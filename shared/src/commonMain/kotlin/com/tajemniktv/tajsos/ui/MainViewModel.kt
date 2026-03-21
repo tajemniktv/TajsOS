@@ -230,23 +230,11 @@ class MainViewModel(
         addNode(title = name, type = "area")
     }
 
-    fun getNodesForProject(projectId: Long): Flow<List<NodeWithPin>> {
-        return allNodes.map { list -> 
-            list.filter { it.node.projectId == projectId }
-        }
-    }
+    fun getNodesForProject(projectId: Long): Flow<List<NodeWithPin>> = repository.getNodesByProjectWithPins(projectId)
 
-    fun getNodesForArea(areaId: Long): Flow<List<NodeWithPin>> {
-        return allNodes.map { list ->
-            list.filter { it.node.areaId == areaId }
-        }
-    }
+    fun getNodesForArea(areaId: Long): Flow<List<NodeWithPin>> = repository.getNodesByAreaWithPins(areaId)
 
-    fun getProjectsForArea(areaId: Long): Flow<List<NodeEntity>> {
-        return allProjects.map { list ->
-            list.filter { it.areaId == areaId }
-        }
-    }
+    fun getProjectsForArea(areaId: Long): Flow<List<NodeEntity>> = repository.getProjectsByArea(areaId)
 
     fun addTrackEntry(
         mood: Int? = null,

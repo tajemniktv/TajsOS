@@ -26,11 +26,22 @@ interface NodeDao {
     @Query("SELECT * FROM nodes WHERE type = :type AND status != 'archived'")
     fun getNodesByType(type: String): Flow<List<NodeEntity>>
 
-    @Query("SELECT * FROM nodes WHERE projectId = :projectId AND status != 'archived'")
+    @Query("SELECT * FROM nodes WHERE projectId = :projectId AND status != 'archived' ORDER BY createdAt DESC")
     fun getNodesByProject(projectId: Long): Flow<List<NodeEntity>>
 
-    @Query("SELECT * FROM nodes WHERE areaId = :areaId AND status != 'archived'")
+    @Transaction
+    @Query("SELECT * FROM nodes WHERE projectId = :projectId AND status != 'archived' ORDER BY createdAt DESC")
+    fun getNodesByProjectWithPins(projectId: Long): Flow<List<NodeWithPin>>
+
+    @Query("SELECT * FROM nodes WHERE areaId = :areaId AND status != 'archived' ORDER BY createdAt DESC")
     fun getNodesByArea(areaId: Long): Flow<List<NodeEntity>>
+
+    @Transaction
+    @Query("SELECT * FROM nodes WHERE areaId = :areaId AND status != 'archived' ORDER BY createdAt DESC")
+    fun getNodesByAreaWithPins(areaId: Long): Flow<List<NodeWithPin>>
+
+    @Query("SELECT * FROM nodes WHERE areaId = :areaId AND type = 'project' AND status != 'archived' ORDER BY createdAt DESC")
+    fun getProjectsByArea(areaId: Long): Flow<List<NodeEntity>>
 
     @Query("SELECT * FROM nodes WHERE id = :id")
     suspend fun getNodeById(id: Long): NodeEntity?

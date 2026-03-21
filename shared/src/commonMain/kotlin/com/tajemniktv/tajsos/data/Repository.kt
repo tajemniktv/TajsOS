@@ -55,7 +55,10 @@ class AppRepository(
 
     fun getNodesByType(type: String): Flow<List<NodeEntity>> = nodeDao.getNodesByType(type)
     fun getNodesByProject(projectId: Long): Flow<List<NodeEntity>> = nodeDao.getNodesByProject(projectId)
+    fun getNodesByProjectWithPins(projectId: Long): Flow<List<NodeWithPin>> = nodeDao.getNodesByProjectWithPins(projectId)
     fun getNodesByArea(areaId: Long): Flow<List<NodeEntity>> = nodeDao.getNodesByArea(areaId)
+    fun getNodesByAreaWithPins(areaId: Long): Flow<List<NodeWithPin>> = nodeDao.getNodesByAreaWithPins(areaId)
+    fun getProjectsByArea(areaId: Long): Flow<List<NodeEntity>> = nodeDao.getProjectsByArea(areaId)
 
     fun getAllSessions(): Flow<List<FocusSessionEntity>> = focusSessionDao.getAllSessions()
     fun getActiveSession(): Flow<FocusSessionEntity?> = focusSessionDao.getActiveSession()
