@@ -68,14 +68,14 @@ class MainViewModel(
 
             if (node.status == "archived") {
                 archived.add(item)
-            }
+            } else {
+                if (node.inboxState && node.type != "project" && node.type != "area") {
+                    inbox.add(item)
+                }
 
-            if (node.inboxState && node.status != "archived" && node.type != "project" && node.type != "area") {
-                inbox.add(item)
-            }
-
-            if (node.reminderAt != null && node.reminderAt <= now && node.status == "active") {
-                reminders.add(node)
+                if (node.status == "active" && node.reminderAt != null && node.reminderAt <= now) {
+                    reminders.add(node)
+                }
             }
         }
         NodeCategorization(inbox, archived, reminders)
