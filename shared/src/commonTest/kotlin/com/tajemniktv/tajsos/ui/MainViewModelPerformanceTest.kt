@@ -87,12 +87,12 @@ class MainViewModelPerformanceTest {
                         reminders.add(node)
                     }
                 }
-                Triple(inbox, archived, reminders)
-            }.stateIn(scope, SharingStarted.Eagerly, Triple(emptyList<NodeWithPin>(), emptyList<NodeWithPin>(), emptyList<NodeEntity>()))
+                MainViewModel.NodeCategorization(inbox, archived, reminders)
+            }.stateIn(scope, SharingStarted.Eagerly, MainViewModel.NodeCategorization())
 
-            val inboxNodes2 = categorizedNodes.map { it.first }.stateIn(scope, SharingStarted.Eagerly, emptyList())
-            val archivedNodes2 = categorizedNodes.map { it.second }.stateIn(scope, SharingStarted.Eagerly, emptyList())
-            val activeReminders2 = categorizedNodes.map { it.third }.stateIn(scope, SharingStarted.Eagerly, emptyList())
+            val inboxNodes2 = categorizedNodes.map { it.inbox }.stateIn(scope, SharingStarted.Eagerly, emptyList())
+            val archivedNodes2 = categorizedNodes.map { it.archived }.stateIn(scope, SharingStarted.Eagerly, emptyList())
+            val activeReminders2 = categorizedNodes.map { it.reminders }.stateIn(scope, SharingStarted.Eagerly, emptyList())
 
             val inb = inboxNodes2.value
             val arc = archivedNodes2.value
