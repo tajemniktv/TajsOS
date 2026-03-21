@@ -50,25 +50,49 @@ class MainViewModel(
     val allAreas: StateFlow<List<NodeEntity>> = repository.getNodesByType("area")
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    val inboxNodes: StateFlow<List<NodeWithPin>> = allNodes.map { list ->
-        list.filter { 
-            it.node.inboxState && 
-            it.node.status != "archived" && 
-            it.node.type != "project" && 
-            it.node.type != "area" 
-        }
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    val archivedNodes: StateFlow<List<NodeWithPin>> = allNodes.map { list ->
-        list.filter { it.node.status == "archived" }
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    data class NodeCategorization(
+        val inbox: List<NodeWithPin> = emptyList(),
+        val archived: List<NodeWithPin> = emptyList(),
+        val reminders: List<NodeEntity> = emptyList()
+    )
 
-    val activeReminders: StateFlow<List<NodeEntity>> = allNodes.map { list ->
+    private val categorizedNodes: StateFlow<NodeCategorization> = allNodes.map { list ->
         val now = Clock.System.now().toEpochMilliseconds()
-        list.map { it.node }.filter {
-            it.reminderAt != null && it.reminderAt <= now && it.status == "active"
+        val inbox = mutableListOf<NodeWithPin>()
+        val archived = mutableListOf<NodeWithPin>()
+        val reminders = mutableListOf<NodeEntity>()
+
+        for (item in list) {
+            val node = item.node
+
+            if (node.status == "archived") {
+                archived.add(item)
+            } else {
+                if (node.inboxState && node.type != "project" && node.type != "area") {
+                    inbox.add(item)
+                }
+
+                if (node.status == "active" && node.reminderAt != null && node.reminderAt <= now) {
+                    reminders.add(node)
+                }
+            }
         }
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+        NodeCategorization(inbox, archived, reminders)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), NodeCategorization())
+
+    val inboxNodes: StateFlow<List<NodeWithPin>> = categorizedNodes.map { it.inbox }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val archivedNodes: StateFlow<List<NodeWithPin>> = categorizedNodes.map { it.archived }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val activeReminders: StateFlow<List<NodeEntity>> = categorizedNodes.map { it.reminders }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+
+
+
 
     val activeSession: StateFlow<FocusSessionEntity?> = repository.getActiveSession()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
@@ -164,8 +188,9 @@ class MainViewModel(
         val avgEnergy = if (recentTracks.isNotEmpty()) recentTracks.mapNotNull { it.energyScore }.average() else 0.0
         val avgFocus = if (recentTracks.isNotEmpty()) recentTracks.mapNotNull { it.focusScore }.average() else 0.0
 
+        val nodesByProjectId = nodes.groupBy { it.node.projectId }
         val neglectedProjects = projects.filter { project ->
-            val projectNodes = nodes.filter { it.node.projectId == project.id }
+            val projectNodes = nodesByProjectId[project.id] ?: emptyList()
             val hasActiveItems = projectNodes.any { it.node.status == "active" }
             val hasRecentCompletions = projectNodes.any { it.node.status == "done" && it.node.updatedAt >= sevenDaysAgo }
             hasActiveItems && !hasRecentCompletions

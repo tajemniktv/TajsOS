@@ -18,13 +18,13 @@ kotlin {
 
     iosArm64()
     iosSimulatorArm64()
-    
+
     jvm()
 
     // js {
     //     browser()
     // }
-    // 
+    //
     // @OptIn(ExperimentalWasmDsl::class)
     // wasmJs {
     //     browser()
@@ -45,7 +45,7 @@ kotlin {
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
-            implementation(libs.kotlinx.coroutinesTest)
+            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
         }
     }
 }
