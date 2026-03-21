@@ -226,16 +226,51 @@ class MainViewModel(
         addNode(title = name, content = description, type = "project", areaId = areaId)
     }
 
+    /**
+     * Creates a new area node with the given name.
+     *
+     * @param name The area's display name.
+     */
     fun addArea(name: String) {
         addNode(title = name, type = "area")
     }
 
-    fun getNodesForProject(projectId: Long): Flow<List<NodeWithPin>> = repository.getNodesByProjectWithPins(projectId)
+    /**
+ * Provides a stream of nodes (with pin metadata) that belong to the given project.
+ *
+ * @param projectId The id of the project whose nodes should be returned.
+ * @return A Flow that emits lists of NodeWithPin for the specified project.
+ */
+fun getNodesForProject(projectId: Long): Flow<List<NodeWithPin>> = repository.getNodesByProjectWithPins(projectId)
 
-    fun getNodesForArea(areaId: Long): Flow<List<NodeWithPin>> = repository.getNodesByAreaWithPins(areaId)
+    /**
+ * Retrieves nodes (including pin state) that belong to the specified area.
+ *
+ * @param areaId The id of the area to fetch nodes for.
+ * @return A Flow that emits lists of `NodeWithPin` belonging to the specified area.
+ */
+fun getNodesForArea(areaId: Long): Flow<List<NodeWithPin>> = repository.getNodesByAreaWithPins(areaId)
 
-    fun getProjectsForArea(areaId: Long): Flow<List<NodeEntity>> = repository.getProjectsByArea(areaId)
+    /**
+ * Provides a reactive stream of projects assigned to the specified area.
+ *
+ * @param areaId The id of the area whose projects to retrieve.
+ * @return A Flow that emits lists of `NodeEntity` representing projects belonging to the given area.
+ */
+fun getProjectsForArea(areaId: Long): Flow<List<NodeEntity>> = repository.getProjectsByArea(areaId)
 
+    /**
+     * Creates and inserts a track entry for the current local date using the provided scores and metadata.
+     *
+     * The entry's `date` is generated from the current local date/time; callers need only supply the measured values.
+     *
+     * @param mood Optional mood score.
+     * @param energy Optional energy score.
+     * @param focus Optional focus score.
+     * @param sleep Optional sleep value (hours).
+     * @param tookMeds Whether medication was taken.
+     * @param note Optional symptom or free-form note.
+     */
     fun addTrackEntry(
         mood: Int? = null,
         energy: Int? = null,
