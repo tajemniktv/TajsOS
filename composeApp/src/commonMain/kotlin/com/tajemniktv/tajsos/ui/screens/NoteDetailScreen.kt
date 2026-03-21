@@ -160,10 +160,11 @@ fun NoteDetailScreen(
             
             // Relations Section
             if (relations.isNotEmpty()) {
+                val nodesMap = remember(nodes) { nodes.associateBy { it.node.id } }
                 Text("RELATED", style = MaterialTheme.typography.labelSmall, color = TactileTheme.Primary)
                 relations.forEach { relation ->
                     val relatedId = if (relation.fromNodeId == noteId) relation.toNodeId else relation.fromNodeId
-                    val relatedNode = nodes.find { it.node.id == relatedId }?.node
+                    val relatedNode = nodesMap[relatedId]?.node
                     if (relatedNode != null) {
                         Surface(
                             onClick = { onNavigateToNode(relatedId) },
