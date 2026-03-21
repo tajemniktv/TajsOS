@@ -51,7 +51,9 @@ class MainViewModelBenchmarkTest {
         val result2 = runOptimized(nodes, projects, sevenDaysAgo)
         val t4 = System.currentTimeMillis()
         val timeOptimized = t4 - t3
-        println("Optimized result size: " + result2.size)
+        println("Optimized result size: ${result2.size}")
+
+        kotlin.test.assertEquals(result1.map { it.id }.toSet(), result2.map { it.id }.toSet(), "The results of original and optimized algorithms should be the same.")
 
         println("===============================")
         println("Original time: " + timeOriginal + "ms")
