@@ -157,14 +157,13 @@ fun NoteDetailScreen(
                     innerTextField()
                 }
             )
-            
+
             // Relations Section
             if (relations.isNotEmpty()) {
-                val nodesMap = remember(nodes) { nodes.associateBy { it.node.id } }
                 Text("RELATED", style = MaterialTheme.typography.labelSmall, color = TactileTheme.Primary)
                 relations.forEach { relation ->
                     val relatedId = if (relation.fromNodeId == noteId) relation.toNodeId else relation.fromNodeId
-                    val relatedNode = nodesMap[relatedId]?.node
+                    val relatedNode = nodes.find { it.node.id == relatedId }?.node
                     if (relatedNode != null) {
                         Surface(
                             onClick = { onNavigateToNode(relatedId) },
@@ -202,7 +201,7 @@ fun NoteDetailScreen(
                     )
                 }
             }
-            Button(onClick = { 
+            Button(onClick = {
                 viewModel.addAttachment(noteId, "URL", "https://example.com", "Example Link")
             }, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = TactileTheme.Surface, contentColor = TactileTheme.Primary)) {
                 Icon(Icons.Default.Add, contentDescription = null)
@@ -211,9 +210,9 @@ fun NoteDetailScreen(
             }
 
             Spacer(modifier = Modifier.height(TactileTheme.SpacingLg))
-            
+
             Text("ORGANIZATION", style = MaterialTheme.typography.labelSmall, color = TactileTheme.Primary)
-            
+
             ListItem(
                 headlineContent = { Text("Status") },
                 supportingContent = { Text(node.status.uppercase()) },
@@ -293,7 +292,7 @@ fun NoteDetailScreen(
                 },
                 colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface)
             )
-            
+
             val updatedDate = kotlin.time.Instant.fromEpochMilliseconds(node.updatedAt).toLocalDateTime(TimeZone.currentSystemDefault()).toString()
             Text(
                 text = "Last updated: $updatedDate",
@@ -313,7 +312,7 @@ fun NoteDetailScreen(
                     allTags.forEach { tag ->
                         ListItem(
                             headlineContent = { Text(tag.name) },
-                            modifier = Modifier.clickable { 
+                            modifier = Modifier.clickable {
                                 viewModel.attachTagToNode(noteId, tag.id)
                                 showTagDialog = false
                             }
