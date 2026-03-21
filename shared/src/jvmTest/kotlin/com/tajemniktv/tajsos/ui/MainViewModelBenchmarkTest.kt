@@ -33,7 +33,7 @@ class MainViewModelBenchmarkTest {
             }
         }
 
-        println("Measuring calculateInsights performance with " + projects.size + " projects and " + nodes.size + " nodes...")
+        println("Measuring calculateInsights performance with ${projects.size} projects and ${nodes.size} nodes...")
 
         // Warmup
         for (i in 0..5) {
