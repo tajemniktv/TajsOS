@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
 package com.tajemniktv.tajsos.ui.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -27,6 +31,7 @@ fun TaskRow(
     onToggleDone: (String) -> Unit,
     onUnpin: () -> Unit,
     onLongClick: () -> Unit = {},
+    onClick: () -> Unit = {},
     onArchive: () -> Unit = {}
 ) {
     val isDone = node.status == "done"
@@ -42,7 +47,7 @@ fun TaskRow(
                 )
             }
             .combinedClickable(
-                onClick = {}, // Already handled by checkbox or swipe?
+                onClick = onClick,
                 onLongClick = onLongClick
             ),
         color = TactileTheme.Surface

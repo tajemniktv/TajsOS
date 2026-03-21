@@ -7,7 +7,8 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun main() {
-    embeddedServer(Netty, port = SERVER_PORT, host = "0.0.0.0", module = Application::module)
+    val host = System.getenv("SERVER_HOST") ?: "127.0.0.1"
+    embeddedServer(Netty, port = SERVER_PORT, host = host, module = Application::module)
         .start(wait = true)
 }
 

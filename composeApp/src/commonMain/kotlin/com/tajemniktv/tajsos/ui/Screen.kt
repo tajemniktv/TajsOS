@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
 package com.tajemniktv.tajsos.ui
 
 import androidx.compose.material.icons.Icons
@@ -19,6 +23,7 @@ sealed class Screen(val route: String, val label: String, val icon: ImageVector)
     data object NoteDetail : Screen("note/{noteId}", "NOTE", Icons.Default.Edit)
     data object Insights : Screen("insights", "STATS", Icons.Default.Info)
     data object Archive : Screen("archive", "ARCHIVE", Icons.Default.Delete)
+    data object Graph : Screen("graph", "GRAPH", Icons.Default.Share)
     data object Projects : Screen("projects", "PROJ", Icons.Default.List)
     data object Areas : Screen("areas", "AREA", Icons.Default.LocationOn)
     data object ProjectDetail : Screen("project/{projectId}", "PROJECT", Icons.Default.List)
