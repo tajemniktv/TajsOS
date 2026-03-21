@@ -164,8 +164,9 @@ class MainViewModel(
         val avgEnergy = if (recentTracks.isNotEmpty()) recentTracks.mapNotNull { it.energyScore }.average() else 0.0
         val avgFocus = if (recentTracks.isNotEmpty()) recentTracks.mapNotNull { it.focusScore }.average() else 0.0
 
+        val nodesByProjectId = nodes.groupBy { it.node.projectId }
         val neglectedProjects = projects.filter { project ->
-            val projectNodes = nodes.filter { it.node.projectId == project.id }
+            val projectNodes = nodesByProjectId[project.id] ?: emptyList()
             val hasActiveItems = projectNodes.any { it.node.status == "active" }
             val hasRecentCompletions = projectNodes.any { it.node.status == "done" && it.node.updatedAt >= sevenDaysAgo }
             hasActiveItems && !hasRecentCompletions
