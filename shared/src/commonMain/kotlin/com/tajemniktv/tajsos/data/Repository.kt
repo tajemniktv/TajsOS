@@ -1,0 +1,111 @@
+package com.tajemniktv.tajsos.data
+
+import kotlinx.coroutines.flow.Flow
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+
+/**
+ * AppRepository is the single source of truth for TajsOS's Room database.
+ */
+class AppRepository(
+    private val nodeDao: NodeDao,
+    private val focusSessionDao: FocusSessionDao,
+    private val trackDao: TrackDao,
+    private val relationDao: RelationDao,
+    private val tagDao: TagDao,
+    private val eventLogDao: EventLogDao,
+    private val attachmentDao: AttachmentDao,
+    private val templateDao: TemplateDao
+) {
+    fun getAllNodes(): Flow<List<NodeWithPin>> = nodeDao.getAllNodesWithPins()
+
+    fun getTodayNodes(): Flow<List<NodeEntity>> {
+        val today = kotlin.time.Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
+        return nodeDao.getTodayNodes(today)
+    }
+
+    suspend fun getNodeById(id: Long): NodeEntity? = nodeDao.getNodeById(id)
+
+    suspend fun insertNode(node: NodeEntity): Long {
+        val id = nodeDao.insertNode(node)
+        logEvent("NODE_CREATED", id)
+        return id
+    }
+
+    suspend fun updateNode(node: NodeEntity) {
+        nodeDao.updateNode(node)
+        if (node.status == "done") {
+            logEvent("NODE_COMPLETED", node.id)
+        } else if (node.status == "archived") {
+            logEvent("NODE_ARCHIVED", node.id)
+        }
+    }
+
+    suspend fun deleteNode(node: NodeEntity) = nodeDao.deleteNode(node)
+
+    suspend fun pinToToday(nodeId: Long) {
+        val today = kotlin.time.Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
+        nodeDao.pinToToday(TodayPinEntity(nodeId = nodeId, date = today, position = 0))
+        logEvent("TODAY_ASSIGNED", nodeId)
+    }
+
+    suspend fun unpinFromToday(nodeId: Long) = nodeDao.unpinFromToday(nodeId)
+
+    fun isPinnedToToday(nodeId: Long): Flow<Boolean> = nodeDao.isPinnedToToday(nodeId)
+
+    fun getNodesByType(type: String): Flow<List<NodeEntity>> = nodeDao.getNodesByType(type)
+    fun getNodesByProject(projectId: Long): Flow<List<NodeEntity>> = nodeDao.getNodesByProject(projectId)
+    fun getNodesByArea(areaId: Long): Flow<List<NodeEntity>> = nodeDao.getNodesByArea(areaId)
+
+    fun getAllSessions(): Flow<List<FocusSessionEntity>> = focusSessionDao.getAllSessions()
+    fun getActiveSession(): Flow<FocusSessionEntity?> = focusSessionDao.getActiveSession()
+    suspend fun insertSession(session: FocusSessionEntity): Long {
+        val id = focusSessionDao.insertSession(session)
+        logEvent("SESSION_STARTED", session.nodeId)
+        return id
+    }
+    suspend fun updateSession(session: FocusSessionEntity) {
+        focusSessionDao.updateSession(session)
+        if (session.endedAt != null) {
+            logEvent("SESSION_ENDED", session.nodeId)
+        }
+    }
+
+    fun getAllTrackEntries(): Flow<List<TrackEntryEntity>> = trackDao.getAllTrackEntries()
+    suspend fun insertTrackEntry(entry: TrackEntryEntity) {
+        trackDao.insertTrackEntry(entry)
+        logEvent("CHECKIN_CREATED")
+    }
+
+    // Relations
+    fun getRelationsForNode(nodeId: Long) = relationDao.getRelationsForNode(nodeId)
+    suspend fun insertRelation(relation: RelationEntity) {
+        relationDao.insertRelation(relation)
+        logEvent("NODE_LINKED", relation.fromNodeId, relation.toNodeId)
+    }
+    suspend fun deleteRelation(relation: RelationEntity) = relationDao.deleteRelation(relation)
+
+    // Tags
+    fun getAllTags() = tagDao.getAllTags()
+    fun getTagsForNode(nodeId: Long) = tagDao.getTagsForNode(nodeId)
+    suspend fun insertTag(tag: TagEntity) = tagDao.insertTag(tag)
+    suspend fun attachTagToNode(nodeId: Long, tagId: Long) = tagDao.attachTagToNode(NodeTagEntity(nodeId, tagId))
+    suspend fun detachTagFromNode(nodeId: Long, tagId: Long) = tagDao.detachTagFromNode(nodeId, tagId)
+
+    // Log
+    fun getRecentLogs(limit: Int = 100) = eventLogDao.getRecentLogs(limit)
+    private suspend fun logEvent(type: String, nodeId: Long? = null, relatedNodeId: Long? = null) {
+        eventLogDao.insertLog(EventLogEntity(eventType = type, nodeId = nodeId, relatedNodeId = relatedNodeId))
+    }
+
+    // Attachments
+    fun getAttachmentsForNode(nodeId: Long) = attachmentDao.getAttachmentsForNode(nodeId)
+    suspend fun insertAttachment(attachment: AttachmentEntity) = attachmentDao.insertAttachment(attachment)
+    suspend fun deleteAttachment(attachment: AttachmentEntity) = attachmentDao.deleteAttachment(attachment)
+
+    // Templates
+    fun getAllTemplates() = templateDao.getAllTemplates()
+    suspend fun insertTemplate(template: TemplateEntity) = templateDao.insertTemplate(template)
+    suspend fun updateTemplate(template: TemplateEntity) = templateDao.updateTemplate(template)
+    suspend fun deleteTemplate(template: TemplateEntity) = templateDao.deleteTemplate(template)
+}
