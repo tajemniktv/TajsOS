@@ -41,10 +41,10 @@ class MainViewModelBenchmarkTest {
             runOptimized(nodes, projects, sevenDaysAgo)
         }
 
-        val t1 = System.currentTimeMillis()
+        val t1 = System.nanoTime()
         val result1 = runOriginal(nodes, projects, sevenDaysAgo)
-        val t2 = System.currentTimeMillis()
-        val timeOriginal = t2 - t1
+        val t2 = System.nanoTime()
+        val timeOriginal = (t2 - t1) / 1_000_000L
         println("Original result size: " + result1.size)
 
         val t3 = System.currentTimeMillis()
