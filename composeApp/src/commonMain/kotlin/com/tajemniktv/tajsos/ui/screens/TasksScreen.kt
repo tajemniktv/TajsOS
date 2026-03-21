@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
 package com.tajemniktv.tajsos.ui.screens
 
 import androidx.compose.foundation.layout.*
@@ -43,6 +47,7 @@ fun TasksScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit) {
                                 isPinned
                             )
                         },
+                        onClick = { onEditNode(nodeWithPin.node.id) },
                         onLongClick = { onEditNode(nodeWithPin.node.id) },
                         onArchive = { viewModel.archiveNode(nodeWithPin.node) }
                     )

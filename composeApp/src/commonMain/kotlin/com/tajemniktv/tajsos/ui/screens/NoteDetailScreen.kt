@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
 package com.tajemniktv.tajsos.ui.screens
 
 import androidx.compose.foundation.clickable
@@ -49,10 +53,16 @@ fun NoteDetailScreen(
     val allTags by viewModel.allTags.collectAsState()
     val relations by viewModel.getRelationsForNode(noteId).collectAsState(initial = emptyList())
     val attachments by viewModel.getAttachmentsForNode(noteId).collectAsState(initial = emptyList())
+    val areas by viewModel.allAreas.collectAsState()
+    val projects by viewModel.allProjects.collectAsState()
 
     var showTagDialog by remember { mutableStateOf(false) }
     var showRelationDialog by remember { mutableStateOf(false) }
     var showStatusDialog by remember { mutableStateOf(false) }
+    var showAreaDialog by remember { mutableStateOf(false) }
+    var showProjectDialog by remember { mutableStateOf(false) }
+    var showReminderDialog by remember { mutableStateOf(false) }
+    var showDueDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -210,21 +220,77 @@ fun NoteDetailScreen(
                 colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface)
             )
 
-            val areas by viewModel.allAreas.collectAsState()
-            val projects by viewModel.allProjects.collectAsState()
-            
+            // Area & Project Selection
             val area = areas.find { it.id == node.areaId }
             val project = projects.find { it.id == node.projectId }
 
-            Text(
-                text = "Area: ${area?.title ?: "None"}",
-                style = MaterialTheme.typography.bodySmall,
-                color = TactileTheme.Muted
+            ListItem(
+                headlineContent = { Text("Area") },
+                supportingContent = { Text(area?.title ?: "Unassigned") },
+                modifier = Modifier.clickable { showAreaDialog = true },
+                colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface)
             )
-            Text(
-                text = "Project: ${project?.title ?: "None"}",
-                style = MaterialTheme.typography.bodySmall,
-                color = TactileTheme.Muted
+
+            ListItem(
+                headlineContent = { Text("Project") },
+                supportingContent = { Text(project?.title ?: "None") },
+                modifier = Modifier.clickable { showProjectDialog = true },
+                colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface)
+            )
+
+            // Due Date
+            ListItem(
+                headlineContent = { Text("Due Date") },
+                supportingContent = {
+                    Text(node.dueAt?.let {
+                        kotlin.time.Instant.fromEpochMilliseconds(it)
+                            .toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
+                    } ?: "No due date")
+                },
+                modifier = Modifier.clickable { showDueDialog = true },
+                trailingContent = {
+                    if (node.dueAt != null) {
+                        IconButton(onClick = { viewModel.updateNode(node.copy(dueAt = null)) }) {
+                            Icon(Icons.Default.Clear, contentDescription = "Clear")
+                        }
+                    }
+                },
+                colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface)
+            )
+
+            // Reminder & Recurrence
+            ListItem(
+                headlineContent = { Text("Reminder") },
+                supportingContent = {
+                    Text(node.reminderAt?.let {
+                        kotlin.time.Instant.fromEpochMilliseconds(it)
+                            .toLocalDateTime(TimeZone.currentSystemDefault()).toString()
+                            .replace("T", " ")
+                    } ?: "No reminder set")
+                },
+                modifier = Modifier.clickable { showReminderDialog = true },
+                trailingContent = {
+                    if (node.reminderAt != null) {
+                        IconButton(onClick = { viewModel.updateNode(node.copy(reminderAt = null)) }) {
+                            Icon(Icons.Default.Clear, contentDescription = "Clear")
+                        }
+                    }
+                },
+                colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface)
+            )
+
+            ListItem(
+                headlineContent = { Text("Recurrence") },
+                supportingContent = { Text(if (node.isRecurring) "Interval: ${node.recurringInterval}" else "One-time") },
+                modifier = Modifier.clickable {
+                    viewModel.updateNode(
+                        node.copy(
+                            isRecurring = !node.isRecurring,
+                            recurringInterval = if (!node.isRecurring) "DAILY" else null
+                        )
+                    )
+                },
+                colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface)
             )
             
             val updatedDate = kotlin.time.Instant.fromEpochMilliseconds(node.updatedAt).toLocalDateTime(TimeZone.currentSystemDefault()).toString()
@@ -312,6 +378,127 @@ fun NoteDetailScreen(
                 }
             },
             confirmButton = { TextButton(onClick = { showStatusDialog = false }) { Text("Cancel") } }
+        )
+    }
+
+    if (showAreaDialog) {
+        AlertDialog(
+            onDismissRequest = { showAreaDialog = false },
+            title = { Text("Assign to Area") },
+            text = {
+                Column {
+                    areas.forEach { area ->
+                        ListItem(
+                            headlineContent = { Text(area.title) },
+                            modifier = Modifier.clickable {
+                                viewModel.updateNode(node.copy(areaId = area.id))
+                                showAreaDialog = false
+                            }
+                        )
+                    }
+                    ListItem(
+                        headlineContent = { Text("Unassign") },
+                        modifier = Modifier.clickable {
+                            viewModel.updateNode(node.copy(areaId = null))
+                            showAreaDialog = false
+                        }
+                    )
+                }
+            },
+            confirmButton = { TextButton(onClick = { showAreaDialog = false }) { Text("Cancel") } }
+        )
+    }
+
+    if (showProjectDialog) {
+        AlertDialog(
+            onDismissRequest = { showProjectDialog = false },
+            title = { Text("Assign to Project") },
+            text = {
+                Column {
+                    projects.forEach { project ->
+                        ListItem(
+                            headlineContent = { Text(project.title) },
+                            modifier = Modifier.clickable {
+                                viewModel.updateNode(node.copy(projectId = project.id))
+                                showProjectDialog = false
+                            }
+                        )
+                    }
+                    ListItem(
+                        headlineContent = { Text("None") },
+                        modifier = Modifier.clickable {
+                            viewModel.updateNode(node.copy(projectId = null))
+                            showProjectDialog = false
+                        }
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    showProjectDialog = false
+                }) { Text("Cancel") }
+            }
+        )
+    }
+
+    if (showDueDialog) {
+        AlertDialog(
+            onDismissRequest = { showDueDialog = false },
+            title = { Text("Set Due Date") },
+            text = {
+                Column {
+                    val options = listOf(
+                        "Today" to kotlin.time.Clock.System.now().toEpochMilliseconds(),
+                        "Tomorrow" to (kotlin.time.Clock.System.now()
+                            .toEpochMilliseconds() + 86400000),
+                        "In 1 Week" to (kotlin.time.Clock.System.now()
+                            .toEpochMilliseconds() + 86400000 * 7)
+                    )
+                    options.forEach { (label, time) ->
+                        ListItem(
+                            headlineContent = { Text(label) },
+                            modifier = Modifier.clickable {
+                                viewModel.updateNode(node.copy(dueAt = time))
+                                showDueDialog = false
+                            }
+                        )
+                    }
+                }
+            },
+            confirmButton = { TextButton(onClick = { showDueDialog = false }) { Text("Cancel") } }
+        )
+    }
+
+    if (showReminderDialog) {
+        AlertDialog(
+            onDismissRequest = { showReminderDialog = false },
+            title = { Text("Set Reminder") },
+            text = {
+                Column {
+                    val options = listOf(
+                        "In 1 Hour" to (kotlin.time.Clock.System.now()
+                            .toEpochMilliseconds() + 3600000),
+                        "Tomorrow Morning" to (kotlin.time.Clock.System.now()
+                            .toEpochMilliseconds() + 86400000),
+                        "Next Week" to (kotlin.time.Clock.System.now()
+                            .toEpochMilliseconds() + 86400000 * 7)
+                    )
+                    options.forEach { (label, time) ->
+                        ListItem(
+                            headlineContent = { Text(label) },
+                            modifier = Modifier.clickable {
+                                viewModel.updateNode(node.copy(reminderAt = time))
+                                showReminderDialog = false
+                            }
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    showReminderDialog = false
+                }) { Text("Cancel") }
+            }
         )
     }
 }

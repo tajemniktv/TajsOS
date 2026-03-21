@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
 package com.tajemniktv.tajsos.ui
 
 import androidx.lifecycle.ViewModel
@@ -59,11 +63,62 @@ class MainViewModel(
         list.filter { it.node.status == "archived" }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
+    val activeReminders: StateFlow<List<NodeEntity>> = allNodes.map { list ->
+        val now = Clock.System.now().toEpochMilliseconds()
+        list.map { it.node }.filter {
+            it.reminderAt != null && it.reminderAt <= now && it.status == "active"
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
     val activeSession: StateFlow<FocusSessionEntity?> = repository.getActiveSession()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
     val allSessions: StateFlow<List<FocusSessionEntity>> = repository.getAllSessions()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    init {
+        viewModelScope.launch {
+            allNodes.filter { it.isNotEmpty() }.firstOrNull() ?: seedOnboardingData()
+        }
+    }
+
+    private suspend fun seedOnboardingData() {
+        if (allNodes.value.isNotEmpty()) return
+
+        val welcomeId = repository.insertNode(
+            NodeEntity(
+                title = "Welcome to TajsOS",
+                content = "This is your new Second Brain. Capture everything, organize later.",
+                type = "note",
+                inboxState = false,
+                isPinned = true
+            )
+        )
+
+        val taskId = repository.insertNode(
+            NodeEntity(
+                title = "Explore the Dashboard",
+                type = "task",
+                inboxState = true
+            )
+        )
+
+        repository.insertNode(
+            NodeEntity(
+                title = "Personal",
+                type = "area",
+                inboxState = false
+            )
+        )
+
+        repository.insertRelation(
+            RelationEntity(
+                fromNodeId = welcomeId,
+                toNodeId = taskId,
+                relationType = "RELATED"
+            )
+        )
+    }
 
     val insights: StateFlow<InsightsData> = combine(
         allNodes,
@@ -80,7 +135,7 @@ class MainViewModel(
         tracks: List<TrackEntryEntity>,
         projects: List<NodeEntity>
     ): InsightsData {
-        val now = kotlin.time.Clock.System.now().toEpochMilliseconds()
+        val now = Clock.System.now().toEpochMilliseconds()
         val sevenDaysAgo = now - (7 * 24 * 60 * 60 * 1000L)
 
         val recentNodes = nodes.filter { it.node.createdAt >= sevenDaysAgo }
@@ -186,13 +241,13 @@ class MainViewModel(
 
     fun updateNode(node: NodeEntity) {
         viewModelScope.launch {
-            repository.updateNode(node.copy(updatedAt = kotlin.time.Clock.System.now().toEpochMilliseconds()))
+            repository.updateNode(node.copy(updatedAt = Clock.System.now().toEpochMilliseconds()))
         }
     }
 
     fun updateNodeStatus(node: NodeEntity, status: String) {
         viewModelScope.launch {
-            val now = kotlin.time.Clock.System.now().toEpochMilliseconds()
+            val now = Clock.System.now().toEpochMilliseconds()
             repository.updateNode(
                 node.copy(
                     status = status, 
@@ -201,12 +256,52 @@ class MainViewModel(
                     archivedAt = if (status == "archived") now else node.archivedAt
                 )
             )
+
+            // Recurrence logic
+            if (status == "done" && node.isRecurring && node.recurringInterval != null) {
+                val nextDue = calculateNextRecurringDate(node.dueAt ?: now, node.recurringInterval)
+                repository.insertNode(
+                    node.copy(
+                        id = 0,
+                        status = "active",
+                        createdAt = now,
+                        updatedAt = now,
+                        completedAt = null,
+                        dueAt = nextDue,
+                        inboxState = false
+                    )
+                )
+            }
         }
+    }
+
+    private fun calculateNextRecurringDate(currentDue: Long, interval: String): Long {
+        val instant = Instant.fromEpochMilliseconds(currentDue)
+        val dateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
+        val nextDateTime = when (interval.uppercase()) {
+            "DAILY" -> dateTime.toInstant(TimeZone.currentSystemDefault())
+                .plus(1, DateTimeUnit.DAY, TimeZone.currentSystemDefault())
+
+            "WEEKLY" -> dateTime.toInstant(TimeZone.currentSystemDefault())
+                .plus(1, DateTimeUnit.WEEK, TimeZone.currentSystemDefault())
+
+            "MONTHLY" -> dateTime.toInstant(TimeZone.currentSystemDefault())
+                .plus(1, DateTimeUnit.MONTH, TimeZone.currentSystemDefault())
+
+            else -> dateTime.toInstant(TimeZone.currentSystemDefault())
+                .plus(1, DateTimeUnit.DAY, TimeZone.currentSystemDefault())
+        }
+        return nextDateTime.toEpochMilliseconds()
     }
 
     fun archiveNode(node: NodeEntity) {
         viewModelScope.launch {
-            repository.updateNode(node.copy(status = "archived", updatedAt = kotlin.time.Clock.System.now().toEpochMilliseconds()))
+            repository.updateNode(
+                node.copy(
+                    status = "archived",
+                    updatedAt = Clock.System.now().toEpochMilliseconds()
+                )
+            )
         }
     }
 
@@ -218,7 +313,12 @@ class MainViewModel(
 
     fun togglePermanentPin(node: NodeEntity) {
         viewModelScope.launch {
-            repository.updateNode(node.copy(isPinned = !node.isPinned, updatedAt = kotlin.time.Clock.System.now().toEpochMilliseconds()))
+            repository.updateNode(
+                node.copy(
+                    isPinned = !node.isPinned,
+                    updatedAt = Clock.System.now().toEpochMilliseconds()
+                )
+            )
         }
     }
 
@@ -259,7 +359,8 @@ class MainViewModel(
         viewModelScope.launch {
             repository.insertTrackEntry(
                 TrackEntryEntity(
-                    date = kotlin.time.Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date.toString(),
+                    date = Clock.System.now()
+                        .toLocalDateTime(TimeZone.currentSystemDefault()).date.toString(),
                     moodScore = mood,
                     energyScore = energy,
                     focusScore = focus,
@@ -277,7 +378,7 @@ class MainViewModel(
                 repository.insertSession(
                     FocusSessionEntity(
                         nodeId = nodeId,
-                        startedAt = kotlin.time.Clock.System.now().toEpochMilliseconds()
+                        startedAt = Clock.System.now().toEpochMilliseconds()
                     )
                 )
             }

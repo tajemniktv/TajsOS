@@ -48,8 +48,8 @@ TajOS is built around 4 pillars:
 - [x] Links / backlinks / related items
 - [x] Computed summaries (Insights)
 - [x] Great search
-- [ ] Optional recurring items (Structure done, logic pending)
-- [ ] Onboarding inside the system
+- [x] Optional recurring items (Logic implemented in ViewModel)
+- [x] Onboarding inside the system (Seeded welcome data)
 
 ---
 
@@ -61,7 +61,7 @@ TajOS is built around 4 pillars:
 - [x] upcoming deadlines
 - [x] resume card
 - [x] inbox count
-- [x] maybe quick stats
+- [x] quick stats
 
 ### 4.2 Inbox / Capture [DONE]
 - [x] task, note, idea, project, area capture
@@ -172,7 +172,7 @@ TajOS is built around 4 pillars:
 - [x] archive UX
 - [x] attachments/resources
 - [x] stable export (JSON)
-- [ ] recurring items (logic)
-- [ ] reminders (logic)
-- [ ] widgets maybe
-- [ ] graph-ish views later
+- [x] recurring items (Logic implemented)
+- [x] reminders (Active reminders on Dashboard)
+- [ ] widgets (Platform-specific, structure ready)
+- [x] graph-ish views (Experimental Graph Screen added)

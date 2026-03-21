@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
 package com.tajemniktv.tajsos.ui.screens
 
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -41,6 +45,7 @@ fun DashboardScreen(
     val allAreas by viewModel.allAreas.collectAsState()
     val allNodes by viewModel.allNodes.collectAsState()
     val inboxNodes by viewModel.inboxNodes.collectAsState()
+    val activeReminders by viewModel.activeReminders.collectAsState()
 
     val today = kotlin.time.Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
     val moodToday = trackEntries.find { it.date == today }
@@ -145,6 +150,61 @@ fun DashboardScreen(
                         style = MaterialTheme.typography.labelSmall,
                         color = TactileTheme.Accent
                     )
+                }
+            }
+        }
+
+        if (activeReminders.isNotEmpty()) {
+            Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+                Text(
+                    text = "ACTIVE REMINDERS",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TactileTheme.Error
+                )
+                activeReminders.forEach { node ->
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .combinedClickable(
+                                onClick = { onEditNode(node.id) },
+                                onLongClick = { onEditNode(node.id) }
+                            ),
+                        color = TactileTheme.Error.copy(alpha = 0.1f),
+                        shape = RoundedCornerShape(TactileTheme.RadiusSm),
+                        border = androidx.compose.foundation.BorderStroke(
+                            1.dp,
+                            TactileTheme.Error.copy(alpha = 0.3f)
+                        )
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(TactileTheme.SpacingMd),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                Icons.Default.NotificationsActive,
+                                contentDescription = null,
+                                tint = TactileTheme.Error,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(Modifier.width(TactileTheme.SpacingMd))
+                            Text(
+                                node.title,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = TactileTheme.Text,
+                                modifier = Modifier.weight(1f)
+                            )
+                            IconButton(onClick = {
+                                viewModel.updateNode(node.copy(reminderAt = null))
+                            }, modifier = Modifier.size(24.dp)) {
+                                Icon(
+                                    Icons.Default.Check,
+                                    contentDescription = "Dismiss",
+                                    tint = TactileTheme.Error,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
