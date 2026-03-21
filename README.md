@@ -26,7 +26,5 @@ See [`AGENTS.md`](./AGENTS.md) for agent/contributor rules and project guardrail
 
 ## Status
 
-TajsOS has been successfully migrated to **Kotlin Multiplatform (KMP)** and **Compose Multiplatform (CMP)**. 
-- Core logic resides in the `:shared` module.
-- Shared UI resides in the `:composeApp` module.
+TajsOS is currently in extremely experimental state and might change heavily. 
 - Currently supports **Android** and **Desktop** targets.
