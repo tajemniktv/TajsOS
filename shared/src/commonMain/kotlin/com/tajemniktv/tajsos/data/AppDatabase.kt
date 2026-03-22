@@ -24,7 +24,7 @@ import androidx.room.RoomDatabaseConstructor
         CalendarProviderEntity::class,
         CalendarEventEntity::class
     ],
-    version = 11,
+    version = 12,
     exportSchema = false
 )
 @ConstructedBy(AppDatabaseConstructor::class)

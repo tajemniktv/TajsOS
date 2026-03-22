@@ -55,6 +55,7 @@ class AppRepository(
     suspend fun insertNode(node: NodeEntity): Long {
         val id = nodeDao.insertNode(node)
         logEvent("NODE_CREATED", id)
+        syncBelongsToRelations(id, node.projectId, node.areaId)
         return id
     }
 
@@ -64,6 +65,29 @@ class AppRepository(
             logEvent("NODE_COMPLETED", node.id)
         } else if (node.status == "archived") {
             logEvent("NODE_ARCHIVED", node.id)
+        }
+        syncBelongsToRelations(node.id, node.projectId, node.areaId)
+    }
+
+    private suspend fun syncBelongsToRelations(nodeId: Long, projectId: Long?, areaId: Long?) {
+        relationDao.deleteBelongsToRelations(nodeId)
+        if (projectId != null) {
+            relationDao.insertRelation(
+                RelationEntity(
+                    fromNodeId = nodeId,
+                    toNodeId = projectId,
+                    relationType = "BELONGS_TO"
+                )
+            )
+        }
+        if (areaId != null) {
+            relationDao.insertRelation(
+                RelationEntity(
+                    fromNodeId = nodeId,
+                    toNodeId = areaId,
+                    relationType = "BELONGS_TO"
+                )
+            )
         }
     }
 
@@ -153,10 +177,18 @@ fun getActiveSession(): Flow<FocusSessionEntity?> = focusSessionDao.getActiveSes
     }
 
     // Relations
+    fun getAllRelations() = relationDao.getAllRelations()
     fun getRelationsForNode(nodeId: Long) = relationDao.getRelationsForNode(nodeId)
     suspend fun insertRelation(relation: RelationEntity) {
-        relationDao.insertRelation(relation)
-        logEvent("NODE_LINKED", relation.fromNodeId, relation.toNodeId)
+        if (!relationDao.relationExists(
+                relation.fromNodeId,
+                relation.toNodeId,
+                relation.relationType
+            )
+        ) {
+            relationDao.insertRelation(relation)
+            logEvent("NODE_LINKED", relation.fromNodeId, relation.toNodeId)
+        }
     }
     suspend fun deleteRelation(relation: RelationEntity) = relationDao.deleteRelation(relation)
 

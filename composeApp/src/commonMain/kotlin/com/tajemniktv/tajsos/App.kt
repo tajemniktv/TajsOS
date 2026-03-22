@@ -219,7 +219,12 @@ fun App(viewModel: MainViewModel) {
                         val projectId =
                             backStackEntry.savedStateHandle.get<Any>("projectId")?.toString()
                                 ?.toLongOrNull() ?: -1L
-                        ProjectDetailScreen(viewModel, projectId, onEditNode)
+                        ProjectDetailScreen(
+                            viewModel,
+                            projectId,
+                            onEditNode,
+                            onBack = { navController.popBackStack() }
+                        )
                     }
                     composable(Screen.AreaDetail.route) { backStackEntry ->
                         val areaId = backStackEntry.savedStateHandle.get<Any>("areaId")?.toString()
@@ -230,7 +235,8 @@ fun App(viewModel: MainViewModel) {
                             onNavigateToProject = { id ->
                                 navController.navigate(Screen.ProjectDetail.route.replace("{projectId}", id.toString()))
                             },
-                            onEditNode = onEditNode
+                            onEditNode = onEditNode,
+                            onBack = { navController.popBackStack() }
                         )
                     }
                     composable(Screen.NoteDetail.route) { backStackEntry ->

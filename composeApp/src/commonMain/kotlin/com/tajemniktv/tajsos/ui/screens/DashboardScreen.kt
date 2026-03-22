@@ -324,11 +324,20 @@ fun DashboardScreen(
             Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
                 ModuleButton(
                     modifier = Modifier.weight(1f),
+                    title = "NOTES",
+                    icon = Icons.Default.Edit,
+                    status = if (notesCount > 0) "$notesCount TOTAL" else "NONE",
+                    onClick = { onNavigateTo(Screen.Notes) }
+                )
+                ModuleButton(
+                    modifier = Modifier.weight(1f),
                     title = "PROJ",
                     icon = Icons.AutoMirrored.Filled.List,
                     status = if (allProjects.isNotEmpty()) "${allProjects.size} ACTIVE" else "EMPTY",
                     onClick = { onNavigateTo(Screen.Projects) }
                 )
+            }
+            Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
                 ModuleButton(
                     modifier = Modifier.weight(1f),
                     title = "AREA",
@@ -336,8 +345,6 @@ fun DashboardScreen(
                     status = if (allAreas.isNotEmpty()) "${allAreas.size} TOTAL" else "EMPTY",
                     onClick = { onNavigateTo(Screen.Areas) }
                 )
-            }
-            Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
                 ModuleButton(
                     modifier = Modifier.weight(1f),
                     title = "CAL",
@@ -345,12 +352,24 @@ fun DashboardScreen(
                     status = if (calendarEntries.isNotEmpty()) "${calendarEntries.size} ITEMS" else "EMPTY",
                     onClick = { onNavigateTo(Screen.Calendar) }
                 )
+            }
+            Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
                 ModuleButton(
                     modifier = Modifier.weight(1f),
                     title = "STATS",
                     icon = Icons.Default.Info,
                     status = "VIEW",
                     onClick = { onNavigateTo(Screen.Insights) }
+                )
+                ModuleButton(
+                    modifier = Modifier.weight(1f),
+                    title = "HISTORY",
+                    icon = Icons.Default.History,
+                    status = if (allSessions.isNotEmpty()) "LAST: ${
+                        Instant.fromEpochMilliseconds(allSessions.first().startedAt)
+                            .toLocalDateTime(TimeZone.currentSystemDefault()).date
+                    }" else "EMPTY",
+                    onClick = { viewModel.resumeLastSession() }
                 )
             }
         }

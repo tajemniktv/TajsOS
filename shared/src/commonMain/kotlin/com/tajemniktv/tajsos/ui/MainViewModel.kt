@@ -409,6 +409,12 @@ class MainViewModel(
         }
     }
 
+    fun deleteNodePermanently(node: NodeEntity) {
+        viewModelScope.launch {
+            repository.deleteNode(node)
+        }
+    }
+
     fun togglePin(node: NodeEntity, isPinned: Boolean) {
         viewModelScope.launch {
             if (isPinned) { repository.pinToToday(node.id) } else { repository.unpinFromToday(node.id) }
@@ -537,6 +543,7 @@ fun getProjectsForArea(areaId: Long): Flow<List<NodeEntity>> = repository.getPro
         }
     }
 
+
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
@@ -580,6 +587,9 @@ fun getProjectsForArea(areaId: Long): Flow<List<NodeEntity>> = repository.getPro
             }
         }
     }
+
+    val allRelations: StateFlow<List<RelationEntity>> = repository.getAllRelations()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     fun getRelationsForNode(nodeId: Long): Flow<List<RelationEntity>> = repository.getRelationsForNode(nodeId)
     fun addRelation(fromNodeId: Long, toNodeId: Long, type: String) {

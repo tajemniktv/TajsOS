@@ -21,10 +21,7 @@ import kotlin.random.Random
 @Composable
 fun GraphScreen(viewModel: MainViewModel, onNodeClick: (Long) -> Unit) {
     val nodes by viewModel.allNodes.collectAsState()
-    val allRelations = remember { mutableStateListOf<com.tajemniktv.tajsos.data.RelationEntity>() }
-
-    // We'll need all relations. Let's add a way to fetch them all in ViewModel or just collect them here.
-    // For simplicity, let's assume we have them or just show nodes for now.
+    val relations by viewModel.allRelations.collectAsState()
 
     var offset by remember { mutableStateOf(Offset.Zero) }
     val nodePositions = remember(nodes) {
@@ -38,13 +35,26 @@ fun GraphScreen(viewModel: MainViewModel, onNodeClick: (Long) -> Unit) {
 
     Box(modifier = Modifier.fillMaxSize().pointerInput(Unit) {
         detectDragGestures { change, dragAmount ->
+            change.consume()
             offset += dragAmount
         }
     }) {
         Canvas(modifier = Modifier.fillMaxSize()) {
-            // Draw lines (simulated)
-            // In a real app, we'd iterate through relations
+            // Draw relations (lines)
+            relations.forEach { relation ->
+                val start = nodePositions[relation.fromNodeId]
+                val end = nodePositions[relation.toNodeId]
+                if (start != null && end != null) {
+                    drawLine(
+                        color = Color.White.copy(alpha = 0.2f),
+                        start = start + offset,
+                        end = end + offset,
+                        strokeWidth = 1f
+                    )
+                }
+            }
 
+            // Draw nodes
             nodes.forEach { nodeWithPin ->
                 val pos = nodePositions[nodeWithPin.node.id] ?: Offset.Zero
                 drawCircle(
@@ -53,7 +63,7 @@ fun GraphScreen(viewModel: MainViewModel, onNodeClick: (Long) -> Unit) {
                         "area" -> TactileTheme.Accent
                         else -> TactileTheme.Muted
                     },
-                    radius = 10f,
+                    radius = 8f,
                     center = pos + offset
                 )
             }

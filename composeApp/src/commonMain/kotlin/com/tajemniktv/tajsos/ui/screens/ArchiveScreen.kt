@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -37,8 +38,26 @@ fun ArchiveScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit) {
                         headlineContent = { Text(nodeWithPin.node.title) },
                         supportingContent = { Text(nodeWithPin.node.type.uppercase()) },
                         trailingContent = {
-                            IconButton(onClick = { viewModel.updateNodeStatus(nodeWithPin.node, "active") }) {
-                                Icon(Icons.Default.Refresh, contentDescription = "Restore")
+                            Row {
+                                IconButton(onClick = {
+                                    viewModel.updateNodeStatus(
+                                        nodeWithPin.node,
+                                        "active"
+                                    )
+                                }) {
+                                    Icon(
+                                        Icons.Default.Refresh,
+                                        contentDescription = "Restore",
+                                        tint = TactileTheme.Primary
+                                    )
+                                }
+                                IconButton(onClick = { viewModel.deleteNodePermanently(nodeWithPin.node) }) {
+                                    Icon(
+                                        Icons.Default.Delete,
+                                        contentDescription = "Delete",
+                                        tint = TactileTheme.Error
+                                    )
+                                }
                             }
                         },
                         modifier = Modifier.combinedClickable(

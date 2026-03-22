@@ -52,7 +52,6 @@ fun NoteDetailScreen(
     val node = nodeWithPin.node
     var title by remember { mutableStateOf(node.title) }
     var content by remember { mutableStateOf(node.content) }
-    var isPinned by remember { mutableStateOf(node.isPinned) }
 
     val tags by viewModel.getTagsForNode(noteId).collectAsState(initial = emptyList())
     val allTags by viewModel.allTags.collectAsState()
@@ -80,13 +79,12 @@ fun NoteDetailScreen(
                 },
                 actions = {
                     IconButton(onClick = {
-                        isPinned = !isPinned
-                        viewModel.updateNode(node.copy(isPinned = isPinned))
+                        viewModel.togglePermanentPin(node)
                     }) {
                         Icon(
-                            if (isPinned) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                            if (node.isPinned) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                             contentDescription = "Pin knowledge",
-                            tint = if (isPinned) TactileTheme.Primary else TactileTheme.Muted
+                            tint = if (node.isPinned) TactileTheme.Primary else TactileTheme.Muted
                         )
                     }
                     IconButton(onClick = {
