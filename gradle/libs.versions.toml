@@ -22,12 +22,17 @@ compose-icons = "1.7.3"
 junit = "4.13.2"
 kotlin = "2.3.20"
 kotlinx-coroutines = "1.10.2"
+turbine = "1.2.1"
+mockk = "1.13.13"
 ktor = "3.4.1"
 logback = "1.5.32"
 material3 = "1.10.0-alpha05"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
+turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 junit = { module = "junit:junit", version.ref = "junit" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
