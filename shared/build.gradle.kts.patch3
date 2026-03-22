@@ -1,0 +1,11 @@
+--- shared/build.gradle.kts
++++ shared/build.gradle.kts
+@@ -40,7 +40,7 @@
+         }
+         commonTest.dependencies {
+             implementation(libs.kotlin.test)
+-            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
++            implementation(libs.kotlinx.coroutinesTest)
+         }
+     }
+ }

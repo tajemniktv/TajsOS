@@ -23,15 +23,68 @@ interface NodeDao {
     )
     fun getTodayNodes(date: String): Flow<List<NodeEntity>>
 
+    /**
+     * Query nodes by type while excluding archived entries.
+     *
+     * @param type The node `type` to filter by (for example `"project"` or `"area"`).
+     * @return A list of nodes matching `type` whose `status` is not `'archived'`.
+     */
     @Query("SELECT * FROM nodes WHERE type = :type AND status != 'archived'")
     fun getNodesByType(type: String): Flow<List<NodeEntity>>
 
-    @Query("SELECT * FROM nodes WHERE projectId = :projectId AND status != 'archived'")
+    /**
+     * Observes non-archived nodes for the specified project, ordered by creation time descending.
+     *
+     * @param projectId ID of the project whose nodes should be observed.
+     * @return Lists of matching NodeEntity objects ordered by `createdAt` descending.
+     */
+    @Query("SELECT * FROM nodes WHERE projectId = :projectId AND status != 'archived' ORDER BY createdAt DESC")
     fun getNodesByProject(projectId: Long): Flow<List<NodeEntity>>
 
-    @Query("SELECT * FROM nodes WHERE areaId = :areaId AND status != 'archived'")
+    /**
+     * Retrieves nodes in a project together with their associated pin information, excluding archived nodes and ordered by creation time descending.
+     *
+     * @param projectId The id of the project whose nodes to retrieve.
+     * @return Lists of NodeWithPin for nodes that belong to the specified project, exclude nodes with `status = 'archived'`, ordered by `createdAt` descending.
+     */
+    @Transaction
+    @Query("SELECT * FROM nodes WHERE projectId = :projectId AND status != 'archived' ORDER BY createdAt DESC")
+    fun getNodesByProjectWithPins(projectId: Long): Flow<List<NodeWithPin>>
+
+    /**
+     * Retrieve nodes in the given area that are not archived, ordered by creation time descending.
+     *
+     * @param areaId The id of the area to filter nodes by.
+     * @return Lists of nodes in the specified area excluding nodes with status `'archived'`, ordered by `createdAt` descending.
+     */
+    @Query("SELECT * FROM nodes WHERE areaId = :areaId AND status != 'archived' ORDER BY createdAt DESC")
     fun getNodesByArea(areaId: Long): Flow<List<NodeEntity>>
 
+    /**
+     * Retrieve nodes with their pin state for a specific area.
+     *
+     * @param areaId The id of the area whose nodes should be returned.
+     * @return Lists of `NodeWithPin` for nodes in the specified area whose `status` is not `'archived'`, ordered by `createdAt` descending.
+     */
+    @Transaction
+    @Query("SELECT * FROM nodes WHERE areaId = :areaId AND status != 'archived' ORDER BY createdAt DESC")
+    fun getNodesByAreaWithPins(areaId: Long): Flow<List<NodeWithPin>>
+
+    /**
+     * Retrieve project nodes belonging to the specified area, ordered by creation time descending.
+     *
+     * @param areaId ID of the area whose project nodes should be returned.
+     * @return A list of project `NodeEntity` objects in the given area ordered by `createdAt` descending.
+     */
+    @Query("SELECT * FROM nodes WHERE areaId = :areaId AND type = 'project' AND status != 'archived' ORDER BY createdAt DESC")
+    fun getProjectsByArea(areaId: Long): Flow<List<NodeEntity>>
+
+    /**
+     * Fetches the node with the given primary key.
+     *
+     * @param id The node's primary key.
+     * @return The matching NodeEntity, or `null` if no node with the given id exists.
+     */
     @Query("SELECT * FROM nodes WHERE id = :id")
     suspend fun getNodeById(id: Long): NodeEntity?
 

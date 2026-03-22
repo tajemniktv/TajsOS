@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
 package com.tajemniktv.tajsos.ui.screens
 
 import androidx.compose.foundation.background
@@ -76,6 +80,7 @@ fun TodayScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit) {
                                 )
                             },
                             onUnpin = { viewModel.togglePin(node, false) },
+                            onClick = { onEditNode(node.id) },
                             onLongClick = { onEditNode(node.id) },
                             onArchive = { viewModel.archiveNode(node) }
                         )

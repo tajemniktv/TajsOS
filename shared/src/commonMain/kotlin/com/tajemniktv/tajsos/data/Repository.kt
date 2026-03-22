@@ -53,12 +53,61 @@ class AppRepository(
 
     fun isPinnedToToday(nodeId: Long): Flow<Boolean> = nodeDao.isPinnedToToday(nodeId)
 
-    fun getNodesByType(type: String): Flow<List<NodeEntity>> = nodeDao.getNodesByType(type)
-    fun getNodesByProject(projectId: Long): Flow<List<NodeEntity>> = nodeDao.getNodesByProject(projectId)
-    fun getNodesByArea(areaId: Long): Flow<List<NodeEntity>> = nodeDao.getNodesByArea(areaId)
+    /**
+ * Retrieves nodes filtered by their type.
+ *
+ * @param type The node type to filter by (for example, "task" or "project").
+ * @return A flow that emits lists of nodes matching the specified type.
+ */
+fun getNodesByType(type: String): Flow<List<NodeEntity>> = nodeDao.getNodesByType(type)
+    /**
+ * Retrieve nodes that belong to the specified project.
+ *
+ * @param projectId The ID of the project to filter nodes by.
+ * @return Lists of nodes belonging to the project.
+ */
+fun getNodesByProject(projectId: Long): Flow<List<NodeEntity>> = nodeDao.getNodesByProject(projectId)
+    /**
+ * Retrieves nodes that belong to the specified project, including their today-pin information.
+ *
+ * @param projectId The id of the project whose nodes should be returned.
+ * @return Lists of `NodeWithPin` representing nodes in the project along with their today-pin data.
+ */
+fun getNodesByProjectWithPins(projectId: Long): Flow<List<NodeWithPin>> = nodeDao.getNodesByProjectWithPins(projectId)
+    /**
+ * Retrieve nodes that belong to a specific area.
+ *
+ * @param areaId The id of the area to filter nodes by.
+ * @return A flow that emits lists of NodeEntity belonging to the specified area.
+ */
+fun getNodesByArea(areaId: Long): Flow<List<NodeEntity>> = nodeDao.getNodesByArea(areaId)
+    /**
+ * Retrieves nodes in the specified area together with their today-pin information.
+ *
+ * @param areaId ID of the area whose nodes should be returned.
+ * @return A list of nodes in the given area paired with their today-pin information.
+ */
+fun getNodesByAreaWithPins(areaId: Long): Flow<List<NodeWithPin>> = nodeDao.getNodesByAreaWithPins(areaId)
+    /**
+ * Retrieves project nodes that belong to the specified area.
+ *
+ * @param areaId The id of the area whose projects should be returned.
+ * @return A flow that emits lists of project nodes belonging to the specified area.
+ */
+fun getProjectsByArea(areaId: Long): Flow<List<NodeEntity>> = nodeDao.getProjectsByArea(areaId)
 
-    fun getAllSessions(): Flow<List<FocusSessionEntity>> = focusSessionDao.getAllSessions()
-    fun getActiveSession(): Flow<FocusSessionEntity?> = focusSessionDao.getActiveSession()
+    /**
+ * Retrieves a stream of all focus sessions stored in the database.
+ *
+ * @return A Flow that emits the current list of FocusSessionEntity objects and re-emits when the data changes.
+ */
+fun getAllSessions(): Flow<List<FocusSessionEntity>> = focusSessionDao.getAllSessions()
+    /**
+ * Observes the currently active focus session.
+ *
+ * @return The active FocusSessionEntity if one exists, `null` otherwise.
+ */
+fun getActiveSession(): Flow<FocusSessionEntity?> = focusSessionDao.getActiveSession()
     suspend fun insertSession(session: FocusSessionEntity): Long {
         val id = focusSessionDao.insertSession(session)
         logEvent("SESSION_STARTED", session.nodeId)

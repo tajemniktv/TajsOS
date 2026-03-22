@@ -1,4 +1,8 @@
-﻿package com.tajemniktv.tajsos
+﻿/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
+package com.tajemniktv.tajsos
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -69,6 +73,7 @@ fun App(viewModel: MainViewModel) {
                         Screen.Areas,
                         Screen.Track,
                         Screen.Insights,
+                        Screen.Graph,
                         Screen.Archive,
                         Screen.Settings
                     )
@@ -224,6 +229,9 @@ fun App(viewModel: MainViewModel) {
                         InsightsScreen(viewModel, onNavigateToProject = { id ->
                             navController.navigate(Screen.ProjectDetail.route.replace("{projectId}", id.toString()))
                         })
+                    }
+                    composable(Screen.Graph.route) {
+                        GraphScreen(viewModel, onNodeClick = onEditNode)
                     }
                     composable(Screen.Archive.route) { ArchiveScreen(viewModel, onEditNode) }
                 }
