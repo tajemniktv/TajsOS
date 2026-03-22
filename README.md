@@ -12,7 +12,7 @@ It is a **life OS first**.
 
 ---
 
-See [`roadmap.md`](./roadmap.md) for the phased roadmap.
+See [`ROADMAP.md`](./ROADMAP.md) for the phased roadmap.
 See [`AGENTS.md`](./AGENTS.md) for agent/contributor rules and project guardrails.
 
 ---
