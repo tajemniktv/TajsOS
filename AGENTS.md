@@ -20,6 +20,10 @@ execution feel like operating heavy machinery.
   - `:composeApp` — shared Compose UI, navigation, and screens for all platforms
   - `:androidApp` — Android-specific entry point
   - `:server` — Ktor-based backend for sync/remote features
+- **Calendar integration:** Supports external calendar providers and events (Google, Outlook, ICS,
+  etc.)
+- **Localization:** The app is being developed with localization in mind; UI strings are sourced for
+  translation.
 - **State management:** ViewModel + StateFlow + immutable UI state (see `MainViewModel` in ComposeApp)
 - **Async:** Kotlin coroutines
 - **Navigation:** State-driven Compose navigation using a sealed `Screen` class; each major feature has a dedicated screen in `composeApp/src/commonMain/kotlin/com/tajemniktv/tajsos/ui/screens/`.
@@ -60,12 +64,27 @@ When making meaningful changes, keep these current:
   - Relations are handled via `RelationEntity` for linking nodes (e.g., tasks to projects).
   - "Today" is implemented as `TodayPinEntity` (table for daily pinning).
   - Focus sessions and daily tracking: `FocusSessionEntity`, `TrackEntryEntity`.
+  - Templates: `TemplateEntity` for reusable item structures.
+  - Reviews: `ReviewEntity` for formal reflection sessions.
+  - Snapshots: `NodeSnapshotEntity` for versioning node content.
+  - Attachments: `AttachmentEntity` for files/links associated with nodes.
+  - Calendar: `CalendarProviderEntity` and `CalendarEventEntity` for external calendar integration.
 - **Repository pattern:**
   - All data access is funneled through `AppRepository` in `shared`.
   - ViewModels (e.g., `MainViewModel`) expose StateFlows for UI state.
+  - AppRepository also provides flows for calendar, template, review, snapshot, and attachment data.
 - **Status/type conventions:**
   - `NodeEntity` uses `type` (`task`, `note`, `project`, `area`, etc.) and `status` (`active`, `done`, `archived`, `on_hold`, `someday`, `blocked`).
+  - `ReviewEntity` uses `type` (`daily`, `weekly`, `monthly`).
+  - `TemplateEntity` uses `nodeType` (`task`, `note`, `project`).
 - **Main entrypoints:**
   - UI: `App.kt` in `composeApp/src/commonMain/kotlin/com/tajemniktv/tajsos/`
   - Data: `AppRepository` and entities in `shared/src/commonMain/kotlin/com/tajemniktv/tajsos/data/`
+  - Insights/stats: `MainViewModel` exposes a rich `insights` StateFlow for weekly summaries,
+    context switching, backlog pressure, etc.
+  - Advanced search/filtering: `MainViewModel` supports multi-criteria search (by tag, type, status,
+    project, area, energy, friction, etc.).
+  - Biometric/locking: App supports biometric authentication and locking via preferences and
+    ViewModel state.
+  - Export: Data export to JSON is available via ViewModel.
 
