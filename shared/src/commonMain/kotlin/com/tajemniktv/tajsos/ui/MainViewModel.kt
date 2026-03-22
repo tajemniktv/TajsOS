@@ -184,14 +184,9 @@ class MainViewModel(
             }.getOrDefault(false)
         }
 
-        val moodScores = recentTracks.mapNotNull { it.moodScore }
-        val avgMood = if (moodScores.isNotEmpty()) moodScores.average() else 0.0
-
-        val energyScores = recentTracks.mapNotNull { it.energyScore }
-        val avgEnergy = if (energyScores.isNotEmpty()) energyScores.average() else 0.0
-
-        val focusScores = recentTracks.mapNotNull { it.focusScore }
-        val avgFocus = if (focusScores.isNotEmpty()) focusScores.average() else 0.0
+        val avgMood = recentTracks.mapNotNull { it.moodScore }.takeIf { it.isNotEmpty() }?.average() ?: 0.0
+        val avgEnergy = recentTracks.mapNotNull { it.energyScore }.takeIf { it.isNotEmpty() }?.average() ?: 0.0
+        val avgFocus = recentTracks.mapNotNull { it.focusScore }.takeIf { it.isNotEmpty() }?.average() ?: 0.0
 
         val nodesByProjectId = nodes.groupBy { it.node.projectId }
         val neglectedProjects = projects.filter { project ->
