@@ -4,34 +4,56 @@
 
 package com.tajemniktv.tajsos.ui.components
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.toInstant
-import kotlinx.datetime.plus
-import kotlinx.datetime.DateTimeUnit
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import kotlinx.datetime.plus
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,9 +63,18 @@ fun CaptureSheet(
     projects: List<NodeEntity> = emptyList(),
     areas: List<NodeEntity> = emptyList(),
     defaultProjectId: Long? = null,
-    defaultAreaId: Long? = null
+    defaultAreaId: Long? = null,
+    initialText: String = "",
+    onVoiceCaptureClick: (() -> Unit)? = null
 ) {
-    var text by remember { mutableStateOf("") }
+    var text by remember { mutableStateOf(initialText) }
+
+    // Update text if initialText changes (e.g. from voice capture)
+    LaunchedEffect(initialText) {
+        if (initialText.isNotEmpty()) {
+            text = initialText
+        }
+    }
     var selectedType by remember { mutableStateOf("task") }
     var selectedProjectId by remember { mutableStateOf<Long?>(defaultProjectId) }
     var selectedAreaId by remember { mutableStateOf<Long?>(defaultAreaId) }
@@ -107,41 +138,64 @@ fun CaptureSheet(
                 }
             }
 
-            BasicTextField(
-                value = text,
-                onValueChange = { text = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = TactileTheme.SpacingMd),
-                textStyle = MaterialTheme.typography.displayMedium.copy(color = TactileTheme.Text),
-                cursorBrush = SolidColor(TactileTheme.Primary),
-                decorationBox = { innerTextField ->
-                    if (text.isEmpty()) {
-                        val placeholder = when (selectedType) {
-                            "project" -> "Project name..."
-                            "area" -> "Area name..."
-                            else -> if (brainDumpMode) "Next thought..." else "Dump thought..."
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                BasicTextField(
+                    value = text,
+                    onValueChange = { text = it },
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(vertical = TactileTheme.SpacingMd),
+                    textStyle = MaterialTheme.typography.displayMedium.copy(color = TactileTheme.Text),
+                    cursorBrush = SolidColor(TactileTheme.Primary),
+                    decorationBox = { innerTextField ->
+                        if (text.isEmpty()) {
+                            val placeholder = when (selectedType) {
+                                "project" -> "Project name..."
+                                "area" -> "Area name..."
+                                else -> if (brainDumpMode) "Next thought..." else "Dump thought..."
+                            }
+                            Text(
+                                placeholder,
+                                style = MaterialTheme.typography.displayMedium,
+                                color = TactileTheme.Muted
+                            )
                         }
-                        Text(
-                            placeholder,
-                            style = MaterialTheme.typography.displayMedium,
-                            color = TactileTheme.Muted
+                        innerTextField()
+                    },
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(onDone = {
+                        if (text.isNotBlank()) {
+                            onCapture(
+                                text,
+                                selectedType,
+                                selectedProjectId,
+                                selectedAreaId,
+                                isRecurring,
+                                recurringInterval,
+                                reminderTime
+                            )
+                            if (multiCaptureMode || brainDumpMode) {
+                                text = ""
+                            } else {
+                                onDismiss()
+                            }
+                        }
+                    })
+                )
+
+                if (onVoiceCaptureClick != null) {
+                    IconButton(onClick = onVoiceCaptureClick) {
+                        Icon(
+                            imageVector = Icons.Default.Mic,
+                            contentDescription = "Voice Capture",
+                            tint = TactileTheme.Primary
                         )
                     }
-                    innerTextField()
-                },
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                keyboardActions = KeyboardActions(onDone = {
-                    if (text.isNotBlank()) {
-                        onCapture(text, selectedType, selectedProjectId, selectedAreaId, isRecurring, recurringInterval, reminderTime)
-                        if (multiCaptureMode || brainDumpMode) {
-                            text = ""
-                        } else {
-                            onDismiss()
-                        }
-                    }
-                })
-            )
+                }
+            }
 
             if (!brainDumpMode) {
                 Text(
@@ -224,13 +278,13 @@ fun CaptureSheet(
                         ) {
                             IconButton(onClick = {
                                 reminderTime = if (reminderTime == null) {
-                                    val now = kotlinx.datetime.Clock.System.now()
+                                    val now = kotlin.time.Clock.System.now()
                                     val tz = kotlinx.datetime.TimeZone.currentSystemDefault()
                                     val localDateTime = now.toLocalDateTime(tz)
                                     val evening = kotlinx.datetime.LocalDateTime(
                                         localDateTime.year,
                                         localDateTime.month,
-                                        localDateTime.dayOfMonth,
+                                        localDateTime.day,
                                         20,
                                         0
                                     )

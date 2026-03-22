@@ -347,6 +347,26 @@ class MainViewModel(
         }
     }
 
+    suspend fun addNodeForResult(
+        title: String,
+        content: String = "",
+        type: String = "task",
+        projectId: Long? = null,
+        areaId: Long? = null,
+        inboxState: Boolean? = null
+    ): Long = withContext(Dispatchers.Default) {
+        repository.insertNode(
+            NodeEntity(
+                title = title,
+                content = content,
+                type = type,
+                projectId = projectId,
+                areaId = areaId,
+                inboxState = inboxState ?: (type != "project" && type != "area")
+            )
+        )
+    }
+
     fun updateNode(node: NodeEntity) {
         viewModelScope.launch {
             repository.updateNode(node.copy(updatedAt = Clock.System.now().toEpochMilliseconds()))
@@ -582,7 +602,7 @@ fun getProjectsForArea(areaId: Long): Flow<List<NodeEntity>> = repository.getPro
         _searchQuery
     ) { nodes, query ->
         if (query.isBlank()) {
-            emptyList()
+            nodes.sortedByDescending { it.node.updatedAt }.take(100)
         } else {
             nodes.filter { matchesQuery(it, query) }
         }

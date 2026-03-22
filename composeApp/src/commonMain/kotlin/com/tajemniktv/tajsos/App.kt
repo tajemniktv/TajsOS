@@ -5,7 +5,9 @@
 package com.tajemniktv.tajsos
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -28,9 +30,21 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun App(viewModel: MainViewModel) {
+fun App(
+    viewModel: MainViewModel,
+    onVoiceCapture: (() -> Unit)? = null,
+    voiceCaptureResult: String? = null,
+    onVoiceCaptureConsumed: () -> Unit = {}
+) {
     val navController = rememberNavController()
     var showCaptureSheet by remember { mutableStateOf(false) }
+
+    // When a voice capture result arrives, show the sheet and set the initial text
+    LaunchedEffect(voiceCaptureResult) {
+        if (voiceCaptureResult != null) {
+            showCaptureSheet = true
+        }
+    }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
@@ -56,63 +70,87 @@ fun App(viewModel: MainViewModel) {
                         bottomEnd = TactileTheme.RadiusMd
                     )
                 ) {
-                    Spacer(Modifier.height(TactileTheme.SpacingLg))
-                    Text(
-                        "TajsOS",
-                        modifier = Modifier.padding(TactileTheme.SpacingMd),
-                        style = MaterialTheme.typography.titleLarge,
-                        color = TactileTheme.Primary
-                    )
-                    HorizontalDivider(color = TactileTheme.Muted)
-
-                    val navItems = listOf(
-                        Screen.Dashboard,
-                        Screen.Inbox,
-                        Screen.Search,
-                        Screen.Tasks,
-                        Screen.Notes,
-                        Screen.Today,
-                        Screen.Calendar,
-                        Screen.Focus,
-                        Screen.Projects,
-                        Screen.Areas,
-                        Screen.Track,
-                        Screen.Insights,
-                        Screen.Graph,
-                        Screen.Archive,
-                        Screen.Settings
-                    )
-
-                    navItems.forEach { screen ->
-                        NavigationDrawerItem(
-                            label = {
-                                Text(
-                                    screen.label,
-                                    style = MaterialTheme.typography.labelLarge
-                                )
-                            },
-                            selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
-                            onClick = {
-                                navController.navigate(screen.route) {
-                                    popUpTo(navController.graph.findStartDestination().id) {
-                                        saveState = true
-                                    }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                                scope.launch { drawerState.close() }
-                            },
-                            icon = { Icon(screen.icon, contentDescription = null) },
-                            modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
-                            colors = NavigationDrawerItemDefaults.colors(
-                                selectedContainerColor = TactileTheme.Primary.copy(alpha = 0.1f),
-                                selectedIconColor = TactileTheme.Primary,
-                                selectedTextColor = TactileTheme.Primary,
-                                unselectedIconColor = TactileTheme.Muted,
-                                unselectedTextColor = TactileTheme.Muted,
-                                unselectedContainerColor = Color.Transparent
-                            )
+                    Column(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .verticalScroll(rememberScrollState())
+                    ) {
+                        Spacer(Modifier.height(TactileTheme.SpacingLg))
+                        Text(
+                            "TajsOS",
+                            modifier = Modifier.padding(TactileTheme.SpacingMd),
+                            style = MaterialTheme.typography.titleLarge,
+                            color = TactileTheme.Primary
                         )
+                        HorizontalDivider(color = TactileTheme.Muted)
+
+                        val coreItems = listOf(Screen.Dashboard, Screen.Inbox, Screen.Search)
+                        val executionItems =
+                            listOf(Screen.Today, Screen.Tasks, Screen.Focus, Screen.Calendar)
+                        val brainItems = listOf(Screen.Notes, Screen.Projects, Screen.Areas)
+                        val statusItems = listOf(Screen.Track, Screen.Insights, Screen.Graph)
+                        val systemItems = listOf(Screen.Archive, Screen.Settings)
+
+                        val groupedItems = listOf(
+                            "CORE" to coreItems,
+                            "EXECUTION" to executionItems,
+                            "SECOND BRAIN" to brainItems,
+                            "STATUS & INSIGHTS" to statusItems,
+                            "SYSTEM" to systemItems
+                        )
+
+                        groupedItems.forEachIndexed { index, (header, items) ->
+                            if (index > 0) {
+                                HorizontalDivider(
+                                    modifier = Modifier.padding(
+                                        horizontal = TactileTheme.SpacingMd,
+                                        vertical = TactileTheme.SpacingSm
+                                    ),
+                                    color = TactileTheme.Muted.copy(alpha = 0.5f)
+                                )
+                            }
+                            Text(
+                                header,
+                                modifier = Modifier.padding(
+                                    horizontal = TactileTheme.SpacingMd,
+                                    vertical = TactileTheme.SpacingSm
+                                ),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = TactileTheme.Muted
+                            )
+                            items.forEach { screen ->
+                                NavigationDrawerItem(
+                                    label = {
+                                        Text(
+                                            screen.label,
+                                            style = MaterialTheme.typography.labelLarge
+                                        )
+                                    },
+                                    selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                                    onClick = {
+                                        navController.navigate(screen.route) {
+                                            popUpTo(navController.graph.findStartDestination().id) {
+                                                saveState = true
+                                            }
+                                            launchSingleTop = true
+                                            restoreState = true
+                                        }
+                                        scope.launch { drawerState.close() }
+                                    },
+                                    icon = { Icon(screen.icon, contentDescription = null) },
+                                    modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
+                                    colors = NavigationDrawerItemDefaults.colors(
+                                        selectedContainerColor = TactileTheme.Primary.copy(alpha = 0.1f),
+                                        selectedIconColor = TactileTheme.Primary,
+                                        selectedTextColor = TactileTheme.Primary,
+                                        unselectedIconColor = TactileTheme.Muted,
+                                        unselectedTextColor = TactileTheme.Muted,
+                                        unselectedContainerColor = Color.Transparent
+                                    )
+                                )
+                            }
+                            Spacer(Modifier.height(TactileTheme.SpacingSm))
+                        }
                     }
                 }
             }
@@ -274,7 +312,10 @@ fun App(viewModel: MainViewModel) {
 
                 if (showCaptureSheet) {
                     CaptureSheet(
-                        onDismiss = { showCaptureSheet = false },
+                        onDismiss = {
+                            showCaptureSheet = false
+                            onVoiceCaptureConsumed()
+                        },
                         onCapture = { text, type, projectId, areaId, isRec, recInt, remAt ->
                             when(type) {
                                 "project" -> viewModel.addProject(text, "", areaId)
@@ -286,7 +327,9 @@ fun App(viewModel: MainViewModel) {
                         projects = allProjects,
                         areas = allAreas,
                         defaultProjectId = lastActiveProjectId,
-                        defaultAreaId = lastActiveAreaId
+                        defaultAreaId = lastActiveAreaId,
+                        initialText = voiceCaptureResult ?: "",
+                        onVoiceCaptureClick = onVoiceCapture
                     )
                 }
             }

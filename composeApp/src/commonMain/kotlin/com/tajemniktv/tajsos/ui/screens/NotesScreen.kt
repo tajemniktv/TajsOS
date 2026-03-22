@@ -34,9 +34,11 @@ fun NotesScreen(viewModel: MainViewModel, onNoteClick: (Long) -> Unit) {
         }
     }
 
-    val pinnedKnowledge = filteredNodes.filter { it.node.isPinned && (it.node.type == "note" || it.node.type == "idea") }
+    val pinnedKnowledge =
+        filteredNodes.filter { it.node.isPinned && (it.node.type == "note" || it.node.type == "idea" || it.node.type == "resource") }
     val unpinnedIdeas = filteredNodes.filter { !it.node.isPinned && it.node.type == "idea" }
     val unpinnedNotes = filteredNodes.filter { !it.node.isPinned && it.node.type == "note" }
+    val unpinnedResources = filteredNodes.filter { !it.node.isPinned && it.node.type == "resource" }
 
     LazyColumn(
         modifier = Modifier
@@ -123,11 +125,37 @@ fun NotesScreen(viewModel: MainViewModel, onNoteClick: (Long) -> Unit) {
                     onArchive = { viewModel.archiveNode(nodeWithPin.node) }
                 )
             }
+            item { Spacer(modifier = Modifier.height(16.dp)) }
         }
 
-        if (pinnedKnowledge.isEmpty() && unpinnedIdeas.isEmpty() && unpinnedNotes.isEmpty()) {
+        if (unpinnedResources.isNotEmpty()) {
             item {
-                EmptyState(message = if (searchQuery.isEmpty()) "NO NOTES OR IDEAS FOUND" else "NO MATCHING RESULTS")
+                Text(
+                    "RESOURCES & ASSETS",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TactileTheme.Primary
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+            items(unpinnedResources, key = { it.node.id }) { nodeWithPin ->
+                NodeCard(
+                    nodeWithPin = nodeWithPin,
+                    onClick = { onNoteClick(nodeWithPin.node.id) },
+                    onToggleDone = { status ->
+                        viewModel.updateNodeStatus(
+                            nodeWithPin.node,
+                            status
+                        )
+                    },
+                    onTogglePin = { isPinned -> viewModel.togglePin(nodeWithPin.node, isPinned) },
+                    onArchive = { viewModel.archiveNode(nodeWithPin.node) }
+                )
+            }
+        }
+
+        if (pinnedKnowledge.isEmpty() && unpinnedIdeas.isEmpty() && unpinnedNotes.isEmpty() && unpinnedResources.isEmpty()) {
+            item {
+                EmptyState(message = if (searchQuery.isEmpty()) "NO KNOWLEDGE FOUND" else "NO MATCHING RESULTS")
             }
         }
     }

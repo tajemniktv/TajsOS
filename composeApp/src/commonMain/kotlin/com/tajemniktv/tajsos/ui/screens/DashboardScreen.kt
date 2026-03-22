@@ -52,9 +52,10 @@ fun DashboardScreen(
     val today = kotlin.time.Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
     val moodToday = trackEntries.find { it.date == today }
     val tasksCount = activeNodes.count { it.node.type == "task" }
-    val notesCount = activeNodes.count { it.node.type == "note" || it.node.type == "idea" }
+    val notesCount =
+        activeNodes.count { it.node.type == "note" || it.node.type == "idea" || it.node.type == "resource" }
     val pinnedKnowledge =
-        activeNodes.filter { it.node.isPinned && (it.node.type == "note" || it.node.type == "idea") }
+        activeNodes.filter { it.node.isPinned && (it.node.type == "note" || it.node.type == "idea" || it.node.type == "resource") }
     val upcomingDeadlines =
         activeNodes.filter { it.node.dueAt != null && it.node.status == "active" }
         .sortedBy { it.node.dueAt }
