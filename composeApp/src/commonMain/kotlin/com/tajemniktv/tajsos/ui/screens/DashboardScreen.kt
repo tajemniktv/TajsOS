@@ -324,7 +324,7 @@ fun DashboardScreen(
                 ModuleButton(
                     modifier = Modifier.weight(1f),
                     title = "PROJ",
-                    icon = Icons.Default.List,
+                    icon = Icons.AutoMirrored.Filled.List,
                     status = if (allProjects.isNotEmpty()) "${allProjects.size} ACTIVE" else "EMPTY",
                     onClick = { onNavigateTo(Screen.Projects) }
                 )

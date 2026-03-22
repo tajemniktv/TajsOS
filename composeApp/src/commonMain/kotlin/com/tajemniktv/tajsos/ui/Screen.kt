@@ -26,9 +26,12 @@ sealed class Screen(val route: String, val label: String, val icon: ImageVector)
     data object Calendar : Screen("calendar", "CAL", Icons.Default.DateRange)
     data object CalendarSettings : Screen("calendar_settings", "CAL OPTS", Icons.Default.Settings)
     data object Graph : Screen("graph", "GRAPH", Icons.Default.Share)
-    data object Projects : Screen("projects", "PROJ", Icons.Default.List)
+    data object Projects : Screen("projects", "PROJ", Icons.AutoMirrored.Filled.List)
     data object Areas : Screen("areas", "AREA", Icons.Default.LocationOn)
-    data object ProjectDetail : Screen("project/{projectId}", "PROJECT", Icons.Default.List)
+    data object ProjectDetail : Screen(
+        "project/{projectId}", "PROJECT",
+        Icons.AutoMirrored.Filled.List
+    )
     data object AreaDetail : Screen("area/{areaId}", "AREA", Icons.Default.LocationOn)
     data object Settings : Screen("settings", "OPTS", Icons.Default.Settings)
 }
