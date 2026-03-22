@@ -19,7 +19,7 @@ class MainViewModelTest {
     private val preferencesRepository = mockk<PreferencesRepository>()
 
     private val allNodesFlow = MutableStateFlow<List<NodeWithPin>>(emptyList())
-    private val isBiometricEnabledFlow = MutableStateFlow<Boolean?>(null)
+    private val isBiometricEnabledFlow = MutableStateFlow<Boolean>(false)
 
     private val testDispatcher = UnconfinedTestDispatcher()
 
@@ -110,7 +110,9 @@ class MainViewModelTest {
             assertEquals(listOf(node1), awaitItem())
 
             viewModel.updateSearchQuery("CONTENT")
-            assertEquals(listOf(node2), awaitItem())
+            // node1 matches "Content 1" (which contains "CONTENT" ignoring case)
+            // node2 matches "CONTENT 2" (which contains "CONTENT" ignoring case)
+            assertEquals(listOf(node1, node2), awaitItem())
         }
     }
 

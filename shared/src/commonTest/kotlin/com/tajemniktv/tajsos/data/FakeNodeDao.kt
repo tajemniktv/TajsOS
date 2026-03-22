@@ -36,8 +36,26 @@ class FakeNodeDao : NodeDao {
         return nodesFlow.map { it.filter { node -> node.projectId == projectId && node.status != "archived" } }
     }
 
+    override fun getNodesByProjectWithPins(projectId: Long): Flow<List<NodeWithPin>> {
+        return nodesFlow.map { nodesList ->
+            nodesList.filter { node -> node.projectId == projectId && node.status != "archived" }
+                .map { node -> NodeWithPin(node, pins.find { it.nodeId == node.id }) }
+        }
+    }
+
     override fun getNodesByArea(areaId: Long): Flow<List<NodeEntity>> {
         return nodesFlow.map { it.filter { node -> node.areaId == areaId && node.status != "archived" } }
+    }
+
+    override fun getNodesByAreaWithPins(areaId: Long): Flow<List<NodeWithPin>> {
+        return nodesFlow.map { nodesList ->
+            nodesList.filter { node -> node.areaId == areaId && node.status != "archived" }
+                .map { node -> NodeWithPin(node, pins.find { it.nodeId == node.id }) }
+        }
+    }
+
+    override fun getProjectsByArea(areaId: Long): Flow<List<NodeEntity>> {
+        return nodesFlow.map { it.filter { node -> node.areaId == areaId && node.type == "project" && node.status != "archived" } }
     }
 
     override suspend fun getNodeById(id: Long): NodeEntity? {
