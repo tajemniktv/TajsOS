@@ -126,7 +126,7 @@
 - [ ] Quick capture from anywhere in the app
 - [ ] One persistent global add button
 - [ ] Capture without forcing category decisions
-- [ ] “Add now, sort ” mode
+- [ ] “Add now, sort later” mode
 - [ ] Single-field capture flow
 - [ ] Multi-capture mode
 - [ ] Brain dump session mode
