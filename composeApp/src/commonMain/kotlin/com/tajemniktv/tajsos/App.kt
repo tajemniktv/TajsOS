@@ -216,11 +216,14 @@ fun App(viewModel: MainViewModel) {
                         AreasScreen(viewModel, onNavigateTo = { route -> navController.navigate(route) })
                     }
                     composable(Screen.ProjectDetail.route) { backStackEntry ->
-                        val projectId = backStackEntry.savedStateHandle.get<String>("projectId")?.toLongOrNull() ?: -1L
+                        val projectId =
+                            backStackEntry.savedStateHandle.get<Any>("projectId")?.toString()
+                                ?.toLongOrNull() ?: -1L
                         ProjectDetailScreen(viewModel, projectId, onEditNode)
                     }
                     composable(Screen.AreaDetail.route) { backStackEntry ->
-                        val areaId = backStackEntry.savedStateHandle.get<String>("areaId")?.toLongOrNull() ?: -1L
+                        val areaId = backStackEntry.savedStateHandle.get<Any>("areaId")?.toString()
+                            ?.toLongOrNull() ?: -1L
                         AreaDetailScreen(
                             viewModel, 
                             areaId, 
@@ -231,7 +234,8 @@ fun App(viewModel: MainViewModel) {
                         )
                     }
                     composable(Screen.NoteDetail.route) { backStackEntry ->
-                        val noteId = backStackEntry.savedStateHandle.get<String>("noteId")?.toLongOrNull() ?: -1L
+                        val noteId = backStackEntry.savedStateHandle.get<Any>("noteId")?.toString()
+                            ?.toLongOrNull() ?: -1L
                         NoteDetailScreen(
                             viewModel, 
                             noteId, 

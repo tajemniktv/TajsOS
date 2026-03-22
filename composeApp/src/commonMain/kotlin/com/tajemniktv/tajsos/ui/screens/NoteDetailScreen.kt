@@ -36,11 +36,15 @@ fun NoteDetailScreen(
     onNavigateToSearch: () -> Unit
 ) {
     val nodes by viewModel.allNodes.collectAsState()
-    val nodeWithPin = nodes.find { it.node.id == noteId }
+    val nodeWithPin = remember(nodes, noteId) { nodes.find { it.node.id == noteId } }
 
     if (nodeWithPin == null) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("Note not found")
+            if (nodes.isEmpty()) {
+                CircularProgressIndicator(color = TactileTheme.Primary)
+            } else {
+                Text("Note not found (ID: $noteId)", color = TactileTheme.Muted)
+            }
         }
         return
     }

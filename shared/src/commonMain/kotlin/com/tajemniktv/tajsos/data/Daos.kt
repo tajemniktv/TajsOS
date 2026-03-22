@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.Flow
 interface NodeDao {
 
     @Transaction
-    @Query("SELECT * FROM nodes WHERE status != 'archived' ORDER BY createdAt DESC")
+    @Query("SELECT * FROM nodes ORDER BY createdAt DESC")
     fun getAllNodesWithPins(): Flow<List<NodeWithPin>>
 
     @Query(
