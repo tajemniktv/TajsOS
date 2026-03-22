@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
 package com.tajemniktv.tajsos.ui.screens
 
 import androidx.compose.foundation.layout.*
@@ -13,13 +17,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.tajemniktv.tajsos.data.EventLogEntity
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 @Composable
 fun InsightsScreen(viewModel: MainViewModel, onNavigateToProject: (Long) -> Unit) {
     val insights by viewModel.insights.collectAsState()
+    val recentLogs by viewModel.recentLogs.collectAsState()
 
     LazyColumn(
         modifier = Modifier
@@ -77,6 +85,19 @@ fun InsightsScreen(viewModel: MainViewModel, onNavigateToProject: (Long) -> Unit
                         project.id
                     )
                 }
+            }
+        }
+
+        if (recentLogs.isNotEmpty()) {
+            item {
+                Text(
+                    "RECENT ACTIVITY",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TactileTheme.Primary
+                )
+            }
+            items(recentLogs) { log ->
+                ActivityLogItem(log)
             }
         }
 
@@ -176,6 +197,41 @@ fun MetricItem(label: String, value: Double) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text("${((value * 10).toInt() / 10.0)}", style = MaterialTheme.typography.headlineMedium, color = TactileTheme.Text)
         Text(label, style = MaterialTheme.typography.labelSmall, color = TactileTheme.Muted)
+    }
+}
+
+@Composable
+fun ActivityLogItem(log: EventLogEntity) {
+    val time = kotlin.time.Instant.fromEpochMilliseconds(log.timestamp)
+        .toLocalDateTime(TimeZone.currentSystemDefault())
+    val timeStr = "${time.hour}:${time.minute.toString().padStart(2, '0')}"
+
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = TactileTheme.Surface,
+        shape = RoundedCornerShape(TactileTheme.RadiusSm),
+        border = androidx.compose.foundation.BorderStroke(
+            1.dp,
+            TactileTheme.Muted.copy(alpha = 0.1f)
+        )
+    ) {
+        Row(
+            modifier = Modifier.padding(TactileTheme.SpacingMd),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                timeStr,
+                style = MaterialTheme.typography.labelSmall,
+                color = TactileTheme.Muted,
+                modifier = Modifier.width(48.dp)
+            )
+            Text(
+                log.eventType.replace("_", " "),
+                style = MaterialTheme.typography.bodySmall,
+                color = TactileTheme.Primary,
+                modifier = Modifier.weight(1f)
+            )
+        }
     }
 }
 

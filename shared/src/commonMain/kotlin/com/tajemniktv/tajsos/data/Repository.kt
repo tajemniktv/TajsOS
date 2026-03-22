@@ -180,12 +180,7 @@ fun getActiveSession(): Flow<FocusSessionEntity?> = focusSessionDao.getActiveSes
     fun getAllRelations() = relationDao.getAllRelations()
     fun getRelationsForNode(nodeId: Long) = relationDao.getRelationsForNode(nodeId)
     suspend fun insertRelation(relation: RelationEntity) {
-        if (!relationDao.relationExists(
-                relation.fromNodeId,
-                relation.toNodeId,
-                relation.relationType
-            )
-        ) {
+        if (!relationDao.anyRelationExists(relation.fromNodeId, relation.toNodeId)) {
             relationDao.insertRelation(relation)
             logEvent("NODE_LINKED", relation.fromNodeId, relation.toNodeId)
         }

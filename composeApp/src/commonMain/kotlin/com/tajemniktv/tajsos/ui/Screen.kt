@@ -34,4 +34,5 @@ sealed class Screen(val route: String, val label: String, val icon: ImageVector)
     )
     data object AreaDetail : Screen("area/{areaId}", "AREA", Icons.Default.LocationOn)
     data object Settings : Screen("settings", "OPTS", Icons.Default.Settings)
+    data object Templates : Screen("templates", "TEMPLATES", Icons.Default.Settings)
 }

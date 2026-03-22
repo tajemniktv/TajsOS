@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.RelationEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
@@ -35,6 +36,7 @@ fun NoteDetailScreen(
     onNavigateToNode: (Long) -> Unit,
     onNavigateToSearch: () -> Unit
 ) {
+    val scope = rememberCoroutineScope()
     val nodes by viewModel.allNodes.collectAsState()
     val nodeWithPin = remember(nodes, noteId) { nodes.find { it.node.id == noteId } }
 
@@ -88,6 +90,21 @@ fun NoteDetailScreen(
                         )
                     }
                     IconButton(onClick = {
+                        scope.launch {
+                            viewModel.getNodeById(noteId)?.let { original ->
+                                viewModel.addNode(
+                                    title = "${original.title} (COPY)",
+                                    content = original.content,
+                                    type = original.type,
+                                    projectId = original.projectId,
+                                    areaId = original.areaId
+                                )
+                            }
+                        }
+                    }) {
+                        Icon(Icons.Default.ContentCopy, contentDescription = "Duplicate")
+                    }
+                    IconButton(onClick = {
                         viewModel.archiveNode(node)
                         onBack()
                     }) {
@@ -128,12 +145,22 @@ fun NoteDetailScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 items(tags) { tag ->
-                    SuggestionChip(
+                    InputChip(
+                        selected = false,
                         onClick = {
                             viewModel.updateSearchQuery("#${tag.name}")
                             onNavigateToSearch()
                         },
-                        label = { Text(tag.name) }
+                        label = { Text(tag.name) },
+                        trailingIcon = {
+                            Icon(
+                                Icons.Default.Close,
+                                contentDescription = "Remove Tag",
+                                modifier = Modifier
+                                    .size(16.dp)
+                                    .clickable { viewModel.detachTagFromNode(noteId, tag.id) }
+                            )
+                        }
                     )
                 }
                 item {
@@ -182,9 +209,25 @@ fun NoteDetailScreen(
                             Row(modifier = Modifier.padding(TactileTheme.SpacingMd), verticalAlignment = Alignment.CenterVertically) {
                                 Icon(Icons.Default.Link, contentDescription = null, tint = TactileTheme.Muted, modifier = Modifier.size(16.dp))
                                 Spacer(Modifier.width(8.dp))
-                                Text(relatedNode.title, style = MaterialTheme.typography.bodyMedium)
-                                Spacer(Modifier.weight(1f))
+                                Text(
+                                    relatedNode.title,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    modifier = Modifier.weight(1f)
+                                )
                                 Text(relation.relationType, style = MaterialTheme.typography.labelSmall, color = TactileTheme.Muted)
+                                if (relation.relationType != "BELONGS_TO") {
+                                    IconButton(
+                                        onClick = { viewModel.deleteRelation(relation) },
+                                        modifier = Modifier.size(24.dp)
+                                    ) {
+                                        Icon(
+                                            Icons.Default.LinkOff,
+                                            contentDescription = "Unlink",
+                                            tint = TactileTheme.Error,
+                                            modifier = Modifier.size(16.dp)
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
@@ -204,6 +247,15 @@ fun NoteDetailScreen(
                         headlineContent = { Text(attachment.title ?: attachment.uriOrPath) },
                         supportingContent = { Text(attachment.assetType) },
                         leadingContent = { Icon(Icons.Default.FilePresent, contentDescription = null) },
+                        trailingContent = {
+                            IconButton(onClick = { viewModel.deleteAttachment(attachment) }) {
+                                Icon(
+                                    Icons.Default.Delete,
+                                    contentDescription = "Remove Attachment",
+                                    tint = TactileTheme.Error
+                                )
+                            }
+                        },
                         colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface)
                     )
                 }
@@ -349,12 +401,16 @@ fun NoteDetailScreen(
     }
 
     if (showRelationDialog) {
+        val linkedNodeIds = remember(relations, noteId) {
+            relations.map { if (it.fromNodeId == noteId) it.toNodeId else it.fromNodeId }.toSet()
+        }
         AlertDialog(
             onDismissRequest = { showRelationDialog = false },
             title = { Text("Link to Node") },
             text = {
                 Column {
-                    nodes.filter { it.node.id != noteId }.take(10).forEach { nodeWithPin ->
+                    nodes.filter { it.node.id != noteId && it.node.id !in linkedNodeIds }.take(10)
+                        .forEach { nodeWithPin ->
                         ListItem(
                             headlineContent = { Text(nodeWithPin.node.title) },
                             supportingContent = { Text(nodeWithPin.node.type) },

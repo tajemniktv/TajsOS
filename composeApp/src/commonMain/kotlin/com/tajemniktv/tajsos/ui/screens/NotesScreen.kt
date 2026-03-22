@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
 package com.tajemniktv.tajsos.ui.screens
 
 import androidx.compose.foundation.clickable
@@ -54,7 +58,7 @@ fun NotesScreen(viewModel: MainViewModel, onNoteClick: (Long) -> Unit) {
             items(pinnedKnowledge, key = { "pinned_${it.node.id}" }) { nodeWithPin ->
                 NodeCard(
                     nodeWithPin = nodeWithPin,
-                    modifier = Modifier.clickable { onNoteClick(nodeWithPin.node.id) },
+                    onClick = { onNoteClick(nodeWithPin.node.id) },
                     onToggleDone = { status ->
                         viewModel.updateNodeStatus(
                             nodeWithPin.node,
@@ -76,7 +80,7 @@ fun NotesScreen(viewModel: MainViewModel, onNoteClick: (Long) -> Unit) {
             items(unpinnedIdeas, key = { it.node.id }) { nodeWithPin ->
                 NodeCard(
                     nodeWithPin = nodeWithPin,
-                    modifier = Modifier.clickable { onNoteClick(nodeWithPin.node.id) },
+                    onClick = { onNoteClick(nodeWithPin.node.id) },
                     onToggleDone = { status ->
                         viewModel.updateNodeStatus(
                             nodeWithPin.node,
@@ -98,7 +102,7 @@ fun NotesScreen(viewModel: MainViewModel, onNoteClick: (Long) -> Unit) {
             items(unpinnedNotes, key = { it.node.id }) { nodeWithPin ->
                 NodeCard(
                     nodeWithPin = nodeWithPin,
-                    modifier = Modifier.clickable { onNoteClick(nodeWithPin.node.id) },
+                    onClick = { onNoteClick(nodeWithPin.node.id) },
                     onToggleDone = { status ->
                         viewModel.updateNodeStatus(
                             nodeWithPin.node,

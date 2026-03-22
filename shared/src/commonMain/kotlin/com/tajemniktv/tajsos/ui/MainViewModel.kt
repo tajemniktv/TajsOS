@@ -398,6 +398,8 @@ class MainViewModel(
         return nextDateTime.toEpochMilliseconds()
     }
 
+    suspend fun getNodeById(id: Long): NodeEntity? = repository.getNodeById(id)
+
     fun archiveNode(node: NodeEntity) {
         viewModelScope.launch {
             repository.updateNode(
@@ -598,6 +600,12 @@ fun getProjectsForArea(areaId: Long): Flow<List<NodeEntity>> = repository.getPro
         }
     }
 
+    fun deleteRelation(relation: RelationEntity) {
+        viewModelScope.launch {
+            repository.deleteRelation(relation)
+        }
+    }
+
     val allTags: StateFlow<List<TagEntity>> = repository.getAllTags()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
@@ -613,10 +621,53 @@ fun getProjectsForArea(areaId: Long): Flow<List<NodeEntity>> = repository.getPro
         }
     }
 
+    fun detachTagFromNode(nodeId: Long, tagId: Long) {
+        viewModelScope.launch {
+            repository.detachTagFromNode(nodeId, tagId)
+        }
+    }
+
     fun getAttachmentsForNode(nodeId: Long): Flow<List<AttachmentEntity>> = repository.getAttachmentsForNode(nodeId)
     fun addAttachment(nodeId: Long, type: String, uri: String, title: String? = null) {
         viewModelScope.launch {
             repository.insertAttachment(AttachmentEntity(nodeId = nodeId, assetType = type, uriOrPath = uri, title = title))
+        }
+    }
+
+    fun deleteAttachment(attachment: AttachmentEntity) {
+        viewModelScope.launch {
+            repository.deleteAttachment(attachment)
+        }
+    }
+
+    val recentLogs: StateFlow<List<EventLogEntity>> = repository.getRecentLogs(50)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val allTemplates: StateFlow<List<TemplateEntity>> = repository.getAllTemplates()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    fun addTemplate(name: String, type: String, title: String? = null, content: String? = null) {
+        viewModelScope.launch {
+            repository.insertTemplate(
+                TemplateEntity(
+                    name = name,
+                    nodeType = type,
+                    defaultTitle = title,
+                    defaultContent = content
+                )
+            )
+        }
+    }
+
+    fun updateTemplate(template: TemplateEntity) {
+        viewModelScope.launch {
+            repository.updateTemplate(template)
+        }
+    }
+
+    fun deleteTemplate(template: TemplateEntity) {
+        viewModelScope.launch {
+            repository.deleteTemplate(template)
         }
     }
 

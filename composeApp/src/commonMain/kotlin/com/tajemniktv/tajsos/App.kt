@@ -206,8 +206,14 @@ fun App(viewModel: MainViewModel) {
                             viewModel,
                             onNavigateToCalendarSettings = {
                                 navController.navigate(Screen.CalendarSettings.route)
+                            },
+                            onNavigateToTemplates = {
+                                navController.navigate(Screen.Templates.route)
                             }
                         )
+                    }
+                    composable(Screen.Templates.route) {
+                        TemplatesScreen(viewModel, onBack = { navController.popBackStack() })
                     }
                     composable(Screen.Projects.route) {
                         ProjectsScreen(viewModel, onNavigateTo = { route -> navController.navigate(route) })

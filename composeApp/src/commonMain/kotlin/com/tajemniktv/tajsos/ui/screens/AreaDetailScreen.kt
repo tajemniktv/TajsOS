@@ -125,6 +125,7 @@ fun AreaDetailScreen(
                             )
                         },
                         onTogglePin = { isPinned -> viewModel.togglePin(item.node, isPinned) },
+                        onClick = { onEditNode(item.node.id) },
                         onLongClick = { onEditNode(item.node.id) },
                         onArchive = { viewModel.archiveNode(item.node) }
                     )

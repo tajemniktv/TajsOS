@@ -17,7 +17,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun SettingsScreen(
     viewModel: MainViewModel,
-    onNavigateToCalendarSettings: () -> Unit = {}
+    onNavigateToCalendarSettings: () -> Unit = {},
+    onNavigateToTemplates: () -> Unit = {}
 ) {
     val isBiometricEnabled by viewModel.isBiometricEnabled.collectAsState()
     val isBiometricHardwareAvailable by viewModel.isBiometricHardwareAvailable.collectAsState()
@@ -85,6 +86,20 @@ fun SettingsScreen(
                 )
             ) {
                 Text("CONFIGURE EXTERNAL CALENDARS")
+            }
+
+            Spacer(Modifier.height(TactileTheme.SpacingMd))
+
+            Button(
+                onClick = onNavigateToTemplates,
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = TactileTheme.Surface,
+                    contentColor = TactileTheme.Primary
+                )
+            ) {
+                Text("MANAGE TEMPLATES")
             }
 
             Spacer(Modifier.height(TactileTheme.SpacingLg))
