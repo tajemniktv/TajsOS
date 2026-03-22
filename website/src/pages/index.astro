@@ -1,11 +1,32 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/landing/Navbar.astro";
+import Hero from "../components/landing/Hero.astro";
+import Features from "../components/landing/Features.astro";
+import InstrumentPanel from "../components/landing/InstrumentPanel.astro";
+import FocusMode from "../components/landing/FocusMode.astro";
+import CTA from "../components/landing/CTA.astro";
+import Footer from "../components/landing/Footer.astro";
 ---
 
 <Layout>
-	<Welcome />
+  <div class="fixed inset-0 noise-bg pointer-events-none z-50"></div>
+  <div
+    class="fixed top-[-10%] right-[-5%] w-150 h-150 gradient-sphere pointer-events-none -z-10"
+  >
+  </div>
+  <div
+    class="fixed bottom-[10%] left-[-10%] w-200 h-200 gradient-sphere pointer-events-none -z-10 opacity-50"
+  >
+  </div>
+
+  <Navbar />
+  <main class="relative pt-32 max-w-400 mx-auto px-8 pb-32">
+    <Hero />
+    <Features />
+    <InstrumentPanel />
+    <FocusMode />
+    <CTA />
+  </main>
+  <Footer />
 </Layout>

@@ -1,0 +1,57 @@
+---
+// src/components/landing/Navbar.astro
+---
+
+<nav
+  class="fixed top-0 w-full z-100 bg-surface/40 backdrop-blur-2xl border-b border-primary/10"
+>
+  <div
+    class="flex justify-between items-center w-full px-8 py-4 max-w-400 mx-auto"
+  >
+    <a href="/" class="flex items-center gap-4">
+      <img
+        alt="TajsOS Icon"
+        class="w-8 h-8"
+        src="/favicon.png"
+      />
+      <span
+        class="text-2xl font-bold tracking-tighter text-[#fcf8fe] font-headline"
+        >TajsOS</span
+      >
+    </a>
+    <div class="hidden md:flex gap-12">
+      <a
+        class="font-mono text-[10px] tracking-widest uppercase font-bold text-on-surface-variant hover:text-on-surface transition-colors"
+        href="/interface">INTERFACE</a
+      >
+      <a
+        class="font-mono text-[10px] tracking-widest uppercase font-bold text-on-surface-variant hover:text-on-surface transition-colors"
+        href="/neural-link">NEURAL LINK</a
+      >
+      <a
+        class="font-mono text-[10px] tracking-widest uppercase font-bold text-on-surface-variant hover:text-on-surface transition-colors"
+        href="/archive">ARCHIVE</a
+      >
+      <a
+        class="font-mono text-[10px] tracking-widest uppercase font-bold text-on-surface-variant hover:text-on-surface transition-colors"
+        href="/docs">DOCS</a
+      >
+    </div>
+    <div class="flex items-center gap-6">
+      <div class="flex gap-4">
+        <span
+          class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer transition-colors"
+          data-icon="settings">settings</span
+        >
+        <span
+          class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer transition-colors"
+          data-icon="account_circle">account_circle</span
+        >
+      </div>
+      <button
+        class="bg-primary text-on-primary-fixed font-mono font-bold px-6 py-2 rounded text-[10px] tracking-widest uppercase hover:shadow-[0_0_20px_rgba(186,158,255,0.4)] transition-all"
+        >INITIALIZE</button
+      >
+    </div>
+  </div>
+</nav>

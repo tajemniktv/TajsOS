@@ -1,0 +1,63 @@
+---
+// src/components/landing/Footer.astro
+---
+
+<footer class="w-full border-t border-primary/10 bg-surface py-24 px-12">
+  <div
+    class="max-w-400 mx-auto flex flex-col md:flex-row justify-between items-start gap-16"
+  >
+    <div class="flex flex-col gap-6">
+      <div
+        class="text-2xl font-bold text-primary font-headline uppercase tracking-tighter"
+      >
+        TajsOS
+      </div>
+      <p
+        class="font-mono text-[10px] tracking-[0.3em] uppercase text-on-surface-variant/40"
+      >
+        © 2026 TajsOS. All nodes active and all rights reserved.
+      </p>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-x-24 gap-y-8">
+      <div class="flex flex-col gap-4">
+        <span class="font-mono text-[10px] text-primary mb-2 tracking-widest"
+          >PROTOCOLS</span
+        >
+        <a
+          class="font-mono text-[10px] tracking-widest uppercase text-on-surface-variant/60 hover:text-primary transition-colors"
+          href="/privacy">Privacy</a
+        >
+        <a
+          class="font-mono text-[10px] tracking-widest uppercase text-on-surface-variant/60 hover:text-primary transition-colors"
+          href="/security">Security</a
+        >
+      </div>
+      <div class="flex flex-col gap-4">
+        <span class="font-mono text-[10px] text-primary mb-2 tracking-widest"
+          >NETWORK</span
+        >
+        <a
+          class="font-mono text-[10px] tracking-widest uppercase text-on-surface-variant/60 hover:text-primary transition-colors"
+          href="/terms">Terms</a
+        >
+        <a
+          class="font-mono text-[10px] tracking-widest uppercase text-on-surface-variant/60 hover:text-primary transition-colors"
+          href="/api-status">API Status</a
+        >
+      </div>
+      <div class="flex flex-col gap-4">
+        <span class="font-mono text-[10px] text-primary mb-2 tracking-widest"
+          >DOCUMENTATION</span
+        >
+        <a
+          class="font-mono text-[10px] tracking-widest uppercase text-on-surface-variant/60 hover:text-primary transition-colors"
+          href="/whitepaper">Whitepaper</a
+        >
+        <a
+          class="font-mono text-[10px] tracking-widest uppercase text-on-surface-variant/60 hover:text-primary transition-colors"
+          href="/system-log">System Log</a
+        >
+      </div>
+    </div>
+  </div>
+</footer>

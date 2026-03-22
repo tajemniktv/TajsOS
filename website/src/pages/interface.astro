@@ -1,0 +1,22 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/landing/Navbar.astro';
+import Footer from '../components/landing/Footer.astro';
+
+// Replace hyphens with spaces and convert to uppercase for title
+const parts = Astro.url.pathname.split('/').filter(Boolean);
+const rawTitle = parts[parts.length - 1] || 'PAGE';
+const title = rawTitle.replace(/-/g, ' ').toUpperCase();
+---
+
+<Layout>
+  <div class="fixed inset-0 noise-bg pointer-events-none z-50"></div>
+  <div class="fixed top-[-10%] right-[-5%] w-[600px] h-[600px] gradient-sphere pointer-events-none -z-10"></div>
+  
+  <Navbar />
+  <main class="relative pt-48 max-w-[1600px] mx-auto px-8 min-h-screen">
+    <h1 class="font-headline text-5xl font-bold uppercase text-primary mb-6">{title}</h1>
+    <p class="text-on-surface-variant text-xl">This is a stub page. Content will be added later.</p>
+  </main>
+  <Footer />
+</Layout>
