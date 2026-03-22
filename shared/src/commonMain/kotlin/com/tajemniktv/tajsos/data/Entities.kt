@@ -9,6 +9,7 @@ import androidx.room.PrimaryKey
 import androidx.room.Embedded
 import androidx.room.Relation
 import androidx.room.Junction
+import androidx.room.Index
 import kotlinx.serialization.Serializable
 
 /**
@@ -124,7 +125,8 @@ data class TagEntity(
  */
 @Entity(
     tableName = "node_tags",
-    primaryKeys = ["nodeId", "tagId"]
+    primaryKeys = ["nodeId", "tagId"],
+    indices = [Index(value = ["tagId"])]
 )
 @Serializable
 data class NodeTagEntity(
