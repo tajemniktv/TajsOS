@@ -28,7 +28,7 @@ fun ArchiveScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit) {
         Spacer(modifier = Modifier.height(TactileTheme.SpacingMd))
 
         if (archivedNodes.isEmpty()) {
-            EmptyState(message = "NO ARCHIVED ITEMS")
+            EmptyState(message = "NO ARCHIVED ITEMS", modifier = Modifier.weight(1f))
         } else {
             LazyColumn(modifier = Modifier.weight(1f)) {
                 items(archivedNodes) { nodeWithPin ->
