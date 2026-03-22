@@ -24,7 +24,12 @@ fun ProjectsScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit) {
     var showAddDialog by remember { mutableStateOf(false) }
     var searchQuery by remember { mutableStateOf("") }
 
-    val filteredProjects = projects.filter { it.title.contains(searchQuery, ignoreCase = true) }
+    val filteredProjects = remember(projects, searchQuery) {
+        projects.filter { it.title.contains(searchQuery, ignoreCase = true) }
+    }
+    val nodesByProjectId = remember(allNodes) {
+        allNodes.groupBy { it.node.projectId }
+    }
 
     Column(
         modifier = Modifier
@@ -61,8 +66,8 @@ fun ProjectsScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit) {
             }
         } else {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
-                items(filteredProjects) { project ->
-                    val projectNodes = allNodes.filter { it.node.projectId == project.id }
+                items(filteredProjects, key = { it.id }) { project ->
+                    val projectNodes = nodesByProjectId[project.id] ?: emptyList()
                     val total = projectNodes.size
                     val completed = projectNodes.count { it.node.status == "done" }
                     val progress = if (total > 0) completed.toFloat() / total else 0f
