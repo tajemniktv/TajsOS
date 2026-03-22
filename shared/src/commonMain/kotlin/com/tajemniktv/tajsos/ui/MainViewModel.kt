@@ -273,8 +273,8 @@ class MainViewModel(
     /**
      * Updates a node's status and handles related side-effects.
      *
-     * In addition to changing the status, this function updates timestamps (`updatedAt`,
-     * and either `completedAt` or `archivedAt` depending on the new status).
+     * In addition to changing the status, this function updates `updatedAt`. It also updates
+     * `completedAt` for a `"done"` status or `archivedAt` for an `"archived"` status.
      *
      * Critically, if a node marked as recurring is transitioned to `"done"`, this function
      * will automatically compute the next due date and insert a *new* active node instance
