@@ -12,6 +12,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.components.EmptyState
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -38,18 +39,22 @@ fun SearchScreen(
 
         Spacer(modifier = Modifier.height(TactileTheme.SpacingMd))
 
-        LazyColumn(modifier = Modifier.weight(1f)) {
-            items(searchResults) { nodeWithPin ->
-                ListItem(
-                    headlineContent = { Text(nodeWithPin.node.title) },
-                    supportingContent = { Text(nodeWithPin.node.type.uppercase()) },
-                    modifier = Modifier.combinedClickable(
-                        onClick = { onItemClick(nodeWithPin.node.id) },
-                        onLongClick = { onItemClick(nodeWithPin.node.id) }
-                    ),
-                    colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface)
-                )
-                HorizontalDivider(color = TactileTheme.Muted.copy(alpha = 0.5f))
+        if (searchResults.isEmpty() && searchQuery.isNotEmpty()) {
+            EmptyState(message = "NO MATCHING RESULTS FOUND")
+        } else {
+            LazyColumn(modifier = Modifier.weight(1f)) {
+                items(searchResults) { nodeWithPin ->
+                    ListItem(
+                        headlineContent = { Text(nodeWithPin.node.title) },
+                        supportingContent = { Text(nodeWithPin.node.type.uppercase()) },
+                        modifier = Modifier.combinedClickable(
+                            onClick = { onItemClick(nodeWithPin.node.id) },
+                            onLongClick = { onItemClick(nodeWithPin.node.id) }
+                        ),
+                        colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface)
+                    )
+                    HorizontalDivider(color = TactileTheme.Muted.copy(alpha = 0.5f))
+                }
             }
         }
     }

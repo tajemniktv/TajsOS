@@ -15,6 +15,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.components.EmptyState
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -26,23 +27,27 @@ fun ArchiveScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit) {
         Text("ARCHIVE", style = MaterialTheme.typography.displaySmall)
         Spacer(modifier = Modifier.height(TactileTheme.SpacingMd))
 
-        LazyColumn(modifier = Modifier.weight(1f)) {
-            items(archivedNodes) { nodeWithPin ->
-                ListItem(
-                    headlineContent = { Text(nodeWithPin.node.title) },
-                    supportingContent = { Text(nodeWithPin.node.type.uppercase()) },
-                    trailingContent = {
-                        IconButton(onClick = { viewModel.updateNodeStatus(nodeWithPin.node, "active") }) {
-                            Icon(Icons.Default.Refresh, contentDescription = "Restore")
-                        }
-                    },
-                    modifier = Modifier.combinedClickable(
-                        onClick = { onEditNode(nodeWithPin.node.id) },
-                        onLongClick = { onEditNode(nodeWithPin.node.id) }
-                    ),
-                    colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface)
-                )
-                HorizontalDivider(color = TactileTheme.Muted.copy(alpha = 0.5f))
+        if (archivedNodes.isEmpty()) {
+            EmptyState(message = "NO ARCHIVED ITEMS")
+        } else {
+            LazyColumn(modifier = Modifier.weight(1f)) {
+                items(archivedNodes) { nodeWithPin ->
+                    ListItem(
+                        headlineContent = { Text(nodeWithPin.node.title) },
+                        supportingContent = { Text(nodeWithPin.node.type.uppercase()) },
+                        trailingContent = {
+                            IconButton(onClick = { viewModel.updateNodeStatus(nodeWithPin.node, "active") }) {
+                                Icon(Icons.Default.Refresh, contentDescription = "Restore")
+                            }
+                        },
+                        modifier = Modifier.combinedClickable(
+                            onClick = { onEditNode(nodeWithPin.node.id) },
+                            onLongClick = { onEditNode(nodeWithPin.node.id) }
+                        ),
+                        colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface)
+                    )
+                    HorizontalDivider(color = TactileTheme.Muted.copy(alpha = 0.5f))
+                }
             }
         }
     }
