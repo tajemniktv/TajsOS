@@ -18,6 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.*
 
 @Composable
 fun CalendarSettingsScreen(viewModel: MainViewModel) {
@@ -35,14 +37,14 @@ fun CalendarSettingsScreen(viewModel: MainViewModel) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                "CALENDAR SYNC",
+                stringResource(Res.string.cal_settings_title),
                 style = MaterialTheme.typography.displaySmall,
                 color = TactileTheme.Text
             )
             IconButton(onClick = { showAddDialog = true }) {
                 Icon(
                     Icons.Default.Add,
-                    contentDescription = "Add Calendar",
+                    contentDescription = stringResource(Res.string.cal_settings_add),
                     tint = TactileTheme.Primary
                 )
             }
@@ -52,7 +54,7 @@ fun CalendarSettingsScreen(viewModel: MainViewModel) {
 
         if (providers.isEmpty()) {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("NO EXTERNAL CALENDARS CONNECTED", color = TactileTheme.Muted)
+                Text(stringResource(Res.string.cal_settings_empty), color = TactileTheme.Muted)
             }
         } else {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
@@ -112,7 +114,11 @@ fun ProviderRow(
                 }
             }
             IconButton(onClick = onDelete) {
-                Icon(Icons.Default.Delete, contentDescription = "Delete", tint = TactileTheme.Error)
+                Icon(
+                    Icons.Default.Delete,
+                    contentDescription = stringResource(Res.string.archive_delete),
+                    tint = TactileTheme.Error
+                )
             }
         }
     }
@@ -129,29 +135,29 @@ fun AddCalendarDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("ADD EXTERNAL CALENDAR") },
+        title = { Text(stringResource(Res.string.cal_settings_dialog_title)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
                 TextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Name") }
+                    label = { Text(stringResource(Res.string.cal_settings_dialog_name)) }
                 )
                 TextField(
                     value = url,
                     onValueChange = { url = it },
-                    label = { Text("ICS URL") }
+                    label = { Text(stringResource(Res.string.cal_settings_dialog_url)) }
                 )
             }
         },
         confirmButton = {
             Button(onClick = { onAdd(name, type, url) }) {
-                Text("ADD")
+                Text(stringResource(Res.string.cal_settings_dialog_add))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("CANCEL")
+                Text(stringResource(Res.string.cal_settings_dialog_cancel))
             }
         }
     )

@@ -18,7 +18,12 @@ import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.NodeCard
 import com.tajemniktv.tajsos.ui.components.ProjectItem
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.*
 
+/**
+ *
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AreaDetailScreen(
@@ -33,7 +38,10 @@ fun AreaDetailScreen(
 
     if (nodeWithPin == null) {
         Box(modifier = Modifier.fillMaxSize()) {
-            Text("Area not found", modifier = Modifier.padding(TactileTheme.SpacingMd))
+            Text(
+                stringResource(Res.string.area_detail_not_found),
+                modifier = Modifier.padding(TactileTheme.SpacingMd)
+            )
         }
         return
     }
@@ -53,13 +61,16 @@ fun AreaDetailScreen(
             TopAppBar(
                 title = {
                     Text(
-                        "AREA // ${area.status.uppercase()}",
+                        "${stringResource(Res.string.type_area).uppercase()} // ${area.status.uppercase()}",
                         style = MaterialTheme.typography.labelSmall
                     )
                 },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(Res.string.detail_back)
+                        )
                     }
                 },
                 actions = {
@@ -67,7 +78,10 @@ fun AreaDetailScreen(
                         viewModel.archiveNode(area)
                         onBack()
                     }) {
-                        Icon(Icons.Default.Delete, contentDescription = "Archive")
+                        Icon(
+                            Icons.Default.Delete,
+                            contentDescription = stringResource(Res.string.detail_archive)
+                        )
                     }
                 }
             )
@@ -101,7 +115,7 @@ fun AreaDetailScreen(
                     modifier = Modifier.padding(vertical = 8.dp).fillMaxWidth()
                 ) {
                     Text(
-                        "$neglectedTasks NEGLECTED TASKS IN THIS AREA",
+                        stringResource(Res.string.area_detail_neglected_tasks, neglectedTasks),
                         style = MaterialTheme.typography.labelSmall,
                         color = TactileTheme.Error,
                         modifier = Modifier.padding(8.dp)
@@ -113,7 +127,7 @@ fun AreaDetailScreen(
 
             if (activeProjects.isNotEmpty()) {
                 Text(
-                    text = "ACTIVE PROJECTS",
+                    text = stringResource(Res.string.area_detail_active_projects),
                     style = MaterialTheme.typography.labelSmall,
                     color = TactileTheme.Primary
                 )
@@ -136,7 +150,7 @@ fun AreaDetailScreen(
             }
 
             Text(
-                text = "DIRECT ITEMS & RECENT ACTIVITY",
+                text = stringResource(Res.string.area_detail_recent_activity),
                 style = MaterialTheme.typography.labelSmall,
                 color = TactileTheme.Primary
             )

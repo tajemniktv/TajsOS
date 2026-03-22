@@ -17,6 +17,8 @@ import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.EmptyState
 import com.tajemniktv.tajsos.ui.components.NodeCard
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.*
 
 @Composable
 fun NotesScreen(
@@ -52,14 +54,17 @@ fun NotesScreen(
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         item {
-            Text("KNOWLEDGE & IDEAS", style = MaterialTheme.typography.displaySmall)
+            Text(
+                stringResource(Res.string.notes_title),
+                style = MaterialTheme.typography.displaySmall
+            )
             Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("Search knowledge...") },
+                placeholder = { Text(stringResource(Res.string.notes_search_placeholder)) },
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                 shape = MaterialTheme.shapes.medium,
             )
@@ -69,7 +74,11 @@ fun NotesScreen(
 
         if (pinnedKnowledge.isNotEmpty()) {
             item {
-                Text("PINNED KNOWLEDGE", style = MaterialTheme.typography.labelSmall, color = TactileTheme.Primary)
+                Text(
+                    stringResource(Res.string.notes_pinned_knowledge),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TactileTheme.Primary
+                )
                 Spacer(modifier = Modifier.height(8.dp))
             }
             items(pinnedKnowledge, key = { "pinned_${it.node.id}" }) { nodeWithPin ->
@@ -91,7 +100,11 @@ fun NotesScreen(
 
         if (unpinnedIdeas.isNotEmpty()) {
             item {
-                Text("IDEAS", style = MaterialTheme.typography.labelSmall, color = TactileTheme.Primary)
+                Text(
+                    stringResource(Res.string.notes_ideas),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TactileTheme.Primary
+                )
                 Spacer(modifier = Modifier.height(8.dp))
             }
             items(unpinnedIdeas, key = { it.node.id }) { nodeWithPin ->
@@ -113,7 +126,11 @@ fun NotesScreen(
 
         if (unpinnedNotes.isNotEmpty()) {
             item {
-                Text("NOTES", style = MaterialTheme.typography.labelSmall, color = TactileTheme.Primary)
+                Text(
+                    stringResource(Res.string.notes_notes),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TactileTheme.Primary
+                )
                 Spacer(modifier = Modifier.height(8.dp))
             }
             items(unpinnedNotes, key = { it.node.id }) { nodeWithPin ->
@@ -136,7 +153,7 @@ fun NotesScreen(
         if (unpinnedResources.isNotEmpty()) {
             item {
                 Text(
-                    "RESOURCES & ASSETS",
+                    stringResource(Res.string.notes_resources),
                     style = MaterialTheme.typography.labelSmall,
                     color = TactileTheme.Primary,
                 )
@@ -160,7 +177,11 @@ fun NotesScreen(
 
         if (pinnedKnowledge.isEmpty() && unpinnedIdeas.isEmpty() && unpinnedNotes.isEmpty() && unpinnedResources.isEmpty()) {
             item {
-                EmptyState(message = if (searchQuery.isEmpty()) "NO KNOWLEDGE FOUND" else "NO MATCHING RESULTS")
+                EmptyState(
+                    message = if (searchQuery.isEmpty()) stringResource(Res.string.notes_empty) else stringResource(
+                        Res.string.notes_no_results
+                    )
+                )
             }
         }
     }

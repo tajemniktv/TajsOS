@@ -155,7 +155,11 @@ class MainViewModelTest {
             tagDao = StubTagDao(),
             eventLogDao = StubEventLogDao(),
             attachmentDao = StubAttachmentDao(),
-            templateDao = StubTemplateDao()
+            templateDao = StubTemplateDao(),
+            nodeSnapshotDao = FakeNodeSnapshotDao(),
+            reviewDao = FakeReviewDao(),
+            calendarProviderDao = FakeCalendarProviderDao(),
+            calendarEventDao = FakeCalendarEventDao()
         )
 
         val fakeDataStore = FakeDataStore()

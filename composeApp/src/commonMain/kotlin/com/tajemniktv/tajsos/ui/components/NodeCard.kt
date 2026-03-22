@@ -30,6 +30,8 @@ import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.*
 import kotlin.time.Clock
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -89,15 +91,27 @@ fun NodeCard(
                     if (node.isPinned) {
                         Icon(
                             imageVector = Icons.Default.Favorite,
-                            contentDescription = "Pinned knowledge",
+                            contentDescription = stringResource(Res.string.detail_favorite),
                             tint = TactileTheme.Primary,
                             modifier = Modifier.padding(start = 4.dp).size(12.dp)
                         )
                     }
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
+                    val typeLabel = when (node.type) {
+                        "task" -> stringResource(Res.string.type_task)
+                        "note" -> stringResource(Res.string.type_note)
+                        "idea" -> stringResource(Res.string.type_idea)
+                        "project" -> stringResource(Res.string.type_project)
+                        "area" -> stringResource(Res.string.type_area)
+                        else -> node.type
+                    }
                     Text(
-                        text = node.type.uppercase() + if (node.isRecurring) " // RECURRING" else "",
+                        text = typeLabel.uppercase() + if (node.isRecurring) " // ${
+                            stringResource(
+                                Res.string.node_recurring
+                            )
+                        }" else "",
                         style = MaterialTheme.typography.labelSmall,
                         color = TactileTheme.Primary
                     )
@@ -123,7 +137,7 @@ fun NodeCard(
                     if (node.status == "active" && node.updatedAt < staleTime) {
                         Spacer(Modifier.width(8.dp))
                         Text(
-                            text = "STALE",
+                            text = stringResource(Res.string.node_stale),
                             style = MaterialTheme.typography.labelSmall,
                             color = TactileTheme.Error.copy(alpha = 0.5f)
                         )
@@ -143,8 +157,15 @@ fun NodeCard(
                     }
                     if (node.friction != null) {
                         Spacer(Modifier.width(8.dp))
+                        val frictionLabel = when (node.friction) {
+                            "easy" -> stringResource(Res.string.dash_overwhelmed) // Using existing "Easy wins only" or similar
+                            "annoying" -> "ANNOYING"
+                            "mentally_heavy" -> "HEAVY"
+                            "unclear" -> "UNCLEAR"
+                            else -> node.friction!!
+                        }
                         Text(
-                            text = node.friction!!.uppercase().replace("_", " "),
+                            text = frictionLabel.uppercase(),
                             style = MaterialTheme.typography.labelSmall,
                             color = TactileTheme.Primary
                         )
@@ -178,7 +199,7 @@ fun NodeCard(
                 IconButton(onClick = onArchive) {
                     Icon(
                         imageVector = Icons.Default.Delete,
-                        contentDescription = "Archive",
+                        contentDescription = stringResource(Res.string.detail_archive),
                         tint = TactileTheme.Muted
                     )
                 }
@@ -186,7 +207,7 @@ fun NodeCard(
             IconButton(onClick = { onTogglePin(!isPinnedToToday) }) {
                 Icon(
                     imageVector = Icons.Default.Star,
-                    contentDescription = "Pin to today",
+                    contentDescription = stringResource(Res.string.node_pin_today_desc),
                     tint = if (isPinnedToToday) TactileTheme.Primary else TactileTheme.Muted.copy(alpha = 0.5f)
                 )
             }

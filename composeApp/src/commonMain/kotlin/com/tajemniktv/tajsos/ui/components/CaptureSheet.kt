@@ -54,6 +54,8 @@ import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.datetime.plus
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -115,14 +117,16 @@ fun CaptureSheet(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    if (brainDumpMode) "BRAIN DUMP ACTIVE" else "QUICK CAPTURE",
+                    if (brainDumpMode) stringResource(Res.string.capture_brain_dump_active) else stringResource(
+                        Res.string.capture_quick_capture
+                    ),
                     style = MaterialTheme.typography.labelSmall,
                     color = if (brainDumpMode) TactileTheme.Primary else TactileTheme.Muted,
                 )
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        "MULTI",
+                        stringResource(Res.string.capture_multi),
                         style = MaterialTheme.typography.labelSmall,
                         color = TactileTheme.Muted,
                     )
@@ -139,7 +143,7 @@ fun CaptureSheet(
                             brainDumpMode = !brainDumpMode
                             if (brainDumpMode) multiCaptureMode = true
                         },
-                        label = { Text("DUMP") },
+                        label = { Text(stringResource(Res.string.capture_dump)) },
                     )
                 }
             }
@@ -161,9 +165,11 @@ fun CaptureSheet(
                         if (text.isEmpty()) {
                             val placeholder =
                                 when (selectedType) {
-                                    "project" -> "Project name..."
-                                    "area" -> "Area name..."
-                                    else -> if (brainDumpMode) "Next thought..." else "Dump thought..."
+                                    "project" -> stringResource(Res.string.capture_placeholder_project)
+                                    "area" -> stringResource(Res.string.capture_placeholder_area)
+                                    else -> if (brainDumpMode) stringResource(Res.string.capture_placeholder_next_thought) else stringResource(
+                                        Res.string.capture_placeholder_dump_thought
+                                    )
                                 }
                             Text(
                                 placeholder,
@@ -199,7 +205,7 @@ fun CaptureSheet(
                     IconButton(onClick = onVoiceCaptureClick) {
                         Icon(
                             imageVector = Icons.Default.Mic,
-                            contentDescription = "Voice Capture",
+                            contentDescription = stringResource(Res.string.capture_voice),
                             tint = TactileTheme.Primary,
                         )
                     }
@@ -208,7 +214,7 @@ fun CaptureSheet(
 
             if (!brainDumpMode) {
                 Text(
-                    "TYPE",
+                    stringResource(Res.string.capture_type),
                     style = MaterialTheme.typography.labelSmall,
                     color = TactileTheme.Primary,
                 )
@@ -217,10 +223,18 @@ fun CaptureSheet(
                     horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
                 ) {
                     items(listOf("task", "note", "idea", "project", "area")) { type ->
+                        val typeLabel = when (type) {
+                            "task" -> stringResource(Res.string.type_task)
+                            "note" -> stringResource(Res.string.type_note)
+                            "idea" -> stringResource(Res.string.type_idea)
+                            "project" -> stringResource(Res.string.type_project)
+                            "area" -> stringResource(Res.string.type_area)
+                            else -> type
+                        }
                         FilterChip(
                             selected = selectedType == type,
                             onClick = { selectedType = type },
-                            label = { Text(type.uppercase()) },
+                            label = { Text(typeLabel.uppercase()) },
                         )
                     }
                 }
@@ -228,7 +242,7 @@ fun CaptureSheet(
 
             if (templates.isNotEmpty() && !brainDumpMode) {
                 Text(
-                    "USE TEMPLATE",
+                    stringResource(Res.string.capture_use_template),
                     style = MaterialTheme.typography.labelSmall,
                     color = TactileTheme.Primary,
                 )
@@ -251,7 +265,11 @@ fun CaptureSheet(
 
             if (selectedType != "area" && selectedType != "project") {
                 if (areas.isNotEmpty() && !brainDumpMode) {
-                    Text("AREA", style = MaterialTheme.typography.labelSmall, color = TactileTheme.Primary)
+                    Text(
+                        stringResource(Res.string.screen_area).uppercase(),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = TactileTheme.Primary
+                    )
                     LazyRow(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
                         items(areas) { area ->
                             FilterChip(
@@ -264,7 +282,11 @@ fun CaptureSheet(
                 }
 
                 if (projects.isNotEmpty() && !brainDumpMode) {
-                    Text("PROJECT", style = MaterialTheme.typography.labelSmall, color = TactileTheme.Primary)
+                    Text(
+                        stringResource(Res.string.screen_project).uppercase(),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = TactileTheme.Primary
+                    )
                     LazyRow(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
                         items(projects) { project ->
                             FilterChip(
@@ -298,7 +320,7 @@ fun CaptureSheet(
                             )
                             Spacer(Modifier.width(4.dp))
                             Text(
-                                "RECURRING",
+                                stringResource(Res.string.capture_recurring),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = TactileTheme.Muted,
                             )
@@ -343,7 +365,9 @@ fun CaptureSheet(
                                 )
                             }
                             Text(
-                                if (reminderTime == null) "NO REMINDER" else "PROCESS LATER",
+                                if (reminderTime == null) stringResource(Res.string.capture_no_reminder) else stringResource(
+                                    Res.string.capture_process_later
+                                ),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = if (reminderTime != null) TactileTheme.Primary else TactileTheme.Muted,
                             )
@@ -353,20 +377,30 @@ fun CaptureSheet(
                     if (isRecurring) {
                         LazyRow(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
                             items(listOf("DAILY", "WEEKLY", "MONTHLY")) { interval ->
+                                val intervalLabel = when (interval) {
+                                    "DAILY" -> stringResource(Res.string.capture_interval_daily)
+                                    "WEEKLY" -> stringResource(Res.string.capture_interval_weekly)
+                                    "MONTHLY" -> stringResource(Res.string.capture_interval_monthly)
+                                    else -> interval
+                                }
                                 FilterChip(
                                     selected = recurringInterval == interval,
                                     onClick = {
                                         recurringInterval =
                                             if (recurringInterval == interval) null else interval
                                     },
-                                    label = { Text(interval) },
+                                    label = { Text(intervalLabel) },
                                 )
                             }
                         }
                     }
                 }
             } else if (selectedType == "project" && areas.isNotEmpty()) {
-                Text("ASSIGN TO AREA", style = MaterialTheme.typography.labelSmall, color = TactileTheme.Primary)
+                Text(
+                    stringResource(Res.string.capture_assign_to_area),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TactileTheme.Primary
+                )
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
                     items(areas) { area ->
                         FilterChip(
@@ -400,8 +434,21 @@ fun CaptureSheet(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(TactileTheme.RadiusMd),
             ) {
+                val saveLabel = if (multiCaptureMode || brainDumpMode) {
+                    stringResource(Res.string.capture_save_continue)
+                } else {
+                    val typeLabel = when (selectedType) {
+                        "task" -> stringResource(Res.string.type_task)
+                        "note" -> stringResource(Res.string.type_note)
+                        "idea" -> stringResource(Res.string.type_idea)
+                        "project" -> stringResource(Res.string.type_project)
+                        "area" -> stringResource(Res.string.type_area)
+                        else -> selectedType
+                    }
+                    stringResource(Res.string.capture_save_type, typeLabel.uppercase())
+                }
                 Text(
-                    if (multiCaptureMode || brainDumpMode) "SAVE & CONTINUE" else "SAVE ${selectedType.uppercase()}",
+                    saveLabel,
                     style = MaterialTheme.typography.labelLarge,
                 )
             }

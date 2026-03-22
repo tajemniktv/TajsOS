@@ -6,11 +6,13 @@ package com.tajemniktv.tajsos.ui.screens
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.LibraryBooks
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -28,6 +30,8 @@ import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.*
 import kotlin.time.Clock
 import kotlin.time.Instant
 
@@ -64,10 +68,24 @@ fun DashboardScreen(
     val upcomingDeadlines = dashboardState.upcomingDeadlines
     val overdueNodes = dashboardState.overdueNodes
     val relevantNote = dashboardState.relevantNote
+    val readLaterVault = dashboardState.readLaterVault
+    val quoteVault = dashboardState.quoteVault
+    val ideaIncubator = dashboardState.ideaIncubator
+
+    val allReviews by viewModel.allReviews.collectAsState()
+    val lastWeeklyReview = allReviews.find { it.type == "weekly" }
 
     val insights by viewModel.insights.collectAsState()
 
     val scrollState = rememberScrollState()
+
+    val currentHour = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).hour
+    val vibeString = when (currentHour) {
+        in 5..11 -> Res.string.dash_vibe_morning
+        in 12..17 -> Res.string.dash_vibe_afternoon
+        in 18..22 -> Res.string.dash_vibe_evening
+        else -> Res.string.dash_vibe_night
+    }
 
     Column(
         modifier =
@@ -77,11 +95,23 @@ fun DashboardScreen(
                 .padding(TactileTheme.SpacingMd),
         verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingLg),
     ) {
-        Text(
-            text = "COMMAND",
-            style = MaterialTheme.typography.displayMedium,
-            color = TactileTheme.Text,
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Bottom
+        ) {
+            Text(
+                text = stringResource(Res.string.dash_command),
+                style = MaterialTheme.typography.displayMedium,
+                color = TactileTheme.Text,
+            )
+            Text(
+                text = stringResource(vibeString),
+                style = MaterialTheme.typography.labelSmall,
+                color = TactileTheme.Muted,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+        }
 
         // 0. Search Bar (Search-first approach)
         OutlinedTextField(
@@ -93,7 +123,7 @@ fun DashboardScreen(
             modifier = Modifier.fillMaxWidth(),
             placeholder = {
                 Text(
-                    "SEARCH YOUR LIFE...",
+                    stringResource(Res.string.dash_search_placeholder),
                     style = MaterialTheme.typography.labelSmall
                 )
             },
@@ -113,7 +143,215 @@ fun DashboardScreen(
             )
         )
 
+        // 0.1 Time-based Reset Card
+        if (currentHour in 5..11) {
+            Surface(
+                onClick = { onNavigateTo(Screen.Review) },
+                modifier = Modifier.fillMaxWidth(),
+                color = TactileTheme.Primary.copy(alpha = 0.05f),
+                shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                border = androidx.compose.foundation.BorderStroke(
+                    1.dp,
+                    TactileTheme.Primary.copy(alpha = 0.2f)
+                )
+            ) {
+                Row(
+                    modifier = Modifier.padding(TactileTheme.SpacingMd),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        Icons.Default.WbSunny,
+                        contentDescription = null,
+                        tint = TactileTheme.Primary
+                    )
+                    Spacer(Modifier.width(TactileTheme.SpacingMd))
+                    Column {
+                        Text(
+                            stringResource(Res.string.dash_morning_reset),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = TactileTheme.Primary
+                        )
+                        Text(
+                            stringResource(Res.string.dash_morning_reset_desc),
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                }
+            }
+        } else if (currentHour in 18..23) {
+            Surface(
+                onClick = { onNavigateTo(Screen.Review) },
+                modifier = Modifier.fillMaxWidth(),
+                color = TactileTheme.Accent.copy(alpha = 0.05f),
+                shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                border = androidx.compose.foundation.BorderStroke(
+                    1.dp,
+                    TactileTheme.Accent.copy(alpha = 0.2f)
+                )
+            ) {
+                Row(
+                    modifier = Modifier.padding(TactileTheme.SpacingMd),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        Icons.Default.Brightness3,
+                        contentDescription = null,
+                        tint = TactileTheme.Accent
+                    )
+                    Spacer(Modifier.width(TactileTheme.SpacingMd))
+                    Column {
+                        Text(
+                            stringResource(Res.string.dash_evening_shutdown),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = TactileTheme.Accent
+                        )
+                        Text(
+                            stringResource(Res.string.dash_evening_shutdown_desc),
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                }
+            }
+        }
+
+        // 0.2 Quick Links
+        if (allAreas.isNotEmpty()) {
+            Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+                Text(
+                    text = stringResource(Res.string.dash_quick_links),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TactileTheme.Primary
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)
+                ) {
+                    allAreas.take(5).forEach { area ->
+                        AssistChip(
+                            onClick = {
+                                onNavigateTo(Screen.Search); viewModel.updateSearchAreaFilter(
+                                area.id
+                            )
+                            },
+                            label = {
+                                Text(
+                                    area.title,
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    Icons.Default.LocationOn,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                            },
+                            shape = RoundedCornerShape(TactileTheme.RadiusSm)
+                        )
+                    }
+                }
+            }
+        }
+
         // 1. Life Summary
+        val now = Clock.System.now().toEpochMilliseconds()
+        val weekMillis = 7 * 24 * 60 * 60 * 1000L
+        val needsWeeklyReview =
+            lastWeeklyReview == null || (now - lastWeeklyReview.completedAt) > weekMillis
+
+        if (needsWeeklyReview) {
+            Surface(
+                onClick = { onNavigateTo(Screen.Review) },
+                modifier = Modifier.fillMaxWidth(),
+                color = TactileTheme.Primary.copy(alpha = 0.1f),
+                shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                border = androidx.compose.foundation.BorderStroke(
+                    1.dp,
+                    TactileTheme.Primary.copy(alpha = 0.5f)
+                )
+            ) {
+                Row(
+                    modifier = Modifier.padding(TactileTheme.SpacingMd),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        Icons.Default.EventRepeat,
+                        contentDescription = null,
+                        tint = TactileTheme.Primary
+                    )
+                    Spacer(Modifier.width(TactileTheme.SpacingMd))
+                    Column {
+                        Text(
+                            stringResource(Res.string.dash_review_pending),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = TactileTheme.Primary
+                        )
+                        Text(
+                            stringResource(Res.string.dash_review_pending_desc),
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                }
+            }
+        }
+
+        // State-Aware Suggestions
+        if (moodToday != null) {
+            val suggestions =
+                mutableListOf<Pair<org.jetbrains.compose.resources.StringResource, () -> Unit>>()
+            if ((moodToday.anxietyScore ?: 0) >= 4) {
+                suggestions.add(Res.string.dash_suggestion_stress to { onNavigateTo(Screen.Review) })
+            }
+            if ((moodToday.focusScore ?: 5) <= 2) {
+                suggestions.add(Res.string.dash_suggestion_low_focus to {
+                    viewModel.clearSearchFilters()
+                    viewModel.updateSearchMaxMinutesFilter(5)
+                    onNavigateTo(Screen.Search)
+                })
+            }
+            if (!moodToday.tookMeds && (Clock.System.now()
+                    .toLocalDateTime(TimeZone.currentSystemDefault()).hour >= 10)
+            ) {
+                suggestions.add(Res.string.dash_suggestion_meds to { onNavigateTo(Screen.Track) })
+            }
+
+            if (suggestions.isNotEmpty()) {
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    color = TactileTheme.Accent.copy(alpha = 0.1f),
+                    shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                    border = androidx.compose.foundation.BorderStroke(
+                        1.dp,
+                        TactileTheme.Accent.copy(alpha = 0.3f)
+                    )
+                ) {
+                    Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+                        Text(
+                            stringResource(Res.string.dash_suggestions_title),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = TactileTheme.Accent
+                        )
+                        suggestions.forEach { (textRes, action) ->
+                            TextButton(onClick = action, contentPadding = PaddingValues(0.dp)) {
+                                Icon(
+                                    Icons.Default.Lightbulb,
+                                    contentDescription = null,
+                                    tint = TactileTheme.Accent,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                                Spacer(Modifier.width(8.dp))
+                                Text(
+                                    stringResource(textRes),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = TactileTheme.Text
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         Surface(
             modifier = Modifier.fillMaxWidth(),
             color = TactileTheme.Surface,
@@ -122,7 +360,7 @@ fun DashboardScreen(
         ) {
             Column(modifier = Modifier.padding(TactileTheme.SpacingLg)) {
                 Text(
-                    text = "LIFE SUMMARY",
+                    text = stringResource(Res.string.dash_life_summary),
                     style = MaterialTheme.typography.labelSmall.copy(letterSpacing = 2.sp),
                     color = TactileTheme.Primary,
                 )
@@ -138,7 +376,7 @@ fun DashboardScreen(
                             color = TactileTheme.Text
                         )
                         Text(
-                            text = "CAPTURES / WEEK",
+                            text = stringResource(Res.string.dash_captures_week),
                             style = MaterialTheme.typography.labelSmall,
                             color = TactileTheme.Muted
                         )
@@ -150,7 +388,7 @@ fun DashboardScreen(
                             color = TactileTheme.Success
                         )
                         Text(
-                            text = "DONE / WEEK",
+                            text = stringResource(Res.string.dash_done_week),
                             style = MaterialTheme.typography.labelSmall,
                             color = TactileTheme.Muted
                         )
@@ -176,6 +414,106 @@ fun DashboardScreen(
 
         // 2. Recovery Mode
         val lowEnergyTasks = dashboardState.lowEnergyTasks
+
+        // 2.1 State-Aware Shortcuts
+        Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+            Text(
+                text = stringResource(Res.string.dash_state_actions),
+                style = MaterialTheme.typography.labelSmall,
+                color = TactileTheme.Primary
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)
+            ) {
+                Surface(
+                    onClick = {
+                        viewModel.clearSearchFilters()
+                        viewModel.updateSearchFrictionFilter("easy")
+                        viewModel.updateSearchEnergyFilter(1)
+                        onNavigateTo(Screen.Search)
+                    },
+                    modifier = Modifier.weight(1f),
+                    color = TactileTheme.Surface,
+                    shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, TactileTheme.Border)
+                ) {
+                    Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+                        Icon(
+                            Icons.Default.Bolt,
+                            contentDescription = null,
+                            tint = TactileTheme.Success
+                        )
+                        Text(
+                            stringResource(Res.string.dash_overwhelmed),
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                        Text(
+                            stringResource(Res.string.dash_overwhelmed_desc),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = TactileTheme.Muted
+                        )
+                    }
+                }
+                Surface(
+                    onClick = {
+                        viewModel.clearSearchFilters()
+                        viewModel.updateSearchEnergyFilter(1)
+                        onNavigateTo(Screen.Search)
+                    },
+                    modifier = Modifier.weight(1f),
+                    color = TactileTheme.Surface,
+                    shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, TactileTheme.Border)
+                ) {
+                    Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+                        Icon(
+                            Icons.Default.BatteryChargingFull,
+                            contentDescription = null,
+                            tint = TactileTheme.Primary
+                        )
+                        Text(
+                            stringResource(Res.string.dash_cannot_think),
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                        Text(
+                            stringResource(Res.string.dash_cannot_think_desc),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = TactileTheme.Muted
+                        )
+                    }
+                }
+                Surface(
+                    onClick = {
+                        viewModel.clearSearchFilters()
+                        viewModel.updateSearchMaxMinutesFilter(10)
+                        onNavigateTo(Screen.Search)
+                    },
+                    modifier = Modifier.weight(1f),
+                    color = TactileTheme.Surface,
+                    shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, TactileTheme.Border)
+                ) {
+                    Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+                        Icon(
+                            Icons.Default.Timer,
+                            contentDescription = null,
+                            tint = TactileTheme.Accent
+                        )
+                        Text(
+                            stringResource(Res.string.dash_10_minutes),
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                        Text(
+                            stringResource(Res.string.dash_10_minutes_desc),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = TactileTheme.Muted
+                        )
+                    }
+                }
+            }
+        }
+
         if (moodToday?.energyScore != null && moodToday.energyScore!! <= 2 && lowEnergyTasks.isNotEmpty()) {
             Surface(
                 modifier = Modifier.fillMaxWidth(),
@@ -188,13 +526,13 @@ fun DashboardScreen(
             ) {
                 Column(modifier = Modifier.padding(TactileTheme.SpacingLg)) {
                     Text(
-                        text = "RECOVERY MODE // LOW ENERGY DETECTED",
+                        text = stringResource(Res.string.dash_recovery_mode),
                         style = MaterialTheme.typography.labelSmall.copy(letterSpacing = 2.sp),
                         color = TactileTheme.Success,
                     )
                     Spacer(Modifier.height(TactileTheme.SpacingMd))
                     Text(
-                        text = "Your energy is low. Try these easy wins:",
+                        text = stringResource(Res.string.dash_recovery_desc),
                         style = MaterialTheme.typography.bodySmall,
                         color = TactileTheme.Muted
                     )
@@ -272,7 +610,9 @@ fun DashboardScreen(
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = if (activeSession != null) "OPERATING" else "NEXT CONTEXT",
+                                text = if (activeSession != null) stringResource(Res.string.dash_operating) else stringResource(
+                                    Res.string.dash_next_context
+                                ),
                                 style = MaterialTheme.typography.labelSmall.copy(letterSpacing = 2.sp),
                                 color = if (activeSession != null) TactileTheme.Accent else TactileTheme.Primary,
                             )
@@ -297,7 +637,11 @@ fun DashboardScreen(
                                 TactileTheme.Primary
                             ) else null,
                         ) {
-                            Text(if (activeSession != null) "VIEW" else "ENGAGE")
+                            Text(
+                                if (activeSession != null) stringResource(Res.string.dash_view) else stringResource(
+                                    Res.string.dash_engage
+                                )
+                            )
                         }
                     }
                 }
@@ -329,7 +673,10 @@ fun DashboardScreen(
                     )
                     Spacer(modifier = Modifier.width(TactileTheme.SpacingMd))
                     Text(
-                        text = if (inboxNodes.size > 10) "${inboxNodes.size} ITEMS OVERFLOWING INBOX" else "${inboxNodes.size} NEW ITEMS TO PROCESS",
+                        text = if (inboxNodes.size > 10) stringResource(
+                            Res.string.dash_inbox_overflow,
+                            inboxNodes.size
+                        ) else stringResource(Res.string.dash_inbox_new, inboxNodes.size),
                         style = MaterialTheme.typography.labelSmall,
                         color = if (inboxNodes.size > 10) TactileTheme.Error else TactileTheme.Accent,
                     )
@@ -342,10 +689,12 @@ fun DashboardScreen(
         if (batchableTasks.isNotEmpty()) {
             val firstBatch = batchableTasks.values.first()
             val areaName =
-                allAreas.find { it.id == firstBatch.first().node.areaId }?.title ?: "GENERAL"
+                allAreas.find { it.id == firstBatch.first().node.areaId }?.title ?: stringResource(
+                    Res.string.screen_area
+                ).uppercase()
             Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
                 Text(
-                    text = "BATCH SUGGESTION // $areaName",
+                    text = stringResource(Res.string.dash_batch_suggestion, areaName),
                     style = MaterialTheme.typography.labelSmall,
                     color = TactileTheme.Accent,
                 )
@@ -360,7 +709,7 @@ fun DashboardScreen(
                 ) {
                     Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
                         Text(
-                            "You have ${firstBatch.size} tasks in $areaName. Batch them?",
+                            stringResource(Res.string.dash_batch_desc, firstBatch.size, areaName),
                             style = MaterialTheme.typography.bodySmall
                         )
                         Spacer(Modifier.height(4.dp))
@@ -381,7 +730,7 @@ fun DashboardScreen(
         if (quickWins.isNotEmpty()) {
             Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
                 Text(
-                    text = "QUICK WINS",
+                    text = stringResource(Res.string.dash_quick_wins),
                     style = MaterialTheme.typography.labelSmall,
                     color = TactileTheme.Success,
                 )
@@ -422,7 +771,7 @@ fun DashboardScreen(
         if (deepWork.isNotEmpty()) {
             Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
                 Text(
-                    text = "DEEP WORK // HIGH ENERGY",
+                    text = stringResource(Res.string.dash_deep_work),
                     style = MaterialTheme.typography.labelSmall,
                     color = TactileTheme.Primary,
                 )
@@ -462,7 +811,7 @@ fun DashboardScreen(
         if (todayNodes.isNotEmpty()) {
             Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
                 Text(
-                    text = "TOP 3 FOR TODAY",
+                    text = stringResource(Res.string.dash_top_3),
                     style = MaterialTheme.typography.labelSmall,
                     color = TactileTheme.Primary,
                 )
@@ -508,7 +857,7 @@ fun DashboardScreen(
         if (overdueNodes.isNotEmpty()) {
             Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
                 Text(
-                    text = "OVERDUE",
+                    text = stringResource(Res.string.dash_overdue),
                     style = MaterialTheme.typography.labelSmall,
                     color = TactileTheme.Error
                 )
@@ -552,7 +901,7 @@ fun DashboardScreen(
         if (activeReminders.isNotEmpty()) {
             Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
                 Text(
-                    text = "ACTIVE REMINDERS",
+                    text = stringResource(Res.string.dash_active_reminders),
                     style = MaterialTheme.typography.labelSmall,
                     color = TactileTheme.Error
                 )
@@ -592,7 +941,7 @@ fun DashboardScreen(
                             ) {
                                 Icon(
                                     Icons.Default.Check,
-                                    contentDescription = "Dismiss",
+                                    contentDescription = stringResource(Res.string.dash_dismiss),
                                     tint = TactileTheme.Error,
                                     modifier = Modifier.size(16.dp)
                                 )
@@ -607,7 +956,7 @@ fun DashboardScreen(
         if (pinnedKnowledge.isNotEmpty()) {
             Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
                 Text(
-                    text = "PINNED KNOWLEDGE",
+                    text = stringResource(Res.string.dash_pinned_knowledge),
                     style = MaterialTheme.typography.labelSmall,
                     color = TactileTheme.Primary
                 )
@@ -647,11 +996,200 @@ fun DashboardScreen(
             }
         }
 
+        // 11.1 Vaults (Read Later, Quotes, Ideas)
+        if (readLaterVault.isNotEmpty() || quoteVault.isNotEmpty() || ideaIncubator.isNotEmpty()) {
+            Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+                Text(
+                    text = stringResource(Res.string.dash_knowledge_vaults),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TactileTheme.Accent
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)
+                ) {
+                    if (readLaterVault.isNotEmpty()) {
+                        Surface(
+                            onClick = {
+                                viewModel.updateSearchQuery("")
+                                viewModel.updateSearchTypeFilter("note")
+                                viewModel.updateSearchStatusFilter("active")
+                                onNavigateTo(Screen.Search)
+                            },
+                            modifier = Modifier.weight(1f),
+                            color = TactileTheme.Surface,
+                            shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                            border = androidx.compose.foundation.BorderStroke(
+                                1.dp,
+                                TactileTheme.Border
+                            )
+                        ) {
+                            Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+                                Icon(
+                                    Icons.Default.Bookmark,
+                                    contentDescription = null,
+                                    tint = TactileTheme.Accent
+                                )
+                                Text(
+                                    stringResource(Res.string.dash_read_later),
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                                Text(
+                                    stringResource(
+                                        Res.string.dash_items_count,
+                                        readLaterVault.size
+                                    ),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = TactileTheme.Muted
+                                )
+                            }
+                        }
+                    }
+                    if (quoteVault.isNotEmpty()) {
+                        Surface(
+                            onClick = { onNavigateTo(Screen.Search) },
+                            modifier = Modifier.weight(1f),
+                            color = TactileTheme.Surface,
+                            shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                            border = androidx.compose.foundation.BorderStroke(
+                                1.dp,
+                                TactileTheme.Border
+                            )
+                        ) {
+                            Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+                                Icon(
+                                    Icons.Default.FormatQuote,
+                                    contentDescription = null,
+                                    tint = TactileTheme.Primary
+                                )
+                                Text(
+                                    stringResource(Res.string.dash_quotes),
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                                Text(
+                                    stringResource(Res.string.dash_items_count, quoteVault.size),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = TactileTheme.Muted
+                                )
+                            }
+                        }
+                    }
+                    if (ideaIncubator.isNotEmpty()) {
+                        Surface(
+                            onClick = { onNavigateTo(Screen.Search) },
+                            modifier = Modifier.weight(1f),
+                            color = TactileTheme.Surface,
+                            shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                            border = androidx.compose.foundation.BorderStroke(
+                                1.dp,
+                                TactileTheme.Border
+                            )
+                        ) {
+                            Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+                                Icon(
+                                    Icons.Default.Lightbulb,
+                                    contentDescription = null,
+                                    tint = TactileTheme.Success
+                                )
+                                Text(
+                                    stringResource(Res.string.dash_ideas),
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                                Text(
+                                    stringResource(
+                                        Res.string.dash_unset_count,
+                                        ideaIncubator.size
+                                    ),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = TactileTheme.Muted
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // 11.2 Foundational Principle
+        val foundationalNotes = dashboardState.foundationalNotes
+        if (foundationalNotes.isNotEmpty()) {
+            Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+                Text(
+                    text = stringResource(Res.string.dash_foundational),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TactileTheme.Accent
+                )
+                foundationalNotes.forEach { nodeWithPin ->
+                    Surface(
+                        onClick = { onEditNode(nodeWithPin.node.id) },
+                        modifier = Modifier.fillMaxWidth(),
+                        color = TactileTheme.Accent.copy(alpha = 0.05f),
+                        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                        border = androidx.compose.foundation.BorderStroke(
+                            1.dp,
+                            TactileTheme.Accent.copy(alpha = 0.2f)
+                        )
+                    ) {
+                        Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+                            Text(
+                                nodeWithPin.node.title,
+                                style = MaterialTheme.typography.labelSmall,
+                                color = TactileTheme.Accent
+                            )
+                            Spacer(Modifier.height(4.dp))
+                            Text(
+                                nodeWithPin.node.content.take(200) + if (nodeWithPin.node.content.length > 200) "..." else "",
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        // 11.3 Resource Highlights
+        val resourceHighlights = dashboardState.resourceHighlights
+        if (resourceHighlights.isNotEmpty()) {
+            Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+                Text(
+                    text = stringResource(Res.string.dash_resource_highlights),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TactileTheme.Primary
+                )
+                resourceHighlights.forEach { nodeWithPin ->
+                    Surface(
+                        onClick = { onEditNode(nodeWithPin.node.id) },
+                        modifier = Modifier.fillMaxWidth(),
+                        color = TactileTheme.Surface,
+                        shape = RoundedCornerShape(TactileTheme.RadiusSm),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, TactileTheme.Border)
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(TactileTheme.SpacingMd),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                Icons.AutoMirrored.Filled.LibraryBooks,
+                                contentDescription = null,
+                                tint = TactileTheme.Primary,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(Modifier.width(TactileTheme.SpacingMd))
+                            Text(
+                                nodeWithPin.node.title,
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
         // 12. Upcoming Deadlines
         if (upcomingDeadlines.isNotEmpty()) {
             Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
                 Text(
-                    text = "UPCOMING DEADLINES",
+                    text = stringResource(Res.string.dash_upcoming_deadlines),
                     style = MaterialTheme.typography.labelSmall,
                     color = TactileTheme.Accent
                 )
@@ -708,7 +1246,7 @@ fun DashboardScreen(
             horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)
         ) {
             Surface(
-                onClick = { /* Placeholder action */ },
+                onClick = { onNavigateTo(Screen.Review) },
                 modifier = Modifier.weight(1f),
                 color = TactileTheme.Surface,
                 shape = RoundedCornerShape(TactileTheme.RadiusMd),
@@ -725,14 +1263,14 @@ fun DashboardScreen(
                     )
                     Spacer(Modifier.height(TactileTheme.SpacingSm))
                     Text(
-                        "MORNING RESET",
+                        stringResource(Res.string.dash_review_reset),
                         style = MaterialTheme.typography.labelSmall,
                         color = TactileTheme.Text
                     )
                 }
             }
             Surface(
-                onClick = { /* Placeholder action */ },
+                onClick = { onNavigateTo(Screen.Track) },
                 modifier = Modifier.weight(1f),
                 color = TactileTheme.Surface,
                 shape = RoundedCornerShape(TactileTheme.RadiusMd),
@@ -743,13 +1281,13 @@ fun DashboardScreen(
             ) {
                 Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
                     Icon(
-                        Icons.Default.NightsStay,
+                        Icons.Default.CheckCircle,
                         contentDescription = null,
                         tint = TactileTheme.Accent
                     )
                     Spacer(Modifier.height(TactileTheme.SpacingSm))
                     Text(
-                        "EVENING SHUTDOWN",
+                        stringResource(Res.string.dash_check_in),
                         style = MaterialTheme.typography.labelSmall,
                         color = TactileTheme.Text
                     )
@@ -763,7 +1301,7 @@ fun DashboardScreen(
             mostRelevantProject?.let { project ->
                 Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
                     Text(
-                        text = "MOST RELEVANT PROJECT",
+                        text = stringResource(Res.string.dash_relevant_project),
                         style = MaterialTheme.typography.labelSmall,
                         color = TactileTheme.Primary
                     )
@@ -803,7 +1341,7 @@ fun DashboardScreen(
         if (relevantNote != null) {
             Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
                 Text(
-                    text = "MOST RELEVANT NOTE",
+                    text = stringResource(Res.string.dash_relevant_note),
                     style = MaterialTheme.typography.labelSmall,
                     color = TactileTheme.Primary
                 )
@@ -843,77 +1381,99 @@ fun DashboardScreen(
             Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
                 ModuleButton(
                     modifier = Modifier.weight(1f),
-                    title = "TODAY",
+                    title = stringResource(Res.string.screen_today),
                     icon = Icons.Default.DateRange,
-                    status = if (todayNodes.isNotEmpty()) "${todayNodes.size} TASKS" else "EMPTY",
+                    status = if (todayNodes.isNotEmpty()) stringResource(
+                        Res.string.dash_module_tasks_count,
+                        todayNodes.size
+                    ) else stringResource(Res.string.dash_module_empty),
                     onClick = { onNavigateTo(Screen.Today) })
                 ModuleButton(
                     modifier = Modifier.weight(1f),
-                    title = "FOCUS",
+                    title = stringResource(Res.string.screen_focus),
                     icon = Icons.Default.PlayArrow,
-                    status = if (todayNodes.isNotEmpty()) "READY" else "WAITING",
+                    status = if (todayNodes.isNotEmpty()) stringResource(Res.string.dash_module_ready) else stringResource(
+                        Res.string.dash_module_waiting
+                    ),
                     onClick = { onNavigateTo(Screen.Focus) })
             }
             Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
                 ModuleButton(
                     modifier = Modifier.weight(1f),
-                    title = "TRACK",
+                    title = stringResource(Res.string.screen_track),
                     icon = Icons.Default.CheckCircle,
-                    status = moodToday?.let { "LOGGED" } ?: "PENDING",
+                    status = moodToday?.let { stringResource(Res.string.dash_module_logged) }
+                        ?: stringResource(Res.string.dash_module_pending),
                     onClick = { onNavigateTo(Screen.Track) })
                 ModuleButton(
                     modifier = Modifier.weight(1f),
-                    title = "TASKS",
+                    title = stringResource(Res.string.screen_tasks),
                     icon = Icons.AutoMirrored.Filled.List,
-                    status = if (tasksCount > 0) "$tasksCount TOTAL" else "NONE",
+                    status = if (tasksCount > 0) stringResource(
+                        Res.string.dash_module_total_count,
+                        tasksCount
+                    ) else stringResource(Res.string.dash_module_none),
                     onClick = { onNavigateTo(Screen.Tasks) })
             }
             Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
                 ModuleButton(
                     modifier = Modifier.weight(1f),
-                    title = "NOTES",
+                    title = stringResource(Res.string.screen_notes),
                     icon = Icons.Default.Edit,
-                    status = if (notesCount > 0) "$notesCount TOTAL" else "NONE",
+                    status = if (notesCount > 0) stringResource(
+                        Res.string.dash_module_total_count,
+                        notesCount
+                    ) else stringResource(Res.string.dash_module_none),
                     onClick = { onNavigateTo(Screen.Notes) })
                 ModuleButton(
                     modifier = Modifier.weight(1f),
-                    title = "PROJ",
+                    title = stringResource(Res.string.screen_proj),
                     icon = Icons.AutoMirrored.Filled.List,
-                    status = if (allProjects.isNotEmpty()) "${allProjects.size} ACTIVE" else "EMPTY",
+                    status = if (allProjects.isNotEmpty()) stringResource(
+                        Res.string.dash_module_active_count,
+                        allProjects.size
+                    ) else stringResource(Res.string.dash_module_empty),
                     onClick = { onNavigateTo(Screen.Projects) })
             }
             Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
                 ModuleButton(
                     modifier = Modifier.weight(1f),
-                    title = "AREA",
+                    title = stringResource(Res.string.screen_area),
                     icon = Icons.Default.LocationOn,
-                    status = if (allAreas.isNotEmpty()) "${allAreas.size} TOTAL" else "EMPTY",
+                    status = if (allAreas.isNotEmpty()) stringResource(
+                        Res.string.dash_module_total_count,
+                        allAreas.size
+                    ) else stringResource(Res.string.dash_module_empty),
                     onClick = { onNavigateTo(Screen.Areas) })
                 ModuleButton(
                     modifier = Modifier.weight(1f),
-                    title = "CAL",
+                    title = stringResource(Res.string.screen_cal),
                     icon = Icons.Default.Event,
-                    status = if (calendarEntries.isNotEmpty()) "${calendarEntries.size} ITEMS" else "EMPTY",
+                    status = if (calendarEntries.isNotEmpty()) stringResource(
+                        Res.string.dash_module_items_count,
+                        calendarEntries.size
+                    ) else stringResource(Res.string.dash_module_empty),
                     onClick = { onNavigateTo(Screen.Calendar) })
             }
             Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
                 ModuleButton(
                     modifier = Modifier.weight(1f),
-                    title = "STATS",
+                    title = stringResource(Res.string.screen_stats),
                     icon = Icons.Default.Info,
-                    status = "VIEW",
+                    status = stringResource(Res.string.dash_view),
                     onClick = { onNavigateTo(Screen.Insights) })
                 ModuleButton(
                     modifier = Modifier.weight(1f),
-                    title = "HISTORY",
+                    title = stringResource(Res.string.screen_history),
                     icon = Icons.Default.History,
                     status = if (allSessions.isNotEmpty()) {
-                        "LAST: ${
+                        stringResource(
+                            Res.string.dash_history_last,
                             Instant.fromEpochMilliseconds(allSessions.first().startedAt)
-                                .toLocalDateTime(TimeZone.currentSystemDefault()).date
-                        }"
+                                .toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
+                        )
                     } else {
-                        "EMPTY"
+                        stringResource(Res.string.dash_module_empty)
                     },
                     onClick = { viewModel.resumeLastSession() },
                 )

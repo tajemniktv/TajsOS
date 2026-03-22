@@ -20,7 +20,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class NodeEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val type: String, // task, note, project, area, resource, idea
+    /**
+     * Task, note, project, area, resource, idea
+     */
+    val type: String,
     val title: String,
     val content: String = "",
     val status: String = "active", // active, done, archived, on_hold, someday, blocked
@@ -62,6 +65,9 @@ data class NodeEntity(
     val reminderAt: Long? = null,
     val isRecurring: Boolean = false,
     val recurringInterval: String? = null, // daily, weekly, monthly
+    // Note-specific (Roadmap Section 5)
+    val noteType: String? = null, // thought, lecture, research, idea, reflection, bug, concept, evergreen
+    val noteState: String? = null, // raw, highlighted, distilled, takeaway
 )
 
 /**
@@ -112,6 +118,7 @@ data class TrackEntryEntity(
     val moodScore: Int? = null,
     val energyScore: Int? = null,
     val focusScore: Int? = null,
+    val anxietyScore: Int? = null,
     val sleepScore: Float? = null,
     val tookMeds: Boolean = false,
     val symptomNote: String = "",
@@ -209,6 +216,24 @@ data class TemplateEntity(
 )
 
 /**
+ * ReviewEntity tracks formal reflection sessions.
+ */
+@Entity(tableName = "reviews")
+@Serializable
+data class ReviewEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val type: String, // daily, weekly, monthly
+    val date: String, // YYYY-MM-DD
+    val completedAt: Long =
+        kotlin.time.Clock.System
+            .now()
+            .toEpochMilliseconds(),
+    val resultNodeId: Long? = null, // Linked note containing the review content
+    val moodScore: Int? = null,
+    val energyScore: Int? = null,
+)
+
+/**
  * CalendarProviderEntity represents an external or internal source of calendar events.
  */
 @Entity(tableName = "calendar_providers")
@@ -253,6 +278,25 @@ data class CalendarEventEntity(
 )
 
 /**
+ * NodeSnapshotEntity stores historical versions of a node's content.
+ */
+@Entity(
+    tableName = "node_snapshots",
+    indices = [Index(value = ["nodeId"])]
+)
+@Serializable
+data class NodeSnapshotEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val nodeId: Long,
+    val title: String,
+    val content: String,
+    val timestamp: Long =
+        kotlin.time.Clock.System
+            .now()
+            .toEpochMilliseconds(),
+)
+
+/**
  * NodeWithPin is a "POJO" used by Room to perform a JOIN.
  */
 data class NodeWithPin(
@@ -273,6 +317,11 @@ data class NodeWithPin(
             ),
     )
     val tags: List<TagEntity> = emptyList(),
+    @Relation(
+        parentColumn = "id",
+        entityColumn = "nodeId",
+    )
+    val snapshots: List<NodeSnapshotEntity> = emptyList(),
 ) {
     val isPinnedToToday: Boolean get() = pin != null
 }

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
 package com.tajemniktv.tajsos.ui.screens
 
 import androidx.compose.foundation.clickable
@@ -14,6 +18,8 @@ import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.*
 
 @Composable
 fun AreasScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit) {
@@ -26,7 +32,7 @@ fun AreasScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit) {
             .padding(TactileTheme.SpacingMd)
     ) {
         Text(
-            text = "AREAS",
+            text = stringResource(Res.string.areas_title),
             style = MaterialTheme.typography.displaySmall,
             color = TactileTheme.Text
         )
@@ -35,10 +41,10 @@ fun AreasScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit) {
         if (areas.isEmpty()) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("No areas yet.", color = TactileTheme.Muted)
+                    Text(stringResource(Res.string.areas_empty), color = TactileTheme.Muted)
                     Spacer(modifier = Modifier.height(TactileTheme.SpacingMd))
                     Button(onClick = { showAddDialog = true }) {
-                        Text("CREATE FIRST AREA")
+                        Text(stringResource(Res.string.areas_create_first))
                     }
                 }
             }
@@ -89,17 +95,20 @@ fun AddAreaDialog(onDismiss: () -> Unit, onConfirm: (String) -> Unit) {
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("NEW AREA") },
+        title = { Text(stringResource(Res.string.areas_dialog_new)) },
         text = {
-            TextField(value = name, onValueChange = { name = it }, label = { Text("Name") })
+            TextField(
+                value = name,
+                onValueChange = { name = it },
+                label = { Text(stringResource(Res.string.areas_dialog_name)) })
         },
         confirmButton = {
             Button(onClick = { if (name.isNotBlank()) onConfirm(name) }) {
-                Text("CREATE")
+                Text(stringResource(Res.string.areas_dialog_create))
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("CANCEL") }
+            TextButton(onClick = onDismiss) { Text(stringResource(Res.string.areas_dialog_cancel)) }
         }
     )
 }

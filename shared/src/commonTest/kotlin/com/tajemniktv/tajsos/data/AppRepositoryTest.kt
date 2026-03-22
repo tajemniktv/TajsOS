@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
 package com.tajemniktv.tajsos.data
 
 import kotlinx.coroutines.test.runTest
@@ -15,6 +19,10 @@ class AppRepositoryTest {
     private val fakeEventLogDao = FakeEventLogDao()
     private val fakeAttachmentDao = FakeAttachmentDao()
     private val fakeTemplateDao = FakeTemplateDao()
+    private val fakeNodeSnapshotDao = FakeNodeSnapshotDao()
+    private val fakeReviewDao = FakeReviewDao()
+    private val fakeCalendarProviderDao = FakeCalendarProviderDao()
+    private val fakeCalendarEventDao = FakeCalendarEventDao()
 
     private val repository = AppRepository(
         nodeDao = fakeNodeDao,
@@ -24,7 +32,11 @@ class AppRepositoryTest {
         tagDao = fakeTagDao,
         eventLogDao = fakeEventLogDao,
         attachmentDao = fakeAttachmentDao,
-        templateDao = fakeTemplateDao
+        templateDao = fakeTemplateDao,
+        nodeSnapshotDao = fakeNodeSnapshotDao,
+        reviewDao = fakeReviewDao,
+        calendarProviderDao = fakeCalendarProviderDao,
+        calendarEventDao = fakeCalendarEventDao
     )
 
     @Test

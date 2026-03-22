@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
 package com.tajemniktv.tajsos.ui.screens
 
 import androidx.compose.foundation.layout.*
@@ -14,6 +18,8 @@ import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.AbortSlider
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.coroutines.delay
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.*
 
 @Composable
 fun FocusScreen(viewModel: MainViewModel) {
@@ -55,7 +61,7 @@ fun FocusScreen(viewModel: MainViewModel) {
         if (currentNode == null) {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(
-                    "NO ACTIVE TASK",
+                    stringResource(Res.string.focus_no_active_task),
                     style = MaterialTheme.typography.labelSmall,
                     color = TactileTheme.Muted
                 )
@@ -84,7 +90,12 @@ fun FocusScreen(viewModel: MainViewModel) {
                     viewModel.updateNode(currentNode.copy(content = it))
                 },
                 modifier = Modifier.fillMaxWidth().padding(vertical = TactileTheme.SpacingMd),
-                label = { Text("NEXT TINY STEP", style = MaterialTheme.typography.labelSmall) },
+                label = {
+                    Text(
+                        stringResource(Res.string.focus_next_tiny_step),
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                },
                 textStyle = MaterialTheme.typography.bodyLarge,
                 singleLine = true
             )
@@ -95,7 +106,7 @@ fun FocusScreen(viewModel: MainViewModel) {
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(TactileTheme.RadiusMd)
                 ) {
-                    Text("ENGAGE")
+                    Text(stringResource(Res.string.focus_engage))
                 }
             } else {
                 AbortSlider(onAbort = {
@@ -106,7 +117,7 @@ fun FocusScreen(viewModel: MainViewModel) {
             Spacer(Modifier.height(TactileTheme.SpacingLg))
             
             Text(
-                "RECENT SESSIONS",
+                stringResource(Res.string.focus_recent_sessions),
                 style = MaterialTheme.typography.labelSmall,
                 color = TactileTheme.Muted,
                 modifier = Modifier.align(Alignment.Start)
@@ -119,8 +130,21 @@ fun FocusScreen(viewModel: MainViewModel) {
                     }
                     if (session.endedAt != null) {
                         ListItem(
-                            headlineContent = { Text(sessionNode?.title ?: "Unknown Task") },
-                            supportingContent = { Text("${session.durationSec / 60}m ${session.durationSec % 60}s focus session") },
+                            headlineContent = {
+                                Text(
+                                    sessionNode?.title
+                                        ?: stringResource(Res.string.focus_unknown_task)
+                                )
+                            },
+                            supportingContent = {
+                                Text(
+                                    stringResource(
+                                        Res.string.focus_session_duration,
+                                        session.durationSec / 60,
+                                        session.durationSec % 60
+                                    )
+                                )
+                            },
                             colors = ListItemDefaults.colors(containerColor = androidx.compose.ui.graphics.Color.Transparent)
                         )
                     }

@@ -33,6 +33,8 @@ import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.datetime.*
 import kotlinx.datetime.LocalDate
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.*
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Instant
@@ -89,7 +91,7 @@ fun CalendarScreen(
         Spacer(Modifier.height(TactileTheme.SpacingLg))
 
         Text(
-            "AGENDA // $selectedDate",
+            stringResource(Res.string.cal_agenda_title, selectedDate.toString()),
             style = MaterialTheme.typography.labelSmall,
             color = TactileTheme.Muted,
         )
@@ -131,7 +133,7 @@ fun CalendarHeader(
         Row(verticalAlignment = Alignment.CenterVertically) {
             TextButton(onClick = onTodayClick) {
                 Text(
-                    "TODAY",
+                    stringResource(Res.string.cal_today),
                     style = MaterialTheme.typography.labelSmall,
                     color = TactileTheme.Primary,
                 )
@@ -139,16 +141,22 @@ fun CalendarHeader(
             IconButton(onClick = onSyncClick) {
                 Icon(
                     Icons.Default.Refresh,
-                    contentDescription = "Sync",
+                    contentDescription = stringResource(Res.string.cal_sync),
                     tint = TactileTheme.Muted,
                     modifier = Modifier.size(20.dp),
                 )
             }
             IconButton(onClick = onPreviousMonth) {
-                Icon(Icons.Default.ChevronLeft, contentDescription = "Previous")
+                Icon(
+                    Icons.Default.ChevronLeft,
+                    contentDescription = stringResource(Res.string.cal_previous)
+                )
             }
             IconButton(onClick = onNextMonth) {
-                Icon(Icons.Default.ChevronRight, contentDescription = "Next")
+                Icon(
+                    Icons.Default.ChevronRight,
+                    contentDescription = stringResource(Res.string.cal_next)
+                )
             }
         }
     }
@@ -285,7 +293,7 @@ fun AgendaView(
     if (dayEntries.isEmpty()) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text(
-                "NO EVENTS RECORDED",
+                stringResource(Res.string.cal_no_events),
                 color = TactileTheme.Muted,
                 style = MaterialTheme.typography.labelSmall,
             )
@@ -310,7 +318,7 @@ fun AgendaRow(
             .toLocalDateTime(TimeZone.currentSystemDefault())
     val timeStr =
         if (entry.isAllDay) {
-            "ALL DAY"
+            stringResource(Res.string.cal_all_day)
         } else {
             "${startTime.hour}:${
                 startTime.minute.toString().padStart(2, '0')

@@ -20,6 +20,8 @@ class AppRepository(
     private val eventLogDao: EventLogDao,
     private val attachmentDao: AttachmentDao,
     private val templateDao: TemplateDao,
+    private val nodeSnapshotDao: NodeSnapshotDao,
+    private val reviewDao: ReviewDao,
     private val calendarProviderDao: CalendarProviderDao,
     private val calendarEventDao: CalendarEventDao
 ) {
@@ -224,4 +226,17 @@ fun getActiveSession(): Flow<FocusSessionEntity?> = focusSessionDao.getActiveSes
     suspend fun insertTemplate(template: TemplateEntity) = templateDao.insertTemplate(template)
     suspend fun updateTemplate(template: TemplateEntity) = templateDao.updateTemplate(template)
     suspend fun deleteTemplate(template: TemplateEntity) = templateDao.deleteTemplate(template)
+
+    // Snapshots
+    fun getSnapshotsForNode(nodeId: Long) = nodeSnapshotDao.getSnapshotsForNode(nodeId)
+    suspend fun insertSnapshot(snapshot: NodeSnapshotEntity) =
+        nodeSnapshotDao.insertSnapshot(snapshot)
+
+    suspend fun deleteSnapshot(snapshot: NodeSnapshotEntity) =
+        nodeSnapshotDao.deleteSnapshot(snapshot)
+
+    // Reviews
+    fun getAllReviews() = reviewDao.getAllReviews()
+    suspend fun insertReview(review: ReviewEntity) = reviewDao.insertReview(review)
+    suspend fun getLastReviewByType(type: String) = reviewDao.getLastReviewByType(type)
 }

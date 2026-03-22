@@ -14,6 +14,8 @@ import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.EmptyState
 import com.tajemniktv.tajsos.ui.components.NodeCard
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.*
 
 @Composable
 fun TasksScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit) {
@@ -25,11 +27,11 @@ fun TasksScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit) {
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Text("TASKS", style = MaterialTheme.typography.displaySmall)
+        Text(stringResource(Res.string.tasks_title), style = MaterialTheme.typography.displaySmall)
         Spacer(modifier = Modifier.height(24.dp))
 
         if (tasks.isEmpty()) {
-            EmptyState(message = "NO TASKS FOUND")
+            EmptyState(message = stringResource(Res.string.tasks_empty))
         } else {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 items(tasks, key = { it.node.id }) { nodeWithPin ->

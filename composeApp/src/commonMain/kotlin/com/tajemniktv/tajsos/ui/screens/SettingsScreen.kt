@@ -13,6 +13,9 @@ import androidx.compose.ui.Modifier
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.getString
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.*
 
 @Composable
 fun SettingsScreen(
@@ -36,10 +39,18 @@ fun SettingsScreen(
                     .padding(padding)
                     .padding(TactileTheme.SpacingMd),
         ) {
-            Text("SETTINGS", style = MaterialTheme.typography.displayMedium, color = TactileTheme.Text)
+            Text(
+                stringResource(Res.string.settings_title),
+                style = MaterialTheme.typography.displayMedium,
+                color = TactileTheme.Text
+            )
             Spacer(Modifier.height(TactileTheme.SpacingLg))
 
-            Text("SECURITY", style = MaterialTheme.typography.labelSmall, color = TactileTheme.Primary)
+            Text(
+                stringResource(Res.string.settings_security),
+                style = MaterialTheme.typography.labelSmall,
+                color = TactileTheme.Primary
+            )
             Row(
                 modifier =
                     Modifier
@@ -50,15 +61,15 @@ fun SettingsScreen(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        "BIOMETRIC LOCK",
+                        stringResource(Res.string.settings_biometric_lock),
                         style = MaterialTheme.typography.bodyLarge,
                         color = TactileTheme.Text,
                     )
                     Text(
                         if (isBiometricHardwareAvailable) {
-                            "Require authentication to open"
+                            stringResource(Res.string.settings_biometric_desc)
                         } else {
-                            "Hardware not available"
+                            stringResource(Res.string.settings_biometric_unavailable)
                         },
                         style = MaterialTheme.typography.labelSmall,
                         color = TactileTheme.Muted,
@@ -75,7 +86,7 @@ fun SettingsScreen(
             Spacer(Modifier.height(TactileTheme.SpacingLg))
 
             Text(
-                "CALENDAR INTEGRATION",
+                stringResource(Res.string.settings_calendar_integration),
                 style = MaterialTheme.typography.labelSmall,
                 color = TactileTheme.Primary,
             )
@@ -91,7 +102,7 @@ fun SettingsScreen(
                         contentColor = TactileTheme.Primary,
                     ),
             ) {
-                Text("CONFIGURE EXTERNAL CALENDARS")
+                Text(stringResource(Res.string.settings_configure_calendars))
             }
 
             Spacer(Modifier.height(TactileTheme.SpacingMd))
@@ -106,19 +117,28 @@ fun SettingsScreen(
                         contentColor = TactileTheme.Primary,
                     ),
             ) {
-                Text("MANAGE TEMPLATES")
+                Text(stringResource(Res.string.settings_manage_templates))
             }
 
             Spacer(Modifier.height(TactileTheme.SpacingLg))
 
-            Text("DATA MANAGEMENT", style = MaterialTheme.typography.labelSmall, color = TactileTheme.Primary)
+            Text(
+                stringResource(Res.string.settings_data_management),
+                style = MaterialTheme.typography.labelSmall,
+                color = TactileTheme.Primary
+            )
             Spacer(Modifier.height(TactileTheme.SpacingSm))
 
             Button(
                 onClick = {
                     scope.launch {
                         val json = viewModel.exportDataJson()
-                        snackbarHostState.showSnackbar("Data exported (${json.length} chars)")
+                        snackbarHostState.showSnackbar(
+                            getString(
+                                Res.string.settings_export_success,
+                                json.length
+                            )
+                        )
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
@@ -128,7 +148,7 @@ fun SettingsScreen(
                     contentColor = TactileTheme.Primary
                 ),
             ) {
-                Text("EXPORT LOCAL DATA")
+                Text(stringResource(Res.string.settings_export_data))
             }
 
             Spacer(Modifier.height(TactileTheme.SpacingLg))
@@ -139,7 +159,7 @@ fun SettingsScreen(
                 shape = RoundedCornerShape(TactileTheme.RadiusMd),
                 colors = ButtonDefaults.buttonColors(containerColor = TactileTheme.Error),
             ) {
-                Text("FORCE TEST CRASH")
+                Text(stringResource(Res.string.settings_force_crash))
             }
         }
     }

@@ -126,7 +126,11 @@ class RepositoryDelegationTest {
             tagDao = FakeTagDao(),
             eventLogDao = FakeEventLogDao(),
             attachmentDao = FakeAttachmentDao(),
-            templateDao = FakeTemplateDao()
+            templateDao = FakeTemplateDao(),
+            nodeSnapshotDao = FakeNodeSnapshotDao(),
+            reviewDao = FakeReviewDao(),
+            calendarProviderDao = FakeCalendarProviderDao(),
+            calendarEventDao = FakeCalendarEventDao()
         )
 
     // ---------------------------------------------------------------------------

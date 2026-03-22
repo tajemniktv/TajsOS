@@ -22,6 +22,8 @@ import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.ProjectItem
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.*
 
 @Composable
 fun ProjectsScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit) {
@@ -48,7 +50,7 @@ fun ProjectsScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit) {
             .padding(TactileTheme.SpacingMd)
     ) {
         Text(
-            text = "PROJECTS",
+            text = stringResource(Res.string.projects_title),
             style = MaterialTheme.typography.displaySmall,
             color = TactileTheme.Text
         )
@@ -58,7 +60,7 @@ fun ProjectsScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit) {
             value = searchQuery,
             onValueChange = { searchQuery = it },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Search projects...") },
+            placeholder = { Text(stringResource(Res.string.projects_search_placeholder)) },
             leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
             shape = MaterialTheme.shapes.medium
         )
@@ -69,12 +71,12 @@ fun ProjectsScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit) {
             FilterChip(
                 selected = selectedStatusFilter == "active",
                 onClick = { selectedStatusFilter = "active" },
-                label = { Text("ACTIVE") }
+                label = { Text(stringResource(Res.string.projects_filter_active)) }
             )
             FilterChip(
                 selected = selectedStatusFilter == "someday",
                 onClick = { selectedStatusFilter = "someday" },
-                label = { Text("SOMEDAY") }
+                label = { Text(stringResource(Res.string.projects_filter_someday)) }
             )
         }
 
@@ -83,10 +85,10 @@ fun ProjectsScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit) {
         if (filteredProjects.isEmpty() && searchQuery.isEmpty()) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("No projects yet.", color = TactileTheme.Muted)
+                    Text(stringResource(Res.string.projects_empty), color = TactileTheme.Muted)
                     Spacer(modifier = Modifier.height(TactileTheme.SpacingMd))
                     Button(onClick = { showAddDialog = true }) {
-                        Text("CREATE FIRST PROJECT")
+                        Text(stringResource(Res.string.projects_create_first))
                     }
                 }
             }
@@ -147,17 +149,27 @@ fun AddProjectDialog(onDismiss: () -> Unit, onConfirm: (String, String, String) 
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("NEW PROJECT") },
+        title = { Text(stringResource(Res.string.projects_dialog_new)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                TextField(value = name, onValueChange = { name = it }, label = { Text("Name") })
-                TextField(value = description, onValueChange = { description = it }, label = { Text("Description") })
+                TextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text(stringResource(Res.string.projects_dialog_name)) })
+                TextField(
+                    value = description,
+                    onValueChange = { description = it },
+                    label = { Text(stringResource(Res.string.projects_dialog_description)) })
                 Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
                     listOf("active", "someday").forEach { s ->
+                        val label =
+                            if (s == "active") stringResource(Res.string.projects_filter_active) else stringResource(
+                                Res.string.projects_filter_someday
+                            )
                         FilterChip(
                             selected = status == s,
                             onClick = { status = s },
-                            label = { Text(s.uppercase()) }
+                            label = { Text(label.uppercase()) }
                         )
                     }
                 }
@@ -165,11 +177,11 @@ fun AddProjectDialog(onDismiss: () -> Unit, onConfirm: (String, String, String) 
         },
         confirmButton = {
             Button(onClick = { if (name.isNotBlank()) onConfirm(name, description, status) }) {
-                Text("CREATE")
+                Text(stringResource(Res.string.projects_dialog_create))
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("CANCEL") }
+            TextButton(onClick = onDismiss) { Text(stringResource(Res.string.projects_dialog_cancel)) }
         }
     )
 }

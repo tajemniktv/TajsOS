@@ -17,6 +17,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,15 +32,26 @@ fun TemplatesScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("TEMPLATES", style = MaterialTheme.typography.labelSmall) },
+                title = {
+                    Text(
+                        stringResource(Res.string.templates_title),
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(Res.string.common_back)
+                        )
                     }
                 },
                 actions = {
                     IconButton(onClick = { showAddDialog = true }) {
-                        Icon(Icons.Default.Add, contentDescription = "Add Template")
+                        Icon(
+                            Icons.Default.Add,
+                            contentDescription = stringResource(Res.string.templates_add_desc)
+                        )
                     }
                 },
             )
@@ -49,7 +62,7 @@ fun TemplatesScreen(
                 modifier = Modifier.fillMaxSize().padding(padding),
                 contentAlignment = Alignment.Center,
             ) {
-                Text("NO TEMPLATES DEFINED", color = TactileTheme.Muted)
+                Text(stringResource(Res.string.templates_empty), color = TactileTheme.Muted)
             }
         } else {
             LazyColumn(
@@ -59,12 +72,22 @@ fun TemplatesScreen(
                 items(templates) { template ->
                     ListItem(
                         headlineContent = { Text(template.name) },
-                        supportingContent = { Text(template.nodeType.uppercase()) },
+                        supportingContent = {
+                            val typeLabel = when (template.nodeType) {
+                                "task" -> stringResource(Res.string.type_task)
+                                "note" -> stringResource(Res.string.type_note)
+                                "idea" -> stringResource(Res.string.type_idea)
+                                "project" -> stringResource(Res.string.type_project)
+                                "area" -> stringResource(Res.string.type_area)
+                                else -> template.nodeType
+                            }
+                            Text(typeLabel.uppercase())
+                        },
                         trailingContent = {
                             IconButton(onClick = { viewModel.deleteTemplate(template) }) {
                                 Icon(
                                     Icons.Default.Delete,
-                                    contentDescription = "Delete",
+                                    contentDescription = stringResource(Res.string.archive_delete),
                                     tint = TactileTheme.Error,
                                 )
                             }
@@ -81,16 +104,25 @@ fun TemplatesScreen(
         var type by remember { mutableStateOf("task") }
         AlertDialog(
             onDismissRequest = { showAddDialog = false },
-            title = { Text("NEW TEMPLATE") },
+            title = { Text(stringResource(Res.string.templates_new_dialog)) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
-                    TextField(value = name, onValueChange = { name = it }, label = { Text("Name") })
+                    TextField(
+                        value = name,
+                        onValueChange = { name = it },
+                        label = { Text(stringResource(Res.string.templates_dialog_name)) })
                     Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
                         listOf("task", "note", "project").forEach { t ->
+                            val typeLabel = when (t) {
+                                "task" -> stringResource(Res.string.type_task)
+                                "note" -> stringResource(Res.string.type_note)
+                                "project" -> stringResource(Res.string.type_project)
+                                else -> t
+                            }
                             FilterChip(
                                 selected = type == t,
                                 onClick = { type = t },
-                                label = { Text(t.uppercase()) },
+                                label = { Text(typeLabel.uppercase()) },
                             )
                         }
                     }
@@ -102,9 +134,17 @@ fun TemplatesScreen(
                         viewModel.addTemplate(name, type)
                         showAddDialog = false
                     }
-                }) { Text("CREATE") }
+                }) { Text(stringResource(Res.string.templates_dialog_create)) }
             },
-            dismissButton = { TextButton(onClick = { showAddDialog = false }) { Text("CANCEL") } },
+            dismissButton = {
+                TextButton(onClick = { showAddDialog = false }) {
+                    Text(
+                        stringResource(
+                            Res.string.templates_dialog_cancel
+                        )
+                    )
+                }
+            },
         )
     }
 }

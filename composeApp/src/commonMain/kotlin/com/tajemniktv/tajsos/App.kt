@@ -27,6 +27,8 @@ import com.tajemniktv.tajsos.ui.screens.*
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.*
 
 /**
  *
@@ -95,7 +97,7 @@ fun App(
                     ) {
                         Spacer(Modifier.height(TactileTheme.SpacingLg))
                         Text(
-                            "TajsOS",
+                            stringResource(Res.string.app_name),
                             modifier = Modifier.padding(TactileTheme.SpacingMd),
                             style = MaterialTheme.typography.titleLarge,
                             color = TactileTheme.Primary,
@@ -106,23 +108,24 @@ fun App(
                         val executionItems =
                             listOf(Screen.Today, Screen.Tasks, Screen.Focus, Screen.Calendar)
                         val brainItems = listOf(Screen.Notes, Screen.Projects, Screen.Areas)
-                        val statusItems = listOf(Screen.Track, Screen.Insights, Screen.Graph)
+                        val statusItems =
+                            listOf(Screen.Track, Screen.Insights, Screen.Graph, Screen.Review)
                         val systemItems = listOf(Screen.Archive, Screen.Settings)
 
                         val groupedItems =
                             listOf(
-                                "CORE" to coreItems,
-                                "EXECUTION" to executionItems,
-                                "SECOND BRAIN" to brainItems,
-                                "STATUS & INSIGHTS" to statusItems,
-                                "SYSTEM" to systemItems,
+                                Res.string.nav_core to coreItems,
+                                Res.string.nav_execution to executionItems,
+                                Res.string.nav_brain to brainItems,
+                                Res.string.nav_status to statusItems,
+                                Res.string.nav_system to systemItems,
                             )
 
                         groupedItems.forEachIndexed {
                             /**
                              *
                              */
-                                index, (header, items) ->
+                                index, (headerRes, items) ->
                             if (index > 0) {
                                 HorizontalDivider(
                                     modifier =
@@ -134,7 +137,7 @@ fun App(
                                 )
                             }
                             Text(
-                                header,
+                                stringResource(headerRes),
                                 modifier =
                                     Modifier.padding(
                                         horizontal = TactileTheme.SpacingMd,
@@ -147,7 +150,7 @@ fun App(
                                 NavigationDrawerItem(
                                     label = {
                                         Text(
-                                            screen.label,
+                                            stringResource(screen.label),
                                             style = MaterialTheme.typography.labelLarge,
                                         )
                                     },
@@ -188,7 +191,7 @@ fun App(
                             IconButton(onClick = { scope.launch { drawerState.open() } }) {
                                 Icon(
                                     Icons.Default.Menu,
-                                    contentDescription = "Menu",
+                                    contentDescription = stringResource(Res.string.nav_menu),
                                     tint = TactileTheme.Primary,
                                 )
                             }
@@ -200,7 +203,7 @@ fun App(
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 Text(
-                                    text = "TajsOS // STATUS: OK",
+                                    text = stringResource(Res.string.app_status_ok),
                                     style = MaterialTheme.typography.labelSmall,
                                     color = MaterialTheme.colorScheme.primary,
                                 )
@@ -226,7 +229,10 @@ fun App(
                         contentColor = MaterialTheme.colorScheme.onPrimary,
                         shape = RoundedCornerShape(TactileTheme.RadiusMd),
                     ) {
-                        Icon(Icons.Default.Add, contentDescription = "Capture")
+                        Icon(
+                            Icons.Default.Add,
+                            contentDescription = stringResource(Res.string.nav_capture)
+                        )
                     }
                 },
             ) { innerPadding ->
@@ -359,6 +365,9 @@ fun App(
                         GraphScreen(viewModel, onNodeClick = onEditNode)
                     }
                     composable(Screen.Archive.route) { ArchiveScreen(viewModel, onEditNode) }
+                    composable(Screen.Review.route) {
+                        ReviewScreen(viewModel, onBack = { navController.popBackStack() })
+                    }
                 }
 
                 if (showCaptureSheet) {

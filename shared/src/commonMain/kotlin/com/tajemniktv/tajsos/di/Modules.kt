@@ -47,6 +47,8 @@ class SharedModule(
             database.eventLogDao(),
             database.attachmentDao(),
             database.templateDao(),
+            database.nodeSnapshotDao(),
+            database.reviewDao(),
             database.calendarProviderDao(),
             database.calendarEventDao(),
         )

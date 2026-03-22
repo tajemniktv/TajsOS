@@ -29,6 +29,28 @@ data class InsightsData(
     val neglectedProjects: List<NodeEntity> = emptyList(),
     val captureToActionRatio: Double = 0.0,
     val autoPreparedReview: String = "",
+    val avgSessionMinutes: Int = 0,
+    val inboxGrowth: Int = 0,
+    val archiveRate: Double = 0.0,
+    val completionsByArea: Map<Long, Int> = emptyMap(),
+    val completionsByProject: Map<Long, Int> = emptyMap(),
+    val mostProductiveHour: Int = -1,
+    val postponeFrequency: Int = 0,
+    val backlogPressure: Double = 0.0,
+    val chaosScore: Int = 0,
+    val contextSwitchingRate: Double = 0.0,
+    val moodVsCompletions: Double = 0.0,
+    val sleepVsFocus: Double = 0.0,
+    val energyVsCaptures: Double = 0.0,
+    val anxietyVsAvoidance: Double = 0.0,
+    val medsEffectiveness: Double = 0.0,
+    val mostPostponedAreaId: Long? = null,
+    val captureTimePattern: String? = null, // Morning, Afternoon, Evening, Night
+    val projectsWithoutTasks: List<NodeEntity> = emptyList(),
+    val neglectedAreas: List<NodeEntity> = emptyList(),
+    val projectEntropy: Map<Long, Double> = emptyMap(), // projectId to entropy score
+    val contextStability: Double = 0.0, // 0.0 to 1.0
+    val passiveBehaviorSummary: String = "",
 )
 
 data class DashboardUIState(
@@ -42,6 +64,14 @@ data class DashboardUIState(
     val batchableTasks: Map<Long?, List<NodeWithPin>> = emptyMap(),
     val quickWins: List<NodeWithPin> = emptyList(),
     val deepWork: List<NodeWithPin> = emptyList(),
+    val topTakeaways: List<NodeWithPin> = emptyList(),
+    val readLaterVault: List<NodeWithPin> = emptyList(),
+    val quoteVault: List<NodeWithPin> = emptyList(),
+    val ideaIncubator: List<NodeWithPin> = emptyList(),
+    val archivedThisWeek: List<NodeWithPin> = emptyList(),
+    val neglectedThisWeek: List<NodeWithPin> = emptyList(),
+    val foundationalNotes: List<NodeWithPin> = emptyList(),
+    val resourceHighlights: List<NodeWithPin> = emptyList(),
 )
 
 class MainViewModel(
@@ -65,6 +95,7 @@ class MainViewModel(
     val dashboardUIState: StateFlow<DashboardUIState> =
         activeNodes.map { nodes ->
             val now = Clock.System.now().toEpochMilliseconds()
+            val sevenDaysAgo = now - (7 * 24 * 60 * 60 * 1000L)
             DashboardUIState(
                 tasksCount = nodes.count { it.node.type == "task" },
                 notesCount = nodes.count { it.node.type == "note" || it.node.type == "idea" || it.node.type == "resource" },
@@ -78,7 +109,25 @@ class MainViewModel(
                 batchableTasks = nodes.filter { it.node.type == "task" && it.node.status == "active" }
                     .groupBy { it.node.areaId }.filter { it.value.size >= 3 },
                 quickWins = nodes.filter { it.node.type == "task" && it.node.status == "active" && it.node.energyLevel == 1 && it.node.friction == "easy" },
-                deepWork = nodes.filter { it.node.type == "task" && it.node.status == "active" && it.node.energyLevel == 3 }
+                deepWork = nodes.filter { it.node.type == "task" && it.node.status == "active" && it.node.energyLevel == 3 },
+                topTakeaways = nodes.filter { (it.node.type == "note" || it.node.type == "idea") && it.node.noteState == "takeaway" },
+                readLaterVault = nodes.filter { it.node.noteType == "read_later" && it.node.status == "active" },
+                quoteVault = nodes.filter { it.node.noteType == "quote" && it.node.status == "active" },
+                ideaIncubator = nodes.filter { it.node.type == "idea" && it.node.status == "active" && it.node.projectId == null },
+                archivedThisWeek = nodes.filter {
+                    it.node.status == "archived" && (it.node.archivedAt ?: 0) >= sevenDaysAgo
+                },
+                neglectedThisWeek = nodes.filter { it.node.status == "active" && it.node.type == "task" && it.node.updatedAt < sevenDaysAgo },
+                foundationalNotes = nodes.filter {
+                    (it.node.type == "note" || it.node.type == "idea") && it.tags.any { tag ->
+                        tag.name.equals(
+                            "foundational",
+                            ignoreCase = true
+                        )
+                    }
+                }.take(1),
+                resourceHighlights = nodes.filter { it.node.type == "resource" && it.node.status == "active" }
+                    .shuffled().take(2),
             )
         }
             .distinctUntilChanged()
@@ -108,6 +157,11 @@ class MainViewModel(
     val calendarProviders: StateFlow<List<CalendarProviderEntity>> =
         repository
             .getAllCalendarProviders()
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val allRelations: StateFlow<List<RelationEntity>> =
+        repository
+            .getAllRelations()
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val calendarEntries: StateFlow<List<CalendarEntry>> =
@@ -316,12 +370,15 @@ class MainViewModel(
         val sevenDaysAgo = now - (7 * 24 * 60 * 60 * 1000L)
 
         val recentNodes = nodes.filter { it.node.createdAt >= sevenDaysAgo }
-        val recentCompletions = nodes.filter { it.node.status == "done" && it.node.updatedAt >= sevenDaysAgo }
+        val recentCompletions = nodes.filter {
+            it.node.status == "done" && (it.node.completedAt ?: 0) >= sevenDaysAgo
+        }
 
-        val weeklyFocusSec =
-            sessions
-                .filter { it.startedAt >= sevenDaysAgo && it.endedAt != null }
-                .sumOf { it.durationSec.toLong() }
+        val recentSessions = sessions.filter { it.startedAt >= sevenDaysAgo && it.endedAt != null }
+        val weeklyFocusSec = recentSessions.sumOf { it.durationSec.toLong() }
+        val avgSessionMin = if (recentSessions.isNotEmpty()) {
+            (recentSessions.map { it.durationSec }.average() / 60).toInt()
+        } else 0
 
         val hourlyDistribution = IntArray(24)
         sessions.filter { it.endedAt != null }.forEach {
@@ -334,6 +391,15 @@ class MainViewModel(
         }
 
         val bestFocusHour = hourlyDistribution.indices.maxByOrNull { hourlyDistribution[it] } ?: -1
+
+        val completionHourlyDist = IntArray(24)
+        recentCompletions.forEach {
+            val hour = Instant.fromEpochMilliseconds(it.node.completedAt ?: 0)
+                .toLocalDateTime(TimeZone.currentSystemDefault()).hour
+            completionHourlyDist[hour]++
+        }
+        val mostProductiveHour =
+            completionHourlyDist.indices.maxByOrNull { completionHourlyDist[it] } ?: -1
 
         val sevenDaysAgoDate = Instant.fromEpochMilliseconds(sevenDaysAgo)
             .toLocalDateTime(TimeZone.currentSystemDefault()).date
@@ -349,9 +415,176 @@ class MainViewModel(
                 val projectNodes = nodesByProjectId[project.id] ?: emptyList()
                 val hasActiveItems = projectNodes.any { it.node.status == "active" }
                 val hasRecentCompletions =
-                    projectNodes.any { it.node.status == "done" && it.node.updatedAt >= sevenDaysAgo }
+                    projectNodes.any {
+                        it.node.status == "done" && (it.node.completedAt ?: 0) >= sevenDaysAgo
+                    }
                 hasActiveItems && !hasRecentCompletions
             }
+
+        val completionsByArea = recentCompletions.filter { it.node.areaId != null }
+            .groupBy { it.node.areaId!! }.mapValues { it.value.size }
+        val completionsByProject = recentCompletions.filter { it.node.projectId != null }
+            .groupBy { it.node.projectId!! }.mapValues { it.value.size }
+
+        val inboxGrowth = recentNodes.count { it.node.inboxState }
+        val archivedCount = nodes.count {
+            it.node.status == "archived" && (it.node.archivedAt ?: 0) >= sevenDaysAgo
+        }
+        val archiveRate =
+            if (recentNodes.isNotEmpty()) archivedCount.toDouble() / recentNodes.size else 0.0
+
+        val activeTasks = nodes.count { it.node.status == "active" && it.node.type == "task" }
+        val recentTaskCompletions = recentCompletions.count { it.node.type == "task" }
+        val backlogPressure =
+            if (recentTaskCompletions > 0) activeTasks.toDouble() / recentTaskCompletions else activeTasks.toDouble()
+
+        val overdueCount =
+            nodes.count { it.node.dueAt != null && it.node.dueAt < now && it.node.status == "active" }
+        val chaosScore =
+            (overdueCount * 10) + (inboxGrowth * 5) + (if (backlogPressure > 5) 50 else 0)
+
+        val uniqueContextsPerDay = recentSessions.groupBy {
+            Instant.fromEpochMilliseconds(it.startedAt)
+                .toLocalDateTime(TimeZone.currentSystemDefault()).date
+        }.mapValues {
+            it.value.mapNotNull { s -> nodes.find { n -> n.node.id == s.nodeId }?.node?.projectId }
+                .distinct().size
+        }
+        val contextSwitchingRate =
+            if (uniqueContextsPerDay.isNotEmpty()) uniqueContextsPerDay.values.average() else 0.0
+
+        // Light Manual Statistics (Roadmap Section 7)
+        // Correlating track entries with activity
+        val dailyCompletions = recentCompletions.groupBy {
+            Instant.fromEpochMilliseconds(it.node.completedAt ?: 0)
+                .toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
+        }.mapValues { it.value.size }
+
+        val dailyCaptures = recentNodes.groupBy {
+            Instant.fromEpochMilliseconds(it.node.createdAt)
+                .toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
+        }.mapValues { it.value.size }
+
+        val dailyFocus = recentSessions.groupBy {
+            Instant.fromEpochMilliseconds(it.startedAt)
+                .toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
+        }.mapValues { it.value.sumOf { s -> s.durationSec } / 3600.0 }
+
+        val moodVsCompletions = if (recentTracks.isNotEmpty()) {
+            val moodOnBusyDays = recentTracks.filter { (dailyCompletions[it.date] ?: 0) >= 3 }
+                .mapNotNull { it.moodScore }.average()
+            val moodOnSlowDays = recentTracks.filter { (dailyCompletions[it.date] ?: 0) == 0 }
+                .mapNotNull { it.moodScore }.average()
+            if (!moodOnBusyDays.isNaN() && !moodOnSlowDays.isNaN()) moodOnBusyDays - moodOnSlowDays else 0.0
+        } else 0.0
+
+        val sleepVsFocus = if (recentTracks.isNotEmpty()) {
+            val focusOnGoodSleep = recentTracks.filter { (it.sleepScore ?: 0f) >= 7f }
+                .map { dailyFocus[it.date] ?: 0.0 }.average()
+            val focusOnBadSleep = recentTracks.filter { (it.sleepScore ?: 0f) < 7f }
+                .map { dailyFocus[it.date] ?: 0.0 }.average()
+            if (!focusOnGoodSleep.isNaN() && !focusOnBadSleep.isNaN()) focusOnGoodSleep - focusOnBadSleep else 0.0
+        } else 0.0
+
+        val energyVsCaptures = if (recentTracks.isNotEmpty()) {
+            val capturesOnHighEnergy = recentTracks.filter { (it.energyScore ?: 0) >= 4 }
+                .map { dailyCaptures[it.date] ?: 0 }.average()
+            val capturesOnLowEnergy = recentTracks.filter { (it.energyScore ?: 0) <= 2 }
+                .map { dailyCaptures[it.date] ?: 0 }.average()
+            if (!capturesOnHighEnergy.isNaN() && !capturesOnLowEnergy.isNaN()) capturesOnHighEnergy - capturesOnLowEnergy else 0.0
+        } else 0.0
+
+        val anxietyVsAvoidance = if (recentTracks.isNotEmpty()) {
+            // Using low mood/energy as a proxy for high anxiety/stress if not explicitly tracked
+            val postponesOnBadDays =
+                recentTracks.filter { (it.moodScore ?: 5) <= 2 }.sumOf { track ->
+                    recentNodes.filter {
+                        val d = Instant.fromEpochMilliseconds(it.node.updatedAt)
+                            .toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
+                        d == track.date && it.node.postponeCount > 0
+                    }.size
+                }
+            postponesOnBadDays.toDouble()
+        } else 0.0
+
+        val medsEffectiveness = if (recentTracks.isNotEmpty()) {
+            val focusWithMeds =
+                recentTracks.filter { it.tookMeds }.mapNotNull { it.focusScore }.average()
+            val focusWithoutMeds =
+                recentTracks.filter { !it.tookMeds }.mapNotNull { it.focusScore }.average()
+            if (!focusWithMeds.isNaN() && !focusWithoutMeds.isNaN()) focusWithMeds - focusWithoutMeds else 0.0
+        } else 0.0
+
+        // Insight Cards Logic (Roadmap Section 7)
+        val mostPostponedAreaId =
+            nodes.filter { it.node.areaId != null && it.node.postponeCount > 0 }
+                .groupBy { it.node.areaId!! }
+                .maxByOrNull { entry -> entry.value.sumOf { it.node.postponeCount } }?.key
+
+        val ideaTimes = nodes.filter { it.node.type == "idea" && it.node.createdAt >= sevenDaysAgo }
+            .map {
+                Instant.fromEpochMilliseconds(it.node.createdAt)
+                    .toLocalDateTime(TimeZone.currentSystemDefault()).hour
+            }
+
+        val captureTimePattern = if (ideaTimes.isNotEmpty()) {
+            val morning = ideaTimes.count { it in 6..11 }
+            val afternoon = ideaTimes.count { it in 12..17 }
+            val evening = ideaTimes.count { it in 18..23 }
+            val night = ideaTimes.count { it in 0..5 }
+            val max = listOf(morning, afternoon, evening, night).maxOrNull() ?: 0
+            when (max) {
+                morning -> "Morning"
+                afternoon -> "Afternoon"
+                evening -> "Evening"
+                else -> "Night"
+            }
+        } else null
+
+        val projectsWithoutTasks = projects.filter { project ->
+            val projectNodes = nodes.filter { it.node.projectId == project.id }
+            val hasNotes = projectNodes.any { it.node.type == "note" || it.node.type == "idea" }
+            val hasTasks = projectNodes.any { it.node.type == "task" && it.node.status == "active" }
+            hasNotes && !hasTasks
+        }
+
+        val areas = nodes.filter { it.node.type == "area" }.map { it.node }
+        val neglectedAreas = areas.filter { area ->
+            val areaNodes = nodes.filter { it.node.areaId == area.id }
+            val hasRecentActivity = areaNodes.any { it.node.updatedAt >= sevenDaysAgo }
+            !hasRecentActivity
+        }
+
+        // Advanced Insight Concepts (Roadmap Section 7)
+        val projectEntropy = projects.associate { project ->
+            val projectNodes =
+                nodes.filter { it.node.projectId == project.id && it.node.status == "active" }
+            if (projectNodes.isEmpty()) {
+                project.id to 0.0
+            } else {
+                val messyNodes = projectNodes.count {
+                    it.node.dueAt == null || it.node.postponeCount > 2 || it.tags.isEmpty()
+                }
+                project.id to (messyNodes.toDouble() / projectNodes.size)
+            }
+        }
+
+        val contextStability =
+            if (contextSwitchingRate > 0) 1.0 / (1.0 + contextSwitchingRate) else 1.0
+
+        val behaviorSummary = buildString {
+            if (mostProductiveHour != -1) {
+                append("You typically finish tasks around ${mostProductiveHour}:00. ")
+            }
+            if (archiveRate > 0.3) {
+                append("You have a healthy habit of archiving items. ")
+            } else if (backlogPressure > 10) {
+                append("Your backlog is growing faster than you can process it. Consider a cleanup. ")
+            }
+            if (contextStability < 0.3) {
+                append("You context-switch frequently. Deep focus sessions might be harder to maintain. ")
+            }
+        }
 
         val review = buildString {
             append("This week you captured ${recentNodes.size} items and completed ${recentCompletions.size}. ")
@@ -369,6 +602,15 @@ class MainViewModel(
                     (recentCompletions.size.toDouble() / recentNodes.size.toDouble() * 100).toInt()
                 append("Current execution ratio: $ratio%. ")
             }
+            if (backlogPressure > 5.0) {
+                append("Warning: Your backlog pressure is high ($backlogPressure). ")
+            }
+            if (medsEffectiveness > 0.5) {
+                append("Focus seems significantly better on days you take medication. ")
+            }
+            if (captureTimePattern != null) {
+                append("You are most creative in the $captureTimePattern. ")
+            }
         }
 
         return InsightsData(
@@ -381,7 +623,29 @@ class MainViewModel(
             avgFocus = avgFocus,
             neglectedProjects = neglectedProjects,
             captureToActionRatio = if (recentNodes.isNotEmpty()) recentCompletions.size.toDouble() / recentNodes.size.toDouble() else 0.0,
-            autoPreparedReview = review
+            autoPreparedReview = review,
+            avgSessionMinutes = avgSessionMin,
+            inboxGrowth = inboxGrowth,
+            archiveRate = archiveRate,
+            completionsByArea = completionsByArea,
+            completionsByProject = completionsByProject,
+            mostProductiveHour = mostProductiveHour,
+            postponeFrequency = recentNodes.sumOf { it.node.postponeCount },
+            backlogPressure = backlogPressure,
+            chaosScore = chaosScore,
+            contextSwitchingRate = contextSwitchingRate,
+            moodVsCompletions = moodVsCompletions,
+            sleepVsFocus = sleepVsFocus,
+            energyVsCaptures = energyVsCaptures,
+            anxietyVsAvoidance = anxietyVsAvoidance,
+            medsEffectiveness = medsEffectiveness,
+            mostPostponedAreaId = mostPostponedAreaId,
+            captureTimePattern = captureTimePattern,
+            projectsWithoutTasks = projectsWithoutTasks,
+            neglectedAreas = neglectedAreas,
+            projectEntropy = projectEntropy,
+            contextStability = contextStability,
+            passiveBehaviorSummary = behaviorSummary
         )
     }
 
@@ -479,6 +743,34 @@ class MainViewModel(
             }
 
             repository.updateNode(updatedNode)
+
+            // Parse internal links [[Note Title]]
+            if (oldNode == null || oldNode.content != node.content) {
+                parseInternalLinks(node.id)
+            }
+        }
+    }
+
+    private fun parseInternalLinks(nodeId: Long) {
+        viewModelScope.launch {
+            repository.getNodeById(nodeId)?.let { node ->
+                // Support both [[Title]] and [[Title|Alias]]
+                val regex = Regex("\\[\\[(.*?)\\]\\]")
+                val matches = regex.findAll(node.content).map { match ->
+                    val fullMatch = match.groupValues[1]
+                    if (fullMatch.contains("|")) fullMatch.split("|")[0] else fullMatch
+                }.toList()
+
+                if (matches.isNotEmpty()) {
+                    val nodes = allNodes.value
+                    for (match in matches) {
+                        nodes.find { it.node.title.equals(match.trim(), ignoreCase = true) }
+                            ?.let { target ->
+                                addRelation(nodeId, target.node.id, "MENTION")
+                            }
+                    }
+                }
+            }
         }
     }
 
@@ -538,6 +830,65 @@ class MainViewModel(
                     )
                 }
             }
+        }
+    }
+
+    fun createSnapshot(nodeId: Long) {
+        viewModelScope.launch {
+            repository.getNodeById(nodeId)?.let { node ->
+                repository.insertSnapshot(
+                    NodeSnapshotEntity(
+                        nodeId = node.id,
+                        title = node.title,
+                        content = node.content
+                    )
+                )
+            }
+        }
+    }
+
+    fun restoreSnapshot(snapshot: NodeSnapshotEntity) {
+        viewModelScope.launch {
+            repository.getNodeById(snapshot.nodeId)?.let { node ->
+                repository.updateNode(
+                    node.copy(
+                        title = snapshot.title,
+                        content = snapshot.content,
+                        updatedAt = Clock.System.now().toEpochMilliseconds()
+                    )
+                )
+            }
+        }
+    }
+
+    fun mergeNodes(primaryNodeId: Long, otherNodeIds: List<Long>) {
+        viewModelScope.launch {
+            val primary = repository.getNodeById(primaryNodeId) ?: return@launch
+            var mergedContent = primary.content
+            var mergedTitle = primary.title
+
+            for (otherId in otherNodeIds) {
+                repository.getNodeById(otherId)?.let { other ->
+                    mergedContent += "\n\n--- MERGED FROM ${other.title} ---\n${other.content}"
+                    archiveNode(other)
+                    // Move relations
+                    val relations = repository.getRelationsForNode(otherId).first()
+                    relations.forEach { rel ->
+                        if (rel.fromNodeId == otherId) {
+                            addRelation(primaryNodeId, rel.toNodeId, rel.relationType)
+                        } else if (rel.toNodeId == otherId) {
+                            addRelation(rel.fromNodeId, primaryNodeId, rel.relationType)
+                        }
+                    }
+                }
+            }
+
+            repository.updateNode(
+                primary.copy(
+                    content = mergedContent,
+                    updatedAt = Clock.System.now().toEpochMilliseconds()
+                )
+            )
         }
     }
 
@@ -753,6 +1104,7 @@ class MainViewModel(
         mood: Int? = null,
         energy: Int? = null,
         focus: Int? = null,
+        anxiety: Int? = null,
         sleep: Float? = null,
         tookMeds: Boolean = false,
         note: String = "",
@@ -769,6 +1121,7 @@ class MainViewModel(
                     moodScore = mood,
                     energyScore = energy,
                     focusScore = focus,
+                    anxietyScore = anxiety,
                     sleepScore = sleep,
                     tookMeds = tookMeds,
                     symptomNote = note,
@@ -836,16 +1189,72 @@ class MainViewModel(
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
+    private val _searchTypeFilter = MutableStateFlow<String?>(null)
+    val searchTypeFilter: StateFlow<String?> = _searchTypeFilter.asStateFlow()
+
+    private val _searchStatusFilter = MutableStateFlow<String?>("active") // Default: active
+    val searchStatusFilter: StateFlow<String?> = _searchStatusFilter.asStateFlow()
+
+    private val _searchProjectFilter = MutableStateFlow<Long?>(null)
+    val searchProjectFilter: StateFlow<Long?> = _searchProjectFilter.asStateFlow()
+
+    private val _searchAreaFilter = MutableStateFlow<Long?>(null)
+    val searchAreaFilter: StateFlow<Long?> = _searchAreaFilter.asStateFlow()
+
+    private val _searchLinkedToFilter = MutableStateFlow<Long?>(null)
+    val searchLinkedToFilter: StateFlow<Long?> = _searchLinkedToFilter.asStateFlow()
+
+    private val _searchMaxMinutesFilter = MutableStateFlow<Int?>(null)
+    val searchMaxMinutesFilter: StateFlow<Int?> = _searchMaxMinutesFilter.asStateFlow()
+
+    private val _searchEnergyFilter = MutableStateFlow<Int?>(null)
+    val searchEnergyFilter: StateFlow<Int?> = _searchEnergyFilter.asStateFlow()
+
+    private val _searchFrictionFilter = MutableStateFlow<String?>(null)
+    val searchFrictionFilter: StateFlow<String?> = _searchFrictionFilter.asStateFlow()
+
     val searchResults: StateFlow<List<NodeWithPin>> =
         combine(
             allNodes,
             _searchQuery,
-        ) { nodes, query ->
-            if (query.isBlank()) {
-                nodes.sortedByDescending { it.node.updatedAt }.take(100)
-            } else {
-                nodes.filter { matchesQuery(it, query) }
-            }
+            _searchTypeFilter,
+            _searchStatusFilter,
+            _searchProjectFilter,
+            _searchAreaFilter,
+            _searchLinkedToFilter,
+            _searchMaxMinutesFilter,
+            _searchEnergyFilter,
+            _searchFrictionFilter,
+            allRelations,
+        ) { args ->
+            val nodes = args[0] as List<NodeWithPin>
+            val query = args[1] as String
+            val type = args[2] as String?
+            val status = args[3] as String?
+            val projectId = args[4] as Long?
+            val areaId = args[5] as Long?
+            val linkedToId = args[6] as Long?
+            val maxMins = args[7] as Int?
+            val energy = args[8] as Int?
+            val friction = args[9] as String?
+            val relations = args[10] as List<RelationEntity>
+
+            nodes.filter { nodeWithPin ->
+                val node = nodeWithPin.node
+                val matchesQuery = if (query.isBlank()) true else matchesQuery(nodeWithPin, query)
+                val matchesType = type == null || node.type == type
+                val matchesStatus = status == null || node.status == status
+                val matchesProject = projectId == null || node.projectId == projectId
+                val matchesArea = areaId == null || node.areaId == areaId
+                val matchesMins = maxMins == null || (node.estimatedMinutes ?: 0) <= maxMins
+                val matchesEnergy = energy == null || node.energyLevel == energy
+                val matchesFriction = friction == null || node.friction == friction
+                val matchesLinkedTo = linkedToId == null || relations.any {
+                    (it.fromNodeId == node.id && it.toNodeId == linkedToId) ||
+                            (it.fromNodeId == linkedToId && it.toNodeId == node.id)
+                }
+                matchesQuery && matchesType && matchesStatus && matchesProject && matchesArea && matchesLinkedTo && matchesMins && matchesEnergy && matchesFriction
+            }.sortedByDescending { it.node.updatedAt }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     private fun matchesQuery(
@@ -871,6 +1280,50 @@ class MainViewModel(
         _searchQuery.value = query
     }
 
+    fun updateSearchTypeFilter(type: String?) {
+        _searchTypeFilter.value = type
+    }
+
+    fun updateSearchStatusFilter(status: String?) {
+        _searchStatusFilter.value = status
+    }
+
+    fun updateSearchProjectFilter(projectId: Long?) {
+        _searchProjectFilter.value = projectId
+    }
+
+    fun updateSearchAreaFilter(areaId: Long?) {
+        _searchAreaFilter.value = areaId
+    }
+
+    fun updateSearchLinkedToFilter(nodeId: Long?) {
+        _searchLinkedToFilter.value = nodeId
+    }
+
+    fun updateSearchMaxMinutesFilter(mins: Int?) {
+        _searchMaxMinutesFilter.value = mins
+    }
+
+    fun updateSearchEnergyFilter(energy: Int?) {
+        _searchEnergyFilter.value = energy
+    }
+
+    fun updateSearchFrictionFilter(friction: String?) {
+        _searchFrictionFilter.value = friction
+    }
+
+    fun clearSearchFilters() {
+        _searchQuery.value = ""
+        _searchTypeFilter.value = null
+        _searchStatusFilter.value = "active"
+        _searchProjectFilter.value = null
+        _searchAreaFilter.value = null
+        _searchLinkedToFilter.value = null
+        _searchMaxMinutesFilter.value = null
+        _searchEnergyFilter.value = null
+        _searchFrictionFilter.value = null
+    }
+
     fun getFilteredNodes(query: String): Flow<List<NodeWithPin>> =
         allNodes.map { nodes ->
             if (query.isBlank()) {
@@ -880,12 +1333,35 @@ class MainViewModel(
             }
         }
 
-    val allRelations: StateFlow<List<RelationEntity>> =
-        repository
-            .getAllRelations()
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    /**
+     * Suggests potentially related nodes based on shared tags or title keywords.
+     */
+    fun getNoteSuggestions(nodeId: Long): Flow<List<NodeWithPin>> =
+        allNodes.map { nodes ->
+            val currentNodeWithPin = nodes.find { it.node.id == nodeId } ?: return@map emptyList()
+            val currentNode = currentNodeWithPin.node
+            val currentTags = currentNodeWithPin.tags.map { it.id }.toSet()
+
+            nodes.filter { other ->
+                other.node.id != nodeId &&
+                        other.node.status != "archived" &&
+                        other.node.type in listOf("note", "idea", "resource", "project") &&
+                        (
+                                other.tags.any { it.id in currentTags } ||
+                                        other.node.title.split(" ").any { word ->
+                                            word.length > 3 && currentNode.title.contains(
+                                                word,
+                                                ignoreCase = true
+                                            )
+                                        }
+                                )
+            }.take(5)
+        }
 
     fun getRelationsForNode(nodeId: Long): Flow<List<RelationEntity>> = repository.getRelationsForNode(nodeId)
+
+    fun getSnapshotsForNode(nodeId: Long): Flow<List<NodeSnapshotEntity>> =
+        repository.getSnapshotsForNode(nodeId)
 
     fun getLogsForNode(nodeId: Long): Flow<List<EventLogEntity>> = repository.getLogsForNode(nodeId)
 
@@ -997,6 +1473,55 @@ class MainViewModel(
             repository.deleteTemplate(template)
         }
     }
+
+    fun deleteSnapshot(snapshot: NodeSnapshotEntity) {
+        viewModelScope.launch {
+            repository.deleteSnapshot(snapshot)
+        }
+    }
+
+    val allReviews: StateFlow<List<ReviewEntity>> =
+        repository
+            .getAllReviews()
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    fun completeReview(
+        type: String,
+        content: String,
+        mood: Int? = null,
+        energy: Int? = null,
+    ) {
+        viewModelScope.launch {
+            val now = Clock.System.now()
+            val dateStr = now.toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
+
+            val nodeId = repository.insertNode(
+                NodeEntity(
+                    title = "${type.uppercase()} REVIEW - $dateStr",
+                    content = content,
+                    type = "note",
+                    noteType = "reflection",
+                    inboxState = false,
+                )
+            )
+
+            repository.insertReview(
+                ReviewEntity(
+                    type = type,
+                    date = dateStr,
+                    resultNodeId = nodeId,
+                    moodScore = mood,
+                    energyScore = energy
+                )
+            )
+
+            if (mood != null || energy != null) {
+                addTrackEntry(mood = mood, energy = energy, note = "Linked to $type review")
+            }
+        }
+    }
+
+    suspend fun getLastReviewByType(type: String) = repository.getLastReviewByType(type)
 
     suspend fun exportDataJson(): String =
         withContext(Dispatchers.Default) {

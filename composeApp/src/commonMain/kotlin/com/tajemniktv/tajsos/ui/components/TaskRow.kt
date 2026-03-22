@@ -20,6 +20,8 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.*
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -81,8 +83,15 @@ fun TaskRow(
                         Spacer(Modifier.width(8.dp))
                     }
                     if (node.friction != null) {
+                        val frictionLabel = when (node.friction) {
+                            "easy" -> stringResource(Res.string.dash_overwhelmed)
+                            "annoying" -> "ANNOYING"
+                            "mentally_heavy" -> "HEAVY"
+                            "unclear" -> "UNCLEAR"
+                            else -> node.friction!!
+                        }
                         Text(
-                            text = node.friction!!.uppercase().replace("_", " "),
+                            text = frictionLabel.uppercase(),
                             style = MaterialTheme.typography.labelSmall,
                             color = TactileTheme.Primary
                         )
@@ -117,13 +126,17 @@ fun TaskRow(
                 IconButton(onClick = onArchive) {
                     Icon(
                         imageVector = Icons.Default.Delete,
-                        contentDescription = "Archive",
+                        contentDescription = stringResource(Res.string.detail_archive),
                         tint = TactileTheme.Muted
                     )
                 }
             }
             IconButton(onClick = onUnpin) {
-                Icon(Icons.Default.Close, contentDescription = "Unpin", tint = TactileTheme.Muted)
+                Icon(
+                    Icons.Default.Close,
+                    contentDescription = stringResource(Res.string.task_row_unpin_desc),
+                    tint = TactileTheme.Muted
+                )
             }
         }
     }

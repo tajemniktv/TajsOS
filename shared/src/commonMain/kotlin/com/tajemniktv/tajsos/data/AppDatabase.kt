@@ -29,8 +29,10 @@ import androidx.room.RoomDatabaseConstructor
         TemplateEntity::class,
         CalendarProviderEntity::class,
         CalendarEventEntity::class,
+        NodeSnapshotEntity::class,
+        ReviewEntity::class,
     ],
-    version = 17,
+    version = 18,
     exportSchema = false,
 )
 @ConstructedBy(AppDatabaseConstructor::class)
@@ -84,6 +86,16 @@ abstract class AppDatabase : RoomDatabase() {
      * Handles cached calendar events synced from external providers.
      */
     abstract fun calendarEventDao(): CalendarEventDao
+
+    /**
+     * Stores historical versions of nodes.
+     */
+    abstract fun nodeSnapshotDao(): NodeSnapshotDao
+
+    /**
+     * Manages formal review sessions.
+     */
+    abstract fun reviewDao(): ReviewDao
 }
 
 /**
@@ -105,5 +117,4 @@ expect object AppDatabaseConstructor : RoomDatabaseConstructor<AppDatabase> {
  */
 fun getDatabaseBuilder(builder: RoomDatabase.Builder<AppDatabase>): AppDatabase =
     builder
-        .fallbackToDestructiveMigration(true)
         .build()

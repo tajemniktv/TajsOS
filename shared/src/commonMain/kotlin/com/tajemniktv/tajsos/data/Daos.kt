@@ -224,6 +224,33 @@ interface TemplateDao {
 }
 
 @Dao
+interface NodeSnapshotDao {
+    @Query("SELECT * FROM node_snapshots WHERE nodeId = :nodeId ORDER BY timestamp DESC")
+    fun getSnapshotsForNode(nodeId: Long): Flow<List<NodeSnapshotEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertSnapshot(snapshot: NodeSnapshotEntity)
+
+    @Delete
+    suspend fun deleteSnapshot(snapshot: NodeSnapshotEntity)
+
+    @Query("DELETE FROM node_snapshots WHERE nodeId = :nodeId")
+    suspend fun deleteSnapshotsForNode(nodeId: Long)
+}
+
+@Dao
+interface ReviewDao {
+    @Query("SELECT * FROM reviews ORDER BY completedAt DESC")
+    fun getAllReviews(): Flow<List<ReviewEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertReview(review: ReviewEntity): Long
+
+    @Query("SELECT * FROM reviews WHERE type = :type ORDER BY completedAt DESC LIMIT 1")
+    suspend fun getLastReviewByType(type: String): ReviewEntity?
+}
+
+@Dao
 interface CalendarProviderDao {
     @Query("SELECT * FROM calendar_providers")
     fun getAllProviders(): Flow<List<CalendarProviderEntity>>

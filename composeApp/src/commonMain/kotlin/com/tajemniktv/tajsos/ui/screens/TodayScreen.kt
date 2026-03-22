@@ -24,6 +24,8 @@ import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.EmptyState
 import com.tajemniktv.tajsos.ui.components.TaskRow
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,14 +38,14 @@ fun TodayScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit) {
             .padding(TactileTheme.SpacingMd)
     ) {
         Text(
-            "TODAY'S PAYLOAD",
+            stringResource(Res.string.today_payload),
             style = MaterialTheme.typography.displayLarge,
             color = TactileTheme.Text
         )
         Spacer(Modifier.height(TactileTheme.SpacingLg))
 
         if (todayNodes.isEmpty()) {
-            EmptyState(message = "NO PAYLOAD DETECTED // TODAY IS EMPTY")
+            EmptyState(message = stringResource(Res.string.today_empty))
         } else {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
                 items(todayNodes.take(3), key = { it.id }) { node ->
@@ -101,7 +103,10 @@ fun TodayScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit) {
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                "SLOT ${todayNodes.size + index + 1} // STANDBY",
+                                stringResource(
+                                    Res.string.today_slot_standby,
+                                    todayNodes.size + index + 1
+                                ),
                                 style = MaterialTheme.typography.labelSmall.copy(letterSpacing = 1.sp),
                                 color = TactileTheme.Muted.copy(alpha = 0.5f)
                             )

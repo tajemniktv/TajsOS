@@ -24,7 +24,10 @@ import com.tajemniktv.tajsos.data.EventLogEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.NodeCard
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,7 +42,10 @@ fun ProjectDetailScreen(
 
     if (nodeWithPin == null) {
         Box(modifier = Modifier.fillMaxSize()) {
-            Text("Project not found", modifier = Modifier.padding(TactileTheme.SpacingMd))
+            Text(
+                stringResource(Res.string.project_detail_not_found),
+                modifier = Modifier.padding(TactileTheme.SpacingMd)
+            )
         }
         return
     }
@@ -66,27 +72,33 @@ fun ProjectDetailScreen(
             TopAppBar(
                 title = {
                     Text(
-                        "PROJECT // ${project.projectStatus?.uppercase() ?: project.status.uppercase()}",
+                        "${stringResource(Res.string.type_project).uppercase()} // ${project.projectStatus?.uppercase() ?: project.status.uppercase()}",
                         style = MaterialTheme.typography.labelSmall
                     )
                 },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(Res.string.detail_back)
+                        )
                     }
                 },
                 actions = {
                     IconButton(onClick = {
                         onEditNode(projectId)
                     }) {
-                        Icon(Icons.Default.Edit, contentDescription = "Edit Project")
+                        Icon(
+                            Icons.Default.Edit,
+                            contentDescription = stringResource(Res.string.project_detail_edit)
+                        )
                     }
                     IconButton(onClick = {
                         viewModel.updateNode(project.copy(isFrozen = !project.isFrozen))
                     }) {
                         Icon(
                             if (project.isFrozen) Icons.Default.AcUnit else Icons.Default.WbSunny,
-                            contentDescription = "Freeze/Unfreeze",
+                            contentDescription = stringResource(Res.string.project_detail_freeze),
                             tint = if (project.isFrozen) TactileTheme.Accent else TactileTheme.Primary
                         )
                     }
@@ -94,7 +106,10 @@ fun ProjectDetailScreen(
                         viewModel.archiveNode(project)
                         onBack()
                     }) {
-                        Icon(Icons.Default.Delete, contentDescription = "Archive")
+                        Icon(
+                            Icons.Default.Delete,
+                            contentDescription = stringResource(Res.string.detail_archive)
+                        )
                     }
                 }
             )
@@ -119,7 +134,7 @@ fun ProjectDetailScreen(
                 )
                 if (isNeglected) {
                     Text(
-                        "NEGLECTED",
+                        stringResource(Res.string.project_detail_neglected),
                         style = MaterialTheme.typography.labelSmall,
                         color = TactileTheme.Error,
                         modifier = Modifier.padding(top = 8.dp)
@@ -134,7 +149,7 @@ fun ProjectDetailScreen(
                     modifier = Modifier.padding(vertical = 8.dp).fillMaxWidth()
                 ) {
                     Text(
-                        "THIS PROJECT IS FROZEN // NO PROGRESS EXPECTED",
+                        stringResource(Res.string.project_detail_frozen_msg),
                         style = MaterialTheme.typography.labelSmall,
                         color = TactileTheme.Accent,
                         modifier = Modifier.padding(8.dp)
@@ -143,7 +158,10 @@ fun ProjectDetailScreen(
             }
 
             Text(
-                text = "WHY: ${project.projectWhy ?: "Not defined"}",
+                text = stringResource(
+                    Res.string.project_detail_why,
+                    project.projectWhy ?: stringResource(Res.string.detail_not_set)
+                ),
                 style = MaterialTheme.typography.bodySmall,
                 color = TactileTheme.Primary,
                 modifier = Modifier.padding(vertical = 4.dp)
@@ -167,7 +185,12 @@ fun ProjectDetailScreen(
                 strokeCap = androidx.compose.ui.graphics.StrokeCap.Round
             )
             Text(
-                "${(progress * 100).toInt()}% COMPLETE // $completed/$total ITEMS",
+                stringResource(
+                    Res.string.project_detail_progress,
+                    (progress * 100).toInt(),
+                    completed,
+                    total
+                ),
                 style = MaterialTheme.typography.labelSmall,
                 color = TactileTheme.Muted,
                 modifier = Modifier.padding(top = 4.dp)
@@ -176,7 +199,7 @@ fun ProjectDetailScreen(
             Spacer(modifier = Modifier.height(TactileTheme.SpacingLg))
 
             Text(
-                text = "NEXT ACTIONS",
+                text = stringResource(Res.string.project_detail_next_actions),
                 style = MaterialTheme.typography.labelSmall,
                 color = TactileTheme.Primary
             )
@@ -184,7 +207,7 @@ fun ProjectDetailScreen(
                 nodesWithPinForProject.filter { it.node.status == "active" && it.node.type == "task" }
             if (nextActions.isEmpty()) {
                 Text(
-                    "No active tasks.",
+                    stringResource(Res.string.project_detail_no_tasks),
                     style = MaterialTheme.typography.bodySmall,
                     color = TactileTheme.Muted
                 )
@@ -208,7 +231,7 @@ fun ProjectDetailScreen(
                 nodesWithPinForProject.filter { it.node.type == "note" || it.node.type == "idea" }
             if (linkedNotes.isNotEmpty()) {
                 Text(
-                    text = "LINKED NOTES",
+                    text = stringResource(Res.string.project_detail_linked_notes),
                     style = MaterialTheme.typography.labelSmall,
                     color = TactileTheme.Primary
                 )
@@ -230,7 +253,7 @@ fun ProjectDetailScreen(
             val linkedResources = nodesWithPinForProject.filter { it.node.type == "resource" }
             if (linkedResources.isNotEmpty()) {
                 Text(
-                    text = "RESOURCES",
+                    text = stringResource(Res.string.project_detail_resources),
                     style = MaterialTheme.typography.labelSmall,
                     color = TactileTheme.Primary
                 )
@@ -250,7 +273,7 @@ fun ProjectDetailScreen(
             }
 
             Text(
-                text = "PROJECT TIMELINE",
+                text = stringResource(Res.string.project_detail_timeline),
                 style = MaterialTheme.typography.labelSmall,
                 color = TactileTheme.Primary
             )
@@ -263,7 +286,7 @@ fun ProjectDetailScreen(
             Spacer(modifier = Modifier.height(TactileTheme.SpacingLg))
 
             Text(
-                text = "PROJECT INBOX & ALL ITEMS",
+                text = stringResource(Res.string.project_detail_inbox_all),
                 style = MaterialTheme.typography.labelSmall,
                 color = TactileTheme.Primary
             )
@@ -304,7 +327,7 @@ fun ProjectTimelineItem(log: EventLogEntity) {
             val date = kotlin.time.Instant.fromEpochMilliseconds(log.timestamp)
                 .toLocalDateTime(kotlinx.datetime.TimeZone.currentSystemDefault())
             Text(
-                text = "${date.hour}:${date.minute} // ${date.dayOfMonth}/${date.monthNumber}",
+                text = "${date.hour}:${date.minute} // ${date.day}/${date.month.number}",
                 style = MaterialTheme.typography.labelSmall,
                 color = TactileTheme.Muted
             )

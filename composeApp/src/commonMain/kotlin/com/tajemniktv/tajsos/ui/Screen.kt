@@ -8,56 +8,63 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.*
 import androidx.compose.ui.graphics.vector.ImageVector
+import org.jetbrains.compose.resources.StringResource
+import tajsos.composeapp.generated.resources.*
 
 /**
  * Screen defines the navigation graph of the app.
  */
 sealed class Screen(
     val route: String,
-    val label: String,
+    val label: StringResource,
     val icon: ImageVector,
 ) {
-    data object Dashboard : Screen("dashboard", "DASH", Icons.Default.Home)
+    data object Dashboard : Screen("dashboard", Res.string.screen_dash, Icons.Default.Home)
 
-    data object Inbox : Screen("inbox", "INBOX", Icons.Default.Email)
+    data object Inbox : Screen("inbox", Res.string.screen_inbox, Icons.Default.Email)
 
-    data object Search : Screen("search", "FIND", Icons.Default.Search)
+    data object Search : Screen("search", Res.string.screen_search, Icons.Default.Search)
 
-    data object Today : Screen("today", "TODAY", Icons.Default.DateRange)
+    data object Today : Screen("today", Res.string.screen_today, Icons.Default.DateRange)
 
-    data object Focus : Screen("focus", "FOCUS", Icons.Default.PlayArrow)
+    data object Focus : Screen("focus", Res.string.screen_focus, Icons.Default.PlayArrow)
 
-    data object Track : Screen("track", "TRACK", Icons.Default.CheckCircle)
+    data object Track : Screen("track", Res.string.screen_track, Icons.Default.CheckCircle)
 
-    data object Tasks : Screen("tasks", "TASKS", Icons.AutoMirrored.Filled.List)
+    data object Tasks : Screen("tasks", Res.string.screen_tasks, Icons.AutoMirrored.Filled.List)
 
-    data object Notes : Screen("notes", "NOTES", Icons.Default.Edit)
+    data object Notes : Screen("notes", Res.string.screen_notes, Icons.Default.Edit)
 
-    data object NoteDetail : Screen("note/{noteId}", "NOTE", Icons.Default.Edit)
+    data object NoteDetail : Screen("note/{noteId}", Res.string.screen_note, Icons.Default.Edit)
 
-    data object Insights : Screen("insights", "STATS", Icons.Default.Info)
+    data object Insights : Screen("insights", Res.string.screen_stats, Icons.Default.Info)
 
-    data object Archive : Screen("archive", "ARCHIVE", Icons.Default.Delete)
+    data object Archive : Screen("archive", Res.string.screen_archive, Icons.Default.Delete)
 
-    data object Calendar : Screen("calendar", "CAL", Icons.Default.Event)
+    data object Calendar : Screen("calendar", Res.string.screen_cal, Icons.Default.Event)
 
-    data object CalendarSettings : Screen("calendar_settings", "CAL OPTS", Icons.Default.Settings)
+    data object CalendarSettings :
+        Screen("calendar_settings", Res.string.screen_cal_opts, Icons.Default.Settings)
 
-    data object Graph : Screen("graph", "GRAPH", Icons.Default.Share)
+    data object Graph : Screen("graph", Res.string.screen_graph, Icons.Default.Share)
 
-    data object Projects : Screen("projects", "PROJ", Icons.AutoMirrored.Filled.List)
+    data object Projects :
+        Screen("projects", Res.string.screen_proj, Icons.AutoMirrored.Filled.List)
 
-    data object Areas : Screen("areas", "AREA", Icons.Default.LocationOn)
+    data object Areas : Screen("areas", Res.string.screen_area, Icons.Default.LocationOn)
 
     data object ProjectDetail : Screen(
         "project/{projectId}",
-        "PROJECT",
+        Res.string.screen_project,
         Icons.AutoMirrored.Filled.List,
     )
 
-    data object AreaDetail : Screen("area/{areaId}", "AREA", Icons.Default.LocationOn)
+    data object AreaDetail :
+        Screen("area/{areaId}", Res.string.screen_area, Icons.Default.LocationOn)
 
-    data object Settings : Screen("settings", "OPTS", Icons.Default.Settings)
+    data object Settings : Screen("settings", Res.string.screen_opts, Icons.Default.Settings)
 
-    data object Templates : Screen("templates", "TEMPLATES", Icons.Default.Settings)
+    data object Templates : Screen("templates", Res.string.screen_templates, Icons.Default.Settings)
+
+    data object Review : Screen("review", Res.string.screen_review, Icons.Default.RateReview)
 }

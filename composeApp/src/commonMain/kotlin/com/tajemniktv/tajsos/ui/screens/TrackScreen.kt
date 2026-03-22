@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
 package com.tajemniktv.tajsos.ui.screens
 
 import androidx.compose.foundation.layout.*
@@ -14,6 +18,8 @@ import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.*
 import kotlin.math.roundToInt
 
 @Composable
@@ -25,6 +31,11 @@ fun TrackScreen(viewModel: MainViewModel) {
     var energy by remember(todayEntry) { mutableFloatStateOf(todayEntry?.energyScore?.toFloat() ?: 3f) }
     var mood by remember(todayEntry) { mutableFloatStateOf(todayEntry?.moodScore?.toFloat() ?: 3f) }
     var focus by remember(todayEntry) { mutableFloatStateOf(todayEntry?.focusScore?.toFloat() ?: 3f) }
+    var anxiety by remember(todayEntry) {
+        mutableFloatStateOf(
+            todayEntry?.anxietyScore?.toFloat() ?: 1f
+        )
+    }
     var sleep by remember(todayEntry) { mutableFloatStateOf(todayEntry?.sleepScore ?: 7f) }
     var tookMeds by remember(todayEntry) { mutableStateOf(todayEntry?.tookMeds ?: false) }
     var note by remember(todayEntry) { mutableStateOf(todayEntry?.symptomNote ?: "") }
@@ -37,12 +48,12 @@ fun TrackScreen(viewModel: MainViewModel) {
     ) {
         item {
             Text(
-                "DAILY TRACKING",
+                stringResource(Res.string.track_title),
                 style = MaterialTheme.typography.displayMedium,
                 color = TactileTheme.Text
             )
             Text(
-                "HOW ARE YOU OPERATING TODAY?",
+                stringResource(Res.string.track_subtitle),
                 style = MaterialTheme.typography.labelSmall,
                 color = TactileTheme.Primary
             )
@@ -51,27 +62,33 @@ fun TrackScreen(viewModel: MainViewModel) {
 
         item {
             TrackSlider(
-                label = "ENERGY",
+                label = stringResource(Res.string.track_label_energy),
                 value = energy,
                 onValueChange = { energy = it })
         }
         item {
             TrackSlider(
-                label = "MOOD",
+                label = stringResource(Res.string.track_label_mood),
                 value = mood,
                 onValueChange = { mood = it })
         }
         item {
             TrackSlider(
-                label = "FOCUS",
+                label = stringResource(Res.string.track_label_focus),
                 value = focus,
                 onValueChange = { focus = it })
+        }
+        item {
+            TrackSlider(
+                label = stringResource(Res.string.track_label_anxiety),
+                value = anxiety,
+                onValueChange = { anxiety = it })
         }
 
         item {
             Column {
                 Text(
-                    "SLEEP (HOURS): ${sleep.roundToInt()}",
+                    stringResource(Res.string.track_label_sleep, sleep.roundToInt()),
                     style = MaterialTheme.typography.labelSmall,
                     color = TactileTheme.Muted
                 )
@@ -99,7 +116,11 @@ fun TrackScreen(viewModel: MainViewModel) {
                     onCheckedChange = { tookMeds = it },
                     colors = CheckboxDefaults.colors(checkedColor = TactileTheme.Primary)
                 )
-                Text("TOOK MEDS", style = MaterialTheme.typography.bodyLarge, color = TactileTheme.Text)
+                Text(
+                    stringResource(Res.string.track_meds),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = TactileTheme.Text
+                )
             }
         }
 
@@ -107,9 +128,9 @@ fun TrackScreen(viewModel: MainViewModel) {
             OutlinedTextField(
                 value = note,
                 onValueChange = { note = it },
-                label = { Text("OBSERVATIONS / SYMPTOMS") },
+                label = { Text(stringResource(Res.string.track_observations_label)) },
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("Any specific context for today?") },
+                placeholder = { Text(stringResource(Res.string.track_observations_placeholder)) },
                 shape = RoundedCornerShape(TactileTheme.RadiusSm)
             )
         }
@@ -121,6 +142,7 @@ fun TrackScreen(viewModel: MainViewModel) {
                         mood = mood.roundToInt(),
                         energy = energy.roundToInt(),
                         focus = focus.roundToInt(),
+                        anxiety = anxiety.roundToInt(),
                         sleep = sleep,
                         tookMeds = tookMeds,
                         note = note
@@ -129,13 +151,20 @@ fun TrackScreen(viewModel: MainViewModel) {
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(TactileTheme.RadiusMd)
             ) {
-                Text("SAVE STATUS", style = MaterialTheme.typography.labelLarge)
+                Text(
+                    stringResource(Res.string.track_save),
+                    style = MaterialTheme.typography.labelLarge
+                )
             }
         }
 
         item {
             Spacer(Modifier.height(TactileTheme.SpacingLg))
-            Text("HISTORY", style = MaterialTheme.typography.labelSmall, color = TactileTheme.Primary)
+            Text(
+                stringResource(Res.string.track_history),
+                style = MaterialTheme.typography.labelSmall,
+                color = TactileTheme.Primary
+            )
         }
 
         items(trackEntries, key = { it.id }) { entry ->
@@ -183,17 +212,22 @@ fun TrackHistoryItem(entry: TrackEntryEntity) {
             ) {
                 Text(entry.date, style = MaterialTheme.typography.labelSmall, color = TactileTheme.Primary)
                 if (entry.tookMeds) {
-                    Text("MEDS OK", style = MaterialTheme.typography.labelSmall, color = TactileTheme.Success)
+                    Text(
+                        stringResource(Res.string.track_history_meds_ok),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = TactileTheme.Success
+                    )
                 }
             }
             Spacer(Modifier.height(4.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
-                StatusChip("MOOD", entry.moodScore)
-                StatusChip("ENERGY", entry.energyScore)
-                StatusChip("FOCUS", entry.focusScore)
+                StatusChip(stringResource(Res.string.track_label_mood), entry.moodScore)
+                StatusChip(stringResource(Res.string.track_label_energy), entry.energyScore)
+                StatusChip(stringResource(Res.string.track_label_focus), entry.focusScore)
+                StatusChip("ANX", entry.anxietyScore) // Could add track_label_anxiety_short
                 if (entry.sleepScore != null) {
                     Text(
-                        "SLEEP: ${entry.sleepScore}H",
+                        stringResource(Res.string.track_history_sleep, entry.sleepScore!!.toInt()),
                         style = MaterialTheme.typography.labelSmall,
                         color = TactileTheme.Text
                     )

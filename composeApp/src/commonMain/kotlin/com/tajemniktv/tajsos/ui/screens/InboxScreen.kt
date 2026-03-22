@@ -23,6 +23,8 @@ import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.EmptyState
 import com.tajemniktv.tajsos.ui.components.NodeCard
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,24 +42,27 @@ fun InboxScreen(
                 .fillMaxSize()
                 .padding(16.dp),
     ) {
-        Text("Quick Capture", style = MaterialTheme.typography.titleLarge)
+        Text(
+            stringResource(Res.string.inbox_quick_capture),
+            style = MaterialTheme.typography.titleLarge
+        )
         Spacer(Modifier.height(12.dp))
 
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             FilterChip(
                 selected = selectedType == "task",
                 onClick = { selectedType = "task" },
-                label = { Text("Task") },
+                label = { Text(stringResource(Res.string.type_task)) },
             )
             FilterChip(
                 selected = selectedType == "note",
                 onClick = { selectedType = "note" },
-                label = { Text("Note") },
+                label = { Text(stringResource(Res.string.type_note)) },
             )
             FilterChip(
                 selected = selectedType == "idea",
                 onClick = { selectedType = "idea" },
-                label = { Text("Idea") },
+                label = { Text(stringResource(Res.string.type_idea)) },
             )
         }
 
@@ -67,7 +72,7 @@ fun InboxScreen(
             value = itemInput,
             onValueChange = { itemInput = it },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("What's on your mind?") },
+            placeholder = { Text(stringResource(Res.string.inbox_placeholder)) },
             trailingIcon = {
                 if (itemInput.isNotBlank()) {
                     IconButton(onClick = {
@@ -76,7 +81,7 @@ fun InboxScreen(
                     }) {
                         Icon(
                             Icons.AutoMirrored.Filled.Send,
-                            contentDescription = "Add",
+                            contentDescription = stringResource(Res.string.inbox_add),
                             tint = MaterialTheme.colorScheme.primary,
                         )
                     }
@@ -94,11 +99,15 @@ fun InboxScreen(
         )
 
         Spacer(modifier = Modifier.height(24.dp))
-        Text("Recent Entries", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
+        Text(
+            stringResource(Res.string.inbox_recent_entries),
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.primary
+        )
         Spacer(modifier = Modifier.height(8.dp))
 
         if (nodes.isEmpty()) {
-            EmptyState(message = "NO ENTRIES FOUND // BRAIN CLEAR")
+            EmptyState(message = stringResource(Res.string.inbox_empty))
         } else {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 items(nodes, key = { it.node.id }) { nodeWithPin ->
@@ -130,7 +139,7 @@ fun InboxScreen(
                         IconButton(onClick = { viewModel.markAsProcessed(nodeWithPin.node.id) }) {
                             Icon(
                                 imageVector = Icons.Default.Check,
-                                contentDescription = "Process",
+                                contentDescription = stringResource(Res.string.inbox_process),
                                 tint = MaterialTheme.colorScheme.primary,
                             )
                         }
