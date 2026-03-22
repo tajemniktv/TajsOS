@@ -2,6 +2,455 @@
   ~ Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
   -->
 
+<!-- values/string.xml -->
 <resources>
-    <string name="app_name" translatable="false">TajsOS</string>
+    <string name="app_name">TajsOS</string>
+    <string name="app_status_ok">TajsOS // STATUS: OK</string>
+
+    <!-- Navigation -->
+    <string name="nav_core">CORE</string>
+    <string name="nav_execution">EXECUTION</string>
+    <string name="nav_brain">SECOND BRAIN</string>
+    <string name="nav_status">STATUS &amp; INSIGHTS</string>
+    <string name="nav_system">SYSTEM</string>
+    <string name="nav_menu">Menu</string>
+    <string name="nav_capture">Capture</string>
+
+    <!-- Screens -->
+    <string name="screen_dash">DASH</string>
+    <string name="screen_inbox">INBOX</string>
+    <string name="screen_search">FIND</string>
+    <string name="screen_today">TODAY</string>
+    <string name="screen_focus">FOCUS</string>
+    <string name="screen_track">TRACK</string>
+    <string name="screen_tasks">TASKS</string>
+    <string name="screen_notes">NOTES</string>
+    <string name="screen_note">NOTE</string>
+    <string name="screen_stats">STATS</string>
+    <string name="screen_archive">ARCHIVE</string>
+    <string name="screen_cal">CAL</string>
+    <string name="screen_cal_opts">CAL OPTS</string>
+    <string name="screen_graph">GRAPH</string>
+    <string name="screen_proj">PROJ</string>
+    <string name="screen_area">AREA</string>
+    <string name="screen_project">PROJECT</string>
+    <string name="screen_opts">OPTS</string>
+    <string name="screen_templates">TEMPLATES</string>
+    <string name="screen_review">REVIEW</string>
+    <string name="screen_history">HISTORY</string>
+
+    <!-- Review Screen -->
+    <string name="review_select_type">SELECT REVIEW TYPE</string>
+    <string name="review_daily">DAILY RESET</string>
+    <string name="review_weekly">WEEKLY REVIEW</string>
+    <string name="review_monthly">MONTHLY REFLECTION</string>
+    <string name="review_next">NEXT</string>
+    <string name="review_complete">COMPLETE REVIEW</string>
+    <string name="review_step_mood_energy">MOOD &amp; ENERGY</string>
+    <string name="review_step_wins">WINS OF THE DAY</string>
+    <string name="review_step_blockers">BLOCKERS</string>
+    <string name="review_step_plan">PLAN TOMORROW</string>
+    <string name="review_step_stats">WEEKLY STATS</string>
+    <string name="review_step_cleanup">CLEANUP BACKLOG</string>
+    <string name="review_step_archive">ARCHIVE SUGGESTIONS</string>
+    <string name="review_step_goals">GOALS FOR NEXT WEEK</string>
+    <string name="common_back">Back</string>
+
+    <!-- Dashboard -->
+    <string name="dash_command">COMMAND</string>
+    <string name="dash_search_placeholder">SEARCH YOUR LIFE...</string>
+    <string name="dash_review_pending">WEEKLY REVIEW PENDING</string>
+    <string name="dash_review_pending_desc">Time to zoom out and align your Second Brain.</string>
+    <string name="dash_suggestions_title">PERSONAL SUGGESTIONS</string>
+    <string name="dash_suggestion_stress">High stress detected. Try a 5-minute reset?</string>
+    <string name="dash_suggestion_low_focus">Focus is low. Start with a tiny task?</string>
+    <string name="dash_suggestion_meds">Don\'t forget your medication if needed.</string>
+    <string name="dash_life_summary">LIFE SUMMARY</string>
+    <string name="dash_captures_week">CAPTURES / WEEK</string>
+    <string name="dash_done_week">DONE / WEEK</string>
+    <string name="dash_state_actions">STATE-AWARE ACTIONS</string>
+    <string name="dash_overwhelmed">OVERWHELMED</string>
+    <string name="dash_overwhelmed_desc">Easy wins only</string>
+    <string name="dash_cannot_think">CANNOT THINK</string>
+    <string name="dash_cannot_think_desc">Low energy tasks</string>
+    <string name="dash_10_minutes">10 MINUTES</string>
+    <string name="dash_10_minutes_desc">Quick micro-steps</string>
+    <string name="dash_recovery_mode">RECOVERY MODE // LOW ENERGY DETECTED</string>
+    <string name="dash_recovery_desc">Your energy is low. Try these easy wins:</string>
+    <string name="dash_operating">OPERATING</string>
+    <string name="dash_next_context">NEXT CONTEXT</string>
+    <string name="dash_view">VIEW</string>
+    <string name="dash_engage">ENGAGE</string>
+    <string name="dash_inbox_overflow">%d ITEMS OVERFLOWING INBOX</string>
+    <string name="dash_inbox_new">%d NEW ITEMS TO PROCESS</string>
+    <string name="dash_batch_suggestion">BATCH SUGGESTION // %s</string>
+    <string name="dash_batch_desc">You have %d tasks in %s. Batch them?</string>
+    <string name="dash_quick_wins">QUICK WINS</string>
+    <string name="dash_deep_work">DEEP WORK // HIGH ENERGY</string>
+    <string name="dash_top_3">TOP 3 FOR TODAY</string>
+    <string name="dash_overdue">OVERDUE</string>
+    <string name="dash_active_reminders">ACTIVE REMINDERS</string>
+    <string name="dash_dismiss">Dismiss</string>
+    <string name="dash_pinned_knowledge">PINNED KNOWLEDGE</string>
+    <string name="dash_knowledge_vaults">KNOWLEDGE VAULTS</string>
+    <string name="dash_read_later">READ LATER</string>
+    <string name="dash_items_count">%d ITEMS</string>
+    <string name="dash_quotes">QUOTES</string>
+    <string name="dash_ideas">IDEAS</string>
+    <string name="dash_unset_count">%d UNSET</string>
+    <string name="dash_upcoming_deadlines">UPCOMING DEADLINES</string>
+    <string name="dash_review_reset">REVIEW &amp; RESET</string>
+    <string name="dash_check_in">CHECK-IN</string>
+    <string name="dash_relevant_project">MOST RELEVANT PROJECT</string>
+    <string name="dash_relevant_note">MOST RELEVANT NOTE</string>
+    <string name="dash_module_ready">READY</string>
+    <string name="dash_module_waiting">WAITING</string>
+    <string name="dash_module_logged">LOGGED</string>
+    <string name="dash_module_pending">PENDING</string>
+    <string name="dash_module_tasks_count">%d TASKS</string>
+    <string name="dash_module_total_count">%d TOTAL</string>
+    <string name="dash_module_active_count">%d ACTIVE</string>
+    <string name="dash_module_items_count">%d ITEMS</string>
+    <string name="dash_module_empty">EMPTY</string>
+    <string name="dash_module_none">NONE</string>
+    <string name="dash_history_last">LAST: %s</string>
+
+    <!-- Dashboard Additions -->
+    <string name="dash_morning_reset">MORNING RESET</string>
+    <string name="dash_morning_reset_desc">Regain orientation and set your intention for the day.</string>
+    <string name="dash_evening_shutdown">EVENING SHUTDOWN</string>
+    <string name="dash_evening_shutdown_desc">Close the open loops and prepare for rest.</string>
+    <string name="dash_quick_links">QUICK LINKS</string>
+    <string name="dash_foundational">FOUNDATIONAL PRINCIPLE</string>
+    <string name="dash_resource_highlights">RESOURCE HIGHLIGHTS</string>
+    <string name="dash_vibe_morning">Good morning. Let\'s operate.</string>
+    <string name="dash_vibe_afternoon">Steady progress. Keep the momentum.</string>
+    <string name="dash_vibe_evening">The day is winding down. Clear the deck.</string>
+    <string name="dash_vibe_night">System standby. Rest is part of the work.</string>
+
+    <!-- Settings -->
+    <string name="settings_title">SETTINGS</string>
+    <string name="settings_security">SECURITY</string>
+    <string name="settings_biometric_lock">BIOMETRIC LOCK</string>
+    <string name="settings_biometric_desc">Require authentication to open</string>
+    <string name="settings_biometric_unavailable">Hardware not available</string>
+    <string name="settings_calendar_integration">CALENDAR INTEGRATION</string>
+    <string name="settings_configure_calendars">CONFIGURE EXTERNAL CALENDARS</string>
+    <string name="settings_manage_templates">MANAGE TEMPLATES</string>
+    <string name="settings_data_management">DATA MANAGEMENT</string>
+    <string name="settings_export_data">EXPORT LOCAL DATA</string>
+    <string name="settings_export_success">Data exported (%d chars)</string>
+    <string name="settings_force_crash">FORCE TEST CRASH</string>
+
+    <!-- Inbox -->
+    <string name="inbox_quick_capture">Quick Capture</string>
+    <string name="inbox_placeholder">What\'s on your mind?</string>
+    <string name="inbox_recent_entries">Recent Entries</string>
+    <string name="inbox_empty">NO ENTRIES FOUND // BRAIN CLEAR</string>
+    <string name="inbox_add">Add</string>
+    <string name="inbox_process">Process</string>
+
+    <!-- Capture Sheet -->
+    <string name="capture_brain_dump_active">BRAIN DUMP ACTIVE</string>
+    <string name="capture_quick_capture">QUICK CAPTURE</string>
+    <string name="capture_multi">MULTI</string>
+    <string name="capture_dump">DUMP</string>
+    <string name="capture_placeholder_project">Project name...</string>
+    <string name="capture_placeholder_area">Area name...</string>
+    <string name="capture_placeholder_next_thought">Next thought...</string>
+    <string name="capture_placeholder_dump_thought">Dump thought...</string>
+    <string name="capture_voice">Voice Capture</string>
+    <string name="capture_type">TYPE</string>
+    <string name="capture_use_template">USE TEMPLATE</string>
+    <string name="capture_recurring">RECURRING</string>
+    <string name="capture_no_reminder">NO REMINDER</string>
+    <string name="capture_process_later">PROCESS LATER</string>
+    <string name="capture_interval_daily">DAILY</string>
+    <string name="capture_interval_weekly">WEEKLY</string>
+    <string name="capture_interval_monthly">MONTHLY</string>
+    <string name="capture_assign_to_area">ASSIGN TO AREA</string>
+    <string name="capture_save_continue">SAVE &amp; CONTINUE</string>
+    <string name="capture_save_type">SAVE %s</string>
+
+    <!-- Search -->
+    <string name="search_placeholder">Search items...</string>
+    <string name="search_clear">Clear</string>
+    <string name="search_reset_filters">Reset Filters</string>
+    <string name="search_filter_active">ACTIVE</string>
+    <string name="search_filter_archived">ARCHIVED</string>
+    <string name="search_filter_linked_to">LINKED TO: %s</string>
+    <string name="search_no_results">NO MATCHING RESULTS FOUND</string>
+
+    <!-- Focus Screen -->
+    <string name="focus_no_active_task">NO ACTIVE TASK</string>
+    <string name="focus_next_tiny_step">NEXT TINY STEP</string>
+    <string name="focus_engage">ENGAGE</string>
+    <string name="focus_recent_sessions">RECENT SESSIONS</string>
+    <string name="focus_unknown_task">Unknown Task</string>
+    <string name="focus_session_duration">%dm %ds focus session</string>
+
+    <!-- Track Screen -->
+    <string name="track_title">DAILY TRACKING</string>
+    <string name="track_subtitle">HOW ARE YOU OPERATING TODAY?</string>
+    <string name="track_label_energy">ENERGY</string>
+    <string name="track_label_mood">MOOD</string>
+    <string name="track_label_focus">FOCUS</string>
+    <string name="track_label_anxiety">STRESS / ANXIETY</string>
+    <string name="track_label_sleep">SLEEP (HOURS): %d</string>
+    <string name="track_meds">TOOK MEDS</string>
+    <string name="track_observations_label">OBSERVATIONS / SYMPTOMS</string>
+    <string name="track_observations_placeholder">Any specific context for today?</string>
+    <string name="track_save">SAVE STATUS</string>
+    <string name="track_history">HISTORY</string>
+    <string name="track_history_meds_ok">MEDS OK</string>
+    <string name="track_history_sleep">SLEEP: %dH</string>
+
+    <!-- Insights Screen -->
+    <string name="insights_title">INSIGHTS &amp; REVIEW</string>
+    <string name="insights_subtitle">LAST 7 DAYS PATTERNS</string>
+    <string name="insights_auto_prepared_review">AUTO-PREPARED REVIEW</string>
+    <string name="insights_capacity">CAPACITY</string>
+    <string name="insights_captures">CAPTURES</string>
+    <string name="insights_completions">COMPLETIONS</string>
+    <string name="insights_focus_execution">FOCUS &amp; EXECUTION</string>
+    <string name="insights_total_hours">TOTAL HOURS</string>
+    <string name="insights_avg_session_min">AVG SESSION MIN</string>
+    <string name="insights_peak_focus">Peak focus at %s</string>
+    <string name="insights_efficiency_chaos">EFFICIENCY &amp; CHAOS</string>
+    <string name="insights_archive">ARCHIVE</string>
+    <string name="insights_postpones">POSTPONES</string>
+    <string name="insights_chaos">CHAOS</string>
+    <string name="insights_pressure">Pressure: %s</string>
+    <string name="insights_switching">Switching: %.1f</string>
+    <string name="insights_peak_completions">Peak completions at %s</string>
+    <string name="insights_intake_dynamics">INTAKE DYNAMICS</string>
+    <string name="insights_new_inbox_items">NEW INBOX ITEMS</string>
+    <string name="insights_unprocessed_rate">UNPROCESSED RATE</string>
+    <string name="insights_system_stability">SYSTEM STABILITY</string>
+    <string name="insights_context_stability">CONTEXT STABILITY</string>
+    <string name="insights_biometrics">BIOMETRICS</string>
+    <string name="insights_lifestyle_correlations">LIFESTYLE CORRELATIONS</string>
+    <string name="insights_avoidance_pattern">AVOIDANCE PATTERN: %d items postponed on low-mood days.</string>
+    <string name="insights_cards_title">INSIGHT CARDS</string>
+    <string name="insights_friction_alert_title">FRICTION ALERT</string>
+    <string name="insights_friction_alert_msg">You postpone %s items most often. Is there a hidden blocker here?</string>
+    <string name="insights_creative_peak_title">CREATIVE PEAK</string>
+    <string name="insights_creative_peak_msg">You capture most ideas in the %s. Keep a capture device ready then!</string>
+    <string name="insights_stagnant_knowledge_title">STAGNANT KNOWLEDGE</string>
+    <string name="insights_stagnant_knowledge_msg">%s has notes but no active tasks. Seed some actions?</string>
+    <string name="insights_radar_drop_title">RADAR DROP</string>
+    <string name="insights_radar_drop_msg">%s has disappeared from the radar. No activity in 7 days.</string>
+    <string name="insights_neglected_projects">NEGLECTED PROJECTS</string>
+    <string name="insights_high_entropy_projects">HIGH ENTROPY PROJECTS</string>
+    <string name="insights_recent_activity">RECENT ACTIVITY</string>
+    <string name="insights_needs_attention">NEEDS ATTENTION</string>
+
+    <!-- Today Screen -->
+    <string name="today_payload">TODAY\'S PAYLOAD</string>
+    <string name="today_empty">NO PAYLOAD DETECTED // TODAY IS EMPTY</string>
+    <string name="today_slot_standby">SLOT %d // STANDBY</string>
+
+    <!-- Archive Screen -->
+    <string name="archive_title">ARCHIVE</string>
+    <string name="archive_subtitle">NOTHING IS EVER TRULY GONE. RESTORE ANY ITEM AT ANY TIME.</string>
+    <string name="archive_empty">NO ARCHIVED ITEMS</string>
+    <string name="archive_restore">Restore</string>
+    <string name="archive_delete">Delete</string>
+
+    <!-- Notes Screen -->
+    <string name="notes_title">KNOWLEDGE &amp; IDEAS</string>
+    <string name="notes_search_placeholder">Search knowledge...</string>
+    <string name="notes_pinned_knowledge">PINNED KNOWLEDGE</string>
+    <string name="notes_ideas">IDEAS</string>
+    <string name="notes_notes">NOTES</string>
+    <string name="notes_resources">RESOURCES &amp; ASSETS</string>
+    <string name="notes_empty">NO KNOWLEDGE FOUND</string>
+    <string name="notes_no_results">NO MATCHING RESULTS</string>
+
+    <!-- Tasks Screen -->
+    <string name="tasks_title">TASKS</string>
+    <string name="tasks_empty">NO TASKS FOUND</string>
+
+    <!-- Projects Screen -->
+    <string name="projects_title">PROJECTS</string>
+    <string name="projects_search_placeholder">Search projects...</string>
+    <string name="projects_filter_active">ACTIVE</string>
+    <string name="projects_filter_someday">SOMEDAY</string>
+    <string name="projects_empty">No projects yet.</string>
+    <string name="projects_create_first">CREATE FIRST PROJECT</string>
+    <string name="projects_dialog_new">NEW PROJECT</string>
+    <string name="projects_dialog_name">Name</string>
+    <string name="projects_dialog_description">Description</string>
+    <string name="projects_dialog_create">CREATE</string>
+    <string name="projects_dialog_cancel">CANCEL</string>
+
+    <!-- Areas Screen -->
+    <string name="areas_title">AREAS</string>
+    <string name="areas_empty">No areas yet.</string>
+    <string name="areas_create_first">CREATE FIRST AREA</string>
+    <string name="areas_dialog_new">NEW AREA</string>
+    <string name="areas_dialog_name">Name</string>
+    <string name="areas_dialog_create">CREATE</string>
+    <string name="areas_dialog_cancel">CANCEL</string>
+
+    <!-- Calendar Screen -->
+    <string name="cal_agenda_title">AGENDA // %s</string>
+    <string name="cal_today">TODAY</string>
+    <string name="cal_sync">Sync</string>
+    <string name="cal_previous">Previous</string>
+    <string name="cal_next">Next</string>
+    <string name="cal_no_events">NO EVENTS RECORDED</string>
+    <string name="cal_all_day">ALL DAY</string>
+    <string name="cal_settings_title">CALENDAR SYNC</string>
+    <string name="cal_settings_add">Add Calendar</string>
+    <string name="cal_settings_empty">NO EXTERNAL CALENDARS CONNECTED</string>
+    <string name="cal_settings_dialog_title">ADD EXTERNAL CALENDAR</string>
+    <string name="cal_settings_dialog_name">Name</string>
+    <string name="cal_settings_dialog_url">ICS URL</string>
+    <string name="cal_settings_dialog_add">ADD</string>
+    <string name="cal_settings_dialog_cancel">CANCEL</string>
+
+    <!-- Templates Screen -->
+    <string name="templates_title">TEMPLATES</string>
+    <string name="templates_empty">NO TEMPLATES DEFINED</string>
+    <string name="templates_add_desc">Add Template</string>
+    <string name="templates_new_dialog">NEW TEMPLATE</string>
+    <string name="templates_dialog_name">Name</string>
+    <string name="templates_dialog_create">CREATE</string>
+    <string name="templates_dialog_cancel">CANCEL</string>
+
+    <!-- Node Detail -->
+    <string name="detail_title">Title</string>
+    <string name="detail_content">Content</string>
+    <string name="detail_status">Status</string>
+    <string name="detail_type">Type</string>
+    <string name="detail_due_at">Due at</string>
+    <string name="detail_reminder_at">Reminder at</string>
+    <string name="detail_pin_today">Pin to Today</string>
+    <string name="detail_unpin_today">Unpin from Today</string>
+    <string name="detail_archive">Archive</string>
+    <string name="detail_delete">Delete Permanently</string>
+    <string name="detail_project">Project</string>
+    <string name="detail_area">Area</string>
+    <string name="detail_back">Back</string>
+    <string name="detail_save">Save</string>
+    <string name="detail_not_found">Note not found (ID: %d)</string>
+    <string name="detail_atomic_mode">Atomic mode toggle</string>
+    <string name="detail_create_snapshot">Create snapshot</string>
+    <string name="detail_versions">Versions</string>
+    <string name="detail_merge">Merge notes</string>
+    <string name="detail_favorite">Pin knowledge</string>
+    <string name="detail_process">Process</string>
+    <string name="detail_convert">Convert</string>
+    <string name="detail_repeat">Repeat Task</string>
+    <string name="detail_duplicate">Duplicate</string>
+    <string name="detail_untitled">Untitled...</string>
+    <string name="detail_remove_tag">Remove Tag</string>
+    <string name="detail_add_tag">Add Tag</string>
+    <string name="detail_next_step">NEXT SMALLEST STEP</string>
+    <string name="detail_next_step_placeholder">Define the smallest possible action...</string>
+    <string name="detail_auto_extract">Auto Extract</string>
+    <string name="detail_completion_note">COMPLETION NOTE</string>
+    <string name="detail_completion_placeholder">Why did this work? Any reflections?</string>
+    <string name="detail_start_writing">Start writing...</string>
+    <string name="detail_split_subtasks">Split Subtasks</string>
+    <string name="detail_split_note">Split Note</string>
+    <string name="detail_relationship_inspector">RELATIONSHIP INSPECTOR</string>
+    <string name="detail_find_all">FIND ALL</string>
+    <string name="detail_backlinks">BACKLINKS / USED IN</string>
+    <string name="detail_suggestions">SUGGESTIONS</string>
+    <string name="detail_link_node">LINK NODE</string>
+    <string name="detail_attachments">ATTACHMENTS</string>
+    <string name="detail_remove_attachment">Remove Attachment</string>
+    <string name="detail_add_link">ADD LINK</string>
+    <string name="detail_knowledge">KNOWLEDGE</string>
+    <string name="detail_note_type">Note Type</string>
+    <string name="detail_progressive_state">Progressive State</string>
+    <string name="detail_stale_warning">You have not looked at this in %d days. Revisit?</string>
+    <string name="detail_organization">ORGANIZATION</string>
+    <string name="detail_energy_required">Energy Required</string>
+    <string name="detail_energy_low">LOW ENERGY</string>
+    <string name="detail_energy_med">MEDIUM ENERGY</string>
+    <string name="detail_energy_high">HIGH ENERGY</string>
+    <string name="detail_not_set">NOT SET</string>
+    <string name="detail_task_friction">Task Friction</string>
+    <string name="detail_time_estimate">Time Estimate</string>
+    <string name="detail_estimate_mins">%d min</string>
+    <string name="detail_postpone_count">Postpone Count</string>
+    <string name="detail_postpone_times">%d times</string>
+    <string name="detail_unassigned">Unassigned</string>
+    <string name="detail_none">None</string>
+    <string name="detail_project_why">Project Why</string>
+    <string name="detail_project_purpose">Project Purpose</string>
+    <string name="detail_project_status">Project Status</string>
+    <string name="detail_hard_deadline">Hard Deadline</string>
+    <string name="detail_critical">CRITICAL</string>
+    <string name="detail_soft">SOFT</string>
+    <string name="detail_no_due_date">No due date</string>
+    <string name="detail_no_reminder">No reminder set</string>
+    <string name="detail_recurrence_interval">Interval: %s</string>
+    <string name="detail_one_time">One-time</string>
+    <string name="detail_last_updated">Last updated: %s</string>
+    <string name="detail_tag_dialog_title">Add Tag</string>
+    <string name="detail_tag_new_placeholder">New tag...</string>
+    <string name="detail_tag_create">Create Tag</string>
+    <string name="detail_relation_dialog_title">Link to Node</string>
+    <string name="detail_status_dialog_title">Set Status</string>
+    <string name="detail_type_dialog_title">Set Note Type</string>
+    <string name="detail_snapshot_dialog_title">VERSION HISTORY</string>
+    <string name="detail_merge_dialog_title">MERGE INTO THIS NOTE</string>
+    <string name="detail_state_dialog_title">Progressive Summarization</string>
+    <string name="detail_area_dialog_title">Assign to Area</string>
+    <string name="detail_project_dialog_title">Assign to Project</string>
+    <string name="detail_unassign">Unassign</string>
+    <string name="detail_due_dialog_title">Set Due Date</string>
+    <string name="detail_reminder_dialog_title">Set Reminder</string>
+    <string name="detail_estimate_dialog_title">Set Time Estimate</string>
+    <string name="detail_postpone_dialog_title">WHY ARE YOU POSTPONING?</string>
+    <string name="detail_postpone_low_energy">Energy too low</string>
+    <string name="detail_postpone_not_enough_info">Not enough info</string>
+    <string name="detail_postpone_scared">Scared to start</string>
+    <string name="detail_postpone_waiting">Waiting for someone</string>
+    <string name="detail_postpone_too_much">Just too much today</string>
+    <string name="detail_why_dialog_title">PROJECT PURPOSE (WHY)</string>
+    <string name="detail_why_placeholder">Why does this project exist?</string>
+
+    <!-- Project Detail -->
+    <string name="project_detail_not_found">Project not found</string>
+    <string name="project_detail_edit">Edit Project</string>
+    <string name="project_detail_freeze">Freeze/Unfreeze</string>
+    <string name="project_detail_neglected">NEGLECTED</string>
+    <string name="project_detail_frozen_msg">THIS PROJECT IS FROZEN // NO PROGRESS EXPECTED</string>
+    <string name="project_detail_why">WHY: %s</string>
+    <string name="project_detail_progress">%d%% COMPLETE // %d/%d ITEMS</string>
+    <string name="project_detail_next_actions">NEXT ACTIONS</string>
+    <string name="project_detail_no_tasks">No active tasks.</string>
+    <string name="project_detail_linked_notes">LINKED NOTES</string>
+    <string name="project_detail_resources">RESOURCES</string>
+    <string name="project_detail_timeline">PROJECT TIMELINE</string>
+    <string name="project_detail_inbox_all">PROJECT INBOX &amp; ALL ITEMS</string>
+
+    <!-- Area Detail -->
+    <string name="area_detail_not_found">Area not found</string>
+    <string name="area_detail_neglected_tasks">%d NEGLECTED TASKS IN THIS AREA</string>
+    <string name="area_detail_active_projects">ACTIVE PROJECTS</string>
+    <string name="area_detail_recent_activity">DIRECT ITEMS &amp; RECENT ACTIVITY</string>
+
+    <!-- Graph Screen -->
+    <string name="graph_title">GRAPH VIEW (CONTEXT CLUSTERS)</string>
+    <string name="graph_subtitle">Grouped by AREA. Tap nodes to open.</string>
+
+    <!-- Node Components -->
+    <string name="node_recurring">RECURRING</string>
+    <string name="node_stale">STALE</string>
+    <string name="node_pin_today_desc">Pin to today</string>
+    <string name="task_row_unpin_desc">Unpin</string>
+
+    <!-- Node Types -->
+    <string name="type_task">Task</string>
+    <string name="type_note">Note</string>
+    <string name="type_idea">Idea</string>
+    <string name="type_project">Project</string>
+    <string name="type_area">Area</string>
+
 </resources>

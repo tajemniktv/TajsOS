@@ -1,0 +1,442 @@
+<!--
+  ~ Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+  -->
+
+<resources>
+    <string name="app_name">TajsOS</string>
+    <string name="app_status_ok">TajsOS // STATUS: OK</string>
+
+    <!-- Navigation -->
+    <string name="nav_core">GŁÓWNE</string>
+    <string name="nav_execution">REALIZACJA</string>
+    <string name="nav_brain">DRUGI MÓZG</string>
+    <string name="nav_status">STATUS I STATYSTYKI</string>
+    <string name="nav_system">SYSTEM</string>
+    <string name="nav_menu">Menu</string>
+    <string name="nav_capture">Przechwyć</string>
+
+    <!-- Screens -->
+    <string name="screen_dash">PULPIT</string>
+    <string name="screen_inbox">SKRZYNKA</string>
+    <string name="screen_search">SZUKAJ</string>
+    <string name="screen_today">DZIŚ</string>
+    <string name="screen_focus">SKUPIENIE</string>
+    <string name="screen_track">ŚLEDZENIE</string>
+    <string name="screen_tasks">ZADANIA</string>
+    <string name="screen_notes">NOTATKI</string>
+    <string name="screen_note">NOTATKA</string>
+    <string name="screen_stats">STATYSTYKI</string>
+    <string name="screen_archive">ARCHIWUM</string>
+    <string name="screen_cal">KAL</string>
+    <string name="screen_cal_opts">OPCJE KAL</string>
+    <string name="screen_graph">GRAF</string>
+    <string name="screen_proj">PROJ</string>
+    <string name="screen_area">OBSZAR</string>
+    <string name="screen_project">PROJEKT</string>
+    <string name="screen_opts">OPCJE</string>
+    <string name="screen_templates">SZABLONY</string>
+    <string name="screen_review">PRZEGLĄD</string>
+    <string name="screen_history">HISTORIA</string>
+
+    <!-- Review Screen -->
+    <string name="review_select_type">WYBIERZ TYP PRZEGLĄDU</string>
+    <string name="review_daily">DZIENNY RESET</string>
+    <string name="review_weekly">PRZEGLĄD TYGODNIOWY</string>
+    <string name="review_monthly">REFLEKSJA MIESIĘCZNA</string>
+    <string name="review_next">DALEJ</string>
+    <string name="review_complete">ZAKOŃCZ PRZEGLĄD</string>
+    <string name="review_step_mood_energy">NASTRÓJ I ENERGIA</string>
+    <string name="review_step_wins">SUKCESY DNIA</string>
+    <string name="review_step_blockers">BLOKERY</string>
+    <string name="review_step_plan">PLAN NA JUTRO</string>
+    <string name="review_step_stats">STATYSTYKI TYGODNIA</string>
+    <string name="review_step_cleanup">SPRZĄTANIE ZALEGŁOŚCI</string>
+    <string name="review_step_archive">SUGESTIE ARCHIWIZACJI</string>
+    <string name="review_step_goals">CELE NA KOLEJNY TYDZIEŃ</string>
+    <string name="common_back">Wróć</string>
+
+    <!-- Dashboard -->
+    <string name="dash_command">DOWODZENIE</string>
+    <string name="dash_search_placeholder">PRZESZUKAJ SWOJE ŻYCIE...</string>
+    <string name="dash_review_pending">OCZEKUJĄCY PRZEGLĄD TYGODNIOWY</string>
+    <string name="dash_review_pending_desc">Czas na spojrzenie z góry i uporządkowanie Twojego Drugiego Mózgu.</string>
+    <string name="dash_suggestions_title">OSOBISTE SUGESTIE</string>
+    <string name="dash_suggestion_stress">Wykryto wysoki stres. Może 5-minutowy reset?</string>
+    <string name="dash_suggestion_low_focus">Skupienie jest niskie. Zacznij od małego zadania?</string>
+    <string name="dash_suggestion_meds">Nie zapomnij o lekach, jeśli są potrzebne.</string>
+    <string name="dash_life_summary">PODSUMOWANIE ŻYCIA</string>
+    <string name="dash_captures_week">PRZECHWYCENIA / TYDZIEŃ</string>
+    <string name="dash_done_week">WYKONANE / TYDZIEŃ</string>
+    <string name="dash_state_actions">AKCJE ZALEŻNE OD STANU</string>
+    <string name="dash_overwhelmed">PRZYTŁOCZENIE</string>
+    <string name="dash_overwhelmed_desc">Tylko łatwe zwycięstwa</string>
+    <string name="dash_cannot_think">NIE MOGĘ MYŚLEĆ</string>
+    <string name="dash_cannot_think_desc">Zadania o niskiej energii</string>
+    <string name="dash_10_minutes">10 MINUT</string>
+    <string name="dash_10_minutes_desc">Szybkie mikrokroki</string>
+    <string name="dash_recovery_mode">TRYB ODZYSKIWANIA // WYKRYTO NISKĄ ENERGIĘ</string>
+    <string name="dash_recovery_desc">Twoja energia jest niska. Spróbuj tych łatwych rzeczy:</string>
+    <string name="dash_operating">OPERACJA W TOKU</string>
+    <string name="dash_next_context">KOLEJNY KONTEKST</string>
+    <string name="dash_view">WIDOK</string>
+    <string name="dash_engage">ZAANGAŻUJ</string>
+    <string name="dash_inbox_overflow">%d ELEMENTÓW PRZEPEŁNIA SKRZYNKĘ</string>
+    <string name="dash_inbox_new">%d NOWYCH ELEMENTÓW DO PRZETWORZENIA</string>
+    <string name="dash_batch_suggestion">SUGESTIA GRUPOWANIA // %s</string>
+    <string name="dash_batch_desc">Masz %d zadań w %s. Pogrupować je?</string>
+    <string name="dash_quick_wins">SZYBKIE ZWYCIĘSTWA</string>
+    <string name="dash_deep_work">PRACA GŁĘBOKA // WYSOKA ENERGIA</string>
+    <string name="dash_top_3">NAJWAŻNIEJSZA 3 NA DZIŚ</string>
+    <string name="dash_overdue">ZALEGŁE</string>
+    <string name="dash_active_reminders">AKTYWNE PRZYPOMNIENIA</string>
+    <string name="dash_dismiss">Odrzuć</string>
+    <string name="dash_pinned_knowledge">PRZYPIĘTA WIEDZA</string>
+    <string name="dash_knowledge_vaults">SKARBCE WIEDZY</string>
+    <string name="dash_read_later">DO PRZECZYTANIA</string>
+    <string name="dash_items_count">%d ELEMENTÓW</string>
+    <string name="dash_quotes">CYTATY</string>
+    <string name="dash_ideas">POMYSŁY</string>
+    <string name="dash_unset_count">%d NIEUSTAWIONYCH</string>
+    <string name="dash_upcoming_deadlines">NADCHODZĄCE TERMINY</string>
+    <string name="dash_review_reset">PRZEGLĄD I RESET</string>
+    <string name="dash_check_in">MELDUNEK</string>
+    <string name="dash_relevant_project">NAJBARDZIEJ ISTOTNY PROJEKT</string>
+    <string name="dash_relevant_note">NAJBARDZIEJ ISTOTNA NOTATKA</string>
+    <string name="dash_module_ready">GOTOWE</string>
+    <string name="dash_module_waiting">OCZEKIWANIE</string>
+    <string name="dash_module_logged">ZALOGOWANO</string>
+    <string name="dash_module_pending">OCZEKUJE</string>
+    <string name="dash_module_tasks_count">%d ZADAŃ</string>
+    <string name="dash_module_total_count">%d ŁĄCZNIE</string>
+    <string name="dash_module_active_count">%d AKTYWNYCH</string>
+    <string name="dash_module_items_count">%d ELEMENTÓW</string>
+    <string name="dash_module_empty">PUSTO</string>
+    <string name="dash_module_none">BRAK</string>
+    <string name="dash_history_last">OSTATNIO: %s</string>
+
+    <!-- Settings -->
+    <string name="settings_title">USTAWIENIA</string>
+    <string name="settings_security">BEZPIECZEŃSTWO</string>
+    <string name="settings_biometric_lock">BLOKADA BIOMETRYCZNA</string>
+    <string name="settings_biometric_desc">Wymagaj uwierzytelnienia przy otwieraniu</string>
+    <string name="settings_biometric_unavailable">Sprzęt niedostępny</string>
+    <string name="settings_calendar_integration">INTEGRACJA Z KALENDARZEM</string>
+    <string name="settings_configure_calendars">SKONFIGURUJ ZEWNĘTRZNE KALENDARZE</string>
+    <string name="settings_manage_templates">ZARZĄDZAJ SZABLONAMI</string>
+    <string name="settings_data_management">ZARZĄDZANIE DANYMI</string>
+    <string name="settings_export_data">EKSPORTUJ DANE LOKALNE</string>
+    <string name="settings_export_success">Dane wyeksportowane (%d znaków)</string>
+    <string name="settings_force_crash">WYMUŚ TESTOWĄ AWARIĘ</string>
+
+    <!-- Inbox -->
+    <string name="inbox_quick_capture">Szybkie Przechwytywanie</string>
+    <string name="inbox_placeholder">Co masz na myśli?</string>
+    <string name="inbox_recent_entries">Ostatnie Wpisy</string>
+    <string name="inbox_empty">NIE ZNALEZIONO WPISÓW // CZYSTY UMYSŁ</string>
+    <string name="inbox_add">Dodaj</string>
+    <string name="inbox_process">Przetwórz</string>
+
+    <!-- Capture Sheet -->
+    <string name="capture_brain_dump_active">ZRZUT MYŚLI AKTYWNY</string>
+    <string name="capture_quick_capture">SZYBKIE PRZECHWYTYWANIE</string>
+    <string name="capture_multi">MULTI</string>
+    <string name="capture_dump">ZRZUT</string>
+    <string name="capture_placeholder_project">Nazwa projektu...</string>
+    <string name="capture_placeholder_area">Nazwa obszaru...</string>
+    <string name="capture_placeholder_next_thought">Następna myśl...</string>
+    <string name="capture_placeholder_dump_thought">Wyrzuć myśl...</string>
+    <string name="capture_voice">Przechwytywanie głosowe</string>
+    <string name="capture_type">TYP</string>
+    <string name="capture_use_template">UŻYJ SZABLONU</string>
+    <string name="capture_recurring">POWTARZALNE</string>
+    <string name="capture_no_reminder">BRAK PRZYPOMNIENIA</string>
+    <string name="capture_process_later">PRZETWÓRZ PÓŹNIEJ</string>
+    <string name="capture_interval_daily">CODZIENNIE</string>
+    <string name="capture_interval_weekly">CO TYDZIEŃ</string>
+    <string name="capture_interval_monthly">CO MIESIĄC</string>
+    <string name="capture_assign_to_area">PRZYPISZ DO OBSZARU</string>
+    <string name="capture_save_continue">ZAPISZ I KONTYNUUJ</string>
+    <string name="capture_save_type">ZAPISZ %s</string>
+
+    <!-- Search -->
+    <string name="search_placeholder">Szukaj elementów...</string>
+    <string name="search_clear">Wyczyść</string>
+    <string name="search_reset_filters">Resetuj filtry</string>
+    <string name="search_filter_active">AKTYWNE</string>
+    <string name="search_filter_archived">ZARCHIWIZOWANE</string>
+    <string name="search_filter_linked_to">POWIĄZANE Z: %s</string>
+    <string name="search_no_results">NIE ZNALEZIONO PASUJĄCYCH WYNIKÓW</string>
+
+    <!-- Focus Screen -->
+    <string name="focus_no_active_task">BRAK AKTYWNEGO ZADANIA</string>
+    <string name="focus_next_tiny_step">NASTĘPNY MAŁY KROK</string>
+    <string name="focus_engage">ZAANGAŻUJ</string>
+    <string name="focus_recent_sessions">OSTATNIE SESJE</string>
+    <string name="focus_unknown_task">Nieznane zadanie</string>
+    <string name="focus_session_duration">sesja skupienia %dm %ds</string>
+
+    <!-- Track Screen -->
+    <string name="track_title">ŚLEDZENIE CODZIENNE</string>
+    <string name="track_subtitle">JAK DZISIAJ FUNKCJONUJESZ?</string>
+    <string name="track_label_energy">ENERGIA</string>
+    <string name="track_label_mood">NASTRÓJ</string>
+    <string name="track_label_focus">SKUPIENIE</string>
+    <string name="track_label_anxiety">STRES / NIEPOKÓJ</string>
+    <string name="track_label_sleep">SEN (GODZINY): %d</string>
+    <string name="track_meds">LEKI PRZYJĘTE</string>
+    <string name="track_observations_label">OBSERWACJE / OBJAWY</string>
+    <string name="track_observations_placeholder">Jakiś konkretny kontekst na dziś?</string>
+    <string name="track_save">ZAPISZ STATUS</string>
+    <string name="track_history">HISTORIA</string>
+    <string name="track_history_meds_ok">LEKI OK</string>
+    <string name="track_history_sleep">SEN: %dH</string>
+
+    <!-- Insights Screen -->
+    <string name="insights_title">ANALIZA I PRZEGLĄD</string>
+    <string name="insights_subtitle">WZORCE Z OSTATNICH 7 DNI</string>
+    <string name="insights_auto_prepared_review">AUTOMATYCZNIE PRZYGOTOWANY PRZEGLĄD</string>
+    <string name="insights_capacity">WYDAJNOŚĆ</string>
+    <string name="insights_captures">PRZECHWYCENIA</string>
+    <string name="insights_completions">WYKONANE</string>
+    <string name="insights_focus_execution">SKUPIENIE I REALIZACJA</string>
+    <string name="insights_total_hours">ŁĄCZNIE GODZIN</string>
+    <string name="insights_avg_session_min">ŚREDNIA SESJA (MIN)</string>
+    <string name="insights_peak_focus">Szczyt skupienia o %s</string>
+    <string name="insights_efficiency_chaos">EFEKTYWNOŚĆ I CHAOS</string>
+    <string name="insights_archive">ARCHIWUM</string>
+    <string name="insights_postpones">PRZEŁOŻONE</string>
+    <string name="insights_chaos">CHAOS</string>
+    <string name="insights_pressure">Presja: %s</string>
+    <string name="insights_switching">Przełączanie: %.1f</string>
+    <string name="insights_peak_completions">Szczyt realizacji o %s</string>
+    <string name="insights_intake_dynamics">DYNAMIKA WPŁYWU</string>
+    <string name="insights_new_inbox_items">NOWE ELEMENTY SKRZYNKI</string>
+    <string name="insights_unprocessed_rate">WSKAŹNIK NIEPRZETWORZONYCH</string>
+    <string name="insights_system_stability">STABILNOŚĆ SYSTEMU</string>
+    <string name="insights_context_stability">STABILNOŚĆ KONTEKSTU</string>
+    <string name="insights_biometrics">BIOMETRIA</string>
+    <string name="insights_lifestyle_correlations">KORELACJE STYLU ŻYCIA</string>
+    <string name="insights_avoidance_pattern">WZORZEC UNIKANIA: %d elementów przełożonych w dni o niskim nastroju.</string>
+    <string name="insights_cards_title">KARTY ANALIZY</string>
+    <string name="insights_friction_alert_title">ALERT TARCIA</string>
+    <string name="insights_friction_alert_msg">Najczęściej przekładasz elementy z obszaru %s. Czy jest tam ukryty bloker?</string>
+    <string name="insights_creative_peak_title">SZCZYT KREATYWNOŚCI</string>
+    <string name="insights_creative_peak_msg">Większość pomysłów przechwytujesz w: %s. Trzymaj wtedy narzędzie do zapisu pod ręką!</string>
+    <string name="insights_stagnant_knowledge_title">STAGNACJA WIEDZY</string>
+    <string name="insights_stagnant_knowledge_msg">%s ma notatki, ale brak aktywnych zadań. Może czas na jakieś działania?</string>
+    <string name="insights_radar_drop_title">POZA RADAREM</string>
+    <string name="insights_radar_drop_msg">%s zniknął z radaru. Brak aktywności od 7 dni.</string>
+    <string name="insights_neglected_projects">ZANIEDBANE PROJEKTY</string>
+    <string name="insights_high_entropy_projects">PROJEKTY O WYSOKIEJ ENTROPII</string>
+    <string name="insights_recent_activity">OSTATNIA AKTYWNOŚĆ</string>
+    <string name="insights_needs_attention">WYMAGA UWAGI</string>
+
+    <!-- Today Screen -->
+    <string name="today_payload">ŁADUNEK NA DZIŚ</string>
+    <string name="today_empty">NIE WYKRYTO ŁADUNKU // DZIEŃ JEST PUSTY</string>
+    <string name="today_slot_standby">SLOT %d // GOTOWOŚĆ</string>
+
+    <!-- Archive Screen -->
+    <string name="archive_title">ARCHIWUM</string>
+    <string name="archive_subtitle">NIC NIGDY NIE ZNIKA NA ZAWSZE. PRZYWRÓĆ DOWOLNY ELEMENT W KAŻDEJ CHWILI.</string>
+    <string name="archive_empty">BRAK ZARCHIWIZOWANYCH ELEMENTÓW</string>
+    <string name="archive_restore">Przywróć</string>
+    <string name="archive_delete">Usuń</string>
+
+    <!-- Notes Screen -->
+    <string name="notes_title">WIEDZA I POMYSŁY</string>
+    <string name="notes_search_placeholder">Przeszukaj wiedzę...</string>
+    <string name="notes_pinned_knowledge">PRZYPIĘTA WIEDZA</string>
+    <string name="notes_ideas">POMYSŁY</string>
+    <string name="notes_notes">NOTATKI</string>
+    <string name="notes_resources">ZASOBY I AKTYWA</string>
+    <string name="notes_empty">NIE ZNALEZIONO WIEDZY</string>
+    <string name="notes_no_results">BRAK PASUJĄCYCH WYNIKÓW</string>
+
+    <!-- Tasks Screen -->
+    <string name="tasks_title">ZADANIA</string>
+    <string name="tasks_empty">NIE ZNALEZIONO ZADAŃ</string>
+
+    <!-- Projects Screen -->
+    <string name="projects_title">PROJEKTY</string>
+    <string name="projects_search_placeholder">Przeszukaj projekty...</string>
+    <string name="projects_filter_active">AKTYWNE</string>
+    <string name="projects_filter_someday">KIEDYŚ</string>
+    <string name="projects_empty">Brak projektów.</string>
+    <string name="projects_create_first">UTWÓRZ PIERWSZY PROJEKT</string>
+    <string name="projects_dialog_new">NOWY PROJEKT</string>
+    <string name="projects_dialog_name">Nazwa</string>
+    <string name="projects_dialog_description">Opis</string>
+    <string name="projects_dialog_create">UTWÓRZ</string>
+    <string name="projects_dialog_cancel">ANULUJ</string>
+
+    <!-- Areas Screen -->
+    <string name="areas_title">OBSZARY</string>
+    <string name="areas_empty">Brak obszarów.</string>
+    <string name="areas_create_first">UTWÓRZ PIERWSZY OBSZAR</string>
+    <string name="areas_dialog_new">NOWY OBSZAR</string>
+    <string name="areas_dialog_name">Nazwa</string>
+    <string name="areas_dialog_create">UTWÓRZ</string>
+    <string name="areas_dialog_cancel">ANULUJ</string>
+
+    <!-- Calendar Screen -->
+    <string name="cal_agenda_title">AGENDA // %s</string>
+    <string name="cal_today">DZIŚ</string>
+    <string name="cal_sync">Synchronizuj</string>
+    <string name="cal_previous">Poprzedni</string>
+    <string name="cal_next">Następny</string>
+    <string name="cal_no_events">BRAK ZAPISANYCH WYDARZEŃ</string>
+    <string name="cal_all_day">CAŁY DZIEŃ</string>
+    <string name="cal_settings_title">SYNCHRONIZACJA KALENDARZA</string>
+    <string name="cal_settings_add">Dodaj kalendarz</string>
+    <string name="cal_settings_empty">BRAK PODŁĄCZONYCH ZEWNĘTRZNYCH KALENDARZY</string>
+    <string name="cal_settings_dialog_title">DODAJ ZEWNĘTRZNY KALENDARZ</string>
+    <string name="cal_settings_dialog_name">Nazwa</string>
+    <string name="cal_settings_dialog_url">URL ICS</string>
+    <string name="cal_settings_dialog_add">DODAJ</string>
+    <string name="cal_settings_dialog_cancel">ANULUJ</string>
+
+    <!-- Templates Screen -->
+    <string name="templates_title">SZABLONY</string>
+    <string name="templates_empty">BRAK ZDEFINIOWANYCH SZABLONÓW</string>
+    <string name="templates_add_desc">Dodaj szablon</string>
+    <string name="templates_new_dialog">NOWY SZABLON</string>
+    <string name="templates_dialog_name">Nazwa</string>
+    <string name="templates_dialog_create">UTWÓRZ</string>
+    <string name="templates_dialog_cancel">ANULUJ</string>
+
+    <!-- Node Detail -->
+    <string name="detail_title">Tytuł</string>
+    <string name="detail_content">Treść</string>
+    <string name="detail_status">Status</string>
+    <string name="detail_type">Typ</string>
+    <string name="detail_due_at">Termin</string>
+    <string name="detail_reminder_at">Przypomnienie</string>
+    <string name="detail_pin_today">Przypnij do Dziś</string>
+    <string name="detail_unpin_today">Odepnij od Dziś</string>
+    <string name="detail_archive">Zarchiwizuj</string>
+    <string name="detail_delete">Usuń trwale</string>
+    <string name="detail_project">Projekt</string>
+    <string name="detail_area">Obszar</string>
+    <string name="detail_back">Wróć</string>
+    <string name="detail_save">Zapisz</string>
+    <string name="detail_not_found">Nie znaleziono notatki (ID: %d)</string>
+    <string name="detail_atomic_mode">Przełącz tryb atomowy</string>
+    <string name="detail_create_snapshot">Utwórz migawkę</string>
+    <string name="detail_versions">Wersje</string>
+    <string name="detail_merge">Scal notatki</string>
+    <string name="detail_favorite">Przypnij wiedzę</string>
+    <string name="detail_process">Przetwórz</string>
+    <string name="detail_convert">Konwertuj</string>
+    <string name="detail_repeat">Powtórz zadanie</string>
+    <string name="detail_duplicate">Duplikuj</string>
+    <string name="detail_untitled">Bez tytułu...</string>
+    <string name="detail_remove_tag">Usuń tag</string>
+    <string name="detail_add_tag">Dodaj tag</string>
+    <string name="detail_next_step">NASTĘPNY NAJMNIEJSZY KROK</string>
+    <string name="detail_next_step_placeholder">Zdefiniuj najmniejszą możliwą akcję...</string>
+    <string name="detail_auto_extract">Automatyczne wyodrębnianie</string>
+    <string name="detail_completion_note">NOTATKA Z WYKONANIA</string>
+    <string name="detail_completion_placeholder">Dlaczego to zadziałało? Jakieś refleksje?</string>
+    <string name="detail_start_writing">Zacznij pisać...</string>
+    <string name="detail_split_subtasks">Podziel na podzadania</string>
+    <string name="detail_split_note">Podziel notatkę</string>
+    <string name="detail_relationship_inspector">INSPEKTOR POWIĄZAŃ</string>
+    <string name="detail_find_all">ZNAJDŹ WSZYSTKIE</string>
+    <string name="detail_backlinks">LINKI ZWROTNE / UŻYTE W</string>
+    <string name="detail_suggestions">SUGESTIE</string>
+    <string name="detail_link_node">POWIĄŻ ELEMENT</string>
+    <string name="detail_attachments">ZAŁĄCZNIKI</string>
+    <string name="detail_remove_attachment">Usuń załącznik</string>
+    <string name="detail_add_link">DODAJ LINK</string>
+    <string name="detail_knowledge">WIEDZA</string>
+    <string name="detail_note_type">Typ notatki</string>
+    <string name="detail_progressive_state">Stan progresywny</string>
+    <string name="detail_stale_warning">Nie zaglądałeś tu od %d dni. Odświeżysz?</string>
+    <string name="detail_organization">ORGANIZACJA</string>
+    <string name="detail_energy_required">Wymagana energia</string>
+    <string name="detail_energy_low">NISKA ENERGIA</string>
+    <string name="detail_energy_med">ŚREDNIA ENERGIA</string>
+    <string name="detail_energy_high">WYSOKA ENERGIA</string>
+    <string name="detail_not_set">NIEUSTAWIONE</string>
+    <string name="detail_task_friction">Opór zadania</string>
+    <string name="detail_time_estimate">Szacowany czas</string>
+    <string name="detail_estimate_mins">%d min</string>
+    <string name="detail_postpone_count">Licznik odłożeń</string>
+    <string name="detail_postpone_times">%d razy</string>
+    <string name="detail_unassigned">Nieprzypisane</string>
+    <string name="detail_none">Brak</string>
+    <string name="detail_project_why">"Dlaczego" projektu</string>
+    <string name="detail_project_purpose">Cel projektu</string>
+    <string name="detail_project_status">Status projektu</string>
+    <string name="detail_hard_deadline">Twardy termin</string>
+    <string name="detail_critical">KRYTYCZNY</string>
+    <string name="detail_soft">MIĘKKI</string>
+    <string name="detail_no_due_date">Brak terminu</string>
+    <string name="detail_no_reminder">Brak przypomnienia</string>
+    <string name="detail_recurrence_interval">Interwał: %s</string>
+    <string name="detail_one_time">Jednorazowe</string>
+    <string name="detail_last_updated">Ostatnia aktualizacja: %s</string>
+    <string name="detail_tag_dialog_title">Dodaj tag</string>
+    <string name="detail_tag_new_placeholder">Nowy tag...</string>
+    <string name="detail_tag_create">Utwórz tag</string>
+    <string name="detail_relation_dialog_title">Powiąż z elementem</string>
+    <string name="detail_status_dialog_title">Ustaw status</string>
+    <string name="detail_type_dialog_title">Ustaw typ notatki</string>
+    <string name="detail_snapshot_dialog_title">HISTORIA WERSJI</string>
+    <string name="detail_merge_dialog_title">SCAL Z TĄ NOTATKĄ</string>
+    <string name="detail_state_dialog_title">Progresywne podsumowanie</string>
+    <string name="detail_area_dialog_title">Przypisz do obszaru</string>
+    <string name="detail_project_dialog_title">Przypisz do projektu</string>
+    <string name="detail_unassign">Odpisz</string>
+    <string name="detail_due_dialog_title">Ustaw termin</string>
+    <string name="detail_reminder_dialog_title">Ustaw przypomnienie</string>
+    <string name="detail_estimate_dialog_title">Ustaw szacowany czas</string>
+    <string name="detail_postpone_dialog_title">DLACZEGO ODKŁADASZ?</string>
+    <string name="detail_postpone_low_energy">Zbyt niska energia</string>
+    <string name="detail_postpone_not_enough_info">Mało informacji</string>
+    <string name="detail_postpone_scared">Strach przed rozpoczęciem</string>
+    <string name="detail_postpone_waiting">Czekam na kogoś</string>
+    <string name="detail_postpone_too_much">Zbyt wiele na dziś</string>
+    <string name="detail_why_dialog_title">CEL PROJEKTU (DLACZEGO)</string>
+    <string name="detail_why_placeholder">Dlaczego ten projekt istnieje?</string>
+
+    <!-- Project Detail -->
+    <string name="project_detail_not_found">Nie znaleziono projektu</string>
+    <string name="project_detail_edit">Edytuj projekt</string>
+    <string name="project_detail_freeze">Zamroź/Odmroź</string>
+    <string name="project_detail_neglected">ZANIEDBANY</string>
+    <string name="project_detail_frozen_msg">TEN PROJEKT JEST ZAMROŻONY // NIE OCZEKUJE SIĘ POSTĘPÓW</string>
+    <string name="project_detail_why">DLACZEGO: %s</string>
+    <string name="project_detail_progress">%d%% UKOŃCZONO // %d/%d ELEMENTÓW</string>
+    <string name="project_detail_next_actions">NASTĘPNE DZIAŁANIA</string>
+    <string name="project_detail_no_tasks">Brak aktywnych zadań.</string>
+    <string name="project_detail_linked_notes">POWIĄZANE NOTATKI</string>
+    <string name="project_detail_resources">ZASOBY</string>
+    <string name="project_detail_timeline">OŚ CZASU PROJEKTU</string>
+    <string name="project_detail_inbox_all">SKRZYNKA PROJEKTU I WSZYSTKIE ELEMENTY</string>
+
+    <!-- Area Detail -->
+    <string name="area_detail_not_found">Nie znaleziono obszaru</string>
+    <string name="area_detail_neglected_tasks">%d ZANIEDBANYCH ZADAŃ W TYM OBSZARZE</string>
+    <string name="area_detail_active_projects">AKTYWNE PROJEKTY</string>
+    <string name="area_detail_recent_activity">BEZPOŚREDNIE ELEMENTY I OSTATNIA AKTYWNOŚĆ</string>
+
+    <!-- Graph Screen -->
+    <string name="graph_title">WIDOK GRAFU (KLASTRY KONTEKSTOWE)</string>
+    <string name="graph_subtitle">Grupowane według OBSZARÓW. Dotknij węzła, aby otworzyć.</string>
+
+    <!-- Node Components -->
+    <string name="node_recurring">POWTARZALNE</string>
+    <string name="node_stale">NIEAKTUALNE</string>
+    <string name="node_pin_today_desc">Przypnij do dziś</string>
+    <string name="task_row_unpin_desc">Odepnij</string>
+
+    <!-- Node Types -->
+    <string name="type_task">Zadanie</string>
+    <string name="type_note">Notatka</string>
+    <string name="type_idea">Pomysł</string>
+    <string name="type_project">Projekt</string>
+    <string name="type_area">Obszar</string>
+
+</resources>
