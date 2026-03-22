@@ -14,6 +14,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.CallSplit
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -303,7 +304,6 @@ fun NoteDetailScreen(
                                 color = TactileTheme.Muted
                             )
                         }
-                        innerTextField()
                     },
                 )
                 Spacer(Modifier.height(TactileTheme.SpacingSm))
@@ -741,7 +741,10 @@ fun NoteDetailScreen(
                                 viewModel.updateNode(node.copy(dueAt = nextDay))
                                 showPostponeDialog = true
                             }) {
-                                Icon(Icons.Default.KeyboardArrowRight, contentDescription = "+1d")
+                                Icon(
+                                    Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                    contentDescription = "+1d"
+                                )
                             }
                             IconButton(onClick = { viewModel.updateNode(node.copy(dueAt = null)) }) {
                                 Icon(Icons.Default.Clear, contentDescription = "Clear")

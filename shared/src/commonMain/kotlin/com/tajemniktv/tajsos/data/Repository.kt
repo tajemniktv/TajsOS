@@ -73,9 +73,13 @@ class AppRepository(
             if (oldNode.isFrozen != node.isFrozen) {
                 logEvent(if (node.isFrozen) "NODE_FROZEN" else "NODE_UNFROZEN", node.id)
             }
-        }
 
-        syncBelongsToRelations(node.id, node.projectId, node.areaId)
+            if (oldNode.projectId != node.projectId || oldNode.areaId != node.areaId) {
+                syncBelongsToRelations(node.id, node.projectId, node.areaId)
+            }
+        } else {
+            syncBelongsToRelations(node.id, node.projectId, node.areaId)
+        }
     }
 
     private suspend fun syncBelongsToRelations(nodeId: Long, projectId: Long?, areaId: Long?) {

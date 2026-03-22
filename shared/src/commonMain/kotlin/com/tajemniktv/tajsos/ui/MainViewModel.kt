@@ -13,7 +13,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.*
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlin.time.Clock
 import kotlin.time.Instant
@@ -32,6 +31,19 @@ data class InsightsData(
     val autoPreparedReview: String = "",
 )
 
+data class DashboardUIState(
+    val tasksCount: Int = 0,
+    val notesCount: Int = 0,
+    val pinnedKnowledge: List<NodeWithPin> = emptyList(),
+    val upcomingDeadlines: List<NodeWithPin> = emptyList(),
+    val overdueNodes: List<NodeWithPin> = emptyList(),
+    val relevantNote: NodeWithPin? = null,
+    val lowEnergyTasks: List<NodeWithPin> = emptyList(),
+    val batchableTasks: Map<Long?, List<NodeWithPin>> = emptyMap(),
+    val quickWins: List<NodeWithPin> = emptyList(),
+    val deepWork: List<NodeWithPin> = emptyList(),
+)
+
 class MainViewModel(
     private val repository: AppRepository,
     private val preferencesRepository: PreferencesRepository,
@@ -46,7 +58,32 @@ class MainViewModel(
         allNodes
             .map { list ->
                 list.filter { it.node.status != "archived" }
-            }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+            }
+            .flowOn(Dispatchers.Default)
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val dashboardUIState: StateFlow<DashboardUIState> =
+        activeNodes.map { nodes ->
+            val now = Clock.System.now().toEpochMilliseconds()
+            DashboardUIState(
+                tasksCount = nodes.count { it.node.type == "task" },
+                notesCount = nodes.count { it.node.type == "note" || it.node.type == "idea" || it.node.type == "resource" },
+                pinnedKnowledge = nodes.filter { it.node.isPinned && (it.node.type == "note" || it.node.type == "idea" || it.node.type == "resource") },
+                upcomingDeadlines = nodes.filter { it.node.dueAt != null && it.node.status == "active" }
+                    .sortedBy { it.node.dueAt }.take(3),
+                overdueNodes = nodes.filter { it.node.dueAt != null && it.node.dueAt < now && it.node.status == "active" },
+                relevantNote = nodes.filter { (it.node.type == "note" || it.node.type == "idea") && it.node.status == "active" }
+                    .sortedByDescending { it.node.updatedAt }.firstOrNull(),
+                lowEnergyTasks = nodes.filter { it.node.type == "task" && it.node.status == "active" && it.node.energyLevel == 1 },
+                batchableTasks = nodes.filter { it.node.type == "task" && it.node.status == "active" }
+                    .groupBy { it.node.areaId }.filter { it.value.size >= 3 },
+                quickWins = nodes.filter { it.node.type == "task" && it.node.status == "active" && it.node.energyLevel == 1 && it.node.friction == "easy" },
+                deepWork = nodes.filter { it.node.type == "task" && it.node.status == "active" && it.node.energyLevel == 3 }
+            )
+        }
+            .distinctUntilChanged()
+            .flowOn(Dispatchers.Default)
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), DashboardUIState())
 
     val todayNodes: StateFlow<List<NodeEntity>> =
         repository
@@ -176,7 +213,9 @@ class MainViewModel(
                     }
                 }
                 NodeCategorization(inbox, archived, reminders)
-            }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), NodeCategorization())
+            }
+            .flowOn(Dispatchers.Default)
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), NodeCategorization())
 
     val inboxNodes: StateFlow<List<NodeWithPin>> =
         categorizedNodes
@@ -262,7 +301,9 @@ class MainViewModel(
             allProjects,
         ) { nodes, sessions, tracks, projects ->
             calculateInsights(nodes, sessions, tracks, projects)
-        }.flowOn(Dispatchers.Default)
+        }
+            .distinctUntilChanged()
+            .flowOn(Dispatchers.Default)
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), InsightsData())
 
     private fun calculateInsights(

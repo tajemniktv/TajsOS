@@ -39,16 +39,17 @@ fun DashboardScreen(
     onEditNode: (Long) -> Unit,
     onNavigateToProject: (Long) -> Unit,
 ) {
+    val allNodes by viewModel.allNodes.collectAsState()
     val todayNodes by viewModel.todayNodes.collectAsState()
     val trackEntries by viewModel.trackEntries.collectAsState()
     val activeSession by viewModel.activeSession.collectAsState()
     val allSessions by viewModel.allSessions.collectAsState()
     val allProjects by viewModel.allProjects.collectAsState()
     val allAreas by viewModel.allAreas.collectAsState()
-    val activeNodes by viewModel.activeNodes.collectAsState()
     val inboxNodes by viewModel.inboxNodes.collectAsState()
     val activeReminders by viewModel.activeReminders.collectAsState()
     val calendarEntries by viewModel.calendarEntries.collectAsState()
+    val dashboardState by viewModel.dashboardUIState.collectAsState()
 
     val today =
         Clock.System
@@ -57,25 +58,12 @@ fun DashboardScreen(
             .date
             .toString()
     val moodToday = trackEntries.find { it.date == today }
-    val tasksCount = activeNodes.count { it.node.type == "task" }
-    val notesCount =
-        activeNodes.count { it.node.type == "note" || it.node.type == "idea" || it.node.type == "resource" }
-    val pinnedKnowledge =
-        activeNodes.filter { it.node.isPinned && (it.node.type == "note" || it.node.type == "idea" || it.node.type == "resource") }
-    val upcomingDeadlines =
-        activeNodes
-            .filter { it.node.dueAt != null && it.node.status == "active" }
-            .sortedBy { it.node.dueAt }
-            .take(3)
-    val overdueNodes =
-        activeNodes.filter {
-            it.node.dueAt != null && it.node.dueAt!! < Clock.System.now()
-                .toEpochMilliseconds() && it.node.status == "active"
-        }
-    val relevantNote =
-        activeNodes.filter { (it.node.type == "note" || it.node.type == "idea") && it.node.status == "active" }
-            .sortedByDescending { it.node.updatedAt }
-            .firstOrNull()
+    val tasksCount = dashboardState.tasksCount
+    val notesCount = dashboardState.notesCount
+    val pinnedKnowledge = dashboardState.pinnedKnowledge
+    val upcomingDeadlines = dashboardState.upcomingDeadlines
+    val overdueNodes = dashboardState.overdueNodes
+    val relevantNote = dashboardState.relevantNote
 
     val insights by viewModel.insights.collectAsState()
 
@@ -187,8 +175,7 @@ fun DashboardScreen(
         }
 
         // 2. Recovery Mode
-        val lowEnergyTasks =
-            activeNodes.filter { it.node.type == "task" && it.node.status == "active" && it.node.energyLevel == 1 }
+        val lowEnergyTasks = dashboardState.lowEnergyTasks
         if (moodToday?.energyScore != null && moodToday.energyScore!! <= 2 && lowEnergyTasks.isNotEmpty()) {
             Surface(
                 modifier = Modifier.fillMaxWidth(),
@@ -246,11 +233,11 @@ fun DashboardScreen(
             val activeItem =
                 activeSession?.let { session ->
                     todayNodes.find { it.id == session.nodeId }
-                        ?: viewModel.allNodes.value
+                        ?: allNodes
                             .find { it.node.id == session.nodeId }
                             ?.node
                 } ?: todayNodes.firstOrNull() ?: allSessions.firstOrNull()?.let { session ->
-                    viewModel.allNodes.value
+                    allNodes
                         .find { it.node.id == session.nodeId }
                         ?.node
                 }
@@ -351,10 +338,7 @@ fun DashboardScreen(
         }
 
         // 5. Batch Suggestion
-        val batchableTasks =
-            activeNodes.filter { it.node.type == "task" && it.node.status == "active" }
-                .groupBy { it.node.areaId }
-                .filter { it.value.size >= 3 }
+        val batchableTasks = dashboardState.batchableTasks
         if (batchableTasks.isNotEmpty()) {
             val firstBatch = batchableTasks.values.first()
             val areaName =
@@ -393,8 +377,7 @@ fun DashboardScreen(
         }
 
         // 6. Quick Wins
-        val quickWins =
-            activeNodes.filter { it.node.type == "task" && it.node.status == "active" && it.node.energyLevel == 1 && it.node.friction == "easy" }
+        val quickWins = dashboardState.quickWins
         if (quickWins.isNotEmpty()) {
             Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
                 Text(
@@ -435,8 +418,7 @@ fun DashboardScreen(
         }
 
         // 7. Deep Work
-        val deepWork =
-            activeNodes.filter { it.node.type == "task" && it.node.status == "active" && it.node.energyLevel == 3 }
+        val deepWork = dashboardState.deepWork
         if (deepWork.isNotEmpty()) {
             Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
                 Text(

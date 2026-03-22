@@ -149,6 +149,9 @@ interface RelationDao {
     @Query("DELETE FROM relations WHERE fromNodeId = :nodeId AND relationType = 'BELONGS_TO'")
     suspend fun deleteBelongsToRelations(nodeId: Long)
 
+    @Query("SELECT * FROM relations WHERE fromNodeId = :nodeId AND relationType = 'BELONGS_TO'")
+    suspend fun getBelongsToRelations(nodeId: Long): List<RelationEntity>
+
     @Query("SELECT EXISTS(SELECT 1 FROM relations WHERE ((fromNodeId = :from AND toNodeId = :to) OR (fromNodeId = :to AND toNodeId = :from)))")
     suspend fun anyRelationExists(from: Long, to: Long): Boolean
 
