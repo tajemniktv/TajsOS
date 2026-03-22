@@ -1,5 +1,12 @@
 # AGENTS.md
 
+## Project identity
+
+TajsOS is a low-friction "Second Brain" multiplatform app for managing your life. It is not
+neccessarily for ADHD brains, but it is designed with ADHD brains in mind. It tries to replace
+overwhelming lists with a mechanical, satisfying control center that makes task capture and
+execution feel like operating heavy machinery.
+
 ## Tech stack
 
 - **Targets:** Android + Desktop (JVM) + web (iOS and web targets scaffolded, Android/Desktop primary)

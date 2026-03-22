@@ -174,5 +174,8 @@ TajOS is built around 4 pillars:
 - [x] stable export (JSON)
 - [x] recurring items (Logic implemented)
 - [x] reminders (Active reminders on Dashboard)
+- [x] native calendar (Month + Agenda)
+- [x] ICS sync (External calendars)
+- [ ] two-way calendar sync (Google/Outlook/iCloud)
 - [ ] widgets (Platform-specific, structure ready)
 - [x] graph-ish views (Experimental Graph Screen added)

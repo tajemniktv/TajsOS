@@ -8,13 +8,6 @@ It combines:
 - a **project/life manager** for keeping domains separate
 - an **insight layer** that gives useful stats without becoming a bureaucracy simulator
 
-TajsOS is not meant to be just:
-- a todo list
-- a habit tracker
-- an ADHD gimmick app
-- a journaling-only app
-- a medical logging tool
-
 It is a **life OS first**.
 
 ---
