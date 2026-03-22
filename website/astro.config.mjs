@@ -16,7 +16,7 @@ import starlightVideos from 'starlight-videos';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://tajsos.com',
+  site: 'https://tajemniktv.github.io/TajsOS/',
   integrations: [starlight({
     title: 'Docs',
     description: 'TajsOS Documentation',
