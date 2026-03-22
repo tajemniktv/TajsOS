@@ -28,6 +28,8 @@ data class InsightsData(
     val avgEnergy: Double = 0.0,
     val avgFocus: Double = 0.0,
     val neglectedProjects: List<NodeEntity> = emptyList(),
+    val captureToActionRatio: Double = 0.0,
+    val autoPreparedReview: String = "",
 )
 
 class MainViewModel(
@@ -260,7 +262,8 @@ class MainViewModel(
             allProjects,
         ) { nodes, sessions, tracks, projects ->
             calculateInsights(nodes, sessions, tracks, projects)
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), InsightsData())
+        }.flowOn(Dispatchers.Default)
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), InsightsData())
 
     private fun calculateInsights(
         nodes: List<NodeWithPin>,
@@ -291,13 +294,9 @@ class MainViewModel(
 
         val bestFocusHour = hourlyDistribution.indices.maxByOrNull { hourlyDistribution[it] } ?: -1
 
-        val recentTracks =
-            tracks.filter {
-                runCatching {
-                    LocalDate.parse(it.date).atStartOfDayIn(TimeZone.currentSystemDefault())
-                        .toEpochMilliseconds() >= sevenDaysAgo
-                }.getOrDefault(false)
-            }
+        val sevenDaysAgoDate = Instant.fromEpochMilliseconds(sevenDaysAgo)
+            .toLocalDateTime(TimeZone.currentSystemDefault()).date
+        val recentTracks = tracks.filter { it.date >= sevenDaysAgoDate.toString() }
 
         val avgMood = if (recentTracks.isNotEmpty()) recentTracks.mapNotNull { it.moodScore }.average() else 0.0
         val avgEnergy = if (recentTracks.isNotEmpty()) recentTracks.mapNotNull { it.energyScore }.average() else 0.0
@@ -313,6 +312,24 @@ class MainViewModel(
                 hasActiveItems && !hasRecentCompletions
             }
 
+        val review = buildString {
+            append("This week you captured ${recentNodes.size} items and completed ${recentCompletions.size}. ")
+            if (weeklyFocusSec > 0) {
+                append("You spent ${((weeklyFocusSec / 3600.0) * 10).toInt() / 10.0} hours in deep focus. ")
+            }
+            if (neglectedProjects.isNotEmpty()) {
+                append("Note that ${neglectedProjects.size} projects are slipping through the cracks. ")
+            }
+            if (avgMood > 0) {
+                append("Your average mood was ${((avgMood * 10).toInt() / 10.0)}/5.0. ")
+            }
+            if (recentNodes.isNotEmpty()) {
+                val ratio =
+                    (recentCompletions.size.toDouble() / recentNodes.size.toDouble() * 100).toInt()
+                append("Current execution ratio: $ratio%. ")
+            }
+        }
+
         return InsightsData(
             weeklyCaptures = recentNodes.size,
             weeklyCompletions = recentCompletions.size,
@@ -322,6 +339,8 @@ class MainViewModel(
             avgEnergy = avgEnergy,
             avgFocus = avgFocus,
             neglectedProjects = neglectedProjects,
+            captureToActionRatio = if (recentNodes.isNotEmpty()) recentCompletions.size.toDouble() / recentNodes.size.toDouble() else 0.0,
+            autoPreparedReview = review
         )
     }
 
@@ -410,7 +429,102 @@ class MainViewModel(
 
     fun updateNode(node: NodeEntity) {
         viewModelScope.launch {
-            repository.updateNode(node.copy(updatedAt = Clock.System.now().toEpochMilliseconds()))
+            val oldNode = repository.getNodeById(node.id)
+            var updatedNode = node.copy(updatedAt = Clock.System.now().toEpochMilliseconds())
+
+            // Check for postponement
+            if (oldNode != null && oldNode.dueAt != null && node.dueAt != null && node.dueAt > oldNode.dueAt) {
+                updatedNode = updatedNode.copy(postponeCount = oldNode.postponeCount + 1)
+            }
+
+            repository.updateNode(updatedNode)
+        }
+    }
+
+    fun extractNextStep(nodeId: Long) {
+        viewModelScope.launch {
+            repository.getNodeById(nodeId)?.let { node ->
+                if (node.nextSmallestStep.isNullOrBlank() && node.content.isNotBlank()) {
+                    val lines = node.content.lines().filter { it.isNotBlank() }
+                    if (lines.isNotEmpty()) {
+                        val firstLine =
+                            lines.first().trim().removePrefix("-").removePrefix("*").trim()
+                        repository.updateNode(
+                            node.copy(
+                                nextSmallestStep = firstLine,
+                                updatedAt = Clock.System.now().toEpochMilliseconds()
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    fun splitIntoSubtasks(nodeId: Long) {
+        viewModelScope.launch {
+            repository.getNodeById(nodeId)?.let { node ->
+                val lines = node.content.lines()
+                    .map { it.trim() }
+                    .filter { it.isNotBlank() && (it.startsWith("-") || it.startsWith("*")) }
+
+                if (lines.isNotEmpty()) {
+                    for (line in lines) {
+                        val subtaskTitle = line.removePrefix("-").removePrefix("*").trim()
+                        val subtaskId = repository.insertNode(
+                            NodeEntity(
+                                title = subtaskTitle,
+                                type = "task",
+                                projectId = node.projectId,
+                                areaId = node.areaId,
+                                parentNodeId = node.id
+                            )
+                        )
+                        repository.insertRelation(
+                            RelationEntity(
+                                fromNodeId = node.id,
+                                toNodeId = subtaskId,
+                                relationType = "DEPENDS_ON"
+                            )
+                        )
+                    }
+                    // Optionally clear content or prefix it with "SPLIT"
+                    repository.updateNode(
+                        node.copy(
+                            content = "// SPLIT INTO SUBTASKS\n" + node.content,
+                            updatedAt = Clock.System.now().toEpochMilliseconds()
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    fun splitNote(nodeId: Long) {
+        viewModelScope.launch {
+            repository.getNodeById(nodeId)?.let { node ->
+                val sections = node.content.split(Regex("(?=^# )", RegexOption.MULTILINE))
+                    .filter { it.isNotBlank() }
+
+                if (sections.size > 1) {
+                    for (section in sections) {
+                        val lines = section.lines()
+                        val title = lines.first().removePrefix("# ").trim()
+                        val content = lines.drop(1).joinToString("\n").trim()
+
+                        repository.insertNode(
+                            NodeEntity(
+                                title = title,
+                                content = content,
+                                type = "note",
+                                projectId = node.projectId,
+                                areaId = node.areaId
+                            )
+                        )
+                    }
+                    archiveNode(node)
+                }
+            }
         }
     }
 
@@ -731,6 +845,8 @@ class MainViewModel(
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     fun getRelationsForNode(nodeId: Long): Flow<List<RelationEntity>> = repository.getRelationsForNode(nodeId)
+
+    fun getLogsForNode(nodeId: Long): Flow<List<EventLogEntity>> = repository.getLogsForNode(nodeId)
 
     fun addRelation(
         fromNodeId: Long,

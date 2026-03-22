@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
 package com.tajemniktv.tajsos.ui.components
 
 import androidx.compose.animation.core.Spring
@@ -26,6 +30,7 @@ import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -100,14 +105,73 @@ fun NodeCard(
                     if (dueAt != null) {
                         val due = kotlin.time.Instant.fromEpochMilliseconds(dueAt).toLocalDateTime(TimeZone.currentSystemDefault())
                         Spacer(Modifier.width(8.dp))
-                        Icon(Icons.Default.DateRange, contentDescription = null, tint = TactileTheme.Accent, modifier = Modifier.size(10.dp))
+                        Icon(
+                            Icons.Default.DateRange,
+                            contentDescription = null,
+                            tint = if (node.isHardDeadline) TactileTheme.Error else TactileTheme.Accent,
+                            modifier = Modifier.size(10.dp)
+                        )
                         Spacer(Modifier.width(2.dp))
                         Text(
-                            text = "${due.day}/${due.month.number}",
+                            text = "${due.day}/${due.month.number}${if (node.isHardDeadline) "!" else ""}",
                             style = MaterialTheme.typography.labelSmall,
-                            color = TactileTheme.Accent
+                            color = if (node.isHardDeadline) TactileTheme.Error else TactileTheme.Accent
                         )
                     }
+                    val staleTime =
+                        Clock.System.now().toEpochMilliseconds() - (14 * 24 * 60 * 60 * 1000L)
+                    if (node.status == "active" && node.updatedAt < staleTime) {
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            text = "STALE",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = TactileTheme.Error.copy(alpha = 0.5f)
+                        )
+                    }
+                    if (node.energyLevel != null) {
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            text = "⚡".repeat(node.energyLevel!!),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = when (node.energyLevel) {
+                                1 -> TactileTheme.Success
+                                2 -> TactileTheme.Primary
+                                3 -> TactileTheme.Error
+                                else -> TactileTheme.Muted
+                            }
+                        )
+                    }
+                    if (node.friction != null) {
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            text = node.friction!!.uppercase().replace("_", " "),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = TactileTheme.Primary
+                        )
+                    }
+                    if (node.status != "active" && node.status != "done") {
+                        Spacer(Modifier.width(8.dp))
+                        val statusColor = when (node.status) {
+                            "blocked" -> TactileTheme.Error
+                            "on_hold" -> TactileTheme.Accent
+                            "someday" -> TactileTheme.Muted
+                            else -> TactileTheme.Primary
+                        }
+                        Text(
+                            text = node.status.uppercase().replace("_", " "),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = statusColor
+                        )
+                    }
+                }
+                if (!node.nextSmallestStep.isNullOrEmpty()) {
+                    Text(
+                        text = "↳ ${node.nextSmallestStep}",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = TactileTheme.Accent,
+                        maxLines = 1,
+                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                    )
                 }
             }
             if (isDone) {

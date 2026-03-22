@@ -6,10 +6,7 @@ package com.tajemniktv.tajsos.ui.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
@@ -61,14 +58,61 @@ fun TaskRow(
                 onCheckedChange = { onToggleDone(if (it) "done" else "active") },
                 colors = CheckboxDefaults.colors(checkedColor = TactileTheme.Primary)
             )
-            Text(
-                text = node.title,
-                style = MaterialTheme.typography.bodyLarge.copy(
-                    textDecoration = if (isDone) TextDecoration.LineThrough else null
-                ),
-                modifier = Modifier.weight(1f),
-                color = if (isDone) TactileTheme.Muted else TactileTheme.Text
-            )
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = node.title,
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        textDecoration = if (isDone) TextDecoration.LineThrough else null
+                    ),
+                    color = if (isDone) TactileTheme.Muted else TactileTheme.Text
+                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    if (node.energyLevel != null) {
+                        Text(
+                            text = "⚡".repeat(node.energyLevel!!),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = when (node.energyLevel) {
+                                1 -> TactileTheme.Success
+                                2 -> TactileTheme.Primary
+                                3 -> TactileTheme.Error
+                                else -> TactileTheme.Muted
+                            }
+                        )
+                        Spacer(Modifier.width(8.dp))
+                    }
+                    if (node.friction != null) {
+                        Text(
+                            text = node.friction!!.uppercase().replace("_", " "),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = TactileTheme.Primary
+                        )
+                        Spacer(Modifier.width(8.dp))
+                    }
+                    if (node.status != "active" && node.status != "done") {
+                        val statusColor = when (node.status) {
+                            "blocked" -> TactileTheme.Error
+                            "on_hold" -> TactileTheme.Accent
+                            "someday" -> TactileTheme.Muted
+                            else -> TactileTheme.Primary
+                        }
+                        Text(
+                            text = node.status.uppercase().replace("_", " "),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = statusColor
+                        )
+                        Spacer(Modifier.width(8.dp))
+                    }
+                    if (!node.nextSmallestStep.isNullOrEmpty()) {
+                        Text(
+                            text = "↳ ${node.nextSmallestStep}",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = TactileTheme.Accent,
+                            maxLines = 1,
+                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                        )
+                    }
+                }
+            }
             if (isDone) {
                 IconButton(onClick = onArchive) {
                     Icon(

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
 package com.tajemniktv.tajsos.ui.screens
 
 import androidx.compose.foundation.clickable
@@ -15,17 +19,24 @@ import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
+import com.tajemniktv.tajsos.ui.components.ProjectItem
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import kotlinx.coroutines.launch
 
 @Composable
 fun ProjectsScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit) {
+    val scope = rememberCoroutineScope()
     val projects by viewModel.allProjects.collectAsState()
     val allNodes by viewModel.allNodes.collectAsState()
     var showAddDialog by remember { mutableStateOf(false) }
     var searchQuery by remember { mutableStateOf("") }
+    var selectedStatusFilter by remember { mutableStateOf("active") }
 
-    val filteredProjects = remember(projects, searchQuery) {
-        projects.filter { it.title.contains(searchQuery, ignoreCase = true) }
+    val filteredProjects = remember(projects, searchQuery, selectedStatusFilter) {
+        projects.filter {
+            it.title.contains(searchQuery, ignoreCase = true) &&
+                    (if (selectedStatusFilter == "active") it.status == "active" || it.status == "on_hold" else it.status == "someday")
+        }
     }
     val nodesByProjectId = remember(allNodes) {
         allNodes.groupBy { it.node.projectId }
@@ -52,7 +63,22 @@ fun ProjectsScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit) {
             shape = MaterialTheme.shapes.medium
         )
 
-        Spacer(modifier = Modifier.height(TactileTheme.SpacingMd))
+        Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
+
+        Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+            FilterChip(
+                selected = selectedStatusFilter == "active",
+                onClick = { selectedStatusFilter = "active" },
+                label = { Text("ACTIVE") }
+            )
+            FilterChip(
+                selected = selectedStatusFilter == "someday",
+                onClick = { selectedStatusFilter = "someday" },
+                label = { Text("SOMEDAY") }
+            )
+        }
+
+        Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
 
         if (filteredProjects.isEmpty() && searchQuery.isEmpty()) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -73,9 +99,17 @@ fun ProjectsScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit) {
                     val progress = if (total > 0) completed.toFloat() / total else 0f
 
                     ProjectItem(
-                        project,
-                        progress,
-                        total
+                        project = project,
+                        progress = progress,
+                        totalItems = total,
+                        onLongClick = {
+                            onNavigateTo(
+                                Screen.NoteDetail.route.replace(
+                                    "{noteId}",
+                                    project.id.toString()
+                                )
+                            )
+                        }
                     ) {
                         onNavigateTo(Screen.ProjectDetail.route.replace("{projectId}", project.id.toString()))
                     }
@@ -90,8 +124,15 @@ fun ProjectsScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit) {
     if (showAddDialog) {
         AddProjectDialog(
             onDismiss = { showAddDialog = false },
-            onConfirm = { title, content ->
-                viewModel.addProject(title, content)
+            onConfirm = { title, content, status ->
+                viewModel.addNode(title, content, "project", inboxState = false)
+                // Wait, addProject in MainViewModel might not support status.
+                // I'll use addNode directly or update MainViewModel.
+                scope.launch {
+                    val id =
+                        viewModel.addNodeForResult(title, content, "project", inboxState = false)
+                    viewModel.updateNodeStatus(viewModel.getNodeById(id)!!, status)
+                }
                 showAddDialog = false
             }
         )
@@ -99,50 +140,10 @@ fun ProjectsScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit) {
 }
 
 @Composable
-fun ProjectItem(project: NodeEntity, progress: Float, totalItems: Int, onClick: () -> Unit) {
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick),
-        color = TactileTheme.Surface,
-        shape = RoundedCornerShape(TactileTheme.RadiusSm),
-        border = androidx.compose.foundation.BorderStroke(1.dp, TactileTheme.Muted.copy(alpha = 0.2f))
-    ) {
-        Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(project.title.uppercase(), style = MaterialTheme.typography.titleMedium, color = TactileTheme.Primary)
-                if (totalItems > 0) {
-                    Text(
-                        "${(progress * 100).toInt()}%",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Muted
-                    )
-                }
-            }
-            if (project.content.isNotEmpty()) {
-                Text(project.content, style = MaterialTheme.typography.bodySmall, color = TactileTheme.Muted)
-            }
-            if (totalItems > 0) {
-                Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
-                LinearProgressIndicator(
-                    progress = { progress },
-                    modifier = Modifier.fillMaxWidth().height(2.dp),
-                    color = TactileTheme.Primary,
-                    trackColor = TactileTheme.Muted.copy(alpha = 0.2f)
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun AddProjectDialog(onDismiss: () -> Unit, onConfirm: (String, String) -> Unit) {
+fun AddProjectDialog(onDismiss: () -> Unit, onConfirm: (String, String, String) -> Unit) {
     var name by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
+    var status by remember { mutableStateOf("active") }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -151,10 +152,19 @@ fun AddProjectDialog(onDismiss: () -> Unit, onConfirm: (String, String) -> Unit)
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 TextField(value = name, onValueChange = { name = it }, label = { Text("Name") })
                 TextField(value = description, onValueChange = { description = it }, label = { Text("Description") })
+                Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+                    listOf("active", "someday").forEach { s ->
+                        FilterChip(
+                            selected = status == s,
+                            onClick = { status = s },
+                            label = { Text(s.uppercase()) }
+                        )
+                    }
+                }
             }
         },
         confirmButton = {
-            Button(onClick = { if (name.isNotBlank()) onConfirm(name, description) }) {
+            Button(onClick = { if (name.isNotBlank()) onConfirm(name, description, status) }) {
                 Text("CREATE")
             }
         },

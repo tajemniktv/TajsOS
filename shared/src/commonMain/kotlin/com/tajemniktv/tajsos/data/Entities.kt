@@ -46,6 +46,18 @@ data class NodeEntity(
         kotlin.time.Clock.System
             .now()
             .toEpochMilliseconds(),
+    // Energy & Friction (Roadmap Section 3)
+    val energyLevel: Int? = null, // 1=low, 2=medium, 3=high
+    val friction: String? = null, // easy, annoying, mentally_heavy, unclear
+    val nextSmallestStep: String? = null,
+    val estimatedMinutes: Int? = null,
+    val postponeCount: Int = 0,
+    val completionNote: String? = null,
+    val isHardDeadline: Boolean = false,
+    // Project/Area specific (Roadmap Section 4)
+    val projectWhy: String? = null,
+    val isFrozen: Boolean = false,
+    val projectStatus: String? = null, // active, slowing_down, neglected, exploratory, on_hold
     // Reminders & Recurrence
     val reminderAt: Long? = null,
     val isRecurring: Boolean = false,
@@ -115,7 +127,7 @@ data class RelationEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val fromNodeId: Long,
     val toNodeId: Long,
-    val relationType: String, // RELATED, MENTION, DEPENDS_ON, BELONGS_TO, REFERENCE, DERIVED_FROM
+    val relationType: String, // RELATED, MENTION, DEPENDS_ON, BELONGS_TO, REFERENCE, DERIVED_FROM, INSPIRED_BY
     val createdAt: Long =
         kotlin.time.Clock.System
             .now()
@@ -156,7 +168,7 @@ data class NodeTagEntity(
 @Serializable
 data class EventLogEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val eventType: String, // ITEM_CREATED, ITEM_COMPLETED, ITEM_ARCHIVED, SESSION_STARTED, SESSION_ENDED, TODAY_ASSIGNED, ITEM_LINKED, CHECKIN_CREATED
+    val eventType: String, // NODE_CREATED, NODE_COMPLETED, NODE_ARCHIVED, SESSION_STARTED, SESSION_ENDED, TODAY_ASSIGNED, NODE_LINKED, CHECKIN_CREATED, NODE_FROZEN, NODE_UNFROZEN
     val nodeId: Long? = null,
     val relatedNodeId: Long? = null,
     val timestamp: Long =

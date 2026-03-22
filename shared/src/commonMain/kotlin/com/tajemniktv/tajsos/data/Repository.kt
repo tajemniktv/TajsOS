@@ -60,12 +60,21 @@ class AppRepository(
     }
 
     suspend fun updateNode(node: NodeEntity) {
+        val oldNode = nodeDao.getNodeById(node.id)
         nodeDao.updateNode(node)
-        if (node.status == "done") {
-            logEvent("NODE_COMPLETED", node.id)
-        } else if (node.status == "archived") {
-            logEvent("NODE_ARCHIVED", node.id)
+
+        if (oldNode != null) {
+            if (oldNode.status != "done" && node.status == "done") {
+                logEvent("NODE_COMPLETED", node.id)
+            } else if (oldNode.status != "archived" && node.status == "archived") {
+                logEvent("NODE_ARCHIVED", node.id)
+            }
+
+            if (oldNode.isFrozen != node.isFrozen) {
+                logEvent(if (node.isFrozen) "NODE_FROZEN" else "NODE_UNFROZEN", node.id)
+            }
         }
+
         syncBelongsToRelations(node.id, node.projectId, node.areaId)
     }
 
@@ -196,6 +205,7 @@ fun getActiveSession(): Flow<FocusSessionEntity?> = focusSessionDao.getActiveSes
 
     // Log
     fun getRecentLogs(limit: Int = 100) = eventLogDao.getRecentLogs(limit)
+    fun getLogsForNode(nodeId: Long) = eventLogDao.getLogsForNode(nodeId)
     private suspend fun logEvent(type: String, nodeId: Long? = null, relatedNodeId: Long? = null) {
         eventLogDao.insertLog(EventLogEntity(eventType = type, nodeId = nodeId, relatedNodeId = relatedNodeId))
     }

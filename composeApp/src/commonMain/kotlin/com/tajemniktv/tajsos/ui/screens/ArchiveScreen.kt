@@ -30,6 +30,11 @@ fun ArchiveScreen(
 
     Column(modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd)) {
         Text("ARCHIVE", style = MaterialTheme.typography.displaySmall)
+        Text(
+            "NOTHING IS EVER TRULY GONE. RESTORE ANY ITEM AT ANY TIME.",
+            style = MaterialTheme.typography.labelSmall,
+            color = TactileTheme.Muted
+        )
         Spacer(modifier = Modifier.height(TactileTheme.SpacingMd))
 
         if (archivedNodes.isEmpty() && isInitialLoadComplete) {

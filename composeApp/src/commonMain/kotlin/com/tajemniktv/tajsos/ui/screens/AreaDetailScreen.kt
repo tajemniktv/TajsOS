@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.NodeCard
+import com.tajemniktv.tajsos.ui.components.ProjectItem
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -83,52 +84,70 @@ fun AreaDetailScreen(
                 style = MaterialTheme.typography.displaySmall,
                 color = TactileTheme.Text
             )
+
+            val activeProjects =
+                projects.filter { it.status == "active" || it.projectStatus == "active" }
+
+            val areaTasks = nodesWithPinInArea.filter { it.node.type == "task" }
+            val staleTime =
+                kotlin.time.Clock.System.now().toEpochMilliseconds() - (14 * 24 * 60 * 60 * 1000L)
+            val neglectedTasks =
+                areaTasks.count { it.node.status == "active" && it.node.updatedAt < staleTime }
+
+            if (neglectedTasks > 0) {
+                Surface(
+                    color = TactileTheme.Error.copy(alpha = 0.1f),
+                    shape = MaterialTheme.shapes.small,
+                    modifier = Modifier.padding(vertical = 8.dp).fillMaxWidth()
+                ) {
+                    Text(
+                        "$neglectedTasks NEGLECTED TASKS IN THIS AREA",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = TactileTheme.Error,
+                        modifier = Modifier.padding(8.dp)
+                    )
+                }
+            }
+
             Spacer(modifier = Modifier.height(TactileTheme.SpacingMd))
 
-            if (projects.isNotEmpty()) {
+            if (activeProjects.isNotEmpty()) {
                 Text(
-                    text = "PROJECTS",
+                    text = "ACTIVE PROJECTS",
                     style = MaterialTheme.typography.labelSmall,
                     color = TactileTheme.Primary
                 )
                 Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
-                LazyColumn(
-                    modifier = Modifier.heightIn(max = 200.dp),
-                    verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)
-                ) {
-                    items(projects) { project ->
-                        val projectNodes = nodes.filter { it.node.projectId == project.id }
-                        val total = projectNodes.size
-                        val completed = projectNodes.count { it.node.status == "done" }
-                        val progress = if (total > 0) completed.toFloat() / total else 0f
+                activeProjects.forEach { project ->
+                    val projectNodes = nodes.filter { it.node.projectId == project.id }
+                    val total = projectNodes.size
+                    val completed = projectNodes.count { it.node.status == "done" }
+                    val progress = if (total > 0) completed.toFloat() / total else 0f
 
-                        ProjectItem(
-                            project,
-                            progress,
-                            total
-                        ) { onNavigateToProject(project.id) }
-                    }
+                    ProjectItem(
+                        project = project,
+                        progress = progress,
+                        totalItems = total,
+                        onLongClick = { onEditNode(project.id) }
+                    ) { onNavigateToProject(project.id) }
+                    Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
                 }
                 Spacer(modifier = Modifier.height(TactileTheme.SpacingMd))
             }
 
             Text(
-                text = "DIRECT ITEMS",
+                text = "DIRECT ITEMS & RECENT ACTIVITY",
                 style = MaterialTheme.typography.labelSmall,
                 color = TactileTheme.Primary
             )
             Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
 
             LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
-                items(nodesWithPinInArea) { item ->
+                items(nodesWithPinInArea.sortedByDescending { it.node.updatedAt }
+                    .take(10)) { item ->
                     NodeCard(
                         nodeWithPin = item,
-                        onToggleDone = { status ->
-                            viewModel.updateNodeStatus(
-                                item.node,
-                                status
-                            )
-                        },
+                        onToggleDone = { status -> viewModel.updateNodeStatus(item.node, status) },
                         onTogglePin = { isPinned -> viewModel.togglePin(item.node, isPinned) },
                         onClick = { onEditNode(item.node.id) },
                         onLongClick = { onEditNode(item.node.id) },

@@ -13,6 +13,8 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.CallSplit
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -86,6 +88,9 @@ fun NoteDetailScreen(
     var showProjectDialog by remember { mutableStateOf(false) }
     var showReminderDialog by remember { mutableStateOf(false) }
     var showDueDialog by remember { mutableStateOf(false) }
+    var showEstimateDialog by remember { mutableStateOf(false) }
+    var showPostponeDialog by remember { mutableStateOf(false) }
+    var showWhyDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -105,6 +110,45 @@ fun NoteDetailScreen(
                             contentDescription = "Pin knowledge",
                             tint = if (node.isPinned) TactileTheme.Primary else TactileTheme.Muted,
                         )
+                    }
+                    if (node.type == "note" || node.type == "idea" || node.type == "task") {
+                        IconButton(onClick = {
+                            scope.launch {
+                                viewModel.getNodeById(noteId)?.let { original ->
+                                    val targetType = when (original.type) {
+                                        "note", "idea" -> "task"
+                                        "task" -> "project"
+                                        else -> original.type
+                                    }
+                                    viewModel.updateNode(original.copy(type = targetType))
+                                }
+                            }
+                        }) {
+                            val icon = when (node.type) {
+                                "note", "idea" -> Icons.Default.CheckCircle
+                                "task" -> Icons.AutoMirrored.Filled.List
+                                else -> Icons.Default.Transform
+                            }
+                            Icon(icon, contentDescription = "Convert")
+                        }
+                    }
+                    if (node.type == "task") {
+                        IconButton(onClick = {
+                            scope.launch {
+                                viewModel.getNodeById(noteId)?.let { original ->
+                                    viewModel.addNode(
+                                        title = original.title,
+                                        content = original.content,
+                                        type = original.type,
+                                        projectId = original.projectId,
+                                        areaId = original.areaId,
+                                        inboxState = false
+                                    )
+                                }
+                            }
+                        }) {
+                            Icon(Icons.Default.Repeat, contentDescription = "Repeat Task")
+                        }
                     }
                     IconButton(onClick = {
                         scope.launch {
@@ -191,6 +235,81 @@ fun NoteDetailScreen(
 
             HorizontalDivider(color = TactileTheme.Muted.copy(alpha = 0.2f))
 
+            if (node.type == "task") {
+                Text(
+                    "NEXT SMALLEST STEP",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TactileTheme.Primary
+                )
+                BasicTextField(
+                    value = node.nextSmallestStep ?: "",
+                    onValueChange = {
+                        viewModel.updateNode(node.copy(nextSmallestStep = it))
+                    },
+                    textStyle = MaterialTheme.typography.bodyMedium.copy(color = TactileTheme.Accent),
+                    cursorBrush = SolidColor(TactileTheme.Accent),
+                    modifier = Modifier.fillMaxWidth(),
+                    decorationBox = { innerTextField ->
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(Modifier.weight(1f)) {
+                                if (node.nextSmallestStep.isNullOrEmpty()) {
+                                    Text(
+                                        "Define the smallest possible action...",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = TactileTheme.Muted
+                                    )
+                                }
+                                innerTextField()
+                            }
+                            if (node.nextSmallestStep.isNullOrBlank() && node.content.isNotBlank()) {
+                                IconButton(
+                                    onClick = { viewModel.extractNextStep(noteId) },
+                                    modifier = Modifier.size(24.dp)
+                                ) {
+                                    Icon(
+                                        Icons.Default.AutoFixHigh,
+                                        contentDescription = "Auto Extract",
+                                        tint = TactileTheme.Accent,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                }
+                            }
+                        }
+                    },
+                )
+                Spacer(Modifier.height(TactileTheme.SpacingSm))
+                HorizontalDivider(color = TactileTheme.Muted.copy(alpha = 0.1f))
+            }
+
+            if (node.status == "done") {
+                Text(
+                    "COMPLETION NOTE",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TactileTheme.Success
+                )
+                BasicTextField(
+                    value = node.completionNote ?: "",
+                    onValueChange = {
+                        viewModel.updateNode(node.copy(completionNote = it))
+                    },
+                    textStyle = MaterialTheme.typography.bodyMedium.copy(color = TactileTheme.Success),
+                    cursorBrush = SolidColor(TactileTheme.Success),
+                    modifier = Modifier.fillMaxWidth(),
+                    decorationBox = { innerTextField ->
+                        if (node.completionNote.isNullOrEmpty()) {
+                            Text(
+                                "Why did this work? Any reflections?",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = TactileTheme.Muted
+                            )
+                        }
+                        innerTextField()
+                    },
+                )
+                Spacer(Modifier.height(TactileTheme.SpacingSm))
+                HorizontalDivider(color = TactileTheme.Muted.copy(alpha = 0.1f))
+            }
+
             BasicTextField(
                 value = content,
                 onValueChange = {
@@ -204,52 +323,179 @@ fun NoteDetailScreen(
                         .fillMaxWidth()
                         .heightIn(min = 200.dp),
                 decorationBox = { innerTextField ->
-                    if (content.isEmpty()) {
-                        Text("Start writing...", style = MaterialTheme.typography.bodyLarge, color = TactileTheme.Muted)
+                    Box {
+                        if (content.isEmpty()) {
+                            Text(
+                                "Start writing...",
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = TactileTheme.Muted
+                            )
+                        }
+                        innerTextField()
+
+                        if (node.type == "task" && content.lines()
+                                .any { it.trim().startsWith("-") || it.trim().startsWith("*") }
+                        ) {
+                            IconButton(
+                                onClick = { viewModel.splitIntoSubtasks(noteId) },
+                                modifier = Modifier.align(Alignment.TopEnd).padding(4.dp)
+                                    .size(24.dp)
+                            ) {
+                                Icon(
+                                    Icons.AutoMirrored.Filled.CallSplit,
+                                    contentDescription = "Split Subtasks",
+                                    tint = TactileTheme.Primary,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                            }
+                        }
+
+                        if ((node.type == "note" || node.type == "idea") && content.contains("# ")) {
+                            IconButton(
+                                onClick = {
+                                    viewModel.splitNote(noteId)
+                                    onBack()
+                                },
+                                modifier = Modifier.align(Alignment.TopEnd).padding(4.dp)
+                                    .size(24.dp)
+                            ) {
+                                Icon(
+                                    Icons.Default.DashboardCustomize,
+                                    contentDescription = "Split Note",
+                                    tint = TactileTheme.Primary,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                            }
+                        }
                     }
-                    innerTextField()
                 },
             )
 
             // Relations Section
             if (relations.isNotEmpty()) {
                 val nodesMap = remember(nodes) { nodes.associateBy { it.node.id } }
-                Text("RELATED", style = MaterialTheme.typography.labelSmall, color = TactileTheme.Primary)
-                relations.forEach { relation ->
-                    val relatedId = if (relation.fromNodeId == noteId) relation.toNodeId else relation.fromNodeId
-                    val relatedNode = nodesMap[relatedId]?.node
-                    if (relatedNode != null) {
-                        Surface(
-                            onClick = { onNavigateToNode(relatedId) },
-                            color = TactileTheme.Surface,
-                            shape = MaterialTheme.shapes.small,
-                            border = androidx.compose.foundation.BorderStroke(1.dp, TactileTheme.Border),
-                            modifier = Modifier.fillMaxWidth(),
-                        ) {
-                            Row(modifier = Modifier.padding(TactileTheme.SpacingMd), verticalAlignment = Alignment.CenterVertically) {
-                                Icon(
-                                    Icons.Default.Link,
-                                    contentDescription = null,
-                                    tint = TactileTheme.Muted,
-                                    modifier = Modifier.size(16.dp),
-                                )
-                                Spacer(Modifier.width(8.dp))
-                                Text(
-                                    relatedNode.title,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    modifier = Modifier.weight(1f),
-                                )
-                                Text(relation.relationType, style = MaterialTheme.typography.labelSmall, color = TactileTheme.Muted)
-                                if (relation.relationType != "BELONGS_TO") {
-                                    IconButton(
-                                        onClick = { viewModel.deleteRelation(relation) },
-                                        modifier = Modifier.size(24.dp),
-                                    ) {
-                                        Icon(
-                                            Icons.Default.LinkOff,
-                                            contentDescription = "Unlink",
-                                            tint = TactileTheme.Error,
-                                            modifier = Modifier.size(16.dp),
+
+                val forwardLinks = relations.filter { it.fromNodeId == noteId }
+                val backLinks = relations.filter { it.toNodeId == noteId }
+
+                if (forwardLinks.isNotEmpty()) {
+                    Text(
+                        "RELATED",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = TactileTheme.Primary
+                    )
+                    forwardLinks.forEach { relation ->
+                        val relatedId = relation.toNodeId
+                        val relatedNode = nodesMap[relatedId]?.node
+                        if (relatedNode != null) {
+                            Surface(
+                                onClick = { onNavigateToNode(relatedId) },
+                                color = TactileTheme.Surface,
+                                shape = MaterialTheme.shapes.small,
+                                border = androidx.compose.foundation.BorderStroke(
+                                    1.dp,
+                                    TactileTheme.Border
+                                ),
+                                modifier = Modifier.fillMaxWidth(),
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(TactileTheme.SpacingMd),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        when (relation.relationType) {
+                                            "DEPENDS_ON" -> Icons.Default.Lock
+                                            "BELONGS_TO" -> Icons.Default.Folder
+                                            else -> Icons.Default.Link
+                                        },
+                                        contentDescription = null,
+                                        tint = TactileTheme.Muted,
+                                        modifier = Modifier.size(16.dp),
+                                    )
+                                    Spacer(Modifier.width(8.dp))
+                                    Column(Modifier.weight(1f)) {
+                                        Text(
+                                            relatedNode.title,
+                                            style = MaterialTheme.typography.bodyMedium,
+                                        )
+                                        val label = when (relation.relationType) {
+                                            "DEPENDS_ON" -> "BLOCKS"
+                                            else -> relation.relationType
+                                        }
+                                        Text(
+                                            label,
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = TactileTheme.Muted
+                                        )
+                                    }
+                                    if (relation.relationType != "BELONGS_TO") {
+                                        IconButton(
+                                            onClick = { viewModel.deleteRelation(relation) },
+                                            modifier = Modifier.size(24.dp),
+                                        ) {
+                                            Icon(
+                                                Icons.Default.LinkOff,
+                                                contentDescription = "Unlink",
+                                                tint = TactileTheme.Error,
+                                                modifier = Modifier.size(16.dp),
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (backLinks.isNotEmpty()) {
+                    Spacer(Modifier.height(TactileTheme.SpacingSm))
+                    Text(
+                        "BACKLINKS",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = TactileTheme.Accent
+                    )
+                    backLinks.forEach { relation ->
+                        val relatedId = relation.fromNodeId
+                        val relatedNode = nodesMap[relatedId]?.node
+                        if (relatedNode != null) {
+                            Surface(
+                                onClick = { onNavigateToNode(relatedId) },
+                                color = TactileTheme.Surface,
+                                shape = MaterialTheme.shapes.small,
+                                border = androidx.compose.foundation.BorderStroke(
+                                    1.dp,
+                                    TactileTheme.Border
+                                ),
+                                modifier = Modifier.fillMaxWidth(),
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(TactileTheme.SpacingMd),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        when (relation.relationType) {
+                                            "DEPENDS_ON" -> Icons.Default.Link
+                                            "BELONGS_TO" -> Icons.Default.Folder
+                                            else -> Icons.Default.Link
+                                        },
+                                        contentDescription = null,
+                                        tint = TactileTheme.Muted,
+                                        modifier = Modifier.size(16.dp),
+                                    )
+                                    Spacer(Modifier.width(8.dp))
+                                    Column(Modifier.weight(1f)) {
+                                        Text(
+                                            relatedNode.title,
+                                            style = MaterialTheme.typography.bodyMedium,
+                                        )
+                                        val label = when (relation.relationType) {
+                                            "DEPENDS_ON" -> "BLOCKED BY"
+                                            else -> "LINKED IN"
+                                        }
+                                        Text(
+                                            label,
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = TactileTheme.Muted
                                         )
                                     }
                                 }
@@ -322,6 +568,99 @@ fun NoteDetailScreen(
                 colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
             )
 
+            if (node.type == "task") {
+                ListItem(
+                    headlineContent = { Text("Energy Required") },
+                    supportingContent = {
+                        Text(
+                            when (node.energyLevel) {
+                                1 -> "LOW ENERGY"
+                                2 -> "MEDIUM ENERGY"
+                                3 -> "HIGH ENERGY"
+                                else -> "NOT SET"
+                            }
+                        )
+                    },
+                    modifier = Modifier.clickable {
+                        val nextLevel = ((node.energyLevel ?: 0) % 3) + 1
+                        viewModel.updateNode(node.copy(energyLevel = nextLevel))
+                    },
+                    colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
+                    trailingContent = {
+                        Icon(
+                            Icons.Default.BatteryChargingFull,
+                            contentDescription = null,
+                            tint = when (node.energyLevel) {
+                                1 -> TactileTheme.Success
+                                2 -> TactileTheme.Primary
+                                3 -> TactileTheme.Error
+                                else -> TactileTheme.Muted
+                            }
+                        )
+                    }
+                )
+
+                ListItem(
+                    headlineContent = { Text("Task Friction") },
+                    supportingContent = {
+                        Text(
+                            (node.friction ?: "NOT SET").uppercase().replace("_", " ")
+                        )
+                    },
+                    modifier = Modifier.clickable {
+                        val frictions = listOf("easy", "annoying", "mentally_heavy", "unclear")
+                        val currentIdx = frictions.indexOf(node.friction)
+                        val nextFriction = frictions[(currentIdx + 1) % frictions.size]
+                        viewModel.updateNode(node.copy(friction = nextFriction))
+                    },
+                    colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
+                    trailingContent = {
+                        Icon(
+                            when (node.friction) {
+                                "easy" -> Icons.Default.Mood
+                                "annoying" -> Icons.Default.SentimentDissatisfied
+                                "mentally_heavy" -> Icons.Default.Psychology
+                                "unclear" -> Icons.Default.QuestionMark
+                                else -> Icons.Default.Edit
+                            },
+                            contentDescription = null,
+                            tint = TactileTheme.Primary
+                        )
+                    }
+                )
+
+                ListItem(
+                    headlineContent = { Text("Time Estimate") },
+                    supportingContent = {
+                        Text(node.estimatedMinutes?.let { "$it min" } ?: "Not set")
+                    },
+                    modifier = Modifier.clickable { showEstimateDialog = true },
+                    colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
+                    trailingContent = {
+                        Icon(
+                            Icons.Default.Timer,
+                            contentDescription = null,
+                            tint = TactileTheme.Primary
+                        )
+                    }
+                )
+
+                if (node.postponeCount > 0) {
+                    ListItem(
+                        headlineContent = { Text("Postpone Count") },
+                        supportingContent = { Text("${node.postponeCount} times") },
+                        colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
+                        trailingContent = {
+                            Icon(
+                                Icons.Default.History,
+                                contentDescription = null,
+                                tint = TactileTheme.Error
+                            )
+                        }
+                    )
+                }
+            }
+
             // Area & Project Selection
             val area = areas.find { it.id == node.areaId }
             val project = projects.find { it.id == node.projectId }
@@ -344,6 +683,41 @@ fun NoteDetailScreen(
                 )
             }
 
+            if (node.type == "project") {
+                ListItem(
+                    headlineContent = { Text("Project Why") },
+                    supportingContent = { Text(node.projectWhy ?: "Define purpose...") },
+                    modifier = Modifier.clickable { showWhyDialog = true },
+                    colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
+                )
+                ListItem(
+                    headlineContent = { Text("Project Status") },
+                    supportingContent = { Text((node.projectStatus ?: "active").uppercase()) },
+                    modifier = Modifier.clickable {
+                        val statuses =
+                            listOf("active", "slowing_down", "neglected", "exploratory", "on_hold")
+                        val currentIdx = statuses.indexOf(node.projectStatus ?: "active")
+                        val nextStatus = statuses[(currentIdx + 1) % statuses.size]
+                        viewModel.updateNode(node.copy(projectStatus = nextStatus))
+                    },
+                    colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
+                )
+            }
+
+            if (node.type == "task") {
+                ListItem(
+                    headlineContent = { Text("Hard Deadline") },
+                    supportingContent = { Text(if (node.isHardDeadline) "CRITICAL" else "SOFT") },
+                    trailingContent = {
+                        Switch(
+                            checked = node.isHardDeadline,
+                            onCheckedChange = { viewModel.updateNode(node.copy(isHardDeadline = it)) }
+                        )
+                    },
+                    colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
+                )
+            }
+
             // Due Date
             ListItem(
                 headlineContent = { Text("Due Date") },
@@ -360,9 +734,18 @@ fun NoteDetailScreen(
                 },
                 modifier = Modifier.clickable { showDueDialog = true },
                 trailingContent = {
-                    if (node.dueAt != null) {
-                        IconButton(onClick = { viewModel.updateNode(node.copy(dueAt = null)) }) {
-                            Icon(Icons.Default.Clear, contentDescription = "Clear")
+                    Row {
+                        if (node.dueAt != null) {
+                            IconButton(onClick = {
+                                val nextDay = node.dueAt!! + (24 * 60 * 60 * 1000L)
+                                viewModel.updateNode(node.copy(dueAt = nextDay))
+                                showPostponeDialog = true
+                            }) {
+                                Icon(Icons.Default.KeyboardArrowRight, contentDescription = "+1d")
+                            }
+                            IconButton(onClick = { viewModel.updateNode(node.copy(dueAt = null)) }) {
+                                Icon(Icons.Default.Clear, contentDescription = "Clear")
+                            }
                         }
                     }
                 },
@@ -465,11 +848,26 @@ fun NoteDetailScreen(
                 relations.map { if (it.fromNodeId == noteId) it.toNodeId else it.fromNodeId }
                     .toSet()
             }
+        var selectedTypeForRelation by remember { mutableStateOf("RELATED") }
         AlertDialog(
             onDismissRequest = { showRelationDialog = false },
             title = { Text("Link to Node") },
             text = {
                 Column {
+                    val relationTypes =
+                        listOf("RELATED", "DEPENDS_ON", "MENTION", "INSPIRED_BY", "REFERENCE")
+                    LazyRow(
+                        modifier = Modifier.padding(bottom = 8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        items(relationTypes) { type ->
+                            FilterChip(
+                                selected = selectedTypeForRelation == type,
+                                onClick = { selectedTypeForRelation = type },
+                                label = { Text(type, style = MaterialTheme.typography.labelSmall) }
+                            )
+                        }
+                    }
                     nodes
                         .filter { it.node.id != noteId && it.node.id !in linkedNodeIds }
                         .take(10)
@@ -482,7 +880,7 @@ fun NoteDetailScreen(
                                         viewModel.addRelation(
                                             noteId,
                                             nodeWithPin.node.id,
-                                            "RELATED"
+                                            selectedTypeForRelation
                                         )
                                         showRelationDialog = false
                                     },
@@ -617,6 +1015,9 @@ fun NoteDetailScreen(
                             headlineContent = { Text(label) },
                             modifier =
                                 Modifier.clickable {
+                                    if (time > (node.dueAt ?: 0)) {
+                                        showPostponeDialog = true
+                                    }
                                     viewModel.updateNode(node.copy(dueAt = time))
                                     showDueDialog = false
                                 },
@@ -669,6 +1070,94 @@ fun NoteDetailScreen(
                     showReminderDialog = false
                 }) { Text("Cancel") }
             },
+        )
+    }
+
+    if (showEstimateDialog) {
+        AlertDialog(
+            onDismissRequest = { showEstimateDialog = false },
+            title = { Text("Set Time Estimate") },
+            text = {
+                Column {
+                    val options = listOf(5, 15, 30, 60, 120)
+                    options.forEach { mins ->
+                        ListItem(
+                            headlineContent = { Text("$mins min") },
+                            modifier = Modifier.clickable {
+                                viewModel.updateNode(node.copy(estimatedMinutes = mins))
+                                showEstimateDialog = false
+                            }
+                        )
+                    }
+                    ListItem(
+                        headlineContent = { Text("Clear") },
+                        modifier = Modifier.clickable {
+                            viewModel.updateNode(node.copy(estimatedMinutes = null))
+                            showEstimateDialog = false
+                        }
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showEstimateDialog = false }) { Text("Cancel") }
+            }
+        )
+    }
+
+    if (showPostponeDialog) {
+        AlertDialog(
+            onDismissRequest = { showPostponeDialog = false },
+            title = { Text("WHY ARE YOU POSTPONING?") },
+            text = {
+                Column {
+                    val reasons = listOf(
+                        "Energy too low",
+                        "Not enough info",
+                        "Scared to start",
+                        "Waiting for someone",
+                        "Just too much today"
+                    )
+                    reasons.forEach { reason ->
+                        ListItem(
+                            headlineContent = { Text(reason) },
+                            modifier = Modifier.clickable {
+                                val currentContent = node.content
+                                val stamp = "\n[POSTPONED: $reason]"
+                                viewModel.updateNode(node.copy(content = currentContent + stamp))
+                                showPostponeDialog = false
+                            }
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showPostponeDialog = false }) { Text("SKIP") }
+            }
+        )
+    }
+
+    if (showWhyDialog) {
+        var whyText by remember { mutableStateOf(node.projectWhy ?: "") }
+        AlertDialog(
+            onDismissRequest = { showWhyDialog = false },
+            title = { Text("PROJECT PURPOSE (WHY)") },
+            text = {
+                TextField(
+                    value = whyText,
+                    onValueChange = { whyText = it },
+                    placeholder = { Text("Why does this project exist?") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
+            confirmButton = {
+                Button(onClick = {
+                    viewModel.updateNode(node.copy(projectWhy = whyText))
+                    showWhyDialog = false
+                }) { Text("SAVE") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showWhyDialog = false }) { Text("CANCEL") }
+            }
         )
     }
 }

@@ -186,6 +186,9 @@ interface EventLogDao {
     @Query("SELECT * FROM event_log ORDER BY timestamp DESC LIMIT :limit")
     fun getRecentLogs(limit: Int = 100): Flow<List<EventLogEntity>>
 
+    @Query("SELECT * FROM event_log WHERE nodeId = :nodeId OR relatedNodeId = :nodeId ORDER BY timestamp DESC")
+    fun getLogsForNode(nodeId: Long): Flow<List<EventLogEntity>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertLog(log: EventLogEntity)
 }

@@ -62,11 +62,13 @@ fun CaptureSheet(
     onCapture: (String, String, Long?, Long?, Boolean, String?, Long?) -> Unit,
     projects: List<NodeEntity> = emptyList(),
     areas: List<NodeEntity> = emptyList(),
+    templates: List<com.tajemniktv.tajsos.data.TemplateEntity> = emptyList(),
     defaultProjectId: Long? = null,
     defaultAreaId: Long? = null,
     initialText: String = "",
     onVoiceCaptureClick: (() -> Unit)? = null,
 ) {
+
     var text by remember { mutableStateOf(initialText) }
 
     // Update text if initialText changes (e.g. from voice capture)
@@ -219,6 +221,29 @@ fun CaptureSheet(
                             selected = selectedType == type,
                             onClick = { selectedType = type },
                             label = { Text(type.uppercase()) },
+                        )
+                    }
+                }
+            }
+
+            if (templates.isNotEmpty() && !brainDumpMode) {
+                Text(
+                    "USE TEMPLATE",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TactileTheme.Primary,
+                )
+                LazyRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                ) {
+                    items(templates.filter { it.nodeType == selectedType }) { template ->
+                        FilterChip(
+                            selected = false,
+                            onClick = {
+                                if (template.defaultTitle != null) text = template.defaultTitle!!
+                                // Apply other template defaults if needed
+                            },
+                            label = { Text(template.name) },
                         )
                     }
                 }

@@ -66,6 +66,7 @@ fun App(
     val trackEntries by viewModel.trackEntries.collectAsState()
     val allProjects by viewModel.allProjects.collectAsState()
     val allAreas by viewModel.allAreas.collectAsState()
+    val allTemplates by viewModel.allTemplates.collectAsState()
     val latestTrack = trackEntries.firstOrNull()
 
     val lastActiveProjectId by viewModel.lastActiveProjectId.collectAsState()
@@ -256,6 +257,14 @@ fun App(
                                 }
                             },
                             onEditNode = onEditNode,
+                            onNavigateToProject = { id ->
+                                navController.navigate(
+                                    Screen.ProjectDetail.route.replace(
+                                        "{projectId}",
+                                        id.toString()
+                                    )
+                                )
+                            }
                         )
                     }
                     composable(Screen.Inbox.route) { InboxScreen(viewModel, onEditNode) }
@@ -376,6 +385,7 @@ fun App(
                         },
                         projects = allProjects,
                         areas = allAreas,
+                        templates = allTemplates,
                         defaultProjectId = lastActiveProjectId,
                         defaultAreaId = lastActiveAreaId,
                         initialText = voiceCaptureResult ?: "",

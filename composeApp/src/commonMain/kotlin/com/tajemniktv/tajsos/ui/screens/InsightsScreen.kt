@@ -49,6 +49,12 @@ fun InsightsScreen(viewModel: MainViewModel, onNavigateToProject: (Long) -> Unit
             Spacer(Modifier.height(TactileTheme.SpacingLg))
         }
 
+        if (insights.autoPreparedReview.isNotBlank()) {
+            item {
+                AutoReviewCard(insights.autoPreparedReview)
+            }
+        }
+
         item {
             CompletionCard(
                 insights.weeklyCaptures,
@@ -103,6 +109,33 @@ fun InsightsScreen(viewModel: MainViewModel, onNavigateToProject: (Long) -> Unit
 
         item {
             Spacer(modifier = Modifier.height(TactileTheme.SpacingLg))
+        }
+    }
+}
+
+@Composable
+fun AutoReviewCard(review: String) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = TactileTheme.Primary.copy(alpha = 0.05f),
+        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+        border = androidx.compose.foundation.BorderStroke(
+            1.dp,
+            TactileTheme.Primary.copy(alpha = 0.2f)
+        )
+    ) {
+        Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+            Text(
+                "AUTO-PREPARED REVIEW",
+                style = MaterialTheme.typography.labelSmall,
+                color = TactileTheme.Primary
+            )
+            Spacer(Modifier.height(8.dp))
+            Text(
+                review,
+                style = MaterialTheme.typography.bodyMedium,
+                color = TactileTheme.Text
+            )
         }
     }
 }
