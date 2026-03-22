@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
 package com.tajemniktv.tajsos.data
 
 import androidx.room.Database
@@ -16,9 +20,11 @@ import androidx.room.RoomDatabaseConstructor
         NodeTagEntity::class,
         EventLogEntity::class,
         AttachmentEntity::class,
-        TemplateEntity::class
+        TemplateEntity::class,
+        CalendarProviderEntity::class,
+        CalendarEventEntity::class
     ],
-    version = 10,
+    version = 11,
     exportSchema = false
 )
 @ConstructedBy(AppDatabaseConstructor::class)
@@ -31,6 +37,8 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun eventLogDao(): EventLogDao
     abstract fun attachmentDao(): AttachmentDao
     abstract fun templateDao(): TemplateDao
+    abstract fun calendarProviderDao(): CalendarProviderDao
+    abstract fun calendarEventDao(): CalendarEventDao
 }
 
 // The Room compiler generates the implementation of this class

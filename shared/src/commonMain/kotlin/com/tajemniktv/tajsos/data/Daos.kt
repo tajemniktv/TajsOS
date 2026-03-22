@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
 package com.tajemniktv.tajsos.data
 
 import androidx.room.*
@@ -202,4 +206,43 @@ interface TemplateDao {
 
     @Delete
     suspend fun deleteTemplate(template: TemplateEntity)
+}
+
+@Dao
+interface CalendarProviderDao {
+    @Query("SELECT * FROM calendar_providers")
+    fun getAllProviders(): Flow<List<CalendarProviderEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertProvider(provider: CalendarProviderEntity): Long
+
+    @Update
+    suspend fun updateProvider(provider: CalendarProviderEntity)
+
+    @Delete
+    suspend fun deleteProvider(provider: CalendarProviderEntity)
+
+    @Query("SELECT * FROM calendar_providers WHERE id = :id")
+    suspend fun getProviderById(id: Long): CalendarProviderEntity?
+}
+
+@Dao
+interface CalendarEventDao {
+    @Query("SELECT * FROM calendar_events WHERE startAt >= :from AND startAt <= :to")
+    fun getEventsInRange(from: Long, to: Long): Flow<List<CalendarEventEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertEvents(events: List<CalendarEventEntity>)
+
+    @Query("DELETE FROM calendar_events WHERE providerId = :providerId")
+    suspend fun deleteEventsByProvider(providerId: Long)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertEvent(event: CalendarEventEntity): Long
+
+    @Update
+    suspend fun updateEvent(event: CalendarEventEntity)
+
+    @Delete
+    suspend fun deleteEvent(event: CalendarEventEntity)
 }

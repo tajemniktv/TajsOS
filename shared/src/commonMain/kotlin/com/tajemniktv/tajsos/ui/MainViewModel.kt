@@ -32,7 +32,8 @@ data class InsightsData(
 
 class MainViewModel(
     private val repository: AppRepository,
-    private val preferencesRepository: PreferencesRepository
+    private val preferencesRepository: PreferencesRepository,
+    private val calendarManager: com.tajemniktv.tajsos.calendar.CalendarManager
 ) : ViewModel() {
 
     val allNodes: StateFlow<List<NodeWithPin>> = repository.getAllNodes()
@@ -49,6 +50,79 @@ class MainViewModel(
 
     val allAreas: StateFlow<List<NodeEntity>> = repository.getNodesByType("area")
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+
+    val calendarProviders: StateFlow<List<CalendarProviderEntity>> =
+        repository.getAllCalendarProviders()
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val calendarEntries: StateFlow<List<CalendarEntry>> = combine(
+        allNodes,
+        repository.getCalendarEventsInRange(
+            0,
+            Long.MAX_VALUE
+        ) // In MVP we can fetch all or a large range
+    ) { nodes, externalEvents ->
+        val entries = mutableListOf<CalendarEntry>()
+
+        // Map internal nodes
+        nodes.forEach { item ->
+            val node = item.node
+            val time = node.startAt ?: node.dueAt
+            if (time != null) {
+                entries.add(
+                    CalendarEntry(
+                        id = "node_${node.id}",
+                        title = node.title,
+                        description = node.content,
+                        startAt = time,
+                        endAt = time + (3600 * 1000), // Default 1 hour
+                        isAllDay = false,
+                        type = EntryType.INTERNAL,
+                        originalId = node.id
+                    )
+                )
+            }
+        }
+
+        // Map external events
+        externalEvents.forEach { event ->
+            entries.add(
+                CalendarEntry(
+                    id = "ext_${event.id}",
+                    title = event.title,
+                    description = event.description,
+                    startAt = event.startAt,
+                    endAt = event.endAt,
+                    isAllDay = event.isAllDay,
+                    type = EntryType.EXTERNAL,
+                    originalId = event.id
+                )
+            )
+        }
+
+        entries.sortedBy { it.startAt }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    fun addCalendarProvider(name: String, type: String, url: String? = null) {
+        viewModelScope.launch {
+            repository.insertCalendarProvider(
+                CalendarProviderEntity(name = name, type = type, url = url)
+            )
+        }
+    }
+
+    fun deleteCalendarProvider(provider: CalendarProviderEntity) {
+        viewModelScope.launch {
+            repository.deleteCalendarProvider(provider)
+        }
+    }
+
+    fun syncCalendars() {
+        viewModelScope.launch {
+            calendarManager.syncAll()
+        }
+    }
 
 
     data class NodeCategorization(
@@ -108,6 +182,7 @@ class MainViewModel(
         viewModelScope.launch {
             allNodes.filter { it.isNotEmpty() }.firstOrNull() ?: seedOnboardingData()
         }
+        syncCalendars()
     }
 
     private suspend fun seedOnboardingData() {
@@ -547,3 +622,19 @@ data class ExportData(
     val version: Int,
     val nodes: List<NodeEntity>
 )
+
+data class CalendarEntry(
+    val id: String,
+    val title: String,
+    val description: String?,
+    val startAt: Long,
+    val endAt: Long,
+    val isAllDay: Boolean,
+    val type: EntryType,
+    val color: Int? = null,
+    val originalId: Long? = null
+)
+
+enum class EntryType {
+    INTERNAL, EXTERNAL
+}

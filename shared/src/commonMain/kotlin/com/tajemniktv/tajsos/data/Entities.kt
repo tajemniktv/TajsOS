@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
 package com.tajemniktv.tajsos.data
 
 import androidx.room.Entity
@@ -170,6 +174,44 @@ data class TemplateEntity(
     val defaultContent: String? = null,
     val defaultMetadataJson: String? = null,
     val isEnabled: Boolean = true
+)
+
+/**
+ * CalendarProviderEntity represents an external or internal source of calendar events.
+ */
+@Entity(tableName = "calendar_providers")
+@Serializable
+data class CalendarProviderEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val name: String,
+    val type: String, // GOOGLE, OUTLOOK, ICS, TAJSOS
+    val accountEmail: String? = null,
+    val url: String? = null, // For ICS
+    val accessToken: String? = null,
+    val refreshToken: String? = null,
+    val lastSyncedAt: Long? = null,
+    val isEnabled: Boolean = true,
+    val color: Int? = null
+)
+
+/**
+ * CalendarEventEntity represents a single event from an external calendar or a pure calendar event.
+ */
+@Entity(tableName = "calendar_events")
+@Serializable
+data class CalendarEventEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val providerId: Long,
+    val externalId: String? = null,
+    val title: String,
+    val description: String? = null,
+    val location: String? = null,
+    val startAt: Long,
+    val endAt: Long,
+    val isAllDay: Boolean = false,
+    val url: String? = null,
+    val createdAt: Long = kotlin.time.Clock.System.now().toEpochMilliseconds(),
+    val updatedAt: Long = kotlin.time.Clock.System.now().toEpochMilliseconds()
 )
 
 /**

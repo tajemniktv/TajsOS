@@ -68,6 +68,7 @@ fun App(viewModel: MainViewModel) {
                         Screen.Tasks,
                         Screen.Notes,
                         Screen.Today,
+                        Screen.Calendar,
                         Screen.Focus,
                         Screen.Projects,
                         Screen.Areas,
@@ -188,13 +189,26 @@ fun App(viewModel: MainViewModel) {
                         SearchScreen(viewModel, onItemClick = onEditNode)
                     }
                     composable(Screen.Today.route) { TodayScreen(viewModel, onEditNode) }
+                    composable(Screen.Calendar.route) {
+                        CalendarScreen(viewModel, onEditNode)
+                    }
+                    composable(Screen.CalendarSettings.route) {
+                        CalendarSettingsScreen(viewModel)
+                    }
                     composable(Screen.Focus.route) { FocusScreen(viewModel) }
                     composable(Screen.Track.route) { TrackScreen(viewModel) }
                     composable(Screen.Tasks.route) { TasksScreen(viewModel, onEditNode) }
                     composable(Screen.Notes.route) {
                         NotesScreen(viewModel, onNoteClick = onEditNode)
                     }
-                    composable(Screen.Settings.route) { SettingsScreen(viewModel) }
+                    composable(Screen.Settings.route) {
+                        SettingsScreen(
+                            viewModel,
+                            onNavigateToCalendarSettings = {
+                                navController.navigate(Screen.CalendarSettings.route)
+                            }
+                        )
+                    }
                     composable(Screen.Projects.route) {
                         ProjectsScreen(viewModel, onNavigateTo = { route -> navController.navigate(route) })
                     }

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
 package com.tajemniktv.tajsos.data
 
 import kotlinx.coroutines.flow.Flow
@@ -15,7 +19,9 @@ class AppRepository(
     private val tagDao: TagDao,
     private val eventLogDao: EventLogDao,
     private val attachmentDao: AttachmentDao,
-    private val templateDao: TemplateDao
+    private val templateDao: TemplateDao,
+    private val calendarProviderDao: CalendarProviderDao,
+    private val calendarEventDao: CalendarEventDao
 ) {
     fun getAllNodes(): Flow<List<NodeWithPin>> = nodeDao.getAllNodesWithPins()
 
@@ -25,6 +31,26 @@ class AppRepository(
     }
 
     suspend fun getNodeById(id: Long): NodeEntity? = nodeDao.getNodeById(id)
+
+    // ... existing methods ...
+
+    // Calendar
+    fun getAllCalendarProviders() = calendarProviderDao.getAllProviders()
+    suspend fun insertCalendarProvider(provider: CalendarProviderEntity) =
+        calendarProviderDao.insertProvider(provider)
+
+    suspend fun updateCalendarProvider(provider: CalendarProviderEntity) =
+        calendarProviderDao.updateProvider(provider)
+
+    suspend fun deleteCalendarProvider(provider: CalendarProviderEntity) =
+        calendarProviderDao.deleteProvider(provider)
+
+    fun getCalendarEventsInRange(from: Long, to: Long) = calendarEventDao.getEventsInRange(from, to)
+    suspend fun insertCalendarEvents(events: List<CalendarEventEntity>) =
+        calendarEventDao.insertEvents(events)
+
+    suspend fun deleteCalendarEventsByProvider(providerId: Long) =
+        calendarEventDao.deleteEventsByProvider(providerId)
 
     suspend fun insertNode(node: NodeEntity): Long {
         val id = nodeDao.insertNode(node)

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
 package com.tajemniktv.tajsos.ui.screens
 
 import androidx.compose.foundation.layout.*
@@ -11,7 +15,10 @@ import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.coroutines.launch
 
 @Composable
-fun SettingsScreen(viewModel: MainViewModel) {
+fun SettingsScreen(
+    viewModel: MainViewModel,
+    onNavigateToCalendarSettings: () -> Unit = {}
+) {
     val isBiometricEnabled by viewModel.isBiometricEnabled.collectAsState()
     val isBiometricHardwareAvailable by viewModel.isBiometricHardwareAvailable.collectAsState()
     val scope = rememberCoroutineScope()
@@ -57,6 +64,27 @@ fun SettingsScreen(viewModel: MainViewModel) {
                     onCheckedChange = { viewModel.setBiometricEnabled(it) },
                     colors = SwitchDefaults.colors(checkedThumbColor = TactileTheme.Primary)
                 )
+            }
+
+            Spacer(Modifier.height(TactileTheme.SpacingLg))
+
+            Text(
+                "CALENDAR INTEGRATION",
+                style = MaterialTheme.typography.labelSmall,
+                color = TactileTheme.Primary
+            )
+            Spacer(Modifier.height(TactileTheme.SpacingSm))
+
+            Button(
+                onClick = onNavigateToCalendarSettings,
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = TactileTheme.Surface,
+                    contentColor = TactileTheme.Primary
+                )
+            ) {
+                Text("CONFIGURE EXTERNAL CALENDARS")
             }
 
             Spacer(Modifier.height(TactileTheme.SpacingLg))
