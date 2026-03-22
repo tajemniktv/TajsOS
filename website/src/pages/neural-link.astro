@@ -3,10 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/landing/Navbar.astro';
 import Footer from '../components/landing/Footer.astro';
 
-// Replace hyphens with spaces and convert to uppercase for title
-const parts = Astro.url.pathname.split('/').filter(Boolean);
-const rawTitle = parts[parts.length - 1] || 'PAGE';
-const title = rawTitle.replace(/-/g, ' ').toUpperCase();
+const title = "NEURAL-LINK";
 ---
 
 <Layout>
@@ -14,9 +11,203 @@ const title = rawTitle.replace(/-/g, ' ').toUpperCase();
   <div class="fixed top-[-10%] right-[-5%] w-[600px] h-[600px] gradient-sphere pointer-events-none -z-10"></div>
   
   <Navbar />
-  <main class="relative pt-48 max-w-[1600px] mx-auto px-8 min-h-screen">
-    <h1 class="font-headline text-5xl font-bold uppercase text-primary mb-6">{title}</h1>
-    <p class="text-on-surface-variant text-xl">This is a stub page. Content will be added later.</p>
+  <main class="relative pt-32 max-w-[1600px] mx-auto px-8 min-h-screen">
+    
+<!-- Top Header Section -->
+<header class="mb-16 flex justify-between items-start">
+<div class="max-w-3xl">
+<h1 class="font-headline font-bold text-7xl lg:text-8xl tracking-tighter leading-none mb-2 text-on-surface">
+          NEURAL <span class="text-primary">//</span> LINK
+        </h1>
+<p class="font-mono text-primary tracking-widest text-sm ml-2">
+          &gt; ACTIVE SYNAPTIC BRIDGE // ENCRYPTION: LEVEL_9
+        </p>
+</div>
+<div class="flex flex-wrap gap-2 justify-end max-w-xs">
+<div class="px-3 py-1 bg-primary/10 border border-primary/30 rounded-full flex items-center gap-2">
+<div class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></div>
+<span class="font-mono text-[10px] text-primary">BRIDGE_STABLE</span>
+</div>
+<div class="px-3 py-1 bg-secondary/10 border border-secondary/30 rounded-full flex items-center gap-2">
+<span class="material-symbols-outlined text-[14px] text-secondary">lock</span>
+<span class="font-mono text-[10px] text-secondary">NEURAL_LOCK: ACTIVE</span>
+</div>
+</div>
+</header>
+<div class="grid grid-cols-12 gap-8 items-start">
+<!-- Central Visualization Canvas -->
+<section class="col-span-12 lg:col-span-8 relative">
+<div class="glass-panel rounded-xl overflow-hidden aspect-video relative flex items-center justify-center">
+<!-- Abstract Visualization Placeholder -->
+<div class="absolute inset-0 opacity-40 mix-blend-screen pointer-events-none">
+<img alt="Neural Mesh Visualization" class="w-full h-full object-cover grayscale brightness-50 contrast-125" data-alt="Glowing digital neural network with purple lines and points" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaGnVLpB993_n6cJdKUKqjoB48VSbkW0Cj_ouckXxQIulaY72lwRE_FYm67sm8K6rgZUJ_UcGjWASM8Ca55A3sF5_ozOsMDRBN8jZtkLWVtAsh7fgwmrP9A7xGJGB95WWUhrGON04djQLo-8UqwVOlVQrRSTovbwiNAdtbEirDp5MW9EppT_HCTtavBQoOArtMujRoY78nffSnpsJzyh3M0LEjoMV6wW76SfqB1Pghm3Cyu80JsHql33bBsluZDxk1HEgOLFwEAOo"/>
+</div>
+<!-- UI Overlay on Visualization -->
+<div class="absolute inset-0 p-8 flex flex-col justify-between pointer-events-none">
+<div class="flex justify-between items-start">
+<div class="bg-surface/80 backdrop-blur-md p-4 rounded-lg border border-outline-variant/30 font-mono text-[10px] text-on-surface-variant space-y-1">
+<div>CORE_TEMP: 32.4°C</div>
+<div>NODE_COUNT: 1,402</div>
+<div>UPTIME: 44:12:09</div>
+</div>
+<div class="text-primary">
+<span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">hub</span>
+</div>
+</div>
+<div class="flex justify-center">
+<button class="pointer-events-auto bg-gradient-to-br from-primary to-primary-dim text-on-primary-fixed font-headline font-bold text-sm tracking-[0.2em] px-12 py-5 rounded-lg neon-glow-primary hover:scale-105 transition-transform active:scale-95">
+                INITIALIZE SYNC
+              </button>
+</div>
+</div>
+</div>
+<!-- Connection History (Beneath visualization) -->
+<div class="mt-8">
+<h2 class="font-headline font-bold text-xs tracking-widest text-on-surface-variant mb-6 uppercase">Sync Session History</h2>
+<div class="space-y-3">
+<!-- Entry 1 -->
+<div class="flex items-center justify-between p-5 glass-panel rounded-lg hover:bg-surface-container-high transition-colors">
+<div class="flex items-center gap-6">
+<span class="material-symbols-outlined text-primary">check_circle</span>
+<div>
+<div class="font-mono text-xs text-on-surface">SESSION_ID_0X44FA</div>
+<div class="font-mono text-[10px] text-on-surface-variant">TIMESTAMP: 2024.05.12 14:30:11</div>
+</div>
+</div>
+<div class="text-right">
+<div class="font-headline text-[10px] tracking-widest text-primary font-bold uppercase">Integrity 99.8%</div>
+<div class="font-mono text-[10px] text-on-surface-variant">SUCCESS_CONFIRMED</div>
+</div>
+</div>
+<!-- Entry 2 -->
+<div class="flex items-center justify-between p-5 glass-panel rounded-lg hover:bg-surface-container-high transition-colors">
+<div class="flex items-center gap-6">
+<span class="material-symbols-outlined text-primary">check_circle</span>
+<div>
+<div class="font-mono text-xs text-on-surface">SESSION_ID_0X39B1</div>
+<div class="font-mono text-[10px] text-on-surface-variant">TIMESTAMP: 2024.05.12 12:01:45</div>
+</div>
+</div>
+<div class="text-right">
+<div class="font-headline text-[10px] tracking-widest text-primary font-bold uppercase">Integrity 99.4%</div>
+<div class="font-mono text-[10px] text-on-surface-variant">SUCCESS_CONFIRMED</div>
+</div>
+</div>
+<!-- Entry 3 -->
+<div class="flex items-center justify-between p-5 glass-panel rounded-lg hover:bg-surface-container-high transition-colors opacity-60">
+<div class="flex items-center gap-6">
+<span class="material-symbols-outlined text-secondary">sync_problem</span>
+<div>
+<div class="font-mono text-xs text-on-surface">SESSION_ID_0X22EF</div>
+<div class="font-mono text-[10px] text-on-surface-variant">TIMESTAMP: 2024.05.11 23:44:02</div>
+</div>
+</div>
+<div class="text-right">
+<div class="font-headline text-[10px] tracking-widest text-secondary font-bold uppercase">Retry Aborted</div>
+<div class="font-mono text-[10px] text-on-surface-variant">USER_TERMINATED</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Sidebar Diagnostics -->
+<aside class="col-span-12 lg:col-span-4 space-y-8">
+<!-- Signal Coherence Panel -->
+<div class="glass-panel p-8 rounded-xl border-l-4 border-l-primary">
+<div class="flex items-center justify-between mb-8">
+<h3 class="font-headline font-bold text-sm tracking-widest text-on-surface uppercase">Sync Diagnostics</h3>
+<span class="material-symbols-outlined text-primary animate-pulse">sensors</span>
+</div>
+<div class="space-y-8">
+<!-- Diagnostic 1 -->
+<div>
+<div class="flex justify-between items-end mb-2">
+<label class="font-mono text-[10px] text-on-surface-variant uppercase tracking-tighter">Signal Coherence</label>
+<span class="font-mono text-xs text-primary">98.4%</span>
+</div>
+<div class="h-1 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[98.4%] neon-glow-primary"></div>
+</div>
+</div>
+<!-- Diagnostic 2 -->
+<div>
+<div class="flex justify-between items-end mb-2">
+<label class="font-mono text-[10px] text-on-surface-variant uppercase tracking-tighter">Latency (ms)</label>
+<span class="font-mono text-xs text-secondary">0.42ms</span>
+</div>
+<div class="h-1 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[15%]"></div>
+</div>
+</div>
+<!-- Diagnostic 3 -->
+<div>
+<div class="flex justify-between items-end mb-2">
+<label class="font-mono text-[10px] text-on-surface-variant uppercase tracking-tighter">Throughput (GB/s)</label>
+<span class="font-mono text-xs text-primary">412.8 GB/S</span>
+</div>
+<div class="h-1 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[82%] neon-glow-primary"></div>
+</div>
+</div>
+</div>
+<div class="mt-10 pt-8 border-t border-outline-variant/20">
+<div class="grid grid-cols-2 gap-4">
+<div class="p-4 bg-surface-container-low rounded-lg border border-outline-variant/10">
+<div class="font-mono text-[8px] text-on-surface-variant mb-1">BUFFER_SIZE</div>
+<div class="font-headline text-lg font-bold text-on-surface tracking-tighter">2.4 TB</div>
+</div>
+<div class="p-4 bg-surface-container-low rounded-lg border border-outline-variant/10">
+<div class="font-mono text-[8px] text-on-surface-variant mb-1">PACKET_LOSS</div>
+<div class="font-headline text-lg font-bold text-on-surface tracking-tighter">0.00%</div>
+</div>
+</div>
+</div>
+</div>
+<!-- System Core Status -->
+<div class="glass-panel p-8 rounded-xl bg-gradient-to-br from-surface-container-high to-surface">
+<h3 class="font-headline font-bold text-[10px] tracking-widest text-on-surface-variant mb-6 uppercase">Active Modules</h3>
+<div class="space-y-4">
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<span class="font-mono text-xs text-on-surface">Neural_Engine_v4</span>
+<span class="ml-auto font-mono text-[10px] text-primary/60">OK</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<span class="font-mono text-xs text-on-surface">Synaptic_Pathfinder</span>
+<span class="ml-auto font-mono text-[10px] text-primary/60">OK</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-secondary"></div>
+<span class="font-mono text-xs text-on-surface">Encryption_Module</span>
+<span class="ml-auto font-mono text-[10px] text-secondary/60">ACTIVE</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-primary/20"></div>
+<span class="font-mono text-xs text-on-surface-variant">Legacy_Sync_Bridge</span>
+<span class="ml-auto font-mono text-[10px] text-on-surface-variant/40">IDLE</span>
+</div>
+</div>
+</div>
+<!-- Quick Log -->
+<div class="bg-surface-container-lowest border border-outline-variant/20 p-6 rounded-xl overflow-hidden relative">
+<div class="absolute top-2 right-2 flex gap-1">
+<div class="w-1.5 h-1.5 rounded-full bg-error/20"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-secondary/20"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-primary/20"></div>
+</div>
+<div class="font-mono text-[9px] text-primary/50 mb-4 tracking-widest uppercase">System Console</div>
+<div class="font-mono text-[10px] space-y-1.5 leading-relaxed text-on-surface-variant">
+<p><span class="text-primary">[14:30:11]</span> Initializing handshake...</p>
+<p><span class="text-primary">[14:30:12]</span> Core sync: 100% matched.</p>
+<p><span class="text-secondary">[14:30:12]</span> Security handshake passed.</p>
+<p><span class="text-on-surface">[14:30:13]</span> Connection stable at 0.42ms.</p>
+<p class="animate-pulse">_</p>
+</div>
+</div>
+</aside>
+</div>
+
   </main>
   <Footer />
 </Layout>

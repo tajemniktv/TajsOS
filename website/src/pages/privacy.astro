@@ -3,10 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/landing/Navbar.astro';
 import Footer from '../components/landing/Footer.astro';
 
-// Replace hyphens with spaces and convert to uppercase for title
-const parts = Astro.url.pathname.split('/').filter(Boolean);
-const rawTitle = parts[parts.length - 1] || 'PAGE';
-const title = rawTitle.replace(/-/g, ' ').toUpperCase();
+const title = "PRIVACY";
 ---
 
 <Layout>
@@ -14,9 +11,161 @@ const title = rawTitle.replace(/-/g, ' ').toUpperCase();
   <div class="fixed top-[-10%] right-[-5%] w-[600px] h-[600px] gradient-sphere pointer-events-none -z-10"></div>
   
   <Navbar />
-  <main class="relative pt-48 max-w-[1600px] mx-auto px-8 min-h-screen">
-    <h1 class="font-headline text-5xl font-bold uppercase text-primary mb-6">{title}</h1>
-    <p class="text-on-surface-variant text-xl">This is a stub page. Content will be added later.</p>
+  <main class="relative pt-32 max-w-[1600px] mx-auto px-8 min-h-screen">
+    
+<!-- Hero Section: Neo-Editorial Asymmetry -->
+<section class="mb-32">
+<div class="flex flex-col lg:flex-row items-end justify-between gap-12">
+<div class="w-full lg:w-2/3">
+<p class="font-label text-primary uppercase tracking-[0.4em] text-sm mb-4">PROTOCOL V4.0.2 // ESTABLISHED</p>
+<h1 class="font-headline font-bold text-7xl md:text-9xl leading-[0.9] tracking-tighter neon-glow">
+                        PRIVACY // <br/> <span class="text-primary-dim">PROTOCOL</span>
+</h1>
+</div>
+<div class="w-full lg:w-1/3 border-l border-outline-variant/30 pl-8 pb-4">
+<p class="font-mono text-xs text-on-surface-variant mb-4 uppercase tracking-widest">System_Log: Decryption_Active</p>
+<p class="text-lg font-light text-on-surface-variant leading-relaxed italic">
+                        "The human mind is the final frontier of data sovereignty. We don't just protect your files; we isolate your consciousness from the noise of the centralized web."
+                    </p>
+</div>
+</div>
+</section>
+<!-- Bento Grid Policy Sections -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-6 mb-32">
+<!-- Data Encryption Large Card -->
+<div class="md:col-span-8 glass-panel rounded-xl p-8 border border-outline-variant/10 relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 font-mono text-[10px] text-primary/40 uppercase tracking-tighter">Cipher: 0x8F22A</div>
+<div class="mb-12">
+<span class="material-symbols-outlined text-primary text-4xl mb-6" data-icon="lock" style="font-variation-settings: 'FILL' 1;">lock</span>
+<h2 class="font-headline text-4xl font-bold tracking-tight mb-4">Data Encryption</h2>
+<p class="text-on-surface-variant max-w-xl leading-relaxed">
+                        Every bit of data passing through the TajsOS kernel is wrapped in <span class="text-on-surface font-mono">AES-256-GCM</span> hardware-level encryption. Your keys are generated in a secure enclave, never touching the persistent storage layer until authorized by your neural signature.
+                    </p>
+</div>
+<div class="flex flex-wrap gap-4 mt-auto">
+<div class="bg-surface-container-highest px-4 py-2 rounded-lg border border-outline-variant/20 flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+<span class="font-mono text-xs uppercase">ENCRYPTION: ACTIVE</span>
+</div>
+<div class="bg-surface-container-highest px-4 py-2 rounded-lg border border-outline-variant/20">
+<span class="font-mono text-xs uppercase text-on-surface-variant">Standard: FIPS 140-2</span>
+</div>
+</div>
+<div class="absolute -bottom-10 -right-10 opacity-5 pointer-events-none">
+<span class="material-symbols-outlined text-[20rem]" data-icon="security">security</span>
+</div>
+</div>
+<!-- Neural Sovereignty Card -->
+<div class="md:col-span-4 bg-primary-dim rounded-xl p-8 flex flex-col justify-between text-on-primary-fixed relative overflow-hidden">
+<div class="relative z-10">
+<h2 class="font-headline text-3xl font-bold tracking-tight mb-4">Neural Sovereignty</h2>
+<p class="text-on-primary-fixed/80 text-sm leading-relaxed">
+                        Your neural mapping data remains strictly local. We utilize federated learning paradigms that ensure "Intelligence stays, Data goes nowhere."
+                    </p>
+</div>
+<div class="mt-8 relative z-10">
+<div class="font-mono text-[10px] uppercase mb-2">Sovereignty Status</div>
+<div class="text-xl font-headline font-bold uppercase tracking-tighter">Verified Local</div>
+</div>
+<!-- Background visual noise -->
+<div class="absolute inset-0 opacity-20 pointer-events-none mix-blend-overlay">
+<img class="w-full h-full object-cover" data-alt="Abstract neural network visual pattern" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDyv0q6wIQmu1iQP0IOvx58GvLx31H4alSvKOhU1A_NDqJnwuohXZoUxk6Xi1DBBJBNHe2cEkYmMHsIL8Ajs7meHiwpXZGBaX0d2P0MD4u9_Za14BX1oaM7Qv_gWSJy9OeozDTP8M6UVCm_clKbfcazMZ4o-c7m1ZK0qLoC1rV-RCk25N_Q1JiPvOC1VmFJvjYWWbit4n_qnoCnV_EYY6JuvKdTcrwTGLfG1jKtH3wquZhlNo-3OHObFdmCaI4aMRc-nY7V0_lwb9w"/>
+</div>
+</div>
+<!-- Zero-Knowledge Sync -->
+<div class="md:col-span-6 bg-surface-container-low rounded-xl p-8 border border-outline-variant/10 group hover:border-primary/30 transition-colors">
+<div class="flex items-start justify-between mb-8">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary border border-outline-variant/20">
+<span class="material-symbols-outlined" data-icon="sync_saved_locally">sync_saved_locally</span>
+</div>
+<span class="font-mono text-[10px] text-on-surface-variant">SYNC_ID: 1024-ALPHA</span>
+</div>
+<h3 class="font-headline text-2xl font-bold mb-3">Zero-Knowledge Sync</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed mb-6">
+                    Multi-device synchronization is achieved through end-to-end encrypted tunnels. TajsOS nodes never see your content—only the encrypted blobs move between your authorized devices.
+                </p>
+<button class="font-label text-xs uppercase tracking-widest text-primary flex items-center gap-2 group-hover:gap-4 transition-all">
+                    Review Protocol <span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+<!-- Retention Policy -->
+<div class="md:col-span-6 glass-panel rounded-xl p-8 border border-outline-variant/10 overflow-hidden relative">
+<div class="flex items-start gap-6">
+<div class="flex-1">
+<h3 class="font-headline text-2xl font-bold mb-3">Retention Policy</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed mb-4">
+                            Ephemeral by default. Metadata is purged every 24 cycles unless pinned to your long-term neural memory. We don't build profiles; we facilitate experiences.
+                        </p>
+<div class="grid grid-cols-2 gap-4 mt-6">
+<div class="border-l-2 border-primary pl-4">
+<div class="text-xs font-mono text-on-surface-variant uppercase">Default State</div>
+<div class="font-headline font-bold uppercase">Ephemeral</div>
+</div>
+<div class="border-l-2 border-outline pl-4">
+<div class="text-xs font-mono text-on-surface-variant uppercase">Purge Cycle</div>
+<div class="font-headline font-bold uppercase">24 Hours</div>
+</div>
+</div>
+</div>
+<div class="hidden sm:block">
+<span class="material-symbols-outlined text-6xl text-outline-variant/20" data-icon="delete_sweep">delete_sweep</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Technical Metadata Overlay Section -->
+<section class="mb-32">
+<div class="bg-surface-container-lowest border border-outline-variant/20 rounded-xl overflow-hidden">
+<div class="bg-surface-container-high px-6 py-3 flex items-center justify-between border-b border-outline-variant/20">
+<div class="flex gap-2">
+<div class="w-2.5 h-2.5 rounded-full bg-error/40"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-primary/40"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-surface-variant"></div>
+</div>
+<div class="font-mono text-[10px] text-on-surface-variant uppercase tracking-widest">Protocol_Inspector_V1.0</div>
+</div>
+<div class="p-8 font-mono text-sm overflow-x-auto">
+<div class="flex gap-8 mb-4 opacity-60">
+<span>[0.0034s] Initializing_Interface...</span>
+<span class="text-primary">OK</span>
+</div>
+<div class="flex gap-8 mb-4 opacity-60">
+<span>[0.0081s] Loading_Security_Manifest...</span>
+<span class="text-primary">OK</span>
+</div>
+<div class="mb-6">
+<span class="text-primary-dim">ROOT@TajsOS:</span><span class="text-on-surface"> ~ # cat /etc/privacy-manifest.json</span>
+</div>
+<div class="text-on-surface-variant leading-relaxed">
+                        &#123;<br/>
+                          "identity": "pseudonymous",<br/>
+                          "tracking": false,<br/>
+                          "telemetry": "opt-out-permanent",<br/>
+                          "encryption_layer": "XChaCha20-Poly1305",<br/>
+                          "node_integrity": "verified",<br/>
+                          "neural_lock": "enabled"<br/>
+                        &#125;
+                    </div>
+<div class="mt-6 flex items-center gap-2">
+<span class="text-primary-dim animate-pulse">_</span>
+<span class="text-on-surface-variant italic">// System standing by for user override</span>
+</div>
+</div>
+</div>
+</section>
+<!-- CTA / Footer Transition Section -->
+<section class="text-center py-20 border-t border-outline-variant/10">
+<h2 class="font-headline text-5xl font-bold mb-8">Ready to reclaim your <span class="text-primary">digital ghost?</span></h2>
+<div class="flex flex-col sm:flex-row justify-center gap-6">
+<button class="bg-gradient-to-br from-primary to-primary-dim text-on-primary-fixed font-headline font-bold py-4 px-10 rounded-lg hover:scale-105 transition-transform duration-300 flex items-center gap-3 mx-auto sm:mx-0">
+                    INITIALIZE INTERFACE <span class="material-symbols-outlined" data-icon="bolt">bolt</span>
+</button>
+<button class="bg-surface-container-highest text-on-surface font-headline font-bold py-4 px-10 rounded-lg border border-outline-variant/30 hover:bg-surface-container-high transition-colors mx-auto sm:mx-0">
+                    READ THE WHITE PAPER
+                </button>
+</div>
+</section>
+
   </main>
   <Footer />
 </Layout>

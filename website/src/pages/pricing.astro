@@ -3,10 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/landing/Navbar.astro';
 import Footer from '../components/landing/Footer.astro';
 
-// Replace hyphens with spaces and convert to uppercase for title
-const parts = Astro.url.pathname.split('/').filter(Boolean);
-const rawTitle = parts[parts.length - 1] || 'PAGE';
-const title = rawTitle.replace(/-/g, ' ').toUpperCase();
+const title = "PRICING";
 ---
 
 <Layout>
@@ -14,9 +11,206 @@ const title = rawTitle.replace(/-/g, ' ').toUpperCase();
   <div class="fixed top-[-10%] right-[-5%] w-[600px] h-[600px] gradient-sphere pointer-events-none -z-10"></div>
   
   <Navbar />
-  <main class="relative pt-48 max-w-[1600px] mx-auto px-8 min-h-screen">
-    <h1 class="font-headline text-5xl font-bold uppercase text-primary mb-6">{title}</h1>
-    <p class="text-on-surface-variant text-xl">This is a stub page. Content will be added later.</p>
+  <main class="relative pt-32 max-w-[1600px] mx-auto px-8 min-h-screen">
+    
+<!-- Hero Section -->
+<section class="mb-24 relative">
+<div class="absolute -top-24 -left-24 w-96 h-96 bg-primary/10 rounded-full blur-[120px]"></div>
+<div class="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-8">
+<div class="max-w-3xl">
+<div class="inline-block py-1 px-3 mb-6 border border-primary/20 bg-primary/5 rounded-full">
+<span class="font-label text-xs uppercase tracking-[0.2em] text-primary font-bold">Billing Architecture v2.0</span>
+</div>
+<h1 class="text-6xl md:text-8xl font-headline font-bold tracking-tighter leading-none mb-8">
+                        PRICING // <span class="text-primary text-glow">PROTOCOL</span>
+</h1>
+</div>
+<div class="md:w-1/3 pb-4">
+<p class="text-on-surface-variant font-mono text-sm leading-relaxed border-l border-outline-variant pl-6">
+                        &gt; SYSTEM_NOTE: ACCESS TO TAJSOS NEURAL INTERFACE IS TIERED BASED ON SYNAPTIC BANDWIDTH REQUIREMENTS. SELECT YOUR PROTOCOL BELOW.
+                    </p>
+</div>
+</div>
+</section>
+<!-- Pricing Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-32">
+<!-- Tier 1: Initiate -->
+<div class="glass-card glow-hover p-8 rounded-xl flex flex-col transition-all duration-500">
+<div class="flex justify-between items-start mb-12">
+<div>
+<h3 class="font-headline text-2xl font-bold uppercase tracking-tight mb-2">Initiate</h3>
+<p class="text-on-surface-variant text-sm">Base Layer Access</p>
+</div>
+<span class="material-symbols-outlined text-primary-dim text-3xl">token</span>
+</div>
+<div class="mb-12">
+<div class="flex items-baseline gap-2">
+<span class="text-5xl font-headline font-bold text-on-surface">$0</span>
+<span class="text-on-surface-variant font-mono text-xs uppercase tracking-widest">/ Perpetual</span>
+</div>
+</div>
+<ul class="space-y-4 mb-12 flex-grow">
+<li class="flex items-center gap-3 text-sm">
+<span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+<span>Basic Neural Capture</span>
+</li>
+<li class="flex items-center gap-3 text-sm">
+<span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+<span>Today's Payload Sync</span>
+</li>
+<li class="flex items-center gap-3 text-sm text-on-surface-variant/50">
+<span class="material-symbols-outlined text-sm">block</span>
+<span class="line-through">Pattern Tracking</span>
+</li>
+</ul>
+<button class="w-full py-4 border border-outline-variant hover:border-primary/50 text-on-surface font-label font-bold uppercase tracking-widest text-xs rounded-lg transition-all">Select Protocol</button>
+</div>
+<!-- Tier 2: Synapse (Featured) -->
+<div class="relative glass-card glow-hover p-8 rounded-xl flex flex-col transition-all duration-500 bg-surface-container-high/60 ring-1 ring-primary/40">
+<div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-on-primary-fixed px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">Recommended</div>
+<div class="flex justify-between items-start mb-12">
+<div>
+<h3 class="font-headline text-2xl font-bold uppercase tracking-tight mb-2 text-primary text-glow">Synapse</h3>
+<p class="text-on-surface-variant text-sm">Dynamic Neural Expansion</p>
+</div>
+<span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 1;">psychology</span>
+</div>
+<div class="mb-12">
+<div class="flex items-baseline gap-2">
+<span class="text-5xl font-headline font-bold text-on-surface">$24</span>
+<span class="text-on-surface-variant font-mono text-xs uppercase tracking-widest">/ Monthly Cycle</span>
+</div>
+</div>
+<ul class="space-y-4 mb-12 flex-grow">
+<li class="flex items-center gap-3 text-sm">
+<span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+<span>Advanced Focus Mode</span>
+</li>
+<li class="flex items-center gap-3 text-sm">
+<span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+<span>Pattern Tracking &amp; Analysis</span>
+</li>
+<li class="flex items-center gap-3 text-sm">
+<span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+<span>Multi-Kernel Synchronization</span>
+</li>
+</ul>
+<button class="w-full py-4 bg-gradient-to-br from-primary to-primary-dim text-on-primary-fixed font-label font-bold uppercase tracking-widest text-xs rounded-lg shadow-[0_0_20px_rgba(186,158,255,0.3)] hover:shadow-[0_0_30px_rgba(186,158,255,0.5)] transition-all">Inject Protocol</button>
+</div>
+<!-- Tier 3: Transcend -->
+<div class="glass-card glow-hover p-8 rounded-xl flex flex-col transition-all duration-500">
+<div class="flex justify-between items-start mb-12">
+<div>
+<h3 class="font-headline text-2xl font-bold uppercase tracking-tight mb-2">Transcend</h3>
+<p class="text-on-surface-variant text-sm">Absolute Interface Unity</p>
+</div>
+<span class="material-symbols-outlined text-primary-dim text-3xl">all_inclusive</span>
+</div>
+<div class="mb-12">
+<div class="flex items-baseline gap-2">
+<span class="text-5xl font-headline font-bold text-on-surface">$599</span>
+<span class="text-on-surface-variant font-mono text-xs uppercase tracking-widest">/ Lifetime Link</span>
+</div>
+</div>
+<ul class="space-y-4 mb-12 flex-grow">
+<li class="flex items-center gap-3 text-sm">
+<span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+<span>Priority Neural Linkage</span>
+</li>
+<li class="flex items-center gap-3 text-sm">
+<span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+<span>Early Alpha Module Access</span>
+</li>
+<li class="flex items-center gap-3 text-sm">
+<span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+<span>White-Glove Tech Support</span>
+</li>
+</ul>
+<button class="w-full py-4 border border-outline-variant hover:border-primary/50 text-on-surface font-label font-bold uppercase tracking-widest text-xs rounded-lg transition-all">Secure Lifetime</button>
+</div>
+</div>
+<!-- Feature Comparison Table -->
+<section class="mb-32 overflow-hidden">
+<h2 class="font-headline text-4xl font-bold mb-12 tracking-tight">FEATURE // <span class="text-primary-dim">COMPARISON</span></h2>
+<div class="bg-surface-container-low rounded-xl overflow-x-auto border border-outline-variant/10">
+<table class="w-full border-collapse text-left font-mono">
+<thead>
+<tr class="border-b border-outline-variant">
+<th class="p-8 text-on-surface-variant text-xs uppercase tracking-widest">Specification</th>
+<th class="p-8 text-on-surface text-sm font-headline">Initiate</th>
+<th class="p-8 text-primary text-sm font-headline">Synapse</th>
+<th class="p-8 text-on-surface text-sm font-headline">Transcend</th>
+</tr>
+</thead>
+<tbody class="text-sm">
+<tr class="border-b border-outline-variant/30 hover:bg-surface-container-high transition-colors">
+<td class="p-8 text-on-surface-variant">Synaptic Bandwidth</td>
+<td class="p-8">128 GB</td>
+<td class="p-8 text-primary">2.5 TB</td>
+<td class="p-8">Unlimited</td>
+</tr>
+<tr class="border-b border-outline-variant/30 hover:bg-surface-container-high transition-colors">
+<td class="p-8 text-on-surface-variant">Focus Mode Pulse</td>
+<td class="p-8">None</td>
+<td class="p-8 text-primary">15min Bursts</td>
+<td class="p-8">Continuous</td>
+</tr>
+<tr class="border-b border-outline-variant/30 hover:bg-surface-container-high transition-colors">
+<td class="p-8 text-on-surface-variant">Neural Patterning</td>
+<td class="p-8"><span class="material-symbols-outlined text-error opacity-40">close</span></td>
+<td class="p-8 text-primary"><span class="material-symbols-outlined">check_circle</span></td>
+<td class="p-8"><span class="material-symbols-outlined">check_circle</span></td>
+</tr>
+<tr class="border-b border-outline-variant/30 hover:bg-surface-container-high transition-colors">
+<td class="p-8 text-on-surface-variant">API Integration</td>
+<td class="p-8">Restricted</td>
+<td class="p-8 text-primary">Full REST</td>
+<td class="p-8">GQL + Webhooks</td>
+</tr>
+<tr class="hover:bg-surface-container-high transition-colors">
+<td class="p-8 text-on-surface-variant">System Response</td>
+<td class="p-8">Standard</td>
+<td class="p-8 text-primary">Accelerated</td>
+<td class="p-8">Instant</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- FAQ Section -->
+<section class="max-w-4xl">
+<h2 class="font-headline text-4xl font-bold mb-12 tracking-tight">PROTOCOL // <span class="text-primary-dim">FAQ</span></h2>
+<div class="space-y-4">
+<details class="group glass-card rounded-lg overflow-hidden border-none">
+<summary class="flex items-center justify-between p-6 cursor-pointer hover:bg-surface-container-high transition-colors">
+<span class="font-label text-sm font-medium tracking-tight">How secure is my neural data payload?</span>
+<span class="material-symbols-outlined group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<div class="p-6 pt-0 text-on-surface-variant text-sm leading-relaxed font-mono">
+                        TajsOS employs end-to-end polymorphic encryption. Your data is fragmented across decentralized nodes; only your private neural key can reconstruct the interface.
+                    </div>
+</details>
+<details class="group glass-card rounded-lg overflow-hidden border-none">
+<summary class="flex items-center justify-between p-6 cursor-pointer hover:bg-surface-container-high transition-colors">
+<span class="font-label text-sm font-medium tracking-tight">Can I downgrade my subscription tier?</span>
+<span class="material-symbols-outlined group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<div class="p-6 pt-0 text-on-surface-variant text-sm leading-relaxed font-mono">
+                        Downgrades take effect at the end of the current billing cycle. Data overages will be archived but inaccessible until the tier is restored.
+                    </div>
+</details>
+<details class="group glass-card rounded-lg overflow-hidden border-none">
+<summary class="flex items-center justify-between p-6 cursor-pointer hover:bg-surface-container-high transition-colors">
+<span class="font-label text-sm font-medium tracking-tight">What happens if my neural link fails?</span>
+<span class="material-symbols-outlined group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<div class="p-6 pt-0 text-on-surface-variant text-sm leading-relaxed font-mono">
+                        Our emergency fallback protocol ensures no data loss. Local cache will synchronize immediately upon re-establishing the kernel connection.
+                    </div>
+</details>
+</div>
+</section>
+
   </main>
   <Footer />
 </Layout>

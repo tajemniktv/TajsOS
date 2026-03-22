@@ -3,10 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/landing/Navbar.astro';
 import Footer from '../components/landing/Footer.astro';
 
-// Replace hyphens with spaces and convert to uppercase for title
-const parts = Astro.url.pathname.split('/').filter(Boolean);
-const rawTitle = parts[parts.length - 1] || 'PAGE';
-const title = rawTitle.replace(/-/g, ' ').toUpperCase();
+const title = "LAUNCH";
 ---
 
 <Layout>
@@ -14,9 +11,74 @@ const title = rawTitle.replace(/-/g, ' ').toUpperCase();
   <div class="fixed top-[-10%] right-[-5%] w-[600px] h-[600px] gradient-sphere pointer-events-none -z-10"></div>
   
   <Navbar />
-  <main class="relative pt-48 max-w-[1600px] mx-auto px-8 min-h-screen">
-    <h1 class="font-headline text-5xl font-bold uppercase text-primary mb-6">{title}</h1>
-    <p class="text-on-surface-variant text-xl">This is a stub page. Content will be added later.</p>
+  <main class="relative pt-32 max-w-[1600px] mx-auto px-8 min-h-screen">
+    
+<!-- Background Spatial Layering Decor -->
+<div class="absolute inset-0 overflow-hidden pointer-events-none">
+<div class="absolute top-[20%] left-[10%] w-[40rem] h-[40rem] bg-primary/5 rounded-full blur-[120px]"></div>
+<div class="absolute bottom-[10%] right-[5%] w-[30rem] h-[30rem] bg-secondary/5 rounded-full blur-[100px]"></div>
+</div>
+<!-- Hero Content -->
+<div class="relative z-10 w-full max-w-5xl flex flex-col items-center text-center">
+<!-- Technical Indicator -->
+<div class="mb-8 flex items-center gap-3 bg-surface-container-low/50 px-4 py-1.5 rounded-full border border-outline-variant/20 neo-blur">
+<span class="flex h-2 w-2 relative">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+</span>
+<span class="font-mono text-[10px] tracking-[0.3em] text-primary uppercase">System Access Granted</span>
+</div>
+<!-- Main Headline -->
+<h1 class="font-headline font-bold text-6xl md:text-8xl lg:text-9xl tracking-tighter text-on-surface glow-text mb-4 leading-none">
+                LAUNCH PROTOCOL <span class="text-primary/40">//</span> 01
+            </h1>
+<p class="font-body text-on-surface-variant max-w-xl text-lg mb-16 leading-relaxed">
+                Initialize the neural handshake. Connect your identity to the first node deployment of the Digital Curator ecosystem.
+            </p>
+<!-- Waitlist Module -->
+<div class="w-full max-w-lg group relative">
+<div class="absolute -inset-0.5 bg-gradient-to-r from-primary to-primary-dim rounded-xl blur opacity-20 group-focus-within:opacity-50 transition duration-1000"></div>
+<div class="relative flex items-center bg-surface-container-lowest border border-outline-variant/30 rounded-xl overflow-hidden focus-within:border-primary transition-all duration-500">
+<input class="bg-transparent border-none focus:ring-0 text-on-surface placeholder:text-outline font-mono py-5 px-6 w-full text-lg" placeholder="neural_id@network.os" type="email"/>
+<button class="bg-primary text-on-primary font-headline font-bold px-8 py-5 hover:bg-primary-fixed transition-all flex items-center gap-2 group/btn">
+                        INITIALIZE
+                        <span class="material-symbols-outlined text-xl transition-transform group-hover/btn:translate-x-1" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Countdown Timer -->
+<div class="mt-16 flex flex-col items-center">
+<span class="font-label text-[10px] tracking-[0.4em] text-outline uppercase mb-4">Time to Node Deployment</span>
+<div class="font-mono text-4xl md:text-5xl tracking-widest text-on-surface-variant tabular-nums">
+                    04<span class="text-primary animate-pulse">:</span>12<span class="text-primary animate-pulse">:</span>09<span class="text-primary animate-pulse">:</span>55
+                </div>
+</div>
+<!-- Status Panels - Bento Style -->
+<div class="mt-24 grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-4xl">
+<div class="bg-surface-container-low/40 neo-blur p-6 rounded-xl border border-outline-variant/10 flex flex-col items-start gap-4">
+<span class="material-symbols-outlined text-primary-dim" data-icon="waves">waves</span>
+<div class="text-left">
+<div class="font-label text-[10px] tracking-widest text-outline uppercase mb-1">Synsc_Latency</div>
+<div class="font-mono text-xl text-on-surface">0.04ms</div>
+</div>
+</div>
+<div class="bg-surface-container-low/40 neo-blur p-6 rounded-xl border border-outline-variant/10 flex flex-col items-start gap-4">
+<span class="material-symbols-outlined text-primary-dim" data-icon="cloud_done">cloud_done</span>
+<div class="text-left">
+<div class="font-label text-[10px] tracking-widest text-outline uppercase mb-1">Node_Load</div>
+<div class="font-mono text-xl text-primary">OPTIMAL</div>
+</div>
+</div>
+<div class="bg-surface-container-low/40 neo-blur p-6 rounded-xl border border-outline-variant/10 flex flex-col items-start gap-4">
+<span class="material-symbols-outlined text-primary-dim" data-icon="encrypted">encrypted</span>
+<div class="text-left">
+<div class="font-label text-[10px] tracking-widest text-outline uppercase mb-1">Encryption_Layer</div>
+<div class="font-mono text-xl text-on-surface">AES-4096</div>
+</div>
+</div>
+</div>
+</div>
+
   </main>
   <Footer />
 </Layout>
