@@ -22,13 +22,14 @@ import com.tajemniktv.tajsos.ui.theme.TactileTheme
 @Composable
 fun ArchiveScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit) {
     val archivedNodes by viewModel.archivedNodes.collectAsState()
+    val isInitialLoadComplete by viewModel.isInitialLoadComplete.collectAsState()
 
     Column(modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd)) {
         Text("ARCHIVE", style = MaterialTheme.typography.displaySmall)
         Spacer(modifier = Modifier.height(TactileTheme.SpacingMd))
 
-        if (archivedNodes.isEmpty()) {
-            EmptyState(message = "NO ARCHIVED ITEMS", modifier = Modifier.weight(1f))
+        if (archivedNodes.isEmpty() && isInitialLoadComplete) {
+            EmptyState(message = "NO ARCHIVED ITEMS")
         } else {
             LazyColumn(modifier = Modifier.weight(1f)) {
                 items(archivedNodes) { nodeWithPin ->
