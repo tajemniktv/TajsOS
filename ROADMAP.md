@@ -42,89 +42,89 @@ Everything else is an extension of those.
 
 ## 2. Home / Command Center
 
-- [ ] Top 3 items for today
-- [ ] Resume last thing card
-- [ ] Overdue / neglected section
-- [ ] “Next up” section
-- [ ] Inbox overflow warning
-- [ ] Quick state summary
-- [ ] Focus card
-- [ ] Current session card
-- [ ] Pinned cards on the home screen
+- [x] Top 3 items for today
+- [x] Resume last thing card
+- [x] Overdue / neglected section
+- [x] “Next up” section
+- [x] Inbox overflow warning
+- [x] Quick state summary
+- [x] Focus card
+- [x] Current session card
+- [x] Pinned cards on the home screen
 - [ ] Dynamic dashboard blocks
-- [ ] Morning reset card
-- [ ] Evening shutdown card
-- [ ] “Your life looks like this right now” summary card
-- [ ] Quick access to most relevant project
-- [ ] Quick access to most relevant note
-- [ ] Upcoming deadline card
-- [ ] One-tap access to the active context
-- [ ] Context recovery widget on the home screen
+- [x] Morning reset card
+- [x] Evening shutdown card
+- [x] “Your life looks like this right now” summary card
+- [x] Quick access to most relevant project
+- [x] Quick access to most relevant note
+- [x] Upcoming deadline card
+- [x] One-tap access to the active context
+- [x] Context recovery widget on the home screen
 
 ---
 
 ## 3. Tasks / Planning / Execution
 
-- [ ] Task → next step extraction
-- [ ] “Next smallest step” field
-- [ ] Energy-needed labels
-- [ ] Low / medium / high energy tags
-- [ ] Task friction markers
-- [ ] “Easy / annoying / mentally heavy / unclear” markers
-- [ ] Blocked state
-- [ ] Waiting state
-- [ ] Someday / maybe state
-- [ ] “Why am I postponing this?” prompt
-- [ ] Convert note to task
-- [ ] Convert task to project
-- [ ] Split task into subtasks
-- [ ] Task chains / dependency support
-- [ ] Soft deadlines
-- [ ] Time estimate presets
-- [ ] 5 min / 15 min / 30 min / 1h+ estimates
-- [ ] Quick wins bucket
-- [ ] “When I have brain” list
-- [ ] “When I am dead inside” list
-- [ ] Postpone counter
-- [ ] Task decay indicator
-- [ ] Task resurrection suggestions
-- [ ] Overdue-but-still-relevant detection
-- [ ] Easy rescheduling flow
+- [x] Task → next step extraction
+- [x] “Next smallest step” field
+- [x] Energy-needed labels
+- [x] Low / medium / high energy tags
+- [x] Task friction markers
+- [x] “Easy / annoying / mentally heavy / unclear” markers
+- [x] Blocked state
+- [x] Waiting state
+- [x] Someday / maybe state
+- [x] “Why am I postponing this?” prompt
+- [x] Convert note to task
+- [x] Convert task to project
+- [x] Split task into subtasks
+- [x] Task chains / dependency support
+- [x] Soft deadlines
+- [x] Time estimate presets
+- [x] 5 min / 15 min / 30 min / 1h+ estimates
+- [x] Quick wins bucket
+- [x] “When I have brain” list
+- [x] “When I am dead inside” list
+- [x] Postpone counter
+- [x] Task decay indicator
+- [x] Task resurrection suggestions
+- [x] Overdue-but-still-relevant detection
+- [x] Easy rescheduling flow
 - [ ] Drag-and-drop prioritization
-- [ ] Minimal friction task completion
-- [ ] Completion notes
-- [ ] “Why did this work?” completion reflection
-- [ ] Task batching suggestions
-- [ ] Repeat task later
-- [ ] Duplicate task quickly
+- [x] Minimal friction task completion
+- [x] Completion notes
+- [x] “Why did this work?” completion reflection
+- [x] Task batching suggestions
+- [x] Repeat task later
+- [x] Duplicate task quickly
 
 ---
 
 ## 4. Projects / Areas / Life Structure
 
-- [ ] Areas system
-- [ ] Project system
-- [ ] Project dashboard
-- [ ] Area dashboard
-- [ ] Project health indicator
-- [ ] Project timeline
-- [ ] Project inbox
-- [ ] Someday projects
-- [ ] Project templates
-- [ ] Project “why” field
-- [ ] Project freeze mode
-- [ ] Project next-action summary
-- [ ] Project recent activity view
-- [ ] Project linked notes panel
-- [ ] Project linked resources panel
-- [ ] Area-level neglected item summary
-- [ ] Area-level activity summary
-- [ ] Area-level active projects list
-- [ ] Archive old projects cleanly
-- [ ] Restore archived projects
-- [ ] Mark project as on hold
-- [ ] Mark project as exploratory
-- [ ] Mark project as active / slowing down / neglected
+- [x] Areas system
+- [x] Project system
+- [x] Project dashboard
+- [x] Area dashboard
+- [x] Project health indicator
+- [x] Project timeline
+- [x] Project inbox
+- [x] Someday projects
+- [x] Project templates
+- [x] Project “why” field
+- [x] Project freeze mode
+- [x] Project next-action summary
+- [x] Project recent activity view
+- [x] Project linked notes panel
+- [x] Project linked resources panel
+- [x] Area-level neglected item summary
+- [x] Area-level activity summary
+- [x] Area-level active projects list
+- [x] Archive old projects cleanly
+- [x] Restore archived projects
+- [x] Mark project as on hold
+- [x] Mark project as exploratory
+- [x] Mark project as active / slowing down / neglected
 
 ### Example Areas
 
@@ -165,7 +165,7 @@ Everything else is an extension of those.
 - [ ] Idea incubator
 - [ ] Atomic note mode
 - [ ] Merge notes
-- [ ] Split note into multiple notes
+- [x] Split note into multiple notes
 - [ ] Turn note into project seed
 - [ ] Knowledge cards
 - [ ] Rich internal linking
@@ -452,18 +452,18 @@ Everything else is an extension of those.
 
 These are the kinds of features that could make TajOS feel distinctly like **TajOS**.
 
-- [ ] Resume engine
-- [ ] Unified project + note + task system
-- [ ] Passive insights engine
-- [ ] Recovery mode
-- [ ] Context-aware suggestions
-- [ ] Auto-prepared reviews
-- [ ] Related items / backlinks
-- [ ] Inbox that does not punish you
-- [ ] One-tap return to active context
-- [ ] Search-first life system
-- [ ] Command Center as the real home screen
-- [ ] Minimal-input statistics
-- [ ] Archive that feels safe, not final
+- [x] Resume engine
+- [x] Unified project + note + task system
+- [x] Passive insights engine
+- [x] Recovery mode
+- [x] Context-aware suggestions
+- [x] Auto-prepared reviews
+- [x] Related items / backlinks
+- [x] Inbox that does not punish you
+- [x] One-tap return to active context
+- [x] Search-first life system
+- [x] Command Center as the real home screen
+- [x] Minimal-input statistics
+- [x] Archive that feels safe, not final
 
 ---
