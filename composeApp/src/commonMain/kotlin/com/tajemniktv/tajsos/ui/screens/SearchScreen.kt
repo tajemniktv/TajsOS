@@ -40,7 +40,7 @@ fun SearchScreen(
         Spacer(modifier = Modifier.height(TactileTheme.SpacingMd))
 
         if (searchResults.isEmpty() && searchQuery.isNotEmpty()) {
-            EmptyState(message = "NO MATCHING RESULTS FOUND")
+            EmptyState(message = "NO MATCHING RESULTS FOUND", modifier = Modifier.weight(1f))
         } else {
             LazyColumn(modifier = Modifier.weight(1f)) {
                 items(searchResults) { nodeWithPin ->
