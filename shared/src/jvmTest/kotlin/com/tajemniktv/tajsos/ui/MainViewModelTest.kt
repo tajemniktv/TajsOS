@@ -103,13 +103,13 @@ class MainViewModelTest {
         val node2 = createNodeWithPin(2, "banana", "CONTENT 2")
         allNodesFlow.value = listOf(node1, node2)
 
-        viewModel.updateSearchQuery("apple")
         viewModel.searchResults.test {
-            assertEquals(listOf(node1), awaitItem())
-        }
+            assertEquals(emptyList(), awaitItem())
 
-        viewModel.updateSearchQuery("CONTENT")
-        viewModel.searchResults.test {
+            viewModel.updateSearchQuery("apple")
+            assertEquals(listOf(node1), awaitItem())
+
+            viewModel.updateSearchQuery("CONTENT")
             assertEquals(listOf(node2), awaitItem())
         }
     }
