@@ -318,10 +318,16 @@ class MainViewModel(
     ) { nodes, query ->
         if (query.isBlank()) {
             emptyList()
+        } else if (query.startsWith("#")) {
+            val tagQuery = query.substring(1)
+            nodes.filter { nodeWithPin ->
+                nodeWithPin.tags.any { it.name.contains(tagQuery, ignoreCase = true) }
+            }
         } else {
             nodes.filter { 
                 it.node.title.contains(query, ignoreCase = true) || 
-                it.node.content.contains(query, ignoreCase = true)
+                it.node.content.contains(query, ignoreCase = true) ||
+                it.tags.any { tag -> tag.name.contains(query, ignoreCase = true) }
             }
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())

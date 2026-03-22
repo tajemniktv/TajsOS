@@ -22,7 +22,8 @@ fun NotesScreen(viewModel: MainViewModel, onNoteClick: (Long) -> Unit) {
     
     val filteredNodes = nodes.filter { 
         it.node.title.contains(searchQuery, ignoreCase = true) || 
-        it.node.content.contains(searchQuery, ignoreCase = true)
+        it.node.content.contains(searchQuery, ignoreCase = true) ||
+        it.tags.any { tag -> tag.name.contains(searchQuery, ignoreCase = true) }
     }
 
     val pinnedKnowledge = filteredNodes.filter { it.node.isPinned && (it.node.type == "note" || it.node.type == "idea") }

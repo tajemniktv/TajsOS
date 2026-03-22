@@ -217,7 +217,8 @@ fun App(viewModel: MainViewModel) {
                             viewModel, 
                             noteId, 
                             onBack = { navController.popBackStack() },
-                            onNavigateToNode = onEditNode
+                            onNavigateToNode = onEditNode,
+                            onNavigateToSearch = { navController.navigate(Screen.Search.route) }
                         )
                     }
                     composable(Screen.Insights.route) {
