@@ -11,9 +11,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -26,7 +29,7 @@ import com.tajemniktv.tajsos.ui.components.NodeCard
 fun InboxScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit) {
     var itemInput by remember { mutableStateOf("") }
     var selectedType by remember { mutableStateOf("task") }
-    val nodes by viewModel.allNodes.collectAsState()
+    val nodes by viewModel.inboxNodes.collectAsState()
 
     Column(
         modifier = Modifier
@@ -94,24 +97,39 @@ fun InboxScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit) {
         } else {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 items(nodes, key = { it.node.id }) { nodeWithPin ->
-                    NodeCard(
-                        nodeWithPin = nodeWithPin,
-                        onToggleDone = { status: String ->
-                            viewModel.updateNodeStatus(
-                                nodeWithPin.node,
-                                status
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        NodeCard(
+                            modifier = Modifier.weight(1f),
+                            nodeWithPin = nodeWithPin,
+                            onToggleDone = { status: String ->
+                                viewModel.updateNodeStatus(
+                                    nodeWithPin.node,
+                                    status
+                                )
+                            },
+                            onTogglePin = { isPinned: Boolean ->
+                                viewModel.togglePin(
+                                    nodeWithPin.node,
+                                    isPinned
+                                )
+                            },
+                            onClick = { onEditNode(nodeWithPin.node.id) },
+                            onLongClick = { onEditNode(nodeWithPin.node.id) },
+                            onArchive = { viewModel.archiveNode(nodeWithPin.node) }
+                        )
+
+                        IconButton(onClick = { viewModel.markAsProcessed(nodeWithPin.node.id) }) {
+                            Icon(
+                                imageVector = Icons.Default.Check,
+                                contentDescription = "Process",
+                                tint = MaterialTheme.colorScheme.primary
                             )
-                        },
-                        onTogglePin = { isPinned: Boolean ->
-                            viewModel.togglePin(
-                                nodeWithPin.node,
-                                isPinned
-                            )
-                        },
-                        onClick = { onEditNode(nodeWithPin.node.id) },
-                        onLongClick = { onEditNode(nodeWithPin.node.id) },
-                        onArchive = { viewModel.archiveNode(nodeWithPin.node) }
-                    )
+                        }
+                    }
                 }
             }
         }

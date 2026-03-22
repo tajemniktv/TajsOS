@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
 package com.tajemniktv.tajsos
 
 import com.tajemniktv.tajsos.data.*
@@ -17,7 +21,7 @@ import kotlin.test.assertTrue
  * 1. activeReminders was removed - no longer filters by reminderAt
  * 2. inboxNodes filter: type != "project" && type != "area" && inboxState == true && status != "archived"
  * 3. archivedNodes filter: status == "archived"
- * 4. searchResults filter: title/content contains query
+ * 4. searchResults filter: title/content contains a query
  * 5. ExportData serialization
  * 6. updateNodeStatus no longer creates recurring copy (verified via behavior test)
  */
@@ -67,9 +71,9 @@ class MainViewModelLogicTest {
         )
         val result = nodes.filter {
             it.node.inboxState &&
-            it.node.status != "archived" &&
-            it.node.type != "project" &&
-            it.node.type != "area"
+                    it.node.status != "archived" &&
+                    it.node.type != "project" &&
+                    it.node.type != "area"
         }
         assertEquals(1, result.size)
     }
@@ -81,9 +85,9 @@ class MainViewModelLogicTest {
         )
         val result = nodes.filter {
             it.node.inboxState &&
-            it.node.status != "archived" &&
-            it.node.type != "project" &&
-            it.node.type != "area"
+                    it.node.status != "archived" &&
+                    it.node.type != "project" &&
+                    it.node.type != "area"
         }
         assertTrue(result.isEmpty())
     }
@@ -95,9 +99,9 @@ class MainViewModelLogicTest {
         )
         val result = nodes.filter {
             it.node.inboxState &&
-            it.node.status != "archived" &&
-            it.node.type != "project" &&
-            it.node.type != "area"
+                    it.node.status != "archived" &&
+                    it.node.type != "project" &&
+                    it.node.type != "area"
         }
         assertTrue(result.isEmpty())
     }
@@ -109,9 +113,9 @@ class MainViewModelLogicTest {
         )
         val result = nodes.filter {
             it.node.inboxState &&
-            it.node.status != "archived" &&
-            it.node.type != "project" &&
-            it.node.type != "area"
+                    it.node.status != "archived" &&
+                    it.node.type != "project" &&
+                    it.node.type != "area"
         }
         assertTrue(result.isEmpty())
     }
@@ -123,9 +127,9 @@ class MainViewModelLogicTest {
         )
         val result = nodes.filter {
             it.node.inboxState &&
-            it.node.status != "archived" &&
-            it.node.type != "project" &&
-            it.node.type != "area"
+                    it.node.status != "archived" &&
+                    it.node.type != "project" &&
+                    it.node.type != "area"
         }
         assertTrue(result.isEmpty())
     }
@@ -139,9 +143,9 @@ class MainViewModelLogicTest {
         )
         val result = nodes.filter {
             it.node.inboxState &&
-            it.node.status != "archived" &&
-            it.node.type != "project" &&
-            it.node.type != "area"
+                    it.node.status != "archived" &&
+                    it.node.type != "project" &&
+                    it.node.type != "area"
         }
         assertEquals(3, result.size)
     }
@@ -190,7 +194,7 @@ class MainViewModelLogicTest {
 
     @Test
     fun removedActiveReminders_nodeWithPastReminderIsNotSpeciallyFiltered() {
-        // The PR removed activeReminders StateFlow. Nodes with reminderAt in the past
+        // The PR removed the activeReminders StateFlow. Nodes with reminderAt in the past
         // are now NOT surfaced separately. We verify that the node still appears normally
         // in allNodes but no longer through a reminder-specific filter.
         val pastReminder = 1000L // very old timestamp
@@ -217,7 +221,7 @@ class MainViewModelLogicTest {
         val query = ""
         val result = if (query.isBlank()) emptyList() else nodes.filter {
             it.node.title.contains(query, ignoreCase = true) ||
-            it.node.content.contains(query, ignoreCase = true)
+                    it.node.content.contains(query, ignoreCase = true)
         }
         assertTrue(result.isEmpty())
     }
@@ -231,7 +235,7 @@ class MainViewModelLogicTest {
         val query = "groceries"
         val result = nodes.filter {
             it.node.title.contains(query, ignoreCase = true) ||
-            it.node.content.contains(query, ignoreCase = true)
+                    it.node.content.contains(query, ignoreCase = true)
         }
         assertEquals(1, result.size)
         assertEquals("Buy groceries", result.first().node.title)
@@ -245,7 +249,7 @@ class MainViewModelLogicTest {
         val query = "important"
         val result = nodes.filter {
             it.node.title.contains(query, ignoreCase = true) ||
-            it.node.content.contains(query, ignoreCase = true)
+                    it.node.content.contains(query, ignoreCase = true)
         }
         assertEquals(1, result.size)
     }
@@ -289,11 +293,13 @@ class MainViewModelLogicTest {
         // Before this PR, completing a recurring node would create a new node.
         // After this PR, that logic is removed. The existing node is simply updated.
         // This test verifies the node copy pattern: no new id=0 copy is created.
-        val recurring = makeNode(id = 10L, isRecurring = true, recurringInterval = "DAILY", status = "active")
+        val recurring =
+            makeNode(id = 10L, isRecurring = true, recurringInterval = "DAILY", status = "active")
         val now = kotlin.time.Clock.System.now().toEpochMilliseconds()
 
         // Simulate what the updated archiveNode/updateNodeStatus does (no copy creation)
-        val updated = recurring.copy(status = "done", updatedAt = now, completedAt = now, archivedAt = null)
+        val updated =
+            recurring.copy(status = "done", updatedAt = now, completedAt = now, archivedAt = null)
 
         // The id is preserved — no new node with id=0 is created
         assertEquals(10L, updated.id)

@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
  */
 sealed class Screen(val route: String, val label: String, val icon: ImageVector) {
     data object Dashboard : Screen("dashboard", "DASH", Icons.Default.Home)
+    data object Inbox : Screen("inbox", "INBOX", Icons.Default.Email)
     data object Search : Screen("search", "FIND", Icons.Default.Search)
     data object Today : Screen("today", "TODAY", Icons.Default.DateRange)
     data object Focus : Screen("focus", "FOCUS", Icons.Default.PlayArrow)

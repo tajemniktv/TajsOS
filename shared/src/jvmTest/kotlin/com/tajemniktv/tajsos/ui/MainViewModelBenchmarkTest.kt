@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
 package com.tajemniktv.tajsos.ui
 
 import com.tajemniktv.tajsos.data.NodeEntity
@@ -53,7 +57,11 @@ class MainViewModelBenchmarkTest {
         val timeOptimized = t4 - t3
         println("Optimized result size: ${result2.size}")
 
-        kotlin.test.assertEquals(result1.map { it.id }.toSet(), result2.map { it.id }.toSet(), "The results of original and optimized algorithms should be the same.")
+        kotlin.test.assertEquals(
+            result1.map { it.id }.toSet(),
+            result2.map { it.id }.toSet(),
+            "The results of original and optimized algorithms should be the same."
+        )
 
         println("===============================")
         println("Original time: " + timeOriginal + "ms")
@@ -64,22 +72,32 @@ class MainViewModelBenchmarkTest {
         println("===============================")
     }
 
-    private fun runOriginal(nodes: List<NodeWithPin>, projects: List<NodeEntity>, sevenDaysAgo: Long): List<NodeEntity> {
+    private fun runOriginal(
+        nodes: List<NodeWithPin>,
+        projects: List<NodeEntity>,
+        sevenDaysAgo: Long
+    ): List<NodeEntity> {
         val neglectedProjects = projects.filter { project ->
             val projectNodes = nodes.filter { it.node.projectId == project.id }
             val hasActiveItems = projectNodes.any { it.node.status == "active" }
-            val hasRecentCompletions = projectNodes.any { it.node.status == "done" && it.node.updatedAt >= sevenDaysAgo }
+            val hasRecentCompletions =
+                projectNodes.any { it.node.status == "done" && it.node.updatedAt >= sevenDaysAgo }
             hasActiveItems && !hasRecentCompletions
         }
         return neglectedProjects
     }
 
-    private fun runOptimized(nodes: List<NodeWithPin>, projects: List<NodeEntity>, sevenDaysAgo: Long): List<NodeEntity> {
+    private fun runOptimized(
+        nodes: List<NodeWithPin>,
+        projects: List<NodeEntity>,
+        sevenDaysAgo: Long
+    ): List<NodeEntity> {
         val nodesByProjectId = nodes.groupBy { it.node.projectId }
         val neglectedProjects = projects.filter { project ->
             val projectNodes = nodesByProjectId[project.id] ?: emptyList()
             val hasActiveItems = projectNodes.any { it.node.status == "active" }
-            val hasRecentCompletions = projectNodes.any { it.node.status == "done" && it.node.updatedAt >= sevenDaysAgo }
+            val hasRecentCompletions =
+                projectNodes.any { it.node.status == "done" && it.node.updatedAt >= sevenDaysAgo }
             hasActiveItems && !hasRecentCompletions
         }
         return neglectedProjects

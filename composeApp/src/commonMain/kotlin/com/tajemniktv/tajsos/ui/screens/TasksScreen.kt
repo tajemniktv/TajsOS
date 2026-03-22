@@ -17,8 +17,8 @@ import com.tajemniktv.tajsos.ui.components.NodeCard
 
 @Composable
 fun TasksScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit) {
-    val nodes by viewModel.allNodes.collectAsState()
-    val tasks = nodes.filter { it.node.type == "task" }
+    val activeNodes by viewModel.activeNodes.collectAsState()
+    val tasks = activeNodes.filter { it.node.type == "task" }
 
     Column(
         modifier = Modifier

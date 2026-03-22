@@ -39,6 +39,10 @@ class MainViewModel(
     val allNodes: StateFlow<List<NodeWithPin>> = repository.getAllNodes()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
+    val activeNodes: StateFlow<List<NodeWithPin>> = allNodes.map { list ->
+        list.filter { it.node.status != "archived" }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
     val todayNodes: StateFlow<List<NodeEntity>> = repository.getTodayNodes()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
@@ -434,6 +438,19 @@ class MainViewModel(
         }
     }
 
+    fun markAsProcessed(nodeId: Long) {
+        viewModelScope.launch {
+            repository.getNodeById(nodeId)?.let { node ->
+                repository.updateNode(
+                    node.copy(
+                        inboxState = false,
+                        updatedAt = Clock.System.now().toEpochMilliseconds()
+                    )
+                )
+            }
+        }
+    }
+
     fun addProject(name: String, description: String = "", areaId: Long? = null) {
         addNode(title = name, content = description, type = "project", areaId = areaId)
     }
@@ -545,6 +562,17 @@ fun getProjectsForArea(areaId: Long): Flow<List<NodeEntity>> = repository.getPro
         }
     }
 
+
+    private val _lastActiveProjectId = MutableStateFlow<Long?>(null)
+    val lastActiveProjectId: StateFlow<Long?> = _lastActiveProjectId.asStateFlow()
+
+    private val _lastActiveAreaId = MutableStateFlow<Long?>(null)
+    val lastActiveAreaId: StateFlow<Long?> = _lastActiveAreaId.asStateFlow()
+
+    fun setLastActiveContext(projectId: Long?, areaId: Long?) {
+        if (projectId != null) _lastActiveProjectId.value = projectId
+        if (areaId != null) _lastActiveAreaId.value = areaId
+    }
 
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()

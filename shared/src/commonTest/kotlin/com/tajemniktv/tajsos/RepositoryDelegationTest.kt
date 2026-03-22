@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
 package com.tajemniktv.tajsos
 
 import com.tajemniktv.tajsos.data.*
@@ -37,10 +41,12 @@ class RepositoryDelegationTest {
             lastProjectWithPinsId = projectId
             return projectWithPinsFlow
         }
+
         override fun getNodesByAreaWithPins(areaId: Long): Flow<List<NodeWithPin>> {
             lastAreaWithPinsId = areaId
             return areaWithPinsFlow
         }
+
         override fun getProjectsByArea(areaId: Long): Flow<List<NodeEntity>> {
             lastProjectsByAreaId = areaId
             return projectsByAreaFlow
@@ -50,7 +56,9 @@ class RepositoryDelegationTest {
         override fun getAllNodesWithPins(): Flow<List<NodeWithPin>> = flowOf(emptyList())
         override fun getTodayNodes(date: String): Flow<List<NodeEntity>> = flowOf(emptyList())
         override fun getNodesByType(type: String): Flow<List<NodeEntity>> = flowOf(emptyList())
-        override fun getNodesByProject(projectId: Long): Flow<List<NodeEntity>> = flowOf(emptyList())
+        override fun getNodesByProject(projectId: Long): Flow<List<NodeEntity>> =
+            flowOf(emptyList())
+
         override fun getNodesByArea(areaId: Long): Flow<List<NodeEntity>> = flowOf(emptyList())
         override suspend fun getNodeById(id: Long): NodeEntity? = null
         override suspend fun insertNode(node: NodeEntity): Long = 0L
@@ -74,7 +82,9 @@ class RepositoryDelegationTest {
     }
 
     private class FakeRelationDao : RelationDao {
-        override fun getRelationsForNode(nodeId: Long): Flow<List<RelationEntity>> = flowOf(emptyList())
+        override fun getRelationsForNode(nodeId: Long): Flow<List<RelationEntity>> =
+            flowOf(emptyList())
+
         override suspend fun insertRelation(relation: RelationEntity) {}
         override suspend fun deleteRelation(relation: RelationEntity) {}
     }
@@ -93,7 +103,9 @@ class RepositoryDelegationTest {
     }
 
     private class FakeAttachmentDao : AttachmentDao {
-        override fun getAttachmentsForNode(nodeId: Long): Flow<List<AttachmentEntity>> = flowOf(emptyList())
+        override fun getAttachmentsForNode(nodeId: Long): Flow<List<AttachmentEntity>> =
+            flowOf(emptyList())
+
         override suspend fun insertAttachment(attachment: AttachmentEntity) {}
         override suspend fun deleteAttachment(attachment: AttachmentEntity) {}
     }
@@ -191,10 +203,12 @@ class RepositoryDelegationTest {
     fun getNodesByAreaWithPins_multiplePinnedNodes_areAllReturned() = runTest {
         val node1 = NodeEntity(id = 1L, type = "task", title = "First")
         val node2 = NodeEntity(id = 2L, type = "note", title = "Second")
-        val expectedFlow = flowOf(listOf(
-            NodeWithPin(node = node1, pin = null),
-            NodeWithPin(node = node2, pin = null)
-        ))
+        val expectedFlow = flowOf(
+            listOf(
+                NodeWithPin(node = node1, pin = null),
+                NodeWithPin(node = node2, pin = null)
+            )
+        )
         val fakeDao = FakeNodeDao(areaWithPinsFlow = expectedFlow)
         val repo = buildRepository(fakeDao)
         val result = repo.getNodesByAreaWithPins(1L).first()

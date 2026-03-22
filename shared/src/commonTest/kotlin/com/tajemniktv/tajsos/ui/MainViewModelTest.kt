@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
 package com.tajemniktv.tajsos.ui
 
 import androidx.datastore.core.DataStore
@@ -43,7 +47,9 @@ class MainViewModelTest {
         override fun getAllNodesWithPins(): Flow<List<NodeWithPin>> = testNodesFlow
         override fun getTodayNodes(date: String): Flow<List<NodeEntity>> = flowOf(emptyList())
         override fun getNodesByType(type: String): Flow<List<NodeEntity>> = flowOf(emptyList())
-        override fun getNodesByProject(projectId: Long): Flow<List<NodeEntity>> = flowOf(emptyList())
+        override fun getNodesByProject(projectId: Long): Flow<List<NodeEntity>> =
+            flowOf(emptyList())
+
         override suspend fun getNodeById(id: Long): NodeEntity? = null
         override suspend fun insertNode(node: NodeEntity): Long = 0
         override suspend fun updateNode(node: NodeEntity) {}
@@ -61,15 +67,20 @@ class MainViewModelTest {
         override fun getAllSessions(): Flow<List<FocusSessionEntity>> = flowOf(emptyList())
         override fun getActiveSession(): Flow<FocusSessionEntity?> = flowOf(null)
     }
+
     class StubTrackDao : TrackDao {
         override fun getAllTrackEntries(): Flow<List<TrackEntryEntity>> = flowOf(emptyList())
         override suspend fun insertTrackEntry(entry: TrackEntryEntity) {}
     }
+
     class StubRelationDao : RelationDao {
-        override fun getRelationsForNode(nodeId: Long): Flow<List<RelationEntity>> = flowOf(emptyList())
+        override fun getRelationsForNode(nodeId: Long): Flow<List<RelationEntity>> =
+            flowOf(emptyList())
+
         override suspend fun insertRelation(relation: RelationEntity) {}
         override suspend fun deleteRelation(relation: RelationEntity) {}
     }
+
     class StubTagDao : TagDao {
         override fun getAllTags(): Flow<List<TagEntity>> = flowOf(emptyList())
         override suspend fun insertTag(tag: TagEntity): Long = 0
@@ -77,15 +88,20 @@ class MainViewModelTest {
         override suspend fun attachTagToNode(nodeTag: NodeTagEntity) {}
         override suspend fun detachTagFromNode(nodeId: Long, tagId: Long) {}
     }
+
     class StubEventLogDao : EventLogDao {
         override suspend fun insertLog(log: EventLogEntity) {}
         override fun getRecentLogs(limit: Int): Flow<List<EventLogEntity>> = flowOf(emptyList())
     }
+
     class StubAttachmentDao : AttachmentDao {
-        override fun getAttachmentsForNode(nodeId: Long): Flow<List<AttachmentEntity>> = flowOf(emptyList())
+        override fun getAttachmentsForNode(nodeId: Long): Flow<List<AttachmentEntity>> =
+            flowOf(emptyList())
+
         override suspend fun insertAttachment(attachment: AttachmentEntity) {}
         override suspend fun deleteAttachment(attachment: AttachmentEntity) {}
     }
+
     class StubTemplateDao : TemplateDao {
         override fun getAllTemplates(): Flow<List<TemplateEntity>> = flowOf(emptyList())
         override suspend fun insertTemplate(template: TemplateEntity) {}
@@ -104,11 +120,27 @@ class MainViewModelTest {
     fun exportDataJson_serializes_current_nodes_state_to_JSON() = runTest {
         val testNodes = listOf(
             NodeWithPin(
-                node = NodeEntity(id = 1, type = "task", title = "Task 1", content = "Content 1", status = "active", source = "manual", inboxState = false),
+                node = NodeEntity(
+                    id = 1,
+                    type = "task",
+                    title = "Task 1",
+                    content = "Content 1",
+                    status = "active",
+                    source = "manual",
+                    inboxState = false
+                ),
                 pin = null
             ),
             NodeWithPin(
-                node = NodeEntity(id = 2, type = "note", title = "Note 1", content = "Content 2", status = "archived", source = "manual", inboxState = true),
+                node = NodeEntity(
+                    id = 2,
+                    type = "note",
+                    title = "Note 1",
+                    content = "Content 2",
+                    status = "archived",
+                    source = "manual",
+                    inboxState = true
+                ),
                 pin = null
             )
         )

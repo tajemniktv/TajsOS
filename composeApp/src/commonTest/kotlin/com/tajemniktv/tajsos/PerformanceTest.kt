@@ -1,7 +1,11 @@
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
 package com.tajemniktv.tajsos
 
 import kotlin.test.Test
-import kotlin.system.measureTimeMillis
+import kotlin.time.measureTime
 
 class PerformanceTest {
 
@@ -22,44 +26,48 @@ class PerformanceTest {
         // Warmup
         for (i in 0..100) {
             relations.forEach { relation ->
-                val relatedId = if (relation.fromNodeId == noteId) relation.toNodeId else relation.fromNodeId
+                val relatedId =
+                    if (relation.fromNodeId == noteId) relation.toNodeId else relation.fromNodeId
                 nodes.find { it.node.id == relatedId }?.node
             }
         }
 
         // Baseline O(R * N)
-        val time1 = measureTimeMillis {
+        val time1 = measureTime {
             var found = 0
             relations.forEach { relation ->
-                val relatedId = if (relation.fromNodeId == noteId) relation.toNodeId else relation.fromNodeId
+                val relatedId =
+                    if (relation.fromNodeId == noteId) relation.toNodeId else relation.fromNodeId
                 val relatedNode = nodes.find { it.node.id == relatedId }?.node
                 if (relatedNode != null) {
                     found++
                 }
             }
-        }
+        }.inWholeMilliseconds
 
         // Warmup optimized
         val warmupNodesMap = nodes.associateBy { it.node.id }
         for (i in 0..100) {
             relations.forEach { relation ->
-                val relatedId = if (relation.fromNodeId == noteId) relation.toNodeId else relation.fromNodeId
+                val relatedId =
+                    if (relation.fromNodeId == noteId) relation.toNodeId else relation.fromNodeId
                 warmupNodesMap[relatedId]?.node
             }
         }
 
         // Optimized O(N)
-        val time2 = measureTimeMillis {
+        val time2 = measureTime {
             var found = 0
             val nodesMap = nodes.associateBy { it.node.id }
             relations.forEach { relation ->
-                val relatedId = if (relation.fromNodeId == noteId) relation.toNodeId else relation.fromNodeId
+                val relatedId =
+                    if (relation.fromNodeId == noteId) relation.toNodeId else relation.fromNodeId
                 val relatedNode = nodesMap[relatedId]?.node
                 if (relatedNode != null) {
                     found++
                 }
             }
-        }
+        }.inWholeMilliseconds
 
         println("Baseline time: $time1 ms")
         println("Optimized time: $time2 ms")

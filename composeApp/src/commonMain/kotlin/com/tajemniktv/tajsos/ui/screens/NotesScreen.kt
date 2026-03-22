@@ -4,7 +4,6 @@
 
 package com.tajemniktv.tajsos.ui.screens
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -21,8 +20,19 @@ import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
 @Composable
 fun NotesScreen(viewModel: MainViewModel, onNoteClick: (Long) -> Unit) {
+    val activeNodes by viewModel.activeNodes.collectAsState()
     var searchQuery by remember { mutableStateOf("") }
-    val filteredNodes by viewModel.getFilteredNodes(searchQuery).collectAsState(emptyList())
+
+    val filteredNodes = remember(activeNodes, searchQuery) {
+        if (searchQuery.isBlank()) {
+            activeNodes
+        } else {
+            activeNodes.filter {
+                it.node.title.contains(searchQuery, ignoreCase = true) ||
+                        it.node.content.contains(searchQuery, ignoreCase = true)
+            }
+        }
+    }
 
     val pinnedKnowledge = filteredNodes.filter { it.node.isPinned && (it.node.type == "note" || it.node.type == "idea") }
     val unpinnedIdeas = filteredNodes.filter { !it.node.isPinned && it.node.type == "idea" }

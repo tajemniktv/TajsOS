@@ -44,16 +44,19 @@ fun DashboardScreen(
     val allProjects by viewModel.allProjects.collectAsState()
     val allAreas by viewModel.allAreas.collectAsState()
     val allNodes by viewModel.allNodes.collectAsState()
+    val activeNodes by viewModel.activeNodes.collectAsState()
     val inboxNodes by viewModel.inboxNodes.collectAsState()
     val activeReminders by viewModel.activeReminders.collectAsState()
     val calendarEntries by viewModel.calendarEntries.collectAsState()
 
     val today = kotlin.time.Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
     val moodToday = trackEntries.find { it.date == today }
-    val tasksCount = allNodes.count { it.node.type == "task" }
-    val notesCount = allNodes.count { it.node.type == "note" || it.node.type == "idea" }
-    val pinnedKnowledge = allNodes.filter { it.node.isPinned && (it.node.type == "note" || it.node.type == "idea") }
-    val upcomingDeadlines = allNodes.filter { it.node.dueAt != null && it.node.status == "active" }
+    val tasksCount = activeNodes.count { it.node.type == "task" }
+    val notesCount = activeNodes.count { it.node.type == "note" || it.node.type == "idea" }
+    val pinnedKnowledge =
+        activeNodes.filter { it.node.isPinned && (it.node.type == "note" || it.node.type == "idea") }
+    val upcomingDeadlines =
+        activeNodes.filter { it.node.dueAt != null && it.node.status == "active" }
         .sortedBy { it.node.dueAt }
         .take(3)
 
@@ -134,7 +137,7 @@ fun DashboardScreen(
 
         if (inboxNodes.isNotEmpty()) {
             Surface(
-                onClick = { onNavigateTo(Screen.Tasks) }, // TODO: Navigate to inbox specifically if needed
+                onClick = { onNavigateTo(Screen.Inbox) },
                 modifier = Modifier.fillMaxWidth(),
                 color = TactileTheme.Surface,
                 shape = RoundedCornerShape(TactileTheme.RadiusMd),

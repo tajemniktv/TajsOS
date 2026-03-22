@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
 package com.tajemniktv.tajsos.ui
 
 import com.tajemniktv.tajsos.data.*
@@ -41,9 +45,9 @@ class MainViewModelPerformanceTest {
             val inboxNodes = allNodesFlow.map { list ->
                 list.filter {
                     it.node.inboxState &&
-                    it.node.status != "archived" &&
-                    it.node.type != "project" &&
-                    it.node.type != "area"
+                            it.node.status != "archived" &&
+                            it.node.type != "project" &&
+                            it.node.type != "area"
                 }
             }.stateIn(scope, SharingStarted.Eagerly, emptyList())
 
@@ -90,9 +94,12 @@ class MainViewModelPerformanceTest {
                 MainViewModel.NodeCategorization(inbox, archived, reminders)
             }.stateIn(scope, SharingStarted.Eagerly, MainViewModel.NodeCategorization())
 
-            val inboxNodes2 = categorizedNodes.map { it.inbox }.stateIn(scope, SharingStarted.Eagerly, emptyList())
-            val archivedNodes2 = categorizedNodes.map { it.archived }.stateIn(scope, SharingStarted.Eagerly, emptyList())
-            val activeReminders2 = categorizedNodes.map { it.reminders }.stateIn(scope, SharingStarted.Eagerly, emptyList())
+            val inboxNodes2 = categorizedNodes.map { it.inbox }
+                .stateIn(scope, SharingStarted.Eagerly, emptyList())
+            val archivedNodes2 = categorizedNodes.map { it.archived }
+                .stateIn(scope, SharingStarted.Eagerly, emptyList())
+            val activeReminders2 = categorizedNodes.map { it.reminders }
+                .stateIn(scope, SharingStarted.Eagerly, emptyList())
 
             val inb = inboxNodes2.value
             val arc = archivedNodes2.value

@@ -39,6 +39,9 @@ fun App(viewModel: MainViewModel) {
     val allAreas by viewModel.allAreas.collectAsState()
     val latestTrack = trackEntries.firstOrNull()
 
+    val lastActiveProjectId by viewModel.lastActiveProjectId.collectAsState()
+    val lastActiveAreaId by viewModel.lastActiveAreaId.collectAsState()
+
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
@@ -64,6 +67,7 @@ fun App(viewModel: MainViewModel) {
 
                     val navItems = listOf(
                         Screen.Dashboard,
+                        Screen.Inbox,
                         Screen.Search,
                         Screen.Tasks,
                         Screen.Notes,
@@ -185,6 +189,7 @@ fun App(viewModel: MainViewModel) {
                             onEditNode = onEditNode
                         )
                     }
+                    composable(Screen.Inbox.route) { InboxScreen(viewModel, onEditNode) }
                     composable(Screen.Search.route) {
                         SearchScreen(viewModel, onItemClick = onEditNode)
                     }
@@ -276,10 +281,12 @@ fun App(viewModel: MainViewModel) {
                                 "area" -> viewModel.addArea(text)
                                 else -> viewModel.addNode(text, "", type, projectId, areaId, isRec, recInt, remAt)
                             }
-                            showCaptureSheet = false
+                            // Note: if multi-capture is on, CaptureSheet handles not closing itself
                         },
                         projects = allProjects,
-                        areas = allAreas
+                        areas = allAreas,
+                        defaultProjectId = lastActiveProjectId,
+                        defaultAreaId = lastActiveAreaId
                     )
                 }
             }

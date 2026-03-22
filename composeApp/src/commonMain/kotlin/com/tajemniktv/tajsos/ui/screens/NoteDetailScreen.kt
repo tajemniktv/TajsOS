@@ -20,20 +20,37 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.unit.dp
-import com.tajemniktv.tajsos.data.RelationEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
+/**
+ *
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NoteDetailScreen(
+    /**
+     *
+     */
     viewModel: MainViewModel,
+    /**
+     *
+     */
     noteId: Long,
+    /**
+     *
+     */
     onBack: () -> Unit,
+    /**
+     *
+     */
     onNavigateToNode: (Long) -> Unit,
+    /**
+     * 
+     */
     onNavigateToSearch: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
@@ -411,15 +428,15 @@ fun NoteDetailScreen(
                 Column {
                     nodes.filter { it.node.id != noteId && it.node.id !in linkedNodeIds }.take(10)
                         .forEach { nodeWithPin ->
-                        ListItem(
-                            headlineContent = { Text(nodeWithPin.node.title) },
-                            supportingContent = { Text(nodeWithPin.node.type) },
-                            modifier = Modifier.clickable {
-                                viewModel.addRelation(noteId, nodeWithPin.node.id, "RELATED")
-                                showRelationDialog = false
-                            }
-                        )
-                    }
+                            ListItem(
+                                headlineContent = { Text(nodeWithPin.node.title) },
+                                supportingContent = { Text(nodeWithPin.node.type) },
+                                modifier = Modifier.clickable {
+                                    viewModel.addRelation(noteId, nodeWithPin.node.id, "RELATED")
+                                    showRelationDialog = false
+                                }
+                            )
+                        }
                 }
             },
             confirmButton = { TextButton(onClick = { showRelationDialog = false }) { Text("Cancel") } }

@@ -38,6 +38,11 @@ fun AreaDetailScreen(
     }
 
     val area = nodeWithPin.node
+
+    LaunchedEffect(areaId) {
+        viewModel.setLastActiveContext(null, areaId)
+    }
+
     val projects by viewModel.getProjectsForArea(areaId).collectAsState(initial = emptyList())
     val nodesWithPinInArea by viewModel.getNodesForArea(areaId)
         .collectAsState(initial = emptyList())

@@ -37,6 +37,10 @@ fun ProjectDetailScreen(
 
     val project = nodeWithPin.node
 
+    LaunchedEffect(projectId) {
+        viewModel.setLastActiveContext(projectId, project.areaId)
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(

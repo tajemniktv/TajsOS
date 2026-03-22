@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
 package com.tajemniktv.tajsos.ui.components
 
 import androidx.compose.foundation.layout.*
@@ -15,6 +19,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.plus
+import kotlinx.datetime.DateTimeUnit
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -27,16 +39,21 @@ fun CaptureSheet(
     onDismiss: () -> Unit,
     onCapture: (String, String, Long?, Long?, Boolean, String?, Long?) -> Unit,
     projects: List<NodeEntity> = emptyList(),
-    areas: List<NodeEntity> = emptyList()
+    areas: List<NodeEntity> = emptyList(),
+    defaultProjectId: Long? = null,
+    defaultAreaId: Long? = null
 ) {
     var text by remember { mutableStateOf("") }
     var selectedType by remember { mutableStateOf("task") }
-    var selectedProjectId by remember { mutableStateOf<Long?>(null) }
-    var selectedAreaId by remember { mutableStateOf<Long?>(null) }
+    var selectedProjectId by remember { mutableStateOf<Long?>(defaultProjectId) }
+    var selectedAreaId by remember { mutableStateOf<Long?>(defaultAreaId) }
     
     var isRecurring by remember { mutableStateOf(false) }
     var recurringInterval by remember { mutableStateOf<String?>(null) }
     var reminderTime by remember { mutableStateOf<Long?>(null) }
+
+    var multiCaptureMode by remember { mutableStateOf(false) }
+    var brainDumpMode by remember { mutableStateOf(false) }
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
@@ -55,6 +72,41 @@ fun CaptureSheet(
                 .verticalScroll(androidx.compose.foundation.rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)
         ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    if (brainDumpMode) "BRAIN DUMP ACTIVE" else "QUICK CAPTURE",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = if (brainDumpMode) TactileTheme.Primary else TactileTheme.Muted
+                )
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        "MULTI",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = TactileTheme.Muted
+                    )
+                    Switch(
+                        checked = multiCaptureMode || brainDumpMode,
+                        onCheckedChange = { multiCaptureMode = it },
+                        enabled = !brainDumpMode,
+                        modifier = Modifier.scale(0.7f)
+                    )
+                    Spacer(Modifier.width(TactileTheme.SpacingSm))
+                    FilterChip(
+                        selected = brainDumpMode,
+                        onClick = {
+                            brainDumpMode = !brainDumpMode
+                            if (brainDumpMode) multiCaptureMode = true
+                        },
+                        label = { Text("DUMP") }
+                    )
+                }
+            }
+
             BasicTextField(
                 value = text,
                 onValueChange = { text = it },
@@ -68,7 +120,7 @@ fun CaptureSheet(
                         val placeholder = when (selectedType) {
                             "project" -> "Project name..."
                             "area" -> "Area name..."
-                            else -> "Dump thought..."
+                            else -> if (brainDumpMode) "Next thought..." else "Dump thought..."
                         }
                         Text(
                             placeholder,
@@ -82,26 +134,37 @@ fun CaptureSheet(
                 keyboardActions = KeyboardActions(onDone = {
                     if (text.isNotBlank()) {
                         onCapture(text, selectedType, selectedProjectId, selectedAreaId, isRecurring, recurringInterval, reminderTime)
+                        if (multiCaptureMode || brainDumpMode) {
+                            text = ""
+                        } else {
+                            onDismiss()
+                        }
                     }
                 })
             )
 
-            Text("TYPE", style = MaterialTheme.typography.labelSmall, color = TactileTheme.Primary)
-            LazyRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)
-            ) {
-                items(listOf("task", "note", "idea", "project", "area")) { type ->
-                    FilterChip(
-                        selected = selectedType == type,
-                        onClick = { selectedType = type },
-                        label = { Text(type.uppercase()) }
-                    )
+            if (!brainDumpMode) {
+                Text(
+                    "TYPE",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TactileTheme.Primary
+                )
+                LazyRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)
+                ) {
+                    items(listOf("task", "note", "idea", "project", "area")) { type ->
+                        FilterChip(
+                            selected = selectedType == type,
+                            onClick = { selectedType = type },
+                            label = { Text(type.uppercase()) }
+                        )
+                    }
                 }
             }
 
             if (selectedType != "area" && selectedType != "project") {
-                if (areas.isNotEmpty()) {
+                if (areas.isNotEmpty() && !brainDumpMode) {
                     Text("AREA", style = MaterialTheme.typography.labelSmall, color = TactileTheme.Primary)
                     LazyRow(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
                         items(areas) { area ->
@@ -114,7 +177,7 @@ fun CaptureSheet(
                     }
                 }
 
-                if (projects.isNotEmpty()) {
+                if (projects.isNotEmpty() && !brainDumpMode) {
                     Text("PROJECT", style = MaterialTheme.typography.labelSmall, color = TactileTheme.Primary)
                     LazyRow(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
                         items(projects) { project ->
@@ -127,30 +190,58 @@ fun CaptureSheet(
                     }
                 }
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)
-                ) {
+                if (!brainDumpMode) {
                     Row(
-                        modifier = Modifier.weight(1f),
-                        verticalAlignment = Alignment.CenterVertically
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)
                     ) {
-                        Checkbox(
-                            checked = isRecurring,
-                            onCheckedChange = { isRecurring = it },
-                            colors = CheckboxDefaults.colors(checkedColor = TactileTheme.Primary)
-                        )
-                        Icon(Icons.Default.Refresh, contentDescription = null, tint = TactileTheme.Muted, modifier = Modifier.size(16.dp))
-                        Spacer(Modifier.width(4.dp))
-                        Text("RECURRING", style = MaterialTheme.typography.labelSmall, color = TactileTheme.Muted)
-                    }
+                        Row(
+                            modifier = Modifier.weight(1f),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Checkbox(
+                                checked = isRecurring,
+                                onCheckedChange = { isRecurring = it },
+                                colors = CheckboxDefaults.colors(checkedColor = TactileTheme.Primary)
+                            )
+                            Icon(
+                                Icons.Default.Refresh,
+                                contentDescription = null,
+                                tint = TactileTheme.Muted,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(Modifier.width(4.dp))
+                            Text(
+                                "RECURRING",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = TactileTheme.Muted
+                            )
+                        }
 
-                    Row(
-                        modifier = Modifier.weight(1f),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        IconButton(onClick = { 
-                            reminderTime = if (reminderTime == null) kotlin.time.Clock.System.now().toEpochMilliseconds() + 3600000 else null
+                        Row(
+                            modifier = Modifier.weight(1f),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            IconButton(onClick = {
+                                reminderTime = if (reminderTime == null) {
+                                    val now = kotlinx.datetime.Clock.System.now()
+                                    val tz = kotlinx.datetime.TimeZone.currentSystemDefault()
+                                    val localDateTime = now.toLocalDateTime(tz)
+                                    val evening = kotlinx.datetime.LocalDateTime(
+                                        localDateTime.year,
+                                        localDateTime.month,
+                                        localDateTime.dayOfMonth,
+                                        20,
+                                        0
+                                    )
+                                    if (localDateTime.hour >= 20) {
+                                        evening.toInstant(tz)
+                                            .plus(1, kotlinx.datetime.DateTimeUnit.DAY, tz)
+                                            .toEpochMilliseconds()
+                                    } else {
+                                        evening.toInstant(tz).toEpochMilliseconds()
+                                    }
+                                } else null
                         }) {
                             Icon(
                                 Icons.Default.Notifications, 
@@ -159,21 +250,25 @@ fun CaptureSheet(
                             )
                         }
                         Text(
-                            if (reminderTime == null) "NO REMINDER" else "+1H", 
+                            if (reminderTime == null) "NO REMINDER" else "PROCESS LATER", 
                             style = MaterialTheme.typography.labelSmall, 
                             color = if (reminderTime != null) TactileTheme.Primary else TactileTheme.Muted
                         )
+                        }
                     }
-                }
-                
-                if (isRecurring) {
-                    LazyRow(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
-                        items(listOf("DAILY", "WEEKLY", "MONTHLY")) { interval ->
-                            FilterChip(
-                                selected = recurringInterval == interval,
-                                onClick = { recurringInterval = if (recurringInterval == interval) null else interval },
-                                label = { Text(interval) }
-                            )
+
+                    if (isRecurring) {
+                        LazyRow(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+                            items(listOf("DAILY", "WEEKLY", "MONTHLY")) { interval ->
+                                FilterChip(
+                                    selected = recurringInterval == interval,
+                                    onClick = {
+                                        recurringInterval =
+                                            if (recurringInterval == interval) null else interval
+                                    },
+                                    label = { Text(interval) }
+                                )
+                            }
                         }
                     }
                 }
@@ -191,11 +286,31 @@ fun CaptureSheet(
             }
 
             Button(
-                onClick = { if (text.isNotBlank()) onCapture(text, selectedType, selectedProjectId, selectedAreaId, isRecurring, recurringInterval, reminderTime) },
+                onClick = {
+                    if (text.isNotBlank()) {
+                        onCapture(
+                            text,
+                            selectedType,
+                            selectedProjectId,
+                            selectedAreaId,
+                            isRecurring,
+                            recurringInterval,
+                            reminderTime
+                        )
+                        if (multiCaptureMode || brainDumpMode) {
+                            text = ""
+                        } else {
+                            onDismiss()
+                        }
+                    }
+                },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(TactileTheme.RadiusMd)
             ) {
-                Text("SAVE ${selectedType.uppercase()}", style = MaterialTheme.typography.labelLarge)
+                Text(
+                    if (multiCaptureMode || brainDumpMode) "SAVE & CONTINUE" else "SAVE ${selectedType.uppercase()}",
+                    style = MaterialTheme.typography.labelLarge
+                )
             }
         }
     }

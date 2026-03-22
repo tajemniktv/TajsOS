@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
 package com.tajemniktv.tajsos
 
 import com.tajemniktv.tajsos.data.NodeEntity
@@ -96,7 +100,13 @@ class NodeEntityTest {
         // The PR removed the recurring copy creation on archival.
         // Verify that a recurring node's archive copy no longer gets auto-generated
         // by checking that copy() preserves isRecurring but does not change id.
-        val recurringNode = NodeEntity(id = 42L, type = "task", title = "Recurring", isRecurring = true, recurringInterval = "DAILY")
+        val recurringNode = NodeEntity(
+            id = 42L,
+            type = "task",
+            title = "Recurring",
+            isRecurring = true,
+            recurringInterval = "DAILY"
+        )
         val archivedCopy = recurringNode.copy(status = "archived")
         // The id stays the same (no new node is auto-created)
         assertEquals(42L, archivedCopy.id)
