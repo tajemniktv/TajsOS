@@ -29,13 +29,11 @@ Everything else is an extension of those.
 - [x] Automatically save last active area
 - [x] Sticky temporary notes
 - [x] Convert sticky notes into real items later
-- [ ] Share sheet capture from other apps
-- [ ] Save links to inbox
-- [ ] Save selected text to inbox
-- [ ] Voice capture
-- [ ] Screenshot to inbox
-- [ ] two-way calendar sync (Google/Outlook/iCloud)
-- [ ] widgets (Platform-specific, structure ready)
+- [x] Share sheet capture from other apps
+- [x] Save links to inbox
+- [x] Save selected text to inbox
+- [x] Voice capture
+- [x] Screenshot to inbox
 - [x] “Remind me to process this later” option
 - [x] Capture ideas without title requirement
 - [x] Capture first, classify later workflow
@@ -445,6 +443,8 @@ Everything else is an extension of those.
 - [ ] Bring back forgotten idea feature
 - [ ] “You touched this last at...” context card
 - [ ] “You probably meant to continue this” prompt
+- [ ] two-way calendar sync (Google/Outlook/iCloud)
+- [ ] widgets (Platform-specific, structure ready)
 
 ---
 
