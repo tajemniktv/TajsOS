@@ -17,14 +17,8 @@ import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
 @Composable
 fun NotesScreen(viewModel: MainViewModel, onNoteClick: (Long) -> Unit) {
-    val nodes by viewModel.allNodes.collectAsState()
     var searchQuery by remember { mutableStateOf("") }
-    
-    val filteredNodes = nodes.filter { 
-        it.node.title.contains(searchQuery, ignoreCase = true) || 
-        it.node.content.contains(searchQuery, ignoreCase = true) ||
-        it.tags.any { tag -> tag.name.contains(searchQuery, ignoreCase = true) }
-    }
+    val filteredNodes by viewModel.getFilteredNodes(searchQuery).collectAsState(emptyList())
 
     val pinnedKnowledge = filteredNodes.filter { it.node.isPinned && (it.node.type == "note" || it.node.type == "idea") }
     val unpinnedIdeas = filteredNodes.filter { !it.node.isPinned && it.node.type == "idea" }
