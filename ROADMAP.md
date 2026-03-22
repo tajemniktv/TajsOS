@@ -131,8 +131,6 @@ Everything else is an extension of those.
 ### Example Areas
 
 - [ ] University
-- [ ] TajOS
-- [ ] TajsMods
 - [ ] Health
 - [ ] Admin
 - [ ] Personal
@@ -469,27 +467,3 @@ These are the kinds of features that could make TajOS feel distinctly like **Taj
 - [ ] Archive that feels safe, not final
 
 ---
-
-## 16. Things Not to Build Too Early
-
-These are useful reminders so the project does not get swallowed by feature-hydra nonsense.
-
-- [ ] Do not build a giant habit tracker too early
-- [ ] Do not build a huge graph view just for aesthetics
-- [ ] Do not build an AI coach too early
-- [ ] Do not create too many tags and properties
-- [ ] Do not create 50 different statuses
-- [ ] Do not build giant dashboards too early
-- [ ] Do not add social features too early
-- [ ] Do not add cloud sync before the core works
-- [ ] Do not overdo gamification
-- [ ] Do not let setup friction kill capture
-- [ ] Do not force structure before use
-- [ ] Do not make the app harder than life itself
-
----
-
-## 17. Summary Sentence
-
-- [ ] Build TajOS so it captures chaos, preserves context, unifies knowledge and execution, and
-  reveals patterns without turning the user into the unpaid secretary of their own life.
