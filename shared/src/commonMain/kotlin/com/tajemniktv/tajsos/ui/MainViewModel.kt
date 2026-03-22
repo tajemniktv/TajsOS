@@ -270,6 +270,19 @@ class MainViewModel(
         }
     }
 
+    /**
+     * Updates a node's status and handles related side-effects.
+     *
+     * In addition to changing the status, this function updates timestamps (`updatedAt`,
+     * and either `completedAt` or `archivedAt` depending on the new status).
+     *
+     * Critically, if a node marked as recurring is transitioned to `"done"`, this function
+     * will automatically compute the next due date and insert a *new* active node instance
+     * into the database to represent the next occurrence.
+     *
+     * @param node The node to update.
+     * @param status The new status to apply (e.g., "active", "done", "archived").
+     */
     fun updateNodeStatus(node: NodeEntity, status: String) {
         viewModelScope.launch {
             val now = Clock.System.now().toEpochMilliseconds()
