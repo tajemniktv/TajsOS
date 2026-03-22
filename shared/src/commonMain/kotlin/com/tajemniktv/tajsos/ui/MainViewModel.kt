@@ -84,7 +84,11 @@ class MainViewModel(
     val inboxNodes: StateFlow<List<NodeWithPin>> = categorizedNodes.map { it.inbox }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
+    private val _isInitialLoadComplete = MutableStateFlow(false)
+    val isInitialLoadComplete: StateFlow<Boolean> = _isInitialLoadComplete.asStateFlow()
+
     val archivedNodes: StateFlow<List<NodeWithPin>> = categorizedNodes.map { it.archived }
+        .onEach { _isInitialLoadComplete.value = true }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val activeReminders: StateFlow<List<NodeEntity>> = categorizedNodes.map { it.reminders }
@@ -184,9 +188,9 @@ class MainViewModel(
             }.getOrDefault(false)
         }
 
-        val avgMood = recentTracks.mapNotNull { it.moodScore }.takeIf { it.isNotEmpty() }?.average() ?: 0.0
-        val avgEnergy = recentTracks.mapNotNull { it.energyScore }.takeIf { it.isNotEmpty() }?.average() ?: 0.0
-        val avgFocus = recentTracks.mapNotNull { it.focusScore }.takeIf { it.isNotEmpty() }?.average() ?: 0.0
+        val avgMood = if (recentTracks.isNotEmpty()) recentTracks.mapNotNull { it.moodScore }.average() else 0.0
+        val avgEnergy = if (recentTracks.isNotEmpty()) recentTracks.mapNotNull { it.energyScore }.average() else 0.0
+        val avgFocus = if (recentTracks.isNotEmpty()) recentTracks.mapNotNull { it.focusScore }.average() else 0.0
 
         val nodesByProjectId = nodes.groupBy { it.node.projectId }
         val neglectedProjects = projects.filter { project ->
@@ -270,19 +274,6 @@ class MainViewModel(
         }
     }
 
-    /**
-     * Updates a node's status and handles related side-effects.
-     *
-     * In addition to changing the status, this function updates `updatedAt`. It also updates
-     * `completedAt` for a `"done"` status or `archivedAt` for an `"archived"` status.
-     *
-     * Critically, if a node marked as recurring is transitioned to `"done"`, this function
-     * will automatically compute the next due date and insert a *new* active node instance
-     * into the database to represent the next occurrence.
-     *
-     * @param node The node to update.
-     * @param status The new status to apply (e.g., "active", "done", "archived").
-     */
     fun updateNodeStatus(node: NodeEntity, status: String) {
         viewModelScope.launch {
             val now = Clock.System.now().toEpochMilliseconds()
