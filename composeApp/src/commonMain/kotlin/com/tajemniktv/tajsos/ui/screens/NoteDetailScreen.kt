@@ -49,9 +49,9 @@ fun NoteDetailScreen(
      */
     onNavigateToNode: (Long) -> Unit,
     /**
-     * 
+     *
      */
-    onNavigateToSearch: () -> Unit
+    onNavigateToSearch: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val nodes by viewModel.allNodes.collectAsState()
@@ -103,7 +103,7 @@ fun NoteDetailScreen(
                         Icon(
                             if (node.isPinned) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                             contentDescription = "Pin knowledge",
-                            tint = if (node.isPinned) TactileTheme.Primary else TactileTheme.Muted
+                            tint = if (node.isPinned) TactileTheme.Primary else TactileTheme.Muted,
                         )
                     }
                     IconButton(onClick = {
@@ -114,7 +114,7 @@ fun NoteDetailScreen(
                                     content = original.content,
                                     type = original.type,
                                     projectId = original.projectId,
-                                    areaId = original.areaId
+                                    areaId = original.areaId,
                                 )
                             }
                         }
@@ -127,17 +127,18 @@ fun NoteDetailScreen(
                     }) {
                         Icon(Icons.Default.Delete, contentDescription = "Archive")
                     }
-                }
+                },
             )
-        }
+        },
     ) { padding ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(TactileTheme.SpacingMd)
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .padding(TactileTheme.SpacingMd)
+                    .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
         ) {
             BasicTextField(
                 value = title,
@@ -153,13 +154,13 @@ fun NoteDetailScreen(
                         Text("Untitled...", style = MaterialTheme.typography.headlineMedium, color = TactileTheme.Muted)
                     }
                     innerTextField()
-                }
+                },
             )
 
             // Tags Row
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 items(tags) { tag ->
                     InputChip(
@@ -173,11 +174,12 @@ fun NoteDetailScreen(
                             Icon(
                                 Icons.Default.Close,
                                 contentDescription = "Remove Tag",
-                                modifier = Modifier
-                                    .size(16.dp)
-                                    .clickable { viewModel.detachTagFromNode(noteId, tag.id) }
+                                modifier =
+                                    Modifier
+                                        .size(16.dp)
+                                        .clickable { viewModel.detachTagFromNode(noteId, tag.id) },
                             )
-                        }
+                        },
                     )
                 }
                 item {
@@ -197,17 +199,18 @@ fun NoteDetailScreen(
                 },
                 textStyle = MaterialTheme.typography.bodyLarge.copy(color = TactileTheme.Text),
                 cursorBrush = SolidColor(TactileTheme.Primary),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = 200.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 200.dp),
                 decorationBox = { innerTextField ->
                     if (content.isEmpty()) {
                         Text("Start writing...", style = MaterialTheme.typography.bodyLarge, color = TactileTheme.Muted)
                     }
                     innerTextField()
-                }
+                },
             )
-            
+
             // Relations Section
             if (relations.isNotEmpty()) {
                 val nodesMap = remember(nodes) { nodes.associateBy { it.node.id } }
@@ -221,27 +224,32 @@ fun NoteDetailScreen(
                             color = TactileTheme.Surface,
                             shape = MaterialTheme.shapes.small,
                             border = androidx.compose.foundation.BorderStroke(1.dp, TactileTheme.Border),
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth(),
                         ) {
                             Row(modifier = Modifier.padding(TactileTheme.SpacingMd), verticalAlignment = Alignment.CenterVertically) {
-                                Icon(Icons.Default.Link, contentDescription = null, tint = TactileTheme.Muted, modifier = Modifier.size(16.dp))
+                                Icon(
+                                    Icons.Default.Link,
+                                    contentDescription = null,
+                                    tint = TactileTheme.Muted,
+                                    modifier = Modifier.size(16.dp),
+                                )
                                 Spacer(Modifier.width(8.dp))
                                 Text(
                                     relatedNode.title,
                                     style = MaterialTheme.typography.bodyMedium,
-                                    modifier = Modifier.weight(1f)
+                                    modifier = Modifier.weight(1f),
                                 )
                                 Text(relation.relationType, style = MaterialTheme.typography.labelSmall, color = TactileTheme.Muted)
                                 if (relation.relationType != "BELONGS_TO") {
                                     IconButton(
                                         onClick = { viewModel.deleteRelation(relation) },
-                                        modifier = Modifier.size(24.dp)
+                                        modifier = Modifier.size(24.dp),
                                     ) {
                                         Icon(
                                             Icons.Default.LinkOff,
                                             contentDescription = "Unlink",
                                             tint = TactileTheme.Error,
-                                            modifier = Modifier.size(16.dp)
+                                            modifier = Modifier.size(16.dp),
                                         )
                                     }
                                 }
@@ -250,7 +258,17 @@ fun NoteDetailScreen(
                     }
                 }
             }
-            Button(onClick = { showRelationDialog = true }, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = TactileTheme.Surface, contentColor = TactileTheme.Primary)) {
+            Button(
+                onClick = {
+                    showRelationDialog = true
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor = TactileTheme.Surface,
+                        contentColor = TactileTheme.Primary,
+                    ),
+            ) {
                 Icon(Icons.Default.Link, contentDescription = null)
                 Spacer(Modifier.width(8.dp))
                 Text("LINK NODE")
@@ -269,31 +287,39 @@ fun NoteDetailScreen(
                                 Icon(
                                     Icons.Default.Delete,
                                     contentDescription = "Remove Attachment",
-                                    tint = TactileTheme.Error
+                                    tint = TactileTheme.Error,
                                 )
                             }
                         },
-                        colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface)
+                        colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
                     )
                 }
             }
-            Button(onClick = { 
-                viewModel.addAttachment(noteId, "URL", "https://example.com", "Example Link")
-            }, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = TactileTheme.Surface, contentColor = TactileTheme.Primary)) {
+            Button(
+                onClick = {
+                    viewModel.addAttachment(noteId, "URL", "https://example.com", "Example Link")
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor = TactileTheme.Surface,
+                        contentColor = TactileTheme.Primary,
+                    ),
+            ) {
                 Icon(Icons.Default.Add, contentDescription = null)
                 Spacer(Modifier.width(8.dp))
                 Text("ADD LINK")
             }
 
             Spacer(modifier = Modifier.height(TactileTheme.SpacingLg))
-            
+
             Text("ORGANIZATION", style = MaterialTheme.typography.labelSmall, color = TactileTheme.Primary)
-            
+
             ListItem(
                 headlineContent = { Text("Status") },
                 supportingContent = { Text(node.status.uppercase()) },
                 modifier = Modifier.clickable { showStatusDialog = true },
-                colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface)
+                colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
             )
 
             // Area & Project Selection
@@ -305,7 +331,7 @@ fun NoteDetailScreen(
                     headlineContent = { Text("Area") },
                     supportingContent = { Text(area?.title ?: "Unassigned") },
                     modifier = Modifier.clickable { showAreaDialog = true },
-                    colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface)
+                    colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
                 )
             }
 
@@ -314,7 +340,7 @@ fun NoteDetailScreen(
                     headlineContent = { Text("Project") },
                     supportingContent = { Text(project?.title ?: "None") },
                     modifier = Modifier.clickable { showProjectDialog = true },
-                    colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface)
+                    colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
                 )
             }
 
@@ -322,10 +348,15 @@ fun NoteDetailScreen(
             ListItem(
                 headlineContent = { Text("Due Date") },
                 supportingContent = {
-                    Text(node.dueAt?.let {
-                        kotlin.time.Instant.fromEpochMilliseconds(it)
-                            .toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
-                    } ?: "No due date")
+                    Text(
+                        node.dueAt?.let {
+                            kotlin.time.Instant
+                                .fromEpochMilliseconds(it)
+                                .toLocalDateTime(TimeZone.currentSystemDefault())
+                                .date
+                                .toString()
+                        } ?: "No due date",
+                    )
                 },
                 modifier = Modifier.clickable { showDueDialog = true },
                 trailingContent = {
@@ -335,18 +366,22 @@ fun NoteDetailScreen(
                         }
                     }
                 },
-                colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface)
+                colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
             )
 
             // Reminder & Recurrence
             ListItem(
                 headlineContent = { Text("Reminder") },
                 supportingContent = {
-                    Text(node.reminderAt?.let {
-                        kotlin.time.Instant.fromEpochMilliseconds(it)
-                            .toLocalDateTime(TimeZone.currentSystemDefault()).toString()
-                            .replace("T", " ")
-                    } ?: "No reminder set")
+                    Text(
+                        node.reminderAt?.let {
+                            kotlin.time.Instant
+                                .fromEpochMilliseconds(it)
+                                .toLocalDateTime(TimeZone.currentSystemDefault())
+                                .toString()
+                                .replace("T", " ")
+                        } ?: "No reminder set",
+                    )
                 },
                 modifier = Modifier.clickable { showReminderDialog = true },
                 trailingContent = {
@@ -356,29 +391,35 @@ fun NoteDetailScreen(
                         }
                     }
                 },
-                colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface)
+                colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
             )
 
             ListItem(
                 headlineContent = { Text("Recurrence") },
                 supportingContent = { Text(if (node.isRecurring) "Interval: ${node.recurringInterval}" else "One-time") },
-                modifier = Modifier.clickable {
-                    viewModel.updateNode(
-                        node.copy(
-                            isRecurring = !node.isRecurring,
-                            recurringInterval = if (!node.isRecurring) "DAILY" else null
+                modifier =
+                    Modifier.clickable {
+                        viewModel.updateNode(
+                            node.copy(
+                                isRecurring = !node.isRecurring,
+                                recurringInterval = if (!node.isRecurring) "DAILY" else null,
+                            ),
                         )
-                    )
-                },
-                colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface)
+                    },
+                colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
             )
-            
-            val updatedDate = kotlin.time.Instant.fromEpochMilliseconds(node.updatedAt).toLocalDateTime(TimeZone.currentSystemDefault()).toString()
+
+            val updatedDate =
+                kotlin.time.Instant
+                    .fromEpochMilliseconds(
+                        node.updatedAt,
+                    ).toLocalDateTime(TimeZone.currentSystemDefault())
+                    .toString()
             Text(
                 text = "Last updated: $updatedDate",
                 style = MaterialTheme.typography.labelSmall,
                 color = TactileTheme.Muted.copy(alpha = 0.5f),
-                modifier = Modifier.padding(top = TactileTheme.SpacingMd)
+                modifier = Modifier.padding(top = TactileTheme.SpacingMd),
             )
         }
     }
@@ -392,10 +433,11 @@ fun NoteDetailScreen(
                     allTags.forEach { tag ->
                         ListItem(
                             headlineContent = { Text(tag.name) },
-                            modifier = Modifier.clickable { 
-                                viewModel.attachTagToNode(noteId, tag.id)
-                                showTagDialog = false
-                            }
+                            modifier =
+                                Modifier.clickable {
+                                    viewModel.attachTagToNode(noteId, tag.id)
+                                    showTagDialog = false
+                                },
                         )
                     }
                     var newTagName by remember { mutableStateOf("") }
@@ -403,7 +445,7 @@ fun NoteDetailScreen(
                         value = newTagName,
                         onValueChange = { newTagName = it },
                         placeholder = { Text("New tag...") },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
                     )
                     Button(onClick = {
                         if (newTagName.isNotBlank()) {
@@ -413,33 +455,46 @@ fun NoteDetailScreen(
                     }) { Text("Create Tag") }
                 }
             },
-            confirmButton = { TextButton(onClick = { showTagDialog = false }) { Text("Close") } }
+            confirmButton = { TextButton(onClick = { showTagDialog = false }) { Text("Close") } },
         )
     }
 
     if (showRelationDialog) {
-        val linkedNodeIds = remember(relations, noteId) {
-            relations.map { if (it.fromNodeId == noteId) it.toNodeId else it.fromNodeId }.toSet()
-        }
+        val linkedNodeIds =
+            remember(relations, noteId) {
+                relations.map { if (it.fromNodeId == noteId) it.toNodeId else it.fromNodeId }
+                    .toSet()
+            }
         AlertDialog(
             onDismissRequest = { showRelationDialog = false },
             title = { Text("Link to Node") },
             text = {
                 Column {
-                    nodes.filter { it.node.id != noteId && it.node.id !in linkedNodeIds }.take(10)
+                    nodes
+                        .filter { it.node.id != noteId && it.node.id !in linkedNodeIds }
+                        .take(10)
                         .forEach { nodeWithPin ->
                             ListItem(
                                 headlineContent = { Text(nodeWithPin.node.title) },
                                 supportingContent = { Text(nodeWithPin.node.type) },
-                                modifier = Modifier.clickable {
-                                    viewModel.addRelation(noteId, nodeWithPin.node.id, "RELATED")
-                                    showRelationDialog = false
-                                }
+                                modifier =
+                                    Modifier.clickable {
+                                        viewModel.addRelation(
+                                            noteId,
+                                            nodeWithPin.node.id,
+                                            "RELATED"
+                                        )
+                                        showRelationDialog = false
+                                    },
                             )
                         }
                 }
             },
-            confirmButton = { TextButton(onClick = { showRelationDialog = false }) { Text("Cancel") } }
+            confirmButton = {
+                TextButton(onClick = {
+                    showRelationDialog = false
+                }) { Text("Cancel") }
+            },
         )
     }
 
@@ -453,15 +508,20 @@ fun NoteDetailScreen(
                     statuses.forEach { status ->
                         ListItem(
                             headlineContent = { Text(status.uppercase()) },
-                            modifier = Modifier.clickable {
-                                viewModel.updateNodeStatus(node, status)
-                                showStatusDialog = false
-                            }
+                            modifier =
+                                Modifier.clickable {
+                                    viewModel.updateNodeStatus(node, status)
+                                    showStatusDialog = false
+                                },
                         )
                     }
                 }
             },
-            confirmButton = { TextButton(onClick = { showStatusDialog = false }) { Text("Cancel") } }
+            confirmButton = {
+                TextButton(onClick = {
+                    showStatusDialog = false
+                }) { Text("Cancel") }
+            },
         )
     }
 
@@ -474,22 +534,24 @@ fun NoteDetailScreen(
                     areas.forEach { area ->
                         ListItem(
                             headlineContent = { Text(area.title) },
-                            modifier = Modifier.clickable {
-                                viewModel.updateNode(node.copy(areaId = area.id))
-                                showAreaDialog = false
-                            }
+                            modifier =
+                                Modifier.clickable {
+                                    viewModel.updateNode(node.copy(areaId = area.id))
+                                    showAreaDialog = false
+                                },
                         )
                     }
                     ListItem(
                         headlineContent = { Text("Unassign") },
-                        modifier = Modifier.clickable {
-                            viewModel.updateNode(node.copy(areaId = null))
-                            showAreaDialog = false
-                        }
+                        modifier =
+                            Modifier.clickable {
+                                viewModel.updateNode(node.copy(areaId = null))
+                                showAreaDialog = false
+                            },
                     )
                 }
             },
-            confirmButton = { TextButton(onClick = { showAreaDialog = false }) { Text("Cancel") } }
+            confirmButton = { TextButton(onClick = { showAreaDialog = false }) { Text("Cancel") } },
         )
     }
 
@@ -502,18 +564,20 @@ fun NoteDetailScreen(
                     projects.forEach { project ->
                         ListItem(
                             headlineContent = { Text(project.title) },
-                            modifier = Modifier.clickable {
-                                viewModel.updateNode(node.copy(projectId = project.id))
-                                showProjectDialog = false
-                            }
+                            modifier =
+                                Modifier.clickable {
+                                    viewModel.updateNode(node.copy(projectId = project.id))
+                                    showProjectDialog = false
+                                },
                         )
                     }
                     ListItem(
                         headlineContent = { Text("None") },
-                        modifier = Modifier.clickable {
-                            viewModel.updateNode(node.copy(projectId = null))
-                            showProjectDialog = false
-                        }
+                        modifier =
+                            Modifier.clickable {
+                                viewModel.updateNode(node.copy(projectId = null))
+                                showProjectDialog = false
+                            },
                     )
                 }
             },
@@ -521,7 +585,7 @@ fun NoteDetailScreen(
                 TextButton(onClick = {
                     showProjectDialog = false
                 }) { Text("Cancel") }
-            }
+            },
         )
     }
 
@@ -531,25 +595,36 @@ fun NoteDetailScreen(
             title = { Text("Set Due Date") },
             text = {
                 Column {
-                    val options = listOf(
-                        "Today" to kotlin.time.Clock.System.now().toEpochMilliseconds(),
-                        "Tomorrow" to (kotlin.time.Clock.System.now()
-                            .toEpochMilliseconds() + 86400000),
-                        "In 1 Week" to (kotlin.time.Clock.System.now()
-                            .toEpochMilliseconds() + 86400000 * 7)
-                    )
+                    val options =
+                        listOf(
+                            "Today" to
+                                    kotlin.time.Clock.System
+                                        .now()
+                                        .toEpochMilliseconds(),
+                            "Tomorrow" to (
+                                    kotlin.time.Clock.System
+                                        .now()
+                                        .toEpochMilliseconds() + 86400000
+                                    ),
+                            "In 1 Week" to (
+                                    kotlin.time.Clock.System
+                                        .now()
+                                        .toEpochMilliseconds() + 86400000 * 7
+                                    ),
+                        )
                     options.forEach { (label, time) ->
                         ListItem(
                             headlineContent = { Text(label) },
-                            modifier = Modifier.clickable {
-                                viewModel.updateNode(node.copy(dueAt = time))
-                                showDueDialog = false
-                            }
+                            modifier =
+                                Modifier.clickable {
+                                    viewModel.updateNode(node.copy(dueAt = time))
+                                    showDueDialog = false
+                                },
                         )
                     }
                 }
             },
-            confirmButton = { TextButton(onClick = { showDueDialog = false }) { Text("Cancel") } }
+            confirmButton = { TextButton(onClick = { showDueDialog = false }) { Text("Cancel") } },
         )
     }
 
@@ -559,21 +634,32 @@ fun NoteDetailScreen(
             title = { Text("Set Reminder") },
             text = {
                 Column {
-                    val options = listOf(
-                        "In 1 Hour" to (kotlin.time.Clock.System.now()
-                            .toEpochMilliseconds() + 3600000),
-                        "Tomorrow Morning" to (kotlin.time.Clock.System.now()
-                            .toEpochMilliseconds() + 86400000),
-                        "Next Week" to (kotlin.time.Clock.System.now()
-                            .toEpochMilliseconds() + 86400000 * 7)
-                    )
+                    val options =
+                        listOf(
+                            "In 1 Hour" to (
+                                    kotlin.time.Clock.System
+                                        .now()
+                                        .toEpochMilliseconds() + 3600000
+                                    ),
+                            "Tomorrow Morning" to (
+                                    kotlin.time.Clock.System
+                                        .now()
+                                        .toEpochMilliseconds() + 86400000
+                                    ),
+                            "Next Week" to (
+                                    kotlin.time.Clock.System
+                                        .now()
+                                        .toEpochMilliseconds() + 86400000 * 7
+                                    ),
+                        )
                     options.forEach { (label, time) ->
                         ListItem(
                             headlineContent = { Text(label) },
-                            modifier = Modifier.clickable {
-                                viewModel.updateNode(node.copy(reminderAt = time))
-                                showReminderDialog = false
-                            }
+                            modifier =
+                                Modifier.clickable {
+                                    viewModel.updateNode(node.copy(reminderAt = time))
+                                    showReminderDialog = false
+                                },
                         )
                     }
                 }
@@ -582,7 +668,7 @@ fun NoteDetailScreen(
                 TextButton(onClick = {
                     showReminderDialog = false
                 }) { Text("Cancel") }
-            }
+            },
         )
     }
 }

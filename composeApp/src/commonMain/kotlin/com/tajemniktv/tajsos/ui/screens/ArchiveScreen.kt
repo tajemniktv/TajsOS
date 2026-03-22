@@ -21,7 +21,10 @@ import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ArchiveScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit) {
+fun ArchiveScreen(
+    viewModel: MainViewModel,
+    onEditNode: (Long) -> Unit,
+) {
     val archivedNodes by viewModel.archivedNodes.collectAsState()
     val isInitialLoadComplete by viewModel.isInitialLoadComplete.collectAsState()
 
@@ -42,29 +45,30 @@ fun ArchiveScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit) {
                                 IconButton(onClick = {
                                     viewModel.updateNodeStatus(
                                         nodeWithPin.node,
-                                        "active"
+                                        "active",
                                     )
                                 }) {
                                     Icon(
                                         Icons.Default.Refresh,
                                         contentDescription = "Restore",
-                                        tint = TactileTheme.Primary
+                                        tint = TactileTheme.Primary,
                                     )
                                 }
                                 IconButton(onClick = { viewModel.deleteNodePermanently(nodeWithPin.node) }) {
                                     Icon(
                                         Icons.Default.Delete,
                                         contentDescription = "Delete",
-                                        tint = TactileTheme.Error
+                                        tint = TactileTheme.Error,
                                     )
                                 }
                             }
                         },
-                        modifier = Modifier.combinedClickable(
-                            onClick = { onEditNode(nodeWithPin.node.id) },
-                            onLongClick = { onEditNode(nodeWithPin.node.id) }
-                        ),
-                        colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface)
+                        modifier =
+                            Modifier.combinedClickable(
+                                onClick = { onEditNode(nodeWithPin.node.id) },
+                                onLongClick = { onEditNode(nodeWithPin.node.id) },
+                            ),
+                        colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
                     )
                     HorizontalDivider(color = TactileTheme.Muted.copy(alpha = 0.5f))
                 }

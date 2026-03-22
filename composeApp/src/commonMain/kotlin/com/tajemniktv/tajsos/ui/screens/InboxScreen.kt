@@ -11,9 +11,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -26,15 +26,19 @@ import com.tajemniktv.tajsos.ui.components.NodeCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InboxScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit) {
+fun InboxScreen(
+    viewModel: MainViewModel,
+    onEditNode: (Long) -> Unit,
+) {
     var itemInput by remember { mutableStateOf("") }
     var selectedType by remember { mutableStateOf("task") }
     val nodes by viewModel.inboxNodes.collectAsState()
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(16.dp),
     ) {
         Text("Quick Capture", style = MaterialTheme.typography.titleLarge)
         Spacer(Modifier.height(12.dp))
@@ -43,17 +47,17 @@ fun InboxScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit) {
             FilterChip(
                 selected = selectedType == "task",
                 onClick = { selectedType = "task" },
-                label = { Text("Task") }
+                label = { Text("Task") },
             )
             FilterChip(
                 selected = selectedType == "note",
                 onClick = { selectedType = "note" },
-                label = { Text("Note") }
+                label = { Text("Note") },
             )
             FilterChip(
                 selected = selectedType == "idea",
                 onClick = { selectedType = "idea" },
-                label = { Text("Idea") }
+                label = { Text("Idea") },
             )
         }
 
@@ -73,19 +77,20 @@ fun InboxScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit) {
                         Icon(
                             Icons.AutoMirrored.Filled.Send,
                             contentDescription = "Add",
-                            tint = MaterialTheme.colorScheme.primary
+                            tint = MaterialTheme.colorScheme.primary,
                         )
                     }
                 }
             },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(onDone = {
-                if (itemInput.isNotBlank()) {
-                    viewModel.addNode(itemInput, type = selectedType)
-                    itemInput = ""
-                }
-            }),
-            shape = RoundedCornerShape(16.dp)
+            keyboardActions =
+                KeyboardActions(onDone = {
+                    if (itemInput.isNotBlank()) {
+                        viewModel.addNode(itemInput, type = selectedType)
+                        itemInput = ""
+                    }
+                }),
+            shape = RoundedCornerShape(16.dp),
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -100,7 +105,7 @@ fun InboxScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         NodeCard(
                             modifier = Modifier.weight(1f),
@@ -108,25 +113,25 @@ fun InboxScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit) {
                             onToggleDone = { status: String ->
                                 viewModel.updateNodeStatus(
                                     nodeWithPin.node,
-                                    status
+                                    status,
                                 )
                             },
                             onTogglePin = { isPinned: Boolean ->
                                 viewModel.togglePin(
                                     nodeWithPin.node,
-                                    isPinned
+                                    isPinned,
                                 )
                             },
                             onClick = { onEditNode(nodeWithPin.node.id) },
                             onLongClick = { onEditNode(nodeWithPin.node.id) },
-                            onArchive = { viewModel.archiveNode(nodeWithPin.node) }
+                            onArchive = { viewModel.archiveNode(nodeWithPin.node) },
                         )
 
                         IconButton(onClick = { viewModel.markAsProcessed(nodeWithPin.node.id) }) {
                             Icon(
                                 imageVector = Icons.Default.Check,
                                 contentDescription = "Process",
-                                tint = MaterialTheme.colorScheme.primary
+                                tint = MaterialTheme.colorScheme.primary,
                             )
                         }
                     }

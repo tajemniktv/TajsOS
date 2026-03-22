@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved. 
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
 package com.tajemniktv.tajsos.ui.screens
@@ -38,19 +38,26 @@ import kotlin.time.Duration.Companion.days
 import kotlin.time.Instant
 
 @Composable
-fun CalendarScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit) {
+fun CalendarScreen(
+    viewModel: MainViewModel,
+    onEditNode: (Long) -> Unit,
+) {
     var currentMonth by remember {
         mutableStateOf(
-            Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+            Clock.System
+                .now()
+                .toLocalDateTime(TimeZone.currentSystemDefault())
+                .date,
         )
     }
     val calendarEntries by viewModel.calendarEntries.collectAsState()
     var selectedDate by remember { mutableStateOf(currentMonth) }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(TactileTheme.SpacingMd)
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(TactileTheme.SpacingMd),
     ) {
         CalendarHeader(
             currentMonth = currentMonth,
@@ -61,26 +68,30 @@ fun CalendarScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit) {
                 currentMonth = currentMonth.plus(1, DateTimeUnit.MONTH)
             },
             onTodayClick = {
-                val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+                val today =
+                    Clock.System
+                        .now()
+                        .toLocalDateTime(TimeZone.currentSystemDefault())
+                        .date
                 currentMonth = today
                 selectedDate = today
             },
-            onSyncClick = { viewModel.syncCalendars() }
+            onSyncClick = { viewModel.syncCalendars() },
         )
 
         MonthView(
             currentMonth = currentMonth,
             selectedDate = selectedDate,
             entries = calendarEntries,
-            onDateSelected = { selectedDate = it }
+            onDateSelected = { selectedDate = it },
         )
 
         Spacer(Modifier.height(TactileTheme.SpacingLg))
 
         Text(
-            "AGENDA // ${selectedDate}",
+            "AGENDA // $selectedDate",
             style = MaterialTheme.typography.labelSmall,
-            color = TactileTheme.Muted
+            color = TactileTheme.Muted,
         )
 
         Spacer(Modifier.height(TactileTheme.SpacingSm))
@@ -92,7 +103,7 @@ fun CalendarScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit) {
                 if (entry.type == EntryType.INTERNAL) {
                     entry.originalId?.let { onEditNode(it) }
                 }
-            }
+            },
         )
     }
 }
@@ -103,18 +114,18 @@ fun CalendarHeader(
     onPreviousMonth: () -> Unit,
     onNextMonth: () -> Unit,
     onTodayClick: () -> Unit,
-    onSyncClick: () -> Unit
+    onSyncClick: () -> Unit,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Column {
             Text(
                 "${currentMonth.month.name} ${currentMonth.year}",
                 style = MaterialTheme.typography.headlineMedium,
-                color = TactileTheme.Primary
+                color = TactileTheme.Primary,
             )
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -122,7 +133,7 @@ fun CalendarHeader(
                 Text(
                     "TODAY",
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Primary
+                    color = TactileTheme.Primary,
                 )
             }
             IconButton(onClick = onSyncClick) {
@@ -130,7 +141,7 @@ fun CalendarHeader(
                     Icons.Default.Refresh,
                     contentDescription = "Sync",
                     tint = TactileTheme.Muted,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(20.dp),
                 )
             }
             IconButton(onClick = onPreviousMonth) {
@@ -148,25 +159,26 @@ fun MonthView(
     currentMonth: LocalDate,
     selectedDate: LocalDate,
     entries: List<com.tajemniktv.tajsos.ui.CalendarEntry>,
-    onDateSelected: (LocalDate) -> Unit
+    onDateSelected: (LocalDate) -> Unit,
 ) {
     val firstDayOfMonth = LocalDate(currentMonth.year, currentMonth.month, 1)
     val lastDayOfMonth = firstDayOfMonth.plus(1, DateTimeUnit.MONTH).minus(1, DateTimeUnit.DAY)
     val daysInMonth = lastDayOfMonth.day
     val firstDayOfWeek = firstDayOfMonth.dayOfWeek.ordinal // 0 = Mon, 6 = Sun
 
-    val days = (0 until 42).map { i ->
-        val dayNumber = i - firstDayOfWeek + 1
-        if (dayNumber in 1..daysInMonth) {
-            LocalDate(currentMonth.year, currentMonth.month, dayNumber)
-        } else {
-            null
+    val days =
+        (0 until 42).map { i ->
+            val dayNumber = i - firstDayOfWeek + 1
+            if (dayNumber in 1..daysInMonth) {
+                LocalDate(currentMonth.year, currentMonth.month, dayNumber)
+            } else {
+                null
+            }
         }
-    }
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(7),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
     ) {
         val weekDays = listOf("M", "T", "W", "T", "F", "S", "S")
         items(weekDays) { day ->
@@ -175,7 +187,7 @@ fun MonthView(
                 modifier = Modifier.padding(vertical = 8.dp),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Muted
+                color = TactileTheme.Muted,
             )
         }
 
@@ -183,31 +195,49 @@ fun MonthView(
             if (date != null) {
                 val isSelected = date == selectedDate
                 val isToday =
-                    date == Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
-                val dayEntries = entries.filter {
-                    Instant.fromEpochMilliseconds(it.startAt)
-                        .toLocalDateTime(TimeZone.currentSystemDefault()).date == date
-                }
+                    date ==
+                            Clock.System
+                                .now()
+                                .toLocalDateTime(TimeZone.currentSystemDefault())
+                                .date
+                val dayEntries =
+                    entries.filter {
+                        Instant
+                            .fromEpochMilliseconds(it.startAt)
+                            .toLocalDateTime(TimeZone.currentSystemDefault())
+                            .date == date
+                    }
 
                 Box(
-                    modifier = Modifier
-                        .aspectRatio(1f)
-                        .padding(2.dp)
-                        .clip(RoundedCornerShape(TactileTheme.RadiusSm))
-                        .background(
-                            if (isSelected) TactileTheme.Primary.copy(alpha = 0.2f)
-                            else if (isToday) TactileTheme.Muted.copy(alpha = 0.1f)
-                            else Color.Transparent
-                        )
-                        .clickable { onDateSelected(date) },
-                    contentAlignment = Alignment.Center
+                    modifier =
+                        Modifier
+                            .aspectRatio(1f)
+                            .padding(2.dp)
+                            .clip(RoundedCornerShape(TactileTheme.RadiusSm))
+                            .background(
+                                if (isSelected) {
+                                    TactileTheme.Primary.copy(alpha = 0.2f)
+                                } else if (isToday) {
+                                    TactileTheme.Muted.copy(alpha = 0.1f)
+                                } else {
+                                    Color.Transparent
+                                },
+                            ).clickable { onDateSelected(date) },
+                    contentAlignment = Alignment.Center,
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
                             date.day.toString(),
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = if (isSelected || isToday) FontWeight.Bold else FontWeight.Normal,
-                            color = if (isSelected) TactileTheme.Primary else if (isToday) TactileTheme.Accent else TactileTheme.Text
+                            color =
+                                if (isSelected) {
+                                    TactileTheme.Primary
+                                } else if (isToday) {
+                                    TactileTheme.Accent
+                                } else {
+                                    TactileTheme.Text
+                                },
                         )
                         if (dayEntries.isNotEmpty()) {
                             Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
@@ -216,7 +246,7 @@ fun MonthView(
                                         Modifier
                                             .size(4.dp)
                                             .clip(CircleShape)
-                                            .background(TactileTheme.Accent)
+                                            .background(TactileTheme.Accent),
                                     )
                                 }
                                 if (dayEntries.size > 3) {
@@ -224,7 +254,7 @@ fun MonthView(
                                         Modifier
                                             .size(2.dp)
                                             .clip(CircleShape)
-                                            .background(TactileTheme.Accent)
+                                            .background(TactileTheme.Accent),
                                     )
                                 }
                             }
@@ -242,19 +272,22 @@ fun MonthView(
 fun AgendaView(
     selectedDate: LocalDate,
     entries: List<com.tajemniktv.tajsos.ui.CalendarEntry>,
-    onEntryClick: (com.tajemniktv.tajsos.ui.CalendarEntry) -> Unit
+    onEntryClick: (com.tajemniktv.tajsos.ui.CalendarEntry) -> Unit,
 ) {
-    val dayEntries = entries.filter {
-        Instant.fromEpochMilliseconds(it.startAt)
-            .toLocalDateTime(TimeZone.currentSystemDefault()).date == selectedDate
-    }
+    val dayEntries =
+        entries.filter {
+            Instant
+                .fromEpochMilliseconds(it.startAt)
+                .toLocalDateTime(TimeZone.currentSystemDefault())
+                .date == selectedDate
+        }
 
     if (dayEntries.isEmpty()) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text(
                 "NO EVENTS RECORDED",
                 color = TactileTheme.Muted,
-                style = MaterialTheme.typography.labelSmall
+                style = MaterialTheme.typography.labelSmall,
             )
         }
     } else {
@@ -267,39 +300,49 @@ fun AgendaView(
 }
 
 @Composable
-fun AgendaRow(entry: com.tajemniktv.tajsos.ui.CalendarEntry, onClick: () -> Unit) {
-    val startTime = Instant.fromEpochMilliseconds(entry.startAt)
-        .toLocalDateTime(TimeZone.currentSystemDefault())
-    val timeStr = if (entry.isAllDay) "ALL DAY" else "${startTime.hour}:${
-        startTime.minute.toString().padStart(2, '0')
-    }"
+fun AgendaRow(
+    entry: com.tajemniktv.tajsos.ui.CalendarEntry,
+    onClick: () -> Unit,
+) {
+    val startTime =
+        Instant
+            .fromEpochMilliseconds(entry.startAt)
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+    val timeStr =
+        if (entry.isAllDay) {
+            "ALL DAY"
+        } else {
+            "${startTime.hour}:${
+                startTime.minute.toString().padStart(2, '0')
+            }"
+        }
 
     Surface(
         onClick = onClick,
         shape = RoundedCornerShape(TactileTheme.RadiusMd),
         color = TactileTheme.Surface,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
     ) {
         Row(
             modifier = Modifier.padding(TactileTheme.SpacingMd),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 timeStr,
                 style = MaterialTheme.typography.labelSmall,
                 color = TactileTheme.Muted,
-                modifier = Modifier.width(60.dp)
+                modifier = Modifier.width(60.dp),
             )
             VerticalDivider(
                 modifier = Modifier.height(24.dp).padding(horizontal = 8.dp),
-                color = TactileTheme.Muted
+                color = TactileTheme.Muted,
             )
             Column {
                 Text(
                     entry.title,
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
-                    color = TactileTheme.Text
+                    color = TactileTheme.Text,
                 )
                 val description = entry.description
                 if (!description.isNullOrBlank()) {
@@ -307,7 +350,7 @@ fun AgendaRow(entry: com.tajemniktv.tajsos.ui.CalendarEntry, onClick: () -> Unit
                         description,
                         style = MaterialTheme.typography.bodySmall,
                         color = TactileTheme.Muted,
-                        maxLines = 1
+                        maxLines = 1,
                     )
                 }
             }
@@ -317,7 +360,7 @@ fun AgendaRow(entry: com.tajemniktv.tajsos.ui.CalendarEntry, onClick: () -> Unit
                     Modifier
                         .size(8.dp)
                         .clip(CircleShape)
-                        .background(TactileTheme.Primary)
+                        .background(TactileTheme.Primary),
                 )
             }
         }

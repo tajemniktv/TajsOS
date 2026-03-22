@@ -4,11 +4,11 @@
 
 package com.tajemniktv.tajsos.di
 
-import com.tajemniktv.tajsos.data.*
-import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.calendar.CalendarManager
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import com.tajemniktv.tajsos.calendar.CalendarManager
+import com.tajemniktv.tajsos.data.*
+import com.tajemniktv.tajsos.ui.MainViewModel
 import io.ktor.client.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
@@ -19,19 +19,24 @@ import kotlinx.serialization.json.Json
  */
 class SharedModule(
     private val database: AppDatabase,
-    private val dataStore: DataStore<Preferences>
+    private val dataStore: DataStore<Preferences>,
 ) {
     private val httpClient by lazy {
         HttpClient {
             install(ContentNegotiation) {
-                json(Json {
-                    ignoreUnknownKeys = true
-                    coerceInputValues = true
-                })
+                json(
+                    Json {
+                        ignoreUnknownKeys = true
+                        coerceInputValues = true
+                    },
+                )
             }
         }
     }
 
+    /**
+     *
+     */
     val repository: AppRepository by lazy {
         AppRepository(
             database.nodeDao(),
@@ -43,19 +48,27 @@ class SharedModule(
             database.attachmentDao(),
             database.templateDao(),
             database.calendarProviderDao(),
-            database.calendarEventDao()
+            database.calendarEventDao(),
         )
     }
 
+    /**
+     *
+     */
     val calendarManager: CalendarManager by lazy {
         CalendarManager(repository, httpClient)
     }
 
+    /**
+     *
+     */
     val preferencesRepository: PreferencesRepository by lazy {
         PreferencesRepository(dataStore)
     }
 
-    fun createViewModel(): MainViewModel {
-        return MainViewModel(repository, preferencesRepository, calendarManager)
-    }
+    /**
+     *
+     */
+    fun createViewModel(): MainViewModel =
+        MainViewModel(repository, preferencesRepository, calendarManager)
 }

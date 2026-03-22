@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
 package com.tajemniktv.tajsos.ui.theme
 
 import androidx.compose.material3.MaterialTheme
@@ -31,34 +35,36 @@ object TactileTheme {
     val SpacingXl = 32.dp
 }
 
-private val TajsDarkColorScheme = darkColorScheme(
-    primary = TactileTheme.Primary,
-    background = TactileTheme.Background,
-    surface = TactileTheme.Surface,
-    onPrimary = TactileTheme.Background,
-    onBackground = TactileTheme.Text,
-    onSurface = TactileTheme.Text,
-    surfaceVariant = TactileTheme.Muted,
-    onSurfaceVariant = TactileTheme.Text,
-    error = TactileTheme.Error
-)
+private val TajsDarkColorScheme =
+    darkColorScheme(
+        primary = TactileTheme.Primary,
+        background = TactileTheme.Background,
+        surface = TactileTheme.Surface,
+        onPrimary = TactileTheme.Background,
+        onBackground = TactileTheme.Text,
+        onSurface = TactileTheme.Text,
+        surfaceVariant = TactileTheme.Muted,
+        onSurfaceVariant = TactileTheme.Text,
+        error = TactileTheme.Error,
+    )
 
-private val TajsLightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-)
+private val TajsLightColorScheme =
+    lightColorScheme(
+        primary = Purple40,
+        secondary = PurpleGrey40,
+        tertiary = Pink40,
+    )
 
 @Composable
 fun TajsOSTheme(
     darkTheme: Boolean = true,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val colorScheme = if (darkTheme) TajsDarkColorScheme else TajsLightColorScheme
 
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
-        content = content
+        content = content,
     )
 }

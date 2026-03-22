@@ -12,9 +12,9 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.*
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.Serializable
 import kotlin.time.Clock
 import kotlin.time.Instant
 
@@ -27,91 +27,107 @@ data class InsightsData(
     val avgMood: Double = 0.0,
     val avgEnergy: Double = 0.0,
     val avgFocus: Double = 0.0,
-    val neglectedProjects: List<NodeEntity> = emptyList()
+    val neglectedProjects: List<NodeEntity> = emptyList(),
 )
 
 class MainViewModel(
     private val repository: AppRepository,
     private val preferencesRepository: PreferencesRepository,
-    private val calendarManager: com.tajemniktv.tajsos.calendar.CalendarManager
+    private val calendarManager: com.tajemniktv.tajsos.calendar.CalendarManager,
 ) : ViewModel() {
-
-    val allNodes: StateFlow<List<NodeWithPin>> = repository.getAllNodes()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
-
-    val activeNodes: StateFlow<List<NodeWithPin>> = allNodes.map { list ->
-        list.filter { it.node.status != "archived" }
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
-
-    val todayNodes: StateFlow<List<NodeEntity>> = repository.getTodayNodes()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
-
-    val trackEntries: StateFlow<List<TrackEntryEntity>> = repository.getAllTrackEntries()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
-
-    val allProjects: StateFlow<List<NodeEntity>> = repository.getNodesByType("project")
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
-
-    val allAreas: StateFlow<List<NodeEntity>> = repository.getNodesByType("area")
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
-
-
-    val calendarProviders: StateFlow<List<CalendarProviderEntity>> =
-        repository.getAllCalendarProviders()
+    val allNodes: StateFlow<List<NodeWithPin>> =
+        repository
+            .getAllNodes()
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    val calendarEntries: StateFlow<List<CalendarEntry>> = combine(
-        allNodes,
-        repository.getCalendarEventsInRange(
-            0,
-            Long.MAX_VALUE
-        ) // In MVP we can fetch all or a large range
-    ) { nodes, externalEvents ->
-        val entries = mutableListOf<CalendarEntry>()
+    val activeNodes: StateFlow<List<NodeWithPin>> =
+        allNodes
+            .map { list ->
+                list.filter { it.node.status != "archived" }
+            }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-        // Map internal nodes
-        nodes.forEach { item ->
-            val node = item.node
-            val time = node.startAt ?: node.dueAt ?: node.reminderAt
-            if (time != null && node.status != "archived") {
+    val todayNodes: StateFlow<List<NodeEntity>> =
+        repository
+            .getTodayNodes()
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val trackEntries: StateFlow<List<TrackEntryEntity>> =
+        repository
+            .getAllTrackEntries()
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val allProjects: StateFlow<List<NodeEntity>> =
+        repository
+            .getNodesByType("project")
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val allAreas: StateFlow<List<NodeEntity>> =
+        repository
+            .getNodesByType("area")
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val calendarProviders: StateFlow<List<CalendarProviderEntity>> =
+        repository
+            .getAllCalendarProviders()
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val calendarEntries: StateFlow<List<CalendarEntry>> =
+        combine(
+            allNodes,
+            repository.getCalendarEventsInRange(
+                0,
+                Long.MAX_VALUE,
+            ), // In MVP we can fetch all or a large range
+        ) { nodes, externalEvents ->
+            val entries = mutableListOf<CalendarEntry>()
+
+            // Map internal nodes
+            nodes.forEach { item ->
+                val node = item.node
+                val time = node.startAt ?: node.dueAt ?: node.reminderAt
+                if (time != null && node.status != "archived") {
+                    entries.add(
+                        CalendarEntry(
+                            id = "node_${node.id}",
+                            title = if (node.status == "done") "✓ ${node.title}" else node.title,
+                            description = node.content,
+                            startAt = time,
+                            endAt = time + (3600 * 1000), // Default 1 hour
+                            isAllDay = false,
+                            type = EntryType.INTERNAL,
+                            originalId = node.id,
+                        ),
+                    )
+                }
+            }
+
+            // Map external events
+            externalEvents.forEach { event ->
                 entries.add(
                     CalendarEntry(
-                        id = "node_${node.id}",
-                        title = if (node.status == "done") "✓ ${node.title}" else node.title,
-                        description = node.content,
-                        startAt = time,
-                        endAt = time + (3600 * 1000), // Default 1 hour
-                        isAllDay = false,
-                        type = EntryType.INTERNAL,
-                        originalId = node.id
-                    )
+                        id = "ext_${event.id}",
+                        title = event.title,
+                        description = event.description,
+                        startAt = event.startAt,
+                        endAt = event.endAt,
+                        isAllDay = event.isAllDay,
+                        type = EntryType.EXTERNAL,
+                        originalId = event.id,
+                    ),
                 )
             }
-        }
 
-        // Map external events
-        externalEvents.forEach { event ->
-            entries.add(
-                CalendarEntry(
-                    id = "ext_${event.id}",
-                    title = event.title,
-                    description = event.description,
-                    startAt = event.startAt,
-                    endAt = event.endAt,
-                    isAllDay = event.isAllDay,
-                    type = EntryType.EXTERNAL,
-                    originalId = event.id
-                )
-            )
-        }
+            entries.sortedBy { it.startAt }
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-        entries.sortedBy { it.startAt }
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
-
-    fun addCalendarProvider(name: String, type: String, url: String? = null) {
+    fun addCalendarProvider(
+        name: String,
+        type: String,
+        url: String? = null,
+    ) {
         viewModelScope.launch {
             repository.insertCalendarProvider(
-                CalendarProviderEntity(name = name, type = type, url = url)
+                CalendarProviderEntity(name = name, type = type, url = url),
             )
         }
     }
@@ -128,59 +144,66 @@ class MainViewModel(
         }
     }
 
-
     data class NodeCategorization(
         val inbox: List<NodeWithPin> = emptyList(),
         val archived: List<NodeWithPin> = emptyList(),
-        val reminders: List<NodeEntity> = emptyList()
+        val reminders: List<NodeEntity> = emptyList(),
     )
 
-    private val categorizedNodes: StateFlow<NodeCategorization> = allNodes.map { list ->
-        val now = Clock.System.now().toEpochMilliseconds()
-        val inbox = mutableListOf<NodeWithPin>()
-        val archived = mutableListOf<NodeWithPin>()
-        val reminders = mutableListOf<NodeEntity>()
+    private val categorizedNodes: StateFlow<NodeCategorization> =
+        allNodes
+            .map { list ->
+                val now = Clock.System.now().toEpochMilliseconds()
+                val inbox = mutableListOf<NodeWithPin>()
+                val archived = mutableListOf<NodeWithPin>()
+                val reminders = mutableListOf<NodeEntity>()
 
-        for (item in list) {
-            val node = item.node
+                for (item in list) {
+                    val node = item.node
 
-            if (node.status == "archived") {
-                archived.add(item)
-            } else {
-                if (node.inboxState && node.type != "project" && node.type != "area") {
-                    inbox.add(item)
+                    if (node.status == "archived") {
+                        archived.add(item)
+                    } else {
+                        if (node.inboxState && node.type != "project" && node.type != "area") {
+                            inbox.add(item)
+                        }
+
+                        if (node.status == "active" && node.reminderAt != null && node.reminderAt <= now) {
+                            reminders.add(node)
+                        }
+                    }
                 }
+                NodeCategorization(inbox, archived, reminders)
+            }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), NodeCategorization())
 
-                if (node.status == "active" && node.reminderAt != null && node.reminderAt <= now) {
-                    reminders.add(node)
-                }
-            }
-        }
-        NodeCategorization(inbox, archived, reminders)
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), NodeCategorization())
-
-    val inboxNodes: StateFlow<List<NodeWithPin>> = categorizedNodes.map { it.inbox }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    val inboxNodes: StateFlow<List<NodeWithPin>> =
+        categorizedNodes
+            .map { it.inbox }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     private val _isInitialLoadComplete = MutableStateFlow(false)
     val isInitialLoadComplete: StateFlow<Boolean> = _isInitialLoadComplete.asStateFlow()
 
-    val archivedNodes: StateFlow<List<NodeWithPin>> = categorizedNodes.map { it.archived }
-        .onEach { _isInitialLoadComplete.value = true }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    val archivedNodes: StateFlow<List<NodeWithPin>> =
+        categorizedNodes
+            .map { it.archived }
+            .onEach { _isInitialLoadComplete.value = true }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    val activeReminders: StateFlow<List<NodeEntity>> = categorizedNodes.map { it.reminders }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    val activeReminders: StateFlow<List<NodeEntity>> =
+        categorizedNodes
+            .map { it.reminders }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
+    val activeSession: StateFlow<FocusSessionEntity?> =
+        repository
+            .getActiveSession()
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
-
-
-
-    val activeSession: StateFlow<FocusSessionEntity?> = repository.getActiveSession()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
-
-    val allSessions: StateFlow<List<FocusSessionEntity>> = repository.getAllSessions()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    val allSessions: StateFlow<List<FocusSessionEntity>> =
+        repository
+            .getAllSessions()
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     init {
         viewModelScope.launch {
@@ -192,55 +215,58 @@ class MainViewModel(
     private suspend fun seedOnboardingData() {
         if (allNodes.value.isNotEmpty()) return
 
-        val welcomeId = repository.insertNode(
-            NodeEntity(
-                title = "Welcome to TajsOS",
-                content = "This is your new Second Brain. Capture everything, organize later.",
-                type = "note",
-                inboxState = false,
-                isPinned = true
+        val welcomeId =
+            repository.insertNode(
+                NodeEntity(
+                    title = "Welcome to TajsOS",
+                    content = "This is your new Second Brain. Capture everything, organize later.",
+                    type = "note",
+                    inboxState = false,
+                    isPinned = true,
+                ),
             )
-        )
 
-        val taskId = repository.insertNode(
-            NodeEntity(
-                title = "Explore the Dashboard",
-                type = "task",
-                inboxState = true
+        val taskId =
+            repository.insertNode(
+                NodeEntity(
+                    title = "Explore the Dashboard",
+                    type = "task",
+                    inboxState = true,
+                ),
             )
-        )
 
         repository.insertNode(
             NodeEntity(
                 title = "Personal",
                 type = "area",
-                inboxState = false
-            )
+                inboxState = false,
+            ),
         )
 
         repository.insertRelation(
             RelationEntity(
                 fromNodeId = welcomeId,
                 toNodeId = taskId,
-                relationType = "RELATED"
-            )
+                relationType = "RELATED",
+            ),
         )
     }
 
-    val insights: StateFlow<InsightsData> = combine(
-        allNodes,
-        allSessions,
-        trackEntries,
-        allProjects
-    ) { nodes, sessions, tracks, projects ->
-        calculateInsights(nodes, sessions, tracks, projects)
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), InsightsData())
+    val insights: StateFlow<InsightsData> =
+        combine(
+            allNodes,
+            allSessions,
+            trackEntries,
+            allProjects,
+        ) { nodes, sessions, tracks, projects ->
+            calculateInsights(nodes, sessions, tracks, projects)
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), InsightsData())
 
     private fun calculateInsights(
         nodes: List<NodeWithPin>,
         sessions: List<FocusSessionEntity>,
         tracks: List<TrackEntryEntity>,
-        projects: List<NodeEntity>
+        projects: List<NodeEntity>,
     ): InsightsData {
         val now = Clock.System.now().toEpochMilliseconds()
         val sevenDaysAgo = now - (7 * 24 * 60 * 60 * 1000L)
@@ -248,36 +274,44 @@ class MainViewModel(
         val recentNodes = nodes.filter { it.node.createdAt >= sevenDaysAgo }
         val recentCompletions = nodes.filter { it.node.status == "done" && it.node.updatedAt >= sevenDaysAgo }
 
-        val weeklyFocusSec = sessions.filter { it.startedAt >= sevenDaysAgo && it.endedAt != null }
-            .sumOf { it.durationSec.toLong() }
+        val weeklyFocusSec =
+            sessions
+                .filter { it.startedAt >= sevenDaysAgo && it.endedAt != null }
+                .sumOf { it.durationSec.toLong() }
 
         val hourlyDistribution = IntArray(24)
         sessions.filter { it.endedAt != null }.forEach {
-            val hour = Instant.fromEpochMilliseconds(it.startedAt)
-                .toLocalDateTime(TimeZone.currentSystemDefault())
-                .hour
+            val hour =
+                Instant
+                    .fromEpochMilliseconds(it.startedAt)
+                    .toLocalDateTime(TimeZone.currentSystemDefault())
+                    .hour
             hourlyDistribution[hour]++
         }
 
         val bestFocusHour = hourlyDistribution.indices.maxByOrNull { hourlyDistribution[it] } ?: -1
 
-        val recentTracks = tracks.filter { 
-            runCatching {
-                LocalDate.parse(it.date).atStartOfDayIn(TimeZone.currentSystemDefault()).toEpochMilliseconds() >= sevenDaysAgo
-            }.getOrDefault(false)
-        }
+        val recentTracks =
+            tracks.filter {
+                runCatching {
+                    LocalDate.parse(it.date).atStartOfDayIn(TimeZone.currentSystemDefault())
+                        .toEpochMilliseconds() >= sevenDaysAgo
+                }.getOrDefault(false)
+            }
 
         val avgMood = if (recentTracks.isNotEmpty()) recentTracks.mapNotNull { it.moodScore }.average() else 0.0
         val avgEnergy = if (recentTracks.isNotEmpty()) recentTracks.mapNotNull { it.energyScore }.average() else 0.0
         val avgFocus = if (recentTracks.isNotEmpty()) recentTracks.mapNotNull { it.focusScore }.average() else 0.0
 
         val nodesByProjectId = nodes.groupBy { it.node.projectId }
-        val neglectedProjects = projects.filter { project ->
-            val projectNodes = nodesByProjectId[project.id] ?: emptyList()
-            val hasActiveItems = projectNodes.any { it.node.status == "active" }
-            val hasRecentCompletions = projectNodes.any { it.node.status == "done" && it.node.updatedAt >= sevenDaysAgo }
-            hasActiveItems && !hasRecentCompletions
-        }
+        val neglectedProjects =
+            projects.filter { project ->
+                val projectNodes = nodesByProjectId[project.id] ?: emptyList()
+                val hasActiveItems = projectNodes.any { it.node.status == "active" }
+                val hasRecentCompletions =
+                    projectNodes.any { it.node.status == "done" && it.node.updatedAt >= sevenDaysAgo }
+                hasActiveItems && !hasRecentCompletions
+            }
 
         return InsightsData(
             weeklyCaptures = recentNodes.size,
@@ -287,12 +321,13 @@ class MainViewModel(
             avgMood = avgMood,
             avgEnergy = avgEnergy,
             avgFocus = avgFocus,
-            neglectedProjects = neglectedProjects
+            neglectedProjects = neglectedProjects,
         )
     }
 
-    val isBiometricEnabled: StateFlow<Boolean?> = preferencesRepository.isBiometricEnabled
-        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
+    val isBiometricEnabled: StateFlow<Boolean?> =
+        preferencesRepository.isBiometricEnabled
+            .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     private val _isBiometricHardwareAvailable = MutableStateFlow(false)
     val isBiometricHardwareAvailable: StateFlow<Boolean> = _isBiometricHardwareAvailable.asStateFlow()
@@ -300,8 +335,13 @@ class MainViewModel(
     private val _isAuthenticated = MutableStateFlow(false)
     val isAuthenticated: StateFlow<Boolean> = _isAuthenticated.asStateFlow()
 
-    fun setBiometricHardwareAvailable(available: Boolean) { _isBiometricHardwareAvailable.value = available }
-    fun setAuthenticated(authenticated: Boolean) { _isAuthenticated.value = authenticated }
+    fun setBiometricHardwareAvailable(available: Boolean) {
+        _isBiometricHardwareAvailable.value = available
+    }
+
+    fun setAuthenticated(authenticated: Boolean) {
+        _isAuthenticated.value = authenticated
+    }
 
     fun lockApp() {
         if (isBiometricEnabled.value == true) {
@@ -326,7 +366,7 @@ class MainViewModel(
         reminderAt: Long? = null,
         color: Int? = null,
         icon: String? = null,
-        inboxState: Boolean? = null
+        inboxState: Boolean? = null,
     ) {
         viewModelScope.launch {
             repository.insertNode(
@@ -341,8 +381,8 @@ class MainViewModel(
                     reminderAt = reminderAt,
                     color = color,
                     icon = icon,
-                    inboxState = inboxState ?: (type != "project" && type != "area")
-                )
+                    inboxState = inboxState ?: (type != "project" && type != "area"),
+                ),
             )
         }
     }
@@ -353,19 +393,20 @@ class MainViewModel(
         type: String = "task",
         projectId: Long? = null,
         areaId: Long? = null,
-        inboxState: Boolean? = null
-    ): Long = withContext(Dispatchers.Default) {
-        repository.insertNode(
-            NodeEntity(
-                title = title,
-                content = content,
-                type = type,
-                projectId = projectId,
-                areaId = areaId,
-                inboxState = inboxState ?: (type != "project" && type != "area")
+        inboxState: Boolean? = null,
+    ): Long =
+        withContext(Dispatchers.Default) {
+            repository.insertNode(
+                NodeEntity(
+                    title = title,
+                    content = content,
+                    type = type,
+                    projectId = projectId,
+                    areaId = areaId,
+                    inboxState = inboxState ?: (type != "project" && type != "area"),
+                ),
             )
-        )
-    }
+        }
 
     fun updateNode(node: NodeEntity) {
         viewModelScope.launch {
@@ -373,16 +414,19 @@ class MainViewModel(
         }
     }
 
-    fun updateNodeStatus(node: NodeEntity, status: String) {
+    fun updateNodeStatus(
+        node: NodeEntity,
+        status: String,
+    ) {
         viewModelScope.launch {
             val now = Clock.System.now().toEpochMilliseconds()
             repository.updateNode(
                 node.copy(
-                    status = status, 
+                    status = status,
                     updatedAt = now,
                     completedAt = if (status == "done") now else node.completedAt,
-                    archivedAt = if (status == "archived") now else node.archivedAt
-                )
+                    archivedAt = if (status == "archived") now else node.archivedAt,
+                ),
             )
 
             // Recurrence logic
@@ -396,29 +440,45 @@ class MainViewModel(
                         updatedAt = now,
                         completedAt = null,
                         dueAt = nextDue,
-                        inboxState = false
-                    )
+                        inboxState = false,
+                    ),
                 )
             }
         }
     }
 
-    private fun calculateNextRecurringDate(currentDue: Long, interval: String): Long {
+    private fun calculateNextRecurringDate(
+        currentDue: Long,
+        interval: String,
+    ): Long {
         val instant = Instant.fromEpochMilliseconds(currentDue)
         val dateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
-        val nextDateTime = when (interval.uppercase()) {
-            "DAILY" -> dateTime.toInstant(TimeZone.currentSystemDefault())
-                .plus(1, DateTimeUnit.DAY, TimeZone.currentSystemDefault())
+        val nextDateTime =
+            when (interval.uppercase()) {
+                "DAILY" -> {
+                    dateTime
+                        .toInstant(TimeZone.currentSystemDefault())
+                        .plus(1, DateTimeUnit.DAY, TimeZone.currentSystemDefault())
+                }
 
-            "WEEKLY" -> dateTime.toInstant(TimeZone.currentSystemDefault())
-                .plus(1, DateTimeUnit.WEEK, TimeZone.currentSystemDefault())
+                "WEEKLY" -> {
+                    dateTime
+                        .toInstant(TimeZone.currentSystemDefault())
+                        .plus(1, DateTimeUnit.WEEK, TimeZone.currentSystemDefault())
+                }
 
-            "MONTHLY" -> dateTime.toInstant(TimeZone.currentSystemDefault())
-                .plus(1, DateTimeUnit.MONTH, TimeZone.currentSystemDefault())
+                "MONTHLY" -> {
+                    dateTime
+                        .toInstant(TimeZone.currentSystemDefault())
+                        .plus(1, DateTimeUnit.MONTH, TimeZone.currentSystemDefault())
+                }
 
-            else -> dateTime.toInstant(TimeZone.currentSystemDefault())
-                .plus(1, DateTimeUnit.DAY, TimeZone.currentSystemDefault())
-        }
+                else -> {
+                    dateTime
+                        .toInstant(TimeZone.currentSystemDefault())
+                        .plus(1, DateTimeUnit.DAY, TimeZone.currentSystemDefault())
+                }
+            }
         return nextDateTime.toEpochMilliseconds()
     }
 
@@ -429,8 +489,8 @@ class MainViewModel(
             repository.updateNode(
                 node.copy(
                     status = "archived",
-                    updatedAt = Clock.System.now().toEpochMilliseconds()
-                )
+                    updatedAt = Clock.System.now().toEpochMilliseconds(),
+                ),
             )
         }
     }
@@ -441,9 +501,16 @@ class MainViewModel(
         }
     }
 
-    fun togglePin(node: NodeEntity, isPinned: Boolean) {
+    fun togglePin(
+        node: NodeEntity,
+        isPinned: Boolean,
+    ) {
         viewModelScope.launch {
-            if (isPinned) { repository.pinToToday(node.id) } else { repository.unpinFromToday(node.id) }
+            if (isPinned) {
+                repository.pinToToday(node.id)
+            } else {
+                repository.unpinFromToday(node.id)
+            }
         }
     }
 
@@ -452,8 +519,8 @@ class MainViewModel(
             repository.updateNode(
                 node.copy(
                     isPinned = !node.isPinned,
-                    updatedAt = Clock.System.now().toEpochMilliseconds()
-                )
+                    updatedAt = Clock.System.now().toEpochMilliseconds(),
+                ),
             )
         }
     }
@@ -464,14 +531,18 @@ class MainViewModel(
                 repository.updateNode(
                     node.copy(
                         inboxState = false,
-                        updatedAt = Clock.System.now().toEpochMilliseconds()
-                    )
+                        updatedAt = Clock.System.now().toEpochMilliseconds(),
+                    ),
                 )
             }
         }
     }
 
-    fun addProject(name: String, description: String = "", areaId: Long? = null) {
+    fun addProject(
+        name: String,
+        description: String = "",
+        areaId: Long? = null,
+    ) {
         addNode(title = name, content = description, type = "project", areaId = areaId)
     }
 
@@ -485,28 +556,31 @@ class MainViewModel(
     }
 
     /**
- * Provides a stream of nodes (with pin metadata) that belong to the given project.
- *
- * @param projectId The id of the project whose nodes should be returned.
- * @return A Flow that emits lists of NodeWithPin for the specified project.
- */
-fun getNodesForProject(projectId: Long): Flow<List<NodeWithPin>> = repository.getNodesByProjectWithPins(projectId)
+     * Provides a stream of nodes (with pin metadata) that belong to the given project.
+     *
+     * @param projectId The id of the project whose nodes should be returned.
+     * @return A Flow that emits lists of NodeWithPin for the specified project.
+     */
+    fun getNodesForProject(projectId: Long): Flow<List<NodeWithPin>> =
+        repository.getNodesByProjectWithPins(projectId)
 
     /**
- * Retrieves nodes (including pin state) that belong to the specified area.
- *
- * @param areaId The id of the area to fetch nodes for.
- * @return A Flow that emits lists of `NodeWithPin` belonging to the specified area.
- */
-fun getNodesForArea(areaId: Long): Flow<List<NodeWithPin>> = repository.getNodesByAreaWithPins(areaId)
+     * Retrieves nodes (including pin state) that belong to the specified area.
+     *
+     * @param areaId The id of the area to fetch nodes for.
+     * @return A Flow that emits lists of `NodeWithPin` belonging to the specified area.
+     */
+    fun getNodesForArea(areaId: Long): Flow<List<NodeWithPin>> =
+        repository.getNodesByAreaWithPins(areaId)
 
     /**
- * Provides a reactive stream of projects assigned to the specified area.
- *
- * @param areaId The id of the area whose projects to retrieve.
- * @return A Flow that emits lists of `NodeEntity` representing projects belonging to the given area.
- */
-fun getProjectsForArea(areaId: Long): Flow<List<NodeEntity>> = repository.getProjectsByArea(areaId)
+     * Provides a reactive stream of projects assigned to the specified area.
+     *
+     * @param areaId The id of the area whose projects to retrieve.
+     * @return A Flow that emits lists of `NodeEntity` representing projects belonging to the given area.
+     */
+    fun getProjectsForArea(areaId: Long): Flow<List<NodeEntity>> =
+        repository.getProjectsByArea(areaId)
 
     /**
      * Creates and inserts a track entry for the current local date using the provided scores and metadata.
@@ -526,20 +600,24 @@ fun getProjectsForArea(areaId: Long): Flow<List<NodeEntity>> = repository.getPro
         focus: Int? = null,
         sleep: Float? = null,
         tookMeds: Boolean = false,
-        note: String = ""
+        note: String = "",
     ) {
         viewModelScope.launch {
             repository.insertTrackEntry(
                 TrackEntryEntity(
-                    date = Clock.System.now()
-                        .toLocalDateTime(TimeZone.currentSystemDefault()).date.toString(),
+                    date =
+                        Clock.System
+                            .now()
+                            .toLocalDateTime(TimeZone.currentSystemDefault())
+                            .date
+                            .toString(),
                     moodScore = mood,
                     energyScore = energy,
                     focusScore = focus,
                     sleepScore = sleep,
                     tookMeds = tookMeds,
-                    symptomNote = note
-                )
+                    symptomNote = note,
+                ),
             )
         }
     }
@@ -550,14 +628,18 @@ fun getProjectsForArea(areaId: Long): Flow<List<NodeEntity>> = repository.getPro
                 repository.insertSession(
                     FocusSessionEntity(
                         nodeId = nodeId,
-                        startedAt = Clock.System.now().toEpochMilliseconds()
-                    )
+                        startedAt = Clock.System.now().toEpochMilliseconds(),
+                    ),
                 )
             }
         }
     }
 
-    fun stopFocusSession(completed: Boolean = true, interrupted: Boolean = false, note: String? = null) {
+    fun stopFocusSession(
+        completed: Boolean = true,
+        interrupted: Boolean = false,
+        note: String? = null,
+    ) {
         viewModelScope.launch {
             activeSession.value?.let { session ->
                 val now = Clock.System.now().toEpochMilliseconds()
@@ -568,8 +650,8 @@ fun getProjectsForArea(areaId: Long): Flow<List<NodeEntity>> = repository.getPro
                         durationSec = duration,
                         completed = completed,
                         interrupted = interrupted,
-                        note = note
-                    )
+                        note = note,
+                    ),
                 )
             }
         }
@@ -582,14 +664,16 @@ fun getProjectsForArea(areaId: Long): Flow<List<NodeEntity>> = repository.getPro
         }
     }
 
-
     private val _lastActiveProjectId = MutableStateFlow<Long?>(null)
     val lastActiveProjectId: StateFlow<Long?> = _lastActiveProjectId.asStateFlow()
 
     private val _lastActiveAreaId = MutableStateFlow<Long?>(null)
     val lastActiveAreaId: StateFlow<Long?> = _lastActiveAreaId.asStateFlow()
 
-    fun setLastActiveContext(projectId: Long?, areaId: Long?) {
+    fun setLastActiveContext(
+        projectId: Long?,
+        areaId: Long?,
+    ) {
         if (projectId != null) _lastActiveProjectId.value = projectId
         if (areaId != null) _lastActiveAreaId.value = areaId
     }
@@ -597,18 +681,22 @@ fun getProjectsForArea(areaId: Long): Flow<List<NodeEntity>> = repository.getPro
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
-    val searchResults: StateFlow<List<NodeWithPin>> = combine(
-        allNodes,
-        _searchQuery
-    ) { nodes, query ->
-        if (query.isBlank()) {
-            nodes.sortedByDescending { it.node.updatedAt }.take(100)
-        } else {
-            nodes.filter { matchesQuery(it, query) }
-        }
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    val searchResults: StateFlow<List<NodeWithPin>> =
+        combine(
+            allNodes,
+            _searchQuery,
+        ) { nodes, query ->
+            if (query.isBlank()) {
+                nodes.sortedByDescending { it.node.updatedAt }.take(100)
+            } else {
+                nodes.filter { matchesQuery(it, query) }
+            }
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    private fun matchesQuery(nodeWithPin: NodeWithPin, query: String): Boolean {
+    private fun matchesQuery(
+        nodeWithPin: NodeWithPin,
+        query: String,
+    ): Boolean {
         if (query.isBlank()) return false
         return if (query.startsWith("#")) {
             val tagQuery = query.substring(1)
@@ -619,8 +707,8 @@ fun getProjectsForArea(areaId: Long): Flow<List<NodeEntity>> = repository.getPro
             }
         } else {
             nodeWithPin.node.title.contains(query, ignoreCase = true) ||
-            nodeWithPin.node.content.contains(query, ignoreCase = true) ||
-            nodeWithPin.tags.any { tag -> tag.name.contains(query, ignoreCase = true) }
+                    nodeWithPin.node.content.contains(query, ignoreCase = true) ||
+                    nodeWithPin.tags.any { tag -> tag.name.contains(query, ignoreCase = true) }
         }
     }
 
@@ -628,21 +716,27 @@ fun getProjectsForArea(areaId: Long): Flow<List<NodeEntity>> = repository.getPro
         _searchQuery.value = query
     }
 
-    fun getFilteredNodes(query: String): Flow<List<NodeWithPin>> {
-        return allNodes.map { nodes ->
+    fun getFilteredNodes(query: String): Flow<List<NodeWithPin>> =
+        allNodes.map { nodes ->
             if (query.isBlank()) {
                 nodes
             } else {
                 nodes.filter { matchesQuery(it, query) }
             }
         }
-    }
 
-    val allRelations: StateFlow<List<RelationEntity>> = repository.getAllRelations()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    val allRelations: StateFlow<List<RelationEntity>> =
+        repository
+            .getAllRelations()
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     fun getRelationsForNode(nodeId: Long): Flow<List<RelationEntity>> = repository.getRelationsForNode(nodeId)
-    fun addRelation(fromNodeId: Long, toNodeId: Long, type: String) {
+
+    fun addRelation(
+        fromNodeId: Long,
+        toNodeId: Long,
+        type: String,
+    ) {
         viewModelScope.launch {
             repository.insertRelation(RelationEntity(fromNodeId = fromNodeId, toNodeId = toNodeId, relationType = type))
         }
@@ -654,29 +748,48 @@ fun getProjectsForArea(areaId: Long): Flow<List<NodeEntity>> = repository.getPro
         }
     }
 
-    val allTags: StateFlow<List<TagEntity>> = repository.getAllTags()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    val allTags: StateFlow<List<TagEntity>> =
+        repository
+            .getAllTags()
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     fun getTagsForNode(nodeId: Long): Flow<List<TagEntity>> = repository.getTagsForNode(nodeId)
-    fun addTag(name: String, color: Int? = null) {
+
+    fun addTag(
+        name: String,
+        color: Int? = null,
+    ) {
         viewModelScope.launch {
             repository.insertTag(TagEntity(name = name, normalizedName = name.lowercase().trim(), color = color))
         }
     }
-    fun attachTagToNode(nodeId: Long, tagId: Long) {
+
+    fun attachTagToNode(
+        nodeId: Long,
+        tagId: Long,
+    ) {
         viewModelScope.launch {
             repository.attachTagToNode(nodeId, tagId)
         }
     }
 
-    fun detachTagFromNode(nodeId: Long, tagId: Long) {
+    fun detachTagFromNode(
+        nodeId: Long,
+        tagId: Long,
+    ) {
         viewModelScope.launch {
             repository.detachTagFromNode(nodeId, tagId)
         }
     }
 
     fun getAttachmentsForNode(nodeId: Long): Flow<List<AttachmentEntity>> = repository.getAttachmentsForNode(nodeId)
-    fun addAttachment(nodeId: Long, type: String, uri: String, title: String? = null) {
+
+    fun addAttachment(
+        nodeId: Long,
+        type: String,
+        uri: String,
+        title: String? = null,
+    ) {
         viewModelScope.launch {
             repository.insertAttachment(AttachmentEntity(nodeId = nodeId, assetType = type, uriOrPath = uri, title = title))
         }
@@ -688,21 +801,30 @@ fun getProjectsForArea(areaId: Long): Flow<List<NodeEntity>> = repository.getPro
         }
     }
 
-    val recentLogs: StateFlow<List<EventLogEntity>> = repository.getRecentLogs(50)
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    val recentLogs: StateFlow<List<EventLogEntity>> =
+        repository
+            .getRecentLogs(50)
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    val allTemplates: StateFlow<List<TemplateEntity>> = repository.getAllTemplates()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    val allTemplates: StateFlow<List<TemplateEntity>> =
+        repository
+            .getAllTemplates()
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    fun addTemplate(name: String, type: String, title: String? = null, content: String? = null) {
+    fun addTemplate(
+        name: String,
+        type: String,
+        title: String? = null,
+        content: String? = null,
+    ) {
         viewModelScope.launch {
             repository.insertTemplate(
                 TemplateEntity(
                     name = name,
                     nodeType = type,
                     defaultTitle = title,
-                    defaultContent = content
-                )
+                    defaultContent = content,
+                ),
             )
         }
     }
@@ -719,17 +841,18 @@ fun getProjectsForArea(areaId: Long): Flow<List<NodeEntity>> = repository.getPro
         }
     }
 
-    suspend fun exportDataJson(): String = withContext(Dispatchers.Default) {
-        val nodes = allNodes.value.map { it.node }
-        val data = ExportData(version = 2, nodes = nodes)
-        Json.encodeToString(data)
-    }
+    suspend fun exportDataJson(): String =
+        withContext(Dispatchers.Default) {
+            val nodes = allNodes.value.map { it.node }
+            val data = ExportData(version = 2, nodes = nodes)
+            Json.encodeToString(data)
+        }
 }
 
 @Serializable
 data class ExportData(
     val version: Int,
-    val nodes: List<NodeEntity>
+    val nodes: List<NodeEntity>,
 )
 
 data class CalendarEntry(
@@ -741,9 +864,10 @@ data class CalendarEntry(
     val isAllDay: Boolean,
     val type: EntryType,
     val color: Int? = null,
-    val originalId: Long? = null
+    val originalId: Long? = null,
 )
 
 enum class EntryType {
-    INTERNAL, EXTERNAL
+    INTERNAL,
+    EXTERNAL,
 }

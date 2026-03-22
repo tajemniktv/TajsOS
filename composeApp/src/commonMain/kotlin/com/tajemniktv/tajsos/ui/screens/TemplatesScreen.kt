@@ -20,7 +20,10 @@ import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TemplatesScreen(viewModel: MainViewModel, onBack: () -> Unit) {
+fun TemplatesScreen(
+    viewModel: MainViewModel,
+    onBack: () -> Unit,
+) {
     val templates by viewModel.allTemplates.collectAsState()
     var showAddDialog by remember { mutableStateOf(false) }
 
@@ -37,21 +40,21 @@ fun TemplatesScreen(viewModel: MainViewModel, onBack: () -> Unit) {
                     IconButton(onClick = { showAddDialog = true }) {
                         Icon(Icons.Default.Add, contentDescription = "Add Template")
                     }
-                }
+                },
             )
-        }
+        },
     ) { padding ->
         if (templates.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize().padding(padding),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 Text("NO TEMPLATES DEFINED", color = TactileTheme.Muted)
             }
         } else {
             LazyColumn(
                 modifier = Modifier.fillMaxSize().padding(padding).padding(TactileTheme.SpacingMd),
-                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)
+                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
             ) {
                 items(templates) { template ->
                     ListItem(
@@ -62,11 +65,11 @@ fun TemplatesScreen(viewModel: MainViewModel, onBack: () -> Unit) {
                                 Icon(
                                     Icons.Default.Delete,
                                     contentDescription = "Delete",
-                                    tint = TactileTheme.Error
+                                    tint = TactileTheme.Error,
                                 )
                             }
                         },
-                        colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface)
+                        colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
                     )
                 }
             }
@@ -87,7 +90,7 @@ fun TemplatesScreen(viewModel: MainViewModel, onBack: () -> Unit) {
                             FilterChip(
                                 selected = type == t,
                                 onClick = { type = t },
-                                label = { Text(t.uppercase()) }
+                                label = { Text(t.uppercase()) },
                             )
                         }
                     }
@@ -101,7 +104,7 @@ fun TemplatesScreen(viewModel: MainViewModel, onBack: () -> Unit) {
                     }
                 }) { Text("CREATE") }
             },
-            dismissButton = { TextButton(onClick = { showAddDialog = false }) { Text("CANCEL") } }
+            dismissButton = { TextButton(onClick = { showAddDialog = false }) { Text("CANCEL") } },
         )
     }
 }

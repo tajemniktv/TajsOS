@@ -4,9 +4,9 @@
 
 package com.tajemniktv.tajsos.data
 
+import androidx.room.ConstructedBy
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import androidx.room.ConstructedBy
 import androidx.room.RoomDatabaseConstructor
 
 /**
@@ -28,10 +28,10 @@ import androidx.room.RoomDatabaseConstructor
         AttachmentEntity::class,
         TemplateEntity::class,
         CalendarProviderEntity::class,
-        CalendarEventEntity::class
+        CalendarEventEntity::class,
     ],
     version = 12,
-    exportSchema = false
+    exportSchema = false,
 )
 @ConstructedBy(AppDatabaseConstructor::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -103,10 +103,7 @@ expect object AppDatabaseConstructor : RoomDatabaseConstructor<AppDatabase> {
  * @param builder The platform-specific Room database builder.
  * @return A fully initialized [AppDatabase] instance.
  */
-fun getDatabaseBuilder(
-    builder: RoomDatabase.Builder<AppDatabase>
-): AppDatabase {
-    return builder
+fun getDatabaseBuilder(builder: RoomDatabase.Builder<AppDatabase>): AppDatabase =
+    builder
         .fallbackToDestructiveMigration(true)
         .build()
-}

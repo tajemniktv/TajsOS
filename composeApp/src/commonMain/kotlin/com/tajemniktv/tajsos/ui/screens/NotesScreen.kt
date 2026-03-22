@@ -19,20 +19,24 @@ import com.tajemniktv.tajsos.ui.components.NodeCard
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
 @Composable
-fun NotesScreen(viewModel: MainViewModel, onNoteClick: (Long) -> Unit) {
+fun NotesScreen(
+    viewModel: MainViewModel,
+    onNoteClick: (Long) -> Unit,
+) {
     val activeNodes by viewModel.activeNodes.collectAsState()
     var searchQuery by remember { mutableStateOf("") }
 
-    val filteredNodes = remember(activeNodes, searchQuery) {
-        if (searchQuery.isBlank()) {
-            activeNodes
-        } else {
-            activeNodes.filter {
-                it.node.title.contains(searchQuery, ignoreCase = true) ||
+    val filteredNodes =
+        remember(activeNodes, searchQuery) {
+            if (searchQuery.isBlank()) {
+                activeNodes
+            } else {
+                activeNodes.filter {
+                    it.node.title.contains(searchQuery, ignoreCase = true) ||
                         it.node.content.contains(searchQuery, ignoreCase = true)
+                }
             }
         }
-    }
 
     val pinnedKnowledge =
         filteredNodes.filter { it.node.isPinned && (it.node.type == "note" || it.node.type == "idea" || it.node.type == "resource") }
@@ -41,24 +45,25 @@ fun NotesScreen(viewModel: MainViewModel, onNoteClick: (Long) -> Unit) {
     val unpinnedResources = filteredNodes.filter { !it.node.isPinned && it.node.type == "resource" }
 
     LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         item {
             Text("KNOWLEDGE & IDEAS", style = MaterialTheme.typography.displaySmall)
             Spacer(modifier = Modifier.height(16.dp))
-            
+
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = { Text("Search knowledge...") },
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-                shape = MaterialTheme.shapes.medium
+                shape = MaterialTheme.shapes.medium,
             )
-            
+
             Spacer(modifier = Modifier.height(24.dp))
         }
 
@@ -74,11 +79,11 @@ fun NotesScreen(viewModel: MainViewModel, onNoteClick: (Long) -> Unit) {
                     onToggleDone = { status ->
                         viewModel.updateNodeStatus(
                             nodeWithPin.node,
-                            status
+                            status,
                         )
                     },
                     onTogglePin = { isPinned -> viewModel.togglePin(nodeWithPin.node, isPinned) },
-                    onArchive = { viewModel.archiveNode(nodeWithPin.node) }
+                    onArchive = { viewModel.archiveNode(nodeWithPin.node) },
                 )
             }
             item { Spacer(modifier = Modifier.height(16.dp)) }
@@ -96,11 +101,11 @@ fun NotesScreen(viewModel: MainViewModel, onNoteClick: (Long) -> Unit) {
                     onToggleDone = { status ->
                         viewModel.updateNodeStatus(
                             nodeWithPin.node,
-                            status
+                            status,
                         )
                     },
                     onTogglePin = { isPinned -> viewModel.togglePin(nodeWithPin.node, isPinned) },
-                    onArchive = { viewModel.archiveNode(nodeWithPin.node) }
+                    onArchive = { viewModel.archiveNode(nodeWithPin.node) },
                 )
             }
             item { Spacer(modifier = Modifier.height(16.dp)) }
@@ -118,11 +123,11 @@ fun NotesScreen(viewModel: MainViewModel, onNoteClick: (Long) -> Unit) {
                     onToggleDone = { status ->
                         viewModel.updateNodeStatus(
                             nodeWithPin.node,
-                            status
+                            status,
                         )
                     },
                     onTogglePin = { isPinned -> viewModel.togglePin(nodeWithPin.node, isPinned) },
-                    onArchive = { viewModel.archiveNode(nodeWithPin.node) }
+                    onArchive = { viewModel.archiveNode(nodeWithPin.node) },
                 )
             }
             item { Spacer(modifier = Modifier.height(16.dp)) }
@@ -133,7 +138,7 @@ fun NotesScreen(viewModel: MainViewModel, onNoteClick: (Long) -> Unit) {
                 Text(
                     "RESOURCES & ASSETS",
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Primary
+                    color = TactileTheme.Primary,
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
@@ -144,11 +149,11 @@ fun NotesScreen(viewModel: MainViewModel, onNoteClick: (Long) -> Unit) {
                     onToggleDone = { status ->
                         viewModel.updateNodeStatus(
                             nodeWithPin.node,
-                            status
+                            status,
                         )
                     },
                     onTogglePin = { isPinned -> viewModel.togglePin(nodeWithPin.node, isPinned) },
-                    onArchive = { viewModel.archiveNode(nodeWithPin.node) }
+                    onArchive = { viewModel.archiveNode(nodeWithPin.node) },
                 )
             }
         }

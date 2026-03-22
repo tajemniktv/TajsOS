@@ -16,10 +16,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.navigation.*
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.*
-import androidx.navigation.*
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.CaptureSheet
@@ -28,13 +28,28 @@ import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.coroutines.launch
 
+/**
+ *
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun App(
+    /**
+     *
+     */
     viewModel: MainViewModel,
+    /**
+     *
+     */
     onVoiceCapture: (() -> Unit)? = null,
+    /**
+     *
+     */
     voiceCaptureResult: String? = null,
-    onVoiceCaptureConsumed: () -> Unit = {}
+    /**
+     *
+     */
+    onVoiceCaptureConsumed: () -> Unit = {},
 ) {
     val navController = rememberNavController()
     var showCaptureSheet by remember { mutableStateOf(false) }
@@ -65,22 +80,24 @@ fun App(
             drawerContent = {
                 ModalDrawerSheet(
                     drawerContainerColor = TactileTheme.Surface,
-                    drawerShape = RoundedCornerShape(
-                        topEnd = TactileTheme.RadiusMd,
-                        bottomEnd = TactileTheme.RadiusMd
-                    )
+                    drawerShape =
+                        RoundedCornerShape(
+                            topEnd = TactileTheme.RadiusMd,
+                            bottomEnd = TactileTheme.RadiusMd,
+                        ),
                 ) {
                     Column(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .verticalScroll(rememberScrollState())
+                        modifier =
+                            Modifier
+                                .fillMaxHeight()
+                                .verticalScroll(rememberScrollState()),
                     ) {
                         Spacer(Modifier.height(TactileTheme.SpacingLg))
                         Text(
                             "TajsOS",
                             modifier = Modifier.padding(TactileTheme.SpacingMd),
                             style = MaterialTheme.typography.titleLarge,
-                            color = TactileTheme.Primary
+                            color = TactileTheme.Primary,
                         )
                         HorizontalDivider(color = TactileTheme.Muted)
 
@@ -91,39 +108,46 @@ fun App(
                         val statusItems = listOf(Screen.Track, Screen.Insights, Screen.Graph)
                         val systemItems = listOf(Screen.Archive, Screen.Settings)
 
-                        val groupedItems = listOf(
-                            "CORE" to coreItems,
-                            "EXECUTION" to executionItems,
-                            "SECOND BRAIN" to brainItems,
-                            "STATUS & INSIGHTS" to statusItems,
-                            "SYSTEM" to systemItems
-                        )
+                        val groupedItems =
+                            listOf(
+                                "CORE" to coreItems,
+                                "EXECUTION" to executionItems,
+                                "SECOND BRAIN" to brainItems,
+                                "STATUS & INSIGHTS" to statusItems,
+                                "SYSTEM" to systemItems,
+                            )
 
-                        groupedItems.forEachIndexed { index, (header, items) ->
+                        groupedItems.forEachIndexed {
+                            /**
+                             *
+                             */
+                                index, (header, items) ->
                             if (index > 0) {
                                 HorizontalDivider(
-                                    modifier = Modifier.padding(
-                                        horizontal = TactileTheme.SpacingMd,
-                                        vertical = TactileTheme.SpacingSm
-                                    ),
-                                    color = TactileTheme.Muted.copy(alpha = 0.5f)
+                                    modifier =
+                                        Modifier.padding(
+                                            horizontal = TactileTheme.SpacingMd,
+                                            vertical = TactileTheme.SpacingSm,
+                                        ),
+                                    color = TactileTheme.Muted.copy(alpha = 0.5f),
                                 )
                             }
                             Text(
                                 header,
-                                modifier = Modifier.padding(
-                                    horizontal = TactileTheme.SpacingMd,
-                                    vertical = TactileTheme.SpacingSm
-                                ),
+                                modifier =
+                                    Modifier.padding(
+                                        horizontal = TactileTheme.SpacingMd,
+                                        vertical = TactileTheme.SpacingSm,
+                                    ),
                                 style = MaterialTheme.typography.labelSmall,
-                                color = TactileTheme.Muted
+                                color = TactileTheme.Muted,
                             )
                             items.forEach { screen ->
                                 NavigationDrawerItem(
                                     label = {
                                         Text(
                                             screen.label,
-                                            style = MaterialTheme.typography.labelLarge
+                                            style = MaterialTheme.typography.labelLarge,
                                         )
                                     },
                                     selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
@@ -139,21 +163,22 @@ fun App(
                                     },
                                     icon = { Icon(screen.icon, contentDescription = null) },
                                     modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
-                                    colors = NavigationDrawerItemDefaults.colors(
-                                        selectedContainerColor = TactileTheme.Primary.copy(alpha = 0.1f),
-                                        selectedIconColor = TactileTheme.Primary,
-                                        selectedTextColor = TactileTheme.Primary,
-                                        unselectedIconColor = TactileTheme.Muted,
-                                        unselectedTextColor = TactileTheme.Muted,
-                                        unselectedContainerColor = Color.Transparent
-                                    )
+                                    colors =
+                                        NavigationDrawerItemDefaults.colors(
+                                            selectedContainerColor = TactileTheme.Primary.copy(alpha = 0.1f),
+                                            selectedIconColor = TactileTheme.Primary,
+                                            selectedTextColor = TactileTheme.Primary,
+                                            unselectedIconColor = TactileTheme.Muted,
+                                            unselectedTextColor = TactileTheme.Muted,
+                                            unselectedContainerColor = Color.Transparent,
+                                        ),
                                 )
                             }
                             Spacer(Modifier.height(TactileTheme.SpacingSm))
                         }
                     }
                 }
-            }
+            },
         ) {
             Scaffold(
                 topBar = {
@@ -163,7 +188,7 @@ fun App(
                                 Icon(
                                     Icons.Default.Menu,
                                     contentDescription = "Menu",
-                                    tint = TactileTheme.Primary
+                                    tint = TactileTheme.Primary,
                                 )
                             }
                         },
@@ -171,25 +196,26 @@ fun App(
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
+                                verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 Text(
                                     text = "TajsOS // STATUS: OK",
                                     style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.primary
+                                    color = MaterialTheme.colorScheme.primary,
                                 )
                                 if (latestTrack != null) {
                                     Text(
                                         text = "E:${latestTrack.energyScore} M:${latestTrack.moodScore} F:${latestTrack.focusScore ?: "-"}",
                                         style = MaterialTheme.typography.labelSmall,
-                                        color = MaterialTheme.colorScheme.primary
+                                        color = MaterialTheme.colorScheme.primary,
                                     )
                                 }
                             }
                         },
-                        colors = TopAppBarDefaults.topAppBarColors(
-                            containerColor = MaterialTheme.colorScheme.background,
-                        )
+                        colors =
+                            TopAppBarDefaults.topAppBarColors(
+                                containerColor = MaterialTheme.colorScheme.background,
+                            ),
                     )
                 },
                 floatingActionButton = {
@@ -197,24 +223,29 @@ fun App(
                         onClick = { showCaptureSheet = true },
                         containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = MaterialTheme.colorScheme.onPrimary,
-                        shape = RoundedCornerShape(TactileTheme.RadiusMd)
+                        shape = RoundedCornerShape(TactileTheme.RadiusMd),
                     ) {
                         Icon(Icons.Default.Add, contentDescription = "Capture")
                     }
-                }
+                },
             ) { innerPadding ->
                 NavHost(
                     navController,
                     startDestination = Screen.Dashboard.route,
-                    modifier = Modifier.padding(innerPadding)
+                    modifier = Modifier.padding(innerPadding),
                 ) {
                     val onEditNode: (Long) -> Unit = { id ->
-                        navController.navigate(Screen.NoteDetail.route.replace("{noteId}", id.toString()))
+                        navController.navigate(
+                            Screen.NoteDetail.route.replace(
+                                "{noteId}",
+                                id.toString(),
+                            ),
+                        )
                     }
 
                     composable(Screen.Dashboard.route) {
                         DashboardScreen(
-                            viewModel, 
+                            viewModel,
                             onNavigateTo = { screen ->
                                 navController.navigate(screen.route) {
                                     popUpTo(navController.graph.findStartDestination().id) {
@@ -224,7 +255,7 @@ fun App(
                                     restoreState = true
                                 }
                             },
-                            onEditNode = onEditNode
+                            onEditNode = onEditNode,
                         )
                     }
                     composable(Screen.Inbox.route) { InboxScreen(viewModel, onEditNode) }
@@ -252,51 +283,62 @@ fun App(
                             },
                             onNavigateToTemplates = {
                                 navController.navigate(Screen.Templates.route)
-                            }
+                            },
                         )
                     }
                     composable(Screen.Templates.route) {
                         TemplatesScreen(viewModel, onBack = { navController.popBackStack() })
                     }
                     composable(Screen.Projects.route) {
-                        ProjectsScreen(viewModel, onNavigateTo = { route -> navController.navigate(route) })
+                        ProjectsScreen(
+                            viewModel,
+                            onNavigateTo = { route -> navController.navigate(route) },
+                        )
                     }
                     composable(Screen.Areas.route) {
                         AreasScreen(viewModel, onNavigateTo = { route -> navController.navigate(route) })
                     }
                     composable(Screen.ProjectDetail.route) { backStackEntry ->
                         val projectId =
-                            backStackEntry.savedStateHandle.get<Any>("projectId")?.toString()
+                            backStackEntry.savedStateHandle
+                                .get<Any>("projectId")
+                                ?.toString()
                                 ?.toLongOrNull() ?: -1L
                         ProjectDetailScreen(
                             viewModel,
                             projectId,
                             onEditNode,
-                            onBack = { navController.popBackStack() }
+                            onBack = { navController.popBackStack() },
                         )
                     }
                     composable(Screen.AreaDetail.route) { backStackEntry ->
-                        val areaId = backStackEntry.savedStateHandle.get<Any>("areaId")?.toString()
-                            ?.toLongOrNull() ?: -1L
+                        val areaId =
+                            backStackEntry.savedStateHandle
+                                .get<Any>("areaId")
+                                ?.toString()
+                                ?.toLongOrNull() ?: -1L
                         AreaDetailScreen(
-                            viewModel, 
-                            areaId, 
+                            viewModel,
+                            areaId,
                             onNavigateToProject = { id ->
                                 navController.navigate(Screen.ProjectDetail.route.replace("{projectId}", id.toString()))
                             },
                             onEditNode = onEditNode,
-                            onBack = { navController.popBackStack() }
+                            onBack = { navController.popBackStack() },
                         )
                     }
                     composable(Screen.NoteDetail.route) { backStackEntry ->
-                        val noteId = backStackEntry.savedStateHandle.get<Any>("noteId")?.toString()
-                            ?.toLongOrNull() ?: -1L
+                        val noteId =
+                            backStackEntry.savedStateHandle
+                                .get<Any>("noteId")
+                                ?.toString()
+                                ?.toLongOrNull() ?: -1L
                         NoteDetailScreen(
-                            viewModel, 
-                            noteId, 
+                            viewModel,
+                            noteId,
                             onBack = { navController.popBackStack() },
                             onNavigateToNode = onEditNode,
-                            onNavigateToSearch = { navController.navigate(Screen.Search.route) }
+                            onNavigateToSearch = { navController.navigate(Screen.Search.route) },
                         )
                     }
                     composable(Screen.Insights.route) {
@@ -316,8 +358,16 @@ fun App(
                             showCaptureSheet = false
                             onVoiceCaptureConsumed()
                         },
-                        onCapture = { text, type, projectId, areaId, isRec, recInt, remAt ->
-                            when(type) {
+                        onCapture = {
+                                text,
+                                type,
+                                projectId,
+                                areaId,
+                                isRec,
+                                recInt,
+                                remAt,
+                            ->
+                            when (type) {
                                 "project" -> viewModel.addProject(text, "", areaId)
                                 "area" -> viewModel.addArea(text)
                                 else -> viewModel.addNode(text, "", type, projectId, areaId, isRec, recInt, remAt)
@@ -329,7 +379,7 @@ fun App(
                         defaultProjectId = lastActiveProjectId,
                         defaultAreaId = lastActiveAreaId,
                         initialText = voiceCaptureResult ?: "",
-                        onVoiceCaptureClick = onVoiceCapture
+                        onVoiceCaptureClick = onVoiceCapture,
                     )
                 }
             }

@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 fun SettingsScreen(
     viewModel: MainViewModel,
     onNavigateToCalendarSettings: () -> Unit = {},
-    onNavigateToTemplates: () -> Unit = {}
+    onNavigateToTemplates: () -> Unit = {},
 ) {
     val isBiometricEnabled by viewModel.isBiometricEnabled.collectAsState()
     val isBiometricHardwareAvailable by viewModel.isBiometricHardwareAvailable.collectAsState()
@@ -27,43 +27,48 @@ fun SettingsScreen(
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
-        containerColor = TactileTheme.Background
+        containerColor = TactileTheme.Background,
     ) { padding ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(TactileTheme.SpacingMd)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .padding(TactileTheme.SpacingMd),
         ) {
             Text("SETTINGS", style = MaterialTheme.typography.displayMedium, color = TactileTheme.Text)
             Spacer(Modifier.height(TactileTheme.SpacingLg))
 
             Text("SECURITY", style = MaterialTheme.typography.labelSmall, color = TactileTheme.Primary)
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = TactileTheme.SpacingSm),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = TactileTheme.SpacingSm),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         "BIOMETRIC LOCK",
                         style = MaterialTheme.typography.bodyLarge,
-                        color = TactileTheme.Text
+                        color = TactileTheme.Text,
                     )
                     Text(
-                        if (isBiometricHardwareAvailable) "Require authentication to open"
-                        else "Hardware not available",
+                        if (isBiometricHardwareAvailable) {
+                            "Require authentication to open"
+                        } else {
+                            "Hardware not available"
+                        },
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Muted
+                        color = TactileTheme.Muted,
                     )
                 }
                 Switch(
                     enabled = isBiometricHardwareAvailable,
                     checked = isBiometricEnabled == true,
                     onCheckedChange = { viewModel.setBiometricEnabled(it) },
-                    colors = SwitchDefaults.colors(checkedThumbColor = TactileTheme.Primary)
+                    colors = SwitchDefaults.colors(checkedThumbColor = TactileTheme.Primary),
                 )
             }
 
@@ -72,7 +77,7 @@ fun SettingsScreen(
             Text(
                 "CALENDAR INTEGRATION",
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary
+                color = TactileTheme.Primary,
             )
             Spacer(Modifier.height(TactileTheme.SpacingSm))
 
@@ -80,10 +85,11 @@ fun SettingsScreen(
                 onClick = onNavigateToCalendarSettings,
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = TactileTheme.Surface,
-                    contentColor = TactileTheme.Primary
-                )
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor = TactileTheme.Surface,
+                        contentColor = TactileTheme.Primary,
+                    ),
             ) {
                 Text("CONFIGURE EXTERNAL CALENDARS")
             }
@@ -94,10 +100,11 @@ fun SettingsScreen(
                 onClick = onNavigateToTemplates,
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = TactileTheme.Surface,
-                    contentColor = TactileTheme.Primary
-                )
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor = TactileTheme.Surface,
+                        contentColor = TactileTheme.Primary,
+                    ),
             ) {
                 Text("MANAGE TEMPLATES")
             }
@@ -116,7 +123,10 @@ fun SettingsScreen(
                 },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                colors = ButtonDefaults.buttonColors(containerColor = TactileTheme.Surface, contentColor = TactileTheme.Primary)
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = TactileTheme.Surface,
+                    contentColor = TactileTheme.Primary
+                ),
             ) {
                 Text("EXPORT LOCAL DATA")
             }
@@ -127,7 +137,7 @@ fun SettingsScreen(
                 onClick = { throw RuntimeException("Test Crash") },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                colors = ButtonDefaults.buttonColors(containerColor = TactileTheme.Error)
+                colors = ButtonDefaults.buttonColors(containerColor = TactileTheme.Error),
             ) {
                 Text("FORCE TEST CRASH")
             }

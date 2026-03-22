@@ -24,30 +24,31 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
-import com.tajemniktv.tajsos.data.createDatabase
 import com.tajemniktv.tajsos.data.createDataStore
+import com.tajemniktv.tajsos.data.createDatabase
 import com.tajemniktv.tajsos.di.SharedModule
 import com.tajemniktv.tajsos.ui.MainViewModel
 import kotlinx.coroutines.launch
 
 /**
- * 
+ *
  */
 class MainActivity : FragmentActivity() {
     private lateinit var viewModel: MainViewModel
     private var voiceCaptureResult = mutableStateOf<String?>(null)
 
-    private val speechRecognizerLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == RESULT_OK) {
-            val data = result.data
-            val results = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
-            if (!results.isNullOrEmpty()) {
-                voiceCaptureResult.value = results[0]
+    private val speechRecognizerLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult(),
+        ) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val data = result.data
+                val results = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+                if (!results.isNullOrEmpty()) {
+                    voiceCaptureResult.value = results[0]
+                }
             }
         }
-    }
 
     /**
      *
@@ -56,7 +57,7 @@ class MainActivity : FragmentActivity() {
         /**
          *
          */
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -84,26 +85,26 @@ class MainActivity : FragmentActivity() {
 
             Surface(
                 modifier = Modifier.fillMaxSize(),
-                color = MaterialTheme.colorScheme.background
+                color = MaterialTheme.colorScheme.background,
             ) {
                 if (isAuthenticated || isBiometricEnabled == false) {
                     App(
                         viewModel = viewModel,
                         onVoiceCapture = { triggerVoiceCapture() },
                         voiceCaptureResult = voiceText,
-                        onVoiceCaptureConsumed = { voiceCaptureResult.value = null }
+                        onVoiceCaptureConsumed = { voiceCaptureResult.value = null },
                     )
                 } else if (isBiometricEnabled == true) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
+                        contentAlignment = Alignment.Center,
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Icon(
                                 painter = painterResource(id = R.drawable.lock_24px),
                                 contentDescription = null,
                                 modifier = Modifier.size(64.dp),
-                                tint = MaterialTheme.colorScheme.primary
+                                tint = MaterialTheme.colorScheme.primary,
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                             Text("App Locked", style = MaterialTheme.typography.headlineMedium)
@@ -130,12 +131,13 @@ class MainActivity : FragmentActivity() {
                     viewModel.addNode(title = sharedText, type = "note")
                 }
             } else if (type?.startsWith("image/") == true) {
-                val imageUri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
-                } else {
-                    @Suppress("DEPRECATION")
-                    intent.getParcelableExtra(Intent.EXTRA_STREAM)
-                }
+                val imageUri =
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
+                    } else {
+                        @Suppress("DEPRECATION")
+                        intent.getParcelableExtra(Intent.EXTRA_STREAM)
+                    }
                 imageUri?.let { uri ->
                     lifecycleScope.launch {
                         val nodeId =
@@ -148,13 +150,14 @@ class MainActivity : FragmentActivity() {
     }
 
     private fun triggerVoiceCapture() {
-        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-            putExtra(
-                RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
-            )
-            putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak now...")
-        }
+        val intent =
+            Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                putExtra(
+                    RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                    RecognizerIntent.LANGUAGE_MODEL_FREE_FORM,
+                )
+                putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak now...")
+            }
         try {
             speechRecognizerLauncher.launch(intent)
         } catch (e: Exception) {
@@ -169,19 +172,25 @@ class MainActivity : FragmentActivity() {
         }
 
         val executor = ContextCompat.getMainExecutor(this)
-        val biometricPrompt = BiometricPrompt(
-            this, executor,
-            object : BiometricPrompt.AuthenticationCallback() {
-                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                    super.onAuthenticationSucceeded(result)
-                    viewModel.setAuthenticated(true)
-                }
-            })
+        val biometricPrompt =
+            BiometricPrompt(
+                this,
+                executor,
+                object : BiometricPrompt.AuthenticationCallback() {
+                    override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                        super.onAuthenticationSucceeded(result)
+                        viewModel.setAuthenticated(true)
+                    }
+                },
+            )
 
-        val promptInfo = BiometricPrompt.PromptInfo.Builder()
-            .setTitle("Biometric login")
-            .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.DEVICE_CREDENTIAL)
-            .build()
+        val promptInfo =
+            BiometricPrompt.PromptInfo
+                .Builder()
+                .setTitle("Biometric login")
+                .setAllowedAuthenticators(
+                    BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.DEVICE_CREDENTIAL,
+                ).build()
 
         biometricPrompt.authenticate(promptInfo)
     }
@@ -189,7 +198,7 @@ class MainActivity : FragmentActivity() {
     private fun isBiometricAvailable(): Boolean {
         val biometricManager = BiometricManager.from(this)
         return biometricManager.canAuthenticate(
-            BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.DEVICE_CREDENTIAL
+            BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.DEVICE_CREDENTIAL,
         ) == BiometricManager.BIOMETRIC_SUCCESS
     }
 
