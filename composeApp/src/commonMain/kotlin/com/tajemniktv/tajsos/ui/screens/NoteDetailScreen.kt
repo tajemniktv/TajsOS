@@ -229,19 +229,23 @@ fun NoteDetailScreen(
             val area = areas.find { it.id == node.areaId }
             val project = projects.find { it.id == node.projectId }
 
-            ListItem(
-                headlineContent = { Text("Area") },
-                supportingContent = { Text(area?.title ?: "Unassigned") },
-                modifier = Modifier.clickable { showAreaDialog = true },
-                colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface)
-            )
+            if (node.type != "area") {
+                ListItem(
+                    headlineContent = { Text("Area") },
+                    supportingContent = { Text(area?.title ?: "Unassigned") },
+                    modifier = Modifier.clickable { showAreaDialog = true },
+                    colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface)
+                )
+            }
 
-            ListItem(
-                headlineContent = { Text("Project") },
-                supportingContent = { Text(project?.title ?: "None") },
-                modifier = Modifier.clickable { showProjectDialog = true },
-                colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface)
-            )
+            if (node.type != "area" && node.type != "project") {
+                ListItem(
+                    headlineContent = { Text("Project") },
+                    supportingContent = { Text(project?.title ?: "None") },
+                    modifier = Modifier.clickable { showProjectDialog = true },
+                    colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface)
+                )
+            }
 
             // Due Date
             ListItem(

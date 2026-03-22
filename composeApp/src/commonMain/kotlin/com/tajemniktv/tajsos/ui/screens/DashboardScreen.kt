@@ -46,6 +46,7 @@ fun DashboardScreen(
     val allNodes by viewModel.allNodes.collectAsState()
     val inboxNodes by viewModel.inboxNodes.collectAsState()
     val activeReminders by viewModel.activeReminders.collectAsState()
+    val calendarEntries by viewModel.calendarEntries.collectAsState()
 
     val today = kotlin.time.Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
     val moodToday = trackEntries.find { it.date == today }
@@ -334,6 +335,22 @@ fun DashboardScreen(
                     icon = Icons.Default.LocationOn,
                     status = if (allAreas.isNotEmpty()) "${allAreas.size} TOTAL" else "EMPTY",
                     onClick = { onNavigateTo(Screen.Areas) }
+                )
+            }
+            Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+                ModuleButton(
+                    modifier = Modifier.weight(1f),
+                    title = "CAL",
+                    icon = Icons.Default.Event,
+                    status = if (calendarEntries.isNotEmpty()) "${calendarEntries.size} ITEMS" else "EMPTY",
+                    onClick = { onNavigateTo(Screen.Calendar) }
+                )
+                ModuleButton(
+                    modifier = Modifier.weight(1f),
+                    title = "STATS",
+                    icon = Icons.Default.Info,
+                    status = "VIEW",
+                    onClick = { onNavigateTo(Screen.Insights) }
                 )
             }
         }

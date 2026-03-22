@@ -68,12 +68,12 @@ class MainViewModel(
         // Map internal nodes
         nodes.forEach { item ->
             val node = item.node
-            val time = node.startAt ?: node.dueAt
-            if (time != null) {
+            val time = node.startAt ?: node.dueAt ?: node.reminderAt
+            if (time != null && node.status != "archived") {
                 entries.add(
                     CalendarEntry(
                         id = "node_${node.id}",
-                        title = node.title,
+                        title = if (node.status == "done") "✓ ${node.title}" else node.title,
                         description = node.content,
                         startAt = time,
                         endAt = time + (3600 * 1000), // Default 1 hour

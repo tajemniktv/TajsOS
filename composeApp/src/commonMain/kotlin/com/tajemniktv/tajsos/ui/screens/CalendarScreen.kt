@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -58,7 +59,13 @@ fun CalendarScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit) {
             },
             onNextMonth = {
                 currentMonth = currentMonth.plus(1, DateTimeUnit.MONTH)
-            }
+            },
+            onTodayClick = {
+                val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+                currentMonth = today
+                selectedDate = today
+            },
+            onSyncClick = { viewModel.syncCalendars() }
         )
 
         MonthView(
@@ -94,19 +101,38 @@ fun CalendarScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit) {
 fun CalendarHeader(
     currentMonth: LocalDate,
     onPreviousMonth: () -> Unit,
-    onNextMonth: () -> Unit
+    onNextMonth: () -> Unit,
+    onTodayClick: () -> Unit,
+    onSyncClick: () -> Unit
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            "${currentMonth.month.name} ${currentMonth.year}",
-            style = MaterialTheme.typography.headlineMedium,
-            color = TactileTheme.Primary
-        )
-        Row {
+        Column {
+            Text(
+                "${currentMonth.month.name} ${currentMonth.year}",
+                style = MaterialTheme.typography.headlineMedium,
+                color = TactileTheme.Primary
+            )
+        }
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            TextButton(onClick = onTodayClick) {
+                Text(
+                    "TODAY",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TactileTheme.Primary
+                )
+            }
+            IconButton(onClick = onSyncClick) {
+                Icon(
+                    Icons.Default.Refresh,
+                    contentDescription = "Sync",
+                    tint = TactileTheme.Muted,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
             IconButton(onClick = onPreviousMonth) {
                 Icon(Icons.Default.ChevronLeft, contentDescription = "Previous")
             }
@@ -156,7 +182,9 @@ fun MonthView(
         items(days) { date ->
             if (date != null) {
                 val isSelected = date == selectedDate
-                val hasEntries = entries.any {
+                val isToday =
+                    date == Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+                val dayEntries = entries.filter {
                     Instant.fromEpochMilliseconds(it.startAt)
                         .toLocalDateTime(TimeZone.currentSystemDefault()).date == date
                 }
@@ -166,7 +194,11 @@ fun MonthView(
                         .aspectRatio(1f)
                         .padding(2.dp)
                         .clip(RoundedCornerShape(TactileTheme.RadiusSm))
-                        .background(if (isSelected) TactileTheme.Primary.copy(alpha = 0.2f) else Color.Transparent)
+                        .background(
+                            if (isSelected) TactileTheme.Primary.copy(alpha = 0.2f)
+                            else if (isToday) TactileTheme.Muted.copy(alpha = 0.1f)
+                            else Color.Transparent
+                        )
                         .clickable { onDateSelected(date) },
                     contentAlignment = Alignment.Center
                 ) {
@@ -174,16 +206,28 @@ fun MonthView(
                         Text(
                             date.day.toString(),
                             style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                            color = if (isSelected) TactileTheme.Primary else TactileTheme.Text
+                            fontWeight = if (isSelected || isToday) FontWeight.Bold else FontWeight.Normal,
+                            color = if (isSelected) TactileTheme.Primary else if (isToday) TactileTheme.Accent else TactileTheme.Text
                         )
-                        if (hasEntries) {
-                            Box(
-                                Modifier
-                                    .size(4.dp)
-                                    .clip(CircleShape)
-                                    .background(TactileTheme.Accent)
-                            )
+                        if (dayEntries.isNotEmpty()) {
+                            Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+                                repeat(dayEntries.size.coerceAtMost(3)) {
+                                    Box(
+                                        Modifier
+                                            .size(4.dp)
+                                            .clip(CircleShape)
+                                            .background(TactileTheme.Accent)
+                                    )
+                                }
+                                if (dayEntries.size > 3) {
+                                    Box(
+                                        Modifier
+                                            .size(2.dp)
+                                            .clip(CircleShape)
+                                            .background(TactileTheme.Accent)
+                                    )
+                                }
+                            }
                         }
                     }
                 }
