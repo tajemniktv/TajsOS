@@ -472,15 +472,38 @@ fun getProjectsForArea(areaId: Long): Flow<List<NodeEntity>> = repository.getPro
         if (query.isBlank()) {
             emptyList()
         } else {
-            nodes.filter { 
-                it.node.title.contains(query, ignoreCase = true) || 
-                it.node.content.contains(query, ignoreCase = true)
-            }
+            nodes.filter { matchesQuery(it, query) }
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
+    private fun matchesQuery(nodeWithPin: NodeWithPin, query: String): Boolean {
+        if (query.isBlank()) return false
+        return if (query.startsWith("#")) {
+            val tagQuery = query.substring(1)
+            if (tagQuery.isBlank()) {
+                false
+            } else {
+                nodeWithPin.tags.any { it.name.contains(tagQuery, ignoreCase = true) }
+            }
+        } else {
+            nodeWithPin.node.title.contains(query, ignoreCase = true) ||
+            nodeWithPin.node.content.contains(query, ignoreCase = true) ||
+            nodeWithPin.tags.any { tag -> tag.name.contains(query, ignoreCase = true) }
+        }
+    }
+
     fun updateSearchQuery(query: String) {
         _searchQuery.value = query
+    }
+
+    fun getFilteredNodes(query: String): Flow<List<NodeWithPin>> {
+        return allNodes.map { nodes ->
+            if (query.isBlank()) {
+                nodes
+            } else {
+                nodes.filter { matchesQuery(it, query) }
+            }
+        }
     }
 
     fun getRelationsForNode(nodeId: Long): Flow<List<RelationEntity>> = repository.getRelationsForNode(nodeId)

@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.Embedded
 import androidx.room.Relation
+import androidx.room.Junction
 import kotlinx.serialization.Serializable
 
 /**
@@ -180,7 +181,17 @@ data class NodeWithPin(
         parentColumn = "id",
         entityColumn = "nodeId"
     )
-    val pin: TodayPinEntity?
+    val pin: TodayPinEntity?,
+    @Relation(
+        parentColumn = "id",
+        entityColumn = "id",
+        associateBy = Junction(
+            value = NodeTagEntity::class,
+            parentColumn = "nodeId",
+            entityColumn = "tagId"
+        )
+    )
+    val tags: List<TagEntity> = emptyList()
 ) {
     val isPinnedToToday: Boolean get() = pin != null
 }

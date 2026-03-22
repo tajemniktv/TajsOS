@@ -32,7 +32,8 @@ fun NoteDetailScreen(
     viewModel: MainViewModel,
     noteId: Long,
     onBack: () -> Unit,
-    onNavigateToNode: (Long) -> Unit
+    onNavigateToNode: (Long) -> Unit,
+    onNavigateToSearch: () -> Unit
 ) {
     val nodes by viewModel.allNodes.collectAsState()
     val nodeWithPin = nodes.find { it.node.id == noteId }
@@ -126,7 +127,10 @@ fun NoteDetailScreen(
             ) {
                 items(tags) { tag ->
                     SuggestionChip(
-                        onClick = { /* TODO: Filter by tag? */ },
+                        onClick = {
+                            viewModel.updateSearchQuery("#${tag.name}")
+                            onNavigateToSearch()
+                        },
                         label = { Text(tag.name) }
                     )
                 }
