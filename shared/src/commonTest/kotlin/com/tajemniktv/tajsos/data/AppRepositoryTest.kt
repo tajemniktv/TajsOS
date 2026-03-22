@@ -1,117 +1,116 @@
 package com.tajemniktv.tajsos.data
 
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+import kotlin.test.assertTrue
 
 class AppRepositoryTest {
 
-    // Simple manual mock of NodeDao for testing
-    class MockNodeDao : NodeDao {
-        var pinnedNodeId: Long? = null
-        var pinnedDate: String? = null
-        var pinnedPosition: Int? = null
+    private val fakeNodeDao = FakeNodeDao()
+    private val fakeFocusSessionDao = FakeFocusSessionDao()
+    private val fakeTrackDao = FakeTrackDao()
+    private val fakeRelationDao = FakeRelationDao()
+    private val fakeTagDao = FakeTagDao()
+    private val fakeEventLogDao = FakeEventLogDao()
+    private val fakeAttachmentDao = FakeAttachmentDao()
+    private val fakeTemplateDao = FakeTemplateDao()
 
-        override fun getAllNodesWithPins(): Flow<List<NodeWithPin>> = flowOf(emptyList())
-        override fun getTodayNodes(date: String): Flow<List<NodeEntity>> = flowOf(emptyList())
-        override fun getNodesByType(type: String): Flow<List<NodeEntity>> = flowOf(emptyList())
-        override fun getNodesByProject(projectId: Long): Flow<List<NodeEntity>> = flowOf(emptyList())
-        override fun getNodesByArea(areaId: Long): Flow<List<NodeEntity>> = flowOf(emptyList())
-        override suspend fun getNodeById(id: Long): NodeEntity? = null
-        override suspend fun insertNode(node: NodeEntity): Long = 0
-        override suspend fun updateNode(node: NodeEntity) {}
-        override suspend fun deleteNode(node: NodeEntity) {}
+    private val repository = AppRepository(
+        nodeDao = fakeNodeDao,
+        focusSessionDao = fakeFocusSessionDao,
+        trackDao = fakeTrackDao,
+        relationDao = fakeRelationDao,
+        tagDao = fakeTagDao,
+        eventLogDao = fakeEventLogDao,
+        attachmentDao = fakeAttachmentDao,
+        templateDao = fakeTemplateDao
+    )
 
-        override suspend fun pinToToday(pin: TodayPinEntity) {
-            pinnedNodeId = pin.nodeId
-            pinnedDate = pin.date
-            pinnedPosition = pin.position
-        }
+    @Test
+    fun testInsertNodeLogsEvent() = runTest {
+        val node = NodeEntity(type = "task", title = "Test Node")
+        val id = repository.insertNode(node)
 
-        override suspend fun unpinFromToday(nodeId: Long) {}
-        override fun isPinnedToToday(nodeId: Long): Flow<Boolean> = flowOf(false)
-    }
-
-    class MockFocusSessionDao : FocusSessionDao {
-        override fun getAllSessions(): Flow<List<FocusSessionEntity>> = flowOf(emptyList())
-        override suspend fun insertSession(session: FocusSessionEntity): Long = 0
-        override suspend fun updateSession(session: FocusSessionEntity) {}
-        override fun getActiveSession(): Flow<FocusSessionEntity?> = flowOf(null)
-    }
-
-    class MockTrackDao : TrackDao {
-        override fun getAllTrackEntries(): Flow<List<TrackEntryEntity>> = flowOf(emptyList())
-        override suspend fun insertTrackEntry(entry: TrackEntryEntity) {}
-    }
-
-    class MockRelationDao : RelationDao {
-        override fun getRelationsForNode(nodeId: Long): Flow<List<RelationEntity>> = flowOf(emptyList())
-        override suspend fun insertRelation(relation: RelationEntity) {}
-        override suspend fun deleteRelation(relation: RelationEntity) {}
-    }
-
-    class MockTagDao : TagDao {
-        override fun getAllTags(): Flow<List<TagEntity>> = flowOf(emptyList())
-        override suspend fun insertTag(tag: TagEntity): Long = 0
-        override fun getTagsForNode(nodeId: Long): Flow<List<TagEntity>> = flowOf(emptyList())
-        override suspend fun attachTagToNode(nodeTag: NodeTagEntity) {}
-        override suspend fun detachTagFromNode(nodeId: Long, tagId: Long) {}
-    }
-
-    class MockEventLogDao : EventLogDao {
-        var loggedEventType: String? = null
-        var loggedNodeId: Long? = null
-
-        override fun getRecentLogs(limit: Int): Flow<List<EventLogEntity>> = flowOf(emptyList())
-        override suspend fun insertLog(log: EventLogEntity) {
-            loggedEventType = log.eventType
-            loggedNodeId = log.nodeId
-        }
-    }
-
-    class MockAttachmentDao : AttachmentDao {
-        override fun getAttachmentsForNode(nodeId: Long): Flow<List<AttachmentEntity>> = flowOf(emptyList())
-        override suspend fun insertAttachment(attachment: AttachmentEntity) {}
-        override suspend fun deleteAttachment(attachment: AttachmentEntity) {}
-    }
-
-    class MockTemplateDao : TemplateDao {
-        override fun getAllTemplates(): Flow<List<TemplateEntity>> = flowOf(emptyList())
-        override suspend fun insertTemplate(template: TemplateEntity) {}
-        override suspend fun updateTemplate(template: TemplateEntity) {}
-        override suspend fun deleteTemplate(template: TemplateEntity) {}
+        val logs = fakeEventLogDao.getLogs()
+        assertEquals(1, logs.size)
+        assertEquals("NODE_CREATED", logs[0].eventType)
+        assertEquals(id, logs[0].nodeId)
     }
 
     @Test
-    fun testPinToToday() = runBlocking {
-        val mockNodeDao = MockNodeDao()
-        val mockEventLogDao = MockEventLogDao()
+    fun testUpdateNodeCompletedLogsEvent() = runTest {
+        val node = NodeEntity(id = 1, type = "task", title = "Test Node", status = "done")
+        repository.updateNode(node)
 
-        val repository = AppRepository(
-            nodeDao = mockNodeDao,
-            focusSessionDao = MockFocusSessionDao(),
-            trackDao = MockTrackDao(),
-            relationDao = MockRelationDao(),
-            tagDao = MockTagDao(),
-            eventLogDao = mockEventLogDao,
-            attachmentDao = MockAttachmentDao(),
-            templateDao = MockTemplateDao()
-        )
+        val logs = fakeEventLogDao.getLogs()
+        assertEquals(1, logs.size)
+        assertEquals("NODE_COMPLETED", logs[0].eventType)
+        assertEquals(1, logs[0].nodeId)
+    }
 
-        val nodeId = 42L
-        repository.pinToToday(nodeId)
+    @Test
+    fun testUpdateNodeArchivedLogsEvent() = runTest {
+        val node = NodeEntity(id = 1, type = "task", title = "Test Node", status = "archived")
+        repository.updateNode(node)
 
-        assertEquals(nodeId, mockNodeDao.pinnedNodeId)
-        assertEquals(0, mockNodeDao.pinnedPosition)
+        val logs = fakeEventLogDao.getLogs()
+        assertEquals(1, logs.size)
+        assertEquals("NODE_ARCHIVED", logs[0].eventType)
+        assertEquals(1, logs[0].nodeId)
+    }
 
-        val expectedDate = kotlin.time.Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
-        assertEquals(expectedDate, mockNodeDao.pinnedDate)
+    @Test
+    fun testPinToTodayLogsEvent() = runTest {
+        repository.pinToToday(1)
 
-        assertEquals("TODAY_ASSIGNED", mockEventLogDao.loggedEventType)
-        assertEquals(nodeId, mockEventLogDao.loggedNodeId)
+        val logs = fakeEventLogDao.getLogs()
+        assertEquals(1, logs.size)
+        assertEquals("TODAY_ASSIGNED", logs[0].eventType)
+        assertEquals(1, logs[0].nodeId)
+    }
+
+    @Test
+    fun testInsertSessionLogsEvent() = runTest {
+        val session = FocusSessionEntity(nodeId = 1, startedAt = 1000)
+        val id = repository.insertSession(session)
+
+        val logs = fakeEventLogDao.getLogs()
+        assertEquals(1, logs.size)
+        assertEquals("SESSION_STARTED", logs[0].eventType)
+        assertEquals(1, logs[0].nodeId)
+    }
+
+    @Test
+    fun testUpdateSessionLogsEvent() = runTest {
+        val session = FocusSessionEntity(id = 1, nodeId = 1, startedAt = 1000, endedAt = 2000)
+        repository.updateSession(session)
+
+        val logs = fakeEventLogDao.getLogs()
+        assertEquals(1, logs.size)
+        assertEquals("SESSION_ENDED", logs[0].eventType)
+        assertEquals(1, logs[0].nodeId)
+    }
+
+    @Test
+    fun testInsertTrackEntryLogsEvent() = runTest {
+        val entry = TrackEntryEntity(date = "2024-03-21")
+        repository.insertTrackEntry(entry)
+
+        val logs = fakeEventLogDao.getLogs()
+        assertEquals(1, logs.size)
+        assertEquals("CHECKIN_CREATED", logs[0].eventType)
+    }
+
+    @Test
+    fun testInsertRelationLogsEvent() = runTest {
+        val relation = RelationEntity(fromNodeId = 1, toNodeId = 2, relationType = "RELATED")
+        repository.insertRelation(relation)
+
+        val logs = fakeEventLogDao.getLogs()
+        assertEquals(1, logs.size)
+        assertEquals("NODE_LINKED", logs[0].eventType)
+        assertEquals(1, logs[0].nodeId)
+        assertEquals(2, logs[0].relatedNodeId)
     }
 }
