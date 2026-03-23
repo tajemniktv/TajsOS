@@ -1,0 +1,11 @@
+--- composeApp/src/commonMain/kotlin/com/tajemniktv/tajsos/ui/screens/AreasScreen.kt
++++ composeApp/src/commonMain/kotlin/com/tajemniktv/tajsos/ui/screens/AreasScreen.kt
+@@ -50,7 +50,7 @@
+             }
+         } else {
+             LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+-                items(areas) { area ->
++                items(areas, key = { it.id }) { area ->
+                     AreaItem(area) {
+                         onNavigateTo(Screen.AreaDetail.route.replace("{areaId}", area.id.toString()))
+                     }

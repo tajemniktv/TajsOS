@@ -50,7 +50,7 @@ fun AreasScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit) {
             }
         } else {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
-                items(areas) { area ->
+                items(areas, key = { it.id }) { area ->
                     AreaItem(area) {
                         onNavigateTo(Screen.AreaDetail.route.replace("{areaId}", area.id.toString()))
                     }

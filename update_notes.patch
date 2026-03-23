@@ -1,0 +1,89 @@
+--- composeApp/src/commonMain/kotlin/com/tajemniktv/tajsos/ui/screens/NotesScreen.kt
++++ composeApp/src/commonMain/kotlin/com/tajemniktv/tajsos/ui/screens/NotesScreen.kt
+@@ -96,19 +96,19 @@
+
+                     if (pinned.isNotEmpty()) {
+                         item { GroupHeader(stringResource(Res.string.notes_pinned_knowledge)) }
+-                        items(pinned) { node -> KnowledgeItem(node, viewModel, onNoteClick) }
++                        items(pinned, key = { it.node.id }) { node -> KnowledgeItem(node, viewModel, onNoteClick) }
+                     }
+                     if (ideas.isNotEmpty()) {
+                         item { GroupHeader(stringResource(Res.string.notes_ideas)) }
+-                        items(ideas) { node -> KnowledgeItem(node, viewModel, onNoteClick) }
++                        items(ideas, key = { it.node.id }) { node -> KnowledgeItem(node, viewModel, onNoteClick) }
+                     }
+                     if (notes.isNotEmpty()) {
+                         item { GroupHeader(stringResource(Res.string.notes_notes)) }
+-                        items(notes) { node -> KnowledgeItem(node, viewModel, onNoteClick) }
++                        items(notes, key = { it.node.id }) { node -> KnowledgeItem(node, viewModel, onNoteClick) }
+                     }
+                     if (resources.isNotEmpty()) {
+                         item { GroupHeader(stringResource(Res.string.notes_resources)) }
+-                        items(resources) { node -> KnowledgeItem(node, viewModel, onNoteClick) }
++                        items(resources, key = { it.node.id }) { node -> KnowledgeItem(node, viewModel, onNoteClick) }
+                     }
+                 }
+
+@@ -117,7 +117,7 @@
+                         val nodesInArea = filteredNodes.filter { it.node.areaId == area.id }
+                         if (nodesInArea.isNotEmpty()) {
+                             item { GroupHeader(area.title.uppercase()) }
+-                            items(nodesInArea) { node ->
++                            items(nodesInArea, key = { it.node.id }) { node ->
+                                 KnowledgeItem(
+                                     node,
+                                     viewModel,
+@@ -129,7 +129,7 @@
+                     val unassigned = filteredNodes.filter { it.node.areaId == null }
+                     if (unassigned.isNotEmpty()) {
+                         item { GroupHeader("UNASSIGNED") }
+-                        items(unassigned) { node -> KnowledgeItem(node, viewModel, onNoteClick) }
++                        items(unassigned, key = { it.node.id }) { node -> KnowledgeItem(node, viewModel, onNoteClick) }
+                     }
+                 }
+
+@@ -139,7 +139,7 @@
+                             filteredNodes.filter { it.node.projectId == project.id }
+                         if (nodesInProject.isNotEmpty()) {
+                             item { GroupHeader(project.title.uppercase()) }
+-                            items(nodesInProject) { node ->
++                            items(nodesInProject, key = { it.node.id }) { node ->
+                                 KnowledgeItem(
+                                     node,
+                                     viewModel,
+@@ -151,7 +151,7 @@
+                     val unassigned = filteredNodes.filter { it.node.projectId == null }
+                     if (unassigned.isNotEmpty()) {
+                         item { GroupHeader("UNASSIGNED") }
+-                        items(unassigned) { node -> KnowledgeItem(node, viewModel, onNoteClick) }
++                        items(unassigned, key = { it.node.id }) { node -> KnowledgeItem(node, viewModel, onNoteClick) }
+                     }
+                 }
+
+@@ -163,7 +163,7 @@
+                     }
+                     groupedByDate.forEach { (date, nodes) ->
+                         item { GroupHeader(date) }
+-                        items(nodes) { node -> KnowledgeItem(node, viewModel, onNoteClick) }
++                        items(nodes, key = { it.node.id }) { node -> KnowledgeItem(node, viewModel, onNoteClick) }
+                     }
+                 }
+
+@@ -179,7 +179,7 @@
+                         val nodesOfType = filteredNodes.filter { it.node.mediaType == type }
+                         if (nodesOfType.isNotEmpty()) {
+                             item { GroupHeader(stringResource(res)) }
+-                            items(nodesOfType) { node ->
++                            items(nodesOfType, key = { it.node.id }) { node ->
+                                 KnowledgeItem(
+                                     node,
+                                     viewModel,
+@@ -192,7 +192,7 @@
+                         filteredNodes.filter { it.node.type == "resource" && it.node.mediaType == null }
+                     if (other.isNotEmpty()) {
+                         item { GroupHeader(stringResource(Res.string.media_other)) }
+-                        items(other) { node -> KnowledgeItem(node, viewModel, onNoteClick) }
++                        items(other, key = { it.node.id }) { node -> KnowledgeItem(node, viewModel, onNoteClick) }
+                     }
+                 }
+             }
