@@ -131,12 +131,13 @@ fun TemplatesScreen(
                 }
             },
             confirmButton = {
-                Button(onClick = {
-                    if (name.isNotBlank()) {
+                Button(
+                    onClick = {
                         viewModel.addTemplate(name, type)
                         showAddDialog = false
-                    }
-                }) { Text(stringResource(Res.string.templates_dialog_create)) }
+                    },
+                    enabled = name.isNotBlank()
+                ) { Text(stringResource(Res.string.templates_dialog_create)) }
             },
             dismissButton = {
                 TextButton(onClick = { showAddDialog = false }) {
