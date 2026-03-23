@@ -430,9 +430,9 @@ class MainViewModel(
             .toLocalDateTime(TimeZone.currentSystemDefault()).date
         val recentTracks = tracks.filter { it.date >= sevenDaysAgoDate.toString() }
 
-        val avgMood = if (recentTracks.isNotEmpty()) recentTracks.mapNotNull { it.moodScore }.average() else 0.0
-        val avgEnergy = if (recentTracks.isNotEmpty()) recentTracks.mapNotNull { it.energyScore }.average() else 0.0
-        val avgFocus = if (recentTracks.isNotEmpty()) recentTracks.mapNotNull { it.focusScore }.average() else 0.0
+        val avgMood = recentTracks.mapNotNull { it.moodScore }.average().takeIf { !it.isNaN() } ?: 0.0
+        val avgEnergy = recentTracks.mapNotNull { it.energyScore }.average().takeIf { !it.isNaN() } ?: 0.0
+        val avgFocus = recentTracks.mapNotNull { it.focusScore }.average().takeIf { !it.isNaN() } ?: 0.0
 
         val nodesByProjectId = nodes.groupBy { it.node.projectId }
         val neglectedProjects =

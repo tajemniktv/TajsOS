@@ -150,7 +150,8 @@ fun ProjectDetailScreen(
                     actionIconContentColor = TactileTheme.Text
                 )
             )
-        }
+        },
+        containerColor = TactileTheme.Background
     ) { padding ->
         Column(
             modifier = Modifier
@@ -158,7 +159,8 @@ fun ProjectDetailScreen(
                 .padding(padding)
                 .background(TactileTheme.Background)
                 .verticalScroll(rememberScrollState())
-                .padding(TactileTheme.SpacingMd),
+                .padding(horizontal = TactileTheme.SpacingMd)
+                .padding(bottom = TactileTheme.SpacingMd),
             verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingLg)
         ) {
             // Header
@@ -264,42 +266,26 @@ fun ProjectDetailScreen(
         }
     }
 
-    if (showStatusDialog) {
-        AlertDialog(
-            onDismissRequest = { showStatusDialog = false },
-            title = { Text(stringResource(Res.string.project_set_status)) },
-            text = {
-                Column {
-                    val statuses = listOf("active", "on_hold", "someday")
-                    statuses.forEach { s ->
-                        ListItem(
-                            headlineContent = { Text(s.uppercase()) },
-                            modifier = Modifier.clickable {
-                                viewModel.updateNodeStatus(project, s)
-                                showStatusDialog = false
-                            }
-                        )
-                    }
-                    HorizontalDivider()
-                    ListItem(
-                        headlineContent = { Text(stringResource(Res.string.project_detail_freeze).uppercase()) },
-                        supportingContent = { Text("Stop all progress indicators") },
-                        trailingContent = {
-                            Switch(checked = project.isFrozen, onCheckedChange = {
-                                viewModel.updateNode(project.copy(isFrozen = it))
-                                showStatusDialog = false
-                            })
-                        }
-                    )
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    showStatusDialog = false
-                }) { Text(stringResource(Res.string.projects_dialog_cancel)) }
+    SelectorDialog(
+        show = showStatusDialog,
+        onDismiss = { showStatusDialog = false },
+        title = "SET STATUS",
+        options = listOf("active", "on_hold", "someday"),
+        selectedOption = project.status,
+        onSelect = { status ->
+            viewModel.updateNodeStatus(project, status); showStatusDialog = false
+        },
+        optionName = { it },
+        optionIcon = {
+            when (it) {
+                "active" -> Icons.Default.PlayArrow
+                "on_hold" -> Icons.Default.Pause
+                "someday" -> Icons.Default.CalendarToday
+                else -> Icons.Default.Info
             }
-        )
-    }
+        },
+        optionSubtext = { "PROJ_STATE_${it.uppercase()}" }
+    )
 }
 
 @Composable

@@ -112,7 +112,8 @@ fun AreaDetailScreen(
                     actionIconContentColor = TactileTheme.Text
                 )
             )
-        }
+        },
+        containerColor = TactileTheme.Background
     ) { padding ->
         Column(
             modifier = Modifier
@@ -120,7 +121,8 @@ fun AreaDetailScreen(
                 .padding(padding)
                 .background(TactileTheme.Background)
                 .verticalScroll(rememberScrollState())
-                .padding(TactileTheme.SpacingMd),
+                .padding(horizontal = TactileTheme.SpacingMd)
+                .padding(bottom = TactileTheme.SpacingMd),
             verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingLg)
         ) {
             // Header
