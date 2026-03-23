@@ -41,90 +41,76 @@ class AppRepositoryTest {
         calendarEventDao = fakeCalendarEventDao
     )
 
+    private fun assertLogEventAdded(
+        expectedType: String,
+        expectedNodeId: Long? = null,
+        expectedSize: Int = 1,
+        logIndex: Int = 0
+    ) {
+        val logs = fakeEventLogDao.getLogs()
+        assertEquals(expectedSize, logs.size)
+        assertEquals(expectedType, logs[logIndex].eventType)
+        if (expectedNodeId != null) {
+            assertEquals(expectedNodeId, logs[logIndex].nodeId)
+        }
+    }
+
     @Test
     fun testInsertNodeLogsEvent() = runTest {
         val node = NodeEntity(type = "task", title = "Test Node")
         val id = repository.insertNode(node)
-
-        val logs = fakeEventLogDao.getLogs()
-        assertEquals(1, logs.size)
-        assertEquals("NODE_CREATED", logs[0].eventType)
-        assertEquals(id, logs[0].nodeId)
+        assertLogEventAdded("NODE_CREATED", id)
     }
 
     @Test
     fun testUpdateNodeCompletedLogsEvent() = runTest {
-        val node = NodeEntity(id = 1, type = "task", title = "Test Node", status = "active")
-        repository.insertNode(node)
-        val doneNode = node.copy(status = "done")
+        val node = NodeEntity(type = "task", title = "Test Node", status = "active")
+        val id = repository.insertNode(node)
+        val doneNode = node.copy(id = id, status = "done")
         repository.updateNode(doneNode)
-
-        val logs = fakeEventLogDao.getLogs()
-        assertEquals(2, logs.size)
-        assertEquals("NODE_COMPLETED", logs[1].eventType)
-        assertEquals(1, logs[1].nodeId)
+        assertLogEventAdded("NODE_COMPLETED", id, expectedSize = 2, logIndex = 1)
     }
 
     @Test
     fun testUpdateNodeArchivedLogsEvent() = runTest {
-        val node = NodeEntity(id = 1, type = "task", title = "Test Node", status = "active")
-        repository.insertNode(node)
-        val archivedNode = node.copy(status = "archived")
+        val node = NodeEntity(type = "task", title = "Test Node", status = "active")
+        val id = repository.insertNode(node)
+        val archivedNode = node.copy(id = id, status = "archived")
         repository.updateNode(archivedNode)
-
-        val logs = fakeEventLogDao.getLogs()
-        assertEquals(2, logs.size)
-        assertEquals("NODE_ARCHIVED", logs[1].eventType)
-        assertEquals(1, logs[1].nodeId)
+        assertLogEventAdded("NODE_ARCHIVED", id, expectedSize = 2, logIndex = 1)
     }
 
     @Test
     fun testPinToTodayLogsEvent() = runTest {
         repository.pinToToday(1)
-
-        val logs = fakeEventLogDao.getLogs()
-        assertEquals(1, logs.size)
-        assertEquals("TODAY_ASSIGNED", logs[0].eventType)
-        assertEquals(1, logs[0].nodeId)
+        assertLogEventAdded("TODAY_ASSIGNED", 1)
     }
 
     @Test
     fun testInsertSessionLogsEvent() = runTest {
         val session = FocusSessionEntity(nodeId = 1, startedAt = 1000)
-        val id = repository.insertSession(session)
-
-        val logs = fakeEventLogDao.getLogs()
-        assertEquals(1, logs.size)
-        assertEquals("SESSION_STARTED", logs[0].eventType)
-        assertEquals(1, logs[0].nodeId)
+        repository.insertSession(session)
+        assertLogEventAdded("SESSION_STARTED", 1)
     }
 
     @Test
     fun testUpdateSessionLogsEvent() = runTest {
         val session = FocusSessionEntity(id = 1, nodeId = 1, startedAt = 1000, endedAt = 2000)
         repository.updateSession(session)
-
-        val logs = fakeEventLogDao.getLogs()
-        assertEquals(1, logs.size)
-        assertEquals("SESSION_ENDED", logs[0].eventType)
-        assertEquals(1, logs[0].nodeId)
+        assertLogEventAdded("SESSION_ENDED", 1)
     }
 
     @Test
     fun testInsertTrackEntryLogsEvent() = runTest {
         val entry = TrackEntryEntity(date = "2024-03-21")
         repository.insertTrackEntry(entry)
-
-        val logs = fakeEventLogDao.getLogs()
-        assertEquals(1, logs.size)
-        assertEquals("CHECKIN_CREATED", logs[0].eventType)
+        assertLogEventAdded("CHECKIN_CREATED")
     }
 
     @Test
     fun testInsertRelationLogsEvent() = runTest {
         val relation = RelationEntity(fromNodeId = 1, toNodeId = 2, relationType = "RELATED")
         repository.insertRelation(relation)
-
         val logs = fakeEventLogDao.getLogs()
         assertEquals(1, logs.size)
         assertEquals("NODE_LINKED", logs[0].eventType)
