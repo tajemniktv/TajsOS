@@ -72,6 +72,10 @@ data class DashboardUIState(
     val neglectedThisWeek: List<NodeWithPin> = emptyList(),
     val foundationalNotes: List<NodeWithPin> = emptyList(),
     val resourceHighlights: List<NodeWithPin> = emptyList(),
+    val stickyNotes: List<NodeWithPin> = emptyList(),
+    val criticalProjects: List<NodeEntity> = emptyList(),
+    val forgottenWisdom: NodeWithPin? = null,
+    val deservesAttention: List<NodeWithPin> = emptyList(),
 )
 
 class MainViewModel(
@@ -128,6 +132,27 @@ class MainViewModel(
                 }.take(1),
                 resourceHighlights = nodes.filter { it.node.type == "resource" && it.node.status == "active" }
                     .shuffled().take(2),
+                stickyNotes = nodes.filter { it.node.isSticky && it.node.status == "active" },
+                criticalProjects = nodes.filter { it.node.type == "project" && it.node.status == "active" }
+                    .map { it.node }.filter { proj ->
+                        val projectNodes = nodes.filter { it.node.projectId == proj.id }
+                        val hasCritical = projectNodes.any {
+                            it.node.status == "active" && it.node.isHardDeadline && it.node.dueAt != null && it.node.dueAt < now
+                        }
+                        val isNeglected =
+                            proj.status == "active" && !proj.isFrozen && projectNodes.none { it.node.updatedAt >= (now - 14 * 24 * 60 * 60 * 1000L) }
+                        hasCritical || isNeglected
+                    },
+                forgottenWisdom = nodes.filter {
+                    (it.node.type == "note" || it.node.type == "idea") &&
+                            it.node.status == "active" &&
+                            (it.node.noteType == "evergreen" || it.node.updatedAt < (now - 30 * 24 * 60 * 60 * 1000L))
+                }.shuffled().firstOrNull(),
+                deservesAttention = nodes.filter {
+                    it.node.status == "active" && it.node.type == "task" &&
+                            !it.node.isPinned && it.node.dueAt == null &&
+                            it.node.updatedAt < (now - 7 * 24 * 60 * 60 * 1000L)
+                }.take(2),
             )
         }
             .distinctUntilChanged()
@@ -588,6 +613,10 @@ class MainViewModel(
 
         val review = buildString {
             append("This week you captured ${recentNodes.size} items and completed ${recentCompletions.size}. ")
+            val recentResources = recentNodes.count { it.node.type == "resource" }
+            if (recentResources > 0) {
+                append("You also added $recentResources new resources to your library. ")
+            }
             if (weeklyFocusSec > 0) {
                 append("You spent ${((weeklyFocusSec / 3600.0) * 10).toInt() / 10.0} hours in deep focus. ")
             }
@@ -691,13 +720,22 @@ class MainViewModel(
         color: Int? = null,
         icon: String? = null,
         inboxState: Boolean? = null,
+        contextScreen: String? = null,
+        isSticky: Boolean = false,
     ) {
         viewModelScope.launch {
+            val autoType =
+                if (type == "task" && (title.startsWith("http://") || title.startsWith("https://"))) {
+                    "resource"
+                } else {
+                    type
+                }
+
             repository.insertNode(
                 NodeEntity(
                     title = title,
                     content = content,
-                    type = type,
+                    type = autoType,
                     projectId = projectId,
                     areaId = areaId,
                     isRecurring = isRecurring,
@@ -705,7 +743,9 @@ class MainViewModel(
                     reminderAt = reminderAt,
                     color = color,
                     icon = icon,
-                    inboxState = inboxState ?: (type != "project" && type != "area"),
+                    inboxState = inboxState ?: (autoType != "project" && autoType != "area"),
+                    contextScreen = contextScreen,
+                    isSticky = isSticky,
                 ),
             )
         }
@@ -1227,6 +1267,7 @@ class MainViewModel(
             _searchFrictionFilter,
             allRelations,
         ) { args ->
+            @Suppress("UNCHECKED_CAST")
             val nodes = args[0] as List<NodeWithPin>
             val query = args[1] as String
             val type = args[2] as String?
@@ -1237,6 +1278,8 @@ class MainViewModel(
             val maxMins = args[7] as Int?
             val energy = args[8] as Int?
             val friction = args[9] as String?
+
+            @Suppress("UNCHECKED_CAST")
             val relations = args[10] as List<RelationEntity>
 
             nodes.filter { nodeWithPin ->
@@ -1255,7 +1298,9 @@ class MainViewModel(
                 }
                 matchesQuery && matchesType && matchesStatus && matchesProject && matchesArea && matchesLinkedTo && matchesMins && matchesEnergy && matchesFriction
             }.sortedByDescending { it.node.updatedAt }
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+        }
+            .flowOn(Dispatchers.Default)
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     private fun matchesQuery(
         nodeWithPin: NodeWithPin,

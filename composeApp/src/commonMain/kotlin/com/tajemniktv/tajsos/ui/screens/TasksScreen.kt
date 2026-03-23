@@ -4,37 +4,157 @@
 
 package com.tajemniktv.tajsos.ui.screens
 
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ViewList
+import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.ViewKanban
+import androidx.compose.material.icons.filled.ViewList
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.EmptyState
 import com.tajemniktv.tajsos.ui.components.NodeCard
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
+import kotlin.time.Clock
 
 @Composable
 fun TasksScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit) {
     val activeNodes by viewModel.activeNodes.collectAsState()
     val tasks = activeNodes.filter { it.node.type == "task" }
+    val allProjects by viewModel.allProjects.collectAsState()
+    val allAreas by viewModel.allAreas.collectAsState()
+
+    var viewMode by remember { mutableStateOf("list") } // list, board
+    var filterStatus by remember { mutableStateOf<String?>(null) }
+    var filterProject by remember { mutableStateOf<Long?>(null) }
+    var filterArea by remember { mutableStateOf<Long?>(null) }
+
+    val filteredTasks = tasks.filter {
+        (filterStatus == null || it.node.status == filterStatus) &&
+                (filterProject == null || it.node.projectId == filterProject) &&
+                (filterArea == null || it.node.areaId == filterArea)
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(TactileTheme.SpacingMd)
     ) {
-        Text(stringResource(Res.string.tasks_title), style = MaterialTheme.typography.displaySmall)
-        Spacer(modifier = Modifier.height(24.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                stringResource(Res.string.tasks_title),
+                style = MaterialTheme.typography.displaySmall
+            )
+            Row {
+                IconButton(onClick = { viewMode = if (viewMode == "list") "board" else "list" }) {
+                    Icon(
+                        if (viewMode == "list") Icons.Default.ViewKanban else Icons.AutoMirrored.Filled.ViewList,
+                        contentDescription = "Switch View"
+                    )
+                }
+            }
+        }
 
-        if (tasks.isEmpty()) {
+        // Resurrection / Suggestions
+        val staleTime = Clock.System.now().toEpochMilliseconds() - (14 * 24 * 60 * 60 * 1000L)
+        val resurrectionTasks =
+            tasks.filter { it.node.status == "active" && it.node.updatedAt < staleTime }.take(2)
+
+        if (resurrectionTasks.isNotEmpty()) {
+            Surface(
+                modifier = Modifier.fillMaxWidth().padding(vertical = TactileTheme.SpacingSm),
+                color = TactileTheme.Primary.copy(alpha = 0.05f),
+                shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                border = androidx.compose.foundation.BorderStroke(
+                    1.dp,
+                    TactileTheme.Primary.copy(alpha = 0.2f)
+                )
+            ) {
+                Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            Icons.Default.AutoAwesome,
+                            contentDescription = null,
+                            tint = TactileTheme.Primary,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            "RESURRECTION SUGGESTIONS",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = TactileTheme.Primary
+                        )
+                    }
+                    Spacer(Modifier.height(8.dp))
+                    resurrectionTasks.forEach { task ->
+                        TextButton(
+                            onClick = { onEditNode(task.node.id) },
+                            contentPadding = PaddingValues(0.dp)
+                        ) {
+                            Text(
+                                "• ${task.node.title}",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = TactileTheme.Text
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        // Filters
+        LazyRow(
+            modifier = Modifier.fillMaxWidth().padding(vertical = TactileTheme.SpacingSm),
+            horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)
+        ) {
+            item {
+                FilterChip(
+                    selected = filterStatus == null && filterProject == null && filterArea == null,
+                    onClick = {
+                        filterStatus = null
+                        filterProject = null
+                        filterArea = null
+                    },
+                    label = { Text("ALL") }
+                )
+            }
+            item {
+                val statuses = listOf("active", "on_hold", "someday", "blocked")
+                statuses.forEach { status ->
+                    FilterChip(
+                        selected = filterStatus == status,
+                        onClick = { filterStatus = if (filterStatus == status) null else status },
+                        label = { Text(status.uppercase()) },
+                        modifier = Modifier.padding(end = 4.dp)
+                    )
+                }
+            }
+        }
+
+        if (filteredTasks.isEmpty()) {
             EmptyState(message = stringResource(Res.string.tasks_empty))
-        } else {
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                items(tasks, key = { it.node.id }) { nodeWithPin ->
+        } else if (viewMode == "list") {
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+                items(filteredTasks, key = { it.node.id }) { nodeWithPin ->
                     NodeCard(
                         nodeWithPin = nodeWithPin,
                         onToggleDone = { status ->
@@ -53,6 +173,56 @@ fun TasksScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit) {
                         onLongClick = { onEditNode(nodeWithPin.node.id) },
                         onArchive = { viewModel.archiveNode(nodeWithPin.node) }
                     )
+                }
+            }
+        } else {
+            // Board View
+            val statuses = listOf("active", "on_hold", "someday", "blocked")
+            Row(
+                modifier = Modifier.fillMaxSize().horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)
+            ) {
+                statuses.forEach { status ->
+                    val columnTasks = filteredTasks.filter { it.node.status == status }
+                    Column(
+                        modifier = Modifier.width(280.dp).fillMaxHeight()
+                    ) {
+                        Surface(
+                            color = TactileTheme.Surface,
+                            shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                            modifier = Modifier.fillMaxWidth()
+                                .padding(bottom = TactileTheme.SpacingSm)
+                        ) {
+                            Text(
+                                text = status.uppercase(),
+                                modifier = Modifier.padding(TactileTheme.SpacingMd),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = TactileTheme.Primary
+                            )
+                        }
+                        LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+                            items(columnTasks, key = { it.node.id }) { nodeWithPin ->
+                                NodeCard(
+                                    nodeWithPin = nodeWithPin,
+                                    onToggleDone = { s ->
+                                        viewModel.updateNodeStatus(
+                                            nodeWithPin.node,
+                                            s
+                                        )
+                                    },
+                                    onTogglePin = { isPinned ->
+                                        viewModel.togglePin(
+                                            nodeWithPin.node,
+                                            isPinned
+                                        )
+                                    },
+                                    onClick = { onEditNode(nodeWithPin.node.id) },
+                                    onLongClick = { onEditNode(nodeWithPin.node.id) },
+                                    onArchive = { viewModel.archiveNode(nodeWithPin.node) }
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }

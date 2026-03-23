@@ -5,11 +5,13 @@
 package com.tajemniktv.tajsos.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -54,14 +56,29 @@ fun ProjectDetailScreen(
     val nodesWithPinForProject by viewModel.getNodesForProject(projectId)
         .collectAsState(initial = emptyList())
 
+    var showStatusDialog by remember { mutableStateOf(false) }
+
     val total = nodesWithPinForProject.size
     val completed = nodesWithPinForProject.count { it.node.status == "done" }
     val progress = if (total > 0) completed.toFloat() / total else 0f
 
-    val staleTime =
-        kotlin.time.Clock.System.now().toEpochMilliseconds() - (14 * 24 * 60 * 60 * 1000L)
+    val now = kotlin.time.Clock.System.now().toEpochMilliseconds()
+    val staleTime = now - (14 * 24 * 60 * 60 * 1000L)
+
+    val hasCriticalOverdue = nodesWithPinForProject.any {
+        val dueAt = it.node.dueAt
+        it.node.status == "active" && it.node.isHardDeadline && dueAt != null && dueAt < now
+    }
     val isNeglected =
-        nodesWithPinForProject.none { it.node.updatedAt >= staleTime } && project.status == "active"
+        nodesWithPinForProject.none { it.node.updatedAt >= staleTime } && project.status == "active" && !project.isFrozen
+
+    val (healthLabel, healthColor) = when {
+        project.isFrozen -> stringResource(Res.string.project_health_frozen) to TactileTheme.Accent
+        project.status == "on_hold" -> stringResource(Res.string.project_health_on_hold) to TactileTheme.Muted
+        hasCriticalOverdue -> stringResource(Res.string.project_health_critical) to TactileTheme.Error
+        isNeglected -> stringResource(Res.string.project_health_neglected) to TactileTheme.Error
+        else -> stringResource(Res.string.project_health_healthy) to TactileTheme.Success
+    }
 
     LaunchedEffect(projectId) {
         viewModel.setLastActiveContext(projectId, project.areaId)
@@ -85,6 +102,12 @@ fun ProjectDetailScreen(
                     }
                 },
                 actions = {
+                    IconButton(onClick = { showStatusDialog = true }) {
+                        Icon(
+                            Icons.Default.Tune,
+                            contentDescription = stringResource(Res.string.project_set_status)
+                        )
+                    }
                     IconButton(onClick = {
                         onEditNode(projectId)
                     }) {
@@ -124,7 +147,8 @@ fun ProjectDetailScreen(
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = project.title.uppercase(),
@@ -132,13 +156,27 @@ fun ProjectDetailScreen(
                     color = if (project.isFrozen) TactileTheme.Muted else TactileTheme.Text,
                     modifier = Modifier.weight(1f)
                 )
-                if (isNeglected) {
-                    Text(
-                        stringResource(Res.string.project_detail_neglected),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Error,
-                        modifier = Modifier.padding(top = 8.dp)
+
+                Surface(
+                    color = healthColor.copy(alpha = 0.1f),
+                    shape = RoundedCornerShape(TactileTheme.RadiusSm),
+                    border = androidx.compose.foundation.BorderStroke(
+                        1.dp,
+                        healthColor.copy(alpha = 0.5f)
                     )
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(modifier = Modifier.size(8.dp).background(healthColor, CircleShape))
+                        Spacer(Modifier.width(6.dp))
+                        Text(
+                            text = healthLabel,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = healthColor
+                        )
+                    }
                 }
             }
 
@@ -197,6 +235,30 @@ fun ProjectDetailScreen(
             )
 
             Spacer(modifier = Modifier.height(TactileTheme.SpacingLg))
+
+            val projectInbox =
+                nodesWithPinForProject.filter { it.node.inboxState && it.node.status == "active" }
+            if (projectInbox.isNotEmpty()) {
+                Text(
+                    text = stringResource(Res.string.project_detail_inbox_all).split("&").first()
+                        .trim(),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TactileTheme.Accent
+                )
+                Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
+                projectInbox.forEach { item ->
+                    NodeCard(
+                        nodeWithPin = item,
+                        onToggleDone = { status -> viewModel.updateNodeStatus(item.node, status) },
+                        onTogglePin = { isPinned -> viewModel.togglePin(item.node, isPinned) },
+                        onClick = { onEditNode(item.node.id) },
+                        onLongClick = { onEditNode(item.node.id) },
+                        onArchive = { viewModel.archiveNode(item.node) }
+                    )
+                    Spacer(Modifier.height(TactileTheme.SpacingSm))
+                }
+                Spacer(modifier = Modifier.height(TactileTheme.SpacingLg))
+            }
 
             Text(
                 text = stringResource(Res.string.project_detail_next_actions),
@@ -292,7 +354,9 @@ fun ProjectDetailScreen(
             )
             Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
 
-            nodesWithPinForProject.forEach { item ->
+            val otherItems =
+                nodesWithPinForProject.filter { !it.node.inboxState || it.node.status != "active" }
+            otherItems.forEach { item ->
                 NodeCard(
                     nodeWithPin = item,
                     onToggleDone = { status -> viewModel.updateNodeStatus(item.node, status) },
@@ -304,6 +368,43 @@ fun ProjectDetailScreen(
                 Spacer(Modifier.height(TactileTheme.SpacingSm))
             }
         }
+    }
+
+    if (showStatusDialog) {
+        AlertDialog(
+            onDismissRequest = { showStatusDialog = false },
+            title = { Text(stringResource(Res.string.project_set_status)) },
+            text = {
+                Column {
+                    val statuses = listOf("active", "on_hold", "someday")
+                    statuses.forEach { s ->
+                        ListItem(
+                            headlineContent = { Text(s.uppercase()) },
+                            modifier = Modifier.clickable {
+                                viewModel.updateNodeStatus(project, s)
+                                showStatusDialog = false
+                            }
+                        )
+                    }
+                    HorizontalDivider()
+                    ListItem(
+                        headlineContent = { Text(stringResource(Res.string.project_detail_freeze).uppercase()) },
+                        supportingContent = { Text("Stop all progress indicators") },
+                        trailingContent = {
+                            Switch(checked = project.isFrozen, onCheckedChange = {
+                                viewModel.updateNode(project.copy(isFrozen = it))
+                                showStatusDialog = false
+                            })
+                        }
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    showStatusDialog = false
+                }) { Text(stringResource(Res.string.projects_dialog_cancel)) }
+            }
+        )
     }
 }
 

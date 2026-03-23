@@ -32,7 +32,7 @@ import androidx.room.RoomDatabaseConstructor
         NodeSnapshotEntity::class,
         ReviewEntity::class,
     ],
-    version = 18,
+    version = 20,
     exportSchema = false,
 )
 @ConstructedBy(AppDatabaseConstructor::class)

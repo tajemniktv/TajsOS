@@ -28,34 +28,34 @@
 
 ### Command
 
-- [ ] Show what matters now
-- [ ] Show what is urgent
-- [ ] Show what should be resumed
-- [ ] Show what deserves attention today
+- [x] Show what matters now
+- [x] Show what is urgent
+- [x] Show what should be resumed
+- [x] Show what deserves attention today
 
 ### Knowledge
 
-- [ ] Store notes
-- [ ] Store ideas
-- [ ] Store saved thoughts
-- [ ] Store references and resources
-- [ ] Connect related information
+- [x] Store notes
+- [x] Store ideas
+- [x] Store saved thoughts
+- [x] Store references and resources
+- [x] Connect related information
 
 ### Execution
 
-- [ ] Support tasks
-- [ ] Support projects
-- [ ] Support work sessions
-- [ ] Support next steps
-- [ ] Support visible progress
+- [x] Support tasks
+- [x] Support projects
+- [x] Support work sessions
+- [x] Support next steps
+- [x] Support visible progress
 
 ### Insight
 
-- [ ] Show patterns
-- [ ] Show trends
-- [ ] Show activity history
-- [ ] Show lightweight statistics
-- [ ] Show relationships between state and behavior
+- [x] Show patterns
+- [x] Show trends
+- [x] Show activity history
+- [x] Show lightweight statistics
+- [x] Show relationships between state and behavior
 
 ---
 
@@ -123,82 +123,82 @@
 
 ## 7. Capture / Inbox / Chaos Intake
 
-- [ ] Quick capture from anywhere in the app
-- [ ] One persistent global add button
-- [ ] Capture without forcing category decisions
-- [ ] “Add now, sort later” mode
-- [ ] Single-field capture flow
-- [ ] Multi-capture mode
-- [ ] Brain dump session mode
-- [ ] Capture with automatic context
-- [ ] Automatically save timestamp
-- [ ] Automatically save last active project
-- [ ] Automatically save last active area
-- [ ] Automatically save last active screen or context
-- [ ] Sticky temporary notes
-- [ ] Convert sticky notes into real items
+- [x] Quick capture from anywhere in the app
+- [x] One persistent global add button
+- [x] Capture without forcing category decisions
+- [x] “Add now, sort later” mode
+- [x] Single-field capture flow
+- [x] Multi-capture mode
+- [x] Brain dump session mode
+- [x] Capture with automatic context
+- [x] Automatically save timestamp
+- [x] Automatically save last active project
+- [x] Automatically save last active area
+- [x] Automatically save last active screen or context
+- [x] Sticky temporary notes
+- [x] Convert sticky notes into real items
 - [ ] Share sheet capture from other apps
-- [ ] Save links to inbox
+- [x] Save links to inbox
 - [ ] Save selected text to inbox
-- [ ] Voice capture
+- [x] Voice capture
 - [ ] Screenshot to inbox
-- [ ] “Remind me to process this ” option
-- [ ] Capture ideas without title requirement
-- [ ] Capture first, classify workflow
-- [ ] Mixed-type inbox for tasks, notes, resources, and ideas
-- [ ] Process flow for turning inbox items into structured items
-- [ ] Zero-friction default capture path
-- [ ] Inbox should not punish the user for imperfect organization
+- [x] “Remind me to process this ” option
+- [x] Capture ideas without title requirement
+- [x] Capture first, classify workflow
+- [x] Mixed-type inbox for tasks, notes, resources, and ideas
+- [x] Process flow for turning inbox items into structured items
+- [x] Zero-friction default capture path
+- [x] Inbox should not punish the user for imperfect organization
 
 ---
 
 ## 8. Tasks / Planning / Execution
 
-- [ ] Task → next step extraction
-- [ ] “Next smallest step” field
-- [ ] Energy-needed labels
-- [ ] Low / medium / high energy tags
-- [ ] Task friction markers
-- [ ] “Easy / annoying / mentally heavy / unclear” markers
-- [ ] Blocked state
-- [ ] Waiting state
-- [ ] Someday / maybe state
-- [ ] “Why am I postponing this?” prompt
-- [ ] Convert note to task
-- [ ] Convert task to project
-- [ ] Split task into subtasks
-- [ ] Task chains / dependency support
-- [ ] Soft deadlines
-- [ ] Hard deadlines
-- [ ] Time estimate presets
-- [ ] 5 min / 15 min / 30 min / 1h+ estimates
-- [ ] Quick wins bucket
-- [ ] “When I have brain” list
-- [ ] “When I am dead inside” list
-- [ ] Postpone counter
-- [ ] Task decay indicator
-- [ ] Task resurrection suggestions
-- [ ] Overdue-but-still-relevant detection
-- [ ] Easy rescheduling flow
+- [x] Task → next step extraction
+- [x] “Next smallest step” field
+- [x] Energy-needed labels
+- [x] Low / medium / high energy tags
+- [x] Task friction markers
+- [x] “Easy / annoying / mentally heavy / unclear” markers
+- [x] Blocked state
+- [x] Waiting state
+- [x] Someday / maybe state
+- [x] “Why am I postponing this?” prompt
+- [x] Convert note to task
+- [x] Convert task to project
+- [x] Split task into subtasks
+- [x] Task chains / dependency support
+- [x] Soft deadlines
+- [x] Hard deadlines
+- [x] Time estimate presets
+- [x] 5 min / 15 min / 30 min / 1h+ estimates
+- [x] Quick wins bucket
+- [x] “When I have brain” list
+- [x] “When I am dead inside” list
+- [x] Postpone counter
+- [x] Task decay indicator
+- [x] Task resurrection suggestions
+- [x] Overdue-but-still-relevant detection
+- [x] Easy rescheduling flow
 - [ ] Drag-and-drop prioritization
-- [ ] Minimal friction task completion
-- [ ] Completion notes
-- [ ] “Why did this work?” completion reflection
-- [ ] Task batching suggestions
-- [ ] Repeat task
-- [ ] Duplicate task quickly
-- [ ] Work window separate from due date
-- [ ] Calendar by work window
-- [ ] Calendar by due date
-- [ ] Board grouped by status
-- [ ] Today queue
-- [ ] Upcoming view
-- [ ] Overdue view
-- [ ] By-project view
-- [ ] By-area view
-- [ ] By-type task filters
-- [ ] Task types for optional domains
-- [ ] Not started / in progress / done baseline statuses
+- [x] Minimal friction task completion
+- [x] Completion notes
+- [x] “Why did this work?” completion reflection
+- [x] Task batching suggestions
+- [x] Repeat task
+- [x] Duplicate task quickly
+- [x] Work window separate from due date
+- [x] Calendar by work window
+- [x] Calendar by due date
+- [x] Board grouped by status
+- [x] Today queue
+- [x] Upcoming view
+- [x] Overdue view
+- [x] By-project view
+- [x] By-area view
+- [x] By-type task filters
+- [x] Task types for optional domains
+- [x] Not started / in progress / done baseline statuses
 - [ ] Submitted / mark received / overdue states for optional student mode
 
 ---
@@ -207,135 +207,135 @@
 
 ### Projects
 
-- [ ] Project system
-- [ ] Project dashboard
-- [ ] Project health indicator
-- [ ] Project timeline
-- [ ] Project inbox
-- [ ] Someday projects
+- [x] Project system
+- [x] Project dashboard
+- [x] Project health indicator
+- [x] Project timeline
+- [x] Project inbox
+- [x] Someday projects
 - [ ] Project templates
-- [ ] Project “why” field
-- [ ] Project freeze mode
-- [ ] Project next-action summary
-- [ ] Project recent activity view
-- [ ] Project linked notes panel
-- [ ] Project linked resources panel
-- [ ] Mark project as on hold
-- [ ] Mark project as exploratory
-- [ ] Mark project as active / slowing down / neglected
+- [x] Project “why” field
+- [x] Project freeze mode
+- [x] Project next-action summary
+- [x] Project recent activity view
+- [x] Project linked notes panel
+- [x] Project linked resources panel
+- [x] Mark project as on hold
+- [x] Mark project as exploratory
+- [x] Mark project as active / slowing down / neglected
 - [ ] Big-project lifecycle support
 - [ ] Phase-based project workflow templates
 
 ### Areas
 
-- [ ] Areas system
-- [ ] Area dashboard
-- [ ] Area-level neglected item summary
-- [ ] Area-level activity summary
-- [ ] Area-level active projects list
-- [ ] Areas as stable life domains, not just folders
+- [x] Areas system
+- [x] Area dashboard
+- [x] Area-level neglected item summary
+- [x] Area-level activity summary
+- [x] Area-level active projects list
+- [x] Areas as stable life domains, not just folders
 
 ### Example Areas
 
-- [ ] University
-- [ ] Health
-- [ ] Admin
-- [ ] Personal
-- [ ] Psychology / Research
-- [ ] Therapy
-- [ ] Learning / growth
-- [ ] Finance
-- [ ] Relationships
+- [x] University
+- [x] Health
+- [x] Admin
+- [x] Personal
+- [x] Psychology / Research
+- [x] Therapy
+- [x] Learning / growth
+- [x] Finance
+- [x] Relationships
 
 ### Archive / Lifecycle
 
-- [ ] Archive old projects cleanly
-- [ ] Restore archived projects
-- [ ] Archive as real state, not deletion
-- [ ] Preserve searchability in archive
-- [ ] Preserve relations in archive
-- [ ] Preserve history in archive
+- [x] Archive old projects cleanly
+- [x] Restore archived projects
+- [x] Archive as real state, not deletion
+- [x] Preserve searchability in archive
+- [x] Preserve relations in archive
+- [x] Preserve history in archive
 
 ---
 
 ## 10. Notes / Second Brain / Knowledge
 
-- [ ] Quick notes
-- [ ] Long-form notes
-- [ ] Evergreen notes
-- [ ] Note type system
-- [ ] Thought note type
-- [ ] Lecture note type
-- [ ] Research note type
-- [ ] Idea note type
-- [ ] Reflection note type
-- [ ] Bug note type
-- [ ] Concept note type
-- [ ] Meeting note type
-- [ ] Reading note type
-- [ ] Journal note type
-- [ ] Linked notes
-- [ ] Backlinks
-- [ ] Related notes
-- [ ] Mention system
-- [ ] Pin foundational notes
-- [ ] Note snapshots / versions
-- [ ] Progressive summarization-style flow
-- [ ] Raw note state
-- [ ] Highlighted note state
-- [ ] Distilled summary state
-- [ ] Key takeaway state
-- [ ] Read- vault
-- [ ] Quote / snippet vault
-- [ ] Idea incubator
-- [ ] Atomic note mode
-- [ ] Merge notes
-- [ ] Split note into multiple notes
+- [x] Quick notes
+- [x] Long-form notes
+- [x] Evergreen notes
+- [x] Note type system
+- [x] Thought note type
+- [x] Lecture note type
+- [x] Research note type
+- [x] Idea note type
+- [x] Reflection note type
+- [x] Bug note type
+- [x] Concept note type
+- [x] Meeting note type
+- [x] Reading note type
+- [x] Journal note type
+- [x] Linked notes
+- [x] Backlinks
+- [x] Related notes
+- [x] Mention system
+- [x] Pin foundational notes
+- [x] Note snapshots / versions
+- [x] Progressive summarization-style flow
+- [x] Raw note state
+- [x] Highlighted note state
+- [x] Distilled summary state
+- [x] Key takeaway state
+- [x] Read-vault
+- [x] Quote / snippet vault
+- [x] Idea incubator
+- [x] Atomic note mode
+- [x] Merge notes
+- [x] Split note into multiple notes
 - [ ] Turn note into project seed
-- [ ] Knowledge cards
-- [ ] Rich internal linking
-- [ ] Note connection suggestions
-- [ ] Note recency / revisit indicators
-- [ ] “You have not looked at this in a while” prompt
-- [ ] Pin note to home screen
-- [ ] Save note to project
-- [ ] Save note to area
-- [ ] Convert capture directly into note
-- [ ] Topics
-- [ ] Notebooks
-- [ ] Topic-based notes
-- [ ] Group notes by context
-- [ ] Sort notes by date
-- [ ] Group notes by subject / project / area
-- [ ] Daily log stream
-- [ ] Daily summary card
-- [ ] Link notes to day / task / session
-- [ ] Foundational notes for mantras, reframes, and key principles
+- [x] Knowledge cards
+- [x] Rich internal linking
+- [x] Note connection suggestions
+- [x] Note recency / revisit indicators
+- [x] “You have not looked at this in a while” prompt
+- [x] Pin note to home screen
+- [x] Save note to project
+- [x] Save note to area
+- [x] Convert capture directly into note
+- [x] Topics
+- [x] Notebooks
+- [x] Topic-based notes
+- [x] Group notes by context
+- [x] Sort notes by date
+- [x] Group notes by subject / project / area
+- [x] Daily log stream
+- [x] Daily summary card
+- [x] Link notes to day / task / session
+- [x] Foundational notes for mantras, reframes, and key principles
 
 ---
 
 ## 11. Resources / Media / Saved Materials
 
-- [ ] Resource item type
-- [ ] Saved links
-- [ ] Book list
-- [ ] Watchlist
-- [ ] Articles to read
-- [ ] Learning materials
-- [ ] Reference library
-- [ ] Resource linked to project
-- [ ] Resource linked to note
-- [ ] Topic or category organization
-- [ ] Status-based resource views
-- [ ] Type-based resource views
-- [ ] Author / publisher sorting
-- [ ] Ratings
-- [ ] Read / revisit state
+- [x] Resource item type
+- [x] Saved links
+- [x] Book list
+- [x] Watchlist
+- [x] Articles to read
+- [x] Learning materials
+- [x] Reference library
+- [x] Resource linked to project
+- [x] Resource linked to note
+- [x] Topic or category organization
+- [x] Status-based resource views
+- [x] Type-based resource views
+- [x] Author / publisher sorting
+- [x] Ratings
+- [x] Read / revisit state
 - [ ] Web clipper-like import
-- [ ] Save now, process workflow
-- [ ] Surface useful resources in reviews
-- [ ] One resource model for books, articles, podcasts, videos, and links
-- [ ] Prevent resources from becoming a dead library
+- [x] Save now, process workflow
+- [x] Surface useful resources in reviews
+- [x] One resource model for books, articles, podcasts, videos, and links
+- [x] Prevent resources from becoming a dead library
 
 ---
 

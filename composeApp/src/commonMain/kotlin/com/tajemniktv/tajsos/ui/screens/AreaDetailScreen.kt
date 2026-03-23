@@ -56,6 +56,15 @@ fun AreaDetailScreen(
     val nodesWithPinInArea by viewModel.getNodesForArea(areaId)
         .collectAsState(initial = emptyList())
 
+    val foundationalNote = nodesWithPinInArea.find {
+        it.node.type == "note" && it.tags.any { tag ->
+            tag.name.equals(
+                "foundational",
+                ignoreCase = true
+            )
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -98,6 +107,59 @@ fun AreaDetailScreen(
                 style = MaterialTheme.typography.displaySmall,
                 color = TactileTheme.Text
             )
+
+            val areaNodesTotal = nodes.filter { it.node.areaId == areaId }
+            if (areaNodesTotal.isNotEmpty()) {
+                val totalCount = areaNodesTotal.size
+                val completedCount = areaNodesTotal.count { it.node.status == "done" }
+                val areaProgress = completedCount.toFloat() / totalCount
+
+                Spacer(Modifier.height(8.dp))
+                LinearProgressIndicator(
+                    progress = { areaProgress },
+                    modifier = Modifier.fillMaxWidth().height(4.dp),
+                    color = TactileTheme.Primary,
+                    trackColor = TactileTheme.Border,
+                    strokeCap = androidx.compose.ui.graphics.StrokeCap.Round
+                )
+                Text(
+                    text = "${(areaProgress * 100).toInt()}% AREA COMPLETION",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TactileTheme.Muted,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+            }
+
+            if (foundationalNote != null) {
+                Surface(
+                    onClick = { onEditNode(foundationalNote.node.id) },
+                    modifier = Modifier.fillMaxWidth().padding(vertical = TactileTheme.SpacingSm),
+                    color = TactileTheme.Primary.copy(alpha = 0.05f),
+                    shape = MaterialTheme.shapes.small,
+                    border = androidx.compose.foundation.BorderStroke(
+                        1.dp,
+                        TactileTheme.Primary.copy(alpha = 0.3f)
+                    )
+                ) {
+                    Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+                        Text(
+                            text = stringResource(Res.string.dash_foundational),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = TactileTheme.Primary
+                        )
+                        Spacer(Modifier.height(4.dp))
+                        Text(
+                            foundationalNote.node.title,
+                            style = MaterialTheme.typography.titleSmall
+                        )
+                        Text(
+                            foundationalNote.node.content.take(100) + "...",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = TactileTheme.Muted
+                        )
+                    }
+                }
+            }
 
             val activeProjects =
                 projects.filter { it.status == "active" || it.projectStatus == "active" }

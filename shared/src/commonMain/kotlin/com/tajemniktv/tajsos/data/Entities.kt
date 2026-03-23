@@ -36,6 +36,8 @@ data class NodeEntity(
     val source: String = "manual", // manual, import, template, system
     val inboxState: Boolean = true,
     val sortOrder: Int? = null,
+    val contextScreen: String? = null,
+    val isSticky: Boolean = false,
     val dueAt: Long? = null,
     val startAt: Long? = null,
     val completedAt: Long? = null,
@@ -66,8 +68,13 @@ data class NodeEntity(
     val isRecurring: Boolean = false,
     val recurringInterval: String? = null, // daily, weekly, monthly
     // Note-specific (Roadmap Section 5)
-    val noteType: String? = null, // thought, lecture, research, idea, reflection, bug, concept, evergreen
+    val noteType: String? = null, // thought, lecture, research, idea, reflection, bug, concept, evergreen, meeting, reading, journal
     val noteState: String? = null, // raw, highlighted, distilled, takeaway
+    // Media/Resource specific (Roadmap Section 11)
+    val mediaType: String? = null, // book, article, podcast, video, link
+    val rating: Int? = null, // 1-5 stars
+    val author: String? = null,
+    val publisher: String? = null,
 )
 
 /**

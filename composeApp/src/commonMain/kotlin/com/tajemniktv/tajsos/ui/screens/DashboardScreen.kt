@@ -4,23 +4,25 @@
 
 package com.tajemniktv.tajsos.ui.screens
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.horizontalScroll
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.LibraryBooks
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.MainViewModel
@@ -42,6 +44,7 @@ fun DashboardScreen(
     onNavigateTo: (Screen) -> Unit,
     onEditNode: (Long) -> Unit,
     onNavigateToProject: (Long) -> Unit,
+    onOpenDrawer: () -> Unit,
 ) {
     val allNodes by viewModel.allNodes.collectAsState()
     val todayNodes by viewModel.todayNodes.collectAsState()
@@ -54,32 +57,28 @@ fun DashboardScreen(
     val activeReminders by viewModel.activeReminders.collectAsState()
     val calendarEntries by viewModel.calendarEntries.collectAsState()
     val dashboardState by viewModel.dashboardUIState.collectAsState()
-
-    val today =
-        Clock.System
-            .now()
-            .toLocalDateTime(TimeZone.currentSystemDefault())
-            .date
-            .toString()
-    val moodToday = trackEntries.find { it.date == today }
-    val tasksCount = dashboardState.tasksCount
-    val notesCount = dashboardState.notesCount
-    val pinnedKnowledge = dashboardState.pinnedKnowledge
-    val upcomingDeadlines = dashboardState.upcomingDeadlines
-    val overdueNodes = dashboardState.overdueNodes
-    val relevantNote = dashboardState.relevantNote
-    val readLaterVault = dashboardState.readLaterVault
-    val quoteVault = dashboardState.quoteVault
-    val ideaIncubator = dashboardState.ideaIncubator
-
-    val allReviews by viewModel.allReviews.collectAsState()
-    val lastWeeklyReview = allReviews.find { it.type == "weekly" }
-
     val insights by viewModel.insights.collectAsState()
+    val allReviews by viewModel.allReviews.collectAsState()
+
+    val pinnedNodes = allNodes.filter { it.pin != null }
+    val completedTodayCount = pinnedNodes.count { it.node.status == "done" }
+    val totalTodayCount = pinnedNodes.size
+    val dailyProgress =
+        if (totalTodayCount > 0) completedTodayCount.toFloat() / totalTodayCount else 0f
+
+    val now = Clock.System.now()
+    val localNow = now.toLocalDateTime(TimeZone.currentSystemDefault())
+    val todayDateStr = localNow.date.toString()
+    val currentHour = localNow.hour
+    val moodToday = trackEntries.find { it.date == todayDateStr }
+
+    val lastWeeklyReview = allReviews.find { it.type == "weekly" }
+    val weekMillis = 7 * 24 * 60 * 60 * 1000L
+    val needsWeeklyReview =
+        lastWeeklyReview == null || (now.toEpochMilliseconds() - lastWeeklyReview.completedAt) > weekMillis
 
     val scrollState = rememberScrollState()
 
-    val currentHour = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).hour
     val vibeString = when (currentHour) {
         in 5..11 -> Res.string.dash_vibe_morning
         in 12..17 -> Res.string.dash_vibe_afternoon
@@ -88,140 +87,52 @@ fun DashboardScreen(
     }
 
     Column(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .verticalScroll(scrollState)
-                .padding(TactileTheme.SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingLg),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(TactileTheme.Background)
+            .verticalScroll(scrollState)
+            .padding(TactileTheme.SpacingMd),
+        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingLg)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Bottom
-        ) {
-            Text(
-                text = stringResource(Res.string.dash_command),
-                style = MaterialTheme.typography.displayMedium,
-                color = TactileTheme.Text,
-            )
-            Text(
-                text = stringResource(vibeString),
-                style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Muted,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-        }
-
-        // 0. Search Bar (Search-first approach)
-        OutlinedTextField(
-            value = "",
-            onValueChange = {
-                viewModel.updateSearchQuery(it)
-                onNavigateTo(Screen.Search)
-            },
-            modifier = Modifier.fillMaxWidth(),
-            placeholder = {
-                Text(
-                    stringResource(Res.string.dash_search_placeholder),
-                    style = MaterialTheme.typography.labelSmall
-                )
-            },
-            leadingIcon = {
-                Icon(
-                    Icons.Default.Search,
-                    contentDescription = null,
-                    tint = TactileTheme.Primary
-                )
-            },
-            shape = RoundedCornerShape(TactileTheme.RadiusMd),
-            colors = OutlinedTextFieldDefaults.colors(
-                unfocusedBorderColor = TactileTheme.Border,
-                focusedBorderColor = TactileTheme.Primary,
-                unfocusedContainerColor = TactileTheme.Surface,
-                focusedContainerColor = TactileTheme.Surface
-            )
+        // 1. Header
+        DashHeader(
+            vibe = stringResource(vibeString),
+            onMenuClick = onOpenDrawer,
+            onSettingsClick = { onNavigateTo(Screen.Settings) }
         )
 
-        // 0.1 Time-based Reset Card
-        if (currentHour in 5..11) {
-            Surface(
-                onClick = { onNavigateTo(Screen.Review) },
+        // 2. Search & Quick Links
+        Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+            OutlinedTextField(
+                value = "",
+                onValueChange = {
+                    viewModel.updateSearchQuery(it)
+                    onNavigateTo(Screen.Search)
+                },
                 modifier = Modifier.fillMaxWidth(),
-                color = TactileTheme.Primary.copy(alpha = 0.05f),
-                shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                border = androidx.compose.foundation.BorderStroke(
-                    1.dp,
-                    TactileTheme.Primary.copy(alpha = 0.2f)
-                )
-            ) {
-                Row(
-                    modifier = Modifier.padding(TactileTheme.SpacingMd),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+                placeholder = {
+                    Text(
+                        stringResource(Res.string.dash_search_placeholder),
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                },
+                leadingIcon = {
                     Icon(
-                        Icons.Default.WbSunny,
+                        Icons.Default.Search,
                         contentDescription = null,
                         tint = TactileTheme.Primary
                     )
-                    Spacer(Modifier.width(TactileTheme.SpacingMd))
-                    Column {
-                        Text(
-                            stringResource(Res.string.dash_morning_reset),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = TactileTheme.Primary
-                        )
-                        Text(
-                            stringResource(Res.string.dash_morning_reset_desc),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-                }
-            }
-        } else if (currentHour in 18..23) {
-            Surface(
-                onClick = { onNavigateTo(Screen.Review) },
-                modifier = Modifier.fillMaxWidth(),
-                color = TactileTheme.Accent.copy(alpha = 0.05f),
+                },
                 shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                border = androidx.compose.foundation.BorderStroke(
-                    1.dp,
-                    TactileTheme.Accent.copy(alpha = 0.2f)
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedBorderColor = TactileTheme.Border,
+                    focusedBorderColor = TactileTheme.Primary,
+                    unfocusedContainerColor = TactileTheme.Surface,
+                    focusedContainerColor = TactileTheme.Surface
                 )
-            ) {
-                Row(
-                    modifier = Modifier.padding(TactileTheme.SpacingMd),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        Icons.Default.Brightness3,
-                        contentDescription = null,
-                        tint = TactileTheme.Accent
-                    )
-                    Spacer(Modifier.width(TactileTheme.SpacingMd))
-                    Column {
-                        Text(
-                            stringResource(Res.string.dash_evening_shutdown),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = TactileTheme.Accent
-                        )
-                        Text(
-                            stringResource(Res.string.dash_evening_shutdown_desc),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-                }
-            }
-        }
+            )
 
-        // 0.2 Quick Links
-        if (allAreas.isNotEmpty()) {
-            Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
-                Text(
-                    text = stringResource(Res.string.dash_quick_links),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Primary
-                )
+            if (allAreas.isNotEmpty()) {
                 Row(
                     modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
                     horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)
@@ -229,9 +140,9 @@ fun DashboardScreen(
                     allAreas.take(5).forEach { area ->
                         AssistChip(
                             onClick = {
-                                onNavigateTo(Screen.Search); viewModel.updateSearchAreaFilter(
-                                area.id
-                            )
+                                viewModel.clearSearchFilters()
+                                viewModel.updateSearchAreaFilter(area.id)
+                                onNavigateTo(Screen.Search)
                             },
                             label = {
                                 Text(
@@ -253,1231 +164,1108 @@ fun DashboardScreen(
             }
         }
 
-        // 1. Life Summary
-        val now = Clock.System.now().toEpochMilliseconds()
-        val weekMillis = 7 * 24 * 60 * 60 * 1000L
-        val needsWeeklyReview =
-            lastWeeklyReview == null || (now - lastWeeklyReview.completedAt) > weekMillis
-
-        if (needsWeeklyReview) {
-            Surface(
-                onClick = { onNavigateTo(Screen.Review) },
-                modifier = Modifier.fillMaxWidth(),
-                color = TactileTheme.Primary.copy(alpha = 0.1f),
-                shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                border = androidx.compose.foundation.BorderStroke(
-                    1.dp,
-                    TactileTheme.Primary.copy(alpha = 0.5f)
+        // 3. Alerts & Reminders (Critical Path)
+        Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+            // Reminders with Dismiss
+            activeReminders.forEach { node ->
+                AlertCard(
+                    title = "REMINDER: ${node.title}",
+                    description = "Active notification threshold reached.",
+                    icon = Icons.Default.NotificationsActive,
+                    color = TactileTheme.Error,
+                    action = {
+                        IconButton(
+                            onClick = { viewModel.updateNode(node.copy(reminderAt = null)) },
+                            modifier = Modifier.size(24.dp)
+                        ) {
+                            Icon(
+                                Icons.Default.Check,
+                                contentDescription = null,
+                                tint = TactileTheme.Error,
+                                modifier = Modifier.size(16.dp)
+                            )
+                        }
+                    },
+                    onClick = { onEditNode(node.id) }
                 )
+            }
+
+            if (needsWeeklyReview) {
+                AlertCard(
+                    title = stringResource(Res.string.dash_review_pending),
+                    description = stringResource(Res.string.dash_review_pending_desc),
+                    icon = Icons.Default.EventRepeat,
+                    color = TactileTheme.Primary,
+                    onClick = { onNavigateTo(Screen.Review) }
+                )
+            }
+
+            if (inboxNodes.isNotEmpty()) {
+                AlertCard(
+                    title = if (inboxNodes.size > 10) stringResource(
+                        Res.string.dash_inbox_overflow,
+                        inboxNodes.size
+                    )
+                    else stringResource(Res.string.dash_inbox_new, inboxNodes.size),
+                    description = "Process items to clear your mental buffer.",
+                    icon = if (inboxNodes.size > 10) Icons.Default.Warning else Icons.Default.MailOutline,
+                    color = if (inboxNodes.size > 10) TactileTheme.Error else TactileTheme.Accent,
+                    onClick = { onNavigateTo(Screen.Inbox) }
+                )
+            }
+
+            if (dashboardState.overdueNodes.isNotEmpty()) {
+                AlertCard(
+                    title = "${dashboardState.overdueNodes.size} OVERDUE ENTRIES",
+                    description = "Deadlines exceeded. System integrity at risk.",
+                    icon = Icons.Default.Warning,
+                    color = TactileTheme.Error,
+                    onClick = {
+                        viewModel.clearSearchFilters()
+                        viewModel.updateSearchStatusFilter("active")
+                        onNavigateTo(Screen.Search)
+                    }
+                )
+            }
+
+            // Mood-based Suggestions
+            moodToday?.let { mood ->
+                if ((mood.anxietyScore ?: 0) >= 4) {
+                    AlertCard(
+                        title = "STRESS DETECTED",
+                        description = stringResource(Res.string.dash_suggestion_stress),
+                        icon = Icons.Default.Psychology,
+                        color = TactileTheme.Accent,
+                        onClick = { onNavigateTo(Screen.Review) }
+                    )
+                }
+                if ((mood.focusScore ?: 5) <= 2) {
+                    AlertCard(
+                        title = "LOW FOCUS PHASE",
+                        description = stringResource(Res.string.dash_suggestion_low_focus),
+                        icon = Icons.Default.Lightbulb,
+                        color = TactileTheme.Accent,
+                        onClick = {
+                            viewModel.clearSearchFilters()
+                            viewModel.updateSearchMaxMinutesFilter(5)
+                            onNavigateTo(Screen.Search)
+                        }
+                    )
+                }
+                if (!mood.tookMeds && localNow.hour >= 10) {
+                    AlertCard(
+                        title = "MEDICATION LOG PENDING",
+                        description = stringResource(Res.string.dash_suggestion_meds),
+                        icon = Icons.Default.MedicalServices,
+                        color = TactileTheme.Accent,
+                        onClick = { onNavigateTo(Screen.Track) }
+                    )
+                }
+            }
+        }
+
+        // 4. Sticky Notes
+        if (dashboardState.stickyNotes.isNotEmpty()) {
+            Row(
+                modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)
+            ) {
+                dashboardState.stickyNotes.forEach { note ->
+                    StickyNoteCard(
+                        title = note.node.title,
+                        content = note.node.content,
+                        onClick = { onEditNode(note.node.id) }
+                    )
+                }
+            }
+        }
+
+        // 5. Daily Pulse & Today's Slots
+        TodayPulseCard(
+            progress = dailyProgress,
+            tasks = pinnedNodes,
+            onToggleTask = { nodeWithPin ->
+                val newStatus = if (nodeWithPin.node.status == "done") "active" else "done"
+                viewModel.updateNodeStatus(nodeWithPin.node, newStatus)
+            },
+            onTaskClick = { onEditNode(it) },
+            onClick = { onNavigateTo(Screen.Today) }
+        )
+
+        // 6. Focus Engine
+        FocusCard(
+            viewModel = viewModel,
+            activeSession = activeSession,
+            onToggleFocus = {
+                if (activeSession != null) {
+                    viewModel.stopFocusSession()
+                } else {
+                    pinnedNodes.firstOrNull()?.let { viewModel.startFocusSession(it.node.id) }
+                }
+            },
+            onClick = { onNavigateTo(Screen.Focus) }
+        )
+
+        // 7. Time-based Phase Cards
+        if (currentHour in 5..11) {
+            AlertCard(
+                title = stringResource(Res.string.dash_morning_reset),
+                description = stringResource(Res.string.dash_morning_reset_desc),
+                icon = Icons.Default.WbSunny,
+                color = TactileTheme.Primary,
+                onClick = { onNavigateTo(Screen.Review) }
+            )
+        } else if (currentHour in 18..23) {
+            AlertCard(
+                title = stringResource(Res.string.dash_evening_shutdown),
+                description = stringResource(Res.string.dash_evening_shutdown_desc),
+                icon = Icons.Default.Brightness3,
+                color = TactileTheme.Accent,
+                onClick = { onNavigateTo(Screen.Review) }
+            )
+        }
+
+        // 8. Performance Summary (Insights)
+        LifeSummaryCard(
+            captures = insights.weeklyCaptures,
+            completions = insights.weeklyCompletions,
+            onClick = { onNavigateTo(Screen.Insights) }
+        )
+
+        // 9. State-Aware Actions (Recovery, Overwhelmed, etc.)
+        StateAwareActionsGrid(viewModel = viewModel, onNavigateTo = onNavigateTo)
+
+        // 10. Operational Suggestions (Recovery, Batch, etc.)
+        Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingLg)) {
+            if (dashboardState.lowEnergyTasks.isNotEmpty() && (moodToday?.energyScore ?: 5) <= 2) {
+                SuggestionGroup(
+                    title = "RECOVERY MODE // LOW ENERGY",
+                    icon = Icons.Default.BatteryChargingFull,
+                    color = TactileTheme.Success,
+                    nodes = dashboardState.lowEnergyTasks,
+                    onEditNode = onEditNode
+                )
+            }
+
+            if (dashboardState.batchableTasks.isNotEmpty()) {
+                val firstBatch = dashboardState.batchableTasks.values.first()
+                val areaName =
+                    allAreas.find { it.id == firstBatch.first().node.areaId }?.title ?: "GENERAL"
+                SuggestionGroup(
+                    title = "BATCH SUGGESTION // $areaName",
+                    icon = Icons.Default.Layers,
+                    color = TactileTheme.Accent,
+                    nodes = firstBatch,
+                    onEditNode = onEditNode,
+                    description = "You have ${firstBatch.size} tasks in $areaName. Batch them?"
+                )
+            }
+
+            if (dashboardState.quickWins.isNotEmpty()) {
+                SuggestionGroup(
+                    title = "QUICK WINS // EASY FRICTION",
+                    icon = Icons.Default.Bolt,
+                    color = TactileTheme.Success,
+                    nodes = dashboardState.quickWins,
+                    onEditNode = onEditNode
+                )
+            }
+
+            if (dashboardState.deepWork.isNotEmpty()) {
+                SuggestionGroup(
+                    title = "DEEP WORK // HIGH ENERGY",
+                    icon = Icons.Default.Psychology,
+                    color = TactileTheme.Primary,
+                    nodes = dashboardState.deepWork,
+                    onEditNode = onEditNode
+                )
+            }
+
+            if (dashboardState.criticalProjects.isNotEmpty()) {
+                SuggestionGroup(
+                    title = "NEEDS ATTENTION // CRITICAL PROJECTS",
+                    icon = Icons.Default.AccountTree,
+                    color = TactileTheme.Error,
+                    nodes = dashboardState.criticalProjects.map {
+                        com.tajemniktv.tajsos.data.NodeWithPin(
+                            it,
+                            null
+                        )
+                    },
+                    onEditNode = { onNavigateToProject(it) }
+                )
+            }
+
+            if (dashboardState.deservesAttention.isNotEmpty()) {
+                SuggestionGroup(
+                    title = "DESERVES ATTENTION // NEGLECTED",
+                    icon = Icons.Default.NotificationImportant,
+                    color = TactileTheme.Accent,
+                    nodes = dashboardState.deservesAttention,
+                    onEditNode = onEditNode
+                )
+            }
+
+            if (dashboardState.upcomingDeadlines.isNotEmpty()) {
+                SuggestionGroup(
+                    title = "UPCOMING DEADLINES",
+                    icon = Icons.Default.DateRange,
+                    color = TactileTheme.Accent,
+                    nodes = dashboardState.upcomingDeadlines,
+                    onEditNode = onEditNode
+                )
+            }
+        }
+
+        // 11. Knowledge, Wisdom & Relevant Contexts
+        Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingLg)) {
+            Text(
+                "KNOWLEDGE & CONTEXT",
+                style = MaterialTheme.typography.labelSmall,
+                color = TactileTheme.Accent,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 1.sp
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)
+            ) {
+                VaultCard(
+                    modifier = Modifier.weight(1f),
+                    title = "READ LATER",
+                    count = dashboardState.readLaterVault.size,
+                    icon = Icons.Default.Bookmark,
+                    onClick = {
+                        viewModel.clearSearchFilters()
+                        viewModel.updateSearchTypeFilter("note")
+                        viewModel.updateSearchStatusFilter("active")
+                        onNavigateTo(Screen.Search)
+                    }
+                )
+                VaultCard(
+                    modifier = Modifier.weight(1f),
+                    title = "QUOTES",
+                    count = dashboardState.quoteVault.size,
+                    icon = Icons.Default.FormatQuote,
+                    onClick = { onNavigateTo(Screen.Search) }
+                )
+                VaultCard(
+                    modifier = Modifier.weight(1f),
+                    title = "IDEAS",
+                    count = dashboardState.ideaIncubator.size,
+                    icon = Icons.Default.Lightbulb,
+                    onClick = { onNavigateTo(Screen.Search) }
+                )
+            }
+
+            if (dashboardState.pinnedKnowledge.isNotEmpty()) {
+                SuggestionGroup(
+                    title = "PINNED KNOWLEDGE",
+                    icon = Icons.Default.Favorite,
+                    color = TactileTheme.Primary,
+                    nodes = dashboardState.pinnedKnowledge,
+                    onEditNode = onEditNode
+                )
+            }
+
+            if (dashboardState.foundationalNotes.isNotEmpty()) {
+                SuggestionGroup(
+                    title = "FOUNDATIONAL PRINCIPLE",
+                    icon = Icons.Default.AutoAwesome,
+                    color = TactileTheme.Accent,
+                    nodes = dashboardState.foundationalNotes,
+                    onEditNode = onEditNode
+                )
+            }
+
+            if (dashboardState.forgottenWisdom != null) {
+                DashCard(onClick = { onEditNode(dashboardState.forgottenWisdom!!.node.id) }) {
+                    Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+                        Text(
+                            "FORGOTTEN WISDOM",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = TactileTheme.Muted,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            dashboardState.forgottenWisdom!!.node.title,
+                            style = MaterialTheme.typography.titleSmall,
+                            color = TactileTheme.Text
+                        )
+                        Spacer(Modifier.height(4.dp))
+                        Text(
+                            dashboardState.forgottenWisdom!!.node.content.take(100) + "...",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = TactileTheme.Muted
+                        )
+                    }
+                }
+            }
+
+            if (dashboardState.resourceHighlights.isNotEmpty()) {
+                SuggestionGroup(
+                    title = "RESOURCE HIGHLIGHTS",
+                    icon = Icons.AutoMirrored.Filled.LibraryBooks,
+                    color = TactileTheme.Primary,
+                    nodes = dashboardState.resourceHighlights,
+                    onEditNode = onEditNode
+                )
+            }
+
+            // Relevant Contexts
+            allProjects.maxByOrNull { it.updatedAt }?.let { project ->
+                MetricCard(
+                    label = "RELEVANT PROJECT",
+                    value = project.title,
+                    secondaryLabel = "LAST UPDATED",
+                    icon = Icons.AutoMirrored.Filled.List,
+                    iconColor = TactileTheme.Primary,
+                    onClick = { onNavigateToProject(project.id) }
+                )
+            }
+
+            dashboardState.relevantNote?.let { nodeWithPin ->
+                MetricCard(
+                    label = "RELEVANT NOTE",
+                    value = nodeWithPin.node.title,
+                    secondaryLabel = "RECENT ACTIVITY",
+                    icon = Icons.Default.Edit,
+                    iconColor = TactileTheme.Primary,
+                    onClick = { onEditNode(nodeWithPin.node.id) }
+                )
+            }
+        }
+
+        // 12. Modules Grid
+        ModulesGrid(
+            todayNodes = todayNodes,
+            activeSession = activeSession,
+            moodToday = moodToday,
+            tasksCount = dashboardState.tasksCount,
+            notesCount = dashboardState.notesCount,
+            allProjects = allProjects,
+            allAreas = allAreas,
+            calendarEntries = calendarEntries,
+            allSessions = allSessions,
+            onNavigateTo = onNavigateTo,
+            viewModel = viewModel
+        )
+
+        // 13. System Footer
+        SystemFooter()
+
+        Spacer(Modifier.height(80.dp))
+    }
+}
+
+@Composable
+fun DashHeader(vibe: String, onMenuClick: () -> Unit, onSettingsClick: () -> Unit) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.clickable { onMenuClick() }) {
+            Box(
+                modifier = Modifier
+                    .size(32.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(TactileTheme.Surface),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    "T",
+                    color = TactileTheme.Primary,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
+            }
+            Spacer(Modifier.width(12.dp))
+            Column {
+                Text(
+                    "TAJSOS",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.ExtraBold,
+                    letterSpacing = 2.sp,
+                    color = TactileTheme.Text
+                )
+                Text(
+                    vibe.uppercase(),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TactileTheme.Muted,
+                    fontSize = 8.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Surface(
+                color = Color.Black.copy(alpha = 0.5f),
+                shape = CircleShape,
+                border = BorderStroke(1.dp, TactileTheme.Border)
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier.size(6.dp).clip(CircleShape)
+                            .background(TactileTheme.Success)
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        "STATUS: OK",
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = TactileTheme.Text
+                    )
+                }
+            }
+            Spacer(Modifier.width(12.dp))
+            IconButton(onClick = onSettingsClick) {
+                Icon(Icons.Default.Settings, contentDescription = null, tint = TactileTheme.Muted)
+            }
+        }
+    }
+}
+
+@Composable
+fun StickyNoteCard(title: String, content: String, onClick: () -> Unit) {
+    Surface(
+        onClick = onClick,
+        modifier = Modifier.width(200.dp),
+        color = TactileTheme.Accent.copy(alpha = 0.1f),
+        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+        border = BorderStroke(1.dp, TactileTheme.Accent.copy(alpha = 0.3f))
+    ) {
+        Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+            Text(
+                title,
+                style = MaterialTheme.typography.labelSmall,
+                maxLines = 1,
+                color = TactileTheme.Accent,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(Modifier.height(4.dp))
+            Text(
+                content,
+                style = MaterialTheme.typography.bodySmall,
+                maxLines = 3,
+                color = TactileTheme.Text
+            )
+        }
+    }
+}
+
+@Composable
+fun TodayPulseCard(
+    progress: Float,
+    tasks: List<com.tajemniktv.tajsos.data.NodeWithPin>,
+    onToggleTask: (com.tajemniktv.tajsos.data.NodeWithPin) -> Unit,
+    onTaskClick: (Long) -> Unit,
+    onClick: () -> Unit
+) {
+    DashCard(onClick = onClick) {
+        Column(modifier = Modifier.padding(TactileTheme.SpacingLg)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top
+            ) {
+                Column {
+                    Text(
+                        "TODAY",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = TactileTheme.Primary,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 1.sp
+                    )
+                    Text(
+                        "Daily Pulse",
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = TactileTheme.Text
+                    )
+                }
+                ProgressRing(progress = progress)
+            }
+            Spacer(Modifier.height(TactileTheme.SpacingLg))
+            Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+                tasks.filter { it.node.status == "active" }.take(3).forEach { nodeWithPin ->
+                    TaskBrief(
+                        title = nodeWithPin.node.title,
+                        isDone = false,
+                        onToggle = { onToggleTask(nodeWithPin) },
+                        onClick = { onTaskClick(nodeWithPin.node.id) })
+                }
+                if (tasks.none { it.node.status == "active" }) {
+                    Text(
+                        "System clear for today.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = TactileTheme.Success,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun FocusCard(
+    viewModel: MainViewModel,
+    activeSession: com.tajemniktv.tajsos.data.FocusSessionEntity?,
+    onToggleFocus: () -> Unit,
+    onClick: () -> Unit
+) {
+    val allNodes by viewModel.allNodes.collectAsState()
+    val activeTask =
+        activeSession?.let { session -> allNodes.find { it.node.id == session.nodeId }?.node }
+
+    DashCard(onClick = onClick) {
+        Column(modifier = Modifier.padding(TactileTheme.SpacingLg)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top
+            ) {
+                Column {
+                    Text(
+                        "FOCUS",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = TactileTheme.Primary,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 1.sp
+                    )
+                    Text(
+                        if (activeSession != null) "Deep Work Phase" else "System Standby",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = TactileTheme.Text
+                    )
+                }
+                if (activeSession != null) {
+                    val duration =
+                        (Clock.System.now().toEpochMilliseconds() - activeSession.startedAt) / 1000
+                    val h = duration / 3600;
+                    val m = (duration % 3600) / 60;
+                    val s = duration % 60
+                    Text(
+                        "${h.toString().padStart(2, '0')}:${
+                            m.toString().padStart(2, '0')
+                        }:${s.toString().padStart(2, '0')}",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = TactileTheme.Primary,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+            Spacer(Modifier.height(TactileTheme.SpacingMd))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    if (activeTask != null) "Active: ${activeTask.title}" else "Ready to engage",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = TactileTheme.Muted,
+                    maxLines = 1,
+                    modifier = Modifier.weight(1f)
+                )
+                Switch(
+                    checked = activeSession != null,
+                    onCheckedChange = { onToggleFocus() },
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = Color.White,
+                        checkedTrackColor = TactileTheme.Primary,
+                        uncheckedThumbColor = TactileTheme.Muted,
+                        uncheckedTrackColor = TactileTheme.Surface
+                    )
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun AlertCard(
+    title: String,
+    description: String,
+    icon: ImageVector,
+    color: Color,
+    action: @Composable (() -> Unit)? = null,
+    onClick: () -> Unit
+) {
+    Surface(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth(),
+        color = color.copy(alpha = 0.05f),
+        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+        border = BorderStroke(1.dp, color.copy(alpha = 0.3f))
+    ) {
+        Row(
+            modifier = Modifier.padding(TactileTheme.SpacingMd),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(icon, contentDescription = null, tint = color)
+            Spacer(Modifier.width(TactileTheme.SpacingMd))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    title,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = color,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    description,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = TactileTheme.Text
+                )
+            }
+            action?.invoke()
+        }
+    }
+}
+
+@Composable
+fun LifeSummaryCard(captures: Int, completions: Int, onClick: () -> Unit) {
+    DashCard(onClick = onClick) {
+        Column(modifier = Modifier.padding(TactileTheme.SpacingLg)) {
+            Text(
+                "LIFE SUMMARY",
+                style = MaterialTheme.typography.labelSmall,
+                color = TactileTheme.Primary,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 1.sp
+            )
+            Spacer(Modifier.height(TactileTheme.SpacingMd))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column {
+                    Text(
+                        "$captures",
+                        style = MaterialTheme.typography.headlineLarge,
+                        color = TactileTheme.Text
+                    ); Text(
+                    "CAPTURES / WEEK",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TactileTheme.Muted
+                )
+                }
+                Column(horizontalAlignment = Alignment.End) {
+                    Text(
+                        "$completions",
+                        style = MaterialTheme.typography.headlineLarge,
+                        color = TactileTheme.Success
+                    ); Text(
+                    "DONE / WEEK",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TactileTheme.Muted
+                )
+                }
+            }
+            Spacer(Modifier.height(TactileTheme.SpacingMd))
+            LinearProgressIndicator(
+                progress = {
+                    if (captures > 0) (completions.toFloat() / captures.toFloat()).coerceIn(
+                        0f,
+                        1f
+                    ) else 0f
+                },
+                modifier = Modifier.fillMaxWidth().height(8.dp),
+                color = TactileTheme.Primary,
+                trackColor = TactileTheme.Border,
+                strokeCap = StrokeCap.Round
+            )
+        }
+    }
+}
+
+@Composable
+fun MetricCard(
+    modifier: Modifier = Modifier,
+    label: String,
+    value: String,
+    secondaryLabel: String,
+    icon: ImageVector,
+    iconColor: Color,
+    onClick: () -> Unit
+) {
+    DashCard(modifier = modifier, onClick = onClick) {
+        Column(modifier = Modifier.padding(TactileTheme.SpacingLg)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Icon(
+                    icon,
+                    contentDescription = null,
+                    tint = iconColor,
+                    modifier = Modifier.size(24.dp)
+                )
+                Text(
+                    secondaryLabel,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = iconColor,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            Spacer(Modifier.height(TactileTheme.SpacingMd))
+            Column {
+                Text(
+                    label,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TactileTheme.Muted,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 1.sp
+                )
+                Text(
+                    value,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = TactileTheme.Text,
+                    maxLines = 1
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun StateAwareActionsGrid(viewModel: MainViewModel, onNavigateTo: (Screen) -> Unit) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)
+    ) {
+        listOf(
+            Triple(Icons.Default.Bolt, "OVERWHELMED", "Easy wins"),
+            Triple(Icons.Default.BatteryChargingFull, "CANNOT THINK", "Low energy"),
+            Triple(Icons.Default.Timer, "10 MINUTES", "Quick steps")
+        ).forEach { (icon, title, desc) ->
+            Surface(
+                onClick = {
+                    viewModel.clearSearchFilters(); when (title) {
+                    "OVERWHELMED" -> {
+                        viewModel.updateSearchFrictionFilter("easy"); viewModel.updateSearchEnergyFilter(
+                            1
+                        )
+                    }; "CANNOT THINK" -> viewModel.updateSearchEnergyFilter(1); "10 MINUTES" -> viewModel.updateSearchMaxMinutesFilter(
+                        10
+                    )
+                }; onNavigateTo(Screen.Search)
+                },
+                modifier = Modifier.weight(1f),
+                color = TactileTheme.Surface,
+                shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                border = BorderStroke(1.dp, TactileTheme.Border)
+            ) {
+                Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+                    Icon(
+                        icon,
+                        contentDescription = null,
+                        tint = TactileTheme.Primary,
+                        modifier = Modifier.size(20.dp)
+                    ); Text(
+                    title,
+                    style = MaterialTheme.typography.labelSmall,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 10.sp
+                ); Text(
+                    desc,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = TactileTheme.Muted,
+                    fontSize = 9.sp
+                )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun SuggestionGroup(
+    title: String,
+    icon: ImageVector,
+    color: Color,
+    nodes: List<com.tajemniktv.tajsos.data.NodeWithPin>,
+    onEditNode: (Long) -> Unit,
+    description: String? = null
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+        Text(
+            title,
+            style = MaterialTheme.typography.labelSmall,
+            color = color,
+            fontWeight = FontWeight.Bold,
+            letterSpacing = 1.sp
+        )
+        if (description != null) Text(
+            description,
+            style = MaterialTheme.typography.bodySmall,
+            color = TactileTheme.Muted
+        )
+        nodes.take(2).forEach { nodeWithPin ->
+            Surface(
+                onClick = { onEditNode(nodeWithPin.node.id) },
+                modifier = Modifier.fillMaxWidth(),
+                color = TactileTheme.Surface,
+                shape = RoundedCornerShape(TactileTheme.RadiusSm),
+                border = BorderStroke(1.dp, color.copy(alpha = 0.2f))
             ) {
                 Row(
                     modifier = Modifier.padding(TactileTheme.SpacingMd),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        Icons.Default.EventRepeat,
+                        icon,
                         contentDescription = null,
-                        tint = TactileTheme.Primary
-                    )
-                    Spacer(Modifier.width(TactileTheme.SpacingMd))
-                    Column {
-                        Text(
-                            stringResource(Res.string.dash_review_pending),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = TactileTheme.Primary
-                        )
-                        Text(
-                            stringResource(Res.string.dash_review_pending_desc),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-                }
-            }
-        }
-
-        // State-Aware Suggestions
-        if (moodToday != null) {
-            val suggestions =
-                mutableListOf<Pair<org.jetbrains.compose.resources.StringResource, () -> Unit>>()
-            if ((moodToday.anxietyScore ?: 0) >= 4) {
-                suggestions.add(Res.string.dash_suggestion_stress to { onNavigateTo(Screen.Review) })
-            }
-            if ((moodToday.focusScore ?: 5) <= 2) {
-                suggestions.add(Res.string.dash_suggestion_low_focus to {
-                    viewModel.clearSearchFilters()
-                    viewModel.updateSearchMaxMinutesFilter(5)
-                    onNavigateTo(Screen.Search)
-                })
-            }
-            if (!moodToday.tookMeds && (Clock.System.now()
-                    .toLocalDateTime(TimeZone.currentSystemDefault()).hour >= 10)
-            ) {
-                suggestions.add(Res.string.dash_suggestion_meds to { onNavigateTo(Screen.Track) })
-            }
-
-            if (suggestions.isNotEmpty()) {
-                Surface(
-                    modifier = Modifier.fillMaxWidth(),
-                    color = TactileTheme.Accent.copy(alpha = 0.1f),
-                    shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                    border = androidx.compose.foundation.BorderStroke(
-                        1.dp,
-                        TactileTheme.Accent.copy(alpha = 0.3f)
-                    )
-                ) {
-                    Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
-                        Text(
-                            stringResource(Res.string.dash_suggestions_title),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = TactileTheme.Accent
-                        )
-                        suggestions.forEach { (textRes, action) ->
-                            TextButton(onClick = action, contentPadding = PaddingValues(0.dp)) {
-                                Icon(
-                                    Icons.Default.Lightbulb,
-                                    contentDescription = null,
-                                    tint = TactileTheme.Accent,
-                                    modifier = Modifier.size(16.dp)
-                                )
-                                Spacer(Modifier.width(8.dp))
-                                Text(
-                                    stringResource(textRes),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = TactileTheme.Text
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            color = TactileTheme.Surface,
-            shape = RoundedCornerShape(TactileTheme.RadiusLg),
-            border = androidx.compose.foundation.BorderStroke(1.dp, TactileTheme.Border),
-        ) {
-            Column(modifier = Modifier.padding(TactileTheme.SpacingLg)) {
-                Text(
-                    text = stringResource(Res.string.dash_life_summary),
-                    style = MaterialTheme.typography.labelSmall.copy(letterSpacing = 2.sp),
-                    color = TactileTheme.Primary,
+                        tint = color,
+                        modifier = Modifier.size(16.dp)
+                    ); Spacer(Modifier.width(TactileTheme.SpacingMd)); Text(
+                    nodeWithPin.node.title,
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 1,
+                    modifier = Modifier.weight(1f)
                 )
-                Spacer(Modifier.height(TactileTheme.SpacingMd))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Column {
-                        Text(
-                            text = "${insights.weeklyCaptures}",
-                            style = MaterialTheme.typography.headlineLarge,
-                            color = TactileTheme.Text
-                        )
-                        Text(
-                            text = stringResource(Res.string.dash_captures_week),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = TactileTheme.Muted
-                        )
-                    }
-                    Column(horizontalAlignment = Alignment.End) {
-                        Text(
-                            text = "${insights.weeklyCompletions}",
-                            style = MaterialTheme.typography.headlineLarge,
-                            color = TactileTheme.Success
-                        )
-                        Text(
-                            text = stringResource(Res.string.dash_done_week),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = TactileTheme.Muted
-                        )
-                    }
                 }
-                Spacer(Modifier.height(TactileTheme.SpacingMd))
-                LinearProgressIndicator(
-                    progress = {
-                        if (insights.weeklyCaptures > 0)
-                            (insights.weeklyCompletions.toFloat() / insights.weeklyCaptures.toFloat()).coerceIn(
-                                0f,
-                                1f
-                            )
-                        else 0f
-                    },
-                    modifier = Modifier.fillMaxWidth().height(8.dp),
-                    color = TactileTheme.Primary,
-                    trackColor = TactileTheme.Border,
-                    strokeCap = androidx.compose.ui.graphics.StrokeCap.Round
-                )
             }
         }
+    }
+}
 
-        // 2. Recovery Mode
-        val lowEnergyTasks = dashboardState.lowEnergyTasks
+@Composable
+fun VaultCard(
+    modifier: Modifier = Modifier,
+    title: String,
+    count: Int,
+    icon: ImageVector,
+    onClick: () -> Unit
+) {
+    Surface(
+        onClick = onClick,
+        modifier = modifier,
+        color = TactileTheme.Surface,
+        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+        border = BorderStroke(1.dp, TactileTheme.Border)
+    ) {
+        Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+            Icon(
+                icon,
+                contentDescription = null,
+                tint = TactileTheme.Accent,
+                modifier = Modifier.size(20.dp)
+            ); Text(
+            title,
+            style = MaterialTheme.typography.labelSmall,
+            fontWeight = FontWeight.Bold,
+            fontSize = 9.sp
+        ); Text(
+            "$count ITEMS",
+            style = MaterialTheme.typography.bodySmall,
+            color = TactileTheme.Muted,
+            fontSize = 8.sp
+        )
+        }
+    }
+}
 
-        // 2.1 State-Aware Shortcuts
-        Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
-            Text(
-                text = stringResource(Res.string.dash_state_actions),
-                style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary
+@Composable
+fun ModulesGrid(
+    todayNodes: List<com.tajemniktv.tajsos.data.NodeEntity>,
+    activeSession: com.tajemniktv.tajsos.data.FocusSessionEntity?,
+    moodToday: com.tajemniktv.tajsos.data.TrackEntryEntity?,
+    tasksCount: Int,
+    notesCount: Int,
+    allProjects: List<com.tajemniktv.tajsos.data.NodeEntity>,
+    allAreas: List<com.tajemniktv.tajsos.data.NodeEntity>,
+    calendarEntries: List<com.tajemniktv.tajsos.ui.CalendarEntry>,
+    allSessions: List<com.tajemniktv.tajsos.data.FocusSessionEntity>,
+    onNavigateTo: (Screen) -> Unit,
+    viewModel: MainViewModel
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+        Text(
+            "MODULES",
+            style = MaterialTheme.typography.labelSmall,
+            color = TactileTheme.Muted,
+            fontWeight = FontWeight.Bold,
+            letterSpacing = 2.sp
+        )
+        val rows = listOf(
+            listOf(
+                Quad(
+                    stringResource(Res.string.screen_today),
+                    Icons.Default.DateRange,
+                    if (todayNodes.isNotEmpty()) "${todayNodes.size} TASKS" else "EMPTY",
+                    { onNavigateTo(Screen.Today) }),
+                Quad(
+                    stringResource(Res.string.screen_focus),
+                    Icons.Default.PlayArrow,
+                    if (activeSession != null) "ACTIVE" else "READY",
+                    { onNavigateTo(Screen.Focus) })
+            ),
+            listOf(
+                Quad(
+                    stringResource(Res.string.screen_track),
+                    Icons.Default.CheckCircle,
+                    if (moodToday != null) "LOGGED" else "PENDING",
+                    { onNavigateTo(Screen.Track) }),
+                Quad(
+                    stringResource(Res.string.screen_tasks),
+                    Icons.AutoMirrored.Filled.List,
+                    "$tasksCount TOTAL",
+                    { onNavigateTo(Screen.Tasks) })
+            ),
+            listOf(
+                Quad(
+                    stringResource(Res.string.screen_notes),
+                    Icons.Default.Edit,
+                    "$notesCount TOTAL",
+                    { onNavigateTo(Screen.Notes) }),
+                Quad(
+                    stringResource(Res.string.screen_proj),
+                    Icons.AutoMirrored.Filled.List,
+                    "${allProjects.size} ACTIVE",
+                    { onNavigateTo(Screen.Projects) })
+            ),
+            listOf(
+                Quad(
+                    stringResource(Res.string.screen_area),
+                    Icons.Default.LocationOn,
+                    "${allAreas.size} TOTAL",
+                    { onNavigateTo(Screen.Areas) }),
+                Quad(
+                    stringResource(Res.string.screen_cal),
+                    Icons.Default.Event,
+                    "${calendarEntries.size} ITEMS",
+                    { onNavigateTo(Screen.Calendar) })
+            ),
+            listOf(
+                Quad(
+                    stringResource(Res.string.screen_stats),
+                    Icons.Default.Info,
+                    "VIEW",
+                    { onNavigateTo(Screen.Insights) }),
+                Quad(
+                    stringResource(Res.string.screen_history),
+                    Icons.Default.History,
+                    if (allSessions.isNotEmpty()) "LAST: ${
+                        Instant.fromEpochMilliseconds(allSessions.first().startedAt)
+                            .toLocalDateTime(TimeZone.currentSystemDefault()).date
+                    }" else "EMPTY",
+                    { viewModel.resumeLastSession() })
             )
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)
-            ) {
-                Surface(
-                    onClick = {
-                        viewModel.clearSearchFilters()
-                        viewModel.updateSearchFrictionFilter("easy")
-                        viewModel.updateSearchEnergyFilter(1)
-                        onNavigateTo(Screen.Search)
-                    },
-                    modifier = Modifier.weight(1f),
-                    color = TactileTheme.Surface,
-                    shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, TactileTheme.Border)
-                ) {
-                    Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
-                        Icon(
-                            Icons.Default.Bolt,
-                            contentDescription = null,
-                            tint = TactileTheme.Success
-                        )
-                        Text(
-                            stringResource(Res.string.dash_overwhelmed),
-                            style = MaterialTheme.typography.labelSmall
-                        )
-                        Text(
-                            stringResource(Res.string.dash_overwhelmed_desc),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = TactileTheme.Muted
-                        )
-                    }
-                }
-                Surface(
-                    onClick = {
-                        viewModel.clearSearchFilters()
-                        viewModel.updateSearchEnergyFilter(1)
-                        onNavigateTo(Screen.Search)
-                    },
-                    modifier = Modifier.weight(1f),
-                    color = TactileTheme.Surface,
-                    shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, TactileTheme.Border)
-                ) {
-                    Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
-                        Icon(
-                            Icons.Default.BatteryChargingFull,
-                            contentDescription = null,
-                            tint = TactileTheme.Primary
-                        )
-                        Text(
-                            stringResource(Res.string.dash_cannot_think),
-                            style = MaterialTheme.typography.labelSmall
-                        )
-                        Text(
-                            stringResource(Res.string.dash_cannot_think_desc),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = TactileTheme.Muted
-                        )
-                    }
-                }
-                Surface(
-                    onClick = {
-                        viewModel.clearSearchFilters()
-                        viewModel.updateSearchMaxMinutesFilter(10)
-                        onNavigateTo(Screen.Search)
-                    },
-                    modifier = Modifier.weight(1f),
-                    color = TactileTheme.Surface,
-                    shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, TactileTheme.Border)
-                ) {
-                    Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
-                        Icon(
-                            Icons.Default.Timer,
-                            contentDescription = null,
-                            tint = TactileTheme.Accent
-                        )
-                        Text(
-                            stringResource(Res.string.dash_10_minutes),
-                            style = MaterialTheme.typography.labelSmall
-                        )
-                        Text(
-                            stringResource(Res.string.dash_10_minutes_desc),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = TactileTheme.Muted
-                        )
-                    }
-                }
-            }
-        }
-
-        if (moodToday?.energyScore != null && moodToday.energyScore!! <= 2 && lowEnergyTasks.isNotEmpty()) {
-            Surface(
-                modifier = Modifier.fillMaxWidth(),
-                color = TactileTheme.Success.copy(alpha = 0.1f),
-                shape = RoundedCornerShape(TactileTheme.RadiusLg),
-                border = androidx.compose.foundation.BorderStroke(
-                    1.dp,
-                    TactileTheme.Success.copy(alpha = 0.3f)
-                ),
-            ) {
-                Column(modifier = Modifier.padding(TactileTheme.SpacingLg)) {
-                    Text(
-                        text = stringResource(Res.string.dash_recovery_mode),
-                        style = MaterialTheme.typography.labelSmall.copy(letterSpacing = 2.sp),
-                        color = TactileTheme.Success,
-                    )
-                    Spacer(Modifier.height(TactileTheme.SpacingMd))
-                    Text(
-                        text = stringResource(Res.string.dash_recovery_desc),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = TactileTheme.Muted
-                    )
-                    Spacer(Modifier.height(TactileTheme.SpacingMd))
-                    lowEnergyTasks.take(2).forEach { nodeWithPin ->
-                        Surface(
-                            onClick = { onEditNode(nodeWithPin.node.id) },
-                            color = TactileTheme.Surface,
-                            shape = RoundedCornerShape(TactileTheme.RadiusSm),
-                            modifier = Modifier.padding(vertical = 4.dp).fillMaxWidth()
-                        ) {
-                            Row(
-                                Modifier.padding(TactileTheme.SpacingMd),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    Icons.Default.BatteryChargingFull,
-                                    contentDescription = null,
-                                    tint = TactileTheme.Success,
-                                    modifier = Modifier.size(16.dp)
-                                )
-                                Spacer(Modifier.width(8.dp))
-                                Text(
-                                    nodeWithPin.node.title,
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // 3. Operating / Next Context
-        if (activeSession != null || todayNodes.isNotEmpty() || allSessions.isNotEmpty()) {
-            val activeItem =
-                activeSession?.let { session ->
-                    todayNodes.find { it.id == session.nodeId }
-                        ?: allNodes
-                            .find { it.node.id == session.nodeId }
-                            ?.node
-                } ?: todayNodes.firstOrNull() ?: allSessions.firstOrNull()?.let { session ->
-                    allNodes
-                        .find { it.node.id == session.nodeId }
-                        ?.node
-                }
-
-            activeItem?.let { item ->
-                Surface(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .combinedClickable(
-                                onClick = {
-                                    if (activeSession != null) {
-                                        onNavigateTo(Screen.Focus)
-                                    } else {
-                                        viewModel.startFocusSession(item.id)
-                                    }
-                                },
-                                onLongClick = { onEditNode(item.id) },
-                            ),
-                    color = if (activeSession != null) TactileTheme.Primary.copy(alpha = 0.15f) else TactileTheme.Surface,
-                    shape = RoundedCornerShape(TactileTheme.RadiusLg),
-                    border =
-                        androidx.compose.foundation.BorderStroke(
-                            1.dp,
-                            if (activeSession != null) TactileTheme.Primary else TactileTheme.Border,
-                        ),
-                ) {
-                    Row(
-                        modifier = Modifier.padding(TactileTheme.SpacingLg),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                    ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = if (activeSession != null) stringResource(Res.string.dash_operating) else stringResource(
-                                    Res.string.dash_next_context
-                                ),
-                                style = MaterialTheme.typography.labelSmall.copy(letterSpacing = 2.sp),
-                                color = if (activeSession != null) TactileTheme.Accent else TactileTheme.Primary,
-                            )
-                            Spacer(Modifier.height(4.dp))
-                            Text(
-                                text = item.title.uppercase(),
-                                style = MaterialTheme.typography.headlineSmall,
-                                color = TactileTheme.Text,
-                            )
-                        }
-
-                        Button(
-                            onClick = { if (activeSession != null) onNavigateTo(Screen.Focus) else viewModel.startFocusSession(item.id) },
-                            shape = RoundedCornerShape(TactileTheme.RadiusSm),
-                            colors =
-                                ButtonDefaults.buttonColors(
-                                    containerColor = if (activeSession != null) TactileTheme.Primary else TactileTheme.Surface,
-                                    contentColor = if (activeSession != null) TactileTheme.Background else TactileTheme.Primary,
-                                ),
-                            border = if (activeSession == null) androidx.compose.foundation.BorderStroke(
-                                1.dp,
-                                TactileTheme.Primary
-                            ) else null,
-                        ) {
-                            Text(
-                                if (activeSession != null) stringResource(Res.string.dash_view) else stringResource(
-                                    Res.string.dash_engage
-                                )
-                            )
-                        }
-                    }
-                }
-            }
-        }
-
-        // 4. Inbox Warning
-        if (inboxNodes.isNotEmpty()) {
-            Surface(
-                onClick = { onNavigateTo(Screen.Inbox) },
-                modifier = Modifier.fillMaxWidth(),
-                color = TactileTheme.Surface,
-                shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                border = androidx.compose.foundation.BorderStroke(
-                    1.dp,
-                    if (inboxNodes.size > 10) TactileTheme.Error.copy(alpha = 0.5f) else TactileTheme.Accent.copy(
-                        alpha = 0.5f
-                    )
-                ),
-            ) {
-                Row(
-                    modifier = Modifier.padding(TactileTheme.SpacingMd),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Icon(
-                        if (inboxNodes.size > 10) Icons.Default.Warning else Icons.Default.MailOutline,
-                        contentDescription = null,
-                        tint = if (inboxNodes.size > 10) TactileTheme.Error else TactileTheme.Accent
-                    )
-                    Spacer(modifier = Modifier.width(TactileTheme.SpacingMd))
-                    Text(
-                        text = if (inboxNodes.size > 10) stringResource(
-                            Res.string.dash_inbox_overflow,
-                            inboxNodes.size
-                        ) else stringResource(Res.string.dash_inbox_new, inboxNodes.size),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = if (inboxNodes.size > 10) TactileTheme.Error else TactileTheme.Accent,
+        )
+        rows.forEach { row ->
+            Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+                row.forEach { (title, icon, status, action) ->
+                    ModuleButton(
+                        modifier = Modifier.weight(1f),
+                        title = title,
+                        icon = icon,
+                        status = status,
+                        onClick = action
                     )
                 }
             }
         }
+    }
+}
 
-        // 5. Batch Suggestion
-        val batchableTasks = dashboardState.batchableTasks
-        if (batchableTasks.isNotEmpty()) {
-            val firstBatch = batchableTasks.values.first()
-            val areaName =
-                allAreas.find { it.id == firstBatch.first().node.areaId }?.title ?: stringResource(
-                    Res.string.screen_area
-                ).uppercase()
-            Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
-                Text(
-                    text = stringResource(Res.string.dash_batch_suggestion, areaName),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Accent,
-                )
-                Surface(
-                    modifier = Modifier.fillMaxWidth(),
-                    color = TactileTheme.Accent.copy(alpha = 0.05f),
-                    shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                    border = androidx.compose.foundation.BorderStroke(
-                        1.dp,
-                        TactileTheme.Accent.copy(alpha = 0.2f)
-                    ),
-                ) {
-                    Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
-                        Text(
-                            stringResource(Res.string.dash_batch_desc, firstBatch.size, areaName),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                        Spacer(Modifier.height(4.dp))
-                        firstBatch.take(3).forEach {
-                            Text(
-                                "• ${it.node.title}",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = TactileTheme.Muted
-                            )
-                        }
-                    }
-                }
-            }
-        }
+data class Quad<A, B, C, D>(val first: A, val second: B, val third: C, val fourth: D)
 
-        // 6. Quick Wins
-        val quickWins = dashboardState.quickWins
-        if (quickWins.isNotEmpty()) {
-            Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
-                Text(
-                    text = stringResource(Res.string.dash_quick_wins),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Success,
-                )
-                quickWins.take(2).forEach { nodeWithPin ->
-                    Surface(
-                        onClick = { onEditNode(nodeWithPin.node.id) },
-                        modifier = Modifier.fillMaxWidth(),
-                        color = TactileTheme.Surface,
-                        shape = RoundedCornerShape(TactileTheme.RadiusSm),
-                        border = androidx.compose.foundation.BorderStroke(
-                            1.dp,
-                            TactileTheme.Success.copy(alpha = 0.2f)
-                        ),
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(TactileTheme.SpacingMd),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                Icons.Default.Bolt,
-                                contentDescription = null,
-                                tint = TactileTheme.Success,
-                                modifier = Modifier.size(16.dp)
-                            )
-                            Spacer(Modifier.width(TactileTheme.SpacingMd))
-                            Text(
-                                nodeWithPin.node.title,
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                        }
-                    }
-                }
-            }
-        }
+@Composable
+fun DashCard(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
+    content: @Composable () -> Unit
+) {
+    Surface(
+        onClick = onClick,
+        modifier = modifier.fillMaxWidth(),
+        color = TactileTheme.Surface,
+        shape = RoundedCornerShape(TactileTheme.RadiusLg),
+        border = BorderStroke(1.dp, TactileTheme.Border)
+    ) { content() }
+}
 
-        // 7. Deep Work
-        val deepWork = dashboardState.deepWork
-        if (deepWork.isNotEmpty()) {
-            Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
-                Text(
-                    text = stringResource(Res.string.dash_deep_work),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Primary,
-                )
-                deepWork.take(2).forEach { nodeWithPin ->
-                    Surface(
-                        onClick = { onEditNode(nodeWithPin.node.id) },
-                        modifier = Modifier.fillMaxWidth(),
-                        color = TactileTheme.Surface,
-                        shape = RoundedCornerShape(TactileTheme.RadiusSm),
-                        border = androidx.compose.foundation.BorderStroke(
-                            1.dp,
-                            TactileTheme.Primary.copy(alpha = 0.2f)
-                        ),
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(TactileTheme.SpacingMd),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                Icons.Default.Psychology,
-                                contentDescription = null,
-                                tint = TactileTheme.Primary,
-                                modifier = Modifier.size(16.dp)
-                            )
-                            Spacer(Modifier.width(TactileTheme.SpacingMd))
-                            Text(
-                                nodeWithPin.node.title,
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                        }
-                    }
-                }
-            }
-        }
-
-        // 8. Top 3 For Today
-        if (todayNodes.isNotEmpty()) {
-            Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
-                Text(
-                    text = stringResource(Res.string.dash_top_3),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Primary,
-                )
-                todayNodes.take(3).forEach { node ->
-                    Surface(
-                        modifier = Modifier.fillMaxWidth().combinedClickable(
-                            onClick = { onEditNode(node.id) },
-                            onLongClick = { onEditNode(node.id) },
-                        ),
-                        color = TactileTheme.Surface,
-                        shape = RoundedCornerShape(TactileTheme.RadiusSm),
-                        border = androidx.compose.foundation.BorderStroke(
-                            1.dp,
-                            TactileTheme.Muted.copy(alpha = 0.2f)
-                        ),
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(TactileTheme.SpacingMd),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Checkbox(
-                                checked = false,
-                                onCheckedChange = { viewModel.updateNodeStatus(node, "done") },
-                                colors = CheckboxDefaults.colors(
-                                    uncheckedColor = TactileTheme.Primary,
-                                    checkmarkColor = TactileTheme.Background
-                                )
-                            )
-                            Spacer(Modifier.width(TactileTheme.SpacingSm))
-                            Text(
-                                node.title,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = TactileTheme.Text,
-                                modifier = Modifier.weight(1f)
-                            )
-                        }
-                    }
-                }
-            }
-        }
-
-        // 9. Overdue
-        if (overdueNodes.isNotEmpty()) {
-            Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
-                Text(
-                    text = stringResource(Res.string.dash_overdue),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Error
-                )
-                overdueNodes.take(3).forEach { nodeWithPin ->
-                    Surface(
-                        modifier = Modifier.fillMaxWidth().combinedClickable(
-                            onClick = { onEditNode(nodeWithPin.node.id) },
-                            onLongClick = { onEditNode(nodeWithPin.node.id) },
-                        ),
-                        color = TactileTheme.Error.copy(alpha = 0.05f),
-                        shape = RoundedCornerShape(TactileTheme.RadiusSm),
-                        border = androidx.compose.foundation.BorderStroke(
-                            1.dp,
-                            TactileTheme.Error.copy(alpha = 0.2f)
-                        ),
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(TactileTheme.SpacingMd),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                Icons.Default.Warning,
-                                contentDescription = null,
-                                tint = TactileTheme.Error,
-                                modifier = Modifier.size(16.dp)
-                            )
-                            Spacer(Modifier.width(TactileTheme.SpacingMd))
-                            Text(
-                                nodeWithPin.node.title,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = TactileTheme.Text,
-                                modifier = Modifier.weight(1f)
-                            )
-                        }
-                    }
-                }
-            }
-        }
-
-        // 10. Active Reminders
-        if (activeReminders.isNotEmpty()) {
-            Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
-                Text(
-                    text = stringResource(Res.string.dash_active_reminders),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Error
-                )
-                activeReminders.forEach { node ->
-                    Surface(
-                        modifier = Modifier.fillMaxWidth().combinedClickable(
-                            onClick = { onEditNode(node.id) },
-                            onLongClick = { onEditNode(node.id) },
-                        ),
-                        color = TactileTheme.Error.copy(alpha = 0.1f),
-                        shape = RoundedCornerShape(TactileTheme.RadiusSm),
-                        border = androidx.compose.foundation.BorderStroke(
-                            1.dp,
-                            TactileTheme.Error.copy(alpha = 0.3f)
-                        ),
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(TactileTheme.SpacingMd),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                Icons.Default.NotificationsActive,
-                                contentDescription = null,
-                                tint = TactileTheme.Error,
-                                modifier = Modifier.size(16.dp)
-                            )
-                            Spacer(Modifier.width(TactileTheme.SpacingMd))
-                            Text(
-                                node.title,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = TactileTheme.Text,
-                                modifier = Modifier.weight(1f)
-                            )
-                            IconButton(
-                                onClick = { viewModel.updateNode(node.copy(reminderAt = null)) },
-                                modifier = Modifier.size(24.dp)
-                            ) {
-                                Icon(
-                                    Icons.Default.Check,
-                                    contentDescription = stringResource(Res.string.dash_dismiss),
-                                    tint = TactileTheme.Error,
-                                    modifier = Modifier.size(16.dp)
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // 11. Pinned Knowledge
-        if (pinnedKnowledge.isNotEmpty()) {
-            Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
-                Text(
-                    text = stringResource(Res.string.dash_pinned_knowledge),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Primary
-                )
-                pinnedKnowledge.take(2).forEach { nodeWithPin ->
-                    Surface(
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
-                            .combinedClickable(
-                                onClick = { onEditNode(nodeWithPin.node.id) },
-                                onLongClick = { onEditNode(nodeWithPin.node.id) },
-                            ),
-                        color = TactileTheme.Surface,
-                        shape = RoundedCornerShape(TactileTheme.RadiusSm),
-                        border = androidx.compose.foundation.BorderStroke(
-                            1.dp,
-                            TactileTheme.Muted.copy(alpha = 0.2f)
-                        ),
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(TactileTheme.SpacingMd),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                Icons.Default.Favorite,
-                                contentDescription = null,
-                                tint = TactileTheme.Primary,
-                                modifier = Modifier.size(16.dp)
-                            )
-                            Spacer(Modifier.width(TactileTheme.SpacingMd))
-                            Text(
-                                text = nodeWithPin.node.title,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = TactileTheme.Text
-                            )
-                        }
-                    }
-                }
-            }
-        }
-
-        // 11.1 Vaults (Read Later, Quotes, Ideas)
-        if (readLaterVault.isNotEmpty() || quoteVault.isNotEmpty() || ideaIncubator.isNotEmpty()) {
-            Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
-                Text(
-                    text = stringResource(Res.string.dash_knowledge_vaults),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Accent
-                )
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)
-                ) {
-                    if (readLaterVault.isNotEmpty()) {
-                        Surface(
-                            onClick = {
-                                viewModel.updateSearchQuery("")
-                                viewModel.updateSearchTypeFilter("note")
-                                viewModel.updateSearchStatusFilter("active")
-                                onNavigateTo(Screen.Search)
-                            },
-                            modifier = Modifier.weight(1f),
-                            color = TactileTheme.Surface,
-                            shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                            border = androidx.compose.foundation.BorderStroke(
-                                1.dp,
-                                TactileTheme.Border
-                            )
-                        ) {
-                            Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
-                                Icon(
-                                    Icons.Default.Bookmark,
-                                    contentDescription = null,
-                                    tint = TactileTheme.Accent
-                                )
-                                Text(
-                                    stringResource(Res.string.dash_read_later),
-                                    style = MaterialTheme.typography.labelSmall
-                                )
-                                Text(
-                                    stringResource(
-                                        Res.string.dash_items_count,
-                                        readLaterVault.size
-                                    ),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = TactileTheme.Muted
-                                )
-                            }
-                        }
-                    }
-                    if (quoteVault.isNotEmpty()) {
-                        Surface(
-                            onClick = { onNavigateTo(Screen.Search) },
-                            modifier = Modifier.weight(1f),
-                            color = TactileTheme.Surface,
-                            shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                            border = androidx.compose.foundation.BorderStroke(
-                                1.dp,
-                                TactileTheme.Border
-                            )
-                        ) {
-                            Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
-                                Icon(
-                                    Icons.Default.FormatQuote,
-                                    contentDescription = null,
-                                    tint = TactileTheme.Primary
-                                )
-                                Text(
-                                    stringResource(Res.string.dash_quotes),
-                                    style = MaterialTheme.typography.labelSmall
-                                )
-                                Text(
-                                    stringResource(Res.string.dash_items_count, quoteVault.size),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = TactileTheme.Muted
-                                )
-                            }
-                        }
-                    }
-                    if (ideaIncubator.isNotEmpty()) {
-                        Surface(
-                            onClick = { onNavigateTo(Screen.Search) },
-                            modifier = Modifier.weight(1f),
-                            color = TactileTheme.Surface,
-                            shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                            border = androidx.compose.foundation.BorderStroke(
-                                1.dp,
-                                TactileTheme.Border
-                            )
-                        ) {
-                            Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
-                                Icon(
-                                    Icons.Default.Lightbulb,
-                                    contentDescription = null,
-                                    tint = TactileTheme.Success
-                                )
-                                Text(
-                                    stringResource(Res.string.dash_ideas),
-                                    style = MaterialTheme.typography.labelSmall
-                                )
-                                Text(
-                                    stringResource(
-                                        Res.string.dash_unset_count,
-                                        ideaIncubator.size
-                                    ),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = TactileTheme.Muted
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // 11.2 Foundational Principle
-        val foundationalNotes = dashboardState.foundationalNotes
-        if (foundationalNotes.isNotEmpty()) {
-            Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
-                Text(
-                    text = stringResource(Res.string.dash_foundational),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Accent
-                )
-                foundationalNotes.forEach { nodeWithPin ->
-                    Surface(
-                        onClick = { onEditNode(nodeWithPin.node.id) },
-                        modifier = Modifier.fillMaxWidth(),
-                        color = TactileTheme.Accent.copy(alpha = 0.05f),
-                        shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                        border = androidx.compose.foundation.BorderStroke(
-                            1.dp,
-                            TactileTheme.Accent.copy(alpha = 0.2f)
-                        )
-                    ) {
-                        Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
-                            Text(
-                                nodeWithPin.node.title,
-                                style = MaterialTheme.typography.labelSmall,
-                                color = TactileTheme.Accent
-                            )
-                            Spacer(Modifier.height(4.dp))
-                            Text(
-                                nodeWithPin.node.content.take(200) + if (nodeWithPin.node.content.length > 200) "..." else "",
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        }
-                    }
-                }
-            }
-        }
-
-        // 11.3 Resource Highlights
-        val resourceHighlights = dashboardState.resourceHighlights
-        if (resourceHighlights.isNotEmpty()) {
-            Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
-                Text(
-                    text = stringResource(Res.string.dash_resource_highlights),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Primary
-                )
-                resourceHighlights.forEach { nodeWithPin ->
-                    Surface(
-                        onClick = { onEditNode(nodeWithPin.node.id) },
-                        modifier = Modifier.fillMaxWidth(),
-                        color = TactileTheme.Surface,
-                        shape = RoundedCornerShape(TactileTheme.RadiusSm),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, TactileTheme.Border)
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(TactileTheme.SpacingMd),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                Icons.AutoMirrored.Filled.LibraryBooks,
-                                contentDescription = null,
-                                tint = TactileTheme.Primary,
-                                modifier = Modifier.size(16.dp)
-                            )
-                            Spacer(Modifier.width(TactileTheme.SpacingMd))
-                            Text(
-                                nodeWithPin.node.title,
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                        }
-                    }
-                }
-            }
-        }
-
-        // 12. Upcoming Deadlines
-        if (upcomingDeadlines.isNotEmpty()) {
-            Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
-                Text(
-                    text = stringResource(Res.string.dash_upcoming_deadlines),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Accent
-                )
-                upcomingDeadlines.forEach { nodeWithPin ->
-                    val due = nodeWithPin.node.dueAt?.let {
-                        Instant.fromEpochMilliseconds(it)
-                            .toLocalDateTime(TimeZone.currentSystemDefault())
-                    }
-                    Surface(
-                        modifier = Modifier.fillMaxWidth().combinedClickable(
-                            onClick = { onEditNode(nodeWithPin.node.id) },
-                            onLongClick = { onEditNode(nodeWithPin.node.id) },
-                        ),
-                        color = TactileTheme.Surface,
-                        shape = RoundedCornerShape(TactileTheme.RadiusSm),
-                        border = androidx.compose.foundation.BorderStroke(
-                            1.dp,
-                            TactileTheme.Accent.copy(alpha = 0.3f)
-                        ),
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(TactileTheme.SpacingMd),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                Icons.Default.DateRange,
-                                contentDescription = null,
-                                tint = TactileTheme.Accent,
-                                modifier = Modifier.size(16.dp)
-                            )
-                            Spacer(Modifier.width(TactileTheme.SpacingMd))
-                            Text(
-                                nodeWithPin.node.title,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = TactileTheme.Text,
-                                modifier = Modifier.weight(1f)
-                            )
-                            if (due != null) {
-                                Text(
-                                    "${due.day}/${due.month.number}",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = TactileTheme.Accent
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // 13. Resets
+@Composable
+fun TaskBrief(title: String, isDone: Boolean, onToggle: () -> Unit, onClick: () -> Unit) {
+    Surface(
+        onClick = onClick,
+        color = Color.Black.copy(alpha = 0.2f),
+        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+        modifier = Modifier.fillMaxWidth()
+    ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Surface(
-                onClick = { onNavigateTo(Screen.Review) },
-                modifier = Modifier.weight(1f),
-                color = TactileTheme.Surface,
-                shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                border = androidx.compose.foundation.BorderStroke(
+            Box(
+                modifier = Modifier.size(20.dp).clip(CircleShape)
+                    .background(if (isDone) TactileTheme.Primary else Color.Transparent).border(
                     1.dp,
-                    TactileTheme.Primary.copy(alpha = 0.3f)
-                ),
+                    if (isDone) TactileTheme.Primary else TactileTheme.Muted,
+                    CircleShape
+                ).clickable { onToggle() }, contentAlignment = Alignment.Center
             ) {
-                Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
-                    Icon(
-                        Icons.Default.WbSunny,
-                        contentDescription = null,
-                        tint = TactileTheme.Primary
-                    )
-                    Spacer(Modifier.height(TactileTheme.SpacingSm))
-                    Text(
-                        stringResource(Res.string.dash_review_reset),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Text
-                    )
-                }
-            }
-            Surface(
-                onClick = { onNavigateTo(Screen.Track) },
-                modifier = Modifier.weight(1f),
-                color = TactileTheme.Surface,
-                shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                border = androidx.compose.foundation.BorderStroke(
-                    1.dp,
-                    TactileTheme.Accent.copy(alpha = 0.3f)
-                ),
-            ) {
-                Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
-                    Icon(
-                        Icons.Default.CheckCircle,
-                        contentDescription = null,
-                        tint = TactileTheme.Accent
-                    )
-                    Spacer(Modifier.height(TactileTheme.SpacingSm))
-                    Text(
-                        stringResource(Res.string.dash_check_in),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Text
-                    )
-                }
-            }
-        }
-
-        // 14. Relevant Project
-        if (allProjects.isNotEmpty()) {
-            val mostRelevantProject = allProjects.sortedByDescending { it.updatedAt }.firstOrNull()
-            mostRelevantProject?.let { project ->
-                Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
-                    Text(
-                        text = stringResource(Res.string.dash_relevant_project),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Primary
-                    )
-                    Surface(
-                        onClick = { onNavigateToProject(project.id) },
-                        modifier = Modifier.fillMaxWidth(),
-                        color = TactileTheme.Surface,
-                        shape = RoundedCornerShape(TactileTheme.RadiusSm),
-                        border = androidx.compose.foundation.BorderStroke(
-                            1.dp,
-                            TactileTheme.Primary.copy(alpha = 0.2f)
-                        ),
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(TactileTheme.SpacingMd),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                Icons.AutoMirrored.Filled.List,
-                                contentDescription = null,
-                                tint = TactileTheme.Primary,
-                                modifier = Modifier.size(16.dp)
-                            )
-                            Spacer(Modifier.width(TactileTheme.SpacingMd))
-                            Text(
-                                text = project.title,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = TactileTheme.Text
-                            )
-                        }
-                    }
-                }
-            }
-        }
-
-        // 15. Relevant Note
-        if (relevantNote != null) {
-            Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
-                Text(
-                    text = stringResource(Res.string.dash_relevant_note),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Primary
-                )
-                Surface(
-                    onClick = { onEditNode(relevantNote.node.id) },
-                    modifier = Modifier.fillMaxWidth(),
-                    color = TactileTheme.Surface,
-                    shape = RoundedCornerShape(TactileTheme.RadiusSm),
-                    border = androidx.compose.foundation.BorderStroke(
-                        1.dp,
-                        TactileTheme.Primary.copy(alpha = 0.2f)
-                    ),
-                ) {
-                    Row(
-                        modifier = Modifier.padding(TactileTheme.SpacingMd),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            Icons.Default.Edit,
-                            contentDescription = null,
-                            tint = TactileTheme.Primary,
-                            modifier = Modifier.size(16.dp)
-                        )
-                        Spacer(Modifier.width(TactileTheme.SpacingMd))
-                        Text(
-                            text = relevantNote.node.title,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = TactileTheme.Text
-                        )
-                    }
-                }
-            }
-        }
-
-        // 16. Modules Grid
-        Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
-            Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
-                ModuleButton(
-                    modifier = Modifier.weight(1f),
-                    title = stringResource(Res.string.screen_today),
-                    icon = Icons.Default.DateRange,
-                    status = if (todayNodes.isNotEmpty()) stringResource(
-                        Res.string.dash_module_tasks_count,
-                        todayNodes.size
-                    ) else stringResource(Res.string.dash_module_empty),
-                    onClick = { onNavigateTo(Screen.Today) })
-                ModuleButton(
-                    modifier = Modifier.weight(1f),
-                    title = stringResource(Res.string.screen_focus),
-                    icon = Icons.Default.PlayArrow,
-                    status = if (todayNodes.isNotEmpty()) stringResource(Res.string.dash_module_ready) else stringResource(
-                        Res.string.dash_module_waiting
-                    ),
-                    onClick = { onNavigateTo(Screen.Focus) })
-            }
-            Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
-                ModuleButton(
-                    modifier = Modifier.weight(1f),
-                    title = stringResource(Res.string.screen_track),
-                    icon = Icons.Default.CheckCircle,
-                    status = moodToday?.let { stringResource(Res.string.dash_module_logged) }
-                        ?: stringResource(Res.string.dash_module_pending),
-                    onClick = { onNavigateTo(Screen.Track) })
-                ModuleButton(
-                    modifier = Modifier.weight(1f),
-                    title = stringResource(Res.string.screen_tasks),
-                    icon = Icons.AutoMirrored.Filled.List,
-                    status = if (tasksCount > 0) stringResource(
-                        Res.string.dash_module_total_count,
-                        tasksCount
-                    ) else stringResource(Res.string.dash_module_none),
-                    onClick = { onNavigateTo(Screen.Tasks) })
-            }
-            Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
-                ModuleButton(
-                    modifier = Modifier.weight(1f),
-                    title = stringResource(Res.string.screen_notes),
-                    icon = Icons.Default.Edit,
-                    status = if (notesCount > 0) stringResource(
-                        Res.string.dash_module_total_count,
-                        notesCount
-                    ) else stringResource(Res.string.dash_module_none),
-                    onClick = { onNavigateTo(Screen.Notes) })
-                ModuleButton(
-                    modifier = Modifier.weight(1f),
-                    title = stringResource(Res.string.screen_proj),
-                    icon = Icons.AutoMirrored.Filled.List,
-                    status = if (allProjects.isNotEmpty()) stringResource(
-                        Res.string.dash_module_active_count,
-                        allProjects.size
-                    ) else stringResource(Res.string.dash_module_empty),
-                    onClick = { onNavigateTo(Screen.Projects) })
-            }
-            Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
-                ModuleButton(
-                    modifier = Modifier.weight(1f),
-                    title = stringResource(Res.string.screen_area),
-                    icon = Icons.Default.LocationOn,
-                    status = if (allAreas.isNotEmpty()) stringResource(
-                        Res.string.dash_module_total_count,
-                        allAreas.size
-                    ) else stringResource(Res.string.dash_module_empty),
-                    onClick = { onNavigateTo(Screen.Areas) })
-                ModuleButton(
-                    modifier = Modifier.weight(1f),
-                    title = stringResource(Res.string.screen_cal),
-                    icon = Icons.Default.Event,
-                    status = if (calendarEntries.isNotEmpty()) stringResource(
-                        Res.string.dash_module_items_count,
-                        calendarEntries.size
-                    ) else stringResource(Res.string.dash_module_empty),
-                    onClick = { onNavigateTo(Screen.Calendar) })
-            }
-            Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
-                ModuleButton(
-                    modifier = Modifier.weight(1f),
-                    title = stringResource(Res.string.screen_stats),
-                    icon = Icons.Default.Info,
-                    status = stringResource(Res.string.dash_view),
-                    onClick = { onNavigateTo(Screen.Insights) })
-                ModuleButton(
-                    modifier = Modifier.weight(1f),
-                    title = stringResource(Res.string.screen_history),
-                    icon = Icons.Default.History,
-                    status = if (allSessions.isNotEmpty()) {
-                        stringResource(
-                            Res.string.dash_history_last,
-                            Instant.fromEpochMilliseconds(allSessions.first().startedAt)
-                                .toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
-                        )
-                    } else {
-                        stringResource(Res.string.dash_module_empty)
-                    },
-                    onClick = { viewModel.resumeLastSession() },
+                if (isDone) Icon(
+                    Icons.Default.Check,
+                    contentDescription = null,
+                    modifier = Modifier.size(14.dp),
+                    tint = Color.White
                 )
             }
+            Spacer(Modifier.width(12.dp)); Text(
+            title,
+            style = MaterialTheme.typography.bodyMedium,
+            color = if (isDone) TactileTheme.Muted else TactileTheme.Text,
+            fontWeight = FontWeight.Medium,
+            maxLines = 1
+        )
         }
+    }
+}
+
+@Composable
+fun ProgressRing(progress: Float) {
+    val anim by animateFloatAsState(targetValue = progress)
+    Box(contentAlignment = Alignment.Center, modifier = Modifier.size(60.dp)) {
+        Canvas(modifier = Modifier.size(60.dp)) {
+            drawCircle(color = Color.White.copy(alpha = 0.1f), style = Stroke(width = 4.dp.toPx()))
+            drawArc(
+                color = TactileTheme.Primary,
+                startAngle = -90f,
+                sweepAngle = 360 * anim,
+                useCenter = false,
+                style = Stroke(width = 4.dp.toPx(), cap = StrokeCap.Round)
+            )
+        }
+        Text(
+            "${(progress * 100).toInt()}%",
+            style = MaterialTheme.typography.labelMedium,
+            fontWeight = FontWeight.Bold,
+            color = TactileTheme.Text
+        )
+    }
+}
+
+@Composable
+fun SystemFooter() {
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+        Text(
+            "MEMORY USAGE: 42%  •  UPTIME: 14D 02H",
+            style = MaterialTheme.typography.labelSmall,
+            color = TactileTheme.Muted,
+            letterSpacing = 1.sp,
+            fontWeight = FontWeight.Bold
+        )
     }
 }

@@ -4,8 +4,10 @@
 
 package com.tajemniktv.tajsos
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -15,7 +17,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.*
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -27,30 +32,22 @@ import com.tajemniktv.tajsos.ui.screens.*
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 
 /**
  *
  */
+/**
+ * Main application entry point for all platforms.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun App(
-    /**
-     *
-     */
     viewModel: MainViewModel,
-    /**
-     *
-     */
     onVoiceCapture: (() -> Unit)? = null,
-    /**
-     *
-     */
     voiceCaptureResult: String? = null,
-    /**
-     *
-     */
     onVoiceCaptureConsumed: () -> Unit = {},
 ) {
     val navController = rememberNavController()
@@ -69,7 +66,7 @@ fun App(
     val allProjects by viewModel.allProjects.collectAsState()
     val allAreas by viewModel.allAreas.collectAsState()
     val allTemplates by viewModel.allTemplates.collectAsState()
-    val latestTrack = trackEntries.firstOrNull()
+    val latestTrack = remember(trackEntries) { trackEntries.firstOrNull() }
 
     val lastActiveProjectId by viewModel.lastActiveProjectId.collectAsState()
     val lastActiveAreaId by viewModel.lastActiveAreaId.collectAsState()
@@ -77,150 +74,91 @@ fun App(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
+    val groupedItems =
+        remember {
+            listOf(
+                Res.string.nav_core to listOf(Screen.Dashboard, Screen.Inbox, Screen.Search),
+                Res.string.nav_execution to listOf(
+                    Screen.Today,
+                    Screen.Tasks,
+                    Screen.Focus,
+                    Screen.Calendar
+                ),
+                Res.string.nav_brain to listOf(Screen.Notes, Screen.Projects, Screen.Areas),
+                Res.string.nav_status to listOf(
+                    Screen.Track,
+                    Screen.Insights,
+                    Screen.Graph,
+                    Screen.Review
+                ),
+                Res.string.nav_system to listOf(Screen.Archive, Screen.Settings),
+            )
+        }
+
     TajsOSTheme {
         ModalNavigationDrawer(
             drawerState = drawerState,
             drawerContent = {
                 ModalDrawerSheet(
-                    drawerContainerColor = TactileTheme.Surface,
-                    drawerShape =
-                        RoundedCornerShape(
-                            topEnd = TactileTheme.RadiusMd,
-                            bottomEnd = TactileTheme.RadiusMd,
-                        ),
+                    drawerContainerColor = TactileTheme.Background,
+                    drawerShape = RoundedCornerShape(0.dp),
                 ) {
-                    Column(
-                        modifier =
-                            Modifier
-                                .fillMaxHeight()
-                                .verticalScroll(rememberScrollState()),
-                    ) {
-                        Spacer(Modifier.height(TactileTheme.SpacingLg))
-                        Text(
-                            stringResource(Res.string.app_name),
-                            modifier = Modifier.padding(TactileTheme.SpacingMd),
-                            style = MaterialTheme.typography.titleLarge,
-                            color = TactileTheme.Primary,
-                        )
-                        HorizontalDivider(color = TactileTheme.Muted)
-
-                        val coreItems = listOf(Screen.Dashboard, Screen.Inbox, Screen.Search)
-                        val executionItems =
-                            listOf(Screen.Today, Screen.Tasks, Screen.Focus, Screen.Calendar)
-                        val brainItems = listOf(Screen.Notes, Screen.Projects, Screen.Areas)
-                        val statusItems =
-                            listOf(Screen.Track, Screen.Insights, Screen.Graph, Screen.Review)
-                        val systemItems = listOf(Screen.Archive, Screen.Settings)
-
-                        val groupedItems =
-                            listOf(
-                                Res.string.nav_core to coreItems,
-                                Res.string.nav_execution to executionItems,
-                                Res.string.nav_brain to brainItems,
-                                Res.string.nav_status to statusItems,
-                                Res.string.nav_system to systemItems,
-                            )
-
-                        groupedItems.forEachIndexed {
-                            /**
-                             *
-                             */
-                                index, (headerRes, items) ->
-                            if (index > 0) {
-                                HorizontalDivider(
-                                    modifier =
-                                        Modifier.padding(
-                                            horizontal = TactileTheme.SpacingMd,
-                                            vertical = TactileTheme.SpacingSm,
-                                        ),
-                                    color = TactileTheme.Muted.copy(alpha = 0.5f),
-                                )
+                    SidebarContent(
+                        groupedItems = groupedItems,
+                        currentDestination = currentDestination,
+                        onNavigate = { screen ->
+                            navController.navigate(screen.route) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
                             }
-                            Text(
-                                stringResource(headerRes),
-                                modifier =
-                                    Modifier.padding(
-                                        horizontal = TactileTheme.SpacingMd,
-                                        vertical = TactileTheme.SpacingSm,
-                                    ),
-                                style = MaterialTheme.typography.labelSmall,
-                                color = TactileTheme.Muted,
-                            )
-                            items.forEach { screen ->
-                                NavigationDrawerItem(
-                                    label = {
-                                        Text(
-                                            stringResource(screen.label),
-                                            style = MaterialTheme.typography.labelLarge,
-                                        )
-                                    },
-                                    selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
-                                    onClick = {
-                                        navController.navigate(screen.route) {
-                                            popUpTo(navController.graph.findStartDestination().id) {
-                                                saveState = true
-                                            }
-                                            launchSingleTop = true
-                                            restoreState = true
-                                        }
-                                        scope.launch { drawerState.close() }
-                                    },
-                                    icon = { Icon(screen.icon, contentDescription = null) },
-                                    modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
-                                    colors =
-                                        NavigationDrawerItemDefaults.colors(
-                                            selectedContainerColor = TactileTheme.Primary.copy(alpha = 0.1f),
-                                            selectedIconColor = TactileTheme.Primary,
-                                            selectedTextColor = TactileTheme.Primary,
-                                            unselectedIconColor = TactileTheme.Muted,
-                                            unselectedTextColor = TactileTheme.Muted,
-                                            unselectedContainerColor = Color.Transparent,
-                                        ),
-                                )
-                            }
-                            Spacer(Modifier.height(TactileTheme.SpacingSm))
-                        }
-                    }
+                            scope.launch { drawerState.close() }
+                        },
+                    )
                 }
             },
         ) {
             Scaffold(
                 topBar = {
-                    TopAppBar(
-                        navigationIcon = {
-                            IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                                Icon(
-                                    Icons.Default.Menu,
-                                    contentDescription = stringResource(Res.string.nav_menu),
-                                    tint = TactileTheme.Primary,
-                                )
-                            }
-                        },
-                        title = {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                Text(
-                                    text = stringResource(Res.string.app_status_ok),
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.primary,
-                                )
-                                if (latestTrack != null) {
+                    if (currentDestination?.route != Screen.Dashboard.route) {
+                        TopAppBar(
+                            navigationIcon = {
+                                IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                                    Icon(
+                                        Icons.Default.Menu,
+                                        contentDescription = stringResource(Res.string.nav_menu),
+                                        tint = TactileTheme.Primary,
+                                    )
+                                }
+                            },
+                            title = {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically,
+                                ) {
                                     Text(
-                                        text = "E:${latestTrack.energyScore} M:${latestTrack.moodScore} F:${latestTrack.focusScore ?: "-"}",
+                                        text = stringResource(Res.string.app_status_ok),
                                         style = MaterialTheme.typography.labelSmall,
                                         color = MaterialTheme.colorScheme.primary,
                                     )
+                                    if (latestTrack != null) {
+                                        Text(
+                                            text = "E:${latestTrack.energyScore} M:${latestTrack.moodScore} F:${latestTrack.focusScore ?: "-"}",
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = MaterialTheme.colorScheme.primary,
+                                        )
+                                    }
                                 }
-                            }
-                        },
-                        colors =
-                            TopAppBarDefaults.topAppBarColors(
-                                containerColor = MaterialTheme.colorScheme.background,
-                            ),
-                    )
+                            },
+                            colors =
+                                TopAppBarDefaults.topAppBarColors(
+                                    containerColor = MaterialTheme.colorScheme.background,
+                                ),
+                        )
+                    }
                 },
                 floatingActionButton = {
                     FloatingActionButton(
@@ -231,7 +169,7 @@ fun App(
                     ) {
                         Icon(
                             Icons.Default.Add,
-                            contentDescription = stringResource(Res.string.nav_capture)
+                            contentDescription = stringResource(Res.string.nav_capture),
                         )
                     }
                 },
@@ -267,10 +205,11 @@ fun App(
                                 navController.navigate(
                                     Screen.ProjectDetail.route.replace(
                                         "{projectId}",
-                                        id.toString()
-                                    )
+                                        id.toString(),
+                                    ),
                                 )
-                            }
+                            },
+                            onOpenDrawer = { scope.launch { drawerState.open() } },
                         )
                     }
                     composable(Screen.Inbox.route) { InboxScreen(viewModel, onEditNode) }
@@ -336,7 +275,12 @@ fun App(
                             viewModel,
                             areaId,
                             onNavigateToProject = { id ->
-                                navController.navigate(Screen.ProjectDetail.route.replace("{projectId}", id.toString()))
+                                navController.navigate(
+                                    Screen.ProjectDetail.route.replace(
+                                        "{projectId}",
+                                        id.toString(),
+                                    ),
+                                )
                             },
                             onEditNode = onEditNode,
                             onBack = { navController.popBackStack() },
@@ -358,7 +302,12 @@ fun App(
                     }
                     composable(Screen.Insights.route) {
                         InsightsScreen(viewModel, onNavigateToProject = { id ->
-                            navController.navigate(Screen.ProjectDetail.route.replace("{projectId}", id.toString()))
+                            navController.navigate(
+                                Screen.ProjectDetail.route.replace(
+                                    "{projectId}",
+                                    id.toString(),
+                                ),
+                            )
                         })
                     }
                     composable(Screen.Graph.route) {
@@ -384,11 +333,25 @@ fun App(
                                 isRec,
                                 recInt,
                                 remAt,
+                                ctx,
+                                sticky
                             ->
                             when (type) {
                                 "project" -> viewModel.addProject(text, "", areaId)
                                 "area" -> viewModel.addArea(text)
-                                else -> viewModel.addNode(text, "", type, projectId, areaId, isRec, recInt, remAt)
+                                else ->
+                                    viewModel.addNode(
+                                        text,
+                                        "",
+                                        type,
+                                        projectId,
+                                        areaId,
+                                        isRec,
+                                        recInt,
+                                        remAt,
+                                        contextScreen = ctx,
+                                        isSticky = sticky,
+                                    )
                             }
                             // Note: if multi-capture is on, CaptureSheet handles not closing itself
                         },
@@ -399,9 +362,182 @@ fun App(
                         defaultAreaId = lastActiveAreaId,
                         initialText = voiceCaptureResult ?: "",
                         onVoiceCaptureClick = onVoiceCapture,
+                        contextScreen = currentDestination?.route,
                     )
                 }
             }
         }
     }
 }
+
+/**
+ * Sidebar content with profile, navigation items, and system uptime.
+ */
+@Composable
+private fun SidebarContent(
+    groupedItems: List<Pair<StringResource, List<Screen>>>,
+    currentDestination: NavDestination?,
+    onNavigate: (Screen) -> Unit,
+) {
+    Column(
+        modifier =
+            Modifier
+                .fillMaxHeight(),
+    ) {
+        // Profile Header
+        Row(
+            modifier =
+                Modifier
+                    .padding(TactileTheme.SpacingMd)
+                    .padding(top = TactileTheme.SpacingSm)
+                    .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(
+                modifier =
+                    Modifier
+                        .size(44.dp)
+                        .background(Color(0xFFFDE68A), CircleShape),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    Icons.Default.Person,
+                    contentDescription = null,
+                    tint = TactileTheme.Surface,
+                    modifier = Modifier.size(24.dp),
+                )
+            }
+            Spacer(Modifier.width(TactileTheme.SpacingMd))
+            Column {
+                Text(
+                    stringResource(Res.string.app_name),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = TactileTheme.Text,
+                    fontWeight = FontWeight.Bold,
+                )
+                Text(
+                    stringResource(Res.string.nav_role_admin),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TactileTheme.Primary,
+                    letterSpacing = 1.sp,
+                )
+            }
+        }
+
+        Spacer(Modifier.height(TactileTheme.SpacingSm))
+
+        Column(
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState()),
+        ) {
+            groupedItems.forEach { (headerRes, items) ->
+                Text(
+                    stringResource(headerRes),
+                    modifier =
+                        Modifier.padding(
+                            horizontal = TactileTheme.SpacingMd,
+                            vertical = TactileTheme.SpacingSm,
+                        ),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TactileTheme.Muted.copy(alpha = 0.6f),
+                )
+                items.forEach { screen ->
+                    val selected = remember(currentDestination, screen.route) {
+                        currentDestination?.hierarchy?.any { it.route == screen.route } == true
+                    }
+
+                    Box(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .height(56.dp),
+                    ) {
+                        if (selected) {
+                            Box(
+                                modifier =
+                                    Modifier
+                                        .fillMaxHeight()
+                                        .width(3.dp)
+                                        .background(TactileTheme.Primary),
+                            )
+                        }
+
+                        NavigationDrawerItem(
+                            label = {
+                                Text(
+                                    stringResource(screen.label),
+                                    style = MaterialTheme.typography.labelLarge,
+                                )
+                            },
+                            selected = selected,
+                            onClick = { onNavigate(screen) },
+                            icon = { Icon(screen.icon, contentDescription = null) },
+                            modifier =
+                                Modifier
+                                    .padding(start = if (selected) 2.dp else 0.dp)
+                                    .padding(NavigationDrawerItemDefaults.ItemPadding),
+                            colors =
+                                NavigationDrawerItemDefaults.colors(
+                                    selectedContainerColor = TactileTheme.Primary.copy(alpha = 0.15f),
+                                    selectedIconColor = TactileTheme.Primary,
+                                    selectedTextColor = TactileTheme.Primary,
+                                    unselectedIconColor = TactileTheme.Muted,
+                                    unselectedTextColor = TactileTheme.Muted,
+                                    unselectedContainerColor = Color.Transparent,
+                                ),
+                            shape = RoundedCornerShape(TactileTheme.RadiusSm),
+                        )
+                    }
+                }
+                Spacer(Modifier.height(TactileTheme.SpacingSm))
+            }
+        }
+
+        // Uptime Footer
+        Column(
+            modifier =
+                Modifier
+                    .padding(TactileTheme.SpacingMd)
+                    .background(
+                        TactileTheme.Surface.copy(alpha = 0.5f),
+                        RoundedCornerShape(TactileTheme.RadiusMd)
+                    )
+                    .padding(TactileTheme.SpacingMd),
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    stringResource(Res.string.nav_uptime),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TactileTheme.Muted,
+                    fontWeight = FontWeight.Bold,
+                )
+                Text(
+                    stringResource(Res.string.nav_uptime_value),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TactileTheme.Primary,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+            Spacer(Modifier.height(TactileTheme.SpacingSm))
+            LinearProgressIndicator(
+                progress = { 0.999f },
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(4.dp),
+                color = TactileTheme.Primary,
+                trackColor = TactileTheme.Muted.copy(alpha = 0.2f),
+                strokeCap = StrokeCap.Round,
+            )
+        }
+        Spacer(Modifier.height(TactileTheme.SpacingMd))
+    }
+}
+
+

@@ -16,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.CallSplit
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.LibraryBooks
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -25,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.components.*
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
@@ -105,6 +107,8 @@ fun NoteDetailScreen(
     var showEstimateDialog by remember { mutableStateOf(false) }
     var showPostponeDialog by remember { mutableStateOf(false) }
     var showWhyDialog by remember { mutableStateOf(false) }
+    var showMediaTypeDialog by remember { mutableStateOf(false) }
+    var showRatingDialog by remember { mutableStateOf(false) }
 
     val suggestions by viewModel.getNoteSuggestions(noteId).collectAsState(initial = emptyList())
 
@@ -743,6 +747,84 @@ fun NoteDetailScreen(
                 Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
             }
 
+            if (node.type == "resource") {
+                Text(
+                    stringResource(Res.string.detail_media),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TactileTheme.Primary
+                )
+
+                ListItem(
+                    headlineContent = { Text(stringResource(Res.string.detail_media_type)) },
+                    supportingContent = { Text((node.mediaType ?: "link").uppercase()) },
+                    modifier = Modifier.clickable { showMediaTypeDialog = true },
+                    colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
+                    trailingContent = {
+                        Icon(
+                            when (node.mediaType) {
+                                "book" -> Icons.AutoMirrored.Filled.LibraryBooks
+                                "article" -> Icons.Default.Description
+                                "podcast" -> Icons.Default.Podcasts
+                                "video" -> Icons.Default.PlayCircle
+                                else -> Icons.Default.Link
+                            },
+                            contentDescription = null,
+                            tint = TactileTheme.Primary
+                        )
+                    }
+                )
+
+                ListItem(
+                    headlineContent = { Text(stringResource(Res.string.detail_author)) },
+                    supportingContent = {
+                        BasicTextField(
+                            value = node.author ?: "",
+                            onValueChange = { viewModel.updateNode(node.copy(author = it)) },
+                            textStyle = MaterialTheme.typography.bodyMedium.copy(color = TactileTheme.Text),
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    },
+                    colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
+                )
+
+                ListItem(
+                    headlineContent = { Text(stringResource(Res.string.detail_publisher)) },
+                    supportingContent = {
+                        BasicTextField(
+                            value = node.publisher ?: "",
+                            onValueChange = { viewModel.updateNode(node.copy(publisher = it)) },
+                            textStyle = MaterialTheme.typography.bodyMedium.copy(color = TactileTheme.Text),
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    },
+                    colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
+                )
+
+                ListItem(
+                    headlineContent = { Text(stringResource(Res.string.detail_rating)) },
+                    supportingContent = {
+                        Text(
+                            if (node.rating != null) stringResource(
+                                Res.string.detail_stars,
+                                node.rating!!
+                            )
+                            else stringResource(Res.string.detail_not_set)
+                        )
+                    },
+                    modifier = Modifier.clickable { showRatingDialog = true },
+                    colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
+                    trailingContent = {
+                        Icon(
+                            Icons.Default.Star,
+                            contentDescription = null,
+                            tint = TactileTheme.Primary
+                        )
+                    }
+                )
+
+                Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
+            }
+
             Text(
                 stringResource(Res.string.detail_organization),
                 style = MaterialTheme.typography.labelSmall,
@@ -1194,7 +1276,10 @@ fun NoteDetailScreen(
             "concept",
             "evergreen",
             "read_later",
-            "quote"
+            "quote",
+            "meeting",
+            "reading",
+            "journal"
         )
         AlertDialog(
             onDismissRequest = { showNoteTypeDialog = false },
@@ -1569,6 +1654,73 @@ fun NoteDetailScreen(
             dismissButton = {
                 TextButton(onClick = {
                     showWhyDialog = false
+                }) { Text(stringResource(Res.string.projects_dialog_cancel)) }
+            }
+        )
+    }
+
+    if (showMediaTypeDialog) {
+        val mediaTypes = listOf(
+            "book" to Res.string.media_book,
+            "article" to Res.string.media_article,
+            "podcast" to Res.string.media_podcast,
+            "video" to Res.string.media_video,
+            "link" to Res.string.media_link
+        )
+        AlertDialog(
+            onDismissRequest = { showMediaTypeDialog = false },
+            title = { Text(stringResource(Res.string.detail_media_type)) },
+            text = {
+                Column {
+                    mediaTypes.forEach { (type, res) ->
+                        ListItem(
+                            headlineContent = { Text(stringResource(res)) },
+                            modifier = Modifier.clickable {
+                                viewModel.updateNode(node.copy(mediaType = type))
+                                showMediaTypeDialog = false
+                            }
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    showMediaTypeDialog = false
+                }) { Text(stringResource(Res.string.projects_dialog_cancel)) }
+            }
+        )
+    }
+
+    if (showRatingDialog) {
+        AlertDialog(
+            onDismissRequest = { showRatingDialog = false },
+            title = { Text(stringResource(Res.string.detail_rating)) },
+            text = {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    (1..5).forEach { stars ->
+                        IconButton(onClick = {
+                            viewModel.updateNode(node.copy(rating = stars))
+                            showRatingDialog = false
+                        }) {
+                            Icon(
+                                if ((node.rating
+                                        ?: 0) >= stars
+                                ) Icons.Default.Star else Icons.Default.StarBorder,
+                                contentDescription = null,
+                                tint = if ((node.rating
+                                        ?: 0) >= stars
+                                ) TactileTheme.Primary else TactileTheme.Muted
+                            )
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    showRatingDialog = false
                 }) { Text(stringResource(Res.string.projects_dialog_cancel)) }
             }
         )

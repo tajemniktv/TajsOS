@@ -16,6 +16,10 @@
     <string name="nav_menu">Menu</string>
     <string name="nav_capture">Capture</string>
 
+    <string name="nav_role_admin">SYSTEM ADMIN</string>
+    <string name="nav_uptime">UPTIME</string>
+    <string name="nav_uptime_value">99.9%</string>
+
     <!-- Screens -->
     <string name="screen_dash">DASH</string>
     <string name="screen_inbox">INBOX</string>
@@ -123,6 +127,7 @@
     <string name="dash_quick_links">QUICK LINKS</string>
     <string name="dash_foundational">FOUNDATIONAL PRINCIPLE</string>
     <string name="dash_resource_highlights">RESOURCE HIGHLIGHTS</string>
+    <string name="dash_forgotten_wisdom">FORGOTTEN WISDOM</string>
     <string name="dash_vibe_morning">Good morning. Let\'s operate.</string>
     <string name="dash_vibe_afternoon">Steady progress. Keep the momentum.</string>
     <string name="dash_vibe_evening">The day is winding down. Clear the deck.</string>
@@ -364,6 +369,12 @@
     <string name="detail_remove_attachment">Remove Attachment</string>
     <string name="detail_add_link">ADD LINK</string>
     <string name="detail_knowledge">KNOWLEDGE</string>
+    <string name="detail_media">MEDIA &amp; RESOURCE</string>
+    <string name="detail_media_type">Media Type</string>
+    <string name="detail_author">Author / Artist</string>
+    <string name="detail_publisher">Publisher / Platform</string>
+    <string name="detail_rating">Rating</string>
+    <string name="detail_stars">%d Stars</string>
     <string name="detail_note_type">Note Type</string>
     <string name="detail_progressive_state">Progressive State</string>
     <string name="detail_stale_warning">You have not looked at this in %d days. Revisit?</string>
@@ -429,6 +440,13 @@
     <string name="project_detail_resources">RESOURCES</string>
     <string name="project_detail_timeline">PROJECT TIMELINE</string>
     <string name="project_detail_inbox_all">PROJECT INBOX &amp; ALL ITEMS</string>
+    <string name="project_health">HEALTH</string>
+    <string name="project_health_healthy">HEALTHY</string>
+    <string name="project_health_neglected">NEGLECTED</string>
+    <string name="project_health_critical">CRITICAL</string>
+    <string name="project_health_frozen">FROZEN</string>
+    <string name="project_health_on_hold">ON HOLD</string>
+    <string name="project_set_status">SET STATUS</string>
 
     <!-- Area Detail -->
     <string name="area_detail_not_found">Area not found</string>
@@ -452,5 +470,12 @@
     <string name="type_idea">Idea</string>
     <string name="type_project">Project</string>
     <string name="type_area">Area</string>
+    <string name="type_resource">Resource</string>
+    <string name="media_book">BOOK</string>
+    <string name="media_article">ARTICLE</string>
+    <string name="media_podcast">PODCAST</string>
+    <string name="media_video">VIDEO</string>
+    <string name="media_link">LINK</string>
+    <string name="media_other">OTHER RESOURCES</string>
 
 </resources>

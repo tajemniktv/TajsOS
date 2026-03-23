@@ -24,6 +24,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
@@ -61,7 +62,7 @@ import tajsos.composeapp.generated.resources.*
 @Composable
 fun CaptureSheet(
     onDismiss: () -> Unit,
-    onCapture: (String, String, Long?, Long?, Boolean, String?, Long?) -> Unit,
+    onCapture: (String, String, Long?, Long?, Boolean, String?, Long?, String?, Boolean) -> Unit,
     projects: List<NodeEntity> = emptyList(),
     areas: List<NodeEntity> = emptyList(),
     templates: List<com.tajemniktv.tajsos.data.TemplateEntity> = emptyList(),
@@ -69,6 +70,7 @@ fun CaptureSheet(
     defaultAreaId: Long? = null,
     initialText: String = "",
     onVoiceCaptureClick: (() -> Unit)? = null,
+    contextScreen: String? = null,
 ) {
 
     var text by remember { mutableStateOf(initialText) }
@@ -86,6 +88,7 @@ fun CaptureSheet(
     var isRecurring by remember { mutableStateOf(false) }
     var recurringInterval by remember { mutableStateOf<String?>(null) }
     var reminderTime by remember { mutableStateOf<Long?>(null) }
+    var isSticky by remember { mutableStateOf(false) }
 
     var multiCaptureMode by remember { mutableStateOf(false) }
     var brainDumpMode by remember { mutableStateOf(false) }
@@ -191,6 +194,8 @@ fun CaptureSheet(
                                     isRecurring,
                                     recurringInterval,
                                     reminderTime,
+                                    contextScreen,
+                                    isSticky
                                 )
                                 if (multiCaptureMode || brainDumpMode) {
                                     text = ""
@@ -222,11 +227,12 @@ fun CaptureSheet(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
                 ) {
-                    items(listOf("task", "note", "idea", "project", "area")) { type ->
+                    items(listOf("task", "note", "idea", "resource", "project", "area")) { type ->
                         val typeLabel = when (type) {
                             "task" -> stringResource(Res.string.type_task)
                             "note" -> stringResource(Res.string.type_note)
                             "idea" -> stringResource(Res.string.type_idea)
+                            "resource" -> stringResource(Res.string.type_resource)
                             "project" -> stringResource(Res.string.type_project)
                             "area" -> stringResource(Res.string.type_area)
                             else -> type
@@ -394,6 +400,37 @@ fun CaptureSheet(
                             }
                         }
                     }
+
+                    // Sticky Toggle
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)
+                    ) {
+                        Row(
+                            modifier = Modifier.weight(1f),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Checkbox(
+                                checked = isSticky,
+                                onCheckedChange = { isSticky = it },
+                                colors = CheckboxDefaults.colors(checkedColor = TactileTheme.Primary),
+                            )
+                            Icon(
+                                Icons.Default.PushPin,
+                                contentDescription = null,
+                                tint = TactileTheme.Muted,
+                                modifier = Modifier.size(16.dp),
+                            )
+                            Spacer(Modifier.width(4.dp))
+                            Text(
+                                "STICKY",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = TactileTheme.Muted,
+                            )
+                        }
+                        Spacer(Modifier.weight(1f))
+                    }
                 }
             } else if (selectedType == "project" && areas.isNotEmpty()) {
                 Text(
@@ -423,6 +460,8 @@ fun CaptureSheet(
                             isRecurring,
                             recurringInterval,
                             reminderTime,
+                            contextScreen,
+                            isSticky
                         )
                         if (multiCaptureMode || brainDumpMode) {
                             text = ""
