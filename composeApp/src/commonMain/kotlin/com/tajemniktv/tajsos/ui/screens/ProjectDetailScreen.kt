@@ -4,6 +4,7 @@
 
 package com.tajemniktv.tajsos.ui.screens
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -15,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -24,12 +26,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.EventLogEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.components.NodeCard
+import com.tajemniktv.tajsos.ui.components.*
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import kotlinx.datetime.TimeZone
 import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
+import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -89,15 +93,17 @@ fun ProjectDetailScreen(
             TopAppBar(
                 title = {
                     Text(
-                        "${stringResource(Res.string.type_project).uppercase()} // ${project.projectStatus?.uppercase() ?: project.status.uppercase()}",
-                        style = MaterialTheme.typography.labelSmall
+                        "NEURAL_INTERFACE",
+                        style = MaterialTheme.typography.labelSmall,
+                        letterSpacing = 1.sp
                     )
                 },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(Res.string.detail_back)
+                            contentDescription = stringResource(Res.string.detail_back),
+                            modifier = Modifier.size(18.dp)
                         )
                     }
                 },
@@ -105,15 +111,15 @@ fun ProjectDetailScreen(
                     IconButton(onClick = { showStatusDialog = true }) {
                         Icon(
                             Icons.Default.Tune,
-                            contentDescription = stringResource(Res.string.project_set_status)
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
                         )
                     }
-                    IconButton(onClick = {
-                        onEditNode(projectId)
-                    }) {
+                    IconButton(onClick = { onEditNode(projectId) }) {
                         Icon(
                             Icons.Default.Edit,
-                            contentDescription = stringResource(Res.string.project_detail_edit)
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
                         )
                     }
                     IconButton(onClick = {
@@ -121,8 +127,9 @@ fun ProjectDetailScreen(
                     }) {
                         Icon(
                             if (project.isFrozen) Icons.Default.AcUnit else Icons.Default.WbSunny,
-                            contentDescription = stringResource(Res.string.project_detail_freeze),
-                            tint = if (project.isFrozen) TactileTheme.Accent else TactileTheme.Primary
+                            contentDescription = null,
+                            tint = if (project.isFrozen) TactileTheme.Accent else TactileTheme.Primary,
+                            modifier = Modifier.size(18.dp)
                         )
                     }
                     IconButton(onClick = {
@@ -131,10 +138,17 @@ fun ProjectDetailScreen(
                     }) {
                         Icon(
                             Icons.Default.Delete,
-                            contentDescription = stringResource(Res.string.detail_archive)
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
                         )
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = TactileTheme.Background,
+                    titleContentColor = TactileTheme.Primary,
+                    navigationIconContentColor = TactileTheme.Text,
+                    actionIconContentColor = TactileTheme.Text
+                )
             )
         }
     ) { padding ->
@@ -142,231 +156,111 @@ fun ProjectDetailScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(TactileTheme.SpacingMd)
+                .background(TactileTheme.Background)
                 .verticalScroll(rememberScrollState())
+                .padding(TactileTheme.SpacingMd),
+            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingLg)
         ) {
+            // Header
+            DetailHeader(
+                category = "CURRENT WORKSPACE",
+                title = project.title
+            )
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)
             ) {
-                Text(
-                    text = project.title.uppercase(),
-                    style = MaterialTheme.typography.displaySmall,
-                    color = if (project.isFrozen) TactileTheme.Muted else TactileTheme.Text,
+                ActionButton(
+                    text = "ADD LINK",
+                    onClick = { /* Add link logic */ },
                     modifier = Modifier.weight(1f)
                 )
+                ActionButton(
+                    text = "LINK NODE",
+                    onClick = { /* Link node logic */ },
+                    containerColor = TactileTheme.Primary,
+                    contentColor = TactileTheme.Background,
+                    modifier = Modifier.weight(1f)
+                )
+            }
 
+            // Health / Status
+            Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+                DetailSectionHeader(
+                    title = stringResource(Res.string.detail_organization),
+                    icon = Icons.Default.BarChart
+                )
+                StatusCard(
+                    status = healthLabel,
+                    color = healthColor,
+                    onClick = { showStatusDialog = true }
+                )
+            }
+
+            // Progress Card
+            InfoCard(
+                title = "PROGRESS",
+                value = "${(progress * 100).toInt()}% COMPLETE",
+                icon = Icons.AutoMirrored.Filled.TrendingUp,
+                color = if (project.isFrozen) TactileTheme.Muted else TactileTheme.Primary
+            )
+
+            // Why Section
+            if (project.projectWhy != null || project.content.isNotEmpty()) {
                 Surface(
-                    color = healthColor.copy(alpha = 0.1f),
-                    shape = RoundedCornerShape(TactileTheme.RadiusSm),
-                    border = androidx.compose.foundation.BorderStroke(
-                        1.dp,
-                        healthColor.copy(alpha = 0.5f)
-                    )
+                    modifier = Modifier.fillMaxWidth(),
+                    color = TactileTheme.Surface,
+                    shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                    border = BorderStroke(1.dp, TactileTheme.Border)
                 ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Box(modifier = Modifier.size(8.dp).background(healthColor, CircleShape))
-                        Spacer(Modifier.width(6.dp))
+                    Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
                         Text(
-                            text = healthLabel,
+                            text = "PURPOSE",
                             style = MaterialTheme.typography.labelSmall,
-                            color = healthColor
+                            color = TactileTheme.Primary,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 8.sp
+                        )
+                        Spacer(Modifier.height(4.dp))
+                        Text(
+                            text = project.projectWhy ?: project.content,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = TactileTheme.Text
                         )
                     }
                 }
             }
 
-            if (project.isFrozen) {
-                Surface(
-                    color = TactileTheme.Accent.copy(alpha = 0.1f),
-                    shape = MaterialTheme.shapes.small,
-                    modifier = Modifier.padding(vertical = 8.dp).fillMaxWidth()
-                ) {
-                    Text(
-                        stringResource(Res.string.project_detail_frozen_msg),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Accent,
-                        modifier = Modifier.padding(8.dp)
-                    )
-                }
-            }
-
-            Text(
-                text = stringResource(
-                    Res.string.project_detail_why,
-                    project.projectWhy ?: stringResource(Res.string.detail_not_set)
-                ),
-                style = MaterialTheme.typography.bodySmall,
-                color = TactileTheme.Primary,
-                modifier = Modifier.padding(vertical = 4.dp)
-            )
-
-            if (project.content.isNotEmpty()) {
-                Text(
-                    text = project.content,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = TactileTheme.Muted
-                )
-            }
-
-            Spacer(modifier = Modifier.height(TactileTheme.SpacingMd))
-
-            LinearProgressIndicator(
-                progress = { progress },
-                modifier = Modifier.fillMaxWidth().height(8.dp),
-                color = if (project.isFrozen) TactileTheme.Muted else TactileTheme.Primary,
-                trackColor = TactileTheme.Border,
-                strokeCap = androidx.compose.ui.graphics.StrokeCap.Round
-            )
-            Text(
-                stringResource(
-                    Res.string.project_detail_progress,
-                    (progress * 100).toInt(),
-                    completed,
-                    total
-                ),
-                style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Muted,
-                modifier = Modifier.padding(top = 4.dp)
-            )
-
-            Spacer(modifier = Modifier.height(TactileTheme.SpacingLg))
-
-            val projectInbox =
-                nodesWithPinForProject.filter { it.node.inboxState && it.node.status == "active" }
-            if (projectInbox.isNotEmpty()) {
-                Text(
-                    text = stringResource(Res.string.project_detail_inbox_all).split("&").first()
-                        .trim(),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Accent
-                )
-                Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
-                projectInbox.forEach { item ->
-                    NodeCard(
-                        nodeWithPin = item,
-                        onToggleDone = { status -> viewModel.updateNodeStatus(item.node, status) },
-                        onTogglePin = { isPinned -> viewModel.togglePin(item.node, isPinned) },
-                        onClick = { onEditNode(item.node.id) },
-                        onLongClick = { onEditNode(item.node.id) },
-                        onArchive = { viewModel.archiveNode(item.node) }
-                    )
-                    Spacer(Modifier.height(TactileTheme.SpacingSm))
-                }
-                Spacer(modifier = Modifier.height(TactileTheme.SpacingLg))
-            }
-
-            Text(
-                text = stringResource(Res.string.project_detail_next_actions),
-                style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary
-            )
+            // Next Actions
             val nextActions =
                 nodesWithPinForProject.filter { it.node.status == "active" && it.node.type == "task" }
-            if (nextActions.isEmpty()) {
-                Text(
-                    stringResource(Res.string.project_detail_no_tasks),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Muted
-                )
-            } else {
-                nextActions.take(3).forEach { item ->
-                    NodeCard(
-                        nodeWithPin = item,
-                        onToggleDone = { status -> viewModel.updateNodeStatus(item.node, status) },
-                        onTogglePin = { isPinned -> viewModel.togglePin(item.node, isPinned) },
-                        onClick = { onEditNode(item.node.id) },
-                        onLongClick = { onEditNode(item.node.id) },
-                        onArchive = { viewModel.archiveNode(item.node) }
-                    )
-                    Spacer(Modifier.height(TactileTheme.SpacingSm))
+            if (nextActions.isNotEmpty()) {
+                Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+                    DetailSectionHeader(title = "NEXT ACTIONS", icon = Icons.Default.PlayArrow)
+                    nextActions.take(5).forEach { item ->
+                        LinkedNodeItem(
+                            title = item.node.title,
+                            subtitle = item.node.nextSmallestStep ?: "Active Task",
+                            icon = Icons.Default.CheckCircle,
+                            onClick = { onEditNode(item.node.id) }
+                        )
+                    }
                 }
             }
 
-            Spacer(modifier = Modifier.height(TactileTheme.SpacingLg))
-
-            val linkedNotes =
-                nodesWithPinForProject.filter { it.node.type == "note" || it.node.type == "idea" }
-            if (linkedNotes.isNotEmpty()) {
-                Text(
-                    text = stringResource(Res.string.project_detail_linked_notes),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Primary
-                )
-                Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
-                linkedNotes.forEach { item ->
-                    NodeCard(
-                        nodeWithPin = item,
-                        onToggleDone = { status -> viewModel.updateNodeStatus(item.node, status) },
-                        onTogglePin = { isPinned -> viewModel.togglePin(item.node, isPinned) },
-                        onClick = { onEditNode(item.node.id) },
-                        onLongClick = { onEditNode(item.node.id) },
-                        onArchive = { viewModel.archiveNode(item.node) }
-                    )
-                    Spacer(Modifier.height(TactileTheme.SpacingSm))
-                }
-                Spacer(modifier = Modifier.height(TactileTheme.SpacingLg))
-            }
-
-            val linkedResources = nodesWithPinForProject.filter { it.node.type == "resource" }
-            if (linkedResources.isNotEmpty()) {
-                Text(
-                    text = stringResource(Res.string.project_detail_resources),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Primary
-                )
-                Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
-                linkedResources.forEach { item ->
-                    NodeCard(
-                        nodeWithPin = item,
-                        onToggleDone = { status -> viewModel.updateNodeStatus(item.node, status) },
-                        onTogglePin = { isPinned -> viewModel.togglePin(item.node, isPinned) },
-                        onClick = { onEditNode(item.node.id) },
-                        onLongClick = { onEditNode(item.node.id) },
-                        onArchive = { viewModel.archiveNode(item.node) }
-                    )
-                    Spacer(Modifier.height(TactileTheme.SpacingSm))
-                }
-                Spacer(modifier = Modifier.height(TactileTheme.SpacingLg))
-            }
-
-            Text(
-                text = stringResource(Res.string.project_detail_timeline),
-                style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary
-            )
-            Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
+            // Timeline
             val logs by viewModel.getLogsForNode(projectId).collectAsState(initial = emptyList())
-            logs.take(10).forEach { log ->
-                ProjectTimelineItem(log)
+            if (logs.isNotEmpty()) {
+                Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+                    DetailSectionHeader(title = "TIMELINE", icon = Icons.Default.History)
+                    logs.take(5).forEach { log ->
+                        ProjectTimelineItem(log)
+                    }
+                }
             }
 
-            Spacer(modifier = Modifier.height(TactileTheme.SpacingLg))
-
-            Text(
-                text = stringResource(Res.string.project_detail_inbox_all),
-                style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary
-            )
-            Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
-
-            val otherItems =
-                nodesWithPinForProject.filter { !it.node.inboxState || it.node.status != "active" }
-            otherItems.forEach { item ->
-                NodeCard(
-                    nodeWithPin = item,
-                    onToggleDone = { status -> viewModel.updateNodeStatus(item.node, status) },
-                    onTogglePin = { isPinned -> viewModel.togglePin(item.node, isPinned) },
-                    onClick = { onEditNode(item.node.id) },
-                    onLongClick = { onEditNode(item.node.id) },
-                    onArchive = { viewModel.archiveNode(item.node) }
-                )
-                Spacer(Modifier.height(TactileTheme.SpacingSm))
-            }
+            Spacer(Modifier.height(TactileTheme.SpacingXl))
         }
     }
 

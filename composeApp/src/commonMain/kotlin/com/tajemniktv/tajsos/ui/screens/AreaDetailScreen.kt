@@ -9,17 +9,26 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.automirrored.filled.TrendingUp
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.components.NodeCard
-import com.tajemniktv.tajsos.ui.components.ProjectItem
+import com.tajemniktv.tajsos.ui.components.*
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.foundation.background
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.Alignment
 
 /**
  *
@@ -70,15 +79,17 @@ fun AreaDetailScreen(
             TopAppBar(
                 title = {
                     Text(
-                        "${stringResource(Res.string.type_area).uppercase()} // ${area.status.uppercase()}",
-                        style = MaterialTheme.typography.labelSmall
+                        "NEURAL_INTERFACE",
+                        style = MaterialTheme.typography.labelSmall,
+                        letterSpacing = 1.sp
                     )
                 },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(Res.string.detail_back)
+                            contentDescription = stringResource(Res.string.detail_back),
+                            modifier = Modifier.size(18.dp)
                         )
                     }
                 },
@@ -89,10 +100,17 @@ fun AreaDetailScreen(
                     }) {
                         Icon(
                             Icons.Default.Delete,
-                            contentDescription = stringResource(Res.string.detail_archive)
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
                         )
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = TactileTheme.Background,
+                    titleContentColor = TactileTheme.Primary,
+                    navigationIconContentColor = TactileTheme.Text,
+                    actionIconContentColor = TactileTheme.Text
+                )
             )
         }
     ) { padding ->
@@ -100,137 +118,125 @@ fun AreaDetailScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(TactileTheme.SpacingMd)
+                .background(TactileTheme.Background)
+                .verticalScroll(rememberScrollState())
+                .padding(TactileTheme.SpacingMd),
+            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingLg)
         ) {
-            Text(
-                text = area.title.uppercase(),
-                style = MaterialTheme.typography.displaySmall,
-                color = TactileTheme.Text
+            // Header
+            DetailHeader(
+                category = "WORKSPACE AREA",
+                title = area.title
             )
 
+            ActionButton(
+                text = "NEW PROJECT",
+                onClick = { /* New project logic */ },
+                containerColor = TactileTheme.Primary,
+                contentColor = TactileTheme.Background,
+                icon = Icons.Default.Add,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            // Health / Status
+            Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+                DetailSectionHeader(
+                    title = "SYSTEM STATE",
+                    icon = Icons.Default.BarChart
+                )
+                StatusCard(
+                    status = area.status,
+                    color = when (area.status) {
+                        "active" -> TactileTheme.Success
+                        "archived" -> TactileTheme.Muted
+                        else -> TactileTheme.Accent
+                    }
+                )
+            }
+
+            // Area Progress
             val areaNodesTotal = nodes.filter { it.node.areaId == areaId }
             if (areaNodesTotal.isNotEmpty()) {
                 val totalCount = areaNodesTotal.size
                 val completedCount = areaNodesTotal.count { it.node.status == "done" }
                 val areaProgress = completedCount.toFloat() / totalCount
 
-                Spacer(Modifier.height(8.dp))
-                LinearProgressIndicator(
-                    progress = { areaProgress },
-                    modifier = Modifier.fillMaxWidth().height(4.dp),
-                    color = TactileTheme.Primary,
-                    trackColor = TactileTheme.Border,
-                    strokeCap = androidx.compose.ui.graphics.StrokeCap.Round
-                )
-                Text(
-                    text = "${(areaProgress * 100).toInt()}% AREA COMPLETION",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Muted,
-                    modifier = Modifier.padding(top = 4.dp)
+                InfoCard(
+                    title = "AREA COMPLETION",
+                    value = "${(areaProgress * 100).toInt()}% COMPLETE",
+                    icon = Icons.AutoMirrored.Filled.TrendingUp,
+                    color = TactileTheme.Primary
                 )
             }
 
+            // Foundational Principle
             if (foundationalNote != null) {
-                Surface(
-                    onClick = { onEditNode(foundationalNote.node.id) },
-                    modifier = Modifier.fillMaxWidth().padding(vertical = TactileTheme.SpacingSm),
-                    color = TactileTheme.Primary.copy(alpha = 0.05f),
-                    shape = MaterialTheme.shapes.small,
-                    border = androidx.compose.foundation.BorderStroke(
-                        1.dp,
-                        TactileTheme.Primary.copy(alpha = 0.3f)
-                    )
-                ) {
-                    Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
-                        Text(
-                            text = stringResource(Res.string.dash_foundational),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = TactileTheme.Primary
-                        )
-                        Spacer(Modifier.height(4.dp))
-                        Text(
-                            foundationalNote.node.title,
-                            style = MaterialTheme.typography.titleSmall
-                        )
-                        Text(
-                            foundationalNote.node.content.take(100) + "...",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = TactileTheme.Muted
+                Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+                    DetailSectionHeader(title = "CORE PRINCIPLE", icon = Icons.Default.AutoAwesome)
+                    Surface(
+                        onClick = { onEditNode(foundationalNote.node.id) },
+                        modifier = Modifier.fillMaxWidth(),
+                        color = Color.Black.copy(alpha = 0.3f),
+                        shape = RoundedCornerShape(TactileTheme.RadiusLg),
+                        border = BorderStroke(1.dp, TactileTheme.Primary.copy(alpha = 0.3f))
+                    ) {
+                        Column(modifier = Modifier.padding(TactileTheme.SpacingLg)) {
+                            Text(
+                                text = foundationalNote.node.title,
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = TactileTheme.Text
+                            )
+                            Spacer(Modifier.height(4.dp))
+                            Text(
+                                text = foundationalNote.node.content.take(150) + "...",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = TactileTheme.Muted
+                            )
+                        }
+                    }
+                }
+            }
+
+            // Active Projects
+            val activeProjects =
+                projects.filter { it.status == "active" || it.projectStatus == "active" }
+            if (activeProjects.isNotEmpty()) {
+                Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+                    DetailSectionHeader(title = "ACTIVE PROJECTS", icon = Icons.Default.AccountTree)
+                    activeProjects.forEach { project ->
+                        LinkedNodeItem(
+                            title = project.title,
+                            subtitle = project.projectStatus ?: "Active Project",
+                            icon = Icons.Default.Folder,
+                            onClick = { onNavigateToProject(project.id) }
                         )
                     }
                 }
             }
 
-            val activeProjects =
-                projects.filter { it.status == "active" || it.projectStatus == "active" }
-
-            val areaTasks = nodesWithPinInArea.filter { it.node.type == "task" }
-            val staleTime =
-                kotlin.time.Clock.System.now().toEpochMilliseconds() - (14 * 24 * 60 * 60 * 1000L)
-            val neglectedTasks =
-                areaTasks.count { it.node.status == "active" && it.node.updatedAt < staleTime }
-
-            if (neglectedTasks > 0) {
-                Surface(
-                    color = TactileTheme.Error.copy(alpha = 0.1f),
-                    shape = MaterialTheme.shapes.small,
-                    modifier = Modifier.padding(vertical = 8.dp).fillMaxWidth()
-                ) {
-                    Text(
-                        stringResource(Res.string.area_detail_neglected_tasks, neglectedTasks),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Error,
-                        modifier = Modifier.padding(8.dp)
-                    )
+            // Recent Activity
+            if (nodesWithPinInArea.isNotEmpty()) {
+                Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+                    DetailSectionHeader(title = "RECENT ACTIVITY", icon = Icons.Default.History)
+                    nodesWithPinInArea.sortedByDescending { it.node.updatedAt }.take(5)
+                        .forEach { item ->
+                            LinkedNodeItem(
+                                title = item.node.title,
+                                subtitle = item.node.type.uppercase(),
+                                icon = when (item.node.type) {
+                                    "task" -> Icons.Default.CheckCircle
+                                    "note" -> Icons.Default.Description
+                                    "idea" -> Icons.Default.Lightbulb
+                                    else -> Icons.Default.Description
+                                },
+                                onClick = { onEditNode(item.node.id) }
+                            )
+                        }
                 }
             }
 
-            Spacer(modifier = Modifier.height(TactileTheme.SpacingMd))
-
-            if (activeProjects.isNotEmpty()) {
-                Text(
-                    text = stringResource(Res.string.area_detail_active_projects),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Primary
-                )
-                Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
-                activeProjects.forEach { project ->
-                    val projectNodes = nodes.filter { it.node.projectId == project.id }
-                    val total = projectNodes.size
-                    val completed = projectNodes.count { it.node.status == "done" }
-                    val progress = if (total > 0) completed.toFloat() / total else 0f
-
-                    ProjectItem(
-                        project = project,
-                        progress = progress,
-                        totalItems = total,
-                        onLongClick = { onEditNode(project.id) }
-                    ) { onNavigateToProject(project.id) }
-                    Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
-                }
-                Spacer(modifier = Modifier.height(TactileTheme.SpacingMd))
-            }
-
-            Text(
-                text = stringResource(Res.string.area_detail_recent_activity),
-                style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary
-            )
-            Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
-
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
-                items(nodesWithPinInArea.sortedByDescending { it.node.updatedAt }
-                    .take(10)) { item ->
-                    NodeCard(
-                        nodeWithPin = item,
-                        onToggleDone = { status -> viewModel.updateNodeStatus(item.node, status) },
-                        onTogglePin = { isPinned -> viewModel.togglePin(item.node, isPinned) },
-                        onClick = { onEditNode(item.node.id) },
-                        onLongClick = { onEditNode(item.node.id) },
-                        onArchive = { viewModel.archiveNode(item.node) }
-                    )
-                }
-            }
+            Spacer(Modifier.height(TactileTheme.SpacingXl))
         }
     }
 }
