@@ -1,0 +1,58 @@
+--- shared/src/commonMain/kotlin/com/tajemniktv/tajsos/ui/MainViewModel.kt
++++ shared/src/commonMain/kotlin/com/tajemniktv/tajsos/ui/MainViewModel.kt
+@@ -430,9 +430,9 @@
+             .toLocalDateTime(TimeZone.currentSystemDefault()).date
+         val recentTracks = tracks.filter { it.date >= sevenDaysAgoDate.toString() }
+
+-        val avgMood = recentTracks.mapNotNull { it.moodScore }.let { if (it.isNotEmpty()) it.average() else 0.0 }
+-        val avgEnergy = recentTracks.mapNotNull { it.energyScore }.let { if (it.isNotEmpty()) it.average() else 0.0 }
+-        val avgFocus = recentTracks.mapNotNull { it.focusScore }.let { if (it.isNotEmpty()) it.average() else 0.0 }
++        val avgMood = recentTracks.mapNotNull { it.moodScore }.average().takeIf { !it.isNaN() } ?: 0.0
++        val avgEnergy = recentTracks.mapNotNull { it.energyScore }.average().takeIf { !it.isNaN() } ?: 0.0
++        val avgFocus = recentTracks.mapNotNull { it.focusScore }.average().takeIf { !it.isNaN() } ?: 0.0
+
+         val nodesByProjectId = nodes.groupBy { it.node.projectId }
+         val neglectedProjects =
+@@ -497,25 +497,25 @@
+
+         val moodVsCompletions = if (recentTracks.isNotEmpty()) {
+             val moodOnBusyDays = recentTracks.filter { (dailyCompletions[it.date] ?: 0) >= 3 }
+-                .mapNotNull { it.moodScore }.let { if (it.isNotEmpty()) it.average() else Double.NaN }
++                .mapNotNull { it.moodScore }.average()
+             val moodOnSlowDays = recentTracks.filter { (dailyCompletions[it.date] ?: 0) == 0 }
+-                .mapNotNull { it.moodScore }.let { if (it.isNotEmpty()) it.average() else Double.NaN }
++                .mapNotNull { it.moodScore }.average()
+             if (!moodOnBusyDays.isNaN() && !moodOnSlowDays.isNaN()) moodOnBusyDays - moodOnSlowDays else 0.0
+         } else 0.0
+
+         val sleepVsFocus = if (recentTracks.isNotEmpty()) {
+             val focusOnGoodSleep = recentTracks.filter { (it.sleepScore ?: 0f) >= 7f }
+-                .map { dailyFocus[it.date] ?: 0.0 }.let { if (it.isNotEmpty()) it.average() else Double.NaN }
++                .map { dailyFocus[it.date] ?: 0.0 }.average()
+             val focusOnBadSleep = recentTracks.filter { (it.sleepScore ?: 0f) < 7f }
+-                .map { dailyFocus[it.date] ?: 0.0 }.let { if (it.isNotEmpty()) it.average() else Double.NaN }
++                .map { dailyFocus[it.date] ?: 0.0 }.average()
+             if (!focusOnGoodSleep.isNaN() && !focusOnBadSleep.isNaN()) focusOnGoodSleep - focusOnBadSleep else 0.0
+         } else 0.0
+
+         val energyVsCaptures = if (recentTracks.isNotEmpty()) {
+             val capturesOnHighEnergy = recentTracks.filter { (it.energyScore ?: 0) >= 4 }
+-                .map { dailyCaptures[it.date] ?: 0 }.let { if (it.isNotEmpty()) it.average() else Double.NaN }
++                .map { dailyCaptures[it.date] ?: 0 }.average()
+             val capturesOnLowEnergy = recentTracks.filter { (it.energyScore ?: 0) <= 2 }
+-                .map { dailyCaptures[it.date] ?: 0 }.let { if (it.isNotEmpty()) it.average() else Double.NaN }
++                .map { dailyCaptures[it.date] ?: 0 }.average()
+             if (!capturesOnHighEnergy.isNaN() && !capturesOnLowEnergy.isNaN()) capturesOnHighEnergy - capturesOnLowEnergy else 0.0
+         } else 0.0
+
+@@ -534,9 +534,9 @@
+
+         val medsEffectiveness = if (recentTracks.isNotEmpty()) {
+             val focusWithMeds =
+-                recentTracks.filter { it.tookMeds }.mapNotNull { it.focusScore }.let { if (it.isNotEmpty()) it.average() else Double.NaN }
++                recentTracks.filter { it.tookMeds }.mapNotNull { it.focusScore }.average()
+             val focusWithoutMeds =
+-                recentTracks.filter { !it.tookMeds }.mapNotNull { it.focusScore }.let { if (it.isNotEmpty()) it.average() else Double.NaN }
++                recentTracks.filter { !it.tookMeds }.mapNotNull { it.focusScore }.average()
+             if (!focusWithMeds.isNaN() && !focusWithoutMeds.isNaN()) focusWithMeds - focusWithoutMeds else 0.0
+         } else 0.0
