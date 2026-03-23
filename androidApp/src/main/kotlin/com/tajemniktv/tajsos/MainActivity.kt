@@ -68,7 +68,6 @@ class MainActivity : FragmentActivity() {
         viewModel = sharedModule.createViewModel()
 
         viewModel.setBiometricHardwareAvailable(isBiometricAvailable())
-        handleIntent(intent)
 
         setContent {
             val isAuthenticated by viewModel.isAuthenticated.collectAsState()
@@ -80,6 +79,12 @@ class MainActivity : FragmentActivity() {
                     showBiometricPrompt(viewModel)
                 } else if (isBiometricEnabled == false) {
                     viewModel.setAuthenticated(true)
+                }
+            }
+
+            LaunchedEffect(isAuthenticated) {
+                if (isAuthenticated) {
+                    handleIntent(intent)
                 }
             }
 
@@ -120,11 +125,17 @@ class MainActivity : FragmentActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        handleIntent(intent)
+        setIntent(intent)
+        if (viewModel.isAuthenticated.value) {
+            handleIntent(intent)
+        }
     }
 
     private fun handleIntent(intent: Intent) {
         if (intent.action == Intent.ACTION_SEND) {
+            // Clear the action so we don't process it multiple times on recomposition/re-entry
+            intent.action = null
+
             val type = intent.type
             if ("text/plain" == type) {
                 intent.getStringExtra(Intent.EXTRA_TEXT)?.let { sharedText ->
