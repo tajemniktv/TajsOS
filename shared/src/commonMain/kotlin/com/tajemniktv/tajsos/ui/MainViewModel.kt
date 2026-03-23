@@ -430,9 +430,9 @@ class MainViewModel(
             .toLocalDateTime(TimeZone.currentSystemDefault()).date
         val recentTracks = tracks.filter { it.date >= sevenDaysAgoDate.toString() }
 
-        val avgMood = if (recentTracks.isNotEmpty()) recentTracks.mapNotNull { it.moodScore }.average() else 0.0
-        val avgEnergy = if (recentTracks.isNotEmpty()) recentTracks.mapNotNull { it.energyScore }.average() else 0.0
-        val avgFocus = if (recentTracks.isNotEmpty()) recentTracks.mapNotNull { it.focusScore }.average() else 0.0
+        val avgMood = recentTracks.mapNotNull { it.moodScore }.let { if (it.isNotEmpty()) it.average() else 0.0 }
+        val avgEnergy = recentTracks.mapNotNull { it.energyScore }.let { if (it.isNotEmpty()) it.average() else 0.0 }
+        val avgFocus = recentTracks.mapNotNull { it.focusScore }.let { if (it.isNotEmpty()) it.average() else 0.0 }
 
         val nodesByProjectId = nodes.groupBy { it.node.projectId }
         val neglectedProjects =
@@ -497,25 +497,25 @@ class MainViewModel(
 
         val moodVsCompletions = if (recentTracks.isNotEmpty()) {
             val moodOnBusyDays = recentTracks.filter { (dailyCompletions[it.date] ?: 0) >= 3 }
-                .mapNotNull { it.moodScore }.average()
+                .mapNotNull { it.moodScore }.let { if (it.isNotEmpty()) it.average() else Double.NaN }
             val moodOnSlowDays = recentTracks.filter { (dailyCompletions[it.date] ?: 0) == 0 }
-                .mapNotNull { it.moodScore }.average()
+                .mapNotNull { it.moodScore }.let { if (it.isNotEmpty()) it.average() else Double.NaN }
             if (!moodOnBusyDays.isNaN() && !moodOnSlowDays.isNaN()) moodOnBusyDays - moodOnSlowDays else 0.0
         } else 0.0
 
         val sleepVsFocus = if (recentTracks.isNotEmpty()) {
             val focusOnGoodSleep = recentTracks.filter { (it.sleepScore ?: 0f) >= 7f }
-                .map { dailyFocus[it.date] ?: 0.0 }.average()
+                .map { dailyFocus[it.date] ?: 0.0 }.let { if (it.isNotEmpty()) it.average() else Double.NaN }
             val focusOnBadSleep = recentTracks.filter { (it.sleepScore ?: 0f) < 7f }
-                .map { dailyFocus[it.date] ?: 0.0 }.average()
+                .map { dailyFocus[it.date] ?: 0.0 }.let { if (it.isNotEmpty()) it.average() else Double.NaN }
             if (!focusOnGoodSleep.isNaN() && !focusOnBadSleep.isNaN()) focusOnGoodSleep - focusOnBadSleep else 0.0
         } else 0.0
 
         val energyVsCaptures = if (recentTracks.isNotEmpty()) {
             val capturesOnHighEnergy = recentTracks.filter { (it.energyScore ?: 0) >= 4 }
-                .map { dailyCaptures[it.date] ?: 0 }.average()
+                .map { dailyCaptures[it.date] ?: 0 }.let { if (it.isNotEmpty()) it.average() else Double.NaN }
             val capturesOnLowEnergy = recentTracks.filter { (it.energyScore ?: 0) <= 2 }
-                .map { dailyCaptures[it.date] ?: 0 }.average()
+                .map { dailyCaptures[it.date] ?: 0 }.let { if (it.isNotEmpty()) it.average() else Double.NaN }
             if (!capturesOnHighEnergy.isNaN() && !capturesOnLowEnergy.isNaN()) capturesOnHighEnergy - capturesOnLowEnergy else 0.0
         } else 0.0
 
@@ -534,9 +534,9 @@ class MainViewModel(
 
         val medsEffectiveness = if (recentTracks.isNotEmpty()) {
             val focusWithMeds =
-                recentTracks.filter { it.tookMeds }.mapNotNull { it.focusScore }.average()
+                recentTracks.filter { it.tookMeds }.mapNotNull { it.focusScore }.let { if (it.isNotEmpty()) it.average() else Double.NaN }
             val focusWithoutMeds =
-                recentTracks.filter { !it.tookMeds }.mapNotNull { it.focusScore }.average()
+                recentTracks.filter { !it.tookMeds }.mapNotNull { it.focusScore }.let { if (it.isNotEmpty()) it.average() else Double.NaN }
             if (!focusWithMeds.isNaN() && !focusWithoutMeds.isNaN()) focusWithMeds - focusWithoutMeds else 0.0
         } else 0.0
 
