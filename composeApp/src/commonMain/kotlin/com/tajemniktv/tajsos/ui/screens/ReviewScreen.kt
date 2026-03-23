@@ -19,7 +19,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.components.*
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
@@ -49,50 +51,64 @@ fun ReviewScreen(
         Res.string.review_step_goals
     )
 
-    val reviewTitle = when (reviewType) {
-        "daily" -> stringResource(Res.string.review_daily)
-        "weekly" -> stringResource(Res.string.review_weekly)
-        "monthly" -> stringResource(Res.string.review_monthly)
-        else -> stringResource(Res.string.review_select_type)
-    }
+    val dailyLabel = stringResource(Res.string.review_daily)
+    val weeklyLabel = stringResource(Res.string.review_weekly)
+    val monthlyLabel = stringResource(Res.string.review_monthly)
+
+    SelectorDialog(
+        show = reviewType == null,
+        onDismiss = onBack,
+        title = "SELECT REVIEW TYPE",
+        options = listOf("daily", "weekly", "monthly"),
+        selectedOption = null,
+        onSelect = { reviewType = it },
+        optionName = {
+            when (it) {
+                "daily" -> dailyLabel
+                "weekly" -> weeklyLabel
+                "monthly" -> monthlyLabel
+                else -> it
+            }
+        },
+        optionIcon = {
+            when (it) {
+                "daily" -> Icons.Default.WbSunny
+                "weekly" -> Icons.Default.DateRange
+                "monthly" -> Icons.Default.CalendarMonth
+                else -> Icons.Default.RateReview
+            }
+        },
+        optionSubtext = { "REV_SYST_${it.uppercase()}" }
+    )
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(reviewTitle.uppercase()) },
+                title = {
+                    Text(
+                        "NEURAL_INTERFACE",
+                        style = MaterialTheme.typography.labelSmall,
+                        letterSpacing = 1.sp
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(Res.string.common_back)
+                            contentDescription = stringResource(Res.string.common_back),
+                            modifier = Modifier.size(18.dp)
                         )
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = TactileTheme.Background,
+                    titleContentColor = TactileTheme.Primary,
+                    navigationIconContentColor = TactileTheme.Text
+                )
             )
         }
     ) { padding ->
-        if (reviewType == null) {
-            Column(
-                modifier = Modifier.fillMaxSize().padding(padding).padding(TactileTheme.SpacingMd),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                ReviewTypeButton(
-                    stringResource(Res.string.review_daily),
-                    Icons.Default.WbSunny
-                ) { reviewType = "daily" }
-                Spacer(Modifier.height(16.dp))
-                ReviewTypeButton(
-                    stringResource(Res.string.review_weekly),
-                    Icons.Default.DateRange
-                ) { reviewType = "weekly" }
-                Spacer(Modifier.height(16.dp))
-                ReviewTypeButton(
-                    stringResource(Res.string.review_monthly),
-                    Icons.Default.CalendarMonth
-                ) { reviewType = "monthly" }
-            }
-        } else {
+        if (reviewType != null) {
             val steps = if (reviewType == "daily") dailySteps else weeklySteps
             ReviewFlow(
                 type = reviewType!!,
@@ -108,23 +124,6 @@ fun ReviewScreen(
                 }
             )
         }
-    }
-}
-
-@Composable
-fun ReviewTypeButton(
-    label: String,
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    onClick: () -> Unit
-) {
-    Button(
-        onClick = onClick,
-        modifier = Modifier.fillMaxWidth().height(80.dp),
-        shape = RoundedCornerShape(TactileTheme.RadiusMd)
-    ) {
-        Icon(icon, contentDescription = null)
-        Spacer(Modifier.width(16.dp))
-        Text(label, style = MaterialTheme.typography.titleMedium)
     }
 }
 
