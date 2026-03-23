@@ -133,6 +133,68 @@
     <string name="dash_vibe_evening">The day is winding down. Clear the deck.</string>
     <string name="dash_vibe_night">System standby. Rest is part of the work.</string>
 
+    <!-- LifeOS Specific -->
+    <string name="dash_area_health">AREA HEALTH</string>
+    <string name="dash_system_status">SYSTEM STATUS</string>
+    <string name="dash_open_loops">OPEN LOOPS</string>
+    <string name="dash_decisions">DECISION QUEUE</string>
+    <string name="dash_maintenance">MAINTENANCE QUEUE</string>
+    <string name="dash_protocols">PROTOCOLS &amp; PLAYBOOKS</string>
+    <string name="dash_load">SYSTEM LOAD</string>
+    <string name="dash_capacity">CAPACITY</string>
+    <string name="dash_fragmentation">FRAGMENTATION</string>
+    <string name="dash_load_warning">SYSTEM OVERLOADED // ATTENTION FRAGMENTED</string>
+    <string name="dash_capacity_mismatch">CAPACITY MISMATCH // RE-EVALUATE LOAD</string>
+    <string name="dash_neglected_area">%s AREA IS NEGLECTED</string>
+    <string name="dash_overloaded_area">%s AREA IS OVERLOADED</string>
+    <string name="dash_stable_area">%s AREA IS STABLE</string>
+    <string name="dash_on_fire_area">%s AREA IS ON FIRE</string>
+    <string name="dash_active_area">%s AREA IS ACTIVE</string>
+
+    <!-- Contexts -->
+    <string name="context_home">AT HOME</string>
+    <string name="context_campus">ON CAMPUS</string>
+    <string name="context_out">OUT OF HOME</string>
+    <string name="context_laptop">LAPTOP REQUIRED</string>
+    <string name="context_phone">PHONE OKAY</string>
+    <string name="context_internet">NEEDS INTERNET</string>
+    <string name="context_privacy">NEEDS PRIVACY</string>
+    <string name="context_low_energy">LOW ENERGY</string>
+    <string name="context_high_focus">HIGH FOCUS</string>
+    <string name="context_brain_works">WHEN BRAIN WORKS</string>
+    <string name="context_emotionally_wrecked">WHEN EMOTIONALLY WRECKED</string>
+    <string name="context_10_min">10 MINUTES</string>
+    <string name="context_commute">COMMUTE FRIENDLY</string>
+    <string name="context_waiting">WAITING ROOM</string>
+
+    <!-- Protocols -->
+    <string name="protocol_morning">MORNING STARTUP</string>
+    <string name="protocol_before_class">BEFORE CLASS</string>
+    <string name="protocol_leaving_home">LEAVING HOME</string>
+    <string name="protocol_deep_work">DEEP WORK ENTRY</string>
+    <string name="protocol_shutdown">SHUTDOWN RITUAL</string>
+    <string name="protocol_recovery">RECOVERY AFTER DERAILMENT</string>
+    <string name="protocol_exam_week">EXAM WEEK</string>
+    <string name="protocol_travel">TRAVEL DAY</string>
+    <string name="protocol_after_interruption">AFTER INTERRUPTION</string>
+    <string name="protocol_arriving_campus">ARRIVING ON CAMPUS</string>
+    <string name="protocol_scrolling_to_working">SCROLLING TO WORKING</string>
+    <string name="protocol_work_to_rest">WORK TO REST</string>
+
+    <!-- Relationship Layer -->
+    <string name="dash_people">PEOPLE &amp; RELATIONSHIPS</string>
+    <string name="dash_last_contact">Last contact: %s</string>
+    <string name="dash_follow_up">FOLLOW-UP NEEDED</string>
+    <string name="dash_ask_next_time">ASK ABOUT THIS NEXT TIME</string>
+
+    <!-- Logistics & Vaults -->
+    <string name="dash_vaults">LOGISTICS &amp; VAULTS</string>
+    <string name="dash_documents">DOCUMENT VAULT</string>
+    <string name="dash_links">IMPORTANT LINKS</string>
+    <string name="dash_medical">MEDICAL INFO</string>
+    <string name="dash_university">UNIVERSITY INFO</string>
+    <string name="dash_ids">IDs &amp; FORMS</string>
+
     <!-- Settings -->
     <string name="settings_title">SETTINGS</string>
     <string name="settings_security">SECURITY</string>

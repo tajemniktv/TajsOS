@@ -227,12 +227,27 @@ fun CaptureSheet(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
                 ) {
-                    items(listOf("task", "note", "idea", "resource", "project", "area")) { type ->
+                    items(
+                        listOf(
+                            "task",
+                            "note",
+                            "idea",
+                            "resource",
+                            "open_loop",
+                            "decision",
+                            "maintenance",
+                            "project",
+                            "area"
+                        )
+                    ) { type ->
                         val typeLabel = when (type) {
                             "task" -> stringResource(Res.string.type_task)
                             "note" -> stringResource(Res.string.type_note)
                             "idea" -> stringResource(Res.string.type_idea)
                             "resource" -> stringResource(Res.string.type_resource)
+                            "open_loop" -> stringResource(Res.string.dash_open_loops)
+                            "decision" -> stringResource(Res.string.dash_decisions)
+                            "maintenance" -> stringResource(Res.string.dash_maintenance)
                             "project" -> stringResource(Res.string.type_project)
                             "area" -> stringResource(Res.string.type_area)
                             else -> type

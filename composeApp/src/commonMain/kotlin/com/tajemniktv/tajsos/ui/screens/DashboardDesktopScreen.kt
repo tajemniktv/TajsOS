@@ -33,7 +33,7 @@ import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.data.TrackEntryEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
-import com.tajemniktv.tajsos.ui.components.SidebarContent
+import com.tajemniktv.tajsos.ui.components.*
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -58,6 +58,7 @@ fun DashboardDesktopScreen(
     val allAreas by viewModel.allAreas.collectAsState()
     val dashboardState by viewModel.dashboardUIState.collectAsState()
     val insights by viewModel.insights.collectAsState()
+    val currentMode by viewModel.currentMode.collectAsState()
 
     val pinnedNodes = allNodes.filter { it.pin != null }
     val completedTodayCount = pinnedNodes.count { it.node.status == "done" }
@@ -84,7 +85,7 @@ fun DashboardDesktopScreen(
         // 2. Main Dashboard Area
         Column(modifier = Modifier.weight(1f).padding(horizontal = 40.dp, vertical = 32.dp)) {
             // Header
-            DesktopHeader(viewModel = viewModel)
+            DesktopHeader(viewModel = viewModel, currentMode = currentMode)
 
             Spacer(Modifier.height(32.dp))
 
@@ -126,15 +127,17 @@ fun DashboardDesktopScreen(
                         )
                     }
 
-                    // Middle Row: Stats (1/4), High Priority (1/2), Next Engagement (1/4)
+                    // Middle Row: Status (1/4), High Priority (1/2), Next Engagement (1/4)
                     Row(
                         modifier = Modifier.weight(1f),
                         horizontalArrangement = Arrangement.spacedBy(24.dp)
                     ) {
-                        DesktopTrackStatsCard(
+                        SystemStatusCard(
+                            load = dashboardState.systemLoad,
+                            fragmentation = dashboardState.fragmentation,
+                            warning = dashboardState.capacityWarning,
                             modifier = Modifier.weight(1f),
-                            trackEntries = trackEntries,
-                            onClick = { onNavigateTo(Screen.Track) }
+                            onClick = { onNavigateTo(Screen.Insights) }
                         )
                         DesktopHighPriorityCard(
                             modifier = Modifier.weight(2f),
@@ -169,11 +172,99 @@ fun DashboardDesktopScreen(
                             project = allProjects.maxByOrNull { it.updatedAt },
                             onNavigateToProject = onNavigateToProject
                         )
-                        DesktopContextCard(
-                            modifier = Modifier.weight(1f),
-                            allAreas = allAreas,
-                            onClick = { onNavigateTo(Screen.Areas) }
-                        )
+                        // Area Health Desktop
+                        Column(
+                            modifier = Modifier.weight(1.5f),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Text(
+                                stringResource(Res.string.dash_area_health),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = Color.White.copy(alpha = 0.3f),
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 10.sp
+                            )
+                            Row(
+                                modifier = Modifier.fillMaxWidth()
+                                    .horizontalScroll(rememberScrollState()),
+                                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
+                                allAreas.forEach { area ->
+                                    AreaHealthCard(
+                                        area = area,
+                                        health = dashboardState.areaHealth[area.id] ?: "stable",
+                                        onClick = {
+                                            viewModel.clearSearchFilters()
+                                            viewModel.updateSearchAreaFilter(area.id)
+                                            onNavigateTo(Screen.Search)
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    // Operational Layer (Full Width)
+                    if (dashboardState.openLoops.isNotEmpty() || dashboardState.pendingDecisions.isNotEmpty() || dashboardState.maintenanceQueue.isNotEmpty()) {
+                        Row(
+                            modifier = Modifier.weight(0.8f),
+                            horizontalArrangement = Arrangement.spacedBy(24.dp)
+                        ) {
+                            if (dashboardState.openLoops.isNotEmpty()) {
+                                Surface(
+                                    modifier = Modifier.weight(1f),
+                                    color = TactileTheme.Surface,
+                                    shape = RoundedCornerShape(24.dp),
+                                    border = BorderStroke(1.dp, Color.White.copy(alpha = 0.05f))
+                                ) {
+                                    Column(modifier = Modifier.padding(24.dp)) {
+                                        SuggestionGroup(
+                                            title = stringResource(Res.string.dash_open_loops),
+                                            icon = Icons.Default.AllInclusive,
+                                            color = TactileTheme.Accent,
+                                            nodes = dashboardState.openLoops,
+                                            onEditNode = onEditNode
+                                        )
+                                    }
+                                }
+                            }
+                            if (dashboardState.pendingDecisions.isNotEmpty()) {
+                                Surface(
+                                    modifier = Modifier.weight(1f),
+                                    color = TactileTheme.Surface,
+                                    shape = RoundedCornerShape(24.dp),
+                                    border = BorderStroke(1.dp, Color.White.copy(alpha = 0.05f))
+                                ) {
+                                    Column(modifier = Modifier.padding(24.dp)) {
+                                        SuggestionGroup(
+                                            title = stringResource(Res.string.dash_decisions),
+                                            icon = Icons.Default.QuestionMark,
+                                            color = TactileTheme.Primary,
+                                            nodes = dashboardState.pendingDecisions,
+                                            onEditNode = onEditNode
+                                        )
+                                    }
+                                }
+                            }
+                            if (dashboardState.maintenanceQueue.isNotEmpty()) {
+                                Surface(
+                                    modifier = Modifier.weight(1f),
+                                    color = TactileTheme.Surface,
+                                    shape = RoundedCornerShape(24.dp),
+                                    border = BorderStroke(1.dp, Color.White.copy(alpha = 0.05f))
+                                ) {
+                                    Column(modifier = Modifier.padding(24.dp)) {
+                                        SuggestionGroup(
+                                            title = stringResource(Res.string.dash_maintenance),
+                                            icon = Icons.Default.Settings,
+                                            color = TactileTheme.Success,
+                                            nodes = dashboardState.maintenanceQueue,
+                                            onEditNode = onEditNode
+                                        )
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -216,20 +307,31 @@ fun DashboardDesktopScreen(
 
 
 @Composable
-fun DesktopHeader(viewModel: MainViewModel) {
+fun DesktopHeader(viewModel: MainViewModel, currentMode: com.tajemniktv.tajsos.data.ModeEntity?) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            "TAJSOS // STATUS: OK",
-            style = MaterialTheme.typography.labelSmall,
-            color = Color.White.copy(alpha = 0.3f),
-            fontWeight = FontWeight.Bold,
-            letterSpacing = 1.sp,
-            fontSize = 10.sp
-        )
+        Column {
+            Text(
+                "TAJSOS // STATUS: OK",
+                style = MaterialTheme.typography.labelSmall,
+                color = Color.White.copy(alpha = 0.3f),
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 1.sp,
+                fontSize = 10.sp
+            )
+            if (currentMode != null) {
+                Text(
+                    "MODE: ${currentMode.name.uppercase()}",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TactileTheme.Primary,
+                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = 10.sp
+                )
+            }
+        }
 
         OutlinedTextField(
             value = "",

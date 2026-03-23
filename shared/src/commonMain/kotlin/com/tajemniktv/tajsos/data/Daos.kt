@@ -288,3 +288,69 @@ interface CalendarEventDao {
     @Delete
     suspend fun deleteEvent(event: CalendarEventEntity)
 }
+
+@Dao
+interface ModeDao {
+    @Query("SELECT * FROM modes ORDER BY sortOrder ASC")
+    fun getAllModes(): Flow<List<ModeEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertMode(mode: ModeEntity): Long
+
+    @Update
+    suspend fun updateMode(mode: ModeEntity)
+
+    @Delete
+    suspend fun deleteMode(mode: ModeEntity)
+
+    @Query("SELECT * FROM mode_preferences WHERE modeId = :modeId")
+    fun getPreferencesForMode(modeId: Long): Flow<ModePreferenceEntity?>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertPreference(preference: ModePreferenceEntity)
+
+    @Query("SELECT * FROM mode_area_filters WHERE modeId = :modeId")
+    fun getAreaFiltersForMode(modeId: Long): Flow<List<ModeAreaFilterEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAreaFilter(filter: ModeAreaFilterEntity)
+
+    @Query("SELECT * FROM mode_type_filters WHERE modeId = :modeId")
+    fun getTypeFiltersForMode(modeId: Long): Flow<List<ModeTypeFilterEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertTypeFilter(filter: ModeTypeFilterEntity)
+
+    @Query("SELECT * FROM mode_usage_logs ORDER BY activatedAt DESC")
+    fun getAllUsageLogs(): Flow<List<ModeUsageLogEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertUsageLog(log: ModeUsageLogEntity): Long
+
+    @Query("UPDATE mode_usage_logs SET deactivatedAt = :timestamp WHERE id = :id")
+    suspend fun deactivateLog(id: Long, timestamp: Long)
+}
+
+@Dao
+interface ProtocolDao {
+    @Query("SELECT * FROM protocol_history ORDER BY executedAt DESC")
+    fun getAllProtocolHistory(): Flow<List<ProtocolHistoryEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertProtocolHistory(history: ProtocolHistoryEntity): Long
+}
+
+@Dao
+interface DecisionDao {
+    @Query("SELECT * FROM decision_options WHERE decisionNodeId = :nodeId")
+    fun getOptionsForDecision(nodeId: Long): Flow<List<DecisionOptionEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertDecisionOption(option: DecisionOptionEntity): Long
+
+    @Update
+    suspend fun updateDecisionOption(option: DecisionOptionEntity)
+
+    @Delete
+    suspend fun deleteDecisionOption(option: DecisionOptionEntity)
+}
