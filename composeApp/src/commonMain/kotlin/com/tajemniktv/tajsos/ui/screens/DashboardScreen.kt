@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavDestination
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.ModuleButton
@@ -40,6 +41,39 @@ import kotlin.time.Instant
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DashboardScreen(
+    viewModel: MainViewModel,
+    onNavigateTo: (Screen) -> Unit,
+    onEditNode: (Long) -> Unit,
+    onNavigateToProject: (Long) -> Unit,
+    onOpenDrawer: () -> Unit,
+    onNewEntry: () -> Unit,
+    currentDestination: NavDestination? = null,
+) {
+    BoxWithConstraints {
+        if (maxWidth > 800.dp) {
+            DashboardDesktopScreen(
+                viewModel = viewModel,
+                onNavigateTo = onNavigateTo,
+                onEditNode = onEditNode,
+                onNavigateToProject = onNavigateToProject,
+                onNewEntry = onNewEntry,
+                currentDestination = currentDestination
+            )
+        } else {
+            DashboardMobileContent(
+                viewModel = viewModel,
+                onNavigateTo = onNavigateTo,
+                onEditNode = onEditNode,
+                onNavigateToProject = onNavigateToProject,
+                onOpenDrawer = onOpenDrawer
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun DashboardMobileContent(
     viewModel: MainViewModel,
     onNavigateTo: (Screen) -> Unit,
     onEditNode: (Long) -> Unit,
