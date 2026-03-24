@@ -250,7 +250,7 @@
     <string name="search_filter_active">ACTIVE</string>
     <string name="search_filter_archived">ARCHIVED</string>
     <string name="search_filter_linked_to">LINKED TO: %1$s</string>
-    <string name="search_no_results">NO MATCHING RESULTS FOUND</string>
+    <string name="search_no_results">SYSTEM CLEAR: NO MATCHES</string>
 
     <!-- Focus Screen -->
     <string name="focus_no_active_task">NO ACTIVE TASK</string>
@@ -360,7 +360,7 @@
 
     <!-- Tasks Screen -->
     <string name="tasks_title">TASKS</string>
-    <string name="tasks_empty">NO TASKS FOUND</string>
+    <string name="tasks_empty">SYSTEM CLEAR: NO ACTIVE TASKS</string>
 
     <!-- Projects Screen -->
     <string name="projects_title">PROJECTS</string>
@@ -564,4 +564,45 @@
     <string name="media_link">LINK</string>
     <string name="media_other">OTHER RESOURCES</string>
 
+
+    <!-- Missing Strings (Decisions & EmptyState & Tasks) -->
+    <string name="empty_state_default_desc">SYSTEM READY</string>
+    <string name="dash_annoying">ANNOYING</string>
+    <string name="dash_heavy">HEAVY</string>
+    <string name="dash_unclear">UNCLEAR</string>
+
+    <string name="decision_status_label">DECISION STATUS</string>
+    <string name="decision_category_label">DECISION CATEGORY</string>
+    <string name="decision_info_missing_label">WHAT INFO IS MISSING?</string>
+    <string name="decision_difficult_because_label">WHAT MAKES THIS DIFFICULT?</string>
+    <string name="decision_easier_if_label">WHAT WOULD MAKE THIS EASIER?</string>
+    <string name="decision_options_label">OPTIONS</string>
+    <string name="decision_no_options">NO OPTIONS ADDED YET</string>
+    <string name="decision_outcome_label">OUTCOME</string>
+    <string name="decision_no_outcome">NO OUTCOME RECORDED</string>
+    <string name="decision_convert_project">CONVERT TO ACTION PLAN (PROJECT)</string>
+    <string name="decision_convert_task">CONVERT TO FOLLOW-UP TASK</string>
+    <string name="decision_finalize">FINALIZE DECISION</string>
+    <string name="decision_add_option_title">ADD OPTION</string>
+    <string name="decision_add_option_field">Title</string>
+    <string name="decision_add">ADD</string>
+    <string name="decision_cancel">CANCEL</string>
+    <string name="decision_selected_option">Selected Option:</string>
+    <string name="decision_outcome_reason">Outcome / Reason</string>
+    <string name="decision_decide">DECIDE</string>
+    <string name="decision_tap_to_add">Tap to add...</string>
+
+    <string name="decision_tab_inbox">INBOX</string>
+    <string name="decision_tab_pending">PENDING</string>
+    <string name="decision_tab_log">LOG</string>
+    <string name="decision_no_decisions_category">NO DECISIONS IN THIS CATEGORY</string>
+    <string name="decision_outcome_prefix">OUTCOME: %1$s</string>
+
+    <!-- Content Descriptions -->
+    <string name="cd_add_option">Add decision option</string>
+    <string name="cd_delete_option">Delete option</string>
+    <string name="cd_decision_decided">Decision decided checkmark</string>
+    <string name="cd_decision_major">Major decision priority icon</string>
+    <string name="cd_decision_tiny">Tiny decision category icon</string>
+    <string name="cd_decision_outcome">Decision outcome checkmark</string>
 </resources>

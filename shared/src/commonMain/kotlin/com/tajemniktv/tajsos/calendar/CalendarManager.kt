@@ -32,8 +32,12 @@ class CalendarManager(
                 val provider = providers.find { it.type == providerEntity.type }
                 if (provider != null) {
                     val events = provider.sync(providerEntity, from, to)
+
+                    // Deduplicate events by externalId to ensure no duplicates from malformed sources
+                    val deduplicatedEvents = events.distinctBy { it.externalId ?: "${it.title}_${it.startAt}" }
+
                     repository.deleteCalendarEventsByProvider(providerEntity.id)
-                    repository.insertCalendarEvents(events)
+                    repository.insertCalendarEvents(deduplicatedEvents)
                     repository.updateCalendarProvider(providerEntity.copy(lastSyncedAt = now.toEpochMilliseconds()))
                 }
             }
