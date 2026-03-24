@@ -51,9 +51,6 @@ class SharedModule(
             database.reviewDao(),
             database.calendarProviderDao(),
             database.calendarEventDao(),
-            database.modeDao(),
-            database.protocolDao(),
-            database.decisionDao(),
         )
     }
 

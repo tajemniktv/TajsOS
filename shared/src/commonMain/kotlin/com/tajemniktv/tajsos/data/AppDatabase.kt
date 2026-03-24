@@ -31,15 +31,8 @@ import androidx.room.RoomDatabaseConstructor
         CalendarEventEntity::class,
         NodeSnapshotEntity::class,
         ReviewEntity::class,
-        ModeEntity::class,
-        ModePreferenceEntity::class,
-        ModeAreaFilterEntity::class,
-        ModeTypeFilterEntity::class,
-        ModeUsageLogEntity::class,
-        ProtocolHistoryEntity::class,
-        DecisionOptionEntity::class,
     ],
-    version = 21,
+    version = 20,
     exportSchema = false,
 )
 @ConstructedBy(AppDatabaseConstructor::class)
@@ -103,21 +96,6 @@ abstract class AppDatabase : RoomDatabase() {
      * Manages formal review sessions.
      */
     abstract fun reviewDao(): ReviewDao
-
-    /**
-     * Manages Operating Mode configurations and logs.
-     */
-    abstract fun modeDao(): ModeDao
-
-    /**
-     * Tracks execution history of transition protocols.
-     */
-    abstract fun protocolDao(): ProtocolDao
-
-    /**
-     * Manages options for decisions.
-     */
-    abstract fun decisionDao(): DecisionDao
 }
 
 /**

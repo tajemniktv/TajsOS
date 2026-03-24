@@ -176,10 +176,7 @@ fun AddProjectDialog(onDismiss: () -> Unit, onConfirm: (String, String, String) 
             }
         },
         confirmButton = {
-            Button(
-                onClick = { onConfirm(name, description, status) },
-                enabled = name.isNotBlank()
-            ) {
+            Button(onClick = { if (name.isNotBlank()) onConfirm(name, description, status) }) {
                 Text(stringResource(Res.string.projects_dialog_create))
             }
         },

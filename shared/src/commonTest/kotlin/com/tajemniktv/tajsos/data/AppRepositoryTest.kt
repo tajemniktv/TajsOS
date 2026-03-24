@@ -10,6 +10,8 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.test.assertFalse
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 
 class AppRepositoryTest {
 
@@ -49,10 +51,9 @@ class AppRepositoryTest {
     ) {
         val logs = fakeEventLogDao.getLogs()
         assertEquals(expectedSize, logs.size)
+        assertTrue(logIndex >= 0 && logIndex < logs.size, "logIndex out of bounds")
         assertEquals(expectedType, logs[logIndex].eventType)
-        if (expectedNodeId != null) {
-            assertEquals(expectedNodeId, logs[logIndex].nodeId)
-        }
+        assertEquals(expectedNodeId, logs[logIndex].nodeId)
     }
 
     @Test
@@ -104,7 +105,7 @@ class AppRepositoryTest {
     fun testInsertTrackEntryLogsEvent() = runTest {
         val entry = TrackEntryEntity(date = "2024-03-21")
         repository.insertTrackEntry(entry)
-        assertLogEventAdded("CHECKIN_CREATED")
+        assertLogEventAdded("CHECKIN_CREATED", expectedNodeId = null)
     }
 
     @Test
@@ -135,12 +136,12 @@ class AppRepositoryTest {
         val id = repository.insertNode(node)
 
         val retrievedNode = repository.getNodeById(id)
-checkNotNull(retrievedNode) { "Node with id $id should exist after insertion" }
+        assertNotNull(retrievedNode)
 
         repository.deleteNode(retrievedNode)
 
         val nullNode = repository.getNodeById(id)
-        assertTrue(nullNode == null)
+        assertNull(nullNode)
     }
 
     @Test

@@ -76,17 +76,6 @@ data class DashboardUIState(
     val criticalProjects: List<NodeEntity> = emptyList(),
     val forgottenWisdom: NodeWithPin? = null,
     val deservesAttention: List<NodeWithPin> = emptyList(),
-    // LifeOS Additions
-    val areaHealth: Map<Long, String> = emptyMap(),
-    val systemLoad: Int = 0,
-    val fragmentation: Int = 0,
-    val capacityWarning: String? = null,
-    val openLoops: List<NodeWithPin> = emptyList(),
-    val pendingDecisions: List<NodeWithPin> = emptyList(),
-    val maintenanceQueue: List<NodeWithPin> = emptyList(),
-    val activeProtocols: List<NodeWithPin> = emptyList(),
-    val relationshipsToContact: List<NodeWithPin> = emptyList(),
-    val contextClusteredTasks: Map<String, List<NodeWithPin>> = emptyMap(),
 )
 
 class MainViewModel(
@@ -111,70 +100,18 @@ class MainViewModel(
         activeNodes.map { nodes ->
             val now = Clock.System.now().toEpochMilliseconds()
             val sevenDaysAgo = now - (7 * 24 * 60 * 60 * 1000L)
-            val fourteenDaysAgo = now - (14 * 24 * 60 * 60 * 1000L)
-
-            // 1. Basic counts and categories
-            val activeTasks = nodes.filter { it.node.type == "task" && it.node.status == "active" }
-            val overdue =
-                nodes.filter { it.node.dueAt != null && it.node.dueAt < now && it.node.status == "active" }
-            val pinnedK =
-                nodes.filter { it.node.isPinned && (it.node.type == "note" || it.node.type == "idea" || it.node.type == "resource") }
-
-            // 2. Open Loops, Decisions, Maintenance
-            val openLoops =
-                nodes.filter { it.node.type == "open_loop" && it.node.status == "active" }
-            val decisions =
-                nodes.filter { it.node.type == "decision" && it.node.status == "active" }
-            val maintenance =
-                nodes.filter { it.node.type == "maintenance" && it.node.status == "active" }
-            val protocols =
-                nodes.filter { it.node.type == "protocol" && it.node.status == "active" }
-            val people = nodes.filter { it.node.type == "person" && it.node.status == "active" }
-
-            // 3. Area Health Logic
-            val areas = nodes.filter { it.node.type == "area" }
-            val areaHealthMap = areas.associate { area ->
-                val areaNodes = nodes.filter { it.node.areaId == area.node.id }
-                val hasRecentActivity = areaNodes.any { it.node.updatedAt >= sevenDaysAgo }
-                val activeCount = areaNodes.count { it.node.status == "active" }
-                val overdueCount =
-                    areaNodes.count { it.node.dueAt != null && it.node.dueAt < now && it.node.status == "active" }
-
-                val health = when {
-                    overdueCount > 3 -> "on_fire"
-                    activeCount > 15 -> "overloaded"
-                    !hasRecentActivity && areaNodes.isNotEmpty() -> "neglected"
-                    activeCount > 0 -> "active"
-                    else -> "stable"
-                }
-                area.node.id to health
-            }
-
-            // 4. Load & Capacity
-            val loadScore = (activeTasks.size * 2) + (openLoops.size * 3) + (overdue.size * 5)
-            val fragmentation = activeTasks.groupBy { it.node.projectId }.size * 5
-            val capWarning = when {
-                loadScore > 100 -> "SYSTEM OVERLOADED // REDUCE INTAKE"
-                fragmentation > 40 -> "ATTENTION FRAGMENTED // FOCUS ON ONE AREA"
-                else -> null
-            }
-
-            // 5. Context Clustered Tasks
-            val contexts = nodes.filter { it.node.status == "active" && it.node.type == "task" }
-                .groupBy { it.node.locationContext ?: "general" }
-
             DashboardUIState(
-                tasksCount = activeTasks.size,
+                tasksCount = nodes.count { it.node.type == "task" },
                 notesCount = nodes.count { it.node.type == "note" || it.node.type == "idea" || it.node.type == "resource" },
-                pinnedKnowledge = pinnedK,
+                pinnedKnowledge = nodes.filter { it.node.isPinned && (it.node.type == "note" || it.node.type == "idea" || it.node.type == "resource") },
                 upcomingDeadlines = nodes.filter { it.node.dueAt != null && it.node.status == "active" }
                     .sortedBy { it.node.dueAt }.take(3),
-                overdueNodes = overdue,
+                overdueNodes = nodes.filter { it.node.dueAt != null && it.node.dueAt < now && it.node.status == "active" },
                 relevantNote = nodes.filter { (it.node.type == "note" || it.node.type == "idea") && it.node.status == "active" }
                     .sortedByDescending { it.node.updatedAt }.firstOrNull(),
                 lowEnergyTasks = nodes.filter { it.node.type == "task" && it.node.status == "active" && it.node.energyLevel == 1 },
-                batchableTasks = activeTasks.groupBy { it.node.areaId }
-                    .filter { it.value.size >= 3 },
+                batchableTasks = nodes.filter { it.node.type == "task" && it.node.status == "active" }
+                    .groupBy { it.node.areaId }.filter { it.value.size >= 3 },
                 quickWins = nodes.filter { it.node.type == "task" && it.node.status == "active" && it.node.energyLevel == 1 && it.node.friction == "easy" },
                 deepWork = nodes.filter { it.node.type == "task" && it.node.status == "active" && it.node.energyLevel == 3 },
                 topTakeaways = nodes.filter { (it.node.type == "note" || it.node.type == "idea") && it.node.noteState == "takeaway" },
@@ -203,7 +140,7 @@ class MainViewModel(
                             it.node.status == "active" && it.node.isHardDeadline && it.node.dueAt != null && it.node.dueAt < now
                         }
                         val isNeglected =
-                            proj.status == "active" && !proj.isFrozen && projectNodes.none { it.node.updatedAt >= fourteenDaysAgo }
+                            proj.status == "active" && !proj.isFrozen && projectNodes.none { it.node.updatedAt >= (now - 14 * 24 * 60 * 60 * 1000L) }
                         hasCritical || isNeglected
                     },
                 forgottenWisdom = nodes.filter {
@@ -214,21 +151,8 @@ class MainViewModel(
                 deservesAttention = nodes.filter {
                     it.node.status == "active" && it.node.type == "task" &&
                             !it.node.isPinned && it.node.dueAt == null &&
-                            it.node.updatedAt < sevenDaysAgo
+                            it.node.updatedAt < (now - 7 * 24 * 60 * 60 * 1000L)
                 }.take(2),
-                // LifeOS Specific
-                areaHealth = areaHealthMap,
-                systemLoad = loadScore.coerceIn(0, 100),
-                fragmentation = fragmentation.coerceIn(0, 100),
-                capacityWarning = capWarning,
-                openLoops = openLoops,
-                pendingDecisions = decisions,
-                maintenanceQueue = maintenance,
-                activeProtocols = protocols,
-                relationshipsToContact = people.filter {
-                    (it.node.lastContactAt ?: 0) < fourteenDaysAgo
-                },
-                contextClusteredTasks = contexts
             )
         }
             .distinctUntilChanged()
@@ -401,21 +325,6 @@ class MainViewModel(
             .getAllSessions()
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    val allModes: StateFlow<List<ModeEntity>> =
-        repository
-            .getAllModes()
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
-
-    val currentModeId: StateFlow<Long?> =
-        preferencesRepository
-            .activeModeId
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
-
-    val currentMode: StateFlow<ModeEntity?> =
-        combine(allModes, currentModeId) { modes, id ->
-            modes.find { it.id == id } ?: modes.firstOrNull { it.key == "COMMAND" }
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
-
     init {
         viewModelScope.launch {
             allNodes.filter { it.isNotEmpty() }.firstOrNull() ?: seedOnboardingData()
@@ -425,8 +334,6 @@ class MainViewModel(
 
     private suspend fun seedOnboardingData() {
         if (allNodes.value.isNotEmpty()) return
-
-        seedDefaultModes()
 
         val welcomeId =
             repository.insertNode(
@@ -448,43 +355,12 @@ class MainViewModel(
                 ),
             )
 
-        val areaId = repository.insertNode(
+        repository.insertNode(
             NodeEntity(
                 title = "Personal",
                 type = "area",
                 inboxState = false,
             ),
-        )
-
-        // Seed some LifeOS sample data to ensure components are visible
-        repository.insertNode(
-            NodeEntity(
-                title = "Reply to research email",
-                type = "open_loop",
-                openLoopType = "reply_needed",
-                areaId = areaId,
-                inboxState = false
-            )
-        )
-
-        repository.insertNode(
-            NodeEntity(
-                title = "Choose between Hilt and Koin",
-                type = "decision",
-                decisionStatus = "pending",
-                areaId = areaId,
-                inboxState = false
-            )
-        )
-
-        repository.insertNode(
-            NodeEntity(
-                title = "Monthly server backup",
-                type = "maintenance",
-                maintenanceType = "backup",
-                areaId = areaId,
-                inboxState = false
-            )
         )
 
         repository.insertRelation(
@@ -494,82 +370,6 @@ class MainViewModel(
                 relationType = "RELATED",
             ),
         )
-    }
-
-    private suspend fun seedDefaultModes() {
-        if (repository.getAllModes().first().isNotEmpty()) return
-
-        // Command Mode
-        val commandId = repository.insertMode(
-            ModeEntity(
-                key = "COMMAND",
-                name = "Command",
-                description = "Default everyday overview mode. What matters right now?",
-                icon = "dashboard",
-                sortOrder = 0
-            )
-        )
-        repository.insertPreference(
-            ModePreferenceEntity(
-                modeId = commandId,
-                showInbox = true,
-                showStats = true,
-                dashboardBlocksJson = "[\"today_top_3\", \"resume_context\", \"inbox_count\", \"deadlines\", \"overdue\", \"pinned_note\"]"
-            )
-        )
-
-        // Focus Mode
-        val focusId = repository.insertMode(
-            ModeEntity(
-                key = "FOCUS",
-                name = "Focus",
-                description = "Narrow the system to one thing. keep attention on this.",
-                icon = "center_focus_strong",
-                sortOrder = 1
-            )
-        )
-        repository.insertPreference(
-            ModePreferenceEntity(
-                modeId = focusId,
-                showInbox = false,
-                showStats = false,
-                dashboardBlocksJson = "[\"current_task\", \"next_step\", \"timer\", \"blockers\", \"linked_resources\"]"
-            )
-        )
-
-        // Recovery Mode
-        val recoveryId = repository.insertMode(
-            ModeEntity(
-                key = "RECOVERY",
-                name = "Recovery",
-                description = "Support low-capacity functioning. Smallest safe useful thing.",
-                icon = "medical_services",
-                sortOrder = 2
-            )
-        )
-        repository.insertPreference(
-            ModePreferenceEntity(
-                modeId = recoveryId,
-                showInbox = false,
-                showStats = false,
-                dashboardBlocksJson = "[\"basics\", \"easy_wins\", \"urgent_only\", \"recovery_protocol\", \"check_in\"]"
-            )
-        )
-
-        // Set initial mode
-        preferencesRepository.updateActiveModeId(commandId)
-    }
-
-    fun switchMode(modeId: Long) {
-        viewModelScope.launch {
-            preferencesRepository.updateActiveModeId(modeId)
-            repository.insertModeUsageLog(
-                ModeUsageLogEntity(
-                    modeId = modeId,
-                    activationSource = "manual"
-                )
-            )
-        }
     }
 
     val insights: StateFlow<InsightsData> =
@@ -630,9 +430,9 @@ class MainViewModel(
             .toLocalDateTime(TimeZone.currentSystemDefault()).date
         val recentTracks = tracks.filter { it.date >= sevenDaysAgoDate.toString() }
 
-        val avgMood = recentTracks.mapNotNull { it.moodScore }.average().takeIf { !it.isNaN() } ?: 0.0
-        val avgEnergy = recentTracks.mapNotNull { it.energyScore }.average().takeIf { !it.isNaN() } ?: 0.0
-        val avgFocus = recentTracks.mapNotNull { it.focusScore }.average().takeIf { !it.isNaN() } ?: 0.0
+        val avgMood = if (recentTracks.isNotEmpty()) recentTracks.mapNotNull { it.moodScore }.average() else 0.0
+        val avgEnergy = if (recentTracks.isNotEmpty()) recentTracks.mapNotNull { it.energyScore }.average() else 0.0
+        val avgFocus = if (recentTracks.isNotEmpty()) recentTracks.mapNotNull { it.focusScore }.average() else 0.0
 
         val nodesByProjectId = nodes.groupBy { it.node.projectId }
         val neglectedProjects =

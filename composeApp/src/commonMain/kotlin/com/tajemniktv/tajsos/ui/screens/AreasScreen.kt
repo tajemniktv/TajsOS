@@ -103,10 +103,7 @@ fun AddAreaDialog(onDismiss: () -> Unit, onConfirm: (String) -> Unit) {
                 label = { Text(stringResource(Res.string.areas_dialog_name)) })
         },
         confirmButton = {
-            Button(
-                onClick = { onConfirm(name) },
-                enabled = name.isNotBlank()
-            ) {
+            Button(onClick = { if (name.isNotBlank()) onConfirm(name) }) {
                 Text(stringResource(Res.string.areas_dialog_create))
             }
         },
