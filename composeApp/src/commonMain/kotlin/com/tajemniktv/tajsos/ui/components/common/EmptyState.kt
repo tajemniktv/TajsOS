@@ -10,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -19,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
+import androidx.compose.ui.graphics.Color
 
 @Composable
 fun EmptyState(
@@ -29,8 +31,8 @@ fun EmptyState(
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "EmptyStatePulse")
     val alpha by infiniteTransition.animateFloat(
-        initialValue = 0.2f,
-        targetValue = 0.5f,
+        initialValue = 0.1f,
+        targetValue = 0.6f,
         animationSpec = infiniteRepeatable(
             animation = tween(2000, easing = LinearEasing),
             repeatMode = RepeatMode.Reverse
@@ -42,30 +44,36 @@ fun EmptyState(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(TactileTheme.SpacingLg)
+        Surface(
+            color = Color.Transparent,
+            shape = RoundedCornerShape(TactileTheme.RadiusMd),
+            border = androidx.compose.foundation.BorderStroke(1.dp, TactileTheme.Primary.copy(alpha = 0.2f))
         ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                modifier = Modifier.size(48.dp),
-                tint = TactileTheme.Primary.copy(alpha = alpha)
-            )
-            Spacer(modifier = Modifier.height(TactileTheme.SpacingMd))
-            Text(
-                text = message,
-                style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Muted,
-                textAlign = TextAlign.Center
-            )
-            if (description != null) {
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = description,
-                    style = MaterialTheme.typography.labelSmall.copy(letterSpacing = 2.sp),
-                    color = TactileTheme.Primary.copy(alpha = 0.2f)
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(TactileTheme.SpacingLg)
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    modifier = Modifier.size(48.dp),
+                    tint = TactileTheme.Primary.copy(alpha = alpha)
                 )
+                Spacer(modifier = Modifier.height(TactileTheme.SpacingMd))
+                Text(
+                    text = message,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TactileTheme.Muted,
+                    textAlign = TextAlign.Center
+                )
+                if (description != null) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = description,
+                        style = MaterialTheme.typography.labelSmall.copy(letterSpacing = 2.sp),
+                        color = TactileTheme.Primary.copy(alpha = 0.2f)
+                    )
+                }
             }
         }
     }

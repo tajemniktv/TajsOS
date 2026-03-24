@@ -109,13 +109,8 @@ fun NodeCard(
                         "area" -> stringResource(Res.string.type_area)
                         else -> node.type
                     }
-                    Text(
-                        text = typeLabel.uppercase() + if (node.isRecurring) " // ${
-                            stringResource(
-                                Res.string.node_recurring
-                            )
-                        }" else "",
-                        style = MaterialTheme.typography.labelSmall,
+                    NodeBadge(
+                        text = typeLabel.uppercase() + if (node.isRecurring) " // ${stringResource(Res.string.node_recurring)}" else "",
                         color = TactileTheme.Primary
                     )
                     val dueAt = node.dueAt
@@ -148,9 +143,8 @@ fun NodeCard(
                     }
                     if (node.energyLevel != null) {
                         Spacer(Modifier.width(8.dp))
-                        Text(
+                        NodeBadge(
                             text = "⚡".repeat(node.energyLevel!!),
-                            style = MaterialTheme.typography.labelSmall,
                             color = when (node.energyLevel) {
                                 1 -> TactileTheme.Success
                                 2 -> TactileTheme.Primary
@@ -168,9 +162,8 @@ fun NodeCard(
                             "unclear" -> "UNCLEAR"
                             else -> node.friction!!
                         }
-                        Text(
+                        NodeBadge(
                             text = frictionLabel.uppercase(),
-                            style = MaterialTheme.typography.labelSmall,
                             color = TactileTheme.Primary
                         )
                     }
@@ -182,9 +175,8 @@ fun NodeCard(
                             "someday" -> TactileTheme.Muted
                             else -> TactileTheme.Primary
                         }
-                        Text(
+                        NodeBadge(
                             text = node.status.uppercase().replace("_", " "),
-                            style = MaterialTheme.typography.labelSmall,
                             color = statusColor
                         )
                     }
@@ -218,5 +210,21 @@ fun NodeCard(
                 )
             }
         }
+    }
+}
+
+
+@Composable
+fun NodeBadge(text: String, color: androidx.compose.ui.graphics.Color) {
+    Surface(
+        color = TactileTheme.Primary.copy(alpha = 0.1f),
+        shape = RoundedCornerShape(4.dp)
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.labelSmall,
+            color = color,
+            modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
+        )
     }
 }

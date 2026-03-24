@@ -250,7 +250,7 @@
     <string name="search_filter_active">ACTIVE</string>
     <string name="search_filter_archived">ARCHIVED</string>
     <string name="search_filter_linked_to">LINKED TO: %1$s</string>
-    <string name="search_no_results">NO MATCHING RESULTS FOUND</string>
+    <string name="search_no_results">SYSTEM CLEAR: NO MATCHES</string>
 
     <!-- Focus Screen -->
     <string name="focus_no_active_task">NO ACTIVE TASK</string>
@@ -360,7 +360,7 @@
 
     <!-- Tasks Screen -->
     <string name="tasks_title">TASKS</string>
-    <string name="tasks_empty">NO TASKS FOUND</string>
+    <string name="tasks_empty">SYSTEM CLEAR: NO ACTIVE TASKS</string>
 
     <!-- Projects Screen -->
     <string name="projects_title">PROJECTS</string>
