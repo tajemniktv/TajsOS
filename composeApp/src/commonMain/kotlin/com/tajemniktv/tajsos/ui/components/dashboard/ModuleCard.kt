@@ -58,7 +58,8 @@ fun ModuleCard(
             ),
         shape = RoundedCornerShape(TactileTheme.RadiusMd),
         color = TactileTheme.Surface,
-        border = BorderStroke(1.dp, TactileTheme.Border.copy(alpha = 0.5f))
+        border = BorderStroke(1.dp, TactileTheme.Border.copy(alpha = 0.5f)),
+        shadowElevation = 2.dp
     ) {
         Column(
             modifier = Modifier.padding(TactileTheme.SpacingMd),
