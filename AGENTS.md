@@ -110,3 +110,42 @@ When making meaningful changes, keep these current:
     - Biometric/locking: App supports biometric authentication and locking via preferences and
       ViewModel state.
     - Export: Data export to JSON is available via ViewModel.
+
+## Testing Guidelines
+
+- **Run all tests**: `./gradlew test`
+- **Run `:shared` tests (JVM)**: `./gradlew :shared:cleanTest :shared:jvmTest`
+- **Run specific `:shared` test (JVM)**: `./gradlew :shared:testJvmTest --tests "com.tajemniktv.tajsos.ClassName"`
+- **Run `:composeApp` tests (JVM)**: `./gradlew :composeApp:jvmTest`
+- **Run `:server` tests**: `./gradlew :server:test`
+- **Testing stack**:
+  - `app.cash.turbine:turbine` for testing flows.
+  - `org.jetbrains.kotlinx:kotlinx-coroutines-test` for coroutines. Note: check `gradle/libs.versions.toml` for `kotlinx.coroutines.test` vs `kotlinx.coroutinesTest` name clashes before modifying versions.
+  - `io.mockk:mockk` for mocking in `commonTest`/`jvmTest`.
+
+## Build & Environment Quirks
+
+- **Gradle daemon hangs**: If the build environment hangs at the task graph calculation phase, try `gradle --no-daemon` or `--no-configuration-cache`, and ensure Java processes from previous builds are killed.
+- **Executing wrapper**: Make sure to run `chmod +x gradlew` if needed. Use the local `gradle` binary if wrapper download timeouts occur.
+- **Compose Multiplatform compile (JVM)**: Use `./gradlew :composeApp:compileKotlinJvm` as the generic `compileKotlin` task can be ambiguous.
+- **Formatting**: `ktlintCheck` is not currently available or configured in the root project. Do not try to run it.
+
+## Kotlin & Code Rules
+
+- **Empty collections average**: `.average()` on an empty numerical collection returns `Double.NaN`. When using `.mapNotNull()`, ensure you check `.isNotEmpty()` on the mapped collection, not the original, to avoid silent NaN propagation.
+- **Kotlin snippets**: Standalone `kotlinc` is not available. To test Kotlin, wrap in a temporary test file in `shared/src/commonTest/kotlin` and execute via Gradle.
+
+## Architecture & Logic Specifics
+
+- **Android Manifest**: The app intentionally leaves backups enabled (`android:allowBackup="true"`) during development. Do not disable this for security.
+- **Intents Processing**: In `MainActivity.kt`, intents (like `ACTION_SEND`) must not be processed in `onCreate`/`onNewIntent` before biometric authentication (i.e., `isAuthenticated == true`).
+- **NodeStatus Side Effects**: In `MainViewModel.updateNodeStatus`, marking a recurring node as "done" automatically triggers calculating the next due date and inserting a new active node.
+- **Database/Room Performance**: Prefer direct database queries (DAO methods with WHERE clauses) over in-memory filtering of large data streams (Flows) in the ViewModel.
+- **Relations/DAOs**:
+  - `NodeDao.getAllNodesWithPins()` excludes nodes with `status = 'archived'`. Downstream flows won't see archived nodes.
+  - DAO methods returning combined models like `NodeWithPin` (which combines `NodeEntity`, `TodayPinEntity`, `TagEntity`) must be marked with `@Transaction`.
+- **Server Binding**: The Ktor server in `:server` binds to `127.0.0.1` by default for security. Override with the `SERVER_HOST` env variable.
+- **Compose UI**:
+  - Empty lists should use the `EmptyState` composable (`com.tajemniktv.tajsos.ui.components.common.EmptyState`).
+  - To optimize recomposition, avoid N+1 list lookups. Pre-compute data into a Map (e.g., `associateBy`) and cache with `remember(state)`.
+  - Action buttons (e.g., Save/Create) should use the `enabled` parameter to reflect invalid form states rather than silently ignoring the click.
