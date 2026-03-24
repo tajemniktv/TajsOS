@@ -135,7 +135,7 @@ class AppRepositoryTest {
         val id = repository.insertNode(node)
 
         val retrievedNode = repository.getNodeById(id)
-        assertTrue(retrievedNode != null)
+checkNotNull(retrievedNode) { "Node with id $id should exist after insertion" }
 
         repository.deleteNode(retrievedNode)
 
