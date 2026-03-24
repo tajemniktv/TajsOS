@@ -56,42 +56,77 @@ class IcsCalendarProvider(private val client: HttpClient) : CalendarProvider {
 
     private fun parseIcs(content: String, providerId: Long): List<CalendarEventEntity> {
         val events = mutableListOf<CalendarEventEntity>()
-        var currentEvent: MutableMap<String, String>? = null
+        var currentBuilder: IcsEventBuilder? = null
 
         unfoldLines(content).forEach { line ->
             val trimmed = line.trim()
             when {
                 trimmed.startsWith("BEGIN:VEVENT") -> {
-                    currentEvent = mutableMapOf()
+                    currentBuilder = IcsEventBuilder()
                 }
                 trimmed.startsWith("END:VEVENT") -> {
-                    currentEvent?.let {
-                        val event = mapToEntity(it, providerId)
-                        if (event != null) events.add(event)
-                    }
-                    currentEvent = null
+                    currentBuilder?.build(providerId)?.let { events.add(it) }
+                    currentBuilder = null
                 }
-                currentEvent != null -> {
-                    processEventLine(trimmed, currentEvent!!)
+                currentBuilder != null -> {
+                    currentBuilder?.processLine(trimmed)
                 }
             }
         }
         return events
     }
+}
 
-    private fun processEventLine(line: String, currentEvent: MutableMap<String, String>) {
+private data class IcsDateProperty(val value: String, val rawKey: String) {
+    val isAllDay: Boolean get() = rawKey.contains("VALUE=DATE") || value.length == 8
+}
+
+private class IcsEventBuilder {
+    private var uid: String? = null
+    private var summary: String = "No Title"
+    private var description: String? = null
+    private var location: String? = null
+    private var startProp: IcsDateProperty? = null
+    private var endProp: IcsDateProperty? = null
+
+    fun processLine(line: String) {
         val parts = line.split(":", limit = 2)
         if (parts.size != 2) return
 
         val rawKey = parts[0]
         val key = rawKey.substringBefore(";")
-        val value = parts[1]
+        val value = unescapeIcs(parts[1])
 
-        currentEvent[key] = unescapeIcs(value)
-
-        if (key == "DTSTART" || key == "DTEND") {
-            currentEvent[key + "_RAW_KEY"] = rawKey
+        when (key) {
+            "UID" -> uid = value
+            "SUMMARY" -> summary = value
+            "DESCRIPTION" -> description = value
+            "LOCATION" -> location = value
+            "DTSTART" -> startProp = IcsDateProperty(value, rawKey)
+            "DTEND" -> endProp = IcsDateProperty(value, rawKey)
         }
+    }
+
+    fun build(providerId: Long): CalendarEventEntity? {
+        val sProp = startProp ?: return null
+        val eProp = endProp ?: sProp
+
+        val start = parseDate(sProp) ?: return null
+        val end = parseDate(eProp) ?: start
+
+        val now = Clock.System.now().toEpochMilliseconds()
+        return CalendarEventEntity(
+            providerId = providerId,
+            externalId = uid,
+            title = summary,
+            description = description,
+            location = location,
+            startAt = start.toEpochMilliseconds(),
+            endAt = end.toEpochMilliseconds(),
+            isAllDay = sProp.isAllDay,
+            createdAt = now,
+            updatedAt = now
+        )
     }
 
     private fun unescapeIcs(value: String): String {
@@ -102,41 +137,13 @@ class IcsCalendarProvider(private val client: HttpClient) : CalendarProvider {
             .replace("\\N", "\n")
     }
 
-    private fun mapToEntity(map: Map<String, String>, providerId: Long): CalendarEventEntity? {
-        val title = map["SUMMARY"] ?: "No Title"
-        val startStr = map["DTSTART"] ?: return null
-        val endStr = map["DTEND"] ?: startStr
-
-        val startRawKey = map["DTSTART_RAW_KEY"] ?: "DTSTART"
-        val endRawKey = map["DTEND_RAW_KEY"] ?: "DTEND"
-
-        val start = parseIcsDate(startStr, startRawKey) ?: return null
-        val end = parseIcsDate(endStr, endRawKey) ?: start
-
-        val isAllDay = startRawKey.contains("VALUE=DATE") || startStr.length == 8
-
-        return CalendarEventEntity(
-            providerId = providerId,
-            externalId = map["UID"],
-            title = title,
-            description = map["DESCRIPTION"],
-            location = map["LOCATION"],
-            startAt = start.toEpochMilliseconds(),
-            endAt = end.toEpochMilliseconds(),
-            isAllDay = isAllDay,
-            createdAt = Clock.System.now().toEpochMilliseconds(),
-            updatedAt = Clock.System.now().toEpochMilliseconds()
-        )
-    }
-
-    // Extracted ICS Date specific parsing
-    private fun parseIcsDate(dateStr: String, rawKey: String = ""): Instant? {
+    private fun parseDate(property: IcsDateProperty): Instant? {
         return try {
-            val cleanDate = dateStr.trim()
+            val cleanDate = property.value.trim()
             if (cleanDate.length == 8) {
-                parseIcsAllDayDate(cleanDate)
+                parseAllDayDate(cleanDate)
             } else if (cleanDate.contains("T")) {
-                parseIsoIcsDate(cleanDate, rawKey)
+                parseIsoDate(property)
             } else {
                 null
             }
@@ -145,31 +152,29 @@ class IcsCalendarProvider(private val client: HttpClient) : CalendarProvider {
         }
     }
 
-    private fun parseIcsAllDayDate(cleanDate: String): Instant {
+    private fun parseAllDayDate(cleanDate: String): Instant {
         val year = cleanDate.substring(0, 4).toInt()
         val month = cleanDate.substring(4, 6).toInt()
         val day = cleanDate.substring(6, 8).toInt()
         return LocalDateTime(year, month, day, 0, 0).toInstant(TimeZone.UTC)
     }
 
-    private fun parseIsoIcsDate(cleanDate: String, rawKey: String): Instant {
-        val iso = formatIcsDateToIso(cleanDate)
-        return if (cleanDate.endsWith("Z")) {
-            Instant.parse(iso + "Z")
-        } else {
-            val timeZone = extractTimeZone(rawKey)
-            LocalDateTime.parse(iso).toInstant(timeZone)
-        }
-    }
-
-    private fun formatIcsDateToIso(cleanDate: String): String {
+    private fun parseIsoDate(property: IcsDateProperty): Instant {
+        val cleanDate = property.value.trim()
         val year = cleanDate.substring(0, 4)
         val month = cleanDate.substring(4, 6)
         val day = cleanDate.substring(6, 8)
         val hour = cleanDate.substring(9, 11)
         val min = cleanDate.substring(11, 13)
         val sec = cleanDate.substring(13, 15)
-        return "$year-$month-${day}T$hour:$min:$sec"
+        val iso = "$year-$month-${day}T$hour:$min:$sec"
+
+        return if (cleanDate.endsWith("Z")) {
+            Instant.parse(iso + "Z")
+        } else {
+            val timeZone = extractTimeZone(property.rawKey)
+            LocalDateTime.parse(iso).toInstant(timeZone)
+        }
     }
 
     private fun extractTimeZone(rawKey: String): TimeZone {
