@@ -84,9 +84,7 @@ fun ProjectsScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit) {
         Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
 
         ProjectListContent(
-            filteredProjects = filteredProjects,
-            searchQuery = searchQuery,
-            nodesByProjectId = nodesByProjectId,
+            state = ProjectListState(filteredProjects, searchQuery, nodesByProjectId),
             onNavigateTo = onNavigateTo,
             onShowAddDialog = { showAddDialog = true }
         )
@@ -160,15 +158,19 @@ fun AddProjectDialog(onDismiss: () -> Unit, onConfirm: (String, String, String) 
     )
 }
 
+data class ProjectListState(
+    val filteredProjects: List<NodeEntity>,
+    val searchQuery: String,
+    val nodesByProjectId: Map<Long?, List<NodeWithPin>>
+)
+
 @Composable
 fun ProjectListContent(
-    filteredProjects: List<NodeEntity>,
-    searchQuery: String,
-    nodesByProjectId: Map<Long?, List<NodeWithPin>>,
+    state: ProjectListState,
     onNavigateTo: (String) -> Unit,
     onShowAddDialog: () -> Unit
 ) {
-    if (filteredProjects.isEmpty() && searchQuery.isEmpty()) {
+    if (state.filteredProjects.isEmpty() && state.searchQuery.isEmpty()) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(stringResource(Res.string.projects_empty), color = TactileTheme.Muted)
@@ -180,8 +182,8 @@ fun ProjectListContent(
         }
     } else {
         LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
-            items(filteredProjects, key = { it.id }) { project ->
-                val projectNodes = nodesByProjectId[project.id] ?: emptyList()
+            items(state.filteredProjects, key = { it.id }) { project ->
+                val projectNodes = state.nodesByProjectId[project.id] ?: emptyList()
                 val total = projectNodes.size
                 val completed = projectNodes.count { it.node.status == "done" }
                 val progress = if (total > 0) completed.toFloat() / total else 0f
