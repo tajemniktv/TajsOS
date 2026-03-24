@@ -23,7 +23,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
 @Composable
 fun TaskBrief(title: String, isDone: Boolean, onToggle: () -> Unit, onClick: () -> Unit) {

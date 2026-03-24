@@ -18,18 +18,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavDestination
-import com.tajemniktv.tajsos.data.FocusSessionEntity
 import com.tajemniktv.tajsos.data.ModeEntity
-import com.tajemniktv.tajsos.data.NodeEntity
-import com.tajemniktv.tajsos.data.TrackEntryEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.dashboard.DashboardBlockRenderer
-import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import org.jetbrains.compose.resources.stringResource
-import tajsos.composeapp.generated.resources.*
 import kotlin.time.Clock
 
 @Composable

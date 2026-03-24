@@ -4,11 +4,9 @@
 
 package com.tajemniktv.tajsos.ui.screens
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
@@ -21,13 +19,14 @@ import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.nodes.ProjectItem
-import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 
 @Composable
-fun ProjectsScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit) {
+fun ProjectsScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit)
+{
     val scope = rememberCoroutineScope()
     val projects by viewModel.allProjects.collectAsState()
     val allNodes by viewModel.allNodes.collectAsState()
@@ -48,12 +47,12 @@ fun ProjectsScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(TactileTheme.SpacingMd)
+            .padding(TactileTheme.SpacingMd),
     ) {
         Text(
             text = stringResource(Res.string.projects_title),
             style = MaterialTheme.typography.displaySmall,
-            color = TactileTheme.Text
+            color = TactileTheme.Text,
         )
         Spacer(modifier = Modifier.height(TactileTheme.SpacingMd))
 
@@ -63,7 +62,7 @@ fun ProjectsScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit) {
             modifier = Modifier.fillMaxWidth(),
             placeholder = { Text(stringResource(Res.string.projects_search_placeholder)) },
             leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-            shape = MaterialTheme.shapes.medium
+            shape = MaterialTheme.shapes.medium,
         )
 
         Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
@@ -72,12 +71,12 @@ fun ProjectsScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit) {
             FilterChip(
                 selected = selectedStatusFilter == "active",
                 onClick = { selectedStatusFilter = "active" },
-                label = { Text(stringResource(Res.string.projects_filter_active)) }
+                label = { Text(stringResource(Res.string.projects_filter_active)) },
             )
             FilterChip(
                 selected = selectedStatusFilter == "someday",
                 onClick = { selectedStatusFilter = "someday" },
-                label = { Text(stringResource(Res.string.projects_filter_someday)) }
+                label = { Text(stringResource(Res.string.projects_filter_someday)) },
             )
         }
 
@@ -86,11 +85,12 @@ fun ProjectsScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit) {
         ProjectListContent(
             state = ProjectListState(filteredProjects, searchQuery, nodesByProjectId),
             onNavigateTo = onNavigateTo,
-            onShowAddDialog = { showAddDialog = true }
+            onShowAddDialog = { showAddDialog = true },
         )
     }
 
-    if (showAddDialog) {
+    if (showAddDialog)
+    {
         AddProjectDialog(
             onDismiss = { showAddDialog = false },
             onConfirm = { title, content, status ->
@@ -99,19 +99,25 @@ fun ProjectsScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit) {
                 // I'll use addNode directly or update MainViewModel.
                 scope.launch {
                     val id =
-                        viewModel.addNodeForResult(title, content, "project", inboxState = false)
+                            viewModel.addNodeForResult(
+                                title,
+                                content,
+                                "project",
+                                inboxState = false,
+                            )
                     viewModel.getNodeById(id)?.let { node ->
                         viewModel.updateNodeStatus(node, status)
                     }
                 }
                 showAddDialog = false
-            }
+            },
         )
     }
 }
 
 @Composable
-fun AddProjectDialog(onDismiss: () -> Unit, onConfirm: (String, String, String) -> Unit) {
+fun AddProjectDialog(onDismiss: () -> Unit, onConfirm: (String, String, String) -> Unit)
+{
     var name by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var status by remember { mutableStateOf("active") }
@@ -124,21 +130,23 @@ fun AddProjectDialog(onDismiss: () -> Unit, onConfirm: (String, String, String) 
                 TextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text(stringResource(Res.string.projects_dialog_name)) })
+                    label = { Text(stringResource(Res.string.projects_dialog_name)) },
+                )
                 TextField(
                     value = description,
                     onValueChange = { description = it },
-                    label = { Text(stringResource(Res.string.projects_dialog_description)) })
+                    label = { Text(stringResource(Res.string.projects_dialog_description)) },
+                )
                 Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
                     listOf("active", "someday").forEach { s ->
                         val label =
-                            if (s == "active") stringResource(Res.string.projects_filter_active) else stringResource(
-                                Res.string.projects_filter_someday
-                            )
+                                if (s == "active") stringResource(Res.string.projects_filter_active) else stringResource(
+                                    Res.string.projects_filter_someday,
+                                )
                         FilterChip(
                             selected = status == s,
                             onClick = { status = s },
-                            label = { Text(label.uppercase()) }
+                            label = { Text(label.uppercase()) },
                         )
                     }
                 }
@@ -147,30 +155,32 @@ fun AddProjectDialog(onDismiss: () -> Unit, onConfirm: (String, String, String) 
         confirmButton = {
             Button(
                 onClick = { onConfirm(name, description, status) },
-                enabled = name.isNotBlank()
+                enabled = name.isNotBlank(),
             ) {
                 Text(stringResource(Res.string.projects_dialog_create))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) { Text(stringResource(Res.string.projects_dialog_cancel)) }
-        }
+        },
     )
 }
 
 data class ProjectListState(
     val filteredProjects: List<NodeEntity>,
     val searchQuery: String,
-    val nodesByProjectId: Map<Long?, List<NodeWithPin>>
+    val nodesByProjectId: Map<Long?, List<NodeWithPin>>,
 )
 
 @Composable
 fun ProjectListContent(
     state: ProjectListState,
     onNavigateTo: (String) -> Unit,
-    onShowAddDialog: () -> Unit
-) {
-    if (state.filteredProjects.isEmpty() && state.searchQuery.isEmpty()) {
+    onShowAddDialog: () -> Unit,
+)
+{
+    if (state.filteredProjects.isEmpty() && state.searchQuery.isEmpty())
+    {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(stringResource(Res.string.projects_empty), color = TactileTheme.Muted)
@@ -180,7 +190,8 @@ fun ProjectListContent(
                 }
             }
         }
-    } else {
+    } else
+    {
         LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
             items(state.filteredProjects, key = { it.id }) { project ->
                 val projectNodes = state.nodesByProjectId[project.id] ?: emptyList()
@@ -196,16 +207,16 @@ fun ProjectListContent(
                         onNavigateTo(
                             Screen.NoteDetail.route.replace(
                                 "{noteId}",
-                                project.id.toString()
-                            )
+                                project.id.toString(),
+                            ),
                         )
-                    }
+                    },
                 ) {
                     onNavigateTo(
                         Screen.ProjectDetail.route.replace(
                             "{projectId}",
-                            project.id.toString()
-                        )
+                            project.id.toString(),
+                        ),
                     )
                 }
             }

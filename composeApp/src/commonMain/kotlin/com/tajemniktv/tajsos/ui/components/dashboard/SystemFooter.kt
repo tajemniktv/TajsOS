@@ -13,7 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
 @Composable
 fun SystemFooter() {

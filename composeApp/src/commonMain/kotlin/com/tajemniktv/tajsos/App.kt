@@ -12,7 +12,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
@@ -29,8 +28,8 @@ import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.common.CaptureSheet
 import com.tajemniktv.tajsos.ui.components.layout.AppLayout
-import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
-import com.tajemniktv.tajsos.ui.design.theme.TajsOSTheme
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import com.tajemniktv.tajsos.ui.screens.*
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
@@ -43,7 +42,8 @@ fun App(
     onVoiceCapture: (() -> Unit)? = null,
     voiceCaptureResult: String? = null,
     onVoiceCaptureConsumed: () -> Unit = {},
-) {
+)
+{
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
@@ -74,13 +74,13 @@ fun App(
         Screen.Review.route,
         Screen.Decisions.route,
         Screen.Profile.route,
-        Screen.Track.route
+        Screen.Track.route,
     )
 
     val showGlobalTopBar = remember(currentDestination) {
         internalHeaderRoutes.none { pattern ->
             currentDestination?.route?.contains(
-                pattern.replace("/{", "").split("/").first()
+                pattern.replace("/{", "").split("/").first(),
             ) == true
         }
     }
@@ -106,7 +106,7 @@ fun App(
                 allModes = allModes,
                 onModeSelect = { viewModel.switchMode(it) },
                 drawerState = drawerState,
-                scope = scope
+                scope = scope,
             ) {
                 AppScaffold(
                     showGlobalTopBar = showGlobalTopBar,
@@ -129,7 +129,7 @@ fun App(
                     currentMode = currentMode,
                     allModes = allModes,
                     onModeSelect = { viewModel.switchMode(it) },
-                    isDesktop = isDesktop
+                    isDesktop = isDesktop,
                 )
             }
         }
@@ -159,14 +159,17 @@ private fun AppScaffold(
     currentMode: ModeEntity?,
     allModes: List<ModeEntity>,
     onModeSelect: (Long) -> Unit,
-    isDesktop: Boolean
-) {
+    isDesktop: Boolean,
+)
+{
     Scaffold(
         topBar = {
-            if (showGlobalTopBar) {
+            if (showGlobalTopBar)
+            {
                 TopAppBar(
                     navigationIcon = {
-                        if (!isDesktop) {
+                        if (!isDesktop)
+                        {
                             IconButton(onClick = { scope.launch { drawerState.open() } }) {
                                 Icon(
                                     Icons.Default.Menu,
@@ -187,7 +190,8 @@ private fun AppScaffold(
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.primary,
                             )
-                            if (latestTrack != null) {
+                            if (latestTrack != null)
+                            {
                                 Text(
                                     text = "E:${latestTrack.energyScore} M:${latestTrack.moodScore} F:${latestTrack.focusScore ?: "-"}",
                                     style = MaterialTheme.typography.labelSmall,
@@ -197,14 +201,15 @@ private fun AppScaffold(
                         }
                     },
                     colors =
-                        TopAppBarDefaults.topAppBarColors(
-                            containerColor = MaterialTheme.colorScheme.background,
-                        ),
+                            TopAppBarDefaults.topAppBarColors(
+                                containerColor = MaterialTheme.colorScheme.background,
+                            ),
                 )
             }
         },
         floatingActionButton = {
-            if (!isDesktop || currentDestination?.route != Screen.Dashboard.route) {
+            if (!isDesktop || currentDestination?.route != Screen.Dashboard.route)
+            {
                 FloatingActionButton(
                     onClick = { onShowCaptureSheet(true) },
                     containerColor = MaterialTheme.colorScheme.primary,
@@ -251,7 +256,7 @@ private fun AppScaffold(
                     currentDestination = currentDestination,
                     currentMode = currentMode,
                     allModes = allModes,
-                    onModeSelect = onModeSelect
+                    onModeSelect = onModeSelect,
                 )
             }
             composable(Screen.Inbox.route) { InboxScreen(viewModel, onEditNode) }
@@ -261,9 +266,20 @@ private fun AppScaffold(
             composable(Screen.Track.route) { TrackScreen(viewModel) }
             composable(Screen.Tasks.route) { TasksScreen(viewModel, onEditNode) }
             composable(Screen.Notes.route) { NotesScreen(viewModel, onEditNode) }
+            composable(Screen.Calendar.route) { CalendarScreen(viewModel, onEditNode) }
             composable(Screen.Decisions.route) { DecisionsScreen(viewModel, onEditNode) }
             composable(Screen.Templates.route) {
                 TemplatesScreen(viewModel, onBack = { navController.popBackStack() })
+            }
+            composable(Screen.Settings.route) {
+                SettingsScreen(
+                    viewModel,
+                    onNavigateToCalendarSettings = { navController.navigate(Screen.CalendarSettings.route) },
+                    onNavigateToTemplates = { navController.navigate(Screen.Templates.route) },
+                )
+            }
+            composable(Screen.CalendarSettings.route) {
+                CalendarSettingsScreen(viewModel)
             }
             composable(Screen.Projects.route) {
                 ProjectsScreen(
@@ -276,10 +292,10 @@ private fun AppScaffold(
             }
             composable(Screen.ProjectDetail.route) { backStackEntry ->
                 val projectId =
-                    backStackEntry.savedStateHandle
-                        .get<Any>("projectId")
-                        ?.toString()
-                        ?.toLongOrNull() ?: -1L
+                        backStackEntry.savedStateHandle
+                            .get<Any>("projectId")
+                            ?.toString()
+                            ?.toLongOrNull() ?: -1L
                 ProjectDetailScreen(
                     viewModel,
                     projectId,
@@ -289,10 +305,10 @@ private fun AppScaffold(
             }
             composable(Screen.AreaDetail.route) { backStackEntry ->
                 val areaId =
-                    backStackEntry.savedStateHandle
-                        .get<Any>("areaId")
-                        ?.toString()
-                        ?.toLongOrNull() ?: -1L
+                        backStackEntry.savedStateHandle
+                            .get<Any>("areaId")
+                            ?.toString()
+                            ?.toLongOrNull() ?: -1L
                 AreaDetailScreen(
                     viewModel,
                     areaId,
@@ -310,10 +326,10 @@ private fun AppScaffold(
             }
             composable(Screen.NoteDetail.route) { backStackEntry ->
                 val noteId =
-                    backStackEntry.savedStateHandle
-                        .get<Any>("noteId")
-                        ?.toString()
-                        ?.toLongOrNull() ?: -1L
+                        backStackEntry.savedStateHandle
+                            .get<Any>("noteId")
+                            ?.toString()
+                            ?.toLongOrNull() ?: -1L
                 NoteDetailScreen(
                     viewModel,
                     noteId,
@@ -323,14 +339,17 @@ private fun AppScaffold(
                 )
             }
             composable(Screen.Insights.route) {
-                InsightsScreen(viewModel, onNavigateToProject = { id ->
-                    navController.navigate(
-                        Screen.ProjectDetail.route.replace(
-                            "{projectId}",
-                            id.toString(),
-                        ),
-                    )
-                })
+                InsightsScreen(
+                    viewModel,
+                    onNavigateToProject = { id ->
+                        navController.navigate(
+                            Screen.ProjectDetail.route.replace(
+                                "{projectId}",
+                                id.toString(),
+                            ),
+                        )
+                    },
+                )
             }
             composable(Screen.Graph.route) {
                 GraphScreen(viewModel, onNodeClick = onEditNode)
@@ -342,27 +361,30 @@ private fun AppScaffold(
             composable(Screen.Profile.route) { ProfileScreen(viewModel) }
         }
 
-        if (showCaptureSheet) {
+        if (showCaptureSheet)
+        {
             CaptureSheet(
                 onDismiss = {
                     onShowCaptureSheet(false)
                     onVoiceCaptureConsumed()
                 },
-                onCapture = { text,
-                              type,
-                              projectId,
-                              areaId,
-                              isRec,
-                              recInt,
-                              remAt,
-                              ctx,
-                              sticky,
-                              decisionCat
+                onCapture = {
+                        text,
+                        type,
+                        projectId,
+                        areaId,
+                        isRec,
+                        recInt,
+                        remAt,
+                        ctx,
+                        sticky,
+                        decisionCat,
                     ->
-                    when (type) {
+                    when (type)
+                    {
                         "project" -> viewModel.addProject(text, "", areaId)
-                        "area" -> viewModel.addArea(text)
-                        else ->
+                        "area"    -> viewModel.addArea(text)
+                        else      ->
                             viewModel.addNode(
                                 text,
                                 "",
@@ -374,7 +396,7 @@ private fun AppScaffold(
                                 remAt,
                                 contextScreen = ctx,
                                 isSticky = sticky,
-                                decisionCategory = decisionCat
+                                decisionCategory = decisionCat,
                             )
                     }
                     // Note: if multi-capture is on, CaptureSheet handles not closing itself
@@ -386,7 +408,7 @@ private fun AppScaffold(
                 defaultAreaId = lastActiveAreaId,
                 initialText = voiceCaptureResult ?: "",
                 onVoiceCaptureClick = onVoiceCapture,
-                contextScreen = currentDestination?.route
+                contextScreen = currentDestination?.route,
             )
         }
     }

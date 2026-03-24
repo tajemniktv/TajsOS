@@ -20,14 +20,15 @@ import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.EventLogEntity
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 
 @Composable
-fun InsightsScreen(viewModel: MainViewModel, onNavigateToProject: (Long) -> Unit) {
+fun InsightsScreen(viewModel: MainViewModel, onNavigateToProject: (Long) -> Unit)
+{
     val insights by viewModel.insights.collectAsState()
     val recentLogs by viewModel.recentLogs.collectAsState()
     val allAreas by viewModel.allAreas.collectAsState()
@@ -36,23 +37,24 @@ fun InsightsScreen(viewModel: MainViewModel, onNavigateToProject: (Long) -> Unit
         modifier = Modifier
             .fillMaxSize()
             .padding(TactileTheme.SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)
+        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
     ) {
         item {
             Text(
                 stringResource(Res.string.insights_title),
                 style = MaterialTheme.typography.displayMedium,
-                color = TactileTheme.Text
+                color = TactileTheme.Text,
             )
             Text(
                 stringResource(Res.string.insights_subtitle),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary
+                color = TactileTheme.Primary,
             )
             Spacer(Modifier.height(TactileTheme.SpacingLg))
         }
 
-        if (insights.autoPreparedReview.isNotBlank()) {
+        if (insights.autoPreparedReview.isNotBlank())
+        {
             item {
                 AutoReviewCard(insights.autoPreparedReview)
             }
@@ -61,7 +63,7 @@ fun InsightsScreen(viewModel: MainViewModel, onNavigateToProject: (Long) -> Unit
         item {
             CompletionCard(
                 insights.weeklyCaptures,
-                insights.weeklyCompletions
+                insights.weeklyCompletions,
             )
         }
 
@@ -69,7 +71,7 @@ fun InsightsScreen(viewModel: MainViewModel, onNavigateToProject: (Long) -> Unit
             FocusInsightCard(
                 insights.weeklyFocusHours,
                 insights.bestFocusHour,
-                insights.avgSessionMinutes
+                insights.avgSessionMinutes,
             )
         }
 
@@ -80,21 +82,21 @@ fun InsightsScreen(viewModel: MainViewModel, onNavigateToProject: (Long) -> Unit
                 insights.backlogPressure,
                 insights.mostProductiveHour,
                 insights.chaosScore,
-                insights.contextSwitchingRate
+                insights.contextSwitchingRate,
             )
         }
 
         item {
             VaultInsightCard(
                 insights.inboxGrowth,
-                insights.weeklyCaptures
+                insights.weeklyCaptures,
             )
         }
 
         item {
             AdvancedSystemCard(
                 insights.contextStability,
-                insights.passiveBehaviorSummary
+                insights.passiveBehaviorSummary,
             )
         }
 
@@ -102,7 +104,7 @@ fun InsightsScreen(viewModel: MainViewModel, onNavigateToProject: (Long) -> Unit
             StateAveragesCard(
                 insights.avgMood,
                 insights.avgEnergy,
-                insights.avgFocus
+                insights.avgFocus,
             )
         }
 
@@ -112,7 +114,7 @@ fun InsightsScreen(viewModel: MainViewModel, onNavigateToProject: (Long) -> Unit
                 insights.sleepVsFocus,
                 insights.energyVsCaptures,
                 insights.anxietyVsAvoidance,
-                insights.medsEffectiveness
+                insights.medsEffectiveness,
             )
         }
 
@@ -120,97 +122,105 @@ fun InsightsScreen(viewModel: MainViewModel, onNavigateToProject: (Long) -> Unit
             Text(
                 stringResource(Res.string.insights_cards_title),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary
+                color = TactileTheme.Primary,
             )
         }
 
-        if (insights.mostPostponedAreaId != null) {
+        if (insights.mostPostponedAreaId != null)
+        {
             val area = allAreas.find { it.id == insights.mostPostponedAreaId }
-            if (area != null) {
+            if (area != null)
+            {
                 item {
                     InsightPatternCard(
                         title = stringResource(Res.string.insights_friction_alert_title),
                         message = stringResource(
                             Res.string.insights_friction_alert_msg,
-                            area.title
+                            area.title,
                         ),
                         icon = Icons.Default.History,
-                        color = TactileTheme.Error
+                        color = TactileTheme.Error,
                     )
                 }
             }
         }
 
-        if (insights.captureTimePattern != null) {
+        if (insights.captureTimePattern != null)
+        {
             item {
                 InsightPatternCard(
                     title = stringResource(Res.string.insights_creative_peak_title),
                     message = stringResource(
                         Res.string.insights_creative_peak_msg,
-                        insights.captureTimePattern!!
+                        insights.captureTimePattern!!,
                     ),
                     icon = Icons.Default.Lightbulb,
-                    color = TactileTheme.Success
+                    color = TactileTheme.Success,
                 )
             }
         }
 
-        if (insights.projectsWithoutTasks.isNotEmpty()) {
+        if (insights.projectsWithoutTasks.isNotEmpty())
+        {
             item {
                 InsightPatternCard(
                     title = stringResource(Res.string.insights_stagnant_knowledge_title),
                     message = stringResource(
                         Res.string.insights_stagnant_knowledge_msg,
-                        insights.projectsWithoutTasks.first().title
+                        insights.projectsWithoutTasks.first().title,
                     ),
                     icon = Icons.Default.Warning,
-                    color = TactileTheme.Accent
+                    color = TactileTheme.Accent,
                 )
             }
         }
 
-        if (insights.neglectedAreas.isNotEmpty()) {
+        if (insights.neglectedAreas.isNotEmpty())
+        {
             val area = insights.neglectedAreas.first()
             item {
                 InsightPatternCard(
                     title = stringResource(Res.string.insights_radar_drop_title),
                     message = stringResource(Res.string.insights_radar_drop_msg, area.title),
                     icon = Icons.Default.LocationOff,
-                    color = TactileTheme.Error
+                    color = TactileTheme.Error,
                 )
             }
         }
 
-        if (insights.neglectedProjects.isNotEmpty()) {
+        if (insights.neglectedProjects.isNotEmpty())
+        {
             item {
                 Text(
                     stringResource(Res.string.insights_neglected_projects),
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Primary
+                    color = TactileTheme.Primary,
                 )
             }
             items(insights.neglectedProjects) { project ->
                 NeglectedProjectItem(project) {
                     onNavigateToProject(
-                        project.id
+                        project.id,
                     )
                 }
             }
         }
 
         val highEntropyProjects = insights.projectEntropy.filter { it.value > 0.5 }
-        if (highEntropyProjects.isNotEmpty()) {
+        if (highEntropyProjects.isNotEmpty())
+        {
             item {
                 Text(
                     stringResource(Res.string.insights_high_entropy_projects),
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Error
+                    color = TactileTheme.Error,
                 )
             }
             items(highEntropyProjects.keys.toList()) { projectId ->
                 val project =
-                    viewModel.allProjects.collectAsState().value.find { it.id == projectId }
-                if (project != null) {
+                        viewModel.allProjects.collectAsState().value.find { it.id == projectId }
+                if (project != null)
+                {
                     ProjectEntropyItem(project, highEntropyProjects[projectId] ?: 0.0) {
                         onNavigateToProject(project.id)
                     }
@@ -218,12 +228,13 @@ fun InsightsScreen(viewModel: MainViewModel, onNavigateToProject: (Long) -> Unit
             }
         }
 
-        if (recentLogs.isNotEmpty()) {
+        if (recentLogs.isNotEmpty())
+        {
             item {
                 Text(
                     stringResource(Res.string.insights_recent_activity),
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Primary
+                    color = TactileTheme.Primary,
                 )
             }
             items(recentLogs) { log ->
@@ -238,77 +249,79 @@ fun InsightsScreen(viewModel: MainViewModel, onNavigateToProject: (Long) -> Unit
 }
 
 @Composable
-fun AutoReviewCard(review: String) {
+fun AutoReviewCard(review: String)
+{
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = TactileTheme.Primary.copy(alpha = 0.05f),
         shape = RoundedCornerShape(TactileTheme.RadiusMd),
         border = androidx.compose.foundation.BorderStroke(
             1.dp,
-            TactileTheme.Primary.copy(alpha = 0.2f)
-        )
+            TactileTheme.Primary.copy(alpha = 0.2f),
+        ),
     ) {
         Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
             Text(
                 stringResource(Res.string.insights_auto_prepared_review),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary
+                color = TactileTheme.Primary,
             )
             Spacer(Modifier.height(8.dp))
             Text(
                 review,
                 style = MaterialTheme.typography.bodyMedium,
-                color = TactileTheme.Text
+                color = TactileTheme.Text,
             )
         }
     }
 }
 
 @Composable
-fun CompletionCard(captures: Int, completions: Int) {
+fun CompletionCard(captures: Int, completions: Int)
+{
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = TactileTheme.Surface,
         shape = RoundedCornerShape(TactileTheme.RadiusMd),
         border = androidx.compose.foundation.BorderStroke(
             1.dp,
-            TactileTheme.Muted.copy(alpha = 0.2f)
-        )
+            TactileTheme.Muted.copy(alpha = 0.2f),
+        ),
     ) {
         Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
             Text(
                 stringResource(Res.string.insights_capacity),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary
+                color = TactileTheme.Primary,
             )
             Spacer(Modifier.height(8.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Bottom
+                verticalAlignment = Alignment.Bottom,
             ) {
                 Column {
                     Text(
                         "$captures",
                         style = MaterialTheme.typography.displaySmall,
-                        color = TactileTheme.Text
+                        color = TactileTheme.Text,
                     )
                     Text(
                         stringResource(Res.string.insights_captures),
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Muted
+                        color = TactileTheme.Muted,
                     )
                 }
                 Column(horizontalAlignment = Alignment.End) {
                     Text(
                         "$completions",
                         style = MaterialTheme.typography.displaySmall,
-                        color = TactileTheme.Success
+                        color = TactileTheme.Success,
                     )
                     Text(
                         stringResource(Res.string.insights_completions),
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Muted
+                        color = TactileTheme.Muted,
                     )
                 }
             }
@@ -318,66 +331,68 @@ fun CompletionCard(captures: Int, completions: Int) {
                 progress = { rate },
                 modifier = Modifier.fillMaxWidth().height(4.dp),
                 color = if (rate >= 0.8f) TactileTheme.Success else TactileTheme.Primary,
-                trackColor = TactileTheme.Muted.copy(alpha = 0.2f)
+                trackColor = TactileTheme.Muted.copy(alpha = 0.2f),
             )
         }
     }
 }
 
 @Composable
-fun FocusInsightCard(hours: Double, bestHour: Int, avgMin: Int) {
+fun FocusInsightCard(hours: Double, bestHour: Int, avgMin: Int)
+{
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = TactileTheme.Surface,
         shape = RoundedCornerShape(TactileTheme.RadiusMd),
         border = androidx.compose.foundation.BorderStroke(
             1.dp,
-            TactileTheme.Muted.copy(alpha = 0.2f)
-        )
+            TactileTheme.Muted.copy(alpha = 0.2f),
+        ),
     ) {
         Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
             Text(
                 stringResource(Res.string.insights_focus_execution),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary
+                color = TactileTheme.Primary,
             )
             Spacer(Modifier.height(8.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Column {
                     Text(
                         "${((hours * 10).toInt() / 10.0)}",
                         style = MaterialTheme.typography.displaySmall,
-                        color = TactileTheme.Text
+                        color = TactileTheme.Text,
                     )
                     Text(
                         stringResource(Res.string.insights_total_hours),
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Muted
+                        color = TactileTheme.Muted,
                     )
                 }
                 Column(horizontalAlignment = Alignment.End) {
                     Text(
                         "$avgMin",
                         style = MaterialTheme.typography.displaySmall,
-                        color = TactileTheme.Primary
+                        color = TactileTheme.Primary,
                     )
                     Text(
                         stringResource(Res.string.insights_avg_session_min),
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Muted
+                        color = TactileTheme.Muted,
                     )
                 }
             }
-            if (bestHour != -1) {
+            if (bestHour != -1)
+            {
                 Spacer(Modifier.height(8.dp))
                 val formattedHour = if (bestHour < 10) "0$bestHour:00" else "$bestHour:00"
                 Text(
                     stringResource(Res.string.insights_peak_focus, formattedHour),
                     style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Muted
+                    color = TactileTheme.Muted,
                 )
             }
         }
@@ -391,77 +406,78 @@ fun EfficiencyCard(
     pressure: Double,
     productiveHour: Int,
     chaos: Int,
-    switching: Double
-) {
+    switching: Double,
+)
+{
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = TactileTheme.Surface,
         shape = RoundedCornerShape(TactileTheme.RadiusMd),
         border = androidx.compose.foundation.BorderStroke(
             1.dp,
-            TactileTheme.Muted.copy(alpha = 0.2f)
-        )
+            TactileTheme.Muted.copy(alpha = 0.2f),
+        ),
     ) {
         Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
             Text(
                 stringResource(Res.string.insights_efficiency_chaos),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary
+                color = TactileTheme.Primary,
             )
             Spacer(Modifier.height(16.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
+                horizontalArrangement = Arrangement.SpaceEvenly,
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         "${(archiveRate * 100).toInt()}%",
                         style = MaterialTheme.typography.headlineSmall,
-                        color = TactileTheme.Text
+                        color = TactileTheme.Text,
                     )
                     Text(
                         stringResource(Res.string.insights_archive),
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Muted
+                        color = TactileTheme.Muted,
                     )
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         "$postpones",
                         style = MaterialTheme.typography.headlineSmall,
-                        color = TactileTheme.Error
+                        color = TactileTheme.Error,
                     )
                     Text(
                         stringResource(Res.string.insights_postpones),
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Muted
+                        color = TactileTheme.Muted,
                     )
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         "$chaos",
                         style = MaterialTheme.typography.headlineSmall,
-                        color = if (chaos > 50) TactileTheme.Error else TactileTheme.Text
+                        color = if (chaos > 50) TactileTheme.Error else TactileTheme.Text,
                     )
                     Text(
                         stringResource(Res.string.insights_chaos),
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Muted
+                        color = TactileTheme.Muted,
                     )
                 }
             }
             Spacer(Modifier.height(16.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Column {
                     val pressureLabel =
-                        if (pressure > 5.0) "HIGH" else if (pressure > 2.0) "MED" else "LOW"
+                            if (pressure > 5.0) "HIGH" else if (pressure > 2.0) "MED" else "LOW"
                     Text(
                         stringResource(Res.string.insights_pressure, pressureLabel),
                         style = MaterialTheme.typography.bodySmall,
-                        color = if (pressure > 5.0) TactileTheme.Error else TactileTheme.Muted
+                        color = if (pressure > 5.0) TactileTheme.Error else TactileTheme.Muted,
                     )
                 }
                 Column(horizontalAlignment = Alignment.End) {
@@ -469,21 +485,22 @@ fun EfficiencyCard(
                         stringResource(
                             Res.string.insights_switching,
                             // Pre-format to 1 decimal place as CMP formatter only supports %d and %s
-                            ((switching * 10).toInt() / 10.0).toString()
+                            ((switching * 10).toInt() / 10.0).toString(),
                         ),
                         style = MaterialTheme.typography.bodySmall,
-                        color = TactileTheme.Muted
+                        color = TactileTheme.Muted,
                     )
                 }
             }
-            if (productiveHour != -1) {
+            if (productiveHour != -1)
+            {
                 Spacer(Modifier.height(8.dp))
                 val formattedHour =
-                    if (productiveHour < 10) "0$productiveHour:00" else "$productiveHour:00"
+                        if (productiveHour < 10) "0$productiveHour:00" else "$productiveHour:00"
                 Text(
                     stringResource(Res.string.insights_peak_completions, formattedHour),
                     style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Accent
+                    color = TactileTheme.Accent,
                 )
             }
         }
@@ -491,51 +508,52 @@ fun EfficiencyCard(
 }
 
 @Composable
-fun VaultInsightCard(inboxGrowth: Int, weeklyCaptures: Int) {
+fun VaultInsightCard(inboxGrowth: Int, weeklyCaptures: Int)
+{
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = TactileTheme.Surface,
         shape = RoundedCornerShape(TactileTheme.RadiusMd),
         border = androidx.compose.foundation.BorderStroke(
             1.dp,
-            TactileTheme.Muted.copy(alpha = 0.2f)
-        )
+            TactileTheme.Muted.copy(alpha = 0.2f),
+        ),
     ) {
         Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
             Text(
                 stringResource(Res.string.insights_intake_dynamics),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary
+                color = TactileTheme.Primary,
             )
             Spacer(Modifier.height(8.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Column {
                     Text(
                         "$inboxGrowth",
                         style = MaterialTheme.typography.displaySmall,
-                        color = TactileTheme.Accent
+                        color = TactileTheme.Accent,
                     )
                     Text(
                         stringResource(Res.string.insights_new_inbox_items),
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Muted
+                        color = TactileTheme.Muted,
                     )
                 }
                 Column(horizontalAlignment = Alignment.End) {
                     val ratio =
-                        if (weeklyCaptures > 0) (inboxGrowth.toDouble() / weeklyCaptures * 100).toInt() else 0
+                            if (weeklyCaptures > 0) (inboxGrowth.toDouble() / weeklyCaptures * 100).toInt() else 0
                     Text(
                         "$ratio%",
                         style = MaterialTheme.typography.displaySmall,
-                        color = TactileTheme.Text
+                        color = TactileTheme.Text,
                     )
                     Text(
                         stringResource(Res.string.insights_unprocessed_rate),
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Muted
+                        color = TactileTheme.Muted,
                     )
                 }
             }
@@ -544,39 +562,40 @@ fun VaultInsightCard(inboxGrowth: Int, weeklyCaptures: Int) {
 }
 
 @Composable
-fun AdvancedSystemCard(stability: Double, summary: String) {
+fun AdvancedSystemCard(stability: Double, summary: String)
+{
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = TactileTheme.Surface,
         shape = RoundedCornerShape(TactileTheme.RadiusMd),
         border = androidx.compose.foundation.BorderStroke(
             1.dp,
-            TactileTheme.Muted.copy(alpha = 0.2f)
-        )
+            TactileTheme.Muted.copy(alpha = 0.2f),
+        ),
     ) {
         Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
             Text(
                 stringResource(Res.string.insights_system_stability),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary
+                color = TactileTheme.Primary,
             )
             Spacer(Modifier.height(8.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     val stabilityLabel =
-                        if (stability > 0.7) "ROCK SOLID" else if (stability > 0.4) "STABLE" else "FLUID"
+                            if (stability > 0.7) "ROCK SOLID" else if (stability > 0.4) "STABLE" else "FLUID"
                     Text(
                         stabilityLabel,
                         style = MaterialTheme.typography.headlineSmall,
-                        color = TactileTheme.Text
+                        color = TactileTheme.Text,
                     )
                     Text(
                         stringResource(Res.string.insights_context_stability),
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Muted
+                        color = TactileTheme.Muted,
                     )
                 }
                 CircularProgressIndicator(
@@ -584,15 +603,16 @@ fun AdvancedSystemCard(stability: Double, summary: String) {
                     modifier = Modifier.size(40.dp),
                     color = if (stability > 0.5) TactileTheme.Success else TactileTheme.Primary,
                     trackColor = TactileTheme.Border,
-                    strokeCap = androidx.compose.ui.graphics.StrokeCap.Round
+                    strokeCap = androidx.compose.ui.graphics.StrokeCap.Round,
                 )
             }
-            if (summary.isNotBlank()) {
+            if (summary.isNotBlank())
+            {
                 Spacer(Modifier.height(16.dp))
                 Text(
                     summary,
                     style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Text.copy(alpha = 0.8f)
+                    color = TactileTheme.Text.copy(alpha = 0.8f),
                 )
             }
         }
@@ -600,31 +620,32 @@ fun AdvancedSystemCard(stability: Double, summary: String) {
 }
 
 @Composable
-fun ProjectEntropyItem(project: NodeEntity, entropy: Double, onClick: () -> Unit) {
+fun ProjectEntropyItem(project: NodeEntity, entropy: Double, onClick: () -> Unit)
+{
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = TactileTheme.Surface,
         shape = RoundedCornerShape(TactileTheme.RadiusSm),
         border = androidx.compose.foundation.BorderStroke(
             1.dp,
-            TactileTheme.Muted.copy(alpha = 0.1f)
+            TactileTheme.Muted.copy(alpha = 0.1f),
         ),
-        onClick = onClick
+        onClick = onClick,
     ) {
         Row(
             modifier = Modifier.padding(TactileTheme.SpacingMd),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     project.title.uppercase(),
                     style = MaterialTheme.typography.titleSmall,
-                    color = TactileTheme.Text
+                    color = TactileTheme.Text,
                 )
                 Text(
                     "Entropy: ${(entropy * 100).toInt()}% (Unstructured/Postponed)",
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Muted
+                    color = TactileTheme.Muted,
                 )
             }
             LinearProgressIndicator(
@@ -632,33 +653,34 @@ fun ProjectEntropyItem(project: NodeEntity, entropy: Double, onClick: () -> Unit
                 modifier = Modifier.width(60.dp).height(4.dp),
                 color = if (entropy > 0.7) TactileTheme.Error else TactileTheme.Primary,
                 trackColor = TactileTheme.Border,
-                strokeCap = androidx.compose.ui.graphics.StrokeCap.Round
+                strokeCap = androidx.compose.ui.graphics.StrokeCap.Round,
             )
         }
     }
 }
 
 @Composable
-fun StateAveragesCard(mood: Double, energy: Double, focus: Double) {
+fun StateAveragesCard(mood: Double, energy: Double, focus: Double)
+{
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = TactileTheme.Surface,
         shape = RoundedCornerShape(TactileTheme.RadiusMd),
         border = androidx.compose.foundation.BorderStroke(
             1.dp,
-            TactileTheme.Muted.copy(alpha = 0.2f)
-        )
+            TactileTheme.Muted.copy(alpha = 0.2f),
+        ),
     ) {
         Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
             Text(
                 stringResource(Res.string.insights_biometrics),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary
+                color = TactileTheme.Primary,
             )
             Spacer(Modifier.height(8.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
+                horizontalArrangement = Arrangement.SpaceEvenly,
             ) {
                 MetricItem(stringResource(Res.string.track_label_affective_state), mood)
                 MetricItem(stringResource(Res.string.track_label_energy_reserves), energy)
@@ -674,22 +696,23 @@ fun CorrelationsCard(
     sleepVsFocus: Double,
     energyVsCapt: Double,
     avoid: Double,
-    medsEffect: Double
-) {
+    medsEffect: Double,
+)
+{
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = TactileTheme.Surface,
         shape = RoundedCornerShape(TactileTheme.RadiusMd),
         border = androidx.compose.foundation.BorderStroke(
             1.dp,
-            TactileTheme.Muted.copy(alpha = 0.2f)
-        )
+            TactileTheme.Muted.copy(alpha = 0.2f),
+        ),
     ) {
         Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
             Text(
                 stringResource(Res.string.insights_lifestyle_correlations),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary
+                color = TactileTheme.Primary,
             )
             Spacer(Modifier.height(16.dp))
 
@@ -697,49 +720,50 @@ fun CorrelationsCard(
                 "${stringResource(Res.string.track_label_affective_state)} → ${stringResource(Res.string.insights_completions)}",
                 moodVsComp,
                 "Higher mood on productive days",
-                "Productive days don't affect mood"
+                "Productive days don't affect mood",
             )
             HorizontalDivider(
                 Modifier.padding(vertical = 8.dp),
-                color = TactileTheme.Muted.copy(alpha = 0.1f)
+                color = TactileTheme.Muted.copy(alpha = 0.1f),
             )
             CorrelationItem(
                 "${
                     stringResource(
-                        Res.string.track_label_recovery_cycles
+                        Res.string.track_label_recovery_cycles,
                     )
                 } → ${stringResource(Res.string.track_label_cognitive_lock)}",
                 sleepVsFocus,
                 "Good sleep boosts focus time",
-                "Sleep doesn't seem to impact focus"
+                "Sleep doesn't seem to impact focus",
             )
             HorizontalDivider(
                 Modifier.padding(vertical = 8.dp),
-                color = TactileTheme.Muted.copy(alpha = 0.1f)
+                color = TactileTheme.Muted.copy(alpha = 0.1f),
             )
             CorrelationItem(
                 "${stringResource(Res.string.track_label_energy_reserves)} → ${stringResource(Res.string.insights_captures)}",
                 energyVsCapt,
                 "High energy leads to more capture",
-                "Capture rate is energy-independent"
+                "Capture rate is energy-independent",
             )
             HorizontalDivider(
                 Modifier.padding(vertical = 8.dp),
-                color = TactileTheme.Muted.copy(alpha = 0.1f)
+                color = TactileTheme.Muted.copy(alpha = 0.1f),
             )
             CorrelationItem(
                 "${stringResource(Res.string.track_meds)} → ${stringResource(Res.string.track_label_cognitive_lock)}",
                 medsEffect,
                 "Medication improves your focus",
-                "No clear meds impact on focus"
+                "No clear meds impact on focus",
             )
 
-            if (avoid > 0) {
+            if (avoid > 0)
+            {
                 Spacer(Modifier.height(12.dp))
                 Text(
                     stringResource(Res.string.insights_avoidance_pattern, avoid.toInt()),
                     style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Error
+                    color = TactileTheme.Error,
                 )
             }
         }
@@ -747,31 +771,34 @@ fun CorrelationsCard(
 }
 
 @Composable
-fun CorrelationItem(label: String, value: Double, positiveMsg: String, neutralMsg: String) {
+fun CorrelationItem(label: String, value: Double, positiveMsg: String, neutralMsg: String)
+{
     Column {
         Text(label, style = MaterialTheme.typography.labelSmall, color = TactileTheme.Muted)
         Text(
             if (value > 0.5) positiveMsg else neutralMsg,
             style = MaterialTheme.typography.bodyMedium,
-            color = if (value > 0.5) TactileTheme.Success else TactileTheme.Text
+            color = if (value > 0.5) TactileTheme.Success else TactileTheme.Text,
         )
     }
 }
 
 @Composable
-fun MetricItem(label: String, value: Double) {
+fun MetricItem(label: String, value: Double)
+{
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             "${((value * 10).toInt() / 10.0)}",
             style = MaterialTheme.typography.headlineMedium,
-            color = TactileTheme.Text
+            color = TactileTheme.Text,
         )
         Text(label, style = MaterialTheme.typography.labelSmall, color = TactileTheme.Muted)
     }
 }
 
 @Composable
-fun ActivityLogItem(log: EventLogEntity) {
+fun ActivityLogItem(log: EventLogEntity)
+{
     val time = kotlin.time.Instant.fromEpochMilliseconds(log.timestamp)
         .toLocalDateTime(TimeZone.currentSystemDefault())
     val timeStr = "${time.hour}:${time.minute.toString().padStart(2, '0')}"
@@ -782,44 +809,45 @@ fun ActivityLogItem(log: EventLogEntity) {
         shape = RoundedCornerShape(TactileTheme.RadiusSm),
         border = androidx.compose.foundation.BorderStroke(
             1.dp,
-            TactileTheme.Muted.copy(alpha = 0.1f)
-        )
+            TactileTheme.Muted.copy(alpha = 0.1f),
+        ),
     ) {
         Row(
             modifier = Modifier.padding(TactileTheme.SpacingMd),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 timeStr,
                 style = MaterialTheme.typography.labelSmall,
                 color = TactileTheme.Muted,
-                modifier = Modifier.width(48.dp)
+                modifier = Modifier.width(48.dp),
             )
             Text(
                 log.eventType.replace("_", " "),
                 style = MaterialTheme.typography.bodySmall,
                 color = TactileTheme.Primary,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             )
         }
     }
 }
 
 @Composable
-fun NeglectedProjectItem(project: NodeEntity, onClick: () -> Unit) {
+fun NeglectedProjectItem(project: NodeEntity, onClick: () -> Unit)
+{
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = TactileTheme.Surface,
         shape = RoundedCornerShape(TactileTheme.RadiusSm),
         border = androidx.compose.foundation.BorderStroke(
             1.dp,
-            TactileTheme.Error.copy(alpha = 0.3f)
+            TactileTheme.Error.copy(alpha = 0.3f),
         ),
-        onClick = onClick
+        onClick = onClick,
     ) {
         Row(
             modifier = Modifier.padding(TactileTheme.SpacingMd),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(Icons.Default.Warning, contentDescription = null, tint = TactileTheme.Error)
             Spacer(Modifier.width(TactileTheme.SpacingMd))
@@ -827,12 +855,12 @@ fun NeglectedProjectItem(project: NodeEntity, onClick: () -> Unit) {
                 Text(
                     project.title.uppercase(),
                     style = MaterialTheme.typography.titleMedium,
-                    color = TactileTheme.Text
+                    color = TactileTheme.Text,
                 )
                 Text(
                     stringResource(Res.string.insights_needs_attention),
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Error
+                    color = TactileTheme.Error,
                 )
             }
         }
@@ -844,17 +872,18 @@ fun InsightPatternCard(
     title: String,
     message: String,
     icon: androidx.compose.ui.graphics.vector.ImageVector,
-    color: androidx.compose.ui.graphics.Color
-) {
+    color: androidx.compose.ui.graphics.Color,
+)
+{
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = color.copy(alpha = 0.05f),
         shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = androidx.compose.foundation.BorderStroke(1.dp, color.copy(alpha = 0.2f))
+        border = androidx.compose.foundation.BorderStroke(1.dp, color.copy(alpha = 0.2f)),
     ) {
         Row(
             modifier = Modifier.padding(TactileTheme.SpacingMd),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(icon, contentDescription = null, tint = color, modifier = Modifier.size(32.dp))
             Spacer(Modifier.width(TactileTheme.SpacingMd))
@@ -863,7 +892,7 @@ fun InsightPatternCard(
                 Text(
                     message,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = TactileTheme.Text
+                    color = TactileTheme.Text,
                 )
             }
         }

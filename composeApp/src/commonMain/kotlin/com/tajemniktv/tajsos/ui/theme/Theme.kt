@@ -2,7 +2,7 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
-package com.tajemniktv.tajsos.ui.design.theme
+package com.tajemniktv.tajsos.ui.theme
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -13,7 +13,8 @@ import androidx.compose.ui.unit.dp
 /**
  * Design Tokens
  */
-object TactileTheme {
+object TactileTheme
+{
     val Primary = PrimaryPurple
     val Background = DeepBackground
     val Surface = SurfaceDark
@@ -23,7 +24,7 @@ object TactileTheme {
     val Error = AccentError
     val Accent = AccentCyan
     val Border = SubtleBorder
-    val SidebarBackground = com.tajemniktv.tajsos.ui.design.theme.SidebarBackground
+    val SidebarBackground = com.tajemniktv.tajsos.ui.theme.SidebarBackground
     val SidebarWidth = 280.dp
 
     val RadiusXs = 2.dp
@@ -39,30 +40,31 @@ object TactileTheme {
 }
 
 private val TajsDarkColorScheme =
-    darkColorScheme(
-        primary = TactileTheme.Primary,
-        background = TactileTheme.Background,
-        surface = TactileTheme.Surface,
-        onPrimary = TactileTheme.Background,
-        onBackground = TactileTheme.Text,
-        onSurface = TactileTheme.Text,
-        surfaceVariant = TactileTheme.Muted,
-        onSurfaceVariant = TactileTheme.Text,
-        error = TactileTheme.Error,
-    )
+        darkColorScheme(
+            primary = TactileTheme.Primary,
+            background = TactileTheme.Background,
+            surface = TactileTheme.Surface,
+            onPrimary = TactileTheme.Background,
+            onBackground = TactileTheme.Text,
+            onSurface = TactileTheme.Text,
+            surfaceVariant = TactileTheme.Muted,
+            onSurfaceVariant = TactileTheme.Text,
+            error = TactileTheme.Error,
+        )
 
 private val TajsLightColorScheme =
-    lightColorScheme(
-        primary = Purple40,
-        secondary = PurpleGrey40,
-        tertiary = Pink40,
-    )
+        lightColorScheme(
+            primary = Purple40,
+            secondary = PurpleGrey40,
+            tertiary = Pink40,
+        )
 
 @Composable
 fun TajsOSTheme(
     darkTheme: Boolean = true,
     content: @Composable () -> Unit,
-) {
+)
+{
     val colorScheme = if (darkTheme) TajsDarkColorScheme else TajsLightColorScheme
     val typography = tajsOSTypography()
 

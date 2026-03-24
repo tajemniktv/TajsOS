@@ -5,8 +5,6 @@
 package com.tajemniktv.tajsos.ui.screens
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -18,10 +16,9 @@ import androidx.compose.ui.Modifier
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.components.nodes.NodeCard
-import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FilterList
@@ -37,8 +34,9 @@ import tajsos.composeapp.generated.resources.*
 @Composable
 fun SearchScreen(
     viewModel: MainViewModel,
-    onItemClick: (Long) -> Unit
-) {
+    onItemClick: (Long) -> Unit,
+)
+{
     val searchQuery by viewModel.searchQuery.collectAsState()
     val searchResults by viewModel.searchResults.collectAsState()
     val searchTypeFilter by viewModel.searchTypeFilter.collectAsState()
@@ -60,24 +58,25 @@ fun SearchScreen(
                 placeholder = { Text(stringResource(Res.string.search_placeholder)) },
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                 trailingIcon = {
-                    if (searchQuery.isNotEmpty()) {
+                    if (searchQuery.isNotEmpty())
+                    {
                         IconButton(onClick = { viewModel.updateSearchQuery("") }) {
                             Icon(
                                 Icons.Default.Clear,
-                                contentDescription = stringResource(Res.string.search_clear)
+                                contentDescription = stringResource(Res.string.search_clear),
                             )
                         }
                     }
                 },
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = TactileTheme.Surface,
-                    unfocusedContainerColor = TactileTheme.Surface
-                )
+                    unfocusedContainerColor = TactileTheme.Surface,
+                ),
             )
             IconButton(onClick = { viewModel.clearSearchFilters() }) {
                 Icon(
                     Icons.Default.FilterList,
-                    contentDescription = stringResource(Res.string.search_reset_filters)
+                    contentDescription = stringResource(Res.string.search_reset_filters),
                 )
             }
         }
@@ -87,25 +86,26 @@ fun SearchScreen(
         // Filters Row
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             item {
                 FilterChip(
                     selected = searchStatusFilter == "active",
                     onClick = { viewModel.updateSearchStatusFilter(if (searchStatusFilter == "active") null else "active") },
-                    label = { Text(stringResource(Res.string.search_filter_active)) }
+                    label = { Text(stringResource(Res.string.search_filter_active)) },
                 )
             }
             item {
                 FilterChip(
                     selected = searchStatusFilter == "archived",
                     onClick = { viewModel.updateSearchStatusFilter(if (searchStatusFilter == "archived") null else "archived") },
-                    label = { Text(stringResource(Res.string.search_filter_archived)) }
+                    label = { Text(stringResource(Res.string.search_filter_archived)) },
                 )
             }
             val types = listOf("task", "note", "project", "area", "resource", "idea")
             items(types) { type ->
-                val typeLabel = when (type) {
+                val typeLabel = when (type)
+                {
                     "task" -> stringResource(Res.string.type_task)
                     "note" -> stringResource(Res.string.type_note)
                     "idea" -> stringResource(Res.string.type_idea)
@@ -116,17 +116,19 @@ fun SearchScreen(
                 FilterChip(
                     selected = searchTypeFilter == type,
                     onClick = { viewModel.updateSearchTypeFilter(if (searchTypeFilter == type) null else type) },
-                    label = { Text(typeLabel.uppercase()) }
+                    label = { Text(typeLabel.uppercase()) },
                 )
             }
         }
 
-        if (projects.isNotEmpty() || areas.isNotEmpty() || searchLinkedToFilter != null) {
+        if (projects.isNotEmpty() || areas.isNotEmpty() || searchLinkedToFilter != null)
+        {
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                if (searchLinkedToFilter != null) {
+                if (searchLinkedToFilter != null)
+                {
                     val linkedNode = allNodes.find { it.node.id == searchLinkedToFilter }?.node
                     item {
                         FilterChip(
@@ -136,24 +138,24 @@ fun SearchScreen(
                                 Text(
                                     stringResource(
                                         Res.string.search_filter_linked_to,
-                                        linkedNode?.title ?: "..."
-                                    )
+                                        linkedNode?.title ?: "...",
+                                    ),
                                 )
                             },
                             leadingIcon = {
                                 Icon(
                                     Icons.Default.Link,
                                     contentDescription = null,
-                                    modifier = Modifier.size(16.dp)
+                                    modifier = Modifier.size(16.dp),
                                 )
                             },
                             trailingIcon = {
                                 Icon(
                                     Icons.Default.Close,
                                     contentDescription = null,
-                                    modifier = Modifier.size(16.dp)
+                                    modifier = Modifier.size(16.dp),
                                 )
-                            }
+                            },
                         )
                     }
                 }
@@ -166,9 +168,9 @@ fun SearchScreen(
                             Icon(
                                 Icons.Default.Place,
                                 contentDescription = null,
-                                modifier = Modifier.size(16.dp)
+                                modifier = Modifier.size(16.dp),
                             )
-                        }
+                        },
                     )
                 }
                 items(projects) { project ->
@@ -180,9 +182,9 @@ fun SearchScreen(
                             Icon(
                                 Icons.Default.Folder,
                                 contentDescription = null,
-                                modifier = Modifier.size(16.dp)
+                                modifier = Modifier.size(16.dp),
                             )
-                        }
+                        },
                     )
                 }
             }
@@ -190,21 +192,33 @@ fun SearchScreen(
 
         Spacer(modifier = Modifier.height(TactileTheme.SpacingMd))
 
-        if (searchResults.isEmpty() && (searchQuery.isNotEmpty() || searchTypeFilter != null || searchStatusFilter != "active")) {
+        if (searchResults.isEmpty() && (searchQuery.isNotEmpty() || searchTypeFilter != null || searchStatusFilter != "active"))
+        {
             EmptyState(message = stringResource(Res.string.search_no_results))
-        } else {
+        } else
+        {
             LazyColumn(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)
+                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
             ) {
                 items(searchResults, key = { it.node.id }) { nodeWithPin ->
                     NodeCard(
                         nodeWithPin = nodeWithPin,
-                        onToggleDone = { status -> viewModel.updateNodeStatus(nodeWithPin.node, status) },
-                        onTogglePin = { isPinned -> viewModel.togglePin(nodeWithPin.node, isPinned) },
+                        onToggleDone = { status ->
+                            viewModel.updateNodeStatus(
+                                nodeWithPin.node,
+                                status,
+                            )
+                        },
+                        onTogglePin = { isPinned ->
+                            viewModel.togglePin(
+                                nodeWithPin.node,
+                                isPinned,
+                            )
+                        },
                         onClick = { onItemClick(nodeWithPin.node.id) },
                         onLongClick = { onItemClick(nodeWithPin.node.id) },
-                        onArchive = { viewModel.archiveNode(nodeWithPin.node) }
+                        onArchive = { viewModel.archiveNode(nodeWithPin.node) },
                     )
                 }
             }

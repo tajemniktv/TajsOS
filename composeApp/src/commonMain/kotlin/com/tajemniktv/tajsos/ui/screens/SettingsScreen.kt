@@ -11,7 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
@@ -22,7 +22,8 @@ fun SettingsScreen(
     viewModel: MainViewModel,
     onNavigateToCalendarSettings: () -> Unit = {},
     onNavigateToTemplates: () -> Unit = {},
-) {
+)
+{
     val isBiometricEnabled by viewModel.isBiometricEnabled.collectAsState()
     val isBiometricHardwareAvailable by viewModel.isBiometricHardwareAvailable.collectAsState()
     val scope = rememberCoroutineScope()
@@ -34,28 +35,28 @@ fun SettingsScreen(
     ) { padding ->
         Column(
             modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-                    .padding(TactileTheme.SpacingMd),
+                    Modifier
+                        .fillMaxSize()
+                        .padding(padding)
+                        .padding(TactileTheme.SpacingMd),
         ) {
             Text(
                 stringResource(Res.string.settings_title),
                 style = MaterialTheme.typography.displayMedium,
-                color = TactileTheme.Text
+                color = TactileTheme.Text,
             )
             Spacer(Modifier.height(TactileTheme.SpacingLg))
 
             Text(
                 stringResource(Res.string.settings_security),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary
+                color = TactileTheme.Primary,
             )
             Row(
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = TactileTheme.SpacingSm),
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = TactileTheme.SpacingSm),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
@@ -66,9 +67,11 @@ fun SettingsScreen(
                         color = TactileTheme.Text,
                     )
                     Text(
-                        if (isBiometricHardwareAvailable) {
+                        if (isBiometricHardwareAvailable)
+                        {
                             stringResource(Res.string.settings_biometric_desc)
-                        } else {
+                        } else
+                        {
                             stringResource(Res.string.settings_biometric_unavailable)
                         },
                         style = MaterialTheme.typography.labelSmall,
@@ -97,10 +100,10 @@ fun SettingsScreen(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(TactileTheme.RadiusMd),
                 colors =
-                    ButtonDefaults.buttonColors(
-                        containerColor = TactileTheme.Surface,
-                        contentColor = TactileTheme.Primary,
-                    ),
+                        ButtonDefaults.buttonColors(
+                            containerColor = TactileTheme.Surface,
+                            contentColor = TactileTheme.Primary,
+                        ),
             ) {
                 Text(stringResource(Res.string.settings_configure_calendars))
             }
@@ -112,10 +115,10 @@ fun SettingsScreen(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(TactileTheme.RadiusMd),
                 colors =
-                    ButtonDefaults.buttonColors(
-                        containerColor = TactileTheme.Surface,
-                        contentColor = TactileTheme.Primary,
-                    ),
+                        ButtonDefaults.buttonColors(
+                            containerColor = TactileTheme.Surface,
+                            contentColor = TactileTheme.Primary,
+                        ),
             ) {
                 Text(stringResource(Res.string.settings_manage_templates))
             }
@@ -125,7 +128,7 @@ fun SettingsScreen(
             Text(
                 stringResource(Res.string.settings_data_management),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary
+                color = TactileTheme.Primary,
             )
             Spacer(Modifier.height(TactileTheme.SpacingSm))
 
@@ -136,8 +139,8 @@ fun SettingsScreen(
                         snackbarHostState.showSnackbar(
                             getString(
                                 Res.string.settings_export_success,
-                                json.length
-                            )
+                                json.length,
+                            ),
                         )
                     }
                 },
@@ -145,7 +148,7 @@ fun SettingsScreen(
                 shape = RoundedCornerShape(TactileTheme.RadiusMd),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = TactileTheme.Surface,
-                    contentColor = TactileTheme.Primary
+                    contentColor = TactileTheme.Primary,
                 ),
             ) {
                 Text(stringResource(Res.string.settings_export_data))

@@ -13,9 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlin.random.Random
 
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -25,7 +24,8 @@ import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 
 @Composable
-fun GraphScreen(viewModel: MainViewModel, onNodeClick: (Long) -> Unit) {
+fun GraphScreen(viewModel: MainViewModel, onNodeClick: (Long) -> Unit)
+{
     val nodes by viewModel.allNodes.collectAsState()
     val relations by viewModel.allRelations.collectAsState()
     val areas by viewModel.allAreas.collectAsState()
@@ -42,40 +42,44 @@ fun GraphScreen(viewModel: MainViewModel, onNodeClick: (Long) -> Unit) {
             val center = areaCenters[nodeWithPin.node.areaId] ?: unassignedCenter
             nodeWithPin.node.id to Offset(
                 center.x + (Random.nextFloat() - 0.5f) * 500f,
-                center.y + (Random.nextFloat() - 0.5f) * 500f
+                center.y + (Random.nextFloat() - 0.5f) * 500f,
             )
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize().pointerInput(nodes) {
-        detectTapGestures { tapOffset ->
-            val adjustedTap = tapOffset - offset
-            val clickedNodeId = nodePositions.entries.find { (_, pos) ->
-                (pos - adjustedTap).getDistance() < 30f
-            }?.key
-            clickedNodeId?.let { onNodeClick(it) }
-        }
-    }.pointerInput(Unit) {
-        detectDragGestures { change, dragAmount ->
-            change.consume()
-            offset += dragAmount
-        }
-    }) {
+    Box(
+        modifier = Modifier.fillMaxSize().pointerInput(nodes) {
+            detectTapGestures { tapOffset ->
+                val adjustedTap = tapOffset - offset
+                val clickedNodeId = nodePositions.entries.find { (_, pos) ->
+                    (pos - adjustedTap).getDistance() < 30f
+                }?.key
+                clickedNodeId?.let { onNodeClick(it) }
+            }
+        }.pointerInput(Unit) {
+            detectDragGestures { change, dragAmount ->
+                change.consume()
+                offset += dragAmount
+            }
+        },
+    ) {
         Canvas(modifier = Modifier.fillMaxSize()) {
             // Draw relations (lines)
             relations.forEach { relation ->
                 val start = nodePositions[relation.fromNodeId]
                 val end = nodePositions[relation.toNodeId]
-                if (start != null && end != null) {
+                if (start != null && end != null)
+                {
                     drawLine(
-                        color = when (relation.relationType) {
+                        color = when (relation.relationType)
+                        {
                             "BELONGS_TO" -> TactileTheme.Primary.copy(alpha = 0.3f)
                             "DEPENDS_ON" -> TactileTheme.Error.copy(alpha = 0.3f)
-                            else -> Color.White.copy(alpha = 0.1f)
+                            else         -> Color.White.copy(alpha = 0.1f)
                         },
                         start = start + offset,
                         end = end + offset,
-                        strokeWidth = 2f
+                        strokeWidth = 2f,
                     )
                 }
             }
@@ -83,7 +87,8 @@ fun GraphScreen(viewModel: MainViewModel, onNodeClick: (Long) -> Unit) {
             // Draw nodes
             nodes.forEach { nodeWithPin ->
                 val pos = nodePositions[nodeWithPin.node.id] ?: return@forEach
-                val color = when (nodeWithPin.node.type) {
+                val color = when (nodeWithPin.node.type)
+                {
                     "project" -> TactileTheme.Primary
                     "area" -> TactileTheme.Accent
                     "task" -> if (nodeWithPin.node.status == "done") TactileTheme.Success else TactileTheme.Muted
@@ -94,10 +99,11 @@ fun GraphScreen(viewModel: MainViewModel, onNodeClick: (Long) -> Unit) {
                 drawCircle(
                     color = color.copy(alpha = 0.8f),
                     radius = 12f,
-                    center = pos + offset
+                    center = pos + offset,
                 )
 
-                if (nodeWithPin.node.type == "project" || nodeWithPin.node.type == "area") {
+                if (nodeWithPin.node.type == "project" || nodeWithPin.node.type == "area")
+                {
                     drawText(
                         textMeasurer = textMeasurer,
                         text = nodeWithPin.node.title.uppercase(),
@@ -105,8 +111,8 @@ fun GraphScreen(viewModel: MainViewModel, onNodeClick: (Long) -> Unit) {
                         style = androidx.compose.ui.text.TextStyle(
                             color = color,
                             fontSize = androidx.compose.ui.unit.TextUnit.Unspecified,
-                            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
-                        )
+                            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                        ),
                     )
                 }
             }
@@ -116,12 +122,12 @@ fun GraphScreen(viewModel: MainViewModel, onNodeClick: (Long) -> Unit) {
             Text(
                 stringResource(Res.string.graph_title),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary
+                color = TactileTheme.Primary,
             )
             Text(
                 stringResource(Res.string.graph_subtitle),
                 style = MaterialTheme.typography.bodySmall,
-                color = TactileTheme.Muted
+                color = TactileTheme.Muted,
             )
         }
     }

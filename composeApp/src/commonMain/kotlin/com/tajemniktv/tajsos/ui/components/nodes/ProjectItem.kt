@@ -17,7 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeEntity
-import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -26,56 +26,60 @@ fun ProjectItem(
     progress: Float,
     totalItems: Int,
     onLongClick: () -> Unit = {},
-    onClick: () -> Unit
-) {
+    onClick: () -> Unit,
+)
+{
     Surface(
         modifier = Modifier
             .fillMaxWidth()
             .combinedClickable(
                 onClick = onClick,
-                onLongClick = onLongClick
+                onLongClick = onLongClick,
             ),
         color = TactileTheme.Surface,
         shape = RoundedCornerShape(TactileTheme.RadiusSm),
         border = androidx.compose.foundation.BorderStroke(
             1.dp,
-            TactileTheme.Muted.copy(alpha = 0.2f)
-        )
+            TactileTheme.Muted.copy(alpha = 0.2f),
+        ),
     ) {
         Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     project.title.uppercase(),
                     style = MaterialTheme.typography.titleMedium,
                     color = TactileTheme.Primary,
-                    fontWeight = androidx.compose.ui.text.font.FontWeight.Black
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.Black,
                 )
-                if (totalItems > 0) {
+                if (totalItems > 0)
+                {
                     Text(
                         "${(progress * 100).toInt()}%",
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Muted
+                        color = TactileTheme.Muted,
                     )
                 }
             }
-            if (project.content.isNotEmpty()) {
+            if (project.content.isNotEmpty())
+            {
                 Text(
                     project.content,
                     style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Muted
+                    color = TactileTheme.Muted,
                 )
             }
-            if (totalItems > 0) {
+            if (totalItems > 0)
+            {
                 Spacer(modifier = Modifier.height(TactileTheme.SpacingMd))
                 LinearProgressIndicator(
                     progress = { progress },
                     modifier = Modifier.fillMaxWidth().height(2.dp),
                     color = TactileTheme.Primary,
-                    trackColor = TactileTheme.Muted.copy(alpha = 0.2f)
+                    trackColor = TactileTheme.Muted.copy(alpha = 0.2f),
                 )
             }
         }

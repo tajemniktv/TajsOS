@@ -5,8 +5,6 @@
 package com.tajemniktv.tajsos.ui.components.nodes
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,7 +15,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -25,17 +22,17 @@ import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.data.DecisionOptionEntity
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
-import kotlinx.coroutines.launch
 
 @Composable
 fun DecisionDetailContent(
     viewModel: MainViewModel,
     node: NodeEntity,
-    onNavigateToProject: (Long) -> Unit
-) {
+    onNavigateToProject: (Long) -> Unit,
+)
+{
     val scope = rememberCoroutineScope()
     val options by viewModel.getOptionsForDecision(node.id).collectAsState(initial = emptyList())
 
@@ -52,7 +49,7 @@ fun DecisionDetailContent(
                     onClick = {
                         viewModel.updateNode(node.copy(decisionStatus = status))
                     },
-                    label = { Text(status.uppercase()) }
+                    label = { Text(status.uppercase()) },
                 )
             }
         }
@@ -66,7 +63,7 @@ fun DecisionDetailContent(
                     onClick = {
                         viewModel.updateNode(node.copy(decisionCategory = category))
                     },
-                    label = { Text(category.uppercase()) }
+                    label = { Text(category.uppercase()) },
                 )
             }
         }
@@ -74,77 +71,84 @@ fun DecisionDetailContent(
         DecisionField(
             label = stringResource(Res.string.decision_info_missing_label),
             value = node.decisionInfoMissing ?: "",
-            onValueChange = { viewModel.updateNode(node.copy(decisionInfoMissing = it)) }
+            onValueChange = { viewModel.updateNode(node.copy(decisionInfoMissing = it)) },
         )
 
         DecisionField(
             label = stringResource(Res.string.decision_difficult_because_label),
             value = node.decisionDifficultBecause ?: "",
-            onValueChange = { viewModel.updateNode(node.copy(decisionDifficultBecause = it)) }
+            onValueChange = { viewModel.updateNode(node.copy(decisionDifficultBecause = it)) },
         )
 
         DecisionField(
             label = stringResource(Res.string.decision_easier_if_label),
             value = node.decisionEasierIf ?: "",
-            onValueChange = { viewModel.updateNode(node.copy(decisionEasierIf = it)) }
+            onValueChange = { viewModel.updateNode(node.copy(decisionEasierIf = it)) },
         )
 
         HorizontalDivider(
             color = TactileTheme.Border,
-            modifier = Modifier.padding(vertical = TactileTheme.SpacingSm)
+            modifier = Modifier.padding(vertical = TactileTheme.SpacingSm),
         )
 
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             SectionTitle(stringResource(Res.string.decision_options_label))
             IconButton(onClick = { showAddOptionDialog = true }) {
-                Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.cd_add_option), tint = TactileTheme.Primary)
+                Icon(
+                    Icons.Default.Add,
+                    contentDescription = stringResource(Res.string.cd_add_option),
+                    tint = TactileTheme.Primary,
+                )
             }
         }
 
-        if (options.isEmpty()) {
+        if (options.isEmpty())
+        {
             Text(
                 stringResource(Res.string.decision_no_options),
                 style = MaterialTheme.typography.labelSmall,
                 color = TactileTheme.Muted,
-                modifier = Modifier.padding(vertical = TactileTheme.SpacingSm)
+                modifier = Modifier.padding(vertical = TactileTheme.SpacingSm),
             )
-        } else {
+        } else
+        {
             options.forEach { option ->
                 OptionCard(
                     option = option,
                     onUpdate = { viewModel.updateDecisionOption(it) },
-                    onDelete = { viewModel.deleteDecisionOption(it) }
+                    onDelete = { viewModel.deleteDecisionOption(it) },
                 )
             }
         }
 
         HorizontalDivider(
             color = TactileTheme.Border,
-            modifier = Modifier.padding(vertical = TactileTheme.SpacingSm)
+            modifier = Modifier.padding(vertical = TactileTheme.SpacingSm),
         )
 
-        if (node.decisionStatus == "decided") {
+        if (node.decisionStatus == "decided")
+        {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     Icons.Default.CheckCircle,
                     contentDescription = stringResource(Res.string.cd_decision_decided),
-                    tint = TactileTheme.Success
+                    tint = TactileTheme.Success,
                 )
                 Spacer(modifier = Modifier.width(TactileTheme.SpacingSm))
                 Column {
                     Text(
                         stringResource(Res.string.decision_outcome_label),
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Success
+                        color = TactileTheme.Success,
                     )
                     Text(
                         node.decisionOutcome ?: stringResource(Res.string.decision_no_outcome),
                         style = MaterialTheme.typography.bodyLarge,
-                        color = TactileTheme.Text
+                        color = TactileTheme.Text,
                     )
                 }
             }
@@ -155,7 +159,7 @@ fun DecisionDetailContent(
                 onClick = { viewModel.convertDecisionToProject(node.id) },
                 colors = ButtonDefaults.buttonColors(containerColor = TactileTheme.Accent),
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(2.dp)
+                shape = RoundedCornerShape(2.dp),
             ) {
                 Text(stringResource(Res.string.decision_convert_project))
             }
@@ -164,23 +168,25 @@ fun DecisionDetailContent(
                 onClick = { viewModel.convertDecisionToTask(node.id) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(2.dp),
-                border = BorderStroke(1.dp, TactileTheme.Border)
+                border = BorderStroke(1.dp, TactileTheme.Border),
             ) {
                 Text(stringResource(Res.string.decision_convert_task), color = TactileTheme.Text)
             }
-        } else {
+        } else
+        {
             Button(
                 onClick = { showDecideDialog = true },
                 colors = ButtonDefaults.buttonColors(containerColor = TactileTheme.Primary),
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(2.dp)
+                shape = RoundedCornerShape(2.dp),
             ) {
                 Text(stringResource(Res.string.decision_finalize))
             }
         }
     }
 
-    if (showAddOptionDialog) {
+    if (showAddOptionDialog)
+    {
         var optionTitle by remember { mutableStateOf("") }
         AlertDialog(
             onDismissRequest = { showAddOptionDialog = false },
@@ -190,27 +196,35 @@ fun DecisionDetailContent(
                     value = optionTitle,
                     onValueChange = { optionTitle = it },
                     label = { Text(stringResource(Res.string.decision_add_option_field)) },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 )
             },
             confirmButton = {
-                TextButton(onClick = {
-                    if (optionTitle.isNotEmpty()) {
-                        viewModel.addDecisionOption(node.id, optionTitle)
-                        showAddOptionDialog = false
-                    }
-                }) { Text(stringResource(Res.string.decision_add)) }
+                TextButton(
+                    onClick = {
+                        if (optionTitle.isNotEmpty())
+                        {
+                            viewModel.addDecisionOption(node.id, optionTitle)
+                            showAddOptionDialog = false
+                        }
+                    },
+                ) { Text(stringResource(Res.string.decision_add)) }
             },
             dismissButton = {
-                TextButton(onClick = { showAddOptionDialog = false }) { Text(stringResource(Res.string.decision_cancel)) }
+                TextButton(
+                    onClick = {
+                        showAddOptionDialog = false
+                    },
+                ) { Text(stringResource(Res.string.decision_cancel)) }
             },
             containerColor = TactileTheme.Background,
             titleContentColor = TactileTheme.Text,
-            textContentColor = TactileTheme.Text
+            textContentColor = TactileTheme.Text,
         )
     }
 
-    if (showDecideDialog) {
+    if (showDecideDialog)
+    {
         var outcome by remember { mutableStateOf("") }
         var selectedOptionId by remember { mutableStateOf<Long?>(null) }
 
@@ -219,16 +233,20 @@ fun DecisionDetailContent(
             title = { Text(stringResource(Res.string.decision_finalize)) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
-                    Text(stringResource(Res.string.decision_selected_option), style = MaterialTheme.typography.labelSmall)
+                    Text(
+                        stringResource(Res.string.decision_selected_option),
+                        style = MaterialTheme.typography.labelSmall,
+                    )
                     options.forEach { option ->
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.fillMaxWidth()
-                                .clickable { selectedOptionId = option.id }
+                                .clickable { selectedOptionId = option.id },
                         ) {
                             RadioButton(
                                 selected = selectedOptionId == option.id,
-                                onClick = { selectedOptionId = option.id })
+                                onClick = { selectedOptionId = option.id },
+                            )
                             Text(option.title)
                         }
                     }
@@ -236,41 +254,50 @@ fun DecisionDetailContent(
                         value = outcome,
                         onValueChange = { outcome = it },
                         label = { Text(stringResource(Res.string.decision_outcome_reason)) },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
                     )
                 }
             },
             confirmButton = {
-                TextButton(onClick = {
-                    if (outcome.isNotEmpty()) {
-                        viewModel.decideOn(node.id, outcome, selectedOptionId)
-                        showDecideDialog = false
-                    }
-                }) { Text(stringResource(Res.string.decision_decide)) }
+                TextButton(
+                    onClick = {
+                        if (outcome.isNotEmpty())
+                        {
+                            viewModel.decideOn(node.id, outcome, selectedOptionId)
+                            showDecideDialog = false
+                        }
+                    },
+                ) { Text(stringResource(Res.string.decision_decide)) }
             },
             dismissButton = {
-                TextButton(onClick = { showDecideDialog = false }) { Text(stringResource(Res.string.decision_cancel)) }
+                TextButton(
+                    onClick = {
+                        showDecideDialog = false
+                    },
+                ) { Text(stringResource(Res.string.decision_cancel)) }
             },
             containerColor = TactileTheme.Background,
             titleContentColor = TactileTheme.Text,
-            textContentColor = TactileTheme.Text
+            textContentColor = TactileTheme.Text,
         )
     }
 }
 
 @Composable
-fun SectionTitle(text: String) {
+fun SectionTitle(text: String)
+{
     Text(
         text,
         style = MaterialTheme.typography.labelSmall,
         color = TactileTheme.Muted,
         fontWeight = FontWeight.Bold,
-        letterSpacing = 1.sp
+        letterSpacing = 1.sp,
     )
 }
 
 @Composable
-fun DecisionField(label: String, value: String, onValueChange: (String) -> Unit) {
+fun DecisionField(label: String, value: String, onValueChange: (String) -> Unit)
+{
     Column {
         SectionTitle(label)
         BasicTextField(
@@ -281,16 +308,17 @@ fun DecisionField(label: String, value: String, onValueChange: (String) -> Unit)
             cursorBrush = SolidColor(TactileTheme.Primary),
             decorationBox = { innerTextField ->
                 Box {
-                    if (value.isEmpty()) {
+                    if (value.isEmpty())
+                    {
                         Text(
                             stringResource(Res.string.decision_tap_to_add),
                             style = MaterialTheme.typography.bodyMedium,
-                            color = TactileTheme.Muted
+                            color = TactileTheme.Muted,
                         )
                     }
                     innerTextField()
                 }
-            }
+            },
         )
     }
 }
@@ -299,39 +327,41 @@ fun DecisionField(label: String, value: String, onValueChange: (String) -> Unit)
 fun OptionCard(
     option: DecisionOptionEntity,
     onUpdate: (DecisionOptionEntity) -> Unit,
-    onDelete: (DecisionOptionEntity) -> Unit
-) {
+    onDelete: (DecisionOptionEntity) -> Unit,
+)
+{
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = TactileTheme.Background,
         border = BorderStroke(1.dp, TactileTheme.Border),
-        shape = RoundedCornerShape(2.dp)
+        shape = RoundedCornerShape(2.dp),
     ) {
         Column(modifier = Modifier.padding(TactileTheme.SpacingSm)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     option.title,
                     style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
                 )
                 IconButton(onClick = { onDelete(option) }) {
                     Icon(
                         Icons.Default.Delete,
                         contentDescription = stringResource(Res.string.cd_delete_option),
                         tint = TactileTheme.Muted,
-                        modifier = Modifier.size(16.dp)
+                        modifier = Modifier.size(16.dp),
                     )
                 }
             }
-            if (option.description != null) {
+            if (option.description != null)
+            {
                 Text(
                     option.description!!,
                     style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Muted
+                    color = TactileTheme.Muted,
                 )
             }
         }

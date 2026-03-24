@@ -17,7 +17,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
-import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 
@@ -26,31 +26,35 @@ import tajsos.composeapp.generated.resources.*
 fun ArchiveScreen(
     viewModel: MainViewModel,
     onEditNode: (Long) -> Unit,
-) {
+)
+{
     val archivedNodes by viewModel.archivedNodes.collectAsState()
     val isInitialLoadComplete by viewModel.isInitialLoadComplete.collectAsState()
 
     Column(modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd)) {
         Text(
             stringResource(Res.string.archive_title),
-            style = MaterialTheme.typography.displaySmall
+            style = MaterialTheme.typography.displaySmall,
         )
         Text(
             stringResource(Res.string.archive_subtitle),
             style = MaterialTheme.typography.labelSmall,
-            color = TactileTheme.Muted
+            color = TactileTheme.Muted,
         )
         Spacer(modifier = Modifier.height(TactileTheme.SpacingMd))
 
-        if (archivedNodes.isEmpty() && isInitialLoadComplete) {
+        if (archivedNodes.isEmpty() && isInitialLoadComplete)
+        {
             EmptyState(message = stringResource(Res.string.archive_empty))
-        } else {
+        } else
+        {
             LazyColumn(modifier = Modifier.weight(1f)) {
                 items(archivedNodes) { nodeWithPin ->
                     ListItem(
                         headlineContent = { Text(nodeWithPin.node.title) },
                         supportingContent = {
-                            val typeLabel = when (nodeWithPin.node.type) {
+                            val typeLabel = when (nodeWithPin.node.type)
+                            {
                                 "task" -> stringResource(Res.string.type_task)
                                 "note" -> stringResource(Res.string.type_note)
                                 "idea" -> stringResource(Res.string.type_idea)
@@ -62,12 +66,14 @@ fun ArchiveScreen(
                         },
                         trailingContent = {
                             Row {
-                                IconButton(onClick = {
-                                    viewModel.updateNodeStatus(
-                                        nodeWithPin.node,
-                                        "active",
-                                    )
-                                }) {
+                                IconButton(
+                                    onClick = {
+                                        viewModel.updateNodeStatus(
+                                            nodeWithPin.node,
+                                            "active",
+                                        )
+                                    },
+                                ) {
                                     Icon(
                                         Icons.Default.Refresh,
                                         contentDescription = stringResource(Res.string.archive_restore),
@@ -84,10 +90,10 @@ fun ArchiveScreen(
                             }
                         },
                         modifier =
-                            Modifier.combinedClickable(
-                                onClick = { onEditNode(nodeWithPin.node.id) },
-                                onLongClick = { onEditNode(nodeWithPin.node.id) },
-                            ),
+                                Modifier.combinedClickable(
+                                    onClick = { onEditNode(nodeWithPin.node.id) },
+                                    onLongClick = { onEditNode(nodeWithPin.node.id) },
+                                ),
                         colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
                     )
                     HorizontalDivider(color = TactileTheme.Muted.copy(alpha = 0.5f))

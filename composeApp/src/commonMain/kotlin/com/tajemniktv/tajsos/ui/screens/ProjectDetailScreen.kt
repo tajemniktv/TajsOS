@@ -6,10 +6,7 @@ package com.tajemniktv.tajsos.ui.screens
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -32,12 +29,8 @@ import com.tajemniktv.tajsos.ui.components.common.InfoCard
 import com.tajemniktv.tajsos.ui.components.common.LinkedNodeItem
 import com.tajemniktv.tajsos.ui.components.common.SelectorDialog
 import com.tajemniktv.tajsos.ui.components.common.StatusCard
-import com.tajemniktv.tajsos.ui.components.nodes.NodeCard
-import com.tajemniktv.tajsos.ui.components.nodes.TaskRow
-import com.tajemniktv.tajsos.ui.design.components.ActionButton
-import com.tajemniktv.tajsos.ui.design.components.DashCard
-import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
-import kotlinx.datetime.TimeZone
+import com.tajemniktv.tajsos.ui.components.ActionButton
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
@@ -50,16 +43,18 @@ fun ProjectDetailScreen(
     viewModel: MainViewModel,
     projectId: Long,
     onEditNode: (Long) -> Unit,
-    onBack: () -> Unit
-) {
+    onBack: () -> Unit,
+)
+{
     val nodes by viewModel.allNodes.collectAsState()
     val nodeWithPin = remember(nodes, projectId) { nodes.find { it.node.id == projectId } }
 
-    if (nodeWithPin == null) {
+    if (nodeWithPin == null)
+    {
         Box(modifier = Modifier.fillMaxSize()) {
             Text(
                 stringResource(Res.string.project_detail_not_found),
-                modifier = Modifier.padding(TactileTheme.SpacingMd)
+                modifier = Modifier.padding(TactileTheme.SpacingMd),
             )
         }
         return
@@ -83,14 +78,15 @@ fun ProjectDetailScreen(
         it.node.status == "active" && it.node.isHardDeadline && dueAt != null && dueAt < now
     }
     val isNeglected =
-        nodesWithPinForProject.none { it.node.updatedAt >= staleTime } && project.status == "active" && !project.isFrozen
+            nodesWithPinForProject.none { it.node.updatedAt >= staleTime } && project.status == "active" && !project.isFrozen
 
-    val (healthLabel, healthColor) = when {
-        project.isFrozen -> stringResource(Res.string.project_health_frozen) to TactileTheme.Accent
+    val (healthLabel, healthColor) = when
+    {
+        project.isFrozen            -> stringResource(Res.string.project_health_frozen) to TactileTheme.Accent
         project.status == "on_hold" -> stringResource(Res.string.project_health_on_hold) to TactileTheme.Muted
-        hasCriticalOverdue -> stringResource(Res.string.project_health_critical) to TactileTheme.Error
-        isNeglected -> stringResource(Res.string.project_health_neglected) to TactileTheme.Error
-        else -> stringResource(Res.string.project_health_healthy) to TactileTheme.Success
+        hasCriticalOverdue          -> stringResource(Res.string.project_health_critical) to TactileTheme.Error
+        isNeglected                 -> stringResource(Res.string.project_health_neglected) to TactileTheme.Error
+        else                        -> stringResource(Res.string.project_health_healthy) to TactileTheme.Success
     }
 
     LaunchedEffect(projectId) {
@@ -104,7 +100,7 @@ fun ProjectDetailScreen(
                     Text(
                         "NEURAL_INTERFACE",
                         style = MaterialTheme.typography.labelSmall,
-                        letterSpacing = 1.sp
+                        letterSpacing = 1.sp,
                     )
                 },
                 navigationIcon = {
@@ -112,7 +108,7 @@ fun ProjectDetailScreen(
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(Res.string.detail_back),
-                            modifier = Modifier.size(18.dp)
+                            modifier = Modifier.size(18.dp),
                         )
                     }
                 },
@@ -121,34 +117,38 @@ fun ProjectDetailScreen(
                         Icon(
                             Icons.Default.Tune,
                             contentDescription = null,
-                            modifier = Modifier.size(18.dp)
+                            modifier = Modifier.size(18.dp),
                         )
                     }
                     IconButton(onClick = { onEditNode(projectId) }) {
                         Icon(
                             Icons.Default.Edit,
                             contentDescription = null,
-                            modifier = Modifier.size(18.dp)
+                            modifier = Modifier.size(18.dp),
                         )
                     }
-                    IconButton(onClick = {
-                        viewModel.updateNode(project.copy(isFrozen = !project.isFrozen))
-                    }) {
+                    IconButton(
+                        onClick = {
+                            viewModel.updateNode(project.copy(isFrozen = !project.isFrozen))
+                        },
+                    ) {
                         Icon(
                             if (project.isFrozen) Icons.Default.AcUnit else Icons.Default.WbSunny,
                             contentDescription = null,
                             tint = if (project.isFrozen) TactileTheme.Accent else TactileTheme.Primary,
-                            modifier = Modifier.size(18.dp)
+                            modifier = Modifier.size(18.dp),
                         )
                     }
-                    IconButton(onClick = {
-                        viewModel.archiveNode(project)
-                        onBack()
-                    }) {
+                    IconButton(
+                        onClick = {
+                            viewModel.archiveNode(project)
+                            onBack()
+                        },
+                    ) {
                         Icon(
                             Icons.Default.Delete,
                             contentDescription = null,
-                            modifier = Modifier.size(18.dp)
+                            modifier = Modifier.size(18.dp),
                         )
                     }
                 },
@@ -156,11 +156,11 @@ fun ProjectDetailScreen(
                     containerColor = TactileTheme.Background,
                     titleContentColor = TactileTheme.Primary,
                     navigationIconContentColor = TactileTheme.Text,
-                    actionIconContentColor = TactileTheme.Text
-                )
+                    actionIconContentColor = TactileTheme.Text,
+                ),
             )
         },
-        containerColor = TactileTheme.Background
+        containerColor = TactileTheme.Background,
     ) { padding ->
         Column(
             modifier = Modifier
@@ -170,29 +170,29 @@ fun ProjectDetailScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = TactileTheme.SpacingMd)
                 .padding(bottom = TactileTheme.SpacingMd),
-            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingLg)
+            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingLg),
         ) {
             // Header
             DetailHeader(
                 title = project.title,
-                subtitle = "CURRENT WORKSPACE"
+                subtitle = "CURRENT WORKSPACE",
             )
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)
+                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
             ) {
                 ActionButton(
                     text = "ADD LINK",
                     onClick = { /* Add link logic */ },
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
                 )
                 ActionButton(
                     text = "LINK NODE",
                     onClick = { /* Link node logic */ },
                     containerColor = TactileTheme.Primary,
                     contentColor = TactileTheme.Background,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
                 )
             }
 
@@ -200,12 +200,12 @@ fun ProjectDetailScreen(
             Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
                 DetailSectionHeader(
                     title = stringResource(Res.string.detail_organization),
-                    icon = Icons.Default.BarChart
+                    icon = Icons.Default.BarChart,
                 )
                 StatusCard(
                     status = healthLabel,
                     color = healthColor,
-                    onClick = { showStatusDialog = true }
+                    onClick = { showStatusDialog = true },
                 )
             }
 
@@ -214,16 +214,17 @@ fun ProjectDetailScreen(
                 title = "PROGRESS",
                 value = "${(progress * 100).toInt()}% COMPLETE",
                 icon = Icons.AutoMirrored.Filled.TrendingUp,
-                color = if (project.isFrozen) TactileTheme.Muted else TactileTheme.Primary
+                color = if (project.isFrozen) TactileTheme.Muted else TactileTheme.Primary,
             )
 
             // Why Section
-            if (project.projectWhy != null || project.content.isNotEmpty()) {
+            if (project.projectWhy != null || project.content.isNotEmpty())
+            {
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
                     color = TactileTheme.Surface,
                     shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                    border = BorderStroke(1.dp, TactileTheme.Border)
+                    border = BorderStroke(1.dp, TactileTheme.Border),
                 ) {
                     Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
                         Text(
@@ -231,13 +232,13 @@ fun ProjectDetailScreen(
                             style = MaterialTheme.typography.labelSmall,
                             color = TactileTheme.Primary,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 8.sp
+                            fontSize = 8.sp,
                         )
                         Spacer(Modifier.height(4.dp))
                         Text(
                             text = project.projectWhy ?: project.content,
                             style = MaterialTheme.typography.bodyMedium,
-                            color = TactileTheme.Text
+                            color = TactileTheme.Text,
                         )
                     }
                 }
@@ -245,8 +246,9 @@ fun ProjectDetailScreen(
 
             // Next Actions
             val nextActions =
-                nodesWithPinForProject.filter { it.node.status == "active" && it.node.type == "task" }
-            if (nextActions.isNotEmpty()) {
+                    nodesWithPinForProject.filter { it.node.status == "active" && it.node.type == "task" }
+            if (nextActions.isNotEmpty())
+            {
                 Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
                     DetailSectionHeader(title = "NEXT ACTIONS", icon = Icons.Default.PlayArrow)
                     nextActions.take(5).forEach { item ->
@@ -254,7 +256,7 @@ fun ProjectDetailScreen(
                             title = item.node.title,
                             subtitle = item.node.nextSmallestStep ?: "Active Task",
                             icon = Icons.Default.CheckCircle,
-                            onClick = { onEditNode(item.node.id) }
+                            onClick = { onEditNode(item.node.id) },
                         )
                     }
                 }
@@ -262,7 +264,8 @@ fun ProjectDetailScreen(
 
             // Timeline
             val logs by viewModel.getLogsForNode(projectId).collectAsState(initial = emptyList())
-            if (logs.isNotEmpty()) {
+            if (logs.isNotEmpty())
+            {
                 Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
                     DetailSectionHeader(title = "TIMELINE", icon = Icons.Default.History)
                     logs.take(5).forEach { log ->
@@ -286,25 +289,27 @@ fun ProjectDetailScreen(
         },
         optionName = { status -> status },
         optionIcon = { status ->
-            when (status) {
-                "active" -> Icons.Default.PlayArrow
+            when (status)
+            {
+                "active"  -> Icons.Default.PlayArrow
                 "on_hold" -> Icons.Default.Pause
                 "someday" -> Icons.Default.CalendarToday
-                else -> Icons.Default.Info
+                else      -> Icons.Default.Info
             }
         },
-        optionSubtext = { status -> "PROJ_STATE_${status.uppercase()}" }
+        optionSubtext = { status -> "PROJ_STATE_${status.uppercase()}" },
     )
 }
 
 @Composable
-fun ProjectTimelineItem(log: EventLogEntity) {
+fun ProjectTimelineItem(log: EventLogEntity)
+{
     Row(
         modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(
-            modifier = Modifier.size(8.dp).background(TactileTheme.Muted, CircleShape)
+            modifier = Modifier.size(8.dp).background(TactileTheme.Muted, CircleShape),
         )
         Spacer(Modifier.width(12.dp))
         Column {
@@ -312,14 +317,14 @@ fun ProjectTimelineItem(log: EventLogEntity) {
                 text = log.eventType.replace("_", " "),
                 style = MaterialTheme.typography.labelSmall,
                 color = TactileTheme.Text,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
             val date = kotlin.time.Instant.fromEpochMilliseconds(log.timestamp)
                 .toLocalDateTime(kotlinx.datetime.TimeZone.currentSystemDefault())
             Text(
                 text = "${date.hour}:${date.minute} // ${date.day}/${date.month.number}",
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Muted
+                color = TactileTheme.Muted,
             )
         }
     }

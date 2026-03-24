@@ -15,15 +15,15 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.MedicationEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 
 @Composable
-fun ProfileScreen(viewModel: MainViewModel) {
+fun ProfileScreen(viewModel: MainViewModel)
+{
     val user by viewModel.user.collectAsState()
     val medications by viewModel.medications.collectAsState()
 
@@ -34,13 +34,13 @@ fun ProfileScreen(viewModel: MainViewModel) {
         modifier = Modifier
             .fillMaxSize()
             .padding(TactileTheme.SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)
+        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
     ) {
         item {
             Text(
                 stringResource(Res.string.profile_title),
                 style = MaterialTheme.typography.displayMedium,
-                color = TactileTheme.Text
+                color = TactileTheme.Text,
             )
             Spacer(Modifier.height(TactileTheme.SpacingLg))
         }
@@ -54,7 +54,7 @@ fun ProfileScreen(viewModel: MainViewModel) {
                 },
                 label = { Text(stringResource(Res.string.profile_name)) },
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(TactileTheme.RadiusSm)
+                shape = RoundedCornerShape(TactileTheme.RadiusSm),
             )
         }
 
@@ -62,12 +62,12 @@ fun ProfileScreen(viewModel: MainViewModel) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     stringResource(Res.string.profile_medications),
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Primary
+                    color = TactileTheme.Primary,
                 )
                 IconButton(onClick = { showAddMedDialog = true }) {
                     Icon(Icons.Default.Add, contentDescription = "Add", tint = TactileTheme.Primary)
@@ -80,46 +80,49 @@ fun ProfileScreen(viewModel: MainViewModel) {
         }
     }
 
-    if (showAddMedDialog) {
+    if (showAddMedDialog)
+    {
         AddMedicationDialog(
             onDismiss = { showAddMedDialog = false },
             onSave = { substance, brands, dosage, hour, optional ->
                 viewModel.addMedication(substance, brands, dosage, hour, optional)
                 showAddMedDialog = false
-            }
+            },
         )
     }
 }
 
 @Composable
-fun MedicationItem(medication: MedicationEntity, onDelete: () -> Unit) {
+fun MedicationItem(medication: MedicationEntity, onDelete: () -> Unit)
+{
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = TactileTheme.Surface.copy(alpha = 0.5f),
-        shape = RoundedCornerShape(TactileTheme.RadiusSm)
+        shape = RoundedCornerShape(TactileTheme.RadiusSm),
     ) {
         Row(
             modifier = Modifier.padding(TactileTheme.SpacingMd),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     medication.substance,
                     style = MaterialTheme.typography.bodyLarge,
-                    color = TactileTheme.Text
+                    color = TactileTheme.Text,
                 )
-                if (medication.brandNames.isNotEmpty()) {
+                if (medication.brandNames.isNotEmpty())
+                {
                     Text(
                         medication.brandNames,
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Muted
+                        color = TactileTheme.Muted,
                     )
                 }
                 Text(
                     "${medication.dosage ?: ""} ${if (medication.takeAtHour != null) "@ ${medication.takeAtHour}:00" else ""}",
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Primary
+                    color = TactileTheme.Primary,
                 )
             }
             IconButton(onClick = onDelete) {
@@ -132,8 +135,9 @@ fun MedicationItem(medication: MedicationEntity, onDelete: () -> Unit) {
 @Composable
 fun AddMedicationDialog(
     onDismiss: () -> Unit,
-    onSave: (String, String, String?, Int?, Boolean) -> Unit
-) {
+    onSave: (String, String, String?, Int?, Boolean) -> Unit,
+)
+{
     var substance by remember { mutableStateOf("") }
     var brands by remember { mutableStateOf("") }
     var dosage by remember { mutableStateOf("") }
@@ -148,22 +152,22 @@ fun AddMedicationDialog(
                 OutlinedTextField(
                     value = substance,
                     onValueChange = { substance = it },
-                    label = { Text(stringResource(Res.string.med_substance)) }
+                    label = { Text(stringResource(Res.string.med_substance)) },
                 )
                 OutlinedTextField(
                     value = brands,
                     onValueChange = { brands = it },
-                    label = { Text(stringResource(Res.string.med_brand_names)) }
+                    label = { Text(stringResource(Res.string.med_brand_names)) },
                 )
                 OutlinedTextField(
                     value = dosage,
                     onValueChange = { dosage = it },
-                    label = { Text(stringResource(Res.string.med_dosage)) }
+                    label = { Text(stringResource(Res.string.med_dosage)) },
                 )
                 OutlinedTextField(
                     value = hour,
                     onValueChange = { hour = it },
-                    label = { Text(stringResource(Res.string.med_take_at)) }
+                    label = { Text(stringResource(Res.string.med_take_at)) },
                 )
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Checkbox(checked = isOptional, onCheckedChange = { isOptional = it })
@@ -172,15 +176,17 @@ fun AddMedicationDialog(
             }
         },
         confirmButton = {
-            Button(onClick = {
-                onSave(
-                    substance,
-                    brands,
-                    dosage.takeIf { it.isNotEmpty() },
-                    hour.toIntOrNull(),
-                    isOptional
-                )
-            }) {
+            Button(
+                onClick = {
+                    onSave(
+                        substance,
+                        brands,
+                        dosage.takeIf { it.isNotEmpty() },
+                        hour.toIntOrNull(),
+                        isOptional,
+                    )
+                },
+            ) {
                 Text(stringResource(Res.string.med_save))
             }
         },
@@ -188,6 +194,6 @@ fun AddMedicationDialog(
             TextButton(onClick = onDismiss) {
                 Text(stringResource(Res.string.common_back))
             }
-        }
+        },
     )
 }

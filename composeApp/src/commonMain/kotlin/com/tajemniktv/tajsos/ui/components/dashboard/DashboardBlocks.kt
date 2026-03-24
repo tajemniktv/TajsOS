@@ -20,8 +20,8 @@ import androidx.compose.ui.graphics.Color
 import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.ui.components.common.AlertCard
 import com.tajemniktv.tajsos.ui.components.nodes.SuggestionGroup
-import com.tajemniktv.tajsos.ui.design.components.DashCard
-import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.components.DashCard
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
 @Composable
 fun CurrentTaskBlock(

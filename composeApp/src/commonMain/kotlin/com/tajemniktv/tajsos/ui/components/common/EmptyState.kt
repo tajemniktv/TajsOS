@@ -17,7 +17,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 import androidx.compose.ui.graphics.Color
@@ -27,51 +27,56 @@ fun EmptyState(
     message: String,
     modifier: Modifier = Modifier,
     icon: ImageVector = Icons.Default.Info,
-    description: String? = stringResource(Res.string.empty_state_default_desc)
-) {
+    description: String? = stringResource(Res.string.empty_state_default_desc),
+)
+{
     val infiniteTransition = rememberInfiniteTransition(label = "EmptyStatePulse")
     val alpha by infiniteTransition.animateFloat(
         initialValue = 0.1f,
         targetValue = 0.6f,
         animationSpec = infiniteRepeatable(
             animation = tween(2000, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse
+            repeatMode = RepeatMode.Reverse,
         ),
-        label = "PulseAlpha"
+        label = "PulseAlpha",
     )
 
     Box(
         modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Surface(
             color = Color.Transparent,
             shape = RoundedCornerShape(TactileTheme.RadiusMd),
-            border = androidx.compose.foundation.BorderStroke(1.dp, TactileTheme.Primary.copy(alpha = 0.2f))
+            border = androidx.compose.foundation.BorderStroke(
+                1.dp,
+                TactileTheme.Primary.copy(alpha = 0.2f),
+            ),
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(TactileTheme.SpacingLg)
+                modifier = Modifier.padding(TactileTheme.SpacingLg),
             ) {
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
                     modifier = Modifier.size(48.dp),
-                    tint = TactileTheme.Primary.copy(alpha = alpha)
+                    tint = TactileTheme.Primary.copy(alpha = alpha),
                 )
                 Spacer(modifier = Modifier.height(TactileTheme.SpacingMd))
                 Text(
                     text = message,
                     style = MaterialTheme.typography.labelSmall,
                     color = TactileTheme.Muted,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
                 )
-                if (description != null) {
+                if (description != null)
+                {
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = description,
                         style = MaterialTheme.typography.labelSmall.copy(letterSpacing = 2.sp),
-                        color = TactileTheme.Primary.copy(alpha = 0.2f)
+                        color = TactileTheme.Primary.copy(alpha = 0.2f),
                     )
                 }
             }

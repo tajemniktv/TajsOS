@@ -27,7 +27,7 @@ import com.tajemniktv.tajsos.ui.components.dashboard.ModuleCard
 import com.tajemniktv.tajsos.ui.components.layout.DashHeader
 import com.tajemniktv.tajsos.ui.components.modes.ModeSuggestionBanner
 import com.tajemniktv.tajsos.ui.components.modes.ModeSwitcherHeader
-import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.Json
@@ -46,10 +46,12 @@ fun DashboardScreen(
     currentDestination: NavDestination? = null,
     currentMode: ModeEntity? = null,
     allModes: List<ModeEntity> = emptyList(),
-    onModeSelect: (Long) -> Unit = {}
-) {
+    onModeSelect: (Long) -> Unit = {},
+)
+{
     BoxWithConstraints {
-        if (maxWidth > 800.dp) {
+        if (maxWidth > 800.dp)
+        {
             DashboardDesktopContent(
                 viewModel = viewModel,
                 onNavigateTo = onNavigateTo,
@@ -59,15 +61,16 @@ fun DashboardScreen(
                 currentDestination = currentDestination,
                 currentMode = currentMode,
                 allModes = allModes,
-                onModeSelect = onModeSelect
+                onModeSelect = onModeSelect,
             )
-        } else {
+        } else
+        {
             DashboardMobileContent(
                 viewModel = viewModel,
                 onNavigateTo = onNavigateTo,
                 onEditNode = onEditNode,
                 onNavigateToProject = onNavigateToProject,
-                onOpenDrawer = onOpenDrawer
+                onOpenDrawer = onOpenDrawer,
             )
         }
     }
@@ -80,7 +83,8 @@ private fun DashboardMobileContent(
     onEditNode: (Long) -> Unit,
     onNavigateToProject: (Long) -> Unit,
     onOpenDrawer: () -> Unit,
-) {
+)
+{
     val allNodes by viewModel.allNodes.collectAsState()
     val todayNodes by viewModel.todayNodes.collectAsState()
     val trackEntries by viewModel.trackEntries.collectAsState()
@@ -98,11 +102,14 @@ private fun DashboardMobileContent(
     val allModes by viewModel.allModes.collectAsState()
 
     val blockList = remember(dashboardState.modePreferences) {
-        try {
+        try
+        {
             val jsonStr = dashboardState.modePreferences?.dashboardBlocksJson
-            if (jsonStr != null) {
+            if (jsonStr != null)
+            {
                 Json.decodeFromString<List<String>>(jsonStr)
-            } else {
+            } else
+            {
                 listOf(
                     "today_pulse",
                     "load_capacity",
@@ -116,10 +123,11 @@ private fun DashboardMobileContent(
                     "actions",
                     "suggestions",
                     "knowledge",
-                    "protocols"
+                    "protocols",
                 )
             }
-        } catch (e: Exception) {
+        } catch (e: Exception)
+        {
             listOf(
                 "today_pulse",
                 "load_capacity",
@@ -133,7 +141,7 @@ private fun DashboardMobileContent(
                 "actions",
                 "suggestions",
                 "knowledge",
-                "protocols"
+                "protocols",
             )
         }
     }
@@ -142,7 +150,7 @@ private fun DashboardMobileContent(
     val completedTodayCount = pinnedNodes.count { it.node.status == "done" }
     val totalTodayCount = pinnedNodes.size
     val dailyProgress =
-        if (totalTodayCount > 0) completedTodayCount.toFloat() / totalTodayCount else 0f
+            if (totalTodayCount > 0) completedTodayCount.toFloat() / totalTodayCount else 0f
 
     val now = Clock.System.now()
     val localNow = now.toLocalDateTime(TimeZone.currentSystemDefault())
@@ -153,11 +161,12 @@ private fun DashboardMobileContent(
     val lastWeeklyReview = allReviews.find { it.type == "weekly" }
     val weekMillis = 7 * 24 * 60 * 60 * 1000L
     val needsWeeklyReview =
-        lastWeeklyReview == null || (now.toEpochMilliseconds() - lastWeeklyReview.completedAt) > weekMillis
+            lastWeeklyReview == null || (now.toEpochMilliseconds() - lastWeeklyReview.completedAt) > weekMillis
 
     val scrollState = rememberScrollState()
 
-    val vibeString = when (currentHour) {
+    val vibeString = when (currentHour)
+    {
         in 5..11 -> Res.string.dash_vibe_morning
         in 12..17 -> Res.string.dash_vibe_afternoon
         in 18..22 -> Res.string.dash_vibe_evening
@@ -172,20 +181,20 @@ private fun DashboardMobileContent(
             .background(TactileTheme.Background)
             .verticalScroll(scrollState)
             .padding(TactileTheme.SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingLg)
+        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingLg),
     ) {
         // 1. Header
         DashHeader(
             vibe = stringResource(vibeString),
             onMenuClick = onOpenDrawer,
             onSettingsClick = { onNavigateTo(Screen.Settings) },
-            tintColor = currentModeColor
+            tintColor = currentModeColor,
         )
 
         ModeSwitcherHeader(
             currentMode = currentMode,
             allModes = allModes,
-            onModeSelect = { viewModel.switchMode(it) }
+            onModeSelect = { viewModel.switchMode(it) },
         )
 
         dashboardState.modeSuggestion?.let { suggestion ->
@@ -195,7 +204,7 @@ private fun DashboardMobileContent(
                     val targetMode = allModes.find { it.key == suggestion }
                     if (targetMode != null) viewModel.switchMode(targetMode.id)
                 },
-                onDismiss = { /* Option to ignore until state changes */ }
+                onDismiss = { /* Option to ignore until state changes */ },
             )
         }
 
@@ -217,7 +226,7 @@ private fun DashboardMobileContent(
                 localNow = localNow,
                 onNavigateTo = onNavigateTo,
                 onEditNode = onEditNode,
-                onNavigateToProject = onNavigateToProject
+                onNavigateToProject = onNavigateToProject,
             )
         }
 
@@ -233,7 +242,7 @@ private fun DashboardMobileContent(
             calendarEntries = calendarEntries,
             allSessions = allSessions,
             onNavigateTo = onNavigateTo,
-            viewModel = viewModel
+            viewModel = viewModel,
         )
 
         // 13. System Footer
@@ -255,21 +264,22 @@ fun DashboardModules(
     calendarEntries: List<com.tajemniktv.tajsos.ui.CalendarEntry>,
     allSessions: List<FocusSessionEntity>,
     onNavigateTo: (Screen) -> Unit,
-    viewModel: MainViewModel
-) {
+    viewModel: MainViewModel,
+)
+{
     Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
         Text(
             "CORE MODULES",
             style = MaterialTheme.typography.labelSmall,
             color = TactileTheme.Muted,
             fontWeight = FontWeight.Bold,
-            letterSpacing = 1.sp
+            letterSpacing = 1.sp,
         )
 
         androidx.compose.foundation.layout.FlowRow(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)
+            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
         ) {
             val itemModifier = Modifier.weight(1f).widthIn(min = 160.dp)
 
@@ -278,7 +288,7 @@ fun DashboardModules(
                 title = stringResource(Res.string.screen_today),
                 icon = Icons.Default.Today,
                 status = "${todayNodes.size}",
-                onClick = { onNavigateTo(Screen.Today) }
+                onClick = { onNavigateTo(Screen.Today) },
             )
 
             ModuleCard(
@@ -287,7 +297,7 @@ fun DashboardModules(
                 icon = Icons.Default.Inbox,
                 status = "12", // Placeholder
                 onClick = { onNavigateTo(Screen.Inbox) },
-                color = TactileTheme.Accent
+                color = TactileTheme.Accent,
             )
 
             ModuleCard(
@@ -296,7 +306,7 @@ fun DashboardModules(
                 icon = Icons.Default.AccountTree,
                 status = "${allProjects.size}",
                 onClick = { onNavigateTo(Screen.Projects) },
-                color = TactileTheme.Success
+                color = TactileTheme.Success,
             )
 
             ModuleCard(
@@ -305,7 +315,7 @@ fun DashboardModules(
                 icon = Icons.Default.Timer,
                 status = if (activeSession != null) "ACTIVE" else "READY",
                 onClick = { onNavigateTo(Screen.Focus) },
-                color = if (activeSession != null) TactileTheme.Primary else TactileTheme.Muted
+                color = if (activeSession != null) TactileTheme.Primary else TactileTheme.Muted,
             )
         }
     }

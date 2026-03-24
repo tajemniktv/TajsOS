@@ -20,11 +20,12 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlin.math.roundToInt
 
 @Composable
-fun AbortSlider(onAbort: () -> Unit) {
+fun AbortSlider(onAbort: () -> Unit)
+{
     val maxOffset = 240.dp
     var offset by remember { mutableFloatStateOf(0f) }
     val maxOffsetPx = with(LocalDensity.current) { maxOffset.toPx() }
@@ -35,14 +36,14 @@ fun AbortSlider(onAbort: () -> Unit) {
             .height(56.dp)
             .background(TactileTheme.Surface, RoundedCornerShape(TactileTheme.RadiusMd))
             .border(1.dp, TactileTheme.Muted, RoundedCornerShape(TactileTheme.RadiusMd)),
-        contentAlignment = Alignment.CenterStart
+        contentAlignment = Alignment.CenterStart,
     ) {
         Text(
             "SLIDE TO ABORT",
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.labelSmall,
-            color = TactileTheme.Muted
+            color = TactileTheme.Muted,
         )
         Box(
             modifier = Modifier
@@ -56,12 +57,13 @@ fun AbortSlider(onAbort: () -> Unit) {
                         offset = newOffset
                     },
                     onDragStopped = {
-                        if (offset >= maxOffsetPx * 0.9f) {
+                        if (offset >= maxOffsetPx * 0.9f)
+                        {
                             onAbort()
                         }
                         offset = 0f
-                    }
-                )
+                    },
+                ),
         )
     }
 }

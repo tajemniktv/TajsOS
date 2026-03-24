@@ -2,28 +2,30 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved. 
  */
 
-package com.tajemniktv.tajsos.ui.design.components
+package com.tajemniktv.tajsos.ui.components
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
 @Composable
 fun DashCard(
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
-    content: @Composable () -> Unit
-) {
+    content: @Composable () -> Unit,
+)
+{
     Surface(
         onClick = onClick,
         modifier = modifier,
         color = TactileTheme.Surface,
-        shape = androidx.compose.foundation.shape.RoundedCornerShape(TactileTheme.RadiusMd),
+        shape = RoundedCornerShape(TactileTheme.RadiusMd),
         border = BorderStroke(1.dp, Color.White.copy(alpha = 0.05f)),
-        content = content
+        content = content,
     )
 }

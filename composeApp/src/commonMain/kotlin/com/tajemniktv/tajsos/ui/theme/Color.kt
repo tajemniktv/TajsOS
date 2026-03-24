@@ -2,7 +2,7 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
-package com.tajemniktv.tajsos.ui.design.theme
+package com.tajemniktv.tajsos.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

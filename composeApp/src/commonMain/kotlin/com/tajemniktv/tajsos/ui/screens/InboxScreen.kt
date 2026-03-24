@@ -13,7 +13,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -23,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.components.nodes.NodeCard
-import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 
@@ -32,20 +30,21 @@ import tajsos.composeapp.generated.resources.*
 fun InboxScreen(
     viewModel: MainViewModel,
     onEditNode: (Long) -> Unit,
-) {
+)
+{
     var itemInput by remember { mutableStateOf("") }
     var selectedType by remember { mutableStateOf("task") }
     val nodes by viewModel.inboxNodes.collectAsState()
 
     Column(
         modifier =
-            Modifier
-                .fillMaxSize()
-                .padding(16.dp),
+                Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
     ) {
         Text(
             stringResource(Res.string.inbox_quick_capture),
-            style = MaterialTheme.typography.titleLarge
+            style = MaterialTheme.typography.titleLarge,
         )
         Spacer(Modifier.height(12.dp))
 
@@ -81,23 +80,28 @@ fun InboxScreen(
                         itemInput = ""
                     },
                     enabled = itemInput.isNotBlank(),
-                    colors = IconButtonDefaults.filledIconButtonColors(containerColor = MaterialTheme.colorScheme.primary)
+                    colors = IconButtonDefaults.filledIconButtonColors(containerColor = MaterialTheme.colorScheme.primary),
                 ) {
                     Icon(
                         Icons.AutoMirrored.Filled.Send,
                         contentDescription = stringResource(Res.string.inbox_add),
-                        tint = if (itemInput.isNotBlank()) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                        tint = if (itemInput.isNotBlank()) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface.copy(
+                            alpha = 0.38f,
+                        ),
                     )
                 }
             },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
             keyboardActions =
-                KeyboardActions(onDone = {
-                    if (itemInput.isNotBlank()) {
-                        viewModel.addNode(itemInput, type = selectedType)
-                        itemInput = ""
-                    }
-                }),
+                    KeyboardActions(
+                        onDone = {
+                            if (itemInput.isNotBlank())
+                            {
+                                viewModel.addNode(itemInput, type = selectedType)
+                                itemInput = ""
+                            }
+                        },
+                    ),
             shape = RoundedCornerShape(16.dp),
         )
 
@@ -105,13 +109,15 @@ fun InboxScreen(
         Text(
             stringResource(Res.string.inbox_recent_entries),
             style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.primary
+            color = MaterialTheme.colorScheme.primary,
         )
         Spacer(modifier = Modifier.height(8.dp))
 
-        if (nodes.isEmpty()) {
+        if (nodes.isEmpty())
+        {
             EmptyState(message = stringResource(Res.string.inbox_empty))
-        } else {
+        } else
+        {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 items(nodes, key = { it.node.id }) { nodeWithPin ->
                     Row(

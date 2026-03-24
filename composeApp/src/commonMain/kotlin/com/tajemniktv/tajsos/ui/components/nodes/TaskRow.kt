@@ -19,7 +19,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeEntity
-import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 
@@ -31,8 +31,9 @@ fun TaskRow(
     onUnpin: () -> Unit,
     onLongClick: () -> Unit = {},
     onClick: () -> Unit = {},
-    onArchive: () -> Unit = {}
-) {
+    onArchive: () -> Unit = {},
+)
+{
     val isDone = node.status == "done"
     Surface(
         modifier = Modifier
@@ -42,92 +43,100 @@ fun TaskRow(
                 drawRect(
                     color = TactileTheme.Primary,
                     topLeft = Offset.Zero,
-                    size = androidx.compose.ui.geometry.Size(4.dp.toPx(), size.height)
+                    size = androidx.compose.ui.geometry.Size(4.dp.toPx(), size.height),
                 )
             }
             .combinedClickable(
                 onClick = onClick,
-                onLongClick = onLongClick
+                onLongClick = onLongClick,
             ),
-        color = TactileTheme.Surface
+        color = TactileTheme.Surface,
     ) {
         Row(
             modifier = Modifier.padding(horizontal = TactileTheme.SpacingMd),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Checkbox(
                 checked = isDone,
                 onCheckedChange = { onToggleDone(if (it) "done" else "active") },
-                colors = CheckboxDefaults.colors(checkedColor = TactileTheme.Primary)
+                colors = CheckboxDefaults.colors(checkedColor = TactileTheme.Primary),
             )
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = node.title,
                     style = MaterialTheme.typography.bodyLarge.copy(
-                        textDecoration = if (isDone) TextDecoration.LineThrough else null
+                        textDecoration = if (isDone) TextDecoration.LineThrough else null,
                     ),
-                    color = if (isDone) TactileTheme.Muted else TactileTheme.Text
+                    color = if (isDone) TactileTheme.Muted else TactileTheme.Text,
                 )
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    if (node.energyLevel != null) {
+                    if (node.energyLevel != null)
+                    {
                         Text(
                             text = "⚡".repeat(node.energyLevel!!),
                             style = MaterialTheme.typography.labelSmall,
-                            color = when (node.energyLevel) {
-                                1 -> TactileTheme.Success
-                                2 -> TactileTheme.Primary
-                                3 -> TactileTheme.Error
+                            color = when (node.energyLevel)
+                            {
+                                1    -> TactileTheme.Success
+                                2    -> TactileTheme.Primary
+                                3    -> TactileTheme.Error
                                 else -> TactileTheme.Muted
-                            }
+                            },
                         )
                         Spacer(Modifier.width(8.dp))
                     }
-                    if (node.friction != null) {
-                        val frictionLabel = when (node.friction) {
-                            "easy" -> stringResource(Res.string.dash_overwhelmed)
-                            "annoying" -> stringResource(Res.string.dash_annoying)
+                    if (node.friction != null)
+                    {
+                        val frictionLabel = when (node.friction)
+                        {
+                            "easy"           -> stringResource(Res.string.dash_overwhelmed)
+                            "annoying"       -> stringResource(Res.string.dash_annoying)
                             "mentally_heavy" -> stringResource(Res.string.dash_heavy)
-                            "unclear" -> stringResource(Res.string.dash_unclear)
-                            else -> node.friction!!
+                            "unclear"        -> stringResource(Res.string.dash_unclear)
+                            else             -> node.friction!!
                         }
                         Text(
                             text = frictionLabel.uppercase(),
                             style = MaterialTheme.typography.labelSmall,
-                            color = TactileTheme.Primary
+                            color = TactileTheme.Primary,
                         )
                         Spacer(Modifier.width(8.dp))
                     }
-                    if (node.status != "active" && node.status != "done") {
-                        val statusColor = when (node.status) {
+                    if (node.status != "active" && node.status != "done")
+                    {
+                        val statusColor = when (node.status)
+                        {
                             "blocked" -> TactileTheme.Error
                             "on_hold" -> TactileTheme.Accent
                             "someday" -> TactileTheme.Muted
-                            else -> TactileTheme.Primary
+                            else      -> TactileTheme.Primary
                         }
                         Text(
                             text = node.status.uppercase().replace("_", " "),
                             style = MaterialTheme.typography.labelSmall,
-                            color = statusColor
+                            color = statusColor,
                         )
                         Spacer(Modifier.width(8.dp))
                     }
-                    if (!node.nextSmallestStep.isNullOrEmpty()) {
+                    if (!node.nextSmallestStep.isNullOrEmpty())
+                    {
                         Text(
                             text = "↳ ${node.nextSmallestStep}",
                             style = MaterialTheme.typography.labelSmall,
                             color = TactileTheme.Accent,
                             maxLines = 1,
-                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
                         )
                     }
                 }
             }
-            if (isDone) {
+            if (isDone)
+            {
                 IconButton(onClick = onArchive) {
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = stringResource(Res.string.detail_archive),
-                        tint = TactileTheme.Muted
+                        tint = TactileTheme.Muted,
                     )
                 }
             }
@@ -135,7 +144,7 @@ fun TaskRow(
                 Icon(
                     Icons.Default.Close,
                     contentDescription = stringResource(Res.string.task_row_unpin_desc),
-                    tint = TactileTheme.Muted
+                    tint = TactileTheme.Muted,
                 )
             }
         }
