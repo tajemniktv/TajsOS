@@ -32,5 +32,6 @@ For contributors, here are useful Gradle commands to build and test:
 - **Run UI component tests (Compose JVM)**: `./gradlew :composeApp:jvmTest`
 
 To run the app locally:
+
 - **Run Desktop JVM App**: `./gradlew :composeApp:run`
 - **Run Ktor Server**: `./gradlew :server:run`
