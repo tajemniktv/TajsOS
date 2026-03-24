@@ -4,6 +4,7 @@
 
 package com.tajemniktv.tajsos.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -15,6 +16,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.MedicationEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
@@ -33,18 +35,10 @@ fun ProfileScreen(viewModel: MainViewModel)
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
+            .background(TactileTheme.Background)
             .padding(TactileTheme.SpacingMd),
         verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
     ) {
-        item {
-            Text(
-                stringResource(Res.string.profile_title),
-                style = MaterialTheme.typography.displayMedium,
-                color = TactileTheme.Text,
-            )
-            Spacer(Modifier.height(TactileTheme.SpacingLg))
-        }
-
         item {
             OutlinedTextField(
                 value = editingName,

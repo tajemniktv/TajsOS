@@ -53,22 +53,12 @@ fun DashHeader(
                 )
             }
             Spacer(Modifier.width(12.dp))
-            Column {
-                Text(
-                    "TAJSOS",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.ExtraBold,
-                    letterSpacing = 2.sp,
-                    color = TactileTheme.Text
-                )
-                Text(
-                    vibe.uppercase(),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = tintColor,
-                    fontSize = 8.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+            StatusHeader(
+                status = "OK",
+                color = tintColor,
+                subtitle = vibe,
+                subtitleStyle = MaterialTheme.typography.titleSmall,
+            )
         }
 
         Row(verticalAlignment = Alignment.CenterVertically) {

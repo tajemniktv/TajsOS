@@ -24,7 +24,6 @@ import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.dashboard.DashboardBlockRenderer
 import com.tajemniktv.tajsos.ui.components.dashboard.ModuleCard
-import com.tajemniktv.tajsos.ui.components.layout.DashHeader
 import com.tajemniktv.tajsos.ui.components.modes.ModeSuggestionBanner
 import com.tajemniktv.tajsos.ui.components.modes.ModeSwitcherHeader
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
@@ -41,12 +40,8 @@ fun DashboardScreen(
     onNavigateTo: (Screen) -> Unit,
     onEditNode: (Long) -> Unit,
     onNavigateToProject: (Long) -> Unit,
-    onOpenDrawer: () -> Unit,
     onNewEntry: () -> Unit,
     currentDestination: NavDestination? = null,
-    currentMode: ModeEntity? = null,
-    allModes: List<ModeEntity> = emptyList(),
-    onModeSelect: (Long) -> Unit = {},
 )
 {
     BoxWithConstraints {
@@ -59,9 +54,6 @@ fun DashboardScreen(
                 onNavigateToProject = onNavigateToProject,
                 onNewEntry = onNewEntry,
                 currentDestination = currentDestination,
-                currentMode = currentMode,
-                allModes = allModes,
-                onModeSelect = onModeSelect,
             )
         } else
         {
@@ -70,7 +62,6 @@ fun DashboardScreen(
                 onNavigateTo = onNavigateTo,
                 onEditNode = onEditNode,
                 onNavigateToProject = onNavigateToProject,
-                onOpenDrawer = onOpenDrawer,
             )
         }
     }
@@ -82,7 +73,6 @@ private fun DashboardMobileContent(
     onNavigateTo: (Screen) -> Unit,
     onEditNode: (Long) -> Unit,
     onNavigateToProject: (Long) -> Unit,
-    onOpenDrawer: () -> Unit,
 )
 {
     val allNodes by viewModel.allNodes.collectAsState()
@@ -165,15 +155,6 @@ private fun DashboardMobileContent(
 
     val scrollState = rememberScrollState()
 
-    val vibeString = when (currentHour)
-    {
-        in 5..11 -> Res.string.dash_vibe_morning
-        in 12..17 -> Res.string.dash_vibe_afternoon
-        in 18..22 -> Res.string.dash_vibe_evening
-        else -> Res.string.dash_vibe_night
-    }
-
-    val currentModeColor = currentMode?.themeColor?.let { Color(it) } ?: TactileTheme.Primary
 
     Column(
         modifier = Modifier
@@ -183,14 +164,6 @@ private fun DashboardMobileContent(
             .padding(TactileTheme.SpacingMd),
         verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingLg),
     ) {
-        // 1. Header
-        DashHeader(
-            vibe = stringResource(vibeString),
-            onMenuClick = onOpenDrawer,
-            onSettingsClick = { onNavigateTo(Screen.Settings) },
-            tintColor = currentModeColor,
-        )
-
         ModeSwitcherHeader(
             currentMode = currentMode,
             allModes = allModes,

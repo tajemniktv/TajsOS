@@ -36,29 +36,6 @@ fun DetailHeader(title: String, subtitle: String, modifier: Modifier = Modifier)
 }
 
 @Composable
-fun ModuleHeader(title: String, icon: ImageVector, color: Color, modifier: Modifier = Modifier) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            tint = color,
-            modifier = Modifier.size(24.dp)
-        )
-        Text(
-            text = title.uppercase(),
-            style = MaterialTheme.typography.titleLarge,
-            color = TactileTheme.Text,
-            fontWeight = FontWeight.ExtraBold,
-            letterSpacing = 1.sp
-        )
-    }
-}
-
-@Composable
 fun DetailSectionHeader(
     title: String,
     modifier: Modifier = Modifier,

@@ -30,6 +30,7 @@ import com.tajemniktv.tajsos.ui.components.common.LinkedNodeItem
 import com.tajemniktv.tajsos.ui.components.common.SelectorDialog
 import com.tajemniktv.tajsos.ui.components.common.StatusCard
 import com.tajemniktv.tajsos.ui.components.ActionButton
+import com.tajemniktv.tajsos.ui.components.layout.LocalHeaderActions
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
@@ -37,7 +38,6 @@ import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 import androidx.compose.ui.unit.sp
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProjectDetailScreen(
     viewModel: MainViewModel,
@@ -93,212 +93,194 @@ fun ProjectDetailScreen(
         viewModel.setLastActiveContext(projectId, project.areaId)
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        "NEURAL_INTERFACE",
-                        style = MaterialTheme.typography.labelSmall,
-                        letterSpacing = 1.sp,
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(Res.string.detail_back),
-                            modifier = Modifier.size(18.dp),
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { showStatusDialog = true }) {
-                        Icon(
-                            Icons.Default.Tune,
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp),
-                        )
-                    }
-                    IconButton(onClick = { onEditNode(projectId) }) {
-                        Icon(
-                            Icons.Default.Edit,
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp),
-                        )
-                    }
-                    IconButton(
-                        onClick = {
-                            viewModel.updateNode(project.copy(isFrozen = !project.isFrozen))
-                        },
-                    ) {
-                        Icon(
-                            if (project.isFrozen) Icons.Default.AcUnit else Icons.Default.WbSunny,
-                            contentDescription = null,
-                            tint = if (project.isFrozen) TactileTheme.Accent else TactileTheme.Primary,
-                            modifier = Modifier.size(18.dp),
-                        )
-                    }
-                    IconButton(
-                        onClick = {
-                            viewModel.archiveNode(project)
-                            onBack()
-                        },
-                    ) {
-                        Icon(
-                            Icons.Default.Delete,
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp),
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = TactileTheme.Background,
-                    titleContentColor = TactileTheme.Primary,
-                    navigationIconContentColor = TactileTheme.Text,
-                    actionIconContentColor = TactileTheme.Text,
-                ),
+    val actions: @Composable RowScope.() -> Unit = {
+        IconButton(onClick = { showStatusDialog = true }) {
+            Icon(
+                Icons.Default.Tune,
+                contentDescription = null,
+                modifier = Modifier.size(18.dp),
             )
-        },
-        containerColor = TactileTheme.Background,
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .background(TactileTheme.Background)
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = TactileTheme.SpacingMd)
-                .padding(bottom = TactileTheme.SpacingMd),
-            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingLg),
+        }
+        IconButton(onClick = { onEditNode(projectId) }) {
+            Icon(
+                Icons.Default.Edit,
+                contentDescription = null,
+                modifier = Modifier.size(18.dp),
+            )
+        }
+        IconButton(
+            onClick = {
+                viewModel.updateNode(project.copy(isFrozen = !project.isFrozen))
+            },
         ) {
-            // Header
-            DetailHeader(
-                title = project.title,
-                subtitle = "CURRENT WORKSPACE",
+            Icon(
+                if (project.isFrozen) Icons.Default.AcUnit else Icons.Default.WbSunny,
+                contentDescription = null,
+                tint = if (project.isFrozen) TactileTheme.Accent else TactileTheme.Primary,
+                modifier = Modifier.size(18.dp),
             )
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
-            ) {
-                ActionButton(
-                    text = "ADD LINK",
-                    onClick = { /* Add link logic */ },
-                    modifier = Modifier.weight(1f),
-                )
-                ActionButton(
-                    text = "LINK NODE",
-                    onClick = { /* Link node logic */ },
-                    containerColor = TactileTheme.Primary,
-                    contentColor = TactileTheme.Background,
-                    modifier = Modifier.weight(1f),
-                )
-            }
-
-            // Health / Status
-            Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
-                DetailSectionHeader(
-                    title = stringResource(Res.string.detail_organization),
-                    icon = Icons.Default.BarChart,
-                )
-                StatusCard(
-                    status = healthLabel,
-                    color = healthColor,
-                    onClick = { showStatusDialog = true },
-                )
-            }
-
-            // Progress Card
-            InfoCard(
-                title = "PROGRESS",
-                value = "${(progress * 100).toInt()}% COMPLETE",
-                icon = Icons.AutoMirrored.Filled.TrendingUp,
-                color = if (project.isFrozen) TactileTheme.Muted else TactileTheme.Primary,
+        }
+        IconButton(
+            onClick = {
+                viewModel.archiveNode(project)
+                onBack()
+            },
+        ) {
+            Icon(
+                Icons.Default.Delete,
+                contentDescription = null,
+                modifier = Modifier.size(18.dp),
             )
-
-            // Why Section
-            if (project.projectWhy != null || project.content.isNotEmpty())
-            {
-                Surface(
-                    modifier = Modifier.fillMaxWidth(),
-                    color = TactileTheme.Surface,
-                    shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                    border = BorderStroke(1.dp, TactileTheme.Border),
-                ) {
-                    Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
-                        Text(
-                            text = "PURPOSE",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = TactileTheme.Primary,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 8.sp,
-                        )
-                        Spacer(Modifier.height(4.dp))
-                        Text(
-                            text = project.projectWhy ?: project.content,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = TactileTheme.Text,
-                        )
-                    }
-                }
-            }
-
-            // Next Actions
-            val nextActions =
-                    nodesWithPinForProject.filter { it.node.status == "active" && it.node.type == "task" }
-            if (nextActions.isNotEmpty())
-            {
-                Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
-                    DetailSectionHeader(title = "NEXT ACTIONS", icon = Icons.Default.PlayArrow)
-                    nextActions.take(5).forEach { item ->
-                        LinkedNodeItem(
-                            title = item.node.title,
-                            subtitle = item.node.nextSmallestStep ?: "Active Task",
-                            icon = Icons.Default.CheckCircle,
-                            onClick = { onEditNode(item.node.id) },
-                        )
-                    }
-                }
-            }
-
-            // Timeline
-            val logs by viewModel.getLogsForNode(projectId).collectAsState(initial = emptyList())
-            if (logs.isNotEmpty())
-            {
-                Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
-                    DetailSectionHeader(title = "TIMELINE", icon = Icons.Default.History)
-                    logs.take(5).forEach { log ->
-                        ProjectTimelineItem(log)
-                    }
-                }
-            }
-
-            Spacer(Modifier.height(TactileTheme.SpacingXl))
         }
     }
 
-    SelectorDialog<String>(
-        show = showStatusDialog,
-        onDismiss = { showStatusDialog = false },
-        title = "SET STATUS",
-        options = listOf("active", "on_hold", "someday"),
-        selectedOption = project.status,
-        onSelect = { status ->
-            viewModel.updateNodeStatus(project, status); showStatusDialog = false
-        },
-        optionName = { status -> status },
-        optionIcon = { status ->
-            when (status)
-            {
-                "active"  -> Icons.Default.PlayArrow
-                "on_hold" -> Icons.Default.Pause
-                "someday" -> Icons.Default.CalendarToday
-                else      -> Icons.Default.Info
+    CompositionLocalProvider(LocalHeaderActions provides actions) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(TactileTheme.Background),
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(TactileTheme.Background)
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = TactileTheme.SpacingMd)
+                    .padding(bottom = TactileTheme.SpacingMd),
+                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingLg),
+            ) {
+                // Header
+                DetailHeader(
+                    title = project.title,
+                    subtitle = "CURRENT WORKSPACE",
+                )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+                ) {
+                    ActionButton(
+                        text = "ADD LINK",
+                        onClick = { /* Add link logic */ },
+                        modifier = Modifier.weight(1f),
+                    )
+                    ActionButton(
+                        text = "LINK NODE",
+                        onClick = { /* Link node logic */ },
+                        containerColor = TactileTheme.Primary,
+                        contentColor = TactileTheme.Background,
+                        modifier = Modifier.weight(1f),
+                    )
+                }
+
+                // Health / Status
+                Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+                    DetailSectionHeader(
+                        title = stringResource(Res.string.detail_organization),
+                        icon = Icons.Default.BarChart,
+                    )
+                    StatusCard(
+                        status = healthLabel,
+                        color = healthColor,
+                        onClick = { showStatusDialog = true },
+                    )
+                }
+
+                // Progress Card
+                InfoCard(
+                    title = "PROGRESS",
+                    value = "${(progress * 100).toInt()}% COMPLETE",
+                    icon = Icons.AutoMirrored.Filled.TrendingUp,
+                    color = if (project.isFrozen) TactileTheme.Muted else TactileTheme.Primary,
+                )
+
+                // Why Section
+                if (project.projectWhy != null || project.content.isNotEmpty())
+                {
+                    Surface(
+                        modifier = Modifier.fillMaxWidth(),
+                        color = TactileTheme.Surface,
+                        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                        border = BorderStroke(1.dp, TactileTheme.Border),
+                    ) {
+                        Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+                            Text(
+                                text = "PURPOSE",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = TactileTheme.Primary,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 8.sp,
+                            )
+                            Spacer(Modifier.height(4.dp))
+                            Text(
+                                text = project.projectWhy ?: project.content,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = TactileTheme.Text,
+                            )
+                        }
+                    }
+                }
+
+                // Next Actions
+                val nextActions =
+                        nodesWithPinForProject.filter { it.node.status == "active" && it.node.type == "task" }
+                if (nextActions.isNotEmpty())
+                {
+                    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+                        DetailSectionHeader(title = "NEXT ACTIONS", icon = Icons.Default.PlayArrow)
+                        nextActions.take(5).forEach { item ->
+                            LinkedNodeItem(
+                                title = item.node.title,
+                                subtitle = item.node.nextSmallestStep ?: "Active Task",
+                                icon = Icons.Default.CheckCircle,
+                                onClick = { onEditNode(item.node.id) },
+                            )
+                        }
+                    }
+                }
+
+                // Timeline
+                val logs by viewModel.getLogsForNode(projectId)
+                    .collectAsState(initial = emptyList())
+                if (logs.isNotEmpty())
+                {
+                    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+                        DetailSectionHeader(title = "TIMELINE", icon = Icons.Default.History)
+                        logs.take(5).forEach { log ->
+                            ProjectTimelineItem(log)
+                        }
+                    }
+                }
+
+                Spacer(Modifier.height(TactileTheme.SpacingXl))
             }
-        },
-        optionSubtext = { status -> "PROJ_STATE_${status.uppercase()}" },
-    )
+        }
+    }
+
+    if (showStatusDialog)
+    {
+        SelectorDialog(
+            show = true,
+            onDismiss = { showStatusDialog = false },
+            title = "SET STATUS",
+            options = listOf("active", "on_hold", "someday"),
+            selectedOption = project.status,
+            onSelect = { status ->
+                viewModel.updateNodeStatus(project, status); showStatusDialog = false
+            },
+            optionName = { status -> status },
+            optionIcon = { status ->
+                when (status)
+                {
+                    "active"  -> Icons.Default.PlayArrow
+                    "on_hold" -> Icons.Default.Pause
+                    "someday" -> Icons.Default.CalendarToday
+                    else      -> Icons.Default.Info
+                }
+            },
+            optionSubtext = { status -> "PROJ_STATE_${status.uppercase()}" },
+        )
+    }
 }
 
 @Composable

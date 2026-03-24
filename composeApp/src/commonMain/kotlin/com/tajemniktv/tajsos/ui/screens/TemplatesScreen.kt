@@ -4,11 +4,11 @@
 
 package com.tajemniktv.tajsos.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
@@ -16,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.components.layout.LocalHeaderActions
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
@@ -30,74 +31,64 @@ fun TemplatesScreen(
     val templates by viewModel.allTemplates.collectAsState()
     var showAddDialog by remember { mutableStateOf(false) }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        stringResource(Res.string.templates_title),
-                        style = MaterialTheme.typography.labelSmall,
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(Res.string.common_back),
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { showAddDialog = true }) {
-                        Icon(
-                            Icons.Default.Add,
-                            contentDescription = stringResource(Res.string.templates_add_desc),
-                        )
-                    }
-                },
+    val actions: @Composable RowScope.() -> Unit = {
+        IconButton(onClick = { showAddDialog = true }) {
+            Icon(
+                Icons.Default.Add,
+                contentDescription = stringResource(Res.string.templates_add_desc),
             )
-        },
-    ) { padding ->
-        if (templates.isEmpty())
-        {
-            Box(
-                modifier = Modifier.fillMaxSize().padding(padding),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(stringResource(Res.string.templates_empty), color = TactileTheme.Muted)
-            }
-        } else
-        {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize().padding(padding).padding(TactileTheme.SpacingMd),
-                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-            ) {
-                items(templates) { template ->
-                    ListItem(
-                        headlineContent = { Text(template.name) },
-                        supportingContent = {
-                            val typeLabel = when (template.nodeType)
-                            {
-                                "task"    -> stringResource(Res.string.type_task)
-                                "note"    -> stringResource(Res.string.type_note)
-                                "idea"    -> stringResource(Res.string.type_idea)
-                                "project" -> stringResource(Res.string.type_project)
-                                "area"    -> stringResource(Res.string.type_area)
-                                else      -> template.nodeType
-                            }
-                            Text(typeLabel.uppercase())
-                        },
-                        trailingContent = {
-                            IconButton(onClick = { viewModel.deleteTemplate(template) }) {
-                                Icon(
-                                    Icons.Default.Delete,
-                                    contentDescription = stringResource(Res.string.archive_delete),
-                                    tint = TactileTheme.Error,
-                                )
-                            }
-                        },
-                        colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
-                    )
+        }
+    }
+
+    CompositionLocalProvider(LocalHeaderActions provides actions) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(TactileTheme.Background),
+        ) {
+            if (templates.isEmpty())
+            {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(stringResource(Res.string.templates_empty), color = TactileTheme.Muted)
+                }
+            } else
+            {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(TactileTheme.SpacingMd),
+                    verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                ) {
+                    items(templates) { template ->
+                        ListItem(
+                            headlineContent = { Text(template.name) },
+                            supportingContent = {
+                                val typeLabel = when (template.nodeType)
+                                {
+                                    "task"    -> stringResource(Res.string.type_task)
+                                    "note"    -> stringResource(Res.string.type_note)
+                                    "idea"    -> stringResource(Res.string.type_idea)
+                                    "project" -> stringResource(Res.string.type_project)
+                                    "area"    -> stringResource(Res.string.type_area)
+                                    else      -> template.nodeType
+                                }
+                                Text(typeLabel.uppercase())
+                            },
+                            trailingContent = {
+                                IconButton(onClick = { viewModel.deleteTemplate(template) }) {
+                                    Icon(
+                                        Icons.Default.Delete,
+                                        contentDescription = stringResource(Res.string.archive_delete),
+                                        tint = TactileTheme.Error,
+                                    )
+                                }
+                            },
+                            colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
+                        )
+                    }
                 }
             }
         }

@@ -4,26 +4,24 @@
 
 package com.tajemniktv.tajsos.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.common.SelectorDialog
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReviewScreen(
     viewModel: MainViewModel,
@@ -81,33 +79,11 @@ fun ReviewScreen(
         optionSubtext = { "REV_SYST_${it.uppercase()}" },
     )
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        "NEURAL_INTERFACE",
-                        style = MaterialTheme.typography.labelSmall,
-                        letterSpacing = 1.sp,
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(Res.string.common_back),
-                            modifier = Modifier.size(18.dp),
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = TactileTheme.Background,
-                    titleContentColor = TactileTheme.Primary,
-                    navigationIconContentColor = TactileTheme.Text,
-                ),
-            )
-        },
-    ) { padding ->
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(TactileTheme.Background),
+    ) {
         if (reviewType != null)
         {
             val steps = if (reviewType == "daily") dailySteps else weeklySteps
@@ -142,7 +118,7 @@ fun ReviewFlow(
 {
     var mood by remember { mutableStateOf(3) }
     var energy by remember { mutableStateOf(3) }
-    var answers = remember { mutableStateMapOf<Int, String>() }
+    val answers = remember { mutableStateMapOf<Int, String>() }
 
     Column(modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd)) {
         LinearProgressIndicator(
@@ -203,10 +179,10 @@ fun ReviewFlow(
 
                 Res.string.review_step_archive                                                                                                                          ->
                 {
-                    val suggestions =
+                    val archivedSuggestions =
                             dashboardState.archivedThisWeek // Just showing what was done, but could suggest others
                     Column {
-                        Text("You archived ${suggestions.size} items this week. Anything else to let go of?")
+                        Text("You archived ${archivedSuggestions.size} items this week. Anything else to let go of?")
                         LazyColumn(Modifier.height(200.dp)) {
                             items(dashboardState.neglectedThisWeek.take(5)) { item ->
                                 ListItem(
