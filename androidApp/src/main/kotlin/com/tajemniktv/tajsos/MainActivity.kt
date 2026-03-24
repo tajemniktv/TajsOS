@@ -87,50 +87,11 @@ class MainActivity : FragmentActivity() {
             }
 
 
-            val currentPendingIntent by pendingIntent
+val currentPendingIntent by pendingIntent
 
             LaunchedEffect(isAuthenticated, currentPendingIntent) {
                 if (isAuthenticated && currentPendingIntent != null) {
-                    val intent = currentPendingIntent!!
-                    if (intent.action == Intent.ACTION_SEND) {
-                        val type = intent.type
-                        if ("text/plain" == type) {
-                            intent.getStringExtra(Intent.EXTRA_TEXT)?.let { sharedText ->
-                                viewModel.addNode(title = sharedText, type = "note")
-                            }
-                        } else if (type?.startsWith("image/") == true) {
-                            val imageUri =
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                    intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
-                                } else {
-                                    @Suppress("DEPRECATION")
-                                    intent.getParcelableExtra(Intent.EXTRA_STREAM)
-                                }
-                            imageUri?.let { uri ->
-                                val nodeId = viewModel.addNodeForResult(title = "Shared Image", type = "resource")
-                                viewModel.addAttachment(nodeId, "IMAGE", uri.toString())
-                            }
-                        }
-                    } else if (intent.action == Intent.ACTION_SEND_MULTIPLE) {
-                        val type = intent.type
-                        if (type?.startsWith("image/") == true) {
-                            val imageUris =
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                    intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM, Uri::class.java)
-                                } else {
-                                    @Suppress("DEPRECATION")
-                                    intent.getParcelableArrayListExtra<Uri>(Intent.EXTRA_STREAM)
-                                }
-                            imageUris?.let { uris ->
-                                val nodeId = viewModel.addNodeForResult(title = "Shared Images", type = "resource")
-                                uris.forEach { uri ->
-                                    viewModel.addAttachment(nodeId, "IMAGE", uri.toString())
-                                }
-                            }
-                        }
-                    }
-                    intent.action = null
-                    pendingIntent.value = null
+                    processPendingIntent(currentPendingIntent!!)
                 }
             }
 
@@ -172,6 +133,54 @@ class MainActivity : FragmentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         handleIntent(intent)
+    }
+
+
+    private suspend fun processPendingIntent(intent: Intent) {
+        when (intent.action) {
+            Intent.ACTION_SEND -> handleActionSend(intent)
+            Intent.ACTION_SEND_MULTIPLE -> handleActionSendMultiple(intent)
+        }
+        intent.action = null
+        pendingIntent.value = null
+    }
+
+    private suspend fun handleActionSend(intent: Intent) {
+        val type = intent.type ?: return
+        if ("text/plain" == type) {
+            intent.getStringExtra(Intent.EXTRA_TEXT)?.let { sharedText ->
+                viewModel.addNode(title = sharedText, type = "note")
+            }
+        } else if (type.startsWith("image/")) {
+            val imageUri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                intent.getParcelableExtra(Intent.EXTRA_STREAM)
+            }
+            imageUri?.let { uri ->
+                val nodeId = viewModel.addNodeForResult(title = "Shared Image", type = "resource")
+                viewModel.addAttachment(nodeId, "IMAGE", uri.toString())
+            }
+        }
+    }
+
+    private suspend fun handleActionSendMultiple(intent: Intent) {
+        val type = intent.type ?: return
+        if (type.startsWith("image/")) {
+            val imageUris = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM, Uri::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                intent.getParcelableArrayListExtra<Uri>(Intent.EXTRA_STREAM)
+            }
+            imageUris?.let { uris ->
+                val nodeId = viewModel.addNodeForResult(title = "Shared Images", type = "resource")
+                uris.forEach { uri ->
+                    viewModel.addAttachment(nodeId, "IMAGE", uri.toString())
+                }
+            }
+        }
     }
 
     private fun handleIntent(intent: Intent) {
