@@ -2,7 +2,7 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
-package com.tajemniktv.tajsos.ui.theme
+package com.tajemniktv.tajsos.ui.design.theme
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -23,6 +23,8 @@ object TactileTheme {
     val Error = AccentError
     val Accent = AccentCyan
     val Border = SubtleBorder
+    val SidebarBackground = com.tajemniktv.tajsos.ui.design.theme.SidebarBackground
+    val SidebarWidth = 280.dp
 
     val RadiusXs = 2.dp
     val RadiusSm = 4.dp

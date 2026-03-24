@@ -16,8 +16,17 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.components.*
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.components.common.DetailHeader
+import com.tajemniktv.tajsos.ui.components.common.DetailSectionHeader
+import com.tajemniktv.tajsos.ui.components.common.InfoCard
+import com.tajemniktv.tajsos.ui.components.common.LinkedNodeItem
+import com.tajemniktv.tajsos.ui.components.common.StatusCard
+import com.tajemniktv.tajsos.ui.components.dashboard.AreaHealthCard
+import com.tajemniktv.tajsos.ui.components.nodes.NodeCard
+import com.tajemniktv.tajsos.ui.components.nodes.ProjectItem
+import com.tajemniktv.tajsos.ui.design.components.ActionButton
+import com.tajemniktv.tajsos.ui.design.components.DashCard
+import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 import androidx.compose.ui.unit.sp
@@ -36,8 +45,8 @@ import androidx.compose.ui.Alignment
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AreaDetailScreen(
-    viewModel: MainViewModel, 
-    areaId: Long, 
+    viewModel: MainViewModel,
+    areaId: Long,
     onNavigateToProject: (Long) -> Unit,
     onEditNode: (Long) -> Unit,
     onBack: () -> Unit
@@ -127,8 +136,8 @@ fun AreaDetailScreen(
         ) {
             // Header
             DetailHeader(
-                category = "WORKSPACE AREA",
-                title = area.title
+                title = area.title,
+                subtitle = "WORKSPACE AREA"
             )
 
             ActionButton(

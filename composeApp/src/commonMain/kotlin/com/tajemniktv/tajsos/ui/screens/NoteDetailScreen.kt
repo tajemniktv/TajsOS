@@ -32,8 +32,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.components.*
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.components.common.ConnectionCard
+import com.tajemniktv.tajsos.ui.components.common.DetailHeader
+import com.tajemniktv.tajsos.ui.components.common.DetailSectionHeader
+import com.tajemniktv.tajsos.ui.components.common.InfoCard
+import com.tajemniktv.tajsos.ui.components.common.LinkedNodeItem
+import com.tajemniktv.tajsos.ui.components.common.SelectorDialog
+import com.tajemniktv.tajsos.ui.components.common.StatusCard
+import com.tajemniktv.tajsos.ui.components.nodes.DecisionDetailContent
+import com.tajemniktv.tajsos.ui.components.nodes.NodeCard
+import com.tajemniktv.tajsos.ui.design.components.ActionButton
+import com.tajemniktv.tajsos.ui.design.components.DashCard
+import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
 import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -204,8 +214,8 @@ fun NoteDetailScreen(
         ) {
             // Header
             DetailHeader(
-                category = "DETAIL VIEW",
-                title = title
+                title = title,
+                subtitle = "DETAIL VIEW"
             )
 
             ActionButton(

@@ -1,4 +1,8 @@
-package com.tajemniktv.tajsos.ui.theme
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
+package com.tajemniktv.tajsos.ui.design.theme
 
 import androidx.compose.ui.graphics.Color
 
@@ -7,6 +11,7 @@ import androidx.compose.ui.graphics.Color
  */
 val PrimaryPurple = Color(0xFF8B5CF6)
 val DeepBackground = Color(0xFF0F0F13)
+val SidebarBackground = Color(0xFF0A0A0E)
 val SurfaceDark = Color(0xFF1C1C21)
 val TextPrimary = Color(0xFFF8FAFC)
 val TextMuted = Color(0xFF52525B)
