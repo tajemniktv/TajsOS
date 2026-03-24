@@ -109,15 +109,21 @@ fun NodeCard(
                         "area" -> stringResource(Res.string.type_area)
                         else -> node.type
                     }
-                    Text(
-                        text = typeLabel.uppercase() + if (node.isRecurring) " // ${
-                            stringResource(
-                                Res.string.node_recurring
-                            )
-                        }" else "",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Primary
-                    )
+                    Surface(
+                        color = TactileTheme.Primary.copy(alpha = 0.1f),
+                        shape = RoundedCornerShape(4.dp)
+                    ) {
+                        Text(
+                            text = typeLabel.uppercase() + if (node.isRecurring) " // ${
+                                stringResource(
+                                    Res.string.node_recurring
+                                )
+                            }" else "",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = TactileTheme.Primary,
+                            modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
+                        )
+                    }
                     val dueAt = node.dueAt
                     if (dueAt != null) {
                         val due = kotlin.time.Instant.fromEpochMilliseconds(dueAt)
@@ -148,16 +154,22 @@ fun NodeCard(
                     }
                     if (node.energyLevel != null) {
                         Spacer(Modifier.width(8.dp))
-                        Text(
-                            text = "⚡".repeat(node.energyLevel!!),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = when (node.energyLevel) {
-                                1 -> TactileTheme.Success
-                                2 -> TactileTheme.Primary
-                                3 -> TactileTheme.Error
-                                else -> TactileTheme.Muted
-                            }
-                        )
+                        Surface(
+                            color = TactileTheme.Primary.copy(alpha = 0.1f),
+                            shape = RoundedCornerShape(4.dp)
+                        ) {
+                            Text(
+                                text = "⚡".repeat(node.energyLevel!!),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = when (node.energyLevel) {
+                                    1 -> TactileTheme.Success
+                                    2 -> TactileTheme.Primary
+                                    3 -> TactileTheme.Error
+                                    else -> TactileTheme.Muted
+                                },
+                                modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
+                            )
+                        }
                     }
                     if (node.friction != null) {
                         Spacer(Modifier.width(8.dp))
@@ -168,11 +180,17 @@ fun NodeCard(
                             "unclear" -> "UNCLEAR"
                             else -> node.friction!!
                         }
-                        Text(
-                            text = frictionLabel.uppercase(),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = TactileTheme.Primary
-                        )
+                        Surface(
+                            color = TactileTheme.Primary.copy(alpha = 0.1f),
+                            shape = RoundedCornerShape(4.dp)
+                        ) {
+                            Text(
+                                text = frictionLabel.uppercase(),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = TactileTheme.Primary,
+                                modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
+                            )
+                        }
                     }
                     if (node.status != "active" && node.status != "done") {
                         Spacer(Modifier.width(8.dp))
@@ -182,11 +200,17 @@ fun NodeCard(
                             "someday" -> TactileTheme.Muted
                             else -> TactileTheme.Primary
                         }
-                        Text(
-                            text = node.status.uppercase().replace("_", " "),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = statusColor
-                        )
+                        Surface(
+                            color = TactileTheme.Primary.copy(alpha = 0.1f),
+                            shape = RoundedCornerShape(4.dp)
+                        ) {
+                            Text(
+                                text = node.status.uppercase().replace("_", " "),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = statusColor,
+                                modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
+                            )
+                        }
                     }
                 }
                 if (!node.nextSmallestStep.isNullOrEmpty()) {
