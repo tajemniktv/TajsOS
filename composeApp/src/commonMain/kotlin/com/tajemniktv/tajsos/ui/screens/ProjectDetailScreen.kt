@@ -35,6 +35,14 @@ import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 import androidx.compose.ui.unit.sp
 
+private sealed interface ProjectDetailEvent {
+    data object OnBack : ProjectDetailEvent
+    data object OnEditNode : ProjectDetailEvent
+    data object OnToggleFreeze : ProjectDetailEvent
+    data object OnArchive : ProjectDetailEvent
+    data object OnShowStatusDialog : ProjectDetailEvent
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProjectDetailScreen(
@@ -67,18 +75,24 @@ fun ProjectDetailScreen(
         viewModel.setLastActiveContext(projectId, project.areaId)
     }
 
+    val handleEvent: (ProjectDetailEvent) -> Unit = { event ->
+        when (event) {
+            ProjectDetailEvent.OnBack -> onBack()
+            ProjectDetailEvent.OnEditNode -> onEditNode(projectId)
+            ProjectDetailEvent.OnToggleFreeze -> viewModel.updateNode(project.copy(isFrozen = !project.isFrozen))
+            ProjectDetailEvent.OnArchive -> {
+                viewModel.archiveNode(project)
+                onBack()
+            }
+            ProjectDetailEvent.OnShowStatusDialog -> showStatusDialog = true
+        }
+    }
+
     Scaffold(
         topBar = {
             ProjectTopBar(
                 project = project,
-                onBack = onBack,
-                onEditNode = { onEditNode(projectId) },
-                onToggleFreeze = { viewModel.updateNode(project.copy(isFrozen = !project.isFrozen)) },
-                onArchive = {
-                    viewModel.archiveNode(project)
-                    onBack()
-                },
-                onShowStatusDialog = { showStatusDialog = true }
+                onEvent = handleEvent
             )
         }
     ) { padding ->
@@ -89,8 +103,7 @@ fun ProjectDetailScreen(
             logs = logs,
             healthLabel = healthLabel,
             healthColor = healthColor,
-            onEditNode = onEditNode,
-            onShowStatusDialog = { showStatusDialog = true }
+            onEvent = handleEvent
         )
     }
 
@@ -134,11 +147,7 @@ private fun calculateHealthStatus(project: NodeEntity, nodes: List<NodeWithPin>)
 @Composable
 private fun ProjectTopBar(
     project: NodeEntity,
-    onBack: () -> Unit,
-    onEditNode: () -> Unit,
-    onToggleFreeze: () -> Unit,
-    onArchive: () -> Unit,
-    onShowStatusDialog: () -> Unit
+    onEvent: (ProjectDetailEvent) -> Unit
 ) {
     TopAppBar(
         title = {
@@ -149,7 +158,7 @@ private fun ProjectTopBar(
             )
         },
         navigationIcon = {
-            IconButton(onClick = onBack) {
+            IconButton(onClick = { onEvent(ProjectDetailEvent.OnBack) }) {
                 Icon(
                     Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = stringResource(Res.string.detail_back),
@@ -158,21 +167,21 @@ private fun ProjectTopBar(
             }
         },
         actions = {
-            IconButton(onClick = onShowStatusDialog) {
+            IconButton(onClick = { onEvent(ProjectDetailEvent.OnShowStatusDialog) }) {
                 Icon(
                     Icons.Default.Tune,
                     contentDescription = null,
                     modifier = Modifier.size(18.dp)
                 )
             }
-            IconButton(onClick = onEditNode) {
+            IconButton(onClick = { onEvent(ProjectDetailEvent.OnEditNode) }) {
                 Icon(
                     Icons.Default.Edit,
                     contentDescription = null,
                     modifier = Modifier.size(18.dp)
                 )
             }
-            IconButton(onClick = onToggleFreeze) {
+            IconButton(onClick = { onEvent(ProjectDetailEvent.OnToggleFreeze) }) {
                 Icon(
                     if (project.isFrozen) Icons.Default.AcUnit else Icons.Default.WbSunny,
                     contentDescription = null,
@@ -180,7 +189,7 @@ private fun ProjectTopBar(
                     modifier = Modifier.size(18.dp)
                 )
             }
-            IconButton(onClick = onArchive) {
+            IconButton(onClick = { onEvent(ProjectDetailEvent.OnArchive) }) {
                 Icon(
                     Icons.Default.Delete,
                     contentDescription = null,
@@ -205,8 +214,7 @@ private fun ProjectDetailContent(
     logs: List<EventLogEntity>,
     healthLabel: String,
     healthColor: androidx.compose.ui.graphics.Color,
-    onEditNode: (Long) -> Unit,
-    onShowStatusDialog: () -> Unit
+    onEvent: (ProjectDetailEvent) -> Unit
 ) {
     val total = nodesWithPinForProject.size
     val completed = nodesWithPinForProject.count { it.node.status == "done" }
@@ -236,7 +244,7 @@ private fun ProjectDetailContent(
             StatusCard(
                 status = healthLabel,
                 color = healthColor,
-                onClick = onShowStatusDialog
+                onClick = { onEvent(ProjectDetailEvent.OnShowStatusDialog) }
             )
         }
 
@@ -249,7 +257,7 @@ private fun ProjectDetailContent(
 
         ProjectPurposeSection(project)
 
-        ProjectNextActionsSection(nodesWithPinForProject, onEditNode)
+        ProjectNextActionsSection(nodesWithPinForProject, onEvent)
 
         ProjectTimelineSection(logs)
 
@@ -309,7 +317,7 @@ private fun ProjectPurposeSection(project: NodeEntity) {
 @Composable
 private fun ProjectNextActionsSection(
     nodesWithPinForProject: List<NodeWithPin>,
-    onEditNode: (Long) -> Unit
+    onEvent: (ProjectDetailEvent) -> Unit
 ) {
     val nextActions = nodesWithPinForProject.filter { it.node.status == "active" && it.node.type == "task" }
     if (nextActions.isNotEmpty()) {
@@ -320,7 +328,7 @@ private fun ProjectNextActionsSection(
                     title = item.node.title,
                     subtitle = item.node.nextSmallestStep ?: "Active Task",
                     icon = Icons.Default.CheckCircle,
-                    onClick = { onEditNode(item.node.id) }
+                    onClick = { onEvent(ProjectDetailEvent.OnEditNode) }
                 )
             }
         }
