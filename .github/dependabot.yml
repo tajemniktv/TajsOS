@@ -1,0 +1,68 @@
+# To get started with Dependabot version updates, you'll need to specify which
+# package ecosystems to update and where the package manifests are located.
+# Please see the documentation for all configuration options:
+# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+updates:
+  # Kotlin / Gradle-managed dependencies for the root project
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 6
+    labels:
+      - "dependencies"
+      - "dependabot"
+
+  # Kotlin / Gradle-managed dependencies for the androidapp module
+  - package-ecosystem: "gradle"
+    directory: "/androidapp"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 4
+    labels:
+      - "dependencies"
+      - "android"
+      - "dependabot"
+
+  # Version catalog (libs.versions.toml) — if your catalog is in gradle/libs.versions.toml
+  - package-ecosystem: "gradle"
+    directory: "/gradle"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 3
+    labels:
+      - "dependencies"
+      - "catalog"
+      - "dependabot"
+
+  # Gradle wrapper (keeps Gradle itself up-to-date)
+  - package-ecosystem: "gradle-wrapper"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    labels:
+      - "infra"
+      - "gradle-wrapper"
+
+  # GitHub Actions (CI/workflow action updates)
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 8
+    labels:
+      - "ci"
+      - "dependabot"
+
+  # Frontend (Astro / npm) — website lives in website/
+  - package-ecosystem: "npm"
+    directory: "/website"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "frontend"
+      - "dependabot"
