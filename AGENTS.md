@@ -61,6 +61,7 @@ When making meaningful changes, keep these current:
 - `README.md` for product and setup
 - `AGENTS.md` for agent behavior and project rules
 - `ROADMAP.md` for phased direction when scope evolves
+- `ARCHITECTURE.md` for understanding the application structural design and boundaries
 
 ---
 

@@ -151,7 +151,10 @@ fun AddCalendarDialog(
             }
         },
         confirmButton = {
-            Button(onClick = { onAdd(name, type, url) }) {
+            Button(
+                onClick = { onAdd(name, type, url) },
+                enabled = name.isNotBlank() && url.isNotBlank()
+            ) {
                 Text(stringResource(Res.string.cal_settings_dialog_add))
             }
         },
