@@ -42,7 +42,6 @@ class MainViewModelTest {
         Dispatchers.resetMain()
     }
 
-    // A customized NodeDao that lets us inject test nodes.
     class TestNodeDao(val testNodesFlow: Flow<List<NodeWithPin>>) : NodeDao {
         override fun getAllNodesWithPins(): Flow<List<NodeWithPin>> = testNodesFlow
         override fun getTodayNodes(date: String): Flow<List<NodeEntity>> = flowOf(emptyList())
@@ -58,9 +57,11 @@ class MainViewModelTest {
         override suspend fun unpinFromToday(nodeId: Long) {}
         override fun getNodesByArea(areaId: Long): Flow<List<NodeEntity>> = flowOf(emptyList())
         override fun isPinnedToToday(nodeId: Long): Flow<Boolean> = flowOf(false)
+        override fun getNodesByProjectWithPins(projectId: Long): Flow<List<NodeWithPin>> = flowOf(emptyList())
+        override fun getNodesByAreaWithPins(areaId: Long): Flow<List<NodeWithPin>> = flowOf(emptyList())
+        override fun getProjectsByArea(areaId: Long): Flow<List<NodeEntity>> = flowOf(emptyList())
     }
 
-    // Stubs for other Daos
     class StubFocusSessionDao : FocusSessionDao {
         override suspend fun insertSession(session: FocusSessionEntity): Long = 0
         override suspend fun updateSession(session: FocusSessionEntity) {}
@@ -70,7 +71,10 @@ class MainViewModelTest {
 
     class StubTrackDao : TrackDao {
         override fun getAllTrackEntries(): Flow<List<TrackEntryEntity>> = flowOf(emptyList())
-        override suspend fun insertTrackEntry(entry: TrackEntryEntity) {}
+        override suspend fun insertTrackEntry(entry: TrackEntryEntity): Long { return 0 }
+        override suspend fun getTrackEntryByDate(date: String): TrackEntryEntity? = null
+        override suspend fun insertTrackMedication(join: TrackMedicationJoinEntity) = Unit
+        override fun getTrackMedications(trackEntryId: Long): Flow<List<TrackMedicationJoinEntity>> = flowOf(emptyList())
     }
 
     class StubRelationDao : RelationDao {
@@ -79,6 +83,10 @@ class MainViewModelTest {
 
         override suspend fun insertRelation(relation: RelationEntity) {}
         override suspend fun deleteRelation(relation: RelationEntity) {}
+        override suspend fun deleteBelongsToRelations(nodeId: Long) = Unit
+        override suspend fun getBelongsToRelations(nodeId: Long): List<RelationEntity> = emptyList()
+        override suspend fun anyRelationExists(from: Long, to: Long): Boolean = false
+        override fun getAllRelations(): Flow<List<RelationEntity>> = flowOf(emptyList())
     }
 
     class StubTagDao : TagDao {
@@ -92,6 +100,7 @@ class MainViewModelTest {
     class StubEventLogDao : EventLogDao {
         override suspend fun insertLog(log: EventLogEntity) {}
         override fun getRecentLogs(limit: Int): Flow<List<EventLogEntity>> = flowOf(emptyList())
+        override fun getLogsForNode(nodeId: Long): Flow<List<EventLogEntity>> = flowOf(emptyList())
     }
 
     class StubAttachmentDao : AttachmentDao {
@@ -159,22 +168,28 @@ class MainViewModelTest {
             nodeSnapshotDao = FakeNodeSnapshotDao(),
             reviewDao = FakeReviewDao(),
             calendarProviderDao = FakeCalendarProviderDao(),
-            calendarEventDao = FakeCalendarEventDao()
+            calendarEventDao = FakeCalendarEventDao(),
+            modeDao = FakeModeDao(),
+            protocolDao = FakeProtocolDao(),
+            decisionDao = FakeDecisionDao(),
+            userDao = FakeUserDao(),
+            medicationDao = FakeMedicationDao()
         )
 
         val fakeDataStore = FakeDataStore()
         val testPrefs = PreferencesRepository(fakeDataStore)
+        val client = io.ktor.client.HttpClient()
+        val calendarManager = com.tajemniktv.tajsos.calendar.CalendarManager(testRepo, client)
 
-        val viewModel = MainViewModel(testRepo, testPrefs)
+        val viewModel = MainViewModel(testRepo, testPrefs, calendarManager)
 
-        // Let state flow initialization complete
         advanceTimeBy(100)
         runCurrent()
 
-        // Actually read the value to force StateFlow evaluation
         val nodes = viewModel.allNodes.value
 
         val exportJson = viewModel.exportDataJson()
+        client.close()
 
         assertTrue(exportJson.isNotEmpty(), "Export JSON should not be empty")
 

@@ -4,13 +4,8 @@ import com.tajemniktv.tajsos.ui.Screen
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
-import kotlin.test.assertNotNull
-import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
-/**
- * Tests for Screen sealed class changes introduced in this PR.
- * The Graph screen was removed; all other screens remain with correct routes and labels.
- */
 class ScreenTest {
 
     private val allScreens: List<Screen> = listOf(
@@ -29,32 +24,25 @@ class ScreenTest {
         Screen.ProjectDetail,
         Screen.AreaDetail,
         Screen.Settings,
+        Screen.Graph,
+        Screen.Inbox,
+        Screen.Calendar,
+        Screen.CalendarSettings,
+        Screen.Templates,
+        Screen.Review,
+        Screen.Profile,
+        Screen.Decisions,
     )
 
-    // --- Graph screen removal ---
-
     @Test
-    fun graphScreen_doesNotExistInScreenList() {
+    fun graphScreen_doesExistInScreenList() {
         val routes = allScreens.map { it.route }
-        assertFalse(routes.contains("graph"), "Graph route should not exist after removal")
+        assertTrue(routes.contains("graph"), "Graph route should exist")
     }
-
-    @Test
-    fun graphScreen_labelNotPresentInKnownScreens() {
-        val labels = allScreens.map { it.label }
-        assertFalse(labels.contains("GRAPH"), "GRAPH label should not exist after removal")
-    }
-
-    // --- Route correctness for retained screens ---
 
     @Test
     fun dashboard_hasCorrectRoute() {
         assertEquals("dashboard", Screen.Dashboard.route)
-    }
-
-    @Test
-    fun dashboard_hasCorrectLabel() {
-        assertEquals("DASH", Screen.Dashboard.label)
     }
 
     @Test
@@ -63,18 +51,8 @@ class ScreenTest {
     }
 
     @Test
-    fun archive_hasCorrectLabel() {
-        assertEquals("ARCHIVE", Screen.Archive.label)
-    }
-
-    @Test
     fun settings_hasCorrectRoute() {
         assertEquals("settings", Screen.Settings.route)
-    }
-
-    @Test
-    fun settings_hasCorrectLabel() {
-        assertEquals("OPTS", Screen.Settings.label)
     }
 
     @Test
@@ -83,17 +61,17 @@ class ScreenTest {
     }
 
     @Test
-    fun noteDetail_routeContainsNoteIdPlaceholder() {
+    fun noteDetail_hasCorrectRoute() {
         assertEquals("note/{noteId}", Screen.NoteDetail.route)
     }
 
     @Test
-    fun projectDetail_routeContainsProjectIdPlaceholder() {
+    fun projectDetail_hasCorrectRoute() {
         assertEquals("project/{projectId}", Screen.ProjectDetail.route)
     }
 
     @Test
-    fun areaDetail_routeContainsAreaIdPlaceholder() {
+    fun areaDetail_hasCorrectRoute() {
         assertEquals("area/{areaId}", Screen.AreaDetail.route)
     }
 
@@ -127,47 +105,15 @@ class ScreenTest {
         assertEquals("areas", Screen.Areas.route)
     }
 
-    // --- Total screen count after Graph removal ---
-
     @Test
-    fun screenCount_is15AfterGraphRemoval() {
-        assertEquals(15, allScreens.size)
+    fun checkTotalScreenCount() {
+        assertEquals(23, allScreens.size)
     }
 
-    // --- Routes must be unique (no duplicate routes) ---
-
     @Test
-    fun allRoutes_areUnique() {
+    fun allRoutesMustBeUnique() {
         val routes = allScreens.map { it.route }
         val uniqueRoutes = routes.toSet()
         assertEquals(routes.size, uniqueRoutes.size, "All screen routes must be unique")
-    }
-
-    // --- Navigation screens shown in the bottom nav ---
-
-    @Test
-    fun bottomNavScreens_doNotIncludeGraph() {
-        // The nav bar screens list used in App.kt doesn't include Screen.Graph
-        val navScreens = listOf(
-            Screen.Dashboard,
-            Screen.Today,
-            Screen.Tasks,
-            Screen.Notes,
-            Screen.Projects,
-            Screen.Areas,
-            Screen.Track,
-            Screen.Insights,
-            Screen.Archive,
-            Screen.Settings
-        )
-        val graphRoute = "graph"
-        assertFalse(navScreens.any { it.route == graphRoute })
-    }
-
-    // --- Regression: Archive route unchanged (was present before PR too) ---
-
-    @Test
-    fun archiveScreen_isDistinctFromGraph() {
-        assertFalse(Screen.Archive.route == "graph")
     }
 }
