@@ -1,0 +1,114 @@
+name: "CodeQL (TajsOS)"
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  schedule:
+    # weekly run (Sunday 02:00 UTC)
+    - cron: "0 2 * * 0"
+
+permissions:
+  actions: read
+  contents: read
+  security-events: write
+
+jobs:
+  analyze:
+    name: CodeQL analyze (java/kotlin + javascript)
+    runs-on: ubuntu-latest
+    env:
+      ANDROID_SDK_ROOT: ${{ runner.temp }}/android-sdk
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-cache-${{ runner.os }}-${{ hashFiles('**/*.gradle*','**/gradle-wrapper.properties','gradle/libs.versions.toml') }}
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: java-kotlin, javascript
+          # build-mode is manual because we run an explicit build step below to ensure proper bytecode extraction
+          build-mode: manual
+
+      - name: Install Android SDK if androidApp exists or compileSdk is present
+        run: |
+          set -euo pipefail
+          if [ -d "androidApp" ] || [ -d "androidapp" ] || grep -qE 'android-compileSdk\\s*=\\s*\"[0-9]+\"' gradle/libs.versions.toml 2>/dev/null; then
+            echo "Android module or compileSdk detected — installing Android SDK cmdline-tools."
+            mkdir -p "${ANDROID_SDK_ROOT}/cmdline-tools"
+            TMPDIR=$(mktemp -d)
+            cd "$TMPDIR"
+            curl -sSfL https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -o cmdline-tools.zip
+            unzip -q cmdline-tools.zip
+            mkdir -p "${ANDROID_SDK_ROOT}/cmdline-tools/latest"
+            mv cmdline-tools/* "${ANDROID_SDK_ROOT}/cmdline-tools/latest/" || true
+            export PATH="${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin:${PATH}"
+            yes | sdkmanager --licenses >/dev/null || true
+            sdkmanager --update
+
+            # derive compileSdk from gradle/libs.versions.toml, fallback to 33
+            COMPILE_SDK=$(grep -Eo 'android-compileSdk\\s*=\\s*\"[0-9]+\"' gradle/libs.versions.toml 2>/dev/null || true)
+            if [ -n "$COMPILE_SDK" ]; then
+              COMPILE_SDK=$(echo "$COMPILE_SDK" | sed -E 's/.*"([0-9]+)".*/\\1/')
+            else
+              COMPILE_SDK=33
+            fi
+            echo "Installing Android platform: platforms;android-${COMPILE_SDK}"
+            sdkmanager "platform-tools" "platforms;android-${COMPILE_SDK}" "build-tools;33.0.2" || true
+            cd -
+            rm -rf "$TMPDIR"
+          else
+            echo "No Android module or compileSdk detected — skipping Android SDK install."
+          fi
+
+      - name: Build Gradle projects (produce JVM/Kotlin bytecode)
+        run: |
+          # build everything via the wrapper; skip tests to speed up analysis
+          chmod +x ./gradlew
+          ./gradlew build -x test --no-daemon
+        env:
+          JAVA_HOME: ${{ runner.tool_cache }}/temurin/17
+
+      - name: Set up Node 22 (for website build)
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Cache npm for website
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: npm-cache-${{ runner.os }}-website-${{ hashFiles('website/package-lock.json', 'website/package.json') }}
+
+      - name: Build website (website/)
+        working-directory: website
+        run: |
+          if [ -f package.json ]; then
+            npm ci
+            npm run build --if-present
+          else
+            echo "No package.json found in website/: skipping website build."
+          fi
+
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: "codeql/tajsos"
