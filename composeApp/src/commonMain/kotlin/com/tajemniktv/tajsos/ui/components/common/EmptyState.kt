@@ -17,13 +17,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.*
 
 @Composable
 fun EmptyState(
     message: String,
     modifier: Modifier = Modifier,
     icon: ImageVector = Icons.Default.Info,
-    description: String? = "SYSTEM READY"
+    description: String? = stringResource(Res.string.empty_state_default_desc)
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "EmptyStatePulse")
     val alpha by infiniteTransition.animateFloat(

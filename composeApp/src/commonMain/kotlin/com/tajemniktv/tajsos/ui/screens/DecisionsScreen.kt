@@ -38,9 +38,9 @@ fun DecisionsScreen(
 ) {
     var selectedTab by remember { mutableIntStateOf(0) }
     val tabs = listOf(
-        "INBOX",
-        "PENDING",
-        "LOG"
+        stringResource(Res.string.decision_tab_inbox),
+        stringResource(Res.string.decision_tab_pending),
+        stringResource(Res.string.decision_tab_log)
     )
 
     val inbox by viewModel.decisionInbox.collectAsState()
@@ -100,7 +100,7 @@ fun DecisionsScreen(
             if (currentNodes.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text(
-                        "NO DECISIONS IN THIS CATEGORY",
+                        stringResource(Res.string.decision_no_decisions_category),
                         style = MaterialTheme.typography.labelSmall,
                         color = TactileTheme.Muted
                     )
@@ -139,7 +139,7 @@ fun DecisionItem(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         imageVector = if (node.decisionCategory == "major") Icons.Default.PriorityHigh else Icons.Default.Circle,
-                        contentDescription = null,
+                        contentDescription = if (node.decisionCategory == "major") stringResource(Res.string.cd_decision_major) else stringResource(Res.string.cd_decision_tiny),
                         tint = if (node.decisionCategory == "major") TactileTheme.Accent else TactileTheme.Muted,
                         modifier = Modifier.size(16.dp)
                     )
@@ -203,7 +203,7 @@ fun DecisionItem(
                     )
                     Spacer(modifier = Modifier.width(TactileTheme.SpacingSm))
                     Text(
-                        "OUTCOME: ${node.decisionOutcome}",
+                        stringResource(Res.string.decision_outcome_prefix, node.decisionOutcome ?: ""),
                         style = MaterialTheme.typography.labelSmall,
                         color = TactileTheme.Success,
                         fontWeight = FontWeight.Bold
