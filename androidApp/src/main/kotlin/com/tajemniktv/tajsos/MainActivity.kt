@@ -88,8 +88,9 @@ class MainActivity : FragmentActivity() {
             }
 
             LaunchedEffect(isAuthenticated, isBiometricEnabled, currentPendingIntent) {
-                if (currentPendingIntent != null && (isAuthenticated || isBiometricEnabled == false)) {
-                    handleIntent(currentPendingIntent!!)
+                val intentToHandle = currentPendingIntent ?: return@LaunchedEffect
+                if (isAuthenticated || isBiometricEnabled == false) {
+                    handleIntent(intentToHandle)
                     pendingIntent.value = null
                 }
             }
