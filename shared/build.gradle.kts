@@ -22,7 +22,7 @@ kotlin {
 
     iosArm64()
     iosSimulatorArm64()
-    
+
     jvm()
 
     // js {
@@ -38,6 +38,7 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.androidx.datastore.preferences)
             implementation(libs.ktor.client.okhttp)
+            implementation(libs.slf4j.android)
         }
         jvmMain.dependencies {
             implementation(libs.ktor.client.okhttp)
@@ -56,6 +57,8 @@ kotlin {
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
+            implementation(libs.compose.icons.core)
+            implementation(libs.compose.icons.extended)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

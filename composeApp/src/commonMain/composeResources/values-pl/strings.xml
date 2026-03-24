@@ -80,10 +80,10 @@
     <string name="dash_next_context">KOLEJNY KONTEKST</string>
     <string name="dash_view">WIDOK</string>
     <string name="dash_engage">ZAANGAŻUJ</string>
-    <string name="dash_inbox_overflow">%d ELEMENTÓW PRZEPEŁNIA SKRZYNKĘ</string>
-    <string name="dash_inbox_new">%d NOWYCH ELEMENTÓW DO PRZETWORZENIA</string>
-    <string name="dash_batch_suggestion">SUGESTIA GRUPOWANIA // %s</string>
-    <string name="dash_batch_desc">Masz %d zadań w %s. Pogrupować je?</string>
+    <string name="dash_inbox_overflow">%1$d ELEMENTÓW PRZEPEŁNIA SKRZYNKĘ</string>
+    <string name="dash_inbox_new">%1$d NOWYCH ELEMENTÓW DO PRZETWORZENIA</string>
+    <string name="dash_batch_suggestion">SUGESTIA GRUPOWANIA // %1$s</string>
+    <string name="dash_batch_desc">Masz %1$d zadań w %2$s. Pogrupować je?</string>
     <string name="dash_quick_wins">SZYBKIE ZWYCIĘSTWA</string>
     <string name="dash_deep_work">PRACA GŁĘBOKA // WYSOKA ENERGIA</string>
     <string name="dash_top_3">NAJWAŻNIEJSZA 3 NA DZIŚ</string>
@@ -93,10 +93,10 @@
     <string name="dash_pinned_knowledge">PRZYPIĘTA WIEDZA</string>
     <string name="dash_knowledge_vaults">SKARBCE WIEDZY</string>
     <string name="dash_read_later">DO PRZECZYTANIA</string>
-    <string name="dash_items_count">%d ELEMENTÓW</string>
+    <string name="dash_items_count">%1$d ELEMENTÓW</string>
     <string name="dash_quotes">CYTATY</string>
     <string name="dash_ideas">POMYSŁY</string>
-    <string name="dash_unset_count">%d NIEUSTAWIONYCH</string>
+    <string name="dash_unset_count">%1$d NIEUSTAWIONYCH</string>
     <string name="dash_upcoming_deadlines">NADCHODZĄCE TERMINY</string>
     <string name="dash_review_reset">PRZEGLĄD I RESET</string>
     <string name="dash_check_in">MELDUNEK</string>
@@ -106,13 +106,13 @@
     <string name="dash_module_waiting">OCZEKIWANIE</string>
     <string name="dash_module_logged">ZALOGOWANO</string>
     <string name="dash_module_pending">OCZEKUJE</string>
-    <string name="dash_module_tasks_count">%d ZADAŃ</string>
-    <string name="dash_module_total_count">%d ŁĄCZNIE</string>
-    <string name="dash_module_active_count">%d AKTYWNYCH</string>
-    <string name="dash_module_items_count">%d ELEMENTÓW</string>
+    <string name="dash_module_tasks_count">%1$d ZADAŃ</string>
+    <string name="dash_module_total_count">%1$d ŁĄCZNIE</string>
+    <string name="dash_module_active_count">%1$d AKTYWNYCH</string>
+    <string name="dash_module_items_count">%1$d ELEMENTÓW</string>
     <string name="dash_module_empty">PUSTO</string>
     <string name="dash_module_none">BRAK</string>
-    <string name="dash_history_last">OSTATNIO: %s</string>
+    <string name="dash_history_last">OSTATNIO: %1$s</string>
 
     <!-- Settings -->
     <string name="settings_title">USTAWIENIA</string>
@@ -125,7 +125,7 @@
     <string name="settings_manage_templates">ZARZĄDZAJ SZABLONAMI</string>
     <string name="settings_data_management">ZARZĄDZANIE DANYMI</string>
     <string name="settings_export_data">EKSPORTUJ DANE LOKALNE</string>
-    <string name="settings_export_success">Dane wyeksportowane (%d znaków)</string>
+    <string name="settings_export_success">Dane wyeksportowane (%1$d znaków)</string>
     <string name="settings_force_crash">WYMUŚ TESTOWĄ AWARIĘ</string>
 
     <!-- Inbox -->
@@ -156,7 +156,7 @@
     <string name="capture_interval_monthly">CO MIESIĄC</string>
     <string name="capture_assign_to_area">PRZYPISZ DO OBSZARU</string>
     <string name="capture_save_continue">ZAPISZ I KONTYNUUJ</string>
-    <string name="capture_save_type">ZAPISZ %s</string>
+    <string name="capture_save_type">ZAPISZ %1$s</string>
 
     <!-- Search -->
     <string name="search_placeholder">Szukaj elementów...</string>
@@ -164,7 +164,7 @@
     <string name="search_reset_filters">Resetuj filtry</string>
     <string name="search_filter_active">AKTYWNE</string>
     <string name="search_filter_archived">ZARCHIWIZOWANE</string>
-    <string name="search_filter_linked_to">POWIĄZANE Z: %s</string>
+    <string name="search_filter_linked_to">POWIĄZANE Z: %1$s</string>
     <string name="search_no_results">NIE ZNALEZIONO PASUJĄCYCH WYNIKÓW</string>
 
     <!-- Focus Screen -->
@@ -173,23 +173,43 @@
     <string name="focus_engage">ZAANGAŻUJ</string>
     <string name="focus_recent_sessions">OSTATNIE SESJE</string>
     <string name="focus_unknown_task">Nieznane zadanie</string>
-    <string name="focus_session_duration">sesja skupienia %dm %ds</string>
+    <string name="focus_session_duration">sesja skupienia %1$dm %2$ds</string>
 
     <!-- Track Screen -->
-    <string name="track_title">ŚLEDZENIE CODZIENNE</string>
-    <string name="track_subtitle">JAK DZISIAJ FUNKCJONUJESZ?</string>
-    <string name="track_label_energy">ENERGIA</string>
-    <string name="track_label_mood">NASTRÓJ</string>
-    <string name="track_label_focus">SKUPIENIE</string>
-    <string name="track_label_anxiety">STRES / NIEPOKÓJ</string>
-    <string name="track_label_sleep">SEN (GODZINY): %d</string>
-    <string name="track_meds">LEKI PRZYJĘTE</string>
-    <string name="track_observations_label">OBSERWACJE / OBJAWY</string>
-    <string name="track_observations_placeholder">Jakiś konkretny kontekst na dziś?</string>
+    <string name="track_title">ŚLEDZENIE CODZIENNE //</string>
+    <string name="track_subtitle">PULS SYSTEMU</string>
+    <string name="track_description">Potwierdź obecne stany poznawcze i biologiczne.</string>
+    <string name="track_label_energy_reserves">REZERWY_ENERGETYCZNE</string>
+    <string name="track_label_affective_state">STAN_AFEKTYWNY</string>
+    <string name="track_label_cognitive_lock">BLOKADA_POZNAWCZA</string>
+    <string name="track_label_system_tension">NAPIĘCIE_SYSTEMU</string>
+    <string name="track_label_recovery_cycles">CYKLE_REGENERACJI</string>
+    <string name="track_label_sleep_short">CYK_REG</string>
+    <string name="track_meds">LEKI</string>
+    <string name="track_medication_synk">SYNCHRONIZACJA_LEKÓW</string>
+    <string name="track_dosage_confirmed">DAWKA POTWIERDZONA</string>
+    <string name="track_bio_feedback">BIO_FEEDBACK</string>
+    <string name="track_sync_in_progress">SYNCHRONIZACJA W TOKU</string>
+    <string name="track_active">AKTYWNY</string>
+    <string name="track_observations_symptoms">OBSERWACJE // OBJAWY</string>
+    <string name="track_all_meds_taken">WSZYSTKIE LEKI PRZYJĘTE</string>
     <string name="track_save">ZAPISZ STATUS</string>
     <string name="track_history">HISTORIA</string>
     <string name="track_history_meds_ok">LEKI OK</string>
-    <string name="track_history_sleep">SEN: %dH</string>
+    <string name="track_history_sleep">REC: %1$.1fH</string>
+
+    <!-- Profile & Meds -->
+    <string name="profile_title">PROFIL_UŻYTKOWNIKA</string>
+    <string name="profile_name">NAZWA</string>
+    <string name="profile_medications">LEKI</string>
+    <string name="profile_add_med">DODAJ LEK</string>
+    <string name="med_substance">SUBSTANCJA</string>
+    <string name="med_brand_names">NAZWY HANDLOWE</string>
+    <string name="med_dosage">DAWKOWANIE</string>
+    <string name="med_take_at">PRZYJMIJ O (GODZINA)</string>
+    <string name="med_is_optional">OPCJONALNE</string>
+    <string name="med_save">ZAPISZ LEK</string>
+    <string name="med_delete">USUŃ</string>
 
     <!-- Insights Screen -->
     <string name="insights_title">ANALIZA I PRZEGLĄD</string>
@@ -201,14 +221,14 @@
     <string name="insights_focus_execution">SKUPIENIE I REALIZACJA</string>
     <string name="insights_total_hours">ŁĄCZNIE GODZIN</string>
     <string name="insights_avg_session_min">ŚREDNIA SESJA (MIN)</string>
-    <string name="insights_peak_focus">Szczyt skupienia o %s</string>
+    <string name="insights_peak_focus">Szczyt skupienia o %1$s</string>
     <string name="insights_efficiency_chaos">EFEKTYWNOŚĆ I CHAOS</string>
     <string name="insights_archive">ARCHIWUM</string>
     <string name="insights_postpones">PRZEŁOŻONE</string>
     <string name="insights_chaos">CHAOS</string>
-    <string name="insights_pressure">Presja: %s</string>
-    <string name="insights_switching">Przełączanie: %.1f</string>
-    <string name="insights_peak_completions">Szczyt realizacji o %s</string>
+    <string name="insights_pressure">Presja: %1$s</string>
+    <string name="insights_switching">Przełączanie: %1$s</string>
+    <string name="insights_peak_completions">Szczyt realizacji o %1$s</string>
     <string name="insights_intake_dynamics">DYNAMIKA WPŁYWU</string>
     <string name="insights_new_inbox_items">NOWE ELEMENTY SKRZYNKI</string>
     <string name="insights_unprocessed_rate">WSKAŹNIK NIEPRZETWORZONYCH</string>
@@ -216,16 +236,16 @@
     <string name="insights_context_stability">STABILNOŚĆ KONTEKSTU</string>
     <string name="insights_biometrics">BIOMETRIA</string>
     <string name="insights_lifestyle_correlations">KORELACJE STYLU ŻYCIA</string>
-    <string name="insights_avoidance_pattern">WZORZEC UNIKANIA: %d elementów przełożonych w dni o niskim nastroju.</string>
+    <string name="insights_avoidance_pattern">WZORZEC UNIKANIA: %1$d elementów przełożonych w dni o niskim nastroju.</string>
     <string name="insights_cards_title">KARTY ANALIZY</string>
     <string name="insights_friction_alert_title">ALERT TARCIA</string>
-    <string name="insights_friction_alert_msg">Najczęściej przekładasz elementy z obszaru %s. Czy jest tam ukryty bloker?</string>
+    <string name="insights_friction_alert_msg">Najczęściej przekładasz elementy z obszaru %1$s. Czy jest tam ukryty bloker?</string>
     <string name="insights_creative_peak_title">SZCZYT KREATYWNOŚCI</string>
-    <string name="insights_creative_peak_msg">Większość pomysłów przechwytujesz w: %s. Trzymaj wtedy narzędzie do zapisu pod ręką!</string>
+    <string name="insights_creative_peak_msg">Większość pomysłów przechwytujesz w: %1$s. Trzymaj wtedy narzędzie do zapisu pod ręką!</string>
     <string name="insights_stagnant_knowledge_title">STAGNACJA WIEDZY</string>
-    <string name="insights_stagnant_knowledge_msg">%s ma notatki, ale brak aktywnych zadań. Może czas na jakieś działania?</string>
+    <string name="insights_stagnant_knowledge_msg">%1$s ma notatki, ale brak aktywnych zadań. Może czas na jakieś działania?</string>
     <string name="insights_radar_drop_title">POZA RADAREM</string>
-    <string name="insights_radar_drop_msg">%s zniknął z radaru. Brak aktywności od 7 dni.</string>
+    <string name="insights_radar_drop_msg">%1$s zniknął z radaru. Brak aktywności od 7 dni.</string>
     <string name="insights_neglected_projects">ZANIEDBANE PROJEKTY</string>
     <string name="insights_high_entropy_projects">PROJEKTY O WYSOKIEJ ENTROPII</string>
     <string name="insights_recent_activity">OSTATNIA AKTYWNOŚĆ</string>
@@ -234,7 +254,7 @@
     <!-- Today Screen -->
     <string name="today_payload">ŁADUNEK NA DZIŚ</string>
     <string name="today_empty">NIE WYKRYTO ŁADUNKU // DZIEŃ JEST PUSTY</string>
-    <string name="today_slot_standby">SLOT %d // GOTOWOŚĆ</string>
+    <string name="today_slot_standby">SLOT %1$d // GOTOWOŚĆ</string>
 
     <!-- Archive Screen -->
     <string name="archive_title">ARCHIWUM</string>
@@ -280,7 +300,7 @@
     <string name="areas_dialog_cancel">ANULUJ</string>
 
     <!-- Calendar Screen -->
-    <string name="cal_agenda_title">AGENDA // %s</string>
+    <string name="cal_agenda_title">AGENDA // %1$s</string>
     <string name="cal_today">DZIŚ</string>
     <string name="cal_sync">Synchronizuj</string>
     <string name="cal_previous">Poprzedni</string>
@@ -320,7 +340,7 @@
     <string name="detail_area">Obszar</string>
     <string name="detail_back">Wróć</string>
     <string name="detail_save">Zapisz</string>
-    <string name="detail_not_found">Nie znaleziono notatki (ID: %d)</string>
+    <string name="detail_not_found">Nie znaleziono notatki (ID: %1$d)</string>
     <string name="detail_atomic_mode">Przełącz tryb atomowy</string>
     <string name="detail_create_snapshot">Utwórz migawkę</string>
     <string name="detail_versions">Wersje</string>
@@ -352,7 +372,7 @@
     <string name="detail_knowledge">WIEDZA</string>
     <string name="detail_note_type">Typ notatki</string>
     <string name="detail_progressive_state">Stan progresywny</string>
-    <string name="detail_stale_warning">Nie zaglądałeś tu od %d dni. Odświeżysz?</string>
+    <string name="detail_stale_warning">Nie zaglądałeś tu od %1$d dni. Odświeżysz?</string>
     <string name="detail_organization">ORGANIZACJA</string>
     <string name="detail_energy_required">Wymagana energia</string>
     <string name="detail_energy_low">NISKA ENERGIA</string>
@@ -361,9 +381,9 @@
     <string name="detail_not_set">NIEUSTAWIONE</string>
     <string name="detail_task_friction">Opór zadania</string>
     <string name="detail_time_estimate">Szacowany czas</string>
-    <string name="detail_estimate_mins">%d min</string>
+    <string name="detail_estimate_mins">%1$d min</string>
     <string name="detail_postpone_count">Licznik odłożeń</string>
-    <string name="detail_postpone_times">%d razy</string>
+    <string name="detail_postpone_times">%1$d razy</string>
     <string name="detail_unassigned">Nieprzypisane</string>
     <string name="detail_none">Brak</string>
     <string name="detail_project_why">"Dlaczego" projektu</string>
@@ -374,9 +394,9 @@
     <string name="detail_soft">MIĘKKI</string>
     <string name="detail_no_due_date">Brak terminu</string>
     <string name="detail_no_reminder">Brak przypomnienia</string>
-    <string name="detail_recurrence_interval">Interwał: %s</string>
+    <string name="detail_recurrence_interval">Interwał: %1$s</string>
     <string name="detail_one_time">Jednorazowe</string>
-    <string name="detail_last_updated">Ostatnia aktualizacja: %s</string>
+    <string name="detail_last_updated">Ostatnia aktualizacja: %1$s</string>
     <string name="detail_tag_dialog_title">Dodaj tag</string>
     <string name="detail_tag_new_placeholder">Nowy tag...</string>
     <string name="detail_tag_create">Utwórz tag</string>
@@ -407,8 +427,8 @@
     <string name="project_detail_freeze">Zamroź/Odmroź</string>
     <string name="project_detail_neglected">ZANIEDBANY</string>
     <string name="project_detail_frozen_msg">TEN PROJEKT JEST ZAMROŻONY // NIE OCZEKUJE SIĘ POSTĘPÓW</string>
-    <string name="project_detail_why">DLACZEGO: %s</string>
-    <string name="project_detail_progress">%d%% UKOŃCZONO // %d/%d ELEMENTÓW</string>
+    <string name="project_detail_why">DLACZEGO: %1$s</string>
+    <string name="project_detail_progress">%1$d%% UKOŃCZONO // %2$d/%3$d ELEMENTÓW</string>
     <string name="project_detail_next_actions">NASTĘPNE DZIAŁANIA</string>
     <string name="project_detail_no_tasks">Brak aktywnych zadań.</string>
     <string name="project_detail_linked_notes">POWIĄZANE NOTATKI</string>
@@ -418,7 +438,7 @@
 
     <!-- Area Detail -->
     <string name="area_detail_not_found">Nie znaleziono obszaru</string>
-    <string name="area_detail_neglected_tasks">%d ZANIEDBANYCH ZADAŃ W TYM OBSZARZE</string>
+    <string name="area_detail_neglected_tasks">%1$d ZANIEDBANYCH ZADAŃ W TYM OBSZARZE</string>
     <string name="area_detail_active_projects">AKTYWNE PROJEKTY</string>
     <string name="area_detail_recent_activity">BEZPOŚREDNIE ELEMENTY I OSTATNIA AKTYWNOŚĆ</string>
 

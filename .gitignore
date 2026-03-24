@@ -18,3 +18,8 @@ captures
 **/xcshareddata/WorkspaceSettings.xcsettings
 node_modules/
 shared/kotzilla.json
+.firebaserc
+plans/*
+.artifacts/*
+.env
+*.log

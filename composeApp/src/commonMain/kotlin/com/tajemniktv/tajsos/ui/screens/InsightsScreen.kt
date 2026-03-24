@@ -270,7 +270,10 @@ fun CompletionCard(captures: Int, completions: Int) {
         modifier = Modifier.fillMaxWidth(),
         color = TactileTheme.Surface,
         shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = androidx.compose.foundation.BorderStroke(1.dp, TactileTheme.Muted.copy(alpha = 0.2f))
+        border = androidx.compose.foundation.BorderStroke(
+            1.dp,
+            TactileTheme.Muted.copy(alpha = 0.2f)
+        )
     ) {
         Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
             Text(
@@ -285,7 +288,11 @@ fun CompletionCard(captures: Int, completions: Int) {
                 verticalAlignment = Alignment.Bottom
             ) {
                 Column {
-                    Text("$captures", style = MaterialTheme.typography.displaySmall, color = TactileTheme.Text)
+                    Text(
+                        "$captures",
+                        style = MaterialTheme.typography.displaySmall,
+                        color = TactileTheme.Text
+                    )
                     Text(
                         stringResource(Res.string.insights_captures),
                         style = MaterialTheme.typography.labelSmall,
@@ -293,7 +300,11 @@ fun CompletionCard(captures: Int, completions: Int) {
                     )
                 }
                 Column(horizontalAlignment = Alignment.End) {
-                    Text("$completions", style = MaterialTheme.typography.displaySmall, color = TactileTheme.Success)
+                    Text(
+                        "$completions",
+                        style = MaterialTheme.typography.displaySmall,
+                        color = TactileTheme.Success
+                    )
                     Text(
                         stringResource(Res.string.insights_completions),
                         style = MaterialTheme.typography.labelSmall,
@@ -319,7 +330,10 @@ fun FocusInsightCard(hours: Double, bestHour: Int, avgMin: Int) {
         modifier = Modifier.fillMaxWidth(),
         color = TactileTheme.Surface,
         shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = androidx.compose.foundation.BorderStroke(1.dp, TactileTheme.Muted.copy(alpha = 0.2f))
+        border = androidx.compose.foundation.BorderStroke(
+            1.dp,
+            TactileTheme.Muted.copy(alpha = 0.2f)
+        )
     ) {
         Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
             Text(
@@ -328,9 +342,16 @@ fun FocusInsightCard(hours: Double, bestHour: Int, avgMin: Int) {
                 color = TactileTheme.Primary
             )
             Spacer(Modifier.height(8.dp))
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
                 Column {
-                    Text("${((hours * 10).toInt() / 10.0)}", style = MaterialTheme.typography.displaySmall, color = TactileTheme.Text)
+                    Text(
+                        "${((hours * 10).toInt() / 10.0)}",
+                        style = MaterialTheme.typography.displaySmall,
+                        color = TactileTheme.Text
+                    )
                     Text(
                         stringResource(Res.string.insights_total_hours),
                         style = MaterialTheme.typography.labelSmall,
@@ -445,7 +466,11 @@ fun EfficiencyCard(
                 }
                 Column(horizontalAlignment = Alignment.End) {
                     Text(
-                        stringResource(Res.string.insights_switching, switching),
+                        stringResource(
+                            Res.string.insights_switching,
+                            // Pre-format to 1 decimal place as CMP formatter only supports %d and %s
+                            ((switching * 10).toInt() / 10.0).toString()
+                        ),
                         style = MaterialTheme.typography.bodySmall,
                         color = TactileTheme.Muted
                     )
@@ -619,7 +644,10 @@ fun StateAveragesCard(mood: Double, energy: Double, focus: Double) {
         modifier = Modifier.fillMaxWidth(),
         color = TactileTheme.Surface,
         shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = androidx.compose.foundation.BorderStroke(1.dp, TactileTheme.Muted.copy(alpha = 0.2f))
+        border = androidx.compose.foundation.BorderStroke(
+            1.dp,
+            TactileTheme.Muted.copy(alpha = 0.2f)
+        )
     ) {
         Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
             Text(
@@ -628,10 +656,13 @@ fun StateAveragesCard(mood: Double, energy: Double, focus: Double) {
                 color = TactileTheme.Primary
             )
             Spacer(Modifier.height(8.dp))
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                MetricItem(stringResource(Res.string.track_label_mood), mood)
-                MetricItem(stringResource(Res.string.track_label_energy), energy)
-                MetricItem(stringResource(Res.string.track_label_focus), focus)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                MetricItem(stringResource(Res.string.track_label_affective_state), mood)
+                MetricItem(stringResource(Res.string.track_label_energy_reserves), energy)
+                MetricItem(stringResource(Res.string.track_label_cognitive_lock), focus)
             }
         }
     }
@@ -663,7 +694,7 @@ fun CorrelationsCard(
             Spacer(Modifier.height(16.dp))
 
             CorrelationItem(
-                "${stringResource(Res.string.track_label_mood)} → ${stringResource(Res.string.insights_completions)}",
+                "${stringResource(Res.string.track_label_affective_state)} → ${stringResource(Res.string.insights_completions)}",
                 moodVsComp,
                 "Higher mood on productive days",
                 "Productive days don't affect mood"
@@ -675,10 +706,9 @@ fun CorrelationsCard(
             CorrelationItem(
                 "${
                     stringResource(
-                        Res.string.track_label_sleep,
-                        ""
+                        Res.string.track_label_recovery_cycles
                     )
-                } → ${stringResource(Res.string.track_label_focus)}",
+                } → ${stringResource(Res.string.track_label_cognitive_lock)}",
                 sleepVsFocus,
                 "Good sleep boosts focus time",
                 "Sleep doesn't seem to impact focus"
@@ -688,7 +718,7 @@ fun CorrelationsCard(
                 color = TactileTheme.Muted.copy(alpha = 0.1f)
             )
             CorrelationItem(
-                "${stringResource(Res.string.track_label_energy)} → ${stringResource(Res.string.insights_captures)}",
+                "${stringResource(Res.string.track_label_energy_reserves)} → ${stringResource(Res.string.insights_captures)}",
                 energyVsCapt,
                 "High energy leads to more capture",
                 "Capture rate is energy-independent"
@@ -698,7 +728,7 @@ fun CorrelationsCard(
                 color = TactileTheme.Muted.copy(alpha = 0.1f)
             )
             CorrelationItem(
-                "${stringResource(Res.string.track_meds)} → ${stringResource(Res.string.track_label_focus)}",
+                "${stringResource(Res.string.track_meds)} → ${stringResource(Res.string.track_label_cognitive_lock)}",
                 medsEffect,
                 "Medication improves your focus",
                 "No clear meds impact on focus"
@@ -731,7 +761,11 @@ fun CorrelationItem(label: String, value: Double, positiveMsg: String, neutralMs
 @Composable
 fun MetricItem(label: String, value: Double) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text("${((value * 10).toInt() / 10.0)}", style = MaterialTheme.typography.headlineMedium, color = TactileTheme.Text)
+        Text(
+            "${((value * 10).toInt() / 10.0)}",
+            style = MaterialTheme.typography.headlineMedium,
+            color = TactileTheme.Text
+        )
         Text(label, style = MaterialTheme.typography.labelSmall, color = TactileTheme.Muted)
     }
 }
@@ -777,7 +811,10 @@ fun NeglectedProjectItem(project: NodeEntity, onClick: () -> Unit) {
         modifier = Modifier.fillMaxWidth(),
         color = TactileTheme.Surface,
         shape = RoundedCornerShape(TactileTheme.RadiusSm),
-        border = androidx.compose.foundation.BorderStroke(1.dp, TactileTheme.Error.copy(alpha = 0.3f)),
+        border = androidx.compose.foundation.BorderStroke(
+            1.dp,
+            TactileTheme.Error.copy(alpha = 0.3f)
+        ),
         onClick = onClick
     ) {
         Row(
@@ -787,7 +824,11 @@ fun NeglectedProjectItem(project: NodeEntity, onClick: () -> Unit) {
             Icon(Icons.Default.Warning, contentDescription = null, tint = TactileTheme.Error)
             Spacer(Modifier.width(TactileTheme.SpacingMd))
             Column {
-                Text(project.title.uppercase(), style = MaterialTheme.typography.titleMedium, color = TactileTheme.Text)
+                Text(
+                    project.title.uppercase(),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = TactileTheme.Text
+                )
                 Text(
                     stringResource(Res.string.insights_needs_attention),
                     style = MaterialTheme.typography.labelSmall,

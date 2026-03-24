@@ -62,7 +62,7 @@ import tajsos.composeapp.generated.resources.*
 @Composable
 fun CaptureSheet(
     onDismiss: () -> Unit,
-    onCapture: (String, String, Long?, Long?, Boolean, String?, Long?, String?, Boolean) -> Unit,
+    onCapture: (String, String, Long?, Long?, Boolean, String?, Long?, String?, Boolean, String?) -> Unit,
     projects: List<NodeEntity> = emptyList(),
     areas: List<NodeEntity> = emptyList(),
     templates: List<com.tajemniktv.tajsos.data.TemplateEntity> = emptyList(),
@@ -82,6 +82,7 @@ fun CaptureSheet(
         }
     }
     var selectedType by remember { mutableStateOf("task") }
+    var decisionCategory by remember { mutableStateOf<String?>("major") }
     var selectedProjectId by remember { mutableStateOf<Long?>(defaultProjectId) }
     var selectedAreaId by remember { mutableStateOf<Long?>(defaultAreaId) }
 
@@ -195,7 +196,8 @@ fun CaptureSheet(
                                     recurringInterval,
                                     reminderTime,
                                     contextScreen,
-                                    isSticky
+                                    isSticky,
+                                    if (selectedType == "decision") decisionCategory else null
                                 )
                                 if (multiCaptureMode || brainDumpMode) {
                                     text = ""
@@ -227,12 +229,27 @@ fun CaptureSheet(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
                 ) {
-                    items(listOf("task", "note", "idea", "resource", "project", "area")) { type ->
+                    items(
+                        listOf(
+                            "task",
+                            "note",
+                            "idea",
+                            "resource",
+                            "open_loop",
+                            "decision",
+                            "maintenance",
+                            "project",
+                            "area"
+                        )
+                    ) { type ->
                         val typeLabel = when (type) {
                             "task" -> stringResource(Res.string.type_task)
                             "note" -> stringResource(Res.string.type_note)
                             "idea" -> stringResource(Res.string.type_idea)
                             "resource" -> stringResource(Res.string.type_resource)
+                            "open_loop" -> stringResource(Res.string.dash_open_loops)
+                            "decision" -> stringResource(Res.string.dash_decisions)
+                            "maintenance" -> stringResource(Res.string.dash_maintenance)
                             "project" -> stringResource(Res.string.type_project)
                             "area" -> stringResource(Res.string.type_area)
                             else -> type
@@ -280,7 +297,10 @@ fun CaptureSheet(
                         items(areas) { area ->
                             FilterChip(
                                 selected = selectedAreaId == area.id,
-                                onClick = { selectedAreaId = if (selectedAreaId == area.id) null else area.id },
+                                onClick = {
+                                    selectedAreaId =
+                                        if (selectedAreaId == area.id) null else area.id
+                                },
                                 label = { Text(area.title) },
                             )
                         }
@@ -297,7 +317,10 @@ fun CaptureSheet(
                         items(projects) { project ->
                             FilterChip(
                                 selected = selectedProjectId == project.id,
-                                onClick = { selectedProjectId = if (selectedProjectId == project.id) null else project.id },
+                                onClick = {
+                                    selectedProjectId =
+                                        if (selectedProjectId == project.id) null else project.id
+                                },
                                 label = { Text(project.title) },
                             )
                         }
@@ -429,7 +452,24 @@ fun CaptureSheet(
                                 color = TactileTheme.Muted,
                             )
                         }
-                        Spacer(Modifier.weight(1f))
+
+                        if (selectedType == "decision") {
+                            Row(
+                                modifier = Modifier.weight(1f),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)
+                            ) {
+                                listOf("tiny", "major").forEach { cat ->
+                                    FilterChip(
+                                        selected = decisionCategory == cat,
+                                        onClick = { decisionCategory = cat },
+                                        label = { Text(cat.uppercase()) }
+                                    )
+                                }
+                            }
+                        } else {
+                            Spacer(Modifier.weight(1f))
+                        }
                     }
                 }
             } else if (selectedType == "project" && areas.isNotEmpty()) {
@@ -442,7 +482,9 @@ fun CaptureSheet(
                     items(areas) { area ->
                         FilterChip(
                             selected = selectedAreaId == area.id,
-                            onClick = { selectedAreaId = if (selectedAreaId == area.id) null else area.id },
+                            onClick = {
+                                selectedAreaId = if (selectedAreaId == area.id) null else area.id
+                            },
                             label = { Text(area.title) },
                         )
                     }
@@ -461,7 +503,8 @@ fun CaptureSheet(
                             recurringInterval,
                             reminderTime,
                             contextScreen,
-                            isSticky
+                            isSticky,
+                            if (selectedType == "decision") decisionCategory else null
                         )
                         if (multiCaptureMode || brainDumpMode) {
                             text = ""

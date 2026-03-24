@@ -1,4 +1,7 @@
-﻿
+﻿/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
@@ -6,6 +9,10 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        create("release") {
+        }
+    }
     namespace = "com.tajemniktv.tajsos"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
@@ -41,9 +48,12 @@ dependencies {
     implementation(projects.shared)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.appcompat)
+    implementation(libs.material)
     implementation(libs.androidx.biometric)
     implementation(libs.androidx.datastore.preferences.core)
     implementation(libs.compose.ui)
+    implementation(libs.compose.icons.core)
+    implementation(libs.compose.icons.extended)
     implementation(libs.compose.material3)
     implementation(libs.compose.uiToolingPreview)
     debugImplementation(libs.compose.uiTooling)

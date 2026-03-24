@@ -4,27 +4,33 @@
 
 package com.tajemniktv.tajsos.ui.screens
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.CallSplit
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.automirrored.filled.LibraryBooks
-import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.automirrored.filled.*
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.*
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
@@ -34,32 +40,18 @@ import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 import kotlin.time.Clock
+import kotlin.time.Instant
 
 /**
- *
+ * Detailed view for a single node (Note, Idea, Task, etc.)
  */
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun NoteDetailScreen(
-    /**
-     *
-     */
     viewModel: MainViewModel,
-    /**
-     *
-     */
     noteId: Long,
-    /**
-     *
-     */
     onBack: () -> Unit,
-    /**
-     *
-     */
     onNavigateToNode: (Long) -> Unit,
-    /**
-     *
-     */
     onNavigateToSearch: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
@@ -105,10 +97,12 @@ fun NoteDetailScreen(
     var showReminderDialog by remember { mutableStateOf(false) }
     var showDueDialog by remember { mutableStateOf(false) }
     var showEstimateDialog by remember { mutableStateOf(false) }
-    var showPostponeDialog by remember { mutableStateOf(false) }
-    var showWhyDialog by remember { mutableStateOf(false) }
     var showMediaTypeDialog by remember { mutableStateOf(false) }
     var showRatingDialog by remember { mutableStateOf(false) }
+    var showMoreDialog by remember { mutableStateOf(false) }
+    var showEnergyDialog by remember { mutableStateOf(false) }
+    var showFrictionDialog by remember { mutableStateOf(false) }
+    var showRecurringDialog by remember { mutableStateOf(false) }
 
     val suggestions by viewModel.getNoteSuggestions(noteId).collectAsState(initial = emptyList())
 
@@ -116,124 +110,29 @@ fun NoteDetailScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    val typeLabel = when (node.type) {
-                        "task" -> stringResource(Res.string.type_task)
-                        "note" -> stringResource(Res.string.type_note)
-                        "idea" -> stringResource(Res.string.type_idea)
-                        "project" -> stringResource(Res.string.type_project)
-                        "area" -> stringResource(Res.string.type_area)
-                        else -> node.type
-                    }
-                    Text(typeLabel.uppercase(), style = MaterialTheme.typography.labelSmall)
+                    Text(
+                        "NEURAL_INTERFACE",
+                        style = MaterialTheme.typography.labelSmall,
+                        letterSpacing = 1.sp
+                    )
                 },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(Res.string.detail_back)
+                            contentDescription = stringResource(Res.string.detail_back),
+                            modifier = Modifier.size(18.dp)
                         )
                     }
                 },
                 actions = {
-                    if (node.type == "note" || node.type == "idea") {
-                        IconButton(onClick = { isAtomicMode = !isAtomicMode }) {
-                            Icon(
-                                if (isAtomicMode) Icons.Default.ZoomInMap else Icons.Default.ZoomOutMap,
-                                contentDescription = stringResource(Res.string.detail_atomic_mode),
-                                tint = if (isAtomicMode) TactileTheme.Primary else TactileTheme.Muted
-                            )
-                        }
-                        IconButton(onClick = {
-                            viewModel.createSnapshot(noteId)
-                        }) {
-                            Icon(
-                                Icons.Default.Save,
-                                contentDescription = stringResource(Res.string.detail_create_snapshot),
-                                tint = TactileTheme.Primary
-                            )
-                        }
-                        IconButton(onClick = { showSnapshotDialog = true }) {
-                            Icon(
-                                Icons.Default.History,
-                                contentDescription = stringResource(Res.string.detail_versions),
-                                tint = TactileTheme.Muted
-                            )
-                        }
-                        IconButton(onClick = { showMergeDialog = true }) {
-                            Icon(
-                                Icons.Default.Merge,
-                                contentDescription = stringResource(Res.string.detail_merge)
-                            )
-                        }
-                    }
-                    IconButton(onClick = {
-                        viewModel.togglePermanentPin(node)
-                    }) {
+                    IconButton(onClick = { viewModel.togglePermanentPin(node) }) {
                         Icon(
                             if (node.isPinned) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                            contentDescription = stringResource(Res.string.detail_favorite),
-                            tint = if (node.isPinned) TactileTheme.Primary else TactileTheme.Muted,
+                            contentDescription = null,
+                            tint = if (node.isPinned) TactileTheme.Primary else TactileTheme.Text,
+                            modifier = Modifier.size(18.dp)
                         )
-                    }
-                    if (node.inboxState) {
-                        IconButton(onClick = {
-                            viewModel.markAsProcessed(noteId)
-                        }) {
-                            Icon(
-                                Icons.Default.DoneAll,
-                                contentDescription = stringResource(Res.string.detail_process),
-                                tint = TactileTheme.Primary
-                            )
-                        }
-                    }
-                    if (node.type == "note" || node.type == "idea" || node.type == "task") {
-                        IconButton(onClick = {
-                            scope.launch {
-                                viewModel.getNodeById(noteId)?.let { original ->
-                                    val targetType = when (original.type) {
-                                        "note", "idea" -> {
-                                            // If it's already an idea/note, it can become a task or project seed
-                                            if (original.noteType == "idea") "project" else "task"
-                                        }
-                                        "task" -> "project"
-                                        else -> original.type
-                                    }
-                                    viewModel.updateNode(original.copy(type = targetType))
-                                }
-                            }
-                        }) {
-                            val icon = when (node.type) {
-                                "note" -> Icons.Default.CheckCircle
-                                "idea" -> Icons.Default.AccountTree
-                                "task" -> Icons.AutoMirrored.Filled.List
-                                else -> Icons.Default.Transform
-                            }
-                            Icon(
-                                icon,
-                                contentDescription = stringResource(Res.string.detail_convert)
-                            )
-                        }
-                    }
-                    if (node.type == "task") {
-                        IconButton(onClick = {
-                            scope.launch {
-                                viewModel.getNodeById(noteId)?.let { original ->
-                                    viewModel.addNode(
-                                        title = original.title,
-                                        content = original.content,
-                                        type = original.type,
-                                        projectId = original.projectId,
-                                        areaId = original.areaId,
-                                        inboxState = false
-                                    )
-                                }
-                            }
-                        }) {
-                            Icon(
-                                Icons.Default.Repeat,
-                                contentDescription = stringResource(Res.string.detail_repeat)
-                            )
-                        }
                     }
                     IconButton(onClick = {
                         scope.launch {
@@ -250,7 +149,8 @@ fun NoteDetailScreen(
                     }) {
                         Icon(
                             Icons.Default.ContentCopy,
-                            contentDescription = stringResource(Res.string.detail_duplicate)
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
                         )
                     }
                     IconButton(onClick = {
@@ -259,346 +159,312 @@ fun NoteDetailScreen(
                     }) {
                         Icon(
                             Icons.Default.Delete,
-                            contentDescription = stringResource(Res.string.detail_archive)
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                    IconButton(onClick = { showMoreDialog = true }) {
+                        Icon(
+                            Icons.Default.MoreVert,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
                         )
                     }
                 },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = TactileTheme.Background,
+                    titleContentColor = TactileTheme.Primary,
+                    navigationIconContentColor = TactileTheme.Text,
+                    actionIconContentColor = TactileTheme.Text
+                )
             )
         },
+        containerColor = TactileTheme.Background,
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { showRelationDialog = true },
+                containerColor = TactileTheme.Primary,
+                contentColor = TactileTheme.Background,
+                shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Icon(Icons.Default.Link, contentDescription = null)
+            }
+        }
     ) { padding ->
         Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-                    .padding(TactileTheme.SpacingMd)
-                    .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .background(TactileTheme.Background)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = TactileTheme.SpacingMd)
+                .padding(bottom = TactileTheme.SpacingMd),
+            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingLg)
         ) {
-            BasicTextField(
-                value = title,
-                onValueChange = {
-                    title = it
-                    viewModel.updateNode(node.copy(title = it))
-                },
-                textStyle = MaterialTheme.typography.headlineMedium.copy(color = TactileTheme.Text),
-                cursorBrush = SolidColor(TactileTheme.Primary),
-                modifier = Modifier.fillMaxWidth(),
-                decorationBox = { innerTextField ->
-                    if (title.isEmpty()) {
-                        Text(
-                            stringResource(Res.string.detail_untitled),
-                            style = MaterialTheme.typography.headlineMedium,
-                            color = TactileTheme.Muted
-                        )
-                    }
-                    innerTextField()
-                },
+            // Header
+            DetailHeader(
+                category = "DETAIL VIEW",
+                title = title
             )
 
-            // Tags Row
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                items(tags) { tag ->
-                    InputChip(
-                        selected = false,
-                        onClick = {
-                            viewModel.updateSearchQuery("#${tag.name}")
-                            onNavigateToSearch()
-                        },
-                        label = { Text(tag.name) },
-                        trailingIcon = {
-                            Icon(
-                                Icons.Default.Close,
-                                contentDescription = stringResource(Res.string.detail_remove_tag),
-                                modifier =
-                                    Modifier
-                                        .size(16.dp)
-                                        .clickable { viewModel.detachTagFromNode(noteId, tag.id) },
-                            )
-                        },
-                    )
-                }
-                item {
-                    IconButton(onClick = { showTagDialog = true }, modifier = Modifier.size(32.dp)) {
-                        Icon(
-                            Icons.Default.Add,
-                            contentDescription = stringResource(Res.string.detail_add_tag),
-                            tint = TactileTheme.Primary
+            ActionButton(
+                text = "NEW NODE",
+                onClick = {
+                    scope.launch {
+                        viewModel.addNode(
+                            title = "NEW NODE",
+                            type = "task",
+                            projectId = node.projectId,
+                            areaId = node.areaId
                         )
                     }
-                }
-            }
-
-            HorizontalDivider(color = TactileTheme.Muted.copy(alpha = 0.2f))
-
-            if (node.type == "task") {
-                Text(
-                    stringResource(Res.string.detail_next_step),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Primary
-                )
-                BasicTextField(
-                    value = node.nextSmallestStep ?: "",
-                    onValueChange = {
-                        viewModel.updateNode(node.copy(nextSmallestStep = it))
-                    },
-                    textStyle = MaterialTheme.typography.bodyMedium.copy(color = TactileTheme.Accent),
-                    cursorBrush = SolidColor(TactileTheme.Accent),
-                    modifier = Modifier.fillMaxWidth(),
-                    decorationBox = { innerTextField ->
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Box(Modifier.weight(1f)) {
-                                if (node.nextSmallestStep.isNullOrEmpty()) {
-                                    Text(
-                                        stringResource(Res.string.detail_next_step_placeholder),
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = TactileTheme.Muted
-                                    )
-                                }
-                                innerTextField()
-                            }
-                            if (node.nextSmallestStep.isNullOrBlank() && node.content.isNotBlank()) {
-                                IconButton(
-                                    onClick = { viewModel.extractNextStep(noteId) },
-                                    modifier = Modifier.size(24.dp)
-                                ) {
-                                    Icon(
-                                        Icons.Default.AutoFixHigh,
-                                        contentDescription = stringResource(Res.string.detail_auto_extract),
-                                        tint = TactileTheme.Accent,
-                                        modifier = Modifier.size(16.dp)
-                                    )
-                                }
-                            }
-                        }
-                    },
-                )
-                Spacer(Modifier.height(TactileTheme.SpacingSm))
-                HorizontalDivider(color = TactileTheme.Muted.copy(alpha = 0.1f))
-            }
-
-            if (node.status == "done") {
-                Text(
-                    stringResource(Res.string.detail_completion_note),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Success
-                )
-                BasicTextField(
-                    value = node.completionNote ?: "",
-                    onValueChange = {
-                        viewModel.updateNode(node.copy(completionNote = it))
-                    },
-                    textStyle = MaterialTheme.typography.bodyMedium.copy(color = TactileTheme.Success),
-                    cursorBrush = SolidColor(TactileTheme.Success),
-                    modifier = Modifier.fillMaxWidth(),
-                    decorationBox = { innerTextField ->
-                        if (node.completionNote.isNullOrEmpty()) {
-                            Text(
-                                stringResource(Res.string.detail_completion_placeholder),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = TactileTheme.Muted
-                            )
-                        }
-                    },
-                )
-                Spacer(Modifier.height(TactileTheme.SpacingSm))
-                HorizontalDivider(color = TactileTheme.Muted.copy(alpha = 0.1f))
-            }
-
-            BasicTextField(
-                value = content,
-                onValueChange = {
-                    content = it
-                    viewModel.updateNode(node.copy(content = it))
                 },
-                textStyle = if (isAtomicMode) {
-                    MaterialTheme.typography.titleLarge.copy(
-                        color = TactileTheme.Text,
-                        lineHeight = androidx.compose.ui.unit.TextUnit.Unspecified
-                    )
-                } else {
-                    MaterialTheme.typography.bodyLarge.copy(color = TactileTheme.Text)
-                },
-                cursorBrush = SolidColor(TactileTheme.Primary),
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .heightIn(min = if (isAtomicMode) 100.dp else 200.dp),
-                decorationBox = { innerTextField ->
-                    Box {
-                        if (content.isEmpty()) {
-                            Text(
-                                stringResource(Res.string.detail_start_writing),
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = TactileTheme.Muted
-                            )
-                        }
-                        innerTextField()
-
-                        if (node.type == "task" && content.lines()
-                                .any { it.trim().startsWith("-") || it.trim().startsWith("*") }
-                        ) {
-                            IconButton(
-                                onClick = { viewModel.splitIntoSubtasks(noteId) },
-                                modifier = Modifier.align(Alignment.TopEnd).padding(4.dp)
-                                    .size(24.dp)
-                            ) {
-                                Icon(
-                                    Icons.AutoMirrored.Filled.CallSplit,
-                                    contentDescription = stringResource(Res.string.detail_split_subtasks),
-                                    tint = TactileTheme.Primary,
-                                    modifier = Modifier.size(16.dp)
-                                )
-                            }
-                        }
-
-                        if ((node.type == "note" || node.type == "idea") && content.contains("# ")) {
-                            IconButton(
-                                onClick = {
-                                    viewModel.splitNote(noteId)
-                                    onBack()
-                                },
-                                modifier = Modifier.align(Alignment.TopEnd).padding(4.dp)
-                                    .size(24.dp)
-                            ) {
-                                Icon(
-                                    Icons.Default.DashboardCustomize,
-                                    contentDescription = stringResource(Res.string.detail_split_note),
-                                    tint = TactileTheme.Primary,
-                                    modifier = Modifier.size(16.dp)
-                                )
-                            }
-                        }
-                    }
-                },
+                containerColor = TactileTheme.Primary,
+                contentColor = TactileTheme.Background,
+                icon = Icons.Default.Add,
+                modifier = Modifier.fillMaxWidth()
             )
 
-            // Relations Section
-            if (relations.isNotEmpty() || suggestions.isNotEmpty()) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        stringResource(Res.string.detail_relationship_inspector),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Primary
-                    )
-                    TextButton(onClick = {
-                        viewModel.clearSearchFilters()
-                        viewModel.updateSearchLinkedToFilter(noteId)
-                        onNavigateToSearch()
-                    }) {
-                        Icon(
-                            Icons.Default.Search,
-                            contentDescription = null,
-                            modifier = Modifier.size(14.dp)
-                        )
-                        Spacer(Modifier.width(4.dp))
-                        Text(
-                            stringResource(Res.string.detail_find_all),
-                            style = MaterialTheme.typography.labelSmall
-                        )
-                    }
-                }
-
-                val nodesMap = remember(nodes) { nodes.associateBy { it.node.id } }
+            // Relationship Inspector
+            Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+                DetailSectionHeader(
+                    title = stringResource(Res.string.detail_relationship_inspector),
+                    icon = Icons.Default.Hub
+                )
 
                 val forwardLinks = relations.filter { it.fromNodeId == noteId }
                 val backLinks = relations.filter { it.toNodeId == noteId }
+                val nodesMap = remember(nodes) { nodes.associateBy { it.node.id } }
 
-                // Group by type
-                val groupedForward = forwardLinks.groupBy { it.relationType }
-
-                groupedForward.forEach { (type, typeRelations) ->
-                    Text(
-                        type,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Muted
-                    )
-                    typeRelations.forEach { relation ->
-                        val relatedId = relation.toNodeId
-                        val relatedNode = nodesMap[relatedId]?.node
-                        if (relatedNode != null) {
-                            RelationshipItem(relatedNode, type) { onNavigateToNode(relatedId) }
+                if (relations.isEmpty() && suggestions.isEmpty()) {
+                    ConnectionCard(text = "CONNECT NODE", onClick = { showRelationDialog = true })
+                } else {
+                    if (backLinks.isNotEmpty()) {
+                        Text(
+                            stringResource(Res.string.detail_backlinks).uppercase(),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = TactileTheme.Muted,
+                            fontSize = 8.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        backLinks.forEach { relation ->
+                            nodesMap[relation.fromNodeId]?.node?.let { relatedNode ->
+                                LinkedNodeItem(
+                                    title = relatedNode.title,
+                                    subtitle = "Linked context",
+                                    icon = when (relatedNode.type) {
+                                        "project" -> Icons.AutoMirrored.Filled.List
+                                        "area" -> Icons.Default.Work
+                                        else -> Icons.AutoMirrored.Filled.Article
+                                    },
+                                    onClick = { onNavigateToNode(relatedNode.id) }
+                                )
+                            }
                         }
                     }
-                }
 
-                if (backLinks.isNotEmpty()) {
-                    Text(
-                        stringResource(Res.string.detail_backlinks),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Accent
-                    )
-                    backLinks.forEach { relation ->
-                        val relatedId = relation.fromNodeId
-                        val relatedNode = nodesMap[relatedId]?.node
-                        if (relatedNode != null) {
-                            RelationshipItem(
-                                relatedNode,
-                                "INCOMING"
-                            ) { onNavigateToNode(relatedId) }
+                    forwardLinks.forEach { relation ->
+                        nodesMap[relation.toNodeId]?.node?.let { relatedNode ->
+                            LinkedNodeItem(
+                                title = relatedNode.title,
+                                subtitle = relation.relationType,
+                                icon = when (relatedNode.type) {
+                                    "task" -> Icons.Default.CheckCircle
+                                    "project" -> Icons.AutoMirrored.Filled.List
+                                    else -> Icons.AutoMirrored.Filled.Article
+                                },
+                                onClick = { onNavigateToNode(relatedNode.id) }
+                            )
                         }
                     }
                 }
             }
 
-            // Suggestions Section
-            if ((node.type == "note" || node.type == "idea") && suggestions.isNotEmpty()) {
-                Spacer(Modifier.height(TactileTheme.SpacingSm))
-                Text(
-                    stringResource(Res.string.detail_suggestions),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Muted
+            // Status Card
+            StatusCard(
+                status = node.status,
+                color = when (node.status) {
+                    "active" -> TactileTheme.Success
+                    "done" -> TactileTheme.Primary
+                    "archived" -> TactileTheme.Muted
+                    "blocked" -> TactileTheme.Error
+                    else -> TactileTheme.Accent
+                },
+                onClick = { showStatusDialog = true }
+            )
+
+            if (node.type == "decision") {
+                DecisionDetailContent(
+                    viewModel = viewModel,
+                    node = node,
+                    onNavigateToProject = { id ->
+                        onNavigateToNode(id)
+                    }
                 )
-                suggestions.forEach { suggestion ->
+            }
+
+            // Info Grid (Due Date & Reminder)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)
+            ) {
+                InfoCard(
+                    title = "DUE AT",
+                    value = node.dueAt?.let {
+                        Instant.fromEpochMilliseconds(it)
+                            .toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
+                    } ?: "None",
+                    icon = Icons.Default.CalendarToday,
+                    modifier = Modifier.weight(1f),
+                    onClick = { showDueDialog = true }
+                )
+                InfoCard(
+                    title = "REMINDER",
+                    value = node.reminderAt?.let { "Set" } ?: "None",
+                    icon = Icons.Default.Notifications,
+                    modifier = Modifier.weight(1f),
+                    onClick = { showReminderDialog = true }
+                )
+            }
+
+            // Task Specific Metadata
+            if (node.type == "task") {
+                Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+                    DetailSectionHeader(
+                        title = "OPERATIONAL METADATA",
+                        icon = Icons.Default.Settings
+                    )
+
                     Surface(
-                        onClick = { onNavigateToNode(suggestion.node.id) },
-                        color = TactileTheme.Surface.copy(alpha = 0.5f),
-                        shape = MaterialTheme.shapes.small,
                         modifier = Modifier.fillMaxWidth(),
+                        color = TactileTheme.Surface,
+                        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                        border = BorderStroke(1.dp, TactileTheme.Border)
                     ) {
-                        Row(
-                            modifier = Modifier.padding(TactileTheme.SpacingMd),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                when (suggestion.node.type) {
-                                    "idea" -> Icons.Default.Lightbulb
-                                    "project" -> Icons.Default.AccountTree
-                                    else -> Icons.Default.Description
-                                },
-                                contentDescription = null,
-                                tint = TactileTheme.Muted,
-                                modifier = Modifier.size(16.dp),
-                            )
-                            Spacer(Modifier.width(8.dp))
-                            Text(
-                                suggestion.node.title,
-                                style = MaterialTheme.typography.bodySmall,
-                                color = TactileTheme.Muted,
-                                modifier = Modifier.weight(1f)
-                            )
-                            IconButton(
-                                onClick = {
-                                    viewModel.addRelation(
-                                        noteId,
-                                        suggestion.node.id,
-                                        "RELATED"
-                                    )
-                                },
-                                modifier = Modifier.size(24.dp)
+                        Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Icon(
-                                    Icons.Default.AddLink,
-                                    contentDescription = stringResource(Res.string.detail_link_node),
-                                    tint = TactileTheme.Primary,
-                                    modifier = Modifier.size(16.dp)
+                                Column(modifier = Modifier.weight(1f).clickable {
+                                    showEnergyDialog = true
+                                }) {
+                                    Text(
+                                        "ENERGY",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = TactileTheme.Muted,
+                                        fontSize = 8.sp
+                                    )
+                                    Text(
+                                        when (node.energyLevel) {
+                                            1 -> "LOW"
+                                            2 -> "MED"
+                                            3 -> "HIGH"
+                                            else -> "NOT SET"
+                                        },
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        color = when (node.energyLevel) {
+                                            1 -> TactileTheme.Success
+                                            2 -> TactileTheme.Primary
+                                            3 -> TactileTheme.Error
+                                            else -> TactileTheme.Text
+                                        }
+                                    )
+                                }
+                                Column(modifier = Modifier.weight(1f).clickable {
+                                    showFrictionDialog = true
+                                }) {
+                                    Text(
+                                        "FRICTION",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = TactileTheme.Muted,
+                                        fontSize = 8.sp
+                                    )
+                                    Text(
+                                        (node.friction ?: "STANDARD").uppercase().replace("_", " "),
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
+
+                            Spacer(Modifier.height(12.dp))
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Column(
+                                    modifier = Modifier.weight(1f)
+                                        .clickable { showEstimateDialog = true }) {
+                                    Text(
+                                        "ESTIMATE",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = TactileTheme.Muted,
+                                        fontSize = 8.sp
+                                    )
+                                    Text(node.estimatedMinutes?.let { "$it min" } ?: "NOT SET",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        fontWeight = FontWeight.Bold)
+                                }
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Text(
+                                            "CRITICAL",
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = TactileTheme.Muted,
+                                            fontSize = 8.sp
+                                        )
+                                        Spacer(Modifier.width(8.dp))
+                                        Switch(
+                                            checked = node.isHardDeadline,
+                                            onCheckedChange = {
+                                                viewModel.updateNode(
+                                                    node.copy(
+                                                        isHardDeadline = it
+                                                    )
+                                                )
+                                            },
+                                            modifier = Modifier.scale(0.6f)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (node.nextSmallestStep != null) {
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            color = TactileTheme.Accent.copy(alpha = 0.1f),
+                            shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                            border = BorderStroke(1.dp, TactileTheme.Accent.copy(alpha = 0.3f))
+                        ) {
+                            Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+                                Text(
+                                    "NEXT SMALLEST STEP",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = TactileTheme.Accent,
+                                    fontSize = 8.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                BasicTextField(
+                                    value = node.nextSmallestStep!!,
+                                    onValueChange = {
+                                        viewModel.updateNode(
+                                            node.copy(
+                                                nextSmallestStep = it
+                                            )
+                                        )
+                                    },
+                                    textStyle = MaterialTheme.typography.bodyMedium.copy(
+                                        color = TactileTheme.Text,
+                                        fontWeight = FontWeight.Medium
+                                    ),
+                                    cursorBrush = SolidColor(TactileTheme.Accent),
+                                    modifier = Modifier.fillMaxWidth()
                                 )
                             }
                         }
@@ -606,667 +472,568 @@ fun NoteDetailScreen(
                 }
             }
 
-            Button(
-                onClick = {
-                    showRelationDialog = true
-                },
-                modifier = Modifier.fillMaxWidth(),
-                colors =
-                    ButtonDefaults.buttonColors(
-                        containerColor = TactileTheme.Surface,
-                        contentColor = TactileTheme.Primary,
-                    ),
-            ) {
-                Icon(Icons.Default.Link, contentDescription = null)
-                Spacer(Modifier.width(8.dp))
-                Text(stringResource(Res.string.detail_link_node))
-            }
+            // Resource Specific Metadata
+            if (node.type == "resource") {
+                Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+                    DetailSectionHeader(
+                        title = "RESOURCE DATA",
+                        icon = Icons.AutoMirrored.Filled.LibraryBooks
+                    )
 
-            // Attachments Section
-            if (attachments.isNotEmpty()) {
-                Text(
-                    stringResource(Res.string.detail_attachments),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Primary
-                )
-                attachments.forEach { attachment ->
-                    ListItem(
-                        headlineContent = { Text(attachment.title ?: attachment.uriOrPath) },
-                        supportingContent = { Text(attachment.assetType) },
-                        leadingContent = { Icon(Icons.Default.FilePresent, contentDescription = null) },
-                        trailingContent = {
-                            IconButton(onClick = { viewModel.deleteAttachment(attachment) }) {
-                                Icon(
-                                    Icons.Default.Delete,
-                                    contentDescription = stringResource(Res.string.detail_remove_attachment),
-                                    tint = TactileTheme.Error,
+                    Surface(
+                        modifier = Modifier.fillMaxWidth(),
+                        color = TactileTheme.Surface,
+                        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                        border = BorderStroke(1.dp, TactileTheme.Border)
+                    ) {
+                        Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Column(
+                                    modifier = Modifier.weight(1f)
+                                        .clickable { showMediaTypeDialog = true }) {
+                                    Text(
+                                        "MEDIA TYPE",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = TactileTheme.Muted,
+                                        fontSize = 8.sp
+                                    )
+                                    Text(
+                                        (node.mediaType ?: "Link").uppercase(),
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                                Column(
+                                    modifier = Modifier.weight(1f)
+                                        .clickable { showRatingDialog = true }) {
+                                    Text(
+                                        "RATING",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = TactileTheme.Muted,
+                                        fontSize = 8.sp
+                                    )
+                                    Text(
+                                        if (node.rating != null) "⭐".repeat(node.rating!!) else "UNRATED",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
+                            Spacer(Modifier.height(12.dp))
+                            Column {
+                                Text(
+                                    "AUTHOR / SOURCE",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = TactileTheme.Muted,
+                                    fontSize = 8.sp
+                                )
+                                BasicTextField(
+                                    value = node.author ?: "",
+                                    onValueChange = { viewModel.updateNode(node.copy(author = it)) },
+                                    textStyle = MaterialTheme.typography.bodyMedium.copy(
+                                        color = TactileTheme.Text,
+                                        fontWeight = FontWeight.Bold
+                                    ),
+                                    modifier = Modifier.fillMaxWidth()
                                 )
                             }
-                        },
-                        colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
-                    )
+                        }
+                    }
                 }
             }
-            Button(
-                onClick = {
-                    viewModel.addAttachment(noteId, "URL", "https://example.com", "Example Link")
-                },
-                modifier = Modifier.fillMaxWidth(),
-                colors =
-                    ButtonDefaults.buttonColors(
-                        containerColor = TactileTheme.Surface,
-                        contentColor = TactileTheme.Primary,
-                    ),
-            ) {
-                Icon(Icons.Default.Add, contentDescription = null)
-                Spacer(Modifier.width(8.dp))
-                Text(stringResource(Res.string.detail_add_link))
-            }
 
-            Spacer(modifier = Modifier.height(TactileTheme.SpacingLg))
-
-            if (node.type == "note" || node.type == "idea") {
-                Text(
-                    stringResource(Res.string.detail_knowledge),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Primary
-                )
-
-                ListItem(
-                    headlineContent = { Text(stringResource(Res.string.detail_note_type)) },
-                    supportingContent = { Text((node.noteType ?: "standard").uppercase()) },
-                    modifier = Modifier.clickable { showNoteTypeDialog = true },
-                    colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
-                    trailingContent = {
-                        Icon(
-                            when (node.noteType) {
-                                "thought" -> Icons.Default.Psychology
-                                "idea" -> Icons.Default.Lightbulb
-                                "lecture" -> Icons.Default.School
-                                "research" -> Icons.Default.Search
-                                "reflection" -> Icons.Default.SelfImprovement
-                                "bug" -> Icons.Default.BugReport
-                                "concept" -> Icons.Default.Category
-                                "evergreen" -> Icons.Default.Park
-                                else -> Icons.Default.Description
-                            },
-                            contentDescription = null,
-                            tint = TactileTheme.Primary
-                        )
-                    }
-                )
-
-                ListItem(
-                    headlineContent = { Text(stringResource(Res.string.detail_progressive_state)) },
-                    supportingContent = { Text((node.noteState ?: "raw").uppercase()) },
-                    modifier = Modifier.clickable { showNoteStateDialog = true },
-                    colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
-                    trailingContent = {
-                        Icon(
-                            when (node.noteState) {
-                                "raw" -> Icons.Default.Description
-                                "highlighted" -> Icons.Default.FormatQuote
-                                "distilled" -> Icons.Default.FilterAlt
-                                "takeaway" -> Icons.Default.Star
-                                else -> Icons.Default.HistoryEdu
-                            },
-                            contentDescription = null,
-                            tint = TactileTheme.Accent
-                        )
-                    }
-                )
-
-                val daysSinceUpdate = (Clock.System.now()
-                    .toEpochMilliseconds() - node.updatedAt) / (1000 * 60 * 60 * 24)
-                if (daysSinceUpdate > 30) {
-                    Surface(
-                        color = TactileTheme.Error.copy(alpha = 0.1f),
-                        shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
+            // Context Graph (Tags)
+            if (tags.isNotEmpty() || showTagDialog) {
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    color = Color.Black.copy(alpha = 0.3f),
+                    shape = RoundedCornerShape(TactileTheme.RadiusLg),
+                    border = BorderStroke(1.dp, TactileTheme.Border.copy(alpha = 0.5f))
+                ) {
+                    Column(modifier = Modifier.padding(TactileTheme.SpacingLg)) {
                         Row(
-                            modifier = Modifier.padding(TactileTheme.SpacingMd),
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Icon(
-                                Icons.Default.Warning,
-                                contentDescription = null,
-                                tint = TactileTheme.Error,
-                                modifier = Modifier.size(16.dp)
-                            )
-                            Spacer(Modifier.width(8.dp))
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Box(
+                                    modifier = Modifier.size(32.dp)
+                                        .background(TactileTheme.Surface, RoundedCornerShape(8.dp)),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        Icons.Default.Psychology,
+                                        null,
+                                        tint = TactileTheme.Primary,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                }
+                                Spacer(Modifier.width(12.dp))
+                                Text(
+                                    "Context Graph",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                            Surface(
+                                color = TactileTheme.Surface,
+                                shape = CircleShape,
+                                border = BorderStroke(1.dp, TactileTheme.Border)
+                            ) {
+                                Text(
+                                    "${tags.size} Tags",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
+                                    color = TactileTheme.Muted
+                                )
+                            }
+                        }
+
+                        Spacer(Modifier.height(TactileTheme.SpacingLg))
+
+                        FlowRow(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            tags.forEach { tag ->
+                                AssistChip(
+                                    onClick = { viewModel.updateSearchQuery("#${tag.name}"); onNavigateToSearch() },
+                                    label = { Text(tag.name) },
+                                    trailingIcon = {
+                                        Icon(
+                                            Icons.Default.Close,
+                                            null,
+                                            modifier = Modifier.size(14.dp).clickable {
+                                                viewModel.detachTagFromNode(
+                                                    noteId,
+                                                    tag.id
+                                                )
+                                            }
+                                        )
+                                    },
+                                    colors = AssistChipDefaults.assistChipColors(
+                                        containerColor = TactileTheme.Surface,
+                                        labelColor = TactileTheme.Text
+                                    ),
+                                    shape = RoundedCornerShape(TactileTheme.RadiusSm)
+                                )
+                            }
+                            IconButton(
+                                onClick = { showTagDialog = true },
+                                modifier = Modifier.size(32.dp)
+                            ) {
+                                Icon(Icons.Default.Add, null, tint = TactileTheme.Primary)
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Cadence / Recurring
+            Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    color = TactileTheme.Surface,
+                    shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                    border = BorderStroke(1.dp, TactileTheme.Border)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(TactileTheme.SpacingMd),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            Icons.Default.Repeat,
+                            null,
+                            tint = TactileTheme.Muted,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(Modifier.width(TactileTheme.SpacingMd))
+                        Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                stringResource(Res.string.detail_stale_warning, daysSinceUpdate),
+                                "RECURRING SCHEDULE",
                                 style = MaterialTheme.typography.labelSmall,
-                                color = TactileTheme.Error
+                                color = TactileTheme.Muted,
+                                fontSize = 8.sp,
+                                fontWeight = FontWeight.Bold
                             )
-                        }
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
-            }
-
-            if (node.type == "resource") {
-                Text(
-                    stringResource(Res.string.detail_media),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Primary
-                )
-
-                ListItem(
-                    headlineContent = { Text(stringResource(Res.string.detail_media_type)) },
-                    supportingContent = { Text((node.mediaType ?: "link").uppercase()) },
-                    modifier = Modifier.clickable { showMediaTypeDialog = true },
-                    colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
-                    trailingContent = {
-                        Icon(
-                            when (node.mediaType) {
-                                "book" -> Icons.AutoMirrored.Filled.LibraryBooks
-                                "article" -> Icons.Default.Description
-                                "podcast" -> Icons.Default.Podcasts
-                                "video" -> Icons.Default.PlayCircle
-                                else -> Icons.Default.Link
-                            },
-                            contentDescription = null,
-                            tint = TactileTheme.Primary
-                        )
-                    }
-                )
-
-                ListItem(
-                    headlineContent = { Text(stringResource(Res.string.detail_author)) },
-                    supportingContent = {
-                        BasicTextField(
-                            value = node.author ?: "",
-                            onValueChange = { viewModel.updateNode(node.copy(author = it)) },
-                            textStyle = MaterialTheme.typography.bodyMedium.copy(color = TactileTheme.Text),
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    },
-                    colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
-                )
-
-                ListItem(
-                    headlineContent = { Text(stringResource(Res.string.detail_publisher)) },
-                    supportingContent = {
-                        BasicTextField(
-                            value = node.publisher ?: "",
-                            onValueChange = { viewModel.updateNode(node.copy(publisher = it)) },
-                            textStyle = MaterialTheme.typography.bodyMedium.copy(color = TactileTheme.Text),
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    },
-                    colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
-                )
-
-                ListItem(
-                    headlineContent = { Text(stringResource(Res.string.detail_rating)) },
-                    supportingContent = {
-                        Text(
-                            if (node.rating != null) stringResource(
-                                Res.string.detail_stars,
-                                node.rating!!
-                            )
-                            else stringResource(Res.string.detail_not_set)
-                        )
-                    },
-                    modifier = Modifier.clickable { showRatingDialog = true },
-                    colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
-                    trailingContent = {
-                        Icon(
-                            Icons.Default.Star,
-                            contentDescription = null,
-                            tint = TactileTheme.Primary
-                        )
-                    }
-                )
-
-                Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
-            }
-
-            Text(
-                stringResource(Res.string.detail_organization),
-                style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary
-            )
-
-            ListItem(
-                headlineContent = { Text(stringResource(Res.string.detail_status)) },
-                supportingContent = { Text(node.status.uppercase()) },
-                modifier = Modifier.clickable { showStatusDialog = true },
-                colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
-            )
-
-            if (node.type == "task") {
-                ListItem(
-                    headlineContent = { Text(stringResource(Res.string.detail_energy_required)) },
-                    supportingContent = {
-                        Text(
-                            when (node.energyLevel) {
-                                1 -> stringResource(Res.string.detail_energy_low)
-                                2 -> stringResource(Res.string.detail_energy_med)
-                                3 -> stringResource(Res.string.detail_energy_high)
-                                else -> stringResource(Res.string.detail_not_set)
-                            }
-                        )
-                    },
-                    modifier = Modifier.clickable {
-                        val nextLevel = ((node.energyLevel ?: 0) % 3) + 1
-                        viewModel.updateNode(node.copy(energyLevel = nextLevel))
-                    },
-                    colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
-                    trailingContent = {
-                        Icon(
-                            Icons.Default.BatteryChargingFull,
-                            contentDescription = null,
-                            tint = when (node.energyLevel) {
-                                1 -> TactileTheme.Success
-                                2 -> TactileTheme.Primary
-                                3 -> TactileTheme.Error
-                                else -> TactileTheme.Muted
-                            }
-                        )
-                    }
-                )
-
-                ListItem(
-                    headlineContent = { Text(stringResource(Res.string.detail_task_friction)) },
-                    supportingContent = {
-                        Text(
-                            (node.friction ?: stringResource(Res.string.detail_not_set)).uppercase()
-                                .replace("_", " ")
-                        )
-                    },
-                    modifier = Modifier.clickable {
-                        val frictions = listOf("easy", "annoying", "mentally_heavy", "unclear")
-                        val currentIdx = frictions.indexOf(node.friction)
-                        val nextFriction = frictions[(currentIdx + 1) % frictions.size]
-                        viewModel.updateNode(node.copy(friction = nextFriction))
-                    },
-                    colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
-                    trailingContent = {
-                        Icon(
-                            when (node.friction) {
-                                "easy" -> Icons.Default.Mood
-                                "annoying" -> Icons.Default.SentimentDissatisfied
-                                "mentally_heavy" -> Icons.Default.Psychology
-                                "unclear" -> Icons.Default.QuestionMark
-                                else -> Icons.Default.Edit
-                            },
-                            contentDescription = null,
-                            tint = TactileTheme.Primary
-                        )
-                    }
-                )
-
-                ListItem(
-                    headlineContent = { Text(stringResource(Res.string.detail_time_estimate)) },
-                    supportingContent = {
-                        Text(node.estimatedMinutes?.let {
-                            stringResource(
-                                Res.string.detail_estimate_mins,
-                                it
-                            )
-                        } ?: stringResource(Res.string.detail_not_set))
-                    },
-                    modifier = Modifier.clickable { showEstimateDialog = true },
-                    colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
-                    trailingContent = {
-                        Icon(
-                            Icons.Default.Timer,
-                            contentDescription = null,
-                            tint = TactileTheme.Primary
-                        )
-                    }
-                )
-
-                if (node.postponeCount > 0) {
-                    ListItem(
-                        headlineContent = { Text(stringResource(Res.string.detail_postpone_count)) },
-                        supportingContent = {
                             Text(
-                                stringResource(
-                                    Res.string.detail_postpone_times,
-                                    node.postponeCount
-                                )
-                            )
-                        },
-                        colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
-                        trailingContent = {
-                            Icon(
-                                Icons.Default.History,
-                                contentDescription = null,
-                                tint = TactileTheme.Error
+                                if (node.isRecurring) node.recurringInterval
+                                    ?: "Set" else "One-time Event",
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Bold
                             )
                         }
-                    )
+                        TextButton(onClick = {
+                            showRecurringDialog = true
+                        }) {
+                            Text(
+                                "MODIFY",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = TactileTheme.Muted
+                            )
+                        }
+                    }
                 }
             }
 
-            // Area & Project Selection
-            val area = areas.find { it.id == node.areaId }
-            val project = projects.find { it.id == node.projectId }
+            // Organization Card (Area & Project)
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                color = TactileTheme.Surface,
+                shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                border = BorderStroke(1.dp, TactileTheme.Border)
+            ) {
+                Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+                    Text(
+                        "ORGANIZATION",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = TactileTheme.Muted,
+                        fontSize = 8.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(Modifier.height(TactileTheme.SpacingSm))
 
-            if (node.type != "area") {
-                ListItem(
-                    headlineContent = { Text(stringResource(Res.string.detail_area)) },
-                    supportingContent = {
-                        Text(
-                            area?.title ?: stringResource(Res.string.detail_unassigned)
-                        )
-                    },
-                    modifier = Modifier.clickable { showAreaDialog = true },
-                    colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
-                )
-            }
+                    val area = areas.find { it.id == node.areaId }
+                    val project = projects.find { it.id == node.projectId }
 
-            if (node.type != "area" && node.type != "project") {
-                ListItem(
-                    headlineContent = { Text(stringResource(Res.string.detail_project)) },
-                    supportingContent = {
-                        Text(
-                            project?.title ?: stringResource(Res.string.detail_none)
-                        )
-                    },
-                    modifier = Modifier.clickable { showProjectDialog = true },
-                    colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
-                )
-            }
-
-            if (node.type == "project") {
-                ListItem(
-                    headlineContent = { Text(stringResource(Res.string.detail_project_why)) },
-                    supportingContent = {
-                        Text(
-                            node.projectWhy ?: stringResource(Res.string.detail_project_purpose)
-                        )
-                    },
-                    modifier = Modifier.clickable { showWhyDialog = true },
-                    colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
-                )
-                ListItem(
-                    headlineContent = { Text(stringResource(Res.string.detail_project_status)) },
-                    supportingContent = { Text((node.projectStatus ?: "active").uppercase()) },
-                    modifier = Modifier.clickable {
-                        val statuses =
-                            listOf("active", "slowing_down", "neglected", "exploratory", "on_hold")
-                        val currentIdx = statuses.indexOf(node.projectStatus ?: "active")
-                        val nextStatus = statuses[(currentIdx + 1) % statuses.size]
-                        viewModel.updateNode(node.copy(projectStatus = nextStatus))
-                    },
-                    colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
-                )
-            }
-
-            if (node.type == "task") {
-                ListItem(
-                    headlineContent = { Text(stringResource(Res.string.detail_hard_deadline)) },
-                    supportingContent = {
-                        Text(
-                            if (node.isHardDeadline) stringResource(Res.string.detail_critical) else stringResource(
-                                Res.string.detail_soft
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Column(modifier = Modifier.weight(1f).clickable { showAreaDialog = true }) {
+                            Text(
+                                "AREA",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = TactileTheme.Primary,
+                                fontSize = 8.sp
                             )
-                        )
-                    },
-                    trailingContent = {
-                        Switch(
-                            checked = node.isHardDeadline,
-                            onCheckedChange = { viewModel.updateNode(node.copy(isHardDeadline = it)) }
-                        )
-                    },
-                    colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
-                )
-            }
-
-            // Due Date
-            ListItem(
-                headlineContent = { Text(stringResource(Res.string.detail_due_at)) },
-                supportingContent = {
-                    Text(
-                        node.dueAt?.let {
-                            kotlin.time.Instant
-                                .fromEpochMilliseconds(it)
-                                .toLocalDateTime(TimeZone.currentSystemDefault())
-                                .date
-                                .toString()
-                        } ?: stringResource(Res.string.detail_no_due_date),
-                    )
-                },
-                modifier = Modifier.clickable { showDueDialog = true },
-                trailingContent = {
-                    Row {
-                        if (node.dueAt != null) {
-                            IconButton(onClick = {
-                                val nextDay = node.dueAt!! + (24 * 60 * 60 * 1000L)
-                                viewModel.updateNode(node.copy(dueAt = nextDay))
-                                showPostponeDialog = true
-                            }) {
-                                Icon(
-                                    Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                                    contentDescription = "+1d"
-                                )
-                            }
-                            IconButton(onClick = { viewModel.updateNode(node.copy(dueAt = null)) }) {
-                                Icon(
-                                    Icons.Default.Clear,
-                                    contentDescription = stringResource(Res.string.search_clear)
-                                )
-                            }
+                            Text(
+                                area?.title ?: "Unassigned",
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Bold
+                            )
                         }
-                    }
-                },
-                colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
-            )
-
-            // Reminder & Recurrence
-            ListItem(
-                headlineContent = { Text(stringResource(Res.string.detail_reminder_at)) },
-                supportingContent = {
-                    Text(
-                        node.reminderAt?.let {
-                            kotlin.time.Instant
-                                .fromEpochMilliseconds(it)
-                                .toLocalDateTime(TimeZone.currentSystemDefault())
-                                .toString()
-                                .replace("T", " ")
-                        } ?: stringResource(Res.string.detail_no_reminder),
-                    )
-                },
-                modifier = Modifier.clickable { showReminderDialog = true },
-                trailingContent = {
-                    if (node.reminderAt != null) {
-                        IconButton(onClick = { viewModel.updateNode(node.copy(reminderAt = null)) }) {
-                            Icon(
-                                Icons.Default.Clear,
-                                contentDescription = stringResource(Res.string.search_clear)
+                        Column(
+                            modifier = Modifier.weight(1f).clickable { showProjectDialog = true }) {
+                            Text(
+                                "PROJECT",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = TactileTheme.Primary,
+                                fontSize = 8.sp
+                            )
+                            Text(
+                                project?.title ?: "None",
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Bold
                             )
                         }
                     }
-                },
-                colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
-            )
+                }
+            }
 
-            ListItem(
-                headlineContent = { Text(stringResource(Res.string.capture_recurring)) },
-                supportingContent = {
-                    Text(
-                        if (node.isRecurring) stringResource(
-                            Res.string.detail_recurrence_interval,
-                            node.recurringInterval ?: ""
-                        ) else stringResource(Res.string.detail_one_time)
+            // Attachments
+            Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+                DetailSectionHeader(title = "ATTACHMENTS", icon = Icons.Default.Attachment)
+                attachments.forEach { attachment ->
+                    LinkedNodeItem(
+                        title = attachment.title ?: attachment.uriOrPath,
+                        subtitle = attachment.assetType,
+                        icon = Icons.Default.FilePresent,
+                        onClick = { /* Open attachment logic */ }
                     )
-                },
-                modifier =
-                    Modifier.clickable {
-                        viewModel.updateNode(
-                            node.copy(
-                                isRecurring = !node.isRecurring,
-                                recurringInterval = if (!node.isRecurring) "DAILY" else null,
-                            ),
-                        )
-                    },
-                colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
-            )
+                }
+                ConnectionCard(text = "ADD ATTACHMENT", onClick = {
+                    viewModel.addAttachment(noteId, "URL", "https://example.com", "New Link")
+                })
+            }
 
-            val updatedDate =
-                kotlin.time.Instant
-                    .fromEpochMilliseconds(
-                        node.updatedAt,
-                    ).toLocalDateTime(TimeZone.currentSystemDefault())
-                    .toString()
-            Text(
-                text = stringResource(Res.string.detail_last_updated, updatedDate),
-                style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Muted.copy(alpha = 0.5f),
-                modifier = Modifier.padding(top = TactileTheme.SpacingMd),
-            )
+            // Knowledge / Media Type (if applicable)
+            if (node.type == "note" || node.type == "idea") {
+                Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+                    DetailSectionHeader(
+                        title = "KNOWLEDGE CONFIG",
+                        icon = Icons.AutoMirrored.Filled.MenuBook
+                    )
+
+                    Surface(
+                        modifier = Modifier.fillMaxWidth(),
+                        color = TactileTheme.Surface,
+                        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                        border = BorderStroke(1.dp, TactileTheme.Border)
+                    ) {
+                        Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Column(
+                                    modifier = Modifier.weight(1f)
+                                        .clickable { showNoteTypeDialog = true }) {
+                                    Text(
+                                        "NOTE TYPE",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = TactileTheme.Muted,
+                                        fontSize = 8.sp
+                                    )
+                                    Text(
+                                        (node.noteType ?: "Standard").uppercase(),
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                                Column(
+                                    modifier = Modifier.weight(1f)
+                                        .clickable { showNoteStateDialog = true }) {
+                                    Text(
+                                        "STATE",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = TactileTheme.Muted,
+                                        fontSize = 8.sp
+                                    )
+                                    Text(
+                                        (node.noteState ?: "Raw").uppercase(),
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Content Editor
+            Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+                DetailSectionHeader(title = "CONTENT", icon = Icons.Default.Description)
+                BasicTextField(
+                    value = content,
+                    onValueChange = {
+                        content = it
+                        viewModel.updateNode(node.copy(content = it))
+                    },
+                    textStyle = (if (isAtomicMode) MaterialTheme.typography.titleLarge else MaterialTheme.typography.bodyLarge).copy(
+                        color = TactileTheme.Text
+                    ),
+                    cursorBrush = SolidColor(TactileTheme.Primary),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 200.dp)
+                        .background(TactileTheme.Surface, RoundedCornerShape(TactileTheme.RadiusMd))
+                        .border(
+                            1.dp,
+                            TactileTheme.Border,
+                            RoundedCornerShape(TactileTheme.RadiusMd)
+                        )
+                        .padding(TactileTheme.SpacingMd),
+                    decorationBox = { innerTextField ->
+                        Box {
+                            if (content.isEmpty()) {
+                                Text(
+                                    stringResource(Res.string.detail_start_writing),
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    color = TactileTheme.Muted
+                                )
+                            }
+                            innerTextField()
+                        }
+                    }
+                )
+            }
+
+            Spacer(Modifier.height(TactileTheme.SpacingXl))
         }
     }
 
-    if (showTagDialog) {
-        AlertDialog(
-            onDismissRequest = { showTagDialog = false },
-            title = { Text(stringResource(Res.string.detail_tag_dialog_title)) },
-            text = {
-                Column {
-                    allTags.forEach { tag ->
-                        ListItem(
-                            headlineContent = { Text(tag.name) },
-                            modifier =
-                                Modifier.clickable {
-                                    viewModel.attachTagToNode(noteId, tag.id)
-                                    showTagDialog = false
-                                },
-                        )
-                    }
-                    var newTagName by remember { mutableStateOf("") }
-                    TextField(
-                        value = newTagName,
-                        onValueChange = { newTagName = it },
-                        placeholder = { Text(stringResource(Res.string.detail_tag_new_placeholder)) },
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                    Button(onClick = {
-                        if (newTagName.isNotBlank()) {
-                            viewModel.addTag(newTagName)
-                            newTagName = ""
-                        }
-                    }) { Text(stringResource(Res.string.detail_tag_create)) }
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { showTagDialog = false }) {
-                    Text(
-                        stringResource(
-                            Res.string.common_back
-                        )
-                    )
-                }
-            },
-        )
-    }
+    // Dialogs
+    SelectorDialog(
+        show = showTagDialog,
+        onDismiss = { showTagDialog = false },
+        title = "SELECT TAG",
+        options = allTags,
+        selectedOption = null,
+        onSelect = { tag -> viewModel.attachTagToNode(noteId, tag.id); showTagDialog = false },
+        optionName = { it.name },
+        optionIcon = { Icons.Default.Tag },
+        optionSubtext = { "TAG_ID_${it.id}" }
+    )
 
-    if (showRelationDialog) {
-        val linkedNodeIds =
-            remember(relations, noteId) {
-                relations.map { if (it.fromNodeId == noteId) it.toNodeId else it.fromNodeId }
-                    .toSet()
+    SelectorDialog(
+        show = showRelationDialog,
+        onDismiss = { showRelationDialog = false },
+        title = "LINK NODE",
+        options = nodes.filter { it.node.id != noteId }.take(10),
+        selectedOption = null,
+        onSelect = { nodeWithPin ->
+            viewModel.addRelation(
+                noteId,
+                nodeWithPin.node.id,
+                "RELATED"
+            ); showRelationDialog = false
+        },
+        optionName = { it.node.title },
+        optionIcon = {
+            when (it.node.type) {
+                "task" -> Icons.Default.CheckCircle
+                "project" -> Icons.AutoMirrored.Filled.List
+                "area" -> Icons.Default.Work
+                else -> Icons.AutoMirrored.Filled.Article
             }
-        var selectedTypeForRelation by remember { mutableStateOf("RELATED") }
-        AlertDialog(
-            onDismissRequest = { showRelationDialog = false },
-            title = { Text(stringResource(Res.string.detail_relation_dialog_title)) },
-            text = {
-                Column {
-                    val relationTypes =
-                        listOf(
-                            "RELATED",
-                            "DEPENDS_ON",
-                            "BELONGS_TO",
-                            "MENTION",
-                            "INSPIRED_BY",
-                            "REFERENCE"
-                        )
-                    LazyRow(
-                        modifier = Modifier.padding(bottom = 8.dp),
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        items(relationTypes) { type ->
-                            FilterChip(
-                                selected = selectedTypeForRelation == type,
-                                onClick = { selectedTypeForRelation = type },
-                                label = { Text(type, style = MaterialTheme.typography.labelSmall) }
-                            )
-                        }
-                    }
-                    nodes
-                        .filter { it.node.id != noteId && it.node.id !in linkedNodeIds }
-                        .take(10)
-                        .forEach { nodeWithPin ->
-                            ListItem(
-                                headlineContent = { Text(nodeWithPin.node.title) },
-                                supportingContent = {
-                                    val typeLabel = when (nodeWithPin.node.type) {
-                                        "task" -> stringResource(Res.string.type_task)
-                                        "note" -> stringResource(Res.string.type_note)
-                                        "idea" -> stringResource(Res.string.type_idea)
-                                        "project" -> stringResource(Res.string.type_project)
-                                        "area" -> stringResource(Res.string.type_area)
-                                        else -> nodeWithPin.node.type
-                                    }
-                                    Text(typeLabel)
-                                },
-                                modifier =
-                                    Modifier.clickable {
-                                        viewModel.addRelation(
-                                            noteId,
-                                            nodeWithPin.node.id,
-                                            selectedTypeForRelation
-                                        )
-                                        showRelationDialog = false
-                                    },
-                            )
-                        }
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    showRelationDialog = false
-                }) { Text(stringResource(Res.string.projects_dialog_cancel)) }
-            },
-        )
-    }
+        },
+        optionSubtext = { it.node.type.uppercase() }
+    )
 
-    if (showStatusDialog) {
-        val statuses = listOf("active", "done", "archived", "on_hold", "someday", "blocked")
-        AlertDialog(
-            onDismissRequest = { showStatusDialog = false },
-            title = { Text(stringResource(Res.string.detail_status_dialog_title)) },
-            text = {
-                Column {
-                    statuses.forEach { status ->
-                        ListItem(
-                            headlineContent = { Text(status.uppercase()) },
-                            modifier =
-                                Modifier.clickable {
-                                    viewModel.updateNodeStatus(node, status)
-                                    showStatusDialog = false
-                                },
-                        )
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    showStatusDialog = false
-                }) { Text(stringResource(Res.string.projects_dialog_cancel)) }
-            },
-        )
-    }
+    SelectorDialog(
+        show = showStatusDialog,
+        onDismiss = { showStatusDialog = false },
+        title = "SET STATUS",
+        options = listOf("active", "done", "archived", "on_hold", "someday", "blocked"),
+        selectedOption = node.status,
+        onSelect = { status -> viewModel.updateNodeStatus(node, status); showStatusDialog = false },
+        optionName = { it },
+        optionIcon = {
+            when (it) {
+                "active" -> Icons.Default.PlayArrow
+                "done" -> Icons.Default.Check
+                "archived" -> Icons.Default.Archive
+                "on_hold" -> Icons.Default.Pause
+                "someday" -> Icons.Default.CalendarToday
+                "blocked" -> Icons.Default.Block
+                else -> Icons.Default.Info
+            }
+        },
+        optionSubtext = { "SYST_STATE_${it.uppercase()}" }
+    )
 
-    if (showNoteTypeDialog) {
-        val types = listOf(
+    SelectorDialog(
+        show = showAreaDialog,
+        onDismiss = { showAreaDialog = false },
+        title = "ASSIGN TO AREA",
+        options = areas,
+        selectedOption = areas.find { it.id == node.areaId },
+        onSelect = { area ->
+            viewModel.updateNode(node.copy(areaId = area.id)); showAreaDialog = false
+        },
+        optionName = { it.title },
+        optionIcon = { Icons.Default.Place },
+        optionSubtext = { "AREA_SYST_${it.id}" }
+    )
+
+    SelectorDialog(
+        show = showProjectDialog,
+        onDismiss = { showProjectDialog = false },
+        title = "ASSIGN TO PROJECT",
+        options = projects,
+        selectedOption = projects.find { it.id == node.projectId },
+        onSelect = { project ->
+            viewModel.updateNode(node.copy(projectId = project.id)); showProjectDialog = false
+        },
+        optionName = { it.title },
+        optionIcon = { Icons.AutoMirrored.Filled.List },
+        optionSubtext = { "PROJ_SYST_${it.id}" }
+    )
+
+    val nowMillis = Clock.System.now().toEpochMilliseconds()
+    val dueOptions = listOf(
+        "Today" to nowMillis,
+        "Tomorrow" to nowMillis + 86400000,
+        "1 Week" to nowMillis + 86400000 * 7,
+        "Clear" to null
+    )
+
+    SelectorDialog(
+        show = showDueDialog,
+        onDismiss = { showDueDialog = false },
+        title = "SET DUE DATE",
+        options = dueOptions,
+        selectedOption = null,
+        onSelect = { option ->
+            viewModel.updateNode(node.copy(dueAt = option.second)); showDueDialog = false
+        },
+        optionName = { it.first },
+        optionIcon = {
+            when (it.first) {
+                "Today" -> Icons.Default.Today
+                "Tomorrow" -> Icons.Default.Event
+                "1 Week" -> Icons.AutoMirrored.Filled.NextPlan
+                else -> Icons.Default.Clear
+            }
+        },
+        optionSubtext = { if (it.second != null) "SYST_TIME_${it.second}" else "CLEAR_FIELD" }
+    )
+
+    val reminderOptions = listOf(
+        "1 Hour" to nowMillis + 3600000,
+        "Tomorrow" to nowMillis + 86400000,
+        "Next Week" to nowMillis + 86400000 * 7,
+        "Clear" to null
+    )
+
+    SelectorDialog(
+        show = showReminderDialog,
+        onDismiss = { showReminderDialog = false },
+        title = "SET REMINDER",
+        options = reminderOptions,
+        selectedOption = null,
+        onSelect = { option ->
+            viewModel.updateNode(node.copy(reminderAt = option.second)); showReminderDialog = false
+        },
+        optionName = { it.first },
+        optionIcon = {
+            when (it.first) {
+                "1 Hour" -> Icons.Default.Timer
+                "Tomorrow" -> Icons.Default.NotificationsActive
+                "Next Week" -> Icons.AutoMirrored.Filled.EventNote
+                else -> Icons.Default.Clear
+            }
+        },
+        optionSubtext = { if (it.second != null) "SYST_ALARM_${it.second}" else "CLEAR_FIELD" }
+    )
+
+    SelectorDialog(
+        show = showSnapshotDialog,
+        onDismiss = { showSnapshotDialog = false },
+        title = "VERSION HISTORY",
+        options = snapshots,
+        selectedOption = null,
+        onSelect = { snapshot ->
+            viewModel.restoreSnapshot(snapshot)
+            content = snapshot.content
+            title = snapshot.title
+            showSnapshotDialog = false
+        },
+        optionName = {
+            Instant.fromEpochMilliseconds(it.timestamp)
+                .toLocalDateTime(TimeZone.currentSystemDefault()).toString().replace("T", " ")
+        },
+        optionIcon = { Icons.Default.History },
+        optionSubtext = { it.content.take(20) + "..." }
+    )
+
+    SelectorDialog(
+        show = showMergeDialog,
+        onDismiss = { showMergeDialog = false },
+        title = "MERGE NODES",
+        options = nodes.filter { it.node.id != noteId && (it.node.type == "note" || it.node.type == "idea") },
+        selectedOption = null,
+        onSelect = { other ->
+            viewModel.mergeNodes(noteId, listOf(other.node.id))
+            showMergeDialog = false
+        },
+        optionName = { it.node.title },
+        optionIcon = { Icons.Default.Merge },
+        optionSubtext = { it.node.type.uppercase() }
+    )
+
+    SelectorDialog(
+        show = showNoteTypeDialog,
+        onDismiss = { showNoteTypeDialog = false },
+        title = "SELECT NOTE TYPE",
+        options = listOf(
             "thought",
             "lecture",
             "research",
@@ -1280,494 +1047,283 @@ fun NoteDetailScreen(
             "meeting",
             "reading",
             "journal"
-        )
-        AlertDialog(
-            onDismissRequest = { showNoteTypeDialog = false },
-            title = { Text(stringResource(Res.string.detail_type_dialog_title)) },
-            text = {
-                Column {
-                    types.forEach { type ->
-                        ListItem(
-                            headlineContent = { Text(type.uppercase().replace("_", " ")) },
-                            modifier = Modifier.clickable {
-                                viewModel.updateNode(node.copy(noteType = type))
-                                showNoteTypeDialog = false
-                            },
-                        )
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { showNoteTypeDialog = false }) {
-                    Text(
-                        stringResource(Res.string.projects_dialog_cancel)
-                    )
-                }
-            },
-        )
-    }
-
-    if (showSnapshotDialog) {
-        AlertDialog(
-            onDismissRequest = { showSnapshotDialog = false },
-            title = { Text(stringResource(Res.string.detail_snapshot_dialog_title)) },
-            text = {
-                LazyColumn {
-                    items(snapshots) { snapshot ->
-                        ListItem(
-                            headlineContent = {
-                                Text(snapshot.timestamp.let {
-                                    kotlin.time.Instant.fromEpochMilliseconds(it).toString()
-                                })
-                            },
-                            supportingContent = { Text(snapshot.content.take(50) + "...") },
-                            modifier = Modifier.clickable {
-                                viewModel.restoreSnapshot(snapshot)
-                                content = snapshot.content
-                                title = snapshot.title
-                                showSnapshotDialog = false
-                            }
-                        )
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { showSnapshotDialog = false }) {
-                    Text(
-                        stringResource(Res.string.projects_dialog_cancel)
-                    )
-                }
+        ),
+        selectedOption = node.noteType,
+        onSelect = { type ->
+            viewModel.updateNode(node.copy(noteType = type)); showNoteTypeDialog = false
+        },
+        optionName = { it },
+        optionIcon = {
+            when (it) {
+                "thought" -> Icons.Default.Psychology
+                "lecture" -> Icons.Default.School
+                "research" -> Icons.Default.Search
+                "idea" -> Icons.Default.Lightbulb
+                "reflection" -> Icons.Default.Visibility
+                "bug" -> Icons.Default.BugReport
+                "concept" -> Icons.Default.Architecture
+                "evergreen" -> Icons.Default.Park
+                "read_later" -> Icons.Default.Bookmark
+                "quote" -> Icons.Default.FormatQuote
+                "meeting" -> Icons.Default.Groups
+                "reading" -> Icons.AutoMirrored.Filled.MenuBook
+                "journal" -> Icons.Default.HistoryEdu
+                else -> Icons.AutoMirrored.Filled.Article
             }
-        )
-    }
+        },
+        optionSubtext = { "NOTE_TYPE_${it.uppercase()}" }
+    )
 
-    if (showMergeDialog) {
-        val otherNodes =
-            nodes.filter { it.node.id != noteId && (it.node.type == "note" || it.node.type == "idea") }
-        AlertDialog(
-            onDismissRequest = { showMergeDialog = false },
-            title = { Text(stringResource(Res.string.detail_merge_dialog_title)) },
-            text = {
-                LazyColumn {
-                    items(otherNodes) { other ->
-                        ListItem(
-                            headlineContent = { Text(other.node.title) },
-                            modifier = Modifier.clickable {
-                                viewModel.mergeNodes(noteId, listOf(other.node.id))
-                                showMergeDialog = false
-                            }
-                        )
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { showMergeDialog = false }) {
-                    Text(
-                        stringResource(Res.string.projects_dialog_cancel)
-                    )
-                }
+    SelectorDialog(
+        show = showNoteStateDialog,
+        onDismiss = { showNoteStateDialog = false },
+        title = "SELECT STATE",
+        options = listOf("raw", "highlighted", "distilled", "takeaway"),
+        selectedOption = node.noteState,
+        onSelect = { state ->
+            viewModel.updateNode(node.copy(noteState = state)); showNoteStateDialog = false
+        },
+        optionName = { it },
+        optionIcon = {
+            when (it) {
+                "raw" -> Icons.AutoMirrored.Filled.Article
+                "highlighted" -> Icons.Default.FormatQuote
+                "distilled" -> Icons.Default.FilterAlt
+                "takeaway" -> Icons.Default.Star
+                else -> Icons.Default.HistoryEdu
             }
-        )
-    }
+        },
+        optionSubtext = { "PROGRESS_LVL_${it.uppercase()}" }
+    )
 
-    if (showNoteStateDialog) {
-        val states = listOf("raw", "highlighted", "distilled", "takeaway")
-        AlertDialog(
-            onDismissRequest = { showNoteStateDialog = false },
-            title = { Text(stringResource(Res.string.detail_state_dialog_title)) },
-            text = {
-                Column {
-                    states.forEach { state ->
-                        ListItem(
-                            headlineContent = { Text(state.uppercase()) },
-                            modifier = Modifier.clickable {
-                                viewModel.updateNode(node.copy(noteState = state))
-                                showNoteStateDialog = false
-                            },
-                        )
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { showNoteStateDialog = false }) {
-                    Text(
-                        stringResource(Res.string.projects_dialog_cancel)
-                    )
-                }
-            },
-        )
-    }
-
-    if (showAreaDialog) {
-        AlertDialog(
-            onDismissRequest = { showAreaDialog = false },
-            title = { Text(stringResource(Res.string.detail_area_dialog_title)) },
-            text = {
-                Column {
-                    areas.forEach { area ->
-                        ListItem(
-                            headlineContent = { Text(area.title) },
-                            modifier =
-                                Modifier.clickable {
-                                    viewModel.updateNode(node.copy(areaId = area.id))
-                                    showAreaDialog = false
-                                },
-                        )
-                    }
-                    ListItem(
-                        headlineContent = { Text(stringResource(Res.string.detail_unassign)) },
-                        modifier =
-                            Modifier.clickable {
-                                viewModel.updateNode(node.copy(areaId = null))
-                                showAreaDialog = false
-                            },
-                    )
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    showAreaDialog = false
-                }) { Text(stringResource(Res.string.projects_dialog_cancel)) }
-            },
-        )
-    }
-
-    if (showProjectDialog) {
-        AlertDialog(
-            onDismissRequest = { showProjectDialog = false },
-            title = { Text(stringResource(Res.string.detail_project_dialog_title)) },
-            text = {
-                Column {
-                    projects.forEach { project ->
-                        ListItem(
-                            headlineContent = { Text(project.title) },
-                            modifier =
-                                Modifier.clickable {
-                                    viewModel.updateNode(node.copy(projectId = project.id))
-                                    showProjectDialog = false
-                                },
-                        )
-                    }
-                    ListItem(
-                        headlineContent = { Text(stringResource(Res.string.detail_none)) },
-                        modifier =
-                            Modifier.clickable {
-                                viewModel.updateNode(node.copy(projectId = null))
-                                showProjectDialog = false
-                            },
-                    )
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    showProjectDialog = false
-                }) { Text(stringResource(Res.string.projects_dialog_cancel)) }
-            },
-        )
-    }
-
-    if (showDueDialog) {
-        AlertDialog(
-            onDismissRequest = { showDueDialog = false },
-            title = { Text(stringResource(Res.string.detail_due_dialog_title)) },
-            text = {
-                Column {
-                    val options =
-                        listOf(
-                            "Today" to
-                                    kotlin.time.Clock.System
-                                        .now()
-                                        .toEpochMilliseconds(),
-                            "Tomorrow" to (
-                                    kotlin.time.Clock.System
-                                        .now()
-                                        .toEpochMilliseconds() + 86400000
-                                    ),
-                            "In 1 Week" to (
-                                    kotlin.time.Clock.System
-                                        .now()
-                                        .toEpochMilliseconds() + 86400000 * 7
-                                    ),
-                        )
-                    options.forEach { (label, time) ->
-                        ListItem(
-                            headlineContent = { Text(label) },
-                            modifier =
-                                Modifier.clickable {
-                                    if (time > (node.dueAt ?: 0)) {
-                                        showPostponeDialog = true
-                                    }
-                                    viewModel.updateNode(node.copy(dueAt = time))
-                                    showDueDialog = false
-                                },
-                        )
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { showDueDialog = false }) {
-                    Text(
-                        stringResource(
-                            Res.string.projects_dialog_cancel
-                        )
-                    )
-                }
-            },
-        )
-    }
-
-    if (showReminderDialog) {
-        AlertDialog(
-            onDismissRequest = { showReminderDialog = false },
-            title = { Text(stringResource(Res.string.detail_reminder_dialog_title)) },
-            text = {
-                Column {
-                    val options =
-                        listOf(
-                            "In 1 Hour" to (
-                                    kotlin.time.Clock.System
-                                        .now()
-                                        .toEpochMilliseconds() + 3600000
-                                    ),
-                            "Tomorrow Morning" to (
-                                    kotlin.time.Clock.System
-                                        .now()
-                                        .toEpochMilliseconds() + 86400000
-                                    ),
-                            "Next Week" to (
-                                    kotlin.time.Clock.System
-                                        .now()
-                                        .toEpochMilliseconds() + 86400000 * 7
-                                    ),
-                        )
-                    options.forEach { (label, time) ->
-                        ListItem(
-                            headlineContent = { Text(label) },
-                            modifier =
-                                Modifier.clickable {
-                                    viewModel.updateNode(node.copy(reminderAt = time))
-                                    showReminderDialog = false
-                                },
-                        )
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    showReminderDialog = false
-                }) { Text(stringResource(Res.string.projects_dialog_cancel)) }
-            },
-        )
-    }
-
-    if (showEstimateDialog) {
-        AlertDialog(
-            onDismissRequest = { showEstimateDialog = false },
-            title = { Text(stringResource(Res.string.detail_estimate_dialog_title)) },
-            text = {
-                Column {
-                    val options = listOf(5, 15, 30, 60, 120)
-                    options.forEach { mins ->
-                        ListItem(
-                            headlineContent = {
-                                Text(
-                                    stringResource(
-                                        Res.string.detail_estimate_mins,
-                                        mins
-                                    )
-                                )
-                            },
-                            modifier = Modifier.clickable {
-                                viewModel.updateNode(node.copy(estimatedMinutes = mins))
-                                showEstimateDialog = false
-                            }
-                        )
-                    }
-                    ListItem(
-                        headlineContent = { Text(stringResource(Res.string.search_clear)) },
-                        modifier = Modifier.clickable {
-                            viewModel.updateNode(node.copy(estimatedMinutes = null))
-                            showEstimateDialog = false
-                        }
-                    )
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    showEstimateDialog = false
-                }) { Text(stringResource(Res.string.projects_dialog_cancel)) }
+    SelectorDialog(
+        show = showMediaTypeDialog,
+        onDismiss = { showMediaTypeDialog = false },
+        title = "SELECT MEDIA TYPE",
+        options = listOf("book", "article", "podcast", "video", "link"),
+        selectedOption = node.mediaType,
+        onSelect = { type ->
+            viewModel.updateNode(node.copy(mediaType = type)); showMediaTypeDialog = false
+        },
+        optionName = { it },
+        optionIcon = {
+            when (it) {
+                "book" -> Icons.AutoMirrored.Filled.MenuBook
+                "article" -> Icons.AutoMirrored.Filled.Article
+                "podcast" -> Icons.Default.Podcasts
+                "video" -> Icons.Default.PlayCircle
+                else -> Icons.Default.Link
             }
-        )
-    }
+        },
+        optionSubtext = { "MEDIA_TYPE_${it.uppercase()}" }
+    )
 
-    if (showPostponeDialog) {
-        AlertDialog(
-            onDismissRequest = { showPostponeDialog = false },
-            title = { Text(stringResource(Res.string.detail_postpone_dialog_title)) },
-            text = {
-                Column {
-                    val reasons = listOf(
-                        stringResource(Res.string.detail_postpone_low_energy),
-                        stringResource(Res.string.detail_postpone_not_enough_info),
-                        stringResource(Res.string.detail_postpone_scared),
-                        stringResource(Res.string.detail_postpone_waiting),
-                        stringResource(Res.string.detail_postpone_too_much)
-                    )
-                    reasons.forEach { reason ->
-                        ListItem(
-                            headlineContent = { Text(reason) },
-                            modifier = Modifier.clickable {
-                                val currentContent = node.content
-                                val stamp = "\n[POSTPONED: $reason]"
-                                viewModel.updateNode(node.copy(content = currentContent + stamp))
-                                showPostponeDialog = false
-                            }
-                        )
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { showPostponeDialog = false }) { Text("SKIP") }
+    SelectorDialog(
+        show = showRatingDialog,
+        onDismiss = { showRatingDialog = false },
+        title = "RATE RESOURCE",
+        options = (1..5).toList(),
+        selectedOption = node.rating,
+        onSelect = { stars ->
+            viewModel.updateNode(node.copy(rating = stars)); showRatingDialog = false
+        },
+        optionName = { "$it STARS" },
+        optionIcon = { Icons.Default.Star },
+        optionSubtext = { "RATING_VAL_$it" }
+    )
+
+    SelectorDialog(
+        show = showEstimateDialog,
+        onDismiss = { showEstimateDialog = false },
+        title = "SET ESTIMATE",
+        options = listOf(5, 15, 30, 60, 120, -1), // -1 for clear
+        selectedOption = node.estimatedMinutes,
+        onSelect = { mins ->
+            viewModel.updateNode(node.copy(estimatedMinutes = if (mins == -1) null else mins))
+            showEstimateDialog = false
+        },
+        optionName = { if (it == -1) "CLEAR" else "$it MIN" },
+        optionIcon = { if (it == -1) Icons.Default.Clear else Icons.Default.Timer },
+        optionSubtext = { if (it == -1) "CLEAR_VAL" else "EST_MIN_$it" }
+    )
+
+    SelectorDialog(
+        show = showEnergyDialog,
+        onDismiss = { showEnergyDialog = false },
+        title = "SET ENERGY LEVEL",
+        options = listOf(1, 2, 3),
+        selectedOption = node.energyLevel,
+        onSelect = { level ->
+            viewModel.updateNode(node.copy(energyLevel = level)); showEnergyDialog = false
+        },
+        optionName = {
+            when (it) {
+                1 -> "LOW"
+                2 -> "MEDIUM"
+                3 -> "HIGH"
+                else -> "UNKNOWN"
             }
-        )
-    }
+        },
+        optionIcon = {
+            when (it) {
+                1 -> Icons.Default.Battery1Bar
+                2 -> Icons.Default.Battery4Bar
+                3 -> Icons.Default.BatteryFull
+                else -> Icons.AutoMirrored.Filled.BatteryUnknown
+            }
+        },
+        optionSubtext = { "ENERGY_LVL_$it" }
+    )
 
-    if (showWhyDialog) {
-        var whyText by remember { mutableStateOf(node.projectWhy ?: "") }
-        AlertDialog(
-            onDismissRequest = { showWhyDialog = false },
-            title = { Text(stringResource(Res.string.detail_why_dialog_title)) },
-            text = {
-                TextField(
-                    value = whyText,
-                    onValueChange = { whyText = it },
-                    placeholder = { Text(stringResource(Res.string.detail_why_placeholder)) },
-                    modifier = Modifier.fillMaxWidth()
+    SelectorDialog(
+        show = showFrictionDialog,
+        onDismiss = { showFrictionDialog = false },
+        title = "SET FRICTION",
+        options = listOf("easy", "annoying", "mentally_heavy", "unclear"),
+        selectedOption = node.friction,
+        onSelect = { friction ->
+            viewModel.updateNode(node.copy(friction = friction)); showFrictionDialog = false
+        },
+        optionName = { it.replace("_", " ") },
+        optionIcon = {
+            when (it) {
+                "easy" -> Icons.Default.Bolt
+                "annoying" -> Icons.Default.SentimentDissatisfied
+                "mentally_heavy" -> Icons.Default.Psychology
+                "unclear" -> Icons.AutoMirrored.Filled.Help
+                else -> Icons.Default.Info
+            }
+        },
+        optionSubtext = { "FRICTION_STATE_${it.uppercase()}" }
+    )
+
+    val moreActions = remember(node, isAtomicMode) {
+        mutableListOf<MoreAction>().apply {
+            if (node.type == "note" || node.type == "idea") {
+                add(
+                    MoreAction(
+                        "atomic",
+                        if (isAtomicMode) "Disable Atomic Mode" else "Enable Atomic Mode",
+                        Icons.Default.ZoomInMap,
+                        "TOGGLE_UI_MODE"
+                    )
                 )
-            },
-            confirmButton = {
-                Button(onClick = {
-                    viewModel.updateNode(node.copy(projectWhy = whyText))
-                    showWhyDialog = false
-                }) { Text(stringResource(Res.string.detail_save)) }
-            },
-            dismissButton = {
-                TextButton(onClick = {
-                    showWhyDialog = false
-                }) { Text(stringResource(Res.string.projects_dialog_cancel)) }
+                add(
+                    MoreAction(
+                        "snapshot",
+                        "Create Snapshot",
+                        Icons.Default.Save,
+                        "VERSION_CONTROL"
+                    )
+                )
+                add(
+                    MoreAction(
+                        "history",
+                        "Version History",
+                        Icons.Default.History,
+                        "ROLLBACK_SYST"
+                    )
+                )
+                add(MoreAction("merge", "Merge Nodes", Icons.Default.Merge, "CONSOLIDATE_DATA"))
             }
-        )
+            if (node.inboxState) {
+                add(
+                    MoreAction(
+                        "processed",
+                        "Mark as Processed",
+                        Icons.Default.DoneAll,
+                        "CLEAR_INBOX"
+                    )
+                )
+            }
+            if (node.type == "task") {
+                add(MoreAction("repeat", "Repeat Task", Icons.Default.Repeat, "CLONE_ENTRY"))
+            }
+            add(MoreAction("convert", "Convert Type", Icons.Default.Transform, "MORPH_DATA"))
+        }
     }
 
-    if (showMediaTypeDialog) {
-        val mediaTypes = listOf(
-            "book" to Res.string.media_book,
-            "article" to Res.string.media_article,
-            "podcast" to Res.string.media_podcast,
-            "video" to Res.string.media_video,
-            "link" to Res.string.media_link
-        )
-        AlertDialog(
-            onDismissRequest = { showMediaTypeDialog = false },
-            title = { Text(stringResource(Res.string.detail_media_type)) },
-            text = {
-                Column {
-                    mediaTypes.forEach { (type, res) ->
-                        ListItem(
-                            headlineContent = { Text(stringResource(res)) },
-                            modifier = Modifier.clickable {
-                                viewModel.updateNode(node.copy(mediaType = type))
-                                showMediaTypeDialog = false
-                            }
-                        )
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    showMediaTypeDialog = false
-                }) { Text(stringResource(Res.string.projects_dialog_cancel)) }
-            }
-        )
-    }
-
-    if (showRatingDialog) {
-        AlertDialog(
-            onDismissRequest = { showRatingDialog = false },
-            title = { Text(stringResource(Res.string.detail_rating)) },
-            text = {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    (1..5).forEach { stars ->
-                        IconButton(onClick = {
-                            viewModel.updateNode(node.copy(rating = stars))
-                            showRatingDialog = false
-                        }) {
-                            Icon(
-                                if ((node.rating
-                                        ?: 0) >= stars
-                                ) Icons.Default.Star else Icons.Default.StarBorder,
-                                contentDescription = null,
-                                tint = if ((node.rating
-                                        ?: 0) >= stars
-                                ) TactileTheme.Primary else TactileTheme.Muted
+    SelectorDialog(
+        show = showMoreDialog,
+        onDismiss = { showMoreDialog = false },
+        title = "SYSTEM COMMANDS",
+        prefix = "MODULE_CONTROL // ACCESS_MENU",
+        options = moreActions,
+        selectedOption = null,
+        onSelect = { action ->
+            showMoreDialog = false
+            when (action.id) {
+                "atomic" -> isAtomicMode = !isAtomicMode
+                "snapshot" -> viewModel.createSnapshot(noteId)
+                "history" -> showSnapshotDialog = true
+                "merge" -> showMergeDialog = true
+                "processed" -> viewModel.markAsProcessed(noteId)
+                "repeat" -> {
+                    scope.launch {
+                        viewModel.getNodeById(noteId)?.let { original ->
+                            viewModel.addNode(
+                                title = original.title,
+                                content = original.content,
+                                type = original.type,
+                                projectId = original.projectId,
+                                areaId = original.areaId,
+                                inboxState = false
                             )
                         }
                     }
                 }
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    showRatingDialog = false
-                }) { Text(stringResource(Res.string.projects_dialog_cancel)) }
+
+                "convert" -> {
+                    scope.launch {
+                        viewModel.getNodeById(noteId)?.let { original ->
+                            val targetType = when (original.type) {
+                                "note", "idea" -> if (original.noteType == "idea") "project" else "task"
+                                "task" -> "project"
+                                else -> original.type
+                            }
+                            viewModel.updateNode(original.copy(type = targetType))
+                        }
+                    }
+                }
             }
-        )
-    }
+        },
+        optionName = { it.name },
+        optionIcon = { it.icon },
+        optionSubtext = { it.subtext }
+    )
+
+    SelectorDialog(
+        show = showRecurringDialog,
+        onDismiss = { showRecurringDialog = false },
+        title = "RECURRING SCHEDULE",
+        options = listOf("NONE", "DAILY", "WEEKLY", "MONTHLY"),
+        selectedOption = if (node.isRecurring) node.recurringInterval ?: "DAILY" else "NONE",
+        onSelect = { interval ->
+            viewModel.updateNode(
+                node.copy(
+                    isRecurring = interval != "NONE",
+                    recurringInterval = if (interval == "NONE") null else interval
+                )
+            )
+            showRecurringDialog = false
+        },
+        optionName = { it },
+        optionIcon = {
+            when (it) {
+                "NONE" -> Icons.Default.Close
+                "DAILY" -> Icons.Default.Today
+                "WEEKLY" -> Icons.Default.DateRange
+                "MONTHLY" -> Icons.Default.CalendarMonth
+                else -> Icons.Default.Repeat
+            }
+        },
+        optionSubtext = { if (it == "NONE") "DISABLE_RECURRING" else "SYST_CADENCE_$it" }
+    )
 }
 
-@Composable
-fun RelationshipItem(
-    node: com.tajemniktv.tajsos.data.NodeEntity,
-    type: String,
-    onClick: () -> Unit
-) {
-    Surface(
-        onClick = onClick,
-        color = TactileTheme.Surface,
-        shape = MaterialTheme.shapes.small,
-        border = androidx.compose.foundation.BorderStroke(1.dp, TactileTheme.Border),
-        modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp),
-    ) {
-        Row(
-            modifier = Modifier.padding(TactileTheme.SpacingSm),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                when (node.type) {
-                    "project" -> Icons.Default.AccountTree
-                    "area" -> Icons.Default.Place
-                    "task" -> Icons.Default.CheckCircle
-                    else -> Icons.Default.Description
-                },
-                contentDescription = null,
-                tint = TactileTheme.Muted,
-                modifier = Modifier.size(16.dp),
-            )
-            Spacer(Modifier.width(8.dp))
-            Column(Modifier.weight(1f)) {
-                Text(
-                    node.title,
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            }
-            Icon(
-                Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                contentDescription = null,
-                modifier = Modifier.size(16.dp),
-                tint = TactileTheme.Muted
-            )
-        }
-    }
-}
+data class MoreAction(
+    val id: String,
+    val name: String,
+    val icon: ImageVector,
+    val subtext: String = ""
+)

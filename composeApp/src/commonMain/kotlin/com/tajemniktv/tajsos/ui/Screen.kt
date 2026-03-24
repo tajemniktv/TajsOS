@@ -18,8 +18,10 @@ sealed class Screen(
     val route: String,
     val label: StringResource,
     val icon: ImageVector,
+    val hasInternalHeader: Boolean = false,
 ) {
-    data object Dashboard : Screen("dashboard", Res.string.screen_dash, Icons.Default.Home)
+    data object Dashboard :
+        Screen("dashboard", Res.string.screen_dash, Icons.Default.Home, hasInternalHeader = true)
 
     data object Inbox : Screen("inbox", Res.string.screen_inbox, Icons.Default.Email)
 
@@ -35,7 +37,12 @@ sealed class Screen(
 
     data object Notes : Screen("notes", Res.string.screen_notes, Icons.Default.Edit)
 
-    data object NoteDetail : Screen("note/{noteId}", Res.string.screen_note, Icons.Default.Edit)
+    data object NoteDetail : Screen(
+        "note/{noteId}",
+        Res.string.screen_note,
+        Icons.Default.Edit,
+        hasInternalHeader = true
+    )
 
     data object Insights : Screen("insights", Res.string.screen_stats, Icons.Default.Info)
 
@@ -57,14 +64,56 @@ sealed class Screen(
         "project/{projectId}",
         Res.string.screen_project,
         Icons.AutoMirrored.Filled.List,
+        hasInternalHeader = true
     )
 
     data object AreaDetail :
-        Screen("area/{areaId}", Res.string.screen_area, Icons.Default.LocationOn)
+        Screen(
+            "area/{areaId}",
+            Res.string.screen_area,
+            Icons.Default.LocationOn,
+            hasInternalHeader = true
+        )
 
     data object Settings : Screen("settings", Res.string.screen_opts, Icons.Default.Settings)
 
-    data object Templates : Screen("templates", Res.string.screen_templates, Icons.Default.Settings)
+    data object Templates : Screen(
+        "templates",
+        Res.string.screen_templates,
+        Icons.Default.Settings,
+        hasInternalHeader = true
+    )
 
-    data object Review : Screen("review", Res.string.screen_review, Icons.Default.RateReview)
+    data object Review : Screen(
+        "review",
+        Res.string.screen_review,
+        Icons.Default.RateReview,
+        hasInternalHeader = true
+    )
+
+    data object Profile : Screen(
+        "profile",
+        Res.string.profile_title,
+        Icons.Default.Person,
+        hasInternalHeader = true
+    )
+
+    data object Decisions : Screen(
+        "decisions",
+        Res.string.dash_decisions,
+        Icons.Default.QuestionMark,
+        hasInternalHeader = true
+    )
+
+    companion object {
+        val groupedItems by lazy {
+            listOf(
+                Res.string.nav_core to listOf(Dashboard, Inbox, Search),
+                Res.string.nav_execution to listOf(Today, Tasks, Focus, Decisions, Calendar),
+                Res.string.nav_brain to listOf(Notes, Projects, Areas),
+                Res.string.nav_status to listOf(Track, Insights, Graph, Review),
+                Res.string.nav_system to listOf(Archive, Settings, Profile),
+            )
+        }
+    }
 }
