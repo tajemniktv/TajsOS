@@ -218,19 +218,6 @@ class AppRepositoryTest {
         assertTrue(updatedOption2.isSelected)
     }
 
-    private suspend fun createBaseDecisionNode(title: String, content: String, outcome: String, areaId: Long, projectId: Long? = null): Long {
-        return fakeNodeDao.insertNode(
-            NodeEntity(
-                type = "decision",
-                title = title,
-                content = content,
-                decisionOutcome = outcome,
-                areaId = areaId,
-                projectId = projectId
-            )
-        )
-    }
-
     private suspend fun assertDerivedRelation(originalId: Long, derivedId: Long) {
         val relations = repository.getAllRelations().first()
         val derivedRelation = relations.find { it.fromNodeId == originalId && it.toNodeId == derivedId }
@@ -240,11 +227,14 @@ class AppRepositoryTest {
 
     @Test
     fun testConvertDecisionToProject_createsDerivedProject() = runTest {
-        val originalNodeId = createBaseDecisionNode(
-            title = "Move to New York",
-            content = "Need to figure out if it's worth it",
-            outcome = "Decided to move",
-            areaId = 42L
+        val originalNodeId = fakeNodeDao.insertNode(
+            NodeEntity(
+                type = "decision",
+                title = "Move to New York",
+                content = "Need to figure out if it's worth it",
+                decisionOutcome = "Decided to move",
+                areaId = 42L
+            )
         )
 
         val projectId = repository.convertDecisionToProject(originalNodeId)
@@ -263,12 +253,15 @@ class AppRepositoryTest {
 
     @Test
     fun testConvertDecisionToTask_createsDerivedTask() = runTest {
-        val originalNodeId = createBaseDecisionNode(
-            title = "Buy new laptop",
-            content = "Old one is breaking",
-            outcome = "Buying the M3 Pro",
-            areaId = 10L,
-            projectId = 20L
+        val originalNodeId = fakeNodeDao.insertNode(
+            NodeEntity(
+                type = "decision",
+                title = "Buy new laptop",
+                content = "Old one is breaking",
+                decisionOutcome = "Buying the M3 Pro",
+                areaId = 10L,
+                projectId = 20L
+            )
         )
 
         val taskId = repository.convertDecisionToTask(originalNodeId)
