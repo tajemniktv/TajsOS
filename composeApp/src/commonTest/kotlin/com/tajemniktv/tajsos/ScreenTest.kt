@@ -4,6 +4,7 @@ import com.tajemniktv.tajsos.ui.Screen
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class ScreenTest {
 
@@ -23,6 +24,7 @@ class ScreenTest {
         Screen.ProjectDetail,
         Screen.AreaDetail,
         Screen.Settings,
+        Screen.Graph,
         Screen.Inbox,
         Screen.Calendar,
         Screen.CalendarSettings,
@@ -33,9 +35,9 @@ class ScreenTest {
     )
 
     @Test
-    fun graphScreen_doesNotExistInScreenList() {
+    fun graphScreen_doesExistInScreenList() {
         val routes = allScreens.map { it.route }
-        assertFalse(routes.contains("graph"), "Graph route should not exist after removal")
+        assertTrue(routes.contains("graph"), "Graph route should exist")
     }
 
     @Test
@@ -105,7 +107,7 @@ class ScreenTest {
 
     @Test
     fun checkTotalScreenCount() {
-        assertEquals(22, allScreens.size)
+        assertEquals(23, allScreens.size)
     }
 
     @Test

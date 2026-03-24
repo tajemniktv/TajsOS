@@ -178,7 +178,8 @@ class MainViewModelTest {
 
         val fakeDataStore = FakeDataStore()
         val testPrefs = PreferencesRepository(fakeDataStore)
-        val calendarManager = com.tajemniktv.tajsos.calendar.CalendarManager(testRepo, io.ktor.client.HttpClient())
+        val client = io.ktor.client.HttpClient()
+        val calendarManager = com.tajemniktv.tajsos.calendar.CalendarManager(testRepo, client)
 
         val viewModel = MainViewModel(testRepo, testPrefs, calendarManager)
 
@@ -188,6 +189,7 @@ class MainViewModelTest {
         val nodes = viewModel.allNodes.value
 
         val exportJson = viewModel.exportDataJson()
+        client.close()
 
         assertTrue(exportJson.isNotEmpty(), "Export JSON should not be empty")
 

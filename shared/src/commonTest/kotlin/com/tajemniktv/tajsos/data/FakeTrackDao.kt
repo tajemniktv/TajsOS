@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.map
 class FakeTrackDao : TrackDao {
     private val entries = mutableListOf<TrackEntryEntity>()
     private val entriesFlow = MutableStateFlow<List<TrackEntryEntity>>(emptyList())
+    private val trackMedications = mutableListOf<TrackMedicationJoinEntity>()
+    private val trackMedicationsFlow = MutableStateFlow<List<TrackMedicationJoinEntity>>(emptyList())
 
     override fun getAllTrackEntries(): Flow<List<TrackEntryEntity>> {
         return entriesFlow.map { list -> list.sortedWith(compareByDescending<TrackEntryEntity> { it.date }.thenByDescending { it.createdAt }) }
@@ -24,9 +26,12 @@ class FakeTrackDao : TrackDao {
         return entriesFlow.value.find { it.date == date }
     }
 
-    override suspend fun insertTrackMedication(join: TrackMedicationJoinEntity) {}
+    override suspend fun insertTrackMedication(join: TrackMedicationJoinEntity) {
+        trackMedications.add(join)
+        trackMedicationsFlow.value = trackMedications.toList()
+    }
 
     override fun getTrackMedications(trackEntryId: Long): Flow<List<TrackMedicationJoinEntity>> {
-        return kotlinx.coroutines.flow.flowOf(emptyList())
+        return trackMedicationsFlow.map { list -> list.filter { it.trackEntryId == trackEntryId } }
     }
 }

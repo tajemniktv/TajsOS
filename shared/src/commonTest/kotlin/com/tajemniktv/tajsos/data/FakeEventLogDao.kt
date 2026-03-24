@@ -21,6 +21,6 @@ class FakeEventLogDao : EventLogDao {
     fun getLogs(): List<EventLogEntity> = logs.toList()
 
     override fun getLogsForNode(nodeId: Long): Flow<List<EventLogEntity>> {
-        return logsFlow.map { list -> list.filter { it.nodeId == nodeId || it.relatedNodeId == nodeId } }
+        return logsFlow.map { list -> list.filter { it.nodeId == nodeId || it.relatedNodeId == nodeId }.sortedByDescending { it.timestamp } }
     }
 }
