@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeEntity
+import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.nodes.ProjectItem
@@ -82,50 +83,13 @@ fun ProjectsScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit) {
 
         Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
 
-        if (filteredProjects.isEmpty() && searchQuery.isEmpty()) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(stringResource(Res.string.projects_empty), color = TactileTheme.Muted)
-                    Spacer(modifier = Modifier.height(TactileTheme.SpacingMd))
-                    Button(onClick = { showAddDialog = true }) {
-                        Text(stringResource(Res.string.projects_create_first))
-                    }
-                }
-            }
-        } else {
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
-                items(filteredProjects, key = { it.id }) { project ->
-                    val projectNodes = nodesByProjectId[project.id] ?: emptyList()
-                    val total = projectNodes.size
-                    val completed = projectNodes.count { it.node.status == "done" }
-                    val progress = if (total > 0) completed.toFloat() / total else 0f
-
-                    ProjectItem(
-                        project = project,
-                        progress = progress,
-                        totalItems = total,
-                        onLongClick = {
-                            onNavigateTo(
-                                Screen.NoteDetail.route.replace(
-                                    "{noteId}",
-                                    project.id.toString()
-                                )
-                            )
-                        }
-                    ) {
-                        onNavigateTo(
-                            Screen.ProjectDetail.route.replace(
-                                "{projectId}",
-                                project.id.toString()
-                            )
-                        )
-                    }
-                }
-                item {
-                    Spacer(modifier = Modifier.height(80.dp))
-                }
-            }
-        }
+        ProjectListContent(
+            filteredProjects = filteredProjects,
+            searchQuery = searchQuery,
+            nodesByProjectId = nodesByProjectId,
+            onNavigateTo = onNavigateTo,
+            onShowAddDialog = { showAddDialog = true }
+        )
     }
 
     if (showAddDialog) {
@@ -194,4 +158,58 @@ fun AddProjectDialog(onDismiss: () -> Unit, onConfirm: (String, String, String) 
             TextButton(onClick = onDismiss) { Text(stringResource(Res.string.projects_dialog_cancel)) }
         }
     )
+}
+
+@Composable
+fun ProjectListContent(
+    filteredProjects: List<NodeEntity>,
+    searchQuery: String,
+    nodesByProjectId: Map<Long?, List<NodeWithPin>>,
+    onNavigateTo: (String) -> Unit,
+    onShowAddDialog: () -> Unit
+) {
+    if (filteredProjects.isEmpty() && searchQuery.isEmpty()) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(stringResource(Res.string.projects_empty), color = TactileTheme.Muted)
+                Spacer(modifier = Modifier.height(TactileTheme.SpacingMd))
+                Button(onClick = onShowAddDialog) {
+                    Text(stringResource(Res.string.projects_create_first))
+                }
+            }
+        }
+    } else {
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+            items(filteredProjects, key = { it.id }) { project ->
+                val projectNodes = nodesByProjectId[project.id] ?: emptyList()
+                val total = projectNodes.size
+                val completed = projectNodes.count { it.node.status == "done" }
+                val progress = if (total > 0) completed.toFloat() / total else 0f
+
+                ProjectItem(
+                    project = project,
+                    progress = progress,
+                    totalItems = total,
+                    onLongClick = {
+                        onNavigateTo(
+                            Screen.NoteDetail.route.replace(
+                                "{noteId}",
+                                project.id.toString()
+                            )
+                        )
+                    }
+                ) {
+                    onNavigateTo(
+                        Screen.ProjectDetail.route.replace(
+                            "{projectId}",
+                            project.id.toString()
+                        )
+                    )
+                }
+            }
+            item {
+                Spacer(modifier = Modifier.height(80.dp))
+            }
+        }
+    }
 }
