@@ -26,6 +26,8 @@ import com.tajemniktv.tajsos.data.DecisionOptionEntity
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.*
 import kotlinx.coroutines.launch
 
 @Composable
@@ -41,7 +43,7 @@ fun DecisionDetailContent(
     var showDecideDialog by remember { mutableStateOf(false) }
 
     Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
-        SectionTitle("DECISION STATUS")
+        SectionTitle(stringResource(Res.string.decision_status_label))
         Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
             val statuses = listOf("pending", "parked", "expired")
             statuses.forEach { status ->
@@ -55,7 +57,7 @@ fun DecisionDetailContent(
             }
         }
 
-        SectionTitle("DECISION CATEGORY")
+        SectionTitle(stringResource(Res.string.decision_category_label))
         Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
             val categories = listOf("tiny", "major")
             categories.forEach { category ->
@@ -70,19 +72,19 @@ fun DecisionDetailContent(
         }
 
         DecisionField(
-            label = "WHAT INFO IS MISSING?",
+            label = stringResource(Res.string.decision_info_missing_label),
             value = node.decisionInfoMissing ?: "",
             onValueChange = { viewModel.updateNode(node.copy(decisionInfoMissing = it)) }
         )
 
         DecisionField(
-            label = "WHAT MAKES THIS DIFFICULT?",
+            label = stringResource(Res.string.decision_difficult_because_label),
             value = node.decisionDifficultBecause ?: "",
             onValueChange = { viewModel.updateNode(node.copy(decisionDifficultBecause = it)) }
         )
 
         DecisionField(
-            label = "WHAT WOULD MAKE THIS EASIER?",
+            label = stringResource(Res.string.decision_easier_if_label),
             value = node.decisionEasierIf ?: "",
             onValueChange = { viewModel.updateNode(node.copy(decisionEasierIf = it)) }
         )
@@ -97,15 +99,15 @@ fun DecisionDetailContent(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            SectionTitle("OPTIONS")
+            SectionTitle(stringResource(Res.string.decision_options_label))
             IconButton(onClick = { showAddOptionDialog = true }) {
-                Icon(Icons.Default.Add, contentDescription = null, tint = TactileTheme.Primary)
+                Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.cd_add_option), tint = TactileTheme.Primary)
             }
         }
 
         if (options.isEmpty()) {
             Text(
-                "NO OPTIONS ADDED YET",
+                stringResource(Res.string.decision_no_options),
                 style = MaterialTheme.typography.labelSmall,
                 color = TactileTheme.Muted,
                 modifier = Modifier.padding(vertical = TactileTheme.SpacingSm)
@@ -129,18 +131,18 @@ fun DecisionDetailContent(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     Icons.Default.CheckCircle,
-                    contentDescription = null,
+                    contentDescription = stringResource(Res.string.cd_decision_decided),
                     tint = TactileTheme.Success
                 )
                 Spacer(modifier = Modifier.width(TactileTheme.SpacingSm))
                 Column {
                     Text(
-                        "OUTCOME",
+                        stringResource(Res.string.decision_outcome_label),
                         style = MaterialTheme.typography.labelSmall,
                         color = TactileTheme.Success
                     )
                     Text(
-                        node.decisionOutcome ?: "NO OUTCOME RECORDED",
+                        node.decisionOutcome ?: stringResource(Res.string.decision_no_outcome),
                         style = MaterialTheme.typography.bodyLarge,
                         color = TactileTheme.Text
                     )
@@ -155,7 +157,7 @@ fun DecisionDetailContent(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(2.dp)
             ) {
-                Text("CONVERT TO ACTION PLAN (PROJECT)")
+                Text(stringResource(Res.string.decision_convert_project))
             }
 
             OutlinedButton(
@@ -164,7 +166,7 @@ fun DecisionDetailContent(
                 shape = RoundedCornerShape(2.dp),
                 border = BorderStroke(1.dp, TactileTheme.Border)
             ) {
-                Text("CONVERT TO FOLLOW-UP TASK", color = TactileTheme.Text)
+                Text(stringResource(Res.string.decision_convert_task), color = TactileTheme.Text)
             }
         } else {
             Button(
@@ -173,7 +175,7 @@ fun DecisionDetailContent(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(2.dp)
             ) {
-                Text("FINALIZE DECISION")
+                Text(stringResource(Res.string.decision_finalize))
             }
         }
     }
@@ -182,12 +184,12 @@ fun DecisionDetailContent(
         var optionTitle by remember { mutableStateOf("") }
         AlertDialog(
             onDismissRequest = { showAddOptionDialog = false },
-            title = { Text("ADD OPTION") },
+            title = { Text(stringResource(Res.string.decision_add_option_title)) },
             text = {
                 OutlinedTextField(
                     value = optionTitle,
                     onValueChange = { optionTitle = it },
-                    label = { Text("Title") },
+                    label = { Text(stringResource(Res.string.decision_add_option_field)) },
                     modifier = Modifier.fillMaxWidth()
                 )
             },
@@ -197,10 +199,10 @@ fun DecisionDetailContent(
                         viewModel.addDecisionOption(node.id, optionTitle)
                         showAddOptionDialog = false
                     }
-                }) { Text("ADD") }
+                }) { Text(stringResource(Res.string.decision_add)) }
             },
             dismissButton = {
-                TextButton(onClick = { showAddOptionDialog = false }) { Text("CANCEL") }
+                TextButton(onClick = { showAddOptionDialog = false }) { Text(stringResource(Res.string.decision_cancel)) }
             },
             containerColor = TactileTheme.Background,
             titleContentColor = TactileTheme.Text,
@@ -214,10 +216,10 @@ fun DecisionDetailContent(
 
         AlertDialog(
             onDismissRequest = { showDecideDialog = false },
-            title = { Text("FINALIZE DECISION") },
+            title = { Text(stringResource(Res.string.decision_finalize)) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
-                    Text("Selected Option:", style = MaterialTheme.typography.labelSmall)
+                    Text(stringResource(Res.string.decision_selected_option), style = MaterialTheme.typography.labelSmall)
                     options.forEach { option ->
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -233,7 +235,7 @@ fun DecisionDetailContent(
                     OutlinedTextField(
                         value = outcome,
                         onValueChange = { outcome = it },
-                        label = { Text("Outcome / Reason") },
+                        label = { Text(stringResource(Res.string.decision_outcome_reason)) },
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
@@ -244,10 +246,10 @@ fun DecisionDetailContent(
                         viewModel.decideOn(node.id, outcome, selectedOptionId)
                         showDecideDialog = false
                     }
-                }) { Text("DECIDE") }
+                }) { Text(stringResource(Res.string.decision_decide)) }
             },
             dismissButton = {
-                TextButton(onClick = { showDecideDialog = false }) { Text("CANCEL") }
+                TextButton(onClick = { showDecideDialog = false }) { Text(stringResource(Res.string.decision_cancel)) }
             },
             containerColor = TactileTheme.Background,
             titleContentColor = TactileTheme.Text,
@@ -281,7 +283,7 @@ fun DecisionField(label: String, value: String, onValueChange: (String) -> Unit)
                 Box {
                     if (value.isEmpty()) {
                         Text(
-                            "Tap to add...",
+                            stringResource(Res.string.decision_tap_to_add),
                             style = MaterialTheme.typography.bodyMedium,
                             color = TactileTheme.Muted
                         )
@@ -319,7 +321,7 @@ fun OptionCard(
                 IconButton(onClick = { onDelete(option) }) {
                     Icon(
                         Icons.Default.Delete,
-                        contentDescription = null,
+                        contentDescription = stringResource(Res.string.cd_delete_option),
                         tint = TactileTheme.Muted,
                         modifier = Modifier.size(16.dp)
                     )

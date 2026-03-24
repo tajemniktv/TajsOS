@@ -85,9 +85,9 @@ fun TaskRow(
                     if (node.friction != null) {
                         val frictionLabel = when (node.friction) {
                             "easy" -> stringResource(Res.string.dash_overwhelmed)
-                            "annoying" -> "ANNOYING"
-                            "mentally_heavy" -> "HEAVY"
-                            "unclear" -> "UNCLEAR"
+                            "annoying" -> stringResource(Res.string.dash_annoying)
+                            "mentally_heavy" -> stringResource(Res.string.dash_heavy)
+                            "unclear" -> stringResource(Res.string.dash_unclear)
                             else -> node.friction!!
                         }
                         Text(
