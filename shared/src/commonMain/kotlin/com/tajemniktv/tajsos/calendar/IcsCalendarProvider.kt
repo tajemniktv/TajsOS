@@ -72,7 +72,7 @@ class IcsCalendarProvider(private val client: HttpClient) : CalendarProvider {
                     currentEvent = null
                 }
                 currentEvent != null -> {
-                    processEventLine(trimmed, currentEvent)
+                    processEventLine(trimmed, currentEvent!!)
                 }
             }
         }
@@ -129,14 +129,12 @@ class IcsCalendarProvider(private val client: HttpClient) : CalendarProvider {
         )
     }
 
+    // Extracted ICS Date specific parsing
     private fun parseIcsDate(dateStr: String, rawKey: String = ""): Instant? {
         return try {
             val cleanDate = dateStr.trim()
             if (cleanDate.length == 8) {
-                val year = cleanDate.substring(0, 4).toInt()
-                val month = cleanDate.substring(4, 6).toInt()
-                val day = cleanDate.substring(6, 8).toInt()
-                LocalDateTime(year, month, day, 0, 0).toInstant(TimeZone.UTC)
+                parseIcsAllDayDate(cleanDate)
             } else if (cleanDate.contains("T")) {
                 parseIsoIcsDate(cleanDate, rawKey)
             } else {
@@ -147,21 +145,31 @@ class IcsCalendarProvider(private val client: HttpClient) : CalendarProvider {
         }
     }
 
-    private fun parseIsoIcsDate(cleanDate: String, rawKey: String): Instant {
-        val year = cleanDate.substring(0, 4)
-        val month = cleanDate.substring(4, 6)
-        val day = cleanDate.substring(6, 8)
-        val hour = cleanDate.substring(9, 11)
-        val min = cleanDate.substring(11, 13)
-        val sec = cleanDate.substring(13, 15)
-        val iso = "$year-$month-${day}T$hour:$min:$sec"
+    private fun parseIcsAllDayDate(cleanDate: String): Instant {
+        val year = cleanDate.substring(0, 4).toInt()
+        val month = cleanDate.substring(4, 6).toInt()
+        val day = cleanDate.substring(6, 8).toInt()
+        return LocalDateTime(year, month, day, 0, 0).toInstant(TimeZone.UTC)
+    }
 
+    private fun parseIsoIcsDate(cleanDate: String, rawKey: String): Instant {
+        val iso = formatIcsDateToIso(cleanDate)
         return if (cleanDate.endsWith("Z")) {
             Instant.parse(iso + "Z")
         } else {
             val timeZone = extractTimeZone(rawKey)
             LocalDateTime.parse(iso).toInstant(timeZone)
         }
+    }
+
+    private fun formatIcsDateToIso(cleanDate: String): String {
+        val year = cleanDate.substring(0, 4)
+        val month = cleanDate.substring(4, 6)
+        val day = cleanDate.substring(6, 8)
+        val hour = cleanDate.substring(9, 11)
+        val min = cleanDate.substring(11, 13)
+        val sec = cleanDate.substring(13, 15)
+        return "$year-$month-${day}T$hour:$min:$sec"
     }
 
     private fun extractTimeZone(rawKey: String): TimeZone {
