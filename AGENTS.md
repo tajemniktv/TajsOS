@@ -1,4 +1,6 @@
-# AGENTS.md
+# Guidelines for AI Agents
+
+This is a guidelines file for agents working on TajsOS.
 
 ## Project identity
 
@@ -6,6 +8,46 @@ TajsOS is a low-friction "Second Brain" multiplatform app for managing your life
 neccessarily for ADHD brains, but it is designed with ADHD brains in mind. It tries to replace
 overwhelming lists with a mechanical, satisfying control center that makes task capture and
 execution feel like operating heavy machinery.
+
+## Maintaining AGENTS.md Files
+
+When updating AGENTS.md files, follow these principles:
+
+- **No hardcoded counts** — Don't write "10 crates" or "5 modules"; these become outdated instantly
+- **No exhaustive lists** — Prefer dynamic commands (`ls crates/`) over maintaining complete lists
+- **Document constraints, not descriptions** — Focus on non-obvious behaviors, gotchas, and
+  cross-crate dependencies
+- **Use nested AGENTS.md** — Place crate-specific details in `crates/{name}/AGENTS.md`, not here
+- **Verify before documenting** — Grep/read the code to confirm claims are accurate
+- **Delete outdated info** — Outdated docs are worse than no docs
+
+## Commit Message Convention
+
+```
+<type>: <description>
+
+[optional body]
+```
+
+### Types
+
+| Type       | Description                           |
+|------------|---------------------------------------|
+| `feat`     | New feature                           |
+| `fix`      | Bug fix                               |
+| `refactor` | Code refactoring (no behavior change) |
+| `docs`     | Documentation only                    |
+| `test`     | Adding or updating tests              |
+| `chore`    | Maintenance tasks                     |
+| `perf`     | Performance improvements              |
+
+### Versioning Conventions
+
+| Bump Type | When to Use                                            | Example           |
+|-----------|--------------------------------------------------------|-------------------|
+| `patch`   | Bug fixes, small features, additive parser support     | `1.2.0` → `1.2.1` |
+| `minor`   | New client support, significant features, UI overhauls | `1.1.2` → `1.2.0` |
+| `major`   | Breaking changes (never used so far)                   | `1.2.1` → `2.0.0` |
 
 ## Tech stack
 
@@ -61,6 +103,10 @@ When making meaningful changes, keep these current:
 - `README.md` for product and setup
 - `AGENTS.md` for agent behavior and project rules
 - `ROADMAP.md` for phased direction when scope evolves
+- `CHANGELOG.md` for release notes
+- `CONTRIBUTING.md` for contributing guidelines
+- `CODE_OF_CONDUCT.md` for code of conduct
+- `DESIGN.md` for visual design principles
 - `ARCHITECTURE.md` for understanding the application structural design and boundaries
 
 ---
