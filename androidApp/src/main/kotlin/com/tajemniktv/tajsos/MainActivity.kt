@@ -204,6 +204,7 @@ class MainActivity : FragmentActivity() {
         ) == BiometricManager.BIOMETRIC_SUCCESS
     }
 
+    //f
     override fun onStop() {
         super.onStop()
         viewModel.lockApp()
