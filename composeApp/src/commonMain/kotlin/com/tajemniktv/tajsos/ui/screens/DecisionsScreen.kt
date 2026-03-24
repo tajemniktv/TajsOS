@@ -131,85 +131,106 @@ fun DecisionItem(
         onClick = { onEditNode(node.id) }
     ) {
         Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = if (node.decisionCategory == "major") Icons.Default.PriorityHigh else Icons.Default.Circle,
-                        contentDescription = if (node.decisionCategory == "major") stringResource(Res.string.cd_decision_major) else stringResource(Res.string.cd_decision_tiny),
-                        tint = if (node.decisionCategory == "major") TactileTheme.Accent else TactileTheme.Muted,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(modifier = Modifier.width(TactileTheme.SpacingSm))
-                    Text(
-                        node.decisionCategory?.uppercase() ?: "TINY",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = if (node.decisionCategory == "major") TactileTheme.Accent else TactileTheme.Muted,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-
-                if (node.decisionStatus != null) {
-                    Surface(
-                        color = getStatusColor(node.decisionStatus!!).copy(alpha = 0.1f),
-                        shape = RoundedCornerShape(2.dp)
-                    ) {
-                        Text(
-                            node.decisionStatus!!.uppercase(),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = getStatusColor(node.decisionStatus!!),
-                            modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp),
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
-            }
-
+            DecisionHeader(node)
             Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
+            DecisionContent(node)
+            DecisionOutcome(node)
+        }
+    }
+}
 
+@Composable
+private fun DecisionHeader(node: NodeEntity) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        DecisionCategoryIcon(node.decisionCategory)
+        DecisionStatusBadge(node.decisionStatus)
+    }
+}
+
+@Composable
+private fun DecisionCategoryIcon(category: String?) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Icon(
+            imageVector = if (category == "major") Icons.Default.PriorityHigh else Icons.Default.Circle,
+            contentDescription = if (category == "major") stringResource(Res.string.cd_decision_major) else stringResource(Res.string.cd_decision_tiny),
+            tint = if (category == "major") TactileTheme.Accent else TactileTheme.Muted,
+            modifier = Modifier.size(16.dp)
+        )
+        Spacer(modifier = Modifier.width(TactileTheme.SpacingSm))
+        Text(
+            category?.uppercase() ?: "TINY",
+            style = MaterialTheme.typography.labelSmall,
+            color = if (category == "major") TactileTheme.Accent else TactileTheme.Muted,
+            fontWeight = FontWeight.Bold
+        )
+    }
+}
+
+@Composable
+private fun DecisionStatusBadge(status: String?) {
+    if (status != null) {
+        Surface(
+            color = getStatusColor(status).copy(alpha = 0.1f),
+            shape = RoundedCornerShape(2.dp)
+        ) {
             Text(
-                node.title,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = TactileTheme.Text
+                status.uppercase(),
+                style = MaterialTheme.typography.labelSmall,
+                color = getStatusColor(status),
+                modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp),
+                fontWeight = FontWeight.Bold
             )
+        }
+    }
+}
 
-            if (node.content.isNotEmpty()) {
-                Text(
-                    node.content,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Muted,
-                    maxLines = 2
-                )
-            }
+@Composable
+private fun DecisionContent(node: NodeEntity) {
+    Text(
+        node.title,
+        style = MaterialTheme.typography.titleMedium,
+        fontWeight = FontWeight.Bold,
+        color = TactileTheme.Text
+    )
 
-            if (node.decisionStatus == "decided" && node.decisionOutcome != null) {
-                Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
-                HorizontalDivider(
-                    Modifier,
-                    DividerDefaults.Thickness,
-                    color = TactileTheme.Border.copy(alpha = 0.3f)
-                )
-                Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        Icons.Default.CheckCircle,
-                        contentDescription = null,
-                        tint = TactileTheme.Success,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(modifier = Modifier.width(TactileTheme.SpacingSm))
-                    Text(
-                        stringResource(Res.string.decision_outcome_prefix, node.decisionOutcome ?: ""),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Success,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-            }
+    if (node.content.isNotEmpty()) {
+        Text(
+            node.content,
+            style = MaterialTheme.typography.bodySmall,
+            color = TactileTheme.Muted,
+            maxLines = 2
+        )
+    }
+}
+
+@Composable
+private fun DecisionOutcome(node: NodeEntity) {
+    if (node.decisionStatus == "decided" && node.decisionOutcome != null) {
+        Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
+        HorizontalDivider(
+            Modifier,
+            DividerDefaults.Thickness,
+            color = TactileTheme.Border.copy(alpha = 0.3f)
+        )
+        Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                Icons.Default.CheckCircle,
+                contentDescription = stringResource(Res.string.cd_decision_outcome),
+                tint = TactileTheme.Success,
+                modifier = Modifier.size(16.dp)
+            )
+            Spacer(modifier = Modifier.width(TactileTheme.SpacingSm))
+            Text(
+                stringResource(Res.string.decision_outcome_prefix, node.decisionOutcome ?: ""),
+                style = MaterialTheme.typography.labelSmall,
+                color = TactileTheme.Success,
+                fontWeight = FontWeight.Bold
+            )
         }
     }
 }
