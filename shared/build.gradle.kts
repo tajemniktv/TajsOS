@@ -82,3 +82,12 @@ dependencies {
     add("kspIosSimulatorArm64", libs.androidx.room.compiler)
     add("kspJvm", libs.androidx.room.compiler)
 }
+kotlin {
+    sourceSets {
+        val commonTest by getting {
+            dependencies {
+                implementation(libs.ktor.client.mock)
+            }
+        }
+    }
+}
