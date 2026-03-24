@@ -38,6 +38,7 @@ import kotlinx.coroutines.launch
 class MainActivity : FragmentActivity() {
     private lateinit var viewModel: MainViewModel
     private var voiceCaptureResult = mutableStateOf<String?>(null)
+    private var pendingIntent = mutableStateOf<Intent?>(null)
 
     private val speechRecognizerLauncher =
         registerForActivityResult(
@@ -70,18 +71,26 @@ class MainActivity : FragmentActivity() {
         viewModel = sharedModule.createViewModel()
 
         viewModel.setBiometricHardwareAvailable(isBiometricAvailable())
-        handleIntent(intent)
+        pendingIntent.value = intent
 
         setContent {
             val isAuthenticated by viewModel.isAuthenticated.collectAsState()
             val isBiometricEnabled by viewModel.isBiometricEnabled.collectAsState()
             val voiceText by voiceCaptureResult
+            val currentPendingIntent by pendingIntent
 
             LaunchedEffect(isBiometricEnabled, isAuthenticated) {
                 if (isBiometricEnabled == true && !isAuthenticated) {
                     showBiometricPrompt(viewModel)
                 } else if (isBiometricEnabled == false) {
                     viewModel.setAuthenticated(true)
+                }
+            }
+
+            LaunchedEffect(isAuthenticated, currentPendingIntent) {
+                if (isAuthenticated && currentPendingIntent != null) {
+                    handleIntent(currentPendingIntent!!)
+                    pendingIntent.value = null
                 }
             }
 
@@ -122,7 +131,7 @@ class MainActivity : FragmentActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        handleIntent(intent)
+        pendingIntent.value = intent
     }
 
     private fun handleIntent(intent: Intent) {
