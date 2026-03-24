@@ -51,7 +51,8 @@ fun ProjectItem(
                 Text(
                     project.title.uppercase(),
                     style = MaterialTheme.typography.titleMedium,
-                    color = TactileTheme.Primary
+                    color = TactileTheme.Primary,
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.Black
                 )
                 if (totalItems > 0) {
                     Text(
@@ -69,7 +70,7 @@ fun ProjectItem(
                 )
             }
             if (totalItems > 0) {
-                Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
+                Spacer(modifier = Modifier.height(TactileTheme.SpacingMd))
                 LinearProgressIndicator(
                     progress = { progress },
                     modifier = Modifier.fillMaxWidth().height(2.dp),
