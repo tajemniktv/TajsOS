@@ -78,7 +78,10 @@ class RepositoryDelegationTest {
 
     private class FakeTrackDao : TrackDao {
         override fun getAllTrackEntries(): Flow<List<TrackEntryEntity>> = flowOf(emptyList())
-        override suspend fun insertTrackEntry(entry: TrackEntryEntity) {}
+        override suspend fun insertTrackEntry(entry: TrackEntryEntity): Long { return 0 }
+        override suspend fun getTrackEntryByDate(date: String): TrackEntryEntity? = null
+        override suspend fun insertTrackMedication(join: TrackMedicationJoinEntity) {}
+        override fun getTrackMedications(trackEntryId: Long): Flow<List<TrackMedicationJoinEntity>> = flowOf(emptyList())
     }
 
     private class FakeRelationDao : RelationDao {
@@ -87,6 +90,10 @@ class RepositoryDelegationTest {
 
         override suspend fun insertRelation(relation: RelationEntity) {}
         override suspend fun deleteRelation(relation: RelationEntity) {}
+        override suspend fun deleteBelongsToRelations(nodeId: Long) {}
+        override suspend fun getBelongsToRelations(nodeId: Long): List<RelationEntity> = emptyList()
+        override suspend fun anyRelationExists(from: Long, to: Long): Boolean = false
+        override fun getAllRelations(): Flow<List<RelationEntity>> = flowOf(emptyList())
     }
 
     private class FakeTagDao : TagDao {
@@ -99,6 +106,7 @@ class RepositoryDelegationTest {
 
     private class FakeEventLogDao : EventLogDao {
         override fun getRecentLogs(limit: Int): Flow<List<EventLogEntity>> = flowOf(emptyList())
+        override fun getLogsForNode(nodeId: Long): Flow<List<EventLogEntity>> = flowOf(emptyList())
         override suspend fun insertLog(log: EventLogEntity) {}
     }
 
@@ -130,7 +138,12 @@ class RepositoryDelegationTest {
             nodeSnapshotDao = FakeNodeSnapshotDao(),
             reviewDao = FakeReviewDao(),
             calendarProviderDao = FakeCalendarProviderDao(),
-            calendarEventDao = FakeCalendarEventDao()
+            calendarEventDao = FakeCalendarEventDao(),
+            modeDao = com.tajemniktv.tajsos.data.FakeModeDao(),
+            protocolDao = com.tajemniktv.tajsos.data.FakeProtocolDao(),
+            decisionDao = com.tajemniktv.tajsos.data.FakeDecisionDao(),
+            userDao = com.tajemniktv.tajsos.data.FakeUserDao(),
+            medicationDao = com.tajemniktv.tajsos.data.FakeMedicationDao()
         )
 
     // ---------------------------------------------------------------------------

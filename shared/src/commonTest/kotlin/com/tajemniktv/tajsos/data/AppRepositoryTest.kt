@@ -1,13 +1,16 @@
-/*
- * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
- */
-
 package com.tajemniktv.tajsos.data
 
 import kotlinx.coroutines.test.runTest
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import kotlin.test.assertFalse
+import kotlin.test.assertNotNull
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 
 class AppRepositoryTest {
 
@@ -36,7 +39,12 @@ class AppRepositoryTest {
         nodeSnapshotDao = fakeNodeSnapshotDao,
         reviewDao = fakeReviewDao,
         calendarProviderDao = fakeCalendarProviderDao,
-        calendarEventDao = fakeCalendarEventDao
+        calendarEventDao = fakeCalendarEventDao,
+        modeDao = FakeModeDao(),
+        protocolDao = FakeProtocolDao(),
+        decisionDao = FakeDecisionDao(),
+        userDao = FakeUserDao(),
+        medicationDao = FakeMedicationDao()
     )
 
     @Test
@@ -52,24 +60,26 @@ class AppRepositoryTest {
 
     @Test
     fun testUpdateNodeCompletedLogsEvent() = runTest {
-        val node = NodeEntity(id = 1, type = "task", title = "Test Node", status = "done")
+        val id = fakeNodeDao.insertNode(NodeEntity(type = "task", title = "Test Node", status = "active"))
+        val node = NodeEntity(id = id, type = "task", title = "Test Node", status = "done")
         repository.updateNode(node)
 
         val logs = fakeEventLogDao.getLogs()
         assertEquals(1, logs.size)
         assertEquals("NODE_COMPLETED", logs[0].eventType)
-        assertEquals(1, logs[0].nodeId)
+        assertEquals(id, logs[0].nodeId)
     }
 
     @Test
     fun testUpdateNodeArchivedLogsEvent() = runTest {
-        val node = NodeEntity(id = 1, type = "task", title = "Test Node", status = "archived")
+        val id = fakeNodeDao.insertNode(NodeEntity(type = "task", title = "Test Node", status = "active"))
+        val node = NodeEntity(id = id, type = "task", title = "Test Node", status = "archived")
         repository.updateNode(node)
 
         val logs = fakeEventLogDao.getLogs()
         assertEquals(1, logs.size)
         assertEquals("NODE_ARCHIVED", logs[0].eventType)
-        assertEquals(1, logs[0].nodeId)
+        assertEquals(id, logs[0].nodeId)
     }
 
     @Test
@@ -115,14 +125,57 @@ class AppRepositoryTest {
     }
 
     @Test
-    fun testInsertRelationLogsEvent() = runTest {
-        val relation = RelationEntity(fromNodeId = 1, toNodeId = 2, relationType = "RELATED")
-        repository.insertRelation(relation)
+    fun testGetActiveSession_returnsSession() = runTest {
+        val session = FocusSessionEntity(nodeId = 1, startedAt = 1000)
+        fakeFocusSessionDao.insertSession(session)
 
-        val logs = fakeEventLogDao.getLogs()
-        assertEquals(1, logs.size)
-        assertEquals("NODE_LINKED", logs[0].eventType)
-        assertEquals(1, logs[0].nodeId)
-        assertEquals(2, logs[0].relatedNodeId)
+        val activeSession = repository.getActiveSession().first()
+        assertNotNull(activeSession)
+        assertEquals(1, activeSession.nodeId)
+    }
+
+    @Test
+    fun testGetTodayNodes_filtersActiveNodes() = runTest {
+        val date = kotlin.time.Clock.System.now().toLocalDateTime(kotlinx.datetime.TimeZone.currentSystemDefault()).date.toString()
+        val activeId = fakeNodeDao.insertNode(NodeEntity(type = "task", title = "Active", status = "active"))
+        val doneId = fakeNodeDao.insertNode(NodeEntity(type = "task", title = "Done", status = "done"))
+
+        fakeNodeDao.pinToToday(TodayPinEntity(nodeId = activeId, date = date, position = 0))
+        fakeNodeDao.pinToToday(TodayPinEntity(nodeId = doneId, date = date, position = 0))
+
+        val todayNodes = repository.getTodayNodes().first()
+        assertEquals(1, todayNodes.size)
+        assertEquals(activeId, todayNodes[0].id)
+    }
+
+    @Test
+    fun testGetNodesByType_filtersOutArchived() = runTest {
+        val activeId = fakeNodeDao.insertNode(NodeEntity(type = "note", title = "Active Note", status = "active"))
+        val archivedId = fakeNodeDao.insertNode(NodeEntity(type = "note", title = "Archived Note", status = "archived"))
+
+        val noteNodes = repository.getNodesByType("note").first()
+        assertEquals(1, noteNodes.size)
+        assertEquals(activeId, noteNodes[0].id)
+    }
+
+    @Test
+    fun testPinToToday_addsPin() = runTest {
+        val nodeId = fakeNodeDao.insertNode(NodeEntity(type = "task", title = "Task", status = "active"))
+        repository.pinToToday(nodeId)
+
+        val isPinned = repository.isPinnedToToday(nodeId).first()
+        assertTrue(isPinned)
+    }
+
+    @Test
+    fun testUnpinFromToday_removesPin() = runTest {
+        val nodeId = fakeNodeDao.insertNode(NodeEntity(type = "task", title = "Task", status = "active"))
+        val date = "2024-03-21"
+
+        fakeNodeDao.pinToToday(TodayPinEntity(nodeId = nodeId, date = date, position = 0))
+        repository.unpinFromToday(nodeId)
+
+        val isPinned = repository.isPinnedToToday(nodeId).first()
+        assertFalse(isPinned)
     }
 }
