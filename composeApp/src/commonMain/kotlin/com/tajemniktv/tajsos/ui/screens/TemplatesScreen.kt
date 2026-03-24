@@ -15,7 +15,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.components.*
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
@@ -129,12 +131,13 @@ fun TemplatesScreen(
                 }
             },
             confirmButton = {
-                Button(onClick = {
-                    if (name.isNotBlank()) {
+                Button(
+                    onClick = {
                         viewModel.addTemplate(name, type)
                         showAddDialog = false
-                    }
-                }) { Text(stringResource(Res.string.templates_dialog_create)) }
+                    },
+                    enabled = name.isNotBlank()
+                ) { Text(stringResource(Res.string.templates_dialog_create)) }
             },
             dismissButton = {
                 TextButton(onClick = { showAddDialog = false }) {

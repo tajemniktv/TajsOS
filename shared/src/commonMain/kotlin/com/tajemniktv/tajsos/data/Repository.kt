@@ -23,7 +23,10 @@ class AppRepository(
     private val nodeSnapshotDao: NodeSnapshotDao,
     private val reviewDao: ReviewDao,
     private val calendarProviderDao: CalendarProviderDao,
-    private val calendarEventDao: CalendarEventDao
+    private val calendarEventDao: CalendarEventDao,
+    private val modeDao: ModeDao,
+    private val protocolDao: ProtocolDao,
+    private val decisionDao: DecisionDao
 ) {
     fun getAllNodes(): Flow<List<NodeWithPin>> = nodeDao.getAllNodesWithPins()
 
@@ -239,4 +242,37 @@ fun getActiveSession(): Flow<FocusSessionEntity?> = focusSessionDao.getActiveSes
     fun getAllReviews() = reviewDao.getAllReviews()
     suspend fun insertReview(review: ReviewEntity) = reviewDao.insertReview(review)
     suspend fun getLastReviewByType(type: String) = reviewDao.getLastReviewByType(type)
+
+    // Operating Modes
+    fun getAllModes() = modeDao.getAllModes()
+    suspend fun insertMode(mode: ModeEntity) = modeDao.insertMode(mode)
+    suspend fun updateMode(mode: ModeEntity) = modeDao.updateMode(mode)
+    fun getPreferencesForMode(modeId: Long) = modeDao.getPreferencesForMode(modeId)
+    suspend fun insertPreference(preference: ModePreferenceEntity) =
+        modeDao.insertPreference(preference)
+
+    fun getAreaFiltersForMode(modeId: Long) = modeDao.getAreaFiltersForMode(modeId)
+    suspend fun insertAreaFilter(filter: ModeAreaFilterEntity) = modeDao.insertAreaFilter(filter)
+    fun getTypeFiltersForMode(modeId: Long) = modeDao.getTypeFiltersForMode(modeId)
+    suspend fun insertTypeFilter(filter: ModeTypeFilterEntity) = modeDao.insertTypeFilter(filter)
+    fun getAllModeUsageLogs() = modeDao.getAllUsageLogs()
+    suspend fun insertModeUsageLog(log: ModeUsageLogEntity) = modeDao.insertUsageLog(log)
+    suspend fun deactivateModeUsageLog(id: Long, timestamp: Long) =
+        modeDao.deactivateLog(id, timestamp)
+
+    // Protocols
+    fun getAllProtocolHistory() = protocolDao.getAllProtocolHistory()
+    suspend fun insertProtocolHistory(history: ProtocolHistoryEntity) =
+        protocolDao.insertProtocolHistory(history)
+
+    // Decisions
+    fun getOptionsForDecision(nodeId: Long) = decisionDao.getOptionsForDecision(nodeId)
+    suspend fun insertDecisionOption(option: DecisionOptionEntity) =
+        decisionDao.insertDecisionOption(option)
+
+    suspend fun updateDecisionOption(option: DecisionOptionEntity) =
+        decisionDao.updateDecisionOption(option)
+
+    suspend fun deleteDecisionOption(option: DecisionOptionEntity) =
+        decisionDao.deleteDecisionOption(option)
 }
