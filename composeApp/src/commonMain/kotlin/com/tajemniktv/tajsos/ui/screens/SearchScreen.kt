@@ -103,7 +103,7 @@ fun SearchScreen(
                 )
             }
             val types = listOf("task", "note", "project", "area", "resource", "idea")
-            items(types) { type ->
+            items(types, key = { it }) { type ->
                 val typeLabel = when (type) {
                     "task" -> stringResource(Res.string.type_task)
                     "note" -> stringResource(Res.string.type_note)
@@ -156,7 +156,7 @@ fun SearchScreen(
                         )
                     }
                 }
-                items(areas) { area ->
+                items(areas, key = { it.id }) { area ->
                     FilterChip(
                         selected = searchAreaFilter == area.id,
                         onClick = { viewModel.updateSearchAreaFilter(if (searchAreaFilter == area.id) null else area.id) },
@@ -170,7 +170,7 @@ fun SearchScreen(
                         }
                     )
                 }
-                items(projects) { project ->
+                items(projects, key = { it.id }) { project ->
                     FilterChip(
                         selected = searchProjectFilter == project.id,
                         onClick = { viewModel.updateSearchProjectFilter(if (searchProjectFilter == project.id) null else project.id) },
@@ -193,7 +193,7 @@ fun SearchScreen(
             EmptyState(message = stringResource(Res.string.search_no_results))
         } else {
             LazyColumn(modifier = Modifier.weight(1f)) {
-                items(searchResults) { nodeWithPin ->
+                items(searchResults, key = { it.node.id }) { nodeWithPin ->
                     ListItem(
                         headlineContent = { Text(nodeWithPin.node.title) },
                         supportingContent = {
