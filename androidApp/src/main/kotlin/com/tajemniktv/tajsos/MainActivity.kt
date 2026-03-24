@@ -38,6 +38,7 @@ import kotlinx.coroutines.launch
 class MainActivity : FragmentActivity() {
     private lateinit var viewModel: MainViewModel
     private var voiceCaptureResult = mutableStateOf<String?>(null)
+    private var pendingIntent = mutableStateOf<Intent?>(null)
 
     private val speechRecognizerLauncher =
         registerForActivityResult(
@@ -85,6 +86,54 @@ class MainActivity : FragmentActivity() {
                 }
             }
 
+
+            val currentPendingIntent by pendingIntent
+
+            LaunchedEffect(isAuthenticated, currentPendingIntent) {
+                if (isAuthenticated && currentPendingIntent != null) {
+                    val intent = currentPendingIntent!!
+                    if (intent.action == Intent.ACTION_SEND) {
+                        val type = intent.type
+                        if ("text/plain" == type) {
+                            intent.getStringExtra(Intent.EXTRA_TEXT)?.let { sharedText ->
+                                viewModel.addNode(title = sharedText, type = "note")
+                            }
+                        } else if (type?.startsWith("image/") == true) {
+                            val imageUri =
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                    intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
+                                } else {
+                                    @Suppress("DEPRECATION")
+                                    intent.getParcelableExtra(Intent.EXTRA_STREAM)
+                                }
+                            imageUri?.let { uri ->
+                                val nodeId = viewModel.addNodeForResult(title = "Shared Image", type = "resource")
+                                viewModel.addAttachment(nodeId, "IMAGE", uri.toString())
+                            }
+                        }
+                    } else if (intent.action == Intent.ACTION_SEND_MULTIPLE) {
+                        val type = intent.type
+                        if (type?.startsWith("image/") == true) {
+                            val imageUris =
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                    intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM, Uri::class.java)
+                                } else {
+                                    @Suppress("DEPRECATION")
+                                    intent.getParcelableArrayListExtra<Uri>(Intent.EXTRA_STREAM)
+                                }
+                            imageUris?.let { uris ->
+                                val nodeId = viewModel.addNodeForResult(title = "Shared Images", type = "resource")
+                                uris.forEach { uri ->
+                                    viewModel.addAttachment(nodeId, "IMAGE", uri.toString())
+                                }
+                            }
+                        }
+                    }
+                    intent.action = null
+                    pendingIntent.value = null
+                }
+            }
+
             Surface(
                 modifier = Modifier.fillMaxSize(),
                 color = MaterialTheme.colorScheme.background,
@@ -126,28 +175,8 @@ class MainActivity : FragmentActivity() {
     }
 
     private fun handleIntent(intent: Intent) {
-        if (intent.action == Intent.ACTION_SEND) {
-            val type = intent.type
-            if ("text/plain" == type) {
-                intent.getStringExtra(Intent.EXTRA_TEXT)?.let { sharedText ->
-                    viewModel.addNode(title = sharedText, type = "note")
-                }
-            } else if (type?.startsWith("image/") == true) {
-                val imageUri =
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
-                    } else {
-                        @Suppress("DEPRECATION")
-                        intent.getParcelableExtra(Intent.EXTRA_STREAM)
-                    }
-                imageUri?.let { uri ->
-                    lifecycleScope.launch {
-                        val nodeId =
-                            viewModel.addNodeForResult(title = "Shared Image", type = "resource")
-                        viewModel.addAttachment(nodeId, "IMAGE", uri.toString())
-                    }
-                }
-            }
+        if (intent.action == Intent.ACTION_SEND || intent.action == Intent.ACTION_SEND_MULTIPLE) {
+            pendingIntent.value = intent
         }
     }
 
