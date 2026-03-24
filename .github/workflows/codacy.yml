@@ -42,7 +42,6 @@ jobs:
       - name: Run Codacy Analysis CLI
         uses: codacy/codacy-analysis-cli-action@562ee3e92b8e92df8b67e0a5ff8aa8e261919c08
         with:
-          category: codacy
           # Check https://github.com/codacy/codacy-analysis-cli#project-token to get your project token from your Codacy repository
           # You can also omit the token and run the tools that support default configurations
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
@@ -55,9 +54,20 @@ jobs:
           # This will handover control about PR rejection to the GitHub side
           max-allowed-issues: 2147483647
 
+
+      - name: Modify SARIF categories
+        run: |
+          python3 -c "import json, sys
+          with open('results.sarif', 'r') as f:
+              data = json.load(f)
+          for idx, run in enumerate(data.get('runs', [])):
+              tool_name = run.get('tool', {}).get('driver', {}).get('name', f'tool-{idx}')
+              run.setdefault('automationDetails', {})['id'] = f'codacy-{tool_name.lower().replace(\" \", \"-\")}'
+          with open('results.sarif', 'w') as f:
+              json.dump(data, f)
+          "
       # Upload the SARIF file generated in the previous step
       - name: Upload SARIF results file
         uses: github/codeql-action/upload-sarif@v4
         with:
-          category: codacy
           sarif_file: results.sarif
