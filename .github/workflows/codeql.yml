@@ -112,7 +112,7 @@ jobs:
           ./gradlew clean assemble -x test --no-daemon --no-parallel
 
       - name: Set up Node 22 (for website build)
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: "22"
 
