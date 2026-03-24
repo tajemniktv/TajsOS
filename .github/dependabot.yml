@@ -39,13 +39,13 @@ updates:
       - "dependabot"
 
   # Gradle wrapper (keeps Gradle itself up-to-date)
-  - package-ecosystem: "gradle-wrapper"
-    directory: "/"
-    schedule:
-      interval: "monthly"
-    labels:
-      - "infra"
-      - "gradle-wrapper"
+  #- package-ecosystem: "gradle-wrapper"
+  #  directory: "/"
+  #  schedule:
+  #    interval: "monthly"
+  #  labels:
+  #    - "infra"
+  #    - "gradle-wrapper"
 
   # GitHub Actions (CI/workflow action updates)
   - package-ecosystem: "github-actions"
