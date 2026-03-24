@@ -25,8 +25,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Export ANDROID_SDK_ROOT
-        # set runner-provided temp into GITHUB_ENV so later steps can use it without referencing runner.* in job-level expressions
+      - name: Export ANDROID_SDK_ROOT (linter-friendly)
         run: |
           echo "ANDROID_SDK_ROOT=${RUNNER_TEMP}/android-sdk" >> $GITHUB_ENV
 
@@ -44,11 +43,19 @@ jobs:
             ~/.gradle/wrapper
           key: gradle-cache-${{ runner.os }}-${{ hashFiles('**/*.gradle*','**/gradle-wrapper.properties','gradle/libs.versions.toml') }}
 
-      - name: Initialize CodeQL (manual build mode)
+      # Initialize CodeQL for Java/Kotlin in manual mode (avoids Kotlin extractor intercept)
+      - name: Initialize CodeQL for java-kotlin (manual build-mode)
         uses: github/codeql-action/init@v4
         with:
-          languages: java-kotlin, javascript
+          languages: java-kotlin
           build-mode: manual
+
+      # Initialize CodeQL for JavaScript in none mode (JS doesn't support manual)
+      - name: Initialize CodeQL for javascript (none build-mode)
+        uses: github/codeql-action/init@v4
+        with:
+          languages: javascript
+          build-mode: none
 
       - name: Detect website (website/package.json) presence
         id: check_website
@@ -103,7 +110,6 @@ jobs:
           # ensure no stale daemons and run an explicit build (skip tests to speed up)
           ./gradlew --stop || true
           ./gradlew clean assemble -x test --no-daemon --no-parallel
-        # rely on actions/setup-java to set JAVA_HOME
 
       - name: Set up Node 22 (for website build)
         uses: actions/setup-node@v4
@@ -129,8 +135,3 @@ jobs:
 
       - name: Perform CodeQL analysis
         uses: github/codeql-action/analyze@v4
-        with:
-          # optional: you can provide a category or custom queries here
-          # category: "codeql/TajsOS"
-          # leave defaults to run standard query packs
-          matrix: ${{ toJson(matrix) || '' }}
