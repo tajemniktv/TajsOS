@@ -861,11 +861,11 @@ class MainViewModel(
         val recentTracks = tracks.filter { it.date >= sevenDaysAgoDate.toString() }
 
         val avgMood =
-            recentTracks.mapNotNull { it.moodScore }.average().takeIf { !it.isNaN() } ?: 0.0
+            recentTracks.mapNotNull { it.moodScore }.takeIf { it.isNotEmpty() }?.average() ?: 0.0
         val avgEnergy =
-            recentTracks.mapNotNull { it.energyScore }.average().takeIf { !it.isNaN() } ?: 0.0
+            recentTracks.mapNotNull { it.energyScore }.takeIf { it.isNotEmpty() }?.average() ?: 0.0
         val avgFocus =
-            recentTracks.mapNotNull { it.focusScore }.average().takeIf { !it.isNaN() } ?: 0.0
+            recentTracks.mapNotNull { it.focusScore }.takeIf { it.isNotEmpty() }?.average() ?: 0.0
 
         val nodesByProjectId = nodes.groupBy { it.node.projectId }
         val neglectedProjects =
@@ -930,25 +930,25 @@ class MainViewModel(
 
         val moodVsCompletions = if (recentTracks.isNotEmpty()) {
             val moodOnBusyDays = recentTracks.filter { (dailyCompletions[it.date] ?: 0) >= 3 }
-                .mapNotNull { it.moodScore }.average()
+                .mapNotNull { it.moodScore }.takeIf { it.isNotEmpty() }?.average() ?: Double.NaN
             val moodOnSlowDays = recentTracks.filter { (dailyCompletions[it.date] ?: 0) == 0 }
-                .mapNotNull { it.moodScore }.average()
+                .mapNotNull { it.moodScore }.takeIf { it.isNotEmpty() }?.average() ?: Double.NaN
             if (!moodOnBusyDays.isNaN() && !moodOnSlowDays.isNaN()) moodOnBusyDays - moodOnSlowDays else 0.0
         } else 0.0
 
         val sleepVsFocus = if (recentTracks.isNotEmpty()) {
             val focusOnGoodSleep = recentTracks.filter { (it.sleepScore ?: 0f) >= 7f }
-                .map { dailyFocus[it.date] ?: 0.0 }.average()
+                .map { dailyFocus[it.date] ?: 0.0 }.takeIf { it.isNotEmpty() }?.average() ?: Double.NaN
             val focusOnBadSleep = recentTracks.filter { (it.sleepScore ?: 0f) < 7f }
-                .map { dailyFocus[it.date] ?: 0.0 }.average()
+                .map { dailyFocus[it.date] ?: 0.0 }.takeIf { it.isNotEmpty() }?.average() ?: Double.NaN
             if (!focusOnGoodSleep.isNaN() && !focusOnBadSleep.isNaN()) focusOnGoodSleep - focusOnBadSleep else 0.0
         } else 0.0
 
         val energyVsCaptures = if (recentTracks.isNotEmpty()) {
             val capturesOnHighEnergy = recentTracks.filter { (it.energyScore ?: 0) >= 4 }
-                .map { dailyCaptures[it.date] ?: 0 }.average()
+                .map { dailyCaptures[it.date] ?: 0 }.takeIf { it.isNotEmpty() }?.average() ?: Double.NaN
             val capturesOnLowEnergy = recentTracks.filter { (it.energyScore ?: 0) <= 2 }
-                .map { dailyCaptures[it.date] ?: 0 }.average()
+                .map { dailyCaptures[it.date] ?: 0 }.takeIf { it.isNotEmpty() }?.average() ?: Double.NaN
             if (!capturesOnHighEnergy.isNaN() && !capturesOnLowEnergy.isNaN()) capturesOnHighEnergy - capturesOnLowEnergy else 0.0
         } else 0.0
 
@@ -967,9 +967,9 @@ class MainViewModel(
 
         val medsEffectiveness = if (recentTracks.isNotEmpty()) {
             val focusWithMeds =
-                recentTracks.filter { it.tookMeds }.mapNotNull { it.focusScore }.average()
+                recentTracks.filter { it.tookMeds }.mapNotNull { it.focusScore }.takeIf { it.isNotEmpty() }?.average() ?: Double.NaN
             val focusWithoutMeds =
-                recentTracks.filter { !it.tookMeds }.mapNotNull { it.focusScore }.average()
+                recentTracks.filter { !it.tookMeds }.mapNotNull { it.focusScore }.takeIf { it.isNotEmpty() }?.average() ?: Double.NaN
             if (!focusWithMeds.isNaN() && !focusWithoutMeds.isNaN()) focusWithMeds - focusWithoutMeds else 0.0
         } else 0.0
 
@@ -1833,22 +1833,19 @@ class MainViewModel(
             @Suppress("UNCHECKED_CAST")
             val relations = args[10] as List<RelationEntity>
 
-            nodes.filter { nodeWithPin ->
-                val node = nodeWithPin.node
-                val matchesQuery = if (query.isBlank()) true else matchesQuery(nodeWithPin, query)
-                val matchesType = type == null || node.type == type
-                val matchesStatus = status == null || node.status == status
-                val matchesProject = projectId == null || node.projectId == projectId
-                val matchesArea = areaId == null || node.areaId == areaId
-                val matchesMins = maxMins == null || (node.estimatedMinutes ?: 0) <= maxMins
-                val matchesEnergy = energy == null || node.energyLevel == energy
-                val matchesFriction = friction == null || node.friction == friction
-                val matchesLinkedTo = linkedToId == null || relations.any {
-                    (it.fromNodeId == node.id && it.toNodeId == linkedToId) ||
-                            (it.fromNodeId == linkedToId && it.toNodeId == node.id)
-                }
-                matchesQuery && matchesType && matchesStatus && matchesProject && matchesArea && matchesLinkedTo && matchesMins && matchesEnergy && matchesFriction
-            }.sortedByDescending { it.node.updatedAt }
+            FilterHelper.filterAndSortNodes(
+                nodes = nodes,
+                query = query,
+                type = type,
+                status = status,
+                projectId = projectId,
+                areaId = areaId,
+                linkedToId = linkedToId,
+                maxMins = maxMins,
+                energy = energy,
+                friction = friction,
+                relations = relations
+            )
         }
             .flowOn(Dispatchers.Default)
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
@@ -1857,19 +1854,7 @@ class MainViewModel(
         nodeWithPin: NodeWithPin,
         query: String,
     ): Boolean {
-        if (query.isBlank()) return false
-        return if (query.startsWith("#")) {
-            val tagQuery = query.substring(1)
-            if (tagQuery.isBlank()) {
-                false
-            } else {
-                nodeWithPin.tags.any { it.name.contains(tagQuery, ignoreCase = true) }
-            }
-        } else {
-            nodeWithPin.node.title.contains(query, ignoreCase = true) ||
-                    nodeWithPin.node.content.contains(query, ignoreCase = true) ||
-                    nodeWithPin.tags.any { tag -> tag.name.contains(query, ignoreCase = true) }
-        }
+        return FilterHelper.matchesQuery(nodeWithPin, query)
     }
 
     fun updateSearchQuery(query: String) {
