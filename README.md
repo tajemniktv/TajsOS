@@ -13,6 +13,7 @@ It is a **life OS first**.
 ---
 
 See [`ROADMAP.md`](./ROADMAP.md) for the phased roadmap.
+See [`ARCHITECTURE.md`](./ARCHITECTURE.md) for structural truths and boundaries.
 See [`AGENTS.md`](./AGENTS.md) for agent/contributor rules and project guardrails.
 
 ---
