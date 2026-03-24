@@ -6,4 +6,4 @@ package com.tajemniktv.tajsos
 
 import androidx.compose.ui.window.ComposeUIViewController
 
-fun MainViewController() = ComposeUIViewController { App() }
+fun MainViewController(viewModel: com.tajemniktv.tajsos.ui.MainViewModel) = ComposeUIViewController { App(viewModel = viewModel) }

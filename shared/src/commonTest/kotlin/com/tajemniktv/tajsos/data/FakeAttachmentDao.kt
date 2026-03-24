@@ -20,7 +20,7 @@ class FakeAttachmentDao : AttachmentDao {
     }
 
     override suspend fun deleteAttachment(attachment: AttachmentEntity) {
-        attachments.removeIf { it.id == attachment.id }
+        attachments.removeAll { it.id == attachment.id }
         attachmentsFlow.value = attachments.toList()
     }
 }
