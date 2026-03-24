@@ -2,21 +2,26 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved. 
  */
 
-package com.tajemniktv.tajsos.ui.components
+package com.tajemniktv.tajsos.ui.components.dashboard
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
+import androidx.compose.material.icons.filled.CenterFocusStrong
+import androidx.compose.material.icons.filled.EmojiEvents
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.tajemniktv.tajsos.data.NodeWithPin
-import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.Screen
-import com.tajemniktv.tajsos.ui.screens.AlertCard
-import com.tajemniktv.tajsos.ui.screens.SuggestionGroup
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.components.common.AlertCard
+import com.tajemniktv.tajsos.ui.components.nodes.SuggestionGroup
+import com.tajemniktv.tajsos.ui.design.components.DashCard
+import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
 
 @Composable
 fun CurrentTaskBlock(
@@ -33,7 +38,10 @@ fun CurrentTaskBlock(
         )
     } else {
         Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
-            DetailSectionHeader(title = "CURRENT FOCUS", icon = Icons.Default.CenterFocusStrong)
+            com.tajemniktv.tajsos.ui.components.common.DetailSectionHeader(
+                title = "CURRENT FOCUS",
+                icon = Icons.Default.CenterFocusStrong
+            )
             DashCard(onClick = { onEdit(activeTask.node.id) }) {
                 Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
                     Text(

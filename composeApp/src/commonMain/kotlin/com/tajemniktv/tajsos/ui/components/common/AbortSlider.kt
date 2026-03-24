@@ -1,4 +1,8 @@
-package com.tajemniktv.tajsos.ui.components
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
+package com.tajemniktv.tajsos.ui.components.common
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -16,7 +20,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
 import kotlin.math.roundToInt
 
 @Composable

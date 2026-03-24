@@ -24,10 +24,10 @@ import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.components.DashCard
-import com.tajemniktv.tajsos.ui.components.ModuleHeader
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
-import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
+import com.tajemniktv.tajsos.ui.components.common.ModuleHeader
+import com.tajemniktv.tajsos.ui.design.components.DashCard
+import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.design.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 

@@ -15,7 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
 import kotlin.random.Random
 
 import androidx.compose.foundation.gestures.detectTapGestures

@@ -1,8 +1,8 @@
 /*
- * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved. 
  */
 
-package com.tajemniktv.tajsos.ui.components
+package com.tajemniktv.tajsos.ui.components.dashboard
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -28,7 +28,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
 
 @Composable
 fun ModuleCard(

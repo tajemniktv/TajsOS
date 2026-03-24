@@ -26,8 +26,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.EventLogEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.components.*
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.components.common.DetailHeader
+import com.tajemniktv.tajsos.ui.components.common.DetailSectionHeader
+import com.tajemniktv.tajsos.ui.components.common.InfoCard
+import com.tajemniktv.tajsos.ui.components.common.LinkedNodeItem
+import com.tajemniktv.tajsos.ui.components.common.SelectorDialog
+import com.tajemniktv.tajsos.ui.components.common.StatusCard
+import com.tajemniktv.tajsos.ui.components.nodes.NodeCard
+import com.tajemniktv.tajsos.ui.components.nodes.TaskRow
+import com.tajemniktv.tajsos.ui.design.components.ActionButton
+import com.tajemniktv.tajsos.ui.design.components.DashCard
+import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
@@ -165,8 +174,8 @@ fun ProjectDetailScreen(
         ) {
             // Header
             DetailHeader(
-                category = "CURRENT WORKSPACE",
-                title = project.title
+                title = project.title,
+                subtitle = "CURRENT WORKSPACE"
             )
 
             Row(
@@ -266,7 +275,7 @@ fun ProjectDetailScreen(
         }
     }
 
-    SelectorDialog(
+    SelectorDialog<String>(
         show = showStatusDialog,
         onDismiss = { showStatusDialog = false },
         title = "SET STATUS",
@@ -275,16 +284,16 @@ fun ProjectDetailScreen(
         onSelect = { status ->
             viewModel.updateNodeStatus(project, status); showStatusDialog = false
         },
-        optionName = { it },
-        optionIcon = {
-            when (it) {
+        optionName = { status -> status },
+        optionIcon = { status ->
+            when (status) {
                 "active" -> Icons.Default.PlayArrow
                 "on_hold" -> Icons.Default.Pause
                 "someday" -> Icons.Default.CalendarToday
                 else -> Icons.Default.Info
             }
         },
-        optionSubtext = { "PROJ_STATE_${it.uppercase()}" }
+        optionSubtext = { status -> "PROJ_STATE_${status.uppercase()}" }
     )
 }
 

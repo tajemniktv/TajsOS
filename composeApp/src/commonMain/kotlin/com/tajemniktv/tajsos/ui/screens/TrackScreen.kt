@@ -22,10 +22,10 @@ import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.data.TrackEntryEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
-import com.tajemniktv.tajsos.ui.components.TactileCard
-import com.tajemniktv.tajsos.ui.components.TactileSlider
-import com.tajemniktv.tajsos.ui.components.TactileTextField
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.design.components.TactileCard
+import com.tajemniktv.tajsos.ui.design.components.TactileSlider
+import com.tajemniktv.tajsos.ui.design.components.TactileTextField
+import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource

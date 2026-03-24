@@ -2,24 +2,23 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved. 
  */
 
-package com.tajemniktv.tajsos.ui.components
+package com.tajemniktv.tajsos.ui.components.dashboard
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.data.NodeEntity
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 
@@ -163,34 +162,6 @@ fun AreaHealthCard(
                 modifier = Modifier.fillMaxWidth().height(2.dp),
                 color = color,
                 trackColor = color.copy(alpha = 0.1f)
-            )
-        }
-    }
-}
-
-@Composable
-fun ProtocolTrigger(label: String, icon: ImageVector, color: Color, onClick: () -> Unit) {
-    Surface(
-        onClick = onClick,
-        modifier = Modifier.width(120.dp),
-        color = color.copy(alpha = 0.1f),
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = BorderStroke(1.dp, color.copy(alpha = 0.3f))
-    ) {
-        Column(
-            modifier = Modifier.padding(TactileTheme.SpacingMd),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Icon(icon, contentDescription = null, tint = color, modifier = Modifier.size(24.dp))
-            Spacer(Modifier.height(8.dp))
-            Text(
-                label.uppercase(),
-                style = MaterialTheme.typography.labelSmall,
-                color = color,
-                fontWeight = FontWeight.Bold,
-                fontSize = 9.sp,
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center
             )
         }
     }

@@ -15,8 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.components.AbortSlider
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.components.common.AbortSlider
+import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
@@ -76,7 +76,8 @@ fun FocusScreen(viewModel: MainViewModel) {
 
             val minutes = timeSeconds / 60
             val seconds = timeSeconds % 60
-            val timeString = "${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}"
+            val timeString =
+                "${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}"
 
             Text(
                 text = timeString,
@@ -86,7 +87,7 @@ fun FocusScreen(viewModel: MainViewModel) {
 
             OutlinedTextField(
                 value = currentNode.content,
-                onValueChange = { 
+                onValueChange = {
                     viewModel.updateNode(currentNode.copy(content = it))
                 },
                 modifier = Modifier.fillMaxWidth().padding(vertical = TactileTheme.SpacingMd),
@@ -113,16 +114,16 @@ fun FocusScreen(viewModel: MainViewModel) {
                     viewModel.stopFocusSession()
                 })
             }
-            
+
             Spacer(Modifier.height(TactileTheme.SpacingLg))
-            
+
             Text(
                 stringResource(Res.string.focus_recent_sessions),
                 style = MaterialTheme.typography.labelSmall,
                 color = TactileTheme.Muted,
                 modifier = Modifier.align(Alignment.Start)
             )
-            
+
             LazyColumn(modifier = Modifier.fillMaxWidth()) {
                 items(allSessions.take(5)) { session ->
                     val sessionNode = remember(session, allNodes) {

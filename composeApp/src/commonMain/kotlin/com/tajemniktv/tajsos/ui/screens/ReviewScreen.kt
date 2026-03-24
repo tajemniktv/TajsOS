@@ -21,8 +21,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.components.*
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.components.common.DetailHeader
+import com.tajemniktv.tajsos.ui.components.common.DetailSectionHeader
+import com.tajemniktv.tajsos.ui.components.common.SelectorDialog
+import com.tajemniktv.tajsos.ui.design.components.ActionButton
+import com.tajemniktv.tajsos.ui.design.components.DashCard
+import com.tajemniktv.tajsos.ui.design.components.TactileSlider
+import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 

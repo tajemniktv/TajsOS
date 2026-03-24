@@ -2,7 +2,7 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved. 
  */
 
-package com.tajemniktv.tajsos.ui.components
+package com.tajemniktv.tajsos.ui.components.nodes
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.data.DecisionOptionEntity
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
 import kotlinx.coroutines.launch
 
 @Composable

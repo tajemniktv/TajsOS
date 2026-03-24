@@ -19,8 +19,8 @@ import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
-import com.tajemniktv.tajsos.ui.components.ProjectItem
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.components.nodes.ProjectItem
+import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
@@ -113,7 +113,12 @@ fun ProjectsScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit) {
                             )
                         }
                     ) {
-                        onNavigateTo(Screen.ProjectDetail.route.replace("{projectId}", project.id.toString()))
+                        onNavigateTo(
+                            Screen.ProjectDetail.route.replace(
+                                "{projectId}",
+                                project.id.toString()
+                            )
+                        )
                     }
                 }
                 item {

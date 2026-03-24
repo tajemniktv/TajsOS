@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 
@@ -52,7 +52,12 @@ fun AreasScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit) {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
                 items(areas, key = { it.id }) { area ->
                     AreaItem(area) {
-                        onNavigateTo(Screen.AreaDetail.route.replace("{areaId}", area.id.toString()))
+                        onNavigateTo(
+                            Screen.AreaDetail.route.replace(
+                                "{areaId}",
+                                area.id.toString()
+                            )
+                        )
                     }
                 }
                 item {
@@ -81,10 +86,17 @@ fun AreaItem(area: NodeEntity, onClick: () -> Unit) {
             .clickable(onClick = onClick),
         color = TactileTheme.Surface,
         shape = RoundedCornerShape(TactileTheme.RadiusSm),
-        border = androidx.compose.foundation.BorderStroke(1.dp, TactileTheme.Muted.copy(alpha = 0.2f))
+        border = androidx.compose.foundation.BorderStroke(
+            1.dp,
+            TactileTheme.Muted.copy(alpha = 0.2f)
+        )
     ) {
         Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
-            Text(area.title.uppercase(), style = MaterialTheme.typography.titleMedium, color = TactileTheme.Primary)
+            Text(
+                area.title.uppercase(),
+                style = MaterialTheme.typography.titleMedium,
+                color = TactileTheme.Primary
+            )
         }
     }
 }

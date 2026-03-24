@@ -2,7 +2,7 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
-package com.tajemniktv.tajsos.ui.components
+package com.tajemniktv.tajsos.ui.components.nodes
 
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
@@ -26,7 +26,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeWithPin
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
@@ -48,7 +48,7 @@ fun NodeCard(
     val node = nodeWithPin.node
     val isPinnedToToday = nodeWithPin.isPinnedToToday
     val isDone = node.status == "done"
-    
+
     val animatedScale by animateFloatAsState(
         targetValue = if (isDone) 0.98f else 1f,
         animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
@@ -65,7 +65,10 @@ fun NodeCard(
             ),
         color = TactileTheme.Surface,
         shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = BorderStroke(1.dp, if (isPinnedToToday) TactileTheme.Primary else TactileTheme.Border)
+        border = BorderStroke(
+            1.dp,
+            if (isPinnedToToday) TactileTheme.Primary else TactileTheme.Border
+        )
     ) {
         Row(
             modifier = Modifier
@@ -117,7 +120,8 @@ fun NodeCard(
                     )
                     val dueAt = node.dueAt
                     if (dueAt != null) {
-                        val due = kotlin.time.Instant.fromEpochMilliseconds(dueAt).toLocalDateTime(TimeZone.currentSystemDefault())
+                        val due = kotlin.time.Instant.fromEpochMilliseconds(dueAt)
+                            .toLocalDateTime(TimeZone.currentSystemDefault())
                         Spacer(Modifier.width(8.dp))
                         Icon(
                             Icons.Default.DateRange,
@@ -208,7 +212,9 @@ fun NodeCard(
                 Icon(
                     imageVector = Icons.Default.Star,
                     contentDescription = stringResource(Res.string.node_pin_today_desc),
-                    tint = if (isPinnedToToday) TactileTheme.Primary else TactileTheme.Muted.copy(alpha = 0.5f)
+                    tint = if (isPinnedToToday) TactileTheme.Primary else TactileTheme.Muted.copy(
+                        alpha = 0.5f
+                    )
                 )
             }
         }

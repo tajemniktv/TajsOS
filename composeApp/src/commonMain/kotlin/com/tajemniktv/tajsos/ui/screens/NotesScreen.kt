@@ -15,9 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.components.EmptyState
-import com.tajemniktv.tajsos.ui.components.NodeCard
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.components.common.EmptyState
+import com.tajemniktv.tajsos.ui.components.nodes.NodeCard
+import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
@@ -46,7 +46,7 @@ fun NotesScreen(
             } else {
                 knowledgeNodes.filter {
                     it.node.title.contains(searchQuery, ignoreCase = true) ||
-                        it.node.content.contains(searchQuery, ignoreCase = true)
+                            it.node.content.contains(searchQuery, ignoreCase = true)
                 }
             }
         }
@@ -96,19 +96,43 @@ fun NotesScreen(
 
                     if (pinned.isNotEmpty()) {
                         item { GroupHeader(stringResource(Res.string.notes_pinned_knowledge)) }
-                        items(pinned, key = { it.node.id }) { node -> KnowledgeItem(node, viewModel, onNoteClick) }
+                        items(pinned, key = { it.node.id }) { node ->
+                            KnowledgeItem(
+                                node,
+                                viewModel,
+                                onNoteClick
+                            )
+                        }
                     }
                     if (ideas.isNotEmpty()) {
                         item { GroupHeader(stringResource(Res.string.notes_ideas)) }
-                        items(ideas, key = { it.node.id }) { node -> KnowledgeItem(node, viewModel, onNoteClick) }
+                        items(ideas, key = { it.node.id }) { node ->
+                            KnowledgeItem(
+                                node,
+                                viewModel,
+                                onNoteClick
+                            )
+                        }
                     }
                     if (notes.isNotEmpty()) {
                         item { GroupHeader(stringResource(Res.string.notes_notes)) }
-                        items(notes, key = { it.node.id }) { node -> KnowledgeItem(node, viewModel, onNoteClick) }
+                        items(notes, key = { it.node.id }) { node ->
+                            KnowledgeItem(
+                                node,
+                                viewModel,
+                                onNoteClick
+                            )
+                        }
                     }
                     if (resources.isNotEmpty()) {
                         item { GroupHeader(stringResource(Res.string.notes_resources)) }
-                        items(resources, key = { it.node.id }) { node -> KnowledgeItem(node, viewModel, onNoteClick) }
+                        items(resources, key = { it.node.id }) { node ->
+                            KnowledgeItem(
+                                node,
+                                viewModel,
+                                onNoteClick
+                            )
+                        }
                     }
                 }
 
@@ -129,7 +153,13 @@ fun NotesScreen(
                     val unassigned = filteredNodes.filter { it.node.areaId == null }
                     if (unassigned.isNotEmpty()) {
                         item { GroupHeader("UNASSIGNED") }
-                        items(unassigned, key = { it.node.id }) { node -> KnowledgeItem(node, viewModel, onNoteClick) }
+                        items(unassigned, key = { it.node.id }) { node ->
+                            KnowledgeItem(
+                                node,
+                                viewModel,
+                                onNoteClick
+                            )
+                        }
                     }
                 }
 
@@ -151,7 +181,13 @@ fun NotesScreen(
                     val unassigned = filteredNodes.filter { it.node.projectId == null }
                     if (unassigned.isNotEmpty()) {
                         item { GroupHeader("UNASSIGNED") }
-                        items(unassigned, key = { it.node.id }) { node -> KnowledgeItem(node, viewModel, onNoteClick) }
+                        items(unassigned, key = { it.node.id }) { node ->
+                            KnowledgeItem(
+                                node,
+                                viewModel,
+                                onNoteClick
+                            )
+                        }
                     }
                 }
 
@@ -163,7 +199,13 @@ fun NotesScreen(
                     }
                     groupedByDate.forEach { (date, nodes) ->
                         item { GroupHeader(date) }
-                        items(nodes, key = { it.node.id }) { node -> KnowledgeItem(node, viewModel, onNoteClick) }
+                        items(nodes, key = { it.node.id }) { node ->
+                            KnowledgeItem(
+                                node,
+                                viewModel,
+                                onNoteClick
+                            )
+                        }
                     }
                 }
 
@@ -192,7 +234,13 @@ fun NotesScreen(
                         filteredNodes.filter { it.node.type == "resource" && it.node.mediaType == null }
                     if (other.isNotEmpty()) {
                         item { GroupHeader(stringResource(Res.string.media_other)) }
-                        items(other, key = { it.node.id }) { node -> KnowledgeItem(node, viewModel, onNoteClick) }
+                        items(other, key = { it.node.id }) { node ->
+                            KnowledgeItem(
+                                node,
+                                viewModel,
+                                onNoteClick
+                            )
+                        }
                     }
                 }
             }

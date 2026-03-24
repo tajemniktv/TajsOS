@@ -1,4 +1,8 @@
-package com.tajemniktv.tajsos.ui.components
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved. 
+ */
+
+package com.tajemniktv.tajsos.ui.components.common
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.layout.*
@@ -12,7 +16,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
 
 @Composable
 fun EmptyState(
