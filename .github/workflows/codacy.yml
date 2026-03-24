@@ -55,11 +55,12 @@ jobs:
           max-allowed-issues: 2147483647
 
       # Add a unique category (automationDetails.id) to each run in the SARIF file
-      # to comply with GitHub Code Scanning's strict multi-run validation.
+      # to comply with GitHub Code Scanning's strict multi-run validation,
+      # and limit to the first 20 runs to prevent maximum run limits (32 > 20).
       - name: Fix SARIF categories
         run: |
           if [ -f results.sarif ]; then
-            jq '.runs = [ .runs | to_entries[] | .value + { "automationDetails": { "id": (.value.tool.driver.name + "-" + (.key | tostring)) } } ]' results.sarif > results_fixed.sarif
+            jq '.runs = ([ .runs | to_entries[] | .value + { "automationDetails": { "id": (.value.tool.driver.name + "-" + (.key | tostring)) } } ] | .[0:20])' results.sarif > results_fixed.sarif
             mv results_fixed.sarif results.sarif
           fi
 
