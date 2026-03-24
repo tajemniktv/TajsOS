@@ -25,7 +25,7 @@ class FakeTemplateDao : TemplateDao {
     }
 
     override suspend fun deleteTemplate(template: TemplateEntity) {
-        templates.removeIf { it.id == template.id }
+        templates.removeAll { it.id == template.id }
         templatesFlow.value = templates.toList()
     }
 }

@@ -79,20 +79,20 @@ class FakeNodeDao : NodeDao {
     }
 
     override suspend fun deleteNode(node: NodeEntity) {
-        nodes.removeIf { it.id == node.id }
+        nodes.removeAll { it.id == node.id }
         nodesFlow.value = nodes.toList()
     }
 
     override suspend fun pinToToday(pin: TodayPinEntity) {
         val newId = (pins.size + 1).toLong()
         val newPin = pin.copy(id = newId)
-        pins.removeIf { it.nodeId == pin.nodeId }
+        pins.removeAll { it.nodeId == pin.nodeId }
         pins.add(newPin)
         pinsFlow.value = pins.toList()
     }
 
     override suspend fun unpinFromToday(nodeId: Long) {
-        pins.removeIf { it.nodeId == nodeId }
+        pins.removeAll { it.nodeId == nodeId }
         pinsFlow.value = pins.toList()
     }
 

@@ -20,12 +20,12 @@ class FakeRelationDao : RelationDao {
     }
 
     override suspend fun deleteRelation(relation: RelationEntity) {
-        relations.removeIf { it.id == relation.id }
+        relations.removeAll { it.id == relation.id }
         relationsFlow.value = relations.toList()
     }
 
     override suspend fun deleteBelongsToRelations(nodeId: Long) {
-        relations.removeIf { it.fromNodeId == nodeId && it.relationType == "BELONGS_TO" }
+        relations.removeAll { it.fromNodeId == nodeId && it.relationType == "BELONGS_TO" }
         relationsFlow.value = relations.toList()
     }
 
