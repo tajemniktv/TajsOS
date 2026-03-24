@@ -61,21 +61,16 @@ bars, Modals). Use semi-transparent surface colors with a `backdrop-blur` of 20p
 
 ## 3. Typography
 
-The typography strategy relies on the tension between the technical, wide-set **Space Grotesk** and
-the clean, functional **Inter**.
-
 * **Display (Space Grotesk):** Used for "Hero" moments. The wide tracking and bold weights convey an
   authoritative, high-tech personality.
-
 * *Display-LG:* 3.5rem / Bold / -0.02em tracking.
-
-* **Headlines (Space Grotesk):** Used to introduce content sections. It acts as the "industrial"
+* **Headings:** Space Grotesk, 700, 24-32sp - Used to introduce content sections. It acts as the "
+  industrial"
   anchor of the page.
-
-* **Title & Body (Inter):** Used for readability. The neutral tone of Inter balances the aggressive
-  nature of Space Grotesk.
-
-* **Labels (Space Grotesk):** Small caps or technical labels should always use Space Grotesk to
+* **Body:** Outfit, 400, 16sp
+* **Small text**: JetBrains Mono, 500, 12sp (uppercase)
+* **Labels (Space Grotesk, 600, 16sp):** Small caps or technical labels should always use Space
+  Grotesk to
   maintain the "software instrument" vibe.
 
 ---

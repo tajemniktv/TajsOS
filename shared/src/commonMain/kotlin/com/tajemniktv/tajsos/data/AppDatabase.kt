@@ -38,8 +38,11 @@ import androidx.room.RoomDatabaseConstructor
         ModeUsageLogEntity::class,
         ProtocolHistoryEntity::class,
         DecisionOptionEntity::class,
+        UserEntity::class,
+        MedicationEntity::class,
+        TrackMedicationJoinEntity::class,
     ],
-    version = 21,
+    version = 24,
     exportSchema = false,
 )
 @ConstructedBy(AppDatabaseConstructor::class)
@@ -118,6 +121,16 @@ abstract class AppDatabase : RoomDatabase() {
      * Manages options for decisions.
      */
     abstract fun decisionDao(): DecisionDao
+
+    /**
+     * Manages user profile data.
+     */
+    abstract fun userDao(): UserDao
+
+    /**
+     * Manages medications and tracking.
+     */
+    abstract fun medicationDao(): MedicationDao
 }
 
 /**

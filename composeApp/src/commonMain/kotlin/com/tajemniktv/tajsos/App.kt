@@ -67,6 +67,8 @@ fun App(
     val allProjects by viewModel.allProjects.collectAsState()
     val allAreas by viewModel.allAreas.collectAsState()
     val allTemplates by viewModel.allTemplates.collectAsState()
+    val currentMode by viewModel.currentMode.collectAsState()
+    val allModes by viewModel.allModes.collectAsState()
     val latestTrack = remember(trackEntries) { trackEntries.firstOrNull() }
 
     val lastActiveProjectId by viewModel.lastActiveProjectId.collectAsState()
@@ -83,7 +85,8 @@ fun App(
             Screen.ProjectDetail.route,
             Screen.AreaDetail.route,
             Screen.Review.route,
-            Screen.Templates.route
+            Screen.Templates.route,
+            Screen.Profile.route
         )
         internalHeaderRoutes.none { pattern ->
             if (pattern.contains("{")) {
@@ -118,7 +121,10 @@ fun App(
                                     restoreState = true
                                 }
                             },
-                            onNewEntry = { showCaptureSheet = true }
+                            onNewEntry = { showCaptureSheet = true },
+                            currentMode = currentMode,
+                            allModes = allModes,
+                            onModeSelect = { viewModel.switchMode(it) }
                         )
                     }
                     Box(modifier = Modifier.weight(1f)) {
@@ -140,6 +146,9 @@ fun App(
                             lastActiveProjectId = lastActiveProjectId,
                             lastActiveAreaId = lastActiveAreaId,
                             currentDestination = currentDestination,
+                            currentMode = currentMode,
+                            allModes = allModes,
+                            onModeSelect = { viewModel.switchMode(it) },
                             isDesktop = true
                         )
                     }
@@ -164,6 +173,9 @@ fun App(
                     lastActiveProjectId = lastActiveProjectId,
                     lastActiveAreaId = lastActiveAreaId,
                     currentDestination = currentDestination,
+                    currentMode = currentMode,
+                    allModes = allModes,
+                    onModeSelect = { viewModel.switchMode(it) },
                     isDesktop = true
                 )
             } else {
@@ -187,6 +199,9 @@ fun App(
                                     }
                                     scope.launch { drawerState.close() }
                                 },
+                                currentMode = currentMode,
+                                allModes = allModes,
+                                onModeSelect = { viewModel.switchMode(it) }
                             )
                         }
                     },
@@ -209,6 +224,9 @@ fun App(
                         lastActiveProjectId = lastActiveProjectId,
                         lastActiveAreaId = lastActiveAreaId,
                         currentDestination = currentDestination,
+                        currentMode = currentMode,
+                        allModes = allModes,
+                        onModeSelect = { viewModel.switchMode(it) },
                         isDesktop = false
                     )
                 }
@@ -237,6 +255,9 @@ private fun AppScaffold(
     lastActiveProjectId: Long?,
     lastActiveAreaId: Long?,
     currentDestination: NavDestination?,
+    currentMode: com.tajemniktv.tajsos.data.ModeEntity?,
+    allModes: List<com.tajemniktv.tajsos.data.ModeEntity>,
+    onModeSelect: (Long) -> Unit,
     isDesktop: Boolean
 ) {
     Scaffold(
@@ -306,196 +327,204 @@ private fun AppScaffold(
                 ) else innerPadding
             ),
         ) {
-                    val onEditNode: (Long) -> Unit = { id ->
+            val onEditNode: (Long) -> Unit = { id ->
+                navController.navigate(
+                    Screen.NoteDetail.route.replace(
+                        "{noteId}",
+                        id.toString(),
+                    ),
+                )
+            }
+
+            composable(Screen.Dashboard.route) {
+                DashboardScreen(
+                    viewModel,
+                    onNavigateTo = { screen ->
+                        navController.navigate(screen.route) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
+                    onEditNode = onEditNode,
+                    onNavigateToProject = { id ->
                         navController.navigate(
-                            Screen.NoteDetail.route.replace(
-                                "{noteId}",
+                            Screen.ProjectDetail.route.replace(
+                                "{projectId}",
                                 id.toString(),
                             ),
                         )
-                    }
+                    },
+                    onOpenDrawer = { scope.launch { drawerState.open() } },
+                    onNewEntry = { onShowCaptureSheet(true) },
+                    currentDestination = currentDestination,
+                    currentMode = currentMode,
+                    allModes = allModes,
+                    onModeSelect = { viewModel.switchMode(it) }
+                )
+            }
+            composable(Screen.Inbox.route) { InboxScreen(viewModel, onEditNode) }
+            composable(Screen.Search.route) {
+                SearchScreen(viewModel, onItemClick = onEditNode)
+            }
+            composable(Screen.Today.route) { TodayScreen(viewModel, onEditNode) }
+            composable(Screen.Calendar.route) {
+                CalendarScreen(viewModel, onEditNode)
+            }
+            composable(Screen.CalendarSettings.route) {
+                CalendarSettingsScreen(viewModel)
+            }
+            composable(Screen.Focus.route) { FocusScreen(viewModel) }
+            composable(Screen.Track.route) { TrackScreen(viewModel) }
+            composable(Screen.Tasks.route) { TasksScreen(viewModel, onEditNode) }
+            composable(Screen.Notes.route) {
+                NotesScreen(viewModel, onNoteClick = onEditNode)
+            }
+            composable(Screen.Decisions.route) {
+                DecisionsScreen(viewModel, onEditNode)
+            }
+            composable(Screen.Settings.route) {
+                SettingsScreen(
+                    viewModel,
+                    onNavigateToCalendarSettings = {
+                        navController.navigate(Screen.CalendarSettings.route)
+                    },
+                    onNavigateToTemplates = {
+                        navController.navigate(Screen.Templates.route)
+                    },
+                )
+            }
+            composable(Screen.Templates.route) {
+                TemplatesScreen(viewModel, onBack = { navController.popBackStack() })
+            }
+            composable(Screen.Projects.route) {
+                ProjectsScreen(
+                    viewModel,
+                    onNavigateTo = { route -> navController.navigate(route) },
+                )
+            }
+            composable(Screen.Areas.route) {
+                AreasScreen(viewModel, onNavigateTo = { route -> navController.navigate(route) })
+            }
+            composable(Screen.ProjectDetail.route) { backStackEntry ->
+                val projectId =
+                    backStackEntry.savedStateHandle
+                        .get<Any>("projectId")
+                        ?.toString()
+                        ?.toLongOrNull() ?: -1L
+                ProjectDetailScreen(
+                    viewModel,
+                    projectId,
+                    onEditNode,
+                    onBack = { navController.popBackStack() },
+                )
+            }
+            composable(Screen.AreaDetail.route) { backStackEntry ->
+                val areaId =
+                    backStackEntry.savedStateHandle
+                        .get<Any>("areaId")
+                        ?.toString()
+                        ?.toLongOrNull() ?: -1L
+                AreaDetailScreen(
+                    viewModel,
+                    areaId,
+                    onNavigateToProject = { id ->
+                        navController.navigate(
+                            Screen.ProjectDetail.route.replace(
+                                "{projectId}",
+                                id.toString(),
+                            ),
+                        )
+                    },
+                    onEditNode = onEditNode,
+                    onBack = { navController.popBackStack() },
+                )
+            }
+            composable(Screen.NoteDetail.route) { backStackEntry ->
+                val noteId =
+                    backStackEntry.savedStateHandle
+                        .get<Any>("noteId")
+                        ?.toString()
+                        ?.toLongOrNull() ?: -1L
+                NoteDetailScreen(
+                    viewModel,
+                    noteId,
+                    onBack = { navController.popBackStack() },
+                    onNavigateToNode = onEditNode,
+                    onNavigateToSearch = { navController.navigate(Screen.Search.route) },
+                )
+            }
+            composable(Screen.Insights.route) {
+                InsightsScreen(viewModel, onNavigateToProject = { id ->
+                    navController.navigate(
+                        Screen.ProjectDetail.route.replace(
+                            "{projectId}",
+                            id.toString(),
+                        ),
+                    )
+                })
+            }
+            composable(Screen.Graph.route) {
+                GraphScreen(viewModel, onNodeClick = onEditNode)
+            }
+            composable(Screen.Archive.route) { ArchiveScreen(viewModel, onEditNode) }
+            composable(Screen.Review.route) {
+                ReviewScreen(viewModel, onBack = { navController.popBackStack() })
+            }
+            composable(Screen.Profile.route) { ProfileScreen(viewModel) }
+        }
 
-                    composable(Screen.Dashboard.route) {
-                        DashboardScreen(
-                            viewModel,
-                            onNavigateTo = { screen ->
-                                navController.navigate(screen.route) {
-                                    popUpTo(navController.graph.findStartDestination().id) {
-                                        saveState = true
-                                    }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            },
-                            onEditNode = onEditNode,
-                            onNavigateToProject = { id ->
-                                navController.navigate(
-                                    Screen.ProjectDetail.route.replace(
-                                        "{projectId}",
-                                        id.toString(),
-                                    ),
-                                )
-                            },
-                            onOpenDrawer = { scope.launch { drawerState.open() } },
-                            onNewEntry = { onShowCaptureSheet(true) },
-                            currentDestination = currentDestination,
-                        )
-                    }
-                    composable(Screen.Inbox.route) { InboxScreen(viewModel, onEditNode) }
-                    composable(Screen.Search.route) {
-                        SearchScreen(viewModel, onItemClick = onEditNode)
-                    }
-                    composable(Screen.Today.route) { TodayScreen(viewModel, onEditNode) }
-                    composable(Screen.Calendar.route) {
-                        CalendarScreen(viewModel, onEditNode)
-                    }
-                    composable(Screen.CalendarSettings.route) {
-                        CalendarSettingsScreen(viewModel)
-                    }
-                    composable(Screen.Focus.route) { FocusScreen(viewModel) }
-                    composable(Screen.Track.route) { TrackScreen(viewModel) }
-                    composable(Screen.Tasks.route) { TasksScreen(viewModel, onEditNode) }
-                    composable(Screen.Notes.route) {
-                        NotesScreen(viewModel, onNoteClick = onEditNode)
-                    }
-                    composable(Screen.Settings.route) {
-                        SettingsScreen(
-                            viewModel,
-                            onNavigateToCalendarSettings = {
-                                navController.navigate(Screen.CalendarSettings.route)
-                            },
-                            onNavigateToTemplates = {
-                                navController.navigate(Screen.Templates.route)
-                            },
-                        )
-                    }
-                    composable(Screen.Templates.route) {
-                        TemplatesScreen(viewModel, onBack = { navController.popBackStack() })
-                    }
-                    composable(Screen.Projects.route) {
-                        ProjectsScreen(
-                            viewModel,
-                            onNavigateTo = { route -> navController.navigate(route) },
-                        )
-                    }
-                    composable(Screen.Areas.route) {
-                        AreasScreen(viewModel, onNavigateTo = { route -> navController.navigate(route) })
-                    }
-                    composable(Screen.ProjectDetail.route) { backStackEntry ->
-                        val projectId =
-                            backStackEntry.savedStateHandle
-                                .get<Any>("projectId")
-                                ?.toString()
-                                ?.toLongOrNull() ?: -1L
-                        ProjectDetailScreen(
-                            viewModel,
-                            projectId,
-                            onEditNode,
-                            onBack = { navController.popBackStack() },
-                        )
-                    }
-                    composable(Screen.AreaDetail.route) { backStackEntry ->
-                        val areaId =
-                            backStackEntry.savedStateHandle
-                                .get<Any>("areaId")
-                                ?.toString()
-                                ?.toLongOrNull() ?: -1L
-                        AreaDetailScreen(
-                            viewModel,
-                            areaId,
-                            onNavigateToProject = { id ->
-                                navController.navigate(
-                                    Screen.ProjectDetail.route.replace(
-                                        "{projectId}",
-                                        id.toString(),
-                                    ),
-                                )
-                            },
-                            onEditNode = onEditNode,
-                            onBack = { navController.popBackStack() },
-                        )
-                    }
-                    composable(Screen.NoteDetail.route) { backStackEntry ->
-                        val noteId =
-                            backStackEntry.savedStateHandle
-                                .get<Any>("noteId")
-                                ?.toString()
-                                ?.toLongOrNull() ?: -1L
-                        NoteDetailScreen(
-                            viewModel,
-                            noteId,
-                            onBack = { navController.popBackStack() },
-                            onNavigateToNode = onEditNode,
-                            onNavigateToSearch = { navController.navigate(Screen.Search.route) },
-                        )
-                    }
-                    composable(Screen.Insights.route) {
-                        InsightsScreen(viewModel, onNavigateToProject = { id ->
-                            navController.navigate(
-                                Screen.ProjectDetail.route.replace(
-                                    "{projectId}",
-                                    id.toString(),
-                                ),
-                            )
-                        })
-                    }
-                    composable(Screen.Graph.route) {
-                        GraphScreen(viewModel, onNodeClick = onEditNode)
-                    }
-                    composable(Screen.Archive.route) { ArchiveScreen(viewModel, onEditNode) }
-                    composable(Screen.Review.route) {
-                        ReviewScreen(viewModel, onBack = { navController.popBackStack() })
-                    }
-                }
-
-                if (showCaptureSheet) {
-                    CaptureSheet(
-                        onDismiss = {
-                            onShowCaptureSheet(false)
-                            onVoiceCaptureConsumed()
-                        },
-                        onCapture = {
+        if (showCaptureSheet) {
+            CaptureSheet(
+                onDismiss = {
+                    onShowCaptureSheet(false)
+                    onVoiceCaptureConsumed()
+                },
+                onCapture = { text,
+                              type,
+                              projectId,
+                              areaId,
+                              isRec,
+                              recInt,
+                              remAt,
+                              ctx,
+                              sticky,
+                              decisionCat
+                    ->
+                    when (type) {
+                        "project" -> viewModel.addProject(text, "", areaId)
+                        "area" -> viewModel.addArea(text)
+                        else ->
+                            viewModel.addNode(
                                 text,
+                                "",
                                 type,
                                 projectId,
                                 areaId,
                                 isRec,
                                 recInt,
                                 remAt,
-                                ctx,
-                                sticky
-                            ->
-                            when (type) {
-                                "project" -> viewModel.addProject(text, "", areaId)
-                                "area" -> viewModel.addArea(text)
-                                else ->
-                                    viewModel.addNode(
-                                        text,
-                                        "",
-                                        type,
-                                        projectId,
-                                        areaId,
-                                        isRec,
-                                        recInt,
-                                        remAt,
-                                        contextScreen = ctx,
-                                        isSticky = sticky,
-                                    )
-                            }
-                            // Note: if multi-capture is on, CaptureSheet handles not closing itself
-                        },
-                        projects = allProjects,
-                        areas = allAreas,
-                        templates = allTemplates,
-                        defaultProjectId = lastActiveProjectId,
-                        defaultAreaId = lastActiveAreaId,
-                        initialText = voiceCaptureResult ?: "",
-                        onVoiceCaptureClick = onVoiceCapture,
-                        contextScreen = currentDestination?.route,
-                    )
-                }
-            }
+                                contextScreen = ctx,
+                                isSticky = sticky,
+                                decisionCategory = decisionCat
+                            )
+                    }
+                    // Note: if multi-capture is on, CaptureSheet handles not closing itself
+                },
+                projects = allProjects,
+                areas = allAreas,
+                templates = allTemplates,
+                defaultProjectId = lastActiveProjectId,
+                defaultAreaId = lastActiveAreaId,
+                initialText = voiceCaptureResult ?: "",
+                onVoiceCaptureClick = onVoiceCapture,
+                contextScreen = currentDestination?.route,
+            )
         }
+    }
+}
 
 
 

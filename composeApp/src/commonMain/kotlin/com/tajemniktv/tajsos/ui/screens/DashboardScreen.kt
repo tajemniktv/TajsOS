@@ -30,9 +30,11 @@ import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.*
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
+import kotlinx.serialization.json.Json
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 import kotlin.time.Clock
@@ -48,6 +50,9 @@ fun DashboardScreen(
     onOpenDrawer: () -> Unit,
     onNewEntry: () -> Unit,
     currentDestination: NavDestination? = null,
+    currentMode: com.tajemniktv.tajsos.data.ModeEntity? = null,
+    allModes: List<com.tajemniktv.tajsos.data.ModeEntity> = emptyList(),
+    onModeSelect: (Long) -> Unit = {}
 ) {
     BoxWithConstraints {
         if (maxWidth > 800.dp) {
@@ -57,7 +62,10 @@ fun DashboardScreen(
                 onEditNode = onEditNode,
                 onNavigateToProject = onNavigateToProject,
                 onNewEntry = onNewEntry,
-                currentDestination = currentDestination
+                currentDestination = currentDestination,
+                currentMode = currentMode,
+                allModes = allModes,
+                onModeSelect = onModeSelect
             )
         } else {
             DashboardMobileContent(
@@ -94,6 +102,49 @@ private fun DashboardMobileContent(
     val insights by viewModel.insights.collectAsState()
     val allReviews by viewModel.allReviews.collectAsState()
     val currentMode by viewModel.currentMode.collectAsState()
+    val allModes by viewModel.allModes.collectAsState()
+    val scope = rememberCoroutineScope()
+
+    val blockList = remember(dashboardState.modePreferences) {
+        try {
+            val jsonStr = dashboardState.modePreferences?.dashboardBlocksJson
+            if (jsonStr != null) {
+                Json.decodeFromString<List<String>>(jsonStr)
+            } else {
+                listOf(
+                    "today_pulse",
+                    "load_capacity",
+                    "area_health",
+                    "operational",
+                    "search",
+                    "alerts",
+                    "sticky",
+                    "focus",
+                    "insights",
+                    "actions",
+                    "suggestions",
+                    "knowledge",
+                    "protocols"
+                )
+            }
+        } catch (e: Exception) {
+            listOf(
+                "today_pulse",
+                "load_capacity",
+                "area_health",
+                "operational",
+                "search",
+                "alerts",
+                "sticky",
+                "focus",
+                "insights",
+                "actions",
+                "suggestions",
+                "knowledge",
+                "protocols"
+            )
+        }
+    }
 
     val pinnedNodes = allNodes.filter { it.pin != null }
     val completedTodayCount = pinnedNodes.count { it.node.status == "done" }
@@ -121,6 +172,8 @@ private fun DashboardMobileContent(
         else -> Res.string.dash_vibe_night
     }
 
+    val currentModeColor = currentMode?.themeColor?.let { Color(it) } ?: TactileTheme.Primary
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -133,536 +186,611 @@ private fun DashboardMobileContent(
         DashHeader(
             vibe = stringResource(vibeString),
             onMenuClick = onOpenDrawer,
-            onSettingsClick = { onNavigateTo(Screen.Settings) }
+            onSettingsClick = { onNavigateTo(Screen.Settings) },
+            tintColor = currentModeColor
         )
 
-        // 1.1 System Load & Capacity
-        SystemStatusCard(
-            load = dashboardState.systemLoad,
-            fragmentation = dashboardState.fragmentation,
-            warning = dashboardState.capacityWarning,
-            onClick = { onNavigateTo(Screen.Insights) }
+        ModeSwitcherHeader(
+            currentMode = currentMode,
+            allModes = allModes,
+            onModeSelect = { viewModel.switchMode(it) }
         )
 
-        // 1.2 Area Health
-        if (allAreas.isNotEmpty()) {
-            Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
-                Text(
-                    stringResource(Res.string.dash_area_health),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Muted,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 1.sp
-                )
-                Row(
-                    modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)
-                ) {
-                    allAreas.forEach { area ->
-                        AreaHealthCard(
-                            area = area,
-                            health = dashboardState.areaHealth[area.id] ?: "stable",
-                            onClick = {
-                                viewModel.clearSearchFilters()
-                                viewModel.updateSearchAreaFilter(area.id)
-                                onNavigateTo(Screen.Search)
-                            }
-                        )
-                    }
-                }
-            }
-        }
-
-        // 1.3 Life OS Operational (Open Loops, Decisions, Maintenance)
-        if (dashboardState.openLoops.isNotEmpty() || dashboardState.pendingDecisions.isNotEmpty() || dashboardState.maintenanceQueue.isNotEmpty()) {
-            Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
-                Text(
-                    "LIFE OS // OPERATIONAL",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Accent,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 2.sp
-                )
-
-                if (dashboardState.openLoops.isNotEmpty()) {
-                    SuggestionGroup(
-                        title = stringResource(Res.string.dash_open_loops),
-                        icon = Icons.Default.AllInclusive,
-                        color = TactileTheme.Accent,
-                        nodes = dashboardState.openLoops,
-                        onEditNode = onEditNode
-                    )
-                }
-
-                if (dashboardState.pendingDecisions.isNotEmpty()) {
-                    SuggestionGroup(
-                        title = stringResource(Res.string.dash_decisions),
-                        icon = Icons.Default.QuestionMark,
-                        color = TactileTheme.Primary,
-                        nodes = dashboardState.pendingDecisions,
-                        onEditNode = onEditNode
-                    )
-                }
-
-                if (dashboardState.maintenanceQueue.isNotEmpty()) {
-                    SuggestionGroup(
-                        title = stringResource(Res.string.dash_maintenance),
-                        icon = Icons.Default.Settings,
-                        color = TactileTheme.Success,
-                        nodes = dashboardState.maintenanceQueue,
-                        onEditNode = onEditNode
-                    )
-                }
-            }
-        }
-
-        // 2. Search & Quick Links
-        Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
-            OutlinedTextField(
-                value = "",
-                onValueChange = {
-                    viewModel.updateSearchQuery(it)
-                    onNavigateTo(Screen.Search)
+        dashboardState.modeSuggestion?.let { suggestion ->
+            ModeSuggestionBanner(
+                suggestion = suggestion,
+                onAccept = {
+                    val targetMode = allModes.find { it.key == suggestion }
+                    if (targetMode != null) viewModel.switchMode(targetMode.id)
                 },
-                modifier = Modifier.fillMaxWidth(),
-                placeholder = {
-                    Text(
-                        stringResource(Res.string.dash_search_placeholder),
-                        style = MaterialTheme.typography.labelSmall
-                    )
-                },
-                leadingIcon = {
-                    Icon(
-                        Icons.Default.Search,
-                        contentDescription = null,
-                        tint = TactileTheme.Primary
-                    )
-                },
-                shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = TactileTheme.Border,
-                    focusedBorderColor = TactileTheme.Primary,
-                    unfocusedContainerColor = TactileTheme.Surface,
-                    focusedContainerColor = TactileTheme.Surface
-                )
+                onDismiss = { /* Option to ignore until state changes */ }
             )
         }
 
-        // 3. Alerts & Reminders (Critical Path)
-        Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
-            // Reminders with Dismiss
-            activeReminders.forEach { node ->
-                AlertCard(
-                    title = "REMINDER: ${node.title}",
-                    description = "Active notification threshold reached.",
-                    icon = Icons.Default.NotificationsActive,
-                    color = TactileTheme.Error,
-                    action = {
-                        IconButton(
-                            onClick = { viewModel.updateNode(node.copy(reminderAt = null)) },
-                            modifier = Modifier.size(24.dp)
-                        ) {
+        blockList.forEach { blockKey ->
+            when (blockKey) {
+                "today_pulse", "today_top_3" -> {
+                    TodayPulseCard(
+                        progress = dailyProgress,
+                        tasks = pinnedNodes,
+                        onToggleTask = { nodeWithPin ->
+                            val newStatus =
+                                if (nodeWithPin.node.status == "done") "active" else "done"
+                            viewModel.updateNodeStatus(nodeWithPin.node, newStatus)
+                        },
+                        onTaskClick = { onEditNode(it) },
+                        onClick = { onNavigateTo(Screen.Today) }
+                    )
+                }
+
+                "load_capacity" -> {
+                    SystemStatusCard(
+                        load = dashboardState.systemLoad,
+                        fragmentation = dashboardState.fragmentation,
+                        warning = dashboardState.capacityWarning,
+                        onClick = { onNavigateTo(Screen.Insights) }
+                    )
+                }
+
+                "area_health" -> {
+                    if (allAreas.isNotEmpty()) {
+                        Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+                            Text(
+                                stringResource(Res.string.dash_area_health),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = TactileTheme.Muted,
+                                fontWeight = FontWeight.Bold,
+                                letterSpacing = 1.sp
+                            )
+                            Row(
+                                modifier = Modifier.fillMaxWidth()
+                                    .horizontalScroll(rememberScrollState()),
+                                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)
+                            ) {
+                                allAreas.forEach { area ->
+                                    AreaHealthCard(
+                                        area = area,
+                                        health = dashboardState.areaHealth[area.id] ?: "stable",
+                                        onClick = {
+                                            viewModel.clearSearchFilters()
+                                            viewModel.updateSearchAreaFilter(area.id)
+                                            onNavigateTo(Screen.Search)
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+
+                "operational" -> {
+                    if (dashboardState.openLoops.isNotEmpty() || dashboardState.pendingDecisions.isNotEmpty() || dashboardState.maintenanceQueue.isNotEmpty()) {
+                        Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+                            Text(
+                                "LIFE OS // OPERATIONAL",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = TactileTheme.Accent,
+                                fontWeight = FontWeight.Bold,
+                                letterSpacing = 2.sp
+                            )
+
+                            if (dashboardState.openLoops.isNotEmpty()) {
+                                SuggestionGroup(
+                                    title = stringResource(Res.string.dash_open_loops),
+                                    icon = Icons.Default.AllInclusive,
+                                    color = TactileTheme.Accent,
+                                    nodes = dashboardState.openLoops,
+                                    onEditNode = onEditNode
+                                )
+                            }
+
+                            if (dashboardState.pendingDecisions.isNotEmpty()) {
+                                SuggestionGroup(
+                                    title = stringResource(Res.string.dash_decisions),
+                                    icon = Icons.Default.QuestionMark,
+                                    color = TactileTheme.Primary,
+                                    nodes = dashboardState.pendingDecisions,
+                                    onEditNode = onEditNode
+                                )
+                            }
+
+                            if (dashboardState.maintenanceQueue.isNotEmpty()) {
+                                SuggestionGroup(
+                                    title = stringResource(Res.string.dash_maintenance),
+                                    icon = Icons.Default.Settings,
+                                    color = TactileTheme.Success,
+                                    nodes = dashboardState.maintenanceQueue,
+                                    onEditNode = onEditNode
+                                )
+                            }
+                        }
+                    }
+                }
+
+                "search" -> {
+                    OutlinedTextField(
+                        value = "",
+                        onValueChange = {
+                            viewModel.updateSearchQuery(it)
+                            onNavigateTo(Screen.Search)
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        placeholder = {
+                            Text(
+                                stringResource(Res.string.dash_search_placeholder),
+                                style = MaterialTheme.typography.labelSmall
+                            )
+                        },
+                        leadingIcon = {
                             Icon(
-                                Icons.Default.Check,
+                                Icons.Default.Search,
                                 contentDescription = null,
-                                tint = TactileTheme.Error,
-                                modifier = Modifier.size(16.dp)
+                                tint = TactileTheme.Primary
+                            )
+                        },
+                        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            unfocusedBorderColor = TactileTheme.Border,
+                            focusedBorderColor = TactileTheme.Primary,
+                            unfocusedContainerColor = TactileTheme.Surface,
+                            focusedContainerColor = TactileTheme.Surface
+                        )
+                    )
+                }
+
+                "alerts" -> {
+                    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+                        activeReminders.forEach { node ->
+                            AlertCard(
+                                title = "REMINDER: ${node.title}",
+                                description = "Active notification threshold reached.",
+                                icon = Icons.Default.NotificationsActive,
+                                color = TactileTheme.Error,
+                                action = {
+                                    IconButton(
+                                        onClick = {
+                                            viewModel.updateNode(
+                                                node.copy(
+                                                    reminderAt = null
+                                                )
+                                            )
+                                        },
+                                        modifier = Modifier.size(24.dp)
+                                    ) {
+                                        Icon(
+                                            Icons.Default.Check,
+                                            contentDescription = null,
+                                            tint = TactileTheme.Error,
+                                            modifier = Modifier.size(16.dp)
+                                        )
+                                    }
+                                },
+                                onClick = { onEditNode(node.id) }
                             )
                         }
-                    },
-                    onClick = { onEditNode(node.id) }
-                )
-            }
 
-            if (needsWeeklyReview) {
-                AlertCard(
-                    title = stringResource(Res.string.dash_review_pending),
-                    description = stringResource(Res.string.dash_review_pending_desc),
-                    icon = Icons.Default.EventRepeat,
-                    color = TactileTheme.Primary,
-                    onClick = { onNavigateTo(Screen.Review) }
-                )
-            }
-
-            if (inboxNodes.isNotEmpty()) {
-                AlertCard(
-                    title = if (inboxNodes.size > 10) stringResource(
-                        Res.string.dash_inbox_overflow,
-                        inboxNodes.size
-                    )
-                    else stringResource(Res.string.dash_inbox_new, inboxNodes.size),
-                    description = "Process items to clear your mental buffer.",
-                    icon = if (inboxNodes.size > 10) Icons.Default.Warning else Icons.Default.MailOutline,
-                    color = if (inboxNodes.size > 10) TactileTheme.Error else TactileTheme.Accent,
-                    onClick = { onNavigateTo(Screen.Inbox) }
-                )
-            }
-
-            if (dashboardState.overdueNodes.isNotEmpty()) {
-                AlertCard(
-                    title = "${dashboardState.overdueNodes.size} OVERDUE ENTRIES",
-                    description = "Deadlines exceeded. System integrity at risk.",
-                    icon = Icons.Default.Warning,
-                    color = TactileTheme.Error,
-                    onClick = {
-                        viewModel.clearSearchFilters()
-                        viewModel.updateSearchStatusFilter("active")
-                        onNavigateTo(Screen.Search)
-                    }
-                )
-            }
-
-            // Mood-based Suggestions
-            moodToday?.let { mood ->
-                if ((mood.anxietyScore ?: 0) >= 4) {
-                    AlertCard(
-                        title = "STRESS DETECTED",
-                        description = stringResource(Res.string.dash_suggestion_stress),
-                        icon = Icons.Default.Psychology,
-                        color = TactileTheme.Accent,
-                        onClick = { onNavigateTo(Screen.Review) }
-                    )
-                }
-                if ((mood.focusScore ?: 5) <= 2) {
-                    AlertCard(
-                        title = "LOW FOCUS PHASE",
-                        description = stringResource(Res.string.dash_suggestion_low_focus),
-                        icon = Icons.Default.Lightbulb,
-                        color = TactileTheme.Accent,
-                        onClick = {
-                            viewModel.clearSearchFilters()
-                            viewModel.updateSearchMaxMinutesFilter(5)
-                            onNavigateTo(Screen.Search)
+                        if (needsWeeklyReview) {
+                            AlertCard(
+                                title = stringResource(Res.string.dash_review_pending),
+                                description = stringResource(Res.string.dash_review_pending_desc),
+                                icon = Icons.Default.EventRepeat,
+                                color = TactileTheme.Primary,
+                                onClick = { onNavigateTo(Screen.Review) }
+                            )
                         }
-                    )
-                }
-                if (!mood.tookMeds && localNow.hour >= 10) {
-                    AlertCard(
-                        title = "MEDICATION LOG PENDING",
-                        description = stringResource(Res.string.dash_suggestion_meds),
-                        icon = Icons.Default.MedicalServices,
-                        color = TactileTheme.Accent,
-                        onClick = { onNavigateTo(Screen.Track) }
-                    )
-                }
-            }
-        }
 
-        // 4. Sticky Notes
-        if (dashboardState.stickyNotes.isNotEmpty()) {
-            Row(
-                modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)
-            ) {
-                dashboardState.stickyNotes.forEach { note ->
-                    StickyNoteCard(
-                        title = note.node.title,
-                        content = note.node.content,
-                        onClick = { onEditNode(note.node.id) }
-                    )
-                }
-            }
-        }
+                        if (inboxNodes.isNotEmpty()) {
+                            AlertCard(
+                                title = if (inboxNodes.size > 10) stringResource(
+                                    Res.string.dash_inbox_overflow,
+                                    inboxNodes.size
+                                )
+                                else stringResource(Res.string.dash_inbox_new, inboxNodes.size),
+                                description = "Process items to clear your mental buffer.",
+                                icon = if (inboxNodes.size > 10) Icons.Default.Warning else Icons.Default.MailOutline,
+                                color = if (inboxNodes.size > 10) TactileTheme.Error else TactileTheme.Accent,
+                                onClick = { onNavigateTo(Screen.Inbox) }
+                            )
+                        }
 
-        // 5. Daily Pulse & Today's Slots
-        TodayPulseCard(
-            progress = dailyProgress,
-            tasks = pinnedNodes,
-            onToggleTask = { nodeWithPin ->
-                val newStatus = if (nodeWithPin.node.status == "done") "active" else "done"
-                viewModel.updateNodeStatus(nodeWithPin.node, newStatus)
-            },
-            onTaskClick = { onEditNode(it) },
-            onClick = { onNavigateTo(Screen.Today) }
-        )
+                        if (dashboardState.overdueNodes.isNotEmpty()) {
+                            AlertCard(
+                                title = "${dashboardState.overdueNodes.size} OVERDUE ENTRIES",
+                                description = "Deadlines exceeded. System integrity at risk.",
+                                icon = Icons.Default.Warning,
+                                color = TactileTheme.Error,
+                                onClick = {
+                                    viewModel.clearSearchFilters()
+                                    viewModel.updateSearchStatusFilter("active")
+                                    onNavigateTo(Screen.Search)
+                                }
+                            )
+                        }
 
-        // 6. Focus Engine
-        FocusCard(
-            viewModel = viewModel,
-            activeSession = activeSession,
-            onToggleFocus = {
-                if (activeSession != null) {
-                    viewModel.stopFocusSession()
-                } else {
-                    pinnedNodes.firstOrNull()?.let { viewModel.startFocusSession(it.node.id) }
-                }
-            },
-            onClick = { onNavigateTo(Screen.Focus) }
-        )
-
-        // 7. Time-based Phase Cards
-        if (currentHour in 5..11) {
-            AlertCard(
-                title = stringResource(Res.string.dash_morning_reset),
-                description = stringResource(Res.string.dash_morning_reset_desc),
-                icon = Icons.Default.WbSunny,
-                color = TactileTheme.Primary,
-                onClick = { onNavigateTo(Screen.Review) }
-            )
-        } else if (currentHour in 18..23) {
-            AlertCard(
-                title = stringResource(Res.string.dash_evening_shutdown),
-                description = stringResource(Res.string.dash_evening_shutdown_desc),
-                icon = Icons.Default.Brightness3,
-                color = TactileTheme.Accent,
-                onClick = { onNavigateTo(Screen.Review) }
-            )
-        }
-
-        // 8. Performance Summary (Insights)
-        LifeSummaryCard(
-            captures = insights.weeklyCaptures,
-            completions = insights.weeklyCompletions,
-            onClick = { onNavigateTo(Screen.Insights) }
-        )
-
-        // 9. State-Aware Actions (Recovery, Overwhelmed, etc.)
-        StateAwareActionsGrid(viewModel = viewModel, onNavigateTo = onNavigateTo)
-
-        // 10. Operational Suggestions (Recovery, Batch, etc.)
-        Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingLg)) {
-            if (dashboardState.lowEnergyTasks.isNotEmpty() && (moodToday?.energyScore ?: 5) <= 2) {
-                SuggestionGroup(
-                    title = "RECOVERY MODE // LOW ENERGY",
-                    icon = Icons.Default.BatteryChargingFull,
-                    color = TactileTheme.Success,
-                    nodes = dashboardState.lowEnergyTasks,
-                    onEditNode = onEditNode
-                )
-            }
-
-            if (dashboardState.batchableTasks.isNotEmpty()) {
-                val firstBatch = dashboardState.batchableTasks.values.first()
-                val areaName =
-                    allAreas.find { it.id == firstBatch.first().node.areaId }?.title ?: "GENERAL"
-                SuggestionGroup(
-                    title = "BATCH SUGGESTION // $areaName",
-                    icon = Icons.Default.Layers,
-                    color = TactileTheme.Accent,
-                    nodes = firstBatch,
-                    onEditNode = onEditNode,
-                    description = "You have ${firstBatch.size} tasks in $areaName. Batch them?"
-                )
-            }
-
-            if (dashboardState.quickWins.isNotEmpty()) {
-                SuggestionGroup(
-                    title = "QUICK WINS // EASY FRICTION",
-                    icon = Icons.Default.Bolt,
-                    color = TactileTheme.Success,
-                    nodes = dashboardState.quickWins,
-                    onEditNode = onEditNode
-                )
-            }
-
-            if (dashboardState.deepWork.isNotEmpty()) {
-                SuggestionGroup(
-                    title = "DEEP WORK // HIGH ENERGY",
-                    icon = Icons.Default.Psychology,
-                    color = TactileTheme.Primary,
-                    nodes = dashboardState.deepWork,
-                    onEditNode = onEditNode
-                )
-            }
-
-            if (dashboardState.criticalProjects.isNotEmpty()) {
-                SuggestionGroup(
-                    title = "NEEDS ATTENTION // CRITICAL PROJECTS",
-                    icon = Icons.Default.AccountTree,
-                    color = TactileTheme.Error,
-                    nodes = dashboardState.criticalProjects.map {
-                        com.tajemniktv.tajsos.data.NodeWithPin(
-                            it,
-                            null
-                        )
-                    },
-                    onEditNode = { onNavigateToProject(it) }
-                )
-            }
-
-            if (dashboardState.deservesAttention.isNotEmpty()) {
-                SuggestionGroup(
-                    title = "DESERVES ATTENTION // NEGLECTED",
-                    icon = Icons.Default.NotificationImportant,
-                    color = TactileTheme.Accent,
-                    nodes = dashboardState.deservesAttention,
-                    onEditNode = onEditNode
-                )
-            }
-
-            if (dashboardState.upcomingDeadlines.isNotEmpty()) {
-                SuggestionGroup(
-                    title = "UPCOMING DEADLINES",
-                    icon = Icons.Default.DateRange,
-                    color = TactileTheme.Accent,
-                    nodes = dashboardState.upcomingDeadlines,
-                    onEditNode = onEditNode
-                )
-            }
-        }
-
-        // 11. Knowledge, Wisdom & Relevant Contexts
-        Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingLg)) {
-            Text(
-                "KNOWLEDGE & CONTEXT",
-                style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Accent,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 1.sp
-            )
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)
-            ) {
-                VaultCard(
-                    modifier = Modifier.weight(1f),
-                    title = "READ LATER",
-                    count = dashboardState.readLaterVault.size,
-                    icon = Icons.Default.Bookmark,
-                    onClick = {
-                        viewModel.clearSearchFilters()
-                        viewModel.updateSearchTypeFilter("note")
-                        viewModel.updateSearchStatusFilter("active")
-                        onNavigateTo(Screen.Search)
+                        moodToday?.let { mood ->
+                            if ((mood.anxietyScore ?: 0) >= 4) {
+                                AlertCard(
+                                    title = "STRESS DETECTED",
+                                    description = stringResource(Res.string.dash_suggestion_stress),
+                                    icon = Icons.Default.Psychology,
+                                    color = TactileTheme.Accent,
+                                    onClick = { onNavigateTo(Screen.Review) }
+                                )
+                            }
+                            if ((mood.focusScore ?: 5) <= 2) {
+                                AlertCard(
+                                    title = "LOW FOCUS PHASE",
+                                    description = stringResource(Res.string.dash_suggestion_low_focus),
+                                    icon = Icons.Default.Lightbulb,
+                                    color = TactileTheme.Accent,
+                                    onClick = {
+                                        viewModel.clearSearchFilters()
+                                        viewModel.updateSearchMaxMinutesFilter(5)
+                                        onNavigateTo(Screen.Search)
+                                    }
+                                )
+                            }
+                            if (!mood.tookMeds && localNow.hour >= 10) {
+                                AlertCard(
+                                    title = "MEDICATION LOG PENDING",
+                                    description = stringResource(Res.string.dash_suggestion_meds),
+                                    icon = Icons.Default.MedicalServices,
+                                    color = TactileTheme.Accent,
+                                    onClick = { onNavigateTo(Screen.Track) }
+                                )
+                            }
+                        }
                     }
-                )
-                VaultCard(
-                    modifier = Modifier.weight(1f),
-                    title = "QUOTES",
-                    count = dashboardState.quoteVault.size,
-                    icon = Icons.Default.FormatQuote,
-                    onClick = { onNavigateTo(Screen.Search) }
-                )
-                VaultCard(
-                    modifier = Modifier.weight(1f),
-                    title = "IDEAS",
-                    count = dashboardState.ideaIncubator.size,
-                    icon = Icons.Default.Lightbulb,
-                    onClick = { onNavigateTo(Screen.Search) }
-                )
-            }
+                }
 
-            if (dashboardState.pinnedKnowledge.isNotEmpty()) {
-                SuggestionGroup(
-                    title = "PINNED KNOWLEDGE",
-                    icon = Icons.Default.Favorite,
-                    color = TactileTheme.Primary,
-                    nodes = dashboardState.pinnedKnowledge,
-                    onEditNode = onEditNode
-                )
-            }
+                "sticky" -> {
+                    if (dashboardState.stickyNotes.isNotEmpty()) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth()
+                                .horizontalScroll(rememberScrollState()),
+                            horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)
+                        ) {
+                            dashboardState.stickyNotes.forEach { note ->
+                                StickyNoteCard(
+                                    title = note.node.title,
+                                    content = note.node.content,
+                                    onClick = { onEditNode(note.node.id) }
+                                )
+                            }
+                        }
+                    }
+                }
 
-            if (dashboardState.foundationalNotes.isNotEmpty()) {
-                SuggestionGroup(
-                    title = "FOUNDATIONAL PRINCIPLE",
-                    icon = Icons.Default.AutoAwesome,
-                    color = TactileTheme.Accent,
-                    nodes = dashboardState.foundationalNotes,
-                    onEditNode = onEditNode
-                )
-            }
+                "focus", "current_task", "timer" -> {
+                    FocusCard(
+                        viewModel = viewModel,
+                        activeSession = activeSession,
+                        onToggleFocus = {
+                            if (activeSession != null) {
+                                viewModel.stopFocusSession()
+                            } else {
+                                pinnedNodes.firstOrNull()
+                                    ?.let { viewModel.startFocusSession(it.node.id) }
+                            }
+                        },
+                        onClick = { onNavigateTo(Screen.Focus) }
+                    )
+                }
 
-            if (dashboardState.forgottenWisdom != null) {
-                DashCard(onClick = { onEditNode(dashboardState.forgottenWisdom!!.node.id) }) {
-                    Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+                "insights" -> {
+                    LifeSummaryCard(
+                        captures = insights.weeklyCaptures,
+                        completions = insights.weeklyCompletions,
+                        onClick = { onNavigateTo(Screen.Insights) }
+                    )
+                }
+
+                "actions" -> {
+                    StateAwareActionsGrid(viewModel = viewModel, onNavigateTo = onNavigateTo)
+                }
+
+                "suggestions", "easy_wins" -> {
+                    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingLg)) {
+                        if (dashboardState.lowEnergyTasks.isNotEmpty() && (moodToday?.energyScore
+                                ?: 5) <= 2
+                        ) {
+                            SuggestionGroup(
+                                title = "RECOVERY MODE // LOW ENERGY",
+                                icon = Icons.Default.BatteryChargingFull,
+                                color = TactileTheme.Success,
+                                nodes = dashboardState.lowEnergyTasks,
+                                onEditNode = onEditNode
+                            )
+                        }
+
+                        if (dashboardState.batchableTasks.isNotEmpty()) {
+                            val firstBatch = dashboardState.batchableTasks.values.first()
+                            val areaName =
+                                allAreas.find { it.id == firstBatch.first().node.areaId }?.title
+                                    ?: "GENERAL"
+                            SuggestionGroup(
+                                title = "BATCH SUGGESTION // $areaName",
+                                icon = Icons.Default.Layers,
+                                color = TactileTheme.Accent,
+                                nodes = firstBatch,
+                                onEditNode = onEditNode,
+                                description = "You have ${firstBatch.size} tasks in $areaName. Batch them?"
+                            )
+                        }
+
+                        if (dashboardState.quickWins.isNotEmpty()) {
+                            SuggestionGroup(
+                                title = "QUICK WINS // EASY FRICTION",
+                                icon = Icons.Default.Bolt,
+                                color = TactileTheme.Success,
+                                nodes = dashboardState.quickWins,
+                                onEditNode = onEditNode
+                            )
+                        }
+
+                        if (dashboardState.deepWork.isNotEmpty()) {
+                            SuggestionGroup(
+                                title = "DEEP WORK // HIGH ENERGY",
+                                icon = Icons.Default.Psychology,
+                                color = TactileTheme.Primary,
+                                nodes = dashboardState.deepWork,
+                                onEditNode = onEditNode
+                            )
+                        }
+
+                        if (dashboardState.criticalProjects.isNotEmpty()) {
+                            SuggestionGroup(
+                                title = "NEEDS ATTENTION // CRITICAL PROJECTS",
+                                icon = Icons.Default.AccountTree,
+                                color = TactileTheme.Error,
+                                nodes = dashboardState.criticalProjects.map {
+                                    com.tajemniktv.tajsos.data.NodeWithPin(
+                                        it,
+                                        null
+                                    )
+                                },
+                                onEditNode = { onNavigateToProject(it) }
+                            )
+                        }
+
+                        if (dashboardState.deservesAttention.isNotEmpty()) {
+                            SuggestionGroup(
+                                title = "DESERVES ATTENTION // NEGLECTED",
+                                icon = Icons.Default.NotificationImportant,
+                                color = TactileTheme.Accent,
+                                nodes = dashboardState.deservesAttention,
+                                onEditNode = onEditNode
+                            )
+                        }
+
+                        if (dashboardState.upcomingDeadlines.isNotEmpty()) {
+                            SuggestionGroup(
+                                title = "UPCOMING DEADLINES",
+                                icon = Icons.Default.DateRange,
+                                color = TactileTheme.Accent,
+                                nodes = dashboardState.upcomingDeadlines,
+                                onEditNode = onEditNode
+                            )
+                        }
+                    }
+                }
+
+                "knowledge", "pinned_note" -> {
+                    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingLg)) {
                         Text(
-                            "FORGOTTEN WISDOM",
+                            "KNOWLEDGE & CONTEXT",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = TactileTheme.Accent,
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = 1.sp
+                        )
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)
+                        ) {
+                            VaultCard(
+                                modifier = Modifier.weight(1f),
+                                title = "READ LATER",
+                                count = dashboardState.readLaterVault.size,
+                                icon = Icons.Default.Bookmark,
+                                onClick = {
+                                    viewModel.clearSearchFilters()
+                                    viewModel.updateSearchTypeFilter("note")
+                                    viewModel.updateSearchStatusFilter("active")
+                                    onNavigateTo(Screen.Search)
+                                }
+                            )
+                            VaultCard(
+                                modifier = Modifier.weight(1f),
+                                title = "QUOTES",
+                                count = dashboardState.quoteVault.size,
+                                icon = Icons.Default.FormatQuote,
+                                onClick = { onNavigateTo(Screen.Search) }
+                            )
+                            VaultCard(
+                                modifier = Modifier.weight(1f),
+                                title = "IDEAS",
+                                count = dashboardState.ideaIncubator.size,
+                                icon = Icons.Default.Lightbulb,
+                                onClick = { onNavigateTo(Screen.Search) }
+                            )
+                        }
+
+                        if (dashboardState.pinnedKnowledge.isNotEmpty()) {
+                            SuggestionGroup(
+                                title = "PINNED KNOWLEDGE",
+                                icon = Icons.Default.Favorite,
+                                color = TactileTheme.Primary,
+                                nodes = dashboardState.pinnedKnowledge,
+                                onEditNode = onEditNode
+                            )
+                        }
+
+                        if (dashboardState.foundationalNotes.isNotEmpty()) {
+                            SuggestionGroup(
+                                title = "FOUNDATIONAL PRINCIPLE",
+                                icon = Icons.Default.AutoAwesome,
+                                color = TactileTheme.Accent,
+                                nodes = dashboardState.foundationalNotes,
+                                onEditNode = onEditNode
+                            )
+                        }
+
+                        if (dashboardState.forgottenWisdom != null) {
+                            DashCard(onClick = { onEditNode(dashboardState.forgottenWisdom!!.node.id) }) {
+                                Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+                                    Text(
+                                        "FORGOTTEN WISDOM",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = TactileTheme.Muted,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                    Text(
+                                        dashboardState.forgottenWisdom!!.node.title,
+                                        style = MaterialTheme.typography.titleSmall,
+                                        color = TactileTheme.Text
+                                    )
+                                    Spacer(Modifier.height(4.dp))
+                                    Text(
+                                        dashboardState.forgottenWisdom!!.node.content.take(100) + "...",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = TactileTheme.Muted
+                                    )
+                                }
+                            }
+                        }
+
+                        if (dashboardState.resourceHighlights.isNotEmpty()) {
+                            SuggestionGroup(
+                                title = "RESOURCE HIGHLIGHTS",
+                                icon = Icons.AutoMirrored.Filled.LibraryBooks,
+                                color = TactileTheme.Primary,
+                                nodes = dashboardState.resourceHighlights,
+                                onEditNode = onEditNode
+                            )
+                        }
+
+                        // Relevant Contexts
+                        allProjects.maxByOrNull { it.updatedAt }?.let { project ->
+                            MetricCard(
+                                label = "RELEVANT PROJECT",
+                                value = project.title,
+                                secondaryLabel = "LAST UPDATED",
+                                icon = Icons.AutoMirrored.Filled.List,
+                                iconColor = TactileTheme.Primary,
+                                onClick = { onNavigateToProject(project.id) }
+                            )
+                        }
+
+                        dashboardState.relevantNote?.let { nodeWithPin ->
+                            MetricCard(
+                                label = "RELEVANT NOTE",
+                                value = nodeWithPin.node.title,
+                                secondaryLabel = "RECENT ACTIVITY",
+                                icon = Icons.Default.Edit,
+                                iconColor = TactileTheme.Primary,
+                                onClick = { onEditNode(nodeWithPin.node.id) }
+                            )
+                        }
+                    }
+                }
+
+                "protocols" -> {
+                    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+                        Text(
+                            stringResource(Res.string.dash_protocols),
                             style = MaterialTheme.typography.labelSmall,
                             color = TactileTheme.Muted,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = 1.sp
                         )
-                        Text(
-                            dashboardState.forgottenWisdom!!.node.title,
-                            style = MaterialTheme.typography.titleSmall,
-                            color = TactileTheme.Text
-                        )
-                        Spacer(Modifier.height(4.dp))
-                        Text(
-                            dashboardState.forgottenWisdom!!.node.content.take(100) + "...",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = TactileTheme.Muted
-                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth()
+                                .horizontalScroll(rememberScrollState()),
+                            horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)
+                        ) {
+                            ProtocolTrigger(
+                                label = stringResource(Res.string.protocol_morning),
+                                icon = Icons.Default.WbSunny,
+                                color = TactileTheme.Primary,
+                                onClick = { onNavigateTo(Screen.Review) }
+                            )
+                            ProtocolTrigger(
+                                label = stringResource(Res.string.protocol_deep_work),
+                                icon = Icons.Default.Psychology,
+                                color = TactileTheme.Accent,
+                                onClick = { onNavigateTo(Screen.Focus) }
+                            )
+                            ProtocolTrigger(
+                                label = stringResource(Res.string.protocol_shutdown),
+                                icon = Icons.Default.Brightness3,
+                                color = TactileTheme.Success,
+                                onClick = { onNavigateTo(Screen.Review) }
+                            )
+                            ProtocolTrigger(
+                                label = stringResource(Res.string.protocol_recovery),
+                                icon = Icons.Default.MedicalServices,
+                                color = TactileTheme.Error,
+                                onClick = { onNavigateTo(Screen.Track) }
+                            )
+                        }
                     }
                 }
-            }
 
-            if (dashboardState.resourceHighlights.isNotEmpty()) {
-                SuggestionGroup(
-                    title = "RESOURCE HIGHLIGHTS",
-                    icon = Icons.AutoMirrored.Filled.LibraryBooks,
-                    color = TactileTheme.Primary,
-                    nodes = dashboardState.resourceHighlights,
-                    onEditNode = onEditNode
-                )
-            }
+                "basics", "survival_basics" -> {
+                    RecoveryBasicsBlock(
+                        onMedsClick = { onNavigateTo(Screen.Track) },
+                        onHydrationClick = { /* hydration track later */ },
+                        onFoodClick = { /* food track later */ }
+                    )
+                }
 
-            // Relevant Contexts
-            allProjects.maxByOrNull { it.updatedAt }?.let { project ->
-                MetricCard(
-                    label = "RELEVANT PROJECT",
-                    value = project.title,
-                    secondaryLabel = "LAST UPDATED",
-                    icon = Icons.AutoMirrored.Filled.List,
-                    iconColor = TactileTheme.Primary,
-                    onClick = { onNavigateToProject(project.id) }
-                )
-            }
+                "shopping_list", "place_based_tasks", "errands" -> {
+                    ErrandListBlock(
+                        errands = dashboardState.shoppingList,
+                        onEdit = onEditNode
+                    )
+                }
 
-            dashboardState.relevantNote?.let { nodeWithPin ->
-                MetricCard(
-                    label = "RELEVANT NOTE",
-                    value = nodeWithPin.node.title,
-                    secondaryLabel = "RECENT ACTIVITY",
-                    icon = Icons.Default.Edit,
-                    iconColor = TactileTheme.Primary,
-                    onClick = { onEditNode(nodeWithPin.node.id) }
-                )
-            }
-        }
+                "tiny_wins", "tiny_victories" -> {
+                    TinyVictoriesBlock(
+                        victories = dashboardState.tinyVictories,
+                        onEdit = onEditNode
+                    )
+                }
 
-        // 11.5 Transition Protocols
-        Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
-            Text(
-                stringResource(Res.string.dash_protocols),
-                style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Muted,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 1.sp
-            )
-            Row(
-                modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)
-            ) {
-                ProtocolTrigger(
-                    label = stringResource(Res.string.protocol_morning),
-                    icon = Icons.Default.WbSunny,
-                    color = TactileTheme.Primary,
-                    onClick = { onNavigateTo(Screen.Review) }
-                )
-                ProtocolTrigger(
-                    label = stringResource(Res.string.protocol_deep_work),
-                    icon = Icons.Default.Psychology,
-                    color = TactileTheme.Accent,
-                    onClick = { onNavigateTo(Screen.Focus) }
-                )
-                ProtocolTrigger(
-                    label = stringResource(Res.string.protocol_shutdown),
-                    icon = Icons.Default.Brightness3,
-                    color = TactileTheme.Success,
-                    onClick = { onNavigateTo(Screen.Review) }
-                )
-                ProtocolTrigger(
-                    label = stringResource(Res.string.protocol_recovery),
-                    icon = Icons.Default.MedicalServices,
-                    color = TactileTheme.Error,
-                    onClick = { onNavigateTo(Screen.Track) }
-                )
+                "current_focus" -> {
+                    CurrentTaskBlock(
+                        activeTask = pinnedNodes.firstOrNull(),
+                        onEdit = onEditNode
+                    )
+                }
+
+                "classes", "assignments", "revision_targets" -> {
+                    SuggestionGroup(
+                        title = "STUDY MODULE // ${blockKey.uppercase()}",
+                        icon = Icons.Default.School,
+                        color = Color(0xFFFF9800),
+                        nodes = dashboardState.upcomingDeadlines, // Placeholder
+                        onEditNode = onEditNode
+                    )
+                }
+
+                "paperwork", "bills", "renewals", "subscriptions", "bureaucracy" -> {
+                    SuggestionGroup(
+                        title = "ADMIN // ${blockKey.uppercase()}",
+                        icon = Icons.Default.Gavel,
+                        color = Color(0xFF607D8B),
+                        nodes = dashboardState.unresolvedBureaucracy,
+                        onEditNode = onEditNode
+                    )
+                }
             }
         }
 
-        // 12. Modules Grid
-        ModulesGrid(
+        // 12. Dashboard Modules
+        DashboardModules(
             todayNodes = todayNodes,
             activeSession = activeSession,
             moodToday = moodToday,
@@ -684,7 +812,12 @@ private fun DashboardMobileContent(
 }
 
 @Composable
-fun DashHeader(vibe: String, onMenuClick: () -> Unit, onSettingsClick: () -> Unit) {
+fun DashHeader(
+    vibe: String,
+    onMenuClick: () -> Unit,
+    onSettingsClick: () -> Unit,
+    tintColor: Color = TactileTheme.Primary
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -702,7 +835,7 @@ fun DashHeader(vibe: String, onMenuClick: () -> Unit, onSettingsClick: () -> Uni
             ) {
                 Text(
                     "T",
-                    color = TactileTheme.Primary,
+                    color = tintColor,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp
                 )
@@ -719,7 +852,7 @@ fun DashHeader(vibe: String, onMenuClick: () -> Unit, onSettingsClick: () -> Uni
                 Text(
                     vibe.uppercase(),
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Muted,
+                    color = tintColor,
                     fontSize = 8.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -738,11 +871,11 @@ fun DashHeader(vibe: String, onMenuClick: () -> Unit, onSettingsClick: () -> Uni
                 ) {
                     Box(
                         modifier = Modifier.size(6.dp).clip(CircleShape)
-                            .background(TactileTheme.Success)
+                            .background(if (tintColor == TactileTheme.Primary) TactileTheme.Success else tintColor)
                     )
                     Spacer(Modifier.width(8.dp))
                     Text(
-                        "STATUS: OK",
+                        "SYSTEM: ONLINE",
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold,
                         color = TactileTheme.Text
@@ -1201,7 +1334,7 @@ fun VaultCard(
 }
 
 @Composable
-fun ModulesGrid(
+fun DashboardModules(
     todayNodes: List<com.tajemniktv.tajsos.data.NodeEntity>,
     activeSession: com.tajemniktv.tajsos.data.FocusSessionEntity?,
     moodToday: com.tajemniktv.tajsos.data.TrackEntryEntity?,
@@ -1216,108 +1349,119 @@ fun ModulesGrid(
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
         Text(
-            "MODULES",
+            stringResource(Res.string.dash_modules),
             style = MaterialTheme.typography.labelSmall,
             color = TactileTheme.Muted,
             fontWeight = FontWeight.Bold,
             letterSpacing = 2.sp
         )
-        val rows = listOf(
-            listOf(
-                Quad(
-                    stringResource(Res.string.screen_today),
-                    Icons.Default.DateRange,
-                    if (todayNodes.isNotEmpty()) "${todayNodes.size} TASKS" else "EMPTY",
-                    { onNavigateTo(Screen.Today) }),
-                Quad(
-                    stringResource(Res.string.screen_focus),
-                    Icons.Default.PlayArrow,
-                    if (activeSession != null) "ACTIVE" else "READY",
-                    { onNavigateTo(Screen.Focus) })
-            ),
-            listOf(
-                Quad(
-                    stringResource(Res.string.screen_track),
-                    Icons.Default.CheckCircle,
-                    if (moodToday != null) "LOGGED" else "PENDING",
-                    { onNavigateTo(Screen.Track) }),
-                Quad(
-                    stringResource(Res.string.screen_tasks),
-                    Icons.AutoMirrored.Filled.List,
-                    "$tasksCount TOTAL",
-                    { onNavigateTo(Screen.Tasks) })
-            ),
-            listOf(
-                Quad(
-                    stringResource(Res.string.screen_notes),
-                    Icons.Default.Edit,
-                    "$notesCount TOTAL",
-                    { onNavigateTo(Screen.Notes) }),
-                Quad(
-                    stringResource(Res.string.screen_proj),
-                    Icons.AutoMirrored.Filled.List,
-                    "${allProjects.size} ACTIVE",
-                    { onNavigateTo(Screen.Projects) })
-            ),
-            listOf(
-                Quad(
-                    stringResource(Res.string.screen_area),
-                    Icons.Default.LocationOn,
-                    "${allAreas.size} TOTAL",
-                    { onNavigateTo(Screen.Areas) }),
-                Quad(
-                    stringResource(Res.string.screen_cal),
-                    Icons.Default.Event,
-                    "${calendarEntries.size} ITEMS",
-                    { onNavigateTo(Screen.Calendar) })
-            ),
-            listOf(
-                Quad(
-                    stringResource(Res.string.screen_stats),
-                    Icons.Default.Info,
-                    "VIEW",
-                    { onNavigateTo(Screen.Insights) }),
-                Quad(
-                    stringResource(Res.string.screen_history),
-                    Icons.Default.History,
-                    if (allSessions.isNotEmpty()) "LAST: ${
-                        Instant.fromEpochMilliseconds(allSessions.first().startedAt)
-                            .toLocalDateTime(TimeZone.currentSystemDefault()).date
-                    }" else "EMPTY",
-                    { viewModel.resumeLastSession() })
+
+        Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+            ModuleCard(
+                modifier = Modifier.weight(1f),
+                title = stringResource(Res.string.screen_today),
+                icon = Icons.Default.DateRange,
+                status = if (todayNodes.isNotEmpty()) stringResource(
+                    Res.string.dash_module_tasks_count,
+                    todayNodes.size
+                ) else stringResource(Res.string.dash_module_empty),
+                onClick = { onNavigateTo(Screen.Today) },
+                color = Color(0xFF4CAF50)
             )
-        )
-        rows.forEach { row ->
-            Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
-                row.forEach { (title, icon, status, action) ->
-                    ModuleButton(
-                        modifier = Modifier.weight(1f),
-                        title = title,
-                        icon = icon,
-                        status = status,
-                        onClick = action
-                    )
-                }
-            }
+            ModuleCard(
+                modifier = Modifier.weight(1f),
+                title = stringResource(Res.string.screen_focus),
+                icon = Icons.Default.PlayArrow,
+                status = if (activeSession != null) stringResource(Res.string.dash_module_active) else stringResource(
+                    Res.string.dash_module_ready
+                ),
+                onClick = { onNavigateTo(Screen.Focus) },
+                color = Color(0xFFF44336)
+            )
+        }
+
+        Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+            ModuleCard(
+                modifier = Modifier.weight(1f),
+                title = stringResource(Res.string.screen_track),
+                icon = Icons.Default.CheckCircle,
+                status = if (moodToday != null) stringResource(Res.string.dash_module_logged) else stringResource(
+                    Res.string.dash_module_pending
+                ),
+                onClick = { onNavigateTo(Screen.Track) },
+                color = Color(0xFF2196F3)
+            )
+            ModuleCard(
+                modifier = Modifier.weight(1f),
+                title = stringResource(Res.string.screen_tasks),
+                icon = Icons.AutoMirrored.Filled.List,
+                status = stringResource(Res.string.dash_module_total_count, tasksCount),
+                onClick = { onNavigateTo(Screen.Tasks) },
+                color = Color(0xFF9C27B0)
+            )
+        }
+
+        Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+            ModuleCard(
+                modifier = Modifier.weight(1f),
+                title = stringResource(Res.string.screen_notes),
+                icon = Icons.Default.Edit,
+                status = stringResource(Res.string.dash_module_total_count, notesCount),
+                onClick = { onNavigateTo(Screen.Notes) },
+                color = Color(0xFFFF9800)
+            )
+            ModuleCard(
+                modifier = Modifier.weight(1f),
+                title = stringResource(Res.string.screen_proj),
+                icon = Icons.AutoMirrored.Filled.List,
+                status = stringResource(Res.string.dash_module_active_count, allProjects.size),
+                onClick = { onNavigateTo(Screen.Projects) },
+                color = Color(0xFF00BCD4)
+            )
+        }
+
+        Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+            ModuleCard(
+                modifier = Modifier.weight(1f),
+                title = stringResource(Res.string.screen_area),
+                icon = Icons.Default.LocationOn,
+                status = stringResource(Res.string.dash_module_total_count, allAreas.size),
+                onClick = { onNavigateTo(Screen.Areas) },
+                color = Color(0xFF607D8B)
+            )
+            ModuleCard(
+                modifier = Modifier.weight(1f),
+                title = stringResource(Res.string.screen_cal),
+                icon = Icons.Default.Event,
+                status = stringResource(Res.string.dash_module_items_count, calendarEntries.size),
+                onClick = { onNavigateTo(Screen.Calendar) },
+                color = Color(0xFF3F51B5)
+            )
+        }
+
+        Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+            ModuleCard(
+                modifier = Modifier.weight(1f),
+                title = stringResource(Res.string.screen_stats),
+                icon = Icons.Default.Info,
+                status = stringResource(Res.string.dash_module_view),
+                onClick = { onNavigateTo(Screen.Insights) },
+                color = Color(0xFF795548)
+            )
+            ModuleCard(
+                modifier = Modifier.weight(1f),
+                title = stringResource(Res.string.screen_history),
+                icon = Icons.Default.History,
+                status = if (allSessions.isNotEmpty()) {
+                    val date = Instant.fromEpochMilliseconds(allSessions.first().startedAt)
+                        .toLocalDateTime(TimeZone.currentSystemDefault()).date
+                    stringResource(Res.string.dash_history_last, date.toString())
+                } else stringResource(Res.string.dash_module_empty),
+                onClick = { viewModel.resumeLastSession() },
+                color = Color(0xFFE91E63)
+            )
         }
     }
-}
-
-data class Quad<A, B, C, D>(val first: A, val second: B, val third: C, val fourth: D)
-
-@Composable
-fun DashCard(
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit = {},
-    content: @Composable () -> Unit
-) {
-    Surface(
-        onClick = onClick,
-        modifier = modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
-        shape = RoundedCornerShape(TactileTheme.RadiusLg),
-        border = BorderStroke(1.dp, TactileTheme.Border)
-    ) { content() }
 }
 
 @Composable
@@ -1335,10 +1479,10 @@ fun TaskBrief(title: String, isDone: Boolean, onToggle: () -> Unit, onClick: () 
             Box(
                 modifier = Modifier.size(20.dp).clip(CircleShape)
                     .background(if (isDone) TactileTheme.Primary else Color.Transparent).border(
-                    1.dp,
-                    if (isDone) TactileTheme.Primary else TactileTheme.Muted,
-                    CircleShape
-                ).clickable { onToggle() }, contentAlignment = Alignment.Center
+                        1.dp,
+                        if (isDone) TactileTheme.Primary else TactileTheme.Muted,
+                        CircleShape
+                    ).clickable { onToggle() }, contentAlignment = Alignment.Center
             ) {
                 if (isDone) Icon(
                     Icons.Default.Check,

@@ -81,7 +81,8 @@ data class NodeEntity(
      */
     val openLoopType: String? = null, // reply_needed, waiting_for, pending_decision, must_check_later, follow_up, unresolved_problem
     val openLoopStalenessAt: Long? = null,
-    val decisionStatus: String? = null, // pending, decided, expired
+    val decisionStatus: String? = null, // pending, decided, expired, parked
+    val decisionCategory: String? = null, // tiny, major
     val decisionRevisitAt: Long? = null,
     val decisionOutcome: String? = null,
     val decisionInfoMissing: String? = null,
@@ -112,6 +113,7 @@ data class ModeEntity(
     val name: String,
     val description: String? = null,
     val icon: String? = null,
+    val themeColor: Int? = null,
     val isBuiltin: Boolean = true,
     val isEnabled: Boolean = true,
     val sortOrder: Int = 0,
@@ -141,6 +143,7 @@ data class ModePreferenceEntity(
     val showOpenLoops: Boolean = true,
     val maxVisibleTasks: Int = 10,
     val sortStrategy: String = "DEFAULT",
+    val quickActionsJson: String? = null,
     val defaultQuickActionsJson: String? = null,
     val dashboardBlocksJson: String? = null,
     val filterProfileJson: String? = null,
@@ -279,6 +282,63 @@ data class TrackEntryEntity(
     // LifeOS Status Tracking
     val loadScore: Int? = null, // 0-100
     val fragmentationScore: Int? = null, // 0-100
+)
+
+/**
+ * UserEntity stores basic user profile information.
+ */
+@Entity(tableName = "users")
+@Serializable
+data class UserEntity(
+    @PrimaryKey val id: Long = 1, // Singleton for now
+    val name: String = "OPERATOR",
+    val avatarUrl: String? = null,
+    val createdAt: Long =
+        kotlin.time.Clock.System
+            .now()
+            .toEpochMilliseconds(),
+    val updatedAt: Long =
+        kotlin.time.Clock.System
+            .now()
+            .toEpochMilliseconds(),
+)
+
+/**
+ * MedicationEntity represents a drug or supplement the user tracks.
+ */
+@Entity(tableName = "medications")
+@Serializable
+data class MedicationEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val substance: String,
+    val brandNames: String = "", // Comma separated list of brands
+    val dosage: String? = null,
+    val takeAtHour: Int? = null, // 0-23
+    val isOptional: Boolean = false,
+    val isEnabled: Boolean = true,
+    val createdAt: Long =
+        kotlin.time.Clock.System
+            .now()
+            .toEpochMilliseconds(),
+    val updatedAt: Long =
+        kotlin.time.Clock.System
+            .now()
+            .toEpochMilliseconds(),
+)
+
+/**
+ * TrackMedicationJoinEntity tracks whether a specific medication was taken for a specific track entry.
+ */
+@Entity(
+    tableName = "track_medications",
+    primaryKeys = ["trackEntryId", "medicationId"],
+    indices = [Index(value = ["trackEntryId"]), Index(value = ["medicationId"])]
+)
+@Serializable
+data class TrackMedicationJoinEntity(
+    val trackEntryId: Long,
+    val medicationId: Long,
+    val wasTaken: Boolean = false,
 )
 
 /**

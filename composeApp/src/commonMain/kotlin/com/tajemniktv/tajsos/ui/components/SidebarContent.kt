@@ -5,7 +5,11 @@
 package com.tajemniktv.tajsos.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
+import com.tajemniktv.tajsos.data.ModeEntity
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
@@ -35,6 +40,9 @@ fun SidebarContent(
     currentDestination: NavDestination?,
     onNavigate: (Screen) -> Unit,
     onNewEntry: (() -> Unit)? = null,
+    currentMode: ModeEntity? = null,
+    allModes: List<ModeEntity> = emptyList(),
+    onModeSelect: (Long) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -53,13 +61,17 @@ fun SidebarContent(
                 modifier =
                     Modifier
                         .size(44.dp)
-                        .background(Color(0xFFFDE68A), CircleShape),
+                        .background(
+                            currentMode?.themeColor?.let { Color(it) }?.copy(alpha = 0.2f) ?: Color(
+                                0xFFFDE68A
+                            ), CircleShape
+                        ),
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
                     Icons.Default.Person,
                     contentDescription = null,
-                    tint = TactileTheme.Surface,
+                    tint = currentMode?.themeColor?.let { Color(it) } ?: TactileTheme.Primary,
                     modifier = Modifier.size(24.dp),
                 )
             }
@@ -72,10 +84,57 @@ fun SidebarContent(
                     fontWeight = FontWeight.Bold,
                 )
                 Text(
-                    stringResource(Res.string.nav_role_admin),
+                    currentMode?.name?.uppercase() ?: stringResource(Res.string.nav_role_admin),
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Primary,
+                    color = currentMode?.themeColor?.let { Color(it) } ?: TactileTheme.Primary,
                     letterSpacing = 1.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+
+        if (allModes.isNotEmpty()) {
+            Column(
+                modifier = Modifier.padding(
+                    horizontal = TactileTheme.SpacingMd,
+                    vertical = TactileTheme.SpacingSm
+                )
+            ) {
+                Text(
+                    "CURRENT MODE",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TactileTheme.Muted,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    letterSpacing = 1.sp
+                )
+                Spacer(Modifier.height(TactileTheme.SpacingSm))
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+                    items(allModes) { mode ->
+                        val isSelected = mode.id == currentMode?.id
+                        val color = mode.themeColor?.let { Color(it) } ?: TactileTheme.Primary
+                        Surface(
+                            onClick = { onModeSelect(mode.id) },
+                            color = if (isSelected) color.copy(alpha = 0.15f) else Color.Transparent,
+                            shape = RoundedCornerShape(TactileTheme.RadiusSm),
+                            border = BorderStroke(
+                                1.dp,
+                                if (isSelected) color else TactileTheme.Border.copy(alpha = 0.3f)
+                            )
+                        ) {
+                            Text(
+                                mode.name.uppercase(),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = if (isSelected) color else TactileTheme.Muted,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                            )
+                        }
+                    }
+                }
+                HorizontalDivider(
+                    color = TactileTheme.Border.copy(alpha = 0.3f),
+                    modifier = Modifier.padding(top = TactileTheme.SpacingMd)
                 )
             }
         }

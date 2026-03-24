@@ -54,6 +54,8 @@ class SharedModule(
             database.modeDao(),
             database.protocolDao(),
             database.decisionDao(),
+            database.userDao(),
+            database.medicationDao(),
         )
     }
 

@@ -132,7 +132,16 @@ interface TrackDao {
     fun getAllTrackEntries(): Flow<List<TrackEntryEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertTrackEntry(entry: TrackEntryEntity)
+    suspend fun insertTrackEntry(entry: TrackEntryEntity): Long
+
+    @Query("SELECT * FROM track_entries WHERE date = :date LIMIT 1")
+    suspend fun getTrackEntryByDate(date: String): TrackEntryEntity?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertTrackMedication(join: TrackMedicationJoinEntity)
+
+    @Query("SELECT * FROM track_medications WHERE trackEntryId = :trackEntryId")
+    fun getTrackMedications(trackEntryId: Long): Flow<List<TrackMedicationJoinEntity>>
 }
 
 @Dao
@@ -353,4 +362,31 @@ interface DecisionDao {
 
     @Delete
     suspend fun deleteDecisionOption(option: DecisionOptionEntity)
+}
+
+@Dao
+interface UserDao {
+    @Query("SELECT * FROM users WHERE id = 1 LIMIT 1")
+    fun getUser(): Flow<UserEntity?>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertUser(user: UserEntity)
+
+    @Update
+    suspend fun updateUser(user: UserEntity)
+}
+
+@Dao
+interface MedicationDao {
+    @Query("SELECT * FROM medications WHERE isEnabled = 1")
+    fun getAllMedications(): Flow<List<MedicationEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertMedication(medication: MedicationEntity): Long
+
+    @Update
+    suspend fun updateMedication(medication: MedicationEntity)
+
+    @Delete
+    suspend fun deleteMedication(medication: MedicationEntity)
 }

@@ -294,6 +294,16 @@ fun NoteDetailScreen(
                 onClick = { showStatusDialog = true }
             )
 
+            if (node.type == "decision") {
+                DecisionDetailContent(
+                    viewModel = viewModel,
+                    node = node,
+                    onNavigateToProject = { id ->
+                        onNavigateToNode(id)
+                    }
+                )
+            }
+
             // Info Grid (Due Date & Reminder)
             Row(
                 modifier = Modifier.fillMaxWidth(),

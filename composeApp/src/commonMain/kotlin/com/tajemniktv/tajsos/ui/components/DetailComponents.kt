@@ -58,6 +58,48 @@ fun DetailHeader(
 }
 
 @Composable
+fun ModuleHeader(
+    title: String,
+    icon: ImageVector,
+    color: Color,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier.fillMaxWidth().padding(bottom = TactileTheme.SpacingMd)) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(icon, contentDescription = null, tint = color, modifier = Modifier.size(24.dp))
+            Spacer(modifier = Modifier.width(TactileTheme.SpacingSm))
+            Text(
+                text = title,
+                style = MaterialTheme.typography.headlineSmall,
+                color = color,
+                fontWeight = FontWeight.ExtraBold,
+                letterSpacing = 1.sp
+            )
+        }
+        HorizontalDivider(
+            color = color.copy(alpha = 0.3f),
+            thickness = 2.dp,
+            modifier = Modifier.padding(top = 4.dp)
+        )
+    }
+}
+
+@Composable
+fun DashCard(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
+    content: @Composable () -> Unit
+) {
+    Surface(
+        onClick = onClick,
+        modifier = modifier.fillMaxWidth(),
+        color = TactileTheme.Surface,
+        shape = RoundedCornerShape(TactileTheme.RadiusLg),
+        border = BorderStroke(1.dp, TactileTheme.Border)
+    ) { content() }
+}
+
+@Composable
 fun <T> SelectorDialog(
     show: Boolean,
     onDismiss: () -> Unit,

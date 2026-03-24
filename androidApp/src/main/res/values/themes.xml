@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+  -->
+
+<resources>
+
+    <style name="Theme.TajsOS" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">#8B5CF6</item>
+        <item name="android:windowBackground">#0F0F13</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+</resources>

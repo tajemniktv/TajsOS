@@ -35,6 +35,7 @@ import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.*
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
@@ -49,6 +50,9 @@ fun DashboardDesktopScreen(
     onNavigateToProject: (Long) -> Unit,
     onNewEntry: () -> Unit,
     currentDestination: NavDestination? = null,
+    currentMode: com.tajemniktv.tajsos.data.ModeEntity? = null,
+    allModes: List<com.tajemniktv.tajsos.data.ModeEntity> = emptyList(),
+    onModeSelect: (Long) -> Unit = {}
 ) {
     val allNodes by viewModel.allNodes.collectAsState()
     val todayNodes by viewModel.todayNodes.collectAsState()
@@ -71,7 +75,7 @@ fun DashboardDesktopScreen(
     val todayDateStr = localNow.date.dayOfWeek.name.take(3).lowercase()
         .replaceFirstChar { it.uppercase() } + ", " +
             localNow.date.month.name.take(3).lowercase()
-                .replaceFirstChar { it.uppercase() } + " " + localNow.date.dayOfMonth
+                .replaceFirstChar { it.uppercase() } + " " + localNow.date.day
 
     Row(modifier = Modifier.fillMaxSize().background(Color(0xFF0A0A0E))) {
         // 1. Sidebar (Navigation Rail)

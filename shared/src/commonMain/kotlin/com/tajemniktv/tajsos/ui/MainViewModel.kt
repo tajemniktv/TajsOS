@@ -87,6 +87,13 @@ data class DashboardUIState(
     val activeProtocols: List<NodeWithPin> = emptyList(),
     val relationshipsToContact: List<NodeWithPin> = emptyList(),
     val contextClusteredTasks: Map<String, List<NodeWithPin>> = emptyMap(),
+    // Expanded for Modes
+    val currentMode: ModeEntity? = null,
+    val modePreferences: ModePreferenceEntity? = null,
+    val tinyVictories: List<NodeWithPin> = emptyList(),
+    val shoppingList: List<NodeWithPin> = emptyList(),
+    val unresolvedBureaucracy: List<NodeWithPin> = emptyList(),
+    val modeSuggestion: String? = null,
 )
 
 class MainViewModel(
@@ -99,6 +106,16 @@ class MainViewModel(
             .getAllNodes()
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
+    val allModes: StateFlow<List<ModeEntity>> =
+        repository
+            .getAllModes()
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val allAreas: StateFlow<List<NodeEntity>> =
+        repository
+            .getNodesByType("area")
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
     val activeNodes: StateFlow<List<NodeWithPin>> =
         allNodes
             .map { list ->
@@ -108,31 +125,84 @@ class MainViewModel(
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val dashboardUIState: StateFlow<DashboardUIState> =
-        activeNodes.map { nodes ->
+        combine(
+            activeNodes,
+            allModes,
+            preferencesRepository.activeModeId,
+            allAreas
+        ) { nodes, modesList, activeId, areasList ->
+            val mode = modesList.find { it.id == activeId }
             val now = Clock.System.now().toEpochMilliseconds()
             val sevenDaysAgo = now - (7 * 24 * 60 * 60 * 1000L)
             val fourteenDaysAgo = now - (14 * 24 * 60 * 60 * 1000L)
 
+            // 0. Mode Preferences & Initial Filtering
+            val prefs =
+                if (mode != null) repository.getPreferencesForMode(mode.id).first() else null
+
+            // Apply Area Filters if any
+            val areaFilters =
+                if (mode != null && mode.key != "ALL") repository.getAreaFiltersForMode(mode.id)
+                    .first() else emptyList()
+            val includedAreaIds = areaFilters.filter { it.include }.map { it.areaId }
+            val excludedAreaIds = areaFilters.filter { !it.include }.map { it.areaId }
+
+            var filteredNodes = nodes
+            if (mode?.key != "ALL") {
+                if (includedAreaIds.isNotEmpty()) {
+                    filteredNodes =
+                        filteredNodes.filter { it.node.areaId in includedAreaIds || it.node.type == "area" }
+                }
+                if (excludedAreaIds.isNotEmpty()) {
+                    filteredNodes = filteredNodes.filter { it.node.areaId !in excludedAreaIds }
+                }
+            }
+
+            // Apply Type Filters if any
+            val typeFilters =
+                if (mode != null && mode.key != "ALL") repository.getTypeFiltersForMode(mode.id)
+                    .first() else emptyList()
+            val includedTypes = typeFilters.filter { it.include }.map { it.nodeType }
+            val excludedTypes = typeFilters.filter { !it.include }.map { it.nodeType }
+
+            if (mode?.key != "ALL") {
+                if (includedTypes.isNotEmpty()) {
+                    filteredNodes = filteredNodes.filter { it.node.type in includedTypes }
+                }
+                if (excludedTypes.isNotEmpty()) {
+                    filteredNodes = filteredNodes.filter { it.node.type !in excludedTypes }
+                }
+            }
+
+            // Recovery/Low Battery Special Logic: Filter by Energy/Friction
+            if (mode?.key == "RECOVERY" || mode?.key == "LOW_BATTERY" || mode?.key == "CANT_THINK") {
+                filteredNodes = filteredNodes.filter {
+                    it.node.type != "task" || (it.node.energyLevel == 1 && it.node.friction == "easy")
+                }
+            }
+
             // 1. Basic counts and categories
-            val activeTasks = nodes.filter { it.node.type == "task" && it.node.status == "active" }
+            val activeTasks =
+                filteredNodes.filter { it.node.type == "task" && it.node.status == "active" }
             val overdue =
-                nodes.filter { it.node.dueAt != null && it.node.dueAt < now && it.node.status == "active" }
+                filteredNodes.filter { it.node.dueAt != null && it.node.dueAt < now && it.node.status == "active" }
             val pinnedK =
-                nodes.filter { it.node.isPinned && (it.node.type == "note" || it.node.type == "idea" || it.node.type == "resource") }
+                filteredNodes.filter { it.node.isPinned && (it.node.type == "note" || it.node.type == "idea" || it.node.type == "resource") }
 
             // 2. Open Loops, Decisions, Maintenance
             val openLoops =
-                nodes.filter { it.node.type == "open_loop" && it.node.status == "active" }
+                filteredNodes.filter { it.node.type == "open_loop" && it.node.status == "active" }
             val decisions =
-                nodes.filter { it.node.type == "decision" && it.node.status == "active" }
+                filteredNodes.filter { it.node.type == "decision" && it.node.status == "active" }
             val maintenance =
-                nodes.filter { it.node.type == "maintenance" && it.node.status == "active" }
+                filteredNodes.filter { it.node.type == "maintenance" && it.node.status == "active" }
             val protocols =
-                nodes.filter { it.node.type == "protocol" && it.node.status == "active" }
-            val people = nodes.filter { it.node.type == "person" && it.node.status == "active" }
+                filteredNodes.filter { it.node.type == "protocol" && it.node.status == "active" }
+            val people =
+                filteredNodes.filter { it.node.type == "person" && it.node.status == "active" }
 
             // 3. Area Health Logic
-            val areas = nodes.filter { it.node.type == "area" }
+            val areas = filteredNodes.filter { it.node.type == "area" }
             val areaHealthMap = areas.associate { area ->
                 val areaNodes = nodes.filter { it.node.areaId == area.node.id }
                 val hasRecentActivity = areaNodes.any { it.node.updatedAt >= sevenDaysAgo }
@@ -160,32 +230,41 @@ class MainViewModel(
             }
 
             // 5. Context Clustered Tasks
-            val contexts = nodes.filter { it.node.status == "active" && it.node.type == "task" }
-                .groupBy { it.node.locationContext ?: "general" }
+            val contexts =
+                filteredNodes.filter { it.node.status == "active" && it.node.type == "task" }
+                    .groupBy { it.node.locationContext ?: "general" }
+
+            // 6. Mode Suggestions
+            val localNow = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+            val suggestion = when {
+                localNow.hour >= 22 && mode?.key != "SHUTDOWN" -> "SHUTDOWN"
+                loadScore > 80 && mode?.key != "RECOVERY" && mode?.key != "LOW_BATTERY" -> "RECOVERY"
+                else -> null
+            }
 
             DashboardUIState(
                 tasksCount = activeTasks.size,
-                notesCount = nodes.count { it.node.type == "note" || it.node.type == "idea" || it.node.type == "resource" },
+                notesCount = filteredNodes.count { it.node.type == "note" || it.node.type == "idea" || it.node.type == "resource" },
                 pinnedKnowledge = pinnedK,
-                upcomingDeadlines = nodes.filter { it.node.dueAt != null && it.node.status == "active" }
+                upcomingDeadlines = filteredNodes.filter { it.node.dueAt != null && it.node.status == "active" }
                     .sortedBy { it.node.dueAt }.take(3),
                 overdueNodes = overdue,
-                relevantNote = nodes.filter { (it.node.type == "note" || it.node.type == "idea") && it.node.status == "active" }
+                relevantNote = filteredNodes.filter { (it.node.type == "note" || it.node.type == "idea") && it.node.status == "active" }
                     .sortedByDescending { it.node.updatedAt }.firstOrNull(),
-                lowEnergyTasks = nodes.filter { it.node.type == "task" && it.node.status == "active" && it.node.energyLevel == 1 },
+                lowEnergyTasks = filteredNodes.filter { it.node.type == "task" && it.node.status == "active" && it.node.energyLevel == 1 },
                 batchableTasks = activeTasks.groupBy { it.node.areaId }
                     .filter { it.value.size >= 3 },
-                quickWins = nodes.filter { it.node.type == "task" && it.node.status == "active" && it.node.energyLevel == 1 && it.node.friction == "easy" },
-                deepWork = nodes.filter { it.node.type == "task" && it.node.status == "active" && it.node.energyLevel == 3 },
-                topTakeaways = nodes.filter { (it.node.type == "note" || it.node.type == "idea") && it.node.noteState == "takeaway" },
-                readLaterVault = nodes.filter { it.node.noteType == "read_later" && it.node.status == "active" },
-                quoteVault = nodes.filter { it.node.noteType == "quote" && it.node.status == "active" },
-                ideaIncubator = nodes.filter { it.node.type == "idea" && it.node.status == "active" && it.node.projectId == null },
+                quickWins = filteredNodes.filter { it.node.type == "task" && it.node.status == "active" && it.node.energyLevel == 1 && it.node.friction == "easy" },
+                deepWork = filteredNodes.filter { it.node.type == "task" && it.node.status == "active" && it.node.energyLevel == 3 },
+                topTakeaways = filteredNodes.filter { (it.node.type == "note" || it.node.type == "idea") && it.node.noteState == "takeaway" },
+                readLaterVault = filteredNodes.filter { it.node.noteType == "read_later" && it.node.status == "active" },
+                quoteVault = filteredNodes.filter { it.node.noteType == "quote" && it.node.status == "active" },
+                ideaIncubator = filteredNodes.filter { it.node.type == "idea" && it.node.status == "active" && it.node.projectId == null },
                 archivedThisWeek = nodes.filter {
                     it.node.status == "archived" && (it.node.archivedAt ?: 0) >= sevenDaysAgo
                 },
-                neglectedThisWeek = nodes.filter { it.node.status == "active" && it.node.type == "task" && it.node.updatedAt < sevenDaysAgo },
-                foundationalNotes = nodes.filter {
+                neglectedThisWeek = filteredNodes.filter { it.node.status == "active" && it.node.type == "task" && it.node.updatedAt < sevenDaysAgo },
+                foundationalNotes = filteredNodes.filter {
                     (it.node.type == "note" || it.node.type == "idea") && it.tags.any { tag ->
                         tag.name.equals(
                             "foundational",
@@ -193,10 +272,10 @@ class MainViewModel(
                         )
                     }
                 }.take(1),
-                resourceHighlights = nodes.filter { it.node.type == "resource" && it.node.status == "active" }
+                resourceHighlights = filteredNodes.filter { it.node.type == "resource" && it.node.status == "active" }
                     .shuffled().take(2),
-                stickyNotes = nodes.filter { it.node.isSticky && it.node.status == "active" },
-                criticalProjects = nodes.filter { it.node.type == "project" && it.node.status == "active" }
+                stickyNotes = filteredNodes.filter { it.node.isSticky && it.node.status == "active" },
+                criticalProjects = filteredNodes.filter { it.node.type == "project" && it.node.status == "active" }
                     .map { it.node }.filter { proj ->
                         val projectNodes = nodes.filter { it.node.projectId == proj.id }
                         val hasCritical = projectNodes.any {
@@ -206,12 +285,12 @@ class MainViewModel(
                             proj.status == "active" && !proj.isFrozen && projectNodes.none { it.node.updatedAt >= fourteenDaysAgo }
                         hasCritical || isNeglected
                     },
-                forgottenWisdom = nodes.filter {
+                forgottenWisdom = filteredNodes.filter {
                     (it.node.type == "note" || it.node.type == "idea") &&
                             it.node.status == "active" &&
                             (it.node.noteType == "evergreen" || it.node.updatedAt < (now - 30 * 24 * 60 * 60 * 1000L))
                 }.shuffled().firstOrNull(),
-                deservesAttention = nodes.filter {
+                deservesAttention = filteredNodes.filter {
                     it.node.status == "active" && it.node.type == "task" &&
                             !it.node.isPinned && it.node.dueAt == null &&
                             it.node.updatedAt < sevenDaysAgo
@@ -228,7 +307,14 @@ class MainViewModel(
                 relationshipsToContact = people.filter {
                     (it.node.lastContactAt ?: 0) < fourteenDaysAgo
                 },
-                contextClusteredTasks = contexts
+                contextClusteredTasks = contexts,
+                currentMode = mode,
+                modePreferences = prefs,
+                tinyVictories = nodes.filter { it.node.status == "done" && it.node.completedAt != null && it.node.completedAt >= sevenDaysAgo }
+                    .take(5),
+                shoppingList = nodes.filter { it.node.status == "active" && it.tags.any { t -> t.name.lowercase() == "shopping" } },
+                unresolvedBureaucracy = nodes.filter { it.node.type == "maintenance" && it.node.status == "active" && it.node.createdAt < sevenDaysAgo },
+                modeSuggestion = suggestion
             )
         }
             .distinctUntilChanged()
@@ -245,15 +331,21 @@ class MainViewModel(
             .getAllTrackEntries()
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
+    val user: StateFlow<UserEntity?> =
+        repository
+            .getUser()
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+
+    val medications: StateFlow<List<MedicationEntity>> =
+        repository
+            .getAllMedications()
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
     val allProjects: StateFlow<List<NodeEntity>> =
         repository
             .getNodesByType("project")
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    val allAreas: StateFlow<List<NodeEntity>> =
-        repository
-            .getNodesByType("area")
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val calendarProviders: StateFlow<List<CalendarProviderEntity>> =
         repository
@@ -401,10 +493,6 @@ class MainViewModel(
             .getAllSessions()
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    val allModes: StateFlow<List<ModeEntity>> =
-        repository
-            .getAllModes()
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val currentModeId: StateFlow<Long?> =
         preferencesRepository
@@ -418,9 +506,17 @@ class MainViewModel(
 
     init {
         viewModelScope.launch {
+            seedDefaultModes()
+            seedUserData()
             allNodes.filter { it.isNotEmpty() }.firstOrNull() ?: seedOnboardingData()
         }
         syncCalendars()
+    }
+
+    private suspend fun seedUserData() {
+        if (user.first() == null) {
+            repository.insertUser(UserEntity(name = "OPERATOR"))
+        }
     }
 
     private suspend fun seedOnboardingData() {
@@ -497,67 +593,201 @@ class MainViewModel(
     }
 
     private suspend fun seedDefaultModes() {
-        if (repository.getAllModes().first().isNotEmpty()) return
+        val existingModes = repository.getAllModes().first()
+        val existingKeys = existingModes.map { it.key }
 
         // Command Mode
-        val commandId = repository.insertMode(
-            ModeEntity(
-                key = "COMMAND",
-                name = "Command",
-                description = "Default everyday overview mode. What matters right now?",
-                icon = "dashboard",
-                sortOrder = 0
+        if ("COMMAND" !in existingKeys) {
+            val commandId = repository.insertMode(
+                ModeEntity(
+                    key = "COMMAND",
+                    name = "Command",
+                    description = "Default everyday overview mode. What matters right now?",
+                    icon = "dashboard",
+                    sortOrder = 0,
+                    themeColor = 0xFF3F51B5.toInt()
+                )
             )
-        )
-        repository.insertPreference(
-            ModePreferenceEntity(
-                modeId = commandId,
-                showInbox = true,
-                showStats = true,
-                dashboardBlocksJson = "[\"today_top_3\", \"resume_context\", \"inbox_count\", \"deadlines\", \"overdue\", \"pinned_note\"]"
+            repository.insertPreference(
+                ModePreferenceEntity(
+                    modeId = commandId,
+                    showInbox = true,
+                    showStats = true,
+                    dashboardBlocksJson = "[\"today_top_3\", \"resume_context\", \"inbox_count\", \"deadlines\", \"overdue\", \"pinned_note\"]"
+                )
             )
-        )
+            // Set initial mode only if none was active
+            if (preferencesRepository.activeModeId.first() == null) {
+                preferencesRepository.updateActiveModeId(commandId)
+            }
+        }
 
         // Focus Mode
-        val focusId = repository.insertMode(
-            ModeEntity(
-                key = "FOCUS",
-                name = "Focus",
-                description = "Narrow the system to one thing. keep attention on this.",
-                icon = "center_focus_strong",
-                sortOrder = 1
+        if ("FOCUS" !in existingKeys) {
+            val focusId = repository.insertMode(
+                ModeEntity(
+                    key = "FOCUS",
+                    name = "Focus",
+                    description = "Narrow the system to one thing. keep attention on this.",
+                    icon = "center_focus_strong",
+                    sortOrder = 1,
+                    themeColor = 0xFFF44336.toInt()
+                )
             )
-        )
-        repository.insertPreference(
-            ModePreferenceEntity(
-                modeId = focusId,
-                showInbox = false,
-                showStats = false,
-                dashboardBlocksJson = "[\"current_task\", \"next_step\", \"timer\", \"blockers\", \"linked_resources\"]"
+            repository.insertPreference(
+                ModePreferenceEntity(
+                    modeId = focusId,
+                    showInbox = false,
+                    showStats = false,
+                    dashboardBlocksJson = "[\"current_task\", \"next_step\", \"timer\", \"blockers\", \"linked_resources\"]"
+                )
             )
-        )
+        }
 
         // Recovery Mode
-        val recoveryId = repository.insertMode(
-            ModeEntity(
-                key = "RECOVERY",
-                name = "Recovery",
-                description = "Support low-capacity functioning. Smallest safe useful thing.",
-                icon = "medical_services",
-                sortOrder = 2
+        if ("RECOVERY" !in existingKeys) {
+            val recoveryId = repository.insertMode(
+                ModeEntity(
+                    key = "RECOVERY",
+                    name = "Recovery",
+                    description = "Support low-capacity functioning. Smallest safe useful thing.",
+                    icon = "medical_services",
+                    sortOrder = 2,
+                    themeColor = 0xFF4CAF50.toInt()
+                )
             )
-        )
-        repository.insertPreference(
-            ModePreferenceEntity(
-                modeId = recoveryId,
-                showInbox = false,
-                showStats = false,
-                dashboardBlocksJson = "[\"basics\", \"easy_wins\", \"urgent_only\", \"recovery_protocol\", \"check_in\"]"
+            repository.insertPreference(
+                ModePreferenceEntity(
+                    modeId = recoveryId,
+                    showInbox = false,
+                    showStats = false,
+                    dashboardBlocksJson = "[\"basics\", \"easy_wins\", \"urgent_only\", \"recovery_protocol\", \"check_in\"]"
+                )
             )
-        )
+        }
 
-        // Set initial mode
-        preferencesRepository.updateActiveModeId(commandId)
+        // Study Mode
+        if ("STUDY" !in existingKeys) {
+            val studyId = repository.insertMode(
+                ModeEntity(
+                    key = "STUDY",
+                    name = "Study",
+                    description = "Focus on learning and academic performance.",
+                    icon = "school",
+                    sortOrder = 3,
+                    themeColor = 0xFFFF9800.toInt()
+                )
+            )
+            repository.insertPreference(
+                ModePreferenceEntity(
+                    modeId = studyId,
+                    dashboardBlocksJson = "[\"classes\", \"assignments\", \"deadlines\", \"notes\", \"revision_targets\"]"
+                )
+            )
+        }
+
+        // Errand Mode
+        if ("ERRAND" !in existingKeys) {
+            val errandId = repository.insertMode(
+                ModeEntity(
+                    key = "ERRAND",
+                    name = "Errand",
+                    description = "Out-of-home execution and logistical clustering.",
+                    icon = "shopping_cart",
+                    sortOrder = 4,
+                    themeColor = 0xFF00BCD4.toInt()
+                )
+            )
+            repository.insertPreference(
+                ModePreferenceEntity(
+                    modeId = errandId,
+                    dashboardBlocksJson = "[\"shopping_list\", \"place_based_tasks\", \"errands\", \"what_to_bring\"]"
+                )
+            )
+        }
+
+        // Admin Mode
+        if ("ADMIN" !in existingKeys) {
+            val adminId = repository.insertMode(
+                ModeEntity(
+                    key = "ADMIN",
+                    name = "Admin",
+                    description = "Handle the 'paperwork' of life. Subscriptions, bills, forms.",
+                    icon = "gavel",
+                    sortOrder = 5,
+                    themeColor = 0xFF607D8B.toInt()
+                )
+            )
+            repository.insertPreference(
+                ModePreferenceEntity(
+                    modeId = adminId,
+                    dashboardBlocksJson = "[\"paperwork\", \"bills\", \"renewals\", \"subscriptions\", \"bureaucracy\"]"
+                )
+            )
+        }
+
+        // Shutdown Mode
+        if ("SHUTDOWN" !in existingKeys) {
+            val shutdownId = repository.insertMode(
+                ModeEntity(
+                    key = "SHUTDOWN",
+                    name = "Shutdown",
+                    description = "Nightly reset and preparation for tomorrow.",
+                    icon = "bedtime",
+                    sortOrder = 6,
+                    themeColor = 0xFF673AB7.toInt()
+                )
+            )
+            repository.insertPreference(
+                ModePreferenceEntity(
+                    modeId = shutdownId,
+                    dashboardBlocksJson = "[\"tomorrow_prep\", \"mini_review\", \"dump_leftovers\", \"open_loops_reduction\"]"
+                )
+            )
+        }
+
+        // Low Battery Mode
+        if ("LOW_BATTERY" !in existingKeys) {
+            val lowBatteryId = repository.insertMode(
+                ModeEntity(
+                    key = "LOW_BATTERY",
+                    name = "Low Battery",
+                    description = "Minimal survival mode for when you are emotionally or physically drained.",
+                    icon = "battery_alert",
+                    sortOrder = 7,
+                    themeColor = 0xFFE91E63.toInt()
+                )
+            )
+            repository.insertPreference(
+                ModePreferenceEntity(
+                    modeId = lowBatteryId,
+                    showInbox = false,
+                    dashboardBlocksJson = "[\"survival_basics\", \"tiny_wins\", \"passive_input\", \"comfort_notes\"]"
+                )
+            )
+        }
+
+        // ALL Mode
+        if ("ALL" !in existingKeys) {
+            val allModeId = repository.insertMode(
+                ModeEntity(
+                    key = "ALL",
+                    name = "All",
+                    description = "Unfiltered access to the entire system. No restrictions.",
+                    icon = "all_inclusive",
+                    sortOrder = 8,
+                    themeColor = 0xFF9E9E9E.toInt()
+                )
+            )
+            repository.insertPreference(
+                ModePreferenceEntity(
+                    modeId = allModeId,
+                    showInbox = true,
+                    showStats = true,
+                    dashboardBlocksJson = "[\"today_top_3\", \"search\", \"alerts\", \"focus\", \"insights\", \"knowledge\", \"operational\"]"
+                )
+            )
+        }
     }
 
     fun switchMode(modeId: Long) {
@@ -630,9 +860,12 @@ class MainViewModel(
             .toLocalDateTime(TimeZone.currentSystemDefault()).date
         val recentTracks = tracks.filter { it.date >= sevenDaysAgoDate.toString() }
 
-        val avgMood = recentTracks.mapNotNull { it.moodScore }.average().takeIf { !it.isNaN() } ?: 0.0
-        val avgEnergy = recentTracks.mapNotNull { it.energyScore }.average().takeIf { !it.isNaN() } ?: 0.0
-        val avgFocus = recentTracks.mapNotNull { it.focusScore }.average().takeIf { !it.isNaN() } ?: 0.0
+        val avgMood =
+            recentTracks.mapNotNull { it.moodScore }.average().takeIf { !it.isNaN() } ?: 0.0
+        val avgEnergy =
+            recentTracks.mapNotNull { it.energyScore }.average().takeIf { !it.isNaN() } ?: 0.0
+        val avgFocus =
+            recentTracks.mapNotNull { it.focusScore }.average().takeIf { !it.isNaN() } ?: 0.0
 
         val nodesByProjectId = nodes.groupBy { it.node.projectId }
         val neglectedProjects =
@@ -883,7 +1116,8 @@ class MainViewModel(
             .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     private val _isBiometricHardwareAvailable = MutableStateFlow(false)
-    val isBiometricHardwareAvailable: StateFlow<Boolean> = _isBiometricHardwareAvailable.asStateFlow()
+    val isBiometricHardwareAvailable: StateFlow<Boolean> =
+        _isBiometricHardwareAvailable.asStateFlow()
 
     private val _isAuthenticated = MutableStateFlow(false)
     val isAuthenticated: StateFlow<Boolean> = _isAuthenticated.asStateFlow()
@@ -922,6 +1156,7 @@ class MainViewModel(
         inboxState: Boolean? = null,
         contextScreen: String? = null,
         isSticky: Boolean = false,
+        decisionCategory: String? = null,
     ) {
         viewModelScope.launch {
             val autoType =
@@ -946,6 +1181,9 @@ class MainViewModel(
                     inboxState = inboxState ?: (autoType != "project" && autoType != "area"),
                     contextScreen = contextScreen,
                     isSticky = isSticky,
+                    decisionStatus = if (autoType == "decision") "pending" else null,
+                    decisionCategory = if (autoType == "decision") decisionCategory
+                        ?: "major" else null,
                 ),
             )
         }
@@ -1348,9 +1586,15 @@ class MainViewModel(
         sleep: Float? = null,
         tookMeds: Boolean = false,
         note: String = "",
+        energyPulse: Int? = null,
+        affectivePulse: Int? = null,
+        cognitivePulse: Int? = null,
+        systemPulse: Int? = null,
+        recoveryPulse: Float? = null,
+        medicationIds: Set<Long> = emptySet()
     ) {
         viewModelScope.launch {
-            repository.insertTrackEntry(
+            val entryId = repository.insertTrackEntry(
                 TrackEntryEntity(
                     date =
                         Clock.System
@@ -1358,17 +1602,79 @@ class MainViewModel(
                             .toLocalDateTime(TimeZone.currentSystemDefault())
                             .date
                             .toString(),
-                    moodScore = mood,
-                    energyScore = energy,
-                    focusScore = focus,
-                    anxietyScore = anxiety,
-                    sleepScore = sleep,
+                    moodScore = mood ?: affectivePulse,
+                    energyScore = energy ?: energyPulse,
+                    focusScore = focus ?: cognitivePulse,
+                    anxietyScore = anxiety ?: systemPulse,
+                    sleepScore = sleep ?: recoveryPulse,
                     tookMeds = tookMeds,
                     symptomNote = note,
                 ),
             )
+
+            // Insert medication tracking
+            medicationIds.forEach { medId ->
+                repository.insertTrackMedication(
+                    TrackMedicationJoinEntity(
+                        trackEntryId = entryId,
+                        medicationId = medId,
+                        wasTaken = true
+                    )
+                )
+            }
         }
     }
+
+    fun updateUserName(name: String) {
+        viewModelScope.launch {
+            val currentUser = user.value ?: UserEntity(name = name)
+            repository.insertUser(
+                currentUser.copy(
+                    name = name,
+                    updatedAt = Clock.System.now().toEpochMilliseconds()
+                )
+            )
+        }
+    }
+
+    fun addMedication(
+        substance: String,
+        brandNames: String = "",
+        dosage: String? = null,
+        takeAtHour: Int? = null,
+        isOptional: Boolean = false
+    ) {
+        viewModelScope.launch {
+            repository.insertMedication(
+                MedicationEntity(
+                    substance = substance,
+                    brandNames = brandNames,
+                    dosage = dosage,
+                    takeAtHour = takeAtHour,
+                    isOptional = isOptional
+                )
+            )
+        }
+    }
+
+    fun updateMedication(medication: MedicationEntity) {
+        viewModelScope.launch {
+            repository.updateMedication(
+                medication.copy(
+                    updatedAt = Clock.System.now().toEpochMilliseconds()
+                )
+            )
+        }
+    }
+
+    fun deleteMedication(medication: MedicationEntity) {
+        viewModelScope.launch {
+            repository.deleteMedication(medication)
+        }
+    }
+
+    fun getMedicationsForEntry(trackEntryId: Long): Flow<List<TrackMedicationJoinEntity>> =
+        repository.getTrackMedications(trackEntryId)
 
     fun startFocusSession(nodeId: Long) {
         viewModelScope.launch {
@@ -1603,7 +1909,8 @@ class MainViewModel(
             }.take(5)
         }
 
-    fun getRelationsForNode(nodeId: Long): Flow<List<RelationEntity>> = repository.getRelationsForNode(nodeId)
+    fun getRelationsForNode(nodeId: Long): Flow<List<RelationEntity>> =
+        repository.getRelationsForNode(nodeId)
 
     fun getSnapshotsForNode(nodeId: Long): Flow<List<NodeSnapshotEntity>> =
         repository.getSnapshotsForNode(nodeId)
@@ -1616,7 +1923,13 @@ class MainViewModel(
         type: String,
     ) {
         viewModelScope.launch {
-            repository.insertRelation(RelationEntity(fromNodeId = fromNodeId, toNodeId = toNodeId, relationType = type))
+            repository.insertRelation(
+                RelationEntity(
+                    fromNodeId = fromNodeId,
+                    toNodeId = toNodeId,
+                    relationType = type
+                )
+            )
         }
     }
 
@@ -1638,7 +1951,13 @@ class MainViewModel(
         color: Int? = null,
     ) {
         viewModelScope.launch {
-            repository.insertTag(TagEntity(name = name, normalizedName = name.lowercase().trim(), color = color))
+            repository.insertTag(
+                TagEntity(
+                    name = name,
+                    normalizedName = name.lowercase().trim(),
+                    color = color
+                )
+            )
         }
     }
 
@@ -1660,7 +1979,8 @@ class MainViewModel(
         }
     }
 
-    fun getAttachmentsForNode(nodeId: Long): Flow<List<AttachmentEntity>> = repository.getAttachmentsForNode(nodeId)
+    fun getAttachmentsForNode(nodeId: Long): Flow<List<AttachmentEntity>> =
+        repository.getAttachmentsForNode(nodeId)
 
     fun addAttachment(
         nodeId: Long,
@@ -1669,7 +1989,14 @@ class MainViewModel(
         title: String? = null,
     ) {
         viewModelScope.launch {
-            repository.insertAttachment(AttachmentEntity(nodeId = nodeId, assetType = type, uriOrPath = uri, title = title))
+            repository.insertAttachment(
+                AttachmentEntity(
+                    nodeId = nodeId,
+                    assetType = type,
+                    uriOrPath = uri,
+                    title = title
+                )
+            )
         }
     }
 
@@ -1774,6 +2101,63 @@ class MainViewModel(
             val data = ExportData(version = 2, nodes = nodes)
             Json.encodeToString(data)
         }
+
+    // Decisions
+    val decisionInbox: StateFlow<List<NodeWithPin>> = allNodes.map { nodes ->
+        nodes.filter { it.node.type == "decision" && it.node.inboxState }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val allPendingDecisions: StateFlow<List<NodeWithPin>> = allNodes.map { nodes ->
+        nodes.filter { it.node.type == "decision" && it.node.status == "active" && !it.node.inboxState }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val decisionLog: StateFlow<List<NodeWithPin>> = allNodes.map { nodes ->
+        nodes.filter { it.node.type == "decision" && (it.node.decisionStatus == "decided" || it.node.decisionStatus == "expired") }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    fun getOptionsForDecision(nodeId: Long) = repository.getOptionsForDecision(nodeId)
+
+    fun addDecisionOption(nodeId: Long, title: String, description: String? = null) {
+        viewModelScope.launch {
+            repository.insertDecisionOption(
+                DecisionOptionEntity(
+                    decisionNodeId = nodeId,
+                    title = title,
+                    description = description
+                )
+            )
+        }
+    }
+
+    fun updateDecisionOption(option: DecisionOptionEntity) {
+        viewModelScope.launch {
+            repository.updateDecisionOption(option)
+        }
+    }
+
+    fun deleteDecisionOption(option: DecisionOptionEntity) {
+        viewModelScope.launch {
+            repository.deleteDecisionOption(option)
+        }
+    }
+
+    fun decideOn(nodeId: Long, outcome: String, selectedOptionId: Long? = null) {
+        viewModelScope.launch {
+            repository.decideOn(nodeId, outcome, selectedOptionId)
+        }
+    }
+
+    fun convertDecisionToProject(nodeId: Long) {
+        viewModelScope.launch {
+            repository.convertDecisionToProject(nodeId)
+        }
+    }
+
+    fun convertDecisionToTask(nodeId: Long) {
+        viewModelScope.launch {
+            repository.convertDecisionToTask(nodeId)
+        }
+    }
 }
 
 @Serializable

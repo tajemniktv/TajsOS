@@ -68,7 +68,7 @@
     <string name="dash_suggestions_title">PERSONAL SUGGESTIONS</string>
     <string name="dash_suggestion_stress">High stress detected. Try a 5-minute reset?</string>
     <string name="dash_suggestion_low_focus">Focus is low. Start with a tiny task?</string>
-    <string name="dash_suggestion_meds">Don\'t forget your medication if needed.</string>
+    <string name="dash_suggestion_meds">Don't forget your medication if needed.</string>
     <string name="dash_life_summary">LIFE SUMMARY</string>
     <string name="dash_captures_week">CAPTURES / WEEK</string>
     <string name="dash_done_week">DONE / WEEK</string>
@@ -85,10 +85,10 @@
     <string name="dash_next_context">NEXT CONTEXT</string>
     <string name="dash_view">VIEW</string>
     <string name="dash_engage">ENGAGE</string>
-    <string name="dash_inbox_overflow">%d ITEMS OVERFLOWING INBOX</string>
-    <string name="dash_inbox_new">%d NEW ITEMS TO PROCESS</string>
-    <string name="dash_batch_suggestion">BATCH SUGGESTION // %s</string>
-    <string name="dash_batch_desc">You have %d tasks in %s. Batch them?</string>
+    <string name="dash_inbox_overflow">%1$d ITEMS OVERFLOWING INBOX</string>
+    <string name="dash_inbox_new">%1$d NEW ITEMS TO PROCESS</string>
+    <string name="dash_batch_suggestion">BATCH SUGGESTION // %1$s</string>
+    <string name="dash_batch_desc">You have %1$d tasks in %2$s. Batch them?</string>
     <string name="dash_quick_wins">QUICK WINS</string>
     <string name="dash_deep_work">DEEP WORK // HIGH ENERGY</string>
     <string name="dash_top_3">TOP 3 FOR TODAY</string>
@@ -98,10 +98,10 @@
     <string name="dash_pinned_knowledge">PINNED KNOWLEDGE</string>
     <string name="dash_knowledge_vaults">KNOWLEDGE VAULTS</string>
     <string name="dash_read_later">READ LATER</string>
-    <string name="dash_items_count">%d ITEMS</string>
+    <string name="dash_items_count">%1$d ITEMS</string>
     <string name="dash_quotes">QUOTES</string>
     <string name="dash_ideas">IDEAS</string>
-    <string name="dash_unset_count">%d UNSET</string>
+    <string name="dash_unset_count">%1$d UNSET</string>
     <string name="dash_upcoming_deadlines">UPCOMING DEADLINES</string>
     <string name="dash_review_reset">REVIEW &amp; RESET</string>
     <string name="dash_check_in">CHECK-IN</string>
@@ -111,13 +111,17 @@
     <string name="dash_module_waiting">WAITING</string>
     <string name="dash_module_logged">LOGGED</string>
     <string name="dash_module_pending">PENDING</string>
-    <string name="dash_module_tasks_count">%d TASKS</string>
-    <string name="dash_module_total_count">%d TOTAL</string>
-    <string name="dash_module_active_count">%d ACTIVE</string>
-    <string name="dash_module_items_count">%d ITEMS</string>
+    <string name="dash_module_tasks_count">%1$d TASKS</string>
+    <string name="dash_module_total_count">%1$d TOTAL</string>
+    <string name="dash_module_active_count">%1$d ACTIVE</string>
+    <string name="dash_module_items_count">%1$d ITEMS</string>
     <string name="dash_module_empty">EMPTY</string>
     <string name="dash_module_none">NONE</string>
-    <string name="dash_history_last">LAST: %s</string>
+    <string name="dash_history_last">LAST: %1$s</string>
+    <string name="dash_all_mode">ALL</string>
+    <string name="dash_modules">MODULES</string>
+    <string name="dash_module_active">ACTIVE</string>
+    <string name="dash_module_view">VIEW</string>
 
     <!-- Dashboard Additions -->
     <string name="dash_morning_reset">MORNING RESET</string>
@@ -128,7 +132,7 @@
     <string name="dash_foundational">FOUNDATIONAL PRINCIPLE</string>
     <string name="dash_resource_highlights">RESOURCE HIGHLIGHTS</string>
     <string name="dash_forgotten_wisdom">FORGOTTEN WISDOM</string>
-    <string name="dash_vibe_morning">Good morning. Let\'s operate.</string>
+    <string name="dash_vibe_morning">Good morning. Let's operate.</string>
     <string name="dash_vibe_afternoon">Steady progress. Keep the momentum.</string>
     <string name="dash_vibe_evening">The day is winding down. Clear the deck.</string>
     <string name="dash_vibe_night">System standby. Rest is part of the work.</string>
@@ -145,11 +149,11 @@
     <string name="dash_fragmentation">FRAGMENTATION</string>
     <string name="dash_load_warning">SYSTEM OVERLOADED // ATTENTION FRAGMENTED</string>
     <string name="dash_capacity_mismatch">CAPACITY MISMATCH // RE-EVALUATE LOAD</string>
-    <string name="dash_neglected_area">%s AREA IS NEGLECTED</string>
-    <string name="dash_overloaded_area">%s AREA IS OVERLOADED</string>
-    <string name="dash_stable_area">%s AREA IS STABLE</string>
-    <string name="dash_on_fire_area">%s AREA IS ON FIRE</string>
-    <string name="dash_active_area">%s AREA IS ACTIVE</string>
+    <string name="dash_neglected_area">%1$s AREA IS NEGLECTED</string>
+    <string name="dash_overloaded_area">%1$s AREA IS OVERLOADED</string>
+    <string name="dash_stable_area">%1$s AREA IS STABLE</string>
+    <string name="dash_on_fire_area">%1$s AREA IS ON FIRE</string>
+    <string name="dash_active_area">%1$s AREA IS ACTIVE</string>
 
     <!-- Contexts -->
     <string name="context_home">AT HOME</string>
@@ -183,7 +187,7 @@
 
     <!-- Relationship Layer -->
     <string name="dash_people">PEOPLE &amp; RELATIONSHIPS</string>
-    <string name="dash_last_contact">Last contact: %s</string>
+    <string name="dash_last_contact">Last contact: %1$s</string>
     <string name="dash_follow_up">FOLLOW-UP NEEDED</string>
     <string name="dash_ask_next_time">ASK ABOUT THIS NEXT TIME</string>
 
@@ -206,12 +210,12 @@
     <string name="settings_manage_templates">MANAGE TEMPLATES</string>
     <string name="settings_data_management">DATA MANAGEMENT</string>
     <string name="settings_export_data">EXPORT LOCAL DATA</string>
-    <string name="settings_export_success">Data exported (%d chars)</string>
+    <string name="settings_export_success">Data exported (%1$d chars)</string>
     <string name="settings_force_crash">FORCE TEST CRASH</string>
 
     <!-- Inbox -->
     <string name="inbox_quick_capture">Quick Capture</string>
-    <string name="inbox_placeholder">What\'s on your mind?</string>
+    <string name="inbox_placeholder">What's on your mind?</string>
     <string name="inbox_recent_entries">Recent Entries</string>
     <string name="inbox_empty">NO ENTRIES FOUND // BRAIN CLEAR</string>
     <string name="inbox_add">Add</string>
@@ -237,7 +241,7 @@
     <string name="capture_interval_monthly">MONTHLY</string>
     <string name="capture_assign_to_area">ASSIGN TO AREA</string>
     <string name="capture_save_continue">SAVE &amp; CONTINUE</string>
-    <string name="capture_save_type">SAVE %s</string>
+    <string name="capture_save_type">SAVE %1$s</string>
 
     <!-- Search -->
     <string name="search_placeholder">Search items...</string>
@@ -245,7 +249,7 @@
     <string name="search_reset_filters">Reset Filters</string>
     <string name="search_filter_active">ACTIVE</string>
     <string name="search_filter_archived">ARCHIVED</string>
-    <string name="search_filter_linked_to">LINKED TO: %s</string>
+    <string name="search_filter_linked_to">LINKED TO: %1$s</string>
     <string name="search_no_results">NO MATCHING RESULTS FOUND</string>
 
     <!-- Focus Screen -->
@@ -254,23 +258,43 @@
     <string name="focus_engage">ENGAGE</string>
     <string name="focus_recent_sessions">RECENT SESSIONS</string>
     <string name="focus_unknown_task">Unknown Task</string>
-    <string name="focus_session_duration">%dm %ds focus session</string>
+    <string name="focus_session_duration">%1$dm %2$ds focus session</string>
 
     <!-- Track Screen -->
-    <string name="track_title">DAILY TRACKING</string>
-    <string name="track_subtitle">HOW ARE YOU OPERATING TODAY?</string>
-    <string name="track_label_energy">ENERGY</string>
-    <string name="track_label_mood">MOOD</string>
-    <string name="track_label_focus">FOCUS</string>
-    <string name="track_label_anxiety">STRESS / ANXIETY</string>
-    <string name="track_label_sleep">SLEEP (HOURS): %d</string>
-    <string name="track_meds">TOOK MEDS</string>
-    <string name="track_observations_label">OBSERVATIONS / SYMPTOMS</string>
-    <string name="track_observations_placeholder">Any specific context for today?</string>
+    <string name="track_title">DAILY_TRACKING //</string>
+    <string name="track_subtitle">SYSTEM_PULSE</string>
+    <string name="track_description">Acknowledge current cognitive and biological states.</string>
+    <string name="track_label_energy_reserves">ENERGY_RESERVES</string>
+    <string name="track_label_affective_state">AFFECTIVE_STATE</string>
+    <string name="track_label_cognitive_lock">COGNITIVE_LOCK</string>
+    <string name="track_label_system_tension">SYSTEM_TENSION</string>
+    <string name="track_label_recovery_cycles">RECOVERY_CYCLES</string>
+    <string name="track_label_sleep_short">REC_CYC</string>
+    <string name="track_meds">MEDS</string>
+    <string name="track_medication_synk">MEDICATION_SYNK</string>
+    <string name="track_dosage_confirmed">DOSAGE CONFIRMED</string>
+    <string name="track_bio_feedback">BIO_FEEDBACK</string>
+    <string name="track_sync_in_progress">SYNC IN PROGRESS</string>
+    <string name="track_active">ACTIVE</string>
+    <string name="track_observations_symptoms">OBSERVATIONS // SYMPTOMS</string>
+    <string name="track_all_meds_taken">ALL MEDS TAKEN</string>
     <string name="track_save">SAVE STATUS</string>
     <string name="track_history">HISTORY</string>
     <string name="track_history_meds_ok">MEDS OK</string>
-    <string name="track_history_sleep">SLEEP: %dH</string>
+    <string name="track_history_sleep">REC: %1$.1fH</string>
+
+    <!-- Profile & Meds -->
+    <string name="profile_title">USER_PROFILE</string>
+    <string name="profile_name">NAME</string>
+    <string name="profile_medications">MEDICATIONS</string>
+    <string name="profile_add_med">ADD MEDICATION</string>
+    <string name="med_substance">SUBSTANCE</string>
+    <string name="med_brand_names">BRAND NAMES</string>
+    <string name="med_dosage">DOSAGE</string>
+    <string name="med_take_at">TAKE AT (HOUR)</string>
+    <string name="med_is_optional">OPTIONAL</string>
+    <string name="med_save">SAVE MEDICATION</string>
+    <string name="med_delete">DELETE</string>
 
     <!-- Insights Screen -->
     <string name="insights_title">INSIGHTS &amp; REVIEW</string>
@@ -282,14 +306,14 @@
     <string name="insights_focus_execution">FOCUS &amp; EXECUTION</string>
     <string name="insights_total_hours">TOTAL HOURS</string>
     <string name="insights_avg_session_min">AVG SESSION MIN</string>
-    <string name="insights_peak_focus">Peak focus at %s</string>
+    <string name="insights_peak_focus">Peak focus at %1$s</string>
     <string name="insights_efficiency_chaos">EFFICIENCY &amp; CHAOS</string>
     <string name="insights_archive">ARCHIVE</string>
     <string name="insights_postpones">POSTPONES</string>
     <string name="insights_chaos">CHAOS</string>
-    <string name="insights_pressure">Pressure: %s</string>
-    <string name="insights_switching">Switching: %.1f</string>
-    <string name="insights_peak_completions">Peak completions at %s</string>
+    <string name="insights_pressure">Pressure: %1$s</string>
+    <string name="insights_switching">Switching: %1$s</string>
+    <string name="insights_peak_completions">Peak completions at %1$s</string>
     <string name="insights_intake_dynamics">INTAKE DYNAMICS</string>
     <string name="insights_new_inbox_items">NEW INBOX ITEMS</string>
     <string name="insights_unprocessed_rate">UNPROCESSED RATE</string>
@@ -297,25 +321,25 @@
     <string name="insights_context_stability">CONTEXT STABILITY</string>
     <string name="insights_biometrics">BIOMETRICS</string>
     <string name="insights_lifestyle_correlations">LIFESTYLE CORRELATIONS</string>
-    <string name="insights_avoidance_pattern">AVOIDANCE PATTERN: %d items postponed on low-mood days.</string>
+    <string name="insights_avoidance_pattern">AVOIDANCE PATTERN: %1$d items postponed on low-mood days.</string>
     <string name="insights_cards_title">INSIGHT CARDS</string>
     <string name="insights_friction_alert_title">FRICTION ALERT</string>
-    <string name="insights_friction_alert_msg">You postpone %s items most often. Is there a hidden blocker here?</string>
+    <string name="insights_friction_alert_msg">You postpone %1$s items most often. Is there a hidden blocker here?</string>
     <string name="insights_creative_peak_title">CREATIVE PEAK</string>
-    <string name="insights_creative_peak_msg">You capture most ideas in the %s. Keep a capture device ready then!</string>
+    <string name="insights_creative_peak_msg">You capture most ideas in the %1$s. Keep a capture device ready then!</string>
     <string name="insights_stagnant_knowledge_title">STAGNANT KNOWLEDGE</string>
-    <string name="insights_stagnant_knowledge_msg">%s has notes but no active tasks. Seed some actions?</string>
+    <string name="insights_stagnant_knowledge_msg">%1$s has notes but no active tasks. Seed some actions?</string>
     <string name="insights_radar_drop_title">RADAR DROP</string>
-    <string name="insights_radar_drop_msg">%s has disappeared from the radar. No activity in 7 days.</string>
+    <string name="insights_radar_drop_msg">%1$s has disappeared from the radar. No activity in 7 days.</string>
     <string name="insights_neglected_projects">NEGLECTED PROJECTS</string>
     <string name="insights_high_entropy_projects">HIGH ENTROPY PROJECTS</string>
     <string name="insights_recent_activity">RECENT ACTIVITY</string>
     <string name="insights_needs_attention">NEEDS ATTENTION</string>
 
     <!-- Today Screen -->
-    <string name="today_payload">TODAY\'S PAYLOAD</string>
+    <string name="today_payload">TODAY'S PAYLOAD</string>
     <string name="today_empty">NO PAYLOAD DETECTED // TODAY IS EMPTY</string>
-    <string name="today_slot_standby">SLOT %d // STANDBY</string>
+    <string name="today_slot_standby">SLOT %1$d // STANDBY</string>
 
     <!-- Archive Screen -->
     <string name="archive_title">ARCHIVE</string>
@@ -361,7 +385,7 @@
     <string name="areas_dialog_cancel">CANCEL</string>
 
     <!-- Calendar Screen -->
-    <string name="cal_agenda_title">AGENDA // %s</string>
+    <string name="cal_agenda_title">AGENDA // %1$s</string>
     <string name="cal_today">TODAY</string>
     <string name="cal_sync">Sync</string>
     <string name="cal_previous">Previous</string>
@@ -401,7 +425,7 @@
     <string name="detail_area">Area</string>
     <string name="detail_back">Back</string>
     <string name="detail_save">Save</string>
-    <string name="detail_not_found">Note not found (ID: %d)</string>
+    <string name="detail_not_found">Note not found (ID: %1$d)</string>
     <string name="detail_atomic_mode">Atomic mode toggle</string>
     <string name="detail_create_snapshot">Create snapshot</string>
     <string name="detail_versions">Versions</string>
@@ -436,10 +460,10 @@
     <string name="detail_author">Author / Artist</string>
     <string name="detail_publisher">Publisher / Platform</string>
     <string name="detail_rating">Rating</string>
-    <string name="detail_stars">%d Stars</string>
+    <string name="detail_stars">%1$d Stars</string>
     <string name="detail_note_type">Note Type</string>
     <string name="detail_progressive_state">Progressive State</string>
-    <string name="detail_stale_warning">You have not looked at this in %d days. Revisit?</string>
+    <string name="detail_stale_warning">You have not looked at this in %1$d days. Revisit?</string>
     <string name="detail_organization">ORGANIZATION</string>
     <string name="detail_energy_required">Energy Required</string>
     <string name="detail_energy_low">LOW ENERGY</string>
@@ -448,9 +472,9 @@
     <string name="detail_not_set">NOT SET</string>
     <string name="detail_task_friction">Task Friction</string>
     <string name="detail_time_estimate">Time Estimate</string>
-    <string name="detail_estimate_mins">%d min</string>
+    <string name="detail_estimate_mins">%1$d min</string>
     <string name="detail_postpone_count">Postpone Count</string>
-    <string name="detail_postpone_times">%d times</string>
+    <string name="detail_postpone_times">%1$d times</string>
     <string name="detail_unassigned">Unassigned</string>
     <string name="detail_none">None</string>
     <string name="detail_project_why">Project Why</string>
@@ -461,9 +485,9 @@
     <string name="detail_soft">SOFT</string>
     <string name="detail_no_due_date">No due date</string>
     <string name="detail_no_reminder">No reminder set</string>
-    <string name="detail_recurrence_interval">Interval: %s</string>
+    <string name="detail_recurrence_interval">Interval: %1$s</string>
     <string name="detail_one_time">One-time</string>
-    <string name="detail_last_updated">Last updated: %s</string>
+    <string name="detail_last_updated">Last updated: %1$s</string>
     <string name="detail_tag_dialog_title">Add Tag</string>
     <string name="detail_tag_new_placeholder">New tag...</string>
     <string name="detail_tag_create">Create Tag</string>
@@ -494,8 +518,8 @@
     <string name="project_detail_freeze">Freeze/Unfreeze</string>
     <string name="project_detail_neglected">NEGLECTED</string>
     <string name="project_detail_frozen_msg">THIS PROJECT IS FROZEN // NO PROGRESS EXPECTED</string>
-    <string name="project_detail_why">WHY: %s</string>
-    <string name="project_detail_progress">%d%% COMPLETE // %d/%d ITEMS</string>
+    <string name="project_detail_why">WHY: %1$s</string>
+    <string name="project_detail_progress">%1$d%% COMPLETE // %2$d/%3$d ITEMS</string>
     <string name="project_detail_next_actions">NEXT ACTIONS</string>
     <string name="project_detail_no_tasks">No active tasks.</string>
     <string name="project_detail_linked_notes">LINKED NOTES</string>
@@ -512,7 +536,7 @@
 
     <!-- Area Detail -->
     <string name="area_detail_not_found">Area not found</string>
-    <string name="area_detail_neglected_tasks">%d NEGLECTED TASKS IN THIS AREA</string>
+    <string name="area_detail_neglected_tasks">%1$d NEGLECTED TASKS IN THIS AREA</string>
     <string name="area_detail_active_projects">ACTIVE PROJECTS</string>
     <string name="area_detail_recent_activity">DIRECT ITEMS &amp; RECENT ACTIVITY</string>
 

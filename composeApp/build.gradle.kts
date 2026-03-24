@@ -1,4 +1,8 @@
-﻿import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+﻿/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
+import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -11,14 +15,14 @@ plugins {
 }
 
 kotlin {
-    // Android target configured via androidLibrary block (replaces androidTarget + android{})
-    androidLibrary {
+    // Android target configured via android block (replaces androidTarget + android{}) (Earlier: androidLibrary)
+    android {
         namespace = "com.tajemniktv.tajsos.composeapp"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
 
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_17)
+            jvmTarget.set(JvmTarget.JVM_25)
         }
 
         // Required for Compose Multiplatform resources to be bundled into the AAR
@@ -32,13 +36,13 @@ kotlin {
         iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "ComposeApp"
+            baseName = "TajsOS"
             isStatic = true
         }
     }
-    
+
     jvm()
-    
+
     sourceSets {
         commonMain.dependencies {
             implementation(libs.compose.runtime)
@@ -54,6 +58,7 @@ kotlin {
             implementation(libs.androidx.navigation.compose)
             implementation(libs.androidx.datastore.preferences.core)
             implementation(libs.kotlinx.datetime)
+            implementation(libs.kotlinx.serialization.json)
             implementation(projects.shared)
         }
         commonTest.dependencies {
@@ -63,6 +68,7 @@ kotlin {
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
+            implementation(libs.logback)
         }
     }
 }

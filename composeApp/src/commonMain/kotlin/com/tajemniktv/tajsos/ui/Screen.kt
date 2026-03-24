@@ -91,14 +91,28 @@ sealed class Screen(
         hasInternalHeader = true
     )
 
+    data object Profile : Screen(
+        "profile",
+        Res.string.profile_title,
+        Icons.Default.Person,
+        hasInternalHeader = true
+    )
+
+    data object Decisions : Screen(
+        "decisions",
+        Res.string.dash_decisions,
+        Icons.Default.QuestionMark,
+        hasInternalHeader = true
+    )
+
     companion object {
         val groupedItems by lazy {
             listOf(
                 Res.string.nav_core to listOf(Dashboard, Inbox, Search),
-                Res.string.nav_execution to listOf(Today, Tasks, Focus, Calendar),
+                Res.string.nav_execution to listOf(Today, Tasks, Focus, Decisions, Calendar),
                 Res.string.nav_brain to listOf(Notes, Projects, Areas),
                 Res.string.nav_status to listOf(Track, Insights, Graph, Review),
-                Res.string.nav_system to listOf(Archive, Settings),
+                Res.string.nav_system to listOf(Archive, Settings, Profile),
             )
         }
     }

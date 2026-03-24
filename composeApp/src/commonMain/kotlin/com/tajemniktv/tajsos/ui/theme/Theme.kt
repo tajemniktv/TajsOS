@@ -29,6 +29,7 @@ object TactileTheme {
     val RadiusMd = 8.dp
     val RadiusLg = 16.dp
 
+    val SpacingXs = 4.dp
     val SpacingSm = 8.dp
     val SpacingMd = 16.dp
     val SpacingLg = 24.dp
@@ -61,10 +62,11 @@ fun TajsOSTheme(
     content: @Composable () -> Unit,
 ) {
     val colorScheme = if (darkTheme) TajsDarkColorScheme else TajsLightColorScheme
+    val typography = tajsOSTypography()
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
+        typography = typography,
         content = content,
     )
 }
