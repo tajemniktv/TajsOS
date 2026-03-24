@@ -138,7 +138,9 @@ fun ProjectsScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit) {
                 scope.launch {
                     val id =
                         viewModel.addNodeForResult(title, content, "project", inboxState = false)
-                    viewModel.updateNodeStatus(viewModel.getNodeById(id)!!, status)
+                    viewModel.getNodeById(id)?.let { node ->
+                        viewModel.updateNodeStatus(node, status)
+                    }
                 }
                 showAddDialog = false
             }
