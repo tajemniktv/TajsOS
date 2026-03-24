@@ -1142,6 +1142,29 @@ class MainViewModel(
         }
     }
 
+    /**
+     * Creates and inserts a new node into the repository.
+     *
+     * **Side-effects:**
+     * - If the `type` is "task" and the `title` starts with a URL ("http://" or "https://"),
+     *   the type is automatically converted to "resource".
+     * - Default `inboxState` is `true` for most node types, placing them in the inbox for later review.
+     *
+     * @param title The title of the node.
+     * @param content Optional content/body of the node.
+     * @param type The primary type of the node (e.g., "task", "note", "decision").
+     * @param projectId The ID of the project this node belongs to, if any.
+     * @param areaId The ID of the area this node belongs to, if any.
+     * @param isRecurring Whether the node should automatically generate a new instance when completed.
+     * @param recurringInterval The interval string (e.g., "DAILY", "WEEKLY") if `isRecurring` is true.
+     * @param reminderAt Timestamp for when the user should be reminded.
+     * @param color Optional hex color for UI representation.
+     * @param icon Optional Material icon string identifier.
+     * @param inboxState Whether the node is in the inbox (needs processing). Defaults based on node type.
+     * @param contextScreen The screen context where this node was created.
+     * @param isSticky Whether the node is pinned/sticky on dashboards.
+     * @param decisionCategory If the type is "decision", categorizes its magnitude (e.g., "major", "tiny").
+     */
     fun addNode(
         title: String,
         content: String = "",
@@ -1210,6 +1233,17 @@ class MainViewModel(
             )
         }
 
+    /**
+     * Updates an existing node in the repository.
+     *
+     * **Side-effects:**
+     * - If the node's `dueAt` is updated to a later time than its previous `dueAt`,
+     *   the `postponeCount` is automatically incremented.
+     * - Parses the node's `content` for internal links (e.g., `[[Note Title]]`). If found,
+     *   it automatically establishes "MENTION" relations to the matched nodes.
+     *
+     * @param node The updated `NodeEntity` to save.
+     */
     fun updateNode(node: NodeEntity) {
         viewModelScope.launch {
             val oldNode = repository.getNodeById(node.id)
@@ -1398,6 +1432,17 @@ class MainViewModel(
         }
     }
 
+    /**
+     * Updates the specific `status` (e.g., "done", "archived", "active") of a given node.
+     *
+     * **Side-effects:**
+     * - Automatically updates `completedAt` or `archivedAt` timestamps based on the new status.
+     * - If a node with `isRecurring == true` is marked as "done", a new active instance of the
+     *   node is automatically created and scheduled for the next `recurringInterval`.
+     *
+     * @param node The node to update.
+     * @param status The new status value.
+     */
     fun updateNodeStatus(
         node: NodeEntity,
         status: String,
