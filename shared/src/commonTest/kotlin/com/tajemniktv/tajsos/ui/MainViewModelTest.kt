@@ -73,7 +73,7 @@ class MainViewModelTest {
         override fun getAllTrackEntries(): Flow<List<TrackEntryEntity>> = flowOf(emptyList())
         override suspend fun insertTrackEntry(entry: TrackEntryEntity): Long { return 0 }
         override suspend fun getTrackEntryByDate(date: String): TrackEntryEntity? = null
-        override suspend fun insertTrackMedication(join: TrackMedicationJoinEntity) {}
+        override suspend fun insertTrackMedication(join: TrackMedicationJoinEntity) = Unit
         override fun getTrackMedications(trackEntryId: Long): Flow<List<TrackMedicationJoinEntity>> = flowOf(emptyList())
     }
 
@@ -83,7 +83,7 @@ class MainViewModelTest {
 
         override suspend fun insertRelation(relation: RelationEntity) {}
         override suspend fun deleteRelation(relation: RelationEntity) {}
-        override suspend fun deleteBelongsToRelations(nodeId: Long) {}
+        override suspend fun deleteBelongsToRelations(nodeId: Long) = Unit
         override suspend fun getBelongsToRelations(nodeId: Long): List<RelationEntity> = emptyList()
         override suspend fun anyRelationExists(from: Long, to: Long): Boolean = false
         override fun getAllRelations(): Flow<List<RelationEntity>> = flowOf(emptyList())

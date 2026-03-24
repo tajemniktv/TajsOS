@@ -169,7 +169,7 @@ class AppRepositoryTest {
     @Test
     fun testUnpinFromToday_removesPin() = runTest {
         val nodeId = fakeNodeDao.insertNode(NodeEntity(type = "task", title = "Task", status = "active"))
-        val date = "2024-03-21"
+        val date = kotlin.time.Clock.System.now().toLocalDateTime(kotlinx.datetime.TimeZone.currentSystemDefault()).date.toString()
 
         fakeNodeDao.pinToToday(TodayPinEntity(nodeId = nodeId, date = date, position = 0))
         repository.unpinFromToday(nodeId)

@@ -31,7 +31,7 @@ class ScreenTest {
         Screen.Templates,
         Screen.Review,
         Screen.Profile,
-        Screen.Decisions
+        Screen.Decisions,
     )
 
     @Test
