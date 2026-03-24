@@ -75,17 +75,19 @@ fun InboxScreen(
             modifier = Modifier.fillMaxWidth(),
             placeholder = { Text(stringResource(Res.string.inbox_placeholder)) },
             trailingIcon = {
-                if (itemInput.isNotBlank()) {
-                    IconButton(onClick = {
+                FilledIconButton(
+                    onClick = {
                         viewModel.addNode(itemInput, type = selectedType)
                         itemInput = ""
-                    }) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.Send,
-                            contentDescription = stringResource(Res.string.inbox_add),
-                            tint = MaterialTheme.colorScheme.primary,
-                        )
-                    }
+                    },
+                    enabled = itemInput.isNotBlank(),
+                    colors = IconButtonDefaults.filledIconButtonColors(containerColor = MaterialTheme.colorScheme.primary)
+                ) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.Send,
+                        contentDescription = stringResource(Res.string.inbox_add),
+                        tint = if (itemInput.isNotBlank()) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                    )
                 }
             },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),

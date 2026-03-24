@@ -177,4 +177,105 @@ class AppRepositoryTest {
         val isPinned = repository.isPinnedToToday(nodeId).first()
         assertFalse(isPinned)
     }
+
+    @Test
+    fun testDecideOn_updatesNodeAndOptions() = runTest {
+        val nodeId = fakeNodeDao.insertNode(
+            NodeEntity(
+                type = "decision",
+                title = "What framework?",
+                decisionStatus = "pending",
+                inboxState = true,
+                status = "active"
+            )
+        )
+
+        val option1Id = repository.insertDecisionOption(
+            DecisionOptionEntity(decisionNodeId = nodeId, title = "Option A")
+        )
+        val option2Id = repository.insertDecisionOption(
+            DecisionOptionEntity(decisionNodeId = nodeId, title = "Option B")
+        )
+
+        repository.decideOn(nodeId, "Went with Option B", option2Id)
+
+        val updatedNode = repository.getNodeById(nodeId)
+        assertNotNull(updatedNode)
+        assertEquals("decided", updatedNode.decisionStatus)
+        assertEquals("Went with Option B", updatedNode.decisionOutcome)
+        assertEquals("done", updatedNode.status)
+        assertFalse(updatedNode.inboxState)
+
+        val options = repository.getOptionsForDecision(nodeId).first()
+        assertEquals(2, options.size)
+
+        val updatedOption1 = options.find { it.id == option1Id }
+        val updatedOption2 = options.find { it.id == option2Id }
+
+        assertNotNull(updatedOption1)
+        assertNotNull(updatedOption2)
+        assertFalse(updatedOption1.isSelected)
+        assertTrue(updatedOption2.isSelected)
+    }
+
+    private suspend fun assertDerivedRelation(originalId: Long, derivedId: Long) {
+        val relations = repository.getAllRelations().first()
+        val derivedRelation = relations.find { it.fromNodeId == originalId && it.toNodeId == derivedId }
+        assertNotNull(derivedRelation)
+        assertEquals("DERIVED_FROM", derivedRelation.relationType)
+    }
+
+    @Test
+    fun testConvertDecisionToProject_createsDerivedProject() = runTest {
+        val originalNodeId = fakeNodeDao.insertNode(
+            NodeEntity(
+                type = "decision",
+                title = "Move to New York",
+                content = "Need to figure out if it's worth it",
+                decisionOutcome = "Decided to move",
+                areaId = 42L
+            )
+        )
+
+        val projectId = repository.convertDecisionToProject(originalNodeId)
+
+        val newProject = repository.getNodeById(projectId)
+        assertNotNull(newProject)
+        assertEquals("project", newProject.type)
+        assertEquals("Action Plan: Move to New York", newProject.title)
+        assertEquals("Derived from decision: Decided to move", newProject.content)
+        assertEquals(42L, newProject.areaId)
+        assertTrue(newProject.inboxState)
+        assertEquals("active", newProject.status)
+
+        assertDerivedRelation(originalNodeId, projectId)
+    }
+
+    @Test
+    fun testConvertDecisionToTask_createsDerivedTask() = runTest {
+        val originalNodeId = fakeNodeDao.insertNode(
+            NodeEntity(
+                type = "decision",
+                title = "Buy new laptop",
+                content = "Old one is breaking",
+                decisionOutcome = "Buying the M3 Pro",
+                areaId = 10L,
+                projectId = 20L
+            )
+        )
+
+        val taskId = repository.convertDecisionToTask(originalNodeId)
+
+        val newTask = repository.getNodeById(taskId)
+        assertNotNull(newTask)
+        assertEquals("task", newTask.type)
+        assertEquals("Follow-up: Buy new laptop", newTask.title)
+        assertEquals("Outcome: Buying the M3 Pro\n\nOld one is breaking", newTask.content)
+        assertEquals(10L, newTask.areaId)
+        assertEquals(20L, newTask.projectId)
+        assertTrue(newTask.inboxState)
+        assertEquals("active", newTask.status)
+
+        assertDerivedRelation(originalNodeId, taskId)
+    }
 }
