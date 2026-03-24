@@ -23,19 +23,21 @@ fun ActionButton(
     modifier: Modifier = Modifier,
     containerColor: Color = TactileTheme.Surface,
     contentColor: Color = TactileTheme.Text,
-    icon: ImageVector? = null
-) {
+    icon: ImageVector? = null,
+)
+{
     Button(
         onClick = onClick,
         modifier = modifier.height(48.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = containerColor,
-            contentColor = contentColor
+            contentColor = contentColor,
         ),
         shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        contentPadding = PaddingValues(horizontal = 16.dp)
+        contentPadding = PaddingValues(horizontal = 16.dp),
     ) {
-        if (icon != null) {
+        if (icon != null)
+        {
             Icon(icon, contentDescription = null, modifier = Modifier.size(18.dp))
             Spacer(Modifier.width(8.dp))
         }
@@ -43,7 +45,7 @@ fun ActionButton(
             text = text.uppercase(),
             style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.Bold,
-            letterSpacing = 1.sp
+            letterSpacing = 1.sp,
         )
     }
 }
