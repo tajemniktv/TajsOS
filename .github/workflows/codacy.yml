@@ -54,16 +54,18 @@ jobs:
           # This will handover control about PR rejection to the GitHub side
           max-allowed-issues: 2147483647
 
-      # Add a unique category (automationDetails.id) to each run in the SARIF file
-      # to comply with GitHub Code Scanning's strict multi-run validation,
-      # and limit to the first 20 runs to prevent maximum run limits (32 > 20).
-      - name: Fix SARIF categories
-        run: |
-          if [ -f results.sarif ]; then
-            jq '.runs = ([ .runs | to_entries[] | .value + { "automationDetails": { "id": (.value.tool.driver.name + "-" + (.key | tostring)) } } ] | .[0:20])' results.sarif > results_fixed.sarif
-            mv results_fixed.sarif results.sarif
-          fi
 
+      - name: Modify SARIF categories
+        run: |
+          python3 -c "import json, sys
+          with open('results.sarif', 'r') as f:
+              data = json.load(f)
+          for idx, run in enumerate(data.get('runs', [])):
+              tool_name = run.get('tool', {}).get('driver', {}).get('name', f'tool-{idx}')
+              run.setdefault('automationDetails', {})['id'] = f'codacy-{tool_name.lower().replace(\" \", \"-\")}'
+          with open('results.sarif', 'w') as f:
+              json.dump(data, f)
+          "
       # Upload the SARIF file generated in the previous step
       - name: Upload SARIF results file
         uses: github/codeql-action/upload-sarif@v4

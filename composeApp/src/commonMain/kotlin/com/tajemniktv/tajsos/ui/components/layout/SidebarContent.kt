@@ -181,39 +181,43 @@ fun SidebarContent(
                             )
                         }
 
-                        NavigationDrawerItem(
-                            label = {
-                                Text(
-                                    stringResource(screen.label).uppercase(),
-                                    style = MaterialTheme.typography.labelLarge,
-                                    fontSize = 12.sp,
-                                    fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium
-                                )
-                            },
-                            selected = selected,
-                            onClick = { onNavigate(screen) },
-                            icon = {
-                                Icon(
-                                    screen.icon,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(20.dp)
-                                )
-                            },
-                            modifier =
-                                Modifier
-                                    .padding(start = if (selected) 2.dp else 0.dp)
-                                    .padding(horizontal = 12.dp, vertical = 2.dp),
-                            colors =
-                                NavigationDrawerItemDefaults.colors(
-                                    selectedContainerColor = TactileTheme.Primary.copy(alpha = 0.15f),
-                                    selectedIconColor = TactileTheme.Primary,
-                                    selectedTextColor = TactileTheme.Primary,
-                                    unselectedIconColor = TactileTheme.Muted,
-                                    unselectedTextColor = TactileTheme.Muted,
-                                    unselectedContainerColor = Color.Transparent,
-                                ),
+                        Surface(
+                            color = Color.Transparent,
                             shape = RoundedCornerShape(TactileTheme.RadiusSm),
-                        )
+                            border = if (selected) BorderStroke(1.dp, TactileTheme.Primary.copy(alpha = 0.3f)) else null,
+                            modifier = Modifier.padding(start = if (selected) 2.dp else 0.dp).padding(horizontal = 12.dp, vertical = 2.dp)
+                        ) {
+                            NavigationDrawerItem(
+                                label = {
+                                    Text(
+                                        stringResource(screen.label).uppercase(),
+                                        style = MaterialTheme.typography.labelLarge,
+                                        fontSize = 12.sp,
+                                        fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium
+                                    )
+                                },
+                                selected = selected,
+                                onClick = { onNavigate(screen) },
+                                icon = {
+                                    Icon(
+                                        screen.icon,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                                colors =
+                                    NavigationDrawerItemDefaults.colors(
+                                        selectedContainerColor = TactileTheme.Primary.copy(alpha = 0.15f),
+                                        selectedIconColor = TactileTheme.Primary,
+                                        selectedTextColor = TactileTheme.Primary,
+                                        unselectedIconColor = TactileTheme.Muted,
+                                        unselectedTextColor = TactileTheme.Muted,
+                                        unselectedContainerColor = Color.Transparent,
+                                    ),
+                                shape = RoundedCornerShape(TactileTheme.RadiusSm),
+                            )
+                        }
                     }
                 }
                 Spacer(Modifier.height(TactileTheme.SpacingSm))
