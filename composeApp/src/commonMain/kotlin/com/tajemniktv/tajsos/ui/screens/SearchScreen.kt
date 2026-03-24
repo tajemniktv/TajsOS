@@ -17,6 +17,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
+import com.tajemniktv.tajsos.ui.components.nodes.NodeCard
 import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
 
 import androidx.compose.foundation.lazy.LazyRow
@@ -192,28 +193,19 @@ fun SearchScreen(
         if (searchResults.isEmpty() && (searchQuery.isNotEmpty() || searchTypeFilter != null || searchStatusFilter != "active")) {
             EmptyState(message = stringResource(Res.string.search_no_results))
         } else {
-            LazyColumn(modifier = Modifier.weight(1f)) {
-                items(searchResults) { nodeWithPin ->
-                    ListItem(
-                        headlineContent = { Text(nodeWithPin.node.title) },
-                        supportingContent = {
-                            val typeLabel = when (nodeWithPin.node.type) {
-                                "task" -> stringResource(Res.string.type_task)
-                                "note" -> stringResource(Res.string.type_note)
-                                "idea" -> stringResource(Res.string.type_idea)
-                                "project" -> stringResource(Res.string.type_project)
-                                "area" -> stringResource(Res.string.type_area)
-                                else -> nodeWithPin.node.type
-                            }
-                            Text(typeLabel.uppercase())
-                        },
-                        modifier = Modifier.combinedClickable(
-                            onClick = { onItemClick(nodeWithPin.node.id) },
-                            onLongClick = { onItemClick(nodeWithPin.node.id) }
-                        ),
-                        colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface)
+            LazyColumn(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)
+            ) {
+                items(searchResults, key = { it.node.id }) { nodeWithPin ->
+                    NodeCard(
+                        nodeWithPin = nodeWithPin,
+                        onToggleDone = { status -> viewModel.updateNodeStatus(nodeWithPin.node, status) },
+                        onTogglePin = { isPinned -> viewModel.togglePin(nodeWithPin.node, isPinned) },
+                        onClick = { onItemClick(nodeWithPin.node.id) },
+                        onLongClick = { onItemClick(nodeWithPin.node.id) },
+                        onArchive = { viewModel.archiveNode(nodeWithPin.node) }
                     )
-                    HorizontalDivider(color = TactileTheme.Muted.copy(alpha = 0.5f))
                 }
             }
         }
