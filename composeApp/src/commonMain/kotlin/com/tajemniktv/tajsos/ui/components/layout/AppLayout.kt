@@ -16,7 +16,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import com.tajemniktv.tajsos.data.ModeEntity
 import com.tajemniktv.tajsos.ui.Screen
-import com.tajemniktv.tajsos.ui.components.SidebarContent
 import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
