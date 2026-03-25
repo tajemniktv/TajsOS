@@ -1,11 +1,13 @@
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
 package com.tajemniktv.tajsos
 
 import com.tajemniktv.tajsos.data.NodeEntity
-import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.ui.InsightsData
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 /**
@@ -13,7 +15,6 @@ import kotlin.test.assertTrue
  * InsightsData is used as the output type of the insights StateFlow.
  */
 class InsightsDataTest {
-
     // --- Default values ---
 
     @Test
@@ -69,16 +70,17 @@ class InsightsDataTest {
     @Test
     fun insightsData_customValues_areStoredCorrectly() {
         val project = NodeEntity(id = 1L, type = "project", title = "Old Project")
-        val data = InsightsData(
-            weeklyCaptures = 10,
-            weeklyCompletions = 5,
-            weeklyFocusHours = 3.5,
-            bestFocusHour = 14,
-            avgMood = 4.2,
-            avgEnergy = 3.8,
-            avgFocus = 4.0,
-            neglectedProjects = listOf(project)
-        )
+        val data =
+            InsightsData(
+                weeklyCaptures = 10,
+                weeklyCompletions = 5,
+                weeklyFocusHours = 3.5,
+                bestFocusHour = 14,
+                avgMood = 4.2,
+                avgEnergy = 3.8,
+                avgFocus = 4.0,
+                neglectedProjects = listOf(project),
+            )
 
         assertEquals(10, data.weeklyCaptures)
         assertEquals(5, data.weeklyCompletions)
@@ -112,7 +114,7 @@ class InsightsDataTest {
 
     @Test
     fun insightsData_bestFocusHourMinusOne_indicatesNoSessions() {
-        val data = InsightsData(bestFocusHour = -1)
+        val data = InsightsData()
         assertTrue(data.bestFocusHour < 0)
     }
 
