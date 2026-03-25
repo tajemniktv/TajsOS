@@ -153,6 +153,7 @@ private class IcsEventBuilder {
     }
 
     private fun parseAllDayDate(cleanDate: String): Instant {
+        if (cleanDate.length < 8) throw IllegalArgumentException("Invalid date length")
         val year = cleanDate.substring(0, 4).toInt()
         val month = cleanDate.substring(4, 6).toInt()
         val day = cleanDate.substring(6, 8).toInt()
@@ -161,6 +162,7 @@ private class IcsEventBuilder {
 
     private fun parseIsoDate(property: IcsDateProperty): Instant {
         val cleanDate = property.value.trim()
+        if (cleanDate.length < 15) throw IllegalArgumentException("Invalid ISO date length")
         val year = cleanDate.substring(0, 4)
         val month = cleanDate.substring(4, 6)
         val day = cleanDate.substring(6, 8)

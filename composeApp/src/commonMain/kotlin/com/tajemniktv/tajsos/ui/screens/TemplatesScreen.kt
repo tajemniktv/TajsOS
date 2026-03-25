@@ -16,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.components.layout.LocalHeaderActions
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
@@ -61,12 +62,7 @@ fun TemplatesScreen(
         ) {
             if (templates.isEmpty())
             {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(stringResource(Res.string.templates_empty), color = TactileTheme.Muted)
-                }
+                EmptyState(message = stringResource(Res.string.templates_empty))
             } else
             {
                 LazyColumn(
