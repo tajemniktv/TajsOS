@@ -13,11 +13,9 @@ execution feel like operating heavy machinery.
 
 When updating AGENTS.md files, follow these principles:
 
-- **No hardcoded counts** — Don't write "10 crates" or "5 modules"; these become outdated instantly
-- **No exhaustive lists** — Prefer dynamic commands (`ls crates/`) over maintaining complete lists
+- **No hardcoded counts** — Don't write "5 modules"; these become outdated instantly
 - **Document constraints, not descriptions** — Focus on non-obvious behaviors, gotchas, and
   cross-crate dependencies
-- **Use nested AGENTS.md** — Place crate-specific details in `crates/{name}/AGENTS.md`, not here
 - **Verify before documenting** — Grep/read the code to confirm claims are accurate
 - **Delete outdated info** — Outdated docs are worse than no docs
 
