@@ -23,39 +23,51 @@ import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.components.nodes.TaskRow
-import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 
+/**
+ * Renders the "Today" screen showing up to three nodes scheduled for today and placeholder slots when fewer than three exist.
+ *
+ * Shows an empty state when there are no today nodes. For each shown node, the row supports swipe-to-complete (start-to-end) which marks the node done, toggling done status, unpinning, editing via click/long-click, and archiving through the provided callbacks; remaining slots are rendered as bordered placeholders labeled with their slot index.
+ *
+ * @param viewModel View model providing `todayNodes` and actions used to update node status, pinning, and archiving.
+ * @param onEditNode Callback invoked with a node ID when the user requests to edit a node (click or long-click).
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TodayScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit) {
+fun TodayScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit)
+{
     val todayNodes by viewModel.todayNodes.collectAsState()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(TactileTheme.SpacingMd)
+            .padding(TactileTheme.SpacingMd),
     ) {
         Text(
             stringResource(Res.string.today_payload),
             style = MaterialTheme.typography.displayLarge,
-            color = TactileTheme.Text
+            color = TactileTheme.Text,
         )
         Spacer(Modifier.height(TactileTheme.SpacingLg))
 
-        if (todayNodes.isEmpty()) {
+        if (todayNodes.isEmpty())
+        {
             EmptyState(message = stringResource(Res.string.today_empty))
-        } else {
+        } else
+        {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
                 items(todayNodes.take(3), key = { it.id }) { node ->
                     val dismissState = rememberSwipeToDismissBoxState(
                         initialValue = SwipeToDismissBoxValue.Settled,
-                        positionalThreshold = SwipeToDismissBoxDefaults.positionalThreshold
+                        positionalThreshold = SwipeToDismissBoxDefaults.positionalThreshold,
                     )
 
                     LaunchedEffect(dismissState.currentValue) {
-                        if (dismissState.currentValue == SwipeToDismissBoxValue.StartToEnd) {
+                        if (dismissState.currentValue == SwipeToDismissBoxValue.StartToEnd)
+                        {
                             viewModel.updateNodeStatus(node, "done")
                         }
                     }
@@ -65,30 +77,31 @@ fun TodayScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit) {
                         enableDismissFromEndToStart = false,
                         backgroundContent = {
                             val color =
-                                if (dismissState.dismissDirection == SwipeToDismissBoxValue.StartToEnd) TactileTheme.Success else Color.Transparent
+                                    if (dismissState.dismissDirection == SwipeToDismissBoxValue.StartToEnd) TactileTheme.Success else Color.Transparent
                             Box(
                                 Modifier
                                     .fillMaxSize()
-                                    .background(color)
+                                    .background(color),
                             )
-                        }
+                        },
                     ) {
                         TaskRow(
                             node = node,
                             onToggleDone = { status: String ->
                                 viewModel.updateNodeStatus(
                                     node,
-                                    status
+                                    status,
                                 )
                             },
                             onUnpin = { viewModel.togglePin(node, false) },
                             onClick = { onEditNode(node.id) },
                             onLongClick = { onEditNode(node.id) },
-                            onArchive = { viewModel.archiveNode(node) }
+                            onArchive = { viewModel.archiveNode(node) },
                         )
                     }
                 }
-                if (todayNodes.size < 3) {
+                if (todayNodes.size < 3)
+                {
                     items(3 - todayNodes.size) { index ->
                         Box(
                             Modifier
@@ -98,17 +111,17 @@ fun TodayScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit) {
                                 .border(
                                     1.dp,
                                     TactileTheme.Border,
-                                    RoundedCornerShape(TactileTheme.RadiusMd)
+                                    RoundedCornerShape(TactileTheme.RadiusMd),
                                 ),
-                            contentAlignment = Alignment.Center
+                            contentAlignment = Alignment.Center,
                         ) {
                             Text(
                                 stringResource(
                                     Res.string.today_slot_standby,
-                                    todayNodes.size + index + 1
+                                    todayNodes.size + index + 1,
                                 ),
                                 style = MaterialTheme.typography.labelSmall.copy(letterSpacing = 1.sp),
-                                color = TactileTheme.Muted.copy(alpha = 0.5f)
+                                color = TactileTheme.Muted.copy(alpha = 0.5f),
                             )
                         }
                     }

@@ -15,9 +15,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
+/**
+ * Renders a themed banner suggesting a mode change and exposes actions to accept or dismiss it.
+ *
+ * @param suggestion The mode name inserted into the banner subtitle (e.g., "Driving").
+ * @param onAccept Callback invoked when the "SWITCH" button is pressed.
+ * @param onDismiss Callback invoked when the "IGNORE" text button is pressed.
+ */
 @Composable
 fun ModeSuggestionBanner(
     suggestion: String,

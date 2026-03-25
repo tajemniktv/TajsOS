@@ -11,29 +11,38 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ViewList
 import androidx.compose.material.icons.filled.AutoAwesome
-import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.ViewKanban
-import androidx.compose.material.icons.filled.ViewList
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.components.nodes.NodeCard
-import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 import kotlin.time.Clock
 
+/**
+ * Displays the Tasks screen: a header with a view-mode toggle, optional resurrection suggestions,
+ * filter chips (status/project/area), and tasks presented either as a vertical list or a kanban-like board.
+ *
+ * The displayed tasks are derived from the viewModel's active nodes and are filtered by the selected
+ * status, project, and area. If any active tasks have not been updated for 14 days, up to two are shown
+ * as "resurrection suggestions" that open the editor when tapped.
+ *
+ * @param viewModel Provides the active nodes, projects, areas, and mutation functions used by the screen
+ *                  (e.g., update status, toggle pin, archive).
+ * @param onEditNode Callback invoked with a node id when the user requests to edit a task.
+ */
 @Composable
-fun TasksScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit) {
+fun TasksScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit)
+{
     val activeNodes by viewModel.activeNodes.collectAsState()
     val tasks = activeNodes.filter { it.node.type == "task" }
     val allProjects by viewModel.allProjects.collectAsState()
@@ -53,22 +62,22 @@ fun TasksScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(TactileTheme.SpacingMd)
+            .padding(TactileTheme.SpacingMd),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 stringResource(Res.string.tasks_title),
-                style = MaterialTheme.typography.displaySmall
+                style = MaterialTheme.typography.displaySmall,
             )
             Row {
                 IconButton(onClick = { viewMode = if (viewMode == "list") "board" else "list" }) {
                     Icon(
                         if (viewMode == "list") Icons.Default.ViewKanban else Icons.AutoMirrored.Filled.ViewList,
-                        contentDescription = "Switch View"
+                        contentDescription = "Switch View",
                     )
                 }
             }
@@ -77,17 +86,18 @@ fun TasksScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit) {
         // Resurrection / Suggestions
         val staleTime = Clock.System.now().toEpochMilliseconds() - (14 * 24 * 60 * 60 * 1000L)
         val resurrectionTasks =
-            tasks.filter { it.node.status == "active" && it.node.updatedAt < staleTime }.take(2)
+                tasks.filter { it.node.status == "active" && it.node.updatedAt < staleTime }.take(2)
 
-        if (resurrectionTasks.isNotEmpty()) {
+        if (resurrectionTasks.isNotEmpty())
+        {
             Surface(
                 modifier = Modifier.fillMaxWidth().padding(vertical = TactileTheme.SpacingSm),
                 color = TactileTheme.Primary.copy(alpha = 0.05f),
                 shape = RoundedCornerShape(TactileTheme.RadiusMd),
                 border = androidx.compose.foundation.BorderStroke(
                     1.dp,
-                    TactileTheme.Primary.copy(alpha = 0.2f)
-                )
+                    TactileTheme.Primary.copy(alpha = 0.2f),
+                ),
             ) {
                 Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -95,25 +105,25 @@ fun TasksScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit) {
                             Icons.Default.AutoAwesome,
                             contentDescription = null,
                             tint = TactileTheme.Primary,
-                            modifier = Modifier.size(16.dp)
+                            modifier = Modifier.size(16.dp),
                         )
                         Spacer(Modifier.width(8.dp))
                         Text(
                             "RESURRECTION SUGGESTIONS",
                             style = MaterialTheme.typography.labelSmall,
-                            color = TactileTheme.Primary
+                            color = TactileTheme.Primary,
                         )
                     }
                     Spacer(Modifier.height(8.dp))
                     resurrectionTasks.forEach { task ->
                         TextButton(
                             onClick = { onEditNode(task.node.id) },
-                            contentPadding = PaddingValues(0.dp)
+                            contentPadding = PaddingValues(0.dp),
                         ) {
                             Text(
                                 "• ${task.node.title}",
                                 style = MaterialTheme.typography.bodySmall,
-                                color = TactileTheme.Text
+                                color = TactileTheme.Text,
                             )
                         }
                     }
@@ -124,7 +134,7 @@ fun TasksScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit) {
         // Filters
         LazyRow(
             modifier = Modifier.fillMaxWidth().padding(vertical = TactileTheme.SpacingSm),
-            horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)
+            horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
         ) {
             item {
                 FilterChip(
@@ -134,7 +144,7 @@ fun TasksScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit) {
                         filterProject = null
                         filterArea = null
                     },
-                    label = { Text("ALL") }
+                    label = { Text("ALL") },
                 )
             }
             item {
@@ -144,15 +154,17 @@ fun TasksScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit) {
                         selected = filterStatus == status,
                         onClick = { filterStatus = if (filterStatus == status) null else status },
                         label = { Text(status.uppercase()) },
-                        modifier = Modifier.padding(end = 4.dp)
+                        modifier = Modifier.padding(end = 4.dp),
                     )
                 }
             }
         }
 
-        if (filteredTasks.isEmpty()) {
+        if (filteredTasks.isEmpty())
+        {
             EmptyState(message = stringResource(Res.string.tasks_empty))
-        } else if (viewMode == "list") {
+        } else if (viewMode == "list")
+        {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
                 items(filteredTasks, key = { it.node.id }) { nodeWithPin ->
                     NodeCard(
@@ -160,44 +172,45 @@ fun TasksScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit) {
                         onToggleDone = { status ->
                             viewModel.updateNodeStatus(
                                 nodeWithPin.node,
-                                status
+                                status,
                             )
                         },
                         onTogglePin = { isPinned ->
                             viewModel.togglePin(
                                 nodeWithPin.node,
-                                isPinned
+                                isPinned,
                             )
                         },
                         onClick = { onEditNode(nodeWithPin.node.id) },
                         onLongClick = { onEditNode(nodeWithPin.node.id) },
-                        onArchive = { viewModel.archiveNode(nodeWithPin.node) }
+                        onArchive = { viewModel.archiveNode(nodeWithPin.node) },
                     )
                 }
             }
-        } else {
+        } else
+        {
             // Board View
             val statuses = listOf("active", "on_hold", "someday", "blocked")
             Row(
                 modifier = Modifier.fillMaxSize().horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)
+                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
             ) {
                 statuses.forEach { status ->
                     val columnTasks = filteredTasks.filter { it.node.status == status }
                     Column(
-                        modifier = Modifier.width(280.dp).fillMaxHeight()
+                        modifier = Modifier.width(280.dp).fillMaxHeight(),
                     ) {
                         Surface(
                             color = TactileTheme.Surface,
                             shape = RoundedCornerShape(TactileTheme.RadiusMd),
                             modifier = Modifier.fillMaxWidth()
-                                .padding(bottom = TactileTheme.SpacingSm)
+                                .padding(bottom = TactileTheme.SpacingSm),
                         ) {
                             Text(
                                 text = status.uppercase(),
                                 modifier = Modifier.padding(TactileTheme.SpacingMd),
                                 style = MaterialTheme.typography.labelSmall,
-                                color = TactileTheme.Primary
+                                color = TactileTheme.Primary,
                             )
                         }
                         LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
@@ -207,18 +220,18 @@ fun TasksScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit) {
                                     onToggleDone = { s ->
                                         viewModel.updateNodeStatus(
                                             nodeWithPin.node,
-                                            s
+                                            s,
                                         )
                                     },
                                     onTogglePin = { isPinned ->
                                         viewModel.togglePin(
                                             nodeWithPin.node,
-                                            isPinned
+                                            isPinned,
                                         )
                                     },
                                     onClick = { onEditNode(nodeWithPin.node.id) },
                                     onLongClick = { onEditNode(nodeWithPin.node.id) },
-                                    onArchive = { viewModel.archiveNode(nodeWithPin.node) }
+                                    onArchive = { viewModel.archiveNode(nodeWithPin.node) },
                                 )
                             }
                         }

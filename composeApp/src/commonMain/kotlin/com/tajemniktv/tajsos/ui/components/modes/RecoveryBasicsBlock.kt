@@ -19,8 +19,16 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
+/**
+ * Displays a "SURVIVAL BASICS" header and a row of three equally sized actionable cards:
+ * MEDS, WATER, and FOOD.
+ *
+ * @param onMedsClick Invoked when the MEDS card is clicked.
+ * @param onHydrationClick Invoked when the WATER card is clicked.
+ * @param onFoodClick Invoked when the FOOD card is clicked.
+ */
 @Composable
 fun RecoveryBasicsBlock(
     onMedsClick: () -> Unit,

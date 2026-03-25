@@ -2,7 +2,7 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
-package com.tajemniktv.tajsos.ui.design.theme
+package com.tajemniktv.tajsos.ui.theme
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -23,7 +23,7 @@ object TactileTheme {
     val Error = AccentError
     val Accent = AccentCyan
     val Border = SubtleBorder
-    val SidebarBackground = com.tajemniktv.tajsos.ui.design.theme.SidebarBackground
+    val SidebarBackground = com.tajemniktv.tajsos.ui.theme.SidebarBackground
     val SidebarWidth = 280.dp
 
     val RadiusXs = 2.dp
@@ -59,7 +59,7 @@ private val TajsLightColorScheme =
     )
 
 @Composable
-fun TajsOSTheme(
+internal fun TajsOSTheme(
     darkTheme: Boolean = true,
     content: @Composable () -> Unit,
 ) {

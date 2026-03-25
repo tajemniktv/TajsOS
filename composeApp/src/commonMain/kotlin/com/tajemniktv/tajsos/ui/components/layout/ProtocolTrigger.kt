@@ -19,21 +19,36 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
+/**
+ * Displays a fixed-width clickable card containing an icon above an uppercase label,
+ * styled using the provided color.
+ *
+ * The entire surface is clickable and invokes [onClick].
+ *
+ * @param label The text shown below the icon (rendered uppercase).
+ * @param icon The vector icon displayed above the label.
+ * @param color The color used for the icon and label tint and to derive the surface background and border.
+ * @param onClick Callback invoked when the card is clicked.
+ */
 @Composable
-fun ProtocolTrigger(label: String, icon: ImageVector, color: Color, onClick: () -> Unit) {
+        /**
+         *
+         */
+fun ProtocolTrigger(label: String, icon: ImageVector, color: Color, onClick: () -> Unit)
+{
     Surface(
         onClick = onClick,
         modifier = Modifier.width(120.dp),
         color = color.copy(alpha = 0.1f),
         shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = BorderStroke(1.dp, color.copy(alpha = 0.3f))
+        border = BorderStroke(1.dp, color.copy(alpha = 0.3f)),
     ) {
         Column(
             modifier = Modifier.padding(TactileTheme.SpacingMd),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
         ) {
             Icon(icon, contentDescription = null, tint = color, modifier = Modifier.size(24.dp))
             Spacer(Modifier.height(8.dp))
@@ -43,7 +58,7 @@ fun ProtocolTrigger(label: String, icon: ImageVector, color: Color, onClick: () 
                 color = color,
                 fontWeight = FontWeight.Bold,
                 fontSize = 9.sp,
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
             )
         }
     }

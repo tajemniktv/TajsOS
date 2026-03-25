@@ -1,8 +1,11 @@
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
 package com.tajemniktv.tajsos.ui
 
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.data.NodeWithPin
-import com.tajemniktv.tajsos.data.RelationEntity
 import com.tajemniktv.tajsos.data.TagEntity
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -10,19 +13,27 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class FilterHelperTest {
-
-    private fun createTestNode(id: Long, title: String, content: String = "", tags: List<String> = emptyList(), updatedAt: Long = 0, status: String = "active"): NodeWithPin {
-        val node = NodeEntity(
-            id = id,
-            title = title,
-            content = content,
-            type = "note",
-            updatedAt = updatedAt,
-            status = status
-        )
-        val tagEntities = tags.mapIndexed { index, name ->
-            TagEntity(id = index.toLong(), name = name, normalizedName = name.lowercase())
-        }
+    private fun createTestNode(
+        id: Long,
+        title: String,
+        content: String = "",
+        tags: List<String> = emptyList(),
+        updatedAt: Long = 0,
+        status: String = "active",
+    ): NodeWithPin {
+        val node =
+            NodeEntity(
+                id = id,
+                title = title,
+                content = content,
+                type = "note",
+                updatedAt = updatedAt,
+                status = status,
+            )
+        val tagEntities =
+            tags.mapIndexed { index, name ->
+                TagEntity(id = index.toLong(), name = name, normalizedName = name.lowercase())
+            }
         return NodeWithPin(node = node, pin = null, tags = tagEntities)
     }
 
@@ -62,19 +73,20 @@ class FilterHelperTest {
         val nodes = listOf(node1, node2, node3)
 
         // Empty query returns all, sorted by updatedAt descending
-        val sortedNodes = FilterHelper.filterAndSortNodes(
-            nodes = nodes,
-            query = "  ",
-            type = null,
-            status = null,
-            projectId = null,
-            areaId = null,
-            linkedToId = null,
-            maxMins = null,
-            energy = null,
-            friction = null,
-            relations = emptyList()
-        )
+        val sortedNodes =
+            FilterHelper.filterAndSortNodes(
+                nodes = nodes,
+                query = "  ",
+                type = null,
+                status = null,
+                projectId = null,
+                areaId = null,
+                linkedToId = null,
+                maxMins = null,
+                energy = null,
+                friction = null,
+                relations = emptyList(),
+            )
 
         assertEquals(3, sortedNodes.size)
         assertEquals(2, sortedNodes[0].node.id)
@@ -82,19 +94,20 @@ class FilterHelperTest {
         assertEquals(1, sortedNodes[2].node.id)
 
         // Query filtering
-        val filteredNodes = FilterHelper.filterAndSortNodes(
-            nodes = nodes,
-            query = "second",
-            type = null,
-            status = null,
-            projectId = null,
-            areaId = null,
-            linkedToId = null,
-            maxMins = null,
-            energy = null,
-            friction = null,
-            relations = emptyList()
-        )
+        val filteredNodes =
+            FilterHelper.filterAndSortNodes(
+                nodes = nodes,
+                query = "second",
+                type = null,
+                status = null,
+                projectId = null,
+                areaId = null,
+                linkedToId = null,
+                maxMins = null,
+                energy = null,
+                friction = null,
+                relations = emptyList(),
+            )
 
         assertEquals(1, filteredNodes.size)
         assertEquals(2, filteredNodes[0].node.id)
@@ -102,25 +115,26 @@ class FilterHelperTest {
 
     @Test
     fun testFilterMultipleStatuses() {
-        val nodeActive = createTestNode(1, "Active Node", status = "active")
+        val nodeActive = createTestNode(1, "Active Node")
         val nodeOnHold = createTestNode(2, "On Hold Node", status = "on_hold")
         val nodeArchived = createTestNode(3, "Archived Node", status = "archived")
 
         val nodes = listOf(nodeActive, nodeOnHold, nodeArchived)
 
-        val filteredNodes = FilterHelper.filterAndSortNodes(
-            nodes = nodes,
-            query = "",
-            type = null,
-            status = "active, on_hold",
-            projectId = null,
-            areaId = null,
-            linkedToId = null,
-            maxMins = null,
-            energy = null,
-            friction = null,
-            relations = emptyList()
-        )
+        val filteredNodes =
+            FilterHelper.filterAndSortNodes(
+                nodes = nodes,
+                query = "",
+                type = null,
+                status = "active, on_hold",
+                projectId = null,
+                areaId = null,
+                linkedToId = null,
+                maxMins = null,
+                energy = null,
+                friction = null,
+                relations = emptyList(),
+            )
 
         assertEquals(2, filteredNodes.size)
         assertTrue(filteredNodes.any { it.node.id == 1L })

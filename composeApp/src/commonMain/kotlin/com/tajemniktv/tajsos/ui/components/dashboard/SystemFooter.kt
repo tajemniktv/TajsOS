@@ -13,8 +13,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
+/**
+ * Renders a centered single-line system status footer showing memory usage and uptime.
+ *
+ * The text displays the literal string "MEMORY USAGE: 42%  •  UPTIME: 14D 02H" styled with
+ * MaterialTheme.typography.labelSmall, bold weight, 1.sp letter spacing, and TactileTheme.Muted color.
+ */
 @Composable
 fun SystemFooter() {
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {

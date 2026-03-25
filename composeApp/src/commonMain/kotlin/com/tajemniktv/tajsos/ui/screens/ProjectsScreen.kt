@@ -4,11 +4,9 @@
 
 package com.tajemniktv.tajsos.ui.screens
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
@@ -21,13 +19,24 @@ import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.nodes.ProjectItem
-import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 
+/**
+ * Displays the projects screen with search, status filters, project list, and add-project flow.
+ *
+ * Collects projects and nodes from the provided ViewModel, derives filtered projects and nodes grouped
+ * by project ID, renders the header, search field, status chips, and the project list, and shows an
+ * add-project dialog that creates a new project node and updates its status.
+ *
+ * @param viewModel Source of project and node state and actions for creating/updating nodes.
+ * @param onNavigateTo Callback invoked with a navigation route when navigating from a project item.
+ */
 @Composable
-fun ProjectsScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit) {
+fun ProjectsScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit)
+{
     val scope = rememberCoroutineScope()
     val projects by viewModel.allProjects.collectAsState()
     val allNodes by viewModel.allNodes.collectAsState()
@@ -48,12 +57,12 @@ fun ProjectsScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(TactileTheme.SpacingMd)
+            .padding(TactileTheme.SpacingMd),
     ) {
         Text(
             text = stringResource(Res.string.projects_title),
             style = MaterialTheme.typography.displaySmall,
-            color = TactileTheme.Text
+            color = TactileTheme.Text,
         )
         Spacer(modifier = Modifier.height(TactileTheme.SpacingMd))
 
@@ -63,7 +72,7 @@ fun ProjectsScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit) {
             modifier = Modifier.fillMaxWidth(),
             placeholder = { Text(stringResource(Res.string.projects_search_placeholder)) },
             leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-            shape = MaterialTheme.shapes.medium
+            shape = MaterialTheme.shapes.medium,
         )
 
         Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
@@ -72,12 +81,12 @@ fun ProjectsScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit) {
             FilterChip(
                 selected = selectedStatusFilter == "active",
                 onClick = { selectedStatusFilter = "active" },
-                label = { Text(stringResource(Res.string.projects_filter_active)) }
+                label = { Text(stringResource(Res.string.projects_filter_active)) },
             )
             FilterChip(
                 selected = selectedStatusFilter == "someday",
                 onClick = { selectedStatusFilter = "someday" },
-                label = { Text(stringResource(Res.string.projects_filter_someday)) }
+                label = { Text(stringResource(Res.string.projects_filter_someday)) },
             )
         }
 
@@ -86,11 +95,12 @@ fun ProjectsScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit) {
         ProjectListContent(
             state = ProjectListState(filteredProjects, searchQuery, nodesByProjectId),
             onNavigateTo = onNavigateTo,
-            onShowAddDialog = { showAddDialog = true }
+            onShowAddDialog = { showAddDialog = true },
         )
     }
 
-    if (showAddDialog) {
+    if (showAddDialog)
+    {
         AddProjectDialog(
             onDismiss = { showAddDialog = false },
             onConfirm = { title, content, status ->
@@ -99,19 +109,33 @@ fun ProjectsScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit) {
                 // I'll use addNode directly or update MainViewModel.
                 scope.launch {
                     val id =
-                        viewModel.addNodeForResult(title, content, "project", inboxState = false)
+                            viewModel.addNodeForResult(
+                                title,
+                                content,
+                                "project",
+                                inboxState = false,
+                            )
                     viewModel.getNodeById(id)?.let { node ->
                         viewModel.updateNodeStatus(node, status)
                     }
                 }
                 showAddDialog = false
-            }
+            },
         )
     }
 }
 
+/**
+ * Shows a dialog for creating a new project.
+ *
+ * The dialog collects a project name, description, and status; the confirm button is enabled only when the name is not blank.
+ *
+ * @param onDismiss Called when the dialog is dismissed or the cancel action is chosen.
+ * @param onConfirm Called with the entered project `name`, `description`, and `status` (`"active"` or `"someday"`) when the user confirms creation.
+ */
 @Composable
-fun AddProjectDialog(onDismiss: () -> Unit, onConfirm: (String, String, String) -> Unit) {
+fun AddProjectDialog(onDismiss: () -> Unit, onConfirm: (String, String, String) -> Unit)
+{
     var name by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var status by remember { mutableStateOf("active") }
@@ -124,21 +148,23 @@ fun AddProjectDialog(onDismiss: () -> Unit, onConfirm: (String, String, String) 
                 TextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text(stringResource(Res.string.projects_dialog_name)) })
+                    label = { Text(stringResource(Res.string.projects_dialog_name)) },
+                )
                 TextField(
                     value = description,
                     onValueChange = { description = it },
-                    label = { Text(stringResource(Res.string.projects_dialog_description)) })
+                    label = { Text(stringResource(Res.string.projects_dialog_description)) },
+                )
                 Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
                     listOf("active", "someday").forEach { s ->
                         val label =
-                            if (s == "active") stringResource(Res.string.projects_filter_active) else stringResource(
-                                Res.string.projects_filter_someday
-                            )
+                                if (s == "active") stringResource(Res.string.projects_filter_active) else stringResource(
+                                    Res.string.projects_filter_someday,
+                                )
                         FilterChip(
                             selected = status == s,
                             onClick = { status = s },
-                            label = { Text(label.uppercase()) }
+                            label = { Text(label.uppercase()) },
                         )
                     }
                 }
@@ -147,30 +173,42 @@ fun AddProjectDialog(onDismiss: () -> Unit, onConfirm: (String, String, String) 
         confirmButton = {
             Button(
                 onClick = { onConfirm(name, description, status) },
-                enabled = name.isNotBlank()
+                enabled = name.isNotBlank(),
             ) {
                 Text(stringResource(Res.string.projects_dialog_create))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) { Text(stringResource(Res.string.projects_dialog_cancel)) }
-        }
+        },
     )
 }
 
 data class ProjectListState(
     val filteredProjects: List<NodeEntity>,
     val searchQuery: String,
-    val nodesByProjectId: Map<Long?, List<NodeWithPin>>
+    val nodesByProjectId: Map<Long?, List<NodeWithPin>>,
 )
 
+/**
+ * Renders either an empty-state prompt or a scrollable list of projects based on the given state.
+ *
+ * If there are no filtered projects and the search query is empty, displays a centered message and a button that invokes the add-project callback.
+ * Otherwise displays a vertically spaced list of project items that show each project's progress; project items invoke navigation via the provided callbacks on click and long-click.
+ *
+ * @param state Current view state containing filtered projects, the search query, and nodes grouped by project id.
+ * @param onNavigateTo Callback invoked with a destination route string to navigate to a screen.
+ * @param onShowAddDialog Callback invoked to request showing the add-project dialog.
+ */
 @Composable
 fun ProjectListContent(
     state: ProjectListState,
     onNavigateTo: (String) -> Unit,
-    onShowAddDialog: () -> Unit
-) {
-    if (state.filteredProjects.isEmpty() && state.searchQuery.isEmpty()) {
+    onShowAddDialog: () -> Unit,
+)
+{
+    if (state.filteredProjects.isEmpty() && state.searchQuery.isEmpty())
+    {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(stringResource(Res.string.projects_empty), color = TactileTheme.Muted)
@@ -180,7 +218,8 @@ fun ProjectListContent(
                 }
             }
         }
-    } else {
+    } else
+    {
         LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
             items(state.filteredProjects, key = { it.id }) { project ->
                 val projectNodes = state.nodesByProjectId[project.id] ?: emptyList()
@@ -196,16 +235,16 @@ fun ProjectListContent(
                         onNavigateTo(
                             Screen.NoteDetail.route.replace(
                                 "{noteId}",
-                                project.id.toString()
-                            )
+                                project.id.toString(),
+                            ),
                         )
-                    }
+                    },
                 ) {
                     onNavigateTo(
                         Screen.ProjectDetail.route.replace(
                             "{projectId}",
-                            project.id.toString()
-                        )
+                            project.id.toString(),
+                        ),
                     )
                 }
             }

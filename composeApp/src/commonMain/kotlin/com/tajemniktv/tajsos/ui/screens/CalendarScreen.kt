@@ -27,23 +27,34 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.EntryType
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.datetime.*
 import kotlinx.datetime.LocalDate
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 import kotlin.time.Clock
-import kotlin.time.Duration.Companion.days
 import kotlin.time.Instant
 
+/**
+ * Composes the calendar screen UI: a header with month navigation and sync, a month grid, and an agenda for the selected day.
+ *
+ * The composable maintains local state for the currently displayed month and the currently selected date, collects calendar entries
+ * from the provided view model, and wires interactions:
+ * - navigating months and jumping to today update the displayed month and selection,
+ * - sync triggers `viewModel.syncCalendars()`,
+ * - selecting a date updates the agenda,
+ * - tapping an agenda entry invokes `onEditNode` only when the entry is `EntryType.INTERNAL` and has a non-null `originalId`.
+ *
+ * @param onEditNode Callback invoked with an entry's `originalId` when an editable internal entry is selected.
+ */
 @Composable
 fun CalendarScreen(
     viewModel: MainViewModel,
     onEditNode: (Long) -> Unit,
-) {
+)
+{
     var currentMonth by remember {
         mutableStateOf(
             Clock.System
@@ -57,9 +68,9 @@ fun CalendarScreen(
 
     Column(
         modifier =
-            Modifier
-                .fillMaxSize()
-                .padding(TactileTheme.SpacingMd),
+                Modifier
+                    .fillMaxSize()
+                    .padding(TactileTheme.SpacingMd),
     ) {
         CalendarHeader(
             currentMonth = currentMonth,
@@ -71,10 +82,10 @@ fun CalendarScreen(
             },
             onTodayClick = {
                 val today =
-                    Clock.System
-                        .now()
-                        .toLocalDateTime(TimeZone.currentSystemDefault())
-                        .date
+                        Clock.System
+                            .now()
+                            .toLocalDateTime(TimeZone.currentSystemDefault())
+                            .date
                 currentMonth = today
                 selectedDate = today
             },
@@ -102,7 +113,8 @@ fun CalendarScreen(
             selectedDate = selectedDate,
             entries = calendarEntries,
             onEntryClick = { entry ->
-                if (entry.type == EntryType.INTERNAL) {
+                if (entry.type == EntryType.INTERNAL)
+                {
                     entry.originalId?.let { onEditNode(it) }
                 }
             },
@@ -110,6 +122,15 @@ fun CalendarScreen(
     }
 }
 
+/**
+ * Header row displaying the current month and controls for "Today", sync, and month navigation.
+ *
+ * @param currentMonth The month (LocalDate) shown in the header; its month name and year are displayed.
+ * @param onPreviousMonth Callback invoked when the previous-month button is pressed.
+ * @param onNextMonth Callback invoked when the next-month button is pressed.
+ * @param onTodayClick Callback invoked when the "Today" button is pressed.
+ * @param onSyncClick Callback invoked when the sync (refresh) button is pressed.
+ */
 @Composable
 fun CalendarHeader(
     currentMonth: LocalDate,
@@ -117,7 +138,8 @@ fun CalendarHeader(
     onNextMonth: () -> Unit,
     onTodayClick: () -> Unit,
     onSyncClick: () -> Unit,
-) {
+)
+{
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -149,40 +171,53 @@ fun CalendarHeader(
             IconButton(onClick = onPreviousMonth) {
                 Icon(
                     Icons.Default.ChevronLeft,
-                    contentDescription = stringResource(Res.string.cal_previous)
+                    contentDescription = stringResource(Res.string.cal_previous),
                 )
             }
             IconButton(onClick = onNextMonth) {
                 Icon(
                     Icons.Default.ChevronRight,
-                    contentDescription = stringResource(Res.string.cal_next)
+                    contentDescription = stringResource(Res.string.cal_next),
                 )
             }
         }
     }
 }
 
+/**
+ * Displays a month calendar grid for the given month with weekday headers, selectable day cells, and visual indicators for entries.
+ *
+ * The grid shows six weeks (7 columns) with days for the specified month placed in their weekday positions. The cell for `selectedDate` and the current system date are visually highlighted. Days that have one or more `entries` show up to three accent dots, with an additional smaller dot when there are more than three entries. Tapping a day invokes `onDateSelected`.
+ *
+ * @param currentMonth The month (year and month fields are used) to display in the grid.
+ * @param selectedDate The date that should be shown as selected/highlighted.
+ * @param entries A list of calendar entries; entries whose start time falls on a particular day will produce indicators on that day's cell.
+ * @param onDateSelected Callback invoked with the tapped `LocalDate`.
+ */
 @Composable
 fun MonthView(
     currentMonth: LocalDate,
     selectedDate: LocalDate,
     entries: List<com.tajemniktv.tajsos.ui.CalendarEntry>,
     onDateSelected: (LocalDate) -> Unit,
-) {
+)
+{
     val firstDayOfMonth = LocalDate(currentMonth.year, currentMonth.month, 1)
     val lastDayOfMonth = firstDayOfMonth.plus(1, DateTimeUnit.MONTH).minus(1, DateTimeUnit.DAY)
     val daysInMonth = lastDayOfMonth.day
     val firstDayOfWeek = firstDayOfMonth.dayOfWeek.ordinal // 0 = Mon, 6 = Sun
 
     val days =
-        (0 until 42).map { i ->
-            val dayNumber = i - firstDayOfWeek + 1
-            if (dayNumber in 1..daysInMonth) {
-                LocalDate(currentMonth.year, currentMonth.month, dayNumber)
-            } else {
-                null
+            (0 until 42).map { i ->
+                val dayNumber = i - firstDayOfWeek + 1
+                if (dayNumber in 1..daysInMonth)
+                {
+                    LocalDate(currentMonth.year, currentMonth.month, dayNumber)
+                } else
+                {
+                    null
+                }
             }
-        }
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(7),
@@ -200,37 +235,41 @@ fun MonthView(
         }
 
         items(days) { date ->
-            if (date != null) {
+            if (date != null)
+            {
                 val isSelected = date == selectedDate
                 val isToday =
-                    date ==
-                            Clock.System
-                                .now()
-                                .toLocalDateTime(TimeZone.currentSystemDefault())
-                                .date
+                        date ==
+                                Clock.System
+                                    .now()
+                                    .toLocalDateTime(TimeZone.currentSystemDefault())
+                                    .date
                 val dayEntries =
-                    entries.filter {
-                        Instant
-                            .fromEpochMilliseconds(it.startAt)
-                            .toLocalDateTime(TimeZone.currentSystemDefault())
-                            .date == date
-                    }
+                        entries.filter {
+                            Instant
+                                .fromEpochMilliseconds(it.startAt)
+                                .toLocalDateTime(TimeZone.currentSystemDefault())
+                                .date == date
+                        }
 
                 Box(
                     modifier =
-                        Modifier
-                            .aspectRatio(1f)
-                            .padding(2.dp)
-                            .clip(RoundedCornerShape(TactileTheme.RadiusSm))
-                            .background(
-                                if (isSelected) {
-                                    TactileTheme.Primary.copy(alpha = 0.2f)
-                                } else if (isToday) {
-                                    TactileTheme.Muted.copy(alpha = 0.1f)
-                                } else {
-                                    Color.Transparent
-                                },
-                            ).clickable { onDateSelected(date) },
+                            Modifier
+                                .aspectRatio(1f)
+                                .padding(2.dp)
+                                .clip(RoundedCornerShape(TactileTheme.RadiusSm))
+                                .background(
+                                    if (isSelected)
+                                    {
+                                        TactileTheme.Primary.copy(alpha = 0.2f)
+                                    } else if (isToday)
+                                    {
+                                        TactileTheme.Muted.copy(alpha = 0.1f)
+                                    } else
+                                    {
+                                        Color.Transparent
+                                    },
+                                ).clickable { onDateSelected(date) },
                     contentAlignment = Alignment.Center,
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -239,15 +278,19 @@ fun MonthView(
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = if (isSelected || isToday) FontWeight.Bold else FontWeight.Normal,
                             color =
-                                if (isSelected) {
-                                    TactileTheme.Primary
-                                } else if (isToday) {
-                                    TactileTheme.Accent
-                                } else {
-                                    TactileTheme.Text
-                                },
+                                    if (isSelected)
+                                    {
+                                        TactileTheme.Primary
+                                    } else if (isToday)
+                                    {
+                                        TactileTheme.Accent
+                                    } else
+                                    {
+                                        TactileTheme.Text
+                                    },
                         )
-                        if (dayEntries.isNotEmpty()) {
+                        if (dayEntries.isNotEmpty())
+                        {
                             Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
                                 repeat(dayEntries.size.coerceAtMost(3)) {
                                     Box(
@@ -257,7 +300,8 @@ fun MonthView(
                                             .background(TactileTheme.Accent),
                                     )
                                 }
-                                if (dayEntries.size > 3) {
+                                if (dayEntries.size > 3)
+                                {
                                     Box(
                                         Modifier
                                             .size(2.dp)
@@ -269,28 +313,42 @@ fun MonthView(
                         }
                     }
                 }
-            } else {
+            } else
+            {
                 Box(Modifier.aspectRatio(1f))
             }
         }
     }
 }
 
+/**
+ * Display an agenda for the specified date.
+ *
+ * Shows a centered "no events" message when there are no entries for `selectedDate`; otherwise
+ * renders a vertically spaced list of the entries for that date. Each row invokes `onEntryClick`
+ * when selected.
+ *
+ * @param selectedDate The date whose agenda should be shown.
+ * @param entries A list of calendar entries to filter and display.
+ * @param onEntryClick Callback invoked with the tapped entry.
+ */
 @Composable
 fun AgendaView(
     selectedDate: LocalDate,
     entries: List<com.tajemniktv.tajsos.ui.CalendarEntry>,
     onEntryClick: (com.tajemniktv.tajsos.ui.CalendarEntry) -> Unit,
-) {
+)
+{
     val dayEntries =
-        entries.filter {
-            Instant
-                .fromEpochMilliseconds(it.startAt)
-                .toLocalDateTime(TimeZone.currentSystemDefault())
-                .date == selectedDate
-        }
+            entries.filter {
+                Instant
+                    .fromEpochMilliseconds(it.startAt)
+                    .toLocalDateTime(TimeZone.currentSystemDefault())
+                    .date == selectedDate
+            }
 
-    if (dayEntries.isEmpty()) {
+    if (dayEntries.isEmpty())
+    {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text(
                 stringResource(Res.string.cal_no_events),
@@ -298,7 +356,8 @@ fun AgendaView(
                 style = MaterialTheme.typography.labelSmall,
             )
         }
-    } else {
+    } else
+    {
         LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
             items(dayEntries) { entry ->
                 AgendaRow(entry, onClick = { onEntryClick(entry) })
@@ -307,23 +366,33 @@ fun AgendaView(
     }
 }
 
+/**
+ * Renders a clickable agenda row for a calendar entry showing its time, title, optional description,
+ * and an indicator for external entries.
+ *
+ * @param entry The calendar entry whose data (start time, title, description, type) is displayed.
+ * @param onClick Callback invoked when the row is tapped.
+ */
 @Composable
 fun AgendaRow(
     entry: com.tajemniktv.tajsos.ui.CalendarEntry,
     onClick: () -> Unit,
-) {
+)
+{
     val startTime =
-        Instant
-            .fromEpochMilliseconds(entry.startAt)
-            .toLocalDateTime(TimeZone.currentSystemDefault())
+            Instant
+                .fromEpochMilliseconds(entry.startAt)
+                .toLocalDateTime(TimeZone.currentSystemDefault())
     val timeStr =
-        if (entry.isAllDay) {
-            stringResource(Res.string.cal_all_day)
-        } else {
-            "${startTime.hour}:${
-                startTime.minute.toString().padStart(2, '0')
-            }"
-        }
+            if (entry.isAllDay)
+            {
+                stringResource(Res.string.cal_all_day)
+            } else
+            {
+                "${startTime.hour}:${
+                    startTime.minute.toString().padStart(2, '0')
+                }"
+            }
 
     Surface(
         onClick = onClick,
@@ -353,7 +422,8 @@ fun AgendaRow(
                     color = TactileTheme.Text,
                 )
                 val description = entry.description
-                if (!description.isNullOrBlank()) {
+                if (!description.isNullOrBlank())
+                {
                     Text(
                         description,
                         style = MaterialTheme.typography.bodySmall,
@@ -363,7 +433,8 @@ fun AgendaRow(
                 }
             }
             Spacer(Modifier.weight(1f))
-            if (entry.type == EntryType.EXTERNAL) {
+            if (entry.type == EntryType.EXTERNAL)
+            {
                 Box(
                     Modifier
                         .size(8.dp)

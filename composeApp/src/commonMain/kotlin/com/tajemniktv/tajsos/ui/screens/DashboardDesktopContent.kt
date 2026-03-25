@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved. 
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
 package com.tajemniktv.tajsos.ui.screens
@@ -10,28 +10,37 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavDestination
-import com.tajemniktv.tajsos.data.FocusSessionEntity
 import com.tajemniktv.tajsos.data.ModeEntity
-import com.tajemniktv.tajsos.data.NodeEntity
-import com.tajemniktv.tajsos.data.TrackEntryEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.dashboard.DashboardBlockRenderer
-import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 import kotlin.time.Clock
 
+/**
+ * Composes the desktop dashboard layout: a two-column scrollable area of dashboard blocks and a right-side panel with quick-capture, weekly life summary, and a system clock, plus a bottom command bar with command shortcuts and a new-entry button.
+ *
+ * @param viewModel Source of dashboard state and collections (nodes, projects, areas, inbox, reminders, session, insights, track entries).
+ * @param onNavigateTo Callback invoked to navigate to the given screen.
+ * @param onEditNode Callback invoked to edit the node with the given id.
+ * @param onNavigateToProject Callback invoked to navigate to the project with the given id.
+ * @param onNewEntry Callback invoked when the new-entry (microphone) button is pressed.
+ * @param currentDestination Current navigation destination (may be unused by this composable but provided for callers).
+ */
 @Composable
 fun DashboardDesktopContent(
     viewModel: MainViewModel,
@@ -39,104 +48,55 @@ fun DashboardDesktopContent(
     onEditNode: (Long) -> Unit,
     onNavigateToProject: (Long) -> Unit,
     onNewEntry: () -> Unit,
-    currentDestination: NavDestination? = null,
-    currentMode: ModeEntity? = null,
-    allModes: List<ModeEntity> = emptyList(),
-    onModeSelect: (Long) -> Unit = {}
-) {
+    currentDestination: NavDestination?,
+)
+{
     val allNodes by viewModel.allNodes.collectAsState()
-    val todayNodes by viewModel.todayNodes.collectAsState()
-    val trackEntries by viewModel.trackEntries.collectAsState()
-    val activeSession by viewModel.activeSession.collectAsState()
+    val pinnedNodes = allNodes.filter { it.pin != null }
     val allProjects by viewModel.allProjects.collectAsState()
     val allAreas by viewModel.allAreas.collectAsState()
-    val dashboardState by viewModel.dashboardUIState.collectAsState()
-    val insights by viewModel.insights.collectAsState()
-
     val inboxNodes by viewModel.inboxNodes.collectAsState()
     val activeReminders by viewModel.activeReminders.collectAsState()
-    val allReviews by viewModel.allReviews.collectAsState()
-    val scope = rememberCoroutineScope()
+    val activeSession by viewModel.activeSession.collectAsState()
+    val dashboardState by viewModel.dashboardUIState.collectAsState()
+    val insights by viewModel.insights.collectAsState()
+    val trackEntries by viewModel.trackEntries.collectAsState()
 
-    val blockList = remember(dashboardState.modePreferences) {
-        try {
-            val jsonStr = dashboardState.modePreferences?.dashboardBlocksJson
-            if (jsonStr != null) {
-                kotlinx.serialization.json.Json.decodeFromString<List<String>>(jsonStr)
-            } else {
-                listOf(
-                    "today_pulse",
-                    "load_capacity",
-                    "area_health",
-                    "operational",
-                    "search",
-                    "alerts",
-                    "sticky",
-                    "focus",
-                    "insights",
-                    "actions",
-                    "suggestions",
-                    "knowledge",
-                    "protocols"
-                )
-            }
-        } catch (e: Exception) {
-            listOf(
-                "today_pulse",
-                "load_capacity",
-                "area_health",
-                "operational",
-                "search",
-                "alerts",
-                "sticky",
-                "focus",
-                "insights",
-                "actions",
-                "suggestions",
-                "knowledge",
-                "protocols"
-            )
-        }
-    }
-
-    val pinnedNodes = allNodes.filter { it.pin != null }
     val completedTodayCount = pinnedNodes.count { it.node.status == "done" }
     val totalTodayCount = pinnedNodes.size
     val dailyProgress =
-        if (totalTodayCount > 0) completedTodayCount.toFloat() / totalTodayCount else 0f
+            if (totalTodayCount > 0) completedTodayCount.toFloat() / totalTodayCount else 0f
 
     val now = Clock.System.now()
     val localNow = now.toLocalDateTime(TimeZone.currentSystemDefault())
-    val todayDateStr = localNow.date.dayOfWeek.name.take(3).lowercase()
-        .replaceFirstChar { it.uppercase() } + ", " +
-            localNow.date.month.name.take(3).lowercase()
-                .replaceFirstChar { it.uppercase() } + " " + localNow.date.day
-    val todayIsoDateStr = localNow.date.toString()
-    val moodToday = trackEntries.find { it.date == todayIsoDateStr }
+    val todayDateStr = localNow.date.toString()
+    val moodToday = trackEntries.find { it.date == todayDateStr }
 
-    val lastWeeklyReview = allReviews.find { it.type == "weekly" }
-    val weekMillis = 7 * 24 * 60 * 60 * 1000L
-    val needsWeeklyReview =
-        lastWeeklyReview == null || (now.toEpochMilliseconds() - lastWeeklyReview.completedAt) > weekMillis
-
-    // Main Dashboard Area
-    Column(modifier = Modifier.fillMaxSize().padding(horizontal = 40.dp, vertical = 32.dp)) {
-        // Header
-        DesktopHeader(viewModel = viewModel, currentMode = currentMode)
-
-        Spacer(Modifier.height(32.dp))
-
-        // Bento Grid
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(TactileTheme.Background)
+            .padding(TactileTheme.SpacingMd),
+        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingLg),
+    ) {
         Row(
-            modifier = Modifier.weight(1f),
-            horizontalArrangement = Arrangement.spacedBy(24.dp)
+            modifier = Modifier.fillMaxWidth().weight(1f),
+            horizontalArrangement = Arrangement.spacedBy(32.dp),
         ) {
-            val scrollState = rememberScrollState()
             Column(
-                modifier = Modifier.fillMaxSize().verticalScroll(scrollState),
-                verticalArrangement = Arrangement.spacedBy(24.dp)
+                modifier = Modifier.weight(1.5f).verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(24.dp),
             ) {
-                blockList.forEach { blockKey ->
+                val blocks = listOf(
+                    "today_pulse",
+                    "load_capacity",
+                    "operational",
+                    "alerts",
+                    "focus",
+                    "suggestions",
+                    "knowledge",
+                )
+                blocks.forEach { blockKey ->
                     DashboardBlockRenderer(
                         blockKey = blockKey,
                         viewModel = viewModel,
@@ -149,45 +109,97 @@ fun DashboardDesktopContent(
                         activeSession = activeSession,
                         insights = insights,
                         moodToday = moodToday,
-                        needsWeeklyReview = needsWeeklyReview,
+                        needsWeeklyReview = false, // Desktop can handle this differently
                         dailyProgress = dailyProgress,
                         localNow = localNow,
                         onNavigateTo = onNavigateTo,
                         onEditNode = onEditNode,
-                        onNavigateToProject = onNavigateToProject
+                        onNavigateToProject = onNavigateToProject,
                     )
+                }
+            }
+
+            Column(
+                modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(24.dp),
+            ) {
+                // Quick capture on desktop
+                OutlinedTextField(
+                    value = "",
+                    onValueChange = { },
+                    modifier = Modifier.fillMaxWidth(),
+                    placeholder = { Text("CMD + K to capture anything...") },
+                    leadingIcon = { Icon(Icons.Default.Terminal, contentDescription = null) },
+                    shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                )
+
+                // Stats / Activity
+                com.tajemniktv.tajsos.ui.components.dashboard.LifeSummaryCard(
+                    captures = insights.weeklyCaptures,
+                    completions = insights.weeklyCompletions,
+                    onClick = { onNavigateTo(Screen.Insights) },
+                )
+
+                // Time / Context
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    color = TactileTheme.Surface,
+                    shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                    border = BorderStroke(1.dp, TactileTheme.Border),
+                ) {
+                    Column(Modifier.padding(20.dp)) {
+                        Text(
+                            "SYSTEM CLOCK",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = TactileTheme.Muted,
+                        )
+                        Text(
+                            localNow.time.toString().take(5),
+                            style = MaterialTheme.typography.displayMedium,
+                            fontWeight = FontWeight.Bold,
+                        )
+                        Text(
+                            localNow.date.toString().uppercase(),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = TactileTheme.Primary,
+                            letterSpacing = 2.sp,
+                        )
+                    }
                 }
             }
         }
 
-        // Bottom Right Controls
-        Box(modifier = Modifier.fillMaxWidth().padding(top = 24.dp)) {
+        // Bottom command bar
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            color = TactileTheme.Surface.copy(alpha = 0.5f),
+            shape = RoundedCornerShape(TactileTheme.RadiusMd),
+            border = BorderStroke(1.dp, TactileTheme.Border),
+        ) {
             Row(
-                modifier = Modifier.align(Alignment.CenterEnd),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                modifier = Modifier.padding(12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Surface(
-                    color = TactileTheme.Surface,
-                    shape = RoundedCornerShape(8.dp),
-                    border = BorderStroke(1.dp, TactileTheme.Border)
-                ) {
-                    Icon(
-                        Icons.Default.Terminal,
-                        contentDescription = null,
-                        modifier = Modifier.padding(10.dp).size(22.dp),
-                        tint = Color.White.copy(alpha = 0.5f)
-                    )
+                Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
+                    CommandItem("F1", "SEARCH")
+                    CommandItem("F2", "INBOX")
+                    CommandItem("F3", "TODAY")
+                    CommandItem("F4", "FOCUS")
                 }
-                Surface(
-                    color = TactileTheme.Surface,
-                    shape = RoundedCornerShape(8.dp),
-                    border = BorderStroke(1.dp, TactileTheme.Border)
+
+                Row(
+                    modifier = Modifier
+                        .clickable { onNewEntry() }
+                        .background(TactileTheme.Primary, RoundedCornerShape(4.dp))
+                        .padding(horizontal = 12.dp, vertical = 6.dp),
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Icon(
                         Icons.Default.Mic,
                         contentDescription = null,
                         modifier = Modifier.padding(10.dp).size(22.dp),
-                        tint = Color.White.copy(alpha = 0.5f)
+                        tint = Color.White.copy(alpha = 0.5f),
                     )
                 }
             }
@@ -195,73 +207,32 @@ fun DashboardDesktopContent(
     }
 }
 
+
+/**
+ * Renders a compact key/action pair for the bottom command bar.
+ *
+ * @param key The keyboard key label displayed inside a rounded, bordered chip (e.g., "F1").
+ * @param action The action label shown next to the key (e.g., "SEARCH").
+ */
 @Composable
-fun DesktopHeader(viewModel: MainViewModel, currentMode: ModeEntity?) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Column {
-            Text(
-                "TAJSOS // STATUS: OK",
-                style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 2.sp
-            )
-            if (currentMode != null) {
-                Text(
-                    "MODE: ${currentMode.name.uppercase()}",
-                    style = MaterialTheme.typography.headlineMedium,
-                    color = TactileTheme.Text,
-                    fontWeight = FontWeight.ExtraBold
-                )
-            }
-        }
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Surface(
-                color = TactileTheme.Surface,
-                shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                border = BorderStroke(1.dp, TactileTheme.Border)
-            ) {
-                Row(
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        Icons.Default.Search,
-                        contentDescription = null,
-                        tint = TactileTheme.Muted,
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Spacer(Modifier.width(12.dp))
-                    Text(
-                        "SEARCH YOUR LIFE...",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = TactileTheme.Muted
-                    )
-                }
-            }
-
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .background(TactileTheme.Surface, RoundedCornerShape(TactileTheme.RadiusMd))
-                    .border(1.dp, TactileTheme.Border, RoundedCornerShape(TactileTheme.RadiusMd)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    Icons.Default.Notifications,
-                    contentDescription = null,
-                    tint = TactileTheme.Text,
-                    modifier = Modifier.size(20.dp)
-                )
-            }
-        }
+private fun CommandItem(key: String, action: String)
+{
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Text(
+            key,
+            modifier = Modifier
+                .background(TactileTheme.Border, RoundedCornerShape(4.dp))
+                .padding(horizontal = 6.dp, vertical = 2.dp),
+            style = MaterialTheme.typography.labelSmall,
+            color = TactileTheme.Text,
+            fontWeight = FontWeight.Bold,
+        )
+        Spacer(Modifier.width(8.dp))
+        Text(
+            action,
+            style = MaterialTheme.typography.labelSmall,
+            color = TactileTheme.Muted,
+            fontWeight = FontWeight.Bold,
+        )
     }
 }

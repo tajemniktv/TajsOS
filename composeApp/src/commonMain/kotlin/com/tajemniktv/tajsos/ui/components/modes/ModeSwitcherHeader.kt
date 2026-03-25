@@ -18,8 +18,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.data.ModeEntity
-import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
+/**
+ * Renders a header labeled "OPERATING MODE" with a horizontally scrollable row of selectable mode chips.
+ *
+ * Each chip shows a mode's name (uppercase), highlights the currently selected mode using the mode's theme color,
+ * and invokes the selection callback when clicked.
+ *
+ * @param currentMode The currently active mode, or `null` if none is selected.
+ * @param allModes The list of modes to display as chips.
+ * @param onModeSelect Callback invoked with the selected mode's `id` when a chip is clicked.
+ */
 @Composable
 fun ModeSwitcherHeader(
     currentMode: ModeEntity?,

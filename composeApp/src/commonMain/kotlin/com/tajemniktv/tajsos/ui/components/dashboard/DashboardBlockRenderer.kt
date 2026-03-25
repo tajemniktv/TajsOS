@@ -29,8 +29,8 @@ import com.tajemniktv.tajsos.ui.components.modes.RecoveryBasicsBlock
 import com.tajemniktv.tajsos.ui.components.layout.ProtocolTrigger
 import com.tajemniktv.tajsos.ui.components.modes.StateAwareActionsGrid
 import com.tajemniktv.tajsos.ui.components.nodes.*
-import com.tajemniktv.tajsos.ui.design.components.DashCard
-import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.components.DashCard
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.datetime.LocalDateTime
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*

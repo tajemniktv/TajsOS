@@ -21,8 +21,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
+/**
+ * Renders the dashboard header with a left menu badge and status block and a right-side system indicator with a settings button.
+ *
+ * @param vibe Subtitle text shown under the status label.
+ * @param onMenuClick Callback invoked when the left menu area is clicked.
+ * @param onSettingsClick Callback invoked when the settings icon is clicked.
+ * @param tintColor Color used for the badge and status accent; defaults to `TactileTheme.Primary`.
+ */
 @Composable
 fun DashHeader(
     vibe: String,
@@ -53,22 +61,12 @@ fun DashHeader(
                 )
             }
             Spacer(Modifier.width(12.dp))
-            Column {
-                Text(
-                    "TAJSOS",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.ExtraBold,
-                    letterSpacing = 2.sp,
-                    color = TactileTheme.Text
-                )
-                Text(
-                    vibe.uppercase(),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = tintColor,
-                    fontSize = 8.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+            StatusHeader(
+                status = "OK",
+                color = tintColor,
+                subtitle = vibe,
+                subtitleStyle = MaterialTheme.typography.titleSmall,
+            )
         }
 
         Row(verticalAlignment = Alignment.CenterVertically) {

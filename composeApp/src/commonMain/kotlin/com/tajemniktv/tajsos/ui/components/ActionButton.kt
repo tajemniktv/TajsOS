@@ -2,7 +2,7 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved. 
  */
 
-package com.tajemniktv.tajsos.ui.design.components
+package com.tajemniktv.tajsos.ui.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,8 +14,18 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
+/**
+ * Renders a Material3 button with a fixed height, rounded corners, an optional leading icon, and an uppercase bold label.
+ *
+ * @param text The button label.
+ * @param onClick Callback invoked when the button is clicked.
+ * @param modifier External modifier applied to the button; a fixed height constraint is appended.
+ * @param containerColor Background color of the button.
+ * @param contentColor Foreground color used for the text and icon.
+ * @param icon Optional leading icon to display before the label.
+ */
 @Composable
 fun ActionButton(
     text: String,
@@ -23,19 +33,21 @@ fun ActionButton(
     modifier: Modifier = Modifier,
     containerColor: Color = TactileTheme.Surface,
     contentColor: Color = TactileTheme.Text,
-    icon: ImageVector? = null
-) {
+    icon: ImageVector? = null,
+)
+{
     Button(
         onClick = onClick,
         modifier = modifier.height(48.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = containerColor,
-            contentColor = contentColor
+            contentColor = contentColor,
         ),
         shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        contentPadding = PaddingValues(horizontal = 16.dp)
+        contentPadding = PaddingValues(horizontal = 16.dp),
     ) {
-        if (icon != null) {
+        if (icon != null)
+        {
             Icon(icon, contentDescription = null, modifier = Modifier.size(18.dp))
             Spacer(Modifier.width(8.dp))
         }
@@ -43,7 +55,7 @@ fun ActionButton(
             text = text.uppercase(),
             style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.Bold,
-            letterSpacing = 1.sp
+            letterSpacing = 1.sp,
         )
     }
 }

@@ -1,38 +1,41 @@
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
 package com.tajemniktv.tajsos
 
 import com.tajemniktv.tajsos.ui.Screen
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class ScreenTest {
-
-    private val allScreens: List<Screen> = listOf(
-        Screen.Dashboard,
-        Screen.Search,
-        Screen.Today,
-        Screen.Focus,
-        Screen.Track,
-        Screen.Tasks,
-        Screen.Notes,
-        Screen.NoteDetail,
-        Screen.Insights,
-        Screen.Archive,
-        Screen.Projects,
-        Screen.Areas,
-        Screen.ProjectDetail,
-        Screen.AreaDetail,
-        Screen.Settings,
-        Screen.Graph,
-        Screen.Inbox,
-        Screen.Calendar,
-        Screen.CalendarSettings,
-        Screen.Templates,
-        Screen.Review,
-        Screen.Profile,
-        Screen.Decisions,
-    )
+    private val allScreens: List<Screen> =
+        listOf(
+            Screen.Dashboard,
+            Screen.Search,
+            Screen.Today,
+            Screen.Focus,
+            Screen.Track,
+            Screen.Tasks,
+            Screen.Notes,
+            Screen.NoteDetail,
+            Screen.Insights,
+            Screen.Archive,
+            Screen.Projects,
+            Screen.Areas,
+            Screen.ProjectDetail,
+            Screen.AreaDetail,
+            Screen.Settings,
+            Screen.Graph,
+            Screen.Inbox,
+            Screen.Calendar,
+            Screen.CalendarSettings,
+            Screen.Templates,
+            Screen.Review,
+            Screen.Profile,
+            Screen.Decisions,
+        )
 
     @Test
     fun graphScreen_doesExistInScreenList() {

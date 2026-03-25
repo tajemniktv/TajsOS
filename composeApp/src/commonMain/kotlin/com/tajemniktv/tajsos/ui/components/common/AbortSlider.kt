@@ -20,9 +20,15 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlin.math.roundToInt
 
+/**
+ * Displays a horizontal "slide to abort" control with a draggable knob.
+ *
+ * Dragging the knob to the right invokes the provided `onAbort` callback when the knob reaches 90% of the track; the knob then resets to the start position when the drag ends.
+ *
+ * @param onAbort Callback invoked when the user slides the knob past the abort threshold. */
 @Composable
 fun AbortSlider(onAbort: () -> Unit) {
     val maxOffset = 240.dp
@@ -30,38 +36,41 @@ fun AbortSlider(onAbort: () -> Unit) {
     val maxOffsetPx = with(LocalDensity.current) { maxOffset.toPx() }
 
     Box(
-        modifier = Modifier
-            .width(300.dp)
-            .height(56.dp)
-            .background(TactileTheme.Surface, RoundedCornerShape(TactileTheme.RadiusMd))
-            .border(1.dp, TactileTheme.Muted, RoundedCornerShape(TactileTheme.RadiusMd)),
-        contentAlignment = Alignment.CenterStart
+        modifier =
+            Modifier
+                .width(300.dp)
+                .height(56.dp)
+                .background(TactileTheme.Surface, RoundedCornerShape(TactileTheme.RadiusMd))
+                .border(1.dp, TactileTheme.Muted, RoundedCornerShape(TactileTheme.RadiusMd)),
+        contentAlignment = Alignment.CenterStart,
     ) {
         Text(
             "SLIDE TO ABORT",
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.labelSmall,
-            color = TactileTheme.Muted
+            color = TactileTheme.Muted,
         )
         Box(
-            modifier = Modifier
-                .offset { IntOffset(offset.roundToInt(), 0) }
-                .size(56.dp)
-                .background(TactileTheme.Error, RoundedCornerShape(TactileTheme.RadiusMd))
-                .draggable(
-                    orientation = Orientation.Horizontal,
-                    state = rememberDraggableState { delta ->
-                        val newOffset = (offset + delta).coerceIn(0f, maxOffsetPx)
-                        offset = newOffset
-                    },
-                    onDragStopped = {
-                        if (offset >= maxOffsetPx * 0.9f) {
-                            onAbort()
-                        }
-                        offset = 0f
-                    }
-                )
+            modifier =
+                Modifier
+                    .offset { IntOffset(offset.roundToInt(), 0) }
+                    .size(56.dp)
+                    .background(TactileTheme.Error, RoundedCornerShape(TactileTheme.RadiusMd))
+                    .draggable(
+                        orientation = Orientation.Horizontal,
+                        state =
+                            rememberDraggableState { delta ->
+                                val newOffset = (offset + delta).coerceIn(0f, maxOffsetPx)
+                                offset = newOffset
+                            },
+                        onDragStopped = {
+                            if (offset >= maxOffsetPx * 0.9f) {
+                                onAbort()
+                            }
+                            offset = 0f
+                        },
+                    ),
         )
     }
 }

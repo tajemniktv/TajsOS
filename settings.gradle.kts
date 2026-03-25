@@ -1,4 +1,8 @@
-﻿rootProject.name = "TajsOS"
+﻿/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
+rootProject.name = "TajsOS"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {

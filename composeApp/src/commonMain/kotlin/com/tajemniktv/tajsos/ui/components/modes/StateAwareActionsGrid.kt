@@ -17,14 +17,21 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
-import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
+/**
+ * Renders a horizontal row of three equally sized actionable cards that apply preset search filters and navigate to the Search screen.
+ *
+ * Tapping a card clears existing search filters, applies the card's preset filters (easy friction / low energy / max minutes), and then invokes navigation to Screen.Search.
+ *
+ * @param viewModel The ViewModel used to clear and update search filters.
+ * @param onNavigateTo Callback invoked with the destination Screen; called with Screen.Search after a card is selected.
+ */
 @Composable
 fun StateAwareActionsGrid(viewModel: MainViewModel, onNavigateTo: (Screen) -> Unit) {
     Row(

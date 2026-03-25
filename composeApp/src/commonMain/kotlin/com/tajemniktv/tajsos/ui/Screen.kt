@@ -18,10 +18,11 @@ sealed class Screen(
     val route: String,
     val label: StringResource,
     val icon: ImageVector,
-    val hasInternalHeader: Boolean = false,
-) {
+    val isRoot: Boolean = true,
+)
+{
     data object Dashboard :
-        Screen("dashboard", Res.string.screen_dash, Icons.Default.Home, hasInternalHeader = true)
+        Screen("dashboard", Res.string.screen_dash, Icons.Default.Home)
 
     data object Inbox : Screen("inbox", Res.string.screen_inbox, Icons.Default.Email)
 
@@ -41,7 +42,7 @@ sealed class Screen(
         "note/{noteId}",
         Res.string.screen_note,
         Icons.Default.Edit,
-        hasInternalHeader = true
+        isRoot = false,
     )
 
     data object Insights : Screen("insights", Res.string.screen_stats, Icons.Default.Info)
@@ -51,7 +52,12 @@ sealed class Screen(
     data object Calendar : Screen("calendar", Res.string.screen_cal, Icons.Default.Event)
 
     data object CalendarSettings :
-        Screen("calendar_settings", Res.string.screen_cal_opts, Icons.Default.Settings)
+        Screen(
+            "calendar_settings",
+            Res.string.screen_cal_opts,
+            Icons.Default.Settings,
+            isRoot = false,
+        )
 
     data object Graph : Screen("graph", Res.string.screen_graph, Icons.Default.Share)
 
@@ -64,7 +70,7 @@ sealed class Screen(
         "project/{projectId}",
         Res.string.screen_project,
         Icons.AutoMirrored.Filled.List,
-        hasInternalHeader = true
+        isRoot = false,
     )
 
     data object AreaDetail :
@@ -72,7 +78,7 @@ sealed class Screen(
             "area/{areaId}",
             Res.string.screen_area,
             Icons.Default.LocationOn,
-            hasInternalHeader = true
+            isRoot = false,
         )
 
     data object Settings : Screen("settings", Res.string.screen_opts, Icons.Default.Settings)
@@ -81,31 +87,47 @@ sealed class Screen(
         "templates",
         Res.string.screen_templates,
         Icons.Default.Settings,
-        hasInternalHeader = true
+        isRoot = false,
     )
 
     data object Review : Screen(
         "review",
         Res.string.screen_review,
         Icons.Default.RateReview,
-        hasInternalHeader = true
     )
 
     data object Profile : Screen(
         "profile",
         Res.string.profile_title,
         Icons.Default.Person,
-        hasInternalHeader = true
     )
 
     data object Decisions : Screen(
         "decisions",
         Res.string.dash_decisions,
         Icons.Default.QuestionMark,
-        hasInternalHeader = true
     )
 
-    companion object {
+    companion object
+    {
+        /**
+         * Finds the Screen corresponding to the base segment of a navigation route.
+         *
+         * @param route The navigation route string, which may include path segments and query parameters (for example, "note/123?edit=true"); may be null.
+         * @return The matching `Screen` whose route's base segment equals the provided route's base segment, or `null` if `route` is null or no match exists.
+         */
+        fun fromRoute(route: String?): Screen?
+        {
+            if (route == null) return null
+            val currentRouteBase = route.split("/").first().split("?").first()
+            return listOf(
+                NoteDetail, ProjectDetail, AreaDetail, CalendarSettings,
+                Dashboard, Inbox, Search, Today, Focus, Track, Tasks, Notes,
+                Insights, Archive, Calendar, Graph, Projects, Areas,
+                Settings, Templates, Review, Profile, Decisions,
+            ).find { it.route.split("/").first() == currentRouteBase }
+        }
+
         val groupedItems by lazy {
             listOf(
                 Res.string.nav_core to listOf(Dashboard, Inbox, Search),

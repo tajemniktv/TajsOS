@@ -20,8 +20,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.data.NodeWithPin
-import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
+/**
+ * Renders a titled suggestion section displaying up to two clickable node entries with an optional description.
+ *
+ * @param title Section header text.
+ * @param icon Icon shown for each node row.
+ * @param color Color used for the title text, icon tint, and row border.
+ * @param nodes Candidate nodes to display; at most the first two items are rendered.
+ * @param onEditNode Callback invoked when a node row is clicked; receives the selected node's `id`.
+ * @param description Optional secondary text shown under the title when non-null.
+ */
 @Composable
 fun SuggestionGroup(
     title: String,

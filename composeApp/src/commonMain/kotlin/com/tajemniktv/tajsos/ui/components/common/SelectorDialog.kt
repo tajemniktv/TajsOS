@@ -22,8 +22,24 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.tajemniktv.tajsos.ui.design.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
+/**
+ * Displays a full-screen selector dialog presenting a grid of selectable options.
+ *
+ * When `show` is true this composable renders a modal dialog with a header, a two-column grid of option tiles, and a footer; tapping a tile calls `onSelect`, and dismissing calls `onDismiss`.
+ *
+ * @param show Whether the dialog is visible.
+ * @param onDismiss Callback invoked when the dialog should be dismissed.
+ * @param title Dialog title displayed in the header.
+ * @param prefix Short label shown above the title; defaults to "SYSTEM_SELECTOR // MODULE_INTAKE".
+ * @param options List of items to render as selectable tiles.
+ * @param selectedOption Currently highlighted option, or `null` if none.
+ * @param onSelect Callback invoked with the option that was tapped.
+ * @param optionName Function that returns the display name for an option.
+ * @param optionIcon Function that returns the icon for an option.
+ * @param optionSubtext Function that returns optional subtext for an option; return an empty string to omit it.
+ */
 @Composable
 fun <T> SelectorDialog(
     show: Boolean,

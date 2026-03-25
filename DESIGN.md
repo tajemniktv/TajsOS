@@ -2,7 +2,10 @@
 
 ## 1. Overview & Creative North Star
 
-**Creative North Star: "The Digital Curator"**
+**Creative North Star: "Digital Life System"**
+
+**TajsOS** is a local-first personal operating system for life, projects, thoughts, execution, and
+insight.
 
 This design system is not a utility; it is an intelligence. To reflect the "Second Brain" ethos, the
 UI must feel like a high-end, tactile instrument—think of a bespoke glass cockpit in a
