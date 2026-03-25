@@ -22,18 +22,22 @@ import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
 @Composable
-fun ProtocolTrigger(label: String, icon: ImageVector, color: Color, onClick: () -> Unit) {
+        /**
+         *
+         */
+fun ProtocolTrigger(label: String, icon: ImageVector, color: Color, onClick: () -> Unit)
+{
     Surface(
         onClick = onClick,
         modifier = Modifier.width(120.dp),
         color = color.copy(alpha = 0.1f),
         shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = BorderStroke(1.dp, color.copy(alpha = 0.3f))
+        border = BorderStroke(1.dp, color.copy(alpha = 0.3f)),
     ) {
         Column(
             modifier = Modifier.padding(TactileTheme.SpacingMd),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
         ) {
             Icon(icon, contentDescription = null, tint = color, modifier = Modifier.size(24.dp))
             Spacer(Modifier.height(8.dp))
@@ -43,7 +47,7 @@ fun ProtocolTrigger(label: String, icon: ImageVector, color: Color, onClick: () 
                 color = color,
                 fontWeight = FontWeight.Bold,
                 fontSize = 9.sp,
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
             )
         }
     }
