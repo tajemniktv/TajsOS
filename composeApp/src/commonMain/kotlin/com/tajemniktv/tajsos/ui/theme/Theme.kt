@@ -13,8 +13,7 @@ import androidx.compose.ui.unit.dp
 /**
  * Design Tokens
  */
-object TactileTheme
-{
+object TactileTheme {
     val Primary = PrimaryPurple
     val Background = DeepBackground
     val Surface = SurfaceDark
@@ -40,40 +39,30 @@ object TactileTheme
 }
 
 private val TajsDarkColorScheme =
-        darkColorScheme(
-            primary = TactileTheme.Primary,
-            background = TactileTheme.Background,
-            surface = TactileTheme.Surface,
-            onPrimary = TactileTheme.Background,
-            onBackground = TactileTheme.Text,
-            onSurface = TactileTheme.Text,
-            surfaceVariant = TactileTheme.Muted,
-            onSurfaceVariant = TactileTheme.Text,
-            error = TactileTheme.Error,
-        )
+    darkColorScheme(
+        primary = TactileTheme.Primary,
+        background = TactileTheme.Background,
+        surface = TactileTheme.Surface,
+        onPrimary = TactileTheme.Background,
+        onBackground = TactileTheme.Text,
+        onSurface = TactileTheme.Text,
+        surfaceVariant = TactileTheme.Muted,
+        onSurfaceVariant = TactileTheme.Text,
+        error = TactileTheme.Error,
+    )
 
 private val TajsLightColorScheme =
-        lightColorScheme(
-            primary = Purple40,
-            secondary = PurpleGrey40,
-            tertiary = Pink40,
-        )
+    lightColorScheme(
+        primary = Purple40,
+        secondary = PurpleGrey40,
+        tertiary = Pink40,
+    )
 
-/**
- * Provides the app's Material 3 theme using the project's color tokens and typography.
- *
- * The selected color scheme depends on `darkTheme`; the composed `content` is rendered
- * within this themed Material composition.
- *
- * @param darkTheme When `true`, applies the dark color scheme; when `false`, applies the light color scheme.
- * @param content Composable content to be displayed with the applied theme.
- */
 @Composable
-fun TajsOSTheme(
+internal fun TajsOSTheme(
     darkTheme: Boolean = true,
     content: @Composable () -> Unit,
-)
-{
+) {
     val colorScheme = if (darkTheme) TajsDarkColorScheme else TajsLightColorScheme
     val typography = tajsOSTypography()
 

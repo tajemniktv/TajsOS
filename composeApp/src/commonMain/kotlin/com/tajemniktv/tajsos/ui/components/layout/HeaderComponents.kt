@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved. 
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
 package com.tajemniktv.tajsos.ui.components.layout
@@ -28,13 +28,13 @@ import com.tajemniktv.tajsos.ui.theme.TactileTheme
  * @param tintColor Color used for the "T" glyph.
  */
 @Composable
-fun TBoxIcon(tintColor: Color)
-{
+fun TBoxIcon(tintColor: Color) {
     Box(
-        modifier = Modifier
-            .size(32.dp)
-            .clip(RoundedCornerShape(4.dp))
-            .background(TactileTheme.Surface),
+        modifier =
+            Modifier
+                .size(32.dp)
+                .clip(RoundedCornerShape(4.dp))
+                .background(TactileTheme.Surface),
         contentAlignment = Alignment.Center,
     ) {
         Text(
@@ -52,9 +52,9 @@ fun TBoxIcon(tintColor: Color)
  * The chip is a semi-transparent black surface with a 1.dp border and centered row content.
  *
  * @param tintColor Color used for the status dot; when equal to `TactileTheme.Primary` the dot is rendered using `TactileTheme.Success` instead.
+ */
 @Composable
-fun SystemOnlineStatus(tintColor: Color)
-{
+fun SystemOnlineStatus(tintColor: Color) {
     Surface(
         color = Color.Black.copy(alpha = 0.5f),
         shape = CircleShape,
@@ -65,8 +65,11 @@ fun SystemOnlineStatus(tintColor: Color)
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Box(
-                modifier = Modifier.size(6.dp).clip(CircleShape)
-                    .background(if (tintColor == TactileTheme.Primary) TactileTheme.Success else tintColor),
+                modifier =
+                    Modifier
+                        .size(6.dp)
+                        .clip(CircleShape)
+                        .background(if (tintColor == TactileTheme.Primary) TactileTheme.Success else tintColor),
             )
             Spacer(Modifier.width(8.dp))
             Text(
@@ -86,8 +89,7 @@ fun SystemOnlineStatus(tintColor: Color)
  * search icon (18.dp) and the placeholder text "SEARCH YOUR LIFE..." laid out horizontally with padding.
  */
 @Composable
-fun DesktopSearchSurface()
-{
+fun DesktopSearchSurface() {
     Surface(
         color = TactileTheme.Surface,
         shape = RoundedCornerShape(TactileTheme.RadiusMd),

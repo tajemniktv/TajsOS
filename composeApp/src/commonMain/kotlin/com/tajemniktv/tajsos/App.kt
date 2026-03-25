@@ -2,6 +2,8 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
+@file:Suppress("ktlint:standard:no-wildcard-imports")
+
 package com.tajemniktv.tajsos
 
 import androidx.compose.foundation.background
@@ -33,15 +35,15 @@ import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.common.CaptureSheet
 import com.tajemniktv.tajsos.ui.components.layout.*
+import com.tajemniktv.tajsos.ui.screens.*
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
-import com.tajemniktv.tajsos.ui.screens.*
 import kotlinx.coroutines.launch
-import kotlin.time.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
+import kotlin.time.Clock
 
 /**
  * Hosts the application's top-level UI: sets up navigation, collects app state from the ViewModel,
@@ -60,8 +62,7 @@ fun App(
     onVoiceCapture: (() -> Unit)? = null,
     voiceCaptureResult: String? = null,
     onVoiceCaptureConsumed: () -> Unit = {},
-)
-{
+) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
@@ -83,21 +84,20 @@ fun App(
 
     var showCaptureSheetState by remember { mutableStateOf(false) }
 
-    val screen = remember(currentDestination) {
-        Screen.fromRoute(currentDestination?.route)
-    }
+    val screen =
+        remember(currentDestination) {
+            Screen.fromRoute(currentDestination?.route)
+        }
 
     TajsOSTheme {
         BoxWithConstraints {
             val isDesktop = maxWidth > 800.dp
 
             val navigate: (String) -> Unit = { route ->
-                if (currentDestination?.route != route)
-                {
+                if (currentDestination?.route != route) {
                     val targetScreen = Screen.fromRoute(route)
                     navController.navigate(route) {
-                        if (targetScreen?.isRoot == true)
-                        {
+                        if (targetScreen?.isRoot == true) {
                             popUpTo(navController.graph.findStartDestination().id) {
                                 saveState = true
                             }
@@ -196,27 +196,26 @@ private fun AppScaffold(
     currentMode: ModeEntity?,
     isDesktop: Boolean,
     onNavigate: (String) -> Unit,
-)
-{
+) {
     val now = Clock.System.now()
     val localNow = now.toLocalDateTime(TimeZone.currentSystemDefault())
     val currentHour = localNow.hour
 
-    val vibeStringRes = when (currentHour)
-    {
-        in 5..11  -> Res.string.dash_vibe_morning
-        in 12..17 -> Res.string.dash_vibe_afternoon
-        in 18..22 -> Res.string.dash_vibe_evening
-        else      -> Res.string.dash_vibe_night
-    }
+    val vibeStringRes =
+        when (currentHour)
+        {
+            in 5..11 -> Res.string.dash_vibe_morning
+            in 12..17 -> Res.string.dash_vibe_afternoon
+            in 18..22 -> Res.string.dash_vibe_evening
+            else -> Res.string.dash_vibe_night
+        }
 
-    val subtitle = if (screen == Screen.Dashboard)
-    {
-        stringResource(vibeStringRes)
-    } else
-    {
-        screen?.label?.let { stringResource(it) } ?: ""
-    }
+    val subtitle =
+        if (screen == Screen.Dashboard) {
+            stringResource(vibeStringRes)
+        } else {
+            screen?.label?.let { stringResource(it) } ?: ""
+        }
 
     val tintColor = currentMode?.themeColor?.let { Color(it) } ?: TactileTheme.Primary
 
@@ -224,16 +223,13 @@ private fun AppScaffold(
         topBar = {
             TopAppBar(
                 navigationIcon = {
-                    if (screen?.isRoot == true)
-                    {
-                        if (!isDesktop)
-                        {
+                    if (screen?.isRoot == true) {
+                        if (!isDesktop) {
                             IconButton(onClick = { scope.launch { drawerState.open() } }) {
                                 TBoxIcon(tintColor = tintColor)
                             }
                         }
-                    } else
-                    {
+                    } else {
                         IconButton(onClick = { navController.popBackStack() }) {
                             Icon(
                                 Icons.AutoMirrored.Filled.ArrowBack,
@@ -249,15 +245,21 @@ private fun AppScaffold(
                         status = "OK",
                         color = tintColor,
                         subtitle = subtitle,
-                        subtitleStyle = if (screen == Screen.Dashboard) MaterialTheme.typography.titleSmall else MaterialTheme.typography.titleMedium,
+                        subtitleStyle =
+                            if (screen ==
+                                Screen.Dashboard
+                            ) {
+                                MaterialTheme.typography.titleSmall
+                            } else {
+                                MaterialTheme.typography.titleMedium
+                            },
                     )
                 },
                 actions = {
                     val localActions = LocalHeaderActions.current
                     localActions()
 
-                    if (isDesktop && screen == Screen.Dashboard)
-                    {
+                    if (isDesktop && screen == Screen.Dashboard) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -266,17 +268,17 @@ private fun AppScaffold(
                             DesktopSearchSurface()
 
                             Box(
-                                modifier = Modifier
-                                    .size(40.dp)
-                                    .background(
-                                        TactileTheme.Surface,
-                                        RoundedCornerShape(TactileTheme.RadiusMd),
-                                    )
-                                    .border(
-                                        1.dp,
-                                        TactileTheme.Border,
-                                        RoundedCornerShape(TactileTheme.RadiusMd),
-                                    ),
+                                modifier =
+                                    Modifier
+                                        .size(40.dp)
+                                        .background(
+                                            TactileTheme.Surface,
+                                            RoundedCornerShape(TactileTheme.RadiusMd),
+                                        ).border(
+                                            1.dp,
+                                            TactileTheme.Border,
+                                            RoundedCornerShape(TactileTheme.RadiusMd),
+                                        ),
                                 contentAlignment = Alignment.Center,
                             ) {
                                 Icon(
@@ -287,8 +289,7 @@ private fun AppScaffold(
                                 )
                             }
                         }
-                    } else
-                    {
+                    } else {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.padding(end = 8.dp),
@@ -306,14 +307,13 @@ private fun AppScaffold(
                     }
                 },
                 colors =
-                        TopAppBarDefaults.topAppBarColors(
-                            containerColor = MaterialTheme.colorScheme.background,
-                        ),
+                    TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.background,
+                    ),
             )
         },
         floatingActionButton = {
-            if (!isDesktop || currentDestination?.route != Screen.Dashboard.route)
-            {
+            if (!isDesktop || currentDestination?.route != Screen.Dashboard.route) {
                 FloatingActionButton(
                     onClick = { onShowCaptureSheet(true) },
                     containerColor = MaterialTheme.colorScheme.primary,
@@ -392,10 +392,10 @@ private fun AppScaffold(
             }
             composable(Screen.ProjectDetail.route) { backStackEntry ->
                 val projectId =
-                        backStackEntry.savedStateHandle
-                            .get<Any>("projectId")
-                            ?.toString()
-                            ?.toLongOrNull() ?: -1L
+                    backStackEntry.savedStateHandle
+                        .get<Any>("projectId")
+                        ?.toString()
+                        ?.toLongOrNull() ?: -1L
                 ProjectDetailScreen(
                     viewModel,
                     projectId,
@@ -405,10 +405,10 @@ private fun AppScaffold(
             }
             composable(Screen.AreaDetail.route) { backStackEntry ->
                 val areaId =
-                        backStackEntry.savedStateHandle
-                            .get<Any>("areaId")
-                            ?.toString()
-                            ?.toLongOrNull() ?: -1L
+                    backStackEntry.savedStateHandle
+                        .get<Any>("areaId")
+                        ?.toString()
+                        ?.toLongOrNull() ?: -1L
                 AreaDetailScreen(
                     viewModel,
                     areaId,
@@ -426,10 +426,10 @@ private fun AppScaffold(
             }
             composable(Screen.NoteDetail.route) { backStackEntry ->
                 val noteId =
-                        backStackEntry.savedStateHandle
-                            .get<Any>("noteId")
-                            ?.toString()
-                            ?.toLongOrNull() ?: -1L
+                    backStackEntry.savedStateHandle
+                        .get<Any>("noteId")
+                        ?.toString()
+                        ?.toLongOrNull() ?: -1L
                 NoteDetailScreen(
                     viewModel,
                     noteId,
@@ -461,30 +461,35 @@ private fun AppScaffold(
             composable(Screen.Profile.route) { ProfileScreen(viewModel) }
         }
 
-        if (showCaptureSheet)
-        {
+        if (showCaptureSheet) {
             CaptureSheet(
                 onDismiss = {
                     onShowCaptureSheet(false)
                     onVoiceCaptureConsumed()
                 },
                 onCapture = {
-                        text,
-                        type,
-                        projectId,
-                        areaId,
-                        isRec,
-                        recInt,
-                        remAt,
-                        ctx,
-                        sticky,
-                        decisionCat,
+                    text,
+                    type,
+                    projectId,
+                    areaId,
+                    isRec,
+                    recInt,
+                    remAt,
+                    ctx,
+                    sticky,
+                    decisionCat,
                     ->
                     when (type)
                     {
-                        "project" -> viewModel.addProject(text, "", areaId)
-                        "area"    -> viewModel.addArea(text)
-                        else      ->
+                        "project" -> {
+                            viewModel.addProject(text, "", areaId)
+                        }
+
+                        "area" -> {
+                            viewModel.addArea(text)
+                        }
+
+                        else -> {
                             viewModel.addNode(
                                 text,
                                 "",
@@ -498,6 +503,7 @@ private fun AppScaffold(
                                 isSticky = sticky,
                                 decisionCategory = decisionCat,
                             )
+                        }
                     }
                     // Note: if multi-capture is on, CaptureSheet handles not closing itself
                 },

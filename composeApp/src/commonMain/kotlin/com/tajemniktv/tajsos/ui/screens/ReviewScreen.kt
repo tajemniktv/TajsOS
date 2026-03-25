@@ -38,26 +38,27 @@ import tajsos.composeapp.generated.resources.*
 fun ReviewScreen(
     viewModel: MainViewModel,
     onBack: () -> Unit,
-)
-{
+) {
     var reviewType by remember { mutableStateOf<String?>(null) }
     var currentStep by remember { mutableStateOf(0) }
 
     val dashboardState by viewModel.dashboardUIState.collectAsState()
     val insights by viewModel.insights.collectAsState()
 
-    val dailySteps = listOf(
-        Res.string.review_step_mood_energy,
-        Res.string.review_step_wins,
-        Res.string.review_step_blockers,
-        Res.string.review_step_plan,
-    )
-    val weeklySteps = listOf(
-        Res.string.review_step_stats,
-        Res.string.review_step_cleanup,
-        Res.string.review_step_archive,
-        Res.string.review_step_goals,
-    )
+    val dailySteps =
+        listOf(
+            Res.string.review_step_mood_energy,
+            Res.string.review_step_wins,
+            Res.string.review_step_blockers,
+            Res.string.review_step_plan,
+        )
+    val weeklySteps =
+        listOf(
+            Res.string.review_step_stats,
+            Res.string.review_step_cleanup,
+            Res.string.review_step_archive,
+            Res.string.review_step_goals,
+        )
 
     val dailyLabel = stringResource(Res.string.review_daily)
     val weeklyLabel = stringResource(Res.string.review_weekly)
@@ -73,31 +74,31 @@ fun ReviewScreen(
         optionName = {
             when (it)
             {
-                "daily"   -> dailyLabel
-                "weekly"  -> weeklyLabel
+                "daily" -> dailyLabel
+                "weekly" -> weeklyLabel
                 "monthly" -> monthlyLabel
-                else      -> it
+                else -> it
             }
         },
         optionIcon = {
             when (it)
             {
-                "daily"   -> Icons.Default.WbSunny
-                "weekly"  -> Icons.Default.DateRange
+                "daily" -> Icons.Default.WbSunny
+                "weekly" -> Icons.Default.DateRange
                 "monthly" -> Icons.Default.CalendarMonth
-                else      -> Icons.Default.RateReview
+                else -> Icons.Default.RateReview
             }
         },
         optionSubtext = { "REV_SYST_${it.uppercase()}" },
     )
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(TactileTheme.Background),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(TactileTheme.Background),
     ) {
-        if (reviewType != null)
-        {
+        if (reviewType != null) {
             val steps = if (reviewType == "daily") dailySteps else weeklySteps
             ReviewFlow(
                 type = reviewType!!,
@@ -144,8 +145,7 @@ fun ReviewFlow(
     insights: com.tajemniktv.tajsos.ui.InsightsData,
     onNext: () -> Unit,
     onComplete: (String, Int?, Int?) -> Unit,
-)
-{
+) {
     var mood by remember { mutableStateOf(3) }
     var energy by remember { mutableStateOf(3) }
     val answers = remember { mutableStateMapOf<Int, String>() }
@@ -168,8 +168,7 @@ fun ReviewFlow(
         Box(Modifier.weight(1f)) {
             when (steps[currentStep])
             {
-                Res.string.review_step_mood_energy                                                                                                                      ->
-                {
+                Res.string.review_step_mood_energy -> {
                     Column {
                         Text("How are you feeling right now?")
                         Slider(
@@ -191,8 +190,7 @@ fun ReviewFlow(
                     }
                 }
 
-                Res.string.review_step_stats                                                                                                                            ->
-                {
+                Res.string.review_step_stats -> {
                     Column(Modifier.verticalScroll(rememberScrollState())) {
                         Text("Capacity: ${insights.weeklyCompletions} tasks done.")
                         Text("Execution Ratio: ${(insights.captureToActionRatio * 100).toInt()}%")
@@ -207,10 +205,9 @@ fun ReviewFlow(
                     }
                 }
 
-                Res.string.review_step_archive                                                                                                                          ->
-                {
+                Res.string.review_step_archive -> {
                     val archivedSuggestions =
-                            dashboardState.archivedThisWeek // Just showing what was done, but could suggest others
+                        dashboardState.archivedThisWeek // Just showing what was done, but could suggest others
                     Column {
                         Text("You archived ${archivedSuggestions.size} items this week. Anything else to let go of?")
                         LazyColumn(Modifier.height(200.dp)) {
@@ -237,8 +234,7 @@ fun ReviewFlow(
                     }
                 }
 
-                Res.string.review_step_wins, Res.string.review_step_blockers, Res.string.review_step_plan, Res.string.review_step_cleanup, Res.string.review_step_goals ->
-                {
+                Res.string.review_step_wins, Res.string.review_step_blockers, Res.string.review_step_plan, Res.string.review_step_cleanup, Res.string.review_step_goals -> {
                     TextField(
                         value = answers[currentStep] ?: "",
                         onValueChange = { answers[currentStep] = it },
@@ -253,22 +249,21 @@ fun ReviewFlow(
             modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
             horizontalArrangement = Arrangement.End,
         ) {
-            if (currentStep < steps.size - 1)
-            {
+            if (currentStep < steps.size - 1) {
                 Button(onClick = onNext) {
                     Text(stringResource(Res.string.review_next))
                 }
-            } else
-            {
+            } else {
                 val completeLabel = stringResource(Res.string.review_complete)
                 Button(
                     onClick = {
                         // Note: joinToString here will use the resource objects, not their string values.
                         // This is a bit tricky since stringResource can only be called in @Composable.
                         // For now, let's keep it simple or assume the user wants the content to be in English for the DB.
-                        val content = steps.indices.joinToString("\n\n") { i ->
-                            "Step $i:\n${answers[i] ?: "N/A"}"
-                        }
+                        val content =
+                            steps.indices.joinToString("\n\n") { i ->
+                                "Step $i:\n${answers[i] ?: "N/A"}"
+                            }
                         onComplete(content, mood, energy)
                     },
                 ) {
