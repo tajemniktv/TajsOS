@@ -1,0 +1,31 @@
+# CODEOWNERS for tajemniktv/TajsOS
+
+## Default owner for the whole repository
+*       @tajemniktv
+
+## Module-level owners
+### Core/shared logic and data models
+/shared/ @tajemniktv
+
+### Compose UI and shared app code
+/composeApp/ @tajemniktv
+
+### Android-specific entrypoint and Android-only code
+/androidApp/ @tajemniktv
+
+### Server/backend (Ktor)
+/server/ @tajemniktv
+
+## Docs, config, and GitHub workflow files
+/docs/ @tajemniktv
+/.github/ @tajemniktv
+
+## Website / frontend (Astro) and public assets
+/website/ @tajemniktv
+
+## Scripts, build outputs, and logs
+/scripts/ @tajemniktv
+/build/logs/ @tajemniktv
+**/logs @tajemniktv
+
+## Specific file exceptions can be added below. Last matching pattern wins.
