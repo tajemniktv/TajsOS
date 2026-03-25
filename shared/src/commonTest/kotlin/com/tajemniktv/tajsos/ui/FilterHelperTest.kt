@@ -175,37 +175,87 @@ class FilterHelperTest {
 
         val nodes = listOf(node1, node2)
 
-        val filteredByProject = FilterHelper.filterAndSortNodes(
-            nodes = nodes, query = "", type = null, status = null,
-            projectId = 10L, areaId = null, linkedToId = null, maxMins = null, energy = null, friction = null, relations = emptyList()
-        )
+        val filteredByProject =
+            FilterHelper.filterAndSortNodes(
+                nodes = nodes,
+                query = "",
+                type = null,
+                status = null,
+                projectId = 10L,
+                areaId = null,
+                linkedToId = null,
+                maxMins = null,
+                energy = null,
+                friction = null,
+                relations = emptyList(),
+            )
         assertEquals(1, filteredByProject.size)
         assertEquals(1L, filteredByProject[0].node.id)
 
-        val filteredByArea = FilterHelper.filterAndSortNodes(
-            nodes = nodes, query = "", type = null, status = null,
-            projectId = null, areaId = 20L, linkedToId = null, maxMins = null, energy = null, friction = null, relations = emptyList()
-        )
+        val filteredByArea =
+            FilterHelper.filterAndSortNodes(
+                nodes = nodes,
+                query = "",
+                type = null,
+                status = null,
+                projectId = null,
+                areaId = 20L,
+                linkedToId = null,
+                maxMins = null,
+                energy = null,
+                friction = null,
+                relations = emptyList(),
+            )
         assertEquals(2, filteredByArea.size)
 
-        val filteredByMins = FilterHelper.filterAndSortNodes(
-            nodes = nodes, query = "", type = null, status = null,
-            projectId = null, areaId = null, linkedToId = null, maxMins = 30, energy = null, friction = null, relations = emptyList()
-        )
+        val filteredByMins =
+            FilterHelper.filterAndSortNodes(
+                nodes = nodes,
+                query = "",
+                type = null,
+                status = null,
+                projectId = null,
+                areaId = null,
+                linkedToId = null,
+                maxMins = 30,
+                energy = null,
+                friction = null,
+                relations = emptyList(),
+            )
         assertEquals(1, filteredByMins.size)
         assertEquals(1L, filteredByMins[0].node.id)
 
-        val filteredByEnergy = FilterHelper.filterAndSortNodes(
-            nodes = nodes, query = "", type = null, status = null,
-            projectId = null, areaId = null, linkedToId = null, maxMins = null, energy = 3, friction = null, relations = emptyList()
-        )
+        val filteredByEnergy =
+            FilterHelper.filterAndSortNodes(
+                nodes = nodes,
+                query = "",
+                type = null,
+                status = null,
+                projectId = null,
+                areaId = null,
+                linkedToId = null,
+                maxMins = null,
+                energy = 3,
+                friction = null,
+                relations = emptyList(),
+            )
         assertEquals(1, filteredByEnergy.size)
         assertEquals(2L, filteredByEnergy[0].node.id)
 
-        val filteredByFriction = FilterHelper.filterAndSortNodes(
-            nodes = nodes, query = "", type = null, status = null,
-            projectId = null, areaId = null, linkedToId = null, maxMins = null, energy = null, friction = "easy", relations = emptyList()
-        )
+        val filteredByFriction =
+            FilterHelper.filterAndSortNodes(
+                nodes = nodes,
+                query = "",
+                type = null,
+                status = null,
+                projectId = null,
+                areaId = null,
+                linkedToId = null,
+                maxMins = null,
+                energy = null,
+                friction = "easy",
+                relations = emptyList(),
+            )
         assertEquals(1, filteredByFriction.size)
         assertEquals(1L, filteredByFriction[0].node.id)
     }
@@ -221,12 +271,20 @@ class FilterHelperTest {
             RelationEntity(id = 2, fromNodeId = 100, toNodeId = 2, relationType = "RELATED")
         )
 
-        val filtered = FilterHelper.filterAndSortNodes(
-            nodes = listOf(node1, node2, node3),
-            query = "", type = null, status = null, projectId = null, areaId = null,
-            linkedToId = 100L, maxMins = null, energy = null, friction = null,
-            relations = relations
-        )
+        val filtered =
+            FilterHelper.filterAndSortNodes(
+                nodes = listOf(node1, node2, node3),
+                query = "",
+                type = null,
+                status = null,
+                projectId = null,
+                areaId = null,
+                linkedToId = 100L,
+                maxMins = null,
+                energy = null,
+                friction = null,
+                relations = relations,
+            )
 
         assertEquals(2, filtered.size)
         assertTrue(filtered.any { it.node.id == 1L })
