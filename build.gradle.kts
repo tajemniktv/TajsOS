@@ -14,4 +14,30 @@ plugins {
     alias(libs.plugins.kotlinJvm) apply false
     alias(libs.plugins.kotlinMultiplatform) apply false
     alias(libs.plugins.ktor) apply false
+    alias(libs.plugins.sonarqube)
+}
+
+sonar {
+    properties {
+        property("sonar.projectKey", "tajemniktv_TajsOS")
+        property("sonar.organization", "tajemniktv")
+        property("sonar.host.url", "https://sonarcloud.io")
+    }
+}
+
+subprojects {
+    apply(plugin = "org.sonarqube")
+
+    sonarqube {
+        properties {
+            property(
+                "sonar.sources",
+                "src/commonMain/kotlin,src/androidMain/kotlin,src/jvmMain/kotlin",
+            )
+            property(
+                "sonar.tests",
+                "src/commonTest/kotlin,src/androidTest/kotlin,src/jvmTest/kotlin",
+            )
+        }
+    }
 }
