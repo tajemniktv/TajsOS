@@ -160,7 +160,7 @@ class FilterHelperTest {
             areaId = 20,
             estimatedMinutes = 15,
             energyLevel = 1,
-            friction = "easy"
+            friction = "easy",
         )
         val node2 = createTestNode(
             id = 2,
@@ -169,113 +169,58 @@ class FilterHelperTest {
             areaId = 20,
             estimatedMinutes = 60,
             energyLevel = 3,
-            friction = "hard"
+            friction = "hard",
         )
         return listOf(node1, node2)
     }
 
-    @Test
-    fun testFilterExtendedPropertiesByProject() {
-        val nodes = createNodesForExtendedTests()
-        val filtered =
-            FilterHelper.filterAndSortNodes(
-                nodes = nodes,
-                query = "",
-                type = null,
-                status = null,
-                projectId = 10L,
-                areaId = null,
-                linkedToId = null,
-                maxMins = null,
-                energy = null,
-                friction = null,
-                relations = emptyList(),
-            )
-        assertEquals(1, filtered.size)
-        assertEquals(1L, filtered[0].node.id)
+    private fun assertFilterResult(
+        nodes: List<NodeWithPin>,
+        expectedCount: Int,
+        expectedFirstId: Long? = null,
+        projectId: Long? = null,
+        areaId: Long? = null,
+        maxMins: Int? = null,
+        energy: Int? = null,
+        friction: String? = null,
+    ) {
+        val filtered = FilterHelper.filterAndSortNodes(
+            nodes = nodes,
+            query = "",
+            type = null,
+            status = null,
+            projectId = projectId,
+            areaId = areaId,
+            linkedToId = null,
+            maxMins = maxMins,
+            energy = energy,
+            friction = friction,
+            relations = emptyList(),
+        )
+        assertEquals(expectedCount, filtered.size)
+        if (expectedFirstId != null) {
+            assertEquals(expectedFirstId, filtered[0].node.id)
+        }
     }
 
     @Test
-    fun testFilterExtendedPropertiesByArea() {
+    fun testFilterExtendedProperties() {
         val nodes = createNodesForExtendedTests()
-        val filtered =
-            FilterHelper.filterAndSortNodes(
-                nodes = nodes,
-                query = "",
-                type = null,
-                status = null,
-                projectId = null,
-                areaId = 20L,
-                linkedToId = null,
-                maxMins = null,
-                energy = null,
-                friction = null,
-                relations = emptyList(),
-            )
-        assertEquals(2, filtered.size)
-    }
 
-    @Test
-    fun testFilterExtendedPropertiesByMaxMins() {
-        val nodes = createNodesForExtendedTests()
-        val filtered =
-            FilterHelper.filterAndSortNodes(
-                nodes = nodes,
-                query = "",
-                type = null,
-                status = null,
-                projectId = null,
-                areaId = null,
-                linkedToId = null,
-                maxMins = 30,
-                energy = null,
-                friction = null,
-                relations = emptyList(),
-            )
-        assertEquals(1, filtered.size)
-        assertEquals(1L, filtered[0].node.id)
-    }
+        // By Project
+        assertFilterResult(nodes, projectId = 10L, expectedCount = 1, expectedFirstId = 1L)
 
-    @Test
-    fun testFilterExtendedPropertiesByEnergy() {
-        val nodes = createNodesForExtendedTests()
-        val filtered =
-            FilterHelper.filterAndSortNodes(
-                nodes = nodes,
-                query = "",
-                type = null,
-                status = null,
-                projectId = null,
-                areaId = null,
-                linkedToId = null,
-                maxMins = null,
-                energy = 3,
-                friction = null,
-                relations = emptyList(),
-            )
-        assertEquals(1, filtered.size)
-        assertEquals(2L, filtered[0].node.id)
-    }
+        // By Area
+        assertFilterResult(nodes, areaId = 20L, expectedCount = 2)
 
-    @Test
-    fun testFilterExtendedPropertiesByFriction() {
-        val nodes = createNodesForExtendedTests()
-        val filtered =
-            FilterHelper.filterAndSortNodes(
-                nodes = nodes,
-                query = "",
-                type = null,
-                status = null,
-                projectId = null,
-                areaId = null,
-                linkedToId = null,
-                maxMins = null,
-                energy = null,
-                friction = "easy",
-                relations = emptyList(),
-            )
-        assertEquals(1, filtered.size)
-        assertEquals(1L, filtered[0].node.id)
+        // By MaxMins
+        assertFilterResult(nodes, maxMins = 30, expectedCount = 1, expectedFirstId = 1L)
+
+        // By Energy
+        assertFilterResult(nodes, energy = 3, expectedCount = 1, expectedFirstId = 2L)
+
+        // By Friction
+        assertFilterResult(nodes, friction = "easy", expectedCount = 1, expectedFirstId = 1L)
     }
 
     @Test
@@ -286,7 +231,7 @@ class FilterHelperTest {
 
         val relations = listOf(
             RelationEntity(id = 1, fromNodeId = 1, toNodeId = 100, relationType = "RELATED"),
-            RelationEntity(id = 2, fromNodeId = 100, toNodeId = 2, relationType = "RELATED")
+            RelationEntity(id = 2, fromNodeId = 100, toNodeId = 2, relationType = "RELATED"),
         )
 
         val filtered =
