@@ -31,6 +31,11 @@ import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 import kotlin.math.roundToInt
 
+/**
+ * Renders the daily tracking screen UI for reporting symptoms, physiological scores, medication intake, and viewing history.
+ *
+ * Displays interactive sliders for energy, affective state, cognition, system tension, and recovery; a medication selection card; a freeform notes field; and a save button that submits the current values to the provided view model. The list of past track entries is shown below for reference.
+ */
 @Composable
 fun TrackScreen(viewModel: MainViewModel)
 {
@@ -234,6 +239,12 @@ fun TrackScreen(viewModel: MainViewModel)
     }
 }
 
+/**
+ * Renders the static header for the tracking screen.
+ *
+ * Shows a top row with a mail icon, app label ("TAJS OS") and profile icon, followed by the
+ * screen title, subtitle, and descriptive text using theme typography and spacing.
+ */
 @Composable
 fun HeaderSection()
 {
@@ -276,6 +287,15 @@ fun HeaderSection()
     }
 }
 
+/**
+ * Displays a card for confirming medication intake with a header, a master checkbox, and a clickable list of medications.
+ *
+ * @param medications The medications to display; when a medication's `brandNames` is not empty it is shown alongside the substance.
+ * @param selectedMedIds IDs of medications currently selected as taken.
+ * @param onToggleMed Called with a medication ID when that medication row is toggled.
+ * @param onToggleAll Called when the master checkbox (toggle all) is activated.
+ * @param allMedsTaken `true` when the master checkbox should be shown checked, `false` otherwise.
+ */
 @Composable
 fun MedicationSyncCard(
     medications: List<com.tajemniktv.tajsos.data.MedicationEntity>,
@@ -360,6 +380,15 @@ fun MedicationSyncCard(
     }
 }
 
+/**
+ * Renders a styled card showing a single tracking history entry.
+ *
+ * Shows the entry date, an optional "meds ok" indicator, status chips for mood/energy/cognitive/system
+ * scores, an optional sleep value, and an optional symptom note.
+ *
+ * @param entry TrackEntryEntity containing the fields displayed: `date`, `tookMeds`, `moodScore`,
+ *              `energyScore`, `focusScore`, `anxietyScore`, optional `sleepScore`, and `symptomNote`. 
+ */
 @Composable
 fun TrackHistoryItem(entry: TrackEntryEntity)
 {
@@ -419,6 +448,14 @@ fun TrackHistoryItem(entry: TrackEntryEntity)
     }
 }
 
+/**
+ * Renders a compact status chip showing a label and its numeric value.
+ *
+ * If `value` is `null`, this composable does not render anything.
+ *
+ * @param label The text label displayed before the value.
+ * @param value The numeric value to display; when `null`, the chip is omitted.
+ */
 @Composable
 fun StatusChip(label: String, value: Int?)
 {

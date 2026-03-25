@@ -34,6 +34,18 @@ import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 
+/**
+ * Renders the app sidebar UI: a profile header, an optional horizontal mode selector,
+ * a scrollable grouped navigation menu, an optional "NEW ENTRY" action button, and an uptime footer.
+ *
+ * @param currentDestination Current navigation destination used to determine which menu item is selected.
+ * @param onNavigate Callback invoked with the target `Screen` when a navigation item is clicked.
+ * @param onNewEntry Optional callback invoked when the "NEW ENTRY" button is pressed; when `null` the button is omitted.
+ * @param currentMode Currently active mode (used for header styling and mode selection state); may be `null`.
+ * @param allModes List of available modes to display in the mode selector; when empty the selector is omitted.
+ * @param onModeSelect Callback invoked with the selected mode's id when a mode chip is clicked.
+ * @param modifier Modifier for external layout adjustments.
+ */
 @Composable
 fun SidebarContent(
     currentDestination: NavDestination?,

@@ -22,6 +22,16 @@ import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 import androidx.compose.ui.graphics.Color
 
+/**
+ * Renders a centered empty-state UI with an icon, a primary message, and an optional secondary description.
+ *
+ * The icon displays a subtle pulsing tint to draw attention; when `description` is `null` the secondary text is omitted.
+ *
+ * @param message Primary text displayed below the icon.
+ * @param modifier Modifier applied to the root container.
+ * @param icon Icon shown above the text.
+ * @param description Optional secondary text shown under the primary message; pass `null` to hide it.
+ */
 @Composable
 fun EmptyState(
     message: String,

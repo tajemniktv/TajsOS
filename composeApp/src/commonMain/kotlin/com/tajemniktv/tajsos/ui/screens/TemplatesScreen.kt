@@ -21,6 +21,19 @@ import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 
+/**
+ * Displays the templates screen: a header action for adding templates, a full-screen list of existing
+ * templates (or an empty-state message), delete controls for each template, and a dialog to create a
+ * new template.
+ *
+ * The list shows each template's name and an uppercase localized type label when available.
+ * The Add action is provided to the surrounding UI via `LocalHeaderActions`. Tapping Add opens a
+ * dialog that collects a template name and type; the create button is enabled only when the name
+ * is not blank.
+ *
+ * @param viewModel Provides template data and actions (observe `allTemplates`, `addTemplate`, `deleteTemplate`).
+ * @param onBack Callback invoked to perform back navigation.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TemplatesScreen(

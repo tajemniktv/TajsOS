@@ -23,6 +23,14 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 
+/**
+ * Renders an interactive, pannable graph of nodes and relations driven by the provided view model.
+ *
+ * The UI displays nodes and connecting relations, allows dragging to pan the canvas, and detects taps on nodes.
+ *
+ * @param viewModel Provides the streams of nodes, relations, and areas used to populate and position the graph.
+ * @param onNodeClick Called with the tapped node's id when the user taps a node on the graph.
+ */
 @Composable
 fun GraphScreen(viewModel: MainViewModel, onNodeClick: (Long) -> Unit)
 {

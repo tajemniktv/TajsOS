@@ -24,6 +24,16 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 
+/**
+ * Displays the projects screen with search, status filters, project list, and add-project flow.
+ *
+ * Collects projects and nodes from the provided ViewModel, derives filtered projects and nodes grouped
+ * by project ID, renders the header, search field, status chips, and the project list, and shows an
+ * add-project dialog that creates a new project node and updates its status.
+ *
+ * @param viewModel Source of project and node state and actions for creating/updating nodes.
+ * @param onNavigateTo Callback invoked with a navigation route when navigating from a project item.
+ */
 @Composable
 fun ProjectsScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit)
 {
@@ -115,6 +125,14 @@ fun ProjectsScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit)
     }
 }
 
+/**
+ * Shows a dialog for creating a new project.
+ *
+ * The dialog collects a project name, description, and status; the confirm button is enabled only when the name is not blank.
+ *
+ * @param onDismiss Called when the dialog is dismissed or the cancel action is chosen.
+ * @param onConfirm Called with the entered project `name`, `description`, and `status` (`"active"` or `"someday"`) when the user confirms creation.
+ */
 @Composable
 fun AddProjectDialog(onDismiss: () -> Unit, onConfirm: (String, String, String) -> Unit)
 {
@@ -172,6 +190,16 @@ data class ProjectListState(
     val nodesByProjectId: Map<Long?, List<NodeWithPin>>,
 )
 
+/**
+ * Renders either an empty-state prompt or a scrollable list of projects based on the given state.
+ *
+ * If there are no filtered projects and the search query is empty, displays a centered message and a button that invokes the add-project callback.
+ * Otherwise displays a vertically spaced list of project items that show each project's progress; project items invoke navigation via the provided callbacks on click and long-click.
+ *
+ * @param state Current view state containing filtered projects, the search query, and nodes grouped by project id.
+ * @param onNavigateTo Callback invoked with a destination route string to navigate to a screen.
+ * @param onShowAddDialog Callback invoked to request showing the add-project dialog.
+ */
 @Composable
 fun ProjectListContent(
     state: ProjectListState,

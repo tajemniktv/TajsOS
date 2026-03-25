@@ -22,6 +22,18 @@ import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 
+/**
+ * Displays a review-type selector and, after a selection, hosts the multi-step review flow UI.
+ *
+ * Shows a selector dialog for "daily", "weekly", or "monthly". After the user selects a type,
+ * renders the corresponding sequence of review steps (daily steps for "daily"; weekly steps for
+ * other types) and exposes controls to advance through steps and complete the review.
+ *
+ * On completion, the function forwards the assembled review content and mood/energy values to the
+ * view model and then invokes `onBack` to exit the screen.
+ *
+ * @param onBack Callback invoked to navigate away from the screen (also used to dismiss the selector).
+ */
 @Composable
 fun ReviewScreen(
     viewModel: MainViewModel,
@@ -104,6 +116,24 @@ fun ReviewScreen(
     }
 }
 
+/**
+ * Renders the multi-step review UI for the given review type and collects user input across steps.
+ *
+ * Displays a progress indicator, the current step title, and step-specific input controls
+ * (e.g., mood/energy sliders, stats with commentary, archive review with item actions, or free-text fields).
+ *
+ * @param type Identifier of the review flow (commonly "daily", "weekly", or "monthly").
+ * @param steps List of string resources used as titles for each step in the flow.
+ * @param currentStep Zero-based index of the currently active step within `steps`.
+ * @param viewModel View model used to perform actions such as archiving nodes.
+ * @param dashboardState UI state providing dashboard lists (e.g., neglectedThisWeek, archivedThisWeek).
+ * @param insights Analytics-like data used to populate the stats step (e.g., weeklyCompletions, captureToActionRatio).
+ * @param onNext Callback invoked to advance to the next step.
+ * @param onComplete Callback invoked when the user completes the final step; receives:
+ *   - `content`: assembled text of all step answers,
+ *   - `mood`: selected mood value (1–5),
+ *   - `energy`: selected energy value (1–5).
+ */
 @Composable
 fun ReviewFlow(
     type: String,

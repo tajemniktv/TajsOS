@@ -25,6 +25,13 @@ import com.tajemniktv.tajsos.ui.components.nodes.NodeCard
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 
+/**
+ * Displays the inbox UI with a quick-capture input, type filters, recent entries, and per-item actions.
+ *
+ * Delegates node operations (add, update status, pin/unpin, archive, mark processed) to the provided ViewModel.
+ *
+ * @param onEditNode Callback invoked with a node ID when the user requests to edit that node.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InboxScreen(

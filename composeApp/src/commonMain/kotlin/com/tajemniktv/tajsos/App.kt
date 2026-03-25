@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
@@ -43,6 +43,16 @@ import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 
+/**
+ * Hosts the application's top-level UI: sets up navigation, collects app state from the ViewModel,
+ * manages the capture-sheet and voice-capture lifecycles, and composes the app theme, layout, and
+ * navigation graph.
+ *
+ * @param viewModel The main ViewModel providing app state (projects, areas, templates, modes, tracks, etc.).
+ * @param onVoiceCapture Optional callback invoked to start a voice capture session.
+ * @param voiceCaptureResult Optional text result from a completed voice capture to prefill the capture sheet.
+ * @param onVoiceCaptureConsumed Callback invoked when the voice capture result has been consumed (clears or acknowledges the result).
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun App(
@@ -136,6 +146,33 @@ fun App(
     }
 }
 
+/**
+ * Renders the app scaffold including the top app bar, floating action button, navigation host, and capture sheet.
+ *
+ * The composable displays a dynamic header based on `screen` and local time, shows a FAB for creating entries when appropriate,
+ * hosts the navigation graph, and conditionally presents the capture sheet for creating projects, areas, or nodes.
+ *
+ * @param screen The current screen descriptor or `null` when unknown; used to derive title, subtitle, and root behavior.
+ * @param drawerState Drawer state used to open/close the navigation drawer.
+ * @param scope Coroutine scope for launching drawer/opening and other UI coroutines.
+ * @param latestTrack Most recent track entry; used by destination screens that display tracking info.
+ * @param showCaptureSheet Whether the capture sheet is currently visible.
+ * @param onShowCaptureSheet Callback to show or hide the capture sheet.
+ * @param navController Navigation controller used by the NavHost.
+ * @param viewModel View model providing data and actions for screens and capture operations.
+ * @param onVoiceCapture Optional callback invoked when the user triggers voice capture from the UI.
+ * @param voiceCaptureResult Optional initial text produced by voice capture; supplied to the capture sheet.
+ * @param onVoiceCaptureConsumed Callback invoked after the voice capture result has been consumed.
+ * @param allProjects List of available project nodes for selection in the capture sheet.
+ * @param allAreas List of available area nodes for selection in the capture sheet.
+ * @param allTemplates List of available templates for the capture sheet.
+ * @param lastActiveProjectId Default project id to preselect in the capture sheet, if any.
+ * @param lastActiveAreaId Default area id to preselect in the capture sheet, if any.
+ * @param currentDestination The current navigation destination; used by child screens for context.
+ * @param currentMode Current UI mode providing theme color and related styling.
+ * @param isDesktop True when running in a desktop-sized layout (affects header and FAB behavior).
+ * @param onNavigate Callback to request navigation to a given route.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AppScaffold(

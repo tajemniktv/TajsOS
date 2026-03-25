@@ -31,6 +31,16 @@ import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 import kotlin.time.Clock
 
+/**
+ * Composes the desktop dashboard layout: a two-column scrollable area of dashboard blocks and a right-side panel with quick-capture, weekly life summary, and a system clock, plus a bottom command bar with command shortcuts and a new-entry button.
+ *
+ * @param viewModel Source of dashboard state and collections (nodes, projects, areas, inbox, reminders, session, insights, track entries).
+ * @param onNavigateTo Callback invoked to navigate to the given screen.
+ * @param onEditNode Callback invoked to edit the node with the given id.
+ * @param onNavigateToProject Callback invoked to navigate to the project with the given id.
+ * @param onNewEntry Callback invoked when the new-entry (microphone) button is pressed.
+ * @param currentDestination Current navigation destination (may be unused by this composable but provided for callers).
+ */
 @Composable
 fun DashboardDesktopContent(
     viewModel: MainViewModel,
@@ -198,6 +208,12 @@ fun DashboardDesktopContent(
 }
 
 
+/**
+ * Renders a compact key/action pair for the bottom command bar.
+ *
+ * @param key The keyboard key label displayed inside a rounded, bordered chip (e.g., "F1").
+ * @param action The action label shown next to the key (e.g., "SEARCH").
+ */
 @Composable
 private fun CommandItem(key: String, action: String)
 {

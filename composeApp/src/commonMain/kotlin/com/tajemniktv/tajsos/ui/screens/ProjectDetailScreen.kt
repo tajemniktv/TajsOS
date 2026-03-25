@@ -38,6 +38,15 @@ import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 import androidx.compose.ui.unit.sp
 
+/**
+ * Renders the project detail screen for the specified project.
+ *
+ * Shows project header, health/status, progress, purpose, next actions, and timeline; provides header actions for changing status, editing, freezing/unfreezing, and archiving the project.
+ *
+ * @param projectId The id of the project to display.
+ * @param onEditNode Callback invoked with a node id when the UI requests navigation to edit that node.
+ * @param onBack Callback invoked when the screen should navigate back (for example after archiving the project).
+ */
 @Composable
 fun ProjectDetailScreen(
     viewModel: MainViewModel,
@@ -283,6 +292,13 @@ fun ProjectDetailScreen(
     }
 }
 
+/**
+ * Renders a single timeline row for an event log with a colored marker, the event label,
+ * and a formatted timestamp.
+ *
+ * @param log The event log to display; its `eventType` is shown as the label and its
+ * `timestamp` is shown as `hour:minute // day/month`.
+ */
 @Composable
 fun ProjectTimelineItem(log: EventLogEntity)
 {

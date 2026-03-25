@@ -30,6 +30,18 @@ import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 
+/**
+ * Renders the detail screen for a workspace area, showing header, status, progress, optional core principle note,
+ * active projects, and recent activity, and provides a header action to archive the area.
+ *
+ * If the area identified by [areaId] is not found, a full-screen "not found" message is displayed.
+ *
+ * @param viewModel The screen's ViewModel providing nodes, projects, and actions.
+ * @param areaId The identifier of the area to display.
+ * @param onNavigateToProject Callback invoked with a project id when the user selects a project.
+ * @param onEditNode Callback invoked with a node id when the user requests to edit a node.
+ * @param onBack Callback invoked to navigate back (used after archive action).
+ */
 @Composable
 fun AreaDetailScreen(
     viewModel: MainViewModel,

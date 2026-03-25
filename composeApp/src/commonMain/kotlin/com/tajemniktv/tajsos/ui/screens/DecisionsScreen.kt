@@ -22,6 +22,14 @@ import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 
+/**
+ * Displays a tabbed UI for viewing decisions in Inbox, Pending, and Log categories.
+ *
+ * Observes the view model's decision flows and shows the corresponding list for the selected tab.
+ *
+ * @param viewModel Provides `decisionInbox`, `allPendingDecisions`, and `decisionLog` state flows that drive the displayed lists.
+ * @param onEditNode Callback invoked with a node's id when the user selects a decision to edit.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DecisionsScreen(
@@ -75,6 +83,14 @@ fun DecisionsScreen(
     }
 }
 
+/**
+ * Displays a list of decision nodes or a centered empty-state message when the list is empty.
+ *
+ * Shows each node as a tappable card with the node's title and up to two lines of content.
+ *
+ * @param nodes The list of decision nodes to display.
+ * @param onEdit Callback invoked when a node card is tapped; receives the tapped node's id.
+ */
 @Composable
 fun DecisionList(nodes: List<NodeWithPin>, onEdit: (Long) -> Unit)
 {
@@ -117,6 +133,11 @@ fun DecisionList(nodes: List<NodeWithPin>, onEdit: (Long) -> Unit)
     }
 }
 
+/**
+ * Preview wrapper that renders the DecisionsScreen content inside the app theme for Compose previews.
+ *
+ * Use in Android Studio's preview tooling to visualize the DecisionsScreen UI while developing.
+ */
 @Preview
 @Composable
 fun DecisionsScreenPreview()

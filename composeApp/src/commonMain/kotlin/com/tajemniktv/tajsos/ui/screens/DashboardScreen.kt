@@ -34,6 +34,16 @@ import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 import kotlin.time.Clock
 
+/**
+ * Displays the dashboard and selects a desktop or mobile layout based on available width.
+ *
+ * @param viewModel Provides dashboard state and actions.
+ * @param onNavigateTo Invoked with a `Screen` when the UI requests navigation to that screen.
+ * @param onEditNode Invoked with a node ID to open the node editor.
+ * @param onNavigateToProject Invoked with a project ID to navigate to that project.
+ * @param onNewEntry Invoked to create a new entry.
+ * @param currentDestination Optional current navigation destination used to highlight or adapt UI state.
+ */
 @Composable
 fun DashboardScreen(
     viewModel: MainViewModel,
@@ -67,6 +77,19 @@ fun DashboardScreen(
     }
 }
 
+/**
+ * Renders the dashboard UI optimized for mobile widths, composing blocks, modules, and footer
+ * based on state collected from the provided view model.
+ *
+ * Uses state flows from `viewModel` to build dashboard blocks, compute metrics (daily progress,
+ * mood, weekly review need, pinned items), and wire navigation/edit callbacks into rendered blocks
+ * and modules.
+ *
+ * @param viewModel Source of dashboard state and actions.
+ * @param onNavigateTo Called with a `Screen` when the UI requests a top-level navigation.
+ * @param onEditNode Called with a node ID to open the node editor.
+ * @param onNavigateToProject Called with a project ID to navigate to a specific project.
+ */
 @Composable
 private fun DashboardMobileContent(
     viewModel: MainViewModel,
@@ -225,6 +248,16 @@ private fun DashboardMobileContent(
     }
 }
 
+/**
+ * Renders the "CORE MODULES" section containing cards for Today, Inbox, Projects, and Focus.
+ *
+ * Displays per-module status badges derived from the provided state and invokes navigation when a card is tapped.
+ *
+ * @param todayNodes Used to compute the Today module's item count.
+ * @param activeSession If non-null, the Focus module shows "ACTIVE" and uses the primary color; otherwise it shows "READY".
+ * @param allProjects Used to compute the Projects module's item count.
+ * @param onNavigateTo Callback invoked with the destination `Screen` when a module card is tapped.
+ */
 @Composable
 fun DashboardModules(
     todayNodes: List<NodeEntity>,

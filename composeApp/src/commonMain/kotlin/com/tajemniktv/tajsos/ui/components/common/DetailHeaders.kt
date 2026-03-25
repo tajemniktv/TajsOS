@@ -15,6 +15,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
+/**
+ * Displays a two-line header with an uppercase primary title and an uppercase secondary subtitle.
+ *
+ * @param title The primary header text shown prominently.
+ * @param subtitle The secondary header text shown in a smaller, muted style.
+ */
 @Composable
 fun DetailHeader(title: String, subtitle: String, modifier: Modifier = Modifier) {
     Column(modifier = modifier.fillMaxWidth()) {
@@ -35,6 +41,17 @@ fun DetailHeader(title: String, subtitle: String, modifier: Modifier = Modifier)
     }
 }
 
+/**
+ * Displays a single-row section header containing an uppercase title and an optional icon.
+ *
+ * The header fills the available width, aligns its contents vertically centered, and spaces
+ * the icon and title consistently.
+ *
+ * @param title The text to display as the section title; rendered in uppercase.
+ * @param modifier Modifier applied to the header container.
+ * @param icon Optional vector icon shown to the start of the title when provided.
+ * @param color Color used for both the icon tint (if present) and the title text.
+ */
 @Composable
 fun DetailSectionHeader(
     title: String,

@@ -21,6 +21,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
+/**
+ * Displays a fixed-width clickable card containing an icon above an uppercase label,
+ * styled using the provided color.
+ *
+ * The entire surface is clickable and invokes [onClick].
+ *
+ * @param label The text shown below the icon (rendered uppercase).
+ * @param icon The vector icon displayed above the label.
+ * @param color The color used for the icon and label tint and to derive the surface background and border.
+ * @param onClick Callback invoked when the card is clicked.
+ */
 @Composable
         /**
          *

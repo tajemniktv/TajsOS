@@ -14,7 +14,15 @@ import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.Font
 import tajsos.composeapp.generated.resources.*
 
-@Composable
+/**
+         * Provides the Space Grotesk font family used by the app.
+         *
+         * The family contains Space Grotesk font resources mapped to their corresponding weights:
+         * Light, Regular (Normal), Medium, and Bold.
+         *
+         * @return A `FontFamily` composed of Space Grotesk fonts with matching `FontWeight` values.
+         */
+        @Composable
 fun spaceGroteskFontFamily() =
         FontFamily(
             Font(Res.font.SpaceGrotesk_Light, FontWeight.Light),
@@ -23,7 +31,12 @@ fun spaceGroteskFontFamily() =
             Font(Res.font.SpaceGrotesk_Bold, FontWeight.Bold),
         )
 
-@Composable
+/**
+         * Provides a FontFamily composed of the Outfit font family across available weight variants.
+         *
+         * @return A FontFamily containing Outfit font resources mapped to their corresponding `FontWeight` values (Thin through Black).
+         */
+        @Composable
 fun outfitFontFamily() =
         FontFamily(
             Font(Res.font.Outfit_Thin, FontWeight.Thin),
@@ -37,7 +50,13 @@ fun outfitFontFamily() =
             Font(Res.font.Outfit_Black, FontWeight.Black),
         )
 
-@Composable
+/**
+         * Provides a FontFamily composed of JetBrains Mono font resources used by the app.
+         *
+         * @return A `FontFamily` that maps JetBrains Mono font resources to weights `Thin`, `ExtraLight`, `Light`,
+         * `Normal` (Regular), `Medium`, `SemiBold`, `Bold`, and `ExtraBold`.
+         */
+        @Composable
 fun jetBrainsMonoFontFamily() =
         FontFamily(
             Font(Res.font.JetBrainsMono_Thin, FontWeight.Thin),
@@ -51,7 +70,12 @@ fun jetBrainsMonoFontFamily() =
         )
 
 /**
- * Typography defines the text styles used throughout TajsOS.
+ * Provides the app's Material3 typography styles used across TajsOS.
+ *
+ * Configures font families, weights, sizes, and spacing for standard text style slots
+ * (display, headline, title, body, label) and their expressive emphasized variants.
+ *
+ * @return A `Typography` instance with the configured `TextStyle` entries.
  */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable

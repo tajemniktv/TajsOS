@@ -14,6 +14,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
+/**
+ * Displays a two-line status header: an uppercased status line prefixed with "TAJSOS // STATUS:" and an optional uppercased subtitle.
+ *
+ * The status line is styled to stand out and uses the provided `color`. When `subtitle` is non-null, a second line is rendered using `subtitleStyle`.
+ *
+ * @param status The status text shown in the primary line (will be uppercased). Defaults to `"OK"`.
+ * @param color Color applied to the primary status line. Defaults to `TactileTheme.Primary`.
+ * @param subtitle Optional secondary line text; when present it will be uppercased and displayed below the status.
+ * @param subtitleStyle Text style applied to the subtitle when shown. Defaults to `MaterialTheme.typography.titleMedium`.
+ */
 @Composable
 fun StatusHeader(
     modifier: Modifier = Modifier,

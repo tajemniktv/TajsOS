@@ -23,6 +23,21 @@ import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 
+/**
+ * Renders a single task row for the given node, showing its title, metadata and action controls.
+ *
+ * Displays a left completion checkbox (tied to `node.status`), the task title (with strike-through when done),
+ * optional metadata labels (energy level, friction, non-standard status, next smallest step), and action buttons
+ * for unpinning and, when completed, archiving. The row supports click and long-click handlers and draws a
+ * colored accent bar at the left edge.
+ *
+ * @param node The task node to render.
+ * @param onToggleDone Callback invoked when the checkbox is toggled; receives the new status string (`"done"` when checked, `"active"` when unchecked).
+ * @param onUnpin Callback invoked when the unpin action is pressed.
+ * @param onLongClick Optional long-click handler for the row.
+ * @param onClick Optional click handler for the row.
+ * @param onArchive Optional archive handler invoked when the archive action (shown only for completed tasks) is pressed.
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TaskRow(

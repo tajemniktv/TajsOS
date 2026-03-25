@@ -19,6 +19,16 @@ import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 
+/**
+ * Shows the calendar providers settings screen with controls to add and remove providers.
+ *
+ * The UI displays a header with the screen title and an add button, a list of existing
+ * calendar providers (or a centered empty-state message when none exist), and an add dialog
+ * when requested. User actions invoke the provided view model: deleting a provider calls
+ * `viewModel.deleteCalendarProvider(...)`, and adding a provider calls
+ * `viewModel.addCalendarProvider(name, type, url)`. The add dialog's confirm button is
+ * enabled only when both name and URL are provided.
+ */
 @Composable
 fun CalendarSettingsScreen(viewModel: MainViewModel)
 {
@@ -81,6 +91,13 @@ fun CalendarSettingsScreen(viewModel: MainViewModel)
     }
 }
 
+/**
+ * Displays a calendar provider in a full-width card showing its name, type, and optional URL,
+ * and provides a delete button.
+ *
+ * @param provider The calendar provider entity whose details are shown.
+ * @param onDelete Callback invoked when the delete button is pressed.
+ */
 @Composable
 fun ProviderRow(
     provider: com.tajemniktv.tajsos.data.CalendarProviderEntity,
@@ -128,6 +145,16 @@ fun ProviderRow(
     }
 }
 
+/**
+ * Shows a dialog that collects a calendar provider's name and URL and adds it when confirmed.
+ *
+ * The dialog maintains local input state for the provider name, URL, and a provider type
+ * initialized to `"ICS"`. The confirm action is enabled only when both name and URL are not blank;
+ * activating confirm invokes `onAdd(name, type, url)`. Dismissing the dialog invokes `onDismiss`.
+ *
+ * @param onDismiss Callback invoked when the dialog is dismissed.
+ * @param onAdd Callback invoked with the entered `name`, `type`, and optional `url` when the user confirms.
+ */
 @Composable
 fun AddCalendarDialog(
     onDismiss: () -> Unit,

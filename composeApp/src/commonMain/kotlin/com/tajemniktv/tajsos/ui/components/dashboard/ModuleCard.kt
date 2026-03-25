@@ -30,6 +30,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
+/**
+ * Displays a clickable dashboard card with an icon, an uppercase title, and a status text; the card visually scales while pressed and emits haptic feedback before invoking `onClick`.
+ *
+ * @param title The card title (rendered uppercase).
+ * @param icon The icon displayed in the leading square.
+ * @param status The status text shown below the title.
+ * @param onClick Callback invoked after haptic feedback is performed.
+ * @param color Tint color used for the icon and its background; defaults to `TactileTheme.Primary`.
+ */
 @Composable
 fun ModuleCard(
     modifier: Modifier = Modifier,

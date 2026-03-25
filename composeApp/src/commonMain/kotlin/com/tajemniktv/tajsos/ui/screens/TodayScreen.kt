@@ -27,6 +27,14 @@ import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 
+/**
+ * Renders the "Today" screen showing up to three nodes scheduled for today and placeholder slots when fewer than three exist.
+ *
+ * Shows an empty state when there are no today nodes. For each shown node, the row supports swipe-to-complete (start-to-end) which marks the node done, toggling done status, unpinning, editing via click/long-click, and archiving through the provided callbacks; remaining slots are rendered as bordered placeholders labeled with their slot index.
+ *
+ * @param viewModel View model providing `todayNodes` and actions used to update node status, pinning, and archiving.
+ * @param onEditNode Callback invoked with a node ID when the user requests to edit a node (click or long-click).
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TodayScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit)

@@ -21,6 +21,18 @@ import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 
+/**
+ * Renders the Archive screen showing archived nodes and providing restore, permanent delete,
+ * and edit navigation actions for each item.
+ *
+ * When there are no archived nodes and the initial load is complete, displays an empty state message.
+ * Otherwise displays a scrollable list of archived nodes; each item shows the node title and an
+ * uppercase type label, offers buttons to restore or delete permanently, and navigates to edit
+ * when clicked or long-clicked.
+ *
+ * @param viewModel Source of archived nodes and actions to update or delete nodes.
+ * @param onEditNode Callback invoked with a node id to open that node for editing.
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ArchiveScreen(

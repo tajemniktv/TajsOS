@@ -26,6 +26,16 @@ import com.tajemniktv.tajsos.ui.components.DashCard
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlin.time.Clock
 
+/**
+ * Displays a clickable sticky-note styled card showing a title and multi-line content.
+ *
+ * The card uses the accent theme for background and border, constrains its width,
+ * and limits the title to one line and the content to three lines.
+ *
+ * @param title The title text displayed at the top of the card.
+ * @param content The body text displayed below the title (up to three lines).
+ * @param onClick Callback invoked when the card is clicked.
+ */
 @Composable
 fun StickyNoteCard(title: String, content: String, onClick: () -> Unit) {
     Surface(

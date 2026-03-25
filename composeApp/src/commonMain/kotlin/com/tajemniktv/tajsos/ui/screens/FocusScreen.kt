@@ -20,6 +20,18 @@ import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 
+/**
+ * Displays the focus screen showing the active task (or a prompt if none), a running timer,
+ * controls to start/stop a focus session, and a short list of recent completed sessions.
+ *
+ * The UI presents the current task title, elapsed time formatted as MM:SS, an editable
+ * "next tiny step" field that updates the task, either an engage button or an abort slider
+ * depending on whether a session is active, and up to five recent completed sessions with
+ * their durations.
+ *
+ * @param viewModel The MainViewModel that provides state (active session, nodes, sessions)
+ *                  and actions (start/stop focus session, update node content) used by the screen.
+ */
 @Composable
 fun FocusScreen(viewModel: MainViewModel)
 {

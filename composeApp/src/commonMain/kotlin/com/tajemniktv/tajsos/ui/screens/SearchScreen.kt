@@ -30,6 +30,18 @@ import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 
+/**
+ * Renders the search screen UI: a query field, filter chips (status, type, project, area, linked-to),
+ * and either an empty-state message or a scrollable list of matching result cards.
+ *
+ * The composable observes search-related state from the provided viewModel and invokes its update
+ * actions in response to user interactions (query changes, filter selection, pin/archive/status updates).
+ * When a result item is tapped or long-pressed, the composable calls `onItemClick` with the node id.
+ *
+ * @param viewModel Provides the observable search state (query, filters, results, projects/areas/nodes)
+ * and exposes actions used by the UI to update query, filters, node status, pinning, and archiving.
+ * @param onItemClick Invoked with the selected node's id when a result card is clicked or long-pressed.
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SearchScreen(

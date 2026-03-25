@@ -110,6 +110,12 @@ sealed class Screen(
 
     companion object
     {
+        /**
+         * Finds the Screen corresponding to the base segment of a navigation route.
+         *
+         * @param route The navigation route string, which may include path segments and query parameters (for example, "note/123?edit=true"); may be null.
+         * @return The matching `Screen` whose route's base segment equals the provided route's base segment, or `null` if `route` is null or no match exists.
+         */
         fun fromRoute(route: String?): Screen?
         {
             if (route == null) return null

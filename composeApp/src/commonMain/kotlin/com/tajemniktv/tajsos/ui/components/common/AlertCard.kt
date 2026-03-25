@@ -20,6 +20,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
+/**
+ * Displays a clickable alert-style card containing an icon, a title, a description, and an optional action composable.
+ *
+ * @param title The header text shown prominently.
+ * @param description The body text shown below the title.
+ * @param icon The icon displayed to the left of the texts.
+ * @param color Base color used for the icon, title emphasis, and card accenting.
+ * @param action Optional composable rendered at the end of the row (e.g., a button or menu).
+ * @param onClick Callback invoked when the card is tapped.
+ */
 @Composable
 fun AlertCard(
     title: String,

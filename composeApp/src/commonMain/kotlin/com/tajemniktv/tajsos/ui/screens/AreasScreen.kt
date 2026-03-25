@@ -21,6 +21,14 @@ import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 
+/**
+ * Displays the Areas screen: shows a list of areas or an empty-state and provides UI to create a new area.
+ *
+ * When an area row is selected, the function invokes the provided navigation callback with that area's detail route.
+ * When the add-area dialog is confirmed, a new area is created via the supplied view model.
+ *
+ * @param onNavigateTo Callback invoked with a navigation route string when the UI requests navigation (e.g., area detail).
+ */
 @Composable
 fun AreasScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit)
 {
@@ -82,6 +90,14 @@ fun AreasScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit)
     }
 }
 
+/**
+ * Displays a tappable surface representing an area node with its title.
+ *
+ * Shows the area's title in uppercase using the theme's title styling and invokes `onClick` when tapped.
+ *
+ * @param area The `NodeEntity` whose title is displayed.
+ * @param onClick Callback executed when the area row is clicked.
+ */
 @Composable
 fun AreaItem(area: NodeEntity, onClick: () -> Unit)
 {
@@ -106,6 +122,15 @@ fun AreaItem(area: NodeEntity, onClick: () -> Unit)
     }
 }
 
+/**
+ * Shows a dialog for creating a new area.
+ *
+ * Displays a text field for the area name. The confirm button is enabled only when the name is not blank;
+ * when confirmed, the entered name is passed to `onConfirm`. Invoking the dismiss action calls `onDismiss`.
+ *
+ * @param onDismiss Callback invoked when the dialog is dismissed or the cancel button is pressed.
+ * @param onConfirm Callback invoked with the entered area name when the confirm button is pressed.
+ */
 @Composable
 fun AddAreaDialog(onDismiss: () -> Unit, onConfirm: (String) -> Unit)
 {

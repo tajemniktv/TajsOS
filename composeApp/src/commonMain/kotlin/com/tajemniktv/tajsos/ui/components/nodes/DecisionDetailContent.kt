@@ -26,6 +26,17 @@ import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 
+/**
+ * Renders a detailed UI for viewing and editing a single decision node.
+ *
+ * Shows status and category chips, editable decision fields, a list of decision
+ * options with add/delete flows, and controls to finalize the decision or
+ * convert a decided decision into a project or task.
+ *
+ * @param viewModel The MainViewModel used to load options and perform updates (add/delete/convert/decide).
+ * @param node The NodeEntity representing the decision to display and edit.
+ * @param onNavigateToProject Callback invoked with a project id when navigation to a converted project is required.
+ */
 @Composable
 fun DecisionDetailContent(
     viewModel: MainViewModel,
@@ -283,6 +294,13 @@ fun DecisionDetailContent(
     }
 }
 
+/**
+ * Displays a section header using the app's section-title styling.
+ *
+ * The text is rendered with small label typography, muted color, bold weight, and 1.sp letter spacing.
+ *
+ * @param text The header text to display.
+ */
 @Composable
 fun SectionTitle(text: String)
 {
@@ -295,6 +313,13 @@ fun SectionTitle(text: String)
     )
 }
 
+/**
+ * Renders a labeled editable text input for a decision field.
+ *
+ * @param label The visible label for the field.
+ * @param value The current text value displayed in the field.
+ * @param onValueChange Called with the new text whenever the user edits the field.
+ */
 @Composable
 fun DecisionField(label: String, value: String, onValueChange: (String) -> Unit)
 {
@@ -323,6 +348,16 @@ fun DecisionField(label: String, value: String, onValueChange: (String) -> Unit)
     }
 }
 
+/**
+ * Renders a card showing a decision option's title, optional description, and a delete action.
+ *
+ * Displays the option title prominently and, if present, its description below. Provides callbacks
+ * for updating or deleting the option.
+ *
+ * @param option The decision option to display.
+ * @param onUpdate Callback invoked to request an update to the given `option`.
+ * @param onDelete Callback invoked when the user requests deletion of the given `option`.
+ */
 @Composable
 fun OptionCard(
     option: DecisionOptionEntity,

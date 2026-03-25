@@ -23,6 +23,13 @@ import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 
+/**
+ * Renders the profile screen UI for viewing and editing the user's name and managing medications.
+ *
+ * Displays an editable name field bound to the view model, a list of medications, and a dialog to add new medications.
+ *
+ * @param viewModel The MainViewModel used to observe user and medication state and to perform updates (update user name, add medication, delete medication).
+ */
 @Composable
 fun ProfileScreen(viewModel: MainViewModel)
 {
@@ -86,6 +93,14 @@ fun ProfileScreen(viewModel: MainViewModel)
     }
 }
 
+/**
+ * Displays a stylized medication row showing substance, optional brand names, dosage and scheduled hour, with a delete action.
+ *
+ * The row shows `medication.substance` as primary text, `medication.brandNames` when non-empty, and a dosage line that includes `@ HH:00` when `medication.takeAtHour` is set. Tapping the delete icon triggers `onDelete`.
+ *
+ * @param medication The medication entity to render; its `substance`, `brandNames`, `dosage`, and `takeAtHour` fields are displayed.
+ * @param onDelete Callback invoked when the delete icon is pressed.
+ */
 @Composable
 fun MedicationItem(medication: MedicationEntity, onDelete: () -> Unit)
 {
@@ -126,6 +141,17 @@ fun MedicationItem(medication: MedicationEntity, onDelete: () -> Unit)
     }
 }
 
+/**
+ * Displays a modal dialog that collects medication details and delivers them via callbacks.
+ *
+ * @param onDismiss Invoked when the dialog is dismissed without saving.
+ * @param onSave Invoked when the user confirms; receives:
+ *   - `substance`: medication substance name (non-empty string),
+ *   - `brands`: comma- or space-separated brand names (string, may be empty),
+ *   - `dosage`: dosage text or `null` if empty,
+ *   - `hour`: hour of intake as an `Int` or `null` if not provided or unparsable,
+ *   - `isOptional`: whether the medication is marked optional.
+ */
 @Composable
 fun AddMedicationDialog(
     onDismiss: () -> Unit,

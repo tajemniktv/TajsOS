@@ -34,6 +34,22 @@ import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 import kotlin.time.Clock
 
+/**
+ * Displays a card representing a node with badges, status indicators, and action controls.
+ *
+ * The card shows the node title, type/recurrence badge, optional due date (with hard-deadline styling),
+ * stale indicator, energy and friction badges, status badge for non-active/non-done states, and an
+ * optional next-smallest-step line. A checkbox toggles the node's done state and the card animates
+ * slightly when done. Right-side icons provide archive (when done) and pin/today toggle actions.
+ *
+ * @param nodeWithPin The node data and its pin-to-today state.
+ * @param modifier Optional Compose modifier applied to the root Surface.
+ * @param onToggleDone Called when the checkbox is toggled; receives the new status string (`"done"` or `"active"`).
+ * @param onTogglePin Called with the new pinned-to-today boolean when the star icon is pressed.
+ * @param onLongClick Invoked on a long press of the card.
+ * @param onClick Invoked on a regular click of the card.
+ * @param onArchive Invoked when the archive/delete icon is pressed (visible when the node is done).
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun NodeCard(
@@ -231,6 +247,14 @@ fun NodeCard(
 }
 
 
+/**
+ * Renders a compact rounded badge displaying the given text using the provided color.
+ *
+ * The badge has a subtle primary-tinted background, small corner radius, and internal padding to fit alongside other UI elements.
+ *
+ * @param text The label shown inside the badge.
+ * @param color The color applied to the badge text.
+ */
 @Composable
 fun NodeBadge(text: String, color: androidx.compose.ui.graphics.Color)
 {

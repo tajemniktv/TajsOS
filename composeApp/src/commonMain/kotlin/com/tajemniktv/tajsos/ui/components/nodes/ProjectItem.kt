@@ -19,6 +19,15 @@ import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
+/**
+ * Renders a clickable project card for a NodeEntity, optionally showing a percentage and a thin progress bar.
+ *
+ * @param project Source data; used for the card title and optional content body.
+ * @param progress Fraction in the range 0..1 used to compute the displayed percentage and drive the progress indicator.
+ * @param totalItems If greater than 0, the percentage text and linear progress indicator are shown; otherwise they are omitted.
+ * @param onLongClick Handler invoked on long press; defaults to a no-op.
+ * @param onClick Handler invoked on click.
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ProjectItem(

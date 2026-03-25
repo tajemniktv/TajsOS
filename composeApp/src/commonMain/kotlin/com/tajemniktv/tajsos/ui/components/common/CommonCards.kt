@@ -23,6 +23,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
+/**
+ * Renders a clickable card with a leading icon, an uppercase title, and a prominent value.
+ *
+ * @param title Short label shown in uppercase at the top of the card.
+ * @param value Prominent value text displayed below the title; its color is controlled by [color].
+ * @param icon Leading icon shown at the start of the title row.
+ * @param modifier Modifier applied to the card for layout or interaction.
+ * @param color Color applied to the `value` text; defaults to `TactileTheme.Primary`.
+ * @param onClick Callback invoked when the card is clicked.
+ */
 @Composable
 fun InfoCard(
     title: String,

@@ -22,6 +22,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
+/**
+ * Displays a 32.dp rounded square with a centered bold "T" glyph.
+ *
+ * @param tintColor Color used for the "T" glyph.
+ */
 @Composable
 fun TBoxIcon(tintColor: Color)
 {
@@ -41,6 +46,12 @@ fun TBoxIcon(tintColor: Color)
     }
 }
 
+/**
+ * Displays a circular status chip showing a colored status dot and a bold "SYSTEM: ONLINE" label.
+ *
+ * The chip is a semi-transparent black surface with a 1.dp border and centered row content.
+ *
+ * @param tintColor Color used for the status dot; when equal to `TactileTheme.Primary` the dot is rendered using `TactileTheme.Success` instead.
 @Composable
 fun SystemOnlineStatus(tintColor: Color)
 {
@@ -68,6 +79,12 @@ fun SystemOnlineStatus(tintColor: Color)
     }
 }
 
+/**
+ * Displays a rounded, bordered search placeholder surface containing a search icon and label.
+ *
+ * The surface uses theme tokens for background, border, and muted content; it contains a leading
+ * search icon (18.dp) and the placeholder text "SEARCH YOUR LIFE..." laid out horizontally with padding.
+ */
 @Composable
 fun DesktopSearchSurface()
 {

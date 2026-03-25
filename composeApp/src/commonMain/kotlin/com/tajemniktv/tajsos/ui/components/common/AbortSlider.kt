@@ -23,6 +23,12 @@ import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlin.math.roundToInt
 
+/**
+ * Displays a horizontal "slide to abort" control with a draggable knob.
+ *
+ * Dragging the knob to the right invokes the provided `onAbort` callback when the knob reaches 90% of the track; the knob then resets to the start position when the drag ends.
+ *
+ * @param onAbort Callback invoked when the user slides the knob past the abort threshold. */
 @Composable
 fun AbortSlider(onAbort: () -> Unit)
 {

@@ -28,6 +28,18 @@ import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 import kotlin.time.Clock
 
+/**
+ * Displays the Tasks screen: a header with a view-mode toggle, optional resurrection suggestions,
+ * filter chips (status/project/area), and tasks presented either as a vertical list or a kanban-like board.
+ *
+ * The displayed tasks are derived from the viewModel's active nodes and are filtered by the selected
+ * status, project, and area. If any active tasks have not been updated for 14 days, up to two are shown
+ * as "resurrection suggestions" that open the editor when tapped.
+ *
+ * @param viewModel Provides the active nodes, projects, areas, and mutation functions used by the screen
+ *                  (e.g., update status, toggle pin, archive).
+ * @param onEditNode Callback invoked with a node id when the user requests to edit a task.
+ */
 @Composable
 fun TasksScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit)
 {

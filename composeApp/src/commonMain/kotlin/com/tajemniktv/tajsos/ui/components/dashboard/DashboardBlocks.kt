@@ -23,6 +23,16 @@ import com.tajemniktv.tajsos.ui.components.nodes.SuggestionGroup
 import com.tajemniktv.tajsos.ui.components.DashCard
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
+/**
+ * Renders the current focused task area or an empty-state alert when no active task is set.
+ *
+ * When `activeTask` is null, displays an alert prompting the user to assign a task. When non-null,
+ * displays a "CURRENT FOCUS" header and a tappable card showing the task title and, if present,
+ * its next smallest step.
+ *
+ * @param activeTask The currently active task to display, or `null` to show the empty-state alert.
+ * @param onEdit Callback invoked with the task's id when the task card is tapped.
+ */
 @Composable
 fun CurrentTaskBlock(
     activeTask: NodeWithPin?,

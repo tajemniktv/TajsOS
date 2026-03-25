@@ -34,6 +34,33 @@ import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 
+/**
+ * Renders a modal bottom sheet that collects capture text and related metadata, then submits it via the provided callback.
+ *
+ * The sheet supports selecting a capture type, optional project/area assignment, templates, recurring/reminder settings,
+ * sticky flag, decision category, multi-capture and brain-dump modes, and an optional voice-capture action.
+ *
+ * @param onDismiss Called to close the sheet.
+ * @param onCapture Called when the user submits a capture. Arguments (in order):
+ *  1. `text` — the entered capture text.
+ *  2. `type` — the selected capture type (e.g. "task", "note", "idea", "project", "area", "decision", etc.).
+ *  3. `projectId` — selected project id or `null`.
+ *  4. `areaId` — selected area id or `null`.
+ *  5. `isRecurring` — `true` if the capture is marked recurring.
+ *  6. `recurringInterval` — recurrence interval string (e.g. "DAILY", "WEEKLY", "MONTHLY") or `null`.
+ *  7. `reminderTime` — scheduled reminder time as epoch milliseconds or `null`.
+ *  8. `contextScreen` — optional calling-screen identifier passed through.
+ *  9. `isSticky` — `true` if the capture is marked sticky.
+ *  10. `decisionCategory` — for type "decision", the selected category ("tiny" or "major") or `null`.
+ * @param projects List of available project nodes for assignment (defaults to empty).
+ * @param areas List of available area nodes for assignment (defaults to empty).
+ * @param templates List of templates that can prefill the capture text (defaults to empty).
+ * @param defaultProjectId Optional project id to preselect when the sheet opens.
+ * @param defaultAreaId Optional area id to preselect when the sheet opens.
+ * @param initialText Initial input text to populate the field (e.g., from voice capture).
+ * @param onVoiceCaptureClick Optional callback invoked when the voice capture button is clicked.
+ * @param contextScreen Optional identifier describing the originating screen; forwarded to `onCapture`.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CaptureSheet(

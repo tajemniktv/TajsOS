@@ -16,6 +16,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
+/**
+ * Renders a Material3 button with a fixed height, rounded corners, an optional leading icon, and an uppercase bold label.
+ *
+ * @param text The button label.
+ * @param onClick Callback invoked when the button is clicked.
+ * @param modifier External modifier applied to the button; a fixed height constraint is appended.
+ * @param containerColor Background color of the button.
+ * @param contentColor Foreground color used for the text and icon.
+ * @param icon Optional leading icon to display before the label.
+ */
 @Composable
 fun ActionButton(
     text: String,
