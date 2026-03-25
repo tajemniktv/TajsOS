@@ -48,7 +48,7 @@ fun Route.syncRoutes() {
                     HttpStatusCode.BadRequest,
                     ErrorResponse(
                         error = "Invalid sync request payload",
-                        details = e.message
+                        details = "The request could not be processed due to a malformed payload"
                     )
                 )
             }
