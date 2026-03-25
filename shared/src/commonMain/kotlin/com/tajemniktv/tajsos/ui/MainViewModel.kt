@@ -1306,6 +1306,16 @@ class MainViewModel(
         }
     }
 
+    /**
+     * Splits a task node's bulleted content into individual subtask nodes.
+     *
+     * **Side-effects:**
+     * - Parses the node's `content` for lines starting with "-" or "*".
+     * - Creates a new child task node for each valid line and establishes a "DEPENDS_ON" relation.
+     * - Prepends the original node's content with `// SPLIT INTO SUBTASKS`.
+     *
+     * @param nodeId The ID of the node to split.
+     */
     fun splitIntoSubtasks(nodeId: Long) {
         viewModelScope.launch {
             repository.getNodeById(nodeId)?.let { node ->
@@ -1373,6 +1383,17 @@ class MainViewModel(
         }
     }
 
+    /**
+     * Merges the content and relations of multiple nodes into a single primary node.
+     *
+     * **Side-effects:**
+     * - Appends the content of all `otherNodeIds` to the `primaryNodeId`'s content, separated by merge headers.
+     * - Automatically archives the nodes that were merged into the primary node.
+     * - Transfers all relations (both incoming and outgoing) from the merged nodes to the primary node.
+     *
+     * @param primaryNodeId The ID of the node that will receive the merged content.
+     * @param otherNodeIds The list of node IDs to merge and archive.
+     */
     fun mergeNodes(primaryNodeId: Long, otherNodeIds: List<Long>) {
         viewModelScope.launch {
             val primary = repository.getNodeById(primaryNodeId) ?: return@launch
@@ -1404,6 +1425,16 @@ class MainViewModel(
         }
     }
 
+    /**
+     * Splits a single note node into multiple separate note nodes based on markdown headers.
+     *
+     * **Side-effects:**
+     * - Parses the node's `content` for sections starting with `# `.
+     * - If multiple sections exist, creates a new note node for each section, using the header as the title.
+     * - Automatically archives the original, unsplit note node if the split was successful.
+     *
+     * @param nodeId The ID of the note node to split.
+     */
     fun splitNote(nodeId: Long) {
         viewModelScope.launch {
             repository.getNodeById(nodeId)?.let { node ->
