@@ -7,7 +7,39 @@ package com.tajemniktv.tajsos.ui
 import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.data.RelationEntity
 
+/**
+ * A utility object that provides functions to filter, search, and sort lists of nodes
+ * based on varying criteria like context, time horizons, energy levels, and query strings.
+ */
 object FilterHelper {
+    /**
+     * Filters a list of nodes based on a wide array of optional parameters, returning
+     * only the nodes that match all specified criteria, and sorts the final list
+     * based on their modification date (newest first).
+     *
+     * Nodes must meet all non-null conditions (logical AND) to be included in the results.
+     * Context filters (location, energy, device, social, time-window) are only applied
+     * strictly if the node type is "task".
+     *
+     * @param nodes The initial list of nodes with associated pins and tags to filter.
+     * `@param` query A text query for partial-matching against titles, content, or tags (prefix with # to search tags only).
+     * @param type The specific type of node to include (e.g., "task", "project").
+     * @param status A comma-separated string of statuses to include (e.g., "active,on_hold").
+     * @param projectId The ID of the project the node must belong to.
+     * @param areaId The ID of the area the node must belong to.
+     * @param linkedToId The ID of another node that this node must have a bidirectional relationship with.
+     * @param maxMins The maximum estimated minutes allowed for the node.
+     * @param energy The specific energy level required for the node.
+     * @param friction The friction level required for the node.
+     * @param locationContext The required location context (e.g., "home", "office").
+     * @param energyContext The required energy context (e.g., "high", "low").
+     * @param deviceContext The required device context (e.g., "laptop", "phone").
+     * @param socialContext The required social context (e.g., "solo", "pair").
+     * @param timeWindowContext The required time window context (e.g., "morning", "evening").
+     * @param timeHorizon A string determining the required temporal scope relative to the current time (e.g., "today", "week", "month", "semester", "short", "long").
+     * @param relations The complete list of relationship entities used to evaluate bidirectional links for the `linkedToId` filter.
+     * @return A list containing only the matching `NodeWithPin` elements, sorted by descending update time and descending ID.
+     */
     fun filterAndSortNodes(
         nodes: List<NodeWithPin>,
         query: String,
@@ -111,6 +143,18 @@ object FilterHelper {
             )
     }
 
+    /**
+     * Determines whether a given node matches a user's search query.
+     *
+     * The match is evaluated based on the format of the query. If the query starts with
+     * a hashtag (#), it performs a partial, case-insensitive match against the node's tags.
+     * Otherwise, it performs a case-insensitive partial match against the node's title,
+     * content, or tags.
+     *
+     * @param nodeWithPin The wrapper object containing the node entity and its associated tags.
+     * @param query The raw query string input by the user. Must not be blank for a valid match.
+     * @return `true` if the node matches the search query; `false` otherwise.
+     */
     fun matchesQuery(
         nodeWithPin: NodeWithPin,
         query: String,

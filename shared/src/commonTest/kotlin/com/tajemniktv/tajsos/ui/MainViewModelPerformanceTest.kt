@@ -17,6 +17,12 @@ import kotlin.test.Test
 import kotlin.time.measureTime
 
 class MainViewModelPerformanceTest {
+    data class NodeCategorization(
+        val inbox: List<NodeWithPin> = emptyList(),
+        val archived: List<NodeWithPin> = emptyList(),
+        val reminders: List<NodeEntity> = emptyList(),
+    )
+
     @Test
     fun benchmarkNodesFiltering(): Unit =
         runBlocking {
@@ -114,11 +120,11 @@ class MainViewModelPerformanceTest {
                                         reminders.add(node)
                                     }
                                 }
-                                MainViewModel.NodeCategorization(inbox, archived, reminders)
+                                NodeCategorization(inbox, archived, reminders)
                             }.stateIn(
                                 scope,
                                 SharingStarted.Eagerly,
-                                MainViewModel.NodeCategorization(),
+                                NodeCategorization(),
                             )
 
                     val inboxNodes2 =

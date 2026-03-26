@@ -35,11 +35,11 @@ data class ModeVisibilityProfile(
 )
 
 /**
- * Defines the filtering configuration for nodes within a specific operating mode.
+ * Defines the inclusion and sorting criteria applied to nodes when a specific Mode is active.
  *
- * @property includeAreaIds The set of area IDs to include. An empty set means no areas are filtered (all are included if no other filter excludes them).
- * @property includeTypes The set of node types to include. An empty set means no types are filtered.
- * @property sortStrategy The strategy used to sort the visible nodes. Defaults to "DEFAULT".
+ * @param includeAreaIds The set of Area IDs to include. If empty, no area filtering is applied.
+ * @param includeTypes The set of node types (e.g., "task", "project", "note") to include.
+ * @param sortStrategy The identifier indicating how the resulting nodes should be sorted (e.g., "DEFAULT", "URGENCY").
  */
 @Serializable
 data class ModeFilterProfile(
@@ -49,9 +49,9 @@ data class ModeFilterProfile(
 )
 
 /**
- * Defines the quick actions available within a specific operating mode.
+ * Defines the quick actions available to the user when a specific Mode is active.
  *
- * @property quickActions A list of quick action identifiers available in this mode. An empty list means no quick actions are configured.
+ * @param quickActions A list of string identifiers corresponding to available actions (e.g., "CREATE_TASK", "START_TIMER").
  */
 @Serializable
 data class ModeActionProfile(
@@ -59,9 +59,9 @@ data class ModeActionProfile(
 )
 
 /**
- * Defines the suggestions configuration for a specific operating mode.
+ * Defines the AI or context-based suggestion types relevant to a specific Mode.
  *
- * @property suggestionKeys A list of suggestion keys to be used for generating suggestions in this mode. An empty list means no suggestions are configured.
+ * @param suggestionKeys A list of suggestion identifiers to generate or display (e.g., "HIGH_ENERGY_TASKS").
  */
 @Serializable
 data class ModeSuggestionProfile(
@@ -69,14 +69,15 @@ data class ModeSuggestionProfile(
 )
 
 /**
- * Represents the complete query profile for a specific operating mode, aggregating visibility, filtering, actions, suggestions, and dashboard blocks.
+ * An aggregate configuration representing the entire behavior, appearance, and filtering
+ * rules for an active Mode within TajsOS.
  *
- * @property modeId The unique identifier of the mode.
- * @property visibility The visibility profile for UI sections.
- * @property filtering The filtering profile for nodes.
- * @property actions The quick actions profile.
- * @property suggestions The suggestions profile.
- * @property dashboardBlocks A list of dashboard block identifiers to display. An empty list means no specific dashboard blocks are configured.
+ * @param modeId The unique identifier of the Mode this profile belongs to.
+ * @param visibility The configuration dictating which UI components are displayed.
+ * @param filtering The logic defining which nodes are queried from the database.
+ * @param actions The configuration of interactive shortcuts available.
+ * @param suggestions The configuration detailing what kind of automated suggestions to present.
+ * @param dashboardBlocks A list of identifiers for modular dashboard components to render on the home screen.
  */
 @Serializable
 data class ModeQueryProfile(
@@ -129,6 +130,15 @@ fun buildModeQueryProfile(
     )
 }
 
+/**
+ * Safely decodes a raw JSON string representing a list of strings into a Kotlin `List<String>`.
+ *
+ * If the input string is null, blank, or contains invalid JSON that cannot be parsed into
+ * a string list, this function catches the exception and returns an empty list instead of crashing.
+ *
+ * @param raw The raw JSON string to decode (e.g., `["ITEM1", "ITEM2"]`).
+ * @return A valid `List<String>`, or an empty list if parsing fails.
+ */
 private fun decodeStringList(raw: String?): List<String> {
     if (raw.isNullOrBlank()) return emptyList()
     return runCatching { modeProfileJson.decodeFromString<List<String>>(raw) }
