@@ -23,4 +23,5 @@ plans/*
 .artifacts/*
 .env
 *.log
-.aiassistant/
+.aiassistant
+.ai
