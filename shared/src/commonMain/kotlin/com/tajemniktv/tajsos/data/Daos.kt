@@ -92,21 +92,54 @@ interface NodeDao {
     @Query("SELECT * FROM nodes WHERE id = :id")
     suspend fun getNodeById(id: Long): NodeEntity?
 
+    /**
+     * Inserts a new node into the database or replaces an existing one if a conflict occurs.
+     *
+     * @param node The [NodeEntity] to insert.
+     * @return The auto-generated or existing primary key ID of the inserted node.
+     */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertNode(node: NodeEntity): Long
 
+    /**
+     * Updates an existing node in the database.
+     *
+     * @param node The [NodeEntity] containing the updated values. Its [NodeEntity.id] must match an existing row.
+     */
     @Update
     suspend fun updateNode(node: NodeEntity)
 
+    /**
+     * Deletes a node from the database.
+     *
+     * @param node The [NodeEntity] to delete.
+     */
     @Delete
     suspend fun deleteNode(node: NodeEntity)
 
+    /**
+     * Pins a node to the "Today" list by inserting a [TodayPinEntity].
+     * Replaces any existing pin for the same node and date to avoid conflicts.
+     *
+     * @param pin The [TodayPinEntity] representing the pinned state.
+     */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun pinToToday(pin: TodayPinEntity)
 
+    /**
+     * Removes the "Today" pin for a specific node.
+     *
+     * @param nodeId The ID of the node to unpin.
+     */
     @Query("DELETE FROM today_pins WHERE nodeId = :nodeId")
     suspend fun unpinFromToday(nodeId: Long)
 
+    /**
+     * Observes whether a specific node is currently pinned to "Today".
+     *
+     * @param nodeId The ID of the node to check.
+     * @return A reactive stream emitting `true` if the node has an associated pin, `false` otherwise.
+     */
     @Query("SELECT EXISTS(SELECT 1 FROM today_pins WHERE nodeId = :nodeId)")
     fun isPinnedToToday(nodeId: Long): Flow<Boolean>
 }
