@@ -15,6 +15,10 @@ import tajsos.composeapp.generated.resources.*
 
 /**
  * Screen defines the navigation graph of the app.
+ * @
+ * @
+ * @
+ * @
  */
 sealed class Screen(
     val route: String,
