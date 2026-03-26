@@ -134,6 +134,9 @@
     <string name="settings_biometric_lock">BLOKADA BIOMETRYCZNA</string>
     <string name="settings_biometric_desc">Wymagaj uwierzytelnienia przy otwieraniu</string>
     <string name="settings_biometric_unavailable">Sprzęt niedostępny</string>
+    <string name="settings_appearance">WYGLĄD</string>
+    <string name="settings_dark_theme">CIEMNY MOTYW</string>
+    <string name="settings_dark_theme_desc">Wyłącz, aby przełączyć na jasny motyw</string>
     <string name="settings_calendar_integration">INTEGRACJA Z KALENDARZEM</string>
     <string name="settings_configure_calendars">SKONFIGURUJ ZEWNĘTRZNE KALENDARZE</string>
     <string name="settings_manage_templates">ZARZĄDZAJ SZABLONAMI</string>
