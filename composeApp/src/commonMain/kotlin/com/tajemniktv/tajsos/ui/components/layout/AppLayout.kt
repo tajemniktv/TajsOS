@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved. 
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
 package com.tajemniktv.tajsos.ui.components.layout
@@ -32,14 +32,14 @@ fun AppLayout(
     onModeSelect: (Long) -> Unit,
     drawerState: DrawerState,
     scope: CoroutineScope,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     if (isDesktop) {
         Row(modifier = Modifier.fillMaxSize().background(TactileTheme.Background)) {
             Surface(
                 modifier = Modifier.width(TactileTheme.SidebarWidth).fillMaxHeight(),
                 color = TactileTheme.SidebarBackground,
-                border = BorderStroke(1.dp, TactileTheme.Border)
+                border = BorderStroke(1.dp, TactileTheme.Border),
             ) {
                 SidebarContent(
                     currentDestination = currentDestination,
@@ -48,7 +48,7 @@ fun AppLayout(
                     currentMode = currentMode,
                     allModes = allModes,
                     packRegistry = packRegistry,
-                    onModeSelect = onModeSelect
+                    onModeSelect = onModeSelect,
                 )
             }
             Box(modifier = Modifier.weight(1f)) {
@@ -62,7 +62,7 @@ fun AppLayout(
                 ModalDrawerSheet(
                     drawerContainerColor = TactileTheme.SidebarBackground,
                     drawerShape = RoundedCornerShape(0.dp),
-                    modifier = Modifier.width(TactileTheme.SidebarWidth)
+                    modifier = Modifier.width(TactileTheme.SidebarWidth),
                 ) {
                     SidebarContent(
                         currentDestination = currentDestination,
@@ -74,7 +74,7 @@ fun AppLayout(
                         currentMode = currentMode,
                         allModes = allModes,
                         packRegistry = packRegistry,
-                        onModeSelect = onModeSelect
+                        onModeSelect = onModeSelect,
                     )
                 }
             },

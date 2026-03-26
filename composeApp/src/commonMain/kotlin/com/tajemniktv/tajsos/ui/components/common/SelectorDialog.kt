@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved. 
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
 package com.tajemniktv.tajsos.ui.components.common
@@ -51,30 +51,32 @@ fun <T> SelectorDialog(
     onSelect: (T) -> Unit,
     optionName: (T) -> String,
     optionIcon: (T) -> ImageVector,
-    optionSubtext: (T) -> String = { "" }
+    optionSubtext: (T) -> String = { "" },
 ) {
     if (!show) return
 
     Dialog(
         onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false)
+        properties = DialogProperties(usePlatformDefaultWidth = false),
     ) {
         Surface(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(TactileTheme.Background.copy(alpha = 0.95f)),
-            color = TactileTheme.Background.copy(alpha = 0.95f)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(TactileTheme.Background.copy(alpha = 0.95f)),
+            color = TactileTheme.Background.copy(alpha = 0.95f),
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(TactileTheme.SpacingMd)
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(TactileTheme.SpacingMd),
             ) {
                 // Header
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.Top
+                    verticalAlignment = Alignment.Top,
                 ) {
                     Column {
                         Text(
@@ -82,26 +84,26 @@ fun <T> SelectorDialog(
                             style = MaterialTheme.typography.labelSmall,
                             color = TactileTheme.Muted,
                             fontWeight = FontWeight.Bold,
-                            letterSpacing = 1.sp
+                            letterSpacing = 1.sp,
                         )
                         Text(
                             title.uppercase(),
                             style = MaterialTheme.typography.headlineMedium,
                             color = TactileTheme.Text,
-                            fontWeight = FontWeight.ExtraBold
+                            fontWeight = FontWeight.ExtraBold,
                         )
                     }
                     Surface(
                         color = Color.Black.copy(alpha = 0.5f),
                         shape = RoundedCornerShape(4.dp),
-                        border = BorderStroke(1.dp, TactileTheme.Border)
+                        border = BorderStroke(1.dp, TactileTheme.Border),
                     ) {
                         Text(
                             "STATUS: READY",
                             style = MaterialTheme.typography.labelSmall,
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                             color = TactileTheme.Muted,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
                         )
                     }
                 }
@@ -113,7 +115,7 @@ fun <T> SelectorDialog(
                     columns = GridCells.Fixed(2),
                     horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
                     verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
                 ) {
                     items(options) { option ->
                         val isSelected = option == selectedOption
@@ -122,28 +124,33 @@ fun <T> SelectorDialog(
                             color = if (isSelected) TactileTheme.Primary else TactileTheme.Surface,
                             shape = RoundedCornerShape(TactileTheme.RadiusMd),
                             modifier = Modifier.height(140.dp),
-                            border = if (isSelected) null else BorderStroke(
-                                1.dp,
-                                TactileTheme.Border
-                            )
+                            border =
+                                if (isSelected) {
+                                    null
+                                } else {
+                                    BorderStroke(
+                                        1.dp,
+                                        TactileTheme.Border,
+                                    )
+                                },
                         ) {
                             Column(
                                 modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd),
                                 horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
+                                verticalArrangement = Arrangement.Center,
                             ) {
                                 Icon(
                                     optionIcon(option),
                                     contentDescription = null,
                                     tint = if (isSelected) TactileTheme.Background else TactileTheme.Primary,
-                                    modifier = Modifier.size(32.dp)
+                                    modifier = Modifier.size(32.dp),
                                 )
                                 Spacer(Modifier.height(TactileTheme.SpacingMd))
                                 Text(
                                     optionName(option).uppercase(),
                                     style = MaterialTheme.typography.labelLarge,
                                     fontWeight = FontWeight.ExtraBold,
-                                    color = if (isSelected) TactileTheme.Background else TactileTheme.Text
+                                    color = if (isSelected) TactileTheme.Background else TactileTheme.Text,
                                 )
                                 val sub = optionSubtext(option)
                                 if (sub.isNotEmpty()) {
@@ -152,7 +159,7 @@ fun <T> SelectorDialog(
                                         style = MaterialTheme.typography.labelSmall,
                                         color = if (isSelected) TactileTheme.Background.copy(alpha = 0.7f) else TactileTheme.Muted,
                                         fontSize = 8.sp,
-                                        fontWeight = FontWeight.Bold
+                                        fontWeight = FontWeight.Bold,
                                     )
                                 }
                             }
@@ -164,7 +171,7 @@ fun <T> SelectorDialog(
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(vertical = TactileTheme.SpacingMd),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Column {
                         Text(
@@ -172,29 +179,30 @@ fun <T> SelectorDialog(
                             style = MaterialTheme.typography.labelSmall,
                             color = TactileTheme.Muted,
                             fontSize = 8.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
                         )
                         Text(
                             "ACTIVE",
                             style = MaterialTheme.typography.labelSmall,
                             color = TactileTheme.Muted,
                             fontSize = 8.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
                         )
                     }
                     Button(
                         onClick = onDismiss,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = TactileTheme.Surface,
-                            contentColor = TactileTheme.Text
-                        ),
+                        colors =
+                            ButtonDefaults.buttonColors(
+                                containerColor = TactileTheme.Surface,
+                                contentColor = TactileTheme.Text,
+                            ),
                         shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                        modifier = Modifier.height(48.dp)
+                        modifier = Modifier.height(48.dp),
                     ) {
                         Text(
                             "CANCEL SESSION",
                             style = MaterialTheme.typography.labelSmall,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
                         )
                     }
                 }

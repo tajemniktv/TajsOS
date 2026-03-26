@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved. 
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
 package com.tajemniktv.tajsos.ui.components.common
@@ -22,21 +22,25 @@ import com.tajemniktv.tajsos.ui.theme.TactileTheme
  * @param subtitle The secondary header text shown in a smaller, muted style.
  */
 @Composable
-fun DetailHeader(title: String, subtitle: String, modifier: Modifier = Modifier) {
+fun DetailHeader(
+    title: String,
+    subtitle: String,
+    modifier: Modifier = Modifier,
+) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
             text = title.uppercase(),
             style = MaterialTheme.typography.headlineSmall,
             color = TactileTheme.Primary,
             fontWeight = FontWeight.ExtraBold,
-            letterSpacing = 2.sp
+            letterSpacing = 2.sp,
         )
         Text(
             text = subtitle.uppercase(),
             style = MaterialTheme.typography.labelSmall,
             color = TactileTheme.Muted,
             fontWeight = FontWeight.Bold,
-            letterSpacing = 1.sp
+            letterSpacing = 1.sp,
         )
     }
 }
@@ -57,12 +61,12 @@ fun DetailSectionHeader(
     title: String,
     modifier: Modifier = Modifier,
     icon: ImageVector? = null,
-    color: Color = TactileTheme.Muted
+    color: Color = TactileTheme.Muted,
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         if (icon != null) {
             Icon(icon, contentDescription = null, tint = color, modifier = Modifier.size(14.dp))
@@ -72,7 +76,7 @@ fun DetailSectionHeader(
             style = MaterialTheme.typography.labelSmall,
             color = color,
             fontWeight = FontWeight.ExtraBold,
-            letterSpacing = 2.sp
+            letterSpacing = 2.sp,
         )
     }
 }

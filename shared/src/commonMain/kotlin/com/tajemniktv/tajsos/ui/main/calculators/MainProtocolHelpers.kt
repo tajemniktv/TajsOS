@@ -2,19 +2,19 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
-package com.tajemniktv.tajsos.ui
+package com.tajemniktv.tajsos.ui.main.calculators
 
 import com.tajemniktv.tajsos.data.ModeEntity
 import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.data.TrackEntryEntity
-import kotlinx.datetime.DatePeriod
-import kotlinx.datetime.DateTimeUnit
-import kotlinx.datetime.Instant
+import com.tajemniktv.tajsos.ui.FilterHelper
+import com.tajemniktv.tajsos.ui.PlaybookTemplate
+import com.tajemniktv.tajsos.ui.TransitionProtocolTemplate
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.days
+import kotlin.time.Instant
 
 fun normalizeProtocolLabel(label: String): String =
     label

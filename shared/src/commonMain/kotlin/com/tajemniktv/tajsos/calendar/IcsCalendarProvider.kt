@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved. 
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
 package com.tajemniktv.tajsos.calendar
@@ -13,13 +13,15 @@ import kotlinx.datetime.*
 import kotlin.time.Clock
 import kotlin.time.Instant
 
-class IcsCalendarProvider(private val client: HttpClient) : CalendarProvider {
+class IcsCalendarProvider(
+    private val client: HttpClient,
+) : CalendarProvider {
     override val type: String = "ICS"
 
     override suspend fun fetchEvents(
         provider: CalendarProviderEntity,
         from: Instant,
-        to: Instant
+        to: Instant,
     ): List<CalendarEventEntity> {
         val url = provider.url ?: return emptyList()
         return try {
@@ -36,48 +38,58 @@ class IcsCalendarProvider(private val client: HttpClient) : CalendarProvider {
         }
     }
 
-    private fun unfoldLines(content: String): Sequence<String> = sequence {
-        val lines = content.lineSequence().iterator()
-        if (!lines.hasNext()) return@sequence
+    private fun unfoldLines(content: String): Sequence<String> =
+        sequence {
+            val lines = content.lineSequence().iterator()
+            if (!lines.hasNext()) return@sequence
 
-        var currentFullLine = lines.next().trimEnd()
+            var currentFullLine = lines.next().trimEnd()
 
-        while (lines.hasNext()) {
-            val nextLine = lines.next().trimEnd()
-            if (nextLine.startsWith(" ") || nextLine.startsWith("\t")) {
-                currentFullLine += nextLine.substring(1)
-            } else {
-                yield(currentFullLine)
-                currentFullLine = nextLine
+            while (lines.hasNext()) {
+                val nextLine = lines.next().trimEnd()
+                if (nextLine.startsWith(" ") || nextLine.startsWith("\t")) {
+                    currentFullLine += nextLine.substring(1)
+                } else {
+                    yield(currentFullLine)
+                    currentFullLine = nextLine
+                }
             }
+            yield(currentFullLine)
         }
-        yield(currentFullLine)
-    }
 
-    private fun parseIcs(content: String, providerId: Long): List<CalendarEventEntity> {
+    private fun parseIcs(
+        content: String,
+        providerId: Long,
+    ): List<CalendarEventEntity> {
         val events = mutableListOf<CalendarEventEntity>()
         var currentBuilder: IcsEventBuilder? = null
 
         unfoldLines(content).forEach { line ->
             val trimmed = line.trim()
-            when {
-                trimmed.startsWith("BEGIN:VEVENT") -> {
-                    currentBuilder = IcsEventBuilder()
+            when
+                {
+                    trimmed.startsWith("BEGIN:VEVENT") -> {
+                        currentBuilder = IcsEventBuilder()
+                    }
+
+                    trimmed.startsWith("END:VEVENT") -> {
+                        currentBuilder?.build(providerId)?.let { events.add(it) }
+                        currentBuilder = null
+                    }
+
+                    currentBuilder != null -> {
+                        currentBuilder.processLine(trimmed)
+                    }
                 }
-                trimmed.startsWith("END:VEVENT") -> {
-                    currentBuilder?.build(providerId)?.let { events.add(it) }
-                    currentBuilder = null
-                }
-                currentBuilder != null -> {
-                    currentBuilder?.processLine(trimmed)
-                }
-            }
         }
         return events
     }
 }
 
-private data class IcsDateProperty(val value: String, val rawKey: String) {
+private data class IcsDateProperty(
+    val value: String,
+    val rawKey: String,
+) {
     val isAllDay: Boolean get() = rawKey.contains("VALUE=DATE") || value.length == 8
 }
 
@@ -97,7 +109,8 @@ private class IcsEventBuilder {
         val key = rawKey.substringBefore(";")
         val value = unescapeIcs(parts[1])
 
-        when (key) {
+        when (key)
+        {
             "UID" -> uid = value
             "SUMMARY" -> summary = value
             "DESCRIPTION" -> description = value
@@ -125,20 +138,20 @@ private class IcsEventBuilder {
             endAt = end.toEpochMilliseconds(),
             isAllDay = sProp.isAllDay,
             createdAt = now,
-            updatedAt = now
+            updatedAt = now,
         )
     }
 
-    private fun unescapeIcs(value: String): String {
-        return value.replace("\\\\", "\\")
+    private fun unescapeIcs(value: String): String =
+        value
+            .replace("\\\\", "\\")
             .replace("\\;", ";")
             .replace("\\,", ",")
             .replace("\\n", "\n")
             .replace("\\N", "\n")
-    }
 
-    private fun parseDate(property: IcsDateProperty): Instant? {
-        return try {
+    private fun parseDate(property: IcsDateProperty): Instant? =
+        try {
             val cleanDate = property.value.trim()
             if (cleanDate.length == 8) {
                 parseAllDayDate(cleanDate)
@@ -150,7 +163,6 @@ private class IcsEventBuilder {
         } catch (e: Exception) {
             null
         }
-    }
 
     private fun parseAllDayDate(cleanDate: String): Instant {
         if (cleanDate.length < 8) throw IllegalArgumentException("Invalid date length")
@@ -180,7 +192,8 @@ private class IcsEventBuilder {
     }
 
     private fun extractTimeZone(rawKey: String): TimeZone {
-        val tzidMatch = Regex("TZID=([^;:]+)").find(rawKey) ?: return TimeZone.currentSystemDefault()
+        val tzidMatch =
+            Regex("TZID=([^;:]+)").find(rawKey) ?: return TimeZone.currentSystemDefault()
         return try {
             TimeZone.of(tzidMatch.groupValues[1])
         } catch (e: Exception) {

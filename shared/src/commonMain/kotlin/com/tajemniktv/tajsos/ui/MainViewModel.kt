@@ -7,15 +7,29 @@ package com.tajemniktv.tajsos.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tajemniktv.tajsos.data.*
+import com.tajemniktv.tajsos.ui.main.calculators.calculateAreaHealthSnapshot
+import com.tajemniktv.tajsos.ui.main.calculators.calculateCapacitySnapshot
+import com.tajemniktv.tajsos.ui.main.calculators.calculateCombinedDirectionSnapshot
+import com.tajemniktv.tajsos.ui.main.calculators.calculateCoreLifeOSShiftSnapshot
+import com.tajemniktv.tajsos.ui.main.calculators.calculateInsights
+import com.tajemniktv.tajsos.ui.main.calculators.calculateLifeOSSecondBrainSnapshot
+import com.tajemniktv.tajsos.ui.main.calculators.calculateLifeOSSignatureSnapshot
+import com.tajemniktv.tajsos.ui.main.calculators.calculateMaintenanceSnapshot
+import com.tajemniktv.tajsos.ui.main.calculators.calculateOpenLoopsSnapshot
+import com.tajemniktv.tajsos.ui.main.calculators.calculatePersonalRulesSnapshot
+import com.tajemniktv.tajsos.ui.main.calculators.calculatePhysicalLogisticsSnapshot
+import com.tajemniktv.tajsos.ui.main.calculators.calculateRelationshipSnapshot
+import com.tajemniktv.tajsos.ui.main.calculators.calculateStudentBoardState
+import com.tajemniktv.tajsos.ui.main.calculators.calculateTimeArchitectureSnapshot
+import com.tajemniktv.tajsos.ui.main.calculators.calculateVaultsSnapshot
+import com.tajemniktv.tajsos.ui.main.calculators.matchesQuery
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.*
 import kotlinx.serialization.json.Json
-import kotlin.math.sqrt
 import kotlin.time.Clock
-import kotlin.time.Instant
 
 class MainViewModel(
     private val repository: AppRepository,

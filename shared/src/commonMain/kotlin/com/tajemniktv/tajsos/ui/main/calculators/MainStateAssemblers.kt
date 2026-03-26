@@ -11,8 +11,12 @@ import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.data.PackRegistry
 import com.tajemniktv.tajsos.data.ProtocolHistoryEntity
-import com.tajemniktv.tajsos.data.RelationEntity
 import com.tajemniktv.tajsos.data.buildModeQueryProfile
+import com.tajemniktv.tajsos.ui.main.calculators.normalizeProtocolLabel
+import com.tajemniktv.tajsos.ui.main.calculators.parsePlaybookModeKey
+import com.tajemniktv.tajsos.ui.main.calculators.protocolChecklistProgress
+import com.tajemniktv.tajsos.ui.main.calculators.recommendProtocolLabel
+import com.tajemniktv.tajsos.ui.main.calculators.suggestPlaybookLabel
 import kotlinx.coroutines.flow.first
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -257,11 +261,20 @@ suspend fun buildDashboardUIState(
         filteredNodes.filter { it.node.type == "decision" && it.node.status == "active" }
     val maintenance =
         filteredNodes.filter { it.node.type == "maintenance" && it.node.status == "active" }
-    val maintenanceSnapshot = calculateMaintenanceSnapshot(nodes)
+    val maintenanceSnapshot =
+        _root_ide_package_.com.tajemniktv.tajsos.ui.main.calculators.calculateMaintenanceSnapshot(
+            nodes,
+        )
     val protocols =
         filteredNodes.filter { it.node.type == "protocol" && it.node.status == "active" }
     val people = filteredNodes.filter { it.node.type == "person" && it.node.status == "active" }
-    val openLoopDecayScores = openLoops.map { openLoopDecayScore(it.node, now) }
+    val openLoopDecayScores =
+        openLoops.map {
+            _root_ide_package_.com.tajemniktv.tajsos.ui.main.calculators.openLoopDecayScore(
+                it.node,
+                now,
+            )
+        }
     val openLoopsDecayAverage =
         if (openLoopDecayScores.isNotEmpty()) openLoopDecayScores.average().toInt() else 0
     val openLoopsOverloadWarning =
@@ -272,7 +285,11 @@ suspend fun buildDashboardUIState(
                 else -> null
             }
 
-    val areaSnapshot = calculateAreaHealthSnapshot(nodes, areasList)
+    val areaSnapshot =
+        _root_ide_package_.com.tajemniktv.tajsos.ui.main.calculators.calculateAreaHealthSnapshot(
+            nodes,
+            areasList,
+        )
     val areaHealthMap = areaSnapshot.areas.associate { it.areaId to it.status }
     val areaHealthMetrics = areaSnapshot.areas.associateBy { it.areaId }
 

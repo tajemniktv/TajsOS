@@ -173,7 +173,7 @@ fun DecisionList(
  */
 @Preview
 @Composable
-fun DecisionsScreenPreview() {
+private fun DecisionsScreenPreview() {
     TajsOSTheme {
         // DecisionsScreen(...)
     }

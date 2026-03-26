@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved. 
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
 package com.tajemniktv.tajsos.ui.components.layout
@@ -31,8 +31,7 @@ fun StatusHeader(
     color: Color = TactileTheme.Primary,
     subtitle: String? = null,
     subtitleStyle: androidx.compose.ui.text.TextStyle = MaterialTheme.typography.titleMedium,
-)
-{
+) {
     Column(modifier = modifier) {
         Text(
             text = "TAJSOS // STATUS: ${status.uppercase()}",
@@ -41,8 +40,7 @@ fun StatusHeader(
             fontWeight = FontWeight.Bold,
             letterSpacing = 2.sp,
         )
-        if (subtitle != null)
-        {
+        if (subtitle != null) {
             Text(
                 text = subtitle.uppercase(),
                 style = subtitleStyle,

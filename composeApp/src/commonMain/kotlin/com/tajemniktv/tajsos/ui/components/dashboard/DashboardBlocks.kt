@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved. 
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
 package com.tajemniktv.tajsos.ui.components.dashboard
@@ -36,7 +36,7 @@ import com.tajemniktv.tajsos.ui.theme.TactileTheme
 @Composable
 fun CurrentTaskBlock(
     activeTask: NodeWithPin?,
-    onEdit: (Long) -> Unit
+    onEdit: (Long) -> Unit,
 ) {
     if (activeTask == null) {
         AlertCard(
@@ -44,26 +44,26 @@ fun CurrentTaskBlock(
             description = "Assign a task to focus on.",
             icon = Icons.Default.Info,
             color = TactileTheme.Muted,
-            onClick = {}
+            onClick = {},
         )
     } else {
         Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
             com.tajemniktv.tajsos.ui.components.common.DetailSectionHeader(
                 title = "CURRENT FOCUS",
-                icon = Icons.Default.CenterFocusStrong
+                icon = Icons.Default.CenterFocusStrong,
             )
             DashCard(onClick = { onEdit(activeTask.node.id) }) {
                 Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
                     Text(
                         activeTask.node.title,
                         style = MaterialTheme.typography.titleLarge,
-                        color = TactileTheme.Primary
+                        color = TactileTheme.Primary,
                     )
                     if (activeTask.node.nextSmallestStep != null) {
                         Text(
                             "NEXT: ${activeTask.node.nextSmallestStep}",
                             style = MaterialTheme.typography.bodySmall,
-                            color = TactileTheme.Accent
+                            color = TactileTheme.Accent,
                         )
                     }
                 }
@@ -75,7 +75,7 @@ fun CurrentTaskBlock(
 @Composable
 fun ErrandListBlock(
     errands: List<NodeWithPin>,
-    onEdit: (Long) -> Unit
+    onEdit: (Long) -> Unit,
 ) {
     if (errands.isNotEmpty()) {
         SuggestionGroup(
@@ -83,7 +83,7 @@ fun ErrandListBlock(
             icon = Icons.Default.ShoppingCart,
             color = Color(0xFF00BCD4),
             nodes = errands,
-            onEditNode = onEdit
+            onEditNode = onEdit,
         )
     }
 }
@@ -91,7 +91,7 @@ fun ErrandListBlock(
 @Composable
 fun TinyVictoriesBlock(
     victories: List<NodeWithPin>,
-    onEdit: (Long) -> Unit
+    onEdit: (Long) -> Unit,
 ) {
     if (victories.isNotEmpty()) {
         SuggestionGroup(
@@ -99,7 +99,7 @@ fun TinyVictoriesBlock(
             icon = Icons.Default.EmojiEvents,
             color = Color(0xFFFFD700),
             nodes = victories,
-            onEditNode = onEdit
+            onEditNode = onEdit,
         )
     }
 }

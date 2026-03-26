@@ -2,8 +2,6 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
-@file:Suppress("ktlint:standard:no-wildcard-imports")
-
 package com.tajemniktv.tajsos
 
 import androidx.compose.foundation.background
@@ -400,7 +398,6 @@ private fun AppScaffold(
             composable(Screen.Vaults.route) { VaultsScreen(viewModel, onEditNode) }
             composable(Screen.Capacity.route) { CapacityScreen(viewModel) }
             composable(Screen.Identity.route) { IdentityScreen(viewModel, onEditNode) }
-            composable(Screen.StudentBoard.route) { StudentBoardScreen(viewModel, onEditNode) }
             composable(Screen.Templates.route) {
                 TemplatesScreen(viewModel, onBack = { navController.popBackStack() })
             }

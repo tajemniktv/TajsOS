@@ -47,7 +47,6 @@ class ScreenTest {
             Screen.Vaults,
             Screen.Capacity,
             Screen.Identity,
-            Screen.StudentBoard,
         )
 
     @Test

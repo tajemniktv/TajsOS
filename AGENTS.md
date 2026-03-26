@@ -93,6 +93,9 @@ When working in this repo, agents should:
 6. Avoid broad rewrites unless explicitly requested.
 7. If available, use MCP servers or tools to check code health (eg. CodeScene, SonarQube).
 8. Integrate the new code with the existing codebase cleanly and thoroughly.
+9. Update the documentation files when needed.
+10. Add or update KDoc comments for new or modified code.
+11. Keep the codebase clean, structured and preferably modular.
 
 ---
 
@@ -150,3 +153,6 @@ needed. Make sure to update them if they are outdated.
     - Biometric/locking: App supports biometric authentication and locking via preferences and
       ViewModel state.
     - Export: Data export to JSON is available via ViewModel.
+
+
+

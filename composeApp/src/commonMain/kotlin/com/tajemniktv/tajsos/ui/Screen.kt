@@ -186,13 +186,6 @@ sealed class Screen(
         Icons.Default.Psychology,
     )
 
-    data object StudentBoard : Screen(
-        "student_board",
-        Res.string.screen_student,
-        Icons.Default.School,
-        isRoot = false,
-    )
-
     companion object {
         /**
          * Finds the Screen corresponding to the base segment of a navigation route.
@@ -244,7 +237,6 @@ sealed class Screen(
                 Vaults,
                 Capacity,
                 Identity,
-                StudentBoard,
             ).find { it.route.split("/").first() == currentRouteBase }
         }
 
@@ -282,10 +274,6 @@ sealed class Screen(
                                         packRegistry.isEnabled(
                                             AppPack.STUDENT,
                                         )
-                                }
-
-                                StudentBoard -> {
-                                    packRegistry.isEnabled(AppPack.STUDENT)
                                 }
 
                                 Study -> {
