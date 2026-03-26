@@ -1,0 +1,431 @@
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
+package com.tajemniktv.tajsos.ui.screens.places
+
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import com.tajemniktv.tajsos.data.NodeEntity
+import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.PhysicalLogisticsSnapshot
+import com.tajemniktv.tajsos.ui.components.cards.NodeCard
+import com.tajemniktv.tajsos.ui.screens.GroupedOpenLoopSection
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
+
+@Composable
+@OptIn(ExperimentalLayoutApi::class)
+fun PlacesScreen(
+    viewModel: MainViewModel,
+    onEditNode: (Long) -> Unit,
+) {
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val surface =
+            if (maxWidth >
+                900.dp
+            ) {
+                PlacesDashboardSurface.DESKTOP
+            } else {
+                PlacesDashboardSurface.MOBILE
+            }
+        val plan =
+            remember(surface) {
+                buildPlacesDashboardPlan(
+                    surface,
+                )
+            }
+        val context =
+            remember(viewModel, onEditNode) {
+                PlacesDashboardContext(
+                    viewModel,
+                    onEditNode,
+                )
+            }
+        Column(modifier = Modifier.fillMaxSize()) {
+            plan.primary.forEach { block ->
+                PlacesDashboardBlockRegistry
+                    .resolve(block.id)
+                    ?.invoke(context)
+            }
+        }
+    }
+}
+
+@Composable
+@OptIn(ExperimentalLayoutApi::class)
+internal fun PlacesMainBlock(
+    viewModel: MainViewModel,
+    onEditNode: (Long) -> Unit,
+) {
+    val physicalLogisticsSnapshot by viewModel.physicalLogisticsSnapshot.collectAsState()
+    val allAreas by viewModel.allAreas.collectAsState()
+
+    Column(
+        modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd),
+        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+    ) {
+        Text(
+            text = "PLACES & LOGISTICS",
+            style = MaterialTheme.typography.displaySmall,
+            color = TactileTheme.Text,
+        )
+        Text(
+            text = "Coordinate errands, packing, travel prep, and reminders tied to physical places.",
+            style = MaterialTheme.typography.bodySmall,
+            color = TactileTheme.Muted,
+        )
+
+        PlacesLayer(
+            viewModel = viewModel,
+            snapshot = physicalLogisticsSnapshot,
+            allAreas = allAreas,
+            onEditNode = onEditNode,
+        )
+    }
+}
+
+@Composable
+@OptIn(ExperimentalLayoutApi::class)
+internal fun PlacesLayer(
+    viewModel: MainViewModel,
+    snapshot: PhysicalLogisticsSnapshot,
+    allAreas: List<NodeEntity>,
+    onEditNode: (Long) -> Unit,
+) {
+    var newPlaceTitle by remember { mutableStateOf("") }
+    var logisticsTitle by remember { mutableStateOf("") }
+    var logisticsContent by remember { mutableStateOf("") }
+
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = TactileTheme.Surface,
+        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+        border = BorderStroke(1.dp, TactileTheme.Border),
+    ) {
+        Column(
+            modifier = Modifier.padding(TactileTheme.SpacingMd),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Text(
+                "PHYSICAL LOGISTICS",
+                style = MaterialTheme.typography.labelSmall,
+                color = TactileTheme.Primary,
+                fontWeight = FontWeight.Bold,
+            )
+            Text(
+                "Places ${snapshot.places.size} • Place tasks ${snapshot.placeBasedTasks.size} • Errands ${
+                    snapshot.errandClusters.values.sumOf {
+                        it.size
+                    }
+                }",
+                style = MaterialTheme.typography.bodySmall,
+                color = TactileTheme.Muted,
+            )
+            Text(
+                "Travel pack template: ${if (snapshot.travelPackTemplateReady) "READY" else "MISSING"}",
+                style = MaterialTheme.typography.bodySmall,
+                color = if (snapshot.travelPackTemplateReady) TactileTheme.Success else TactileTheme.Accent,
+            )
+        }
+    }
+
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = TactileTheme.Surface,
+        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+        border = BorderStroke(1.dp, TactileTheme.Border),
+    ) {
+        Column(
+            modifier = Modifier.padding(TactileTheme.SpacingMd),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            OutlinedTextField(
+                value = newPlaceTitle,
+                onValueChange = { newPlaceTitle = it },
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text("Place name") },
+            )
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+            ) {
+                AssistChip(
+                    onClick = {
+                        viewModel.addPlace(newPlaceTitle, campus = true)
+                        newPlaceTitle = ""
+                    },
+                    label = { Text("ADD CAMPUS LOCATION") },
+                )
+                AssistChip(
+                    onClick = {
+                        viewModel.addPlace(newPlaceTitle, home = true)
+                        newPlaceTitle = ""
+                    },
+                    label = { Text("ADD HOME ZONE") },
+                )
+                AssistChip(
+                    onClick = {
+                        viewModel.addPlace(newPlaceTitle)
+                        newPlaceTitle = ""
+                    },
+                    label = { Text("ADD PLACE") },
+                )
+                AssistChip(
+                    onClick = { viewModel.ensureTravelPackTemplate() },
+                    label = { Text("ENSURE TRAVEL PACK TEMPLATE") },
+                )
+            }
+        }
+    }
+
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = TactileTheme.Surface,
+        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+        border = BorderStroke(1.dp, TactileTheme.Border),
+    ) {
+        Column(
+            modifier = Modifier.padding(TactileTheme.SpacingMd),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            OutlinedTextField(
+                value = logisticsTitle,
+                onValueChange = { logisticsTitle = it },
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text("List / note title") },
+            )
+            OutlinedTextField(
+                value = logisticsContent,
+                onValueChange = { logisticsContent = it },
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text("Optional logistics notes") },
+                minLines = 2,
+            )
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+            ) {
+                AssistChip(
+                    onClick = { viewModel.createWhatToBringList(logisticsTitle) },
+                    label = { Text("WHAT TO BRING") },
+                )
+                AssistChip(
+                    onClick = { viewModel.createPackingList(logisticsTitle) },
+                    label = { Text("PACKING LIST") },
+                )
+                AssistChip(
+                    onClick = {
+                        viewModel.createLeaveHomeChecklist(
+                            if (logisticsTitle.isBlank()) "Leave-home checklist" else logisticsTitle,
+                        )
+                    },
+                    label = { Text("LEAVE HOME CHECKLIST") },
+                )
+                AssistChip(
+                    onClick = { viewModel.createDontForgetSet(logisticsTitle) },
+                    label = { Text("DON'T FORGET SET") },
+                )
+                AssistChip(
+                    onClick = { viewModel.createEventPreparationList(logisticsTitle) },
+                    label = { Text("EVENT PREP LIST") },
+                )
+                AssistChip(
+                    onClick = { viewModel.createClassBringList(logisticsTitle) },
+                    label = { Text("CLASS BRING LIST") },
+                )
+                AssistChip(
+                    onClick = {
+                        viewModel.addPhysicalLogisticsNote(logisticsTitle, logisticsContent)
+                        logisticsTitle = ""
+                        logisticsContent = ""
+                    },
+                    label = { Text("PHYSICAL LOGISTICS NOTE") },
+                )
+            }
+        }
+    }
+
+    LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+        if (snapshot.campusLocations.isNotEmpty()) {
+            item {
+                GroupedOpenLoopSection(
+                    title = "CAMPUS LOCATIONS",
+                    items = snapshot.campusLocations.map { "${it.place.node.title} • ${it.relatedTasks.size} tasks" },
+                )
+            }
+        }
+        if (snapshot.homeZones.isNotEmpty()) {
+            item {
+                GroupedOpenLoopSection(
+                    title = "HOME ZONES",
+                    items = snapshot.homeZones.map { "${it.place.node.title} • ${it.relatedTasks.size} tasks" },
+                )
+            }
+        }
+        if (snapshot.whatToBringLists.isNotEmpty()) {
+            item {
+                GroupedOpenLoopSection(
+                    title = "WHAT-TO-BRING LISTS",
+                    items = snapshot.whatToBringLists.map { it.node.title },
+                )
+            }
+        }
+        if (snapshot.packingLists.isNotEmpty()) {
+            item {
+                GroupedOpenLoopSection(
+                    title = "PACKING LISTS",
+                    items = snapshot.packingLists.map { it.node.title },
+                )
+            }
+        }
+        if (snapshot.leaveHomeChecklists.isNotEmpty()) {
+            item {
+                GroupedOpenLoopSection(
+                    title = "LEAVE-HOME CHECKLISTS",
+                    items = snapshot.leaveHomeChecklists.map { it.node.title },
+                )
+            }
+        }
+        if (snapshot.dontForgetSets.isNotEmpty()) {
+            item {
+                GroupedOpenLoopSection(
+                    title = "DON'T FORGET ITEM SETS",
+                    items = snapshot.dontForgetSets.map { it.node.title },
+                )
+            }
+        }
+        if (snapshot.eventPreparationLists.isNotEmpty()) {
+            item {
+                GroupedOpenLoopSection(
+                    title = "EVENT PREPARATION LISTS",
+                    items = snapshot.eventPreparationLists.map { it.node.title },
+                )
+            }
+        }
+        if (snapshot.classSpecificBringLists.isNotEmpty()) {
+            item {
+                GroupedOpenLoopSection(
+                    title = "CLASS-SPECIFIC BRING LISTS",
+                    items = snapshot.classSpecificBringLists.map { it.node.title },
+                )
+            }
+        }
+        if (snapshot.outOfHomeTaskClusters.isNotEmpty()) {
+            item {
+                GroupedOpenLoopSection(
+                    title = "OUT-OF-HOME CLUSTERS",
+                    items = snapshot.outOfHomeTaskClusters.entries.map { "${it.key} • ${it.value.size}" },
+                )
+            }
+        }
+        if (snapshot.errandClusters.isNotEmpty()) {
+            item {
+                GroupedOpenLoopSection(
+                    title = "ERRAND CLUSTERS",
+                    items = snapshot.errandClusters.entries.map { "${it.key} • ${it.value.size}" },
+                )
+            }
+        }
+        if (snapshot.locationSpecificReminders.isNotEmpty()) {
+            item {
+                GroupedOpenLoopSection(
+                    title = "LOCATION-SPECIFIC REMINDERS",
+                    items = snapshot.locationSpecificReminders.map { it.node.title },
+                )
+            }
+        }
+
+        items(snapshot.places, key = { it.place.node.id }) { place ->
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                color = TactileTheme.Surface,
+                shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                border = BorderStroke(1.dp, TactileTheme.Border),
+            ) {
+                Column(
+                    modifier = Modifier.padding(TactileTheme.SpacingMd),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    Text(
+                        place.place.node.title,
+                        style = MaterialTheme.typography.titleSmall,
+                        color = TactileTheme.Text,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Text(
+                        "Related tasks ${place.relatedTasks.size} • Reminders ${place.remindersCount}",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = TactileTheme.Muted,
+                    )
+                    if (place.relatedTasks.isNotEmpty()) {
+                        GroupedOpenLoopSection(
+                            title = "PLACE-BASED TASKS",
+                            items =
+                                place.relatedTasks.take(6).map { task ->
+                                    val area =
+                                        allAreas.find { it.id == task.node.areaId }?.title
+                                            ?: "General"
+                                    "${task.node.title} • $area"
+                                },
+                        )
+                    }
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                    ) {
+                        AssistChip(
+                            onClick = { onEditNode(place.place.node.id) },
+                            label = { Text("OPEN PLACE PAGE") },
+                        )
+                        AssistChip(
+                            onClick = {
+                                viewModel.createWhatToBringList(
+                                    "What to bring for ${place.place.node.title}",
+                                    place.place.node.id,
+                                )
+                            },
+                            label = { Text("WHAT TO BRING") },
+                        )
+                    }
+                }
+            }
+        }
+
+        if (snapshot.physicalLogisticsNotes.isNotEmpty()) {
+            items(snapshot.physicalLogisticsNotes, key = { it.node.id }) { note ->
+                NodeCard(
+                    nodeWithPin = note,
+                    onToggleDone = { status -> viewModel.updateNodeStatus(note.node, status) },
+                    onTogglePin = { isPinned -> viewModel.togglePin(note.node, isPinned) },
+                    onClick = { onEditNode(note.node.id) },
+                    onLongClick = { onEditNode(note.node.id) },
+                    onArchive = { viewModel.archiveNode(note.node) },
+                )
+            }
+        }
+    }
+}
