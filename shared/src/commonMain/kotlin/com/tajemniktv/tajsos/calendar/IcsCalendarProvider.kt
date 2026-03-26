@@ -24,6 +24,9 @@ class IcsCalendarProvider(
         to: Instant,
     ): List<CalendarEventEntity> {
         val url = provider.url ?: return emptyList()
+        if (!url.startsWith("http://") && !url.startsWith("https://")) {
+            return emptyList()
+        }
         return try {
             val response = client.get(url)
             if (response.status.value in 200..299) {
