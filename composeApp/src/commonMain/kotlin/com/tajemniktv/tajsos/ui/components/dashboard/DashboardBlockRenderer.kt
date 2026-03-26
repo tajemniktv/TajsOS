@@ -14,6 +14,8 @@ import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -89,6 +91,13 @@ fun DashboardBlockRenderer(
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 1.sp
                     )
+                    if (dashboardState.areaImbalanceScore >= 30) {
+                        Text(
+                            "IMBALANCE ${dashboardState.areaImbalanceScore}% // ${dashboardState.areaImbalanceLabel.uppercase()}",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = if (dashboardState.areaImbalanceScore >= 60) TactileTheme.Error else TactileTheme.Accent,
+                        )
+                    }
                     Row(
                         modifier = Modifier.fillMaxWidth()
                             .horizontalScroll(rememberScrollState()),
@@ -97,7 +106,7 @@ fun DashboardBlockRenderer(
                         allAreas.forEach { area ->
                             AreaHealthCard(
                                 area = area,
-                                health = dashboardState.areaHealth[area.id] ?: "stable",
+                                metrics = dashboardState.areaHealthMetrics[area.id],
                                 onClick = {
                                     viewModel.clearSearchFilters()
                                     viewModel.updateSearchAreaFilter(area.id)
@@ -120,6 +129,28 @@ fun DashboardBlockRenderer(
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 2.sp
                     )
+
+                    TextButton(onClick = { onNavigateTo(Screen.Operations) }) {
+                        Text(
+                            text = "OPEN OPERATIONS WORKSPACE",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = TactileTheme.Primary,
+                        )
+                    }
+                    dashboardState.openLoopsOverloadWarning?.let { warning ->
+                        Text(
+                            warning,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = TactileTheme.Error,
+                        )
+                    }
+                    dashboardState.maintenanceOverdueWarning?.let { warning ->
+                        Text(
+                            warning,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = TactileTheme.Error,
+                        )
+                    }
 
                     if (dashboardState.openLoops.isNotEmpty()) {
                         SuggestionGroup(
@@ -150,6 +181,54 @@ fun DashboardBlockRenderer(
                             onEditNode = onEditNode
                         )
                     }
+                }
+            }
+        }
+
+        "time_architecture" -> {
+            val timeSnapshot by viewModel.timeArchitectureSnapshot.collectAsState()
+            Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+                Text(
+                    "TIME ARCHITECTURE",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TactileTheme.Accent,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 1.sp,
+                )
+                MetricCard(
+                    label = "HORIZONS",
+                    value = "TODAY ${timeSnapshot.todayLayer.size} • WEEK ${timeSnapshot.weekLayer.size} • MONTH ${timeSnapshot.monthLayer.size}",
+                    secondaryLabel = "SEMESTER ${timeSnapshot.semesterLayer.size}",
+                    icon = Icons.Default.Schedule,
+                    iconColor = TactileTheme.Primary,
+                    onClick = { onNavigateTo(Screen.Operations) },
+                )
+                if (timeSnapshot.examPeriodMode) {
+                    AlertCard(
+                        title = "EXAM PERIOD MODE",
+                        description = "Countdown detected in <= 30 days. Tighten weekly plan.",
+                        icon = Icons.Default.School,
+                        color = TactileTheme.Error,
+                        onClick = { onNavigateTo(Screen.StudentBoard) },
+                    )
+                }
+                if (timeSnapshot.countdowns.isNotEmpty()) {
+                    SuggestionGroup(
+                        title = "COUNTDOWNS",
+                        icon = Icons.Default.HourglassBottom,
+                        color = TactileTheme.Accent,
+                        nodes = timeSnapshot.countdowns.map { it.node },
+                        onEditNode = onEditNode,
+                    )
+                }
+                if (timeSnapshot.shortHorizonTasks.isNotEmpty()) {
+                    SuggestionGroup(
+                        title = "SHORT HORIZON",
+                        icon = Icons.Default.Bolt,
+                        color = TactileTheme.Success,
+                        nodes = timeSnapshot.shortHorizonTasks,
+                        onEditNode = onEditNode,
+                    )
                 }
             }
         }
@@ -338,8 +417,23 @@ fun DashboardBlockRenderer(
 
         "suggestions", "easy_wins" -> {
             Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingLg)) {
-                if (dashboardState.lowEnergyTasks.isNotEmpty() && (moodToday?.energyScore
-                        ?: 5) <= 2
+                val suggestedContextKey = dashboardState.suggestedContextKey
+                if (dashboardState.suggestedContextTasks.isNotEmpty() && suggestedContextKey != null) {
+                    SuggestionGroup(
+                        title = "CONTEXT MATCH // ${
+                            suggestedContextKey.replace("_", " ").uppercase()
+                        }",
+                        icon = Icons.Default.Explore,
+                        color = TactileTheme.Primary,
+                        nodes = dashboardState.suggestedContextTasks,
+                        onEditNode = onEditNode,
+                    )
+                }
+
+                if (dashboardState.lowEnergyTasks.isNotEmpty() && (
+                        moodToday?.energyScore
+                            ?: 5
+                    ) <= 2
                 ) {
                     SuggestionGroup(
                         title = "RECOVERY MODE // LOW ENERGY",
@@ -544,6 +638,7 @@ fun DashboardBlockRenderer(
         }
 
         "protocols" -> {
+            val transitionSnapshot by viewModel.transitionProtocolsSnapshot.collectAsState()
             Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
                 Text(
                     stringResource(Res.string.dash_protocols),
@@ -552,34 +647,99 @@ fun DashboardBlockRenderer(
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 1.sp
                 )
-                Row(
-                    modifier = Modifier.fillMaxWidth()
-                        .horizontalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)
-                ) {
-                    ProtocolTrigger(
-                        label = stringResource(Res.string.protocol_morning),
-                        icon = Icons.Default.WbSunny,
-                        color = TactileTheme.Primary,
-                        onClick = { onNavigateTo(Screen.Review) }
-                    )
-                    ProtocolTrigger(
-                        label = stringResource(Res.string.protocol_deep_work),
-                        icon = Icons.Default.Psychology,
+                transitionSnapshot.recommendedLabel?.let { recommended ->
+                    Text(
+                        "SUGGESTED NOW // ${recommended.uppercase()}",
+                        style = MaterialTheme.typography.labelSmall,
                         color = TactileTheme.Accent,
-                        onClick = { onNavigateTo(Screen.Focus) }
                     )
-                    ProtocolTrigger(
-                        label = stringResource(Res.string.protocol_shutdown),
-                        icon = Icons.Default.Brightness3,
-                        color = TactileTheme.Success,
-                        onClick = { onNavigateTo(Screen.Review) }
-                    )
-                    ProtocolTrigger(
-                        label = stringResource(Res.string.protocol_recovery),
-                        icon = Icons.Default.MedicalServices,
-                        color = TactileTheme.Error,
-                        onClick = { onNavigateTo(Screen.Track) }
+                }
+                Row(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                ) {
+                    viewModel.transitionProtocolTemplates.forEach { template ->
+                        val (icon, color, destination) =
+                            when (template.key)
+                            {
+                                "morning_startup" -> {
+                                    Triple(
+                                        Icons.Default.WbSunny,
+                                        TactileTheme.Primary,
+                                        Screen.Review,
+                                    )
+                                }
+
+                                "deep_work_entry" -> {
+                                    Triple(
+                                        Icons.Default.Psychology,
+                                        TactileTheme.Accent,
+                                        Screen.Focus,
+                                    )
+                                }
+
+                                "shutdown_ritual" -> {
+                                    Triple(
+                                        Icons.Default.Brightness3,
+                                        TactileTheme.Success,
+                                        Screen.Review,
+                                    )
+                                }
+
+                                "recovery_after_derailment" -> {
+                                    Triple(
+                                        Icons.Default.MedicalServices,
+                                        TactileTheme.Error,
+                                        Screen.Track,
+                                    )
+                                }
+
+                                "exam_week" -> {
+                                    Triple(
+                                        Icons.Default.School,
+                                        TactileTheme.Accent,
+                                        Screen.StudentBoard,
+                                    )
+                                }
+
+                                "travel_day" -> {
+                                    Triple(
+                                        Icons.Default.Flight,
+                                        TactileTheme.Primary,
+                                        Screen.Operations,
+                                    )
+                                }
+
+                                else -> {
+                                    Triple(
+                                        Icons.Default.RocketLaunch,
+                                        TactileTheme.Primary,
+                                        Screen.Operations,
+                                    )
+                                }
+                            }
+                        ProtocolTrigger(
+                            label = template.label.uppercase(),
+                            icon = icon,
+                            color = color,
+                            onClick = {
+                                viewModel.triggerProtocol(template.label)
+                                onNavigateTo(destination)
+                            },
+                        )
+                    }
+                }
+
+                if (dashboardState.activeProtocols.isNotEmpty()) {
+                    SuggestionGroup(
+                        title = "ACTIVE PROTOCOLS",
+                        icon = Icons.Default.RocketLaunch,
+                        color = TactileTheme.Primary,
+                        nodes = dashboardState.activeProtocols,
+                        onEditNode = onEditNode,
                     )
                 }
             }
@@ -589,39 +749,52 @@ fun DashboardBlockRenderer(
             RecoveryBasicsBlock(
                 onMedsClick = { onNavigateTo(Screen.Track) },
                 onHydrationClick = { /* hydration track later */ },
-                onFoodClick = { /* food track later */ }
+                onFoodClick = { /* food track later */ },
             )
         }
 
         "shopping_list", "place_based_tasks", "errands" -> {
             ErrandListBlock(
                 errands = dashboardState.shoppingList,
-                onEdit = onEditNode
+                onEdit = onEditNode,
             )
         }
 
         "tiny_wins", "tiny_victories" -> {
             TinyVictoriesBlock(
                 victories = dashboardState.tinyVictories,
-                onEdit = onEditNode
+                onEdit = onEditNode,
             )
         }
 
         "current_focus" -> {
             CurrentTaskBlock(
                 activeTask = pinnedNodes.firstOrNull(),
-                onEdit = onEditNode
+                onEdit = onEditNode,
             )
         }
 
         "classes", "assignments", "revision_targets" -> {
-            SuggestionGroup(
-                title = "STUDY MODULE // ${blockKey.uppercase()}",
-                icon = Icons.Default.School,
-                color = Color(0xFFFF9800),
-                nodes = dashboardState.upcomingDeadlines, // Placeholder
-                onEditNode = onEditNode
-            )
+            val studentBoard by viewModel.studentBoardState.collectAsState()
+            val studyNodes =
+                when (blockKey)
+                {
+                    "classes"     -> studentBoard.assignmentTracker
+                    "assignments" -> studentBoard.assignmentDeadlines
+                    else -> studentBoard.revisitBeforeExam
+                }
+            Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+                SuggestionGroup(
+                    title = "STUDY MODULE // ${blockKey.uppercase()}",
+                    icon = Icons.Default.School,
+                    color = Color(0xFFFF9800),
+                    nodes = studyNodes.take(5),
+                    onEditNode = onEditNode,
+                )
+                TextButton(onClick = { onNavigateTo(Screen.StudentBoard) }) {
+                    Text("OPEN STUDENT BOARD")
+                }
+            }
         }
 
         "paperwork", "bills", "renewals", "subscriptions", "bureaucracy" -> {
@@ -630,7 +803,7 @@ fun DashboardBlockRenderer(
                 icon = Icons.Default.Gavel,
                 color = Color(0xFF607D8B),
                 nodes = dashboardState.unresolvedBureaucracy,
-                onEditNode = onEditNode
+                onEditNode = onEditNode,
             )
         }
     }

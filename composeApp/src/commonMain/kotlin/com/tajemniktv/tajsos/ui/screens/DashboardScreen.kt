@@ -16,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavDestination
+import com.tajemniktv.tajsos.data.AppPack
 import com.tajemniktv.tajsos.data.FocusSessionEntity
 import com.tajemniktv.tajsos.data.ModeEntity
 import com.tajemniktv.tajsos.data.NodeEntity
@@ -52,11 +53,9 @@ fun DashboardScreen(
     onNavigateToProject: (Long) -> Unit,
     onNewEntry: () -> Unit,
     currentDestination: NavDestination? = null,
-)
-{
+) {
     BoxWithConstraints {
-        if (maxWidth > 800.dp)
-        {
+        if (maxWidth > 800.dp) {
             DashboardDesktopContent(
                 viewModel = viewModel,
                 onNavigateTo = onNavigateTo,
@@ -65,8 +64,7 @@ fun DashboardScreen(
                 onNewEntry = onNewEntry,
                 currentDestination = currentDestination,
             )
-        } else
-        {
+        } else {
             DashboardMobileContent(
                 viewModel = viewModel,
                 onNavigateTo = onNavigateTo,
@@ -96,8 +94,7 @@ private fun DashboardMobileContent(
     onNavigateTo: (Screen) -> Unit,
     onEditNode: (Long) -> Unit,
     onNavigateToProject: (Long) -> Unit,
-)
-{
+) {
     val allNodes by viewModel.allNodes.collectAsState()
     val todayNodes by viewModel.todayNodes.collectAsState()
     val trackEntries by viewModel.trackEntries.collectAsState()
@@ -113,16 +110,37 @@ private fun DashboardMobileContent(
     val allReviews by viewModel.allReviews.collectAsState()
     val currentMode by viewModel.currentMode.collectAsState()
     val allModes by viewModel.allModes.collectAsState()
+    val enabledPacks by viewModel.enabledPacks.collectAsState()
 
-    val blockList = remember(dashboardState.modePreferences) {
-        try
-        {
-            val jsonStr = dashboardState.modePreferences?.dashboardBlocksJson
-            if (jsonStr != null)
-            {
-                Json.decodeFromString<List<String>>(jsonStr)
-            } else
-            {
+    val rawBlockList =
+        remember(dashboardState.modePreferences, dashboardState.modeQueryProfile) {
+            dashboardState.modeQueryProfile
+                ?.dashboardBlocks
+                ?.takeIf { it.isNotEmpty() }
+                ?.let { return@remember it }
+            try {
+                val jsonStr = dashboardState.modePreferences?.dashboardBlocksJson
+                if (jsonStr != null) {
+                    Json.decodeFromString<List<String>>(jsonStr)
+                } else {
+                    listOf(
+                        "today_pulse",
+                        "load_capacity",
+                        "area_health",
+                        "operational",
+                        "search",
+                        "alerts",
+                        "sticky",
+                        "focus",
+                        "insights",
+                        "actions",
+                        "suggestions",
+                        "knowledge",
+                        "time_architecture",
+                        "protocols",
+                    )
+                }
+            } catch (e: Exception) {
                 listOf(
                     "today_pulse",
                     "load_capacity",
@@ -136,34 +154,45 @@ private fun DashboardMobileContent(
                     "actions",
                     "suggestions",
                     "knowledge",
+                    "time_architecture",
                     "protocols",
                 )
             }
-        } catch (e: Exception)
-        {
-            listOf(
-                "today_pulse",
-                "load_capacity",
-                "area_health",
-                "operational",
-                "search",
-                "alerts",
-                "sticky",
-                "focus",
-                "insights",
-                "actions",
-                "suggestions",
-                "knowledge",
-                "protocols",
-            )
         }
-    }
+
+    val blockList =
+        remember(rawBlockList, enabledPacks) {
+            rawBlockList.filter { block ->
+                when (block)
+                {
+                    "classes", "assignments", "revision_targets" -> {
+                        enabledPacks.isEnabled(
+                            AppPack.STUDENT,
+                        )
+                    }
+
+                    "paperwork", "bills", "renewals", "subscriptions", "bureaucracy" -> {
+                        enabledPacks.isEnabled(AppPack.FINANCE) || enabledPacks.isEnabled(AppPack.MAINTENANCE)
+                    }
+
+                    "protocols" -> {
+                        enabledPacks.isEnabled(
+                            AppPack.PROTOCOLS,
+                        ) || enabledPacks.isEnabled(AppPack.MAINTENANCE)
+                    }
+
+                    else -> {
+                        true
+                    }
+                }
+            }
+        }
 
     val pinnedNodes = allNodes.filter { it.pin != null }
     val completedTodayCount = pinnedNodes.count { it.node.status == "done" }
     val totalTodayCount = pinnedNodes.size
     val dailyProgress =
-            if (totalTodayCount > 0) completedTodayCount.toFloat() / totalTodayCount else 0f
+        if (totalTodayCount > 0) completedTodayCount.toFloat() / totalTodayCount else 0f
 
     val now = Clock.System.now()
     val localNow = now.toLocalDateTime(TimeZone.currentSystemDefault())
@@ -174,17 +203,17 @@ private fun DashboardMobileContent(
     val lastWeeklyReview = allReviews.find { it.type == "weekly" }
     val weekMillis = 7 * 24 * 60 * 60 * 1000L
     val needsWeeklyReview =
-            lastWeeklyReview == null || (now.toEpochMilliseconds() - lastWeeklyReview.completedAt) > weekMillis
+        lastWeeklyReview == null || (now.toEpochMilliseconds() - lastWeeklyReview.completedAt) > weekMillis
 
     val scrollState = rememberScrollState()
 
-
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(TactileTheme.Background)
-            .verticalScroll(scrollState)
-            .padding(TactileTheme.SpacingMd),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(TactileTheme.Background)
+                .verticalScroll(scrollState)
+                .padding(TactileTheme.SpacingMd),
         verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingLg),
     ) {
         ModeSwitcherHeader(
@@ -229,6 +258,7 @@ private fun DashboardMobileContent(
         // 12. Dashboard Modules
         DashboardModules(
             todayNodes = todayNodes,
+            inboxCount = inboxNodes.size,
             activeSession = activeSession,
             moodToday = moodToday,
             tasksCount = dashboardState.tasksCount,
@@ -242,7 +272,8 @@ private fun DashboardMobileContent(
         )
 
         // 13. System Footer
-        com.tajemniktv.tajsos.ui.components.dashboard.SystemFooter()
+        com.tajemniktv.tajsos.ui.components.dashboard
+            .SystemFooter()
 
         Spacer(Modifier.height(80.dp))
     }
@@ -261,6 +292,7 @@ private fun DashboardMobileContent(
 @Composable
 fun DashboardModules(
     todayNodes: List<NodeEntity>,
+    inboxCount: Int,
     activeSession: FocusSessionEntity?,
     moodToday: TrackEntryEntity?,
     tasksCount: Int,
@@ -271,8 +303,7 @@ fun DashboardModules(
     allSessions: List<FocusSessionEntity>,
     onNavigateTo: (Screen) -> Unit,
     viewModel: MainViewModel,
-)
-{
+) {
     Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
         Text(
             "CORE MODULES",
@@ -301,7 +332,7 @@ fun DashboardModules(
                 modifier = itemModifier,
                 title = stringResource(Res.string.screen_inbox),
                 icon = Icons.Default.Inbox,
-                status = "12", // Placeholder
+                status = "$inboxCount",
                 onClick = { onNavigateTo(Screen.Inbox) },
                 color = TactileTheme.Accent,
             )

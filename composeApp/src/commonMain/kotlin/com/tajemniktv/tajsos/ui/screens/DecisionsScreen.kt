@@ -10,10 +10,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.DashCard
@@ -35,24 +36,25 @@ import tajsos.composeapp.generated.resources.*
 fun DecisionsScreen(
     viewModel: MainViewModel,
     onEditNode: (Long) -> Unit,
-)
-{
+) {
     var selectedTab by remember { mutableIntStateOf(0) }
-    val tabs = listOf(
-        stringResource(Res.string.decision_tab_inbox),
-        stringResource(Res.string.decision_tab_pending),
-        stringResource(Res.string.decision_tab_log),
-    )
+    val tabs =
+        listOf(
+            stringResource(Res.string.decision_tab_inbox),
+            stringResource(Res.string.decision_tab_pending),
+            stringResource(Res.string.decision_tab_log),
+        )
 
     val inbox by viewModel.decisionInbox.collectAsState()
     val pending by viewModel.allPendingDecisions.collectAsState()
     val log by viewModel.decisionLog.collectAsState()
+    val stale by viewModel.stalePendingDecisions.collectAsState()
 
     Column(
         modifier =
-                Modifier
-                    .fillMaxSize()
-                    .background(TactileTheme.Background),
+            Modifier
+                .fillMaxSize()
+                .background(TactileTheme.Background),
     ) {
         TabRow(
             selectedTabIndex = selectedTab,
@@ -74,6 +76,38 @@ fun DecisionsScreen(
             }
         }
 
+        if (selectedTab == 1 && stale.isNotEmpty()) {
+            Surface(
+                modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingMd),
+                color = TactileTheme.Error.copy(alpha = 0.08f),
+                border =
+                    androidx.compose.foundation.BorderStroke(
+                        1.dp,
+                        TactileTheme.Error.copy(alpha = 0.25f),
+                    ),
+                shape =
+                    androidx.compose.foundation.shape
+                        .RoundedCornerShape(TactileTheme.RadiusMd),
+            ) {
+                Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+                    Text(
+                        "UNRESOLVED DECISIONS SITTING TOO LONG",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = TactileTheme.Error,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Spacer(Modifier.height(6.dp))
+                    stale.take(3).forEach { item ->
+                        Text(
+                            "• ${item.node.node.title} (${item.ageDays}d)",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = TactileTheme.Text,
+                        )
+                    }
+                }
+            }
+        }
+
         when (selectedTab)
         {
             0 -> DecisionList(inbox, onEditNode)
@@ -92,18 +126,18 @@ fun DecisionsScreen(
  * @param onEdit Callback invoked when a node card is tapped; receives the tapped node's id.
  */
 @Composable
-fun DecisionList(nodes: List<NodeWithPin>, onEdit: (Long) -> Unit)
-{
-    if (nodes.isEmpty())
-    {
+fun DecisionList(
+    nodes: List<NodeWithPin>,
+    onEdit: (Long) -> Unit,
+) {
+    if (nodes.isEmpty()) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text(
                 stringResource(Res.string.decision_no_decisions_category),
                 color = TactileTheme.Muted,
             )
         }
-    } else
-    {
+    } else {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(TactileTheme.SpacingMd),
@@ -117,8 +151,7 @@ fun DecisionList(nodes: List<NodeWithPin>, onEdit: (Long) -> Unit)
                             style = MaterialTheme.typography.titleMedium,
                             color = TactileTheme.Text,
                         )
-                        if (node.node.content.isNotEmpty())
-                        {
+                        if (node.node.content.isNotEmpty()) {
                             Text(
                                 node.node.content,
                                 style = MaterialTheme.typography.bodySmall,
@@ -140,8 +173,7 @@ fun DecisionList(nodes: List<NodeWithPin>, onEdit: (Long) -> Unit)
  */
 @Preview
 @Composable
-fun DecisionsScreenPreview()
-{
+fun DecisionsScreenPreview() {
     TajsOSTheme {
         // DecisionsScreen(...)
     }

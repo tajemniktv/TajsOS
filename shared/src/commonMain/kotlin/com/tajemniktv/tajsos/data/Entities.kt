@@ -100,6 +100,8 @@ data class NodeEntity(
     val socialContext: String? = null, // needs_privacy, commute_friendly
     val timeWindowContext: String? = null, // 10_minute, waiting_room
     val areaHealthStatus: String? = null, // active, neglected, overloaded, stable, on_fire
+    // Typed metadata envelope for optional packs and future schema evolution.
+    val metadataJson: String? = null,
 )
 
 /**
@@ -155,7 +157,7 @@ data class ModePreferenceEntity(
  */
 @Entity(
     tableName = "mode_area_filters",
-    primaryKeys = ["modeId", "areaId"]
+    primaryKeys = ["modeId", "areaId"],
 )
 @Serializable
 data class ModeAreaFilterEntity(
@@ -169,7 +171,7 @@ data class ModeAreaFilterEntity(
  */
 @Entity(
     tableName = "mode_type_filters",
-    primaryKeys = ["modeId", "nodeType"]
+    primaryKeys = ["modeId", "nodeType"],
 )
 @Serializable
 data class ModeTypeFilterEntity(
@@ -332,7 +334,7 @@ data class MedicationEntity(
 @Entity(
     tableName = "track_medications",
     primaryKeys = ["trackEntryId", "medicationId"],
-    indices = [Index(value = ["trackEntryId"]), Index(value = ["medicationId"])]
+    indices = [Index(value = ["trackEntryId"]), Index(value = ["medicationId"])],
 )
 @Serializable
 data class TrackMedicationJoinEntity(
@@ -498,7 +500,7 @@ data class CalendarEventEntity(
  */
 @Entity(
     tableName = "node_snapshots",
-    indices = [Index(value = ["nodeId"])]
+    indices = [Index(value = ["nodeId"])],
 )
 @Serializable
 data class NodeSnapshotEntity(

@@ -23,8 +23,13 @@ import com.tajemniktv.tajsos.data.DecisionOptionEntity
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.plus
+import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
+import kotlin.time.Clock
 
 /**
  * Renders a detailed UI for viewing and editing a single decision node.
@@ -46,9 +51,16 @@ fun DecisionDetailContent(
 {
     val scope = rememberCoroutineScope()
     val options by viewModel.getOptionsForDecision(node.id).collectAsState(initial = emptyList())
+        val allPeople by viewModel.allNodes.collectAsState()
+        val peopleNodes =
+            remember(allPeople) { allPeople.filter { it.node.type == "person" && it.node.status == "active" } }
+        val relatedPeople by viewModel
+            .getRelatedPeopleForDecision(node.id)
+            .collectAsState(initial = emptyList())
 
     var showAddOptionDialog by remember { mutableStateOf(false) }
     var showDecideDialog by remember { mutableStateOf(false) }
+        var showPeopleDialog by remember { mutableStateOf(false) }
 
     Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
         SectionTitle(stringResource(Res.string.decision_status_label))
@@ -75,7 +87,96 @@ fun DecisionDetailContent(
                         viewModel.updateNode(node.copy(decisionCategory = category))
                     },
                     label = { Text(category.uppercase()) },
+                    )
+                }
+            }
+
+            SectionTitle("DECISION REVISIT DATE")
+            Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+                val now = Clock.System.now()
+                val tz = TimeZone.currentSystemDefault()
+                val revisitDateLabel =
+                    node.decisionRevisitAt?.let {
+                        kotlin.time.Instant
+                            .fromEpochMilliseconds(it)
+                            .toLocalDateTime(tz)
+                            .date
+                            .toString()
+                    } ?: "NONE"
+                AssistChip(
+                    onClick = {},
+                    label = { Text("Current: $revisitDateLabel") },
                 )
+                FilterChip(
+                    selected = false,
+                    onClick = {
+                        viewModel.setDecisionRevisit(
+                            node,
+                            now.plus(1, DateTimeUnit.WEEK, tz).toEpochMilliseconds(),
+                        )
+                    },
+                    label = { Text("1 WEEK") },
+                )
+                FilterChip(
+                    selected = false,
+                    onClick = {
+                        viewModel.setDecisionRevisit(
+                            node,
+                            now.plus(1, DateTimeUnit.MONTH, tz).toEpochMilliseconds(),
+                        )
+                    },
+                    label = { Text("1 MONTH") },
+                )
+                FilterChip(
+                    selected = node.decisionRevisitAt == null,
+                    onClick = { viewModel.setDecisionRevisit(node, null) },
+                    label = { Text("CLEAR") },
+                )
+            }
+
+            SectionTitle("RELATED PEOPLE")
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    if (relatedPeople.isEmpty()) "No related people linked." else "${relatedPeople.size} linked",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = TactileTheme.Muted,
+                )
+                TextButton(onClick = { showPeopleDialog = true }) {
+                    Text("LINK PERSON")
+                }
+            }
+            if (relatedPeople.isNotEmpty()) {
+                relatedPeople.forEach { person ->
+                    Surface(
+                        modifier = Modifier.fillMaxWidth(),
+                        color = TactileTheme.Background,
+                        border = BorderStroke(1.dp, TactileTheme.Border),
+                        shape = RoundedCornerShape(2.dp),
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(TactileTheme.SpacingSm),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                person.node.title,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = TactileTheme.Text,
+                            )
+                            TextButton(onClick = {
+                                viewModel.unlinkDecisionFromPerson(
+                                node.id,
+                                person.node.id,
+                            )
+                        }) {
+                            Text("UNLINK")
+                        }
+                    }
+                }
             }
         }
 
@@ -260,33 +361,67 @@ fun DecisionDetailContent(
                             )
                             Text(option.title)
                         }
+                            }
+                            OutlinedTextField(
+                                value = outcome,
+                                onValueChange = { outcome = it },
+                                label = { Text(stringResource(Res.string.decision_outcome_reason)) },
+                                modifier = Modifier.fillMaxWidth(),
+                            )
+                        }
+                    },
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                if (outcome.isNotEmpty()) {
+                                    viewModel.decideOn(node.id, outcome, selectedOptionId)
+                                    showDecideDialog = false
+                                }
+                            },
+                        ) { Text(stringResource(Res.string.decision_decide)) }
+                    },
+                    dismissButton = {
+                        TextButton(
+                            onClick = {
+                                showDecideDialog = false
+                            },
+                        ) { Text(stringResource(Res.string.decision_cancel)) }
+                    },
+                    containerColor = TactileTheme.Background,
+                    titleContentColor = TactileTheme.Text,
+                    textContentColor = TactileTheme.Text,
+                )
+            }
+
+        if (showPeopleDialog) {
+            AlertDialog(
+                onDismissRequest = { showPeopleDialog = false },
+                title = { Text("LINK PERSON TO DECISION") },
+                text = {
+                    if (peopleNodes.isEmpty()) {
+                        Text("No person nodes available.")
+                    } else {
+                        Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+                            peopleNodes.forEach { person ->
+                                OutlinedButton(
+                                    onClick = {
+                                        viewModel.linkDecisionToPerson(node.id, person.node.id)
+                                    showPeopleDialog = false
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                            ) {
+                                Text(person.node.title)
+                            }
+                        }
                     }
-                    OutlinedTextField(
-                        value = outcome,
-                        onValueChange = { outcome = it },
-                        label = { Text(stringResource(Res.string.decision_outcome_reason)) },
-                        modifier = Modifier.fillMaxWidth(),
-                    )
                 }
             },
             confirmButton = {
-                TextButton(
-                    onClick = {
-                        if (outcome.isNotEmpty())
-                        {
-                            viewModel.decideOn(node.id, outcome, selectedOptionId)
-                            showDecideDialog = false
-                        }
-                    },
-                ) { Text(stringResource(Res.string.decision_decide)) }
+                TextButton(onClick = { showPeopleDialog = false }) {
+                    Text("CLOSE")
+                }
             },
-            dismissButton = {
-                TextButton(
-                    onClick = {
-                        showDecideDialog = false
-                    },
-                ) { Text(stringResource(Res.string.decision_cancel)) }
-            },
+            dismissButton = {},
             containerColor = TactileTheme.Background,
             titleContentColor = TactileTheme.Text,
             textContentColor = TactileTheme.Text,
