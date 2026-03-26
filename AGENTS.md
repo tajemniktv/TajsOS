@@ -91,7 +91,8 @@ When working in this repo, agents should:
 4. Keep diffs focused and reviewable.
 5. Update docs when the product scope or setup changes.
 6. Avoid broad rewrites unless explicitly requested.
-7. If available, use MCP servers or tools to check code health (eg. CodeScene, SonarQube)
+7. If available, use MCP servers or tools to check code health (eg. CodeScene, SonarQube).
+8. Integrate the new code with the existing codebase cleanly and thoroughly.
 
 ---
 
