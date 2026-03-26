@@ -347,4 +347,20 @@ class AppRepositoryTest {
 
             assertDerivedRelation(originalNodeId, taskId)
         }
+
+    @Test
+    fun testBuildExportBundle_includesSchemaAndPacks(): TestResult =
+        runTest {
+            fakeNodeDao.insertNode(NodeEntity(type = "task", title = "Export me"))
+
+            val bundle =
+                repository.buildExportBundle(
+                    enabledPacks = setOf(AppPack.STUDENT.key, AppPack.CREATOR.key),
+                )
+
+            assertEquals(EXPORT_SCHEMA_VERSION, bundle.schemaVersion)
+            assertTrue(bundle.nodes.isNotEmpty())
+            assertTrue(bundle.enabledPacks.contains(AppPack.STUDENT.key))
+            assertTrue(bundle.enabledPacks.contains(AppPack.CREATOR.key))
+        }
 }

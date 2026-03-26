@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import com.tajemniktv.tajsos.data.ModeEntity
+import com.tajemniktv.tajsos.data.PackRegistry
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.coroutines.CoroutineScope
@@ -27,6 +28,7 @@ fun AppLayout(
     onNewEntry: () -> Unit,
     currentMode: ModeEntity?,
     allModes: List<ModeEntity>,
+    packRegistry: PackRegistry,
     onModeSelect: (Long) -> Unit,
     drawerState: DrawerState,
     scope: CoroutineScope,
@@ -45,6 +47,7 @@ fun AppLayout(
                     onNewEntry = onNewEntry,
                     currentMode = currentMode,
                     allModes = allModes,
+                    packRegistry = packRegistry,
                     onModeSelect = onModeSelect
                 )
             }
@@ -70,6 +73,7 @@ fun AppLayout(
                         onNewEntry = onNewEntry,
                         currentMode = currentMode,
                         allModes = allModes,
+                        packRegistry = packRegistry,
                         onModeSelect = onModeSelect
                     )
                 }

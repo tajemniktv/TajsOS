@@ -76,6 +76,7 @@ class ApplicationTest {
 
             val requestPayload =
                 SyncRequest(
+                    protocolVersion = 2,
                     lastSyncTime = 1234567890L,
                     items =
                         listOf(
@@ -97,9 +98,11 @@ class ApplicationTest {
             assertEquals(HttpStatusCode.OK, response.status)
 
             val syncResponse = response.body<SyncResponse>()
+            assertEquals(2, syncResponse.protocolVersion)
             assertTrue(syncResponse.serverTime > 0)
             assertTrue(syncResponse.items.isEmpty()) // Empty for dummy implementation
             assertTrue(syncResponse.conflicts.isEmpty())
+            assertEquals(listOf("node-1"), syncResponse.ackedItemIds)
         }
 
     @Test
@@ -117,6 +120,72 @@ class ApplicationTest {
             assertEquals(HttpStatusCode.BadRequest, response.status)
             val bodyText = response.bodyAsText()
             assertTrue(bodyText.contains("Invalid sync request payload"))
+        }
+
+    @Test
+    fun testSyncEndpoint_returnsDeltaAndConflict(): TestResult =
+        testApplication {
+            application {
+                module()
+            }
+            val clientWithNegotiation =
+                createClient {
+                    install(ContentNegotiation) {
+                        json(
+                            Json {
+                                ignoreUnknownKeys = true
+                            },
+                        )
+                    }
+                }
+
+            val firstRequest =
+                SyncRequest(
+                    protocolVersion = 2,
+                    lastSyncTime = 0L,
+                    items =
+                        listOf(
+                            SyncItem(
+                                id = "node-sync-1",
+                                entityType = "task",
+                                payload = "{\"title\":\"v1\"}",
+                                updatedAt = 2_000L,
+                            ),
+                        ),
+                )
+
+            val firstResponse =
+                clientWithNegotiation.post("/sync") {
+                    contentType(ContentType.Application.Json)
+                    setBody(firstRequest)
+                }
+            assertEquals(HttpStatusCode.OK, firstResponse.status)
+
+            val staleUpdate =
+                SyncRequest(
+                    protocolVersion = 2,
+                    lastSyncTime = 0L,
+                    items =
+                        listOf(
+                            SyncItem(
+                                id = "node-sync-1",
+                                entityType = "task",
+                                payload = "{\"title\":\"stale\"}",
+                                updatedAt = 1_000L,
+                            ),
+                        ),
+                )
+
+            val secondResponse =
+                clientWithNegotiation.post("/sync") {
+                    contentType(ContentType.Application.Json)
+                    setBody(staleUpdate)
+                }
+            assertEquals(HttpStatusCode.OK, secondResponse.status)
+            val secondBody = secondResponse.body<SyncResponse>()
+            assertTrue(secondBody.conflicts.contains("node-sync-1"))
+            assertFalse(secondBody.ackedItemIds.contains("node-sync-1"))
+            assertTrue(secondBody.items.any { it.id == "node-sync-1" && it.updatedAt == 2_000L })
         }
 
     @Test

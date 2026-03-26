@@ -81,6 +81,7 @@ fun App(
 
     val currentMode by viewModel.currentMode.collectAsState()
     val allModes by viewModel.allModes.collectAsState()
+    val enabledPacks by viewModel.enabledPacks.collectAsState()
 
     var showCaptureSheetState by remember { mutableStateOf(false) }
 
@@ -115,6 +116,7 @@ fun App(
                 onNewEntry = { showCaptureSheetState = true },
                 currentMode = currentMode,
                 allModes = allModes,
+                packRegistry = enabledPacks,
                 onModeSelect = { viewModel.switchMode(it) },
                 drawerState = drawerState,
                 scope = scope,
@@ -368,6 +370,8 @@ private fun AppScaffold(
             composable(Screen.Notes.route) { NotesScreen(viewModel, onEditNode) }
             composable(Screen.Calendar.route) { CalendarScreen(viewModel, onEditNode) }
             composable(Screen.Decisions.route) { DecisionsScreen(viewModel, onEditNode) }
+            composable(Screen.Operations.route) { OperationsScreen(viewModel, onEditNode) }
+            composable(Screen.StudentBoard.route) { StudentBoardScreen(viewModel, onEditNode) }
             composable(Screen.Templates.route) {
                 TemplatesScreen(viewModel, onBack = { navController.popBackStack() })
             }
