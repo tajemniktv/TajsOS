@@ -909,6 +909,18 @@ class MainViewModel(
         )
     }
 
+    /**
+     * Creates and inserts a new node into the repository, returning its assigned ID.
+     * Similar to `addNode`, but operates as a suspend function to await the result.
+     *
+     * @param title The title of the node.
+     * @param content Optional content/body of the node.
+     * @param type The primary type of the node (e.g., "task", "note", "decision").
+     * @param projectId The ID of the project this node belongs to, if any.
+     * @param areaId The ID of the area this node belongs to, if any.
+     * @param inboxState Whether the node is in the inbox (needs processing). Defaults based on node type.
+     * @return The unique ID of the newly inserted node.
+     */
     suspend fun addNodeForResult(
         title: String,
         content: String = "",
@@ -933,6 +945,11 @@ class MainViewModel(
         nodeCommands.updateNode(node)
     }
 
+    /**
+     * Extracts the first bullet point or list item from the node's content and sets it as the `nextSmallestStep`.
+     *
+     * @param nodeId The ID of the node to process.
+     */
     fun extractNextStep(nodeId: Long) {
         nodeCommands.extractNextStep(nodeId)
     }
@@ -951,10 +968,20 @@ class MainViewModel(
         nodeCommands.splitIntoSubtasks(nodeId)
     }
 
+    /**
+     * Creates a historical snapshot of the node's current state.
+     *
+     * @param nodeId The ID of the node to snapshot.
+     */
     fun createSnapshot(nodeId: Long) {
         nodeCommands.createSnapshot(nodeId)
     }
 
+    /**
+     * Restores a node's state to a previously saved snapshot.
+     *
+     * @param snapshot The snapshot entity containing the historical state.
+     */
     fun restoreSnapshot(snapshot: NodeSnapshotEntity) {
         nodeCommands.restoreSnapshot(snapshot)
     }
@@ -1011,14 +1038,30 @@ class MainViewModel(
 
     suspend fun getNodeById(id: Long): NodeEntity? = repository.getNodeById(id)
 
+    /**
+     * Marks a node as archived. Archived nodes are typically hidden from active views.
+     *
+     * @param node The node to archive.
+     */
     fun archiveNode(node: NodeEntity) {
         nodeCommands.archiveNode(node)
     }
 
+    /**
+     * Permanently deletes a node from the database. This action cannot be undone.
+     *
+     * @param node The node to delete.
+     */
     fun deleteNodePermanently(node: NodeEntity) {
         nodeCommands.deleteNodePermanently(node)
     }
 
+    /**
+     * Toggles the pinned status of a node.
+     *
+     * @param node The node to update.
+     * @param isPinned The new pinned status.
+     */
     fun togglePin(
         node: NodeEntity,
         isPinned: Boolean,
@@ -1026,14 +1069,32 @@ class MainViewModel(
         nodeCommands.togglePin(node, isPinned)
     }
 
+    /**
+     * Toggles the permanent pin status of a node. Permanently pinned nodes
+     * typically bypass normal unpinning logic (e.g., daily resets).
+     *
+     * @param node The node to update.
+     */
     fun togglePermanentPin(node: NodeEntity) {
         nodeCommands.togglePermanentPin(node)
     }
 
+    /**
+     * Marks a node as processed, effectively removing it from the inbox.
+     *
+     * @param nodeId The ID of the node to mark as processed.
+     */
     fun markAsProcessed(nodeId: Long) {
         nodeCommands.markAsProcessed(nodeId)
     }
 
+    /**
+     * Creates a new project node.
+     *
+     * @param name The name of the new project.
+     * @param description An optional description for the project.
+     * @param areaId The ID of the area this project belongs to, if any.
+     */
     fun addProject(
         name: String,
         description: String = "",
