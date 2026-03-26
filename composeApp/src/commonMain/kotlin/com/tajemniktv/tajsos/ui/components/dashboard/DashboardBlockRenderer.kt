@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved. 
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
 package com.tajemniktv.tajsos.ui.components.dashboard
@@ -26,12 +26,20 @@ import com.tajemniktv.tajsos.ui.DashboardUIState
 import com.tajemniktv.tajsos.ui.InsightsData
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
-import com.tajemniktv.tajsos.ui.components.common.AlertCard
-import com.tajemniktv.tajsos.ui.components.modes.RecoveryBasicsBlock
+import com.tajemniktv.tajsos.ui.components.cards.AlertCard
+import com.tajemniktv.tajsos.ui.components.cards.AreaHealthCard
+import com.tajemniktv.tajsos.ui.components.cards.DashCard
+import com.tajemniktv.tajsos.ui.components.cards.FocusCard
+import com.tajemniktv.tajsos.ui.components.cards.LifeSummaryCard
+import com.tajemniktv.tajsos.ui.components.cards.MetricCard
+import com.tajemniktv.tajsos.ui.components.cards.StickyNoteCard
+import com.tajemniktv.tajsos.ui.components.cards.SystemStatusCard
+import com.tajemniktv.tajsos.ui.components.cards.TodayPulseCard
+import com.tajemniktv.tajsos.ui.components.cards.VaultCard
 import com.tajemniktv.tajsos.ui.components.layout.ProtocolTrigger
+import com.tajemniktv.tajsos.ui.components.modes.RecoveryBasicsBlock
 import com.tajemniktv.tajsos.ui.components.modes.StateAwareActionsGrid
 import com.tajemniktv.tajsos.ui.components.nodes.*
-import com.tajemniktv.tajsos.ui.components.DashCard
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.datetime.LocalDateTime
 import org.jetbrains.compose.resources.stringResource
@@ -55,9 +63,10 @@ fun DashboardBlockRenderer(
     localNow: LocalDateTime,
     onNavigateTo: (Screen) -> Unit,
     onEditNode: (Long) -> Unit,
-    onNavigateToProject: (Long) -> Unit
+    onNavigateToProject: (Long) -> Unit,
 ) {
-    when (blockKey) {
+    when (blockKey)
+    {
         "today_pulse", "today_top_3" -> {
             TodayPulseCard(
                 progress = dailyProgress,
@@ -68,7 +77,7 @@ fun DashboardBlockRenderer(
                     viewModel.updateNodeStatus(nodeWithPin.node, newStatus)
                 },
                 onTaskClick = { onEditNode(it) },
-                onClick = { onNavigateTo(Screen.Today) }
+                onClick = { onNavigateTo(Screen.Today) },
             )
         }
 
@@ -77,7 +86,7 @@ fun DashboardBlockRenderer(
                 load = dashboardState.systemLoad,
                 fragmentation = dashboardState.fragmentation,
                 warning = dashboardState.capacityWarning,
-                onClick = { onNavigateTo(Screen.Insights) }
+                onClick = { onNavigateTo(Screen.Insights) },
             )
         }
 
@@ -89,7 +98,7 @@ fun DashboardBlockRenderer(
                         style = MaterialTheme.typography.labelSmall,
                         color = TactileTheme.Muted,
                         fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.sp
+                        letterSpacing = 1.sp,
                     )
                     if (dashboardState.areaImbalanceScore >= 30) {
                         Text(
@@ -99,9 +108,11 @@ fun DashboardBlockRenderer(
                         )
                     }
                     Row(
-                        modifier = Modifier.fillMaxWidth()
-                            .horizontalScroll(rememberScrollState()),
-                        horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .horizontalScroll(rememberScrollState()),
+                        horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
                     ) {
                         allAreas.forEach { area ->
                             AreaHealthCard(
@@ -111,7 +122,7 @@ fun DashboardBlockRenderer(
                                     viewModel.clearSearchFilters()
                                     viewModel.updateSearchAreaFilter(area.id)
                                     onNavigateTo(Screen.Search)
-                                }
+                                },
                             )
                         }
                     }
@@ -120,14 +131,16 @@ fun DashboardBlockRenderer(
         }
 
         "operational" -> {
-            if (dashboardState.openLoops.isNotEmpty() || dashboardState.pendingDecisions.isNotEmpty() || dashboardState.maintenanceQueue.isNotEmpty()) {
+            if (dashboardState.openLoops.isNotEmpty() || dashboardState.pendingDecisions.isNotEmpty() ||
+                dashboardState.maintenanceQueue.isNotEmpty()
+            ) {
                 Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
                     Text(
                         "LIFE OS // OPERATIONAL",
                         style = MaterialTheme.typography.labelSmall,
                         color = TactileTheme.Accent,
                         fontWeight = FontWeight.Bold,
-                        letterSpacing = 2.sp
+                        letterSpacing = 2.sp,
                     )
 
                     TextButton(onClick = { onNavigateTo(Screen.OpenLoops) }) {
@@ -158,7 +171,7 @@ fun DashboardBlockRenderer(
                             icon = Icons.Default.AllInclusive,
                             color = TactileTheme.Accent,
                             nodes = dashboardState.openLoops,
-                            onEditNode = onEditNode
+                            onEditNode = onEditNode,
                         )
                     }
 
@@ -168,7 +181,7 @@ fun DashboardBlockRenderer(
                             icon = Icons.Default.QuestionMark,
                             color = TactileTheme.Primary,
                             nodes = dashboardState.pendingDecisions,
-                            onEditNode = onEditNode
+                            onEditNode = onEditNode,
                         )
                     }
 
@@ -178,7 +191,7 @@ fun DashboardBlockRenderer(
                             icon = Icons.Default.Settings,
                             color = TactileTheme.Success,
                             nodes = dashboardState.maintenanceQueue,
-                            onEditNode = onEditNode
+                            onEditNode = onEditNode,
                         )
                     }
                 }
@@ -244,23 +257,24 @@ fun DashboardBlockRenderer(
                 placeholder = {
                     Text(
                         stringResource(Res.string.dash_search_placeholder),
-                        style = MaterialTheme.typography.labelSmall
+                        style = MaterialTheme.typography.labelSmall,
                     )
                 },
                 leadingIcon = {
                     Icon(
                         Icons.Default.Search,
                         contentDescription = null,
-                        tint = TactileTheme.Primary
+                        tint = TactileTheme.Primary,
                     )
                 },
                 shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = TactileTheme.Border,
-                    focusedBorderColor = TactileTheme.Primary,
-                    unfocusedContainerColor = TactileTheme.Surface,
-                    focusedContainerColor = TactileTheme.Surface
-                )
+                colors =
+                    OutlinedTextFieldDefaults.colors(
+                        unfocusedBorderColor = TactileTheme.Border,
+                        focusedBorderColor = TactileTheme.Primary,
+                        unfocusedContainerColor = TactileTheme.Surface,
+                        focusedContainerColor = TactileTheme.Surface,
+                    ),
             )
         }
 
@@ -277,21 +291,21 @@ fun DashboardBlockRenderer(
                                 onClick = {
                                     viewModel.updateNode(
                                         node.copy(
-                                            reminderAt = null
-                                        )
+                                            reminderAt = null,
+                                        ),
                                     )
                                 },
-                                modifier = Modifier.size(24.dp)
+                                modifier = Modifier.size(24.dp),
                             ) {
                                 Icon(
                                     Icons.Default.Check,
                                     contentDescription = null,
                                     tint = TactileTheme.Error,
-                                    modifier = Modifier.size(16.dp)
+                                    modifier = Modifier.size(16.dp),
                                 )
                             }
                         },
-                        onClick = { onEditNode(node.id) }
+                        onClick = { onEditNode(node.id) },
                     )
                 }
 
@@ -301,21 +315,25 @@ fun DashboardBlockRenderer(
                         description = stringResource(Res.string.dash_review_pending_desc),
                         icon = Icons.Default.EventRepeat,
                         color = TactileTheme.Primary,
-                        onClick = { onNavigateTo(Screen.Review) }
+                        onClick = { onNavigateTo(Screen.Review) },
                     )
                 }
 
                 if (inboxNodes.isNotEmpty()) {
                     AlertCard(
-                        title = if (inboxNodes.size > 10) stringResource(
-                            Res.string.dash_inbox_overflow,
-                            inboxNodes.size
-                        )
-                        else stringResource(Res.string.dash_inbox_new, inboxNodes.size),
+                        title =
+                            if (inboxNodes.size > 10) {
+                                stringResource(
+                                    Res.string.dash_inbox_overflow,
+                                    inboxNodes.size,
+                                )
+                            } else {
+                                stringResource(Res.string.dash_inbox_new, inboxNodes.size)
+                            },
                         description = "Process items to clear your mental buffer.",
                         icon = if (inboxNodes.size > 10) Icons.Default.Warning else Icons.Default.MailOutline,
                         color = if (inboxNodes.size > 10) TactileTheme.Error else TactileTheme.Accent,
-                        onClick = { onNavigateTo(Screen.Inbox) }
+                        onClick = { onNavigateTo(Screen.Inbox) },
                     )
                 }
 
@@ -329,7 +347,7 @@ fun DashboardBlockRenderer(
                             viewModel.clearSearchFilters()
                             viewModel.updateSearchStatusFilter("active")
                             onNavigateTo(Screen.Search)
-                        }
+                        },
                     )
                 }
 
@@ -340,7 +358,7 @@ fun DashboardBlockRenderer(
                             description = stringResource(Res.string.dash_suggestion_stress),
                             icon = Icons.Default.Psychology,
                             color = TactileTheme.Accent,
-                            onClick = { onNavigateTo(Screen.Review) }
+                            onClick = { onNavigateTo(Screen.Review) },
                         )
                     }
                     if ((mood.focusScore ?: 5) <= 2) {
@@ -353,7 +371,7 @@ fun DashboardBlockRenderer(
                                 viewModel.clearSearchFilters()
                                 viewModel.updateSearchMaxMinutesFilter(5)
                                 onNavigateTo(Screen.Search)
-                            }
+                            },
                         )
                     }
                     if (!mood.tookMeds && localNow.hour >= 10) {
@@ -362,7 +380,7 @@ fun DashboardBlockRenderer(
                             description = stringResource(Res.string.dash_suggestion_meds),
                             icon = Icons.Default.MedicalServices,
                             color = TactileTheme.Accent,
-                            onClick = { onNavigateTo(Screen.Track) }
+                            onClick = { onNavigateTo(Screen.Track) },
                         )
                     }
                 }
@@ -372,15 +390,17 @@ fun DashboardBlockRenderer(
         "sticky" -> {
             if (dashboardState.stickyNotes.isNotEmpty()) {
                 Row(
-                    modifier = Modifier.fillMaxWidth()
-                        .horizontalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
                 ) {
                     dashboardState.stickyNotes.forEach { note ->
                         StickyNoteCard(
                             title = note.node.title,
                             content = note.node.content,
-                            onClick = { onEditNode(note.node.id) }
+                            onClick = { onEditNode(note.node.id) },
                         )
                     }
                 }
@@ -395,11 +415,12 @@ fun DashboardBlockRenderer(
                     if (activeSession != null) {
                         viewModel.stopFocusSession()
                     } else {
-                        pinnedNodes.firstOrNull()
+                        pinnedNodes
+                            .firstOrNull()
                             ?.let { viewModel.startFocusSession(it.node.id) }
                     }
                 },
-                onClick = { onNavigateTo(Screen.Focus) }
+                onClick = { onNavigateTo(Screen.Focus) },
             )
         }
 
@@ -407,7 +428,7 @@ fun DashboardBlockRenderer(
             LifeSummaryCard(
                 captures = insights.weeklyCaptures,
                 completions = insights.weeklyCompletions,
-                onClick = { onNavigateTo(Screen.Insights) }
+                onClick = { onNavigateTo(Screen.Insights) },
             )
         }
 
@@ -440,7 +461,7 @@ fun DashboardBlockRenderer(
                         icon = Icons.Default.BatteryChargingFull,
                         color = TactileTheme.Success,
                         nodes = dashboardState.lowEnergyTasks,
-                        onEditNode = onEditNode
+                        onEditNode = onEditNode,
                     )
                 }
 
@@ -455,7 +476,7 @@ fun DashboardBlockRenderer(
                         color = TactileTheme.Accent,
                         nodes = firstBatch,
                         onEditNode = onEditNode,
-                        description = "You have ${firstBatch.size} tasks in $areaName. Batch them?"
+                        description = "You have ${firstBatch.size} tasks in $areaName. Batch them?",
                     )
                 }
 
@@ -465,7 +486,7 @@ fun DashboardBlockRenderer(
                         icon = Icons.Default.Bolt,
                         color = TactileTheme.Success,
                         nodes = dashboardState.quickWins,
-                        onEditNode = onEditNode
+                        onEditNode = onEditNode,
                     )
                 }
 
@@ -475,7 +496,7 @@ fun DashboardBlockRenderer(
                         icon = Icons.Default.Psychology,
                         color = TactileTheme.Primary,
                         nodes = dashboardState.deepWork,
-                        onEditNode = onEditNode
+                        onEditNode = onEditNode,
                     )
                 }
 
@@ -484,13 +505,14 @@ fun DashboardBlockRenderer(
                         title = "NEEDS ATTENTION // CRITICAL PROJECTS",
                         icon = Icons.Default.AccountTree,
                         color = TactileTheme.Error,
-                        nodes = dashboardState.criticalProjects.map {
-                            NodeWithPin(
-                                it,
-                                null
-                            )
-                        },
-                        onEditNode = { onNavigateToProject(it) }
+                        nodes =
+                            dashboardState.criticalProjects.map {
+                                NodeWithPin(
+                                    it,
+                                    null,
+                                )
+                            },
+                        onEditNode = { onNavigateToProject(it) },
                     )
                 }
 
@@ -500,7 +522,7 @@ fun DashboardBlockRenderer(
                         icon = Icons.Default.NotificationImportant,
                         color = TactileTheme.Accent,
                         nodes = dashboardState.deservesAttention,
-                        onEditNode = onEditNode
+                        onEditNode = onEditNode,
                     )
                 }
 
@@ -510,7 +532,7 @@ fun DashboardBlockRenderer(
                         icon = Icons.Default.DateRange,
                         color = TactileTheme.Accent,
                         nodes = dashboardState.upcomingDeadlines,
-                        onEditNode = onEditNode
+                        onEditNode = onEditNode,
                     )
                 }
             }
@@ -523,12 +545,12 @@ fun DashboardBlockRenderer(
                     style = MaterialTheme.typography.labelSmall,
                     color = TactileTheme.Accent,
                     fontWeight = FontWeight.Bold,
-                    letterSpacing = 1.sp
+                    letterSpacing = 1.sp,
                 )
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)
+                    horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
                 ) {
                     VaultCard(
                         modifier = Modifier.weight(1f),
@@ -540,21 +562,21 @@ fun DashboardBlockRenderer(
                             viewModel.updateSearchTypeFilter("note")
                             viewModel.updateSearchStatusFilter("active")
                             onNavigateTo(Screen.Search)
-                        }
+                        },
                     )
                     VaultCard(
                         modifier = Modifier.weight(1f),
                         title = "QUOTES",
                         count = dashboardState.quoteVault.size,
                         icon = Icons.Default.FormatQuote,
-                        onClick = { onNavigateTo(Screen.Search) }
+                        onClick = { onNavigateTo(Screen.Search) },
                     )
                     VaultCard(
                         modifier = Modifier.weight(1f),
                         title = "IDEAS",
                         count = dashboardState.ideaIncubator.size,
                         icon = Icons.Default.Lightbulb,
-                        onClick = { onNavigateTo(Screen.Search) }
+                        onClick = { onNavigateTo(Screen.Search) },
                     )
                 }
 
@@ -564,7 +586,7 @@ fun DashboardBlockRenderer(
                         icon = Icons.Default.Favorite,
                         color = TactileTheme.Primary,
                         nodes = dashboardState.pinnedKnowledge,
-                        onEditNode = onEditNode
+                        onEditNode = onEditNode,
                     )
                 }
 
@@ -574,7 +596,7 @@ fun DashboardBlockRenderer(
                         icon = Icons.Default.AutoAwesome,
                         color = TactileTheme.Accent,
                         nodes = dashboardState.foundationalNotes,
-                        onEditNode = onEditNode
+                        onEditNode = onEditNode,
                     )
                 }
 
@@ -585,18 +607,20 @@ fun DashboardBlockRenderer(
                                 "FORGOTTEN WISDOM",
                                 style = MaterialTheme.typography.labelSmall,
                                 color = TactileTheme.Muted,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Bold,
                             )
                             Text(
                                 dashboardState.forgottenWisdom!!.node.title,
                                 style = MaterialTheme.typography.titleSmall,
-                                color = TactileTheme.Text
+                                color = TactileTheme.Text,
                             )
                             Spacer(Modifier.height(4.dp))
                             Text(
-                                dashboardState.forgottenWisdom!!.node.content.take(100) + "...",
+                                dashboardState.forgottenWisdom!!
+                                    .node.content
+                                    .take(100) + "...",
                                 style = MaterialTheme.typography.bodySmall,
-                                color = TactileTheme.Muted
+                                color = TactileTheme.Muted,
                             )
                         }
                     }
@@ -608,7 +632,7 @@ fun DashboardBlockRenderer(
                         icon = Icons.AutoMirrored.Filled.LibraryBooks,
                         color = TactileTheme.Primary,
                         nodes = dashboardState.resourceHighlights,
-                        onEditNode = onEditNode
+                        onEditNode = onEditNode,
                     )
                 }
 
@@ -620,7 +644,7 @@ fun DashboardBlockRenderer(
                         secondaryLabel = "LAST UPDATED",
                         icon = Icons.AutoMirrored.Filled.List,
                         iconColor = TactileTheme.Primary,
-                        onClick = { onNavigateToProject(project.id) }
+                        onClick = { onNavigateToProject(project.id) },
                     )
                 }
 
@@ -631,7 +655,7 @@ fun DashboardBlockRenderer(
                         secondaryLabel = "RECENT ACTIVITY",
                         icon = Icons.Default.Edit,
                         iconColor = TactileTheme.Primary,
-                        onClick = { onEditNode(nodeWithPin.node.id) }
+                        onClick = { onEditNode(nodeWithPin.node.id) },
                     )
                 }
             }
@@ -645,7 +669,7 @@ fun DashboardBlockRenderer(
                     style = MaterialTheme.typography.labelSmall,
                     color = TactileTheme.Muted,
                     fontWeight = FontWeight.Bold,
-                    letterSpacing = 1.sp
+                    letterSpacing = 1.sp,
                 )
                 transitionSnapshot.recommendedLabel?.let { recommended ->
                     Text(
@@ -779,7 +803,7 @@ fun DashboardBlockRenderer(
             val studyNodes =
                 when (blockKey)
                 {
-                    "classes"     -> studentBoard.assignmentTracker
+                    "classes" -> studentBoard.assignmentTracker
                     "assignments" -> studentBoard.assignmentDeadlines
                     else -> studentBoard.revisitBeforeExam
                 }

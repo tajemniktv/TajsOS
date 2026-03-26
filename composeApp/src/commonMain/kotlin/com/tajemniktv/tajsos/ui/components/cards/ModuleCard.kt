@@ -1,15 +1,21 @@
 /*
- * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved. 
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
-package com.tajemniktv.tajsos.ui.components.dashboard
+package com.tajemniktv.tajsos.ui.components.cards
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -30,15 +36,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
-/**
- * Displays a clickable dashboard card with an icon, an uppercase title, and a status text; the card visually scales while pressed and emits haptic feedback before invoking `onClick`.
- *
- * @param title The card title (rendered uppercase).
- * @param icon The icon displayed in the leading square.
- * @param status The status text shown below the title.
- * @param onClick Callback invoked after haptic feedback is performed.
- * @param color Tint color used for the icon and its background; defaults to `TactileTheme.Primary`.
- */
 @Composable
 fun ModuleCard(
     modifier: Modifier = Modifier,
@@ -46,48 +43,49 @@ fun ModuleCard(
     icon: ImageVector,
     status: String,
     onClick: () -> Unit,
-    color: Color = TactileTheme.Primary
+    color: Color = TactileTheme.Primary,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
     val scale = if (isPressed) 0.98f else 1f
-
     val haptic = LocalHapticFeedback.current
 
     Surface(
-        modifier = modifier
-            .graphicsLayer(scaleX = scale, scaleY = scale)
-            .clickable(
-                interactionSource = interactionSource,
-                indication = null,
-                onClick = {
-                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                    onClick()
-                }
-            ),
+        modifier =
+            modifier
+                .graphicsLayer(scaleX = scale, scaleY = scale)
+                .clickable(
+                    interactionSource = interactionSource,
+                    indication = null,
+                    onClick = {
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        onClick()
+                    },
+                ),
         shape = RoundedCornerShape(TactileTheme.RadiusMd),
         color = TactileTheme.Surface,
         border = BorderStroke(1.dp, TactileTheme.Border.copy(alpha = 0.5f)),
-        shadowElevation = 2.dp
+        shadowElevation = 2.dp,
     ) {
         Column(
             modifier = Modifier.padding(TactileTheme.SpacingMd),
-            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingXs)
+            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingXs),
         ) {
             Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .background(
-                        color.copy(alpha = 0.1f),
-                        RoundedCornerShape(TactileTheme.RadiusSm)
-                    ),
-                contentAlignment = Alignment.Center
+                modifier =
+                    Modifier
+                        .size(40.dp)
+                        .background(
+                            color.copy(alpha = 0.1f),
+                            RoundedCornerShape(TactileTheme.RadiusSm),
+                        ),
+                contentAlignment = Alignment.Center,
             ) {
                 Icon(
                     icon,
                     contentDescription = null,
                     modifier = Modifier.size(24.dp),
-                    tint = color
+                    tint = color,
                 )
             }
 
@@ -98,14 +96,14 @@ fun ModuleCard(
                 style = MaterialTheme.typography.labelSmall,
                 color = TactileTheme.Muted,
                 fontWeight = FontWeight.ExtraBold,
-                letterSpacing = 1.sp
+                letterSpacing = 1.sp,
             )
 
             Text(
                 text = status,
                 style = MaterialTheme.typography.titleMedium,
                 color = TactileTheme.Text,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
         }
     }

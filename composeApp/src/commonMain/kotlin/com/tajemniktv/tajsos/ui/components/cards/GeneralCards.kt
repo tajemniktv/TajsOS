@@ -1,18 +1,29 @@
 /*
- * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved. 
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
-package com.tajemniktv.tajsos.ui.components.common
+package com.tajemniktv.tajsos.ui.components.cards
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,16 +34,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
-/**
- * Renders a clickable card with a leading icon, an uppercase title, and a prominent value.
- *
- * @param title Short label shown in uppercase at the top of the card.
- * @param value Prominent value text displayed below the title; its color is controlled by [color].
- * @param icon Leading icon shown at the start of the title row.
- * @param modifier Modifier applied to the card for layout or interaction.
- * @param color Color applied to the `value` text; defaults to `TactileTheme.Primary`.
- * @param onClick Callback invoked when the card is clicked.
- */
 @Composable
 fun InfoCard(
     title: String,
@@ -40,41 +41,41 @@ fun InfoCard(
     icon: ImageVector,
     modifier: Modifier = Modifier,
     color: Color = TactileTheme.Primary,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
 ) {
     Surface(
         onClick = onClick,
         modifier = modifier,
         color = TactileTheme.Surface,
         shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = BorderStroke(1.dp, TactileTheme.Border)
+        border = BorderStroke(1.dp, TactileTheme.Border),
     ) {
         Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Icon(
                     icon,
                     contentDescription = null,
                     tint = TactileTheme.Muted,
-                    modifier = Modifier.size(16.dp)
+                    modifier = Modifier.size(16.dp),
                 )
                 Text(
                     text = title.uppercase(),
                     style = MaterialTheme.typography.labelSmall,
                     color = TactileTheme.Muted,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 8.sp
+                    fontSize = 8.sp,
                 )
             }
-            Spacer(Modifier.height(TactileTheme.SpacingSm))
+            Spacer(Modifier.width(TactileTheme.SpacingSm))
             Text(
                 text = value,
                 style = MaterialTheme.typography.titleMedium,
                 color = color,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
         }
     }
@@ -85,14 +86,14 @@ fun StatusCard(
     status: String,
     modifier: Modifier = Modifier,
     color: Color = TactileTheme.Success,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
 ) {
     Surface(
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
         color = TactileTheme.Surface,
         shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = BorderStroke(1.dp, TactileTheme.Border)
+        border = BorderStroke(1.dp, TactileTheme.Border),
     ) {
         Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
             Text(
@@ -100,9 +101,9 @@ fun StatusCard(
                 style = MaterialTheme.typography.labelSmall,
                 color = TactileTheme.Muted,
                 fontWeight = FontWeight.Bold,
-                fontSize = 8.sp
+                fontSize = 8.sp,
             )
-            Spacer(Modifier.height(TactileTheme.SpacingSm))
+            Spacer(Modifier.width(TactileTheme.SpacingSm))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Box(modifier = Modifier.size(8.dp).background(color, CircleShape))
                 Spacer(Modifier.width(8.dp))
@@ -110,7 +111,7 @@ fun StatusCard(
                     text = status.uppercase(),
                     style = MaterialTheme.typography.titleLarge,
                     color = TactileTheme.Text,
-                    fontWeight = FontWeight.ExtraBold
+                    fontWeight = FontWeight.ExtraBold,
                 )
             }
         }
@@ -123,30 +124,31 @@ fun LinkedNodeItem(
     subtitle: String,
     icon: ImageVector,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Surface(
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
         color = TactileTheme.Surface,
         shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = BorderStroke(1.dp, TactileTheme.Border)
+        border = BorderStroke(1.dp, TactileTheme.Border),
     ) {
         Row(
             modifier = Modifier.padding(TactileTheme.SpacingMd),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .background(TactileTheme.Background, RoundedCornerShape(8.dp)),
-                contentAlignment = Alignment.Center
+                modifier =
+                    Modifier
+                        .size(40.dp)
+                        .background(TactileTheme.Background, RoundedCornerShape(8.dp)),
+                contentAlignment = Alignment.Center,
             ) {
                 Icon(
                     icon,
                     contentDescription = null,
                     tint = TactileTheme.Muted,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(20.dp),
                 )
             }
             Spacer(Modifier.width(TactileTheme.SpacingMd))
@@ -155,19 +157,19 @@ fun LinkedNodeItem(
                     text = title,
                     style = MaterialTheme.typography.titleSmall,
                     color = TactileTheme.Text,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
                 )
                 Text(
                     text = subtitle,
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Muted
+                    color = TactileTheme.Muted,
                 )
             }
             Icon(
                 Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = null,
                 tint = TactileTheme.Muted,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(20.dp),
             )
         }
     }
@@ -177,25 +179,25 @@ fun LinkedNodeItem(
 fun ConnectionCard(
     text: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Surface(
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
         color = Color.Transparent,
         shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = BorderStroke(1.dp, TactileTheme.Border.copy(alpha = 0.5f))
+        border = BorderStroke(1.dp, TactileTheme.Border.copy(alpha = 0.5f)),
     ) {
         Row(
             modifier = Modifier.padding(TactileTheme.SpacingMd),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+            horizontalArrangement = Arrangement.Center,
         ) {
             Icon(
                 Icons.Default.Add,
                 contentDescription = null,
                 tint = TactileTheme.Muted,
-                modifier = Modifier.size(16.dp)
+                modifier = Modifier.size(16.dp),
             )
             Spacer(Modifier.width(8.dp))
             Text(
@@ -203,7 +205,7 @@ fun ConnectionCard(
                 style = MaterialTheme.typography.labelSmall,
                 color = TactileTheme.Muted,
                 fontWeight = FontWeight.Bold,
-                letterSpacing = 1.sp
+                letterSpacing = 1.sp,
             )
         }
     }

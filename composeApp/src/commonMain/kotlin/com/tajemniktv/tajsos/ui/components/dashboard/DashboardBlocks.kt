@@ -18,9 +18,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.tajemniktv.tajsos.data.NodeWithPin
-import com.tajemniktv.tajsos.ui.components.common.AlertCard
+import com.tajemniktv.tajsos.ui.components.cards.AlertCard
+import com.tajemniktv.tajsos.ui.components.cards.DashCard
 import com.tajemniktv.tajsos.ui.components.nodes.SuggestionGroup
-import com.tajemniktv.tajsos.ui.components.DashCard
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
 /**

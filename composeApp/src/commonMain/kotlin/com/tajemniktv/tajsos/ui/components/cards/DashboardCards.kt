@@ -1,15 +1,33 @@
 /*
- * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved. 
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
-package com.tajemniktv.tajsos.ui.components.dashboard
+package com.tajemniktv.tajsos.ui.components.cards
 
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,31 +37,25 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tajemniktv.tajsos.data.*
+import com.tajemniktv.tajsos.data.FocusSessionEntity
+import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.nodes.TaskBrief
-import com.tajemniktv.tajsos.ui.components.DashCard
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlin.time.Clock
 
-/**
- * Displays a clickable sticky-note styled card showing a title and multi-line content.
- *
- * The card uses the accent theme for background and border, constrains its width,
- * and limits the title to one line and the content to three lines.
- *
- * @param title The title text displayed at the top of the card.
- * @param content The body text displayed below the title (up to three lines).
- * @param onClick Callback invoked when the card is clicked.
- */
 @Composable
-fun StickyNoteCard(title: String, content: String, onClick: () -> Unit) {
+fun StickyNoteCard(
+    title: String,
+    content: String,
+    onClick: () -> Unit,
+) {
     Surface(
         onClick = onClick,
         modifier = Modifier.width(200.dp),
         color = TactileTheme.Accent.copy(alpha = 0.1f),
         shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = BorderStroke(1.dp, TactileTheme.Accent.copy(alpha = 0.3f))
+        border = BorderStroke(1.dp, TactileTheme.Accent.copy(alpha = 0.3f)),
     ) {
         Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
             Text(
@@ -51,14 +63,14 @@ fun StickyNoteCard(title: String, content: String, onClick: () -> Unit) {
                 style = MaterialTheme.typography.labelSmall,
                 maxLines = 1,
                 color = TactileTheme.Accent,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
             Spacer(Modifier.height(4.dp))
             Text(
                 content,
                 style = MaterialTheme.typography.bodySmall,
                 maxLines = 3,
-                color = TactileTheme.Text
+                color = TactileTheme.Text,
             )
         }
     }
@@ -70,14 +82,14 @@ fun TodayPulseCard(
     tasks: List<NodeWithPin>,
     onToggleTask: (NodeWithPin) -> Unit,
     onTaskClick: (Long) -> Unit,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     DashCard(onClick = onClick) {
         Column(modifier = Modifier.padding(TactileTheme.SpacingLg)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Top
+                verticalAlignment = Alignment.Top,
             ) {
                 Column {
                     Text(
@@ -85,13 +97,13 @@ fun TodayPulseCard(
                         style = MaterialTheme.typography.labelSmall,
                         color = TactileTheme.Primary,
                         fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.sp
+                        letterSpacing = 1.sp,
                     )
                     Text(
                         "Daily Pulse",
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold,
-                        color = TactileTheme.Text
+                        color = TactileTheme.Text,
                     )
                 }
                 ProgressRing(progress = progress)
@@ -103,14 +115,15 @@ fun TodayPulseCard(
                         title = nodeWithPin.node.title,
                         isDone = false,
                         onToggle = { onToggleTask(nodeWithPin) },
-                        onClick = { onTaskClick(nodeWithPin.node.id) })
+                        onClick = { onTaskClick(nodeWithPin.node.id) },
+                    )
                 }
                 if (tasks.none { it.node.status == "active" }) {
                     Text(
                         "System clear for today.",
                         style = MaterialTheme.typography.bodyMedium,
                         color = TactileTheme.Success,
-                        fontWeight = FontWeight.Medium
+                        fontWeight = FontWeight.Medium,
                     )
                 }
             }
@@ -123,7 +136,7 @@ fun FocusCard(
     viewModel: MainViewModel,
     activeSession: FocusSessionEntity?,
     onToggleFocus: () -> Unit,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     val allNodes by viewModel.allNodes.collectAsState()
     val activeTask =
@@ -134,7 +147,7 @@ fun FocusCard(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Top
+                verticalAlignment = Alignment.Top,
             ) {
                 Column {
                     Text(
@@ -142,20 +155,20 @@ fun FocusCard(
                         style = MaterialTheme.typography.labelSmall,
                         color = TactileTheme.Primary,
                         fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.sp
+                        letterSpacing = 1.sp,
                     )
                     Text(
                         if (activeSession != null) "Deep Work Phase" else "System Standby",
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
-                        color = TactileTheme.Text
+                        color = TactileTheme.Text,
                     )
                 }
                 if (activeSession != null) {
                     val duration =
                         (Clock.System.now().toEpochMilliseconds() - activeSession.startedAt) / 1000
-                    val h = duration / 3600;
-                    val m = (duration % 3600) / 60;
+                    val h = duration / 3600
+                    val m = (duration % 3600) / 60
                     val s = duration % 60
                     Text(
                         "${h.toString().padStart(2, '0')}:${
@@ -163,7 +176,7 @@ fun FocusCard(
                         }:${s.toString().padStart(2, '0')}",
                         style = MaterialTheme.typography.labelLarge,
                         color = TactileTheme.Primary,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
                     )
                 }
             }
@@ -171,24 +184,25 @@ fun FocusCard(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     if (activeTask != null) "Active: ${activeTask.title}" else "Ready to engage",
                     style = MaterialTheme.typography.bodySmall,
                     color = TactileTheme.Muted,
                     maxLines = 1,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
                 )
                 Switch(
                     checked = activeSession != null,
                     onCheckedChange = { onToggleFocus() },
-                    colors = SwitchDefaults.colors(
-                        checkedThumbColor = Color.White,
-                        checkedTrackColor = TactileTheme.Primary,
-                        uncheckedThumbColor = TactileTheme.Muted,
-                        uncheckedTrackColor = TactileTheme.Surface
-                    )
+                    colors =
+                        SwitchDefaults.colors(
+                            checkedThumbColor = Color.White,
+                            checkedTrackColor = TactileTheme.Primary,
+                            uncheckedThumbColor = TactileTheme.Muted,
+                            uncheckedTrackColor = TactileTheme.Surface,
+                        ),
                 )
             }
         }
@@ -196,7 +210,11 @@ fun FocusCard(
 }
 
 @Composable
-fun LifeSummaryCard(captures: Int, completions: Int, onClick: () -> Unit) {
+fun LifeSummaryCard(
+    captures: Int,
+    completions: Int,
+    onClick: () -> Unit,
+) {
     DashCard(onClick = onClick) {
         Column(modifier = Modifier.padding(TactileTheme.SpacingLg)) {
             Text(
@@ -204,48 +222,54 @@ fun LifeSummaryCard(captures: Int, completions: Int, onClick: () -> Unit) {
                 style = MaterialTheme.typography.labelSmall,
                 color = TactileTheme.Primary,
                 fontWeight = FontWeight.Bold,
-                letterSpacing = 1.sp
+                letterSpacing = 1.sp,
             )
             Spacer(Modifier.height(TactileTheme.SpacingMd))
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Column {
                     Text(
                         "$captures",
                         style = MaterialTheme.typography.headlineLarge,
-                        color = TactileTheme.Text
-                    ); Text(
-                    "CAPTURES / WEEK",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Muted
-                )
+                        color = TactileTheme.Text,
+                    )
+                    Text(
+                        "CAPTURES / WEEK",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = TactileTheme.Muted,
+                    )
                 }
                 Column(horizontalAlignment = Alignment.End) {
                     Text(
                         "$completions",
                         style = MaterialTheme.typography.headlineLarge,
-                        color = TactileTheme.Success
-                    ); Text(
-                    "DONE / WEEK",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Muted
-                )
+                        color = TactileTheme.Success,
+                    )
+                    Text(
+                        "DONE / WEEK",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = TactileTheme.Muted,
+                    )
                 }
             }
             Spacer(Modifier.height(TactileTheme.SpacingMd))
             LinearProgressIndicator(
                 progress = {
-                    if (captures > 0) (completions.toFloat() / captures.toFloat()).coerceIn(
-                        0f,
-                        1f
-                    ) else 0f
+                    if (captures > 0) {
+                        (completions.toFloat() / captures.toFloat()).coerceIn(
+                            0f,
+                            1f,
+                        )
+                    } else {
+                        0f
+                    }
                 },
                 modifier = Modifier.fillMaxWidth().height(8.dp),
                 color = TactileTheme.Primary,
                 trackColor = TactileTheme.Border,
-                strokeCap = StrokeCap.Round
+                strokeCap = StrokeCap.Round,
             )
         }
     }
@@ -259,25 +283,25 @@ fun MetricCard(
     secondaryLabel: String,
     icon: ImageVector,
     iconColor: Color,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     DashCard(modifier = modifier, onClick = onClick) {
         Column(modifier = Modifier.padding(TactileTheme.SpacingLg)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Icon(
                     icon,
                     contentDescription = null,
                     tint = iconColor,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(24.dp),
                 )
                 Text(
                     secondaryLabel,
                     style = MaterialTheme.typography.labelSmall,
                     color = iconColor,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
                 )
             }
             Spacer(Modifier.height(TactileTheme.SpacingMd))
@@ -287,14 +311,14 @@ fun MetricCard(
                     style = MaterialTheme.typography.labelSmall,
                     color = TactileTheme.Muted,
                     fontWeight = FontWeight.Bold,
-                    letterSpacing = 1.sp
+                    letterSpacing = 1.sp,
                 )
                 Text(
                     value,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = TactileTheme.Text,
-                    maxLines = 1
+                    maxLines = 1,
                 )
             }
         }
@@ -307,32 +331,34 @@ fun VaultCard(
     title: String,
     count: Int,
     icon: ImageVector,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Surface(
         onClick = onClick,
         modifier = modifier,
         color = TactileTheme.Surface,
         shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = BorderStroke(1.dp, TactileTheme.Border)
+        border = BorderStroke(1.dp, TactileTheme.Border),
     ) {
         Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
             Icon(
                 icon,
                 contentDescription = null,
                 tint = TactileTheme.Accent,
-                modifier = Modifier.size(20.dp)
-            ); Text(
-            title,
-            style = MaterialTheme.typography.labelSmall,
-            fontWeight = FontWeight.Bold,
-            fontSize = 9.sp
-        ); Text(
-            "$count ITEMS",
-            style = MaterialTheme.typography.bodySmall,
-            color = TactileTheme.Muted,
-            fontSize = 8.sp
-        )
+                modifier = Modifier.size(20.dp),
+            )
+            Text(
+                title,
+                style = MaterialTheme.typography.labelSmall,
+                fontWeight = FontWeight.Bold,
+                fontSize = 9.sp,
+            )
+            Text(
+                "$count ITEMS",
+                style = MaterialTheme.typography.bodySmall,
+                color = TactileTheme.Muted,
+                fontSize = 8.sp,
+            )
         }
     }
 }
@@ -348,14 +374,14 @@ fun ProgressRing(progress: Float) {
                 startAngle = -90f,
                 sweepAngle = 360 * anim,
                 useCenter = false,
-                style = Stroke(width = 4.dp.toPx(), cap = StrokeCap.Round)
+                style = Stroke(width = 4.dp.toPx(), cap = StrokeCap.Round),
             )
         }
         Text(
             "${(progress * 100).toInt()}%",
             style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.Bold,
-            color = TactileTheme.Text
+            color = TactileTheme.Text,
         )
     }
 }

@@ -44,6 +44,7 @@ import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.ui.AreaHealthMetrics
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
+import com.tajemniktv.tajsos.ui.components.cards.AreaHealthOverviewCard
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
@@ -146,56 +147,6 @@ fun AreasScreen(
                 showAddDialog = false
             },
         )
-    }
-}
-
-@Composable
-private fun AreaHealthOverviewCard(
-    dominantArea: String?,
-    imbalanceScore: Int,
-    imbalanceLabel: String,
-    disappearingCount: Int,
-) {
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = BorderStroke(1.dp, TactileTheme.Border),
-    ) {
-        Column(
-            modifier = Modifier.padding(TactileTheme.SpacingMd),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            Text(
-                "LIFE AREAS HEALTH",
-                style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary,
-                fontWeight = FontWeight.Bold,
-            )
-            Text(
-                "Dominant this week: ${dominantArea ?: "N/A"}",
-                style = MaterialTheme.typography.bodyMedium,
-                color = TactileTheme.Text,
-            )
-            Text(
-                "Imbalance: $imbalanceScore% (${imbalanceLabel.uppercase()})",
-                style = MaterialTheme.typography.bodySmall,
-                color = if (imbalanceScore >= 60) TactileTheme.Error else TactileTheme.Muted,
-            )
-            LinearProgressIndicator(
-                progress = { (imbalanceScore / 100f).coerceIn(0f, 1f) },
-                modifier = Modifier.fillMaxWidth().height(6.dp),
-                color = if (imbalanceScore >= 60) TactileTheme.Error else TactileTheme.Primary,
-                trackColor = TactileTheme.Border,
-            )
-            if (disappearingCount > 0) {
-                Text(
-                    "Radar drop detected in $disappearingCount area(s).",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Error,
-                )
-            }
-        }
     }
 }
 

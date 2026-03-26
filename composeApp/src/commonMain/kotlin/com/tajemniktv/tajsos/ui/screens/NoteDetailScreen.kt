@@ -30,13 +30,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.ActionButton
-import com.tajemniktv.tajsos.ui.components.common.ConnectionCard
+import com.tajemniktv.tajsos.ui.components.cards.ConnectionCard
+import com.tajemniktv.tajsos.ui.components.cards.InfoCard
+import com.tajemniktv.tajsos.ui.components.cards.LinkedNodeItem
+import com.tajemniktv.tajsos.ui.components.cards.StatusCard
 import com.tajemniktv.tajsos.ui.components.common.DetailHeader
 import com.tajemniktv.tajsos.ui.components.common.DetailSectionHeader
-import com.tajemniktv.tajsos.ui.components.common.InfoCard
-import com.tajemniktv.tajsos.ui.components.common.LinkedNodeItem
 import com.tajemniktv.tajsos.ui.components.common.SelectorDialog
-import com.tajemniktv.tajsos.ui.components.common.StatusCard
 import com.tajemniktv.tajsos.ui.components.layout.LocalHeaderActions
 import com.tajemniktv.tajsos.ui.components.nodes.DecisionDetailContent
 import com.tajemniktv.tajsos.ui.theme.TactileTheme

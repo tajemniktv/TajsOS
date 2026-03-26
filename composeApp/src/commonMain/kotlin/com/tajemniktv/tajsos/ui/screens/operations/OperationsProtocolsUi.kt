@@ -35,6 +35,7 @@ import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.PlaybookSnapshot
 import com.tajemniktv.tajsos.ui.ProtocolHistoryItem
 import com.tajemniktv.tajsos.ui.TransitionProtocolsSnapshot
+import com.tajemniktv.tajsos.ui.components.cards.ProtocolCard
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
 @Composable
@@ -316,10 +317,12 @@ internal fun ProtocolsLayer(
                         color = TactileTheme.Muted,
                     )
                     Text(
-                        "Mode ${playbook.linkedModeKey ?: "NONE"} • Area ${allAreas
-                            .find {
-                                it.id == playbook.linkedAreaId
-                            }?.title ?: "NONE"}",
+                        "Mode ${playbook.linkedModeKey ?: "NONE"} • Area ${
+                            allAreas
+                                .find {
+                                    it.id == playbook.linkedAreaId
+                                }?.title ?: "NONE"
+                        }",
                         style = MaterialTheme.typography.bodySmall,
                         color = TactileTheme.Muted,
                     )
@@ -398,12 +401,14 @@ internal fun ProtocolsLayer(
         items(snapshot.protocols, key = { it.node.node.id }) { item ->
             ProtocolCard(
                 item = item,
+                checklistItems = parseProtocolChecklist(item.node.node.content),
                 onEditNode = onEditNode,
                 onRun = { viewModel.triggerProtocol(item.node.node.title, source = "operations") },
                 onToggleChecklist = { index, checked ->
                     viewModel.toggleProtocolChecklistStep(item.node.node, index, checked)
                 },
                 onArchive = { viewModel.archiveNode(item.node.node) },
+                formatTimestamp = ::formatProtocolTimestamp,
             )
         }
 

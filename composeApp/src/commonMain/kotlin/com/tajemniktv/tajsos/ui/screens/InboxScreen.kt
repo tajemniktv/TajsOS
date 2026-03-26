@@ -20,8 +20,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.components.cards.NodeCard
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
-import com.tajemniktv.tajsos.ui.components.nodes.NodeCard
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 
@@ -37,17 +37,16 @@ import tajsos.composeapp.generated.resources.*
 fun InboxScreen(
     viewModel: MainViewModel,
     onEditNode: (Long) -> Unit,
-)
-{
+) {
     var itemInput by remember { mutableStateOf("") }
     var selectedType by remember { mutableStateOf("task") }
     val nodes by viewModel.inboxNodes.collectAsState()
 
     Column(
         modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
+            Modifier
+                .fillMaxSize()
+                .padding(16.dp),
     ) {
         Text(
             stringResource(Res.string.inbox_quick_capture),
@@ -92,23 +91,27 @@ fun InboxScreen(
                     Icon(
                         Icons.AutoMirrored.Filled.Send,
                         contentDescription = stringResource(Res.string.inbox_add),
-                        tint = if (itemInput.isNotBlank()) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface.copy(
-                            alpha = 0.38f,
-                        ),
+                        tint =
+                            if (itemInput.isNotBlank()) {
+                                MaterialTheme.colorScheme.onPrimary
+                            } else {
+                                MaterialTheme.colorScheme.onSurface.copy(
+                                    alpha = 0.38f,
+                                )
+                            },
                     )
                 }
             },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
             keyboardActions =
-                    KeyboardActions(
-                        onDone = {
-                            if (itemInput.isNotBlank())
-                            {
-                                viewModel.addNode(itemInput, type = selectedType)
-                                itemInput = ""
-                            }
-                        },
-                    ),
+                KeyboardActions(
+                    onDone = {
+                        if (itemInput.isNotBlank()) {
+                            viewModel.addNode(itemInput, type = selectedType)
+                            itemInput = ""
+                        }
+                    },
+                ),
             shape = RoundedCornerShape(16.dp),
         )
 
@@ -120,11 +123,9 @@ fun InboxScreen(
         )
         Spacer(modifier = Modifier.height(8.dp))
 
-        if (nodes.isEmpty())
-        {
+        if (nodes.isEmpty()) {
             EmptyState(message = stringResource(Res.string.inbox_empty))
-        } else
-        {
+        } else {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 items(nodes, key = { it.node.id }) { nodeWithPin ->
                     Row(

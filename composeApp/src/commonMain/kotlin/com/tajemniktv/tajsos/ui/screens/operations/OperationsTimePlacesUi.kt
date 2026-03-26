@@ -33,7 +33,7 @@ import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.PhysicalLogisticsSnapshot
 import com.tajemniktv.tajsos.ui.TimeArchitectureSnapshot
-import com.tajemniktv.tajsos.ui.components.nodes.NodeCard
+import com.tajemniktv.tajsos.ui.components.cards.NodeCard
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
 @Composable
@@ -287,9 +287,11 @@ internal fun PlacesLayer(
                 fontWeight = FontWeight.Bold,
             )
             Text(
-                "Places ${snapshot.places.size} • Place tasks ${snapshot.placeBasedTasks.size} • Errands ${snapshot.errandClusters.values.sumOf {
-                    it.size
-                }}",
+                "Places ${snapshot.places.size} • Place tasks ${snapshot.placeBasedTasks.size} • Errands ${
+                    snapshot.errandClusters.values.sumOf {
+                        it.size
+                    }
+                }",
                 style = MaterialTheme.typography.bodySmall,
                 color = TactileTheme.Muted,
             )

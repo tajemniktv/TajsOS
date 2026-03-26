@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.data.DecisionOptionEntity
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.components.cards.OptionCard
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.TimeZone
@@ -493,47 +494,3 @@ fun DecisionField(label: String, value: String, onValueChange: (String) -> Unit)
  * @param onUpdate Callback invoked to request an update to the given `option`.
  * @param onDelete Callback invoked when the user requests deletion of the given `option`.
  */
-@Composable
-fun OptionCard(
-    option: DecisionOptionEntity,
-    onUpdate: (DecisionOptionEntity) -> Unit,
-    onDelete: (DecisionOptionEntity) -> Unit,
-)
-{
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Background,
-        border = BorderStroke(1.dp, TactileTheme.Border),
-        shape = RoundedCornerShape(2.dp),
-    ) {
-        Column(modifier = Modifier.padding(TactileTheme.SpacingSm)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    option.title,
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold,
-                )
-                IconButton(onClick = { onDelete(option) }) {
-                    Icon(
-                        Icons.Default.Delete,
-                        contentDescription = stringResource(Res.string.cd_delete_option),
-                        tint = TactileTheme.Muted,
-                        modifier = Modifier.size(16.dp),
-                    )
-                }
-            }
-            if (option.description != null)
-            {
-                Text(
-                    option.description!!,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Muted,
-                )
-            }
-        }
-    }
-}

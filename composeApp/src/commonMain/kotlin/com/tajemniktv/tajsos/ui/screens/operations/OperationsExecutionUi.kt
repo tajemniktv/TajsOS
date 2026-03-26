@@ -26,6 +26,8 @@ import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.components.cards.MaintenanceCard
+import com.tajemniktv.tajsos.ui.components.cards.OpenLoopCard
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
@@ -179,6 +181,7 @@ internal fun MaintenanceLayer(
             MaintenanceCard(
                 item = item,
                 areaName = allAreas.find { it.id == item.node.node.areaId }?.title,
+                maintenanceTypes = maintenanceTypes,
                 onEditNode = onEditNode,
                 onSetType = { type -> viewModel.updateMaintenanceType(item.node.node, type) },
                 onSetRecurring = { interval ->
@@ -289,6 +292,7 @@ internal fun OpenLoopsLayer(
             OpenLoopCard(
                 item = loop,
                 areaName = allAreas.find { it.id == loop.node.node.areaId }?.title,
+                openLoopTypes = openLoopTypes,
                 onEditNode = onEditNode,
                 onSetType = { type -> viewModel.updateOpenLoopType(loop.node.node, type) },
                 onConvertTask = { viewModel.convertOpenLoopToTask(loop.node.node.id) },

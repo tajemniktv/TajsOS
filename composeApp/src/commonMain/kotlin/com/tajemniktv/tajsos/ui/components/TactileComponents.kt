@@ -6,7 +6,6 @@ package com.tajemniktv.tajsos.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -169,23 +168,6 @@ fun TactileTextField(
             )
         }
     }
-}
-
-@Composable
-fun TactileCard(
-    modifier: Modifier = Modifier,
-    onClick: (() -> Unit)? = null,
-    content: @Composable BoxScope.() -> Unit
-) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(TactileTheme.Surface, RoundedCornerShape(TactileTheme.RadiusMd))
-            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
-            .padding(TactileTheme.SpacingMd),
-        contentAlignment = Alignment.CenterStart,
-        content = content
-    )
 }
 
 @Preview

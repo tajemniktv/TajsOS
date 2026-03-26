@@ -371,7 +371,21 @@ private fun AppScaffold(
             composable(Screen.Calendar.route) { CalendarScreen(viewModel, onEditNode) }
             composable(Screen.Decisions.route) { DecisionsScreen(viewModel, onEditNode) }
             composable(Screen.Operations.route) {
-                OperationsScreen(viewModel, onNavigate = { onNavigate(it.route) })
+                DashboardScreen(
+                    viewModel,
+                    onNavigateTo = { screen -> onNavigate(screen.route) },
+                    onEditNode = onEditNode,
+                    onNavigateToProject = { projectId ->
+                        onNavigate(
+                            Screen.ProjectDetail.route.replace(
+                                "{projectId}",
+                                projectId.toString(),
+                            ),
+                        )
+                    },
+                    onNewEntry = { onShowCaptureSheet(true) },
+                    currentDestination = navController.currentDestination,
+                )
             }
             composable(Screen.OpenLoops.route) { OpenLoopsScreen(viewModel, onEditNode) }
             composable(Screen.Protocols.route) { ProtocolsScreen(viewModel, onEditNode) }

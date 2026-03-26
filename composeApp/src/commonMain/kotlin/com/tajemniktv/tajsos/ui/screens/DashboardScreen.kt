@@ -4,12 +4,44 @@
 
 package com.tajemniktv.tajsos.ui.screens
 
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.AccountTree
+import androidx.compose.material.icons.filled.Inbox
+import androidx.compose.material.icons.filled.Mic
+import androidx.compose.material.icons.filled.Terminal
+import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material.icons.filled.Today
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -18,13 +50,13 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavDestination
 import com.tajemniktv.tajsos.data.AppPack
 import com.tajemniktv.tajsos.data.FocusSessionEntity
-import com.tajemniktv.tajsos.data.ModeEntity
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.data.TrackEntryEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
+import com.tajemniktv.tajsos.ui.components.cards.LifeSummaryCard
+import com.tajemniktv.tajsos.ui.components.cards.ModuleCard
 import com.tajemniktv.tajsos.ui.components.dashboard.DashboardBlockRenderer
-import com.tajemniktv.tajsos.ui.components.dashboard.ModuleCard
 import com.tajemniktv.tajsos.ui.components.modes.ModeSuggestionBanner
 import com.tajemniktv.tajsos.ui.components.modes.ModeSwitcherHeader
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
@@ -32,20 +64,15 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.Json
 import org.jetbrains.compose.resources.stringResource
-import tajsos.composeapp.generated.resources.*
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.screen_focus
+import tajsos.composeapp.generated.resources.screen_inbox
+import tajsos.composeapp.generated.resources.screen_project
+import tajsos.composeapp.generated.resources.screen_today
 import kotlin.time.Clock
 
-/**
- * Displays the dashboard and selects a desktop or mobile layout based on available width.
- *
- * @param viewModel Provides dashboard state and actions.
- * @param onNavigateTo Invoked with a `Screen` when the UI requests navigation to that screen.
- * @param onEditNode Invoked with a node ID to open the node editor.
- * @param onNavigateToProject Invoked with a project ID to navigate to that project.
- * @param onNewEntry Invoked to create a new entry.
- * @param currentDestination Optional current navigation destination used to highlight or adapt UI state.
- */
 @Composable
+@OptIn(ExperimentalLayoutApi::class)
 fun DashboardScreen(
     viewModel: MainViewModel,
     onNavigateTo: (Screen) -> Unit,
@@ -75,20 +102,8 @@ fun DashboardScreen(
     }
 }
 
-/**
- * Renders the dashboard UI optimized for mobile widths, composing blocks, modules, and footer
- * based on state collected from the provided view model.
- *
- * Uses state flows from `viewModel` to build dashboard blocks, compute metrics (daily progress,
- * mood, weekly review need, pinned items), and wire navigation/edit callbacks into rendered blocks
- * and modules.
- *
- * @param viewModel Source of dashboard state and actions.
- * @param onNavigateTo Called with a `Screen` when the UI requests a top-level navigation.
- * @param onEditNode Called with a node ID to open the node editor.
- * @param onNavigateToProject Called with a project ID to navigate to a specific project.
- */
 @Composable
+@OptIn(ExperimentalLayoutApi::class)
 private fun DashboardMobileContent(
     viewModel: MainViewModel,
     onNavigateTo: (Screen) -> Unit,
@@ -140,7 +155,7 @@ private fun DashboardMobileContent(
                         "protocols",
                     )
                 }
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 listOf(
                     "today_pulse",
                     "load_capacity",
@@ -176,9 +191,7 @@ private fun DashboardMobileContent(
                     }
 
                     "protocols" -> {
-                        enabledPacks.isEnabled(
-                            AppPack.PROTOCOLS,
-                        ) || enabledPacks.isEnabled(AppPack.MAINTENANCE)
+                        enabledPacks.isEnabled(AppPack.PROTOCOLS) || enabledPacks.isEnabled(AppPack.MAINTENANCE)
                     }
 
                     else -> {
@@ -197,7 +210,6 @@ private fun DashboardMobileContent(
     val now = Clock.System.now()
     val localNow = now.toLocalDateTime(TimeZone.currentSystemDefault())
     val todayDateStr = localNow.date.toString()
-    val currentHour = localNow.hour
     val moodToday = trackEntries.find { it.date == todayDateStr }
 
     val lastWeeklyReview = allReviews.find { it.type == "weekly" }
@@ -205,14 +217,12 @@ private fun DashboardMobileContent(
     val needsWeeklyReview =
         lastWeeklyReview == null || (now.toEpochMilliseconds() - lastWeeklyReview.completedAt) > weekMillis
 
-    val scrollState = rememberScrollState()
-
     Column(
         modifier =
             Modifier
                 .fillMaxSize()
                 .background(TactileTheme.Background)
-                .verticalScroll(scrollState)
+                .verticalScroll(rememberScrollState())
                 .padding(TactileTheme.SpacingMd),
         verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingLg),
     ) {
@@ -229,7 +239,7 @@ private fun DashboardMobileContent(
                     val targetMode = allModes.find { it.key == suggestion }
                     if (targetMode != null) viewModel.switchMode(targetMode.id)
                 },
-                onDismiss = { /* Option to ignore until state changes */ },
+                onDismiss = {},
             )
         }
 
@@ -255,7 +265,6 @@ private fun DashboardMobileContent(
             )
         }
 
-        // 12. Dashboard Modules
         DashboardModules(
             todayNodes = todayNodes,
             inboxCount = inboxNodes.size,
@@ -271,25 +280,189 @@ private fun DashboardMobileContent(
             viewModel = viewModel,
         )
 
-        // 13. System Footer
+        DashboardOperationsOverview(
+            viewModel = viewModel,
+            onNavigateTo = onNavigateTo,
+        )
+
         com.tajemniktv.tajsos.ui.components.dashboard
             .SystemFooter()
-
         Spacer(Modifier.height(80.dp))
     }
 }
 
-/**
- * Renders the "CORE MODULES" section containing cards for Today, Inbox, Projects, and Focus.
- *
- * Displays per-module status badges derived from the provided state and invokes navigation when a card is tapped.
- *
- * @param todayNodes Used to compute the Today module's item count.
- * @param activeSession If non-null, the Focus module shows "ACTIVE" and uses the primary color; otherwise it shows "READY".
- * @param allProjects Used to compute the Projects module's item count.
- * @param onNavigateTo Callback invoked with the destination `Screen` when a module card is tapped.
- */
 @Composable
+@OptIn(ExperimentalLayoutApi::class)
+private fun DashboardDesktopContent(
+    viewModel: MainViewModel,
+    onNavigateTo: (Screen) -> Unit,
+    onEditNode: (Long) -> Unit,
+    onNavigateToProject: (Long) -> Unit,
+    onNewEntry: () -> Unit,
+    currentDestination: NavDestination?,
+) {
+    val allNodes by viewModel.allNodes.collectAsState()
+    val pinnedNodes = allNodes.filter { it.pin != null }
+    val allProjects by viewModel.allProjects.collectAsState()
+    val allAreas by viewModel.allAreas.collectAsState()
+    val inboxNodes by viewModel.inboxNodes.collectAsState()
+    val activeReminders by viewModel.activeReminders.collectAsState()
+    val activeSession by viewModel.activeSession.collectAsState()
+    val dashboardState by viewModel.dashboardUIState.collectAsState()
+    val insights by viewModel.insights.collectAsState()
+    val trackEntries by viewModel.trackEntries.collectAsState()
+
+    val completedTodayCount = pinnedNodes.count { it.node.status == "done" }
+    val totalTodayCount = pinnedNodes.size
+    val dailyProgress =
+        if (totalTodayCount > 0) completedTodayCount.toFloat() / totalTodayCount else 0f
+
+    val now = Clock.System.now()
+    val localNow = now.toLocalDateTime(TimeZone.currentSystemDefault())
+    val todayDateStr = localNow.date.toString()
+    val moodToday = trackEntries.find { it.date == todayDateStr }
+
+    Column(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(TactileTheme.Background)
+                .padding(TactileTheme.SpacingMd),
+        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingLg),
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth().weight(1f),
+            horizontalArrangement = Arrangement.spacedBy(32.dp),
+        ) {
+            Column(
+                modifier = Modifier.weight(1.5f).verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(24.dp),
+            ) {
+                val blocks =
+                    listOf(
+                        "today_pulse",
+                        "load_capacity",
+                        "operational",
+                        "alerts",
+                        "focus",
+                        "suggestions",
+                        "knowledge",
+                    )
+                blocks.forEach { blockKey ->
+                    DashboardBlockRenderer(
+                        blockKey = blockKey,
+                        viewModel = viewModel,
+                        dashboardState = dashboardState,
+                        pinnedNodes = pinnedNodes,
+                        allProjects = allProjects,
+                        allAreas = allAreas,
+                        inboxNodes = inboxNodes,
+                        activeReminders = activeReminders,
+                        activeSession = activeSession,
+                        insights = insights,
+                        moodToday = moodToday,
+                        needsWeeklyReview = false,
+                        dailyProgress = dailyProgress,
+                        localNow = localNow,
+                        onNavigateTo = onNavigateTo,
+                        onEditNode = onEditNode,
+                        onNavigateToProject = onNavigateToProject,
+                    )
+                }
+            }
+
+            Column(
+                modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(24.dp),
+            ) {
+                OutlinedTextField(
+                    value = "",
+                    onValueChange = {},
+                    modifier = Modifier.fillMaxWidth(),
+                    placeholder = { Text("CMD + K to capture anything...") },
+                    leadingIcon = { Icon(Icons.Default.Terminal, contentDescription = null) },
+                    shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                )
+
+                LifeSummaryCard(
+                    captures = insights.weeklyCaptures,
+                    completions = insights.weeklyCompletions,
+                    onClick = { onNavigateTo(Screen.Insights) },
+                )
+
+                DashboardOperationsOverview(
+                    viewModel = viewModel,
+                    onNavigateTo = onNavigateTo,
+                )
+
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    color = TactileTheme.Surface,
+                    shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                    border = BorderStroke(1.dp, TactileTheme.Border),
+                ) {
+                    Column(Modifier.padding(20.dp)) {
+                        Text(
+                            "SYSTEM CLOCK",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = TactileTheme.Muted,
+                        )
+                        Text(
+                            localNow.time.toString().take(5),
+                            style = MaterialTheme.typography.displayMedium,
+                            fontWeight = FontWeight.Bold,
+                        )
+                        Text(
+                            localNow.date.toString().uppercase(),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = TactileTheme.Primary,
+                            letterSpacing = 2.sp,
+                        )
+                    }
+                }
+            }
+        }
+
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            color = TactileTheme.Surface.copy(alpha = 0.5f),
+            shape = RoundedCornerShape(TactileTheme.RadiusMd),
+            border = BorderStroke(1.dp, TactileTheme.Border),
+        ) {
+            Row(
+                modifier = Modifier.padding(12.dp).fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
+                    CommandItem("F1", "SEARCH")
+                    CommandItem("F2", "INBOX")
+                    CommandItem("F3", "TODAY")
+                    CommandItem("F4", "FOCUS")
+                }
+
+                Row(
+                    modifier =
+                        Modifier
+                            .clickable { onNewEntry() }
+                            .background(TactileTheme.Primary, RoundedCornerShape(4.dp))
+                            .padding(horizontal = 12.dp, vertical = 6.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(
+                        Icons.Default.Mic,
+                        contentDescription = null,
+                        modifier = Modifier.padding(10.dp).size(22.dp),
+                        tint = Color.White.copy(alpha = 0.5f),
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+@OptIn(ExperimentalLayoutApi::class)
 fun DashboardModules(
     todayNodes: List<NodeEntity>,
     inboxCount: Int,
@@ -313,7 +486,7 @@ fun DashboardModules(
             letterSpacing = 1.sp,
         )
 
-        androidx.compose.foundation.layout.FlowRow(
+        FlowRow(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
             verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
@@ -355,5 +528,119 @@ fun DashboardModules(
                 color = if (activeSession != null) TactileTheme.Primary else TactileTheme.Muted,
             )
         }
+    }
+}
+
+@Composable
+@OptIn(ExperimentalLayoutApi::class)
+private fun DashboardOperationsOverview(
+    viewModel: MainViewModel,
+    onNavigateTo: (Screen) -> Unit,
+) {
+    val capacitySnapshot by viewModel.capacitySnapshot.collectAsState()
+    val lifeOSSignatureSnapshot by viewModel.lifeOSSignatureSnapshot.collectAsState()
+    val lifeOSSecondBrainSnapshot by viewModel.lifeOSSecondBrainSnapshot.collectAsState()
+    val combinedDirectionSnapshot by viewModel.combinedDirectionSnapshot.collectAsState()
+    val relationshipSnapshot by viewModel.relationshipSnapshot.collectAsState()
+    val coreLifeOSShiftSnapshot by viewModel.coreLifeOSShiftSnapshot.collectAsState()
+
+    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+        Text(
+            "SYSTEMS OVERVIEW",
+            style = MaterialTheme.typography.labelSmall,
+            color = TactileTheme.Muted,
+            fontWeight = FontWeight.Bold,
+            letterSpacing = 1.sp,
+        )
+
+        GroupedOpenLoopSection(
+            title = "MODULE STATUS",
+            items =
+                listOf(
+                    "Capacity load ${capacitySnapshot.loadScore}% • Fragmentation ${capacitySnapshot.fragmentationScore}%",
+                    "Relationships ${relationshipSnapshot.people.size} • Follow-up ${relationshipSnapshot.followUpNeeded.size}",
+                    "LifeOS signature ${lifeOSSignatureSnapshot.modeOfLifeLabel.uppercase()}",
+                    "Second brain posture ${lifeOSSecondBrainSnapshot.postureLabel.uppercase()}",
+                    "Direction ${combinedDirectionSnapshot.completionPercent}% • Core shift ${coreLifeOSShiftSnapshot.completionPercent}%",
+                ),
+        )
+
+        FlowRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+        ) {
+            dashboardSystemsModules().forEach { (screen, summary) ->
+                Column(
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .widthIn(min = 180.dp)
+                            .background(
+                                TactileTheme.Surface,
+                                RoundedCornerShape(TactileTheme.RadiusMd),
+                            ).border(
+                                1.dp,
+                                TactileTheme.Border,
+                                RoundedCornerShape(TactileTheme.RadiusMd),
+                            ).clickable { onNavigateTo(screen) }
+                            .padding(TactileTheme.SpacingMd),
+                    verticalArrangement = Arrangement.spacedBy(6.dp),
+                ) {
+                    Text(
+                        text = screen.route.replace("_", " ").uppercase(),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = TactileTheme.Primary,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Text(
+                        text = summary,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = TactileTheme.Muted,
+                    )
+                }
+            }
+        }
+    }
+}
+
+private fun dashboardSystemsModules(): List<Pair<Screen, String>> =
+    listOf(
+        Screen.OpenLoops to "Resolve active loops, inbox spillover, and review debt.",
+        Screen.Protocols to "Run and maintain transition protocols and playbooks.",
+        Screen.TimeArchitecture to "Manage horizons, countdowns, and focus periods.",
+        Screen.Places to "Coordinate errands, travel packs, and place-based logistics.",
+        Screen.Finances to "Keep bills, renewals, and subscriptions under control.",
+        Screen.Relationships to "Maintain follow-ups, shared plans, and contact rhythm.",
+        Screen.Study to "Keep coursework, revision, and study execution visible.",
+        Screen.Rules to "Store and pin personal principles and decision rules.",
+        Screen.Vaults to "Keep reference material, paperwork, and retrieval systems clean.",
+        Screen.Capacity to "Track load, fragmentation, and realistic throughput.",
+        Screen.Identity to "Review signature, distinction, direction, and core-shift state.",
+    )
+
+@Composable
+private fun CommandItem(
+    key: String,
+    action: String,
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Text(
+            key,
+            modifier =
+                Modifier
+                    .background(TactileTheme.Border, RoundedCornerShape(4.dp))
+                    .padding(horizontal = 6.dp, vertical = 2.dp),
+            style = MaterialTheme.typography.labelSmall,
+            color = TactileTheme.Text,
+            fontWeight = FontWeight.Bold,
+        )
+        Spacer(Modifier.width(8.dp))
+        Text(
+            action,
+            style = MaterialTheme.typography.labelSmall,
+            color = TactileTheme.Muted,
+            fontWeight = FontWeight.Bold,
+        )
     }
 }

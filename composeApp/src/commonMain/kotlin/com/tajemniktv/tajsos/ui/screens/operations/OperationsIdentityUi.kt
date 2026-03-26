@@ -30,6 +30,9 @@ import com.tajemniktv.tajsos.ui.CoreLifeOSShiftSnapshot
 import com.tajemniktv.tajsos.ui.LifeOSSecondBrainSnapshot
 import com.tajemniktv.tajsos.ui.LifeOSSignatureSnapshot
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.components.cards.CoreShiftCriterionCard
+import com.tajemniktv.tajsos.ui.components.cards.DirectionCommitmentCard
+import com.tajemniktv.tajsos.ui.components.cards.DistinctionQuestionCard
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlin.time.Clock
 

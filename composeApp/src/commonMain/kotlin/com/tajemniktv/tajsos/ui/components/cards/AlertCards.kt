@@ -1,11 +1,16 @@
 /*
- * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved. 
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
-package com.tajemniktv.tajsos.ui.components.common
+package com.tajemniktv.tajsos.ui.components.cards
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -20,16 +25,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
-/**
- * Displays a clickable alert-style card containing an icon, a title, a description, and an optional action composable.
- *
- * @param title The header text shown prominently.
- * @param description The body text shown below the title.
- * @param icon The icon displayed to the left of the texts.
- * @param color Base color used for the icon, title emphasis, and card accenting.
- * @param action Optional composable rendered at the end of the row (e.g., a button or menu).
- * @param onClick Callback invoked when the card is tapped.
- */
 @Composable
 fun AlertCard(
     title: String,
@@ -37,18 +32,18 @@ fun AlertCard(
     icon: ImageVector,
     color: Color,
     action: @Composable (() -> Unit)? = null,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Surface(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
         color = color.copy(alpha = 0.05f),
         shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = BorderStroke(1.dp, color.copy(alpha = 0.3f))
+        border = BorderStroke(1.dp, color.copy(alpha = 0.3f)),
     ) {
         Row(
             modifier = Modifier.padding(TactileTheme.SpacingMd),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(icon, contentDescription = null, tint = color)
             Spacer(Modifier.width(TactileTheme.SpacingMd))
@@ -57,12 +52,12 @@ fun AlertCard(
                     title,
                     style = MaterialTheme.typography.labelSmall,
                     color = color,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
                 )
                 Text(
                     description,
                     style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Text
+                    color = TactileTheme.Text,
                 )
             }
             action?.invoke()

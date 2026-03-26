@@ -21,9 +21,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.data.TrackEntryEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.components.TactileCard
 import com.tajemniktv.tajsos.ui.components.TactileSlider
 import com.tajemniktv.tajsos.ui.components.TactileTextField
+import com.tajemniktv.tajsos.ui.components.cards.MedicationSyncCard
+import com.tajemniktv.tajsos.ui.components.cards.TactileCard
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -37,13 +38,16 @@ import kotlin.math.roundToInt
  * Displays interactive sliders for energy, affective state, cognition, system tension, and recovery; a medication selection card; a freeform notes field; and a save button that submits the current values to the provided view model. The list of past track entries is shown below for reference.
  */
 @Composable
-fun TrackScreen(viewModel: MainViewModel)
-{
+fun TrackScreen(viewModel: MainViewModel) {
     val trackEntries by viewModel.trackEntries.collectAsState()
     val medications by viewModel.medications.collectAsState()
 
-    val today = kotlin.time.Clock.System.now()
-        .toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
+    val today =
+        kotlin.time.Clock.System
+            .now()
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+            .date
+            .toString()
     val todayEntry = trackEntries.find { it.date == today }
 
     var energy by remember(todayEntry) {
@@ -74,9 +78,10 @@ fun TrackScreen(viewModel: MainViewModel)
     val allMedsTaken = medications.all { it.isOptional || selectedMedIds.value.contains(it.id) }
 
     LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(TactileTheme.SpacingMd),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(TactileTheme.SpacingMd),
         verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
     ) {
         item {
@@ -137,17 +142,16 @@ fun TrackScreen(viewModel: MainViewModel)
                 medications = medications,
                 selectedMedIds = selectedMedIds.value,
                 onToggleMed = { id ->
-                    selectedMedIds.value = if (selectedMedIds.value.contains(id))
-                    {
-                        selectedMedIds.value - id
-                    } else
-                    {
-                        selectedMedIds.value + id
-                    }
+                    selectedMedIds.value =
+                        if (selectedMedIds.value.contains(id)) {
+                            selectedMedIds.value - id
+                        } else {
+                            selectedMedIds.value + id
+                        }
                 },
                 onToggleAll = {
                     selectedMedIds.value =
-                            if (allMedsTaken) emptySet() else medications.map { it.id }.toSet()
+                        if (allMedsTaken) emptySet() else medications.map { it.id }.toSet()
                 },
                 allMedsTaken = allMedsTaken,
             )
@@ -166,10 +170,11 @@ fun TrackScreen(viewModel: MainViewModel)
                     Column {
                         Text(
                             stringResource(Res.string.track_bio_feedback),
-                            style = MaterialTheme.typography.labelMedium.copy(
-                                fontWeight = FontWeight.Bold,
-                                letterSpacing = 1.sp,
-                            ),
+                            style =
+                                MaterialTheme.typography.labelMedium.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    letterSpacing = 1.sp,
+                                ),
                             color = TactileTheme.Text,
                         )
                         Text(
@@ -216,10 +221,11 @@ fun TrackScreen(viewModel: MainViewModel)
             ) {
                 Text(
                     stringResource(Res.string.track_save),
-                    style = MaterialTheme.typography.labelLarge.copy(
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.sp,
-                    ),
+                    style =
+                        MaterialTheme.typography.labelLarge.copy(
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = 1.sp,
+                        ),
                 )
             }
         }
@@ -246,8 +252,7 @@ fun TrackScreen(viewModel: MainViewModel)
  * screen title, subtitle, and descriptive text using theme typography and spacing.
  */
 @Composable
-fun HeaderSection()
-{
+fun HeaderSection() {
     Column {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(Icons.Default.MailOutline, contentDescription = null, tint = TactileTheme.Primary)
@@ -263,19 +268,21 @@ fun HeaderSection()
         Spacer(Modifier.height(TactileTheme.SpacingLg))
         Text(
             stringResource(Res.string.track_title),
-            style = MaterialTheme.typography.displayMedium.copy(
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 2.sp,
-            ),
+            style =
+                MaterialTheme.typography.displayMedium.copy(
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 2.sp,
+                ),
             color = TactileTheme.Text,
         )
         Text(
             stringResource(Res.string.track_subtitle),
-            style = MaterialTheme.typography.displayMedium.copy(
-                fontWeight = FontWeight.Bold,
-                color = TactileTheme.Primary,
-                letterSpacing = 2.sp,
-            ),
+            style =
+                MaterialTheme.typography.displayMedium.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = TactileTheme.Primary,
+                    letterSpacing = 2.sp,
+                ),
         )
         Spacer(Modifier.height(TactileTheme.SpacingSm))
         Text(
@@ -296,89 +303,6 @@ fun HeaderSection()
  * @param onToggleAll Called when the master checkbox (toggle all) is activated.
  * @param allMedsTaken `true` when the master checkbox should be shown checked, `false` otherwise.
  */
-@Composable
-fun MedicationSyncCard(
-    medications: List<com.tajemniktv.tajsos.data.MedicationEntity>,
-    selectedMedIds: Set<Long>,
-    onToggleMed: (Long) -> Unit,
-    onToggleAll: () -> Unit,
-    allMedsTaken: Boolean,
-)
-{
-    TactileCard {
-        Column {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    Icons.Default.MailOutline, // Reusing icon for meds
-                    contentDescription = null,
-                    tint = TactileTheme.Primary,
-                    modifier = Modifier.size(24.dp),
-                )
-                Spacer(Modifier.width(TactileTheme.SpacingMd))
-                Column {
-                    Text(
-                        stringResource(Res.string.track_medication_synk),
-                        style = MaterialTheme.typography.labelMedium.copy(
-                            fontWeight = FontWeight.Bold,
-                            letterSpacing = 1.sp,
-                        ),
-                        color = TactileTheme.Text,
-                    )
-                    Text(
-                        stringResource(Res.string.track_dosage_confirmed),
-                        style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
-                        color = TactileTheme.Muted,
-                    )
-                }
-                Spacer(Modifier.weight(1f))
-                Checkbox(
-                    checked = allMedsTaken,
-                    onCheckedChange = { onToggleAll() },
-                    colors = CheckboxDefaults.colors(checkedColor = TactileTheme.Primary),
-                )
-            }
-
-            if (medications.isNotEmpty())
-            {
-                Spacer(Modifier.height(TactileTheme.SpacingSm))
-                HorizontalDivider(color = TactileTheme.Muted.copy(alpha = 0.2f))
-                Spacer(Modifier.height(TactileTheme.SpacingSm))
-
-                medications.forEach { med ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth().clickable { onToggleMed(med.id) }
-                            .padding(vertical = 4.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(
-                            text = med.substance,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = if (selectedMedIds.contains(med.id)) TactileTheme.Text else TactileTheme.Muted,
-                        )
-                        if (!med.brandNames.isNullOrEmpty())
-                        {
-                            Text(
-                                text = " (${med.brandNames})",
-                                style = MaterialTheme.typography.labelSmall.copy(fontSize = 8.sp),
-                                color = TactileTheme.Muted,
-                            )
-                        }
-                        Spacer(Modifier.weight(1f))
-                        if (selectedMedIds.contains(med.id))
-                        {
-                            Icon(
-                                Icons.Default.Check,
-                                contentDescription = null,
-                                tint = TactileTheme.Primary,
-                                modifier = Modifier.size(16.dp),
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
 
 /**
  * Renders a styled card showing a single tracking history entry.
@@ -387,19 +311,19 @@ fun MedicationSyncCard(
  * scores, an optional sleep value, and an optional symptom note.
  *
  * @param entry TrackEntryEntity containing the fields displayed: `date`, `tookMeds`, `moodScore`,
- *              `energyScore`, `focusScore`, `anxietyScore`, optional `sleepScore`, and `symptomNote`. 
+ *              `energyScore`, `focusScore`, `anxietyScore`, optional `sleepScore`, and `symptomNote`.
  */
 @Composable
-fun TrackHistoryItem(entry: TrackEntryEntity)
-{
+fun TrackHistoryItem(entry: TrackEntryEntity) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = TactileTheme.Surface.copy(alpha = 0.5f),
         shape = RoundedCornerShape(TactileTheme.RadiusSm),
-        border = androidx.compose.foundation.BorderStroke(
-            1.dp,
-            TactileTheme.Muted.copy(alpha = 0.2f),
-        ),
+        border =
+            androidx.compose.foundation.BorderStroke(
+                1.dp,
+                TactileTheme.Muted.copy(alpha = 0.2f),
+            ),
     ) {
         Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
             Row(
@@ -411,8 +335,7 @@ fun TrackHistoryItem(entry: TrackEntryEntity)
                     style = MaterialTheme.typography.labelSmall,
                     color = TactileTheme.Primary,
                 )
-                if (entry.tookMeds)
-                {
+                if (entry.tookMeds) {
                     Text(
                         stringResource(Res.string.track_history_meds_ok),
                         style = MaterialTheme.typography.labelSmall,
@@ -426,8 +349,7 @@ fun TrackHistoryItem(entry: TrackEntryEntity)
                 StatusChip("ENG", entry.energyScore)
                 StatusChip("COG", entry.focusScore)
                 StatusChip("SYS", entry.anxietyScore)
-                if (entry.sleepScore != null)
-                {
+                if (entry.sleepScore != null) {
                     Text(
                         stringResource(Res.string.track_history_sleep, entry.sleepScore!!),
                         style = MaterialTheme.typography.labelSmall,
@@ -435,8 +357,7 @@ fun TrackHistoryItem(entry: TrackEntryEntity)
                     )
                 }
             }
-            if (entry.symptomNote.isNotEmpty())
-            {
+            if (entry.symptomNote.isNotEmpty()) {
                 Spacer(Modifier.height(TactileTheme.SpacingSm))
                 Text(
                     entry.symptomNote,
@@ -457,8 +378,10 @@ fun TrackHistoryItem(entry: TrackEntryEntity)
  * @param value The numeric value to display; when `null`, the chip is omitted.
  */
 @Composable
-fun StatusChip(label: String, value: Int?)
-{
+fun StatusChip(
+    label: String,
+    value: Int?,
+) {
     if (value == null) return
     Text(
         text = "$label: $value",

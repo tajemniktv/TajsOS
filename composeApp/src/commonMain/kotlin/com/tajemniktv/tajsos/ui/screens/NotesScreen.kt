@@ -14,8 +14,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.components.cards.NodeCard
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
-import com.tajemniktv.tajsos.ui.components.nodes.NodeCard
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -38,31 +38,29 @@ import kotlin.time.Instant
 fun NotesScreen(
     viewModel: MainViewModel,
     onNoteClick: (Long) -> Unit,
-)
-{
+) {
     val activeNodes by viewModel.activeNodes.collectAsState()
     val allAreas by viewModel.allAreas.collectAsState()
     val allProjects by viewModel.allProjects.collectAsState()
     var searchQuery by remember { mutableStateOf("") }
     var selectedGroup by remember { mutableStateOf("TYPE") } // TYPE, AREA, PROJECT, DATE, MEDIA
 
-    val knowledgeNodes = remember(activeNodes) {
-        activeNodes.filter { it.node.type in listOf("note", "idea", "resource") }
-    }
+    val knowledgeNodes =
+        remember(activeNodes) {
+            activeNodes.filter { it.node.type in listOf("note", "idea", "resource") }
+        }
 
     val filteredNodes =
-            remember(knowledgeNodes, searchQuery) {
-                if (searchQuery.isBlank())
-                {
-                    knowledgeNodes
-                } else
-                {
-                    knowledgeNodes.filter {
-                        it.node.title.contains(searchQuery, ignoreCase = true) ||
-                                it.node.content.contains(searchQuery, ignoreCase = true)
-                    }
+        remember(knowledgeNodes, searchQuery) {
+            if (searchQuery.isBlank()) {
+                knowledgeNodes
+            } else {
+                knowledgeNodes.filter {
+                    it.node.title.contains(searchQuery, ignoreCase = true) ||
+                        it.node.content.contains(searchQuery, ignoreCase = true)
                 }
             }
+        }
 
     Column(modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd)) {
         Text(
@@ -101,16 +99,14 @@ fun NotesScreen(
         ) {
             when (selectedGroup)
             {
-                "TYPE"    ->
-                {
+                "TYPE" -> {
                     val pinned = filteredNodes.filter { it.node.isPinned }
                     val ideas = filteredNodes.filter { !it.node.isPinned && it.node.type == "idea" }
                     val notes = filteredNodes.filter { !it.node.isPinned && it.node.type == "note" }
                     val resources =
-                            filteredNodes.filter { !it.node.isPinned && it.node.type == "resource" }
+                        filteredNodes.filter { !it.node.isPinned && it.node.type == "resource" }
 
-                    if (pinned.isNotEmpty())
-                    {
+                    if (pinned.isNotEmpty()) {
                         item { GroupHeader(stringResource(Res.string.notes_pinned_knowledge)) }
                         items(pinned, key = { it.node.id }) { node ->
                             KnowledgeItem(
@@ -120,8 +116,7 @@ fun NotesScreen(
                             )
                         }
                     }
-                    if (ideas.isNotEmpty())
-                    {
+                    if (ideas.isNotEmpty()) {
                         item { GroupHeader(stringResource(Res.string.notes_ideas)) }
                         items(ideas, key = { it.node.id }) { node ->
                             KnowledgeItem(
@@ -131,8 +126,7 @@ fun NotesScreen(
                             )
                         }
                     }
-                    if (notes.isNotEmpty())
-                    {
+                    if (notes.isNotEmpty()) {
                         item { GroupHeader(stringResource(Res.string.notes_notes)) }
                         items(notes, key = { it.node.id }) { node ->
                             KnowledgeItem(
@@ -142,8 +136,7 @@ fun NotesScreen(
                             )
                         }
                     }
-                    if (resources.isNotEmpty())
-                    {
+                    if (resources.isNotEmpty()) {
                         item { GroupHeader(stringResource(Res.string.notes_resources)) }
                         items(resources, key = { it.node.id }) { node ->
                             KnowledgeItem(
@@ -155,12 +148,10 @@ fun NotesScreen(
                     }
                 }
 
-                "AREA"    ->
-                {
+                "AREA" -> {
                     allAreas.forEach { area ->
                         val nodesInArea = filteredNodes.filter { it.node.areaId == area.id }
-                        if (nodesInArea.isNotEmpty())
-                        {
+                        if (nodesInArea.isNotEmpty()) {
                             item { GroupHeader(area.title.uppercase()) }
                             items(nodesInArea, key = { it.node.id }) { node ->
                                 KnowledgeItem(
@@ -172,8 +163,7 @@ fun NotesScreen(
                         }
                     }
                     val unassigned = filteredNodes.filter { it.node.areaId == null }
-                    if (unassigned.isNotEmpty())
-                    {
+                    if (unassigned.isNotEmpty()) {
                         item { GroupHeader("UNASSIGNED") }
                         items(unassigned, key = { it.node.id }) { node ->
                             KnowledgeItem(
@@ -185,13 +175,11 @@ fun NotesScreen(
                     }
                 }
 
-                "PROJECT" ->
-                {
+                "PROJECT" -> {
                     allProjects.forEach { project ->
                         val nodesInProject =
-                                filteredNodes.filter { it.node.projectId == project.id }
-                        if (nodesInProject.isNotEmpty())
-                        {
+                            filteredNodes.filter { it.node.projectId == project.id }
+                        if (nodesInProject.isNotEmpty()) {
                             item { GroupHeader(project.title.uppercase()) }
                             items(nodesInProject, key = { it.node.id }) { node ->
                                 KnowledgeItem(
@@ -203,8 +191,7 @@ fun NotesScreen(
                         }
                     }
                     val unassigned = filteredNodes.filter { it.node.projectId == null }
-                    if (unassigned.isNotEmpty())
-                    {
+                    if (unassigned.isNotEmpty()) {
                         item { GroupHeader("UNASSIGNED") }
                         items(unassigned, key = { it.node.id }) { node ->
                             KnowledgeItem(
@@ -216,13 +203,13 @@ fun NotesScreen(
                     }
                 }
 
-                "DATE"    ->
-                {
-                    val groupedByDate = filteredNodes.groupBy {
-                        val instant = Instant.fromEpochMilliseconds(it.node.createdAt)
-                        val date = instant.toLocalDateTime(TimeZone.currentSystemDefault()).date
-                        date.toString()
-                    }
+                "DATE" -> {
+                    val groupedByDate =
+                        filteredNodes.groupBy {
+                            val instant = Instant.fromEpochMilliseconds(it.node.createdAt)
+                            val date = instant.toLocalDateTime(TimeZone.currentSystemDefault()).date
+                            date.toString()
+                        }
                     groupedByDate.forEach { (date, nodes) ->
                         item { GroupHeader(date) }
                         items(nodes, key = { it.node.id }) { node ->
@@ -235,19 +222,18 @@ fun NotesScreen(
                     }
                 }
 
-                "MEDIA"   ->
-                {
-                    val mediaTypes = listOf(
-                        "book" to Res.string.media_book,
-                        "article" to Res.string.media_article,
-                        "podcast" to Res.string.media_podcast,
-                        "video" to Res.string.media_video,
-                        "link" to Res.string.media_link,
-                    )
+                "MEDIA" -> {
+                    val mediaTypes =
+                        listOf(
+                            "book" to Res.string.media_book,
+                            "article" to Res.string.media_article,
+                            "podcast" to Res.string.media_podcast,
+                            "video" to Res.string.media_video,
+                            "link" to Res.string.media_link,
+                        )
                     mediaTypes.forEach { (type, res) ->
                         val nodesOfType = filteredNodes.filter { it.node.mediaType == type }
-                        if (nodesOfType.isNotEmpty())
-                        {
+                        if (nodesOfType.isNotEmpty()) {
                             item { GroupHeader(stringResource(res)) }
                             items(nodesOfType, key = { it.node.id }) { node ->
                                 KnowledgeItem(
@@ -259,9 +245,8 @@ fun NotesScreen(
                         }
                     }
                     val other =
-                            filteredNodes.filter { it.node.type == "resource" && it.node.mediaType == null }
-                    if (other.isNotEmpty())
-                    {
+                        filteredNodes.filter { it.node.type == "resource" && it.node.mediaType == null }
+                    if (other.isNotEmpty()) {
                         item { GroupHeader(stringResource(Res.string.media_other)) }
                         items(other, key = { it.node.id }) { node ->
                             KnowledgeItem(
@@ -274,13 +259,17 @@ fun NotesScreen(
                 }
             }
 
-            if (filteredNodes.isEmpty())
-            {
+            if (filteredNodes.isEmpty()) {
                 item {
                     EmptyState(
-                        message = if (searchQuery.isEmpty()) stringResource(Res.string.notes_empty) else stringResource(
-                            Res.string.notes_no_results,
-                        ),
+                        message =
+                            if (searchQuery.isEmpty()) {
+                                stringResource(Res.string.notes_empty)
+                            } else {
+                                stringResource(
+                                    Res.string.notes_no_results,
+                                )
+                            },
                     )
                 }
             }
@@ -294,8 +283,7 @@ fun NotesScreen(
  * @param title The text to display as the header.
  */
 @Composable
-fun GroupHeader(title: String)
-{
+fun GroupHeader(title: String) {
     Text(
         text = title,
         style = MaterialTheme.typography.labelSmall,
@@ -319,8 +307,7 @@ fun KnowledgeItem(
     node: com.tajemniktv.tajsos.data.NodeWithPin,
     viewModel: MainViewModel,
     onNoteClick: (Long) -> Unit,
-)
-{
+) {
     NodeCard(
         nodeWithPin = node,
         onClick = { onNoteClick(node.node.id) },

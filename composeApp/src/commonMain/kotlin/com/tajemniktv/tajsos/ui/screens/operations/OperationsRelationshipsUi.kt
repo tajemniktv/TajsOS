@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.RelationshipSnapshot
+import com.tajemniktv.tajsos.ui.components.cards.PersonRelationshipCard
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
@@ -131,6 +132,7 @@ internal fun PeopleLayer(
                 item = person,
                 viewModel = viewModel,
                 onEditNode = onEditNode,
+                groupedSection = ::GroupedOpenLoopSection,
             )
         }
     }
