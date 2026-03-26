@@ -80,11 +80,14 @@ data class PackRegistry(
             else -> true
         }
 
-    /**
-     * Validates the currently enabled packs against their dependencies.
-     *
-     * @return A set of string messages indicating missing dependencies for enabled and owned packs. Returns an empty set if all dependencies are satisfied.
-     */
+/**
+ * Validates the currently enabled packs against their dependencies.
+ *
+ * Note: This function only checks dependencies for packs that are both owned and enabled.
+ * It will not report missing dependencies for packs that are enabled but not owned.
+ *
+ * @return A set of string messages indicating missing dependencies for enabled and owned packs. Returns an empty set if all dependencies are satisfied.
+ */
     fun validateEnabledPacks(): Set<String> =
         AppPack.entries
             .filter { enabledPackKeys.contains(it.key) && ownedPackKeys.contains(it.key) }
