@@ -6,6 +6,7 @@ package com.tajemniktv.tajsos.ui
 
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.data.NodeWithPin
+import com.tajemniktv.tajsos.data.RelationEntity
 import com.tajemniktv.tajsos.data.TagEntity
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -20,6 +21,11 @@ class FilterHelperTest {
         tags: List<String> = emptyList(),
         updatedAt: Long = 0,
         status: String = "active",
+        projectId: Long? = null,
+        areaId: Long? = null,
+        estimatedMinutes: Int? = null,
+        energyLevel: Int? = null,
+        friction: String? = null,
     ): NodeWithPin {
         val node =
             NodeEntity(
@@ -29,6 +35,11 @@ class FilterHelperTest {
                 type = "note",
                 updatedAt = updatedAt,
                 status = status,
+                projectId = projectId,
+                areaId = areaId,
+                estimatedMinutes = estimatedMinutes,
+                energyLevel = energyLevel,
+                friction = friction,
             )
         val tagEntities =
             tags.mapIndexed { index, name ->
@@ -139,5 +150,116 @@ class FilterHelperTest {
         assertEquals(2, filteredNodes.size)
         assertTrue(filteredNodes.any { it.node.id == 1L })
         assertTrue(filteredNodes.any { it.node.id == 2L })
+    }
+
+    private fun createNodesForExtendedTests(): List<NodeWithPin> {
+        val node1 = createTestNode(
+            id = 1,
+            title = "Node 1",
+            projectId = 10,
+            areaId = 20,
+            estimatedMinutes = 15,
+            energyLevel = 1,
+            friction = "easy",
+        )
+        val node2 = createTestNode(
+            id = 2,
+            title = "Node 2",
+            projectId = 11,
+            areaId = 20,
+            estimatedMinutes = 60,
+            energyLevel = 3,
+            friction = "hard",
+        )
+        return listOf(node1, node2)
+    }
+
+    private fun assertFilterResult(
+        nodes: List<NodeWithPin>,
+        expectedCount: Int,
+        expectedFirstId: Long? = null,
+        projectId: Long? = null,
+        areaId: Long? = null,
+        maxMins: Int? = null,
+        energy: Int? = null,
+        friction: String? = null,
+    ) {
+        val filtered = FilterHelper.filterAndSortNodes(
+            nodes = nodes,
+            query = "",
+            type = null,
+            status = null,
+            projectId = projectId,
+            areaId = areaId,
+            linkedToId = null,
+            maxMins = maxMins,
+            energy = energy,
+            friction = friction,
+            relations = emptyList(),
+        )
+        assertEquals(expectedCount, filtered.size)
+        if (expectedFirstId != null) {
+            assertEquals(expectedFirstId, filtered[0].node.id)
+        }
+    }
+
+    @Test
+    fun testFilterExtendedProperties() {
+        val nodes = createNodesForExtendedTests()
+
+        // By Project
+        assertFilterResult(nodes, projectId = 10L, expectedCount = 1, expectedFirstId = 1L)
+
+        // By Area
+        assertFilterResult(nodes, areaId = 20L, expectedCount = 2)
+
+        // By MaxMins
+        assertFilterResult(nodes, maxMins = 30, expectedCount = 1, expectedFirstId = 1L)
+
+        // By Energy
+        assertFilterResult(nodes, energy = 3, expectedCount = 1, expectedFirstId = 2L)
+
+        // By Friction
+        assertFilterResult(nodes, friction = "easy", expectedCount = 1, expectedFirstId = 1L)
+    }
+
+    @Test
+    fun testFilterLinkedToId() {
+        val node1 = createTestNode(1, "Linked Node")
+        val node2 = createTestNode(2, "Another Linked Node")
+        val node3 = createTestNode(3, "Unlinked Node")
+
+        val relations = listOf(
+            RelationEntity(id = 1, fromNodeId = 1, toNodeId = 100, relationType = "RELATED"),
+            RelationEntity(id = 2, fromNodeId = 100, toNodeId = 2, relationType = "RELATED"),
+        )
+
+        val filtered =
+            FilterHelper.filterAndSortNodes(
+                nodes = listOf(node1, node2, node3),
+                query = "",
+                type = null,
+                status = null,
+                projectId = null,
+                areaId = null,
+                linkedToId = 100L,
+                maxMins = null,
+                energy = null,
+                friction = null,
+                relations = relations,
+            )
+
+        assertEquals(2, filtered.size)
+        assertTrue(filtered.any { it.node.id == 1L })
+        assertTrue(filtered.any { it.node.id == 2L })
+    }
+
+    @Test
+    fun testMatchesQueryEmptyTag() {
+        val node = createTestNode(1, "Title", tags = listOf("Tag"))
+
+        // Blank tag query "# " or "#" should be false
+        assertFalse(FilterHelper.matchesQuery(node, "#"))
+        assertFalse(FilterHelper.matchesQuery(node, "#   "))
     }
 }
