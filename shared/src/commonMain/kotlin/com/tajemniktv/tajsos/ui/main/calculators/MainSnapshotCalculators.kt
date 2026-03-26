@@ -518,7 +518,12 @@ fun calculateAreaHealthSnapshot(
     val disappearingAreaIds =
         computed.filter { it.isDisappearing }.mapTo(mutableSetOf()) { it.areaId }
 
-    val avgLoad = computed.map { it.stressLoad }.average()
+    val avgLoad =
+        if (computed.isNotEmpty()) {
+            computed.map { it.stressLoad }.average()
+        } else {
+            0.0
+        }
     val variance =
         if (computed.size > 1) {
             computed.map { (it.stressLoad - avgLoad) * (it.stressLoad - avgLoad) }.average()

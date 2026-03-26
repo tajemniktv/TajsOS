@@ -58,6 +58,7 @@ fun InsightsScreen(
     val recentLogs by viewModel.recentLogs.collectAsState()
     val allAreas by viewModel.allAreas.collectAsState()
     val areaSnapshot by viewModel.areaHealthSnapshot.collectAsState()
+    val allProjects by viewModel.allProjects.collectAsState()
 
     LazyColumn(
         modifier =
@@ -253,11 +254,7 @@ fun InsightsScreen(
                 )
             }
             items(highEntropyProjects.keys.toList()) { projectId ->
-                val project =
-                    viewModel.allProjects
-                        .collectAsState()
-                        .value
-                        .find { it.id == projectId }
+                val project = allProjects.find { it.id == projectId }
                 if (project != null) {
                     ProjectEntropyItem(project, highEntropyProjects[projectId] ?: 0.0) {
                         onNavigateToProject(project.id)

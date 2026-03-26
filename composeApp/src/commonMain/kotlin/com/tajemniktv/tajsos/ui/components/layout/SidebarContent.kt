@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
@@ -46,6 +47,9 @@ import tajsos.composeapp.generated.resources.*
  * @param currentMode Currently active mode (used for header styling and mode selection state); may be `null`.
  * @param allModes List of available modes to display in the mode selector; when empty the selector is omitted.
  * @param onModeSelect Callback invoked with the selected mode's id when a mode chip is clicked.
+ * @param useContextualSidebar When true, menu groups are derived from the current screen context.
+ * @param onBackToMainSidebar Callback used to switch to the full/main sidebar menu.
+ * @param onNavigateFromSidebar Callback used after navigation from sidebar items.
  * @param modifier Modifier for external layout adjustments.
  */
 @Composable
@@ -61,8 +65,23 @@ fun SidebarContent(
             enabledPackKeys = AppPack.defaultFreePackKeys,
         ),
     onModeSelect: (Long) -> Unit = {},
+    useContextualSidebar: Boolean = false,
+    onBackToMainSidebar: () -> Unit = {},
+    onNavigateFromSidebar: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
+    val currentScreen = Screen.fromRoute(currentDestination?.route)
+    val contextScreen = currentScreen?.let(Screen::sidebarContextRoot)
+    val menuGroups = Screen.groupedItemsForPacks(packRegistry)
+    val mainSidebarScrollState = rememberScrollState()
+    val contextualSidebarScrollState = rememberScrollState()
+    val contextualHeader =
+        if (useContextualSidebar && contextScreen != null) {
+            Screen.contextualHeaderFor(contextScreen, packRegistry)
+        } else {
+            null
+        }
+
     Column(
         modifier = modifier.fillMaxHeight(),
     ) {
@@ -167,11 +186,54 @@ fun SidebarContent(
             modifier =
                 Modifier
                     .weight(1f)
-                    .verticalScroll(rememberScrollState()),
+                    .verticalScroll(
+                        if (contextualHeader != null) {
+                            contextualSidebarScrollState
+                        } else {
+                            mainSidebarScrollState
+                        },
+                    ),
         ) {
-            Screen.groupedItemsForPacks(packRegistry).forEach { (headerRes, items) ->
+            if (contextualHeader != null) {
+                Row(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                horizontal = TactileTheme.SpacingMd,
+                                vertical = TactileTheme.SpacingSm,
+                            ),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                ) {
+                    OutlinedButton(
+                        onClick = onBackToMainSidebar,
+                        shape = RoundedCornerShape(TactileTheme.RadiusSm),
+                    ) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(Res.string.common_back),
+                            modifier = Modifier.size(16.dp),
+                        )
+                    }
+                    Text(
+                        stringResource(contextualHeader).uppercase(),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = TactileTheme.Muted.copy(alpha = 0.85f),
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                    )
+                }
+
+                val panelLabel =
+                    contextScreen?.let { stringResource(it.label).uppercase() } ?: "PANEL"
+                val sections =
+                    remember(contextScreen) {
+                        contextScreen?.let(::placeholderSectionsFor).orEmpty()
+                    }
+
                 Text(
-                    stringResource(headerRes).uppercase(),
+                    panelLabel,
                     modifier =
                         Modifier.padding(
                             horizontal = TactileTheme.SpacingMd,
@@ -182,79 +244,150 @@ fun SidebarContent(
                     fontSize = 10.sp,
                     fontWeight = FontWeight.ExtraBold,
                 )
-                items.forEach { screen ->
-                    val selected =
-                        remember(currentDestination, screen.route) {
-                            currentDestination?.hierarchy?.any { it.route == screen.route } == true
-                        }
 
-                    Box(
+                sections.forEach { section ->
+                    Text(
+                        section.title,
                         modifier =
                             Modifier
                                 .fillMaxWidth()
-                                .height(48.dp),
-                    ) {
-                        if (selected) {
-                            Box(
-                                modifier =
-                                    Modifier
-                                        .fillMaxHeight()
-                                        .width(3.dp)
-                                        .background(TactileTheme.Primary),
-                            )
-                        }
+                                .padding(
+                                    horizontal = TactileTheme.SpacingMd,
+                                    vertical = TactileTheme.SpacingSm,
+                                ),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = TactileTheme.Muted.copy(alpha = 0.75f),
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                    )
 
+                    section.items.forEach { item ->
                         Surface(
-                            color = Color.Transparent,
-                            shape = RoundedCornerShape(TactileTheme.RadiusSm),
-                            border =
-                                if (selected) {
-                                    BorderStroke(
-                                        1.dp,
-                                        TactileTheme.Primary.copy(alpha = 0.3f),
-                                    )
-                                } else {
-                                    null
-                                },
                             modifier =
                                 Modifier
-                                    .padding(start = if (selected) 2.dp else 0.dp)
+                                    .fillMaxWidth()
                                     .padding(horizontal = 12.dp, vertical = 2.dp),
+                            color = Color.Transparent,
+                            shape = RoundedCornerShape(TactileTheme.RadiusSm),
+                            border = BorderStroke(1.dp, TactileTheme.Border.copy(alpha = 0.25f)),
                         ) {
-                            NavigationDrawerItem(
-                                label = {
-                                    Text(
-                                        stringResource(screen.label).uppercase(),
-                                        style = MaterialTheme.typography.labelLarge,
-                                        fontSize = 12.sp,
-                                        fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
-                                    )
-                                },
-                                selected = selected,
-                                onClick = { onNavigate(screen) },
-                                icon = {
-                                    Icon(
-                                        screen.icon,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(20.dp),
-                                    )
-                                },
-                                modifier = Modifier.fillMaxWidth(),
-                                colors =
-                                    NavigationDrawerItemDefaults.colors(
-                                        selectedContainerColor = TactileTheme.Primary.copy(alpha = 0.15f),
-                                        selectedIconColor = TactileTheme.Primary,
-                                        selectedTextColor = TactileTheme.Primary,
-                                        unselectedIconColor = TactileTheme.Muted,
-                                        unselectedTextColor = TactileTheme.Muted,
-                                        unselectedContainerColor = Color.Transparent,
-                                    ),
-                                shape = RoundedCornerShape(TactileTheme.RadiusSm),
-                            )
+                            Row(
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 12.dp, vertical = 12.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Icon(
+                                    Icons.Default.Add,
+                                    contentDescription = null,
+                                    tint = TactileTheme.Muted,
+                                    modifier = Modifier.size(16.dp),
+                                )
+                                Spacer(Modifier.width(10.dp))
+                                Text(
+                                    item,
+                                    style = MaterialTheme.typography.labelLarge,
+                                    color = TactileTheme.Muted,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Medium,
+                                )
+                            }
                         }
                     }
+                    Spacer(Modifier.height(TactileTheme.SpacingSm))
                 }
-                Spacer(Modifier.height(TactileTheme.SpacingSm))
+            } else {
+                menuGroups.forEach { (headerRes, items) ->
+                    Text(
+                        stringResource(headerRes).uppercase(),
+                        modifier =
+                            Modifier.padding(
+                                horizontal = TactileTheme.SpacingMd,
+                                vertical = TactileTheme.SpacingSm,
+                            ),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = TactileTheme.Muted.copy(alpha = 0.6f),
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                    )
+                    items.forEach { screen ->
+                        val selected =
+                            remember(currentDestination, screen.route) {
+                                currentDestination?.hierarchy?.any { it.route == screen.route } == true
+                            }
+
+                        Box(
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .height(48.dp),
+                        ) {
+                            if (selected) {
+                                Box(
+                                    modifier =
+                                        Modifier
+                                            .fillMaxHeight()
+                                            .width(3.dp)
+                                            .background(TactileTheme.Primary),
+                                )
+                            }
+
+                            Surface(
+                                color = Color.Transparent,
+                                shape = RoundedCornerShape(TactileTheme.RadiusSm),
+                                border =
+                                    if (selected) {
+                                        BorderStroke(
+                                            1.dp,
+                                            TactileTheme.Primary.copy(alpha = 0.3f),
+                                        )
+                                    } else {
+                                        null
+                                    },
+                                modifier =
+                                    Modifier
+                                        .padding(start = if (selected) 2.dp else 0.dp)
+                                        .padding(horizontal = 12.dp, vertical = 2.dp),
+                            ) {
+                                NavigationDrawerItem(
+                                    label = {
+                                        Text(
+                                            stringResource(screen.label).uppercase(),
+                                            style = MaterialTheme.typography.labelLarge,
+                                            fontSize = 12.sp,
+                                            fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
+                                        )
+                                    },
+                                    selected = selected,
+                                    onClick = {
+                                        onNavigate(screen)
+                                        onNavigateFromSidebar()
+                                    },
+                                    icon = {
+                                        Icon(
+                                            screen.icon,
+                                            contentDescription = null,
+                                            modifier = Modifier.size(20.dp),
+                                        )
+                                    },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    colors =
+                                        NavigationDrawerItemDefaults.colors(
+                                            selectedContainerColor = TactileTheme.Primary.copy(alpha = 0.15f),
+                                            selectedIconColor = TactileTheme.Primary,
+                                            selectedTextColor = TactileTheme.Primary,
+                                            unselectedIconColor = TactileTheme.Muted,
+                                            unselectedTextColor = TactileTheme.Muted,
+                                            unselectedContainerColor = Color.Transparent,
+                                        ),
+                                    shape = RoundedCornerShape(TactileTheme.RadiusSm),
+                                )
+                            }
+                        }
+                    }
+                    Spacer(Modifier.height(TactileTheme.SpacingSm))
+                }
             }
         }
 
@@ -319,4 +452,42 @@ fun SidebarContent(
         }
         Spacer(Modifier.height(TactileTheme.SpacingMd))
     }
+}
+
+private data class SidebarPlaceholderSection(
+    val title: String,
+    val items: List<String>,
+)
+
+private fun placeholderSectionsFor(screen: Screen): List<SidebarPlaceholderSection> {
+    val screenTag = screen.route.substringBefore("/")
+    return listOf(
+        SidebarPlaceholderSection(
+            title = "PRIMARY",
+            items =
+                listOf(
+                    "$screenTag overview placeholder",
+                    "$screenTag shortcuts placeholder",
+                    "$screenTag quick filters placeholder",
+                ),
+        ),
+        SidebarPlaceholderSection(
+            title = "WORKFLOW",
+            items =
+                listOf(
+                    "$screenTag actions placeholder",
+                    "$screenTag pinned context placeholder",
+                    "$screenTag automation placeholder",
+                ),
+        ),
+        SidebarPlaceholderSection(
+            title = "INSIGHTS",
+            items =
+                listOf(
+                    "$screenTag metrics placeholder",
+                    "$screenTag anomalies placeholder",
+                    "$screenTag recommendations placeholder",
+                ),
+        ),
+    )
 }
