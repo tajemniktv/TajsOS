@@ -4,8 +4,8 @@
 
 package com.tajemniktv.tajsos.ui.components.layout
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -28,7 +28,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
+import com.tajemniktv.tajsos.data.AppPack
 import com.tajemniktv.tajsos.data.ModeEntity
+import com.tajemniktv.tajsos.data.PackRegistry
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
@@ -53,33 +55,37 @@ fun SidebarContent(
     onNewEntry: (() -> Unit)? = null,
     currentMode: ModeEntity? = null,
     allModes: List<ModeEntity> = emptyList(),
+    packRegistry: PackRegistry =
+        PackRegistry(
+            ownedPackKeys = AppPack.defaultFreePackKeys,
+            enabledPackKeys = AppPack.defaultFreePackKeys,
+        ),
     onModeSelect: (Long) -> Unit = {},
     modifier: Modifier = Modifier,
-)
-{
+) {
     Column(
         modifier = modifier.fillMaxHeight(),
     ) {
         // Profile Header
         Row(
             modifier =
-                    Modifier
-                        .padding(TactileTheme.SpacingMd)
-                        .padding(top = TactileTheme.SpacingSm)
-                        .fillMaxWidth(),
+                Modifier
+                    .padding(TactileTheme.SpacingMd)
+                    .padding(top = TactileTheme.SpacingSm)
+                    .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Box(
                 modifier =
-                        Modifier
-                            .size(44.dp)
-                            .background(
-                                currentMode?.themeColor?.let { Color(it) }?.copy(alpha = 0.2f)
-                                        ?: Color(
-                                            0xFFFDE68A,
-                                        ),
-                                CircleShape,
-                            ),
+                    Modifier
+                        .size(44.dp)
+                        .background(
+                            currentMode?.themeColor?.let { Color(it) }?.copy(alpha = 0.2f)
+                                ?: Color(
+                                    0xFFFDE68A,
+                                ),
+                            CircleShape,
+                        ),
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
@@ -107,13 +113,13 @@ fun SidebarContent(
             }
         }
 
-        if (allModes.isNotEmpty())
-        {
+        if (allModes.isNotEmpty()) {
             Column(
-                modifier = Modifier.padding(
-                    horizontal = TactileTheme.SpacingMd,
-                    vertical = TactileTheme.SpacingSm,
-                ),
+                modifier =
+                    Modifier.padding(
+                        horizontal = TactileTheme.SpacingMd,
+                        vertical = TactileTheme.SpacingSm,
+                    ),
             ) {
                 Text(
                     "CURRENT MODE",
@@ -132,10 +138,11 @@ fun SidebarContent(
                             onClick = { onModeSelect(mode.id) },
                             color = if (isSelected) color.copy(alpha = 0.15f) else Color.Transparent,
                             shape = RoundedCornerShape(TactileTheme.RadiusSm),
-                            border = BorderStroke(
-                                1.dp,
-                                if (isSelected) color else TactileTheme.Border.copy(alpha = 0.3f),
-                            ),
+                            border =
+                                BorderStroke(
+                                    1.dp,
+                                    if (isSelected) color else TactileTheme.Border.copy(alpha = 0.3f),
+                                ),
                         ) {
                             Text(
                                 mode.name.uppercase(),
@@ -158,54 +165,61 @@ fun SidebarContent(
 
         Column(
             modifier =
-                    Modifier
-                        .weight(1f)
-                        .verticalScroll(rememberScrollState()),
+                Modifier
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState()),
         ) {
-            Screen.groupedItems.forEach { (headerRes, items) ->
+            Screen.groupedItemsForPacks(packRegistry).forEach { (headerRes, items) ->
                 Text(
                     stringResource(headerRes).uppercase(),
                     modifier =
-                            Modifier.padding(
-                                horizontal = TactileTheme.SpacingMd,
-                                vertical = TactileTheme.SpacingSm,
-                            ),
+                        Modifier.padding(
+                            horizontal = TactileTheme.SpacingMd,
+                            vertical = TactileTheme.SpacingSm,
+                        ),
                     style = MaterialTheme.typography.labelSmall,
                     color = TactileTheme.Muted.copy(alpha = 0.6f),
                     fontSize = 10.sp,
                     fontWeight = FontWeight.ExtraBold,
                 )
                 items.forEach { screen ->
-                    val selected = remember(currentDestination, screen.route) {
-                        currentDestination?.hierarchy?.any { it.route == screen.route } == true
-                    }
+                    val selected =
+                        remember(currentDestination, screen.route) {
+                            currentDestination?.hierarchy?.any { it.route == screen.route } == true
+                        }
 
                     Box(
                         modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .height(48.dp),
+                            Modifier
+                                .fillMaxWidth()
+                                .height(48.dp),
                     ) {
-                        if (selected)
-                        {
+                        if (selected) {
                             Box(
                                 modifier =
-                                        Modifier
-                                            .fillMaxHeight()
-                                            .width(3.dp)
-                                            .background(TactileTheme.Primary),
+                                    Modifier
+                                        .fillMaxHeight()
+                                        .width(3.dp)
+                                        .background(TactileTheme.Primary),
                             )
                         }
 
                         Surface(
                             color = Color.Transparent,
                             shape = RoundedCornerShape(TactileTheme.RadiusSm),
-                            border = if (selected) BorderStroke(
-                                1.dp,
-                                TactileTheme.Primary.copy(alpha = 0.3f),
-                            ) else null,
-                            modifier = Modifier.padding(start = if (selected) 2.dp else 0.dp)
-                                .padding(horizontal = 12.dp, vertical = 2.dp),
+                            border =
+                                if (selected) {
+                                    BorderStroke(
+                                        1.dp,
+                                        TactileTheme.Primary.copy(alpha = 0.3f),
+                                    )
+                                } else {
+                                    null
+                                },
+                            modifier =
+                                Modifier
+                                    .padding(start = if (selected) 2.dp else 0.dp)
+                                    .padding(horizontal = 12.dp, vertical = 2.dp),
                         ) {
                             NavigationDrawerItem(
                                 label = {
@@ -227,14 +241,14 @@ fun SidebarContent(
                                 },
                                 modifier = Modifier.fillMaxWidth(),
                                 colors =
-                                        NavigationDrawerItemDefaults.colors(
-                                            selectedContainerColor = TactileTheme.Primary.copy(alpha = 0.15f),
-                                            selectedIconColor = TactileTheme.Primary,
-                                            selectedTextColor = TactileTheme.Primary,
-                                            unselectedIconColor = TactileTheme.Muted,
-                                            unselectedTextColor = TactileTheme.Muted,
-                                            unselectedContainerColor = Color.Transparent,
-                                        ),
+                                    NavigationDrawerItemDefaults.colors(
+                                        selectedContainerColor = TactileTheme.Primary.copy(alpha = 0.15f),
+                                        selectedIconColor = TactileTheme.Primary,
+                                        selectedTextColor = TactileTheme.Primary,
+                                        unselectedIconColor = TactileTheme.Muted,
+                                        unselectedTextColor = TactileTheme.Muted,
+                                        unselectedContainerColor = Color.Transparent,
+                                    ),
                                 shape = RoundedCornerShape(TactileTheme.RadiusSm),
                             )
                         }
@@ -244,8 +258,7 @@ fun SidebarContent(
             }
         }
 
-        if (onNewEntry != null)
-        {
+        if (onNewEntry != null) {
             Box(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
                 Button(
                     onClick = onNewEntry,
@@ -267,13 +280,12 @@ fun SidebarContent(
         // Uptime Footer
         Column(
             modifier =
-                    Modifier
-                        .padding(TactileTheme.SpacingMd)
-                        .background(
-                            TactileTheme.Surface.copy(alpha = 0.5f),
-                            RoundedCornerShape(TactileTheme.RadiusMd),
-                        )
-                        .padding(TactileTheme.SpacingMd),
+                Modifier
+                    .padding(TactileTheme.SpacingMd)
+                    .background(
+                        TactileTheme.Surface.copy(alpha = 0.5f),
+                        RoundedCornerShape(TactileTheme.RadiusMd),
+                    ).padding(TactileTheme.SpacingMd),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -297,9 +309,9 @@ fun SidebarContent(
             LinearProgressIndicator(
                 progress = { 0.999f },
                 modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .height(4.dp),
+                    Modifier
+                        .fillMaxWidth()
+                        .height(4.dp),
                 color = TactileTheme.Primary,
                 trackColor = TactileTheme.Muted.copy(alpha = 0.2f),
                 strokeCap = StrokeCap.Round,

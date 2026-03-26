@@ -8,6 +8,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.*
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.tajemniktv.tajsos.data.AppPack
+import com.tajemniktv.tajsos.data.PackRegistry
 import org.jetbrains.compose.resources.StringResource
 import tajsos.composeapp.generated.resources.*
 
@@ -19,8 +21,7 @@ sealed class Screen(
     val label: StringResource,
     val icon: ImageVector,
     val isRoot: Boolean = true,
-)
-{
+) {
     data object Dashboard :
         Screen("dashboard", Res.string.screen_dash, Icons.Default.Home)
 
@@ -108,34 +109,114 @@ sealed class Screen(
         Icons.Default.QuestionMark,
     )
 
-    companion object
-    {
+    data object Operations : Screen(
+        "operations",
+        Res.string.screen_ops,
+        Icons.Default.Tune,
+    )
+
+    data object StudentBoard : Screen(
+        "student_board",
+        Res.string.screen_student,
+        Icons.Default.School,
+    )
+
+    companion object {
         /**
          * Finds the Screen corresponding to the base segment of a navigation route.
          *
          * @param route The navigation route string, which may include path segments and query parameters (for example, "note/123?edit=true"); may be null.
          * @return The matching `Screen` whose route's base segment equals the provided route's base segment, or `null` if `route` is null or no match exists.
          */
-        fun fromRoute(route: String?): Screen?
-        {
+        fun fromRoute(route: String?): Screen? {
             if (route == null) return null
-            val currentRouteBase = route.split("/").first().split("?").first()
+            val currentRouteBase =
+                route
+                    .split("/")
+                    .first()
+                    .split("?")
+                    .first()
             return listOf(
-                NoteDetail, ProjectDetail, AreaDetail, CalendarSettings,
-                Dashboard, Inbox, Search, Today, Focus, Track, Tasks, Notes,
-                Insights, Archive, Calendar, Graph, Projects, Areas,
-                Settings, Templates, Review, Profile, Decisions,
+                NoteDetail,
+                ProjectDetail,
+                AreaDetail,
+                CalendarSettings,
+                Dashboard,
+                Inbox,
+                Search,
+                Today,
+                Focus,
+                Track,
+                Tasks,
+                Notes,
+                Insights,
+                Archive,
+                Calendar,
+                Graph,
+                Projects,
+                Areas,
+                Settings,
+                Templates,
+                Review,
+                Profile,
+                Decisions,
+                Operations,
+                StudentBoard,
             ).find { it.route.split("/").first() == currentRouteBase }
         }
 
         val groupedItems by lazy {
             listOf(
                 Res.string.nav_core to listOf(Dashboard, Inbox, Search),
-                Res.string.nav_execution to listOf(Today, Tasks, Focus, Decisions, Calendar),
+                Res.string.nav_execution to
+                    listOf(
+                        Today,
+                        Tasks,
+                        Focus,
+                        Decisions,
+                        Operations,
+                        StudentBoard,
+                        Calendar,
+                    ),
                 Res.string.nav_brain to listOf(Notes, Projects, Areas),
                 Res.string.nav_status to listOf(Track, Insights, Graph, Review),
                 Res.string.nav_system to listOf(Archive, Settings, Profile),
             )
+        }
+
+        fun groupedItemsForPacks(packRegistry: PackRegistry): List<Pair<StringResource, List<Screen>>> {
+            val visible =
+                groupedItems.map { (group, screens) ->
+                    group to
+                        screens.filter { screen ->
+                            when (screen)
+                            {
+                                Graph -> {
+                                    packRegistry.isEnabled(AppPack.CREATOR) ||
+                                        packRegistry.isEnabled(
+                                            AppPack.STUDENT,
+                                        )
+                                }
+
+                                StudentBoard -> {
+                                    packRegistry.isEnabled(AppPack.STUDENT)
+                                }
+
+                                Calendar -> {
+                                    true
+                                }
+
+                                Operations -> {
+                                    true
+                                }
+
+                                else -> {
+                                    true
+                                }
+                            }
+                        }
+                }
+            return visible.filter { (_, screens) -> screens.isNotEmpty() }
         }
     }
 }

@@ -1,14 +1,9 @@
 # TajsOS
 
-**TajsOS** is a local-first personal operating system for life, projects, thoughts, execution, and insight.
-
-It combines:
-- a **command center** for what matters now
-- a **second brain** for notes, ideas, and context
-- a **project/life manager** for keeping domains separate
-- an **insight layer** that gives useful stats without becoming a bureaucracy simulator
-
-It is a **life OS first**.
+**TajsOS** is a local-first personal operating system for life, projects, thoughts, execution, and
+insight. It is not neccessarily for ADHD brains, but it is designed with ADHD brains in mind. It
+tries to replace overwhelming lists with a mechanical, satisfying control center that makes task
+capture and execution feel like operating heavy machinery.
 
 ---
 
@@ -20,5 +15,6 @@ See [`AGENTS.md`](./AGENTS.md) for agent/contributor rules and project guardrail
 
 ## Status
 
-TajsOS is currently in extremely experimental state and might change heavily. 
+TajsOS is currently in extremely experimental state and might change heavily.
+
 - Currently supports **Android** and **Desktop** targets.

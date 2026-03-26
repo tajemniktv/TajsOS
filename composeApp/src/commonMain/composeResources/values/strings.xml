@@ -41,6 +41,8 @@
     <string name="screen_opts">OPTS</string>
     <string name="screen_templates">TEMPLATES</string>
     <string name="screen_review">REVIEW</string>
+    <string name="screen_ops">OPS</string>
+    <string name="screen_student">STUDENT</string>
     <string name="screen_history">HISTORY</string>
 
     <!-- Review Screen -->

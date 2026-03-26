@@ -36,6 +36,8 @@
     <string name="screen_opts">OPCJE</string>
     <string name="screen_templates">SZABLONY</string>
     <string name="screen_review">PRZEGLĄD</string>
+    <string name="screen_ops">OPERACJE</string>
+    <string name="screen_student">STUDENT</string>
     <string name="screen_history">HISTORIA</string>
 
     <!-- Review Screen -->

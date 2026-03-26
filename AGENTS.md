@@ -4,10 +4,10 @@ This is a guidelines file for agents working on TajsOS.
 
 ## Project identity
 
-TajsOS is a low-friction "Second Brain" multiplatform app for managing your life. It is not
-neccessarily for ADHD brains, but it is designed with ADHD brains in mind. It tries to replace
-overwhelming lists with a mechanical, satisfying control center that makes task capture and
-execution feel like operating heavy machinery.
+**TajsOS** is a local-first personal operating system for life, projects, thoughts, execution, and
+insight. It is not neccessarily for ADHD brains, but it is designed with ADHD brains in mind. It
+tries to replace overwhelming lists with a mechanical, satisfying control center that makes task
+capture and execution feel like operating heavy machinery.
 
 ## Maintaining AGENTS.md Files
 
