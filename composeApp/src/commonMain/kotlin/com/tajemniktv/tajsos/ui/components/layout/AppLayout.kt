@@ -10,6 +10,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
@@ -34,6 +38,13 @@ fun AppLayout(
     scope: CoroutineScope,
     content: @Composable () -> Unit,
 ) {
+    var showMainSidebar by rememberSaveable { mutableStateOf(false) }
+    val currentScreen = Screen.fromRoute(currentDestination?.route)
+    val useContextualSidebar =
+        currentScreen != null &&
+            currentScreen != Screen.Dashboard &&
+            !showMainSidebar
+
     if (isDesktop) {
         Row(modifier = Modifier.fillMaxSize().background(TactileTheme.Background)) {
             Surface(
@@ -49,6 +60,9 @@ fun AppLayout(
                     allModes = allModes,
                     packRegistry = packRegistry,
                     onModeSelect = onModeSelect,
+                    useContextualSidebar = useContextualSidebar,
+                    onBackToMainSidebar = { showMainSidebar = true },
+                    onNavigateFromSidebar = { showMainSidebar = false },
                 )
             }
             Box(modifier = Modifier.weight(1f)) {
@@ -68,6 +82,7 @@ fun AppLayout(
                         currentDestination = currentDestination,
                         onNavigate = { screen ->
                             onNavigate(screen)
+                            showMainSidebar = false
                             scope.launch { drawerState.close() }
                         },
                         onNewEntry = onNewEntry,
@@ -75,6 +90,9 @@ fun AppLayout(
                         allModes = allModes,
                         packRegistry = packRegistry,
                         onModeSelect = onModeSelect,
+                        useContextualSidebar = useContextualSidebar,
+                        onBackToMainSidebar = { showMainSidebar = true },
+                        onNavigateFromSidebar = { showMainSidebar = false },
                     )
                 }
             },

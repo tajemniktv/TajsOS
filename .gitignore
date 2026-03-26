@@ -25,3 +25,4 @@ plans/*
 *.log
 .aiassistant
 .ai
+.serena

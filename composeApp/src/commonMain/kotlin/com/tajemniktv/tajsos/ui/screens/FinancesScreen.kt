@@ -4,21 +4,14 @@
 
 package com.tajemniktv.tajsos.ui.screens
 
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -26,226 +19,129 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
-import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.components.cards.MaintenanceCard
-import com.tajemniktv.tajsos.ui.components.common.EmptyState
+import com.tajemniktv.tajsos.ui.components.finance.FinanceDashboardBlockRegistry
+import com.tajemniktv.tajsos.ui.components.finance.FinanceDashboardContext
+import com.tajemniktv.tajsos.ui.components.finance.FinanceDashboardSurface
+import com.tajemniktv.tajsos.ui.components.finance.FinanceMaintenanceView
+import com.tajemniktv.tajsos.ui.components.finance.buildFinanceDashboardPlan
+import com.tajemniktv.tajsos.ui.components.finance.financeSyntheticLiquidity
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
-private val financeMaintenanceTypes =
-    setOf(
-        "bill",
-        "subscription",
-        "renewal",
-    )
+private val financeMaintenanceTypes = setOf("bill", "subscription", "renewal")
 
 @Composable
-@OptIn(ExperimentalLayoutApi::class)
 fun FinancesScreen(
     viewModel: MainViewModel,
     onEditNode: (Long) -> Unit,
 ) {
-    val maintenanceSnapshot by viewModel.maintenanceSnapshot.collectAsState()
+    val snapshot by viewModel.maintenanceSnapshot.collectAsState()
     val allAreas by viewModel.allAreas.collectAsState()
-    var maintenanceView by remember { mutableStateOf(MaintenanceView.Queue) }
+    var maintenanceView by remember { mutableStateOf(FinanceMaintenanceView.Queue) }
 
-    Column(
-        modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
-    ) {
-        Text(
-            text = "FINANCES WORKSPACE",
-            style = MaterialTheme.typography.displaySmall,
-            color = TactileTheme.Text,
-        )
-        Text(
-            text = "Track bills, subscriptions, renewals, and finance-related maintenance.",
-            style = MaterialTheme.typography.bodySmall,
-            color = TactileTheme.Muted,
-        )
-
-        MaintenanceLayer(
-            viewModel = viewModel,
-            snapshot = maintenanceSnapshot,
-            allAreas = allAreas,
-            maintenanceView = maintenanceView,
-            onMaintenanceView = { maintenanceView = it },
-            maintenanceTypeFilter = financeMaintenanceTypes,
-            onEditNode = onEditNode,
-        )
-    }
-}
-
-@Composable
-@OptIn(ExperimentalLayoutApi::class)
-internal fun MaintenanceLayer(
-    viewModel: MainViewModel,
-    snapshot: com.tajemniktv.tajsos.ui.MaintenanceSnapshot,
-    allAreas: List<NodeEntity>,
-    maintenanceView: MaintenanceView,
-    onMaintenanceView: (MaintenanceView) -> Unit,
-    maintenanceTypeFilter: Set<String>? = null,
-    onEditNode: (Long) -> Unit,
-) {
-    val itemsForView =
+    val queue = snapshot.active.filter { it.node.node.maintenanceType in financeMaintenanceTypes }
+    val recurring =
+        snapshot.recurring.filter { it.node.node.maintenanceType in financeMaintenanceTypes }
+    val overdue =
+        snapshot.overdue.filter { it.node.node.maintenanceType in financeMaintenanceTypes }
+    val itemsInView =
         when (maintenanceView)
         {
-            MaintenanceView.Queue -> snapshot.active
-            MaintenanceView.Recurring -> snapshot.recurring
-            MaintenanceView.Overdue -> snapshot.overdue
+            FinanceMaintenanceView.Queue -> queue
+            FinanceMaintenanceView.Recurring -> recurring
+            FinanceMaintenanceView.Overdue -> overdue
         }
-    val items =
-        if (maintenanceTypeFilter == null) {
-            itemsForView
-        } else {
-            itemsForView.filter { item ->
-                val maintenanceType = item.node.node.maintenanceType
-                maintenanceType != null && maintenanceType in maintenanceTypeFilter
-            }
-        }
+    val allItems = (queue + recurring + overdue).distinctBy { it.node.node.id }
+    val liquidity = allItems.sumOf { financeSyntheticLiquidity(it.node.node.title) }
+    val bars =
+        listOf(
+            queue.size + 2,
+            recurring.size + 1,
+            overdue.size + 1,
+            snapshot.breakIfIgnored.size + 1,
+            (snapshot.adminDebtMeter / 10).coerceAtLeast(1),
+        )
+    val confidence = (100 - snapshot.adminDebtMeter / 2).coerceIn(35, 98)
 
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = BorderStroke(1.dp, TactileTheme.Border),
-    ) {
-        Column(
-            modifier = Modifier.padding(TactileTheme.SpacingMd),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+    val context =
+        remember(
+            viewModel,
+            allAreas,
+            queue,
+            recurring,
+            overdue,
+            allItems,
+            itemsInView,
+            confidence,
+            liquidity,
+            bars,
+            maintenanceView,
+            onEditNode,
         ) {
-            Text(
-                "MAINTENANCE DASHBOARD",
-                style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary,
-                fontWeight = FontWeight.Bold,
+            FinanceDashboardContext(
+                viewModel = viewModel,
+                allAreas = allAreas,
+                queue = queue,
+                recurring = recurring,
+                overdue = overdue,
+                allItems = allItems,
+                itemsInView = itemsInView,
+                confidence = confidence,
+                liquidity = liquidity,
+                bars = bars,
+                maintenanceView = maintenanceView,
+                onMaintenanceViewChange = { maintenanceView = it },
+                onEditNode = onEditNode,
             )
-            Text(
-                "Active ${snapshot.active.size} • Recurring ${snapshot.recurring.size} • Overdue ${snapshot.overdue.size}",
-                style = MaterialTheme.typography.bodySmall,
-                color = TactileTheme.Muted,
-            )
-            Text(
-                "Admin debt meter: ${snapshot.adminDebtMeter}%",
-                style = MaterialTheme.typography.bodySmall,
-                color = if (snapshot.adminDebtMeter >= 70) TactileTheme.Error else TactileTheme.Text,
-            )
-            snapshot.overdueWarning?.let { warning ->
-                Text(
-                    warning,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Error,
-                    fontWeight = FontWeight.Bold,
-                )
-            }
-            if (snapshot.breakIfIgnored.isNotEmpty()) {
-                Text(
-                    "Things that break if ignored: ${
-                        snapshot.breakIfIgnored.joinToString(", ") {
-                            (it.node.node.maintenanceType ?: "manual").replace(
-                                "_",
-                                " ",
-                            )
-                        }
-                    }",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Muted,
-                )
-            }
         }
-    }
 
-    FlowRow(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+    BoxWithConstraints(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        listOf(TactileTheme.Background, TactileTheme.Surface.copy(alpha = 0.45f)),
+                    ),
+                ),
     ) {
-        MaintenanceView.entries.forEach { view ->
-            FilterChip(
-                selected = maintenanceView == view,
-                onClick = { onMaintenanceView(view) },
-                label = { Text(view.label) },
-            )
-        }
-    }
+        val surface =
+            if (maxWidth > 980.dp) FinanceDashboardSurface.DESKTOP else FinanceDashboardSurface.MOBILE
+        val plan = remember(surface) { buildFinanceDashboardPlan(surface) }
 
-    if (items.isEmpty()) {
-        EmptyState(message = "No maintenance items in ${maintenanceView.label.lowercase()}.")
-        return
-    }
-
-    LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
-        if (maintenanceTypeFilter == null) {
-            item {
-                GroupedOpenLoopSection(
-                    title = "TRACKERS BY TYPE",
-                    items =
-                        snapshot.byType.entries.map { entry ->
-                            "${entry.key.replace("_", " ").uppercase()} • ${entry.value.size}"
-                        },
-                )
-            }
-            item {
-                GroupedOpenLoopSection(
-                    title = "TRACKERS BY URGENCY",
-                    items =
-                        snapshot.byUrgency.entries.map { entry ->
-                            "${entry.key.uppercase()} • ${entry.value.size}"
-                        },
-                )
-            }
-            item {
-                GroupedOpenLoopSection(
-                    title = "TRACKERS BY AREA",
-                    items =
-                        snapshot.byArea.entries.map { entry ->
-                            val name =
-                                if (entry.key == null) {
-                                    "UNASSIGNED"
-                                } else {
-                                    allAreas.find { it.id == entry.key }?.title ?: "UNKNOWN"
-                                }
-                            "$name • ${entry.value.size}"
-                        },
-                )
-            }
-            if (snapshot.expirationReminders.isNotEmpty()) {
-                item {
-                    GroupedOpenLoopSection(
-                        title = "EXPIRATION REMINDERS",
-                        items =
-                            snapshot.expirationReminders
-                                .take(5)
-                                .map { "${it.node.node.title} • ${it.dueInDays ?: 0}d" },
-                    )
+        if (surface == FinanceDashboardSurface.MOBILE) {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd),
+                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+            ) {
+                items(plan.primary, key = { it.id }) { block ->
+                    FinanceDashboardBlockRegistry.resolve(block.id)?.invoke(context)
                 }
             }
-        }
-
-        items(items, key = { it.node.node.id }) { item ->
-            MaintenanceCard(
-                item = item,
-                areaName = allAreas.find { it.id == item.node.node.areaId }?.title,
-                maintenanceTypes = maintenanceTypes,
-                onEditNode = onEditNode,
-                onSetType = { type -> viewModel.updateMaintenanceType(item.node.node, type) },
-                onSetRecurring = { interval ->
-                    viewModel.setMaintenanceRecurring(
-                        item.node.node,
-                        interval,
-                    )
-                },
-                onSetOverdue = { timestamp ->
-                    viewModel.setMaintenanceOverdueAt(
-                        item.node.node,
-                        timestamp,
-                    )
-                },
-                onResolve = { viewModel.updateNodeStatus(item.node.node, "done") },
-                onArchive = { viewModel.archiveNode(item.node.node) },
-            )
+        } else {
+            Row(
+                modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd),
+                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+            ) {
+                LazyColumn(
+                    modifier = Modifier.weight(1.3f),
+                    verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+                ) {
+                    items(plan.primary, key = { it.id }) { block ->
+                        FinanceDashboardBlockRegistry.resolve(block.id)?.invoke(context)
+                    }
+                }
+                LazyColumn(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+                ) {
+                    items(plan.secondary, key = { it.id }) { block ->
+                        FinanceDashboardBlockRegistry.resolve(block.id)?.invoke(context)
+                    }
+                }
+            }
         }
     }
 }
