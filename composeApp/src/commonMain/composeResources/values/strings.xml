@@ -219,6 +219,9 @@
     <string name="settings_biometric_lock">BIOMETRIC LOCK</string>
     <string name="settings_biometric_desc">Require authentication to open</string>
     <string name="settings_biometric_unavailable">Hardware not available</string>
+    <string name="settings_appearance">APPEARANCE</string>
+    <string name="settings_dark_theme">DARK THEME</string>
+    <string name="settings_dark_theme_desc">Turn off to switch to the light theme</string>
     <string name="settings_calendar_integration">CALENDAR INTEGRATION</string>
     <string name="settings_configure_calendars">CONFIGURE EXTERNAL CALENDARS</string>
     <string name="settings_manage_templates">MANAGE TEMPLATES</string>
