@@ -113,12 +113,80 @@ sealed class Screen(
         "operations",
         Res.string.screen_ops,
         Icons.Default.Tune,
+        isRoot = false,
+    )
+
+    data object OpenLoops : Screen(
+        "open_loops",
+        Res.string.screen_open_loops,
+        Icons.Default.AllInclusive,
+    )
+
+    data object Protocols : Screen(
+        "protocols",
+        Res.string.screen_protocols,
+        Icons.Default.RocketLaunch,
+    )
+
+    data object TimeArchitecture : Screen(
+        "time_architecture",
+        Res.string.screen_time_architecture,
+        Icons.Default.Schedule,
+    )
+
+    data object Places : Screen(
+        "places",
+        Res.string.screen_places,
+        Icons.Default.Place,
+    )
+
+    data object Finances : Screen(
+        "finances",
+        Res.string.screen_finances,
+        Icons.Default.AttachMoney,
+    )
+
+    data object Relationships : Screen(
+        "relationships",
+        Res.string.screen_relationships,
+        Icons.Default.People,
+    )
+
+    data object Study : Screen(
+        "study",
+        Res.string.screen_study,
+        Icons.Default.School,
+    )
+
+    data object Rules : Screen(
+        "rules",
+        Res.string.screen_rules,
+        Icons.Default.Gavel,
+    )
+
+    data object Vaults : Screen(
+        "vaults",
+        Res.string.screen_vaults,
+        Icons.Default.Inventory2,
+    )
+
+    data object Capacity : Screen(
+        "capacity",
+        Res.string.screen_capacity,
+        Icons.Default.Speed,
+    )
+
+    data object Identity : Screen(
+        "identity",
+        Res.string.screen_identity,
+        Icons.Default.Psychology,
     )
 
     data object StudentBoard : Screen(
         "student_board",
         Res.string.screen_student,
         Icons.Default.School,
+        isRoot = false,
     )
 
     companion object {
@@ -161,6 +229,17 @@ sealed class Screen(
                 Profile,
                 Decisions,
                 Operations,
+                OpenLoops,
+                Protocols,
+                TimeArchitecture,
+                Places,
+                Finances,
+                Relationships,
+                Study,
+                Rules,
+                Vaults,
+                Capacity,
+                Identity,
                 StudentBoard,
             ).find { it.route.split("/").first() == currentRouteBase }
         }
@@ -174,12 +253,15 @@ sealed class Screen(
                         Tasks,
                         Focus,
                         Decisions,
-                        Operations,
-                        StudentBoard,
+                        OpenLoops,
+                        Finances,
+                        Relationships,
+                        Study,
                         Calendar,
                     ),
-                Res.string.nav_brain to listOf(Notes, Projects, Areas),
-                Res.string.nav_status to listOf(Track, Insights, Graph, Review),
+                Res.string.nav_systems to listOf(Protocols, TimeArchitecture, Places),
+                Res.string.nav_brain to listOf(Notes, Projects, Areas, Vaults, Rules),
+                Res.string.nav_status to listOf(Track, Insights, Capacity, Identity, Graph, Review),
                 Res.string.nav_system to listOf(Archive, Settings, Profile),
             )
         }
@@ -202,7 +284,22 @@ sealed class Screen(
                                     packRegistry.isEnabled(AppPack.STUDENT)
                                 }
 
-                                Calendar -> {
+                                Study -> {
+                                    packRegistry.isEnabled(AppPack.STUDENT)
+                                }
+
+                                OpenLoops,
+                                Protocols,
+                                TimeArchitecture,
+                                Places,
+                                Finances,
+                                Relationships,
+                                Rules,
+                                Vaults,
+                                Capacity,
+                                Identity,
+                                Calendar,
+                                -> {
                                     true
                                 }
 

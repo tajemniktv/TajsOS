@@ -10,6 +10,7 @@
     <!-- Navigation -->
     <string name="nav_core">CORE</string>
     <string name="nav_execution">EXECUTION</string>
+    <string name="nav_systems">SYSTEMS</string>
     <string name="nav_brain">SECOND BRAIN</string>
     <string name="nav_status">STATUS &amp; INSIGHTS</string>
     <string name="nav_system">SYSTEM</string>
@@ -42,6 +43,17 @@
     <string name="screen_templates">TEMPLATES</string>
     <string name="screen_review">REVIEW</string>
     <string name="screen_ops">OPS</string>
+    <string name="screen_open_loops">LOOPS</string>
+    <string name="screen_protocols">PROTOCOLS</string>
+    <string name="screen_time_architecture">TIME</string>
+    <string name="screen_places">PLACES</string>
+    <string name="screen_finances">FINANCE</string>
+    <string name="screen_relationships">RELATIONSHIPS</string>
+    <string name="screen_study">STUDY</string>
+    <string name="screen_rules">RULES</string>
+    <string name="screen_vaults">VAULTS</string>
+    <string name="screen_capacity">CAPACITY</string>
+    <string name="screen_identity">IDENTITY</string>
     <string name="screen_student">STUDENT</string>
     <string name="screen_history">HISTORY</string>
 

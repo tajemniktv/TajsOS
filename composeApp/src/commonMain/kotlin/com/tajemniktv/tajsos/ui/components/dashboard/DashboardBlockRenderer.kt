@@ -130,9 +130,9 @@ fun DashboardBlockRenderer(
                         letterSpacing = 2.sp
                     )
 
-                    TextButton(onClick = { onNavigateTo(Screen.Operations) }) {
+                    TextButton(onClick = { onNavigateTo(Screen.OpenLoops) }) {
                         Text(
-                            text = "OPEN OPERATIONS WORKSPACE",
+                            text = "OPEN OPEN LOOPS",
                             style = MaterialTheme.typography.labelSmall,
                             color = TactileTheme.Primary,
                         )
@@ -201,7 +201,7 @@ fun DashboardBlockRenderer(
                     secondaryLabel = "SEMESTER ${timeSnapshot.semesterLayer.size}",
                     icon = Icons.Default.Schedule,
                     iconColor = TactileTheme.Primary,
-                    onClick = { onNavigateTo(Screen.Operations) },
+                    onClick = { onNavigateTo(Screen.TimeArchitecture) },
                 )
                 if (timeSnapshot.examPeriodMode) {
                     AlertCard(
@@ -209,7 +209,7 @@ fun DashboardBlockRenderer(
                         description = "Countdown detected in <= 30 days. Tighten weekly plan.",
                         icon = Icons.Default.School,
                         color = TactileTheme.Error,
-                        onClick = { onNavigateTo(Screen.StudentBoard) },
+                        onClick = { onNavigateTo(Screen.Study) },
                     )
                 }
                 if (timeSnapshot.countdowns.isNotEmpty()) {
@@ -701,7 +701,7 @@ fun DashboardBlockRenderer(
                                     Triple(
                                         Icons.Default.School,
                                         TactileTheme.Accent,
-                                        Screen.StudentBoard,
+                                        Screen.Study,
                                     )
                                 }
 
@@ -709,7 +709,7 @@ fun DashboardBlockRenderer(
                                     Triple(
                                         Icons.Default.Flight,
                                         TactileTheme.Primary,
-                                        Screen.Operations,
+                                        Screen.Places,
                                     )
                                 }
 
@@ -717,7 +717,7 @@ fun DashboardBlockRenderer(
                                     Triple(
                                         Icons.Default.RocketLaunch,
                                         TactileTheme.Primary,
-                                        Screen.Operations,
+                                        Screen.Protocols,
                                     )
                                 }
                             }
@@ -791,8 +791,8 @@ fun DashboardBlockRenderer(
                     nodes = studyNodes.take(5),
                     onEditNode = onEditNode,
                 )
-                TextButton(onClick = { onNavigateTo(Screen.StudentBoard) }) {
-                    Text("OPEN STUDENT BOARD")
+                TextButton(onClick = { onNavigateTo(Screen.Study) }) {
+                    Text("OPEN STUDY WORKSPACE")
                 }
             }
         }

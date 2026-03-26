@@ -2639,7 +2639,9 @@ class MainViewModel(
                         .toLocalDateTime(TimeZone.currentSystemDefault())
                         .date.dayOfWeek.name
                 }.eachCount()
-                .toSortedMap()
+                .entries
+                .sortedBy { it.key }
+                .associate { it.toPair() }
         val projectPhases =
             projects
                 .map { project ->

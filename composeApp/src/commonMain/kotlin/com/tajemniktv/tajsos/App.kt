@@ -370,7 +370,22 @@ private fun AppScaffold(
             composable(Screen.Notes.route) { NotesScreen(viewModel, onEditNode) }
             composable(Screen.Calendar.route) { CalendarScreen(viewModel, onEditNode) }
             composable(Screen.Decisions.route) { DecisionsScreen(viewModel, onEditNode) }
-            composable(Screen.Operations.route) { OperationsScreen(viewModel, onEditNode) }
+            composable(Screen.Operations.route) {
+                OperationsScreen(viewModel, onNavigate = { onNavigate(it.route) })
+            }
+            composable(Screen.OpenLoops.route) { OpenLoopsScreen(viewModel, onEditNode) }
+            composable(Screen.Protocols.route) { ProtocolsScreen(viewModel, onEditNode) }
+            composable(Screen.TimeArchitecture.route) {
+                TimeArchitectureScreen(viewModel, onEditNode)
+            }
+            composable(Screen.Places.route) { PlacesScreen(viewModel, onEditNode) }
+            composable(Screen.Finances.route) { FinancesScreen(viewModel, onEditNode) }
+            composable(Screen.Relationships.route) { RelationshipsScreen(viewModel, onEditNode) }
+            composable(Screen.Study.route) { StudyScreen(viewModel, onEditNode) }
+            composable(Screen.Rules.route) { RulesScreen(viewModel, onEditNode) }
+            composable(Screen.Vaults.route) { VaultsScreen(viewModel, onEditNode) }
+            composable(Screen.Capacity.route) { CapacityScreen(viewModel) }
+            composable(Screen.Identity.route) { IdentityScreen(viewModel, onEditNode) }
             composable(Screen.StudentBoard.route) { StudentBoardScreen(viewModel, onEditNode) }
             composable(Screen.Templates.route) {
                 TemplatesScreen(viewModel, onBack = { navController.popBackStack() })
