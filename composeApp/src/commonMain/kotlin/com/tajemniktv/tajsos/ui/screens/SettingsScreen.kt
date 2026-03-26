@@ -23,7 +23,7 @@ import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 
 /**
- * Renders the app settings screen with security, appearance, calendar, templates, data management, and a test crash action.
+ * Renders the app settings screen with security, calendar, templates, data management, and a test crash action.
  *
  * The security section shows a biometric toggle that reflects and updates the ViewModel biometric state and is disabled when biometric hardware is unavailable. The data export action calls the ViewModel to obtain exported JSON and displays a snackbar indicating the exported byte length. The force crash button throws a RuntimeException when tapped.
  *
@@ -40,7 +40,6 @@ fun SettingsScreen(
 ) {
     val isBiometricEnabled by viewModel.isBiometricEnabled.collectAsState()
     val isBiometricHardwareAvailable by viewModel.isBiometricHardwareAvailable.collectAsState()
-    val isDarkThemeEnabled by viewModel.isDarkThemeEnabled.collectAsState()
     val enabledPacks by viewModel.enabledPacks.collectAsState()
     var importPayload by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
@@ -92,40 +91,6 @@ fun SettingsScreen(
                     enabled = isBiometricHardwareAvailable,
                     checked = isBiometricEnabled == true,
                     onCheckedChange = { viewModel.setBiometricEnabled(it) },
-                    colors = SwitchDefaults.colors(checkedThumbColor = TactileTheme.Primary),
-                )
-            }
-
-            Spacer(Modifier.height(TactileTheme.SpacingLg))
-
-            Text(
-                stringResource(Res.string.settings_appearance),
-                style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary,
-            )
-            Row(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = TactileTheme.SpacingSm),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        stringResource(Res.string.settings_dark_theme),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = TactileTheme.Text,
-                    )
-                    Text(
-                        stringResource(Res.string.settings_dark_theme_desc),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Muted,
-                    )
-                }
-                Switch(
-                    checked = isDarkThemeEnabled,
-                    onCheckedChange = { viewModel.setDarkThemeEnabled(it) },
                     colors = SwitchDefaults.colors(checkedThumbColor = TactileTheme.Primary),
                 )
             }

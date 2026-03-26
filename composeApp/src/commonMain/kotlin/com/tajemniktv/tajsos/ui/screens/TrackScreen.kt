@@ -25,6 +25,7 @@ import com.tajemniktv.tajsos.ui.components.TactileSlider
 import com.tajemniktv.tajsos.ui.components.TactileTextField
 import com.tajemniktv.tajsos.ui.components.cards.MedicationSyncCard
 import com.tajemniktv.tajsos.ui.components.cards.TactileCard
+import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -239,8 +240,14 @@ fun TrackScreen(viewModel: MainViewModel) {
             )
         }
 
-        items(trackEntries, key = { it.id }) { entry ->
-            TrackHistoryItem(entry)
+        if (trackEntries.isEmpty()) {
+            item {
+                EmptyState(stringResource(Res.string.track_empty))
+            }
+        } else {
+            items(trackEntries, key = { it.id }) { entry ->
+                TrackHistoryItem(entry)
+            }
         }
     }
 }
