@@ -1039,12 +1039,13 @@ class MainViewModel(
     suspend fun getNodeById(id: Long): NodeEntity? = repository.getNodeById(id)
 
     /**
-     * Marks a node as archived. Archived nodes are typically hidden from active views.
+     * Marks a node as archived, setting its status and archivedAt timestamp.
+     * Archived nodes are typically hidden from active views.
      *
      * @param node The node to archive.
      */
     fun archiveNode(node: NodeEntity) {
-        nodeCommands.archiveNode(node)
+        updateNodeStatus(node, "archived")
     }
 
     /**
@@ -1057,7 +1058,7 @@ class MainViewModel(
     }
 
     /**
-     * Toggles the pinned status of a node.
+     * Sets the pinned status of a node for the "Today" view.
      *
      * @param node The node to update.
      * @param isPinned The new pinned status.
