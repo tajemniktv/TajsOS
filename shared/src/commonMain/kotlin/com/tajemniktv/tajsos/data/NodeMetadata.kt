@@ -13,6 +13,15 @@ private val nodeMetadataJson =
         encodeDefaults = true
     }
 
+/**
+ * Envelope for modular, typed metadata attached to [NodeEntity].
+ *
+ * This structure allows TajsOS to attach domain-specific data (like student grades,
+ * or financial records) to the core Node model without bloating the primary SQL schema.
+ * It is serialized to JSON and stored in `NodeEntity.metadataJson`.
+ *
+ * @property schemaVersion Used for future migrations if the envelope structure changes significantly.
+ */
 @Serializable
 data class NodeMetadataEnvelope(
     val schemaVersion: Int = 1,
@@ -22,6 +31,9 @@ data class NodeMetadataEnvelope(
     val creator: CreatorMetadata? = null,
 )
 
+/**
+ * Metadata pack for student-related nodes (courses, assignments, exams).
+ */
 @Serializable
 data class StudentMetadata(
     val courseId: String? = null,
@@ -37,6 +49,9 @@ data class StudentMetadata(
     val revisitBeforeExam: Boolean = false,
 )
 
+/**
+ * Metadata pack for financial tracking (expenses, income, budgets).
+ */
 @Serializable
 data class FinanceMetadata(
     val entryType: String? = null,
@@ -45,6 +60,9 @@ data class FinanceMetadata(
     val monthBucket: String? = null,
 )
 
+/**
+ * Metadata pack for relationship and CRM features.
+ */
 @Serializable
 data class PeopleMetadata(
     val personId: String? = null,
@@ -53,6 +71,9 @@ data class PeopleMetadata(
     val followUpEpochMs: Long? = null,
 )
 
+/**
+ * Metadata pack for content creation, development, and publishing pipelines.
+ */
 @Serializable
 data class CreatorMetadata(
     val ideaStage: String? = null,
@@ -60,6 +81,13 @@ data class CreatorMetadata(
     val repositoryRef: String? = null,
 )
 
+/**
+ * Safely deserializes the `metadataJson` field into a [NodeMetadataEnvelope].
+ *
+ * It silently ignores parsing errors or unknown keys (via [nodeMetadataJson] configuration),
+ * returning null if the payload is malformed or empty. This ensures that corrupt metadata
+ * does not crash the UI.
+ */
 fun NodeEntity.metadataEnvelopeOrNull(): NodeMetadataEnvelope? =
     metadataJson?.takeIf { it.isNotBlank() }?.let {
         runCatching {
@@ -67,6 +95,12 @@ fun NodeEntity.metadataEnvelopeOrNull(): NodeMetadataEnvelope? =
         }.getOrNull()
     }
 
+/**
+ * Returns a copy of the current [NodeEntity] with its `metadataJson` field updated
+ * to reflect the provided [envelope].
+ *
+ * If [envelope] is null, the resulting JSON string will be null (clearing the metadata).
+ */
 fun NodeEntity.withMetadataEnvelope(envelope: NodeMetadataEnvelope?): NodeEntity =
     copy(
         metadataJson = envelope?.let { nodeMetadataJson.encodeToString(it) },
