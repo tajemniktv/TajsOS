@@ -89,12 +89,12 @@ data class ModeQueryProfile(
 )
 
 /**
- * Builds a [ModeQueryProfile] from the given preference, area filters, and type filters.
+ * Constructs a mode configuration by combining the stored preference with the provided area and type filters.
  *
- * @param preference The user's preference for the mode, containing visibility settings, quick actions, dashboard blocks, and suggestion keys.
- * @param areaFilters A list of area filters defining which areas should be included in this mode.
- * @param typeFilters A list of type filters defining which node types should be included in this mode.
- * @return A fully constructed [ModeQueryProfile].
+ * @param preference The persisted mode preference containing visibility flags, sort strategy, and JSON fields for quick actions, dashboard blocks, and suggestions.
+ * @param areaFilters A list of area filter entities; entries with `include == true` indicate areas to include in the profile.
+ * @param typeFilters A list of type filter entities; entries with `include == true` indicate node types to include in the profile.
+ * @return A ModeQueryProfile that consolidates visibility, filtering, actions, suggestions, and dashboard block settings for the mode.
  */
 fun buildModeQueryProfile(
     preference: ModePreferenceEntity,

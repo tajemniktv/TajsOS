@@ -57,19 +57,26 @@ data class PackRegistry(
     fun isEnabled(pack: AppPack): Boolean = enabledPackKeys.contains(pack.key)
 
     /**
-     * Verifies if all dependencies required by a specific feature pack are currently enabled.
-     *
-     * @param pack The [AppPack] whose dependencies are to be checked.
-     * @return `true` if all dependencies are enabled, `false` if one or more dependencies are missing.
-     */
+ * Checks whether all dependencies required by the given pack are enabled.
+ *
+ * @param pack The AppPack whose dependencies to check.
+ * @return `true` if all dependencies are enabled, `false` otherwise.
+ */
     fun isDependencySatisfied(pack: AppPack): Boolean = enabledPackKeys.containsAll(pack.dependencies)
 
     /**
-     * Determines if a specific operating mode can be used based on the currently enabled packs.
-     *
-     * @param modeKey The string identifier of the operating mode (e.g., "STUDY", "ADMIN").
-     * @return `true` if the necessary packs for the mode are enabled, `false` otherwise. Defaults to `true` for unrecognized modes.
-     */
+         * Determines whether the specified operating mode is permitted by the currently enabled packs.
+         *
+         * Mode requirements:
+         * - "STUDY" requires the STUDENT pack.
+         * - "ADMIN" requires the FINANCE pack or the MAINTENANCE pack.
+         * - "ERRAND" requires the MAINTENANCE pack.
+         * - "SHUTDOWN" requires the PROTOCOLS pack.
+         * - Any other mode is permitted.
+         *
+         * @param modeKey The mode identifier (comparison is case-insensitive).
+         * @return `true` if the required packs for the mode are enabled, `false` otherwise.
+         */
     fun canUseMode(modeKey: String): Boolean =
         when (modeKey.uppercase())
         {
@@ -81,13 +88,13 @@ data class PackRegistry(
         }
 
 /**
- * Validates the currently enabled packs against their dependencies.
- *
- * Note: This function only checks dependencies for packs that are both owned and enabled.
- * It will not report missing dependencies for packs that are enabled but not owned.
- *
- * @return A set of string messages indicating missing dependencies for enabled and owned packs. Returns an empty set if all dependencies are satisfied.
- */
+             * Finds missing dependencies for enabled packs that the user owns.
+             *
+             * Checks only packs that are both enabled and owned and reports each dependency
+             * that is not enabled.
+             *
+             * @return `Set<String>` of messages formatted as "<packKey>:missing:<depKey>" for each missing dependency; empty set if none.
+             */
     fun validateEnabledPacks(): Set<String> =
         AppPack.entries
             .filter { enabledPackKeys.contains(it.key) && ownedPackKeys.contains(it.key) }
