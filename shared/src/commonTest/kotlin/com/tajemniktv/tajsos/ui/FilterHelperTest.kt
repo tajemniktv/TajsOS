@@ -353,25 +353,27 @@ class FilterHelperTest {
             relations = emptyList(),
         )
 
-        // Note fails because matchesLocationContext requires "office", which Note lacks ("home").
-        // Therefore only taskMatch matches the criteria.
+        // Notes bypass matchesContextScope restriction, but still must pass context matching if a context is requested.
+        // The query asks for `locationContext = "office"`. The note has `locationContext = "home"`, so it fails.
+        // The `taskMismatch` fails because its contexts do not match.
+        // Therefore only `taskMatch` matches all criteria.
         assertEquals(1, filtered.size)
         assertEquals(2L, filtered.first().node.id)
     }
 
-    @Test
-    fun testFilterTimeHorizon() {
+    private fun createTimeNodes(): List<NodeWithPin> {
         val now = kotlin.time.Clock.System.now().toEpochMilliseconds()
         val dayMs = 24 * 60 * 60 * 1000L
+        return listOf(
+            createTestNode(id = 1, title = "Today", type = "task", dueAt = now),
+            createTestNode(id = 2, title = "Next Week", type = "task", dueAt = now + (8 * dayMs)),
+            createTestNode(id = 3, title = "No Due Date", type = "task", dueAt = null)
+        )
+    }
 
-        val taskToday = createTestNode(id = 1, title = "Today", type = "task", dueAt = now + (dayMs / 2))
-        val taskNextWeek = createTestNode(id = 2, title = "Next Week", type = "task", dueAt = now + (8 * dayMs))
-        val taskNoDue = createTestNode(id = 3, title = "No Due Date", type = "task", dueAt = null)
-
-        val nodes = listOf(taskToday, taskNextWeek, taskNoDue)
-
-        val filteredToday = FilterHelper.filterAndSortNodes(
-            nodes = nodes,
+    private fun assertTimeHorizon(horizon: String, expectedIds: List<Long>) {
+        val filtered = FilterHelper.filterAndSortNodes(
+            nodes = createTimeNodes(),
             query = "",
             type = null,
             status = null,
@@ -386,58 +388,30 @@ class FilterHelperTest {
             deviceContext = null,
             socialContext = null,
             timeWindowContext = null,
-            timeHorizon = "today",
+            timeHorizon = horizon,
             relations = emptyList(),
         )
-        // Only taskToday should be returned
-        assertEquals(1, filteredToday.size)
-        assertEquals(1L, filteredToday.first().node.id)
+        assertEquals(expectedIds.size, filtered.size)
+        expectedIds.forEach { id ->
+            assertTrue(filtered.any { it.node.id == id })
+        }
+    }
 
-        val filteredWeek = FilterHelper.filterAndSortNodes(
-            nodes = nodes,
-            query = "",
-            type = null,
-            status = null,
-            projectId = null,
-            areaId = null,
-            linkedToId = null,
-            maxMins = null,
-            energy = null,
-            friction = null,
-            locationContext = null,
-            energyContext = null,
-            deviceContext = null,
-            socialContext = null,
-            timeWindowContext = null,
-            timeHorizon = "week",
-            relations = emptyList(),
-        )
-        // Only taskToday should be returned, since taskNextWeek is 8 days out
-        assertEquals(1, filteredWeek.size)
-        assertEquals(1L, filteredWeek.first().node.id)
+    @Test
+    fun testFilterTimeHorizonToday() {
+        // Only taskToday (id=1) should be returned
+        assertTimeHorizon("today", listOf(1L))
+    }
 
-        val filteredMonth = FilterHelper.filterAndSortNodes(
-            nodes = nodes,
-            query = "",
-            type = null,
-            status = null,
-            projectId = null,
-            areaId = null,
-            linkedToId = null,
-            maxMins = null,
-            energy = null,
-            friction = null,
-            locationContext = null,
-            energyContext = null,
-            deviceContext = null,
-            socialContext = null,
-            timeWindowContext = null,
-            timeHorizon = "month",
-            relations = emptyList(),
-        )
-        // taskToday and taskNextWeek are within 30 days
-        assertEquals(2, filteredMonth.size)
-        assertTrue(filteredMonth.any { it.node.id == 1L })
-        assertTrue(filteredMonth.any { it.node.id == 2L })
+    @Test
+    fun testFilterTimeHorizonWeek() {
+        // Only taskToday (id=1) should be returned, since taskNextWeek is 8 days out
+        assertTimeHorizon("week", listOf(1L))
+    }
+
+    @Test
+    fun testFilterTimeHorizonMonth() {
+        // taskToday (id=1) and taskNextWeek (id=2) are within 30 days
+        assertTimeHorizon("month", listOf(1L, 2L))
     }
 }
