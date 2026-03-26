@@ -80,6 +80,7 @@ fun App(
     val currentMode by viewModel.currentMode.collectAsState()
     val allModes by viewModel.allModes.collectAsState()
     val enabledPacks by viewModel.enabledPacks.collectAsState()
+    val isDarkThemeEnabled by viewModel.isDarkThemeEnabled.collectAsState()
 
     var showCaptureSheetState by remember { mutableStateOf(false) }
 
@@ -88,7 +89,7 @@ fun App(
             Screen.fromRoute(currentDestination?.route)
         }
 
-    TajsOSTheme {
+    TajsOSTheme(darkTheme = isDarkThemeEnabled) {
         BoxWithConstraints {
             val isDesktop = maxWidth > 800.dp
 

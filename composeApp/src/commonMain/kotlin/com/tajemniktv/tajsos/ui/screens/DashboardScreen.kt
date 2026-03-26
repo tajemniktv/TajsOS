@@ -48,7 +48,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavDestination
-import com.tajemniktv.tajsos.data.AppPack
 import com.tajemniktv.tajsos.data.FocusSessionEntity
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.data.TrackEntryEntity
@@ -56,13 +55,15 @@ import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.cards.LifeSummaryCard
 import com.tajemniktv.tajsos.ui.components.cards.ModuleCard
+import com.tajemniktv.tajsos.ui.components.dashboard.DashboardBlockInstance
 import com.tajemniktv.tajsos.ui.components.dashboard.DashboardBlockRenderer
+import com.tajemniktv.tajsos.ui.components.dashboard.DashboardSurface
+import com.tajemniktv.tajsos.ui.components.dashboard.buildDashboardLayoutPlan
 import com.tajemniktv.tajsos.ui.components.modes.ModeSuggestionBanner
 import com.tajemniktv.tajsos.ui.components.modes.ModeSwitcherHeader
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import kotlinx.serialization.json.Json
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.screen_focus
@@ -82,33 +83,28 @@ fun DashboardScreen(
     currentDestination: NavDestination? = null,
 ) {
     BoxWithConstraints {
-        if (maxWidth > 800.dp) {
-            DashboardDesktopContent(
-                viewModel = viewModel,
-                onNavigateTo = onNavigateTo,
-                onEditNode = onEditNode,
-                onNavigateToProject = onNavigateToProject,
-                onNewEntry = onNewEntry,
-                currentDestination = currentDestination,
-            )
-        } else {
-            DashboardMobileContent(
-                viewModel = viewModel,
-                onNavigateTo = onNavigateTo,
-                onEditNode = onEditNode,
-                onNavigateToProject = onNavigateToProject,
-            )
-        }
+        DashboardUnifiedContent(
+            surface = if (maxWidth > 800.dp) DashboardSurface.DESKTOP else DashboardSurface.MOBILE,
+            viewModel = viewModel,
+            onNavigateTo = onNavigateTo,
+            onEditNode = onEditNode,
+            onNavigateToProject = onNavigateToProject,
+            onNewEntry = onNewEntry,
+            currentDestination = currentDestination,
+        )
     }
 }
 
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
-private fun DashboardMobileContent(
+private fun DashboardUnifiedContent(
+    surface: DashboardSurface,
     viewModel: MainViewModel,
     onNavigateTo: (Screen) -> Unit,
     onEditNode: (Long) -> Unit,
     onNavigateToProject: (Long) -> Unit,
+    onNewEntry: () -> Unit,
+    currentDestination: NavDestination?,
 ) {
     val allNodes by viewModel.allNodes.collectAsState()
     val todayNodes by viewModel.todayNodes.collectAsState()
@@ -127,80 +123,6 @@ private fun DashboardMobileContent(
     val allModes by viewModel.allModes.collectAsState()
     val enabledPacks by viewModel.enabledPacks.collectAsState()
 
-    val rawBlockList =
-        remember(dashboardState.modePreferences, dashboardState.modeQueryProfile) {
-            dashboardState.modeQueryProfile
-                ?.dashboardBlocks
-                ?.takeIf { it.isNotEmpty() }
-                ?.let { return@remember it }
-            try {
-                val jsonStr = dashboardState.modePreferences?.dashboardBlocksJson
-                if (jsonStr != null) {
-                    Json.decodeFromString<List<String>>(jsonStr)
-                } else {
-                    listOf(
-                        "today_pulse",
-                        "load_capacity",
-                        "area_health",
-                        "operational",
-                        "search",
-                        "alerts",
-                        "sticky",
-                        "focus",
-                        "insights",
-                        "actions",
-                        "suggestions",
-                        "knowledge",
-                        "time_architecture",
-                        "protocols",
-                    )
-                }
-            } catch (_: Exception) {
-                listOf(
-                    "today_pulse",
-                    "load_capacity",
-                    "area_health",
-                    "operational",
-                    "search",
-                    "alerts",
-                    "sticky",
-                    "focus",
-                    "insights",
-                    "actions",
-                    "suggestions",
-                    "knowledge",
-                    "time_architecture",
-                    "protocols",
-                )
-            }
-        }
-
-    val blockList =
-        remember(rawBlockList, enabledPacks) {
-            rawBlockList.filter { block ->
-                when (block)
-                {
-                    "classes", "assignments", "revision_targets" -> {
-                        enabledPacks.isEnabled(
-                            AppPack.STUDENT,
-                        )
-                    }
-
-                    "paperwork", "bills", "renewals", "subscriptions", "bureaucracy" -> {
-                        enabledPacks.isEnabled(AppPack.FINANCE) || enabledPacks.isEnabled(AppPack.MAINTENANCE)
-                    }
-
-                    "protocols" -> {
-                        enabledPacks.isEnabled(AppPack.PROTOCOLS) || enabledPacks.isEnabled(AppPack.MAINTENANCE)
-                    }
-
-                    else -> {
-                        true
-                    }
-                }
-            }
-        }
-
     val pinnedNodes = allNodes.filter { it.pin != null }
     val completedTodayCount = pinnedNodes.count { it.node.status == "done" }
     val totalTodayCount = pinnedNodes.size
@@ -217,35 +139,47 @@ private fun DashboardMobileContent(
     val needsWeeklyReview =
         lastWeeklyReview == null || (now.toEpochMilliseconds() - lastWeeklyReview.completedAt) > weekMillis
 
-    Column(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .background(TactileTheme.Background)
-                .verticalScroll(rememberScrollState())
-                .padding(TactileTheme.SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingLg),
-    ) {
-        ModeSwitcherHeader(
-            currentMode = currentMode,
-            allModes = allModes,
-            onModeSelect = { viewModel.switchMode(it) },
-        )
-
-        dashboardState.modeSuggestion?.let { suggestion ->
-            ModeSuggestionBanner(
-                suggestion = suggestion,
-                onAccept = {
-                    val targetMode = allModes.find { it.key == suggestion }
-                    if (targetMode != null) viewModel.switchMode(targetMode.id)
-                },
-                onDismiss = {},
+    val layoutPlan =
+        remember(
+            surface,
+            dashboardState.modeQueryProfile,
+            dashboardState.modePreferences,
+            enabledPacks,
+        ) {
+            buildDashboardLayoutPlan(
+                surface = surface,
+                dashboardState = dashboardState,
+                enabledPacks = enabledPacks,
             )
         }
 
-        blockList.forEach { blockKey ->
-            DashboardBlockRenderer(
-                blockKey = blockKey,
+    val context =
+        remember(
+            viewModel,
+            dashboardState,
+            pinnedNodes,
+            allProjects,
+            allAreas,
+            inboxNodes,
+            activeReminders,
+            activeSession,
+            insights,
+            moodToday,
+            needsWeeklyReview,
+            dailyProgress,
+            localNow,
+            todayNodes,
+            allSessions,
+            calendarEntries,
+            allModes,
+            currentMode,
+            onNavigateTo,
+            onEditNode,
+            onNavigateToProject,
+            onNewEntry,
+            currentDestination,
+        ) {
+            DashboardRenderContext(
                 viewModel = viewModel,
                 dashboardState = dashboardState,
                 pinnedNodes = pinnedNodes,
@@ -259,68 +193,39 @@ private fun DashboardMobileContent(
                 needsWeeklyReview = needsWeeklyReview,
                 dailyProgress = dailyProgress,
                 localNow = localNow,
+                todayNodes = todayNodes,
+                allSessions = allSessions,
+                calendarEntries = calendarEntries,
+                allModes = allModes,
+                currentMode = currentMode,
                 onNavigateTo = onNavigateTo,
                 onEditNode = onEditNode,
                 onNavigateToProject = onNavigateToProject,
+                onNewEntry = onNewEntry,
+                currentDestination = currentDestination,
             )
         }
 
-        DashboardModules(
-            todayNodes = todayNodes,
-            inboxCount = inboxNodes.size,
-            activeSession = activeSession,
-            moodToday = moodToday,
-            tasksCount = dashboardState.tasksCount,
-            notesCount = dashboardState.notesCount,
-            allProjects = allProjects,
-            allAreas = allAreas,
-            calendarEntries = calendarEntries,
-            allSessions = allSessions,
-            onNavigateTo = onNavigateTo,
-            viewModel = viewModel,
-        )
-
-        DashboardOperationsOverview(
-            viewModel = viewModel,
-            onNavigateTo = onNavigateTo,
-        )
-
-        com.tajemniktv.tajsos.ui.components.dashboard
-            .SystemFooter()
-        Spacer(Modifier.height(80.dp))
+    if (surface == DashboardSurface.MOBILE) {
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(TactileTheme.Background)
+                    .verticalScroll(rememberScrollState())
+                    .padding(TactileTheme.SpacingMd),
+            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingLg),
+        ) {
+            layoutPlan.primary.forEach { block ->
+                RenderDashboardBlock(block = block, context = context)
+            }
+            layoutPlan.footer.forEach { block ->
+                RenderDashboardBlock(block = block, context = context)
+            }
+            Spacer(Modifier.height(80.dp))
+        }
+        return
     }
-}
-
-@Composable
-@OptIn(ExperimentalLayoutApi::class)
-private fun DashboardDesktopContent(
-    viewModel: MainViewModel,
-    onNavigateTo: (Screen) -> Unit,
-    onEditNode: (Long) -> Unit,
-    onNavigateToProject: (Long) -> Unit,
-    onNewEntry: () -> Unit,
-    currentDestination: NavDestination?,
-) {
-    val allNodes by viewModel.allNodes.collectAsState()
-    val pinnedNodes = allNodes.filter { it.pin != null }
-    val allProjects by viewModel.allProjects.collectAsState()
-    val allAreas by viewModel.allAreas.collectAsState()
-    val inboxNodes by viewModel.inboxNodes.collectAsState()
-    val activeReminders by viewModel.activeReminders.collectAsState()
-    val activeSession by viewModel.activeSession.collectAsState()
-    val dashboardState by viewModel.dashboardUIState.collectAsState()
-    val insights by viewModel.insights.collectAsState()
-    val trackEntries by viewModel.trackEntries.collectAsState()
-
-    val completedTodayCount = pinnedNodes.count { it.node.status == "done" }
-    val totalTodayCount = pinnedNodes.size
-    val dailyProgress =
-        if (totalTodayCount > 0) completedTodayCount.toFloat() / totalTodayCount else 0f
-
-    val now = Clock.System.now()
-    val localNow = now.toLocalDateTime(TimeZone.currentSystemDefault())
-    val todayDateStr = localNow.date.toString()
-    val moodToday = trackEntries.find { it.date == todayDateStr }
 
     Column(
         modifier =
@@ -338,125 +243,220 @@ private fun DashboardDesktopContent(
                 modifier = Modifier.weight(1.5f).verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(24.dp),
             ) {
-                val blocks =
-                    listOf(
-                        "today_pulse",
-                        "load_capacity",
-                        "operational",
-                        "alerts",
-                        "focus",
-                        "suggestions",
-                        "knowledge",
-                    )
-                blocks.forEach { blockKey ->
-                    DashboardBlockRenderer(
-                        blockKey = blockKey,
-                        viewModel = viewModel,
-                        dashboardState = dashboardState,
-                        pinnedNodes = pinnedNodes,
-                        allProjects = allProjects,
-                        allAreas = allAreas,
-                        inboxNodes = inboxNodes,
-                        activeReminders = activeReminders,
-                        activeSession = activeSession,
-                        insights = insights,
-                        moodToday = moodToday,
-                        needsWeeklyReview = false,
-                        dailyProgress = dailyProgress,
-                        localNow = localNow,
-                        onNavigateTo = onNavigateTo,
-                        onEditNode = onEditNode,
-                        onNavigateToProject = onNavigateToProject,
-                    )
+                layoutPlan.primary.forEach { block ->
+                    RenderDashboardBlock(block = block, context = context)
                 }
             }
-
             Column(
                 modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(24.dp),
             ) {
-                OutlinedTextField(
-                    value = "",
-                    onValueChange = {},
-                    modifier = Modifier.fillMaxWidth(),
-                    placeholder = { Text("CMD + K to capture anything...") },
-                    leadingIcon = { Icon(Icons.Default.Terminal, contentDescription = null) },
-                    shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                )
+                layoutPlan.secondary.forEach { block ->
+                    RenderDashboardBlock(block = block, context = context)
+                }
+            }
+        }
+        layoutPlan.bottomBar.forEach { block ->
+            RenderDashboardBlock(block = block, context = context)
+        }
+    }
+}
 
-                LifeSummaryCard(
-                    captures = insights.weeklyCaptures,
-                    completions = insights.weeklyCompletions,
-                    onClick = { onNavigateTo(Screen.Insights) },
-                )
+/**
+ * Captures dashboard dependencies and callbacks in one container for block rendering.
+ */
+private data class DashboardRenderContext(
+    val viewModel: MainViewModel,
+    val dashboardState: com.tajemniktv.tajsos.ui.DashboardUIState,
+    val pinnedNodes: List<com.tajemniktv.tajsos.data.NodeWithPin>,
+    val allProjects: List<NodeEntity>,
+    val allAreas: List<NodeEntity>,
+    val inboxNodes: List<com.tajemniktv.tajsos.data.NodeWithPin>,
+    val activeReminders: List<NodeEntity>,
+    val activeSession: FocusSessionEntity?,
+    val insights: com.tajemniktv.tajsos.ui.InsightsData,
+    val moodToday: TrackEntryEntity?,
+    val needsWeeklyReview: Boolean,
+    val dailyProgress: Float,
+    val localNow: kotlinx.datetime.LocalDateTime,
+    val todayNodes: List<NodeEntity>,
+    val allSessions: List<FocusSessionEntity>,
+    val calendarEntries: List<com.tajemniktv.tajsos.ui.CalendarEntry>,
+    val allModes: List<com.tajemniktv.tajsos.data.ModeEntity>,
+    val currentMode: com.tajemniktv.tajsos.data.ModeEntity?,
+    val onNavigateTo: (Screen) -> Unit,
+    val onEditNode: (Long) -> Unit,
+    val onNavigateToProject: (Long) -> Unit,
+    val onNewEntry: () -> Unit,
+    val currentDestination: NavDestination?,
+)
 
-                DashboardOperationsOverview(
-                    viewModel = viewModel,
-                    onNavigateTo = onNavigateTo,
+/**
+ * Renders one dashboard block from the engine plan.
+ */
+@Composable
+private fun RenderDashboardBlock(
+    block: DashboardBlockInstance,
+    context: DashboardRenderContext,
+) {
+    when (block.id)
+    {
+        "mode_controls" -> {
+            ModeSwitcherHeader(
+                currentMode = context.currentMode,
+                allModes = context.allModes,
+                onModeSelect = { context.viewModel.switchMode(it) },
+            )
+            context.dashboardState.modeSuggestion?.let { suggestion ->
+                ModeSuggestionBanner(
+                    suggestion = suggestion,
+                    onAccept = {
+                        val targetMode = context.allModes.find { it.key == suggestion }
+                        if (targetMode != null) context.viewModel.switchMode(targetMode.id)
+                    },
+                    onDismiss = {},
                 )
+            }
+        }
 
-                Surface(
-                    modifier = Modifier.fillMaxWidth(),
-                    color = TactileTheme.Surface,
-                    shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                    border = BorderStroke(1.dp, TactileTheme.Border),
+        "search_capture" -> {
+            OutlinedTextField(
+                value = "",
+                onValueChange = {},
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = { Text("CMD + K to capture anything...") },
+                leadingIcon = { Icon(Icons.Default.Terminal, contentDescription = null) },
+                shape = RoundedCornerShape(TactileTheme.RadiusMd),
+            )
+        }
+
+        "insights_summary" -> {
+            LifeSummaryCard(
+                captures = context.insights.weeklyCaptures,
+                completions = context.insights.weeklyCompletions,
+                onClick = { context.onNavigateTo(Screen.Insights) },
+            )
+        }
+
+        "modules" -> {
+            DashboardModules(
+                todayNodes = context.todayNodes,
+                inboxCount = context.inboxNodes.size,
+                activeSession = context.activeSession,
+                moodToday = context.moodToday,
+                tasksCount = context.dashboardState.tasksCount,
+                notesCount = context.dashboardState.notesCount,
+                allProjects = context.allProjects,
+                allAreas = context.allAreas,
+                calendarEntries = context.calendarEntries,
+                allSessions = context.allSessions,
+                onNavigateTo = context.onNavigateTo,
+                viewModel = context.viewModel,
+            )
+        }
+
+        "operations_overview" -> {
+            DashboardOperationsOverview(
+                viewModel = context.viewModel,
+                onNavigateTo = context.onNavigateTo,
+            )
+        }
+
+        "system_clock" -> {
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                color = TactileTheme.Surface,
+                shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                border = BorderStroke(1.dp, TactileTheme.Border),
+            ) {
+                Column(Modifier.padding(20.dp)) {
+                    Text(
+                        "SYSTEM CLOCK",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = TactileTheme.Muted,
+                    )
+                    Text(
+                        context.localNow.time
+                            .toString()
+                            .take(5),
+                        style = MaterialTheme.typography.displayMedium,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Text(
+                        context.localNow.date
+                            .toString()
+                            .uppercase(),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = TactileTheme.Primary,
+                        letterSpacing = 2.sp,
+                    )
+                }
+            }
+        }
+
+        "system_footer" -> {
+            com.tajemniktv.tajsos.ui.components.dashboard
+                .SystemFooter()
+        }
+
+        "command_bar" -> {
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                color = TactileTheme.Surface.copy(alpha = 0.5f),
+                shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                border = BorderStroke(1.dp, TactileTheme.Border),
+            ) {
+                Row(
+                    modifier = Modifier.padding(12.dp).fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Column(Modifier.padding(20.dp)) {
-                        Text(
-                            "SYSTEM CLOCK",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = TactileTheme.Muted,
-                        )
-                        Text(
-                            localNow.time.toString().take(5),
-                            style = MaterialTheme.typography.displayMedium,
-                            fontWeight = FontWeight.Bold,
-                        )
-                        Text(
-                            localNow.date.toString().uppercase(),
-                            style = MaterialTheme.typography.labelMedium,
-                            color = TactileTheme.Primary,
-                            letterSpacing = 2.sp,
+                    Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
+                        CommandItem("F1", "SEARCH")
+                        CommandItem("F2", "INBOX")
+                        CommandItem("F3", "TODAY")
+                        CommandItem("F4", "FOCUS")
+                    }
+
+                    Row(
+                        modifier =
+                            Modifier
+                                .clickable { context.onNewEntry() }
+                                .background(TactileTheme.Primary, RoundedCornerShape(4.dp))
+                                .padding(horizontal = 12.dp, vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Icon(
+                            Icons.Default.Mic,
+                            contentDescription = null,
+                            modifier = Modifier.padding(10.dp).size(22.dp),
+                            tint = Color.White.copy(alpha = 0.5f),
                         )
                     }
                 }
             }
         }
 
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            color = TactileTheme.Surface.copy(alpha = 0.5f),
-            shape = RoundedCornerShape(TactileTheme.RadiusMd),
-            border = BorderStroke(1.dp, TactileTheme.Border),
-        ) {
-            Row(
-                modifier = Modifier.padding(12.dp).fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
-                    CommandItem("F1", "SEARCH")
-                    CommandItem("F2", "INBOX")
-                    CommandItem("F3", "TODAY")
-                    CommandItem("F4", "FOCUS")
-                }
-
-                Row(
-                    modifier =
-                        Modifier
-                            .clickable { onNewEntry() }
-                            .background(TactileTheme.Primary, RoundedCornerShape(4.dp))
-                            .padding(horizontal = 12.dp, vertical = 6.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Icon(
-                        Icons.Default.Mic,
-                        contentDescription = null,
-                        modifier = Modifier.padding(10.dp).size(22.dp),
-                        tint = Color.White.copy(alpha = 0.5f),
-                    )
-                }
-            }
+        else -> {
+            DashboardBlockRenderer(
+                blockKey = block.id,
+                viewModel = context.viewModel,
+                dashboardState = context.dashboardState,
+                pinnedNodes = context.pinnedNodes,
+                allProjects = context.allProjects,
+                allAreas = context.allAreas,
+                inboxNodes = context.inboxNodes,
+                activeReminders = context.activeReminders,
+                activeSession = context.activeSession,
+                insights = context.insights,
+                moodToday = context.moodToday,
+                needsWeeklyReview = context.needsWeeklyReview,
+                dailyProgress = context.dailyProgress,
+                localNow = context.localNow,
+                onNavigateTo = context.onNavigateTo,
+                onEditNode = context.onEditNode,
+                onNavigateToProject = context.onNavigateToProject,
+            )
         }
     }
 }

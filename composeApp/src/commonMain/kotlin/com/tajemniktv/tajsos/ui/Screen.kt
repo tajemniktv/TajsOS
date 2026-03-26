@@ -307,5 +307,50 @@ sealed class Screen(
                 }
             return visible.filter { (_, screens) -> screens.isNotEmpty() }
         }
+
+        /**
+         * Returns a context-aware subset of sidebar groups for the currently visible screen.
+         * The first group is the screen's own group, followed by a lightweight core shortcut group.
+         */
+        fun contextualItemsFor(
+            currentScreen: Screen,
+            packRegistry: PackRegistry,
+        ): List<Pair<StringResource, List<Screen>>> {
+            val visibleGroups = groupedItemsForPacks(packRegistry)
+            val rootScreen = sidebarContextRoot(currentScreen)
+
+            val activeGroup = visibleGroups.find { (_, items) -> rootScreen in items }
+            val coreGroup = visibleGroups.find { (header, _) -> header == Res.string.nav_core }
+
+            return buildList {
+                if (activeGroup != null) add(activeGroup)
+                if (coreGroup != null && coreGroup != activeGroup) add(coreGroup)
+            }
+        }
+
+        /**
+         * Returns the contextual header label for the active sidebar context.
+         */
+        fun contextualHeaderFor(
+            currentScreen: Screen,
+            packRegistry: PackRegistry,
+        ): StringResource? {
+            val rootScreen = sidebarContextRoot(currentScreen)
+            return groupedItemsForPacks(packRegistry)
+                .find { (_, items) -> rootScreen in items }
+                ?.first
+        }
+
+        fun sidebarContextRoot(screen: Screen): Screen =
+            when (screen)
+            {
+                NoteDetail -> Notes
+                ProjectDetail -> Projects
+                AreaDetail -> Areas
+                CalendarSettings -> Calendar
+                Templates -> Settings
+                Operations -> Dashboard
+                else -> screen
+            }
     }
 }
