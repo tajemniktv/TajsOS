@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tajemniktv.tajsos.ui.AreaHealthMetrics
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
@@ -121,21 +122,25 @@ private fun getLoadColor(value: Int, inverse: Boolean = false): Color {
 @Composable
 fun AreaHealthCard(
     area: NodeEntity,
-    health: String,
+    metrics: AreaHealthMetrics?,
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
-    val (color, labelRes) = when (health) {
-        "on_fire" -> TactileTheme.Error to Res.string.dash_on_fire_area
-        "overloaded" -> TactileTheme.Error to Res.string.dash_overloaded_area
-        "neglected" -> TactileTheme.Muted to Res.string.dash_neglected_area
-        "active" -> TactileTheme.Primary to Res.string.dash_active_area
-        else -> TactileTheme.Success to Res.string.dash_stable_area
-    }
+    val status = metrics?.status ?: "stable"
+    val load = metrics?.stressLoad ?: 0
+    val (color, statusLabel) =
+        when (status)
+        {
+            "on_fire" -> TactileTheme.Error to "ON FIRE"
+            "overloaded" -> TactileTheme.Error to "OVERLOADED"
+            "neglected" -> TactileTheme.Muted to "NEGLECTED"
+            "active" -> TactileTheme.Primary to "ACTIVE"
+            else -> TactileTheme.Success to "STABLE"
+        }
 
     Surface(
         onClick = onClick,
-        modifier = modifier.width(160.dp),
+        modifier = modifier.width(190.dp),
         color = TactileTheme.Surface,
         shape = RoundedCornerShape(TactileTheme.RadiusMd),
         border = BorderStroke(1.dp, color.copy(alpha = 0.3f))
@@ -150,19 +155,42 @@ fun AreaHealthCard(
             )
             Spacer(Modifier.height(4.dp))
             Text(
-                stringResource(labelRes, "").trim()
-                    .removeSuffix(":"), // Simple way to reuse label with placeholder
+                statusLabel,
                 style = MaterialTheme.typography.bodySmall,
                 color = color,
                 fontSize = 10.sp
             )
             Spacer(Modifier.height(8.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Text(
+                    "L $load%",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = color,
+                )
+                Text(
+                    "O ${metrics?.openLoops ?: 0} • D ${metrics?.deadlines ?: 0}",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TactileTheme.Muted,
+                )
+            }
+            Spacer(Modifier.height(4.dp))
             LinearProgressIndicator(
-                progress = { if (health == "stable") 1f else 0.5f }, // Placeholder logic
+                progress = { (load / 100f).coerceIn(0f, 1f) },
                 modifier = Modifier.fillMaxWidth().height(2.dp),
                 color = color,
-                trackColor = color.copy(alpha = 0.1f)
+                trackColor = color.copy(alpha = 0.1f),
             )
+            if (metrics?.isDisappearing == true) {
+                Spacer(Modifier.height(6.dp))
+                Text(
+                    "DISAPPEARING FROM RADAR",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TactileTheme.Error,
+                )
+            }
         }
     }
 }

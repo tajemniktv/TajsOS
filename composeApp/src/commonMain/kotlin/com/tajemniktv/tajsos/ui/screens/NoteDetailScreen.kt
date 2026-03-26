@@ -29,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.components.ActionButton
 import com.tajemniktv.tajsos.ui.components.common.ConnectionCard
 import com.tajemniktv.tajsos.ui.components.common.DetailHeader
 import com.tajemniktv.tajsos.ui.components.common.DetailSectionHeader
@@ -38,7 +39,6 @@ import com.tajemniktv.tajsos.ui.components.common.SelectorDialog
 import com.tajemniktv.tajsos.ui.components.common.StatusCard
 import com.tajemniktv.tajsos.ui.components.layout.LocalHeaderActions
 import com.tajemniktv.tajsos.ui.components.nodes.DecisionDetailContent
-import com.tajemniktv.tajsos.ui.components.ActionButton
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
@@ -59,20 +59,16 @@ fun NoteDetailScreen(
     onBack: () -> Unit,
     onNavigateToNode: (Long) -> Unit,
     onNavigateToSearch: () -> Unit,
-)
-{
+) {
     val scope = rememberCoroutineScope()
     val nodes by viewModel.allNodes.collectAsState()
     val nodeWithPin = remember(nodes, noteId) { nodes.find { it.node.id == noteId } }
 
-    if (nodeWithPin == null)
-    {
+    if (nodeWithPin == null) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            if (nodes.isEmpty())
-            {
+            if (nodes.isEmpty()) {
                 CircularProgressIndicator(color = TactileTheme.Primary)
-            } else
-            {
+            } else {
                 Text(
                     stringResource(Res.string.detail_not_found, noteId),
                     color = TactileTheme.Muted,
@@ -169,17 +165,19 @@ fun NoteDetailScreen(
 
     CompositionLocalProvider(LocalHeaderActions provides actions) {
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(TactileTheme.Background),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(TactileTheme.Background),
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(TactileTheme.Background)
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = TactileTheme.SpacingMd)
-                    .padding(bottom = TactileTheme.SpacingMd),
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .background(TactileTheme.Background)
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = TactileTheme.SpacingMd)
+                        .padding(bottom = TactileTheme.SpacingMd),
                 verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingLg),
             ) {
                 // Header
@@ -217,16 +215,13 @@ fun NoteDetailScreen(
                     val backLinks = relations.filter { it.toNodeId == noteId }
                     val nodesMap = remember(nodes) { nodes.associateBy { it.node.id } }
 
-                    if (relations.isEmpty() && suggestions.isEmpty())
-                    {
+                    if (relations.isEmpty() && suggestions.isEmpty()) {
                         ConnectionCard(
                             text = "CONNECT NODE",
                             onClick = { showRelationDialog = true },
                         )
-                    } else
-                    {
-                        if (backLinks.isNotEmpty())
-                        {
+                    } else {
+                        if (backLinks.isNotEmpty()) {
                             Text(
                                 stringResource(Res.string.detail_backlinks).uppercase(),
                                 style = MaterialTheme.typography.labelSmall,
@@ -239,12 +234,13 @@ fun NoteDetailScreen(
                                     LinkedNodeItem(
                                         title = relatedNode.title,
                                         subtitle = "Linked context",
-                                        icon = when (relatedNode.type)
-                                        {
-                                            "project" -> Icons.AutoMirrored.Filled.List
-                                            "area"    -> Icons.Default.Work
-                                            else      -> Icons.AutoMirrored.Filled.Article
-                                        },
+                                        icon =
+                                            when (relatedNode.type)
+                                            {
+                                                "project" -> Icons.AutoMirrored.Filled.List
+                                                "area" -> Icons.Default.Work
+                                                else -> Icons.AutoMirrored.Filled.Article
+                                            },
                                         onClick = { onNavigateToNode(relatedNode.id) },
                                     )
                                 }
@@ -256,12 +252,13 @@ fun NoteDetailScreen(
                                 LinkedNodeItem(
                                     title = relatedNode.title,
                                     subtitle = relation.relationType,
-                                    icon = when (relatedNode.type)
-                                    {
-                                        "task"    -> Icons.Default.CheckCircle
-                                        "project" -> Icons.AutoMirrored.Filled.List
-                                        else      -> Icons.AutoMirrored.Filled.Article
-                                    },
+                                    icon =
+                                        when (relatedNode.type)
+                                        {
+                                            "task" -> Icons.Default.CheckCircle
+                                            "project" -> Icons.AutoMirrored.Filled.List
+                                            else -> Icons.AutoMirrored.Filled.Article
+                                        },
                                     onClick = { onNavigateToNode(relatedNode.id) },
                                 )
                             }
@@ -272,19 +269,19 @@ fun NoteDetailScreen(
                 // Status Card
                 StatusCard(
                     status = node.status,
-                    color = when (node.status)
-                    {
-                        "active"   -> TactileTheme.Success
-                        "done"     -> TactileTheme.Primary
-                        "archived" -> TactileTheme.Muted
-                        "blocked"  -> TactileTheme.Error
-                        else       -> TactileTheme.Accent
-                    },
+                    color =
+                        when (node.status)
+                        {
+                            "active" -> TactileTheme.Success
+                            "done" -> TactileTheme.Primary
+                            "archived" -> TactileTheme.Muted
+                            "blocked" -> TactileTheme.Error
+                            else -> TactileTheme.Accent
+                        },
                     onClick = { showStatusDialog = true },
                 )
 
-                if (node.type == "decision")
-                {
+                if (node.type == "decision") {
                     DecisionDetailContent(
                         viewModel = viewModel,
                         node = node,
@@ -301,10 +298,14 @@ fun NoteDetailScreen(
                 ) {
                     InfoCard(
                         title = "DUE AT",
-                        value = node.dueAt?.let {
-                            Instant.fromEpochMilliseconds(it)
-                                .toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
-                        } ?: "None",
+                        value =
+                            node.dueAt?.let {
+                                Instant
+                                    .fromEpochMilliseconds(it)
+                                    .toLocalDateTime(TimeZone.currentSystemDefault())
+                                    .date
+                                    .toString()
+                            } ?: "None",
                         icon = Icons.Default.CalendarToday,
                         modifier = Modifier.weight(1f),
                         onClick = { showDueDialog = true },
@@ -319,8 +320,7 @@ fun NoteDetailScreen(
                 }
 
                 // Task Specific Metadata
-                if (node.type == "task")
-                {
+                if (node.type == "task") {
                     Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
                         DetailSectionHeader(
                             title = "OPERATIONAL METADATA",
@@ -339,9 +339,10 @@ fun NoteDetailScreen(
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                 ) {
                                     Column(
-                                        modifier = Modifier.weight(1f).clickable {
-                                            showEnergyDialog = true
-                                        },
+                                        modifier =
+                                            Modifier.weight(1f).clickable {
+                                                showEnergyDialog = true
+                                            },
                                     ) {
                                         Text(
                                             "ENERGY",
@@ -351,27 +352,29 @@ fun NoteDetailScreen(
                                         )
                                         Text(
                                             when (node.energyLevel)
-                                            {
-                                                1    -> "LOW"
-                                                2    -> "MED"
-                                                3    -> "HIGH"
-                                                else -> "NOT SET"
-                                            },
+                                                {
+                                                    1 -> "LOW"
+                                                    2 -> "MED"
+                                                    3 -> "HIGH"
+                                                    else -> "NOT SET"
+                                                },
                                             style = MaterialTheme.typography.bodyMedium,
                                             fontWeight = FontWeight.Bold,
-                                            color = when (node.energyLevel)
-                                            {
-                                                1    -> TactileTheme.Success
-                                                2    -> TactileTheme.Primary
-                                                3    -> TactileTheme.Error
-                                                else -> TactileTheme.Text
-                                            },
+                                            color =
+                                                when (node.energyLevel)
+                                                {
+                                                    1 -> TactileTheme.Success
+                                                    2 -> TactileTheme.Primary
+                                                    3 -> TactileTheme.Error
+                                                    else -> TactileTheme.Text
+                                                },
                                         )
                                     }
                                     Column(
-                                        modifier = Modifier.weight(1f).clickable {
-                                            showFrictionDialog = true
-                                        },
+                                        modifier =
+                                            Modifier.weight(1f).clickable {
+                                                showFrictionDialog = true
+                                            },
                                     ) {
                                         Text(
                                             "FRICTION",
@@ -380,7 +383,8 @@ fun NoteDetailScreen(
                                             fontSize = 8.sp,
                                         )
                                         Text(
-                                            (node.friction ?: "STANDARD").uppercase()
+                                            (node.friction ?: "STANDARD")
+                                                .uppercase()
                                                 .replace("_", " "),
                                             style = MaterialTheme.typography.bodyMedium,
                                             fontWeight = FontWeight.Bold,
@@ -395,8 +399,10 @@ fun NoteDetailScreen(
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                 ) {
                                     Column(
-                                        modifier = Modifier.weight(1f)
-                                            .clickable { showEstimateDialog = true },
+                                        modifier =
+                                            Modifier
+                                                .weight(1f)
+                                                .clickable { showEstimateDialog = true },
                                     ) {
                                         Text(
                                             "ESTIMATE",
@@ -436,8 +442,7 @@ fun NoteDetailScreen(
                             }
                         }
 
-                        if (node.nextSmallestStep != null)
-                        {
+                        if (node.nextSmallestStep != null) {
                             Surface(
                                 modifier = Modifier.fillMaxWidth(),
                                 color = TactileTheme.Accent.copy(alpha = 0.1f),
@@ -461,10 +466,11 @@ fun NoteDetailScreen(
                                                 ),
                                             )
                                         },
-                                        textStyle = MaterialTheme.typography.bodyMedium.copy(
-                                            color = TactileTheme.Text,
-                                            fontWeight = FontWeight.Medium,
-                                        ),
+                                        textStyle =
+                                            MaterialTheme.typography.bodyMedium.copy(
+                                                color = TactileTheme.Text,
+                                                fontWeight = FontWeight.Medium,
+                                            ),
                                         cursorBrush = SolidColor(TactileTheme.Accent),
                                         modifier = Modifier.fillMaxWidth(),
                                     )
@@ -475,8 +481,7 @@ fun NoteDetailScreen(
                 }
 
                 // Resource Specific Metadata
-                if (node.type == "resource")
-                {
+                if (node.type == "resource") {
                     Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
                         DetailSectionHeader(
                             title = "RESOURCE DATA",
@@ -495,8 +500,10 @@ fun NoteDetailScreen(
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                 ) {
                                     Column(
-                                        modifier = Modifier.weight(1f)
-                                            .clickable { showMediaTypeDialog = true },
+                                        modifier =
+                                            Modifier
+                                                .weight(1f)
+                                                .clickable { showMediaTypeDialog = true },
                                     ) {
                                         Text(
                                             "MEDIA TYPE",
@@ -511,8 +518,10 @@ fun NoteDetailScreen(
                                         )
                                     }
                                     Column(
-                                        modifier = Modifier.weight(1f)
-                                            .clickable { showRatingDialog = true },
+                                        modifier =
+                                            Modifier
+                                                .weight(1f)
+                                                .clickable { showRatingDialog = true },
                                     ) {
                                         Text(
                                             "RATING",
@@ -538,10 +547,11 @@ fun NoteDetailScreen(
                                     BasicTextField(
                                         value = node.author ?: "",
                                         onValueChange = { viewModel.updateNode(node.copy(author = it)) },
-                                        textStyle = MaterialTheme.typography.bodyMedium.copy(
-                                            color = TactileTheme.Text,
-                                            fontWeight = FontWeight.Bold,
-                                        ),
+                                        textStyle =
+                                            MaterialTheme.typography.bodyMedium.copy(
+                                                color = TactileTheme.Text,
+                                                fontWeight = FontWeight.Bold,
+                                            ),
                                         modifier = Modifier.fillMaxWidth(),
                                     )
                                 }
@@ -551,8 +561,7 @@ fun NoteDetailScreen(
                 }
 
                 // Context Graph (Tags)
-                if (tags.isNotEmpty() || showTagDialog)
-                {
+                if (tags.isNotEmpty() || showTagDialog) {
                     Surface(
                         modifier = Modifier.fillMaxWidth(),
                         color = Color.Black.copy(alpha = 0.3f),
@@ -567,11 +576,13 @@ fun NoteDetailScreen(
                             ) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Box(
-                                        modifier = Modifier.size(32.dp)
-                                            .background(
-                                                TactileTheme.Surface,
-                                                RoundedCornerShape(8.dp),
-                                            ),
+                                        modifier =
+                                            Modifier
+                                                .size(32.dp)
+                                                .background(
+                                                    TactileTheme.Surface,
+                                                    RoundedCornerShape(8.dp),
+                                                ),
                                         contentAlignment = Alignment.Center,
                                     ) {
                                         Icon(
@@ -596,10 +607,11 @@ fun NoteDetailScreen(
                                     Text(
                                         "${tags.size} Tags",
                                         style = MaterialTheme.typography.labelSmall,
-                                        modifier = Modifier.padding(
-                                            horizontal = 8.dp,
-                                            vertical = 2.dp,
-                                        ),
+                                        modifier =
+                                            Modifier.padding(
+                                                horizontal = 8.dp,
+                                                vertical = 2.dp,
+                                            ),
                                         color = TactileTheme.Muted,
                                     )
                                 }
@@ -614,24 +626,29 @@ fun NoteDetailScreen(
                             ) {
                                 tags.forEach { tag ->
                                     AssistChip(
-                                        onClick = { viewModel.updateSearchQuery("#${tag.name}"); onNavigateToSearch() },
+                                        onClick = {
+                                            viewModel.updateSearchQuery("#${tag.name}")
+                                            onNavigateToSearch()
+                                        },
                                         label = { Text(tag.name) },
                                         trailingIcon = {
                                             Icon(
                                                 Icons.Default.Close,
                                                 null,
-                                                modifier = Modifier.size(14.dp).clickable {
-                                                    viewModel.detachTagFromNode(
-                                                        noteId,
-                                                        tag.id,
-                                                    )
-                                                },
+                                                modifier =
+                                                    Modifier.size(14.dp).clickable {
+                                                        viewModel.detachTagFromNode(
+                                                            noteId,
+                                                            tag.id,
+                                                        )
+                                                    },
                                             )
                                         },
-                                        colors = AssistChipDefaults.assistChipColors(
-                                            containerColor = TactileTheme.Surface,
-                                            labelColor = TactileTheme.Text,
-                                        ),
+                                        colors =
+                                            AssistChipDefaults.assistChipColors(
+                                                containerColor = TactileTheme.Surface,
+                                                labelColor = TactileTheme.Text,
+                                            ),
                                         shape = RoundedCornerShape(TactileTheme.RadiusSm),
                                     )
                                 }
@@ -674,8 +691,12 @@ fun NoteDetailScreen(
                                     fontWeight = FontWeight.Bold,
                                 )
                                 Text(
-                                    if (node.isRecurring) node.recurringInterval
-                                            ?: "Set" else "One-time Event",
+                                    if (node.isRecurring) {
+                                        node.recurringInterval
+                                            ?: "Set"
+                                    } else {
+                                        "One-time Event"
+                                    },
                                     style = MaterialTheme.typography.bodyMedium,
                                     fontWeight = FontWeight.Bold,
                                 )
@@ -691,6 +712,116 @@ fun NoteDetailScreen(
                                     color = TactileTheme.Muted,
                                 )
                             }
+                        }
+                    }
+                }
+
+                if (node.type == "task") {
+                    Surface(
+                        modifier = Modifier.fillMaxWidth(),
+                        color = TactileTheme.Surface,
+                        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                        border = BorderStroke(1.dp, TactileTheme.Border),
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(TactileTheme.SpacingMd),
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            Text(
+                                "CONTEXT-AWARE PLANNING",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = TactileTheme.Muted,
+                                fontSize = 8.sp,
+                                fontWeight = FontWeight.Bold,
+                            )
+
+                            val locationContexts =
+                                listOf(
+                                    "at_home" to stringResource(Res.string.context_home),
+                                    "on_campus" to stringResource(Res.string.context_campus),
+                                    "out_of_home" to stringResource(Res.string.context_out),
+                                )
+                            val deviceContexts =
+                                listOf(
+                                    "laptop_required" to stringResource(Res.string.context_laptop),
+                                    "phone_okay" to stringResource(Res.string.context_phone),
+                                    "needs_internet" to stringResource(Res.string.context_internet),
+                                )
+                            val energyContexts =
+                                listOf(
+                                    "low_energy" to stringResource(Res.string.context_low_energy),
+                                    "high_focus" to stringResource(Res.string.context_high_focus),
+                                    "brain_works" to stringResource(Res.string.context_brain_works),
+                                    "emotionally_wrecked" to stringResource(Res.string.context_emotionally_wrecked),
+                                )
+                            val socialContexts =
+                                listOf(
+                                    "needs_privacy" to stringResource(Res.string.context_privacy),
+                                    "commute_friendly" to stringResource(Res.string.context_commute),
+                                )
+                            val timeWindowContexts =
+                                listOf(
+                                    "10_minute" to stringResource(Res.string.context_10_min),
+                                    "waiting_room" to stringResource(Res.string.context_waiting),
+                                )
+
+                            @Composable
+                            fun contextRow(
+                                title: String,
+                                selected: String?,
+                                options: List<Pair<String, String>>,
+                                apply: (String?) -> Unit,
+                            ) {
+                                Text(
+                                    title,
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = TactileTheme.Primary,
+                                    fontSize = 9.sp,
+                                )
+                                FlowRow(
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                                ) {
+                                    options.forEach { (key, label) ->
+                                        FilterChip(
+                                            selected = selected == key,
+                                            onClick = { apply(if (selected == key) null else key) },
+                                            label = { Text(label) },
+                                        )
+                                    }
+                                }
+                            }
+
+                            contextRow(
+                                title = "LOCATION",
+                                selected = node.locationContext,
+                                options = locationContexts,
+                                apply = { value -> viewModel.updateNode(node.copy(locationContext = value)) },
+                            )
+                            contextRow(
+                                title = "DEVICE",
+                                selected = node.deviceContext,
+                                options = deviceContexts,
+                                apply = { value -> viewModel.updateNode(node.copy(deviceContext = value)) },
+                            )
+                            contextRow(
+                                title = "ENERGY",
+                                selected = node.energyContext,
+                                options = energyContexts,
+                                apply = { value -> viewModel.updateNode(node.copy(energyContext = value)) },
+                            )
+                            contextRow(
+                                title = "SOCIAL",
+                                selected = node.socialContext,
+                                options = socialContexts,
+                                apply = { value -> viewModel.updateNode(node.copy(socialContext = value)) },
+                            )
+                            contextRow(
+                                title = "TIME WINDOW",
+                                selected = node.timeWindowContext,
+                                options = timeWindowContexts,
+                                apply = { value -> viewModel.updateNode(node.copy(timeWindowContext = value)) },
+                            )
                         }
                     }
                 }
@@ -720,8 +851,10 @@ fun NoteDetailScreen(
                             horizontalArrangement = Arrangement.spacedBy(12.dp),
                         ) {
                             Column(
-                                modifier = Modifier.weight(1f)
-                                    .clickable { showAreaDialog = true },
+                                modifier =
+                                    Modifier
+                                        .weight(1f)
+                                        .clickable { showAreaDialog = true },
                             ) {
                                 Text(
                                     "AREA",
@@ -736,8 +869,10 @@ fun NoteDetailScreen(
                                 )
                             }
                             Column(
-                                modifier = Modifier.weight(1f)
-                                    .clickable { showProjectDialog = true },
+                                modifier =
+                                    Modifier
+                                        .weight(1f)
+                                        .clickable { showProjectDialog = true },
                             ) {
                                 Text(
                                     "PROJECT",
@@ -780,8 +915,7 @@ fun NoteDetailScreen(
                 }
 
                 // Knowledge / Media Type (if applicable)
-                if (node.type == "note" || node.type == "idea")
-                {
+                if (node.type == "note" || node.type == "idea") {
                     Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
                         DetailSectionHeader(
                             title = "KNOWLEDGE CONFIG",
@@ -800,8 +934,10 @@ fun NoteDetailScreen(
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                 ) {
                                     Column(
-                                        modifier = Modifier.weight(1f)
-                                            .clickable { showNoteTypeDialog = true },
+                                        modifier =
+                                            Modifier
+                                                .weight(1f)
+                                                .clickable { showNoteTypeDialog = true },
                                     ) {
                                         Text(
                                             "NOTE TYPE",
@@ -816,8 +952,10 @@ fun NoteDetailScreen(
                                         )
                                     }
                                     Column(
-                                        modifier = Modifier.weight(1f)
-                                            .clickable { showNoteStateDialog = true },
+                                        modifier =
+                                            Modifier
+                                                .weight(1f)
+                                                .clickable { showNoteStateDialog = true },
                                     ) {
                                         Text(
                                             "STATE",
@@ -846,27 +984,26 @@ fun NoteDetailScreen(
                             content = it
                             viewModel.updateNode(node.copy(content = it))
                         },
-                        textStyle = (if (isAtomicMode) MaterialTheme.typography.titleLarge else MaterialTheme.typography.bodyLarge).copy(
-                            color = TactileTheme.Text,
-                        ),
+                        textStyle =
+                            (if (isAtomicMode) MaterialTheme.typography.titleLarge else MaterialTheme.typography.bodyLarge).copy(
+                                color = TactileTheme.Text,
+                            ),
                         cursorBrush = SolidColor(TactileTheme.Primary),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .heightIn(min = 200.dp)
-                            .background(
-                                TactileTheme.Surface,
-                                RoundedCornerShape(TactileTheme.RadiusMd),
-                            )
-                            .border(
-                                1.dp,
-                                TactileTheme.Border,
-                                RoundedCornerShape(TactileTheme.RadiusMd),
-                            )
-                            .padding(TactileTheme.SpacingMd),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .heightIn(min = 200.dp)
+                                .background(
+                                    TactileTheme.Surface,
+                                    RoundedCornerShape(TactileTheme.RadiusMd),
+                                ).border(
+                                    1.dp,
+                                    TactileTheme.Border,
+                                    RoundedCornerShape(TactileTheme.RadiusMd),
+                                ).padding(TactileTheme.SpacingMd),
                         decorationBox = { innerTextField ->
                             Box {
-                                if (content.isEmpty())
-                                {
+                                if (content.isEmpty()) {
                                     Text(
                                         stringResource(Res.string.detail_start_writing),
                                         style = MaterialTheme.typography.bodyLarge,
@@ -902,7 +1039,10 @@ fun NoteDetailScreen(
         prefix = "CONTEXT_TAG // FILTER",
         options = allTags,
         selectedOption = null,
-        onSelect = { tag -> viewModel.attachTagToNode(noteId, tag.id); showTagDialog = false },
+        onSelect = { tag ->
+            viewModel.attachTagToNode(noteId, tag.id)
+            showTagDialog = false
+        },
         optionName = { it.name },
         optionIcon = { Icons.Default.Tag },
         optionSubtext = { "TAG_ID_${it.id}" },
@@ -920,16 +1060,17 @@ fun NoteDetailScreen(
                 noteId,
                 nodeWithPin.node.id,
                 "RELATED",
-            ); showRelationDialog = false
+            )
+            showRelationDialog = false
         },
         optionName = { it.node.title },
         optionIcon = {
             when (it.node.type)
             {
-                "task"    -> Icons.Default.CheckCircle
+                "task" -> Icons.Default.CheckCircle
                 "project" -> Icons.AutoMirrored.Filled.List
-                "area"    -> Icons.Default.Work
-                else      -> Icons.AutoMirrored.Filled.Article
+                "area" -> Icons.Default.Work
+                else -> Icons.AutoMirrored.Filled.Article
             }
         },
         optionSubtext = { it.node.type.uppercase() },
@@ -942,18 +1083,21 @@ fun NoteDetailScreen(
         prefix = "NODE_STATE // MODIFY",
         options = listOf("active", "done", "archived", "on_hold", "someday", "blocked"),
         selectedOption = node.status,
-        onSelect = { status -> viewModel.updateNodeStatus(node, status); showStatusDialog = false },
+        onSelect = { status ->
+            viewModel.updateNodeStatus(node, status)
+            showStatusDialog = false
+        },
         optionName = { it },
         optionIcon = {
             when (it)
             {
-                "active"   -> Icons.Default.PlayArrow
-                "done"     -> Icons.Default.Check
+                "active" -> Icons.Default.PlayArrow
+                "done" -> Icons.Default.Check
                 "archived" -> Icons.Default.Archive
-                "on_hold"  -> Icons.Default.Pause
-                "someday"  -> Icons.Default.CalendarToday
-                "blocked"  -> Icons.Default.Block
-                else       -> Icons.Default.Info
+                "on_hold" -> Icons.Default.Pause
+                "someday" -> Icons.Default.CalendarToday
+                "blocked" -> Icons.Default.Block
+                else -> Icons.Default.Info
             }
         },
         optionSubtext = { "SYST_STATE_${it.uppercase()}" },
@@ -967,7 +1111,8 @@ fun NoteDetailScreen(
         options = areas,
         selectedOption = areas.find { it.id == node.areaId },
         onSelect = { area ->
-            viewModel.updateNode(node.copy(areaId = area.id)); showAreaDialog = false
+            viewModel.updateNode(node.copy(areaId = area.id))
+            showAreaDialog = false
         },
         optionName = { it.title },
         optionIcon = { Icons.Default.Place },
@@ -982,7 +1127,8 @@ fun NoteDetailScreen(
         options = projects,
         selectedOption = projects.find { it.id == node.projectId },
         onSelect = { project ->
-            viewModel.updateNode(node.copy(projectId = project.id)); showProjectDialog = false
+            viewModel.updateNode(node.copy(projectId = project.id))
+            showProjectDialog = false
         },
         optionName = { it.title },
         optionIcon = { Icons.AutoMirrored.Filled.List },
@@ -990,12 +1136,13 @@ fun NoteDetailScreen(
     )
 
     val nowMillis = Clock.System.now().toEpochMilliseconds()
-    val dueOptions = listOf(
-        "Today" to nowMillis,
-        "Tomorrow" to nowMillis + 86400000,
-        "1 Week" to nowMillis + 86400000 * 7,
-        "Clear" to null,
-    )
+    val dueOptions =
+        listOf(
+            "Today" to nowMillis,
+            "Tomorrow" to nowMillis + 86400000,
+            "1 Week" to nowMillis + 86400000 * 7,
+            "Clear" to null,
+        )
 
     SelectorDialog(
         show = showDueDialog,
@@ -1005,27 +1152,29 @@ fun NoteDetailScreen(
         options = dueOptions,
         selectedOption = null,
         onSelect = { option ->
-            viewModel.updateNode(node.copy(dueAt = option.second)); showDueDialog = false
+            viewModel.updateNode(node.copy(dueAt = option.second))
+            showDueDialog = false
         },
         optionName = { it.first },
         optionIcon = {
             when (it.first)
             {
-                "Today"    -> Icons.Default.Today
+                "Today" -> Icons.Default.Today
                 "Tomorrow" -> Icons.Default.Event
-                "1 Week"   -> Icons.AutoMirrored.Filled.NextPlan
-                else       -> Icons.Default.Clear
+                "1 Week" -> Icons.AutoMirrored.Filled.NextPlan
+                else -> Icons.Default.Clear
             }
         },
         optionSubtext = { if (it.second != null) "SYST_TIME_${it.second}" else "CLEAR_FIELD" },
     )
 
-    val reminderOptions = listOf(
-        "1 Hour" to nowMillis + 3600000,
-        "Tomorrow" to nowMillis + 86400000,
-        "Next Week" to nowMillis + 86400000 * 7,
-        "Clear" to null,
-    )
+    val reminderOptions =
+        listOf(
+            "1 Hour" to nowMillis + 3600000,
+            "Tomorrow" to nowMillis + 86400000,
+            "Next Week" to nowMillis + 86400000 * 7,
+            "Clear" to null,
+        )
 
     SelectorDialog(
         show = showReminderDialog,
@@ -1035,16 +1184,17 @@ fun NoteDetailScreen(
         options = reminderOptions,
         selectedOption = null,
         onSelect = { option ->
-            viewModel.updateNode(node.copy(reminderAt = option.second)); showReminderDialog = false
+            viewModel.updateNode(node.copy(reminderAt = option.second))
+            showReminderDialog = false
         },
         optionName = { it.first },
         optionIcon = {
             when (it.first)
             {
-                "1 Hour"    -> Icons.Default.Timer
-                "Tomorrow"  -> Icons.Default.NotificationsActive
+                "1 Hour" -> Icons.Default.Timer
+                "Tomorrow" -> Icons.Default.NotificationsActive
                 "Next Week" -> Icons.AutoMirrored.Filled.EventNote
-                else        -> Icons.Default.Clear
+                else -> Icons.Default.Clear
             }
         },
         optionSubtext = { if (it.second != null) "SYST_ALARM_${it.second}" else "CLEAR_FIELD" },
@@ -1064,8 +1214,11 @@ fun NoteDetailScreen(
             showSnapshotDialog = false
         },
         optionName = {
-            Instant.fromEpochMilliseconds(it.timestamp)
-                .toLocalDateTime(TimeZone.currentSystemDefault()).toString().replace("T", " ")
+            Instant
+                .fromEpochMilliseconds(it.timestamp)
+                .toLocalDateTime(TimeZone.currentSystemDefault())
+                .toString()
+                .replace("T", " ")
         },
         optionIcon = { Icons.Default.History },
         optionSubtext = { it.content.take(20) + "..." },
@@ -1092,43 +1245,45 @@ fun NoteDetailScreen(
         onDismiss = { showNoteTypeDialog = false },
         title = "SELECT NOTE TYPE",
         prefix = "TYPE_SPEC // CLASSIFY",
-        options = listOf(
-            "thought",
-            "lecture",
-            "research",
-            "idea",
-            "reflection",
-            "bug",
-            "concept",
-            "evergreen",
-            "read_later",
-            "quote",
-            "meeting",
-            "reading",
-            "journal",
-        ),
+        options =
+            listOf(
+                "thought",
+                "lecture",
+                "research",
+                "idea",
+                "reflection",
+                "bug",
+                "concept",
+                "evergreen",
+                "read_later",
+                "quote",
+                "meeting",
+                "reading",
+                "journal",
+            ),
         selectedOption = node.noteType,
         onSelect = { type ->
-            viewModel.updateNode(node.copy(noteType = type)); showNoteTypeDialog = false
+            viewModel.updateNode(node.copy(noteType = type))
+            showNoteTypeDialog = false
         },
         optionName = { it },
         optionIcon = {
             when (it)
             {
-                "thought"    -> Icons.Default.Psychology
-                "lecture"    -> Icons.Default.School
-                "research"   -> Icons.Default.Search
-                "idea"       -> Icons.Default.Lightbulb
+                "thought" -> Icons.Default.Psychology
+                "lecture" -> Icons.Default.School
+                "research" -> Icons.Default.Search
+                "idea" -> Icons.Default.Lightbulb
                 "reflection" -> Icons.Default.Visibility
-                "bug"        -> Icons.Default.BugReport
-                "concept"    -> Icons.Default.Architecture
-                "evergreen"  -> Icons.Default.Park
+                "bug" -> Icons.Default.BugReport
+                "concept" -> Icons.Default.Architecture
+                "evergreen" -> Icons.Default.Park
                 "read_later" -> Icons.Default.Bookmark
-                "quote"      -> Icons.Default.FormatQuote
-                "meeting"    -> Icons.Default.Groups
-                "reading"    -> Icons.AutoMirrored.Filled.MenuBook
-                "journal"    -> Icons.Default.HistoryEdu
-                else         -> Icons.AutoMirrored.Filled.Article
+                "quote" -> Icons.Default.FormatQuote
+                "meeting" -> Icons.Default.Groups
+                "reading" -> Icons.AutoMirrored.Filled.MenuBook
+                "journal" -> Icons.Default.HistoryEdu
+                else -> Icons.AutoMirrored.Filled.Article
             }
         },
         optionSubtext = { "NOTE_TYPE_${it.uppercase()}" },
@@ -1142,17 +1297,18 @@ fun NoteDetailScreen(
         options = listOf("raw", "highlighted", "distilled", "takeaway"),
         selectedOption = node.noteState,
         onSelect = { state ->
-            viewModel.updateNode(node.copy(noteState = state)); showNoteStateDialog = false
+            viewModel.updateNode(node.copy(noteState = state))
+            showNoteStateDialog = false
         },
         optionName = { it },
         optionIcon = {
             when (it)
             {
-                "raw"         -> Icons.AutoMirrored.Filled.Article
+                "raw" -> Icons.AutoMirrored.Filled.Article
                 "highlighted" -> Icons.Default.FormatQuote
-                "distilled"   -> Icons.Default.FilterAlt
-                "takeaway"    -> Icons.Default.Star
-                else          -> Icons.Default.HistoryEdu
+                "distilled" -> Icons.Default.FilterAlt
+                "takeaway" -> Icons.Default.Star
+                else -> Icons.Default.HistoryEdu
             }
         },
         optionSubtext = { "PROGRESS_LVL_${it.uppercase()}" },
@@ -1166,17 +1322,18 @@ fun NoteDetailScreen(
         options = listOf("book", "article", "podcast", "video", "link"),
         selectedOption = node.mediaType,
         onSelect = { type ->
-            viewModel.updateNode(node.copy(mediaType = type)); showMediaTypeDialog = false
+            viewModel.updateNode(node.copy(mediaType = type))
+            showMediaTypeDialog = false
         },
         optionName = { it },
         optionIcon = {
             when (it)
             {
-                "book"    -> Icons.AutoMirrored.Filled.MenuBook
+                "book" -> Icons.AutoMirrored.Filled.MenuBook
                 "article" -> Icons.AutoMirrored.Filled.Article
                 "podcast" -> Icons.Default.Podcasts
-                "video"   -> Icons.Default.PlayCircle
-                else      -> Icons.Default.Link
+                "video" -> Icons.Default.PlayCircle
+                else -> Icons.Default.Link
             }
         },
         optionSubtext = { "MEDIA_TYPE_${it.uppercase()}" },
@@ -1190,7 +1347,8 @@ fun NoteDetailScreen(
         options = (1..5).toList(),
         selectedOption = node.rating,
         onSelect = { stars ->
-            viewModel.updateNode(node.copy(rating = stars)); showRatingDialog = false
+            viewModel.updateNode(node.copy(rating = stars))
+            showRatingDialog = false
         },
         optionName = { "$it STARS" },
         optionIcon = { Icons.Default.Star },
@@ -1221,23 +1379,24 @@ fun NoteDetailScreen(
         options = listOf(1, 2, 3),
         selectedOption = node.energyLevel,
         onSelect = { level ->
-            viewModel.updateNode(node.copy(energyLevel = level)); showEnergyDialog = false
+            viewModel.updateNode(node.copy(energyLevel = level))
+            showEnergyDialog = false
         },
         optionName = {
             when (it)
             {
-                1    -> "LOW"
-                2    -> "MEDIUM"
-                3    -> "HIGH"
+                1 -> "LOW"
+                2 -> "MEDIUM"
+                3 -> "HIGH"
                 else -> "UNKNOWN"
             }
         },
         optionIcon = {
             when (it)
             {
-                1    -> Icons.Default.Battery1Bar
-                2    -> Icons.Default.Battery4Bar
-                3    -> Icons.Default.BatteryFull
+                1 -> Icons.Default.Battery1Bar
+                2 -> Icons.Default.Battery4Bar
+                3 -> Icons.Default.BatteryFull
                 else -> Icons.AutoMirrored.Filled.BatteryUnknown
             }
         },
@@ -1252,72 +1411,91 @@ fun NoteDetailScreen(
         options = listOf("easy", "annoying", "mentally_heavy", "unclear"),
         selectedOption = node.friction,
         onSelect = { friction ->
-            viewModel.updateNode(node.copy(friction = friction)); showFrictionDialog = false
+            viewModel.updateNode(node.copy(friction = friction))
+            showFrictionDialog = false
         },
         optionName = { it.replace("_", " ") },
         optionIcon = {
             when (it)
             {
-                "easy"           -> Icons.Default.Bolt
-                "annoying"       -> Icons.Default.SentimentDissatisfied
+                "easy" -> Icons.Default.Bolt
+                "annoying" -> Icons.Default.SentimentDissatisfied
                 "mentally_heavy" -> Icons.Default.Psychology
-                "unclear"        -> Icons.AutoMirrored.Filled.Help
-                else             -> Icons.Default.Info
+                "unclear" -> Icons.AutoMirrored.Filled.Help
+                else -> Icons.Default.Info
             }
         },
         optionSubtext = { "FRICTION_STATE_${it.uppercase()}" },
     )
 
-    if (showMoreDialog)
-    {
-        val moreActions = remember(node, isAtomicMode) {
-            mutableListOf<MoreAction>().apply {
-                if (node.type == "note" || node.type == "idea")
-                {
+    if (showMoreDialog) {
+        val moreActions =
+            remember(node, isAtomicMode) {
+                mutableListOf<MoreAction>().apply {
+                    if (node.type == "note" || node.type == "idea") {
+                        add(
+                            MoreAction(
+                                "atomic",
+                                if (isAtomicMode) "Disable Atomic Mode" else "Enable Atomic Mode",
+                                Icons.Default.ZoomInMap,
+                                "TOGGLE_UI_MODE",
+                            ),
+                        )
+                        add(
+                            MoreAction(
+                                "snapshot",
+                                "Create Snapshot",
+                                Icons.Default.Save,
+                                "VERSION_CONTROL",
+                            ),
+                        )
+                        add(
+                            MoreAction(
+                                "history",
+                                "Version History",
+                                Icons.Default.History,
+                                "ROLLBACK_SYST",
+                            ),
+                        )
+                        add(
+                            MoreAction(
+                                "merge",
+                                "Merge Nodes",
+                                Icons.Default.Merge,
+                                "CONSOLIDATE_DATA",
+                            ),
+                        )
+                    }
+                    if (node.inboxState) {
+                        add(
+                            MoreAction(
+                                "processed",
+                                "Mark as Processed",
+                                Icons.Default.DoneAll,
+                                "CLEAR_INBOX",
+                            ),
+                        )
+                    }
+                    if (node.type == "task") {
+                        add(
+                            MoreAction(
+                                "repeat",
+                                "Repeat Task",
+                                Icons.Default.Repeat,
+                                "CLONE_ENTRY",
+                            ),
+                        )
+                    }
                     add(
                         MoreAction(
-                            "atomic",
-                            if (isAtomicMode) "Disable Atomic Mode" else "Enable Atomic Mode",
-                            Icons.Default.ZoomInMap,
-                            "TOGGLE_UI_MODE",
+                            "convert",
+                            "Convert Type",
+                            Icons.Default.Transform,
+                            "MORPH_DATA",
                         ),
                     )
-                    add(
-                        MoreAction(
-                            "snapshot",
-                            "Create Snapshot",
-                            Icons.Default.Save,
-                            "VERSION_CONTROL",
-                        ),
-                    )
-                    add(
-                        MoreAction(
-                            "history",
-                            "Version History",
-                            Icons.Default.History,
-                            "ROLLBACK_SYST",
-                        ),
-                    )
-                    add(MoreAction("merge", "Merge Nodes", Icons.Default.Merge, "CONSOLIDATE_DATA"))
                 }
-                if (node.inboxState)
-                {
-                    add(
-                        MoreAction(
-                            "processed",
-                            "Mark as Processed",
-                            Icons.Default.DoneAll,
-                            "CLEAR_INBOX",
-                        ),
-                    )
-                }
-                if (node.type == "task")
-                {
-                    add(MoreAction("repeat", "Repeat Task", Icons.Default.Repeat, "CLONE_ENTRY"))
-                }
-                add(MoreAction("convert", "Convert Type", Icons.Default.Transform, "MORPH_DATA"))
             }
-        }
 
         SelectorDialog(
             show = true,
@@ -1329,13 +1507,27 @@ fun NoteDetailScreen(
                 showMoreDialog = false
                 when (action.id)
                 {
-                    "atomic"    -> isAtomicMode = !isAtomicMode
-                    "snapshot"  -> viewModel.createSnapshot(noteId)
-                    "history"   -> showSnapshotDialog = true
-                    "merge"     -> showMergeDialog = true
-                    "processed" -> viewModel.markAsProcessed(noteId)
-                    "repeat"    ->
-                    {
+                    "atomic" -> {
+                        isAtomicMode = !isAtomicMode
+                    }
+
+                    "snapshot" -> {
+                        viewModel.createSnapshot(noteId)
+                    }
+
+                    "history" -> {
+                        showSnapshotDialog = true
+                    }
+
+                    "merge" -> {
+                        showMergeDialog = true
+                    }
+
+                    "processed" -> {
+                        viewModel.markAsProcessed(noteId)
+                    }
+
+                    "repeat" -> {
                         scope.launch {
                             viewModel.getNodeById(noteId)?.let { original ->
                                 viewModel.addNode(
@@ -1350,16 +1542,16 @@ fun NoteDetailScreen(
                         }
                     }
 
-                    "convert"   ->
-                    {
+                    "convert" -> {
                         scope.launch {
                             viewModel.getNodeById(noteId)?.let { original ->
-                                val targetType = when (original.type)
-                                {
-                                    "note", "idea" -> if (original.noteType == "idea") "project" else "task"
-                                    "task"         -> "project"
-                                    else           -> original.type
-                                }
+                                val targetType =
+                                    when (original.type)
+                                    {
+                                        "note", "idea" -> if (original.noteType == "idea") "project" else "task"
+                                        "task" -> "project"
+                                        else -> original.type
+                                    }
                                 viewModel.updateNode(original.copy(type = targetType))
                             }
                         }
@@ -1393,11 +1585,11 @@ fun NoteDetailScreen(
         optionIcon = {
             when (it)
             {
-                "NONE"    -> Icons.Default.Close
-                "DAILY"   -> Icons.Default.Today
-                "WEEKLY"  -> Icons.Default.DateRange
+                "NONE" -> Icons.Default.Close
+                "DAILY" -> Icons.Default.Today
+                "WEEKLY" -> Icons.Default.DateRange
                 "MONTHLY" -> Icons.Default.CalendarMonth
-                else      -> Icons.Default.Repeat
+                else -> Icons.Default.Repeat
             }
         },
         optionSubtext = { if (it == "NONE") "DISABLE_RECURRING" else "SYST_CADENCE_$it" },

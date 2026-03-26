@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.EventLogEntity
 import com.tajemniktv.tajsos.data.NodeEntity
+import com.tajemniktv.tajsos.ui.AreaHealthMetrics
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.datetime.TimeZone
@@ -38,16 +39,20 @@ import tajsos.composeapp.generated.resources.*
  * @param onNavigateToProject Callback invoked with a project's id when the user selects a project item.
  */
 @Composable
-fun InsightsScreen(viewModel: MainViewModel, onNavigateToProject: (Long) -> Unit)
-{
+fun InsightsScreen(
+    viewModel: MainViewModel,
+    onNavigateToProject: (Long) -> Unit,
+) {
     val insights by viewModel.insights.collectAsState()
     val recentLogs by viewModel.recentLogs.collectAsState()
     val allAreas by viewModel.allAreas.collectAsState()
+    val areaSnapshot by viewModel.areaHealthSnapshot.collectAsState()
 
     LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(TactileTheme.SpacingMd),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(TactileTheme.SpacingMd),
         verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
     ) {
         item {
@@ -64,8 +69,7 @@ fun InsightsScreen(viewModel: MainViewModel, onNavigateToProject: (Long) -> Unit
             Spacer(Modifier.height(TactileTheme.SpacingLg))
         }
 
-        if (insights.autoPreparedReview.isNotBlank())
-        {
+        if (insights.autoPreparedReview.isNotBlank()) {
             item {
                 AutoReviewCard(insights.autoPreparedReview)
             }
@@ -137,18 +141,31 @@ fun InsightsScreen(viewModel: MainViewModel, onNavigateToProject: (Long) -> Unit
             )
         }
 
-        if (insights.mostPostponedAreaId != null)
-        {
+        if (areaSnapshot.areas.isNotEmpty()) {
+            item {
+                AreaHealthSystemCard(
+                    dominantArea = allAreas.find { it.id == areaSnapshot.dominantAreaId }?.title,
+                    imbalanceScore = areaSnapshot.imbalanceScore,
+                    imbalanceLabel = areaSnapshot.imbalanceLabel,
+                    disappearingCount = areaSnapshot.disappearingAreaIds.size,
+                )
+            }
+            items(areaSnapshot.areas.take(4)) { area ->
+                AreaHealthInsightItem(area)
+            }
+        }
+
+        if (insights.mostPostponedAreaId != null) {
             val area = allAreas.find { it.id == insights.mostPostponedAreaId }
-            if (area != null)
-            {
+            if (area != null) {
                 item {
                     InsightPatternCard(
                         title = stringResource(Res.string.insights_friction_alert_title),
-                        message = stringResource(
-                            Res.string.insights_friction_alert_msg,
-                            area.title,
-                        ),
+                        message =
+                            stringResource(
+                                Res.string.insights_friction_alert_msg,
+                                area.title,
+                            ),
                         icon = Icons.Default.History,
                         color = TactileTheme.Error,
                     )
@@ -156,38 +173,37 @@ fun InsightsScreen(viewModel: MainViewModel, onNavigateToProject: (Long) -> Unit
             }
         }
 
-        if (insights.captureTimePattern != null)
-        {
+        if (insights.captureTimePattern != null) {
             item {
                 InsightPatternCard(
                     title = stringResource(Res.string.insights_creative_peak_title),
-                    message = stringResource(
-                        Res.string.insights_creative_peak_msg,
-                        insights.captureTimePattern!!,
-                    ),
+                    message =
+                        stringResource(
+                            Res.string.insights_creative_peak_msg,
+                            insights.captureTimePattern!!,
+                        ),
                     icon = Icons.Default.Lightbulb,
                     color = TactileTheme.Success,
                 )
             }
         }
 
-        if (insights.projectsWithoutTasks.isNotEmpty())
-        {
+        if (insights.projectsWithoutTasks.isNotEmpty()) {
             item {
                 InsightPatternCard(
                     title = stringResource(Res.string.insights_stagnant_knowledge_title),
-                    message = stringResource(
-                        Res.string.insights_stagnant_knowledge_msg,
-                        insights.projectsWithoutTasks.first().title,
-                    ),
+                    message =
+                        stringResource(
+                            Res.string.insights_stagnant_knowledge_msg,
+                            insights.projectsWithoutTasks.first().title,
+                        ),
                     icon = Icons.Default.Warning,
                     color = TactileTheme.Accent,
                 )
             }
         }
 
-        if (insights.neglectedAreas.isNotEmpty())
-        {
+        if (insights.neglectedAreas.isNotEmpty()) {
             val area = insights.neglectedAreas.first()
             item {
                 InsightPatternCard(
@@ -199,8 +215,7 @@ fun InsightsScreen(viewModel: MainViewModel, onNavigateToProject: (Long) -> Unit
             }
         }
 
-        if (insights.neglectedProjects.isNotEmpty())
-        {
+        if (insights.neglectedProjects.isNotEmpty()) {
             item {
                 Text(
                     stringResource(Res.string.insights_neglected_projects),
@@ -218,8 +233,7 @@ fun InsightsScreen(viewModel: MainViewModel, onNavigateToProject: (Long) -> Unit
         }
 
         val highEntropyProjects = insights.projectEntropy.filter { it.value > 0.5 }
-        if (highEntropyProjects.isNotEmpty())
-        {
+        if (highEntropyProjects.isNotEmpty()) {
             item {
                 Text(
                     stringResource(Res.string.insights_high_entropy_projects),
@@ -229,9 +243,11 @@ fun InsightsScreen(viewModel: MainViewModel, onNavigateToProject: (Long) -> Unit
             }
             items(highEntropyProjects.keys.toList()) { projectId ->
                 val project =
-                        viewModel.allProjects.collectAsState().value.find { it.id == projectId }
-                if (project != null)
-                {
+                    viewModel.allProjects
+                        .collectAsState()
+                        .value
+                        .find { it.id == projectId }
+                if (project != null) {
                     ProjectEntropyItem(project, highEntropyProjects[projectId] ?: 0.0) {
                         onNavigateToProject(project.id)
                     }
@@ -239,8 +255,7 @@ fun InsightsScreen(viewModel: MainViewModel, onNavigateToProject: (Long) -> Unit
             }
         }
 
-        if (recentLogs.isNotEmpty())
-        {
+        if (recentLogs.isNotEmpty()) {
             item {
                 Text(
                     stringResource(Res.string.insights_recent_activity),
@@ -265,16 +280,16 @@ fun InsightsScreen(viewModel: MainViewModel, onNavigateToProject: (Long) -> Unit
  * @param review The review text to display inside the card; may be blank.
  */
 @Composable
-fun AutoReviewCard(review: String)
-{
+fun AutoReviewCard(review: String) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = TactileTheme.Primary.copy(alpha = 0.05f),
         shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = androidx.compose.foundation.BorderStroke(
-            1.dp,
-            TactileTheme.Primary.copy(alpha = 0.2f),
-        ),
+        border =
+            androidx.compose.foundation.BorderStroke(
+                1.dp,
+                TactileTheme.Primary.copy(alpha = 0.2f),
+            ),
     ) {
         Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
             Text(
@@ -296,19 +311,22 @@ fun AutoReviewCard(review: String)
  * Displays a themed card showing capture and completion counts alongside a progress indicator of completion rate.
  *
  * @param captures Total number of captures.
- * @param completions Number of captures that were completed; used to compute the completion progress shown. 
+ * @param completions Number of captures that were completed; used to compute the completion progress shown.
  */
 @Composable
-fun CompletionCard(captures: Int, completions: Int)
-{
+fun CompletionCard(
+    captures: Int,
+    completions: Int,
+) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = TactileTheme.Surface,
         shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = androidx.compose.foundation.BorderStroke(
-            1.dp,
-            TactileTheme.Muted.copy(alpha = 0.2f),
-        ),
+        border =
+            androidx.compose.foundation.BorderStroke(
+                1.dp,
+                TactileTheme.Muted.copy(alpha = 0.2f),
+            ),
     ) {
         Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
             Text(
@@ -367,16 +385,20 @@ fun CompletionCard(captures: Int, completions: Int)
  * @param avgMin Average session duration in minutes.
  */
 @Composable
-fun FocusInsightCard(hours: Double, bestHour: Int, avgMin: Int)
-{
+fun FocusInsightCard(
+    hours: Double,
+    bestHour: Int,
+    avgMin: Int,
+) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = TactileTheme.Surface,
         shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = androidx.compose.foundation.BorderStroke(
-            1.dp,
-            TactileTheme.Muted.copy(alpha = 0.2f),
-        ),
+        border =
+            androidx.compose.foundation.BorderStroke(
+                1.dp,
+                TactileTheme.Muted.copy(alpha = 0.2f),
+            ),
     ) {
         Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
             Text(
@@ -414,8 +436,7 @@ fun FocusInsightCard(hours: Double, bestHour: Int, avgMin: Int)
                     )
                 }
             }
-            if (bestHour != -1)
-            {
+            if (bestHour != -1) {
                 Spacer(Modifier.height(8.dp))
                 val formattedHour = if (bestHour < 10) "0$bestHour:00" else "$bestHour:00"
                 Text(
@@ -447,16 +468,16 @@ fun EfficiencyCard(
     productiveHour: Int,
     chaos: Int,
     switching: Double,
-)
-{
+) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = TactileTheme.Surface,
         shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = androidx.compose.foundation.BorderStroke(
-            1.dp,
-            TactileTheme.Muted.copy(alpha = 0.2f),
-        ),
+        border =
+            androidx.compose.foundation.BorderStroke(
+                1.dp,
+                TactileTheme.Muted.copy(alpha = 0.2f),
+            ),
     ) {
         Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
             Text(
@@ -513,7 +534,13 @@ fun EfficiencyCard(
             ) {
                 Column {
                     val pressureLabel =
-                            if (pressure > 5.0) "HIGH" else if (pressure > 2.0) "MED" else "LOW"
+                        if (pressure > 5.0) {
+                            "HIGH"
+                        } else if (pressure > 2.0) {
+                            "MED"
+                        } else {
+                            "LOW"
+                        }
                     Text(
                         stringResource(Res.string.insights_pressure, pressureLabel),
                         style = MaterialTheme.typography.bodySmall,
@@ -532,11 +559,10 @@ fun EfficiencyCard(
                     )
                 }
             }
-            if (productiveHour != -1)
-            {
+            if (productiveHour != -1) {
                 Spacer(Modifier.height(8.dp))
                 val formattedHour =
-                        if (productiveHour < 10) "0$productiveHour:00" else "$productiveHour:00"
+                    if (productiveHour < 10) "0$productiveHour:00" else "$productiveHour:00"
                 Text(
                     stringResource(Res.string.insights_peak_completions, formattedHour),
                     style = MaterialTheme.typography.bodySmall,
@@ -558,16 +584,19 @@ fun EfficiencyCard(
  * @param weeklyCaptures Total captures during the same period used to compute the unprocessed rate.
  */
 @Composable
-fun VaultInsightCard(inboxGrowth: Int, weeklyCaptures: Int)
-{
+fun VaultInsightCard(
+    inboxGrowth: Int,
+    weeklyCaptures: Int,
+) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = TactileTheme.Surface,
         shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = androidx.compose.foundation.BorderStroke(
-            1.dp,
-            TactileTheme.Muted.copy(alpha = 0.2f),
-        ),
+        border =
+            androidx.compose.foundation.BorderStroke(
+                1.dp,
+                TactileTheme.Muted.copy(alpha = 0.2f),
+            ),
     ) {
         Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
             Text(
@@ -594,7 +623,7 @@ fun VaultInsightCard(inboxGrowth: Int, weeklyCaptures: Int)
                 }
                 Column(horizontalAlignment = Alignment.End) {
                     val ratio =
-                            if (weeklyCaptures > 0) (inboxGrowth.toDouble() / weeklyCaptures * 100).toInt() else 0
+                        if (weeklyCaptures > 0) (inboxGrowth.toDouble() / weeklyCaptures * 100).toInt() else 0
                     Text(
                         "$ratio%",
                         style = MaterialTheme.typography.displaySmall,
@@ -624,16 +653,19 @@ fun VaultInsightCard(inboxGrowth: Int, weeklyCaptures: Int)
  * @param summary Optional explanatory text; rendered only when `summary` is not blank.
  */
 @Composable
-fun AdvancedSystemCard(stability: Double, summary: String)
-{
+fun AdvancedSystemCard(
+    stability: Double,
+    summary: String,
+) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = TactileTheme.Surface,
         shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = androidx.compose.foundation.BorderStroke(
-            1.dp,
-            TactileTheme.Muted.copy(alpha = 0.2f),
-        ),
+        border =
+            androidx.compose.foundation.BorderStroke(
+                1.dp,
+                TactileTheme.Muted.copy(alpha = 0.2f),
+            ),
     ) {
         Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
             Text(
@@ -648,7 +680,13 @@ fun AdvancedSystemCard(stability: Double, summary: String)
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     val stabilityLabel =
-                            if (stability > 0.7) "ROCK SOLID" else if (stability > 0.4) "STABLE" else "FLUID"
+                        if (stability > 0.7) {
+                            "ROCK SOLID"
+                        } else if (stability > 0.4) {
+                            "STABLE"
+                        } else {
+                            "FLUID"
+                        }
                     Text(
                         stabilityLabel,
                         style = MaterialTheme.typography.headlineSmall,
@@ -668,8 +706,7 @@ fun AdvancedSystemCard(stability: Double, summary: String)
                     strokeCap = androidx.compose.ui.graphics.StrokeCap.Round,
                 )
             }
-            if (summary.isNotBlank())
-            {
+            if (summary.isNotBlank()) {
                 Spacer(Modifier.height(16.dp))
                 Text(
                     summary,
@@ -692,16 +729,20 @@ fun AdvancedSystemCard(stability: Double, summary: String)
  * @param onClick Callback invoked when the card is clicked.
  */
 @Composable
-fun ProjectEntropyItem(project: NodeEntity, entropy: Double, onClick: () -> Unit)
-{
+fun ProjectEntropyItem(
+    project: NodeEntity,
+    entropy: Double,
+    onClick: () -> Unit,
+) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = TactileTheme.Surface,
         shape = RoundedCornerShape(TactileTheme.RadiusSm),
-        border = androidx.compose.foundation.BorderStroke(
-            1.dp,
-            TactileTheme.Muted.copy(alpha = 0.1f),
-        ),
+        border =
+            androidx.compose.foundation.BorderStroke(
+                1.dp,
+                TactileTheme.Muted.copy(alpha = 0.1f),
+            ),
         onClick = onClick,
     ) {
         Row(
@@ -741,16 +782,20 @@ fun ProjectEntropyItem(project: NodeEntity, entropy: Double, onClick: () -> Unit
  * @param focus Average focus (cognitive) value to display.
  */
 @Composable
-fun StateAveragesCard(mood: Double, energy: Double, focus: Double)
-{
+fun StateAveragesCard(
+    mood: Double,
+    energy: Double,
+    focus: Double,
+) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = TactileTheme.Surface,
         shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = androidx.compose.foundation.BorderStroke(
-            1.dp,
-            TactileTheme.Muted.copy(alpha = 0.2f),
-        ),
+        border =
+            androidx.compose.foundation.BorderStroke(
+                1.dp,
+                TactileTheme.Muted.copy(alpha = 0.2f),
+            ),
     ) {
         Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
             Text(
@@ -787,16 +832,16 @@ fun CorrelationsCard(
     energyVsCapt: Double,
     avoid: Double,
     medsEffect: Double,
-)
-{
+) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = TactileTheme.Surface,
         shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = androidx.compose.foundation.BorderStroke(
-            1.dp,
-            TactileTheme.Muted.copy(alpha = 0.2f),
-        ),
+        border =
+            androidx.compose.foundation.BorderStroke(
+                1.dp,
+                TactileTheme.Muted.copy(alpha = 0.2f),
+            ),
     ) {
         Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
             Text(
@@ -847,8 +892,7 @@ fun CorrelationsCard(
                 "No clear meds impact on focus",
             )
 
-            if (avoid > 0)
-            {
+            if (avoid > 0) {
                 Spacer(Modifier.height(12.dp))
                 Text(
                     stringResource(Res.string.insights_avoidance_pattern, avoid.toInt()),
@@ -871,8 +915,12 @@ fun CorrelationsCard(
  * @param neutralMsg Message to display when the correlation is not considered strong.
  */
 @Composable
-fun CorrelationItem(label: String, value: Double, positiveMsg: String, neutralMsg: String)
-{
+fun CorrelationItem(
+    label: String,
+    value: Double,
+    positiveMsg: String,
+    neutralMsg: String,
+) {
     Column {
         Text(label, style = MaterialTheme.typography.labelSmall, color = TactileTheme.Muted)
         Text(
@@ -892,8 +940,10 @@ fun CorrelationItem(label: String, value: Double, positiveMsg: String, neutralMs
  * @param value Numeric value to display (rendered rounded down to one decimal).
  */
 @Composable
-fun MetricItem(label: String, value: Double)
-{
+fun MetricItem(
+    label: String,
+    value: Double,
+) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             "${((value * 10).toInt() / 10.0)}",
@@ -913,20 +963,22 @@ fun MetricItem(label: String, value: Double)
  * @param log The event log entity whose `timestamp` (epoch milliseconds) and `eventType` are displayed.
  */
 @Composable
-fun ActivityLogItem(log: EventLogEntity)
-{
-    val time = kotlin.time.Instant.fromEpochMilliseconds(log.timestamp)
-        .toLocalDateTime(TimeZone.currentSystemDefault())
+fun ActivityLogItem(log: EventLogEntity) {
+    val time =
+        kotlin.time.Instant
+            .fromEpochMilliseconds(log.timestamp)
+            .toLocalDateTime(TimeZone.currentSystemDefault())
     val timeStr = "${time.hour}:${time.minute.toString().padStart(2, '0')}"
 
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = TactileTheme.Surface,
         shape = RoundedCornerShape(TactileTheme.RadiusSm),
-        border = androidx.compose.foundation.BorderStroke(
-            1.dp,
-            TactileTheme.Muted.copy(alpha = 0.1f),
-        ),
+        border =
+            androidx.compose.foundation.BorderStroke(
+                1.dp,
+                TactileTheme.Muted.copy(alpha = 0.1f),
+            ),
     ) {
         Row(
             modifier = Modifier.padding(TactileTheme.SpacingMd),
@@ -959,16 +1011,19 @@ fun ActivityLogItem(log: EventLogEntity)
  * @param onClick Callback invoked when the item is clicked.
  */
 @Composable
-fun NeglectedProjectItem(project: NodeEntity, onClick: () -> Unit)
-{
+fun NeglectedProjectItem(
+    project: NodeEntity,
+    onClick: () -> Unit,
+) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = TactileTheme.Surface,
         shape = RoundedCornerShape(TactileTheme.RadiusSm),
-        border = androidx.compose.foundation.BorderStroke(
-            1.dp,
-            TactileTheme.Error.copy(alpha = 0.3f),
-        ),
+        border =
+            androidx.compose.foundation.BorderStroke(
+                1.dp,
+                TactileTheme.Error.copy(alpha = 0.3f),
+            ),
         onClick = onClick,
     ) {
         Row(
@@ -1009,8 +1064,7 @@ fun InsightPatternCard(
     message: String,
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     color: androidx.compose.ui.graphics.Color,
-)
-{
+) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = color.copy(alpha = 0.05f),
@@ -1031,6 +1085,85 @@ fun InsightPatternCard(
                     color = TactileTheme.Text,
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun AreaHealthSystemCard(
+    dominantArea: String?,
+    imbalanceScore: Int,
+    imbalanceLabel: String,
+    disappearingCount: Int,
+) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = TactileTheme.Surface,
+        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+        border = androidx.compose.foundation.BorderStroke(1.dp, TactileTheme.Border),
+    ) {
+        Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+            Text(
+                "LIFE AREAS HEALTH",
+                style = MaterialTheme.typography.labelSmall,
+                color = TactileTheme.Primary,
+            )
+            Spacer(Modifier.height(8.dp))
+            Text(
+                "Dominant area this week: ${dominantArea ?: "N/A"}",
+                style = MaterialTheme.typography.bodyMedium,
+                color = TactileTheme.Text,
+            )
+            Text(
+                "Imbalance: $imbalanceScore% (${imbalanceLabel.uppercase()})",
+                style = MaterialTheme.typography.bodySmall,
+                color = if (imbalanceScore >= 60) TactileTheme.Error else TactileTheme.Muted,
+            )
+            if (disappearingCount > 0) {
+                Text(
+                    "Areas disappearing from radar: $disappearingCount",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = TactileTheme.Error,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun AreaHealthInsightItem(area: AreaHealthMetrics) {
+    val color =
+        when (area.status)
+        {
+            "on_fire" -> TactileTheme.Error
+            "overloaded" -> TactileTheme.Accent
+            "neglected" -> TactileTheme.Muted
+            "active" -> TactileTheme.Primary
+            else -> TactileTheme.Success
+        }
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = TactileTheme.Surface,
+        shape = RoundedCornerShape(TactileTheme.RadiusSm),
+        border = androidx.compose.foundation.BorderStroke(1.dp, color.copy(alpha = 0.25f)),
+    ) {
+        Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+            Text(
+                area.areaTitle.uppercase(),
+                style = MaterialTheme.typography.titleSmall,
+                color = TactileTheme.Text,
+            )
+            Spacer(Modifier.height(4.dp))
+            Text(
+                "${area.status.uppercase()} • load ${area.stressLoad}%",
+                style = MaterialTheme.typography.labelSmall,
+                color = color,
+            )
+            Text(
+                "Open loops ${area.openLoops} • Deadlines ${area.deadlines} • Recent ${area.recentActivity}",
+                style = MaterialTheme.typography.bodySmall,
+                color = TactileTheme.Muted,
+            )
         }
     }
 }
