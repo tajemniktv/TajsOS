@@ -12,6 +12,17 @@ private val modeProfileJson =
         ignoreUnknownKeys = true
     }
 
+/**
+ * Defines the visibility configuration for different sections of the UI within a specific operating mode.
+ *
+ * @property showInbox Whether the inbox section is visible. Defaults to true.
+ * @property showStats Whether the statistics section is visible. Defaults to true.
+ * @property showNotes Whether the notes section is visible. Defaults to true.
+ * @property showResources Whether the resources section is visible. Defaults to true.
+ * @property showDeadlines Whether the deadlines section is visible. Defaults to true.
+ * @property showOpenLoops Whether the open loops section is visible. Defaults to true.
+ * @property maxVisibleTasks The maximum number of tasks to display in a list. Defaults to 10.
+ */
 @Serializable
 data class ModeVisibilityProfile(
     val showInbox: Boolean = true,
@@ -23,6 +34,13 @@ data class ModeVisibilityProfile(
     val maxVisibleTasks: Int = 10,
 )
 
+/**
+ * Defines the filtering configuration for nodes within a specific operating mode.
+ *
+ * @property includeAreaIds The set of area IDs to include. An empty set means no areas are filtered (all are included if no other filter excludes them).
+ * @property includeTypes The set of node types to include. An empty set means no types are filtered.
+ * @property sortStrategy The strategy used to sort the visible nodes. Defaults to "DEFAULT".
+ */
 @Serializable
 data class ModeFilterProfile(
     val includeAreaIds: Set<Long> = emptySet(),
@@ -30,16 +48,36 @@ data class ModeFilterProfile(
     val sortStrategy: String = "DEFAULT",
 )
 
+/**
+ * Defines the quick actions available within a specific operating mode.
+ *
+ * @property quickActions A list of quick action identifiers available in this mode. An empty list means no quick actions are configured.
+ */
 @Serializable
 data class ModeActionProfile(
     val quickActions: List<String> = emptyList(),
 )
 
+/**
+ * Defines the suggestions configuration for a specific operating mode.
+ *
+ * @property suggestionKeys A list of suggestion keys to be used for generating suggestions in this mode. An empty list means no suggestions are configured.
+ */
 @Serializable
 data class ModeSuggestionProfile(
     val suggestionKeys: List<String> = emptyList(),
 )
 
+/**
+ * Represents the complete query profile for a specific operating mode, aggregating visibility, filtering, actions, suggestions, and dashboard blocks.
+ *
+ * @property modeId The unique identifier of the mode.
+ * @property visibility The visibility profile for UI sections.
+ * @property filtering The filtering profile for nodes.
+ * @property actions The quick actions profile.
+ * @property suggestions The suggestions profile.
+ * @property dashboardBlocks A list of dashboard block identifiers to display. An empty list means no specific dashboard blocks are configured.
+ */
 @Serializable
 data class ModeQueryProfile(
     val modeId: Long,
@@ -50,6 +88,14 @@ data class ModeQueryProfile(
     val dashboardBlocks: List<String> = emptyList(),
 )
 
+/**
+ * Builds a [ModeQueryProfile] from the given preference, area filters, and type filters.
+ *
+ * @param preference The user's preference for the mode, containing visibility settings, quick actions, dashboard blocks, and suggestion keys.
+ * @param areaFilters A list of area filters defining which areas should be included in this mode.
+ * @param typeFilters A list of type filters defining which node types should be included in this mode.
+ * @return A fully constructed [ModeQueryProfile].
+ */
 fun buildModeQueryProfile(
     preference: ModePreferenceEntity,
     areaFilters: List<ModeAreaFilterEntity>,
