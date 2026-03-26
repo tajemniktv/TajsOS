@@ -13,15 +13,15 @@ private val modeProfileJson =
     }
 
 /**
- * Defines which UI components or node types are visible in a specific application Mode.
+ * Defines the visibility configuration for different sections of the UI within a specific operating mode.
  *
- * @param showInbox Whether the Inbox section should be visible in this Mode.
- * @param showStats Whether productivity or completion statistics should be visible.
- * @param showNotes Whether Notes should be shown in the primary view.
- * @param showResources Whether Resources (links, references) should be shown.
- * @param showDeadlines Whether upcoming Deadlines should be highlighted.
- * @param showOpenLoops Whether unstructured Open Loops should be displayed.
- * @param maxVisibleTasks The maximum number of tasks to display at once in the main list.
+ * @property showInbox Whether the inbox section is visible. Defaults to true.
+ * @property showStats Whether the statistics section is visible. Defaults to true.
+ * @property showNotes Whether the notes section is visible. Defaults to true.
+ * @property showResources Whether the resources section is visible. Defaults to true.
+ * @property showDeadlines Whether the deadlines section is visible. Defaults to true.
+ * @property showOpenLoops Whether the open loops section is visible. Defaults to true.
+ * @property maxVisibleTasks The maximum number of tasks to display in a list. Defaults to 10.
  */
 @Serializable
 data class ModeVisibilityProfile(
@@ -90,12 +90,12 @@ data class ModeQueryProfile(
 )
 
 /**
- * Constructs a fully populated [ModeQueryProfile] from its constituent database entities and JSON columns.
+ * Constructs a mode configuration by combining the stored preference with the provided area and type filters.
  *
- * @param preference The primary entity containing basic toggles and serialized JSON blocks for the Mode.
- * @param areaFilters A list of specific Area inclusion/exclusion rules associated with this Mode.
- * @param typeFilters A list of specific Node Type inclusion rules associated with this Mode.
- * @return A unified [ModeQueryProfile] object ready to be used by the domain logic or UI layer.
+ * @param preference The persisted mode preference containing visibility flags, sort strategy, and JSON fields for quick actions, dashboard blocks, and suggestions.
+ * @param areaFilters A list of area filter entities; entries with `include == true` indicate areas to include in the profile.
+ * @param typeFilters A list of type filter entities; entries with `include == true` indicate node types to include in the profile.
+ * @return A ModeQueryProfile that consolidates visibility, filtering, actions, suggestions, and dashboard block settings for the mode.
  */
 fun buildModeQueryProfile(
     preference: ModePreferenceEntity,
