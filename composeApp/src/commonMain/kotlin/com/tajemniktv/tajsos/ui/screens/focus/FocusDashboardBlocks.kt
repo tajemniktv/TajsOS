@@ -2,7 +2,7 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
-package com.tajemniktv.tajsos.ui.screens
+package com.tajemniktv.tajsos.ui.screens.focus
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -69,6 +69,18 @@ import tajsos.composeapp.generated.resources.focus_recent_sessions
 import tajsos.composeapp.generated.resources.focus_session_duration
 import tajsos.composeapp.generated.resources.focus_unknown_task
 
+object FocusDashboardBlockRegistry {
+    private val renderers: Map<String, FocusDashboardBlockRenderer> =
+        mapOf("focus_main" to ::renderFocusMainBlock)
+
+    fun resolve(id: String): FocusDashboardBlockRenderer? = renderers[id]
+}
+
+@Composable
+private fun renderFocusMainBlock(context: FocusDashboardContext) {
+    FocusMainBlock(viewModel = context.viewModel)
+}
+
 /**
  * Displays the focus cockpit with a circular timer dial, active task controls, and recent sessions.
  *
@@ -78,7 +90,7 @@ import tajsos.composeapp.generated.resources.focus_unknown_task
  * @param viewModel The MainViewModel exposing focus state, nodes, sessions, and actions.
  */
 @Composable
-fun FocusScreen(viewModel: MainViewModel) {
+internal fun FocusMainBlock(viewModel: MainViewModel) {
     val activeSession by viewModel.activeSession.collectAsState()
     val todayNodes by viewModel.todayNodes.collectAsState()
     val allNodes by viewModel.allNodes.collectAsState()
@@ -297,14 +309,6 @@ fun FocusScreen(viewModel: MainViewModel) {
     }
 }
 
-/**
- * Draws the central circular dial with elapsed time and compact session metrics.
- *
- * @param timeString Elapsed time in MM:SS format.
- * @param progress Session progress in range 0f..1f.
- * @param finishedSessions Number of completed sessions.
- * @param totalFocusedMinutes Total minutes from all sessions.
- */
 @Composable
 private fun FocusTimerDial(
     timeString: String,
@@ -369,9 +373,6 @@ private fun FocusTimerDial(
     }
 }
 
-/**
- * Renders a compact value/label pair inside the timer dial.
- */
 @Composable
 private fun FocusDialMetric(
     value: String,
@@ -393,9 +394,6 @@ private fun FocusDialMetric(
     }
 }
 
-/**
- * Displays one action card with icon and uppercase label in the control row.
- */
 @Composable
 private fun FocusActionCard(
     modifier: Modifier = Modifier,
@@ -452,9 +450,6 @@ private fun FocusActionCard(
     }
 }
 
-/**
- * Displays a passive stat card used in the control row.
- */
 @Composable
 private fun FocusStatCard(
     modifier: Modifier = Modifier,

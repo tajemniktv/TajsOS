@@ -25,7 +25,7 @@ import com.tajemniktv.tajsos.ui.theme.TactileTheme
 fun SystemFooter() {
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
         Text(
-            "MEMORY USAGE: 42%  •  UPTIME: 14D 02H",
+            "BRAIN POWER: x%  •  UPTIME: xD xH", // Placeholder for future calculation of power
             style = MaterialTheme.typography.labelSmall,
             color = TactileTheme.Muted,
             letterSpacing = 1.sp,

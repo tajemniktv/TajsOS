@@ -4,16 +4,67 @@
 
 package com.tajemniktv.tajsos.ui.screens.protocols
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
 object ProtocolsDashboardBlockRegistry {
-    private val renderers: Map<String, com.tajemniktv.tajsos.ui.screens.protocols.ProtocolsDashboardBlockRenderer> =
+    private val renderers: Map<String, ProtocolsDashboardBlockRenderer> =
         mapOf("protocols_main" to ::renderProtocolsMainBlock)
 
-    fun resolve(id: String): com.tajemniktv.tajsos.ui.screens.protocols.ProtocolsDashboardBlockRenderer? = renderers[id]
+    fun resolve(id: String): ProtocolsDashboardBlockRenderer? = renderers[id]
 }
 
 @Composable
-private fun renderProtocolsMainBlock(context: com.tajemniktv.tajsos.ui.screens.protocols.ProtocolsDashboardContext) {
+private fun renderProtocolsMainBlock(context: ProtocolsDashboardContext) {
     ProtocolsMainBlock(viewModel = context.viewModel, onEditNode = context.onEditNode)
+}
+
+@Composable
+@OptIn(ExperimentalLayoutApi::class)
+internal fun ProtocolsMainBlock(
+    viewModel: MainViewModel,
+    onEditNode: (Long) -> Unit,
+) {
+    val transitionProtocolsSnapshot by viewModel.transitionProtocolsSnapshot.collectAsState()
+    val playbookSnapshot by viewModel.playbookSnapshot.collectAsState()
+    val allModes by viewModel.allModes.collectAsState()
+    val allAreas by viewModel.allAreas.collectAsState()
+    val protocolHistoryItems by viewModel.protocolHistoryItems.collectAsState()
+
+    Column(
+        modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd),
+        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+    ) {
+        Text(
+            text = "PROTOCOLS",
+            style = MaterialTheme.typography.displaySmall,
+            color = TactileTheme.Text,
+        )
+        Text(
+            text = "Trigger repeatable transition sequences and keep playbooks attached to real contexts.",
+            style = MaterialTheme.typography.bodySmall,
+            color = TactileTheme.Muted,
+        )
+
+        ProtocolsLayer(
+            viewModel = viewModel,
+            snapshot = transitionProtocolsSnapshot,
+            playbookSnapshot = playbookSnapshot,
+            allModes = allModes,
+            allAreas = allAreas,
+            history = protocolHistoryItems,
+            onEditNode = onEditNode,
+        )
+    }
 }

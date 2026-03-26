@@ -2,44 +2,66 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
-package com.tajemniktv.tajsos.ui.screens
+package com.tajemniktv.tajsos.ui.screens.archive
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
-import tajsos.composeapp.generated.resources.*
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.archive_delete
+import tajsos.composeapp.generated.resources.archive_empty
+import tajsos.composeapp.generated.resources.archive_restore
+import tajsos.composeapp.generated.resources.archive_subtitle
+import tajsos.composeapp.generated.resources.archive_title
+import tajsos.composeapp.generated.resources.type_area
+import tajsos.composeapp.generated.resources.type_idea
+import tajsos.composeapp.generated.resources.type_note
+import tajsos.composeapp.generated.resources.type_project
+import tajsos.composeapp.generated.resources.type_task
 
-/**
- * Renders the Archive screen showing archived nodes and providing restore, permanent delete,
- * and edit navigation actions for each item.
- *
- * When there are no archived nodes and the initial load is complete, displays an empty state message.
- * Otherwise displays a scrollable list of archived nodes; each item shows the node title and an
- * uppercase type label, offers buttons to restore or delete permanently, and navigates to edit
- * when clicked or long-clicked.
- *
- * @param viewModel Source of archived nodes and actions to update or delete nodes.
- * @param onEditNode Callback invoked with a node id to open that node for editing.
- */
+object ArchiveDashboardBlockRegistry {
+    private val renderers: Map<String, ArchiveDashboardBlockRenderer> =
+        mapOf("archive_main" to ::renderArchiveMainBlock)
+
+    fun resolve(id: String): ArchiveDashboardBlockRenderer? = renderers[id]
+}
+
+@Composable
+private fun renderArchiveMainBlock(context: ArchiveDashboardContext) {
+    ArchiveMainBlock(viewModel = context.viewModel, onEditNode = context.onEditNode)
+}
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ArchiveScreen(
+internal fun ArchiveMainBlock(
     viewModel: MainViewModel,
     onEditNode: (Long) -> Unit,
-)
-{
+) {
     val archivedNodes by viewModel.archivedNodes.collectAsState()
     val isInitialLoadComplete by viewModel.isInitialLoadComplete.collectAsState()
 
@@ -55,25 +77,24 @@ fun ArchiveScreen(
         )
         Spacer(modifier = Modifier.height(TactileTheme.SpacingMd))
 
-        if (archivedNodes.isEmpty() && isInitialLoadComplete)
-        {
+        if (archivedNodes.isEmpty() && isInitialLoadComplete) {
             EmptyState(message = stringResource(Res.string.archive_empty))
-        } else
-        {
+        } else {
             LazyColumn(modifier = Modifier.weight(1f)) {
                 items(archivedNodes) { nodeWithPin ->
                     ListItem(
                         headlineContent = { Text(nodeWithPin.node.title) },
                         supportingContent = {
-                            val typeLabel = when (nodeWithPin.node.type)
-                            {
-                                "task" -> stringResource(Res.string.type_task)
-                                "note" -> stringResource(Res.string.type_note)
-                                "idea" -> stringResource(Res.string.type_idea)
-                                "project" -> stringResource(Res.string.type_project)
-                                "area" -> stringResource(Res.string.type_area)
-                                else -> nodeWithPin.node.type
-                            }
+                            val typeLabel =
+                                when (nodeWithPin.node.type)
+                                {
+                                    "task" -> stringResource(Res.string.type_task)
+                                    "note" -> stringResource(Res.string.type_note)
+                                    "idea" -> stringResource(Res.string.type_idea)
+                                    "project" -> stringResource(Res.string.type_project)
+                                    "area" -> stringResource(Res.string.type_area)
+                                    else -> nodeWithPin.node.type
+                                }
                             Text(typeLabel.uppercase())
                         },
                         trailingContent = {
@@ -102,10 +123,10 @@ fun ArchiveScreen(
                             }
                         },
                         modifier =
-                                Modifier.combinedClickable(
-                                    onClick = { onEditNode(nodeWithPin.node.id) },
-                                    onLongClick = { onEditNode(nodeWithPin.node.id) },
-                                ),
+                            Modifier.combinedClickable(
+                                onClick = { onEditNode(nodeWithPin.node.id) },
+                                onLongClick = { onEditNode(nodeWithPin.node.id) },
+                            ),
                         colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
                     )
                     HorizontalDivider(color = TactileTheme.Muted.copy(alpha = 0.5f))

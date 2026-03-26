@@ -113,13 +113,6 @@ sealed class Screen(
         Icons.Default.QuestionMark,
     )
 
-    data object Operations : Screen(
-        "operations",
-        Res.string.screen_ops,
-        Icons.Default.Tune,
-        isRoot = false,
-    )
-
     data object OpenLoops : Screen(
         "open_loops",
         Res.string.screen_open_loops,
@@ -225,7 +218,6 @@ sealed class Screen(
                 Review,
                 Profile,
                 Decisions,
-                Operations,
                 OpenLoops,
                 Protocols,
                 TimeArchitecture,
@@ -295,10 +287,6 @@ sealed class Screen(
                                     true
                                 }
 
-                                Operations -> {
-                                    true
-                                }
-
                                 else -> {
                                     true
                                 }
@@ -349,7 +337,6 @@ sealed class Screen(
                 AreaDetail -> Areas
                 CalendarSettings -> Calendar
                 Templates -> Settings
-                Operations -> Dashboard
                 else -> screen
             }
     }

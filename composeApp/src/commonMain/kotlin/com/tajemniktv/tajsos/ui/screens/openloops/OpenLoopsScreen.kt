@@ -82,44 +82,6 @@ fun OpenLoopsScreen(
 
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
-internal fun OpenLoopsMainBlock(
-    viewModel: MainViewModel,
-    onEditNode: (Long) -> Unit,
-) {
-    val openLoopsSnapshot by viewModel.openLoopsSnapshot.collectAsState()
-    val allAreas by viewModel.allAreas.collectAsState()
-    val allNodes by viewModel.allNodes.collectAsState()
-    var openLoopView by remember { mutableStateOf(OpenLoopView.Inbox) }
-
-    Column(
-        modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
-    ) {
-        Text(
-            text = "OPEN LOOPS",
-            style = MaterialTheme.typography.displaySmall,
-            color = TactileTheme.Text,
-        )
-        Text(
-            text = "Resolve inbox spillover, waiting-fors, pending decisions, and stale unresolved loops.",
-            style = MaterialTheme.typography.bodySmall,
-            color = TactileTheme.Muted,
-        )
-
-        OpenLoopsLayer(
-            viewModel = viewModel,
-            snapshot = openLoopsSnapshot,
-            allAreas = allAreas,
-            allNodes = allNodes,
-            openLoopView = openLoopView,
-            onOpenLoopView = { openLoopView = it },
-            onEditNode = onEditNode,
-        )
-    }
-}
-
-@Composable
-@OptIn(ExperimentalLayoutApi::class)
 internal fun OpenLoopsLayer(
     viewModel: MainViewModel,
     snapshot: OpenLoopsSnapshot,

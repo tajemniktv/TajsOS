@@ -34,9 +34,15 @@ import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.common.CaptureSheet
 import com.tajemniktv.tajsos.ui.components.layout.*
 import com.tajemniktv.tajsos.ui.screens.*
+import com.tajemniktv.tajsos.ui.screens.archive.ArchiveScreen
+import com.tajemniktv.tajsos.ui.screens.areas.AreasScreen
 import com.tajemniktv.tajsos.ui.screens.calendar.CalendarScreen
+import com.tajemniktv.tajsos.ui.screens.capacity.CapacityScreen
 import com.tajemniktv.tajsos.ui.screens.dashboard.DashboardScreen
+import com.tajemniktv.tajsos.ui.screens.decisions.DecisionsScreen
 import com.tajemniktv.tajsos.ui.screens.finance.FinancesScreen
+import com.tajemniktv.tajsos.ui.screens.focus.FocusScreen
+import com.tajemniktv.tajsos.ui.screens.graph.GraphScreen
 import com.tajemniktv.tajsos.ui.screens.inbox.InboxScreen
 import com.tajemniktv.tajsos.ui.screens.insights.InsightsScreen
 import com.tajemniktv.tajsos.ui.screens.notes.NotesScreen
@@ -67,6 +73,7 @@ import kotlin.time.Clock
  * @param voiceCaptureResult Optional text result from a completed voice capture to prefill the capture sheet.
  * @param onVoiceCaptureConsumed Callback invoked when the voice capture result has been consumed (clears or acknowledges the result).
  */
+@Suppress("ktlint:compose:vm-forwarding-check", "ViewModelForwarding")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun App(
@@ -256,7 +263,6 @@ private fun AppScaffold(
                 },
                 title = {
                     StatusHeader(
-                        status = "OK",
                         color = tintColor,
                         subtitle = subtitle,
                         subtitleStyle =
@@ -382,23 +388,6 @@ private fun AppScaffold(
             composable(Screen.Notes.route) { NotesScreen(viewModel, onEditNode) }
             composable(Screen.Calendar.route) { CalendarScreen(viewModel, onEditNode) }
             composable(Screen.Decisions.route) { DecisionsScreen(viewModel, onEditNode) }
-            composable(Screen.Operations.route) {
-                DashboardScreen(
-                    viewModel,
-                    onNavigateTo = { screen -> onNavigate(screen.route) },
-                    onEditNode = onEditNode,
-                    onNavigateToProject = { projectId ->
-                        onNavigate(
-                            Screen.ProjectDetail.route.replace(
-                                "{projectId}",
-                                projectId.toString(),
-                            ),
-                        )
-                    },
-                    onNewEntry = { onShowCaptureSheet(true) },
-                    currentDestination = navController.currentDestination,
-                )
-            }
             composable(Screen.OpenLoops.route) { OpenLoopsScreen(viewModel, onEditNode) }
             composable(Screen.Protocols.route) { ProtocolsScreen(viewModel, onEditNode) }
             composable(Screen.TimeArchitecture.route) {
@@ -526,7 +515,7 @@ private fun AppScaffold(
                     when (type)
                     {
                         "project" -> {
-                            viewModel.addProject(text, "", areaId)
+                            viewModel.addProject(text, areaId = areaId)
                         }
 
                         "area" -> {
@@ -536,13 +525,12 @@ private fun AppScaffold(
                         else -> {
                             viewModel.addNode(
                                 text,
-                                "",
-                                type,
-                                projectId,
-                                areaId,
-                                isRec,
-                                recInt,
-                                remAt,
+                                type = type,
+                                projectId = projectId,
+                                areaId = areaId,
+                                isRecurring = isRec,
+                                recurringInterval = recInt,
+                                reminderAt = remAt,
                                 contextScreen = ctx,
                                 isSticky = sticky,
                                 decisionCategory = decisionCat,

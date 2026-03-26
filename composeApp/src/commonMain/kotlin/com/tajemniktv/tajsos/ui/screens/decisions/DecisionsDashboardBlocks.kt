@@ -2,38 +2,62 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
-package com.tajemniktv.tajsos.ui.screens
+package com.tajemniktv.tajsos.ui.screens.decisions
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.cards.DashCard
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
-import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
-import tajsos.composeapp.generated.resources.*
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.decision_no_decisions_category
+import tajsos.composeapp.generated.resources.decision_tab_inbox
+import tajsos.composeapp.generated.resources.decision_tab_log
+import tajsos.composeapp.generated.resources.decision_tab_pending
 
-/**
- * Displays a tabbed UI for viewing decisions in Inbox, Pending, and Log categories.
- *
- * Observes the view model's decision flows and shows the corresponding list for the selected tab.
- *
- * @param viewModel Provides `decisionInbox`, `allPendingDecisions`, and `decisionLog` state flows that drive the displayed lists.
- * @param onEditNode Callback invoked with a node's id when the user selects a decision to edit.
- */
+object DecisionsDashboardBlockRegistry {
+    private val renderers: Map<String, DecisionsDashboardBlockRenderer> =
+        mapOf("decisions_main" to ::renderDecisionsMainBlock)
+
+    fun resolve(id: String): DecisionsDashboardBlockRenderer? = renderers[id]
+}
+
+@Composable
+private fun renderDecisionsMainBlock(context: DecisionsDashboardContext) {
+    DecisionsMainBlock(viewModel = context.viewModel, onEditNode = context.onEditNode)
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DecisionsScreen(
+internal fun DecisionsMainBlock(
     viewModel: MainViewModel,
     onEditNode: (Long) -> Unit,
 ) {
@@ -117,14 +141,6 @@ fun DecisionsScreen(
     }
 }
 
-/**
- * Displays a list of decision nodes or a centered empty-state message when the list is empty.
- *
- * Shows each node as a tappable card with the node's title and up to two lines of content.
- *
- * @param nodes The list of decision nodes to display.
- * @param onEdit Callback invoked when a node card is tapped; receives the tapped node's id.
- */
 @Composable
 fun DecisionList(
     nodes: List<NodeWithPin>,
@@ -163,18 +179,5 @@ fun DecisionList(
                 }
             }
         }
-    }
-}
-
-/**
- * Preview wrapper that renders the DecisionsScreen content inside the app theme for Compose previews.
- *
- * Use in Android Studio's preview tooling to visualize the DecisionsScreen UI while developing.
- */
-@Preview
-@Composable
-private fun DecisionsScreenPreview() {
-    TajsOSTheme {
-        // DecisionsScreen(...)
     }
 }

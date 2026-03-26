@@ -85,45 +85,6 @@ fun ProtocolsScreen(
 
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
-internal fun ProtocolsMainBlock(
-    viewModel: MainViewModel,
-    onEditNode: (Long) -> Unit,
-) {
-    val transitionProtocolsSnapshot by viewModel.transitionProtocolsSnapshot.collectAsState()
-    val playbookSnapshot by viewModel.playbookSnapshot.collectAsState()
-    val allModes by viewModel.allModes.collectAsState()
-    val allAreas by viewModel.allAreas.collectAsState()
-    val protocolHistoryItems by viewModel.protocolHistoryItems.collectAsState()
-
-    Column(
-        modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
-    ) {
-        Text(
-            text = "PROTOCOLS",
-            style = MaterialTheme.typography.displaySmall,
-            color = TactileTheme.Text,
-        )
-        Text(
-            text = "Trigger repeatable transition sequences and keep playbooks attached to real contexts.",
-            style = MaterialTheme.typography.bodySmall,
-            color = TactileTheme.Muted,
-        )
-
-        ProtocolsLayer(
-            viewModel = viewModel,
-            snapshot = transitionProtocolsSnapshot,
-            playbookSnapshot = playbookSnapshot,
-            allModes = allModes,
-            allAreas = allAreas,
-            history = protocolHistoryItems,
-            onEditNode = onEditNode,
-        )
-    }
-}
-
-@Composable
-@OptIn(ExperimentalLayoutApi::class)
 internal fun ProtocolsLayer(
     viewModel: MainViewModel,
     snapshot: TransitionProtocolsSnapshot,

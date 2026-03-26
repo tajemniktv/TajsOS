@@ -2,7 +2,7 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
-package com.tajemniktv.tajsos.ui.screens
+package com.tajemniktv.tajsos.ui.screens.capacity
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -23,10 +23,23 @@ import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.ui.CapacitySnapshot
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.screens.GroupedOpenLoopSection
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
+object CapacityDashboardBlockRegistry {
+    private val renderers: Map<String, CapacityDashboardBlockRenderer> =
+        mapOf("capacity_main" to ::renderCapacityMainBlock)
+
+    fun resolve(id: String): CapacityDashboardBlockRenderer? = renderers[id]
+}
+
 @Composable
-fun CapacityScreen(viewModel: MainViewModel) {
+private fun renderCapacityMainBlock(context: CapacityDashboardContext) {
+    CapacityMainBlock(viewModel = context.viewModel)
+}
+
+@Composable
+internal fun CapacityMainBlock(viewModel: MainViewModel) {
     val capacitySnapshot by viewModel.capacitySnapshot.collectAsState()
     val allAreas by viewModel.allAreas.collectAsState()
 

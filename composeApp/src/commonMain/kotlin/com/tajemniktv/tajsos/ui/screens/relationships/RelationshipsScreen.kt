@@ -54,37 +54,6 @@ fun RelationshipsScreen(
 
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
-internal fun RelationshipsMainBlock(
-    viewModel: MainViewModel,
-    onEditNode: (Long) -> Unit,
-) {
-    val relationshipSnapshot by viewModel.relationshipSnapshot.collectAsState()
-
-    Column(
-        modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
-    ) {
-        Text(
-            text = "RELATIONSHIPS WORKSPACE",
-            style = MaterialTheme.typography.displaySmall,
-            color = TactileTheme.Text,
-        )
-        Text(
-            text = "Manage follow-ups, important people, and relationship continuity.",
-            style = MaterialTheme.typography.bodySmall,
-            color = TactileTheme.Muted,
-        )
-
-        PeopleLayer(
-            viewModel = viewModel,
-            snapshot = relationshipSnapshot,
-            onEditNode = onEditNode,
-        )
-    }
-}
-
-@Composable
-@OptIn(ExperimentalLayoutApi::class)
 internal fun PeopleLayer(
     viewModel: MainViewModel,
     snapshot: RelationshipSnapshot,

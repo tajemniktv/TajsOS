@@ -77,39 +77,6 @@ fun PlacesScreen(
 
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
-internal fun PlacesMainBlock(
-    viewModel: MainViewModel,
-    onEditNode: (Long) -> Unit,
-) {
-    val physicalLogisticsSnapshot by viewModel.physicalLogisticsSnapshot.collectAsState()
-    val allAreas by viewModel.allAreas.collectAsState()
-
-    Column(
-        modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
-    ) {
-        Text(
-            text = "PLACES & LOGISTICS",
-            style = MaterialTheme.typography.displaySmall,
-            color = TactileTheme.Text,
-        )
-        Text(
-            text = "Coordinate errands, packing, travel prep, and reminders tied to physical places.",
-            style = MaterialTheme.typography.bodySmall,
-            color = TactileTheme.Muted,
-        )
-
-        PlacesLayer(
-            viewModel = viewModel,
-            snapshot = physicalLogisticsSnapshot,
-            allAreas = allAreas,
-            onEditNode = onEditNode,
-        )
-    }
-}
-
-@Composable
-@OptIn(ExperimentalLayoutApi::class)
 internal fun PlacesLayer(
     viewModel: MainViewModel,
     snapshot: PhysicalLogisticsSnapshot,

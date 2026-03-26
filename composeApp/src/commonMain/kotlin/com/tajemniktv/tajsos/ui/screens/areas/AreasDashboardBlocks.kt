@@ -2,7 +2,7 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
-package com.tajemniktv.tajsos.ui.screens
+package com.tajemniktv.tajsos.ui.screens.areas
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -56,8 +56,20 @@ import tajsos.composeapp.generated.resources.areas_dialog_new
 import tajsos.composeapp.generated.resources.areas_empty
 import tajsos.composeapp.generated.resources.areas_title
 
+object AreasDashboardBlockRegistry {
+    private val renderers: Map<String, AreasDashboardBlockRenderer> =
+        mapOf("areas_main" to ::renderAreasMainBlock)
+
+    fun resolve(id: String): AreasDashboardBlockRenderer? = renderers[id]
+}
+
 @Composable
-fun AreasScreen(
+private fun renderAreasMainBlock(context: AreasDashboardContext) {
+    AreasMainBlock(viewModel = context.viewModel, onNavigateTo = context.onNavigateTo)
+}
+
+@Composable
+internal fun AreasMainBlock(
     viewModel: MainViewModel,
     onNavigateTo: (String) -> Unit,
 ) {
