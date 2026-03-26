@@ -13,6 +13,16 @@ import kotlin.time.Clock
 import kotlin.time.Instant
 import kotlin.time.Duration.Companion.days
 
+/**
+ * An orchestrator that manages synchronization across all configured remote calendar providers.
+ *
+ * It uses a local-first design strategy by pulling external events into the shared data layer via
+ * [CalendarProviderEntity] and [CalendarEventEntity]. Synchronization works by deduplicating and merging remote events
+ * with local representations, preserving primary keys and local metadata.
+ *
+ * @param repository The central data repository providing database operations for calendar objects.
+ * @param httpClient The configured HTTP client to perform external API queries.
+ */
 class CalendarManager(
     private val repository: AppRepository,
     httpClient: HttpClient
@@ -21,6 +31,11 @@ class CalendarManager(
         IcsCalendarProvider(httpClient)
     )
 
+    /**
+     * Iterates through all enabled [CalendarProviderEntity] records and triggers synchronization for each.
+     * Fetches events for a static sliding window (30 days ago to 90 days from now) to minimize overhead.
+     * Fetches events, deduplicates them by `externalId`, and synchronizes the local database.
+     */
     suspend fun syncAll() = coroutineScope {
         val allProviders = repository.getAllCalendarProviders().first().orEmpty()
         val now = Clock.System.now()
@@ -45,4 +60,10 @@ class CalendarManager(
     }
 }
 
+/**
+ * Safe fallback returning an empty list if the nullable collection receiver is null.
+ *
+ * @receiver The nullable collection to unwrap.
+ * @return The original list, or an empty list if null.
+ */
 private fun <T> List<T>?.orEmpty(): List<T> = this ?: emptyList()

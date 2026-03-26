@@ -13,11 +13,25 @@ import kotlinx.datetime.*
 import kotlin.time.Clock
 import kotlin.time.Instant
 
+/**
+ * A calendar provider that fetches and parses standard ICS (iCalendar) files from HTTP(S) sources.
+ *
+ * @param client The Ktor HttpClient used to fetch the ICS file content.
+ */
 class IcsCalendarProvider(
     private val client: HttpClient,
 ) : CalendarProvider {
     override val type: String = "ICS"
 
+    /**
+     * Fetches and parses ICS events for a given provider within the specified time range.
+     * Only standard HTTP/HTTPS schemes are supported.
+     *
+     * @param provider The provider configuration containing the ICS URL.
+     * @param from The start of the time range (inclusive).
+     * @param to The end of the time range (inclusive).
+     * @return A list of valid, parsed [CalendarEventEntity] instances falling within the range.
+     */
     override suspend fun fetchEvents(
         provider: CalendarProviderEntity,
         from: Instant,
@@ -41,6 +55,13 @@ class IcsCalendarProvider(
         }
     }
 
+    /**
+     * Unfolds multiline entries in an ICS file into a single logical line per entry.
+     * In the ICS spec, long lines are wrapped and begin with whitespace on subsequent lines.
+     *
+     * @param content The raw, multi-line string content of the ICS file.
+     * @return A sequence of unfolded, logical lines.
+     */
     private fun unfoldLines(content: String): Sequence<String> =
         sequence {
             val lines = content.lineSequence().iterator()
@@ -60,6 +81,13 @@ class IcsCalendarProvider(
             yield(currentFullLine)
         }
 
+    /**
+     * Parses the unfolded lines of an ICS file and builds [CalendarEventEntity] instances for each `VEVENT`.
+     *
+     * @param content The raw string content of the ICS file.
+     * @param providerId The internal database ID of the calendar provider owning these events.
+     * @return A list of fully constructed [CalendarEventEntity] instances.
+     */
     private fun parseIcs(
         content: String,
         providerId: Long,
@@ -89,13 +117,26 @@ class IcsCalendarProvider(
     }
 }
 
+/**
+ * Represents an extracted date property from an ICS file, encapsulating the raw value and metadata key.
+ *
+ * @property value The raw date/time string value (e.g., "20231225" or "20231225T100000Z").
+ * @property rawKey The raw property key (e.g., "DTSTART" or "DTSTART;VALUE=DATE").
+ */
 private data class IcsDateProperty(
     val value: String,
     val rawKey: String,
 ) {
+    /**
+     * Determines if the parsed property represents a full-day event without specific start/end times.
+     */
     val isAllDay: Boolean get() = rawKey.contains("VALUE=DATE") || value.length == 8
 }
 
+/**
+ * A stateful builder class designed to construct a single [CalendarEventEntity] iteratively
+ * by processing lines within a `BEGIN:VEVENT` and `END:VEVENT` block.
+ */
 private class IcsEventBuilder {
     private var uid: String? = null
     private var summary: String = "No Title"
@@ -104,6 +145,12 @@ private class IcsEventBuilder {
     private var startProp: IcsDateProperty? = null
     private var endProp: IcsDateProperty? = null
 
+    /**
+     * Processes a single parsed, logical line and updates internal builder state appropriately.
+     * Supported keys include UID, SUMMARY, DESCRIPTION, LOCATION, DTSTART, and DTEND.
+     *
+     * @param line A single, unfolded line from the `VEVENT` block.
+     */
     fun processLine(line: String) {
         val parts = line.split(":", limit = 2)
         if (parts.size != 2) return
@@ -123,6 +170,13 @@ private class IcsEventBuilder {
         }
     }
 
+    /**
+     * Completes the builder process and attempts to construct a valid [CalendarEventEntity].
+     * Returns null if minimum required properties (such as a valid start time) are missing.
+     *
+     * @param providerId The database ID of the calendar provider creating this event.
+     * @return A fully populated [CalendarEventEntity], or null if essential data is missing/invalid.
+     */
     fun build(providerId: Long): CalendarEventEntity? {
         val sProp = startProp ?: return null
         val eProp = endProp ?: sProp
@@ -145,6 +199,12 @@ private class IcsEventBuilder {
         )
     }
 
+    /**
+     * Unescapes ICS-specific character encodings like '\n' to standard newline characters.
+     *
+     * @param value The raw string value requiring unescaping.
+     * @return The unescaped standard Kotlin string.
+     */
     private fun unescapeIcs(value: String): String =
         value
             .replace("\\\\", "\\")
@@ -153,6 +213,12 @@ private class IcsEventBuilder {
             .replace("\\n", "\n")
             .replace("\\N", "\n")
 
+    /**
+     * Parses an [IcsDateProperty] into a unified [Instant].
+     *
+     * @param property The extracted date property object to parse.
+     * @return The resulting [Instant], or null if parsing fails.
+     */
     private fun parseDate(property: IcsDateProperty): Instant? =
         try {
             val cleanDate = property.value.trim()
@@ -167,6 +233,13 @@ private class IcsEventBuilder {
             null
         }
 
+    /**
+     * Parses a short 8-character (YYYYMMDD) date string representing an all-day event
+     * into an [Instant] anchored to Midnight UTC.
+     *
+     * @param cleanDate The 8-character date string to parse.
+     * @return The resulting [Instant].
+     */
     private fun parseAllDayDate(cleanDate: String): Instant {
         if (cleanDate.length < 8) throw IllegalArgumentException("Invalid date length")
         val year = cleanDate.substring(0, 4).toInt()
@@ -175,6 +248,13 @@ private class IcsEventBuilder {
         return LocalDateTime(year, month, day, 0, 0).toInstant(TimeZone.UTC)
     }
 
+    /**
+     * Parses a standard ISO 8601 formatted date/time string from an ICS file.
+     * Accounts for UTC 'Z' markers and localized `TZID` parameters.
+     *
+     * @param property The [IcsDateProperty] containing the raw ISO string and metadata key.
+     * @return The resulting [Instant].
+     */
     private fun parseIsoDate(property: IcsDateProperty): Instant {
         val cleanDate = property.value.trim()
         if (cleanDate.length < 15) throw IllegalArgumentException("Invalid ISO date length")
@@ -194,6 +274,13 @@ private class IcsEventBuilder {
         }
     }
 
+    /**
+     * Extracts a [TimeZone] from the raw ICS property key via the `TZID` parameter,
+     * defaulting to the system default if missing or invalid.
+     *
+     * @param rawKey The raw property key containing potential `TZID` parameters.
+     * @return The parsed [TimeZone] or the system default fallback.
+     */
     private fun extractTimeZone(rawKey: String): TimeZone {
         val tzidMatch =
             Regex("TZID=([^;:]+)").find(rawKey) ?: return TimeZone.currentSystemDefault()
