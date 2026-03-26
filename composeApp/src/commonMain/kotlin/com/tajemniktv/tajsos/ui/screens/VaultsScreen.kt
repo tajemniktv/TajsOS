@@ -6,6 +6,7 @@ package com.tajemniktv.tajsos.ui.screens
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -32,12 +33,36 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.VaultsSnapshot
+import com.tajemniktv.tajsos.ui.components.vaults.VaultsDashboardBlockRegistry
+import com.tajemniktv.tajsos.ui.components.vaults.VaultsDashboardContext
+import com.tajemniktv.tajsos.ui.components.vaults.VaultsDashboardSurface
+import com.tajemniktv.tajsos.ui.components.vaults.buildVaultsDashboardPlan
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlin.time.Clock
 
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
 fun VaultsScreen(
+    viewModel: MainViewModel,
+    onEditNode: (Long) -> Unit,
+) {
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val surface =
+            if (maxWidth > 900.dp) VaultsDashboardSurface.DESKTOP else VaultsDashboardSurface.MOBILE
+        val plan = remember(surface) { buildVaultsDashboardPlan(surface) }
+        val context =
+            remember(viewModel, onEditNode) { VaultsDashboardContext(viewModel, onEditNode) }
+        Column(modifier = Modifier.fillMaxSize()) {
+            plan.primary.forEach { block ->
+                VaultsDashboardBlockRegistry.resolve(block.id)?.invoke(context)
+            }
+        }
+    }
+}
+
+@Composable
+@OptIn(ExperimentalLayoutApi::class)
+internal fun VaultsMainBlock(
     viewModel: MainViewModel,
     onEditNode: (Long) -> Unit,
 ) {

@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,6 +24,10 @@ import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.components.nodes.TaskRow
+import com.tajemniktv.tajsos.ui.components.today.TodayDashboardBlockRegistry
+import com.tajemniktv.tajsos.ui.components.today.TodayDashboardContext
+import com.tajemniktv.tajsos.ui.components.today.TodayDashboardSurface
+import com.tajemniktv.tajsos.ui.components.today.buildTodayDashboardPlan
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
@@ -37,14 +42,37 @@ import tajsos.composeapp.generated.resources.*
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TodayScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit)
-{
+fun TodayScreen(
+    viewModel: MainViewModel,
+    onEditNode: (Long) -> Unit,
+) {
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val surface =
+            if (maxWidth > 900.dp) TodayDashboardSurface.DESKTOP else TodayDashboardSurface.MOBILE
+        val plan = remember(surface) { buildTodayDashboardPlan(surface) }
+        val context =
+            remember(viewModel, onEditNode) { TodayDashboardContext(viewModel, onEditNode) }
+        Column(modifier = Modifier.fillMaxSize()) {
+            plan.primary.forEach { block ->
+                TodayDashboardBlockRegistry.resolve(block.id)?.invoke(context)
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun TodayMainBlock(
+    viewModel: MainViewModel,
+    onEditNode: (Long) -> Unit,
+) {
     val todayNodes by viewModel.todayNodes.collectAsState()
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(TactileTheme.SpacingMd),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(TactileTheme.SpacingMd),
     ) {
         Text(
             stringResource(Res.string.today_payload),
@@ -53,21 +81,19 @@ fun TodayScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit)
         )
         Spacer(Modifier.height(TactileTheme.SpacingLg))
 
-        if (todayNodes.isEmpty())
-        {
+        if (todayNodes.isEmpty()) {
             EmptyState(message = stringResource(Res.string.today_empty))
-        } else
-        {
+        } else {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
                 items(todayNodes.take(3), key = { it.id }) { node ->
-                    val dismissState = rememberSwipeToDismissBoxState(
-                        initialValue = SwipeToDismissBoxValue.Settled,
-                        positionalThreshold = SwipeToDismissBoxDefaults.positionalThreshold,
-                    )
+                    val dismissState =
+                        rememberSwipeToDismissBoxState(
+                            initialValue = SwipeToDismissBoxValue.Settled,
+                            positionalThreshold = SwipeToDismissBoxDefaults.positionalThreshold,
+                        )
 
                     LaunchedEffect(dismissState.currentValue) {
-                        if (dismissState.currentValue == SwipeToDismissBoxValue.StartToEnd)
-                        {
+                        if (dismissState.currentValue == SwipeToDismissBoxValue.StartToEnd) {
                             viewModel.updateNodeStatus(node, "done")
                         }
                     }
@@ -77,7 +103,13 @@ fun TodayScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit)
                         enableDismissFromEndToStart = false,
                         backgroundContent = {
                             val color =
-                                    if (dismissState.dismissDirection == SwipeToDismissBoxValue.StartToEnd) TactileTheme.Success else Color.Transparent
+                                if (dismissState.dismissDirection ==
+                                    SwipeToDismissBoxValue.StartToEnd
+                                ) {
+                                    TactileTheme.Success
+                                } else {
+                                    Color.Transparent
+                                }
                             Box(
                                 Modifier
                                     .fillMaxSize()
@@ -100,8 +132,7 @@ fun TodayScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit)
                         )
                     }
                 }
-                if (todayNodes.size < 3)
-                {
+                if (todayNodes.size < 3) {
                     items(3 - todayNodes.size) { index ->
                         Box(
                             Modifier

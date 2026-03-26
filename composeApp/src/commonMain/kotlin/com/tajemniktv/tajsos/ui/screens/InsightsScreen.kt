@@ -14,6 +14,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -32,6 +33,10 @@ import com.tajemniktv.tajsos.ui.components.cards.FocusInsightCard
 import com.tajemniktv.tajsos.ui.components.cards.InsightPatternCard
 import com.tajemniktv.tajsos.ui.components.cards.StateAveragesCard
 import com.tajemniktv.tajsos.ui.components.cards.VaultInsightCard
+import com.tajemniktv.tajsos.ui.components.insights.InsightsDashboardBlockRegistry
+import com.tajemniktv.tajsos.ui.components.insights.InsightsDashboardContext
+import com.tajemniktv.tajsos.ui.components.insights.InsightsDashboardSurface
+import com.tajemniktv.tajsos.ui.components.insights.buildInsightsDashboardPlan
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -51,6 +56,30 @@ import tajsos.composeapp.generated.resources.*
  */
 @Composable
 fun InsightsScreen(
+    viewModel: MainViewModel,
+    onNavigateToProject: (Long) -> Unit,
+) {
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val surface =
+            if (maxWidth > 900.dp) InsightsDashboardSurface.DESKTOP else InsightsDashboardSurface.MOBILE
+        val plan = remember(surface) { buildInsightsDashboardPlan(surface) }
+        val context =
+            remember(viewModel, onNavigateToProject) {
+                InsightsDashboardContext(
+                    viewModel,
+                    onNavigateToProject,
+                )
+            }
+        Column(modifier = Modifier.fillMaxSize()) {
+            plan.primary.forEach { block ->
+                InsightsDashboardBlockRegistry.resolve(block.id)?.invoke(context)
+            }
+        }
+    }
+}
+
+@Composable
+internal fun InsightsMainBlock(
     viewModel: MainViewModel,
     onNavigateToProject: (Long) -> Unit,
 ) {

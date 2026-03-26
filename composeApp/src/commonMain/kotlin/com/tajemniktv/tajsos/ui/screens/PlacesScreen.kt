@@ -6,6 +6,7 @@ package com.tajemniktv.tajsos.ui.screens
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -33,11 +34,35 @@ import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.PhysicalLogisticsSnapshot
 import com.tajemniktv.tajsos.ui.components.cards.NodeCard
+import com.tajemniktv.tajsos.ui.components.places.PlacesDashboardBlockRegistry
+import com.tajemniktv.tajsos.ui.components.places.PlacesDashboardContext
+import com.tajemniktv.tajsos.ui.components.places.PlacesDashboardSurface
+import com.tajemniktv.tajsos.ui.components.places.buildPlacesDashboardPlan
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
 fun PlacesScreen(
+    viewModel: MainViewModel,
+    onEditNode: (Long) -> Unit,
+) {
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val surface =
+            if (maxWidth > 900.dp) PlacesDashboardSurface.DESKTOP else PlacesDashboardSurface.MOBILE
+        val plan = remember(surface) { buildPlacesDashboardPlan(surface) }
+        val context =
+            remember(viewModel, onEditNode) { PlacesDashboardContext(viewModel, onEditNode) }
+        Column(modifier = Modifier.fillMaxSize()) {
+            plan.primary.forEach { block ->
+                PlacesDashboardBlockRegistry.resolve(block.id)?.invoke(context)
+            }
+        }
+    }
+}
+
+@Composable
+@OptIn(ExperimentalLayoutApi::class)
+internal fun PlacesMainBlock(
     viewModel: MainViewModel,
     onEditNode: (Long) -> Unit,
 ) {

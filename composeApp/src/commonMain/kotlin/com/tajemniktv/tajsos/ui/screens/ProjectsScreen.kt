@@ -19,6 +19,10 @@ import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.nodes.ProjectItem
+import com.tajemniktv.tajsos.ui.components.projects.ProjectsDashboardBlockRegistry
+import com.tajemniktv.tajsos.ui.components.projects.ProjectsDashboardContext
+import com.tajemniktv.tajsos.ui.components.projects.ProjectsDashboardSurface
+import com.tajemniktv.tajsos.ui.components.projects.buildProjectsDashboardPlan
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
@@ -35,8 +39,29 @@ import tajsos.composeapp.generated.resources.*
  * @param onNavigateTo Callback invoked with a navigation route when navigating from a project item.
  */
 @Composable
-fun ProjectsScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit)
-{
+fun ProjectsScreen(
+    viewModel: MainViewModel,
+    onNavigateTo: (String) -> Unit,
+) {
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val surface =
+            if (maxWidth > 900.dp) ProjectsDashboardSurface.DESKTOP else ProjectsDashboardSurface.MOBILE
+        val plan = remember(surface) { buildProjectsDashboardPlan(surface) }
+        val context =
+            remember(viewModel, onNavigateTo) { ProjectsDashboardContext(viewModel, onNavigateTo) }
+        Column(modifier = Modifier.fillMaxSize()) {
+            plan.primary.forEach { block ->
+                ProjectsDashboardBlockRegistry.resolve(block.id)?.invoke(context)
+            }
+        }
+    }
+}
+
+@Composable
+internal fun ProjectsMainBlock(
+    viewModel: MainViewModel,
+    onNavigateTo: (String) -> Unit,
+) {
     val scope = rememberCoroutineScope()
     val projects by viewModel.allProjects.collectAsState()
     val allNodes by viewModel.allNodes.collectAsState()
@@ -44,20 +69,23 @@ fun ProjectsScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit)
     var searchQuery by remember { mutableStateOf("") }
     var selectedStatusFilter by remember { mutableStateOf("active") }
 
-    val filteredProjects = remember(projects, searchQuery, selectedStatusFilter) {
-        projects.filter {
-            it.title.contains(searchQuery, ignoreCase = true) &&
+    val filteredProjects =
+        remember(projects, searchQuery, selectedStatusFilter) {
+            projects.filter {
+                it.title.contains(searchQuery, ignoreCase = true) &&
                     (if (selectedStatusFilter == "active") it.status == "active" || it.status == "on_hold" else it.status == "someday")
+            }
         }
-    }
-    val nodesByProjectId = remember(allNodes) {
-        allNodes.groupBy { it.node.projectId }
-    }
+    val nodesByProjectId =
+        remember(allNodes) {
+            allNodes.groupBy { it.node.projectId }
+        }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(TactileTheme.SpacingMd),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(TactileTheme.SpacingMd),
     ) {
         Text(
             text = stringResource(Res.string.projects_title),
@@ -99,8 +127,7 @@ fun ProjectsScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit)
         )
     }
 
-    if (showAddDialog)
-    {
+    if (showAddDialog) {
         AddProjectDialog(
             onDismiss = { showAddDialog = false },
             onConfirm = { title, content, status ->
@@ -109,12 +136,12 @@ fun ProjectsScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit)
                 // I'll use addNode directly or update MainViewModel.
                 scope.launch {
                     val id =
-                            viewModel.addNodeForResult(
-                                title,
-                                content,
-                                "project",
-                                inboxState = false,
-                            )
+                        viewModel.addNodeForResult(
+                            title,
+                            content,
+                            "project",
+                            inboxState = false,
+                        )
                     viewModel.getNodeById(id)?.let { node ->
                         viewModel.updateNodeStatus(node, status)
                     }
@@ -134,8 +161,10 @@ fun ProjectsScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit)
  * @param onConfirm Called with the entered project `name`, `description`, and `status` (`"active"` or `"someday"`) when the user confirms creation.
  */
 @Composable
-fun AddProjectDialog(onDismiss: () -> Unit, onConfirm: (String, String, String) -> Unit)
-{
+fun AddProjectDialog(
+    onDismiss: () -> Unit,
+    onConfirm: (String, String, String) -> Unit,
+) {
     var name by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var status by remember { mutableStateOf("active") }
@@ -158,9 +187,13 @@ fun AddProjectDialog(onDismiss: () -> Unit, onConfirm: (String, String, String) 
                 Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
                     listOf("active", "someday").forEach { s ->
                         val label =
-                                if (s == "active") stringResource(Res.string.projects_filter_active) else stringResource(
+                            if (s == "active") {
+                                stringResource(Res.string.projects_filter_active)
+                            } else {
+                                stringResource(
                                     Res.string.projects_filter_someday,
                                 )
+                            }
                         FilterChip(
                             selected = status == s,
                             onClick = { status = s },
@@ -205,10 +238,8 @@ fun ProjectListContent(
     state: ProjectListState,
     onNavigateTo: (String) -> Unit,
     onShowAddDialog: () -> Unit,
-)
-{
-    if (state.filteredProjects.isEmpty() && state.searchQuery.isEmpty())
-    {
+) {
+    if (state.filteredProjects.isEmpty() && state.searchQuery.isEmpty()) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(stringResource(Res.string.projects_empty), color = TactileTheme.Muted)
@@ -218,8 +249,7 @@ fun ProjectListContent(
                 }
             }
         }
-    } else
-    {
+    } else {
         LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
             items(state.filteredProjects, key = { it.id }) { project ->
                 val projectNodes = state.nodesByProjectId[project.id] ?: emptyList()

@@ -6,6 +6,7 @@ package com.tajemniktv.tajsos.ui.screens
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -27,11 +29,35 @@ import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.RelationshipSnapshot
 import com.tajemniktv.tajsos.ui.components.cards.PersonRelationshipCard
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
+import com.tajemniktv.tajsos.ui.components.relationships.RelationshipsDashboardBlockRegistry
+import com.tajemniktv.tajsos.ui.components.relationships.RelationshipsDashboardContext
+import com.tajemniktv.tajsos.ui.components.relationships.RelationshipsDashboardSurface
+import com.tajemniktv.tajsos.ui.components.relationships.buildRelationshipsDashboardPlan
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
 fun RelationshipsScreen(
+    viewModel: MainViewModel,
+    onEditNode: (Long) -> Unit,
+) {
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val surface =
+            if (maxWidth > 900.dp) RelationshipsDashboardSurface.DESKTOP else RelationshipsDashboardSurface.MOBILE
+        val plan = remember(surface) { buildRelationshipsDashboardPlan(surface) }
+        val context =
+            remember(viewModel, onEditNode) { RelationshipsDashboardContext(viewModel, onEditNode) }
+        Column(modifier = Modifier.fillMaxSize()) {
+            plan.primary.forEach { block ->
+                RelationshipsDashboardBlockRegistry.resolve(block.id)?.invoke(context)
+            }
+        }
+    }
+}
+
+@Composable
+@OptIn(ExperimentalLayoutApi::class)
+internal fun RelationshipsMainBlock(
     viewModel: MainViewModel,
     onEditNode: (Long) -> Unit,
 ) {

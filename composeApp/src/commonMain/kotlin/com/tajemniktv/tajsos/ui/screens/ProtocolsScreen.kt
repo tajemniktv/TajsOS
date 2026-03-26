@@ -6,6 +6,7 @@ package com.tajemniktv.tajsos.ui.screens
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -38,11 +39,35 @@ import com.tajemniktv.tajsos.ui.PlaybookSnapshot
 import com.tajemniktv.tajsos.ui.ProtocolHistoryItem
 import com.tajemniktv.tajsos.ui.TransitionProtocolsSnapshot
 import com.tajemniktv.tajsos.ui.components.cards.ProtocolCard
+import com.tajemniktv.tajsos.ui.components.protocols.ProtocolsDashboardBlockRegistry
+import com.tajemniktv.tajsos.ui.components.protocols.ProtocolsDashboardContext
+import com.tajemniktv.tajsos.ui.components.protocols.ProtocolsDashboardSurface
+import com.tajemniktv.tajsos.ui.components.protocols.buildProtocolsDashboardPlan
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
 fun ProtocolsScreen(
+    viewModel: MainViewModel,
+    onEditNode: (Long) -> Unit,
+) {
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val surface =
+            if (maxWidth > 900.dp) ProtocolsDashboardSurface.DESKTOP else ProtocolsDashboardSurface.MOBILE
+        val plan = remember(surface) { buildProtocolsDashboardPlan(surface) }
+        val context =
+            remember(viewModel, onEditNode) { ProtocolsDashboardContext(viewModel, onEditNode) }
+        Column(modifier = Modifier.fillMaxSize()) {
+            plan.primary.forEach { block ->
+                ProtocolsDashboardBlockRegistry.resolve(block.id)?.invoke(context)
+            }
+        }
+    }
+}
+
+@Composable
+@OptIn(ExperimentalLayoutApi::class)
+internal fun ProtocolsMainBlock(
     viewModel: MainViewModel,
     onEditNode: (Long) -> Unit,
 ) {
