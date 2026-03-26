@@ -22,7 +22,7 @@ object FilterHelper {
      * strictly if the node type is "task".
      *
      * @param nodes The initial list of nodes with associated pins and tags to filter.
-     * @param query A text query for partial-matching against titles, content, or tags (prefix with # for exact tag search).
+     * `@param` query A text query for partial-matching against titles, content, or tags (prefix with # to search tags only).
      * @param type The specific type of node to include (e.g., "task", "project").
      * @param status A comma-separated string of statuses to include (e.g., "active,on_hold").
      * @param projectId The ID of the project the node must belong to.
@@ -147,7 +147,7 @@ object FilterHelper {
      * Determines whether a given node matches a user's search query.
      *
      * The match is evaluated based on the format of the query. If the query starts with
-     * a hashtag (`#`), it forces an exact, case-insensitive match against the node's tags.
+     * a hashtag (#), it performs a partial, case-insensitive match against the node's tags.
      * Otherwise, it performs a case-insensitive partial match against the node's title,
      * content, or tags.
      *
