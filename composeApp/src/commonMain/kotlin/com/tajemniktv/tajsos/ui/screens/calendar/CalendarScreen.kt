@@ -1,0 +1,664 @@
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
+package com.tajemniktv.tajsos.ui.screens.calendar
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ChevronLeft
+import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.filled.TaskAlt
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import com.tajemniktv.tajsos.ui.CalendarEntry
+import com.tajemniktv.tajsos.ui.EntryType
+import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import kotlinx.datetime.*
+import kotlinx.datetime.LocalDate
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.*
+import kotlin.time.Clock
+import kotlin.time.Instant
+
+/**
+ * Composes the calendar screen UI: a header with month navigation and sync, a month grid, and an agenda for the selected day.
+ *
+ * The composable maintains local state for the currently displayed month and the currently selected date, collects calendar entries
+ * from the provided view model, and wires interactions:
+ * - navigating months and jumping to today update the displayed month and selection,
+ * - sync triggers `viewModel.syncCalendars()`,
+ * - selecting a date updates the agenda,
+ * - tapping an agenda entry invokes `onEditNode` only when the entry is `EntryType.INTERNAL` and has a non-null `originalId`.
+ *
+ * @param onEditNode Callback invoked with an entry's `originalId` when an editable internal entry is selected.
+ */
+@Composable
+fun CalendarScreen(
+    viewModel: MainViewModel,
+    onEditNode: (Long) -> Unit,
+) {
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val surface =
+            if (maxWidth >
+                900.dp
+            ) {
+                CalendarDashboardSurface.DESKTOP
+            } else {
+                CalendarDashboardSurface.MOBILE
+            }
+        val plan =
+            remember(surface) {
+                buildCalendarDashboardPlan(
+                    surface,
+                )
+            }
+        val context =
+            remember(viewModel, onEditNode) {
+                CalendarDashboardContext(
+                    viewModel,
+                    onEditNode,
+                )
+            }
+        Column(modifier = Modifier.fillMaxSize()) {
+            plan.primary.forEach { block ->
+                CalendarDashboardBlockRegistry
+                    .resolve(
+                        block.id,
+                    )?.invoke(context)
+            }
+        }
+    }
+}
+
+@Composable
+internal fun CalendarMainBlock(
+    viewModel: MainViewModel,
+    onEditNode: (Long) -> Unit,
+) {
+    var currentMonth by remember {
+        mutableStateOf(
+            Clock.System
+                .now()
+                .toLocalDateTime(TimeZone.currentSystemDefault())
+                .date,
+        )
+    }
+    val calendarEntries by viewModel.calendarEntries.collectAsState()
+    val activeNodes by viewModel.activeNodes.collectAsState()
+    var selectedDate by remember { mutableStateOf(currentMonth) }
+    val todayEpoch =
+        remember(selectedDate) {
+            selectedDate.atStartOfDayIn(TimeZone.currentSystemDefault()).toEpochMilliseconds()
+        }
+    val pendingNodes =
+        remember(activeNodes, todayEpoch) {
+            activeNodes
+                .map { it.node }
+                .filter { node ->
+                    node.type == "task" &&
+                        node.status == "active" &&
+                        (node.dueAt?.let { it >= todayEpoch } == true)
+                }.sortedBy { it.dueAt }
+                .take(6)
+        }
+
+    Box(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(Color(0xFF090A12), Color(0xFF0D1021), Color(0xFF090A12)),
+                    ),
+                ),
+    ) {
+        BoxWithConstraints(modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd)) {
+            if (maxWidth > 1100.dp) {
+                Row(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+                ) {
+                    Surface(
+                        modifier = Modifier.weight(1.75f).fillMaxHeight(),
+                        shape = RoundedCornerShape(20.dp),
+                        color = Color(0x26172035),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0x334D5C8A)),
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd),
+                            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                        ) {
+                            CalendarHeader(
+                                currentMonth = currentMonth,
+                                onPreviousMonth = {
+                                    currentMonth = currentMonth.minus(1, DateTimeUnit.MONTH)
+                                },
+                                onNextMonth = {
+                                    currentMonth = currentMonth.plus(1, DateTimeUnit.MONTH)
+                                },
+                                onTodayClick = {
+                                    val today =
+                                        Clock.System
+                                            .now()
+                                            .toLocalDateTime(TimeZone.currentSystemDefault())
+                                            .date
+                                    currentMonth = today
+                                    selectedDate = today
+                                },
+                                onSyncClick = { viewModel.syncCalendars() },
+                            )
+                            MonthView(
+                                currentMonth = currentMonth,
+                                selectedDate = selectedDate,
+                                entries = calendarEntries,
+                                onDateSelected = { selectedDate = it },
+                            )
+                        }
+                    }
+
+                    Surface(
+                        modifier = Modifier.weight(1f).fillMaxHeight(),
+                        shape = RoundedCornerShape(20.dp),
+                        color = Color(0x1F172035),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0x334D5C8A)),
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd),
+                            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    Icons.Default.Schedule,
+                                    contentDescription = null,
+                                    tint = TactileTheme.Primary,
+                                )
+                                Spacer(Modifier.width(8.dp))
+                                Text(
+                                    stringResource(
+                                        Res.string.cal_agenda_title,
+                                        selectedDate.toString(),
+                                    ),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = TactileTheme.Primary,
+                                )
+                            }
+                            Box(modifier = Modifier.weight(1f)) {
+                                AgendaView(
+                                    selectedDate = selectedDate,
+                                    entries = calendarEntries,
+                                    onEntryClick = { entry ->
+                                        if (entry.type == EntryType.INTERNAL) {
+                                            entry.originalId?.let { onEditNode(it) }
+                                        }
+                                    },
+                                )
+                            }
+
+                            HorizontalDivider(color = TactileTheme.Border.copy(alpha = 0.6f))
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    Icons.Default.TaskAlt,
+                                    contentDescription = null,
+                                    tint = TactileTheme.Accent,
+                                )
+                                Spacer(Modifier.width(8.dp))
+                                Text(
+                                    "PENDING",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = TactileTheme.Accent,
+                                )
+                            }
+                            if (pendingNodes.isEmpty()) {
+                                Text(
+                                    "No pending nodes due soon.",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = TactileTheme.Muted,
+                                )
+                            } else {
+                                pendingNodes.forEach { node ->
+                                    Surface(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        shape = RoundedCornerShape(12.dp),
+                                        color = Color(0x261B223B),
+                                        border =
+                                            androidx.compose.foundation.BorderStroke(
+                                                1.dp,
+                                                TactileTheme.Border.copy(alpha = 0.7f),
+                                            ),
+                                    ) {
+                                        Row(
+                                            modifier =
+                                                Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(horizontal = 10.dp, vertical = 8.dp),
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            verticalAlignment = Alignment.CenterVertically,
+                                        ) {
+                                            Text(
+                                                node.title,
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color = TactileTheme.Text,
+                                                modifier = Modifier.weight(1f),
+                                                maxLines = 1,
+                                            )
+                                            val dueText =
+                                                node.dueAt?.let {
+                                                    Instant
+                                                        .fromEpochMilliseconds(it)
+                                                        .toLocalDateTime(TimeZone.currentSystemDefault())
+                                                        .date
+                                                        .toString()
+                                                } ?: "--"
+                                            Text(
+                                                dueText,
+                                                style = MaterialTheme.typography.labelSmall,
+                                                color = TactileTheme.Muted,
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+                ) {
+                    Surface(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(20.dp),
+                        color = Color(0x26172035),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0x334D5C8A)),
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(TactileTheme.SpacingMd),
+                            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                        ) {
+                            CalendarHeader(
+                                currentMonth = currentMonth,
+                                onPreviousMonth = {
+                                    currentMonth = currentMonth.minus(1, DateTimeUnit.MONTH)
+                                },
+                                onNextMonth = {
+                                    currentMonth = currentMonth.plus(1, DateTimeUnit.MONTH)
+                                },
+                                onTodayClick = {
+                                    val today =
+                                        Clock.System
+                                            .now()
+                                            .toLocalDateTime(TimeZone.currentSystemDefault())
+                                            .date
+                                    currentMonth = today
+                                    selectedDate = today
+                                },
+                                onSyncClick = { viewModel.syncCalendars() },
+                            )
+                            MonthView(
+                                currentMonth = currentMonth,
+                                selectedDate = selectedDate,
+                                entries = calendarEntries,
+                                onDateSelected = { selectedDate = it },
+                            )
+                        }
+                    }
+
+                    Surface(
+                        modifier = Modifier.fillMaxWidth().weight(1f),
+                        shape = RoundedCornerShape(20.dp),
+                        color = Color(0x1F172035),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0x334D5C8A)),
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd),
+                            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                        ) {
+                            Text(
+                                stringResource(
+                                    Res.string.cal_agenda_title,
+                                    selectedDate.toString(),
+                                ),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = TactileTheme.Primary,
+                            )
+                            AgendaView(
+                                selectedDate = selectedDate,
+                                entries = calendarEntries,
+                                onEntryClick = { entry ->
+                                    if (entry.type == EntryType.INTERNAL) {
+                                        entry.originalId?.let { onEditNode(it) }
+                                    }
+                                },
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Header row displaying the current month and controls for "Today", sync, and month navigation.
+ *
+ * @param currentMonth The month (LocalDate) shown in the header; its month name and year are displayed.
+ * @param onPreviousMonth Callback invoked when the previous-month button is pressed.
+ * @param onNextMonth Callback invoked when the next-month button is pressed.
+ * @param onTodayClick Callback invoked when the "Today" button is pressed.
+ * @param onSyncClick Callback invoked when the sync (refresh) button is pressed.
+ */
+@Composable
+fun CalendarHeader(
+    currentMonth: LocalDate,
+    onPreviousMonth: () -> Unit,
+    onNextMonth: () -> Unit,
+    onTodayClick: () -> Unit,
+    onSyncClick: () -> Unit,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column {
+            Text(
+                "${currentMonth.month.name} ${currentMonth.year}",
+                style = MaterialTheme.typography.headlineMedium,
+                color = Color(0xFFD7CCFF),
+            )
+        }
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            TextButton(onClick = onTodayClick) {
+                Text(
+                    stringResource(Res.string.cal_today),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TactileTheme.Primary,
+                )
+            }
+            IconButton(onClick = onSyncClick) {
+                Icon(
+                    Icons.Default.Refresh,
+                    contentDescription = stringResource(Res.string.cal_sync),
+                    tint = TactileTheme.Muted,
+                    modifier = Modifier.size(20.dp),
+                )
+            }
+            IconButton(onClick = onPreviousMonth) {
+                Icon(
+                    Icons.Default.ChevronLeft,
+                    contentDescription = stringResource(Res.string.cal_previous),
+                )
+            }
+            IconButton(onClick = onNextMonth) {
+                Icon(
+                    Icons.Default.ChevronRight,
+                    contentDescription = stringResource(Res.string.cal_next),
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Displays a month calendar grid for the given month with weekday headers, selectable day cells, and visual indicators for entries.
+ *
+ * The grid shows six weeks (7 columns) with days for the specified month placed in their weekday positions. The cell for `selectedDate` and the current system date are visually highlighted. Days that have one or more `entries` show up to three accent dots, with an additional smaller dot when there are more than three entries. Tapping a day invokes `onDateSelected`.
+ *
+ * @param currentMonth The month (year and month fields are used) to display in the grid.
+ * @param selectedDate The date that should be shown as selected/highlighted.
+ * @param entries A list of calendar entries; entries whose start time falls on a particular day will produce indicators on that day's cell.
+ * @param onDateSelected Callback invoked with the tapped `LocalDate`.
+ */
+@Composable
+fun MonthView(
+    currentMonth: LocalDate,
+    selectedDate: LocalDate,
+    entries: List<CalendarEntry>,
+    onDateSelected: (LocalDate) -> Unit,
+) {
+    val firstDayOfMonth = LocalDate(currentMonth.year, currentMonth.month, 1)
+    val lastDayOfMonth = firstDayOfMonth.plus(1, DateTimeUnit.MONTH).minus(1, DateTimeUnit.DAY)
+    val daysInMonth = lastDayOfMonth.day
+    val firstDayOfWeek = firstDayOfMonth.dayOfWeek.ordinal // 0 = Mon, 6 = Sun
+
+    val days =
+        (0 until 42).map { i ->
+            val dayNumber = i - firstDayOfWeek + 1
+            if (dayNumber in 1..daysInMonth) {
+                LocalDate(currentMonth.year, currentMonth.month, dayNumber)
+            } else {
+                null
+            }
+        }
+
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(7),
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        val weekDays = listOf("M", "T", "W", "T", "F", "S", "S")
+        items(weekDays) { day ->
+            Text(
+                day,
+                modifier = Modifier.padding(vertical = 8.dp),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.labelSmall,
+                color = TactileTheme.Muted,
+            )
+        }
+
+        items(days) { date ->
+            if (date != null) {
+                val isSelected = date == selectedDate
+                val isToday =
+                    date ==
+                        Clock.System
+                            .now()
+                            .toLocalDateTime(TimeZone.currentSystemDefault())
+                            .date
+                val dayEntries =
+                    entries.filter {
+                        Instant
+                            .fromEpochMilliseconds(it.startAt)
+                            .toLocalDateTime(TimeZone.currentSystemDefault())
+                            .date == date
+                    }
+
+                Box(
+                    modifier =
+                        Modifier
+                            .aspectRatio(1f)
+                            .padding(3.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(
+                                if (isSelected) {
+                                    Color(0x338B5CF6)
+                                } else if (isToday) {
+                                    Color(0x1F8B5CF6)
+                                } else {
+                                    Color(0x140E1328)
+                                },
+                            ).clickable { onDateSelected(date) },
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            date.day.toString(),
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = if (isSelected || isToday) FontWeight.Bold else FontWeight.Normal,
+                            color =
+                                if (isSelected) {
+                                    Color(0xFFE8DDFF)
+                                } else if (isToday) {
+                                    TactileTheme.Accent
+                                } else {
+                                    TactileTheme.Text
+                                },
+                        )
+                        if (dayEntries.isNotEmpty()) {
+                            Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+                                repeat(dayEntries.size.coerceAtMost(3)) {
+                                    Box(
+                                        Modifier
+                                            .size(4.dp)
+                                            .clip(CircleShape)
+                                            .background(TactileTheme.Accent),
+                                    )
+                                }
+                                if (dayEntries.size > 3) {
+                                    Box(
+                                        Modifier
+                                            .size(2.dp)
+                                            .clip(CircleShape)
+                                            .background(TactileTheme.Accent),
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                Box(Modifier.aspectRatio(1f))
+            }
+        }
+    }
+}
+
+/**
+ * Display an agenda for the specified date.
+ *
+ * Shows a centered "no events" message when there are no entries for `selectedDate`; otherwise
+ * renders a vertically spaced list of the entries for that date. Each row invokes `onEntryClick`
+ * when selected.
+ *
+ * @param selectedDate The date whose agenda should be shown.
+ * @param entries A list of calendar entries to filter and display.
+ * @param onEntryClick Callback invoked with the tapped entry.
+ */
+@Composable
+fun AgendaView(
+    selectedDate: LocalDate,
+    entries: List<CalendarEntry>,
+    onEntryClick: (CalendarEntry) -> Unit,
+) {
+    val dayEntries =
+        entries.filter {
+            Instant
+                .fromEpochMilliseconds(it.startAt)
+                .toLocalDateTime(TimeZone.currentSystemDefault())
+                .date == selectedDate
+        }
+
+    if (dayEntries.isEmpty()) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text(
+                stringResource(Res.string.cal_no_events),
+                color = TactileTheme.Muted,
+                style = MaterialTheme.typography.labelSmall,
+            )
+        }
+    } else {
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+            items(dayEntries) { entry ->
+                AgendaRow(entry, onClick = { onEntryClick(entry) })
+            }
+        }
+    }
+}
+
+/**
+ * Renders a clickable agenda row for a calendar entry showing its time, title, optional description,
+ * and an indicator for external entries.
+ *
+ * @param entry The calendar entry whose data (start time, title, description, type) is displayed.
+ * @param onClick Callback invoked when the row is tapped.
+ */
+@Composable
+fun AgendaRow(
+    entry: CalendarEntry,
+    onClick: () -> Unit,
+) {
+    val startTime =
+        Instant
+            .fromEpochMilliseconds(entry.startAt)
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+    val timeStr =
+        if (entry.isAllDay) {
+            stringResource(Res.string.cal_all_day)
+        } else {
+            "${startTime.hour}:${
+                startTime.minute.toString().padStart(2, '0')
+            }"
+        }
+
+    Surface(
+        onClick = onClick,
+        shape = RoundedCornerShape(14.dp),
+        color = Color(0x2A1A2038),
+        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0x334D5C8A)),
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Row(
+            modifier = Modifier.padding(TactileTheme.SpacingMd),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                timeStr,
+                style = MaterialTheme.typography.labelSmall,
+                color = TactileTheme.Muted,
+                modifier = Modifier.width(60.dp),
+            )
+            VerticalDivider(
+                modifier = Modifier.height(24.dp).padding(horizontal = 8.dp),
+                color = TactileTheme.Muted,
+            )
+            Column {
+                Text(
+                    entry.title,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = TactileTheme.Text,
+                )
+                val description = entry.description
+                if (!description.isNullOrBlank()) {
+                    Text(
+                        description,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = TactileTheme.Muted,
+                        maxLines = 1,
+                    )
+                }
+            }
+            Spacer(Modifier.weight(1f))
+            if (entry.type == EntryType.EXTERNAL) {
+                Box(
+                    Modifier
+                        .size(8.dp)
+                        .clip(CircleShape)
+                        .background(TactileTheme.Primary),
+                )
+            }
+        }
+    }
+}
