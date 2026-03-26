@@ -4,6 +4,9 @@
 
 package com.tajemniktv.tajsos.ui
 
+/**
+ * A default list of suggested Area titles provided during the initial onboarding or area creation flow.
+ */
 val suggestedAreaTitles =
     listOf(
         "Health",
@@ -18,6 +21,9 @@ val suggestedAreaTitles =
         "Home / environment",
     )
 
+/**
+ * A predefined list of standard [TransitionProtocolTemplate] objects used to bootstrap new transition protocols.
+ */
 val defaultTransitionProtocolTemplates =
     listOf(
         TransitionProtocolTemplate(
@@ -165,6 +171,9 @@ val defaultTransitionProtocolTemplates =
         ),
     )
 
+/**
+ * A predefined list of standard [PlaybookTemplate] objects providing actionable step-by-step guides for common scenarios.
+ */
 val defaultPlaybookTemplates =
     listOf(
         PlaybookTemplate(

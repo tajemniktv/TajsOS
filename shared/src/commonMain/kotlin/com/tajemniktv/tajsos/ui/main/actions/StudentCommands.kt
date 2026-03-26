@@ -15,6 +15,19 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlin.time.Clock
 
+/**
+ * A specialized command dispatcher responsible for all academic, study-tracking, and student-focused operations.
+ *
+ * It manages interactions with nodes holding `StudentMetadata` embedded in their JSON payload,
+ * handles study progress updates, and structures academic connections (like papers to concepts).
+ *
+ * @property repository The [AppRepository] used for direct database updates.
+ * @property scope The [CoroutineScope] in which all asynchronous database operations execute.
+ * @property currentTags A lambda supplier providing real-time access to the list of all tags.
+ * @property addNodeForResult A complex lambda function that creates a new node and immediately returns its inserted database ID.
+ * @property startFocusSession A lambda function injected to trigger a formal study session loop on a specific node ID.
+ * @property addRelation A lambda function injected to create bidirectional connections between two specific node IDs.
+ */
 class StudentCommands(
     private val repository: AppRepository,
     private val scope: CoroutineScope,
@@ -23,10 +36,24 @@ class StudentCommands(
     private val startFocusSession: (Long) -> Unit,
     private val addRelation: (Long, Long, String) -> Unit,
 ) {
+    /**
+     * Initializes a formal focus/study session tracked against a specific academic node.
+     *
+     * @param nodeId The unique ID of the node being studied.
+     */
     fun startStudySession(nodeId: Long) {
         startFocusSession(nodeId)
     }
 
+    /**
+     * Updates the embedded completion percentage for an academic reading material.
+     *
+     * Modifies the underlying JSON `StudentMetadata` structure tied to the node, ensuring the
+     * value remains safely clamped between 0 and 100.
+     *
+     * @param node The [NodeEntity] representing the reading material.
+     * @param progressPercent The integer completion percentage to apply (0-100).
+     */
     fun setReadingProgress(
         node: NodeEntity,
         progressPercent: Int,
@@ -36,6 +63,15 @@ class StudentCommands(
         }
     }
 
+    /**
+     * Updates the self-assessed mastery percentage of a specific academic topic or concept.
+     *
+     * Modifies the underlying JSON `StudentMetadata` structure tied to the node, ensuring the
+     * value remains safely clamped between 0 and 100.
+     *
+     * @param node The [NodeEntity] representing the academic topic.
+     * @param masteryPercent The integer mastery percentage to apply (0-100).
+     */
     fun setTopicMastery(
         node: NodeEntity,
         topic: String?,
@@ -136,6 +172,13 @@ class StudentCommands(
         addRelation(paperNodeId, noteNodeId, "PAPER_REFERENCE")
     }
 
+    /**
+     * Helper method to deserialize, safely mutate, and re-serialize `StudentMetadata` embedded
+     * within the JSON column of a `NodeEntity`.
+     *
+     * @param node The [NodeEntity] whose metadata is being mutated.
+     * @param update A lambda providing the existing [StudentMetadata] (or default) and returning the mutated version.
+     */
     private fun updateStudentMetadata(
         node: NodeEntity,
         update: (StudentMetadata) -> StudentMetadata,
