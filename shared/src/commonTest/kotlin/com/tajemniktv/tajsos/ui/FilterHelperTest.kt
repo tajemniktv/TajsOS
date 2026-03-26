@@ -26,13 +26,20 @@ class FilterHelperTest {
         estimatedMinutes: Int? = null,
         energyLevel: Int? = null,
         friction: String? = null,
+        locationContext: String? = null,
+        energyContext: String? = null,
+        deviceContext: String? = null,
+        socialContext: String? = null,
+        timeWindowContext: String? = null,
+        dueAt: Long? = null,
+        type: String = "note",
     ): NodeWithPin {
         val node =
             NodeEntity(
                 id = id,
                 title = title,
                 content = content,
-                type = "note",
+                type = type,
                 updatedAt = updatedAt,
                 status = status,
                 projectId = projectId,
@@ -40,6 +47,12 @@ class FilterHelperTest {
                 estimatedMinutes = estimatedMinutes,
                 energyLevel = energyLevel,
                 friction = friction,
+                locationContext = locationContext,
+                energyContext = energyContext,
+                deviceContext = deviceContext,
+                socialContext = socialContext,
+                timeWindowContext = timeWindowContext,
+                dueAt = dueAt,
             )
         val tagEntities =
             tags.mapIndexed { index, name ->
@@ -96,6 +109,12 @@ class FilterHelperTest {
                 maxMins = null,
                 energy = null,
                 friction = null,
+                locationContext = null,
+                energyContext = null,
+                deviceContext = null,
+                socialContext = null,
+                timeWindowContext = null,
+                timeHorizon = null,
                 relations = emptyList(),
             )
 
@@ -117,6 +136,12 @@ class FilterHelperTest {
                 maxMins = null,
                 energy = null,
                 friction = null,
+                locationContext = null,
+                energyContext = null,
+                deviceContext = null,
+                socialContext = null,
+                timeWindowContext = null,
+                timeHorizon = null,
                 relations = emptyList(),
             )
 
@@ -144,6 +169,12 @@ class FilterHelperTest {
                 maxMins = null,
                 energy = null,
                 friction = null,
+                locationContext = null,
+                energyContext = null,
+                deviceContext = null,
+                socialContext = null,
+                timeWindowContext = null,
+                timeHorizon = null,
                 relations = emptyList(),
             )
 
@@ -195,6 +226,12 @@ class FilterHelperTest {
             maxMins = maxMins,
             energy = energy,
             friction = friction,
+            locationContext = null,
+            energyContext = null,
+            deviceContext = null,
+            socialContext = null,
+            timeWindowContext = null,
+            timeHorizon = null,
             relations = emptyList(),
         )
         assertEquals(expectedCount, filtered.size)
@@ -246,6 +283,12 @@ class FilterHelperTest {
                 maxMins = null,
                 energy = null,
                 friction = null,
+                locationContext = null,
+                energyContext = null,
+                deviceContext = null,
+                socialContext = null,
+                timeWindowContext = null,
+                timeHorizon = null,
                 relations = relations,
             )
 
@@ -261,5 +304,140 @@ class FilterHelperTest {
         // Blank tag query "# " or "#" should be false
         assertFalse(FilterHelper.matchesQuery(node, "#"))
         assertFalse(FilterHelper.matchesQuery(node, "#   "))
+    }
+
+    @Test
+    fun testFilterContexts() {
+        // Context filtering only applies to "task" type nodes, notes bypass the context filters
+        val noteBypass = createTestNode(id = 1, title = "Note", type = "note", locationContext = "home")
+        val taskMatch = createTestNode(
+            id = 2,
+            title = "Task Match",
+            type = "task",
+            locationContext = "office",
+            energyContext = "high",
+            deviceContext = "laptop",
+            socialContext = "solo",
+            timeWindowContext = "long",
+        )
+        val taskMismatch = createTestNode(
+            id = 3,
+            title = "Task Mismatch",
+            type = "task",
+            locationContext = "home",
+            energyContext = "low",
+            deviceContext = "phone",
+            socialContext = "group",
+            timeWindowContext = "short",
+        )
+
+        val nodes = listOf(noteBypass, taskMatch, taskMismatch)
+
+        val filtered = FilterHelper.filterAndSortNodes(
+            nodes = nodes,
+            query = "",
+            type = null,
+            status = null,
+            projectId = null,
+            areaId = null,
+            linkedToId = null,
+            maxMins = null,
+            energy = null,
+            friction = null,
+            locationContext = "office",
+            energyContext = "high",
+            deviceContext = "laptop",
+            socialContext = "solo",
+            timeWindowContext = "long",
+            timeHorizon = null,
+            relations = emptyList(),
+        )
+
+        // Note fails because matchesLocationContext requires "office", which Note lacks ("home").
+        // Therefore only taskMatch matches the criteria.
+        assertEquals(1, filtered.size)
+        assertEquals(2L, filtered.first().node.id)
+    }
+
+    @Test
+    fun testFilterTimeHorizon() {
+        val now = kotlin.time.Clock.System.now().toEpochMilliseconds()
+        val dayMs = 24 * 60 * 60 * 1000L
+
+        val taskToday = createTestNode(id = 1, title = "Today", type = "task", dueAt = now + (dayMs / 2))
+        val taskNextWeek = createTestNode(id = 2, title = "Next Week", type = "task", dueAt = now + (8 * dayMs))
+        val taskNoDue = createTestNode(id = 3, title = "No Due Date", type = "task", dueAt = null)
+
+        val nodes = listOf(taskToday, taskNextWeek, taskNoDue)
+
+        val filteredToday = FilterHelper.filterAndSortNodes(
+            nodes = nodes,
+            query = "",
+            type = null,
+            status = null,
+            projectId = null,
+            areaId = null,
+            linkedToId = null,
+            maxMins = null,
+            energy = null,
+            friction = null,
+            locationContext = null,
+            energyContext = null,
+            deviceContext = null,
+            socialContext = null,
+            timeWindowContext = null,
+            timeHorizon = "today",
+            relations = emptyList(),
+        )
+        // Only taskToday should be returned
+        assertEquals(1, filteredToday.size)
+        assertEquals(1L, filteredToday.first().node.id)
+
+        val filteredWeek = FilterHelper.filterAndSortNodes(
+            nodes = nodes,
+            query = "",
+            type = null,
+            status = null,
+            projectId = null,
+            areaId = null,
+            linkedToId = null,
+            maxMins = null,
+            energy = null,
+            friction = null,
+            locationContext = null,
+            energyContext = null,
+            deviceContext = null,
+            socialContext = null,
+            timeWindowContext = null,
+            timeHorizon = "week",
+            relations = emptyList(),
+        )
+        // Only taskToday should be returned, since taskNextWeek is 8 days out
+        assertEquals(1, filteredWeek.size)
+        assertEquals(1L, filteredWeek.first().node.id)
+
+        val filteredMonth = FilterHelper.filterAndSortNodes(
+            nodes = nodes,
+            query = "",
+            type = null,
+            status = null,
+            projectId = null,
+            areaId = null,
+            linkedToId = null,
+            maxMins = null,
+            energy = null,
+            friction = null,
+            locationContext = null,
+            energyContext = null,
+            deviceContext = null,
+            socialContext = null,
+            timeWindowContext = null,
+            timeHorizon = "month",
+            relations = emptyList(),
+        )
+        // taskToday and taskNextWeek are within 30 days
+        assertEquals(2, filteredMonth.size)
+        assertTrue(filteredMonth.any { it.node.id == 1L })
+        assertTrue(filteredMonth.any { it.node.id == 2L })
     }
 }
