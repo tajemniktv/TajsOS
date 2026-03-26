@@ -95,9 +95,10 @@ When working in this repo, agents should:
 
 ---
 
-## Documentation expectations
+## Documentation
 
-When making meaningful changes, keep these current:
+Before interacting with the codebase, please familiarize yourself with the following files if
+needed. Make sure to update them if they are outdated.
 
 - `README.md` for product and setup
 - `AGENTS.md` for agent behavior and project rules
@@ -106,7 +107,6 @@ When making meaningful changes, keep these current:
 - `CONTRIBUTING.md` for contributing guidelines
 - `CODE_OF_CONDUCT.md` for code of conduct
 - `DESIGN.md` for visual design principles
-- `ARCHITECTURE.md` for understanding the application structural design and boundaries
 
 ---
 
@@ -146,13 +146,6 @@ When making meaningful changes, keep these current:
     - UI: `App.kt` in `composeApp/src/commonMain/kotlin/com/tajemniktv/tajsos/`
     - Data: `AppRepository` and entities in
       `shared/src/commonMain/kotlin/com/tajemniktv/tajsos/data/`
-    - Insights/stats: `MainViewModel` exposes a rich `insights` StateFlow for weekly summaries,
-      context switching, backlog pressure, and LifeOS-specific metrics (e.g., mood/focus
-      correlations,
-      area health, context stability, project entropy, and other context-driven insights).
-    - Advanced search/filtering: `MainViewModel` supports multi-criteria search (by tag, type,
-      status,
-      project, area, energy, friction, etc.).
     - Biometric/locking: App supports biometric authentication and locking via preferences and
       ViewModel state.
     - Export: Data export to JSON is available via ViewModel.
