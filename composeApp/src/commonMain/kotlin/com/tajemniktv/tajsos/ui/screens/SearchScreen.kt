@@ -135,13 +135,20 @@ fun SearchScreen(
 
         if (projects.isNotEmpty() || areas.isNotEmpty() || searchLinkedToFilter != null)
         {
+            val linkedNode = remember(allNodes, searchLinkedToFilter) {
+                if (searchLinkedToFilter != null) {
+                    allNodes.find { it.node.id == searchLinkedToFilter }?.node
+                } else {
+                    null
+                }
+            }
+
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 if (searchLinkedToFilter != null)
                 {
-                    val linkedNode = allNodes.find { it.node.id == searchLinkedToFilter }?.node
                     item {
                         FilterChip(
                             selected = true,
