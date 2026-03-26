@@ -242,7 +242,7 @@ fun TrackScreen(viewModel: MainViewModel) {
 
         if (trackEntries.isEmpty()) {
             item {
-                EmptyState("No tracking history yet.")
+                EmptyState(stringResource(Res.string.track_empty))
             }
         } else {
             items(trackEntries, key = { it.id }) { entry ->

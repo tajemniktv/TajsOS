@@ -318,11 +318,6 @@ class MainViewModel(
         preferencesRepository.isBiometricEnabled
             .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
-    /** Current app theme mode preference (`true` = dark, `false` = light). */
-    val isDarkThemeEnabled: StateFlow<Boolean> =
-        preferencesRepository.isDarkThemeEnabled
-            .stateIn(viewModelScope, SharingStarted.Eagerly, true)
-
     val enabledPacks: StateFlow<PackRegistry> =
         preferencesRepository.enabledPacks
             .stateIn(
@@ -786,13 +781,6 @@ class MainViewModel(
     fun setBiometricEnabled(enabled: Boolean) {
         viewModelScope.launch {
             preferencesRepository.updateBiometricEnabled(enabled)
-        }
-    }
-
-    /** Updates and persists the app theme mode preference. */
-    fun setDarkThemeEnabled(enabled: Boolean) {
-        viewModelScope.launch {
-            preferencesRepository.updateDarkThemeEnabled(enabled)
         }
     }
 

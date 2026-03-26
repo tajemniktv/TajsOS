@@ -219,9 +219,6 @@
     <string name="settings_biometric_lock">BIOMETRIC LOCK</string>
     <string name="settings_biometric_desc">Require authentication to open</string>
     <string name="settings_biometric_unavailable">Hardware not available</string>
-    <string name="settings_appearance">APPEARANCE</string>
-    <string name="settings_dark_theme">DARK THEME</string>
-    <string name="settings_dark_theme_desc">Turn off to switch to the light theme</string>
     <string name="settings_calendar_integration">CALENDAR INTEGRATION</string>
     <string name="settings_configure_calendars">CONFIGURE EXTERNAL CALENDARS</string>
     <string name="settings_manage_templates">MANAGE TEMPLATES</string>
@@ -622,4 +619,5 @@
     <string name="cd_decision_major">Major decision priority icon</string>
     <string name="cd_decision_tiny">Tiny decision category icon</string>
     <string name="cd_decision_outcome">Decision outcome checkmark</string>
+    <string name="track_empty">No tracking history yet.</string>
 </resources>
