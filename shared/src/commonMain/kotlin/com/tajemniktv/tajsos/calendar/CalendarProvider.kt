@@ -18,12 +18,12 @@ interface CalendarProvider {
     val type: String
 
     /**
-     * Fetches events for the specified provider within a given time range.
+     * Fetches calendar events for the specified provider within the inclusive time range.
      *
-     * @param provider The calendar provider entity containing configuration such as URL.
+     * @param provider The calendar provider entity containing configuration for the source.
      * @param from The start of the time range (inclusive).
      * @param to The end of the time range (inclusive).
-     * @return A list of fetched [CalendarEventEntity] instances.
+     * @return A list of `CalendarEventEntity` instances occurring between `from` and `to`.
      */
     suspend fun fetchEvents(
         provider: CalendarProviderEntity,
@@ -32,13 +32,12 @@ interface CalendarProvider {
     ): List<CalendarEventEntity>
 
     /**
-     * Synchronizes events for the specified provider within a given time range.
-     * By default, it delegates to [fetchEvents].
+     * Synchronizes events for the specified provider within the given inclusive time range.
      *
-     * @param provider The calendar provider entity containing configuration such as URL.
+     * @param provider The calendar provider entity containing configuration (for example, URL and credentials).
      * @param from The start of the time range (inclusive).
      * @param to The end of the time range (inclusive).
-     * @return A list of synchronized [CalendarEventEntity] instances.
+     * @return A list of synchronized CalendarEventEntity instances.
      */
     suspend fun sync(
         provider: CalendarProviderEntity,

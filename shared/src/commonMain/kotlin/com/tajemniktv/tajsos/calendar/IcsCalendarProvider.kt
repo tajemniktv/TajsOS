@@ -146,10 +146,11 @@ private class IcsEventBuilder {
     private var endProp: IcsDateProperty? = null
 
     /**
-     * Processes a single parsed, logical line and updates internal builder state appropriately.
-     * Supported keys include UID, SUMMARY, DESCRIPTION, LOCATION, DTSTART, and DTEND.
+     * Updates the builder's fields from a single unfolded VEVENT line.
      *
-     * @param line A single, unfolded line from the `VEVENT` block.
+     * Recognizes the keys `UID`, `SUMMARY`, `DESCRIPTION`, `LOCATION`, `DTSTART`, and `DTEND`; the value is unescaped and date properties retain their raw key text.
+     *
+     * @param line An unfolded logical line from within a `VEVENT` block, expected in `key:value` form.
      */
     fun processLine(line: String) {
         val parts = line.split(":", limit = 2)
@@ -200,11 +201,13 @@ private class IcsEventBuilder {
     }
 
     /**
-     * Unescapes ICS-specific character encodings like '\n' to standard newline characters.
-     *
-     * @param value The raw string value requiring unescaping.
-     * @return The unescaped standard Kotlin string.
-     */
+             * Decode ICS escape sequences in a property value.
+             *
+             * Replaces ICS escapes (`\\`, `\;`, `\,`, `\n`, `\N`) with their corresponding characters.
+             *
+             * @param value Raw ICS-escaped string.
+             * @return The string with ICS escape sequences unescaped.
+             */
     private fun unescapeIcs(value: String): String =
         value
             .replace("\\\\", "\\")
@@ -234,11 +237,11 @@ private class IcsEventBuilder {
         }
 
     /**
-     * Parses a short 8-character (YYYYMMDD) date string representing an all-day event
-     * into an [Instant] anchored to Midnight UTC.
+     * Convert an 8-character YYYYMMDD date string to an Instant at midnight UTC.
      *
-     * @param cleanDate The 8-character date string to parse.
-     * @return The resulting [Instant].
+     * @param cleanDate The 8-character date string in `YYYYMMDD` format.
+     * @return An Instant representing the parsed date at 00:00 UTC.
+     * @throws IllegalArgumentException if `cleanDate` has fewer than 8 characters.
      */
     private fun parseAllDayDate(cleanDate: String): Instant {
         if (cleanDate.length < 8) throw IllegalArgumentException("Invalid date length")
@@ -249,11 +252,13 @@ private class IcsEventBuilder {
     }
 
     /**
-     * Parses a standard ISO 8601 formatted date/time string from an ICS file.
-     * Accounts for UTC 'Z' markers and localized `TZID` parameters.
+     * Parse an ISO-like datetime value from an ICS date property into an Instant.
      *
-     * @param property The [IcsDateProperty] containing the raw ISO string and metadata key.
-     * @return The resulting [Instant].
+     * Handles values that end with `Z` as UTC; otherwise resolves a timezone from the property's raw key (e.g., `TZID=...`) and converts the local datetime to an Instant.
+     *
+     * @param property The [IcsDateProperty] containing the raw datetime string and the raw key (which may include `TZID`).
+     * @return The parsed Instant representing that point in time.
+     * @throws IllegalArgumentException If the datetime string is shorter than the expected minimum length.
      */
     private fun parseIsoDate(property: IcsDateProperty): Instant {
         val cleanDate = property.value.trim()

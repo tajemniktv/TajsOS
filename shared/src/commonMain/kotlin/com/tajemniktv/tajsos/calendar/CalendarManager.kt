@@ -32,9 +32,13 @@ class CalendarManager(
     )
 
     /**
-     * Iterates through all enabled [CalendarProviderEntity] records and triggers synchronization for each.
-     * Fetches events for a static sliding window (30 days ago to 90 days from now) to minimize overhead.
-     * Fetches events, deduplicates them by `externalId`, and synchronizes the local database.
+     * Synchronizes local calendar events for all enabled calendar providers.
+     *
+     * For each enabled provider this fetches remote events within a fixed sliding window
+     * (from 30 days ago to 90 days from now), deduplicates fetched events by `externalId`
+     * (falling back to `"${title}_${startAt}"` when `externalId` is null), replaces that
+     * provider's local events with the deduplicated set, and updates the provider's
+     * `lastSyncedAt` timestamp.
      */
     suspend fun syncAll() = coroutineScope {
         val allProviders = repository.getAllCalendarProviders().first().orEmpty()
