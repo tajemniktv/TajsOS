@@ -96,6 +96,12 @@ class FilterHelperTest {
                 maxMins = null,
                 energy = null,
                 friction = null,
+                locationContext = null,
+                energyContext = null,
+                deviceContext = null,
+                socialContext = null,
+                timeWindowContext = null,
+                timeHorizon = null,
                 relations = emptyList(),
             )
 
@@ -117,6 +123,12 @@ class FilterHelperTest {
                 maxMins = null,
                 energy = null,
                 friction = null,
+                locationContext = null,
+                energyContext = null,
+                deviceContext = null,
+                socialContext = null,
+                timeWindowContext = null,
+                timeHorizon = null,
                 relations = emptyList(),
             )
 
@@ -144,6 +156,12 @@ class FilterHelperTest {
                 maxMins = null,
                 energy = null,
                 friction = null,
+                locationContext = null,
+                energyContext = null,
+                deviceContext = null,
+                socialContext = null,
+                timeWindowContext = null,
+                timeHorizon = null,
                 relations = emptyList(),
             )
 
@@ -195,6 +213,12 @@ class FilterHelperTest {
             maxMins = maxMins,
             energy = energy,
             friction = friction,
+            locationContext = null,
+            energyContext = null,
+            deviceContext = null,
+            socialContext = null,
+            timeWindowContext = null,
+            timeHorizon = null,
             relations = emptyList(),
         )
         assertEquals(expectedCount, filtered.size)
@@ -246,6 +270,12 @@ class FilterHelperTest {
                 maxMins = null,
                 energy = null,
                 friction = null,
+                locationContext = null,
+                energyContext = null,
+                deviceContext = null,
+                socialContext = null,
+                timeWindowContext = null,
+                timeHorizon = null,
                 relations = relations,
             )
 
