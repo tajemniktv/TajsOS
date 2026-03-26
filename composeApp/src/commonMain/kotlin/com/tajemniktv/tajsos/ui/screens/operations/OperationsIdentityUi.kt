@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.FilterChip
@@ -82,52 +80,44 @@ internal fun CapacityLayer(
         }
     }
 
-    LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
         if (snapshot.loadByArea.isNotEmpty()) {
-            item {
-                GroupedOpenLoopSection(
-                    title = "LOAD BY AREA",
-                    items =
-                        snapshot.loadByArea.entries
-                            .sortedByDescending { it.value }
-                            .map { (areaId, score) ->
-                                val areaName =
-                                    if (areaId == null) {
-                                        "UNASSIGNED"
-                                    } else {
-                                        allAreas.find { it.id == areaId }?.title ?: "UNKNOWN"
-                                    }
-                                "$areaName • $score"
-                            },
-                )
-            }
+            GroupedOpenLoopSection(
+                title = "LOAD BY AREA",
+                items =
+                    snapshot.loadByArea.entries
+                        .sortedByDescending { it.value }
+                        .map { (areaId, score) ->
+                            val areaName =
+                                if (areaId == null) {
+                                    "UNASSIGNED"
+                                } else {
+                                    allAreas.find { it.id == areaId }?.title ?: "UNKNOWN"
+                                }
+                            "$areaName • $score"
+                        },
+            )
         }
         if (snapshot.loadByMode.isNotEmpty()) {
-            item {
-                GroupedOpenLoopSection(
-                    title = "LOAD BY MODE",
-                    items =
-                        snapshot.loadByMode.entries
-                            .sortedByDescending { it.value }
-                            .map { (mode, score) -> "$mode • $score" },
-                )
-            }
+            GroupedOpenLoopSection(
+                title = "LOAD BY MODE",
+                items =
+                    snapshot.loadByMode.entries
+                        .sortedByDescending { it.value }
+                        .map { (mode, score) -> "$mode • $score" },
+            )
         }
         if (snapshot.loadTrend.isNotEmpty()) {
-            item {
-                GroupedOpenLoopSection(
-                    title = "LOAD TREND",
-                    items = snapshot.loadTrend.map { "${it.label} • L${it.load} / F${it.fragmentation}" },
-                )
-            }
+            GroupedOpenLoopSection(
+                title = "LOAD TREND",
+                items = snapshot.loadTrend.map { "${it.label} • L${it.load} / F${it.fragmentation}" },
+            )
         }
         if (snapshot.capacityAwareSuggestions.isNotEmpty()) {
-            item {
-                GroupedOpenLoopSection(
-                    title = "CAPACITY-AWARE SUGGESTIONS",
-                    items = snapshot.capacityAwareSuggestions,
-                )
-            }
+            GroupedOpenLoopSection(
+                title = "CAPACITY-AWARE SUGGESTIONS",
+                items = snapshot.capacityAwareSuggestions,
+            )
         }
     }
 }
@@ -210,51 +200,47 @@ internal fun SignatureLayer(
         }
     }
 
-    LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
         if (missingCapabilities.isNotEmpty()) {
-            item {
-                GroupedOpenLoopSection(
-                    title = "MISSING SIGNATURE CAPABILITIES",
-                    items = missingCapabilities,
-                )
-            }
+            GroupedOpenLoopSection(
+                title = "MISSING SIGNATURE CAPABILITIES",
+                items = missingCapabilities,
+            )
         }
 
-        item {
-            Surface(
-                modifier = Modifier.fillMaxWidth(),
-                color = TactileTheme.Surface,
-                shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                border = BorderStroke(1.dp, TactileTheme.Border),
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            color = TactileTheme.Surface,
+            shape = RoundedCornerShape(TactileTheme.RadiusMd),
+            border = BorderStroke(1.dp, TactileTheme.Border),
+        ) {
+            Column(
+                modifier = Modifier.padding(TactileTheme.SpacingMd),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                Column(
-                    modifier = Modifier.padding(TactileTheme.SpacingMd),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
+                Text(
+                    "WORK DATE VS DUE DATE",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TactileTheme.Primary,
+                    fontWeight = FontWeight.Bold,
+                )
+                Text(
+                    "Coverage ${snapshot.workDateDueCoveragePercent}% • Missing work date ${snapshot.workDateDueItems.size}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = TactileTheme.Muted,
+                )
+                if (snapshot.workDateDueItems.isEmpty()) {
                     Text(
-                        "WORK DATE VS DUE DATE",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Primary,
+                        "All active due tasks have a work date.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = TactileTheme.Success,
                         fontWeight = FontWeight.Bold,
                     )
-                    Text(
-                        "Coverage ${snapshot.workDateDueCoveragePercent}% • Missing work date ${snapshot.workDateDueItems.size}",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = TactileTheme.Muted,
-                    )
-                    if (snapshot.workDateDueItems.isEmpty()) {
-                        Text(
-                            "All active due tasks have a work date.",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = TactileTheme.Success,
-                            fontWeight = FontWeight.Bold,
-                        )
-                    }
                 }
             }
         }
 
-        items(snapshot.workDateDueItems, key = { it.node.id }) { item ->
+        snapshot.workDateDueItems.forEach { item ->
             val node = item.node
             val dueAt = node.dueAt
             val todayWorkAt = Clock.System.now().toEpochMilliseconds()
@@ -338,27 +324,23 @@ internal fun DistinctionLayer(snapshot: LifeOSSecondBrainSnapshot) {
         }
     }
 
-    LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
         if (snapshot.secondBrainQuestions.isNotEmpty()) {
-            item {
-                GroupedOpenLoopSection(
-                    title = "SECOND BRAIN-ORIENTED QUESTIONS",
-                    items = snapshot.secondBrainQuestions.map { it.question },
-                )
-            }
-            items(snapshot.secondBrainQuestions, key = { it.question }) { item ->
+            GroupedOpenLoopSection(
+                title = "SECOND BRAIN-ORIENTED QUESTIONS",
+                items = snapshot.secondBrainQuestions.map { it.question },
+            )
+            snapshot.secondBrainQuestions.forEach { item ->
                 DistinctionQuestionCard(item = item)
             }
         }
 
         if (snapshot.lifeOSQuestions.isNotEmpty()) {
-            item {
-                GroupedOpenLoopSection(
-                    title = "LIFEOS-ORIENTED QUESTIONS",
-                    items = snapshot.lifeOSQuestions.map { it.question },
-                )
-            }
-            items(snapshot.lifeOSQuestions, key = { it.question }) { item ->
+            GroupedOpenLoopSection(
+                title = "LIFEOS-ORIENTED QUESTIONS",
+                items = snapshot.lifeOSQuestions.map { it.question },
+            )
+            snapshot.lifeOSQuestions.forEach { item ->
                 DistinctionQuestionCard(item = item)
             }
         }
@@ -396,16 +378,14 @@ internal fun DirectionLayer(snapshot: CombinedDirectionSnapshot) {
         }
     }
 
-    LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
         if (snapshot.practicalitySignals.isNotEmpty()) {
-            item {
-                GroupedOpenLoopSection(
-                    title = "PRACTICALITY SIGNALS",
-                    items = snapshot.practicalitySignals,
-                )
-            }
+            GroupedOpenLoopSection(
+                title = "PRACTICALITY SIGNALS",
+                items = snapshot.practicalitySignals,
+            )
         }
-        items(snapshot.commitments, key = { it.commitment }) { item ->
+        snapshot.commitments.forEach { item ->
             DirectionCommitmentCard(item = item)
         }
     }
@@ -445,8 +425,8 @@ internal fun CoreShiftLayer(snapshot: CoreLifeOSShiftSnapshot) {
         }
     }
 
-    LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
-        items(snapshot.items, key = { it.criterion }) { item ->
+    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+        snapshot.items.forEach { item ->
             CoreShiftCriterionCard(item = item)
         }
     }
