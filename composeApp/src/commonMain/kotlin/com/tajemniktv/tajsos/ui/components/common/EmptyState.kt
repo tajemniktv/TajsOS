@@ -31,6 +31,7 @@ import tajsos.composeapp.generated.resources.*
  * @param modifier Modifier applied to the root container.
  * @param icon Icon shown above the text.
  * @param description Optional secondary text shown under the primary message; pass `null` to hide it.
+ * @param content Optional content (e.g., buttons) rendered below the primary text.
  */
 @Composable
 fun EmptyState(
@@ -38,6 +39,7 @@ fun EmptyState(
     modifier: Modifier = Modifier,
     icon: ImageVector = Icons.Default.Info,
     description: String? = stringResource(Res.string.empty_state_default_desc),
+    content: @Composable ColumnScope.() -> Unit = {},
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "EmptyStatePulse")
     val alpha by infiniteTransition.animateFloat(
@@ -89,6 +91,8 @@ fun EmptyState(
                         color = TactileTheme.Primary.copy(alpha = 0.2f),
                     )
                 }
+
+                content()
             }
         }
     }

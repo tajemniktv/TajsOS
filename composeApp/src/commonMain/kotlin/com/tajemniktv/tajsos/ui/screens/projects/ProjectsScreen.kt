@@ -19,6 +19,7 @@ import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.nodes.ProjectItem
+import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
@@ -255,13 +256,12 @@ fun ProjectListContent(
     onShowAddDialog: () -> Unit,
 ) {
     if (state.filteredProjects.isEmpty() && state.searchQuery.isEmpty()) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(stringResource(Res.string.projects_empty), color = TactileTheme.Muted)
-                Spacer(modifier = Modifier.height(TactileTheme.SpacingMd))
-                Button(onClick = onShowAddDialog) {
-                    Text(stringResource(Res.string.projects_create_first))
-                }
+        EmptyState(
+            message = stringResource(Res.string.projects_empty)
+        ) {
+            Spacer(modifier = Modifier.height(TactileTheme.SpacingMd))
+            Button(onClick = onShowAddDialog) {
+                Text(stringResource(Res.string.projects_create_first))
             }
         }
     } else {

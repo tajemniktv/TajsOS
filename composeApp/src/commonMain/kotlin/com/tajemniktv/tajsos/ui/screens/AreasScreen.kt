@@ -45,6 +45,7 @@ import com.tajemniktv.tajsos.ui.AreaHealthMetrics
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.cards.AreaHealthOverviewCard
+import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
@@ -104,17 +105,16 @@ fun AreasScreen(
         }
 
         if (areas.isEmpty()) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(stringResource(Res.string.areas_empty), color = TactileTheme.Muted)
-                    Spacer(modifier = Modifier.height(TactileTheme.SpacingMd))
-                    Button(onClick = { showAddDialog = true }) {
-                        Text(stringResource(Res.string.areas_create_first))
-                    }
-                    Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
-                    OutlinedButton(onClick = { viewModel.addSuggestedAreas() }) {
-                        Text("USE SUGGESTED AREAS")
-                    }
+            EmptyState(
+                message = stringResource(Res.string.areas_empty)
+            ) {
+                Spacer(modifier = Modifier.height(TactileTheme.SpacingMd))
+                Button(onClick = { showAddDialog = true }) {
+                    Text(stringResource(Res.string.areas_create_first))
+                }
+                Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
+                OutlinedButton(onClick = { viewModel.addSuggestedAreas() }) {
+                    Text("USE SUGGESTED AREAS")
                 }
             }
         } else {
