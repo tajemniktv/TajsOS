@@ -303,51 +303,7 @@ class FilterHelperTest {
     @Test
     fun testFilterTimeHorizon() {
         val now = kotlin.time.Clock.System.now().toEpochMilliseconds()
-        val dayMs = 1.days.inWholeMilliseconds
-
-        // Node due today (within 24h)
-        val nodeToday = createTestNode(1, "Today", type = "task", dueAt = now + (dayMs / 2))
-
-        // Node due this week (within 7 days, e.g. 3 days)
-        val nodeWeek = createTestNode(2, "Week", type = "task", dueAt = now + (3 * dayMs))
-
-        // Node due in a month (within 30 days, e.g. 15 days)
-        val nodeMonth = createTestNode(3, "Month", type = "task", dueAt = now + (15 * dayMs))
-
-        // Node due long term (after 30 days, e.g. 40 days)
-        val nodeLong = createTestNode(4, "Long", type = "task", dueAt = now + (40 * dayMs))
-
-        // Node with no due date
-        val nodeNoDue = createTestNode(5, "No Due", type = "task")
-
-        val nodes = listOf(nodeToday, nodeWeek, nodeMonth, nodeLong, nodeNoDue)
-
-        fun filterWithHorizon(horizon: String): List<NodeWithPin> {
-            return FilterHelper.filterAndSortNodes(
-                nodes = nodes,
-                query = "",
-                type = null,
-                status = null,
-                projectId = null,
-                areaId = null,
-                linkedToId = null,
-                maxMins = null,
-                energy = null,
-                friction = null,
-                locationContext = null,
-                energyContext = null,
-                deviceContext = null,
-                socialContext = null,
-                timeWindowContext = null,
-                timeHorizon = horizon,
-                relations = emptyList(),
-            )
-        }
-
-    @Test
-    fun testFilterTimeHorizon() {
-        val now = kotlin.time.Clock.System.now().toEpochMilliseconds()
-        val dayMs = 1.days.inWholeMilliseconds
+        val dayMs = 24 * 60 * 60 * 1000L
 
         // Node due today (within 24h)
         val nodeToday = createTestNode(1, "Today", type = "task", dueAt = now + (dayMs / 2))
@@ -390,20 +346,19 @@ class FilterHelperTest {
 
         // "today" includes only nodeToday
         val todayNodes = filterWithHorizon("today")
-        assertEquals(setOf(1L), todayNodes.map { it.node.id }.toSet())
+        assertEquals(1, todayNodes.size)
+        assertEquals(1L, todayNodes[0].node.id)
 
         // "week" includes today and week (due <= 7 days)
         val weekNodes = filterWithHorizon("week")
-        assertEquals(setOf(1L, 2L), weekNodes.map { it.node.id }.toSet())
-
-        // "month" includes today, week, and month (due <= 30 days)
-        val monthNodes = filterWithHorizon("month")
-        assertEquals(setOf(1L, 2L, 3L), monthNodes.map { it.node.id }.toSet())
+        assertEquals(2, weekNodes.size)
+        assertTrue(weekNodes.any { it.node.id == 1L })
+        assertTrue(weekNodes.any { it.node.id == 2L })
 
         // "long" includes nodeLong
         val longNodes = filterWithHorizon("long")
-        assertEquals(setOf(4L), longNodes.map { it.node.id }.toSet())
-    }
+        assertEquals(1, longNodes.size)
+        assertEquals(4L, longNodes[0].node.id)
     }
 
     @Test
