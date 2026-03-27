@@ -32,8 +32,18 @@ class AppRepository(
     private val userDao: UserDao,
     private val medicationDao: MedicationDao,
 ) {
+    /**
+     * Retrieves a stream of all nodes stored in the database, including their today-pin status.
+     *
+     * @return A Flow emitting a list of [NodeWithPin] objects.
+     */
     fun getAllNodes(): Flow<List<NodeWithPin>> = nodeDao.getAllNodesWithPins()
 
+    /**
+     * Retrieves a stream of active nodes that are assigned to the current local date.
+     *
+     * @return A Flow emitting a list of active [NodeEntity] objects for today.
+     */
     fun getTodayNodes(): Flow<List<NodeEntity>> {
         val today =
             kotlin.time.Clock.System
@@ -44,6 +54,12 @@ class AppRepository(
         return nodeDao.getTodayNodes(today)
     }
 
+    /**
+     * Retrieves a single node by its ID.
+     *
+     * @param id The ID of the node to retrieve.
+     * @return The [NodeEntity] if found, or `null` otherwise.
+     */
     suspend fun getNodeById(id: Long): NodeEntity? = nodeDao.getNodeById(id)
 
     // ... existing methods ...
@@ -66,6 +82,16 @@ class AppRepository(
 
     suspend fun deleteCalendarEventsByProvider(providerId: Long) = calendarEventDao.deleteEventsByProvider(providerId)
 
+    /**
+     * Inserts a new node into the database.
+     *
+     * **Side effects:**
+     * - Logs a "NODE_CREATED" event.
+     * - Synchronizes "BELONGS_TO" relations for the node's associated project and area.
+     *
+     * @param node The node entity to insert.
+     * @return The auto-generated ID of the newly inserted node.
+     */
     suspend fun insertNode(node: NodeEntity): Long {
         val id = nodeDao.insertNode(node)
         logEvent("NODE_CREATED", id)
@@ -73,6 +99,36 @@ class AppRepository(
         return id
     }
 
+    /**
+     * Updates an existing node in the database.
+     *
+     * **Side effects:**
+     * - Logs a "NODE_COMPLETED" event if the status changes to "done".
+     * - Logs a "NODE_ARCHIVED" event if the status changes to "archived".
+     * - Logs "NODE_FROZEN" or "NODE_UNFROZEN" if the frozen state changes.
+     * - Synchronizes "BELONGS_TO" relations if the node's projectId or areaId changes.
+     *
+     * @param node The updated node entity to save.
+     */
+    suspend fun updateNode(node: NodeEntity) {
+        val oldNode = nodeDao.getNodeById(node.id) ?: return
+        nodeDao.updateNode(node)
+        
+        if (oldNode.status != node.status) {
+            when (node.status) {
+                "done" -> logEvent("NODE_COMPLETED", node.id)
+                "archived" -> logEvent("NODE_ARCHIVED", node.id)
+            }
+        }
+        
+        if (oldNode.isFrozen != node.isFrozen) {
+            logEvent(if (node.isFrozen) "NODE_FROZEN" else "NODE_UNFROZEN", node.id)
+        }
+
+        if (oldNode.projectId != node.projectId || oldNode.areaId != node.areaId) {
+            syncBelongsToRelations(node.id, node.projectId, node.areaId)
+        }
+    }
     suspend fun updateNode(node: NodeEntity) {
         val oldNode = nodeDao.getNodeById(node.id)
         nodeDao.updateNode(node)
@@ -122,8 +178,21 @@ class AppRepository(
         }
     }
 
+    /**
+     * Permanently deletes a node from the database.
+     *
+     * @param node The node to delete.
+     */
     suspend fun deleteNode(node: NodeEntity) = nodeDao.deleteNode(node)
 
+    /**
+     * Pins a node to the current day ("Today" view) by creating a [TodayPinEntity].
+     *
+     * **Side effects:**
+     * - Logs a "TODAY_ASSIGNED" event.
+     *
+     * @param nodeId The ID of the node to pin.
+     */
     suspend fun pinToToday(nodeId: Long) {
         val today =
             kotlin.time.Clock.System
@@ -135,8 +204,19 @@ class AppRepository(
         logEvent("TODAY_ASSIGNED", nodeId)
     }
 
+    /**
+     * Removes a node's pin from the "Today" view.
+     *
+     * @param nodeId The ID of the node to unpin.
+     */
     suspend fun unpinFromToday(nodeId: Long) = nodeDao.unpinFromToday(nodeId)
 
+    /**
+     * Observes whether a specific node is pinned to today.
+     *
+     * @param nodeId The ID of the node to check.
+     * @return A Flow emitting true if the node is pinned to today, false otherwise.
+     */
     fun isPinnedToToday(nodeId: Long): Flow<Boolean> = nodeDao.isPinnedToToday(nodeId)
 
     /**
