@@ -45,6 +45,7 @@ import com.tajemniktv.tajsos.ui.AreaHealthMetrics
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.cards.AreaHealthOverviewCard
+import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
@@ -55,6 +56,8 @@ import tajsos.composeapp.generated.resources.areas_dialog_name
 import tajsos.composeapp.generated.resources.areas_dialog_new
 import tajsos.composeapp.generated.resources.areas_empty
 import tajsos.composeapp.generated.resources.areas_title
+import tajsos.composeapp.generated.resources.add_suggested_areas
+import tajsos.composeapp.generated.resources.use_suggested_areas
 
 @Composable
 fun AreasScreen(
@@ -99,22 +102,21 @@ fun AreasScreen(
                 onClick = { viewModel.addSuggestedAreas() },
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text("ADD SUGGESTED AREAS")
+                Text(stringResource(Res.string.add_suggested_areas))
             }
         }
 
         if (areas.isEmpty()) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(stringResource(Res.string.areas_empty), color = TactileTheme.Muted)
-                    Spacer(modifier = Modifier.height(TactileTheme.SpacingMd))
-                    Button(onClick = { showAddDialog = true }) {
-                        Text(stringResource(Res.string.areas_create_first))
-                    }
-                    Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
-                    OutlinedButton(onClick = { viewModel.addSuggestedAreas() }) {
-                        Text("USE SUGGESTED AREAS")
-                    }
+            EmptyState(
+                message = stringResource(Res.string.areas_empty)
+            ) {
+                Spacer(modifier = Modifier.height(TactileTheme.SpacingMd))
+                Button(onClick = { showAddDialog = true }) {
+                    Text(stringResource(Res.string.areas_create_first))
+                }
+                Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
+                OutlinedButton(onClick = { viewModel.addSuggestedAreas() }) {
+                    Text(stringResource(Res.string.use_suggested_areas))
                 }
             }
         } else {
