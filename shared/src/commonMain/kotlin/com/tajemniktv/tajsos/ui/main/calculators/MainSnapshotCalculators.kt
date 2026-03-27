@@ -10,6 +10,16 @@ import kotlin.math.sqrt
 import kotlin.time.Clock
 import kotlin.time.Instant
 
+/**
+ * Aggregates analytical tracking data to compute a comprehensive [InsightsData] payload
+ * detailing focus hours, completion rates, backlog pressure, and identified chaotic patterns.
+ *
+ * @param nodes The complete list of active nodes in the system.
+ * @param sessions A list of recorded [FocusSessionEntity] records tracking deep work time.
+ * @param tracks A list of recorded [TrackEntryEntity] records detailing mood, energy, and sleep.
+ * @param projects A curated list of nodes strictly identified as "project" entities.
+ * @return An analytical [InsightsData] snapshot summarizing the user's historical performance.
+ */
 fun calculateInsights(
     nodes: List<NodeWithPin>,
     sessions: List<FocusSessionEntity>,
@@ -417,6 +427,14 @@ fun calculateInsights(
     )
 }
 
+/**
+ * Groups all nodes by their configured Area of Responsibility assignment,
+ * calculating stress loads, neglect days, and balancing scores to produce an [AreaHealthSnapshot].
+ *
+ * @param nodes The complete list of active nodes in the system.
+ * @param areas A curated list of active nodes identified as Areas of Responsibility.
+ * @return An [AreaHealthSnapshot] detailing which life domains are thriving and which are neglected.
+ */
 fun calculateAreaHealthSnapshot(
     nodes: List<NodeWithPin>,
     areas: List<NodeEntity>,
@@ -548,6 +566,15 @@ fun calculateAreaHealthSnapshot(
     )
 }
 
+/**
+ * Scans the user's node database for unresolved inputs (items in the inbox or tasks without context),
+ * grouping them by urgency and aging decay to generate an [OpenLoopsSnapshot].
+ *
+ * @param nodes The complete list of active nodes in the system.
+ * @param people A curated list of nodes strictly identified as "person" entities.
+ * @param relations The complete list of formal bidirectional database links.
+ * @return An [OpenLoopsSnapshot] identifying cognitive friction caused by unprocessed items.
+ */
 fun calculateOpenLoopsSnapshot(
     nodes: List<NodeWithPin>,
     relations: List<RelationEntity>,
@@ -555,6 +582,11 @@ fun calculateOpenLoopsSnapshot(
     val now = Clock.System.now().toEpochMilliseconds()
     val nodesById = nodes.associateBy { it.node.id }
 
+    /**
+     * Iterates through all relations linked to an open loop to identify if it is currently waiting on a specific person.
+     * @param openLoopId The unique ID of the open loop node.
+     * @return A Pair containing the linked person's ID and name, or null if no dependency exists.
+     */
     fun findRelatedPerson(openLoopId: Long): Pair<Long, String>? {
         val relatedPersonId =
             relations.firstNotNullOfOrNull { relation ->
@@ -699,6 +731,13 @@ fun openLoopDecayScore(
     ).coerceIn(0, 100)
 }
 
+/**
+ * Evaluates active tasks tagged with maintenance parameters (e.g., "recurring", "chore")
+ * and calculates their specific due dates and overdue statuses to generate a [MaintenanceSnapshot].
+ *
+ * @param tasks A comprehensive list of all non-archived task nodes.
+ * @return A [MaintenanceSnapshot] summarizing the user's administrative and routine debt.
+ */
 fun calculateMaintenanceSnapshot(nodes: List<NodeWithPin>): com.tajemniktv.tajsos.ui.MaintenanceSnapshot {
     val now = Clock.System.now().toEpochMilliseconds()
     val soonHorizon = now + (7 * 24 * 60 * 60 * 1000L)
@@ -832,6 +871,14 @@ fun maintenanceUrgency(
         }
 }
 
+/**
+ * Scans all node entities evaluating explicit due dates, implicit horizons,
+ * and project phase assignments to build a [TimeArchitectureSnapshot] stratifying tasks by timeline.
+ *
+ * @param nodes The complete list of active nodes in the system.
+ * @param projects A curated list of nodes strictly identified as "project" entities.
+ * @return A [TimeArchitectureSnapshot] organizing nodes into layers (e.g., today, week, semester).
+ */
 fun calculateTimeArchitectureSnapshot(
     nodes: List<NodeWithPin>,
     todayLayerNodes: List<NodeEntity>,
@@ -961,6 +1008,11 @@ fun calculateRelationshipSnapshot(
             .filter { it.node.type == "person" && it.node.status == "active" }
             .sortedBy { it.node.title.lowercase() }
 
+    /**
+     * Filters the global node list to extract all tasks or notes explicitly mentioning or linked to a specific person.
+     * @param personId The unique ID of the person entity.
+     * @return A list of node entities formally related to the person.
+     */
     fun relatedForPerson(personId: Long): List<NodeWithPin> =
         relations
             .mapNotNull { relation ->
@@ -1127,6 +1179,13 @@ fun calculatePhysicalLogisticsSnapshot(
     val activeNodes = nodes.filter { it.node.status == "active" }
     val activeTasks = activeNodes.filter { it.node.type == "task" }
 
+    /**
+     * Filters the global node list to extract all active tasks related to a specific physical location node.
+     * Includes tasks physically bound via explicit links AND tasks heuristically included when their locationContext
+     * matches campus/home patterns and the place title contains corresponding keywords.
+     * @param placeId The unique ID of the physical place node.
+     * @return A list of task nodes physically bound to or heuristically associated with the specified place.
+     */
     fun relatedTasksForPlace(placeId: Long): List<NodeWithPin> {
         val relationTaskIds =
             relations
@@ -1234,6 +1293,12 @@ fun calculatePhysicalLogisticsSnapshot(
                 }
             }
 
+    /**
+     * A fast lookup utility verifying if a specific node contains any of the provided tracking tags.
+     * @param node The wrapped node entity with its associated tags.
+     * @param tags A vararg of string tags to check (e.g., 'packing', 'dont_forget').
+     * @return True if at least one matching tag is attached.
+     */
     fun hasLogisticsTag(
         node: NodeWithPin,
         vararg tags: String,
@@ -1350,6 +1415,11 @@ fun calculatePersonalRulesSnapshot(
                     )
             }.sortedByDescending { it.node.updatedAt }
 
+    /**
+     * Filters the global node list to isolate all nodes actively tagged with a specific string.
+     * @param tag The exact string name of the tag to search for.
+     * @return A subset list of nodes containing the requested tag.
+     */
     fun byTag(tag: String): List<NodeWithPin> = activeRules.filter { item -> item.tags.any { it.normalizedName == tag } }
 
     val antiGoals = byTag("rule_anti_goal")
@@ -1395,6 +1465,12 @@ fun calculatePersonalRulesSnapshot(
 fun calculateVaultsSnapshot(nodes: List<NodeWithPin>): com.tajemniktv.tajsos.ui.VaultsSnapshot {
     val active = nodes.filter { it.node.status == "active" }
 
+    /**
+     * Verifies if a specific node contains a specific string tag.
+     * @param node The wrapped node entity with its tags.
+     * @param tag The exact string tag name to search for.
+     * @return True if the tag is present.
+     */
     fun hasTag(
         node: NodeWithPin,
         tag: String,
@@ -1473,6 +1549,13 @@ fun calculateVaultsSnapshot(nodes: List<NodeWithPin>): com.tajemniktv.tajsos.ui.
     )
 }
 
+/**
+ * Assesses the user's current systemic workload—including fragmentation from context switching,
+ * overwhelming numbers of active projects, and unresolved admin debt—to generate a [CapacitySnapshot].
+ *
+ * @param inputs A bundled dataset providing current node volumes, maintenance debt, and open loops.
+ * @return A [CapacitySnapshot] identifying execution pressure and potential burnout risks.
+ */
 fun calculateCapacitySnapshot(
     nodes: List<NodeWithPin>,
     projects: List<NodeEntity>,
@@ -1553,6 +1636,12 @@ fun calculateCapacitySnapshot(
         ).coerceIn(0, 100)
     loadByArea[null] = unassignedLoad
 
+    /**
+     * Computes a heuristic load score for a specific focus mode based on precomputed signals.
+     * The score is derived from combining load, fragmentation, admin debt, and open loop metrics according to mode-specific logic.
+     * @param key The unique string identifier of the focus mode.
+     * @return An integer score (0-100) representing the computed workload heuristic for that mode.
+     */
     fun modeLoadForKey(key: String): Int =
         when (key)
         {
@@ -2225,6 +2314,14 @@ fun calculateCoreLifeOSShiftSnapshot(
     )
 }
 
+/**
+ * Evaluates nodes structurally bound to academic templates or metadata to generate
+ * a specialized [StudentBoardState] dashboard payload for studying.
+ *
+ * @param nodes The complete list of active nodes in the system.
+ * @param relations The complete list of formal database links between nodes.
+ * @return A [StudentBoardState] snapshot tracking course progress, mastery levels, and exams.
+ */
 fun calculateStudentBoardState(
     nodes: List<NodeWithPin>,
     relations: List<RelationEntity>,
