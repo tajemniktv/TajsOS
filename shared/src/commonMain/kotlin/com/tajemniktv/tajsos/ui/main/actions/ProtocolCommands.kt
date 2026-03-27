@@ -18,6 +18,19 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlin.time.Clock
 
+/**
+ * A dedicated command dispatcher responsible for managing structured protocols and actionable playbooks.
+ *
+ * This class isolates the database and business logic required to instantiate, track, trigger,
+ * and conclude system-defined protocols (e.g., "morning_startup") or custom playbooks.
+ *
+ * @property repository The [AppRepository] used for direct database updates.
+ * @property scope The [CoroutineScope] in which all asynchronous database operations execute.
+ * @property currentNodes A lambda supplier providing real-time access to the list of all active nodes.
+ * @property currentTags A lambda supplier providing real-time access to the list of all tags.
+ * @property protocolTemplates A lambda supplier providing available [TransitionProtocolTemplate] blueprints.
+ * @property playbookTemplates A lambda supplier providing available [PlaybookTemplate] blueprints.
+ */
 class ProtocolCommands(
     private val repository: AppRepository,
     private val scope: CoroutineScope,
@@ -26,6 +39,15 @@ class ProtocolCommands(
     private val protocolTemplates: () -> List<TransitionProtocolTemplate>,
     private val playbookTemplates: () -> List<PlaybookTemplate>,
 ) {
+    /**
+     * Executes or instantiates a specific transition protocol based on its label.
+     *
+     * If the protocol node does not exist, a new protocol node is created from the best-matching [TransitionProtocolTemplate].
+     * If the node already exists, a history row is recorded for the new trigger without altering the existing node metadata or content.
+     *
+     * @param protocolLabel The string identifier or title of the protocol to trigger.
+     * @param source The structural context or UI location where the trigger originated (defaults to "dashboard").
+     */
     fun triggerProtocol(
         protocolLabel: String,
         source: String = "dashboard",

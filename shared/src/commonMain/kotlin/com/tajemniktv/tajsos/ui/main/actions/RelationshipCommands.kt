@@ -15,6 +15,20 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.plus
 import kotlin.time.Clock
 
+/**
+ * A specialized command dispatcher responsible for all interpersonal and CRM (Customer Relationship Management) operations.
+ *
+ * This class abstracts the logic required to log contact dates, schedule follow-ups, apply relationship-specific tags,
+ * and seamlessly instantiate structured templates (e.g., meeting agendas or gift trackers) explicitly linked to people.
+ *
+ * @property repository The [AppRepository] used for direct database updates.
+ * @property scope The [CoroutineScope] in which all asynchronous database operations execute.
+ * @property currentTemplates A lambda supplier providing access to all registered user templates.
+ * @property addNodeForResult A complex lambda function that creates a node and returns its inserted ID.
+ * @property addRelation A lambda function injected to formally link two nodes together in the database.
+ * @property updateNode A standard lambda function injected to trigger a core node update flow.
+ * @property setTagOnNode A suspended lambda function injected to securely attach or detach string tags.
+ */
 class RelationshipCommands(
     private val repository: AppRepository,
     private val scope: CoroutineScope,
@@ -24,11 +38,24 @@ class RelationshipCommands(
     private val updateNode: (NodeEntity) -> Unit,
     private val setTagOnNode: suspend (Long, String, Boolean) -> Unit,
 ) {
+    /**
+     * Marks the current moment as the last point of contact for a specific person.
+     * Silently fails if the node is not of type "person".
+     *
+     * @param person The [NodeEntity] representing the person.
+     */
     fun setPersonLastContactNow(person: NodeEntity) {
         if (person.type != "person") return
         updateNode(person.copy(lastContactAt = Clock.System.now().toEpochMilliseconds()))
     }
 
+    /**
+     * Schedules a formal follow-up date for a specific person by calculating a future epoch timestamp.
+     * Silently fails if the node is not of type "person".
+     *
+     * @param person The [NodeEntity] representing the person.
+     * @param days The number of days into the future to schedule the follow-up, or null to clear it.
+     */
     fun setPersonFollowUpInDays(
         person: NodeEntity,
         days: Int?,

@@ -18,21 +18,44 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 
+/**
+ * A utility class responsible for initializing and populating the local database with core operational data
+ * during the initial onboarding flow or upon system launch.
+ *
+ * It generates default entities such as focus modes, academic templates, logistical systems,
+ * and base user data if the local storage is detected as entirely empty.
+ *
+ * @property repository The [AppRepository] used for direct database inserts.
+ * @property preferencesRepository The [PreferencesRepository] used to handle default tier access checks.
+ * @property allNodes A reactive [StateFlow] representing the current list of all nodes, used to determine if the DB is empty.
+ * @property user A reactive [StateFlow] representing the current user entity state.
+ */
 class AppBootstrapper(
     private val repository: AppRepository,
     private val preferencesRepository: PreferencesRepository,
     private val allNodes: StateFlow<List<NodeWithPin>>,
     private val user: StateFlow<UserEntity?>,
 ) {
+    /**
+     * Executes the comprehensive bootstrap sequence.
+     *
+     * It unconditionally ensures default pack access, seeds static modes and templates, sets up the user entity,
+     * and triggers sample onboarding data generation only if the node list is empty when checked.
+     */
     suspend fun bootstrap() {
         preferencesRepository.ensureDefaultPackAccess()
         seedDefaultModes()
         seedStudentTemplates()
         seedLifeLogisticsTemplates()
         seedUserData()
-        allNodes.filter { it.isNotEmpty() }.firstOrNull() ?: seedOnboardingData()
+        if (allNodes.value.isEmpty()) {
+            seedOnboardingData()
+        }
     }
 
+    /**
+     * Creates the baseline [UserEntity] if it doesn't already exist.
+     */
     private suspend fun seedUserData() {
         if (user.first() == null) {
             repository.insertUser(UserEntity(name = "OPERATOR"))
@@ -112,6 +135,9 @@ class AppBootstrapper(
         )
     }
 
+    /**
+     * Instantiates the core academic templates within the system (e.g., Class Lecture, Reading Summary).
+     */
     private suspend fun seedStudentTemplates() {
         val existingNames =
             repository
@@ -198,6 +224,10 @@ class AppBootstrapper(
         }
     }
 
+    /**
+     * Identifies if default system modes exist (e.g., Work, Recovery, Chaos), and inserts them
+     * alongside their associated [ModePreferenceEntity] configurations if they are missing.
+     */
     private suspend fun seedDefaultModes() {
         val existingModes = repository.getAllModes().first()
         val existingKeys = existingModes.map { it.key }
