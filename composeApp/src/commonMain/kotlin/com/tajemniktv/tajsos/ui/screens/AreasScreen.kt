@@ -56,6 +56,8 @@ import tajsos.composeapp.generated.resources.areas_dialog_name
 import tajsos.composeapp.generated.resources.areas_dialog_new
 import tajsos.composeapp.generated.resources.areas_empty
 import tajsos.composeapp.generated.resources.areas_title
+import tajsos.composeapp.generated.resources.add_suggested_areas
+import tajsos.composeapp.generated.resources.use_suggested_areas
 
 @Composable
 fun AreasScreen(
@@ -100,7 +102,7 @@ fun AreasScreen(
                 onClick = { viewModel.addSuggestedAreas() },
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text("ADD SUGGESTED AREAS")
+                Text(stringResource(Res.string.add_suggested_areas))
             }
         }
 
@@ -114,7 +116,7 @@ fun AreasScreen(
                 }
                 Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
                 OutlinedButton(onClick = { viewModel.addSuggestedAreas() }) {
-                    Text("USE SUGGESTED AREAS")
+                    Text(stringResource(Res.string.use_suggested_areas))
                 }
             }
         } else {

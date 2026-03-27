@@ -397,6 +397,8 @@
     <string name="areas_dialog_name">Name</string>
     <string name="areas_dialog_create">CREATE</string>
     <string name="areas_dialog_cancel">CANCEL</string>
+    <string name="use_suggested_areas">USE SUGGESTED AREAS</string>
+    <string name="add_suggested_areas">ADD SUGGESTED AREAS</string>
 
     <!-- Calendar Screen -->
     <string name="cal_agenda_title">AGENDA // %1$s</string>
