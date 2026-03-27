@@ -185,10 +185,10 @@ data class CapacitySnapshot(
  * @param logisticsVaultEnabled True if the user utilizes the physical places and packing lists feature.
  * @param loadCapacityEnabled True if the user estimates task duration to monitor their workload capacity.
  * @param personalPrinciplesPlaybooksEnabled True if the user maintains explicit behavioral rules and playbooks.
- * @param modeOfLifeLabel A calculated descriptor of the user's current holistic system state (e.g., "Survival Mode", "Thriving").
+ * @param modeOfLifeLabel A calculated descriptor of the user's current holistic system state, emitting labels like "stabilization", "firefighting", or "execution".
  * @param modeOfLifeReason The specific metric or trigger causing the [modeOfLifeLabel] classification.
- * @param workDateDueCoveragePercent The percentage of active tasks that have an explicit due date assigned.
- * @param workDateDueItems A list of the specific tasks contributing to the due date coverage metric.
+ * @param workDateDueCoveragePercent The percentage of work/start-date coverage among tasks that already have due-dates.
+ * @param workDateDueItems The list of items missing a work/start-date (the items that reduce coverage).
  */
 data class LifeOSSignatureSnapshot(
     val operatingModesEnabled: Boolean = false,
@@ -285,8 +285,8 @@ data class CoreLifeOSShiftItem(
  *
  * @param items A list of [CoreLifeOSShiftItem] elements tracking paradigm adoption.
  * @param completionPercent The overall progress percentage towards the core shift.
- * @param connectedProperly True if the underlying data layer is accurately feeding the shift metrics.
- * @param integrationWarning An optional warning if older legacy behaviors are conflicting with the new shift.
+ * @param connectedProperly Derived from completionPercent; true when completionPercent meets or exceeds the configured threshold in calculateCoreLifeOSShiftSnapshot().
+ * @param integrationWarning The fallback indicator shown when the threshold is not met.
  */
 data class CoreLifeOSShiftSnapshot(
     val items: List<CoreLifeOSShiftItem> = emptyList(),

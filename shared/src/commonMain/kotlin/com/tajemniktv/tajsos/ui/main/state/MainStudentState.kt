@@ -79,22 +79,22 @@ data class StudentMasteryItem(
  * @param researchIdeaVault A list of nodes capturing ideas or hypotheses for future research papers.
  * @param quoteBank A list of nodes containing saved quotes from academic readings or lectures.
  * @param caseReflectionNotes A list of nodes detailing personal reflections on specific academic cases.
- * @param readingBacklog A list of reading assignments or papers that are queued but not yet started.
+ * @param readingBacklog Populated from all active reading notes (not just queued ones).
  * @param revisitBeforeExam A list of nodes explicitly flagged to be reviewed prior to an upcoming exam.
  * @param readingProgress A tracked list of [StudentProgressItem] objects reflecting ongoing reading materials.
  * @param assignmentDeadlines A list of nodes sorted or filtered by strict upcoming academic deadlines.
  * @param topicMastery A list of [StudentMasteryItem] objects indicating mastery levels for specific study topics.
  * @param courseDashboard A list of [StudentCourseSummary] objects summarizing all active courses.
  * @param semesterDashboard A list of [StudentSemesterSummary] objects summarizing broader semester statistics.
- * @param examCountdownNode The specific [NodeWithPin] representing the next major upcoming exam.
+ * @param examCountdownNode Chosen as the first exam-like node found (not necessarily the next chronological exam).
  * @param examCountdownDays The calculated number of days remaining until the [examCountdownNode]'s due date.
  * @param topicToNoteLinks The total number of mapped relationships between distinct topics and their supporting notes.
  * @param paperToNoteLinks The total number of mapped relationships between academic papers and summary notes.
  * @param conceptGraphNodes The total number of nodes participating in the student knowledge graph.
  * @param conceptGraphEdges The total number of interconnected edges (relations) within the student knowledge graph.
  * @param flashcardCandidates A list of nodes formatted or suitable to be exported as spaced repetition flashcards.
- * @param studySessionsThisWeek The count of distinct focus sessions tagged for studying during the current week.
- * @param studyMinutesThisWeek The total accumulated minutes spent studying across all sessions in the current week.
+ * @param studySessionsThisWeek Count of sessions attached to active student nodes (any session linked to an active student node).
+ * @param studyMinutesThisWeek Total minutes from sessions attached to active student nodes (any session linked to an active student node).
  */
 data class StudentBoardState(
     val lectureTemplateReady: Boolean = false,

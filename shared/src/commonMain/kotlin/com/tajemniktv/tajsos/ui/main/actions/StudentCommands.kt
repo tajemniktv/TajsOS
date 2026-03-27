@@ -70,6 +70,7 @@ class StudentCommands(
      * value remains safely clamped between 0 and 100.
      *
      * @param node The [NodeEntity] representing the academic topic.
+     * @param topic The optional topic identifier or concept name whose masteryPercent is being set; may be null.
      * @param masteryPercent The integer mastery percentage to apply (0-100).
      */
     fun setTopicMastery(

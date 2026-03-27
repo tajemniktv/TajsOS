@@ -428,11 +428,11 @@ fun calculateInsights(
 }
 
 /**
- * Groups all task entities strictly by their configured `AreaOfLife` assignment,
+ * Groups all nodes by their configured Area of Responsibility assignment,
  * calculating stress loads, neglect days, and balancing scores to produce an [AreaHealthSnapshot].
  *
+ * @param nodes The complete list of active nodes in the system.
  * @param areas A curated list of active nodes identified as Areas of Responsibility.
- * @param allActiveTasks A comprehensive list of all non-archived task nodes.
  * @return An [AreaHealthSnapshot] detailing which life domains are thriving and which are neglected.
  */
 fun calculateAreaHealthSnapshot(
@@ -1180,9 +1180,11 @@ fun calculatePhysicalLogisticsSnapshot(
     val activeTasks = activeNodes.filter { it.node.type == "task" }
 
     /**
-     * Filters the global node list to extract all active tasks explicitly linked to a specific physical location node.
+     * Filters the global node list to extract all active tasks related to a specific physical location node.
+     * Includes tasks physically bound via explicit links AND tasks heuristically included when their locationContext
+     * matches campus/home patterns and the place title contains corresponding keywords.
      * @param placeId The unique ID of the physical place node.
-     * @return A list of task nodes physically bound to the specified place.
+     * @return A list of task nodes physically bound to or heuristically associated with the specified place.
      */
     fun relatedTasksForPlace(placeId: Long): List<NodeWithPin> {
         val relationTaskIds =
@@ -1635,9 +1637,10 @@ fun calculateCapacitySnapshot(
     loadByArea[null] = unassignedLoad
 
     /**
-     * Calculates a localized load score for a specific focus mode by summing the estimated minutes of all tasks belonging to it.
+     * Computes a heuristic load score for a specific focus mode based on precomputed signals.
+     * The score is derived from combining load, fragmentation, admin debt, and open loop metrics according to mode-specific logic.
      * @param key The unique string identifier of the focus mode.
-     * @return An integer representing the total estimated minutes of workload for that mode.
+     * @return An integer score (0-100) representing the computed workload heuristic for that mode.
      */
     fun modeLoadForKey(key: String): Int =
         when (key)

@@ -51,7 +51,7 @@ import com.tajemniktv.tajsos.data.NodeWithPin
  * @param openLoops A raw list of nodes classified as unresolved open loops.
  * @param pendingDecisions A list of nodes explicitly marked as decisions requiring a choice.
  * @param maintenanceQueue A list of active tasks tagged as routine maintenance or chores.
- * @param activeProtocols A list of active routine or transition protocol templates.
+ * @param activeProtocols A list of instantiated protocol/playbook nodes (List<NodeWithPin>) rather than template definitions.
  * @param relationshipsToContact A list of person entities or CRM nodes scheduled for follow-up.
  * @param contextClusteredTasks A map of tasks grouped dynamically by their string context (e.g., "errands").
  * @param currentMode The currently active focus Mode (e.g., "Work", "Relax").
@@ -122,8 +122,8 @@ data class DashboardUIState(
  *
  * @param areaId The unique ID of the Area node.
  * @param areaTitle The title of the Area node.
- * @param status A string descriptor of the area's health (e.g., "stable", "critical").
- * @param activeItems The count of active tasks belonging to this area.
+ * @param status A string descriptor of the area's health using real tokens (e.g., "on_fire", "overloaded", "stable").
+ * @param activeItems The count of all active non-area nodes in this area (not only tasks).
  * @param openLoops The count of unresolved open loops in this area.
  * @param deadlines The count of impending deadlines in this area.
  * @param overdueDeadlines The count of missed deadlines in this area.

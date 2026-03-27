@@ -40,7 +40,7 @@ data class TransitionProtocolItem(
  * A data class representing a single historical execution record of a transition protocol.
  *
  * @param historyId The unique ID of the historical record.
- * @param protocolNodeId The ID of the [NodeWithPin] that was executed.
+ * @param protocolNodeId The ID of the node that was executed.
  * @param protocolLabel The name or title of the protocol at the time of execution.
  * @param executedAt The epoch timestamp when the execution was logged.
  * @param notes Optional notes or reflections recorded during the execution.
@@ -97,12 +97,12 @@ data class RelationshipStatusItem(
  * @param people A general list of all [RelationshipStatusItem] entities currently tracked.
  * @param importantRelationships A subset list of [RelationshipStatusItem] entities explicitly marked as important.
  * @param followUpNeeded A subset list of [RelationshipStatusItem] entities requiring immediate contact or follow-up.
- * @param upcomingImportantDates A subset list of [RelationshipStatusItem] entities with imminent birthdays or anniversaries.
+ * @param upcomingImportantDates Contains items with follow-up dueAt values within the next 30 days (not birthdays/anniversaries).
  * @param replyQueue A list of open loop nodes indicating the user is waiting for an external reply.
  * @param sharedPlans A list of actionable nodes linked collaboratively to specific tracked people.
  * @param professors A subset list of [RelationshipStatusItem] entities categorized academically.
  * @param friendsAndFamily A subset list of [RelationshipStatusItem] entities categorized personally.
- * @param gentlePrompt An optional system-generated reminder to reach out to a specific neglected connection.
+ * @param gentlePrompt A generic nudge derived from backlog size (not a reminder for a specific connection).
  */
 data class RelationshipSnapshot(
     val people: List<RelationshipStatusItem> = emptyList(),

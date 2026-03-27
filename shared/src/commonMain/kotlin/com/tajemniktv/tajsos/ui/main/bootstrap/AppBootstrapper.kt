@@ -22,7 +22,7 @@ import kotlinx.coroutines.flow.firstOrNull
  * A utility class responsible for initializing and populating the local database with core operational data
  * during the initial onboarding flow or upon system launch.
  *
- * It generates default default entities such as focus modes, academic templates, logistical systems,
+ * It generates default entities such as focus modes, academic templates, logistical systems,
  * and base user data if the local storage is detected as entirely empty.
  *
  * @property repository The [AppRepository] used for direct database inserts.
@@ -40,7 +40,7 @@ class AppBootstrapper(
      * Executes the comprehensive bootstrap sequence.
      *
      * It unconditionally ensures default pack access, seeds static modes and templates, sets up the user entity,
-     * and specifically triggers massive sample onboarding data generation only if the node list is absolutely empty.
+     * and triggers sample onboarding data generation only if the node list is empty when checked.
      */
     suspend fun bootstrap() {
         preferencesRepository.ensureDefaultPackAccess()
@@ -48,7 +48,9 @@ class AppBootstrapper(
         seedStudentTemplates()
         seedLifeLogisticsTemplates()
         seedUserData()
-        allNodes.filter { it.isNotEmpty() }.firstOrNull() ?: seedOnboardingData()
+        if (allNodes.value.isEmpty()) {
+            seedOnboardingData()
+        }
     }
 
     /**

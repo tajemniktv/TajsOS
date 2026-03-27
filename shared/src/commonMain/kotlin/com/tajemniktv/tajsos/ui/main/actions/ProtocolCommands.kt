@@ -42,8 +42,8 @@ class ProtocolCommands(
     /**
      * Executes or instantiates a specific transition protocol based on its label.
      *
-     * If the protocol is already running or exists, its metadata is updated to track the new execution trigger.
-     * If the protocol does not exist, a new protocol node is created based on the best matching [TransitionProtocolTemplate].
+     * If the protocol node does not exist, a new protocol node is created from the best-matching [TransitionProtocolTemplate].
+     * If the node already exists, a history row is recorded for the new trigger without altering the existing node metadata or content.
      *
      * @param protocolLabel The string identifier or title of the protocol to trigger.
      * @param source The structural context or UI location where the trigger originated (defaults to "dashboard").

@@ -72,7 +72,7 @@ fun findPlaybookTemplate(
  * This is used to link a playbook explicitly to a focus state.
  *
  * @param modeKey The specific focus mode key to embed in the context, or null.
- * @return A formatted context string (e.g., "playbook|mode=WORK"), or null if blank.
+ * @return A non-null formatted context string (e.g., "playbook" or "playbook|mode=WORK").
  */
 fun buildPlaybookRelationshipContext(modeKey: String?): String? =
     buildString {
