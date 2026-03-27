@@ -111,6 +111,25 @@ class AppRepository(
      * @param node The updated node entity to save.
      */
     suspend fun updateNode(node: NodeEntity) {
+        val oldNode = nodeDao.getNodeById(node.id) ?: return
+        nodeDao.updateNode(node)
+        
+        if (oldNode.status != node.status) {
+            when (node.status) {
+                "done" -> logEvent("NODE_COMPLETED", node.id)
+                "archived" -> logEvent("NODE_ARCHIVED", node.id)
+            }
+        }
+        
+        if (oldNode.isFrozen != node.isFrozen) {
+            logEvent(if (node.isFrozen) "NODE_FROZEN" else "NODE_UNFROZEN", node.id)
+        }
+
+        if (oldNode.projectId != node.projectId || oldNode.areaId != node.areaId) {
+            syncBelongsToRelations(node.id, node.projectId, node.areaId)
+        }
+    }
+    suspend fun updateNode(node: NodeEntity) {
         val oldNode = nodeDao.getNodeById(node.id)
         nodeDao.updateNode(node)
 
