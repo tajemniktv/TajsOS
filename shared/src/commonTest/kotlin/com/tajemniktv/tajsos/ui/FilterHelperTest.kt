@@ -303,7 +303,7 @@ class FilterHelperTest {
     @Test
     fun testFilterTimeHorizon() {
         val now = kotlin.time.Clock.System.now().toEpochMilliseconds()
-        val dayMs = 24 * 60 * 60 * 1000L
+        val dayMs = 1.days.inWholeMilliseconds
 
         // Node due today (within 24h)
         val nodeToday = createTestNode(1, "Today", type = "task", dueAt = now + (dayMs / 2))
