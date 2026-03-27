@@ -40,9 +40,9 @@ class AppRepository(
     fun getAllNodes(): Flow<List<NodeWithPin>> = nodeDao.getAllNodesWithPins()
 
     /**
-     * Retrieves a stream of nodes that are assigned to the current local date.
+     * Retrieves a stream of active nodes that are assigned to the current local date.
      *
-     * @return A Flow emitting a list of [NodeEntity] objects for today.
+     * @return A Flow emitting a list of active [NodeEntity] objects for today.
      */
     fun getTodayNodes(): Flow<List<NodeEntity>> {
         val today =
