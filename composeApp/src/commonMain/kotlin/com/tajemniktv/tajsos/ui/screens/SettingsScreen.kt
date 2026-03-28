@@ -25,12 +25,11 @@ import tajsos.composeapp.generated.resources.*
 /**
  * Renders the app settings screen with security, calendar, templates, data management, and a test crash action.
  *
- * The security section shows a biometric toggle that reflects and updates the ViewModel biometric state and is disabled when biometric hardware is unavailable. The data export action calls the ViewModel to obtain exported JSON and displays a snackbar indicating the exported byte length. The force crash button throws a RuntimeException when tapped.
+ * The security section shows a biometric toggle that reflects and updates the ViewModel biometric state and is disabled when biometric hardware is unavailable. The data export action calls the ViewModel to obtain exported JSON and displays a snackbar indicating the exported byte length.
  *
  * @param viewModel Provides observable biometric state and actions for toggling biometric protection and exporting data.
  * @param onNavigateToCalendarSettings Callback invoked when the user requests calendar integration settings.
  * @param onNavigateToTemplates Callback invoked when the user requests template management.
- * @throws RuntimeException Thrown when the "force crash" button is pressed.
  */
 @Composable
 fun SettingsScreen(
@@ -283,14 +282,6 @@ fun SettingsScreen(
 
             Spacer(Modifier.height(TactileTheme.SpacingLg))
 
-            Button(
-                onClick = { throw RuntimeException("Test Crash") },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                colors = ButtonDefaults.buttonColors(containerColor = TactileTheme.Error),
-            ) {
-                Text(stringResource(Res.string.settings_force_crash))
-            }
         }
     }
 }
