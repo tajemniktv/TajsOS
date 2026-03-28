@@ -18,6 +18,10 @@ class FakeEventLogDao : EventLogDao {
         logsFlow.value = logs.toList()
     }
 
+    override suspend fun insertLogs(logs: List<EventLogEntity>) {
+        logs.forEach { insertLog(it) }
+    }
+
     fun getLogs(): List<EventLogEntity> = logs.toList()
 
     override fun getLogsForNode(nodeId: Long): Flow<List<EventLogEntity>> {

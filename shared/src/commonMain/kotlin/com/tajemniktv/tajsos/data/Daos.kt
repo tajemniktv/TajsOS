@@ -95,6 +95,9 @@ interface NodeDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertNode(node: NodeEntity): Long
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertNodes(nodes: List<NodeEntity>): List<Long>
+
     @Update
     suspend fun updateNode(node: NodeEntity)
 
@@ -152,11 +155,17 @@ interface RelationDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertRelation(relation: RelationEntity)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertRelations(relations: List<RelationEntity>)
+
     @Delete
     suspend fun deleteRelation(relation: RelationEntity)
 
     @Query("DELETE FROM relations WHERE fromNodeId = :nodeId AND relationType = 'BELONGS_TO'")
     suspend fun deleteBelongsToRelations(nodeId: Long)
+
+    @Query("DELETE FROM relations WHERE fromNodeId IN (:nodeIds) AND relationType = 'BELONGS_TO'")
+    suspend fun deleteBelongsToRelations(nodeIds: List<Long>)
 
     @Query("SELECT * FROM relations WHERE fromNodeId = :nodeId AND relationType = 'BELONGS_TO'")
     suspend fun getBelongsToRelations(nodeId: Long): List<RelationEntity>
@@ -203,6 +212,9 @@ interface EventLogDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertLog(log: EventLogEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertLogs(logs: List<EventLogEntity>)
 }
 
 @Dao

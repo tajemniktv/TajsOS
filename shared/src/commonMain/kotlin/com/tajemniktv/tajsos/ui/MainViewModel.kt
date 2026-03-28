@@ -1442,21 +1442,20 @@ class MainViewModel(
                     .filter { it.isNotBlank() }
 
                 if (sections.size > 1) {
-                    for (section in sections) {
+                    val nodesToInsert = sections.map { section ->
                         val lines = section.lines()
                         val title = lines.first().removePrefix("# ").trim()
                         val content = lines.drop(1).joinToString("\n").trim()
 
-                        repository.insertNode(
-                            NodeEntity(
-                                title = title,
-                                content = content,
-                                type = "note",
-                                projectId = node.projectId,
-                                areaId = node.areaId
-                            )
+                        NodeEntity(
+                            title = title,
+                            content = content,
+                            type = "note",
+                            projectId = node.projectId,
+                            areaId = node.areaId
                         )
                     }
+                    repository.insertNodes(nodesToInsert)
                     archiveNode(node)
                 }
             }
