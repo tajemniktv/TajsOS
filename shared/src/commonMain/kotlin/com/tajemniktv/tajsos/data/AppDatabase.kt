@@ -42,7 +42,7 @@ import androidx.room.RoomDatabaseConstructor
         MedicationEntity::class,
         TrackMedicationJoinEntity::class,
     ],
-    version = 25,
+    version = 26,
     exportSchema = false,
 )
 @ConstructedBy(AppDatabaseConstructor::class)
