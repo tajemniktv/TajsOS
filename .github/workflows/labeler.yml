@@ -1,4 +1,4 @@
-name: github
+name: GitHub Labeler
 
 on:
   push:
@@ -11,6 +11,9 @@ on:
     paths:
       - '.github/labels.yml'
       - '.github/workflows/labels.yml'
+
+  workflow_dispatch:
+    
 
 jobs:
   labeler:
