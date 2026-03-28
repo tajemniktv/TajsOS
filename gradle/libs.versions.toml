@@ -27,7 +27,7 @@ mockk = "1.14.9"
 ktor = "3.4.1"
 logback = "1.5.32"
 material = "1.13.0"
-material3 = "1.11.0-alpha04"
+material3 = "1.11.0-alpha05"
 slf4j-android = "2.0.17-0"
 sonarqube = "7.2.3.7755"
 

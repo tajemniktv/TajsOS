@@ -50,6 +50,135 @@ class AppRepositoryTest {
             medicationDao = FakeMedicationDao(),
         )
 
+    // ---- insertNodes tests ----
+
+    @Test
+    fun testInsertNodes_returnsIdsForAllNodes(): TestResult =
+        runTest {
+            val nodes = listOf(
+                NodeEntity(type = "note", title = "Note A"),
+                NodeEntity(type = "note", title = "Note B"),
+                NodeEntity(type = "note", title = "Note C"),
+            )
+
+            val ids = repository.insertNodes(nodes)
+
+            assertEquals(3, ids.size)
+            assertTrue(ids.all { it > 0 }, "All returned IDs should be positive")
+            assertEquals(ids.distinct().size, ids.size, "All IDs should be unique")
+        }
+
+    @Test
+    fun testInsertNodes_logsNodeCreatedForEachNode(): TestResult =
+        runTest {
+            val nodes = listOf(
+                NodeEntity(type = "note", title = "Note A"),
+                NodeEntity(type = "note", title = "Note B"),
+            )
+
+            val ids = repository.insertNodes(nodes)
+
+            val logs = fakeEventLogDao.getLogs()
+            assertEquals(2, logs.size)
+            assertTrue(logs.all { it.eventType == "NODE_CREATED" })
+            assertEquals(ids.toSet(), logs.map { it.nodeId }.toSet())
+        }
+
+    @Test
+    fun testInsertNodes_createsRelationsForProjectId(): TestResult =
+        runTest {
+            val projectId = 42L
+            val nodes = listOf(
+                NodeEntity(type = "note", title = "Note A", projectId = projectId),
+                NodeEntity(type = "note", title = "Note B", projectId = projectId),
+            )
+
+            val ids = repository.insertNodes(nodes)
+
+            val relations = fakeRelationDao.getAllRelations().first()
+            val belongsToRelations = relations.filter { it.relationType == "BELONGS_TO" && it.toNodeId == projectId }
+            assertEquals(2, belongsToRelations.size)
+            assertEquals(ids.toSet(), belongsToRelations.map { it.fromNodeId }.toSet())
+        }
+
+    @Test
+    fun testInsertNodes_createsRelationsForAreaId(): TestResult =
+        runTest {
+            val areaId = 99L
+            val nodes = listOf(
+                NodeEntity(type = "note", title = "Note A", areaId = areaId),
+            )
+
+            val ids = repository.insertNodes(nodes)
+
+            val relations = fakeRelationDao.getAllRelations().first()
+            val belongsToRelations = relations.filter { it.relationType == "BELONGS_TO" && it.toNodeId == areaId }
+            assertEquals(1, belongsToRelations.size)
+            assertEquals(ids[0], belongsToRelations[0].fromNodeId)
+        }
+
+    @Test
+    fun testInsertNodes_createsRelationsForBothProjectAndArea(): TestResult =
+        runTest {
+            val projectId = 10L
+            val areaId = 20L
+            val nodes = listOf(
+                NodeEntity(type = "note", title = "Note A", projectId = projectId, areaId = areaId),
+            )
+
+            val ids = repository.insertNodes(nodes)
+
+            val relations = fakeRelationDao.getAllRelations().first()
+            val belongsToRelations = relations.filter { it.relationType == "BELONGS_TO" && it.fromNodeId == ids[0] }
+            assertEquals(2, belongsToRelations.size)
+            assertTrue(belongsToRelations.any { it.toNodeId == projectId })
+            assertTrue(belongsToRelations.any { it.toNodeId == areaId })
+        }
+
+    @Test
+    fun testInsertNodes_nodesWithoutProjectOrArea_createsNoRelations(): TestResult =
+        runTest {
+            val nodes = listOf(
+                NodeEntity(type = "note", title = "Note A"),
+                NodeEntity(type = "note", title = "Note B"),
+            )
+
+            repository.insertNodes(nodes)
+
+            val relations = fakeRelationDao.getAllRelations().first()
+            assertTrue(relations.isEmpty(), "No relations should be created for nodes without projectId or areaId")
+        }
+
+    @Test
+    fun testInsertNodes_emptyList_returnsEmptyAndNoSideEffects(): TestResult =
+        runTest {
+            val ids = repository.insertNodes(emptyList())
+
+            assertEquals(0, ids.size)
+            assertEquals(0, fakeEventLogDao.getLogs().size)
+            assertTrue(fakeRelationDao.getAllRelations().first().isEmpty())
+        }
+
+    @Test
+    fun testInsertNodes_mixedNodesWithAndWithoutProject(): TestResult =
+        runTest {
+            val projectId = 5L
+            val nodes = listOf(
+                NodeEntity(type = "note", title = "Has Project", projectId = projectId),
+                NodeEntity(type = "note", title = "No Project"),
+            )
+
+            val ids = repository.insertNodes(nodes)
+
+            val logs = fakeEventLogDao.getLogs()
+            assertEquals(2, logs.size, "Should log NODE_CREATED for every node")
+
+            val relations = fakeRelationDao.getAllRelations().first()
+            assertEquals(1, relations.size, "Only the node with projectId should have a relation")
+            assertEquals(ids[0], relations[0].fromNodeId)
+            assertEquals(projectId, relations[0].toNodeId)
+        }
+
     @Test
     fun testInsertNodeLogsEvent(): TestResult =
         runTest {

@@ -19,6 +19,10 @@ class FakeRelationDao : RelationDao {
         relationsFlow.value = relations.toList()
     }
 
+    override suspend fun insertRelations(relations: List<RelationEntity>) {
+        relations.forEach { insertRelation(it) }
+    }
+
     override suspend fun deleteRelation(relation: RelationEntity) {
         relations.removeAll { it.id == relation.id }
         relationsFlow.value = relations.toList()
@@ -26,6 +30,11 @@ class FakeRelationDao : RelationDao {
 
     override suspend fun deleteBelongsToRelations(nodeId: Long) {
         relations.removeAll { it.fromNodeId == nodeId && it.relationType == "BELONGS_TO" }
+        relationsFlow.value = relations.toList()
+    }
+
+    override suspend fun deleteBelongsToRelations(nodeIds: List<Long>) {
+        relations.removeAll { it.fromNodeId in nodeIds && it.relationType == "BELONGS_TO" }
         relationsFlow.value = relations.toList()
     }
 

@@ -9,9 +9,9 @@ updates:
   - package-ecosystem: "gradle"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "daily"
       day: "monday"
-    open-pull-requests-limit: 6
+    open-pull-requests-limit: 10
     labels:
       - "dependencies"
       - "dependabot"
@@ -20,8 +20,8 @@ updates:
   - package-ecosystem: "gradle"
     directory: "/androidapp"
     schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 4
+      interval: "daily"
+    open-pull-requests-limit: 10
     labels:
       - "dependencies"
       - "android"
@@ -31,8 +31,8 @@ updates:
   - package-ecosystem: "gradle"
     directory: "/gradle"
     schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 3
+      interval: "daily"
+    open-pull-requests-limit: 10
     labels:
       - "dependencies"
       - "catalog"
@@ -51,8 +51,8 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 8
+      interval: "daily"
+    open-pull-requests-limit: 10
     labels:
       - "ci"
       - "dependabot"
@@ -61,8 +61,8 @@ updates:
   - package-ecosystem: "npm"
     directory: "/website"
     schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 5
+      interval: "daily"
+    open-pull-requests-limit: 10
     labels:
       - "frontend"
       - "dependabot"

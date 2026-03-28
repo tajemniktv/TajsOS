@@ -70,6 +70,10 @@ class FakeNodeDao : NodeDao {
         return newId
     }
 
+    override suspend fun insertNodes(nodes: List<NodeEntity>): List<Long> {
+        return nodes.map { insertNode(it) }
+    }
+
     override suspend fun updateNode(node: NodeEntity) {
         val index = nodes.indexOfFirst { it.id == node.id }
         if (index != -1) {
