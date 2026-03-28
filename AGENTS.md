@@ -4,12 +4,12 @@ This file defines working constraints for agents contributing to TajsOS.
 
 ## Project identity
 
-**TajsOS** is a local-first personal operating system for life, projects, thoughts, execution, and insight.
-The product should feel like one coherent system with multiple lenses over shared life data, not a collection of disconnected feature silos.
+**TajsOS** is a local-first personal operating system for life, projects, thoughts, execution, and
+insight.
+The product should feel like one coherent system with multiple lenses over shared life data, not a
+collection of disconnected feature silos.
 
-## Maintaining AGENTS.md files
-
-When updating AGENTS.md files:
+## Maintaining AGENTS.md or docs files
 
 - Avoid hardcoded counts or brittle inventories.
 - Document behavioral constraints and architectural boundaries.
@@ -44,7 +44,7 @@ When updating AGENTS.md files:
 | `minor`   | Significant features, client support, UI overhauls | `1.1.2` -> `1.2.0` |
 | `major`   | Breaking changes                                   | `1.2.1` -> `2.0.0` |
 
-## Verified implementation context
+## Architecture
 
 ### Platforms and modules
 
@@ -74,13 +74,16 @@ When updating AGENTS.md files:
 ### ViewModel boundaries
 
 - `MainViewModel` is shell-level orchestration, not the universal domain engine.
-- Keep global concerns in root scope (app lifecycle, mode shell, navigation shell, sync status, pack availability, global capture/search entry).
+- Keep global concerns in root scope (app lifecycle, mode shell, navigation shell, sync status, pack
+  availability, global capture/search entry).
 - Move feature/domain-heavy orchestration into feature-scoped components.
-- Avoid adding new cross-domain branching logic to `MainViewModel` when a bounded feature component can own it.
+- Avoid adding new cross-domain branching logic to `MainViewModel` when a bounded feature component
+  can own it.
 
 ### Domain modeling boundaries
 
-- Treat `NodeEntity` as an overloaded legacy surface that should not absorb unlimited new nullable fields.
+- Treat `NodeEntity` as an overloaded legacy surface that should not absorb unlimited new nullable
+  fields.
 - Prefer typed companion models/tables for deeper domain behavior.
 - Keep relation graph behavior (`RelationEntity`) as a first-class capability.
 - Preserve backward compatibility when evolving data shape.
@@ -94,12 +97,14 @@ When updating AGENTS.md files:
 ### Date/time boundaries
 
 - `YYYY-MM-DD` string matching for “today” is a temporary compromise, not a long-term pattern.
-- New date-sensitive behavior should use real date abstractions (`LocalDate`/`epochDay`) with explicit timezone semantics.
+- New date-sensitive behavior should use real date abstractions (`LocalDate`/`epochDay`) with
+  explicit timezone semantics.
 
 ### Sync boundaries
 
 - Keep sync behind abstractions/interfaces in client architecture.
-- Current `/sync` behavior is a development stub (in-memory, non-durable) and must not define long-term product assumptions.
+- Current `/sync` behavior is a development stub (in-memory, non-durable) and must not define
+  long-term product assumptions.
 - Do not couple feature correctness to current stub conflict semantics.
 
 ### Data safety boundaries
@@ -133,7 +138,8 @@ Feature work should reinforce cohesive read models:
 
 - Room is used cross-platform through KMP Room setup.
 - Database currently uses `fallbackToDestructiveMigration(true)` on Android and JVM.
-- DataStore (`PreferencesRepository`) currently carries biometric settings, active mode, and pack ownership/enabling.
+- DataStore (`PreferencesRepository`) currently carries biometric settings, active mode, and pack
+  ownership/enabling.
 
 ## Agent behavior expectations
 
@@ -146,8 +152,10 @@ When working in this repo, agents should:
 5. Update documentation when constraints or behavior change.
 6. Respect typed-domain direction and avoid unnecessary string-state sprawl.
 7. Keep sync assumptions abstract/local-first.
-8. Add or update KDoc for meaningful public API changes.
+8. Add or update KDoc after changes to the codebase.
 9. Validate assumptions from current code, not old docs.
+10. After a successful build/test, commit changes.
+11. When modifying or creating visual aspects of the app, consult DESIGN.md
 
 ## Documentation touchpoints
 
@@ -158,11 +166,13 @@ Before broad changes, check and update if impacted:
 - `DESIGN.md`
 - `LICENSE.md`
 
-If additional docs are added later (for example `ROADMAP.md` or `CHANGELOG.md`), keep references synchronized.
+If additional docs are added later (for example `ROADMAP.md` or `CHANGELOG.md`), keep references
+synchronized.
 
 ## High-risk gotchas
 
-- Repository methods include side effects (event logging, relation synchronization, decision conversions); prefer repository APIs over direct DAO bypass.
+- Repository methods include side effects (event logging, relation synchronization, decision
+  conversions); prefer repository APIs over direct DAO bypass.
 - `MainViewModel` is already large; default to feature-scoped ownership for new domain logic.
 - `NodeEntity` growth is architectural debt unless deliberately justified.
 - Server sync state is currently in-memory and non-durable.
