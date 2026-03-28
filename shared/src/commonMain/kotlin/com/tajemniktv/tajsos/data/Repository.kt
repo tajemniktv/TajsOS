@@ -417,6 +417,18 @@ class AppRepository(
             nodes.filter { it.inboxState }
         }
 
+    /**
+     * Resolves a decision by finalizing its outcome, marking the selected option, and updating its state to 'done'.
+     *
+     * **Side effects:**
+     * - Flags the matching [DecisionOptionEntity] as selected and unselects others.
+     * - Updates the decision's status to `decided` and marks the overall node status as `done`.
+     * - Removes the decision from the inbox (`inboxState = false`) and timestamps its completion.
+     *
+     * @param nodeId The ID of the decision node to finalize.
+     * @param outcome A freeform string recording the rationale or outcome of the decision.
+     * @param selectedOptionId The optional ID of a predefined [DecisionOptionEntity] chosen by the user.
+     */
     suspend fun decideOn(
         nodeId: Long,
         outcome: String,
@@ -451,6 +463,16 @@ class AppRepository(
         )
     }
 
+    /**
+     * Converts a completed decision into a new, actionable project node.
+     *
+     * **Side effects:**
+     * - Inserts a new project node initialized with the decision's title, outcome (falling back to content), and area.
+     * - Establishes a `DERIVED_FROM` relation linking the parent decision to the new project.
+     *
+     * @param nodeId The ID of the parent decision node.
+     * @return The ID of the newly created project node, or -1 if the parent decision was not found.
+     */
     suspend fun convertDecisionToProject(nodeId: Long): Long {
         val node = nodeDao.getNodeById(nodeId) ?: return -1
         val newProject =
@@ -473,6 +495,16 @@ class AppRepository(
         return projectId
     }
 
+    /**
+     * Converts a completed decision into a new, actionable task node.
+     *
+     * **Side effects:**
+     * - Inserts a new task node initialized with the decision's title, area, project, and content from its outcome and original content.
+     * - Establishes a `DERIVED_FROM` relation linking the parent decision to the new task.
+     *
+     * @param nodeId The ID of the parent decision node.
+     * @return The ID of the newly created task node, or -1 if the parent decision was not found.
+     */
     suspend fun convertDecisionToTask(nodeId: Long): Long {
         val node = nodeDao.getNodeById(nodeId) ?: return -1
         val newTask =
