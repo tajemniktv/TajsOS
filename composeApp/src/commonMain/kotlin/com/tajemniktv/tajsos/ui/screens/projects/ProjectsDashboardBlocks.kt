@@ -4,6 +4,8 @@
 
 package com.tajemniktv.tajsos.ui.screens.projects
 
+import com.tajemniktv.tajsos.data.ProjectState
+import com.tajemniktv.tajsos.data.projectStateOrNull
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -65,7 +67,13 @@ internal fun ProjectsMainBlock(
         remember(projects, searchQuery, selectedStatusFilter) {
             projects.filter {
                 it.title.contains(searchQuery, ignoreCase = true) &&
-                    (if (selectedStatusFilter == "active") it.status == "active" || it.status == "on_hold" else it.status == "someday")
+                    (
+                        if (selectedStatusFilter == "active") {
+                            it.projectStateOrNull() in setOf(ProjectState.ACTIVE, ProjectState.ON_HOLD)
+                        } else {
+                            it.projectStateOrNull() == ProjectState.SOMEDAY
+                        }
+                    )
             }
         }
     val nodesByProjectId =
@@ -123,9 +131,6 @@ internal fun ProjectsMainBlock(
         AddProjectDialog(
             onDismiss = { showAddDialog = false },
             onConfirm = { title, content, status ->
-                viewModel.addNode(title, content, "project", inboxState = false)
-                // Wait, addProject in MainViewModel might not support status.
-                // I'll use addNode directly or update MainViewModel.
                 scope.launch {
                     val id =
                         viewModel.addNodeForResult(
@@ -135,7 +140,9 @@ internal fun ProjectsMainBlock(
                             inboxState = false,
                         )
                     viewModel.getNodeById(id)?.let { node ->
-                        viewModel.updateNodeStatus(node, status)
+                        if (node.status != status) {
+                            viewModel.updateNodeStatus(node, status)
+                        }
                     }
                 }
                 showAddDialog = false

@@ -4,6 +4,13 @@
 
 package com.tajemniktv.tajsos.ui.screens
 
+import com.tajemniktv.tajsos.data.ProjectState
+import com.tajemniktv.tajsos.data.TaskState
+import com.tajemniktv.tajsos.data.isKnowledgeItem
+import com.tajemniktv.tajsos.data.isTaskItem
+import com.tajemniktv.tajsos.data.projectStateOrNull
+import com.tajemniktv.tajsos.data.taskStateOrNull
+import com.tajemniktv.tajsos.data.toNodeStatus
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -74,8 +81,10 @@ fun ProjectDetailScreen(
 
     var showStatusDialog by remember { mutableStateOf(false) }
 
-    val total = nodesWithPinForProject.size
-    val completed = nodesWithPinForProject.count { it.node.status == "done" }
+    val projectTasks = nodesWithPinForProject.filter { it.node.isTaskItem() }
+    val supportingKnowledge = nodesWithPinForProject.filter { it.node.isKnowledgeItem() }
+    val total = projectTasks.size
+    val completed = projectTasks.count { it.node.taskStateOrNull() == TaskState.DONE }
     val progress = if (total > 0) completed.toFloat() / total else 0f
 
     val now =
@@ -85,18 +94,21 @@ fun ProjectDetailScreen(
     val staleTime = now - (14 * 24 * 60 * 60 * 1000L)
 
     val hasCriticalOverdue =
-        nodesWithPinForProject.any {
+        projectTasks.any {
             val dueAt = it.node.dueAt
-            it.node.status == "active" && it.node.isHardDeadline && dueAt != null && dueAt < now
+            it.node.taskStateOrNull() == TaskState.ACTIVE && it.node.isHardDeadline && dueAt != null && dueAt < now
         }
     val isNeglected =
-        nodesWithPinForProject.none { it.node.updatedAt >= staleTime } && project.status == "active" && !project.isFrozen
+        nodesWithPinForProject.none { it.node.updatedAt >= staleTime } &&
+            project.projectStateOrNull() == ProjectState.ACTIVE &&
+            !project.isFrozen
 
     val (healthLabel, healthColor) =
         when
             {
                 project.isFrozen -> stringResource(Res.string.project_health_frozen) to TactileTheme.Accent
-                project.status == "on_hold" -> stringResource(Res.string.project_health_on_hold) to TactileTheme.Muted
+                project.projectStateOrNull() == ProjectState.ON_HOLD ->
+                    stringResource(Res.string.project_health_on_hold) to TactileTheme.Muted
                 hasCriticalOverdue -> stringResource(Res.string.project_health_critical) to TactileTheme.Error
                 isNeglected -> stringResource(Res.string.project_health_neglected) to TactileTheme.Error
                 else -> stringResource(Res.string.project_health_healthy) to TactileTheme.Success
@@ -167,7 +179,7 @@ fun ProjectDetailScreen(
                 // Header
                 DetailHeader(
                     title = project.title,
-                    subtitle = "CURRENT WORKSPACE",
+                    subtitle = "PROJECT OUTCOME",
                 )
 
                 Row(
@@ -203,8 +215,8 @@ fun ProjectDetailScreen(
 
                 // Progress Card
                 InfoCard(
-                    title = "PROGRESS",
-                    value = "${(progress * 100).toInt()}% COMPLETE",
+                    title = "ACTION PROGRESS",
+                    value = if (total > 0) "${(progress * 100).toInt()}% COMPLETE // $completed/$total TASKS" else "NO TASKS YET",
                     icon = Icons.AutoMirrored.Filled.TrendingUp,
                     color = if (project.isFrozen) TactileTheme.Muted else TactileTheme.Primary,
                 )
@@ -237,15 +249,29 @@ fun ProjectDetailScreen(
 
                 // Next Actions
                 val nextActions =
-                    nodesWithPinForProject.filter { it.node.status == "active" && it.node.type == "task" }
+                    projectTasks.filter { it.node.taskStateOrNull() == TaskState.ACTIVE }
                 if (nextActions.isNotEmpty()) {
                     Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
                         DetailSectionHeader(title = "NEXT ACTIONS", icon = Icons.Default.PlayArrow)
                         nextActions.take(5).forEach { item ->
                             LinkedNodeItem(
                                 title = item.node.title,
-                                subtitle = item.node.nextSmallestStep ?: "Active Task",
+                                subtitle = item.node.nextSmallestStep ?: "Task in this project",
                                 icon = Icons.Default.CheckCircle,
+                                onClick = { onEditNode(item.node.id) },
+                            )
+                        }
+                    }
+                }
+
+                if (supportingKnowledge.isNotEmpty()) {
+                    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+                        DetailSectionHeader(title = "SUPPORTING KNOWLEDGE", icon = Icons.Default.Description)
+                        supportingKnowledge.take(5).forEach { item ->
+                            LinkedNodeItem(
+                                title = item.node.title,
+                                subtitle = if (item.node.type == "record") "Project record" else "Project note",
+                                icon = if (item.node.type == "record") Icons.Default.History else Icons.Default.Description,
                                 onClick = { onEditNode(item.node.id) },
                             )
                         }
@@ -276,7 +302,7 @@ fun ProjectDetailScreen(
             onDismiss = { showStatusDialog = false },
             title = "SET STATUS",
             options = listOf("active", "on_hold", "someday"),
-            selectedOption = project.status,
+            selectedOption = project.projectStateOrNull()?.toNodeStatus() ?: project.status,
             onSelect = { status ->
                 viewModel.updateNodeStatus(project, status)
                 showStatusDialog = false

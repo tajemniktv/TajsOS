@@ -8,12 +8,12 @@
     <string name="app_status_ok">TajsOS // STATUS: OK</string>
 
     <!-- Navigation -->
-    <string name="nav_core">CORE</string>
-    <string name="nav_execution">EXECUTION</string>
-    <string name="nav_systems">SYSTEMS</string>
-    <string name="nav_brain">SECOND BRAIN</string>
-    <string name="nav_status">STATUS &amp; INSIGHTS</string>
-    <string name="nav_system">SYSTEM</string>
+    <string name="nav_core">HOME</string>
+    <string name="nav_execution">NOW</string>
+    <string name="nav_systems">OPERATE</string>
+    <string name="nav_brain">KNOWLEDGE</string>
+    <string name="nav_status">REVIEW</string>
+    <string name="nav_system">DOMAINS &amp; SYSTEM</string>
     <string name="nav_menu">Menu</string>
     <string name="nav_capture">Capture</string>
 

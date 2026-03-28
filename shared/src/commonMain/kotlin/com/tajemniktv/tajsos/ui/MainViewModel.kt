@@ -28,6 +28,8 @@ import com.tajemniktv.tajsos.data.PreferencesRepository
 import com.tajemniktv.tajsos.data.ProtocolHistoryEntity
 import com.tajemniktv.tajsos.data.RelationEntity
 import com.tajemniktv.tajsos.data.ReviewEntity
+import com.tajemniktv.tajsos.data.isAreaItem
+import com.tajemniktv.tajsos.data.isProjectItem
 import com.tajemniktv.tajsos.data.TagEntity
 import com.tajemniktv.tajsos.data.TemplateEntity
 import com.tajemniktv.tajsos.data.TrackEntryEntity
@@ -178,8 +180,8 @@ class MainViewModel(
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val allAreas: StateFlow<List<NodeEntity>> =
-        repository
-            .getNodesByType("area")
+        allNodes
+            .map { nodes -> nodes.map { it.node }.filter { it.isAreaItem() } }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val activeNodes: StateFlow<List<NodeWithPin>> =
@@ -253,8 +255,8 @@ class MainViewModel(
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val allProjects: StateFlow<List<NodeEntity>> =
-        repository
-            .getNodesByType("project")
+        allNodes
+            .map { nodes -> nodes.map { it.node }.filter { it.isProjectItem() } }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val calendarProviders: StateFlow<List<CalendarProviderEntity>> =

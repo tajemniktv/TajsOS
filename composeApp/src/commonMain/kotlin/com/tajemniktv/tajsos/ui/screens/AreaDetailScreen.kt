@@ -4,6 +4,12 @@
 
 package com.tajemniktv.tajsos.ui.screens
 
+import com.tajemniktv.tajsos.data.ProjectState
+import com.tajemniktv.tajsos.data.TaskState
+import com.tajemniktv.tajsos.data.isNoteItem
+import com.tajemniktv.tajsos.data.isTaskItem
+import com.tajemniktv.tajsos.data.projectStateOrNull
+import com.tajemniktv.tajsos.data.taskStateOrNull
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -23,7 +29,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.AccountTree
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AllInclusive
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.BarChart
@@ -51,7 +56,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.components.ActionButton
 import com.tajemniktv.tajsos.ui.components.cards.InfoCard
 import com.tajemniktv.tajsos.ui.components.cards.LinkedNodeItem
 import com.tajemniktv.tajsos.ui.components.cards.StatusCard
@@ -111,7 +115,7 @@ fun AreaDetailScreen(
 
     val foundationalNote =
         nodesWithPinInArea.find {
-            it.node.type == "note" &&
+            it.node.isNoteItem() &&
                 it.tags.any { tag ->
                     tag.name.equals(
                         "foundational",
@@ -155,16 +159,7 @@ fun AreaDetailScreen(
                 // Header
                 DetailHeader(
                     title = area.title,
-                    subtitle = "WORKSPACE AREA",
-                )
-
-                ActionButton(
-                    text = "NEW PROJECT",
-                    onClick = { /* New project logic */ },
-                    containerColor = TactileTheme.Primary,
-                    contentColor = TactileTheme.Background,
-                    icon = Icons.Default.Add,
-                    modifier = Modifier.fillMaxWidth(),
+                    subtitle = "RESPONSIBILITY AREA",
                 )
 
                 // Health / Status
@@ -232,6 +227,27 @@ fun AreaDetailScreen(
                         icon = Icons.AutoMirrored.Filled.TrendingUp,
                         color = TactileTheme.Primary,
                     )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+                    ) {
+                        InfoCard(
+                            title = "PROJECTS",
+                            value = projects.size.toString(),
+                            icon = Icons.Default.Folder,
+                            color = TactileTheme.Primary,
+                            modifier = Modifier.weight(1f),
+                        )
+                        InfoCard(
+                            title = "ACTIVE TASKS",
+                            value = nodesWithPinInArea.count {
+                                it.node.isTaskItem() && it.node.taskStateOrNull() == TaskState.ACTIVE
+                            }.toString(),
+                            icon = Icons.Default.CheckCircle,
+                            color = TactileTheme.Accent,
+                            modifier = Modifier.weight(1f),
+                        )
+                    }
                 }
 
                 // Foundational Principle
@@ -268,17 +284,21 @@ fun AreaDetailScreen(
 
                 // Active Projects
                 val activeProjects =
-                    projects.filter { it.status == "active" || it.projectStatus == "active" }
+                    projects.filter { it.projectStateOrNull() in setOf(ProjectState.ACTIVE, ProjectState.ON_HOLD) }
                 if (activeProjects.isNotEmpty()) {
                     Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
                         DetailSectionHeader(
-                            title = "ACTIVE PROJECTS",
+                            title = "CURRENT PROJECTS",
                             icon = Icons.Default.AccountTree,
                         )
                         activeProjects.forEach { project ->
                             LinkedNodeItem(
                                 title = project.title,
-                                subtitle = project.projectStatus ?: "Active Project",
+                                subtitle =
+                                    when (project.projectStateOrNull()) {
+                                        ProjectState.ON_HOLD -> "On hold project"
+                                        else -> "Active project"
+                                    },
                                 icon = Icons.Default.Folder,
                                 onClick = { onNavigateToProject(project.id) },
                             )
@@ -296,13 +316,20 @@ fun AreaDetailScreen(
                             .forEach { item ->
                                 LinkedNodeItem(
                                     title = item.node.title,
-                                    subtitle = item.node.type.uppercase(),
+                                    subtitle =
+                                        when {
+                                            item.node.isTaskItem() -> "TASK"
+                                            item.node.type == "record" -> "RECORD"
+                                            item.node.isNoteItem() -> "NOTE"
+                                            item.node.projectStateOrNull() != null -> "PROJECT"
+                                            else -> item.node.type.uppercase()
+                                        },
                                     icon =
-                                        when (item.node.type)
-                                        {
-                                            "task" -> Icons.Default.CheckCircle
-                                            "note" -> Icons.Default.Description
-                                            "idea" -> Icons.Default.Lightbulb
+                                        when {
+                                            item.node.isTaskItem() -> Icons.Default.CheckCircle
+                                            item.node.type == "record" -> Icons.Default.History
+                                            item.node.isNoteItem() -> Icons.Default.Description
+                                            item.node.projectStateOrNull() != null -> Icons.Default.Folder
                                             else -> Icons.Default.Description
                                         },
                                     onClick = { onEditNode(item.node.id) },
