@@ -15,7 +15,7 @@
     "@astrojs/mdx": "^5.0.2",
     "@astrojs/partytown": "^2.1.5",
     "@astrojs/react": "^5.0.2",
-    "@astrojs/sitemap": "^3.7.1",
+    "@astrojs/sitemap": "^3.7.2",
     "@astrojs/starlight": "^0.38.2",
     "@tailwindcss/vite": "^4.2.2",
     "@types/react": "^19.2.14",
