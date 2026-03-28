@@ -259,6 +259,23 @@ fun NodeWithPin.isKnowledgeItem(): Boolean = node.isKnowledgeItem()
 fun NodeWithPin.isAreaItem(): Boolean = node.isAreaItem()
 
 /**
+ * Matches a UI-facing kind filter against the collapsed LifeOS object model.
+ *
+ * Search and navigation filters should prefer this helper so legacy subtypes like
+ * ideas/resources/open loops continue to resolve through the smaller primary object set.
+ */
+fun NodeEntity.matchesItemFilter(filter: String?): Boolean =
+    when (filter) {
+        null -> true
+        "task" -> isTaskItem()
+        "note" -> isNoteItem()
+        "record" -> isRecordItem()
+        "project" -> isProjectItem()
+        "area" -> isAreaItem()
+        else -> type == filter
+    }
+
+/**
  * Resolves the canonical task state from current node status values.
  */
 fun taskStateFromNodeStatus(value: String?): TaskState? = TaskState.fromStorageKey(value)

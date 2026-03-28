@@ -83,4 +83,16 @@ class LifeObjectModelsTest {
         assertEquals(ItemKind.AREA, areaNode.itemKindOrNull())
         assertTrue(areaNode.isAreaItem())
     }
+
+    @Test
+    fun matchesItemFilter_collapses_legacy_subtypes_for_search() {
+        val ideaNode = NodeEntity(type = "idea", title = "Concept")
+        val openLoopNode = NodeEntity(type = "open_loop", title = "Call insurance")
+        val recordNode = NodeEntity(type = "record", title = "Session log")
+
+        assertTrue(ideaNode.matchesItemFilter("note"))
+        assertTrue(openLoopNode.matchesItemFilter("task"))
+        assertTrue(recordNode.matchesItemFilter("record"))
+        assertFalse(recordNode.matchesItemFilter("note"))
+    }
 }

@@ -599,6 +599,7 @@
     <!-- Node Types -->
     <string name="type_task">Task</string>
     <string name="type_note">Note</string>
+    <string name="type_record">Record</string>
     <string name="type_idea">Idea</string>
     <string name="type_project">Project</string>
     <string name="type_area">Area</string>

@@ -4,6 +4,8 @@
 
 package com.tajemniktv.tajsos.ui
 
+import com.tajemniktv.tajsos.data.isTaskItem
+import com.tajemniktv.tajsos.data.matchesItemFilter
 import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.data.RelationEntity
 
@@ -19,7 +21,7 @@ object FilterHelper {
      *
      * Nodes must meet all non-null conditions (logical AND) to be included in the results.
      * Context filters (location, energy, device, social, time-window) are only applied
-     * strictly if the node type is "task".
+     * strictly if the node is task-shaped work in the collapsed LifeOS model.
      *
      * @param nodes The initial list of nodes with associated pins and tags to filter.
      * `@param` query A text query for partial-matching against titles, content, or tags (prefix with # to search tags only).
@@ -71,7 +73,7 @@ object FilterHelper {
             .filter { nodeWithPin ->
                 val node = nodeWithPin.node
                 val matchesQuery = if (isQueryEmpty) true else matchesQuery(nodeWithPin, cleanQuery)
-                val matchesType = type == null || node.type == type
+                val matchesType = node.matchesItemFilter(type)
 
                 // Allow mode/status filtering logic (comma separated status like "active,on_hold")
                 val matchesStatus =
@@ -88,7 +90,7 @@ object FilterHelper {
                         deviceContext != null ||
                         socialContext != null ||
                         timeWindowContext != null
-                val matchesContextScope = !anyContextFilter || node.type == "task"
+                val matchesContextScope = !anyContextFilter || node.isTaskItem()
                 val matchesLocationContext =
                     locationContext == null || node.locationContext == locationContext
                 val matchesEnergyContext =
