@@ -113,41 +113,20 @@ class AppRepository(
     suspend fun updateNode(node: NodeEntity) {
         val oldNode = nodeDao.getNodeById(node.id) ?: return
         nodeDao.updateNode(node)
-        
+
         if (oldNode.status != node.status) {
-            when (node.status) {
+            when (node.status)
+            {
                 "done" -> logEvent("NODE_COMPLETED", node.id)
                 "archived" -> logEvent("NODE_ARCHIVED", node.id)
             }
         }
-        
+
         if (oldNode.isFrozen != node.isFrozen) {
             logEvent(if (node.isFrozen) "NODE_FROZEN" else "NODE_UNFROZEN", node.id)
         }
 
         if (oldNode.projectId != node.projectId || oldNode.areaId != node.areaId) {
-            syncBelongsToRelations(node.id, node.projectId, node.areaId)
-        }
-    }
-    suspend fun updateNode(node: NodeEntity) {
-        val oldNode = nodeDao.getNodeById(node.id)
-        nodeDao.updateNode(node)
-
-        if (oldNode != null) {
-            if (oldNode.status != "done" && node.status == "done") {
-                logEvent("NODE_COMPLETED", node.id)
-            } else if (oldNode.status != "archived" && node.status == "archived") {
-                logEvent("NODE_ARCHIVED", node.id)
-            }
-
-            if (oldNode.isFrozen != node.isFrozen) {
-                logEvent(if (node.isFrozen) "NODE_FROZEN" else "NODE_UNFROZEN", node.id)
-            }
-
-            if (oldNode.projectId != node.projectId || oldNode.areaId != node.areaId) {
-                syncBelongsToRelations(node.id, node.projectId, node.areaId)
-            }
-        } else {
             syncBelongsToRelations(node.id, node.projectId, node.areaId)
         }
     }
@@ -480,8 +459,6 @@ class AppRepository(
                 title = "Action Plan: ${node.title}",
                 content = "Derived from decision: ${node.decisionOutcome ?: node.content}",
                 areaId = node.areaId,
-                status = "active",
-                inboxState = true,
             )
         val projectId = nodeDao.insertNode(newProject)
 
@@ -505,8 +482,6 @@ class AppRepository(
                 content = "Outcome: ${node.decisionOutcome ?: ""}\n\n${node.content}",
                 areaId = node.areaId,
                 projectId = node.projectId,
-                status = "active",
-                inboxState = true,
             )
         val taskId = nodeDao.insertNode(newTask)
 

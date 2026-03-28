@@ -26,14 +26,26 @@ data class NodeEntity(
     val type: String,
     val title: String,
     val content: String = "",
-    val status: String = "active", // active, done, archived, on_hold, someday, blocked
+    /**
+     * active, done, archived, on_hold, someday, blocked
+     */
+    val status: String = "active",
     val isPinned: Boolean = false,
     val parentNodeId: Long? = null,
     val projectId: Long? = null,
     val areaId: Long? = null,
-    val color: Int? = null, // Used for projects and areas
-    val icon: String? = null, // Used for projects and areas
-    val source: String = "manual", // manual, import, template, system
+    /**
+     * Used for projects and areas.
+     */
+    val color: Int? = null,
+    /**
+     * Used for projects and areas.
+     */
+    val icon: String? = null,
+    /**
+     * manual, import, template, system
+     */
+    val source: String = "manual",
     val inboxState: Boolean = true,
     val sortOrder: Int? = null,
     val contextScreen: String? = null,
@@ -51,56 +63,116 @@ data class NodeEntity(
         kotlin.time.Clock.System
             .now()
             .toEpochMilliseconds(),
-    // Energy & Friction (Roadmap Section 3)
-    val energyLevel: Int? = null, // 1=low, 2=medium, 3=high
-    val friction: String? = null, // easy, annoying, mentally_heavy, unclear
+    /**
+     * Energy & Friction (Roadmap Section 3). 1=low, 2=medium, 3=high.
+     */
+    val energyLevel: Int? = null,
+    /**
+     * easy, annoying, mentally_heavy, unclear
+     */
+    val friction: String? = null,
     val nextSmallestStep: String? = null,
     val estimatedMinutes: Int? = null,
     val postponeCount: Int = 0,
     val completionNote: String? = null,
     val isHardDeadline: Boolean = false,
-    // Project/Area specific (Roadmap Section 4)
+    /**
+     * Project/Area specific (Roadmap Section 4).
+     */
     val projectWhy: String? = null,
     val isFrozen: Boolean = false,
-    val projectStatus: String? = null, // active, slowing_down, neglected, exploratory, on_hold
-    // Reminders & Recurrence
+    /**
+     * active, slowing_down, neglected, exploratory, on_hold
+     */
+    val projectStatus: String? = null,
+    /**
+     * Reminders & recurrence.
+     */
     val reminderAt: Long? = null,
     val isRecurring: Boolean = false,
-    val recurringInterval: String? = null, // daily, weekly, monthly
-    // Note-specific (Roadmap Section 5)
-    val noteType: String? = null, // thought, lecture, research, idea, reflection, bug, concept, evergreen, meeting, reading, journal
-    val noteState: String? = null, // raw, highlighted, distilled, takeaway
-    // Media/Resource specific (Roadmap Section 11)
-    val mediaType: String? = null, // book, article, podcast, video, link
-    val rating: Int? = null, // 1-5 stars
+    /**
+     * daily, weekly, monthly
+     */
+    val recurringInterval: String? = null,
+    /**
+     * Note-specific (Roadmap Section 5): thought, lecture, research, idea,
+     * reflection, bug, concept, evergreen, meeting, reading, journal.
+     */
+    val noteType: String? = null,
+    /**
+     * raw, highlighted, distilled, takeaway
+     */
+    val noteState: String? = null,
+    /**
+     * Media/Resource specific (Roadmap Section 11): book, article, podcast, video, link.
+     */
+    val mediaType: String? = null,
+    /**
+     * 1-5 stars
+     */
+    val rating: Int? = null,
     val author: String? = null,
     val publisher: String? = null,
-    // LifeOS Features (Open Loops, Decisions, Maintenance, Relationships, Contexts, Health)
     /**
-     * open_loop, decision, maintenance, person, place, protocol, rule, principle, vault, document
+     * LifeOS feature type (Open Loops, Decisions, Maintenance, Relationships, Contexts, Health):
+     * open_loop, decision, maintenance, person, place, protocol, rule, principle, vault, document.
+     * For open loops: reply_needed, waiting_for, pending_decision, must_check_later,
+     * follow_up, unresolved_problem.
      */
-    val openLoopType: String? = null, // reply_needed, waiting_for, pending_decision, must_check_later, follow_up, unresolved_problem
+    val openLoopType: String? = null,
     val openLoopStalenessAt: Long? = null,
-    val decisionStatus: String? = null, // pending, decided, expired, parked
-    val decisionCategory: String? = null, // tiny, major
+    /**
+     * pending, decided, expired, parked
+     */
+    val decisionStatus: String? = null,
+    /**
+     * tiny, major
+     */
+    val decisionCategory: String? = null,
     val decisionRevisitAt: Long? = null,
     val decisionOutcome: String? = null,
     val decisionInfoMissing: String? = null,
     val decisionDifficultBecause: String? = null,
     val decisionEasierIf: String? = null,
-    val maintenanceType: String? = null, // med_refill, prescription, appointment, bill, subscription, renewal, form, cleaning, backup
-    val maintenanceInterval: String? = null, // manual string representation or JSON
+    /**
+     * med_refill, prescription, appointment, bill, subscription, renewal, form, cleaning, backup
+     */
+    val maintenanceType: String? = null,
+    /**
+     * Manual string representation or JSON.
+     */
+    val maintenanceInterval: String? = null,
     val maintenanceOverdueAt: Long? = null,
     val lastContactAt: Long? = null,
     val socialEnergyNotes: String? = null,
     val relationshipContext: String? = null,
-    val locationContext: String? = null, // at_home, on_campus, out_of_home
-    val energyContext: String? = null, // low_energy, high_focus, brain_works, emotionally_wrecked
-    val deviceContext: String? = null, // laptop_required, phone_okay, needs_internet
-    val socialContext: String? = null, // needs_privacy, commute_friendly
-    val timeWindowContext: String? = null, // 10_minute, waiting_room
-    val areaHealthStatus: String? = null, // active, neglected, overloaded, stable, on_fire
-    // Typed metadata envelope for optional packs and future schema evolution.
+    /**
+     * at_home, on_campus, out_of_home
+     */
+    val locationContext: String? = null,
+    /**
+     * low_energy, high_focus, brain_works, emotionally_wrecked
+     */
+    val energyContext: String? = null,
+    /**
+     * laptop_required, phone_okay, needs_internet
+     */
+    val deviceContext: String? = null,
+    /**
+     * needs_privacy, commute_friendly
+     */
+    val socialContext: String? = null,
+    /**
+     * 10_minute, waiting_room
+     */
+    val timeWindowContext: String? = null,
+    /**
+     * active, neglected, overloaded, stable, on_fire
+     */
+    val areaHealthStatus: String? = null,
+    /**
+     * Typed metadata envelope for optional packs and future schema evolution.
+     */
     val metadataJson: String? = null,
 )
 
@@ -111,7 +183,10 @@ data class NodeEntity(
 @Serializable
 data class ModeEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val key: String, // COMMAND, FOCUS, RECOVERY, STUDY, ADMIN, ERRAND, SHUTDOWN
+    /**
+     * COMMAND, FOCUS, RECOVERY, STUDY, ADMIN, ERRAND, SHUTDOWN
+     */
+    val key: String,
     val name: String,
     val description: String? = null,
     val icon: String? = null,
@@ -193,7 +268,10 @@ data class ModeUsageLogEntity(
             .now()
             .toEpochMilliseconds(),
     val deactivatedAt: Long? = null,
-    val activationSource: String? = null, // manual, auto, suggestion
+    /**
+     * manual, auto, suggestion
+     */
+    val activationSource: String? = null,
     val contextJson: String? = null,
 )
 
@@ -204,7 +282,10 @@ data class ModeUsageLogEntity(
 @Serializable
 data class ProtocolHistoryEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val protocolNodeId: Long, // Linked to NodeEntity of type 'protocol'
+    /**
+     * Linked to [NodeEntity] of type `protocol`.
+     */
+    val protocolNodeId: Long,
     val executedAt: Long =
         kotlin.time.Clock.System
             .now()
@@ -220,7 +301,10 @@ data class ProtocolHistoryEntity(
 @Serializable
 data class DecisionOptionEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val decisionNodeId: Long, // Linked to NodeEntity of type 'decision'
+    /**
+     * Linked to [NodeEntity] of type `decision`.
+     */
+    val decisionNodeId: Long,
     val title: String,
     val description: String? = null,
     val prosJson: String? = null,
@@ -236,7 +320,10 @@ data class DecisionOptionEntity(
 data class TodayPinEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val nodeId: Long,
-    val date: String, // YYYY-MM-DD
+    /**
+     * YYYY-MM-DD
+     */
+    val date: String,
     val position: Int,
     val selectedAt: Long =
         kotlin.time.Clock.System
@@ -252,7 +339,10 @@ data class TodayPinEntity(
 data class FocusSessionEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val nodeId: Long,
-    val sessionType: String = "FOCUS", // FOCUS, REVIEW, WRITING, STUDY, FREEFORM
+    /**
+     * FOCUS, REVIEW, WRITING, STUDY, FREEFORM
+     */
+    val sessionType: String = "FOCUS",
     val startedAt: Long,
     val endedAt: Long? = null,
     val durationSec: Int = 0,
@@ -268,7 +358,10 @@ data class FocusSessionEntity(
 @Serializable
 data class TrackEntryEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val date: String, // YYYY-MM-DD
+    /**
+     * YYYY-MM-DD
+     */
+    val date: String,
     val createdAt: Long =
         kotlin.time.Clock.System
             .now()
@@ -280,10 +373,18 @@ data class TrackEntryEntity(
     val sleepScore: Float? = null,
     val tookMeds: Boolean = false,
     val symptomNote: String = "",
-    val source: String = "manual", // manual, inferred, reminder
-    // LifeOS Status Tracking
-    val loadScore: Int? = null, // 0-100
-    val fragmentationScore: Int? = null, // 0-100
+    /**
+     * manual, inferred, reminder
+     */
+    val source: String = "manual",
+    /**
+     * LifeOS status tracking. 0-100.
+     */
+    val loadScore: Int? = null,
+    /**
+     * LifeOS status tracking. 0-100.
+     */
+    val fragmentationScore: Int? = null,
 )
 
 /**
@@ -292,7 +393,10 @@ data class TrackEntryEntity(
 @Entity(tableName = "users")
 @Serializable
 data class UserEntity(
-    @PrimaryKey val id: Long = 1, // Singleton for now
+    /**
+     * Singleton for now.
+     */
+    @PrimaryKey val id: Long = 1,
     val name: String = "OPERATOR",
     val avatarUrl: String? = null,
     val createdAt: Long =
@@ -313,9 +417,15 @@ data class UserEntity(
 data class MedicationEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val substance: String,
-    val brandNames: String = "", // Comma separated list of brands
+    /**
+     * Comma-separated list of brands.
+     */
+    val brandNames: String = "",
     val dosage: String? = null,
-    val takeAtHour: Int? = null, // 0-23
+    /**
+     * 0-23
+     */
+    val takeAtHour: Int? = null,
     val isOptional: Boolean = false,
     val isEnabled: Boolean = true,
     val createdAt: Long =
@@ -352,7 +462,10 @@ data class RelationEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val fromNodeId: Long,
     val toNodeId: Long,
-    val relationType: String, // RELATED, MENTION, DEPENDS_ON, BELONGS_TO, REFERENCE, DERIVED_FROM, INSPIRED_BY
+    /**
+     * RELATED, MENTION, DEPENDS_ON, BELONGS_TO, REFERENCE, DERIVED_FROM, INSPIRED_BY
+     */
+    val relationType: String,
     val createdAt: Long =
         kotlin.time.Clock.System
             .now()
@@ -393,7 +506,11 @@ data class NodeTagEntity(
 @Serializable
 data class EventLogEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val eventType: String, // NODE_CREATED, NODE_COMPLETED, NODE_ARCHIVED, SESSION_STARTED, SESSION_ENDED, TODAY_ASSIGNED, NODE_LINKED, CHECKIN_CREATED, NODE_FROZEN, NODE_UNFROZEN
+    /**
+     * NODE_CREATED, NODE_COMPLETED, NODE_ARCHIVED, SESSION_STARTED, SESSION_ENDED,
+     * TODAY_ASSIGNED, NODE_LINKED, CHECKIN_CREATED, NODE_FROZEN, NODE_UNFROZEN
+     */
+    val eventType: String,
     val nodeId: Long? = null,
     val relatedNodeId: Long? = null,
     val timestamp: Long =
@@ -411,7 +528,10 @@ data class EventLogEntity(
 data class AttachmentEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val nodeId: Long,
-    val assetType: String, // URL, IMAGE, FILE, AUDIO
+    /**
+     * URL, IMAGE, FILE, AUDIO
+     */
+    val assetType: String,
     val uriOrPath: String,
     val mimeType: String? = null,
     val title: String? = null,
@@ -426,7 +546,10 @@ data class AttachmentEntity(
 data class TemplateEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val name: String,
-    val nodeType: String, // task, note, project
+    /**
+     * task, note, project
+     */
+    val nodeType: String,
     val defaultTitle: String? = null,
     val defaultContent: String? = null,
     val defaultMetadataJson: String? = null,
@@ -440,13 +563,22 @@ data class TemplateEntity(
 @Serializable
 data class ReviewEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val type: String, // daily, weekly, monthly
-    val date: String, // YYYY-MM-DD
+    /**
+     * daily, weekly, monthly
+     */
+    val type: String,
+    /**
+     * YYYY-MM-DD
+     */
+    val date: String,
     val completedAt: Long =
         kotlin.time.Clock.System
             .now()
             .toEpochMilliseconds(),
-    val resultNodeId: Long? = null, // Linked note containing the review content
+    /**
+     * Linked note containing the review content.
+     */
+    val resultNodeId: Long? = null,
     val moodScore: Int? = null,
     val energyScore: Int? = null,
 )
@@ -459,9 +591,15 @@ data class ReviewEntity(
 data class CalendarProviderEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val name: String,
-    val type: String, // GOOGLE, OUTLOOK, ICS, TAJSOS
+    /**
+     * GOOGLE, OUTLOOK, ICS, TAJSOS
+     */
+    val type: String,
     val accountEmail: String? = null,
-    val url: String? = null, // For ICS
+    /**
+     * For ICS.
+     */
+    val url: String? = null,
     val accessToken: String? = null,
     val refreshToken: String? = null,
     val lastSyncedAt: Long? = null,

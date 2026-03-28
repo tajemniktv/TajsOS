@@ -6,15 +6,39 @@ package com.tajemniktv.tajsos
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberDrawerState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,8 +56,26 @@ import com.tajemniktv.tajsos.data.TemplateEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.common.CaptureSheet
-import com.tajemniktv.tajsos.ui.components.layout.*
-import com.tajemniktv.tajsos.ui.screens.*
+import com.tajemniktv.tajsos.ui.components.layout.AppLayout
+import com.tajemniktv.tajsos.ui.components.layout.DesktopSearchSurface
+import com.tajemniktv.tajsos.ui.components.layout.LocalHeaderActions
+import com.tajemniktv.tajsos.ui.components.layout.StatusHeader
+import com.tajemniktv.tajsos.ui.components.layout.SystemOnlineStatus
+import com.tajemniktv.tajsos.ui.components.layout.TBoxIcon
+import com.tajemniktv.tajsos.ui.screens.AreaDetailScreen
+import com.tajemniktv.tajsos.ui.screens.CalendarSettingsScreen
+import com.tajemniktv.tajsos.ui.screens.IdentityScreen
+import com.tajemniktv.tajsos.ui.screens.NoteDetailScreen
+import com.tajemniktv.tajsos.ui.screens.ProfileScreen
+import com.tajemniktv.tajsos.ui.screens.ProjectDetailScreen
+import com.tajemniktv.tajsos.ui.screens.ReviewScreen
+import com.tajemniktv.tajsos.ui.screens.RulesScreen
+import com.tajemniktv.tajsos.ui.screens.SearchScreen
+import com.tajemniktv.tajsos.ui.screens.SettingsScreen
+import com.tajemniktv.tajsos.ui.screens.TasksScreen
+import com.tajemniktv.tajsos.ui.screens.TemplatesScreen
+import com.tajemniktv.tajsos.ui.screens.TimeArchitectureScreen
+import com.tajemniktv.tajsos.ui.screens.TrackScreen
 import com.tajemniktv.tajsos.ui.screens.archive.ArchiveScreen
 import com.tajemniktv.tajsos.ui.screens.areas.AreasScreen
 import com.tajemniktv.tajsos.ui.screens.calendar.CalendarScreen
@@ -60,7 +102,13 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
-import tajsos.composeapp.generated.resources.*
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.common_back
+import tajsos.composeapp.generated.resources.dash_vibe_afternoon
+import tajsos.composeapp.generated.resources.dash_vibe_evening
+import tajsos.composeapp.generated.resources.dash_vibe_morning
+import tajsos.composeapp.generated.resources.dash_vibe_night
+import tajsos.composeapp.generated.resources.nav_capture
 import kotlin.time.Clock
 
 /**
@@ -73,7 +121,7 @@ import kotlin.time.Clock
  * @param voiceCaptureResult Optional text result from a completed voice capture to prefill the capture sheet.
  * @param onVoiceCaptureConsumed Callback invoked when the voice capture result has been consumed (clears or acknowledges the result).
  */
-@Suppress("ktlint:compose:vm-forwarding-check", "ViewModelForwarding")
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun App(
