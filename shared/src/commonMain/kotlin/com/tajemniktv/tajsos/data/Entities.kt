@@ -96,7 +96,7 @@ data class NodeEntity(
      */
     val recurringInterval: String? = null,
     /**
-     * Note-specific (Roadmap Section 5): thought, lecture, research, idea,
+     * Note-specific (Roadmap Section 5): thought, lecture, research, rough note,
      * reflection, bug, concept, evergreen, meeting, reading, journal.
      */
     val noteType: String? = null,
@@ -116,7 +116,7 @@ data class NodeEntity(
     val publisher: String? = null,
     /**
      * LifeOS feature type (Open Loops, Decisions, Maintenance, Relationships, Contexts, Health):
-     * open_loop, decision, maintenance, person, place, protocol, rule, principle, vault, document.
+     * unresolved work, decision support, maintenance, relationship anchor, place anchor, routine, rule, principle, reference, document.
      * For open loops: reply_needed, waiting_for, pending_decision, must_check_later,
      * follow_up, unresolved_problem.
      */
@@ -277,14 +277,14 @@ data class ModeUsageLogEntity(
 )
 
 /**
- * ProtocolHistoryEntity tracks when transition protocols are executed.
+ * ProtocolHistoryEntity tracks when routines and playbooks are executed.
  */
 @Entity(tableName = "protocol_history")
 @Serializable
 data class ProtocolHistoryEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     /**
-     * Linked to [NodeEntity] of type `protocol`.
+     * Linked to the routine/playbook node that was executed.
      */
     val protocolNodeId: Long,
     val executedAt: Long =

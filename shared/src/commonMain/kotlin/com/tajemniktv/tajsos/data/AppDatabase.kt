@@ -143,7 +143,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun modeDao(): ModeDao
 
     /**
-     * Tracks execution history of transition protocols.
+     * Tracks execution history of routines and playbooks.
      */
     abstract fun protocolDao(): ProtocolDao
 

@@ -318,7 +318,7 @@ private fun NodeEntity.tagsHintContainsRelationship(): Boolean =
  * Matches a UI-facing kind filter against the collapsed LifeOS object model.
  *
  * Search and navigation filters should prefer this helper so legacy subtypes like
- * ideas/resources/open loops continue to resolve through the smaller primary object set.
+ * Legacy idea/resource/unresolved-work variants continue to resolve through the smaller primary object set.
  */
 fun NodeEntity.matchesItemFilter(filter: String?): Boolean =
     when (filter) {
