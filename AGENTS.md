@@ -137,7 +137,8 @@ Feature work should reinforce cohesive read models:
 ## Persistence constraints
 
 - Room is used cross-platform through KMP Room setup.
-- Database currently uses `fallbackToDestructiveMigration(true)` on Android and JVM.
+- Database currently uses `fallbackToDestructiveMigration(true)` on Android and JVM - During
+  development, migration or backward compatibility is not needed nor preferred.
 - DataStore (`PreferencesRepository`) currently carries biometric settings, active mode, and pack
   ownership/enabling.
 
@@ -156,6 +157,8 @@ When working in this repo, agents should:
 9. Validate assumptions from current code, not old docs.
 10. After a successful build/test, commit changes.
 11. When modifying or creating visual aspects of the app, consult DESIGN.md
+12. If users request is ambigous, not specific enough or you're not sure what the user meant - Ask
+    before doing.
 
 ## Documentation touchpoints
 
