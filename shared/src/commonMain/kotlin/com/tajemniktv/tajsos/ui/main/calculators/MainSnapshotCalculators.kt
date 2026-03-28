@@ -1031,8 +1031,8 @@ fun calculateRelationshipSnapshot(
             val relatedNodes = relatedForPerson(person.node.id)
             val replyQueueCount =
                 relatedNodes.count {
-                    it.node.type == "open_loop" &&
-                        it.node.status == "active" &&
+                    it.node.isTaskItem() &&
+                        it.node.taskStateOrNull() == TaskState.ACTIVE &&
                         (it.node.openLoopType == "reply_needed" || it.node.openLoopType == "follow_up")
                 }
             val sharedPlansCount =
@@ -1045,7 +1045,7 @@ fun calculateRelationshipSnapshot(
                 }
             val askAboutCount =
                 relatedNodes.count {
-                    it.node.type == "note" &&
+                    it.node.isNoteItem() &&
                         (
                             it.node.noteType == "ask_next_time" ||
                                 it.tags.any { tag -> tag.normalizedName == "ask_next_time" }
@@ -1109,8 +1109,8 @@ fun calculateRelationshipSnapshot(
         allRelatedItemsByPerson.values
             .flatten()
             .filter {
-                it.node.status == "active" &&
-                    it.node.type == "open_loop" &&
+                it.node.taskStateOrNull() == TaskState.ACTIVE &&
+                    it.node.isTaskItem() &&
                     (it.node.openLoopType == "reply_needed" || it.node.openLoopType == "follow_up")
             }.distinctBy { it.node.id }
             .sortedBy { it.node.dueAt ?: Long.MAX_VALUE }
@@ -2343,7 +2343,7 @@ fun calculateStudentBoardState(
     val assignmentTracker =
         activeNodes
             .filter { item ->
-                item.node.type == "task" && (
+                item.node.isTaskItem() && (
                     item.student()?.assignmentType != null ||
                         item.hasTag("assignment")
                 )
@@ -2378,38 +2378,38 @@ fun calculateStudentBoardState(
 
     val psychologyConceptMaps =
         activeNodes.filter {
-            it.node.type == "note" &&
+            it.node.isNoteItem() &&
                 it.node.noteType == "concept" &&
                 it.hasTag("psychology")
         }
 
     val glossaryCards =
         activeNodes.filter {
-            it.node.type == "note" &&
+            it.node.isNoteItem() &&
                 (it.hasTag("glossary") || it.hasTag("knowledge_card") || it.node.noteType == "concept")
         }
 
     val researchIdeaVault =
         activeNodes.filter {
-            it.node.type == "idea" &&
+            it.node.isNoteItem() &&
                 (it.hasTag("research") || it.hasTag("research_idea") || it.node.noteType == "research")
         }
 
     val quoteBank =
         activeNodes.filter {
-            it.node.type == "note" && it.node.noteType == "quote"
+            it.node.isNoteItem() && it.node.noteType == "quote"
         }
 
     val caseReflectionNotes =
         activeNodes.filter {
-            it.node.type == "note" &&
+            it.node.isKnowledgeItem() &&
                 (it.node.noteType == "reflection" || it.hasTag("case_study") || it.hasTag("reflection"))
         }
 
     val readingBacklog =
         activeNodes
             .filter {
-                it.node.type == "note" &&
+                it.node.isNoteItem() &&
                     (it.node.noteType == "reading" || it.hasTag("reading"))
             }.sortedByDescending { it.node.updatedAt }
 
@@ -2465,8 +2465,8 @@ fun calculateStudentBoardState(
                         ?: courseId
                 val openAssignments =
                     entries.count {
-                        it.third.node.type == "task" &&
-                            it.third.node.status == "active" &&
+                        it.third.node.isTaskItem() &&
+                            it.third.node.taskStateOrNull() == TaskState.ACTIVE &&
                             it.second.assignmentType != null
                     }
                 val upcomingExams =
@@ -2514,7 +2514,7 @@ fun calculateStudentBoardState(
                 val courseCount =
                     semesterNodes.mapNotNull { it.student()?.courseId }.distinct().size
                 val openAssignments =
-                    semesterNodes.count { it.node.type == "task" && it.student()?.assignmentType != null }
+                    semesterNodes.count { it.node.isTaskItem() && it.student()?.assignmentType != null }
                 val upcomingExams =
                     semesterNodes.count {
                         it.node.dueAt != null &&
@@ -2553,7 +2553,7 @@ fun calculateStudentBoardState(
     val conceptNodeIds =
         activeNodes
             .filter {
-                it.node.type == "note" && (it.node.noteType == "concept" || it.hasTag("psychology"))
+                it.node.isNoteItem() && (it.node.noteType == "concept" || it.hasTag("psychology"))
             }.map { it.node.id }
             .toSet()
 

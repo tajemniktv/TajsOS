@@ -47,11 +47,14 @@ internal fun HealthMainBlock(
     viewModel: MainViewModel,
     onEditNode: (Long) -> Unit,
 ) {
+    val allNodes by viewModel.allNodes.collectAsState()
     val maintenanceSnapshot by viewModel.maintenanceSnapshot.collectAsState()
     val trackEntries by viewModel.trackEntries.collectAsState()
 
     val healthQueue = DomainLensQueries.healthMaintenanceItems(maintenanceSnapshot)
     val overdueHealth = DomainLensQueries.healthOverdueItems(maintenanceSnapshot)
+    val healthActions = DomainLensQueries.healthActionItems(allNodes)
+    val healthKnowledge = DomainLensQueries.healthKnowledgeItems(allNodes)
     val latestTrack = trackEntries.firstOrNull()
 
     Column(
@@ -74,7 +77,7 @@ internal fun HealthMainBlock(
                     color = TactileTheme.Primary,
                 )
                 Text(
-                    "Health maintenance ${healthQueue.size} • Overdue ${overdueHealth.size}",
+                    "Actions ${healthActions.size} • Maintenance ${healthQueue.size} • Knowledge ${healthKnowledge.size}",
                     style = MaterialTheme.typography.bodySmall,
                     color = TactileTheme.Muted,
                 )
@@ -86,8 +89,8 @@ internal fun HealthMainBlock(
             }
         }
 
-        if (healthQueue.isEmpty()) {
-            EmptyState("No health maintenance items detected yet.")
+        if (healthQueue.isEmpty() && healthActions.isEmpty() && healthKnowledge.isEmpty()) {
+            EmptyState("No health-related items detected yet.")
             return@Column
         }
 
@@ -95,6 +98,20 @@ internal fun HealthMainBlock(
             GroupedOpenLoopSection(
                 title = "OVERDUE HEALTH MAINTENANCE",
                 items = overdueHealth.map { it.node.node.title },
+            )
+        }
+
+        if (healthActions.isNotEmpty()) {
+            GroupedOpenLoopSection(
+                title = "HEALTH ACTIONS",
+                items = healthActions.take(8).map { it.node.title },
+            )
+        }
+
+        if (healthKnowledge.isNotEmpty()) {
+            GroupedOpenLoopSection(
+                title = "HEALTH NOTES & RECORDS",
+                items = healthKnowledge.take(8).map { it.node.title },
             )
         }
 

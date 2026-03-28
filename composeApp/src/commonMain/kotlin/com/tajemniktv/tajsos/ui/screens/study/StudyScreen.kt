@@ -25,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeWithPin
+import com.tajemniktv.tajsos.data.isNoteItem
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.common.SelectorDialog
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
@@ -58,15 +59,19 @@ fun StudyScreen(
 
     val topicCandidates =
         remember(allNodes) {
-            allNodes.filter { it.node.type == "note" && (it.node.noteType == "concept" || it.node.noteType == "lecture") }
+            allNodes.filter {
+                it.node.isNoteItem() && (it.node.noteType == "concept" || it.node.noteType == "lecture")
+            }
         }
     val noteCandidates =
         remember(allNodes) {
-            allNodes.filter { it.node.type == "note" || it.node.type == "idea" }
+            allNodes.filter { it.node.isNoteItem() }
         }
     val paperCandidates =
         remember(allNodes) {
-            allNodes.filter { it.node.type == "note" && (it.node.noteType == "reading" || it.node.noteType == "research") }
+            allNodes.filter {
+                it.node.isNoteItem() && (it.node.noteType == "reading" || it.node.noteType == "research")
+            }
         }
 
     SelectorDialog(

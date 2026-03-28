@@ -70,7 +70,7 @@ internal fun PeopleLayer(
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
-                "RELATIONSHIP LAYER",
+                "RELATIONSHIP HEALTH",
                 style = MaterialTheme.typography.labelSmall,
                 color = TactileTheme.Primary,
                 fontWeight = FontWeight.Bold,
@@ -91,7 +91,7 @@ internal fun PeopleLayer(
     }
 
     if (snapshot.people.isEmpty()) {
-        EmptyState("No person nodes yet. Add a `person` node to start relationship tracking.")
+        EmptyState("No relationship anchors yet. Add a person entry to start tracking shared life context.")
         return
     }
 
