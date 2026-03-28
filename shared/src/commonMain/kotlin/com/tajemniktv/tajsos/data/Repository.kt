@@ -71,10 +71,37 @@ class AppRepository(
 
     suspend fun insertNodes(nodes: List<NodeEntity>): List<Long> {
         val ids = nodeDao.insertNodes(nodes)
+        val logs = mutableListOf<EventLogEntity>()
+        val relations = mutableListOf<RelationEntity>()
+        val nodesToSync = mutableListOf<Long>()
+
         ids.zip(nodes).forEach { (id, node) ->
-            logEvent("NODE_CREATED", id)
-            syncBelongsToRelations(id, node.projectId, node.areaId)
+            logs.add(EventLogEntity(eventType = "NODE_CREATED", nodeId = id))
+            if (node.projectId != null) {
+                relations.add(
+                    RelationEntity(
+                        fromNodeId = id,
+                        toNodeId = node.projectId,
+                        relationType = "BELONGS_TO"
+                    )
+                )
+            }
+            if (node.areaId != null) {
+                relations.add(
+                    RelationEntity(
+                        fromNodeId = id,
+                        toNodeId = node.areaId,
+                        relationType = "BELONGS_TO"
+                    )
+                )
+            }
+            nodesToSync.add(id)
         }
+
+        eventLogDao.insertLogs(logs)
+        relationDao.deleteBelongsToRelations(nodesToSync)
+        relationDao.insertRelations(relations)
+
         return ids
     }
 
