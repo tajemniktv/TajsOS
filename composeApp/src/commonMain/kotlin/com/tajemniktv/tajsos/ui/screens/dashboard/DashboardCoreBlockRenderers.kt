@@ -111,6 +111,42 @@ internal fun renderTodayPulseBlock(context: com.tajemniktv.tajsos.ui.screens.das
 }
 
 @Composable
+private fun renderForgottenWisdom(context: com.tajemniktv.tajsos.ui.screens.dashboard.DashboardBlockContext) {
+    val forgottenWisdom = context.dashboardState.forgottenWisdom
+    if (forgottenWisdom != null) {
+        DashCard(onClick = {
+            context.onEditNode(
+                forgottenWisdom
+                    .node.id,
+            )
+        }) {
+            Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+                Text(
+                    "FORGOTTEN WISDOM",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TactileTheme.Muted,
+                    fontWeight = FontWeight.Bold,
+                )
+                Text(
+                    forgottenWisdom
+                        .node.title,
+                    style = MaterialTheme.typography.titleSmall,
+                    color = TactileTheme.Text,
+                )
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    forgottenWisdom
+                        .node.content
+                        .take(100) + "...",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = TactileTheme.Muted,
+                )
+            }
+        }
+    }
+}
+
+@Composable
 internal fun renderLoadCapacityBlock(context: com.tajemniktv.tajsos.ui.screens.dashboard.DashboardBlockContext) {
     SystemStatusCard(
         load = context.dashboardState.systemLoad,
@@ -621,38 +657,7 @@ internal fun renderKnowledgeBlock(context: com.tajemniktv.tajsos.ui.screens.dash
             )
         }
 
-        val forgottenWisdom = context.dashboardState.forgottenWisdom
-        if (forgottenWisdom != null) {
-            DashCard(onClick = {
-                context.onEditNode(
-                    forgottenWisdom
-                        .node.id,
-                )
-            }) {
-                Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
-                    Text(
-                        "FORGOTTEN WISDOM",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Muted,
-                        fontWeight = FontWeight.Bold,
-                    )
-                    Text(
-                        forgottenWisdom
-                            .node.title,
-                        style = MaterialTheme.typography.titleSmall,
-                        color = TactileTheme.Text,
-                    )
-                    Spacer(Modifier.height(4.dp))
-                    Text(
-                        forgottenWisdom
-                            .node.content
-                            .take(100) + "...",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = TactileTheme.Muted,
-                    )
-                }
-            }
-        }
+        renderForgottenWisdom(context)
 
         if (context.dashboardState.resourceHighlights.isNotEmpty()) {
             SuggestionGroup(
