@@ -32,6 +32,8 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import com.tajemniktv.tajsos.data.AppPack
 import com.tajemniktv.tajsos.data.ModeEntity
 import com.tajemniktv.tajsos.data.PackRegistry
+import com.tajemniktv.tajsos.data.UserProfile
+import com.tajemniktv.tajsos.data.resolveDisplayName
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
@@ -64,6 +66,7 @@ fun SidebarContent(
             ownedPackKeys = AppPack.defaultFreePackKeys,
             enabledPackKeys = AppPack.defaultFreePackKeys,
         ),
+    userProfile: UserProfile = UserProfile(),
     onModeSelect: (Long) -> Unit = {},
     useContextualSidebar: Boolean = false,
     onBackToMainSidebar: () -> Unit = {},
@@ -81,6 +84,8 @@ fun SidebarContent(
         } else {
             null
         }
+    val displayName = userProfile.resolveDisplayName()
+    val avatarInitials = profileInitials(userProfile)
 
     Column(
         modifier = modifier.fillMaxHeight(),
@@ -107,17 +112,26 @@ fun SidebarContent(
                         ),
                 contentAlignment = Alignment.Center,
             ) {
-                Icon(
-                    Icons.Default.Person,
-                    contentDescription = null,
-                    tint = currentMode?.themeColor?.let { Color(it) } ?: TactileTheme.Primary,
-                    modifier = Modifier.size(24.dp),
-                )
+                if (avatarInitials.isBlank()) {
+                    Icon(
+                        Icons.Default.Person,
+                        contentDescription = null,
+                        tint = currentMode?.themeColor?.let { Color(it) } ?: TactileTheme.Primary,
+                        modifier = Modifier.size(24.dp),
+                    )
+                } else {
+                    Text(
+                        avatarInitials,
+                        color = currentMode?.themeColor?.let { Color(it) } ?: TactileTheme.Primary,
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
             }
             Spacer(Modifier.width(TactileTheme.SpacingMd))
             Column {
                 Text(
-                    stringResource(Res.string.app_name),
+                    displayName,
                     style = MaterialTheme.typography.titleMedium,
                     color = TactileTheme.Text,
                     fontWeight = FontWeight.Bold,
@@ -490,4 +504,13 @@ private fun placeholderSectionsFor(screen: Screen): List<SidebarPlaceholderSecti
                 ),
         ),
     )
+}
+
+private fun profileInitials(profile: UserProfile): String {
+    val first = profile.firstName.trim().firstOrNull()?.uppercaseChar()?.toString().orEmpty()
+    val last = profile.lastName.trim().firstOrNull()?.uppercaseChar()?.toString().orEmpty()
+    val initials = first + last
+    if (initials.isNotBlank()) return initials
+    val nickname = profile.nickname.trim()
+    return nickname.take(2).uppercase()
 }

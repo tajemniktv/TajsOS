@@ -53,6 +53,7 @@ import androidx.navigation.compose.rememberNavController
 import com.tajemniktv.tajsos.data.ModeEntity
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.data.TemplateEntity
+import com.tajemniktv.tajsos.data.UserProfile
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.common.CaptureSheet
@@ -156,6 +157,7 @@ fun App(
     val currentMode by viewModel.currentMode.collectAsState()
     val allModes by viewModel.allModes.collectAsState()
     val enabledPacks by viewModel.enabledPacks.collectAsState()
+    val userProfile by viewModel.userProfile.collectAsState()
 
     var showCaptureSheetState by remember { mutableStateOf(false) }
 
@@ -191,6 +193,7 @@ fun App(
                 currentMode = currentMode,
                 allModes = allModes,
                 packRegistry = enabledPacks,
+                userProfile = userProfile,
                 onModeSelect = { viewModel.switchMode(it) },
                 drawerState = drawerState,
                 scope = scope,

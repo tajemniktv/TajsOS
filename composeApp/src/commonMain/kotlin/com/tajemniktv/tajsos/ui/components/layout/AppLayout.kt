@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import com.tajemniktv.tajsos.data.ModeEntity
 import com.tajemniktv.tajsos.data.PackRegistry
+import com.tajemniktv.tajsos.data.UserProfile
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.coroutines.CoroutineScope
@@ -33,6 +34,7 @@ fun AppLayout(
     currentMode: ModeEntity?,
     allModes: List<ModeEntity>,
     packRegistry: PackRegistry,
+    userProfile: UserProfile,
     onModeSelect: (Long) -> Unit,
     drawerState: DrawerState,
     scope: CoroutineScope,
@@ -59,6 +61,7 @@ fun AppLayout(
                     currentMode = currentMode,
                     allModes = allModes,
                     packRegistry = packRegistry,
+                    userProfile = userProfile,
                     onModeSelect = onModeSelect,
                     useContextualSidebar = useContextualSidebar,
                     onBackToMainSidebar = { showMainSidebar = true },
@@ -89,6 +92,7 @@ fun AppLayout(
                         currentMode = currentMode,
                         allModes = allModes,
                         packRegistry = packRegistry,
+                        userProfile = userProfile,
                         onModeSelect = onModeSelect,
                         useContextualSidebar = useContextualSidebar,
                         onBackToMainSidebar = { showMainSidebar = true },
