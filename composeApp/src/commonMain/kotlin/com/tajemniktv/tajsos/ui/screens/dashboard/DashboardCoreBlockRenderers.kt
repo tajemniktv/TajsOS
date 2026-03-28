@@ -621,10 +621,11 @@ internal fun renderKnowledgeBlock(context: com.tajemniktv.tajsos.ui.screens.dash
             )
         }
 
-        if (context.dashboardState.forgottenWisdom != null) {
+        val forgottenWisdom = context.dashboardState.forgottenWisdom
+        if (forgottenWisdom != null) {
             DashCard(onClick = {
                 context.onEditNode(
-                    context.dashboardState.forgottenWisdom!!
+                    forgottenWisdom
                         .node.id,
                 )
             }) {
@@ -636,14 +637,14 @@ internal fun renderKnowledgeBlock(context: com.tajemniktv.tajsos.ui.screens.dash
                         fontWeight = FontWeight.Bold,
                     )
                     Text(
-                        context.dashboardState.forgottenWisdom!!
+                        forgottenWisdom
                             .node.title,
                         style = MaterialTheme.typography.titleSmall,
                         color = TactileTheme.Text,
                     )
                     Spacer(Modifier.height(4.dp))
                     Text(
-                        context.dashboardState.forgottenWisdom!!
+                        forgottenWisdom
                             .node.content
                             .take(100) + "...",
                         style = MaterialTheme.typography.bodySmall,
