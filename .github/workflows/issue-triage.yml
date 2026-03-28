@@ -1,0 +1,258 @@
+name: Issue Triage
+
+on:
+  issues:
+    types: [ opened, edited, reopened ]
+
+permissions:
+  issues: write
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Label issues based on Issue Form fields
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const action = context.payload.action;
+            const body = context.payload.issue.body || "";
+
+            const escapeRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+            function getSection(label) {
+              const re = new RegExp(`###\\s+${escapeRegExp(label)}\\s*\\n+([\\s\\S]*?)(?=\\n###\\s+|$)`, "i");
+              const m = body.match(re);
+              return m ? m[1].trim() : "";
+            }
+
+            function getSingleLine(label) {
+              const section = getSection(label);
+              if (!section) return "";
+              return section.split("\n").map(l => l.trim()).find(Boolean) || "";
+            }
+
+            function getCheckedOptions(label) {
+              const section = getSection(label);
+              if (!section) return [];
+              return section
+                .split("\n")
+                .map(l => l.trim())
+                .filter(l => /^-\s*\[[xX]\]\s+/.test(l))
+                .map(l => l.replace(/^-\s*\[[xX]\]\s+/, "").trim());
+            }
+
+            const categoryMap = {
+              "UI / UX": ["ui"],
+              "Domain logic / data model": ["domain"],
+              "Local-first / sync behavior": ["local-first", "sync"],
+              "Productivity / workflow": ["workflow"],
+              "Performance": ["performance"],
+              "Accessibility": ["accessibility"],
+              "Integrations (share/biometric/voice)": ["integration"],
+              "Build / tooling / CI": ["tooling"],
+              "Developer experience / tooling": ["tooling"],
+              "Other": []
+            };
+
+            const scopeMap = {
+              "Small (tweak / small option)": ["scope:small"],
+              "Medium (new setting / moderate logic)": ["scope:medium"],
+              "Large (multi-part feature; needs planning)": ["scope:large"],
+              "Not sure": []
+            };
+
+            const constraintsMap = {
+              "Could impact performance (CPU/GPU/memory)": ["impact:performance"],
+              "Impacts local-first correctness (offline behavior, merge/conflict semantics)": ["impact:local-first"],
+              "Adds or changes persisted schema/state": ["impact:persistence"],
+              "Touches cross-domain orchestration (MainViewModel/root shell)": ["impact:orchestration"],
+              "Requires sync interface changes": ["impact:sync-api"],
+              "Might need localization / translations": ["i18n"]
+            };
+
+            const platformMap = {
+              "Android app": ["android"],
+              "Desktop JVM app": ["desktop"],
+              "iOS framework/app integration": ["ios"],
+              "Server (Ktor/Netty)": ["server"],
+              "Website": ["website"],
+              "Other / Not sure": []
+            };
+
+            const moduleMap = {
+              ":androidApp": ["module:androidApp"],
+              ":composeApp": ["module:composeApp"],
+              ":shared": ["module:shared"],
+              ":server": ["module:server"],
+              "website/": ["module:website"],
+              "Not sure": []
+            };
+
+            const lensMap = {
+              "Now": ["lens:now"],
+              "Plan": ["lens:plan"],
+              "Operate": ["lens:operate"],
+              "Knowledge": ["lens:knowledge"],
+              "Review": ["lens:review"],
+              "Cross-lens / Shell": ["lens:shell"],
+              "Not sure": []
+            };
+
+            const targetMap = {
+              "Android app": ["android"],
+              "Desktop JVM app": ["desktop"],
+              "iOS framework/app integration": ["ios"],
+              "Server (Ktor/Netty)": ["server"],
+              "Shared domain (`:shared`)": ["module:shared"],
+              "Website": ["website"]
+            };
+
+            const bugFrequencyMap = {
+              "Every time": ["repro:always"],
+              "Often ( > 50% )": ["repro:intermittent"],
+              "Sometimes": ["repro:intermittent"],
+              "Rarely": ["repro:intermittent"],
+              "Once": ["repro:intermittent"]
+            };
+
+            const managed = new Set([
+              "needs-triage",
+              ...Object.values(categoryMap).flat(),
+              ...Object.values(scopeMap).flat(),
+              ...Object.values(constraintsMap).flat(),
+              ...Object.values(platformMap).flat(),
+              ...Object.values(moduleMap).flat(),
+              ...Object.values(lensMap).flat(),
+              ...Object.values(targetMap).flat(),
+              ...Object.values(bugFrequencyMap).flat(),
+              "regression",
+              "crash",
+              "sync",
+              "local-first",
+              "android",
+              "desktop",
+              "ios",
+              "server",
+              "website",
+              "domain",
+              "workflow",
+              "integration",
+              "tooling",
+              "module:androidApp",
+              "module:composeApp",
+              "module:shared",
+              "module:server",
+              "module:website",
+              "lens:now",
+              "lens:plan",
+              "lens:operate",
+              "lens:knowledge",
+              "lens:review",
+              "lens:shell"
+            ]);
+
+            const desired = new Set();
+
+            if (action === "opened" || action === "reopened") desired.add("needs-triage");
+
+            const category = getSingleLine("Category");
+            if (categoryMap[category]) categoryMap[category].forEach(l => desired.add(l));
+
+            const scope = getSingleLine("How big is this?");
+            if (scopeMap[scope]) scopeMap[scope].forEach(l => desired.add(l));
+
+            const constraintsChecked = getCheckedOptions("Considerations (check all that apply)");
+            for (const opt of constraintsChecked) {
+              const ls = constraintsMap[opt];
+              if (ls) ls.forEach(l => desired.add(l));
+            }
+
+            const platform = getSingleLine("Platform target");
+            if (platformMap[platform]) platformMap[platform].forEach(l => desired.add(l));
+
+            const module = getSingleLine("Primary module");
+            if (moduleMap[module]) moduleMap[module].forEach(l => desired.add(l));
+
+            const lens = getSingleLine("Primary product lens");
+            if (lensMap[lens]) lensMap[lens].forEach(l => desired.add(l));
+
+            const targetsChecked = getCheckedOptions("Runtime targets impacted (check all that apply)");
+            for (const opt of targetsChecked) {
+              const ls = targetMap[opt];
+              if (ls) ls.forEach(l => desired.add(l));
+            }
+
+            const freq = getSingleLine("How often does it occur?");
+            if (bugFrequencyMap[freq]) bugFrequencyMap[freq].forEach(l => desired.add(l));
+
+            const regression = getSingleLine("Did this work in an older TajsOS version?");
+            if (regression === "Yes") desired.add("regression");
+
+            const lower = body.toLowerCase();
+            if (lower.includes("crash") || lower.includes("crashed") || lower.includes("fatal")) desired.add("crash");
+            if (lower.includes("translation") || lower.includes("localization") || lower.includes("i18n")) desired.add("i18n");
+            if (lower.includes("sync") || lower.includes("offline") || lower.includes("conflict")) desired.add("sync");
+
+            const { data: issue } = await github.rest.issues.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number
+            });
+
+            const existing = issue.labels.map(l => (typeof l === "string" ? l : l.name));
+            const kept = existing.filter(l => !managed.has(l));
+            const finalLabels = Array.from(new Set([...kept, ...desired]));
+
+            const knownLabels = new Set();
+            let page = 1;
+            while (true) {
+              const { data } = await github.rest.issues.listLabelsForRepo({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                per_page: 100,
+                page
+              });
+              if (!data.length) break;
+              for (const label of data) knownLabels.add(label.name);
+              if (data.length < 100) break;
+              page += 1;
+            }
+
+            const defaultLabelMeta = { color: "BFDADC", description: "Auto-managed by issue triage workflow" };
+            const labelMeta = {
+              "needs-triage": { color: "FBCA04", description: "Issue needs triage" },
+              "bug": { color: "D73A4A", description: "Bug report" },
+              "enhancement": { color: "A2EEEF", description: "Feature request" },
+              "question": { color: "D876E3", description: "Support question" },
+              "performance": { color: "F9D0C4", description: "Performance-related" },
+              "accessibility": { color: "5319E7", description: "Accessibility-related" },
+              "i18n": { color: "1D76DB", description: "Localization or translation related" },
+              "crash": { color: "B60205", description: "Crash or fatal failure" },
+              "regression": { color: "C2E0C6", description: "Previously worked in an older version" }
+            };
+
+            const toCreate = finalLabels.filter((name) => !knownLabels.has(name));
+            for (const name of toCreate) {
+              const meta = labelMeta[name] || defaultLabelMeta;
+              try {
+                await github.rest.issues.createLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  name,
+                  color: meta.color,
+                  description: meta.description
+                });
+                knownLabels.add(name);
+              } catch (error) {
+                if (error.status !== 422) throw error;
+              }
+            }
+
+            await github.rest.issues.setLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: finalLabels
+            });

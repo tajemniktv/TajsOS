@@ -1,0 +1,237 @@
+name: Feature Request
+description: Suggest an idea or improvement for TajsOS
+title: "[Feature] "
+labels: [ "enhancement" ]
+assignees:
+  - tajemniktv
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Thanks for the suggestion
+        Please **search existing issues** before submitting a new request.
+        The best requests explain the **problem**, propose a **solution**, and include **acceptance criteria**.
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Summary
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: What would you like to add/change?
+      description: One or two sentences describing the request.
+      placeholder: "Example: Add a cross-lens quick capture flow that works consistently on Android and Desktop."
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Problem / motivation
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: What problem does this solve?
+      description: Explain your use case and why this matters.
+      placeholder: "What friction exists today, and what outcome should improve?"
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Proposed solution
+
+  - type: textarea
+    id: proposed_solution
+    attributes:
+      label: What should happen?
+      description: Describe the desired behavior, UX, and any settings/toggles.
+      placeholder: |
+        - Where is it triggered?
+        - What does the UI look like?
+        - Any default values?
+        - Any opt-in setting?
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Category
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - UI / UX
+        - Domain logic / data model
+        - Local-first / sync behavior
+        - Productivity / workflow
+        - Performance
+        - Accessibility
+        - Integrations (share/biometric/voice)
+        - Developer experience / tooling
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: product_lens
+    attributes:
+      label: Primary product lens
+      options:
+        - Now
+        - Plan
+        - Operate
+        - Knowledge
+        - Review
+        - Cross-lens / Shell
+        - Not sure
+    validations:
+      required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Scope
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: How big is this?
+      options:
+        - Small (tweak / small option)
+        - Medium (new setting / moderate logic)
+        - Large (multi-part feature; needs planning)
+        - Not sure
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Runtime targets
+
+  - type: checkboxes
+    id: targets
+    attributes:
+      label: Runtime targets impacted (check all that apply)
+      options:
+        - label: Android app
+          required: false
+        - label: Desktop JVM app
+          required: false
+        - label: iOS framework/app integration
+          required: false
+        - label: Server (Ktor/Netty)
+          required: false
+        - label: Shared domain (`:shared`)
+          required: false
+        - label: Website
+          required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Constraints / compatibility
+
+  - type: checkboxes
+    id: constraints
+    attributes:
+      label: Considerations (check all that apply)
+      options:
+        - label: Could impact performance (CPU/GPU/memory)
+          required: false
+        - label: Impacts local-first correctness (offline behavior, merge/conflict semantics)
+          required: false
+        - label: Adds or changes persisted schema/state
+          required: false
+        - label: Touches cross-domain orchestration (MainViewModel/root shell)
+          required: false
+        - label: Requires sync interface changes
+          required: false
+        - label: Might need localization / translations
+          required: false
+
+  - type: textarea
+    id: compatibility_notes
+    attributes:
+      label: Compatibility notes (optional)
+      description: Any known constraints, edge cases, or conflicts.
+      placeholder: "Examples: migration concerns, backward-compatibility caveats, timezone/date semantics, pack gating impact."
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Alternatives considered (optional)
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: What other solutions did you consider?
+      description: If there are alternatives, list them and why they're worse/better.
+      placeholder: "Alternative designs and tradeoffs."
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Acceptance criteria
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: How do we know it’s done?
+      description: Bullet list of conditions that must be true for the feature to be complete.
+      placeholder: |
+        - [ ] Works on listed runtime targets
+        - [ ] Preserves local-first behavior
+        - [ ] Includes tests/docs updates where needed
+        - [ ] No regressions in core shell navigation/modes
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Mockups / references (optional)
+
+  - type: textarea
+    id: mockups
+    attributes:
+      label: Screenshots, mockups, or examples
+      description: Drag & drop images or paste links to references.
+      placeholder: "Attach screenshots, diagrams, flow sketches, or links to references."
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Additional context (optional)
+
+  - type: textarea
+    id: additional_context
+    attributes:
+      label: Anything else?
+      placeholder: "Extra details, edge cases, why it's important, etc."
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Confirmations
+
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Please confirm
+      options:
+        - label: I have searched existing issues to avoid duplicates.
+          required: true
+        - label: I described the problem and proposed a concrete solution.
+          required: true
+        - label: I added acceptance criteria and target scope.
+          required: true

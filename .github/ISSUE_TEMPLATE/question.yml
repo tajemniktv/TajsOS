@@ -1,0 +1,94 @@
+name: Question / Support
+description: Ask a question or request help with TajsOS
+title: "[Question]: "
+labels: [ "question" ]
+assignees:
+  - tajemniktv
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Thanks for reaching out
+        Please search existing issues and documentation before submitting.
+        Use this form for questions, usage help, or clarification requests.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: What is your question?
+      description: Provide a brief summary of your question or the area you're unsure about.
+      placeholder: "Example: How should I model recurring routines across Now and Plan?"
+    validations:
+      required: true
+
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: Provide context, what you're trying to achieve, and any relevant information.
+      placeholder: |
+        Your setup, what you tried, expected behavior, etc.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform_target
+    attributes:
+      label: Platform target
+      options:
+        - Android app
+        - Desktop JVM app
+        - iOS framework/app integration
+        - Server (Ktor/Netty)
+        - Website
+        - Other / Not sure
+    validations:
+      required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ## What I tried
+
+  - type: textarea
+    id: tried
+    attributes:
+      label: What have you tried?
+      description: List any steps you have taken to resolve or understand your question.
+      placeholder: |
+        - Checked the wiki
+        - Searched issues
+        - Tried toggling option X
+      render: text
+    validations:
+      required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Additional context (optional)
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
+      description: Any extra information that might help us understand your question.
+      placeholder: "Any extra notes..."
+    validations:
+      required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Confirmations
+
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Please confirm
+      options:
+        - label: I have searched existing issues to avoid duplicates.
+          required: true
+        - label: This is a general question or support request (not a bug or feature request).
+          required: true

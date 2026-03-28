@@ -159,6 +159,7 @@ When working in this repo, agents should:
 11. When modifying or creating visual aspects of the app, consult DESIGN.md
 12. If users request is ambigous, not specific enough or you're not sure what the user meant - Ask
     before doing.
+13. After updating the codebase, check if tests also require updating.
 
 ## Documentation touchpoints
 

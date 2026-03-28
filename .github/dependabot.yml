@@ -17,6 +17,7 @@ updates:
       interval: "daily"
     open-pull-requests-limit: 10
     labels:
+      - "dependencies"
       - "ci"
       - "dependabot"
 
@@ -27,5 +28,6 @@ updates:
       interval: "daily"
     open-pull-requests-limit: 10
     labels:
-      - "frontend"
+      - "dependencies"
+      - "website"
       - "dependabot"
