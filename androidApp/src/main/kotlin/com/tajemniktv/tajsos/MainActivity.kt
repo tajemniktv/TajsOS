@@ -38,6 +38,7 @@ import kotlinx.coroutines.launch
 class MainActivity : FragmentActivity() {
     private lateinit var viewModel: MainViewModel
     private var voiceCaptureResult = mutableStateOf<String?>(null)
+    private var avatarPickResult = mutableStateOf<String?>(null)
     private var pendingIntent = mutableStateOf<Intent?>(null)
 
     private val speechRecognizerLauncher =
@@ -51,6 +52,11 @@ class MainActivity : FragmentActivity() {
                     voiceCaptureResult.value = results[0]
                 }
             }
+        }
+
+    private val avatarPickerLauncher =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            avatarPickResult.value = uri?.toString()
         }
 
     /**
@@ -77,6 +83,7 @@ class MainActivity : FragmentActivity() {
             val isAuthenticated by viewModel.isAuthenticated.collectAsState()
             val isBiometricEnabled by viewModel.isBiometricEnabled.collectAsState()
             val voiceText by voiceCaptureResult
+            val avatarRef by avatarPickResult
 
             LaunchedEffect(isBiometricEnabled, isAuthenticated) {
                 if (isBiometricEnabled == true && !isAuthenticated) {
@@ -105,6 +112,9 @@ val currentPendingIntent by pendingIntent
                         onVoiceCapture = { triggerVoiceCapture() },
                         voiceCaptureResult = voiceText,
                         onVoiceCaptureConsumed = { voiceCaptureResult.value = null },
+                        onPickAvatar = { avatarPickerLauncher.launch("image/*") },
+                        avatarPickResult = avatarRef,
+                        onAvatarPickConsumed = { avatarPickResult.value = null },
                     )
                 } else if (isBiometricEnabled == true) {
                     Box(

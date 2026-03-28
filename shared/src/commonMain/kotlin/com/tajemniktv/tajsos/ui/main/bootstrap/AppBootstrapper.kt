@@ -58,7 +58,7 @@ class AppBootstrapper(
      */
     private suspend fun seedUserData() {
         if (user.first() == null) {
-            repository.insertUser(UserEntity(name = "OPERATOR"))
+            repository.insertUser(UserEntity(nickname = "OPERATOR"))
         }
     }
 

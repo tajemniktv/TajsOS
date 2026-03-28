@@ -30,6 +30,7 @@ import com.tajemniktv.tajsos.data.TemplateEntity
 import com.tajemniktv.tajsos.data.TrackEntryEntity
 import com.tajemniktv.tajsos.data.TrackMedicationJoinEntity
 import com.tajemniktv.tajsos.data.UserEntity
+import com.tajemniktv.tajsos.data.UserProfile
 import com.tajemniktv.tajsos.ui.main.calculators.calculateAreaHealthSnapshot
 import com.tajemniktv.tajsos.ui.main.calculators.calculateCapacitySnapshot
 import com.tajemniktv.tajsos.ui.main.calculators.calculateCombinedDirectionSnapshot
@@ -234,6 +235,14 @@ class MainViewModel(
         repository
             .getUser()
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+
+    /**
+     * Typed local profile state for the operator identity screen.
+     */
+    val userProfile: StateFlow<UserProfile> =
+        repository
+            .getUserProfile()
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), UserProfile())
 
     val medications: StateFlow<List<MedicationEntity>> =
         repository
@@ -1564,13 +1573,21 @@ class MainViewModel(
 
     fun updateUserName(name: String) {
         viewModelScope.launch {
-            val currentUser = user.value ?: UserEntity(name = name)
-            repository.insertUser(
-                currentUser.copy(
-                    name = name,
-                    updatedAt = Clock.System.now().toEpochMilliseconds(),
+            val currentProfile = userProfile.value
+            repository.saveUserProfile(
+                currentProfile.copy(
+                    nickname = name.trim().ifBlank { currentProfile.nickname },
                 ),
             )
+        }
+    }
+
+    /**
+     * Persists profile changes captured by the user profile feature.
+     */
+    fun saveUserProfile(profile: UserProfile) {
+        viewModelScope.launch {
+            repository.saveUserProfile(profile)
         }
     }
 

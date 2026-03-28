@@ -121,6 +121,9 @@ import kotlin.time.Clock
  * @param onVoiceCapture Optional callback invoked to start a voice capture session.
  * @param voiceCaptureResult Optional text result from a completed voice capture to prefill the capture sheet.
  * @param onVoiceCaptureConsumed Callback invoked when the voice capture result has been consumed (clears or acknowledges the result).
+ * @param onPickAvatar Optional callback used by the profile screen to request a platform avatar picker.
+ * @param avatarPickResult Optional selected avatar reference (URI/path) from a platform picker.
+ * @param onAvatarPickConsumed Callback invoked after the avatar picker result has been consumed by UI state.
  */
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -130,6 +133,9 @@ fun App(
     onVoiceCapture: (() -> Unit)? = null,
     voiceCaptureResult: String? = null,
     onVoiceCaptureConsumed: () -> Unit = {},
+    onPickAvatar: (() -> Unit)? = null,
+    avatarPickResult: String? = null,
+    onAvatarPickConsumed: () -> Unit = {},
 ) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -201,6 +207,9 @@ fun App(
                     onVoiceCapture = onVoiceCapture,
                     voiceCaptureResult = voiceCaptureResult,
                     onVoiceCaptureConsumed = onVoiceCaptureConsumed,
+                    onPickAvatar = onPickAvatar,
+                    avatarPickResult = avatarPickResult,
+                    onAvatarPickConsumed = onAvatarPickConsumed,
                     allProjects = allProjects,
                     allAreas = allAreas,
                     allTemplates = allTemplates,
@@ -257,6 +266,9 @@ private fun AppScaffold(
     onVoiceCapture: (() -> Unit)?,
     voiceCaptureResult: String?,
     onVoiceCaptureConsumed: () -> Unit,
+    onPickAvatar: (() -> Unit)?,
+    avatarPickResult: String?,
+    onAvatarPickConsumed: () -> Unit,
     allProjects: List<NodeEntity>,
     allAreas: List<NodeEntity>,
     allTemplates: List<TemplateEntity>,
@@ -458,6 +470,7 @@ private fun AppScaffold(
             composable(Screen.Settings.route) {
                 SettingsScreen(
                     viewModel,
+                    onNavigateToProfile = { onNavigate(Screen.Profile.route) },
                     onNavigateToCalendarSettings = { onNavigate(Screen.CalendarSettings.route) },
                     onNavigateToTemplates = { onNavigate(Screen.Templates.route) },
                 )
@@ -542,7 +555,14 @@ private fun AppScaffold(
             composable(Screen.Review.route) {
                 ReviewScreen(viewModel, onBack = { navController.popBackStack() })
             }
-            composable(Screen.Profile.route) { ProfileScreen(viewModel) }
+            composable(Screen.Profile.route) {
+                ProfileScreen(
+                    viewModel = viewModel,
+                    onPickAvatar = onPickAvatar,
+                    pickedAvatarRef = avatarPickResult,
+                    onAvatarPickedConsumed = onAvatarPickConsumed,
+                )
+            }
         }
 
         if (showCaptureSheet) {

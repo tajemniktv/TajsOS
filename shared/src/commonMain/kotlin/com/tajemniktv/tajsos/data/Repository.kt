@@ -542,6 +542,22 @@ class AppRepository(
 
     suspend fun updateUser(user: UserEntity) = userDao.updateUser(user)
 
+    /**
+     * Observes the persisted operator profile as a typed local identity model.
+     */
+    fun getUserProfile(): Flow<UserProfile> =
+        userDao.getUser().map { userEntity ->
+            userEntity?.toUserProfile() ?: UserEntity().toUserProfile()
+        }
+
+    /**
+     * Persists the operator profile, preserving existing creation metadata.
+     */
+    suspend fun saveUserProfile(profile: UserProfile) {
+        val existing = userDao.getUser().first()
+        userDao.insertUser(profile.toEntity(existing))
+    }
+
     fun getAllMedications(): Flow<List<MedicationEntity>> = medicationDao.getAllMedications()
 
     suspend fun insertMedication(medication: MedicationEntity): Long = medicationDao.insertMedication(medication)

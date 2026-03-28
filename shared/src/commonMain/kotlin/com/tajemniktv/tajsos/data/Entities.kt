@@ -397,8 +397,27 @@ data class UserEntity(
      * Singleton for now.
      */
     @PrimaryKey val id: Long = 1,
-    val name: String = "OPERATOR",
-    val avatarUrl: String? = null,
+    val firstName: String = "",
+    val lastName: String = "",
+    val nickname: String = "OPERATOR",
+    val email: String = "",
+    val avatarRef: String? = null,
+    val bio: String = "",
+    val phoneNumber: String = "",
+    /**
+     * ISO date string `YYYY-MM-DD`.
+     */
+    val birthDate: String = "",
+    val city: String = "",
+    val country: String = "",
+    val timezone: String = "",
+    val occupation: String = "",
+    val website: String = "",
+    val preferredGreeting: String = "",
+    /**
+     * Serialized [UserDisplayNameFormat] enum key.
+     */
+    val displayNameFormat: String = "NICKNAME",
     val createdAt: Long =
         kotlin.time.Clock.System
             .now()

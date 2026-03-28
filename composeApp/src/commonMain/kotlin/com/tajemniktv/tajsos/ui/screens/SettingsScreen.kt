@@ -37,6 +37,7 @@ fun SettingsScreen(
     viewModel: MainViewModel,
     onNavigateToCalendarSettings: () -> Unit = {},
     onNavigateToTemplates: () -> Unit = {},
+    onNavigateToProfile: () -> Unit = {},
 ) {
     val isBiometricEnabled by viewModel.isBiometricEnabled.collectAsState()
     val isBiometricHardwareAvailable by viewModel.isBiometricHardwareAvailable.collectAsState()
@@ -103,6 +104,21 @@ fun SettingsScreen(
                 color = TactileTheme.Primary,
             )
             Spacer(Modifier.height(TactileTheme.SpacingSm))
+
+            Button(
+                onClick = onNavigateToProfile,
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor = TactileTheme.Surface,
+                        contentColor = TactileTheme.Primary,
+                    ),
+            ) {
+                Text(stringResource(Res.string.profile_title))
+            }
+
+            Spacer(Modifier.height(TactileTheme.SpacingMd))
 
             Button(
                 onClick = onNavigateToCalendarSettings,
