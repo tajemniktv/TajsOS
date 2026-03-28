@@ -113,8 +113,9 @@ fun calculateInsights(
     val archiveRate =
         if (recentNodes.isNotEmpty()) archivedCount.toDouble() / recentNodes.size else 0.0
 
-    val activeTasks = nodes.count { it.node.status == "active" && it.node.type == "task" }
-    val recentTaskCompletions = recentCompletions.count { it.node.type == "task" }
+    val activeTasks =
+        nodes.count { it.node.isTaskItem() && it.node.taskStateOrNull() == TaskState.ACTIVE }
+    val recentTaskCompletions = recentCompletions.count { it.node.isTaskItem() }
     val backlogPressure =
         if (recentTaskCompletions > 0) activeTasks.toDouble() / recentTaskCompletions else activeTasks.toDouble()
 
@@ -311,13 +312,13 @@ fun calculateInsights(
     val projectsWithoutTasks =
         projects.filter { project ->
             val projectNodes = nodes.filter { it.node.projectId == project.id }
-            val hasNotes = projectNodes.any { it.node.type == "note" || it.node.type == "idea" }
+            val hasNotes = projectNodes.any { it.node.isKnowledgeItem() }
             val hasTasks =
-                projectNodes.any { it.node.type == "task" && it.node.status == "active" }
+                projectNodes.any { it.node.isTaskItem() && it.node.taskStateOrNull() == TaskState.ACTIVE }
             hasNotes && !hasTasks
         }
 
-    val areas = nodes.filter { it.node.type == "area" }.map { it.node }
+    val areas = nodes.filter { it.node.isAreaItem() }.map { it.node }
     val neglectedAreas =
         areas.filter { area ->
             val areaNodes = nodes.filter { it.node.areaId == area.id }
@@ -901,7 +902,7 @@ fun calculateTimeArchitectureSnapshot(
     val monthLayer = dueNodes.filter { (it.node.dueAt ?: Long.MAX_VALUE) in now..monthHorizon }
     val semesterLayer =
         dueNodes.filter { (it.node.dueAt ?: Long.MAX_VALUE) in now..semesterHorizon }
-    val shortHorizonTasks = weekLayer.filter { it.node.type == "task" }.take(8)
+    val shortHorizonTasks = weekLayer.filter { it.node.isTaskItem() }.take(8)
     val longHorizonTasks = dueNodes.filter { (it.node.dueAt ?: 0L) > monthHorizon }.take(8)
     val seasonalGoals =
         activeNodes.filter { item ->
@@ -1177,7 +1178,7 @@ fun calculatePhysicalLogisticsSnapshot(
 ): com.tajemniktv.tajsos.ui.PhysicalLogisticsSnapshot {
     val byId = nodes.associateBy { it.node.id }
     val activeNodes = nodes.filter { it.node.status == "active" }
-    val activeTasks = activeNodes.filter { it.node.type == "task" }
+    val activeTasks = activeNodes.filter { it.node.isTaskItem() }
 
     /**
      * Filters the global node list to extract all active tasks related to a specific physical location node.
@@ -1568,7 +1569,7 @@ fun calculateCapacitySnapshot(
 ): com.tajemniktv.tajsos.ui.CapacitySnapshot {
     val now = Clock.System.now().toEpochMilliseconds()
     val weekMs = 7L * 24 * 60 * 60 * 1000
-    val activeTasks = nodes.filter { it.node.type == "task" && it.node.status == "active" }
+    val activeTasks = nodes.filter { it.node.isTaskItem() && it.node.taskStateOrNull() == TaskState.ACTIVE }
     val activeProjects =
         projects.filter { it.status == "active" || it.projectStatus == "active" }
     val overdueCount =
@@ -1755,7 +1756,9 @@ fun calculateLifeOSSignatureSnapshot(
     nodes: List<NodeWithPin>,
 ): com.tajemniktv.tajsos.ui.LifeOSSignatureSnapshot {
     val dueTasks =
-        nodes.filter { it.node.type == "task" && it.node.status == "active" && it.node.dueAt != null }
+        nodes.filter {
+            it.node.isTaskItem() && it.node.taskStateOrNull() == TaskState.ACTIVE && it.node.dueAt != null
+        }
     val withWorkDate = dueTasks.filter { it.node.startAt != null }
     val coverage =
         if (dueTasks.isEmpty()) 100 else ((withWorkDate.size * 100.0) / dueTasks.size).toInt()

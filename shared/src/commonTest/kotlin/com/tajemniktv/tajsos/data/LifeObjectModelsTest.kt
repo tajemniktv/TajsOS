@@ -59,4 +59,28 @@ class LifeObjectModelsTest {
         assertFalse(ItemKind.PROJECT.defaultInboxState())
         assertFalse(ItemKind.AREA.defaultInboxState())
     }
+
+    @Test
+    fun itemHelpers_groupLegacyTypesIntoTaskAndKnowledgeLenses() {
+        val maintenanceNode = NodeEntity(type = "maintenance", title = "Pay electricity bill")
+        val resourceNode = NodeEntity(type = "resource", title = "CBT worksheet")
+        val recordNode = NodeEntity(type = "record", title = "Therapy reflection")
+
+        assertTrue(maintenanceNode.isTaskItem())
+        assertEquals(TaskState.ACTIVE, maintenanceNode.taskStateOrNull())
+        assertTrue(resourceNode.isNoteItem())
+        assertTrue(resourceNode.isKnowledgeItem())
+        assertTrue(recordNode.isRecordItem())
+        assertTrue(recordNode.isKnowledgeItem())
+    }
+
+    @Test
+    fun projectStateFromNodeStatus_mapsLegacyCompletionValues() {
+        val projectNode = NodeEntity(type = "project", title = "Move apartments", projectStatus = "done")
+        val areaNode = NodeEntity(type = "area", title = "Health")
+
+        assertEquals(ProjectState.COMPLETED, projectNode.projectStateOrNull())
+        assertEquals(ItemKind.AREA, areaNode.itemKindOrNull())
+        assertTrue(areaNode.isAreaItem())
+    }
 }

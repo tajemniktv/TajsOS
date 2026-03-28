@@ -13,7 +13,13 @@ import com.tajemniktv.tajsos.data.PackRegistry
 import com.tajemniktv.tajsos.data.ProtocolHistoryEntity
 import com.tajemniktv.tajsos.data.ScheduleEntryEntity
 import com.tajemniktv.tajsos.data.ScheduleEntryKind
+import com.tajemniktv.tajsos.data.TaskState
 import com.tajemniktv.tajsos.data.buildModeQueryProfile
+import com.tajemniktv.tajsos.data.isAreaItem
+import com.tajemniktv.tajsos.data.isKnowledgeItem
+import com.tajemniktv.tajsos.data.isNoteItem
+import com.tajemniktv.tajsos.data.isTaskItem
+import com.tajemniktv.tajsos.data.taskStateOrNull
 import com.tajemniktv.tajsos.ui.main.calculators.normalizeProtocolLabel
 import com.tajemniktv.tajsos.ui.main.calculators.parsePlaybookModeKey
 import com.tajemniktv.tajsos.ui.main.calculators.protocolChecklistProgress
@@ -258,7 +264,7 @@ suspend fun buildDashboardUIState(
     if (mode?.key != "ALL") {
         if (includedAreaIds.isNotEmpty()) {
             filteredNodes =
-                filteredNodes.filter { it.node.areaId in includedAreaIds || it.node.type == "area" }
+                filteredNodes.filter { it.node.areaId in includedAreaIds || it.node.isAreaItem() }
         }
         if (excludedAreaIds.isNotEmpty()) {
             filteredNodes = filteredNodes.filter { it.node.areaId !in excludedAreaIds }
@@ -290,12 +296,13 @@ suspend fun buildDashboardUIState(
             }
     }
 
-    val activeTasks = filteredNodes.filter { it.node.type == "task" && it.node.status == "active" }
+    val activeTasks =
+        filteredNodes.filter { it.node.isTaskItem() && it.node.taskStateOrNull() == TaskState.ACTIVE }
     val overdue =
         filteredNodes.filter { it.node.dueAt != null && it.node.dueAt < now && it.node.status == "active" }
     val pinnedK =
         filteredNodes.filter {
-            it.node.isPinned && (it.node.type == "note" || it.node.type == "idea" || it.node.type == "resource")
+            it.node.isPinned && it.node.isKnowledgeItem()
         }
 
     val openLoops =
@@ -395,7 +402,7 @@ suspend fun buildDashboardUIState(
 
     return DashboardUIState(
         tasksCount = activeTasks.size,
-        notesCount = filteredNodes.count { it.node.type == "note" || it.node.type == "idea" || it.node.type == "resource" },
+        notesCount = filteredNodes.count { it.node.isKnowledgeItem() },
         pinnedKnowledge = pinnedK,
         upcomingDeadlines =
             filteredNodes
@@ -405,18 +412,24 @@ suspend fun buildDashboardUIState(
         overdueNodes = overdue,
         relevantNote =
             filteredNodes
-                .filter { (it.node.type == "note" || it.node.type == "idea") && it.node.status == "active" }
+                .filter { it.node.isNoteItem() && it.node.status == "active" }
                 .sortedByDescending { it.node.updatedAt }
                 .firstOrNull(),
-        lowEnergyTasks = filteredNodes.filter { it.node.type == "task" && it.node.status == "active" && it.node.energyLevel == 1 },
+        lowEnergyTasks =
+            filteredNodes.filter {
+                it.node.isTaskItem() && it.node.taskStateOrNull() == TaskState.ACTIVE && it.node.energyLevel == 1
+            },
         batchableTasks = activeTasks.groupBy { it.node.areaId }.filter { it.value.size >= 3 },
         quickWins =
             filteredNodes.filter {
-                it.node.type == "task" && it.node.status == "active" && it.node.energyLevel == 1 &&
+                it.node.isTaskItem() && it.node.taskStateOrNull() == TaskState.ACTIVE && it.node.energyLevel == 1 &&
                     it.node.friction == "easy"
             },
-        deepWork = filteredNodes.filter { it.node.type == "task" && it.node.status == "active" && it.node.energyLevel == 3 },
-        topTakeaways = filteredNodes.filter { (it.node.type == "note" || it.node.type == "idea") && it.node.noteState == "takeaway" },
+        deepWork =
+            filteredNodes.filter {
+                it.node.isTaskItem() && it.node.taskStateOrNull() == TaskState.ACTIVE && it.node.energyLevel == 3
+            },
+        topTakeaways = filteredNodes.filter { it.node.isNoteItem() && it.node.noteState == "takeaway" },
         readLaterVault = filteredNodes.filter { it.node.noteType == "read_later" && it.node.status == "active" },
         quoteVault = filteredNodes.filter { it.node.noteType == "quote" && it.node.status == "active" },
         ideaIncubator = filteredNodes.filter { it.node.type == "idea" && it.node.status == "active" && it.node.projectId == null },
@@ -426,7 +439,7 @@ suspend fun buildDashboardUIState(
             },
         neglectedThisWeek =
             filteredNodes.filter {
-                it.node.status == "active" && it.node.type == "task" && it.node.updatedAt < sevenDaysAgo
+                it.node.isTaskItem() && it.node.taskStateOrNull() == TaskState.ACTIVE && it.node.updatedAt < sevenDaysAgo
             },
         foundationalNotes =
             filteredNodes

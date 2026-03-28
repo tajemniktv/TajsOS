@@ -20,6 +20,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.tajemniktv.tajsos.data.TaskState
+import com.tajemniktv.tajsos.data.isTaskItem
+import com.tajemniktv.tajsos.data.taskStateOrNull
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.cards.NodeCard
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
@@ -46,18 +49,18 @@ fun TasksScreen(
     onEditNode: (Long) -> Unit,
 ) {
     val activeNodes by viewModel.activeNodes.collectAsState()
-    val tasks = activeNodes.filter { it.node.type == "task" }
+    val tasks = activeNodes.filter { it.node.isTaskItem() }
     val allProjects by viewModel.allProjects.collectAsState()
     val allAreas by viewModel.allAreas.collectAsState()
 
     var viewMode by remember { mutableStateOf("list") } // list, board
-    var filterStatus by remember { mutableStateOf<String?>(null) }
+    var filterStatus by remember { mutableStateOf<TaskState?>(null) }
     var filterProject by remember { mutableStateOf<Long?>(null) }
     var filterArea by remember { mutableStateOf<Long?>(null) }
 
     val filteredTasks =
         tasks.filter {
-            (filterStatus == null || it.node.status == filterStatus) &&
+            (filterStatus == null || it.node.taskStateOrNull() == filterStatus) &&
                 (filterProject == null || it.node.projectId == filterProject) &&
                 (filterArea == null || it.node.areaId == filterArea)
         }
@@ -90,7 +93,7 @@ fun TasksScreen(
         // Resurrection / Suggestions
         val staleTime = Clock.System.now().toEpochMilliseconds() - (14 * 24 * 60 * 60 * 1000L)
         val resurrectionTasks =
-            tasks.filter { it.node.status == "active" && it.node.updatedAt < staleTime }.take(2)
+            tasks.filter { it.node.taskStateOrNull() == TaskState.ACTIVE && it.node.updatedAt < staleTime }.take(2)
 
         if (resurrectionTasks.isNotEmpty()) {
             Surface(
@@ -152,12 +155,12 @@ fun TasksScreen(
                 )
             }
             item {
-                val statuses = listOf("active", "on_hold", "someday", "blocked")
+                val statuses = listOf(TaskState.ACTIVE, TaskState.ON_HOLD, TaskState.SOMEDAY, TaskState.BLOCKED)
                 statuses.forEach { status ->
                     FilterChip(
                         selected = filterStatus == status,
                         onClick = { filterStatus = if (filterStatus == status) null else status },
-                        label = { Text(status.uppercase()) },
+                        label = { Text(status.storageKey.uppercase().replace("_", " ")) },
                         modifier = Modifier.padding(end = 4.dp),
                     )
                 }
@@ -191,13 +194,13 @@ fun TasksScreen(
             }
         } else {
             // Board View
-            val statuses = listOf("active", "on_hold", "someday", "blocked")
+            val statuses = listOf(TaskState.ACTIVE, TaskState.ON_HOLD, TaskState.SOMEDAY, TaskState.BLOCKED)
             Row(
                 modifier = Modifier.fillMaxSize().horizontalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
             ) {
                 statuses.forEach { status ->
-                    val columnTasks = filteredTasks.filter { it.node.status == status }
+                    val columnTasks = filteredTasks.filter { it.node.taskStateOrNull() == status }
                     Column(
                         modifier = Modifier.width(280.dp).fillMaxHeight(),
                     ) {
@@ -210,7 +213,7 @@ fun TasksScreen(
                                     .padding(bottom = TactileTheme.SpacingSm),
                         ) {
                             Text(
-                                text = status.uppercase(),
+                                text = status.storageKey.uppercase().replace("_", " "),
                                 modifier = Modifier.padding(TactileTheme.SpacingMd),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = TactileTheme.Primary,

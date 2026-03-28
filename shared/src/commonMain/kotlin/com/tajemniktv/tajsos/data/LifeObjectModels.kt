@@ -218,6 +218,79 @@ fun legacyNodeTypeToItemKind(type: String?): ItemKind? =
 fun NodeEntity.itemKindOrNull(): ItemKind? = legacyNodeTypeToItemKind(type)
 
 /**
+ * Returns true when the node represents task-shaped work in the new model.
+ */
+fun NodeEntity.isTaskItem(): Boolean = itemKindOrNull() == ItemKind.TASK
+
+/**
+ * Returns true when the node represents durable knowledge or planning text.
+ */
+fun NodeEntity.isNoteItem(): Boolean = itemKindOrNull() == ItemKind.NOTE
+
+/**
+ * Returns true when the node represents chronological or reflective records.
+ */
+fun NodeEntity.isRecordItem(): Boolean = itemKindOrNull() == ItemKind.RECORD
+
+/**
+ * Returns true when the node belongs to the Knowledge lens.
+ */
+fun NodeEntity.isKnowledgeItem(): Boolean = isNoteItem() || isRecordItem()
+
+/**
+ * Returns true when the node represents an outcome-bearing project.
+ */
+fun NodeEntity.isProjectItem(): Boolean = itemKindOrNull() == ItemKind.PROJECT
+
+/**
+ * Returns true when the node represents an enduring area of responsibility.
+ */
+fun NodeEntity.isAreaItem(): Boolean = itemKindOrNull() == ItemKind.AREA
+
+/**
+ * Convenience projections for node wrappers consumed by the UI.
+ */
+fun NodeWithPin.itemKindOrNull(): ItemKind? = node.itemKindOrNull()
+
+fun NodeWithPin.isTaskItem(): Boolean = node.isTaskItem()
+
+fun NodeWithPin.isKnowledgeItem(): Boolean = node.isKnowledgeItem()
+
+fun NodeWithPin.isAreaItem(): Boolean = node.isAreaItem()
+
+/**
+ * Resolves the canonical task state from current node status values.
+ */
+fun taskStateFromNodeStatus(value: String?): TaskState? = TaskState.fromStorageKey(value)
+
+/**
+ * Resolves the canonical project state from current node status values.
+ */
+fun projectStateFromNodeStatus(value: String?): ProjectState? =
+    when (value) {
+        "done",
+        "completed",
+        -> ProjectState.COMPLETED
+        "archived" -> ProjectState.ARCHIVED
+        else -> ProjectState.fromStorageKey(value)
+    }
+
+/**
+ * Reads a typed task state from the legacy node surface when possible.
+ */
+fun NodeEntity.taskStateOrNull(): TaskState? = if (isTaskItem()) taskStateFromNodeStatus(status) else null
+
+/**
+ * Reads a typed project state from the legacy node surface when possible.
+ */
+fun NodeEntity.projectStateOrNull(): ProjectState? =
+    if (isProjectItem()) {
+        projectStateFromNodeStatus(projectStatus ?: status)
+    } else {
+        null
+    }
+
+/**
  * Converts a task state into the existing node status vocabulary.
  */
 fun TaskState.toNodeStatus(): String = storageKey
