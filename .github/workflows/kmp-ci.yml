@@ -48,7 +48,8 @@ jobs:
             echo "Unable to detect android-compileSdk in gradle/libs.versions.toml"
             exit 1
           fi
-          yes | sdkmanager --licenses >/dev/null
+          # sdkmanager may close stdin early; with pipefail that can surface as a false failure.
+          (yes || true) | sdkmanager --licenses >/dev/null || true
           sdkmanager "platform-tools" "platforms;android-${COMPILE_SDK}"
 
       - name: Build and test JVM/Android modules

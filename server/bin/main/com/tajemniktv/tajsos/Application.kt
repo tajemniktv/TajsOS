@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
- */
-
 package com.tajemniktv.tajsos
 
 import com.tajemniktv.tajsos.routes.healthRoutes
@@ -23,13 +19,11 @@ fun main() {
 
 fun Application.module() {
     install(ContentNegotiation) {
-        json(
-            Json {
-                prettyPrint = true
-                isLenient = true
-                ignoreUnknownKeys = true
-            },
-        )
+        json(Json {
+            prettyPrint = true
+            isLenient = true
+            ignoreUnknownKeys = true
+        })
     }
 
     routing {

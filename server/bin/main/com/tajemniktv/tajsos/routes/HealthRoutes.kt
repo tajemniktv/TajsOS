@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
- */
-
 package com.tajemniktv.tajsos.routes
 
 import com.tajemniktv.tajsos.dto.HealthResponse
@@ -17,8 +13,8 @@ fun Route.healthRoutes() {
             HealthResponse(
                 status = "OK",
                 version = "1.0.0", // Hardcoded for now, could be passed from build
-                uptime = System.currentTimeMillis() - startTime,
-            ),
+                uptime = System.currentTimeMillis() - startTime
+            )
         )
     }
 }
