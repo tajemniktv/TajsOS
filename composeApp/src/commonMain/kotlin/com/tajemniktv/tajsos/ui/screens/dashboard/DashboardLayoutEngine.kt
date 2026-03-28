@@ -239,6 +239,17 @@ private val defaultDesktopSecondaryIds =
     )
 
 private val defaultDesktopBottomBarIds = listOf("command_bar")
+private val nonContentBlockIds =
+    setOf(
+        "mode_controls",
+        "modules",
+        "operations_overview",
+        "search_capture",
+        "insights_summary",
+        "system_clock",
+        "system_footer",
+        "command_bar",
+    )
 
 /**
  * Returns all canonical dashboard block ids with aliases for discoverability.
@@ -274,6 +285,15 @@ fun defaultDashboardContentBlockIds(): List<String> =
     )
 
 /**
+ * Returns every dashboard content block that can be shown when mode constraints are intentionally
+ * disabled (for example, the "ALL" operating mode).
+ */
+fun allDashboardContentBlockIds(): List<String> =
+    dashboardBlockSpecs
+        .map { it.id }
+        .filterNot { it in nonContentBlockIds }
+
+/**
  * Builds the render plan for the dashboard from mode preferences and defaults.
  *
  * It supports two input formats from `dashboardBlocksJson`:
@@ -285,8 +305,14 @@ fun buildDashboardLayoutPlan(
     dashboardState: DashboardUIState,
     enabledPacks: PackRegistry,
 ): DashboardLayoutPlan {
+    val forceAllContent =
+        dashboardState.currentMode?.key.equals(
+            "ALL",
+            ignoreCase = true,
+        )
     val preferenceJson = dashboardState.modePreferences?.dashboardBlocksJson
     val fromModeProfile = dashboardState.modeQueryProfile?.dashboardBlocks.orEmpty()
+    val forcedModeBlocks = if (forceAllContent) allDashboardContentBlockIds() else emptyList()
 
     val explicitLayout =
         parseVersionedLayout(
@@ -325,7 +351,10 @@ fun buildDashboardLayoutPlan(
         parseLegacyBlockList(
             preferenceJson,
         )
-    val modeBlocks = fromModeProfile.ifEmpty { preferenceBlocks }
+    val modeBlocks =
+        forcedModeBlocks
+            .ifEmpty { fromModeProfile }
+            .ifEmpty { preferenceBlocks }
     val dynamicContent =
         normalizeBlocks(
             modeBlocks,
