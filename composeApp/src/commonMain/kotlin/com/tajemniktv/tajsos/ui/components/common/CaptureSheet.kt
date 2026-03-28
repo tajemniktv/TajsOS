@@ -43,7 +43,7 @@ import tajsos.composeapp.generated.resources.*
  * @param onDismiss Called to close the sheet.
  * @param onCapture Called when the user submits a capture. Arguments (in order):
  *  1. `text` — the entered capture text.
- *  2. `type` — the selected capture type (e.g. "task", "note", "idea", "project", "area", "decision", etc.).
+ *  2. `type` — the selected capture type (for example "inbox", "task", "note", "record", "project", "area").
  *  3. `projectId` — selected project id or `null`.
  *  4. `areaId` — selected area id or `null`.
  *  5. `isRecurring` — `true` if the capture is marked recurring.
@@ -83,7 +83,7 @@ fun CaptureSheet(
             text = initialText
         }
     }
-    var selectedType by remember { mutableStateOf("task") }
+    var selectedType by remember { mutableStateOf("inbox") }
     var decisionCategory by remember { mutableStateOf<String?>("major") }
     var selectedProjectId by remember { mutableStateOf<Long?>(defaultProjectId) }
     var selectedAreaId by remember { mutableStateOf<Long?>(defaultAreaId) }
@@ -253,13 +253,10 @@ fun CaptureSheet(
                 ) {
                     items(
                         listOf(
+                            "inbox",
                             "task",
                             "note",
-                            "idea",
-                            "resource",
-                            "open_loop",
-                            "decision",
-                            "maintenance",
+                            "record",
                             "project",
                             "area",
                         ),
@@ -267,13 +264,10 @@ fun CaptureSheet(
                         val typeLabel =
                             when (type)
                             {
+                                "inbox" -> "Capture"
                                 "task" -> stringResource(Res.string.type_task)
                                 "note" -> stringResource(Res.string.type_note)
-                                "idea" -> stringResource(Res.string.type_idea)
-                                "resource" -> stringResource(Res.string.type_resource)
-                                "open_loop" -> stringResource(Res.string.dash_open_loops)
-                                "decision" -> stringResource(Res.string.dash_decisions)
-                                "maintenance" -> stringResource(Res.string.dash_maintenance)
+                                "record" -> "Record"
                                 "project" -> stringResource(Res.string.type_project)
                                 "area" -> stringResource(Res.string.type_area)
                                 else -> type
@@ -351,7 +345,7 @@ fun CaptureSheet(
                     }
                 }
 
-                if (!brainDumpMode) {
+                if (selectedType != "inbox" && !brainDumpMode) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
@@ -540,7 +534,7 @@ fun CaptureSheet(
                             reminderTime,
                             contextScreen,
                             isSticky,
-                            if (selectedType == "decision") decisionCategory else null,
+                                if (selectedType == "decision") decisionCategory else null,
                         )
                         if (multiCaptureMode || brainDumpMode) {
                             text = ""

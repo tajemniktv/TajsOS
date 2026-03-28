@@ -588,6 +588,15 @@ private fun AppScaffold(
                     ->
                     when (type)
                     {
+                        "inbox" -> {
+                            viewModel.captureInboxEntry(
+                                rawText = text,
+                                areaId = areaId,
+                                projectId = projectId,
+                                contextScreen = ctx,
+                            )
+                        }
+
                         "project" -> {
                             viewModel.addProject(text, areaId = areaId)
                         }

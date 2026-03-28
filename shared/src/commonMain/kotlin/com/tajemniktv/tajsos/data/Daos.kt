@@ -102,6 +102,12 @@ interface NodeDao {
     suspend fun insertNode(node: NodeEntity): Long
 
     /**
+     * Inserts multiple nodes, returning their generated identifiers.
+     */
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertNodes(nodes: List<NodeEntity>): List<Long>
+
+    /**
      * Updates an existing node in the database.
      *
      * @param node The [NodeEntity] containing the updated values. Its [NodeEntity.id] must match an existing row.
@@ -257,6 +263,96 @@ interface AttachmentDao {
 
     @Delete
     suspend fun deleteAttachment(attachment: AttachmentEntity)
+}
+
+/**
+ * Persists raw capture inbox entries that have not yet been triaged into life objects.
+ */
+@Dao
+interface InboxEntryDao {
+    @Query(
+        """
+        SELECT * FROM inbox_entries
+        WHERE processedAt IS NULL AND dismissedAt IS NULL
+        ORDER BY capturedAt DESC
+    """,
+    )
+    fun getActiveInboxEntries(): Flow<List<InboxEntryEntity>>
+
+    @Query("SELECT * FROM inbox_entries WHERE id = :id")
+    suspend fun getInboxEntryById(id: Long): InboxEntryEntity?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertInboxEntry(entry: InboxEntryEntity): Long
+
+    @Update
+    suspend fun updateInboxEntry(entry: InboxEntryEntity)
+}
+
+/**
+ * Accesses task-specific execution data that sits beside the shared item row.
+ */
+@Dao
+interface TaskFacetDao {
+    @Query("SELECT * FROM task_facets WHERE itemId = :itemId")
+    suspend fun getTaskFacetByItemId(itemId: Long): TaskFacetEntity?
+
+    @Query("SELECT * FROM task_facets WHERE itemId = :itemId")
+    fun observeTaskFacet(itemId: Long): Flow<TaskFacetEntity?>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertTaskFacet(facet: TaskFacetEntity)
+}
+
+/**
+ * Accesses project-specific coordination data that sits beside the shared item row.
+ */
+@Dao
+interface ProjectFacetDao {
+    @Query("SELECT * FROM project_facets WHERE itemId = :itemId")
+    suspend fun getProjectFacetByItemId(itemId: Long): ProjectFacetEntity?
+
+    @Query("SELECT * FROM project_facets WHERE itemId = :itemId")
+    fun observeProjectFacet(itemId: Long): Flow<ProjectFacetEntity?>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertProjectFacet(facet: ProjectFacetEntity)
+}
+
+/**
+ * Accesses record-specific chronology data that sits beside the shared item row.
+ */
+@Dao
+interface RecordFacetDao {
+    @Query("SELECT * FROM record_facets WHERE itemId = :itemId")
+    suspend fun getRecordFacetByItemId(itemId: Long): RecordFacetEntity?
+
+    @Query("SELECT * FROM record_facets WHERE itemId = :itemId")
+    fun observeRecordFacet(itemId: Long): Flow<RecordFacetEntity?>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertRecordFacet(facet: RecordFacetEntity)
+}
+
+/**
+ * Persists attachable schedule data for life objects.
+ */
+@Dao
+interface ScheduleEntryDao {
+    @Query("SELECT * FROM schedule_entries WHERE itemId = :itemId ORDER BY scheduledAt ASC")
+    fun getScheduleEntriesForItem(itemId: Long): Flow<List<ScheduleEntryEntity>>
+
+    @Query("SELECT * FROM schedule_entries WHERE itemId = :itemId AND kind = :kind ORDER BY scheduledAt ASC")
+    suspend fun getScheduleEntriesByKind(itemId: Long, kind: String): List<ScheduleEntryEntity>
+
+    @Query("DELETE FROM schedule_entries WHERE itemId = :itemId AND kind = :kind")
+    suspend fun deleteScheduleEntriesByKind(itemId: Long, kind: String)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertScheduleEntry(entry: ScheduleEntryEntity): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertScheduleEntries(entries: List<ScheduleEntryEntity>)
 }
 
 @Dao

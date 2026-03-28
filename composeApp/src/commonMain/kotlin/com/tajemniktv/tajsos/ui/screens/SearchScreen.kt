@@ -132,13 +132,14 @@ fun SearchScreen(
                     label = { Text(stringResource(Res.string.search_filter_archived)) },
                 )
             }
-            val types = listOf("task", "note", "project", "area", "resource", "idea")
+            val types = listOf("task", "note", "record", "project", "area", "resource", "idea")
             items(types) { type ->
                 val typeLabel =
                     when (type)
                     {
                         "task" -> stringResource(Res.string.type_task)
                         "note" -> stringResource(Res.string.type_note)
+                        "record" -> "Record"
                         "idea" -> stringResource(Res.string.type_idea)
                         "project" -> stringResource(Res.string.type_project)
                         "area" -> stringResource(Res.string.type_area)

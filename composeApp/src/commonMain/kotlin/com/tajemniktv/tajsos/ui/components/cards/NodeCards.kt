@@ -128,6 +128,7 @@ fun NodeCard(
                         {
                             "task" -> stringResource(Res.string.type_task)
                             "note" -> stringResource(Res.string.type_note)
+                            "record" -> "Record"
                             "idea" -> stringResource(Res.string.type_idea)
                             "project" -> stringResource(Res.string.type_project)
                             "area" -> stringResource(Res.string.type_area)

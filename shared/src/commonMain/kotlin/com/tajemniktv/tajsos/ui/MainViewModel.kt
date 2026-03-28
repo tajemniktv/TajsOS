@@ -14,6 +14,8 @@ import com.tajemniktv.tajsos.data.DecisionOptionEntity
 import com.tajemniktv.tajsos.data.EventLogEntity
 import com.tajemniktv.tajsos.data.ExportBundle
 import com.tajemniktv.tajsos.data.FocusSessionEntity
+import com.tajemniktv.tajsos.data.InboxEntryEntity
+import com.tajemniktv.tajsos.data.ItemKind
 import com.tajemniktv.tajsos.data.MedicationEntity
 import com.tajemniktv.tajsos.data.ModeEntity
 import com.tajemniktv.tajsos.data.ModeUsageLogEntity
@@ -308,6 +310,14 @@ class MainViewModel(
     val inboxNodes: StateFlow<List<NodeWithPin>> =
         categorizedNodes
             .map { it.inbox }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    /**
+     * Raw capture entries that still need semantic triage into tasks, notes, records, or projects.
+     */
+    val inboxEntries: StateFlow<List<InboxEntryEntity>> =
+        repository
+            .getActiveInboxEntries()
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     private val _isInitialLoadComplete = MutableStateFlow(false)
@@ -971,6 +981,48 @@ class MainViewModel(
             isSticky = isSticky,
             decisionCategory = decisionCategory,
         )
+    }
+
+    /**
+     * Stores a raw capture entry for later triage instead of forcing an immediate object type.
+     */
+    fun captureInboxEntry(
+        rawText: String,
+        areaId: Long? = null,
+        projectId: Long? = null,
+        suggestedKind: ItemKind? = null,
+        contextScreen: String? = null,
+    ) {
+        viewModelScope.launch {
+            repository.captureInboxEntry(
+                rawText = rawText,
+                suggestedKind = suggestedKind,
+                homeAreaId = areaId,
+                activeProjectId = projectId,
+                contextScreen = contextScreen,
+            )
+        }
+    }
+
+    /**
+     * Converts a raw inbox capture into a typed LifeOS item.
+     */
+    fun triageInboxEntry(
+        entryId: Long,
+        kind: ItemKind,
+    ) {
+        viewModelScope.launch {
+            repository.triageInboxEntry(entryId, kind)
+        }
+    }
+
+    /**
+     * Dismisses a raw inbox capture without creating an item.
+     */
+    fun dismissInboxEntry(entry: InboxEntryEntity) {
+        viewModelScope.launch {
+            repository.dismissInboxEntry(entry)
+        }
     }
 
     /**

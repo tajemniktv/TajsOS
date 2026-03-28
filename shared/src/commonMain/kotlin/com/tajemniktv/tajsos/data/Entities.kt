@@ -21,7 +21,8 @@ import kotlinx.serialization.Serializable
 data class NodeEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     /**
-     * Task, note, project, area, resource, idea
+     * Legacy storage type mirrored by current UI.
+     * New work should prefer [ItemKind] plus typed facets.
      */
     val type: String,
     val title: String,

@@ -19,18 +19,14 @@ mind.
 
 The app is built around a unified model where different things in life can still be connected:
 
-- **Tasks**
-- **Notes**
-- **Ideas**
-- **Projects**
-- **Areas**
-- **People**
-- **Protocols**
-- **Open loops**
-- **Reviews**
-- **Attachments**
-- **Calendar events**
-- **Focus and tracking data**
+- **Inbox captures** for fast intake before forced classification
+- **Tasks** for execution
+- **Notes** for durable knowledge and reference
+- **Records** for chronological reflections, logs, and observations
+- **Projects** for outcomes
+- **Areas** for ongoing responsibility
+- **Relations, schedules, and reminders** as shared layers across the system
+- **Focus, review, and tracking data** as read models over shared life objects
 
 Instead of splitting everything into isolated tools, TajsOS tries to make them work as one system.
 

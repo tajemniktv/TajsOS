@@ -18,6 +18,11 @@ import androidx.room.RoomDatabaseConstructor
 @Database(
     entities = [
         NodeEntity::class,
+        InboxEntryEntity::class,
+        TaskFacetEntity::class,
+        ProjectFacetEntity::class,
+        RecordFacetEntity::class,
+        ScheduleEntryEntity::class,
         TodayPinEntity::class,
         FocusSessionEntity::class,
         TrackEntryEntity::class,
@@ -42,7 +47,7 @@ import androidx.room.RoomDatabaseConstructor
         MedicationEntity::class,
         TrackMedicationJoinEntity::class,
     ],
-    version = 27,
+    version = 28,
     exportSchema = false,
 )
 @ConstructedBy(AppDatabaseConstructor::class)
@@ -51,6 +56,31 @@ abstract class AppDatabase : RoomDatabase() {
      * Provides access to [NodeEntity] operations, representing the core data model.
      */
     abstract fun nodeDao(): NodeDao
+
+    /**
+     * Stores raw capture entries awaiting triage into typed life objects.
+     */
+    abstract fun inboxEntryDao(): InboxEntryDao
+
+    /**
+     * Stores task-specific execution data.
+     */
+    abstract fun taskFacetDao(): TaskFacetDao
+
+    /**
+     * Stores project-specific coordination data.
+     */
+    abstract fun projectFacetDao(): ProjectFacetDao
+
+    /**
+     * Stores record-specific chronology data.
+     */
+    abstract fun recordFacetDao(): RecordFacetDao
+
+    /**
+     * Stores attachable schedule and reminder data.
+     */
+    abstract fun scheduleEntryDao(): ScheduleEntryDao
 
     /**
      * Manages focus session persistence and statistics.

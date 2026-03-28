@@ -56,6 +56,11 @@ class SharedModule(
             database.decisionDao(),
             database.userDao(),
             database.medicationDao(),
+            database.inboxEntryDao(),
+            database.taskFacetDao(),
+            database.projectFacetDao(),
+            database.recordFacetDao(),
+            database.scheduleEntryDao(),
         )
     }
 
