@@ -7,6 +7,7 @@ version: 2
 updates:
   # Kotlin / Gradle-managed dependencies for the root project
   - package-ecosystem: "gradle"
+    target-branch: "dev"
     directory: "/"
     schedule:
       interval: "daily"
@@ -18,6 +19,7 @@ updates:
 
   # Kotlin / Gradle-managed dependencies for the androidapp module
   - package-ecosystem: "gradle"
+    target-branch: "dev"
     directory: "/androidapp"
     schedule:
       interval: "daily"
@@ -29,6 +31,7 @@ updates:
 
   # Version catalog (libs.versions.toml) — if your catalog is in gradle/libs.versions.toml
   - package-ecosystem: "gradle"
+    target-branch: "dev"
     directory: "/gradle"
     schedule:
       interval: "daily"
@@ -49,6 +52,7 @@ updates:
 
   # GitHub Actions (CI/workflow action updates)
   - package-ecosystem: "github-actions"
+    target-branch: "dev"
     directory: "/"
     schedule:
       interval: "daily"
@@ -59,6 +63,7 @@ updates:
 
   # Frontend (Astro / npm) — website lives in website/
   - package-ecosystem: "npm"
+    target-branch: "dev"
     directory: "/website"
     schedule:
       interval: "daily"
