@@ -37,6 +37,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.tajemniktv.tajsos.data.NodeEntity
+import com.tajemniktv.tajsos.data.isNoteItem
+import com.tajemniktv.tajsos.data.isRecordItem
+import com.tajemniktv.tajsos.data.isTaskItem
 import com.tajemniktv.tajsos.ui.components.cards.MaintenanceCard
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.screens.maintenanceTypes
@@ -62,17 +66,17 @@ internal fun renderFinanceHeaderBlock(context: com.tajemniktv.tajsos.ui.screens.
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
-                "NEURAL FINANCES",
+                "FINANCE LENS",
                 style = MaterialTheme.typography.displaySmall,
                 color = TactileTheme.Text,
             )
             Text(
-                "Financial dashboard for liquidity, cashflow velocity, and maintenance operations.",
+                "See money-related actions, reference material, deadlines, and recurring obligations in one place.",
                 style = MaterialTheme.typography.bodySmall,
                 color = TactileTheme.Muted,
             )
             Text(
-                "Tracking ${context.allItems.size} maintenance-finance item(s).",
+                "Tracking ${context.actionItems.size} actions, ${context.knowledgeItems.size} knowledge items, and ${context.deadlineItems.size} deadlines.",
                 style = MaterialTheme.typography.labelSmall,
                 color = TactileTheme.Muted,
             )
@@ -112,7 +116,7 @@ internal fun renderFinanceMetricsBlock(context: com.tajemniktv.tajsos.ui.screens
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Text(
-                    "TOTAL PORTFOLIO LIQUIDITY",
+                    "REFERENCE WEIGHT",
                     style = MaterialTheme.typography.labelSmall,
                     color = TactileTheme.Muted,
                     fontWeight = FontWeight.Bold,
@@ -122,6 +126,11 @@ internal fun renderFinanceMetricsBlock(context: com.tajemniktv.tajsos.ui.screens
                     style = MaterialTheme.typography.displayMedium,
                     color = TactileTheme.Text,
                     fontWeight = FontWeight.ExtraBold,
+                )
+                Text(
+                    "${context.knowledgeItems.size} finance notes/records",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = TactileTheme.Muted,
                 )
                 com.tajemniktv.tajsos.ui.screens.finance.FinanceMiniBars(
                     values = context.bars,
@@ -140,13 +149,13 @@ internal fun renderFinanceMetricsBlock(context: com.tajemniktv.tajsos.ui.screens
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Text(
-                    "CASH FLOW VELOCITY",
+                    "PRESSURE",
                     style = MaterialTheme.typography.labelSmall,
                     color = TactileTheme.Muted,
                     fontWeight = FontWeight.Bold,
                 )
                 Text(
-                    "IN ${context.recurring.size + context.queue.size} • OUT ${context.overdue.size + context.queue.size}",
+                    "${context.deadlineItems.size} dated items • ${context.overdue.size} overdue • ${context.queue.size + context.recurring.size} recurring/admin",
                     style = MaterialTheme.typography.bodySmall,
                     color = TactileTheme.Muted,
                 )
@@ -177,19 +186,19 @@ internal fun renderFinanceActivityBlock(context: com.tajemniktv.tajsos.ui.screen
                 color = TactileTheme.Text,
                 fontWeight = FontWeight.Bold,
             )
-            for (item in context.allItems.take(5)) {
+            for (item in context.recentItems.take(5)) {
                 Row(
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .clickable { context.onEditNode(item.node.node.id) }
+                            .clickable { context.onEditNode(item.node.id) }
                             .padding(vertical = 4.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            item.node.node.title,
+                            item.node.title,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             style = MaterialTheme.typography.bodyMedium,
@@ -197,8 +206,7 @@ internal fun renderFinanceActivityBlock(context: com.tajemniktv.tajsos.ui.screen
                             fontWeight = FontWeight.SemiBold,
                         )
                         Text(
-                            item.node.node.maintenanceType
-                                ?.uppercase() ?: "MANUAL",
+                            financeItemLabel(item.node),
                             style = MaterialTheme.typography.labelSmall,
                             color = TactileTheme.Muted,
                         )
@@ -206,7 +214,7 @@ internal fun renderFinanceActivityBlock(context: com.tajemniktv.tajsos.ui.screen
                     Text(
                         formatCurrency(
                             com.tajemniktv.tajsos.ui.screens.finance.financeSyntheticTxn(
-                                item.node.node.title,
+                                item.node.title,
                             ),
                         ),
                         color = TactileTheme.Primary,
@@ -236,7 +244,7 @@ internal fun renderFinanceInsightsBlock(context: com.tajemniktv.tajsos.ui.screen
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
-                "NEURAL INSIGHTS",
+                "LENS INSIGHTS",
                 style = MaterialTheme.typography.labelSmall,
                 color = TactileTheme.Text,
                 fontWeight = FontWeight.Bold,
@@ -246,6 +254,7 @@ internal fun renderFinanceInsightsBlock(context: com.tajemniktv.tajsos.ui.screen
                     snapshot.overdueWarning,
                     if (snapshot.breakIfIgnored.isNotEmpty()) "Break risk: ${snapshot.breakIfIgnored.size} item(s)." else null,
                     "Admin debt: ${snapshot.adminDebtMeter}%",
+                    if (context.deadlineItems.isNotEmpty()) "Upcoming finance deadlines: ${context.deadlineItems.size}" else null,
                 )
             for (item in insightItems) {
                 Surface(
@@ -291,7 +300,7 @@ internal fun renderFinanceVaultBlock(context: com.tajemniktv.tajsos.ui.screens.f
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
-                "VAULT STATUS",
+                "REFERENCE COVERAGE",
                 style = MaterialTheme.typography.labelSmall,
                 color = TactileTheme.Muted,
                 fontWeight = FontWeight.Bold,
@@ -302,7 +311,7 @@ internal fun renderFinanceVaultBlock(context: com.tajemniktv.tajsos.ui.screens.f
             ) {
                 Icon(Icons.Default.Lock, null, tint = TactileTheme.Primary)
                 Text(
-                    "ENCRYPTED",
+                    "${context.knowledgeItems.size} SAVED",
                     style = MaterialTheme.typography.titleMedium,
                     color = TactileTheme.Text,
                     fontWeight = FontWeight.Bold,
@@ -310,7 +319,7 @@ internal fun renderFinanceVaultBlock(context: com.tajemniktv.tajsos.ui.screens.f
             }
             AssistChip(
                 onClick = {},
-                label = { Text("SYNC VAULT") },
+                label = { Text("${context.deadlineItems.size} DEADLINES") },
                 leadingIcon = { Icon(Icons.Default.Sync, null, modifier = Modifier.size(14.dp)) },
             )
         }
@@ -354,7 +363,7 @@ internal fun renderFinanceQueueControlsBlock(context: com.tajemniktv.tajsos.ui.s
 @Composable
 internal fun renderFinanceQueueListBlock(context: com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardContext) {
     if (context.itemsInView.isEmpty()) {
-        EmptyState(message = "No finance maintenance items in ${context.maintenanceView.label.lowercase()}.")
+        EmptyState(message = "No finance maintenance items in ${context.maintenanceView.label.lowercase()} right now.")
         return
     }
     for (item in context.itemsInView) {
@@ -381,6 +390,14 @@ internal fun renderFinanceQueueListBlock(context: com.tajemniktv.tajsos.ui.scree
         )
     }
 }
+
+private fun financeItemLabel(node: NodeEntity): String =
+    when {
+        node.isTaskItem() -> node.maintenanceType?.uppercase() ?: "ACTION"
+        node.isRecordItem() -> "RECORD"
+        node.isNoteItem() -> "NOTE"
+        else -> node.type.uppercase()
+    }
 
 @Composable
 private fun FinanceMiniBars(

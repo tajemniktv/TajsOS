@@ -14,6 +14,87 @@ import kotlin.test.assertEquals
 
 class DomainLensQueriesTest {
     @Test
+    fun financeQueries_include_actions_knowledge_deadlines_and_maintenance_without_resource_types() {
+        val financeTask =
+            NodeWithPin(
+                node =
+                    NodeEntity(
+                        id = 10,
+                        type = "task",
+                        title = "Pay rent",
+                        status = "active",
+                        dueAt = 2_000L,
+                    ),
+                pin = null,
+                tags = listOf(TagEntity(id = 10, name = "finance", normalizedName = "finance")),
+            )
+        val financeNote =
+            NodeWithPin(
+                node =
+                    NodeEntity(
+                        id = 11,
+                        type = "note",
+                        title = "Insurance policy reference",
+                        status = "active",
+                        noteType = "reference",
+                    ),
+                pin = null,
+                tags = listOf(TagEntity(id = 11, name = "insurance", normalizedName = "insurance")),
+            )
+        val financeDeadline =
+            NodeWithPin(
+                node =
+                    NodeEntity(
+                        id = 12,
+                        type = "note",
+                        title = "Tax filing deadline",
+                        status = "active",
+                        dueAt = 1_000L,
+                    ),
+                pin = null,
+                tags = emptyList(),
+            )
+        val unrelatedRecord =
+            NodeWithPin(
+                node = NodeEntity(id = 13, type = "record", title = "Therapy reflection", status = "active"),
+                pin = null,
+                tags = emptyList(),
+            )
+        val maintenanceItem =
+            MaintenanceStatusItem(
+                node =
+                    NodeWithPin(
+                        node =
+                            NodeEntity(
+                                id = 14,
+                                type = "maintenance",
+                                title = "Renew bank card",
+                                status = "active",
+                                maintenanceType = "renewal",
+                            ),
+                        pin = null,
+                    ),
+                urgency = "medium",
+                isRecurring = true,
+            )
+
+        val allNodes = listOf(financeTask, financeNote, financeDeadline, unrelatedRecord)
+        val snapshot =
+            MaintenanceSnapshot(
+                active = listOf(maintenanceItem),
+                recurring = listOf(maintenanceItem),
+                overdue = listOf(maintenanceItem),
+            )
+
+        assertEquals(listOf(financeTask.node.id), DomainLensQueries.financeActionItems(allNodes).map { it.node.id })
+        assertEquals(listOf(financeNote.node.id, financeDeadline.node.id), DomainLensQueries.financeKnowledgeItems(allNodes).map { it.node.id })
+        assertEquals(listOf(financeDeadline.node.id, financeTask.node.id), DomainLensQueries.financeDeadlineItems(allNodes).map { it.node.id })
+        assertEquals(listOf(maintenanceItem.node.node.id), DomainLensQueries.financeMaintenanceItems(snapshot).map { it.node.node.id })
+        assertEquals(listOf(maintenanceItem.node.node.id), DomainLensQueries.financeRecurringItems(snapshot).map { it.node.node.id })
+        assertEquals(listOf(maintenanceItem.node.node.id), DomainLensQueries.financeOverdueItems(snapshot).map { it.node.node.id })
+    }
+
+    @Test
     fun healthQueries_include_actions_knowledge_and_maintenance_without_special_domain_types() {
         val healthTask =
             NodeWithPin(

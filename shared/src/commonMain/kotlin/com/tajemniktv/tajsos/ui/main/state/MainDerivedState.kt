@@ -96,30 +96,24 @@ data class PersonalRulesSnapshot(
 )
 
 /**
- * A snapshot of various secure vaults holding static reference information and critical documentation.
+ * A snapshot of durable reference material and retrieval-oriented storage across the system.
  *
- * @param documentVault Nodes linking to or summarizing important physical documents.
- * @param importantLinksVault A curated collection of highly accessed or critical URLs.
- * @param medicalInfoVault Secure notes containing medical history, prescriptions, or provider info.
- * @param universityInfoVault Static reference notes containing student IDs, syllabi links, or academic advisor details.
- * @param idsAndFormsVault Notes tracking the status or physical location of identification documents.
- * @param applicationStatusTracking Notes tracking the status of external applications (e.g., jobs, housing, visas).
- * @param receiptsPaperwork Notes designated for tracking financial receipts or bureaucratic paperwork.
- * @param accountReferenceVault Notes holding non-sensitive reference info for various accounts (never passwords).
- * @param officialDeadlineReminders Hard deadlines tied to external authorities (e.g., taxes, enrollment).
- * @param mustFindLater Items dumped quickly with the explicit intention of being sorted later.
+ * @param referenceLibrary Durable reference notes, records, and document-like items worth keeping retrievable.
+ * @param importantLinks Curated links and portal shortcuts that matter operationally.
+ * @param healthReference Health-related records, provider info, prescriptions, and symptom context.
+ * @param institutionalReference Admin, study, identity, and account reference material.
+ * @param processTracking Tracked external processes such as applications, renewals, and approvals.
+ * @param officialDeadlines Hard external deadlines tied to authorities, institutions, or financial obligations.
+ * @param retrievalQueue Quick-captured items intentionally pinned for later retrieval or sorting.
  */
 data class VaultsSnapshot(
-    val documentVault: List<NodeWithPin> = emptyList(),
-    val importantLinksVault: List<NodeWithPin> = emptyList(),
-    val medicalInfoVault: List<NodeWithPin> = emptyList(),
-    val universityInfoVault: List<NodeWithPin> = emptyList(),
-    val idsAndFormsVault: List<NodeWithPin> = emptyList(),
-    val applicationStatusTracking: List<NodeWithPin> = emptyList(),
-    val receiptsPaperwork: List<NodeWithPin> = emptyList(),
-    val accountReferenceVault: List<NodeWithPin> = emptyList(),
-    val officialDeadlineReminders: List<NodeWithPin> = emptyList(),
-    val mustFindLater: List<NodeWithPin> = emptyList(),
+    val referenceLibrary: List<NodeWithPin> = emptyList(),
+    val importantLinks: List<NodeWithPin> = emptyList(),
+    val healthReference: List<NodeWithPin> = emptyList(),
+    val institutionalReference: List<NodeWithPin> = emptyList(),
+    val processTracking: List<NodeWithPin> = emptyList(),
+    val officialDeadlines: List<NodeWithPin> = emptyList(),
+    val retrievalQueue: List<NodeWithPin> = emptyList(),
 )
 
 /**

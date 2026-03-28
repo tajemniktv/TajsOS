@@ -96,21 +96,18 @@ internal fun VaultsLayer(
 ) {
     var entryTitle by remember { mutableStateOf("") }
     var entryContent by remember { mutableStateOf("") }
-    var selectedCategory by remember { mutableStateOf("vault_document") }
-    var entryType by remember { mutableStateOf("document") }
+    var selectedCategory by remember { mutableStateOf("reference") }
+    var entryType by remember { mutableStateOf("note") }
     var searchQuery by remember { mutableStateOf("") }
 
     val categories =
         listOf(
-            "vault_document" to "DOCUMENT VAULT",
-            "vault_links" to "IMPORTANT LINKS",
-            "vault_medical" to "MEDICAL INFO",
-            "vault_university" to "UNIVERSITY INFO",
-            "vault_ids_forms" to "IDs & FORMS",
-            "vault_application_status" to "APPLICATION STATUS",
-            "vault_receipts_paperwork" to "RECEIPTS / PAPERWORK",
-            "vault_account_reference" to "ACCOUNT / REFERENCE",
-            "vault_official_deadline" to "OFFICIAL DEADLINE",
+            "reference" to "REFERENCE",
+            "important_links" to "IMPORTANT LINKS",
+            "health_reference" to "HEALTH",
+            "institutional_reference" to "INSTITUTIONAL",
+            "process_tracking" to "PROCESS TRACKING",
+            "official_deadline" to "OFFICIAL DEADLINE",
         )
 
     val nowMillis = Clock.System.now().toEpochMilliseconds()
@@ -118,81 +115,83 @@ internal fun VaultsLayer(
         remember(snapshot, nowMillis) {
             listOf(
                 VaultCategoryCardData(
-                    title = "General Documents",
-                    subtitle = "Core paperwork and operational docs.",
-                    count = snapshot.documentVault.size,
+                    title = "Reference Library",
+                    subtitle = "Durable notes, document-like material, and saved reference.",
+                    count = snapshot.referenceLibrary.size,
                     icon = Icons.Default.Folder,
-                    stamp = latestRelative(snapshot.documentVault, nowMillis),
-                    badge = "ENCRYPTED",
+                    stamp = latestRelative(snapshot.referenceLibrary, nowMillis),
+                    badge = "READY",
                 ),
                 VaultCategoryCardData(
                     title = "Important Links",
-                    subtitle = "Critical URLs and portal references.",
-                    count = snapshot.importantLinksVault.size,
+                    subtitle = "Critical URLs and portal shortcuts.",
+                    count = snapshot.importantLinks.size,
                     icon = Icons.Default.Link,
-                    stamp = latestRelative(snapshot.importantLinksVault, nowMillis),
+                    stamp = latestRelative(snapshot.importantLinks, nowMillis),
                     badge = "SYNCED",
                 ),
                 VaultCategoryCardData(
-                    title = "Medical Records",
-                    subtitle = "Health documents and provider details.",
-                    count = snapshot.medicalInfoVault.size,
+                    title = "Health Reference",
+                    subtitle = "Provider details, symptom logs, prescriptions, and health notes.",
+                    count = snapshot.healthReference.size,
                     icon = Icons.Default.MedicalInformation,
-                    stamp = latestRelative(snapshot.medicalInfoVault, nowMillis),
+                    stamp = latestRelative(snapshot.healthReference, nowMillis),
                     badge = "SECURE",
                 ),
                 VaultCategoryCardData(
-                    title = "University",
-                    subtitle = "Study IDs, policies, and references.",
-                    count = snapshot.universityInfoVault.size,
-                    icon = Icons.Default.FolderSpecial,
-                    stamp = latestRelative(snapshot.universityInfoVault, nowMillis),
-                ),
-                VaultCategoryCardData(
-                    title = "IDs & Forms",
-                    subtitle = "Documents needed for verification.",
-                    count = snapshot.idsAndFormsVault.size,
-                    icon = Icons.Default.VerifiedUser,
-                    stamp = latestRelative(snapshot.idsAndFormsVault, nowMillis),
-                ),
-                VaultCategoryCardData(
-                    title = "Receipts & Paperwork",
-                    subtitle = "Bureaucratic and financial trails.",
-                    count = snapshot.receiptsPaperwork.size,
-                    icon = Icons.Default.Description,
-                    stamp = latestRelative(snapshot.receiptsPaperwork, nowMillis),
-                ),
-                VaultCategoryCardData(
-                    title = "Accounts & Financials",
-                    subtitle = "Non-sensitive account references.",
-                    count = snapshot.accountReferenceVault.size,
+                    title = "Institutional Reference",
+                    subtitle = "IDs, forms, study/admin reference, and account context.",
+                    count = snapshot.institutionalReference.size,
                     icon = Icons.Default.AccountBalance,
-                    stamp = latestRelative(snapshot.accountReferenceVault, nowMillis),
-                    badge = "VAULTED",
+                    stamp = latestRelative(snapshot.institutionalReference, nowMillis),
+                    badge = "STABLE",
                 ),
                 VaultCategoryCardData(
-                    title = "Application Status",
-                    subtitle = "Tracking visas, jobs, and external pipelines.",
-                    count = snapshot.applicationStatusTracking.size,
+                    title = "Process Tracking",
+                    subtitle = "Applications, renewals, and outside workflows in motion.",
+                    count = snapshot.processTracking.size,
                     icon = Icons.Default.FolderShared,
-                    stamp = latestRelative(snapshot.applicationStatusTracking, nowMillis),
+                    stamp = latestRelative(snapshot.processTracking, nowMillis),
+                ),
+                VaultCategoryCardData(
+                    title = "Official Deadlines",
+                    subtitle = "Hard dates that should not get lost.",
+                    count = snapshot.officialDeadlines.size,
+                    icon = Icons.Default.Description,
+                    stamp = latestRelative(snapshot.officialDeadlines, nowMillis),
+                ),
+                VaultCategoryCardData(
+                    title = "Retrieval Queue",
+                    subtitle = "Pinned or marked items to find later.",
+                    count = snapshot.retrievalQueue.size,
+                    icon = Icons.Default.VerifiedUser,
+                    stamp = latestRelative(snapshot.retrievalQueue, nowMillis),
                 ),
             )
         }
 
-    val totalVaultItems = categoryCards.sumOf { it.count }
+    val totalVaultItems =
+        remember(snapshot) {
+            listOf(
+                snapshot.referenceLibrary,
+                snapshot.importantLinks,
+                snapshot.healthReference,
+                snapshot.institutionalReference,
+                snapshot.processTracking,
+                snapshot.officialDeadlines,
+                snapshot.retrievalQueue,
+            ).flatMap { it }.distinctBy { it.node.id }.size
+        }
     val latestUpdatedAt =
         remember(snapshot) {
             listOf(
-                snapshot.documentVault,
-                snapshot.importantLinksVault,
-                snapshot.medicalInfoVault,
-                snapshot.universityInfoVault,
-                snapshot.idsAndFormsVault,
-                snapshot.applicationStatusTracking,
-                snapshot.receiptsPaperwork,
-                snapshot.accountReferenceVault,
-                snapshot.officialDeadlineReminders,
+                snapshot.referenceLibrary,
+                snapshot.importantLinks,
+                snapshot.healthReference,
+                snapshot.institutionalReference,
+                snapshot.processTracking,
+                snapshot.officialDeadlines,
+                snapshot.retrievalQueue,
             ).flatMap { it }.maxOfOrNull { it.node.updatedAt }
         }
 
@@ -269,8 +268,8 @@ internal fun VaultsLayer(
                         }
                         VaultDashboardCards(
                             cards = categoryCards,
-                            applicationProgress = snapshot.applicationStatusTracking.size,
-                            totalTracked = snapshot.applicationStatusTracking.size + snapshot.officialDeadlineReminders.size,
+                            applicationProgress = snapshot.processTracking.size,
+                            totalTracked = snapshot.processTracking.size + snapshot.officialDeadlines.size,
                         )
                         VaultEntryComposer(
                             entryTitle = entryTitle,
@@ -317,7 +316,7 @@ internal fun VaultsLayer(
             )
         }
 
-        items(snapshot.mustFindLater, key = { it.node.id }) { item ->
+        items(snapshot.retrievalQueue, key = { it.node.id }) { item ->
             Surface(
                 modifier = Modifier.fillMaxWidth(),
                 color = TactileTheme.Surface,
@@ -687,7 +686,7 @@ private fun VaultEntryComposer(
                 horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
                 verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
             ) {
-                listOf("document", "resource", "note", "vault").forEach { type ->
+                listOf("note", "record", "task").forEach { type ->
                     FilterChip(
                         selected = entryType == type,
                         onClick = { onEntryTypeChange(type) },
@@ -730,15 +729,12 @@ private data class VaultSectionModel(
 
 private fun buildSectionModels(snapshot: VaultsSnapshot): List<VaultSectionModel> =
     listOf(
-        VaultSectionModel("DOCUMENT VAULT", snapshot.documentVault.map { it.node.title }),
-        VaultSectionModel("IMPORTANT LINKS VAULT", snapshot.importantLinksVault.map { it.node.title }),
-        VaultSectionModel("MEDICAL INFO VAULT", snapshot.medicalInfoVault.map { it.node.title }),
-        VaultSectionModel("UNIVERSITY INFO VAULT", snapshot.universityInfoVault.map { it.node.title }),
-        VaultSectionModel("IDs / FORMS VAULT", snapshot.idsAndFormsVault.map { it.node.title }),
-        VaultSectionModel("APPLICATION STATUS TRACKING", snapshot.applicationStatusTracking.map { it.node.title }),
-        VaultSectionModel("RECEIPTS / PAPERWORK", snapshot.receiptsPaperwork.map { it.node.title }),
-        VaultSectionModel("ACCOUNT / REFERENCE VAULT", snapshot.accountReferenceVault.map { it.node.title }),
-        VaultSectionModel("OFFICIAL DEADLINE REMINDERS", snapshot.officialDeadlineReminders.map { it.node.title }),
+        VaultSectionModel("REFERENCE LIBRARY", snapshot.referenceLibrary.map { it.node.title }),
+        VaultSectionModel("IMPORTANT LINKS", snapshot.importantLinks.map { it.node.title }),
+        VaultSectionModel("HEALTH REFERENCE", snapshot.healthReference.map { it.node.title }),
+        VaultSectionModel("INSTITUTIONAL REFERENCE", snapshot.institutionalReference.map { it.node.title }),
+        VaultSectionModel("PROCESS TRACKING", snapshot.processTracking.map { it.node.title }),
+        VaultSectionModel("OFFICIAL DEADLINES", snapshot.officialDeadlines.map { it.node.title }),
     ).filter { it.items.isNotEmpty() }
 
 private fun latestRelative(

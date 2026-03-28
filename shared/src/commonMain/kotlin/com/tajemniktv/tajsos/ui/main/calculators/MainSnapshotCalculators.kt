@@ -281,9 +281,9 @@ fun calculateInsights(
             .maxByOrNull { entry -> entry.value.sumOf { it.node.postponeCount } }
             ?.key
 
-    val ideaTimes =
+    val knowledgeCaptureHours =
         nodes
-            .filter { it.node.type == "idea" && it.node.createdAt >= sevenDaysAgo }
+            .filter { it.node.isKnowledgeItem() && it.node.createdAt >= sevenDaysAgo }
             .map {
                 Instant
                     .fromEpochMilliseconds(it.node.createdAt)
@@ -292,11 +292,11 @@ fun calculateInsights(
             }
 
     val captureTimePattern =
-        if (ideaTimes.isNotEmpty()) {
-            val morning = ideaTimes.count { it in 6..11 }
-            val afternoon = ideaTimes.count { it in 12..17 }
-            val evening = ideaTimes.count { it in 18..23 }
-            val night = ideaTimes.count { it in 0..5 }
+        if (knowledgeCaptureHours.isNotEmpty()) {
+            val morning = knowledgeCaptureHours.count { it in 6..11 }
+            val afternoon = knowledgeCaptureHours.count { it in 12..17 }
+            val evening = knowledgeCaptureHours.count { it in 18..23 }
+            val night = knowledgeCaptureHours.count { it in 0..5 }
             val max = listOf(morning, afternoon, evening, night).maxOrNull() ?: 0
             when (max)
             {
@@ -363,9 +363,9 @@ fun calculateInsights(
     val review =
         buildString {
             append("This week you captured ${recentNodes.size} items and completed ${recentCompletions.size}. ")
-            val recentResources = recentNodes.count { it.node.type == "resource" }
-            if (recentResources > 0) {
-                append("You also added $recentResources new resources to your library. ")
+            val recentKnowledge = recentNodes.count { it.node.isKnowledgeItem() }
+            if (recentKnowledge > 0) {
+                append("You also added $recentKnowledge new knowledge items to your library. ")
             }
             if (weeklyFocusSec > 0) {
                 append("You spent ${((weeklyFocusSec / 3600.0) * 10).toInt() / 10.0} hours in deep focus. ")
@@ -1477,76 +1477,88 @@ fun calculateVaultsSnapshot(nodes: List<NodeWithPin>): com.tajemniktv.tajsos.ui.
         tag: String,
     ): Boolean = node.tags.any { it.normalizedName == tag }
 
-    val documentVault =
-        active.filter {
-            it.node.type in setOf("document", "vault", "note", "resource") &&
-                (hasTag(it, "vault_document") || it.node.type == "document")
+    fun matchesAny(
+        text: String,
+        keywords: Collection<String>,
+    ): Boolean = keywords.any { keyword -> text.contains(keyword, ignoreCase = true) }
+
+    val knowledgeItems = active.filter { it.node.isKnowledgeItem() }
+
+    val referenceLibrary =
+        knowledgeItems.filter {
+            hasTag(it, "reference") ||
+                hasTag(it, "vault_document") ||
+                hasTag(it, "vault_receipts_paperwork") ||
+                hasTag(it, "vault_account_reference") ||
+                it.node.noteType == "reference" ||
+                matchesAny(
+                    it.node.title,
+                    listOf("document", "paperwork", "receipt", "reference", "policy", "manual"),
+                )
         }
-    val importantLinksVault =
-        active.filter {
-            it.node.type in setOf("resource", "note", "vault") &&
-                (hasTag(it, "vault_links") || it.node.mediaType == "link")
+    val importantLinks =
+        knowledgeItems.filter {
+            hasTag(it, "important_links") ||
+                hasTag(it, "vault_links") ||
+                it.node.mediaType == "link"
         }
-    val medicalInfoVault =
-        active.filter {
-            hasTag(it, "vault_medical") || it.node.title.contains("medical", ignoreCase = true)
+    val healthReference =
+        knowledgeItems.filter {
+            hasTag(it, "health_reference") ||
+                hasTag(it, "vault_medical") ||
+                matchesAny(
+                    it.node.title,
+                    listOf("medical", "health", "doctor", "prescription", "symptom", "insurance"),
+                )
         }
-    val universityInfoVault =
-        active.filter {
-            hasTag(it, "vault_university") ||
-                it.node.title.contains("university", ignoreCase = true) ||
-                it.node.title.contains("campus", ignoreCase = true)
+    val institutionalReference =
+        knowledgeItems.filter {
+            hasTag(it, "institutional_reference") ||
+                hasTag(it, "vault_university") ||
+                hasTag(it, "vault_ids_forms") ||
+                matchesAny(
+                    it.node.title,
+                    listOf("university", "campus", "student", "form", "passport", "visa", "id", "account"),
+                )
         }
-    val idsAndFormsVault =
-        active.filter {
-            hasTag(it, "vault_ids_forms") ||
-                it.node.title.contains("id", ignoreCase = true) ||
-                it.node.title.contains("form", ignoreCase = true)
+    val processTracking =
+        active.filter { it.node.isKnowledgeItem() || it.node.isTaskItem() }.filter {
+            hasTag(it, "process_tracking") ||
+                hasTag(it, "vault_application_status") ||
+                matchesAny(
+                    it.node.title,
+                    listOf("application", "approval", "renewal", "status", "visa", "enrollment"),
+                ) ||
+                it.node.content.contains("Status:", ignoreCase = true)
         }
-    val applicationStatusTracking =
-        active.filter {
-            hasTag(it, "vault_application_status") ||
-                it.node.title.contains("application status", ignoreCase = true)
-        }
-    val receiptsPaperwork =
-        active.filter {
-            hasTag(it, "vault_receipts_paperwork") ||
-                it.node.title.contains("receipt", ignoreCase = true) ||
-                it.node.title.contains("paperwork", ignoreCase = true)
-        }
-    val accountReferenceVault =
-        active.filter {
-            hasTag(it, "vault_account_reference") ||
-                it.node.title.contains("account", ignoreCase = true) ||
-                it.node.title.contains("reference", ignoreCase = true)
-        }
-    val officialDeadlineReminders =
+    val officialDeadlines =
         active
             .filter {
                 it.node.dueAt != null &&
                     (
-                        hasTag(it, "vault_official_deadline") ||
-                            it.node.type in setOf("document", "maintenance") ||
-                            it.node.title.contains("deadline", ignoreCase = true)
+                        hasTag(it, "official_deadline") ||
+                            hasTag(it, "vault_official_deadline") ||
+                            hasTag(it, "process_tracking") ||
+                            matchesAny(
+                                it.node.title,
+                                listOf("deadline", "renewal", "tax", "application", "visa", "enrollment"),
+                            )
                     )
             }.sortedBy { it.node.dueAt ?: Long.MAX_VALUE }
-    val mustFindLater =
+    val retrievalQueue =
         active
             .filter {
                 hasTag(it, "must_find_later") || it.node.isPinned
             }.sortedByDescending { it.node.updatedAt }
 
     return com.tajemniktv.tajsos.ui.VaultsSnapshot(
-        documentVault = documentVault,
-        importantLinksVault = importantLinksVault,
-        medicalInfoVault = medicalInfoVault,
-        universityInfoVault = universityInfoVault,
-        idsAndFormsVault = idsAndFormsVault,
-        applicationStatusTracking = applicationStatusTracking,
-        receiptsPaperwork = receiptsPaperwork,
-        accountReferenceVault = accountReferenceVault,
-        officialDeadlineReminders = officialDeadlineReminders,
-        mustFindLater = mustFindLater,
+        referenceLibrary = referenceLibrary,
+        importantLinks = importantLinks,
+        healthReference = healthReference,
+        institutionalReference = institutionalReference,
+        processTracking = processTracking,
+        officialDeadlines = officialDeadlines,
+        retrievalQueue = retrievalQueue,
     )
 }
 
@@ -1853,9 +1865,9 @@ fun calculateLifeOSSignatureSnapshot(
             },
         relationshipLayerEnabled = relationships.people.isNotEmpty() || relationships.replyQueue.isNotEmpty(),
         logisticsVaultEnabled =
-            vaults.documentVault.isNotEmpty() ||
-                vaults.importantLinksVault.isNotEmpty() ||
-                vaults.mustFindLater.isNotEmpty(),
+            vaults.referenceLibrary.isNotEmpty() ||
+                vaults.importantLinks.isNotEmpty() ||
+                vaults.retrievalQueue.isNotEmpty(),
         loadCapacityEnabled = capacity.loadScore > 0 || capacity.fragmentationScore > 0,
         personalPrinciplesPlaybooksEnabled =
             nodes.any { it.node.type in setOf("rule", "principle") } &&
@@ -1883,8 +1895,7 @@ fun calculateLifeOSSecondBrainSnapshot(
 ): com.tajemniktv.tajsos.ui.LifeOSSecondBrainSnapshot {
     val knowledgeCount =
         nodes.count {
-            it.node.status == "active" &&
-                it.node.type in setOf("note", "idea", "resource")
+            it.node.status == "active" && it.node.isKnowledgeItem()
         }
     val savedCount = nodes.size
     val connectedIds =
@@ -1893,9 +1904,9 @@ fun calculateLifeOSSecondBrainSnapshot(
             .toSet()
             .intersect(nodes.map { it.node.id }.toSet())
     val findLaterCount =
-        vaults.documentVault.size +
-            vaults.importantLinksVault.size +
-            vaults.mustFindLater.size
+        vaults.referenceLibrary.size +
+            vaults.importantLinks.size +
+            vaults.retrievalQueue.size
 
     val secondBrain =
         listOf(
@@ -1903,9 +1914,9 @@ fun calculateLifeOSSecondBrainSnapshot(
                 question = "What do I know?",
                 answer =
                     if (knowledgeCount > 0) {
-                        "$knowledgeCount active knowledge nodes (notes, ideas, resources)."
+                        "$knowledgeCount active knowledge items across notes and records."
                     } else {
-                        "Knowledge layer is empty; capture notes/resources first."
+                        "Knowledge layer is empty; capture notes or records first."
                     },
                 answered = knowledgeCount > 0,
             ),
@@ -1933,9 +1944,9 @@ fun calculateLifeOSSecondBrainSnapshot(
                 question = "Where can I find this later?",
                 answer =
                     if (findLaterCount > 0) {
-                        "$findLaterCount entries in vault-focused find-later storage."
+                        "$findLaterCount reference or retrieval items are easy to find later."
                     } else {
-                        "Find-later vault is empty; add key docs/links for retrieval."
+                        "Reference retrieval is empty; save key links, notes, or deadlines here."
                     },
                 answered = findLaterCount > 0,
             ),
