@@ -95,4 +95,32 @@ class LifeObjectModelsTest {
         assertTrue(recordNode.matchesItemFilter("record"))
         assertFalse(recordNode.matchesItemFilter("note"))
     }
+
+    @Test
+    fun decisionSupportHelpers_collapse_decisions_and_pending_decision_loops_into_task_work() {
+        val decisionNode =
+            NodeEntity(
+                type = "decision",
+                title = "Choose therapist",
+                decisionStatus = "pending",
+            )
+        val pendingDecisionLoop =
+            NodeEntity(
+                type = "open_loop",
+                title = "Need to decide on lease",
+                openLoopType = "pending_decision",
+            )
+        val resolvedDecision =
+            NodeEntity(
+                type = "decision",
+                title = "Pick laptop",
+                status = "done",
+                decisionStatus = "decided",
+            )
+
+        assertTrue(decisionNode.isDecisionSupportItem())
+        assertTrue(pendingDecisionLoop.isDecisionSupportItem())
+        assertFalse(decisionNode.isResolvedDecisionSupportItem())
+        assertTrue(resolvedDecision.isResolvedDecisionSupportItem())
+    }
 }

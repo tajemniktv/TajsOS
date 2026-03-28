@@ -50,12 +50,12 @@ internal fun OpenLoopsMainBlock(
         verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
     ) {
         Text(
-            text = "OPEN LOOPS",
+            text = "UNRESOLVED WORK",
             style = MaterialTheme.typography.displaySmall,
             color = TactileTheme.Text,
         )
         Text(
-            text = "Resolve inbox spillover, waiting-fors, pending decisions, and stale unresolved loops.",
+            text = "Review unresolved task-shaped work, inbox spillover, waiting-fors, and stale commitments that still need closure.",
             style = MaterialTheme.typography.bodySmall,
             color = TactileTheme.Muted,
         )

@@ -113,7 +113,7 @@ internal fun DecisionsMainBlock(
             ) {
                 Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
                     Text(
-                        "UNRESOLVED DECISIONS SITTING TOO LONG",
+                        "DECISION WORK SITTING TOO LONG",
                         style = MaterialTheme.typography.labelSmall,
                         color = TactileTheme.Error,
                         fontWeight = FontWeight.Bold,

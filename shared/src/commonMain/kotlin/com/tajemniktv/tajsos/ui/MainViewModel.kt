@@ -28,8 +28,12 @@ import com.tajemniktv.tajsos.data.PreferencesRepository
 import com.tajemniktv.tajsos.data.ProtocolHistoryEntity
 import com.tajemniktv.tajsos.data.RelationEntity
 import com.tajemniktv.tajsos.data.ReviewEntity
+import com.tajemniktv.tajsos.data.TaskState
 import com.tajemniktv.tajsos.data.isAreaItem
+import com.tajemniktv.tajsos.data.isDecisionSupportItem
 import com.tajemniktv.tajsos.data.isProjectItem
+import com.tajemniktv.tajsos.data.isResolvedDecisionSupportItem
+import com.tajemniktv.tajsos.data.taskStateOrNull
 import com.tajemniktv.tajsos.data.TagEntity
 import com.tajemniktv.tajsos.data.TemplateEntity
 import com.tajemniktv.tajsos.data.TrackEntryEntity
@@ -2389,19 +2393,24 @@ class MainViewModel(
     val decisionInbox: StateFlow<List<NodeWithPin>> =
         allNodes
             .map { nodes ->
-                nodes.filter { it.node.type == "decision" && it.node.inboxState }
+                nodes.filter { it.node.isDecisionSupportItem() && it.node.inboxState }
             }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val allPendingDecisions: StateFlow<List<NodeWithPin>> =
         allNodes
             .map { nodes ->
-                nodes.filter { it.node.type == "decision" && it.node.status == "active" && !it.node.inboxState }
+                nodes.filter {
+                    it.node.isDecisionSupportItem() &&
+                        it.node.taskStateOrNull() == TaskState.ACTIVE &&
+                        !it.node.inboxState &&
+                        !it.node.isResolvedDecisionSupportItem()
+                }
             }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val decisionLog: StateFlow<List<NodeWithPin>> =
         allNodes
             .map { nodes ->
-                nodes.filter { it.node.type == "decision" && (it.node.decisionStatus == "decided" || it.node.decisionStatus == "expired") }
+                nodes.filter { it.node.isResolvedDecisionSupportItem() }
             }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val stalePendingDecisions: StateFlow<List<DecisionStaleItem>> =
@@ -2410,9 +2419,9 @@ class MainViewModel(
                 val now = Clock.System.now().toEpochMilliseconds()
                 nodes
                     .filter {
-                        it.node.type == "decision" &&
-                            it.node.status == "active" &&
-                            (it.node.decisionStatus == null || it.node.decisionStatus == "pending" || it.node.decisionStatus == "parked")
+                        it.node.isDecisionSupportItem() &&
+                            it.node.taskStateOrNull() == TaskState.ACTIVE &&
+                            !it.node.isResolvedDecisionSupportItem()
                     }.map { decision ->
                         val ageDays =
                             ((now - decision.node.createdAt).coerceAtLeast(0L) / (24 * 60 * 60 * 1000L)).toInt()

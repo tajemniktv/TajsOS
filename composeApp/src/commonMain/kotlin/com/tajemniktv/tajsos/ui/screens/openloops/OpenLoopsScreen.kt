@@ -111,7 +111,7 @@ internal fun OpenLoopsLayer(
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
-                "OPEN LOOPS LAYER",
+                "UNRESOLVED WORK",
                 style = MaterialTheme.typography.labelSmall,
                 color = TactileTheme.Primary,
                 fontWeight = FontWeight.Bold,
@@ -139,7 +139,7 @@ internal fun OpenLoopsLayer(
                     onClick = { viewModel.archiveResolvedOpenLoops() },
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    Text("ARCHIVE RESOLVED OPEN LOOPS")
+                    Text("ARCHIVE RESOLVED ITEMS")
                 }
             }
         }
@@ -160,7 +160,7 @@ internal fun OpenLoopsLayer(
     }
 
     if (loops.isEmpty()) {
-        EmptyState(message = "No open loops in ${openLoopView.label.lowercase()}.")
+        EmptyState(message = "No unresolved work in ${openLoopView.label.lowercase()}.")
         return
     }
 

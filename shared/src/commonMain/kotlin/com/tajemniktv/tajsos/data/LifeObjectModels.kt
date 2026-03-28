@@ -248,6 +248,32 @@ fun NodeEntity.isProjectItem(): Boolean = itemKindOrNull() == ItemKind.PROJECT
 fun NodeEntity.isAreaItem(): Boolean = itemKindOrNull() == ItemKind.AREA
 
 /**
+ * Returns true when task-shaped work is specifically about making or revisiting a decision.
+ */
+fun NodeEntity.isDecisionSupportItem(): Boolean =
+    isTaskItem() &&
+        (
+            type == "decision" ||
+                openLoopType == "pending_decision" ||
+                decisionStatus != null ||
+                decisionCategory != null ||
+                decisionRevisitAt != null ||
+                !decisionInfoMissing.isNullOrBlank() ||
+                !decisionDifficultBecause.isNullOrBlank() ||
+                !decisionEasierIf.isNullOrBlank()
+        )
+
+/**
+ * Returns true when decision-shaped work has already been resolved or logged.
+ */
+fun NodeEntity.isResolvedDecisionSupportItem(): Boolean =
+    isDecisionSupportItem() &&
+        (
+            decisionStatus in setOf("decided", "expired") ||
+                status == "done"
+        )
+
+/**
  * Convenience projections for node wrappers consumed by the UI.
  */
 fun NodeWithPin.itemKindOrNull(): ItemKind? = node.itemKindOrNull()
@@ -257,6 +283,8 @@ fun NodeWithPin.isTaskItem(): Boolean = node.isTaskItem()
 fun NodeWithPin.isKnowledgeItem(): Boolean = node.isKnowledgeItem()
 
 fun NodeWithPin.isAreaItem(): Boolean = node.isAreaItem()
+
+fun NodeWithPin.isDecisionSupportItem(): Boolean = node.isDecisionSupportItem()
 
 /**
  * Matches a UI-facing kind filter against the collapsed LifeOS object model.
