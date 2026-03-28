@@ -86,6 +86,8 @@ class MainViewModelTest {
 
         override suspend fun insertNode(node: NodeEntity): Long = 0
 
+        override suspend fun insertNodes(nodes: List<NodeEntity>): List<Long> = nodes.map { 0L }
+
         override suspend fun updateNode(node: NodeEntity) {
         }
 
@@ -138,10 +140,14 @@ class MainViewModelTest {
         override suspend fun insertRelation(relation: RelationEntity) {
         }
 
+        override suspend fun insertRelations(relations: List<RelationEntity>): Unit = Unit
+
         override suspend fun deleteRelation(relation: RelationEntity) {
         }
 
         override suspend fun deleteBelongsToRelations(nodeId: Long): Unit = Unit
+
+        override suspend fun deleteBelongsToRelations(nodeIds: List<Long>): Unit = Unit
 
         override suspend fun getBelongsToRelations(nodeId: Long): List<RelationEntity> = emptyList()
 
@@ -173,6 +179,8 @@ class MainViewModelTest {
     class StubEventLogDao : EventLogDao {
         override suspend fun insertLog(log: EventLogEntity) {
         }
+
+        override suspend fun insertLogs(logs: List<EventLogEntity>): Unit = Unit
 
         override fun getRecentLogs(limit: Int): Flow<List<EventLogEntity>> = flowOf(emptyList())
 

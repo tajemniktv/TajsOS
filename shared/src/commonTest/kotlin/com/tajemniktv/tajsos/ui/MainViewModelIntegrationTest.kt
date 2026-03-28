@@ -245,4 +245,109 @@ class MainViewModelIntegrationTest {
             assertEquals(nodeId, archivedNodes.first().node.id)
             assertEquals("archived", archivedNodes.first().node.status)
         }
+
+    // ---- splitNote tests ----
+
+    @Test
+    fun splitNote_createsOneNodePerSection(): TestResult =
+        runTest(testDispatcher) {
+            val nodeDao = FakeNodeDao()
+            val content = "# First Section\nFirst content\n# Second Section\nSecond content\n# Third Section\nThird content"
+            val originalId = nodeDao.insertNode(NodeEntity(type = "note", title = "Combined Note", content = content))
+
+            val viewModel = createViewModel(nodeDao)
+            viewModel.splitNote(originalId)
+
+            // 3 new notes + 1 archived original = 4 total, filter active (3)
+            val activeNodes = viewModel.allNodes.first { list ->
+                list.count { it.node.status == "active" } == 3
+            }
+            val activeNotes = activeNodes.filter { it.node.status == "active" }
+            assertEquals(3, activeNotes.size)
+        }
+
+    @Test
+    fun splitNote_usesHeaderAsTitle(): TestResult =
+        runTest(testDispatcher) {
+            val nodeDao = FakeNodeDao()
+            val content = "# Alpha\nAlpha body\n# Beta\nBeta body"
+            val originalId = nodeDao.insertNode(NodeEntity(type = "note", title = "Original", content = content))
+
+            val viewModel = createViewModel(nodeDao)
+            viewModel.splitNote(originalId)
+
+            val allNodes = viewModel.allNodes.first { list ->
+                list.any { it.node.title == "Alpha" } && list.any { it.node.title == "Beta" }
+            }
+            val titles = allNodes.map { it.node.title }
+            assertTrue(titles.contains("Alpha"), "Should have a note titled 'Alpha'")
+            assertTrue(titles.contains("Beta"), "Should have a note titled 'Beta'")
+        }
+
+    @Test
+    fun splitNote_archivesOriginalNode(): TestResult =
+        runTest(testDispatcher) {
+            val nodeDao = FakeNodeDao()
+            val content = "# Section One\nContent one\n# Section Two\nContent two"
+            val originalId = nodeDao.insertNode(NodeEntity(type = "note", title = "To Split", content = content))
+
+            val viewModel = createViewModel(nodeDao)
+            viewModel.splitNote(originalId)
+
+            val archivedNodes = viewModel.archivedNodes.first { it.any { n -> n.node.id == originalId } }
+            val archivedOriginal = archivedNodes.find { it.node.id == originalId }
+            assertEquals("archived", archivedOriginal?.node?.status, "Original node should be archived after split")
+        }
+
+    @Test
+    fun splitNote_doesNotSplitWhenOnlyOneSection(): TestResult =
+        runTest(testDispatcher) {
+            val nodeDao = FakeNodeDao()
+            val content = "# Only Section\nSome content here"
+            val originalId = nodeDao.insertNode(NodeEntity(type = "note", title = "Single Section", content = content))
+
+            val viewModel = createViewModel(nodeDao)
+            viewModel.splitNote(originalId)
+
+            // Give the coroutine time to execute
+            val allNodes = viewModel.allNodes.first { it.isNotEmpty() }
+            assertEquals(1, allNodes.size, "No new nodes should be created for a single section")
+            assertEquals("active", allNodes.first().node.status, "Original node should remain active")
+        }
+
+    @Test
+    fun splitNote_inheritsProjectAndAreaFromOriginal(): TestResult =
+        runTest(testDispatcher) {
+            val nodeDao = FakeNodeDao()
+            val projectId = 10L
+            val areaId = 20L
+            val content = "# Part A\nContent A\n# Part B\nContent B"
+            val originalId = nodeDao.insertNode(
+                NodeEntity(type = "note", title = "Structured Note", content = content, projectId = projectId, areaId = areaId)
+            )
+
+            val viewModel = createViewModel(nodeDao)
+            viewModel.splitNote(originalId)
+
+            val allNodes = viewModel.allNodes.first { list ->
+                list.count { it.node.status == "active" } == 2
+            }
+            val newNotes = allNodes.filter { it.node.status == "active" }
+            assertTrue(newNotes.all { it.node.projectId == projectId }, "All new notes should inherit projectId")
+            assertTrue(newNotes.all { it.node.areaId == areaId }, "All new notes should inherit areaId")
+        }
+
+    @Test
+    fun splitNote_doesNotSplitWhenNodeHasNoContent(): TestResult =
+        runTest(testDispatcher) {
+            val nodeDao = FakeNodeDao()
+            val originalId = nodeDao.insertNode(NodeEntity(type = "note", title = "Empty Note", content = ""))
+
+            val viewModel = createViewModel(nodeDao)
+            viewModel.splitNote(originalId)
+
+            val allNodes = viewModel.allNodes.first { it.isNotEmpty() }
+            assertEquals(1, allNodes.size, "No new nodes should be created for empty content")
+            assertEquals("active", allNodes.first().node.status, "Original node should remain unchanged")
+        }
 }
