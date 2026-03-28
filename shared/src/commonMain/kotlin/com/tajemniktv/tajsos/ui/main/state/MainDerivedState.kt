@@ -59,7 +59,7 @@ data class PhysicalLogisticsSnapshot(
 /**
  * A snapshot containing the user's deeply personal operating principles, anti-goals, and behavioral rules.
  *
- * @param vault A general list of rule-related nodes.
+ * @param vault A general list of rule or reference nodes.
  * @param antiGoals A list of defined outcomes or behaviors the user explicitly wants to avoid.
  * @param redFlags A list of warning signs indicating the user is slipping into bad habits.
  * @param greenFlags A list of positive signs indicating the user is in a healthy, productive state.

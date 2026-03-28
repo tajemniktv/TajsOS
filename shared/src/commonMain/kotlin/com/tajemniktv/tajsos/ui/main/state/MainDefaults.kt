@@ -14,7 +14,7 @@ val suggestedAreaTitles =
     )
 
 /**
- * A predefined list of standard [TransitionProtocolTemplate] objects used to bootstrap new transition protocols.
+ * A predefined list of standard [TransitionProtocolTemplate] objects used to bootstrap new routines.
  */
 val defaultTransitionProtocolTemplates =
     listOf(

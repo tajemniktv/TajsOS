@@ -48,7 +48,7 @@ internal data class LifeOSSignatureInputs(
  * An internal data class bundling the inputs alongside broader context snapshots for LifeOS Signature calculation.
  *
  * @param inputs The primary [LifeOSSignatureInputs] entity data.
- * @param vaults The current [VaultsSnapshot] evaluating static document structures.
+ * @param vaults The current [VaultsSnapshot] evaluating reference and retrieval structures.
  * @param capacity The current [CapacitySnapshot] evaluating systemic load.
  * @param playbooks The current [PlaybookSnapshot] evaluating behavioral playbooks.
  * @param currentMode The currently active focus Mode, if any.

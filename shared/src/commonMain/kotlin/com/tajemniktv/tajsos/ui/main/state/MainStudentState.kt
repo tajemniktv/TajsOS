@@ -76,7 +76,7 @@ data class StudentMasteryItem(
  * @param examPrepBoard A list of tasks or nodes specifically tagged or scheduled for exam preparation.
  * @param psychologyConceptMaps A list of nodes representing specific psychological concepts or models.
  * @param glossaryCards A list of nodes structured as glossary terms or definitions.
- * @param researchIdeaVault A list of nodes capturing ideas or hypotheses for future research papers.
+ * @param researchIdeaVault A list of notes capturing hypotheses or future research directions.
  * @param quoteBank A list of nodes containing saved quotes from academic readings or lectures.
  * @param caseReflectionNotes A list of nodes detailing personal reflections on specific academic cases.
  * @param readingBacklog Populated from all active reading notes (not just queued ones).

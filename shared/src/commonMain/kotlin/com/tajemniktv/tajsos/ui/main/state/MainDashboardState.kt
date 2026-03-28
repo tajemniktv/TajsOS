@@ -24,13 +24,13 @@ import com.tajemniktv.tajsos.data.NodeWithPin
  * @param quickWins A list of short, low-friction tasks that can be completed quickly.
  * @param deepWork A list of high-focus, high-energy tasks requiring sustained attention.
  * @param topTakeaways A curated list of nodes containing key summaries or learnings.
- * @param readLaterVault A curated list of nodes tagged as articles or resources to read later.
+ * @param readLaterVault A curated list of notes or reference items tagged to read later.
  * @param quoteVault A list of nodes containing saved quotes or philosophical excerpts.
- * @param ideaIncubator A list of raw ideas or underdeveloped concepts waiting for review.
+ * @param ideaIncubator A list of rough notes or underdeveloped concepts waiting for review.
  * @param archivedThisWeek A list of nodes that were completed or archived within the current week.
  * @param neglectedThisWeek A list of active nodes that have seen no updates or interaction this week.
  * @param foundationalNotes A list of core knowledge or heavily linked reference notes.
- * @param resourceHighlights A list of external resources or assets marked as highly valuable.
+ * @param resourceHighlights A list of reference items marked as highly valuable.
  * @param stickyNotes A list of temporary or fleeting notes meant for immediate visibility.
  * @param criticalProjects A list of project entities flagged as urgent, failing, or critical path.
  * @param forgottenWisdom A randomly surfaced older note to encourage serendipitous review.
@@ -41,18 +41,18 @@ import com.tajemniktv.tajsos.data.NodeWithPin
  * @param disappearingAreaIds A set of Area IDs that are severely neglected and falling out of focus.
  * @param areaImbalanceScore A calculated metric (0-100) indicating how skewed the user's focus is across Areas.
  * @param areaImbalanceLabel A string descriptor of the imbalance score (e.g., "balanced", "hyperfocused").
- * @param openLoopsOverloadWarning An optional warning message triggered if the user has too many unprocessed open loops.
- * @param openLoopsDecayAverage The average age or "decay" score of unresolved open loops.
+ * @param openLoopsOverloadWarning An optional warning message triggered if the user has too many unresolved inputs.
+ * @param openLoopsDecayAverage The average age or "decay" score of unresolved work.
  * @param maintenanceAdminDebtMeter A metric (0-100) indicating the backlog of personal admin or maintenance tasks.
  * @param maintenanceOverdueWarning An optional warning message if critical maintenance tasks are overdue.
  * @param systemLoad A holistic metric combining task volume, deadlines, and active projects.
  * @param fragmentation A metric evaluating how context-switching or scattered the user's attention currently is.
  * @param capacityWarning An optional warning message if the calculated workload exceeds the user's estimated capacity.
- * @param openLoops A raw list of nodes classified as unresolved open loops.
+ * @param openLoops A raw list of nodes classified as unresolved work.
  * @param pendingDecisions A list of nodes explicitly marked as decisions requiring a choice.
  * @param maintenanceQueue A list of active tasks tagged as routine maintenance or chores.
- * @param activeProtocols A list of instantiated protocol/playbook nodes (List<NodeWithPin>) rather than template definitions.
- * @param relationshipsToContact A list of person entities or CRM nodes scheduled for follow-up.
+ * @param activeProtocols A list of instantiated routine/playbook nodes (List<NodeWithPin>) rather than template definitions.
+ * @param relationshipsToContact A list of relationship anchors scheduled for follow-up.
  * @param contextClusteredTasks A map of tasks grouped dynamically by their string context (e.g., "errands").
  * @param currentMode The currently active focus Mode (e.g., "Work", "Relax").
  * @param modePreferences The UI and functional preferences associated with the [currentMode].
@@ -124,7 +124,7 @@ data class DashboardUIState(
  * @param areaTitle The title of the Area node.
  * @param status A string descriptor of the area's health using real tokens (e.g., "on_fire", "overloaded", "stable").
  * @param activeItems The count of all active non-area nodes in this area (not only tasks).
- * @param openLoops The count of unresolved open loops in this area.
+ * @param openLoops The count of unresolved work items in this area.
  * @param deadlines The count of impending deadlines in this area.
  * @param overdueDeadlines The count of missed deadlines in this area.
  * @param stressLoad A calculated numeric load indicating how heavy this area currently is.
@@ -168,9 +168,9 @@ data class AreaHealthSnapshot(
 )
 
 /**
- * A data class representing a specific unresolved open loop and its calculated urgency.
+ * A data class representing a specific unresolved work item and its calculated urgency.
  *
- * @param node The [NodeWithPin] wrapper for the open loop.
+ * @param node The [NodeWithPin] wrapper for the unresolved item.
  * @param urgency A calculated string representing how critical the loop is (e.g., "high", "low").
  * @param ageDays The number of days since the loop was captured.
  * @param stalenessDays The number of days since the loop was last modified or reviewed.
@@ -189,16 +189,16 @@ data class OpenLoopStatusItem(
 )
 
 /**
- * A snapshot encompassing all open loops across the system, categorized by state, area, and urgency.
+ * A snapshot encompassing all unresolved work across the system, categorized by state, area, and urgency.
  *
- * @param active A list of all currently active open loops.
- * @param inbox A list of unprocessed open loops still residing in the inbox.
- * @param review A list of older open loops specifically flagged for review.
- * @param resolved A list of open loops closed recently.
- * @param byArea A mapping of open loops to their respective Area IDs.
- * @param byPerson A mapping of open loops to the Person ID they are waiting on.
- * @param byUrgency A mapping of open loops grouped by their calculated urgency string.
- * @param overloadWarning An optional warning if the system detects too many active open loops.
+ * @param active A list of all currently active unresolved items.
+ * @param inbox A list of unprocessed unresolved items still residing in the inbox.
+ * @param review A list of older unresolved items specifically flagged for review.
+ * @param resolved A list of unresolved items closed recently.
+ * @param byArea A mapping of unresolved items to their respective Area IDs.
+ * @param byPerson A mapping of unresolved items to the relationship anchor ID they are waiting on.
+ * @param byUrgency A mapping of unresolved items grouped by their calculated urgency string.
+ * @param overloadWarning An optional warning if the system detects too many active unresolved items.
  * @param averageDecayScore The calculated average of all active loop decay scores.
  */
 data class OpenLoopsSnapshot(
