@@ -549,6 +549,7 @@ fun CaptureSheet(
                         }
                     }
                 },
+                enabled = text.isNotBlank(),
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(TactileTheme.RadiusMd),
             ) {
