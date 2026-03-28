@@ -1,0 +1,278 @@
+name: Bug Report
+description: Report a reproducible bug in TajsOS
+title: "[Bug] "
+labels: [ "bug" ]
+assignees:
+  - tajemniktv
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Thanks for helping improve TajsOS
+        Please **search existing issues** before opening a new one.
+        The more detail you provide, the faster we can reproduce and fix it.
+
+        Logs, screenshots, stack traces, and sample data are all helpful.
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Version and target
+
+  - type: input
+    id: tajsos_version
+    attributes:
+      label: TajsOS version
+      description: App version, build number, or commit hash.
+      placeholder: "e.g. 0.8.2 (build 142) or commit abc1234"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform_target
+    attributes:
+      label: Platform target
+      options:
+        - Android app
+        - Desktop JVM app
+        - iOS framework/app integration
+        - Server (Ktor/Netty)
+        - Website
+        - Other / Not sure
+    validations:
+      required: true
+
+  - type: dropdown
+    id: primary_module
+    attributes:
+      label: Primary module
+      options:
+        - ":androidApp"
+        - ":composeApp"
+        - ":shared"
+        - ":server"
+        - "website/"
+        - Not sure
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - UI / UX
+        - Domain logic / data model
+        - Local-first / sync behavior
+        - Performance
+        - Accessibility
+        - Integrations (share/biometric/voice)
+        - Build / tooling / CI
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: product_lens
+    attributes:
+      label: Primary product lens
+      options:
+        - Now
+        - Plan
+        - Operate
+        - Knowledge
+        - Review
+        - Cross-lens / Shell
+        - Not sure
+    validations:
+      required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ## What went wrong?
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the bug
+      description: Clear and concise description. Include error messages if any.
+      placeholder: |
+        What happened?
+        What did you expect to happen?
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Steps to reproduce
+
+  - type: textarea
+    id: reproduction_steps
+    attributes:
+      label: Steps to reproduce
+      description: Step-by-step instructions that reliably trigger the bug.
+      placeholder: |
+        1. Open TajsOS
+        2. Navigate to ...
+        3. Perform ...
+        4. Observe ...
+      render: bash
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Expected vs actual
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      placeholder: "What should have happened?"
+    validations:
+      required: false
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      placeholder: "What happened instead?"
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Frequency
+
+  - type: dropdown
+    id: frequency
+    attributes:
+      label: How often does it occur?
+      options:
+        - Every time
+        - Often ( > 50% )
+        - Sometimes
+        - Rarely
+        - Once
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Regression (did it work before?)
+
+  - type: dropdown
+    id: regression
+    attributes:
+      label: Did this work in an older TajsOS version?
+      options:
+        - "Not sure"
+        - "Yes"
+        - "No"
+    validations:
+      required: true
+
+  - type: input
+    id: last_known_working
+    attributes:
+      label: Last known working version (if regression = Yes)
+      description: If known, provide the last version where this worked.
+      placeholder: "e.g. 0.8.1"
+    validations:
+      required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Screenshots / video (optional)
+
+  - type: textarea
+    id: media
+    attributes:
+      label: Media
+      description: Drag & drop images here, or link to a short clip/GIF.
+      placeholder: "Attach screenshots/videos or paste links."
+
+  - type: checkboxes
+    id: sync_related_checks
+    attributes:
+      label: Local-first / sync checks (if applicable)
+      options:
+        - label: I reproduced this while fully offline (or explained why not).
+          required: false
+        - label: I reproduced this after app restart.
+          required: false
+        - label: I reproduced this across devices or runtimes (if relevant).
+          required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Environment
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: OS/device/runtime info helps reproduce platform-specific issues.
+      value: |
+        - OS:
+        - Device:
+        - Runtime (Android/Desktop/iOS/Server):
+        - Locale/timezone:
+        - Network state (offline/online/flaky):
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Logs / diagnostics (optional but very helpful)
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs & files
+      description: |
+        Paste relevant logs/stack traces or drag-and-drop files below.
+        Exported data that reproduces the issue is very helpful.
+      placeholder: |
+        <!-- Paste logs here or drag files below -->
+      render: text
+    validations:
+      required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Additional context (optional)
+
+  - type: textarea
+    id: additional_context
+    attributes:
+      label: Additional notes
+      description: Anything else that might help (settings used, keybinds, edge cases, etc.)
+      placeholder: "Any extra detail that could help reproduce or understand the bug."
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Confirmations
+
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Please confirm
+      options:
+        - label: I have searched existing issues to avoid duplicates.
+          required: true
+        - label: I provided TajsOS version, target platform, and module details above.
+          required: true
+        - label: I included reproduction steps and expected/actual behavior, and attached logs/media if relevant.
+          required: true

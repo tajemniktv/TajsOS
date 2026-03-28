@@ -24,6 +24,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.ActionButton
+import com.tajemniktv.tajsos.ui.components.cards.InfoCard
+import com.tajemniktv.tajsos.ui.components.cards.LinkedNodeItem
+import com.tajemniktv.tajsos.ui.components.cards.StatusCard
 import com.tajemniktv.tajsos.ui.components.common.*
 import com.tajemniktv.tajsos.ui.components.layout.LocalHeaderActions
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
@@ -49,13 +52,11 @@ fun AreaDetailScreen(
     onNavigateToProject: (Long) -> Unit,
     onEditNode: (Long) -> Unit,
     onBack: () -> Unit,
-)
-{
+) {
     val nodes by viewModel.allNodes.collectAsState()
     val nodeWithPin = remember(nodes, areaId) { nodes.find { it.node.id == areaId } }
 
-    if (nodeWithPin == null)
-    {
+    if (nodeWithPin == null) {
         Box(modifier = Modifier.fillMaxSize()) {
             Text(
                 stringResource(Res.string.area_detail_not_found),
@@ -66,23 +67,28 @@ fun AreaDetailScreen(
     }
 
     val area = nodeWithPin.node
+    val areaSnapshot by viewModel.areaHealthSnapshot.collectAsState()
+    val areaMetrics = areaSnapshot.areas.firstOrNull { it.areaId == area.id }
 
     LaunchedEffect(areaId) {
         viewModel.setLastActiveContext(null, areaId)
     }
 
     val projects by viewModel.getProjectsForArea(areaId).collectAsState(initial = emptyList())
-    val nodesWithPinInArea by viewModel.getNodesForArea(areaId)
+    val nodesWithPinInArea by viewModel
+        .getNodesForArea(areaId)
         .collectAsState(initial = emptyList())
 
-    val foundationalNote = nodesWithPinInArea.find {
-        it.node.type == "note" && it.tags.any { tag ->
-            tag.name.equals(
-                "foundational",
-                ignoreCase = true,
-            )
+    val foundationalNote =
+        nodesWithPinInArea.find {
+            it.node.type == "note" &&
+                it.tags.any { tag ->
+                    tag.name.equals(
+                        "foundational",
+                        ignoreCase = true,
+                    )
+                }
         }
-    }
 
     val actions: @Composable RowScope.() -> Unit = {
         IconButton(
@@ -101,17 +107,19 @@ fun AreaDetailScreen(
 
     CompositionLocalProvider(LocalHeaderActions provides actions) {
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(TactileTheme.Background),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(TactileTheme.Background),
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(TactileTheme.Background)
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = TactileTheme.SpacingMd)
-                    .padding(bottom = TactileTheme.SpacingMd),
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .background(TactileTheme.Background)
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = TactileTheme.SpacingMd)
+                        .padding(bottom = TactileTheme.SpacingMd),
                 verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingLg),
             ) {
                 // Header
@@ -136,20 +144,54 @@ fun AreaDetailScreen(
                         icon = Icons.Default.BarChart,
                     )
                     StatusCard(
-                        status = area.status,
-                        color = when (area.status)
-                        {
-                            "active"   -> TactileTheme.Success
-                            "archived" -> TactileTheme.Muted
-                            else       -> TactileTheme.Accent
-                        },
+                        status = (areaMetrics?.status ?: "stable"),
+                        color =
+                            when (areaMetrics?.status)
+                            {
+                                "on_fire" -> TactileTheme.Error
+                                "overloaded" -> TactileTheme.Accent
+                                "neglected" -> TactileTheme.Muted
+                                "active" -> TactileTheme.Primary
+                                else -> TactileTheme.Success
+                            },
                     )
+                    if (areaMetrics != null) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+                        ) {
+                            InfoCard(
+                                title = "OPEN LOOPS",
+                                value = areaMetrics.openLoops.toString(),
+                                icon = Icons.Default.AllInclusive,
+                                color = TactileTheme.Accent,
+                                modifier = Modifier.weight(1f),
+                            )
+                            InfoCard(
+                                title = "DEADLINES",
+                                value = "${areaMetrics.overdueDeadlines}/${areaMetrics.deadlines}",
+                                icon = Icons.Default.EventBusy,
+                                color = if (areaMetrics.overdueDeadlines > 0) TactileTheme.Error else TactileTheme.Primary,
+                                modifier = Modifier.weight(1f),
+                            )
+                        }
+                        InfoCard(
+                            title = "STRESS LOAD",
+                            value = "${areaMetrics.stressLoad}%",
+                            icon = Icons.Default.Speed,
+                            color = if (areaMetrics.stressLoad >= 70) TactileTheme.Error else TactileTheme.Primary,
+                        )
+                        Text(
+                            "Recent activity: ${areaMetrics.recentActivity} • Neglected: ${areaMetrics.neglectedDays} days",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = TactileTheme.Muted,
+                        )
+                    }
                 }
 
                 // Area Progress
                 val areaNodesTotal = nodes.filter { it.node.areaId == areaId }
-                if (areaNodesTotal.isNotEmpty())
-                {
+                if (areaNodesTotal.isNotEmpty()) {
                     val totalCount = areaNodesTotal.size
                     val completedCount = areaNodesTotal.count { it.node.status == "done" }
                     val areaProgress = completedCount.toFloat() / totalCount
@@ -163,8 +205,7 @@ fun AreaDetailScreen(
                 }
 
                 // Foundational Principle
-                if (foundationalNote != null)
-                {
+                if (foundationalNote != null) {
                     Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
                         DetailSectionHeader(
                             title = "CORE PRINCIPLE",
@@ -197,9 +238,8 @@ fun AreaDetailScreen(
 
                 // Active Projects
                 val activeProjects =
-                        projects.filter { it.status == "active" || it.projectStatus == "active" }
-                if (activeProjects.isNotEmpty())
-                {
+                    projects.filter { it.status == "active" || it.projectStatus == "active" }
+                if (activeProjects.isNotEmpty()) {
                     Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
                         DetailSectionHeader(
                             title = "ACTIVE PROJECTS",
@@ -217,22 +257,24 @@ fun AreaDetailScreen(
                 }
 
                 // Recent Activity
-                if (nodesWithPinInArea.isNotEmpty())
-                {
+                if (nodesWithPinInArea.isNotEmpty()) {
                     Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
                         DetailSectionHeader(title = "RECENT ACTIVITY", icon = Icons.Default.History)
-                        nodesWithPinInArea.sortedByDescending { it.node.updatedAt }.take(5)
+                        nodesWithPinInArea
+                            .sortedByDescending { it.node.updatedAt }
+                            .take(5)
                             .forEach { item ->
                                 LinkedNodeItem(
                                     title = item.node.title,
                                     subtitle = item.node.type.uppercase(),
-                                    icon = when (item.node.type)
-                                    {
-                                        "task" -> Icons.Default.CheckCircle
-                                        "note" -> Icons.Default.Description
-                                        "idea" -> Icons.Default.Lightbulb
-                                        else   -> Icons.Default.Description
-                                    },
+                                    icon =
+                                        when (item.node.type)
+                                        {
+                                            "task" -> Icons.Default.CheckCircle
+                                            "note" -> Icons.Default.Description
+                                            "idea" -> Icons.Default.Lightbulb
+                                            else -> Icons.Default.Description
+                                        },
                                     onClick = { onEditNode(item.node.id) },
                                 )
                             }

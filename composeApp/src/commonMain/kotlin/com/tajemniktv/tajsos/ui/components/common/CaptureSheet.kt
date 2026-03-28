@@ -74,15 +74,12 @@ fun CaptureSheet(
     initialText: String = "",
     onVoiceCaptureClick: (() -> Unit)? = null,
     contextScreen: String? = null,
-)
-{
-
+) {
     var text by remember { mutableStateOf(initialText) }
 
     // Update text if initialText changes (e.g. from voice capture)
     LaunchedEffect(initialText) {
-        if (initialText.isNotEmpty())
-        {
+        if (initialText.isNotEmpty()) {
             text = initialText
         }
     }
@@ -105,19 +102,20 @@ fun CaptureSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
         containerColor = TactileTheme.Surface,
-        shape = RoundedCornerShape(
-            topStart = TactileTheme.RadiusLg,
-            topEnd = TactileTheme.RadiusLg,
-        ),
+        shape =
+            RoundedCornerShape(
+                topStart = TactileTheme.RadiusLg,
+                topEnd = TactileTheme.RadiusLg,
+            ),
     ) {
         Column(
             modifier =
-                    Modifier
-                        .padding(TactileTheme.SpacingMd)
-                        .fillMaxWidth()
-                        .navigationBarsPadding()
-                        .imePadding()
-                        .verticalScroll(androidx.compose.foundation.rememberScrollState()),
+                Modifier
+                    .padding(TactileTheme.SpacingMd)
+                    .fillMaxWidth()
+                    .navigationBarsPadding()
+                    .imePadding()
+                    .verticalScroll(androidx.compose.foundation.rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
         ) {
             Row(
@@ -126,9 +124,13 @@ fun CaptureSheet(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    if (brainDumpMode) stringResource(Res.string.capture_brain_dump_active) else stringResource(
-                        Res.string.capture_quick_capture,
-                    ),
+                    if (brainDumpMode) {
+                        stringResource(Res.string.capture_brain_dump_active)
+                    } else {
+                        stringResource(
+                            Res.string.capture_quick_capture,
+                        )
+                    },
                     style = MaterialTheme.typography.labelSmall,
                     color = if (brainDumpMode) TactileTheme.Primary else TactileTheme.Muted,
                 )
@@ -165,23 +167,34 @@ fun CaptureSheet(
                     value = text,
                     onValueChange = { text = it },
                     modifier =
-                            Modifier
-                                .weight(1f)
-                                .padding(vertical = TactileTheme.SpacingMd),
+                        Modifier
+                            .weight(1f)
+                            .padding(vertical = TactileTheme.SpacingMd),
                     textStyle = MaterialTheme.typography.displayMedium.copy(color = TactileTheme.Text),
                     cursorBrush = SolidColor(TactileTheme.Primary),
                     decorationBox = { innerTextField ->
-                        if (text.isEmpty())
-                        {
+                        if (text.isEmpty()) {
                             val placeholder =
-                                    when (selectedType)
-                                    {
-                                        "project" -> stringResource(Res.string.capture_placeholder_project)
-                                        "area"    -> stringResource(Res.string.capture_placeholder_area)
-                                        else      -> if (brainDumpMode) stringResource(Res.string.capture_placeholder_next_thought) else stringResource(
-                                            Res.string.capture_placeholder_dump_thought,
-                                        )
+                                when (selectedType)
+                                {
+                                    "project" -> {
+                                        stringResource(Res.string.capture_placeholder_project)
                                     }
+
+                                    "area" -> {
+                                        stringResource(Res.string.capture_placeholder_area)
+                                    }
+
+                                    else -> {
+                                        if (brainDumpMode) {
+                                            stringResource(Res.string.capture_placeholder_next_thought)
+                                        } else {
+                                            stringResource(
+                                                Res.string.capture_placeholder_dump_thought,
+                                            )
+                                        }
+                                    }
+                                }
                             Text(
                                 placeholder,
                                 style = MaterialTheme.typography.displayMedium,
@@ -192,36 +205,32 @@ fun CaptureSheet(
                     },
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     keyboardActions =
-                            KeyboardActions(
-                                onDone = {
-                                    if (text.isNotBlank())
-                                    {
-                                        onCapture(
-                                            text,
-                                            selectedType,
-                                            selectedProjectId,
-                                            selectedAreaId,
-                                            isRecurring,
-                                            recurringInterval,
-                                            reminderTime,
-                                            contextScreen,
-                                            isSticky,
-                                            if (selectedType == "decision") decisionCategory else null,
-                                        )
-                                        if (multiCaptureMode || brainDumpMode)
-                                        {
-                                            text = ""
-                                        } else
-                                        {
-                                            onDismiss()
-                                        }
+                        KeyboardActions(
+                            onDone = {
+                                if (text.isNotBlank()) {
+                                    onCapture(
+                                        text,
+                                        selectedType,
+                                        selectedProjectId,
+                                        selectedAreaId,
+                                        isRecurring,
+                                        recurringInterval,
+                                        reminderTime,
+                                        contextScreen,
+                                        isSticky,
+                                        if (selectedType == "decision") decisionCategory else null,
+                                    )
+                                    if (multiCaptureMode || brainDumpMode) {
+                                        text = ""
+                                    } else {
+                                        onDismiss()
                                     }
-                                },
-                            ),
+                                }
+                            },
+                        ),
                 )
 
-                if (onVoiceCaptureClick != null)
-                {
+                if (onVoiceCaptureClick != null) {
                     IconButton(onClick = onVoiceCaptureClick) {
                         Icon(
                             imageVector = Icons.Default.Mic,
@@ -232,8 +241,7 @@ fun CaptureSheet(
                 }
             }
 
-            if (!brainDumpMode)
-            {
+            if (!brainDumpMode) {
                 Text(
                     stringResource(Res.string.capture_type),
                     style = MaterialTheme.typography.labelSmall,
@@ -256,19 +264,20 @@ fun CaptureSheet(
                             "area",
                         ),
                     ) { type ->
-                        val typeLabel = when (type)
-                        {
-                            "task"        -> stringResource(Res.string.type_task)
-                            "note"        -> stringResource(Res.string.type_note)
-                            "idea"        -> stringResource(Res.string.type_idea)
-                            "resource"    -> stringResource(Res.string.type_resource)
-                            "open_loop"   -> stringResource(Res.string.dash_open_loops)
-                            "decision"    -> stringResource(Res.string.dash_decisions)
-                            "maintenance" -> stringResource(Res.string.dash_maintenance)
-                            "project"     -> stringResource(Res.string.type_project)
-                            "area"        -> stringResource(Res.string.type_area)
-                            else          -> type
-                        }
+                        val typeLabel =
+                            when (type)
+                            {
+                                "task" -> stringResource(Res.string.type_task)
+                                "note" -> stringResource(Res.string.type_note)
+                                "idea" -> stringResource(Res.string.type_idea)
+                                "resource" -> stringResource(Res.string.type_resource)
+                                "open_loop" -> stringResource(Res.string.dash_open_loops)
+                                "decision" -> stringResource(Res.string.dash_decisions)
+                                "maintenance" -> stringResource(Res.string.dash_maintenance)
+                                "project" -> stringResource(Res.string.type_project)
+                                "area" -> stringResource(Res.string.type_area)
+                                else -> type
+                            }
                         FilterChip(
                             selected = selectedType == type,
                             onClick = { selectedType = type },
@@ -278,8 +287,7 @@ fun CaptureSheet(
                 }
             }
 
-            if (templates.isNotEmpty() && !brainDumpMode)
-            {
+            if (templates.isNotEmpty() && !brainDumpMode) {
                 Text(
                     stringResource(Res.string.capture_use_template),
                     style = MaterialTheme.typography.labelSmall,
@@ -302,10 +310,8 @@ fun CaptureSheet(
                 }
             }
 
-            if (selectedType != "area" && selectedType != "project")
-            {
-                if (areas.isNotEmpty() && !brainDumpMode)
-                {
+            if (selectedType != "area" && selectedType != "project") {
+                if (areas.isNotEmpty() && !brainDumpMode) {
                     Text(
                         stringResource(Res.string.screen_area).uppercase(),
                         style = MaterialTheme.typography.labelSmall,
@@ -317,7 +323,7 @@ fun CaptureSheet(
                                 selected = selectedAreaId == area.id,
                                 onClick = {
                                     selectedAreaId =
-                                            if (selectedAreaId == area.id) null else area.id
+                                        if (selectedAreaId == area.id) null else area.id
                                 },
                                 label = { Text(area.title) },
                             )
@@ -325,8 +331,7 @@ fun CaptureSheet(
                     }
                 }
 
-                if (projects.isNotEmpty() && !brainDumpMode)
-                {
+                if (projects.isNotEmpty() && !brainDumpMode) {
                     Text(
                         stringResource(Res.string.screen_project).uppercase(),
                         style = MaterialTheme.typography.labelSmall,
@@ -338,7 +343,7 @@ fun CaptureSheet(
                                 selected = selectedProjectId == project.id,
                                 onClick = {
                                     selectedProjectId =
-                                            if (selectedProjectId == project.id) null else project.id
+                                        if (selectedProjectId == project.id) null else project.id
                                 },
                                 label = { Text(project.title) },
                             )
@@ -346,8 +351,7 @@ fun CaptureSheet(
                     }
                 }
 
-                if (!brainDumpMode)
-                {
+                if (!brainDumpMode) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
@@ -382,40 +386,35 @@ fun CaptureSheet(
                             IconButton(
                                 onClick = {
                                     reminderTime =
-                                            if (reminderTime == null)
-                                            {
-                                                val now =
-                                                        kotlin.time.Clock.System
-                                                            .now()
-                                                val tz =
-                                                        kotlinx.datetime.TimeZone.currentSystemDefault()
-                                                val localDateTime = now.toLocalDateTime(tz)
-                                                val evening =
-                                                        kotlinx.datetime.LocalDateTime(
-                                                            localDateTime.year,
-                                                            localDateTime.month,
-                                                            localDateTime.day,
-                                                            20,
-                                                            0,
-                                                        )
-                                                if (localDateTime.hour >= 20)
-                                                {
-                                                    evening
-                                                        .toInstant(tz)
-                                                        .plus(
-                                                            1,
-                                                            kotlinx.datetime.DateTimeUnit.DAY,
-                                                            tz,
-                                                        )
-                                                        .toEpochMilliseconds()
-                                                } else
-                                                {
-                                                    evening.toInstant(tz).toEpochMilliseconds()
-                                                }
-                                            } else
-                                            {
-                                                null
+                                        if (reminderTime == null) {
+                                            val now =
+                                                kotlin.time.Clock.System
+                                                    .now()
+                                            val tz =
+                                                kotlinx.datetime.TimeZone.currentSystemDefault()
+                                            val localDateTime = now.toLocalDateTime(tz)
+                                            val evening =
+                                                kotlinx.datetime.LocalDateTime(
+                                                    localDateTime.year,
+                                                    localDateTime.month,
+                                                    localDateTime.day,
+                                                    20,
+                                                    0,
+                                                )
+                                            if (localDateTime.hour >= 20) {
+                                                evening
+                                                    .toInstant(tz)
+                                                    .plus(
+                                                        1,
+                                                        kotlinx.datetime.DateTimeUnit.DAY,
+                                                        tz,
+                                                    ).toEpochMilliseconds()
+                                            } else {
+                                                evening.toInstant(tz).toEpochMilliseconds()
                                             }
+                                        } else {
+                                            null
+                                        }
                                 },
                             ) {
                                 Icon(
@@ -425,31 +424,35 @@ fun CaptureSheet(
                                 )
                             }
                             Text(
-                                if (reminderTime == null) stringResource(Res.string.capture_no_reminder) else stringResource(
-                                    Res.string.capture_process_later,
-                                ),
+                                if (reminderTime == null) {
+                                    stringResource(Res.string.capture_no_reminder)
+                                } else {
+                                    stringResource(
+                                        Res.string.capture_process_later,
+                                    )
+                                },
                                 style = MaterialTheme.typography.labelSmall,
                                 color = if (reminderTime != null) TactileTheme.Primary else TactileTheme.Muted,
                             )
                         }
                     }
 
-                    if (isRecurring)
-                    {
+                    if (isRecurring) {
                         LazyRow(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
                             items(listOf("DAILY", "WEEKLY", "MONTHLY")) { interval ->
-                                val intervalLabel = when (interval)
-                                {
-                                    "DAILY"   -> stringResource(Res.string.capture_interval_daily)
-                                    "WEEKLY"  -> stringResource(Res.string.capture_interval_weekly)
-                                    "MONTHLY" -> stringResource(Res.string.capture_interval_monthly)
-                                    else      -> interval
-                                }
+                                val intervalLabel =
+                                    when (interval)
+                                    {
+                                        "DAILY" -> stringResource(Res.string.capture_interval_daily)
+                                        "WEEKLY" -> stringResource(Res.string.capture_interval_weekly)
+                                        "MONTHLY" -> stringResource(Res.string.capture_interval_monthly)
+                                        else -> interval
+                                    }
                                 FilterChip(
                                     selected = recurringInterval == interval,
                                     onClick = {
                                         recurringInterval =
-                                                if (recurringInterval == interval) null else interval
+                                            if (recurringInterval == interval) null else interval
                                     },
                                     label = { Text(intervalLabel) },
                                 )
@@ -486,8 +489,7 @@ fun CaptureSheet(
                             )
                         }
 
-                        if (selectedType == "decision")
-                        {
+                        if (selectedType == "decision") {
                             Row(
                                 modifier = Modifier.weight(1f),
                                 verticalAlignment = Alignment.CenterVertically,
@@ -501,14 +503,12 @@ fun CaptureSheet(
                                     )
                                 }
                             }
-                        } else
-                        {
+                        } else {
                             Spacer(Modifier.weight(1f))
                         }
                     }
                 }
-            } else if (selectedType == "project" && areas.isNotEmpty())
-            {
+            } else if (selectedType == "project" && areas.isNotEmpty()) {
                 Text(
                     stringResource(Res.string.capture_assign_to_area),
                     style = MaterialTheme.typography.labelSmall,
@@ -529,8 +529,7 @@ fun CaptureSheet(
 
             Button(
                 onClick = {
-                    if (text.isNotBlank())
-                    {
+                    if (text.isNotBlank()) {
                         onCapture(
                             text,
                             selectedType,
@@ -543,34 +542,33 @@ fun CaptureSheet(
                             isSticky,
                             if (selectedType == "decision") decisionCategory else null,
                         )
-                        if (multiCaptureMode || brainDumpMode)
-                        {
+                        if (multiCaptureMode || brainDumpMode) {
                             text = ""
-                        } else
-                        {
+                        } else {
                             onDismiss()
                         }
                     }
                 },
+                enabled = text.isNotBlank(),
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(TactileTheme.RadiusMd),
             ) {
-                val saveLabel = if (multiCaptureMode || brainDumpMode)
-                {
-                    stringResource(Res.string.capture_save_continue)
-                } else
-                {
-                    val typeLabel = when (selectedType)
-                    {
-                        "task"    -> stringResource(Res.string.type_task)
-                        "note"    -> stringResource(Res.string.type_note)
-                        "idea"    -> stringResource(Res.string.type_idea)
-                        "project" -> stringResource(Res.string.type_project)
-                        "area"    -> stringResource(Res.string.type_area)
-                        else      -> selectedType
+                val saveLabel =
+                    if (multiCaptureMode || brainDumpMode) {
+                        stringResource(Res.string.capture_save_continue)
+                    } else {
+                        val typeLabel =
+                            when (selectedType)
+                            {
+                                "task" -> stringResource(Res.string.type_task)
+                                "note" -> stringResource(Res.string.type_note)
+                                "idea" -> stringResource(Res.string.type_idea)
+                                "project" -> stringResource(Res.string.type_project)
+                                "area" -> stringResource(Res.string.type_area)
+                                else -> selectedType
+                            }
+                        stringResource(Res.string.capture_save_type, typeLabel.uppercase())
                     }
-                    stringResource(Res.string.capture_save_type, typeLabel.uppercase())
-                }
                 Text(
                     saveLabel,
                     style = MaterialTheme.typography.labelLarge,

@@ -4,11 +4,15 @@
 
 package com.tajemniktv.tajsos
 
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import com.tajemniktv.tajsos.data.createDatabase
 import com.tajemniktv.tajsos.di.SharedModule
+import java.awt.FileDialog
+import java.awt.Frame
 import java.io.File
 
 fun main() =
@@ -29,6 +33,23 @@ fun main() =
             onCloseRequest = ::exitApplication,
             title = "TajsOS",
         ) {
-            App(viewModel)
+            val avatarPickResult = remember { mutableStateOf<String?>(null) }
+            App(
+                viewModel = viewModel,
+                onPickAvatar = {
+                    val dialog = FileDialog(null as Frame?, "Select Avatar Image", FileDialog.LOAD)
+                    dialog.isVisible = true
+                    val file = dialog.file
+                    val directory = dialog.directory
+                    avatarPickResult.value =
+                        if (file != null && directory != null) {
+                            File(directory, file).absolutePath
+                        } else {
+                            null
+                        }
+                },
+                avatarPickResult = avatarPickResult.value,
+                onAvatarPickConsumed = { avatarPickResult.value = null },
+            )
         }
     }

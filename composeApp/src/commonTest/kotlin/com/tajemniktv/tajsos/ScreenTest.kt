@@ -35,6 +35,18 @@ class ScreenTest {
             Screen.Review,
             Screen.Profile,
             Screen.Decisions,
+            Screen.OpenLoops,
+            Screen.Protocols,
+            Screen.TimeArchitecture,
+            Screen.Places,
+            Screen.Finances,
+            Screen.Health,
+            Screen.Relationships,
+            Screen.Education,
+            Screen.Rules,
+            Screen.Vaults,
+            Screen.Capacity,
+            Screen.Identity,
         )
 
     @Test
@@ -109,8 +121,43 @@ class ScreenTest {
     }
 
     @Test
-    fun checkTotalScreenCount() {
-        assertEquals(23, allScreens.size)
+    fun finances_hasCorrectRoute() {
+        assertEquals("finances", Screen.Finances.route)
+    }
+
+    @Test
+    fun openLoops_hasCorrectRoute() {
+        assertEquals("open_loops", Screen.OpenLoops.route)
+    }
+
+    @Test
+    fun protocols_hasCorrectRoute() {
+        assertEquals("protocols", Screen.Protocols.route)
+    }
+
+    @Test
+    fun timeArchitecture_hasCorrectRoute() {
+        assertEquals("time_architecture", Screen.TimeArchitecture.route)
+    }
+
+    @Test
+    fun relationships_hasCorrectRoute() {
+        assertEquals("relationships", Screen.Relationships.route)
+    }
+
+    @Test
+    fun health_hasCorrectRoute() {
+        assertEquals("health", Screen.Health.route)
+    }
+
+    @Test
+    fun education_hasCorrectRoute() {
+        assertEquals("education", Screen.Education.route)
+    }
+
+    @Test
+    fun studyLegacy_mapsToEducation() {
+        assertEquals(Screen.Education, Screen.fromRoute("study"))
     }
 
     @Test

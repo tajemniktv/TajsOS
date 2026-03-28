@@ -5,7 +5,9 @@
 **Creative North Star: "Digital Life System"**
 
 **TajsOS** is a local-first personal operating system for life, projects, thoughts, execution, and
-insight.
+insight. It is not neccessarily for ADHD brains, but it is designed with ADHD brains in mind. It
+tries to replace overwhelming lists with a mechanical, satisfying control center that makes task
+capture and execution feel like operating heavy machinery.
 
 This design system is not a utility; it is an intelligence. To reflect the "Second Brain" ethos, the
 UI must feel like a high-end, tactile instrument—think of a bespoke glass cockpit in a

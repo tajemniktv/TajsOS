@@ -23,3 +23,6 @@ plans/*
 .artifacts/*
 .env
 *.log
+.aiassistant
+.ai
+.serena

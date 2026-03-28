@@ -408,6 +408,82 @@ class AppRepositoryTest {
             assertTrue(updatedOption2.isSelected)
         }
 
+    @Test
+    fun testDecideOn_withNullOption_updatesNodeButNoOptionsSelected(): TestResult =
+        runTest {
+            val nodeId =
+                fakeNodeDao.insertNode(
+                    NodeEntity(
+                        type = "decision",
+                        title = "What framework?",
+                        decisionStatus = "pending",
+                    ),
+                )
+
+            val option1Id =
+                repository.insertDecisionOption(
+                    DecisionOptionEntity(decisionNodeId = nodeId, title = "Option A", isSelected = true),
+                )
+            val option2Id =
+                repository.insertDecisionOption(
+                    DecisionOptionEntity(decisionNodeId = nodeId, title = "Option B"),
+                )
+
+            repository.decideOn(nodeId, "Decided not to choose", null)
+
+            val updatedNode = repository.getNodeById(nodeId)
+            assertNotNull(updatedNode)
+            assertEquals("decided", updatedNode.decisionStatus)
+            assertEquals("Decided not to choose", updatedNode.decisionOutcome)
+            assertEquals("done", updatedNode.status)
+
+            val options = repository.getOptionsForDecision(nodeId).first()
+            assertEquals(2, options.size)
+
+            val updatedOption1 = options.find { it.id == option1Id }
+            val updatedOption2 = options.find { it.id == option2Id }
+
+            assertNotNull(updatedOption1)
+            assertNotNull(updatedOption2)
+            assertFalse(updatedOption1.isSelected)
+            assertFalse(updatedOption2.isSelected)
+        }
+
+    @Test
+    fun testDecideOn_deselectsPreviousOption(): TestResult =
+        runTest {
+            val nodeId =
+                fakeNodeDao.insertNode(
+                    NodeEntity(
+                        type = "decision",
+                        title = "What framework?",
+                        decisionStatus = "pending",
+                    ),
+                )
+
+            val option1Id =
+                repository.insertDecisionOption(
+                    DecisionOptionEntity(decisionNodeId = nodeId, title = "Option A", isSelected = true),
+                )
+            val option2Id =
+                repository.insertDecisionOption(
+                    DecisionOptionEntity(decisionNodeId = nodeId, title = "Option B"),
+                )
+
+            repository.decideOn(nodeId, "Changed to B", option2Id)
+
+            val options = repository.getOptionsForDecision(nodeId).first()
+            assertEquals(2, options.size)
+
+            val updatedOption1 = options.find { it.id == option1Id }
+            val updatedOption2 = options.find { it.id == option2Id }
+
+            assertNotNull(updatedOption1)
+            assertNotNull(updatedOption2)
+            assertFalse(updatedOption1.isSelected)
+            assertTrue(updatedOption2.isSelected)
+        }
+
     private suspend fun assertDerivedRelation(
         originalId: Long,
         derivedId: Long,
@@ -475,5 +551,21 @@ class AppRepositoryTest {
             assertEquals("active", newTask.status)
 
             assertDerivedRelation(originalNodeId, taskId)
+        }
+
+    @Test
+    fun testBuildExportBundle_includesSchemaAndPacks(): TestResult =
+        runTest {
+            fakeNodeDao.insertNode(NodeEntity(type = "task", title = "Export me"))
+
+            val bundle =
+                repository.buildExportBundle(
+                    enabledPacks = setOf(AppPack.STUDENT.key, AppPack.CREATOR.key),
+                )
+
+            assertEquals(EXPORT_SCHEMA_VERSION, bundle.schemaVersion)
+            assertTrue(bundle.nodes.isNotEmpty())
+            assertTrue(bundle.enabledPacks.contains(AppPack.STUDENT.key))
+            assertTrue(bundle.enabledPacks.contains(AppPack.CREATOR.key))
         }
 }

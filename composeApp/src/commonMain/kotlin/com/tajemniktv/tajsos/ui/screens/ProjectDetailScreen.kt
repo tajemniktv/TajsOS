@@ -21,22 +21,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.data.EventLogEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.components.ActionButton
+import com.tajemniktv.tajsos.ui.components.cards.InfoCard
+import com.tajemniktv.tajsos.ui.components.cards.LinkedNodeItem
+import com.tajemniktv.tajsos.ui.components.cards.StatusCard
 import com.tajemniktv.tajsos.ui.components.common.DetailHeader
 import com.tajemniktv.tajsos.ui.components.common.DetailSectionHeader
-import com.tajemniktv.tajsos.ui.components.common.InfoCard
-import com.tajemniktv.tajsos.ui.components.common.LinkedNodeItem
 import com.tajemniktv.tajsos.ui.components.common.SelectorDialog
-import com.tajemniktv.tajsos.ui.components.common.StatusCard
-import com.tajemniktv.tajsos.ui.components.ActionButton
 import com.tajemniktv.tajsos.ui.components.layout.LocalHeaderActions
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
-import androidx.compose.ui.unit.sp
 
 /**
  * Renders the project detail screen for the specified project.
@@ -53,13 +53,11 @@ fun ProjectDetailScreen(
     projectId: Long,
     onEditNode: (Long) -> Unit,
     onBack: () -> Unit,
-)
-{
+) {
     val nodes by viewModel.allNodes.collectAsState()
     val nodeWithPin = remember(nodes, projectId) { nodes.find { it.node.id == projectId } }
 
-    if (nodeWithPin == null)
-    {
+    if (nodeWithPin == null) {
         Box(modifier = Modifier.fillMaxSize()) {
             Text(
                 stringResource(Res.string.project_detail_not_found),
@@ -70,7 +68,8 @@ fun ProjectDetailScreen(
     }
 
     val project = nodeWithPin.node
-    val nodesWithPinForProject by viewModel.getNodesForProject(projectId)
+    val nodesWithPinForProject by viewModel
+        .getNodesForProject(projectId)
         .collectAsState(initial = emptyList())
 
     var showStatusDialog by remember { mutableStateOf(false) }
@@ -79,24 +78,29 @@ fun ProjectDetailScreen(
     val completed = nodesWithPinForProject.count { it.node.status == "done" }
     val progress = if (total > 0) completed.toFloat() / total else 0f
 
-    val now = kotlin.time.Clock.System.now().toEpochMilliseconds()
+    val now =
+        kotlin.time.Clock.System
+            .now()
+            .toEpochMilliseconds()
     val staleTime = now - (14 * 24 * 60 * 60 * 1000L)
 
-    val hasCriticalOverdue = nodesWithPinForProject.any {
-        val dueAt = it.node.dueAt
-        it.node.status == "active" && it.node.isHardDeadline && dueAt != null && dueAt < now
-    }
+    val hasCriticalOverdue =
+        nodesWithPinForProject.any {
+            val dueAt = it.node.dueAt
+            it.node.status == "active" && it.node.isHardDeadline && dueAt != null && dueAt < now
+        }
     val isNeglected =
-            nodesWithPinForProject.none { it.node.updatedAt >= staleTime } && project.status == "active" && !project.isFrozen
+        nodesWithPinForProject.none { it.node.updatedAt >= staleTime } && project.status == "active" && !project.isFrozen
 
-    val (healthLabel, healthColor) = when
-    {
-        project.isFrozen            -> stringResource(Res.string.project_health_frozen) to TactileTheme.Accent
-        project.status == "on_hold" -> stringResource(Res.string.project_health_on_hold) to TactileTheme.Muted
-        hasCriticalOverdue          -> stringResource(Res.string.project_health_critical) to TactileTheme.Error
-        isNeglected                 -> stringResource(Res.string.project_health_neglected) to TactileTheme.Error
-        else                        -> stringResource(Res.string.project_health_healthy) to TactileTheme.Success
-    }
+    val (healthLabel, healthColor) =
+        when
+            {
+                project.isFrozen -> stringResource(Res.string.project_health_frozen) to TactileTheme.Accent
+                project.status == "on_hold" -> stringResource(Res.string.project_health_on_hold) to TactileTheme.Muted
+                hasCriticalOverdue -> stringResource(Res.string.project_health_critical) to TactileTheme.Error
+                isNeglected -> stringResource(Res.string.project_health_neglected) to TactileTheme.Error
+                else -> stringResource(Res.string.project_health_healthy) to TactileTheme.Success
+            }
 
     LaunchedEffect(projectId) {
         viewModel.setLastActiveContext(projectId, project.areaId)
@@ -145,17 +149,19 @@ fun ProjectDetailScreen(
 
     CompositionLocalProvider(LocalHeaderActions provides actions) {
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(TactileTheme.Background),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(TactileTheme.Background),
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(TactileTheme.Background)
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = TactileTheme.SpacingMd)
-                    .padding(bottom = TactileTheme.SpacingMd),
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .background(TactileTheme.Background)
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = TactileTheme.SpacingMd)
+                        .padding(bottom = TactileTheme.SpacingMd),
                 verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingLg),
             ) {
                 // Header
@@ -204,8 +210,7 @@ fun ProjectDetailScreen(
                 )
 
                 // Why Section
-                if (project.projectWhy != null || project.content.isNotEmpty())
-                {
+                if (project.projectWhy != null || project.content.isNotEmpty()) {
                     Surface(
                         modifier = Modifier.fillMaxWidth(),
                         color = TactileTheme.Surface,
@@ -232,9 +237,8 @@ fun ProjectDetailScreen(
 
                 // Next Actions
                 val nextActions =
-                        nodesWithPinForProject.filter { it.node.status == "active" && it.node.type == "task" }
-                if (nextActions.isNotEmpty())
-                {
+                    nodesWithPinForProject.filter { it.node.status == "active" && it.node.type == "task" }
+                if (nextActions.isNotEmpty()) {
                     Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
                         DetailSectionHeader(title = "NEXT ACTIONS", icon = Icons.Default.PlayArrow)
                         nextActions.take(5).forEach { item ->
@@ -249,10 +253,10 @@ fun ProjectDetailScreen(
                 }
 
                 // Timeline
-                val logs by viewModel.getLogsForNode(projectId)
+                val logs by viewModel
+                    .getLogsForNode(projectId)
                     .collectAsState(initial = emptyList())
-                if (logs.isNotEmpty())
-                {
+                if (logs.isNotEmpty()) {
                     Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
                         DetailSectionHeader(title = "TIMELINE", icon = Icons.Default.History)
                         logs.take(5).forEach { log ->
@@ -266,8 +270,7 @@ fun ProjectDetailScreen(
         }
     }
 
-    if (showStatusDialog)
-    {
+    if (showStatusDialog) {
         SelectorDialog(
             show = true,
             onDismiss = { showStatusDialog = false },
@@ -275,16 +278,17 @@ fun ProjectDetailScreen(
             options = listOf("active", "on_hold", "someday"),
             selectedOption = project.status,
             onSelect = { status ->
-                viewModel.updateNodeStatus(project, status); showStatusDialog = false
+                viewModel.updateNodeStatus(project, status)
+                showStatusDialog = false
             },
             optionName = { status -> status },
             optionIcon = { status ->
                 when (status)
                 {
-                    "active"  -> Icons.Default.PlayArrow
+                    "active" -> Icons.Default.PlayArrow
                     "on_hold" -> Icons.Default.Pause
                     "someday" -> Icons.Default.CalendarToday
-                    else      -> Icons.Default.Info
+                    else -> Icons.Default.Info
                 }
             },
             optionSubtext = { status -> "PROJ_STATE_${status.uppercase()}" },
@@ -300,8 +304,7 @@ fun ProjectDetailScreen(
  * `timestamp` is shown as `hour:minute // day/month`.
  */
 @Composable
-fun ProjectTimelineItem(log: EventLogEntity)
-{
+fun ProjectTimelineItem(log: EventLogEntity) {
     Row(
         modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -317,8 +320,10 @@ fun ProjectTimelineItem(log: EventLogEntity)
                 color = TactileTheme.Text,
                 fontWeight = FontWeight.Bold,
             )
-            val date = kotlin.time.Instant.fromEpochMilliseconds(log.timestamp)
-                .toLocalDateTime(kotlinx.datetime.TimeZone.currentSystemDefault())
+            val date =
+                kotlin.time.Instant
+                    .fromEpochMilliseconds(log.timestamp)
+                    .toLocalDateTime(kotlinx.datetime.TimeZone.currentSystemDefault())
             Text(
                 text = "${date.hour}:${date.minute} // ${date.day}/${date.month.number}",
                 style = MaterialTheme.typography.labelSmall,

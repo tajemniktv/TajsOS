@@ -1,27 +1,24 @@
 # Guidelines for AI Agents
 
-This is a guidelines file for agents working on TajsOS.
+This file defines working constraints for agents contributing to TajsOS.
 
 ## Project identity
 
-TajsOS is a low-friction "Second Brain" multiplatform app for managing your life. It is not
-neccessarily for ADHD brains, but it is designed with ADHD brains in mind. It tries to replace
-overwhelming lists with a mechanical, satisfying control center that makes task capture and
-execution feel like operating heavy machinery.
+**TajsOS** is a local-first personal operating system for life, projects, thoughts, execution, and
+insight.
+The product should feel like one coherent system with multiple lenses over shared life data, not a
+collection of disconnected feature silos.
 
-## Maintaining AGENTS.md Files
+## Maintaining AGENTS.md or docs files
 
-When updating AGENTS.md files, follow these principles:
+- Avoid hardcoded counts or brittle inventories.
+- Document behavioral constraints and architectural boundaries.
+- Verify claims in code before writing them.
+- Remove outdated guidance instead of preserving stale history.
 
-- **No hardcoded counts** — Don't write "5 modules"; these become outdated instantly
-- **Document constraints, not descriptions** — Focus on non-obvious behaviors, gotchas, and
-  cross-crate dependencies
-- **Verify before documenting** — Grep/read the code to confirm claims are accurate
-- **Delete outdated info** — Outdated docs are worse than no docs
+## Commit message convention
 
-## Commit Message Convention
-
-```
+```text
 <type>: <description>
 
 [optional body]
@@ -39,120 +36,147 @@ When updating AGENTS.md files, follow these principles:
 | `chore`    | Maintenance tasks                     |
 | `perf`     | Performance improvements              |
 
-### Versioning Conventions
+### Versioning conventions
 
-| Bump Type | When to Use                                            | Example           |
-|-----------|--------------------------------------------------------|-------------------|
-| `patch`   | Bug fixes, small features, additive parser support     | `1.2.0` → `1.2.1` |
-| `minor`   | New client support, significant features, UI overhauls | `1.1.2` → `1.2.0` |
-| `major`   | Breaking changes (never used so far)                   | `1.2.1` → `2.0.0` |
+| Bump Type | When to Use                                        | Example            |
+|-----------|----------------------------------------------------|--------------------|
+| `patch`   | Bug fixes, small features, additive support        | `1.2.0` -> `1.2.1` |
+| `minor`   | Significant features, client support, UI overhauls | `1.1.2` -> `1.2.0` |
+| `major`   | Breaking changes                                   | `1.2.1` -> `2.0.0` |
 
-## Tech stack
+## Architecture
 
-- **Targets:** Android + Desktop (JVM) + web (iOS and web targets scaffolded, Android/Desktop
-  primary)
-- **Language:** Kotlin
-- **App model:** Kotlin Multiplatform (KMP)
-- **UI:** Compose Multiplatform (CMP, shared UI)
-- **Design system:** Material 3
-- **Architecture:** Pragmatic layered architecture with shared `data`/`domain` (in `:shared`) and UI
-  separated from business logic. Core logic and data models live in
-  `shared/src/commonMain/kotlin/com/tajemniktv/tajsos/data/`.
-- **Module structure:**
-    - `:shared` — core logic, Room entities, repositories, and data models
-    - `:composeApp` — shared Compose UI, navigation, and screens for all platforms
-    - `:androidApp` — Android-specific entry point
-    - `:server` — Ktor-based backend for sync/remote features
-- **Calendar integration:** Supports external calendar providers and events (Google, Outlook, ICS,
-  etc.)
-- **Localization:** The app is being developed with localization in mind; UI strings are sourced for
-  translation.
-- **State management:** ViewModel + StateFlow + immutable UI state (see `MainViewModel` in
-  ComposeApp)
-- **Async:** Kotlin coroutines
-- **Navigation:** State-driven Compose navigation using a sealed `Screen` class; each major feature
-  has a dedicated screen in `composeApp/src/commonMain/kotlin/com/tajemniktv/tajsos/ui/screens/`.
-- **Persistence:** Room for structured data, DataStore for preferences/settings
-- **Sync:** Local-first approach with a remote backend for cross-device sync
-- **Background work:** WorkManager on Android only when it provides clear value
-- **Dependency injection:** Manual DI at first, Hilt only if complexity justifies it
-- **Build system:** Gradle with Kotlin DSL and version catalogs (`gradle/libs.versions.toml`). All
-  modules use plugin aliases and share dependency versions.
+### Platforms and modules
 
----
+- Active Gradle modules: `:androidApp`, `:composeApp`, `:shared`, `:server`.
+- Active runtime targets in code: Android app, Desktop JVM app, and iOS framework integration.
+- `website/` is separate from KMP runtime concerns.
+- Server is currently Ktor/Netty and intentionally lightweight.
+
+### Foundations to preserve unless explicitly changing
+
+- KMP + Compose Multiplatform with shared business logic.
+- Manual DI (`SharedModule`).
+- Coroutines + `StateFlow` reactive state model.
+- Room + DataStore persistence split.
+- Persisted operating modes and mode preferences.
+- Android integrations (share intents, biometrics, voice capture).
+- Separate website and server modules.
+
+## Architectural guardrails
+
+### System shape
+
+- Prioritize backend/domain coherence before broad UI surface expansion.
+- Design screens as projections (lenses) over shared state, not isolated feature kingdoms.
+- Preserve local-first behavior as a non-negotiable baseline.
+
+### ViewModel boundaries
+
+- `MainViewModel` is shell-level orchestration, not the universal domain engine.
+- Keep global concerns in root scope (app lifecycle, mode shell, navigation shell, sync status, pack
+  availability, global capture/search entry).
+- Move feature/domain-heavy orchestration into feature-scoped components.
+- Avoid adding new cross-domain branching logic to `MainViewModel` when a bounded feature component
+  can own it.
+
+### Domain modeling boundaries
+
+- Treat `NodeEntity` as an overloaded legacy surface that should not absorb unlimited new nullable
+  fields.
+- Prefer typed companion models/tables for deeper domain behavior.
+- Keep relation graph behavior (`RelationEntity`) as a first-class capability.
+- Preserve backward compatibility when evolving data shape.
+
+### Type safety boundaries
+
+- Do not introduce new raw string literals for domain state when typed models are feasible.
+- Prefer enums, sealed hierarchies, value objects, or centralized constants with strict mapping.
+- Treat new string literals as schema-affecting changes.
+
+### Date/time boundaries
+
+- `YYYY-MM-DD` string matching for “today” is a temporary compromise, not a long-term pattern.
+- New date-sensitive behavior should use real date abstractions (`LocalDate`/`epochDay`) with
+  explicit timezone semantics.
+
+### Sync boundaries
+
+- Keep sync behind abstractions/interfaces in client architecture.
+- Current `/sync` behavior is a development stub (in-memory, non-durable) and must not define
+  long-term product assumptions.
+- Do not couple feature correctness to current stub conflict semantics.
+
+### Data safety boundaries
+
+- `fallbackToDestructiveMigration(true)` indicates pre-alpha schema safety posture.
+- Any schema growth should be treated as high-risk and documented clearly.
+- Prefer migration-safe evolution and backup/export resilience as architecture matures.
+
+### Pack and shell boundaries
+
+- Pack gating is valid for advanced/specialized capabilities.
+- Core app identity and shell structure should remain cohesive and broadly available.
+- Avoid making core navigation feel like fragmented DLC partitions.
+
+### Bootstrap boundaries
+
+- Keep system defaults, onboarding examples, and dev/demo data conceptually separate.
+- Startup behavior should be explicit and predictable.
+
+## Product lens framing
+
+Feature work should reinforce cohesive read models:
+
+- **Now**: urgent execution state across tasks/events/open loops/mode.
+- **Plan**: calendar commitments and forward pressure.
+- **Operate**: maintenance, logistics, and routines.
+- **Knowledge**: notes, references, and linked entities.
+- **Review**: trends, outcomes, unfinished loops, reflection.
+
+## Persistence constraints
+
+- Room is used cross-platform through KMP Room setup.
+- Database currently uses `fallbackToDestructiveMigration(true)` on Android and JVM - During
+  development, migration or backward compatibility is not needed nor preferred.
+- DataStore (`PreferencesRepository`) currently carries biometric settings, active mode, and pack
+  ownership/enabling.
 
 ## Agent behavior expectations
 
 When working in this repo, agents should:
 
-1. Preserve existing behavior unless asked to change it.
-2. Explain tradeoffs clearly when making structure decisions.
-3. Prefer editing existing files over creating unnecessary new ones.
-4. Keep diffs focused and reviewable.
-5. Update docs when the product scope or setup changes.
-6. Avoid broad rewrites unless explicitly requested.
-7. If available, use MCP servers or tools to check code health (eg. CodeScene, SonarQube)
+1. Preserve behavior unless explicitly asked to change it.
+2. Keep diffs focused and reviewable.
+3. Prefer editing existing files over broad rewrites.
+4. Explain architectural tradeoffs when changing structure.
+5. Update documentation when constraints or behavior change.
+6. Respect typed-domain direction and avoid unnecessary string-state sprawl.
+7. Keep sync assumptions abstract/local-first.
+8. Add or update KDoc after changes to the codebase.
+9. Validate assumptions from current code, not old docs.
+10. After a successful build/test, commit changes.
+11. When modifying or creating visual aspects of the app, consult DESIGN.md
+12. If users request is ambigous, not specific enough or you're not sure what the user meant - Ask
+    before doing.
+13. After updating the codebase, check if tests also require updating.
 
----
+## Documentation touchpoints
 
-## Documentation expectations
+Before broad changes, check and update if impacted:
 
-When making meaningful changes, keep these current:
+- `README.md`
+- `AGENTS.md`
+- `DESIGN.md`
+- `LICENSE.md`
 
-- `README.md` for product and setup
-- `AGENTS.md` for agent behavior and project rules
-- `ROADMAP.md` for phased direction when scope evolves
-- `CHANGELOG.md` for release notes
-- `CONTRIBUTING.md` for contributing guidelines
-- `CODE_OF_CONDUCT.md` for code of conduct
-- `DESIGN.md` for visual design principles
-- `ARCHITECTURE.md` for understanding the application structural design and boundaries
+If additional docs are added later (for example `ROADMAP.md` or `CHANGELOG.md`), keep references
+synchronized.
 
----
+## High-risk gotchas
 
-## Additional project conventions and patterns
-
-- **Data model conventions:**
-    - The main entity is `NodeEntity` (unified model for `task`, `note`, `idea`, `project`, `area`,
-      `resource`, and LifeOS types like `open_loop`, `decision`, `maintenance`, `protocol`,
-      `person`,
-      etc.).
-    - Operating Modes are implemented via `ModeEntity`, `ModePreferenceEntity`,
-      `ModeAreaFilterEntity`, `ModeTypeFilterEntity`, and `ModeUsageLogEntity` for context-driven
-      UI,
-      filtering, and user workflows. Modes like "COMMAND", "FOCUS", and "RECOVERY" are seeded and
-      used
-      throughout the app.
-    - Relations are handled via `RelationEntity` for linking nodes (e.g., tasks to projects).
-    - "Today" is implemented as `TodayPinEntity` (table for daily pinning).
-    - Focus sessions and daily tracking: `FocusSessionEntity`, `TrackEntryEntity`.
-    - Templates: `TemplateEntity` for reusable item structures.
-    - Reviews: `ReviewEntity` for formal reflection sessions.
-    - Snapshots: `NodeSnapshotEntity` for versioning node content.
-    - Attachments: `AttachmentEntity` for files/links associated with nodes.
-    - Calendar: `CalendarProviderEntity` and `CalendarEventEntity` for external calendar
-      integration.
-- **Repository pattern:**
-    - All data access is funneled through `AppRepository` in `shared`.
-    - ViewModels (e.g., `MainViewModel`) expose StateFlows for UI state.
-    - AppRepository also provides flows for calendar, template, review, snapshot, and attachment
-      data.
-- **Status/type conventions:**
-    - `NodeEntity` uses `type` (`task`, `note`, `project`, `area`, etc.) and `status` (`active`,
-      `done`, `archived`, `on_hold`, `someday`, `blocked`).
-    - `ReviewEntity` uses `type` (`daily`, `weekly`, `monthly`).
-    - `TemplateEntity` uses `nodeType` (`task`, `note`, `project`).
-- **Main entrypoints:**
-    - UI: `App.kt` in `composeApp/src/commonMain/kotlin/com/tajemniktv/tajsos/`
-    - Data: `AppRepository` and entities in
-      `shared/src/commonMain/kotlin/com/tajemniktv/tajsos/data/`
-    - Insights/stats: `MainViewModel` exposes a rich `insights` StateFlow for weekly summaries,
-      context switching, backlog pressure, and LifeOS-specific metrics (e.g., mood/focus
-      correlations,
-      area health, context stability, project entropy, and other context-driven insights).
-    - Advanced search/filtering: `MainViewModel` supports multi-criteria search (by tag, type,
-      status,
-      project, area, energy, friction, etc.).
-    - Biometric/locking: App supports biometric authentication and locking via preferences and
-      ViewModel state.
-    - Export: Data export to JSON is available via ViewModel.
+- Repository methods include side effects (event logging, relation synchronization, decision
+  conversions); prefer repository APIs over direct DAO bypass.
+- `MainViewModel` is already large; default to feature-scoped ownership for new domain logic.
+- `NodeEntity` growth is architectural debt unless deliberately justified.
+- Server sync state is currently in-memory and non-durable.

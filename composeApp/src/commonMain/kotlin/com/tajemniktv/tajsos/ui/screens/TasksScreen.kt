@@ -21,8 +21,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.components.cards.NodeCard
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
-import com.tajemniktv.tajsos.ui.components.nodes.NodeCard
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
@@ -41,8 +41,10 @@ import kotlin.time.Clock
  * @param onEditNode Callback invoked with a node id when the user requests to edit a task.
  */
 @Composable
-fun TasksScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit)
-{
+fun TasksScreen(
+    viewModel: MainViewModel,
+    onEditNode: (Long) -> Unit,
+) {
     val activeNodes by viewModel.activeNodes.collectAsState()
     val tasks = activeNodes.filter { it.node.type == "task" }
     val allProjects by viewModel.allProjects.collectAsState()
@@ -53,16 +55,18 @@ fun TasksScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit)
     var filterProject by remember { mutableStateOf<Long?>(null) }
     var filterArea by remember { mutableStateOf<Long?>(null) }
 
-    val filteredTasks = tasks.filter {
-        (filterStatus == null || it.node.status == filterStatus) &&
+    val filteredTasks =
+        tasks.filter {
+            (filterStatus == null || it.node.status == filterStatus) &&
                 (filterProject == null || it.node.projectId == filterProject) &&
                 (filterArea == null || it.node.areaId == filterArea)
-    }
+        }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(TactileTheme.SpacingMd),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(TactileTheme.SpacingMd),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -86,18 +90,18 @@ fun TasksScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit)
         // Resurrection / Suggestions
         val staleTime = Clock.System.now().toEpochMilliseconds() - (14 * 24 * 60 * 60 * 1000L)
         val resurrectionTasks =
-                tasks.filter { it.node.status == "active" && it.node.updatedAt < staleTime }.take(2)
+            tasks.filter { it.node.status == "active" && it.node.updatedAt < staleTime }.take(2)
 
-        if (resurrectionTasks.isNotEmpty())
-        {
+        if (resurrectionTasks.isNotEmpty()) {
             Surface(
                 modifier = Modifier.fillMaxWidth().padding(vertical = TactileTheme.SpacingSm),
                 color = TactileTheme.Primary.copy(alpha = 0.05f),
                 shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                border = androidx.compose.foundation.BorderStroke(
-                    1.dp,
-                    TactileTheme.Primary.copy(alpha = 0.2f),
-                ),
+                border =
+                    androidx.compose.foundation.BorderStroke(
+                        1.dp,
+                        TactileTheme.Primary.copy(alpha = 0.2f),
+                    ),
             ) {
                 Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -160,11 +164,9 @@ fun TasksScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit)
             }
         }
 
-        if (filteredTasks.isEmpty())
-        {
+        if (filteredTasks.isEmpty()) {
             EmptyState(message = stringResource(Res.string.tasks_empty))
-        } else if (viewMode == "list")
-        {
+        } else if (viewMode == "list") {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
                 items(filteredTasks, key = { it.node.id }) { nodeWithPin ->
                     NodeCard(
@@ -187,8 +189,7 @@ fun TasksScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit)
                     )
                 }
             }
-        } else
-        {
+        } else {
             // Board View
             val statuses = listOf("active", "on_hold", "someday", "blocked")
             Row(
@@ -203,8 +204,10 @@ fun TasksScreen(viewModel: MainViewModel, onEditNode: (Long) -> Unit)
                         Surface(
                             color = TactileTheme.Surface,
                             shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                            modifier = Modifier.fillMaxWidth()
-                                .padding(bottom = TactileTheme.SpacingSm),
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(bottom = TactileTheme.SpacingSm),
                         ) {
                             Text(
                                 text = status.uppercase(),

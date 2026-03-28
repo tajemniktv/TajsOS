@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: "Project README"
+    url: "https://github.com/tajemniktv/TajsOS/blob/main/README.md"
+    about: "Check setup, architecture overview, and contributor documentation."
+  - name: "Contributing Guide"
+    url: "https://github.com/tajemniktv/TajsOS/blob/main/CONTRIBUTING.md"
+    about: "Review contribution expectations and workflow details."

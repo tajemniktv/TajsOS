@@ -10,6 +10,7 @@
     <!-- Navigation -->
     <string name="nav_core">CORE</string>
     <string name="nav_execution">EXECUTION</string>
+    <string name="nav_systems">SYSTEMS</string>
     <string name="nav_brain">SECOND BRAIN</string>
     <string name="nav_status">STATUS &amp; INSIGHTS</string>
     <string name="nav_system">SYSTEM</string>
@@ -41,6 +42,21 @@
     <string name="screen_opts">OPTS</string>
     <string name="screen_templates">TEMPLATES</string>
     <string name="screen_review">REVIEW</string>
+    <string name="screen_ops">OPS</string>
+    <string name="screen_open_loops">LOOPS</string>
+    <string name="screen_protocols">PROTOCOLS</string>
+    <string name="screen_time_architecture">TIME</string>
+    <string name="screen_places">PLACES</string>
+    <string name="screen_finances">FINANCES</string>
+    <string name="screen_health">HEALTH</string>
+    <string name="screen_relationships">RELATIONSHIPS</string>
+    <string name="screen_education">EDUCATION</string>
+    <string name="screen_study">EDUCATION</string>
+    <string name="screen_rules">RULES</string>
+    <string name="screen_vaults">VAULTS</string>
+    <string name="screen_capacity">CAPACITY</string>
+    <string name="screen_identity">IDENTITY</string>
+    <string name="screen_student">STUDENT</string>
     <string name="screen_history">HISTORY</string>
 
     <!-- Review Screen -->
@@ -286,6 +302,34 @@
     <!-- Profile & Meds -->
     <string name="profile_title">USER_PROFILE</string>
     <string name="profile_name">NAME</string>
+    <string name="profile_identity_section">IDENTITY</string>
+    <string name="profile_contact_section">CONTACT &amp; INFO</string>
+    <string name="profile_first_name">FIRST NAME</string>
+    <string name="profile_last_name">LAST NAME</string>
+    <string name="profile_nickname">NICKNAME</string>
+    <string name="profile_email">EMAIL</string>
+    <string name="profile_phone">PHONE</string>
+    <string name="profile_birth_date">BIRTH DATE (YYYY-MM-DD)</string>
+    <string name="profile_city">CITY</string>
+    <string name="profile_country">COUNTRY</string>
+    <string name="profile_time_zone">TIMEZONE</string>
+    <string name="profile_occupation">OCCUPATION</string>
+    <string name="profile_website">WEBSITE / SOCIAL LINK</string>
+    <string name="profile_greeting">PREFERRED GREETING</string>
+    <string name="profile_display_format">DISPLAY NAME FORMAT</string>
+    <string name="profile_display_nickname">Nickname</string>
+    <string name="profile_display_first_name">First name</string>
+    <string name="profile_display_first_last">First + last</string>
+    <string name="profile_display_full_name">Full name</string>
+    <string name="profile_bio">BIO</string>
+    <string name="profile_select_avatar">Select Avatar</string>
+    <string name="profile_remove_avatar">Remove Avatar</string>
+    <string name="profile_save">SAVE PROFILE</string>
+    <string name="profile_saved">Profile saved.</string>
+    <string name="profile_unsaved">Unsaved changes.</string>
+    <string name="profile_email_invalid">Please enter a valid email.</string>
+    <string name="profile_completion">PROFILE COMPLETION: %1$d%%</string>
+    <string name="profile_empty_hint">No avatar selected</string>
     <string name="profile_medications">MEDICATIONS</string>
     <string name="profile_add_med">ADD MEDICATION</string>
     <string name="med_substance">SUBSTANCE</string>
@@ -383,6 +427,8 @@
     <string name="areas_dialog_name">Name</string>
     <string name="areas_dialog_create">CREATE</string>
     <string name="areas_dialog_cancel">CANCEL</string>
+    <string name="use_suggested_areas">USE SUGGESTED AREAS</string>
+    <string name="add_suggested_areas">ADD SUGGESTED AREAS</string>
 
     <!-- Calendar Screen -->
     <string name="cal_agenda_title">AGENDA // %1$s</string>
@@ -605,4 +651,5 @@
     <string name="cd_decision_major">Major decision priority icon</string>
     <string name="cd_decision_tiny">Tiny decision category icon</string>
     <string name="cd_decision_outcome">Decision outcome checkmark</string>
+    <string name="track_empty">No tracking history yet.</string>
 </resources>

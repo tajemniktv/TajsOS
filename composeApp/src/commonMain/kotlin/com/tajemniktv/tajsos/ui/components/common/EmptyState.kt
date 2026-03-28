@@ -1,18 +1,19 @@
 /*
- * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved. 
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
 package com.tajemniktv.tajsos.ui.components.common
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -20,7 +21,6 @@ import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
-import androidx.compose.ui.graphics.Color
 
 /**
  * Renders a centered empty-state UI with an icon, a primary message, and an optional secondary description.
@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.Color
  * @param modifier Modifier applied to the root container.
  * @param icon Icon shown above the text.
  * @param description Optional secondary text shown under the primary message; pass `null` to hide it.
+ * @param content Optional content (e.g., buttons) rendered below the primary text.
  */
 @Composable
 fun EmptyState(
@@ -38,16 +39,17 @@ fun EmptyState(
     modifier: Modifier = Modifier,
     icon: ImageVector = Icons.Default.Info,
     description: String? = stringResource(Res.string.empty_state_default_desc),
-)
-{
+    content: @Composable ColumnScope.() -> Unit = {},
+) {
     val infiniteTransition = rememberInfiniteTransition(label = "EmptyStatePulse")
     val alpha by infiniteTransition.animateFloat(
         initialValue = 0.1f,
         targetValue = 0.6f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(2000, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse,
-        ),
+        animationSpec =
+            infiniteRepeatable(
+                animation = tween(2000, easing = LinearEasing),
+                repeatMode = RepeatMode.Reverse,
+            ),
         label = "PulseAlpha",
     )
 
@@ -58,10 +60,11 @@ fun EmptyState(
         Surface(
             color = Color.Transparent,
             shape = RoundedCornerShape(TactileTheme.RadiusMd),
-            border = androidx.compose.foundation.BorderStroke(
-                1.dp,
-                TactileTheme.Primary.copy(alpha = 0.2f),
-            ),
+            border =
+                androidx.compose.foundation.BorderStroke(
+                    1.dp,
+                    TactileTheme.Primary.copy(alpha = 0.2f),
+                ),
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -80,8 +83,7 @@ fun EmptyState(
                     color = TactileTheme.Muted,
                     textAlign = TextAlign.Center,
                 )
-                if (description != null)
-                {
+                if (description != null) {
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = description,
@@ -89,6 +91,8 @@ fun EmptyState(
                         color = TactileTheme.Primary.copy(alpha = 0.2f),
                     )
                 }
+
+                content()
             }
         }
     }
