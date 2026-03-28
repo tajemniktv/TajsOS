@@ -9,22 +9,22 @@ fun buildOpenLoopsDashboardPlan(
 ): com.tajemniktv.tajsos.ui.screens.openloops.OpenLoopsDashboardPlan =
     when (surface)
     {
-        _root_ide_package_.com.tajemniktv.tajsos.ui.screens.openloops.OpenLoopsDashboardSurface.MOBILE -> {
-            _root_ide_package_.com.tajemniktv.tajsos.ui.screens.openloops.OpenLoopsDashboardPlan(
+        com.tajemniktv.tajsos.ui.screens.openloops.OpenLoopsDashboardSurface.MOBILE -> {
+            com.tajemniktv.tajsos.ui.screens.openloops.OpenLoopsDashboardPlan(
                 primary =
                     listOf(
-                        _root_ide_package_.com.tajemniktv.tajsos.ui.screens.openloops.OpenLoopsDashboardBlock(
+                        com.tajemniktv.tajsos.ui.screens.openloops.OpenLoopsDashboardBlock(
                             "openloops_main",
                         ),
                     ),
             )
         }
 
-        _root_ide_package_.com.tajemniktv.tajsos.ui.screens.openloops.OpenLoopsDashboardSurface.DESKTOP -> {
-            _root_ide_package_.com.tajemniktv.tajsos.ui.screens.openloops.OpenLoopsDashboardPlan(
+        com.tajemniktv.tajsos.ui.screens.openloops.OpenLoopsDashboardSurface.DESKTOP -> {
+            com.tajemniktv.tajsos.ui.screens.openloops.OpenLoopsDashboardPlan(
                 primary =
                     listOf(
-                        _root_ide_package_.com.tajemniktv.tajsos.ui.screens.openloops.OpenLoopsDashboardBlock(
+                        com.tajemniktv.tajsos.ui.screens.openloops.OpenLoopsDashboardBlock(
                             "openloops_main",
                         ),
                     ),

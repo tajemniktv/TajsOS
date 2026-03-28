@@ -53,19 +53,19 @@ fun buildFinanceDashboardPlan(
     layoutOverrideJson: String? = null,
 ): com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardPlan {
     val parsed =
-        _root_ide_package_.com.tajemniktv.tajsos.ui.screens.finance.parseStructured(
+        com.tajemniktv.tajsos.ui.screens.finance.parseStructured(
             layoutOverrideJson,
         )
     if (parsed != null) {
-        return _root_ide_package_.com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardPlan(
+        return com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardPlan(
             primary =
                 parsed.primary.distinct().map {
-                    _root_ide_package_.com.tajemniktv.tajsos.ui.screens.finance
+                    com.tajemniktv.tajsos.ui.screens.finance
                         .FinanceDashboardBlock(it)
                 },
             secondary =
                 parsed.secondary.distinct().map {
-                    _root_ide_package_.com.tajemniktv.tajsos.ui.screens.finance
+                    com.tajemniktv.tajsos.ui.screens.finance
                         .FinanceDashboardBlock(it)
                 },
         )
@@ -73,28 +73,28 @@ fun buildFinanceDashboardPlan(
 
     return when (surface)
     {
-        _root_ide_package_.com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardSurface.MOBILE -> {
-            _root_ide_package_.com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardPlan(
+        com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardSurface.MOBILE -> {
+            com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardPlan(
                 primary =
-                    _root_ide_package_.com.tajemniktv.tajsos.ui.screens.finance.mobileDefaults.map {
-                        _root_ide_package_.com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardBlock(
+                    com.tajemniktv.tajsos.ui.screens.finance.mobileDefaults.map {
+                        com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardBlock(
                             it,
                         )
                     },
             )
         }
 
-        _root_ide_package_.com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardSurface.DESKTOP -> {
-            _root_ide_package_.com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardPlan(
+        com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardSurface.DESKTOP -> {
+            com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardPlan(
                 primary =
-                    _root_ide_package_.com.tajemniktv.tajsos.ui.screens.finance.desktopPrimaryDefaults.map {
-                        _root_ide_package_.com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardBlock(
+                    com.tajemniktv.tajsos.ui.screens.finance.desktopPrimaryDefaults.map {
+                        com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardBlock(
                             it,
                         )
                     },
                 secondary =
-                    _root_ide_package_.com.tajemniktv.tajsos.ui.screens.finance.desktopSecondaryDefaults.map {
-                        _root_ide_package_.com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardBlock(
+                    com.tajemniktv.tajsos.ui.screens.finance.desktopSecondaryDefaults.map {
+                        com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardBlock(
                             it,
                         )
                     },
@@ -106,7 +106,7 @@ fun buildFinanceDashboardPlan(
 private fun parseStructured(raw: String?): com.tajemniktv.tajsos.ui.screens.finance.FinanceLayoutJsonV1? {
     if (raw.isNullOrBlank()) return null
     return runCatching {
-        _root_ide_package_.com.tajemniktv.tajsos.ui.screens.finance.financeLayoutJson
+        com.tajemniktv.tajsos.ui.screens.finance.financeLayoutJson
             .decodeFromString<com.tajemniktv.tajsos.ui.screens.finance.FinanceLayoutJsonV1>(
                 raw,
             )

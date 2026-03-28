@@ -9,22 +9,22 @@ fun buildProjectsDashboardPlan(
 ): com.tajemniktv.tajsos.ui.screens.projects.ProjectsDashboardPlan =
     when (surface)
     {
-        _root_ide_package_.com.tajemniktv.tajsos.ui.screens.projects.ProjectsDashboardSurface.MOBILE -> {
-            _root_ide_package_.com.tajemniktv.tajsos.ui.screens.projects.ProjectsDashboardPlan(
+        com.tajemniktv.tajsos.ui.screens.projects.ProjectsDashboardSurface.MOBILE -> {
+            com.tajemniktv.tajsos.ui.screens.projects.ProjectsDashboardPlan(
                 primary =
                     listOf(
-                        _root_ide_package_.com.tajemniktv.tajsos.ui.screens.projects.ProjectsDashboardBlock(
+                        com.tajemniktv.tajsos.ui.screens.projects.ProjectsDashboardBlock(
                             "projects_main",
                         ),
                     ),
             )
         }
 
-        _root_ide_package_.com.tajemniktv.tajsos.ui.screens.projects.ProjectsDashboardSurface.DESKTOP -> {
-            _root_ide_package_.com.tajemniktv.tajsos.ui.screens.projects.ProjectsDashboardPlan(
+        com.tajemniktv.tajsos.ui.screens.projects.ProjectsDashboardSurface.DESKTOP -> {
+            com.tajemniktv.tajsos.ui.screens.projects.ProjectsDashboardPlan(
                 primary =
                     listOf(
-                        _root_ide_package_.com.tajemniktv.tajsos.ui.screens.projects.ProjectsDashboardBlock(
+                        com.tajemniktv.tajsos.ui.screens.projects.ProjectsDashboardBlock(
                             "projects_main",
                         ),
                     ),

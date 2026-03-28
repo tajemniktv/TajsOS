@@ -262,7 +262,7 @@ suspend fun buildDashboardUIState(
     val maintenance =
         filteredNodes.filter { it.node.type == "maintenance" && it.node.status == "active" }
     val maintenanceSnapshot =
-        _root_ide_package_.com.tajemniktv.tajsos.ui.main.calculators.calculateMaintenanceSnapshot(
+        com.tajemniktv.tajsos.ui.main.calculators.calculateMaintenanceSnapshot(
             nodes,
         )
     val protocols =
@@ -270,7 +270,7 @@ suspend fun buildDashboardUIState(
     val people = filteredNodes.filter { it.node.type == "person" && it.node.status == "active" }
     val openLoopDecayScores =
         openLoops.map {
-            _root_ide_package_.com.tajemniktv.tajsos.ui.main.calculators.openLoopDecayScore(
+            com.tajemniktv.tajsos.ui.main.calculators.openLoopDecayScore(
                 it.node,
                 now,
             )
@@ -286,7 +286,7 @@ suspend fun buildDashboardUIState(
             }
 
     val areaSnapshot =
-        _root_ide_package_.com.tajemniktv.tajsos.ui.main.calculators.calculateAreaHealthSnapshot(
+        com.tajemniktv.tajsos.ui.main.calculators.calculateAreaHealthSnapshot(
             nodes,
             areasList,
         )

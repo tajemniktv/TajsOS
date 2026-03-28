@@ -32,11 +32,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.tajemniktv.tajsos.ui.MaintenanceStatusItem
 import com.tajemniktv.tajsos.ui.components.cards.MaintenanceCard
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.screens.maintenanceTypes
@@ -111,7 +109,7 @@ internal fun renderFinanceMetricsBlock(context: com.tajemniktv.tajsos.ui.screens
                     color = TactileTheme.Text,
                     fontWeight = FontWeight.ExtraBold,
                 )
-                _root_ide_package_.com.tajemniktv.tajsos.ui.screens.finance.FinanceMiniBars(
+                com.tajemniktv.tajsos.ui.screens.finance.FinanceMiniBars(
                     values = context.bars,
                     bigLast = false,
                 )
@@ -138,7 +136,7 @@ internal fun renderFinanceMetricsBlock(context: com.tajemniktv.tajsos.ui.screens
                     style = MaterialTheme.typography.bodySmall,
                     color = TactileTheme.Muted,
                 )
-                _root_ide_package_.com.tajemniktv.tajsos.ui.screens.finance.FinanceMiniBars(
+                com.tajemniktv.tajsos.ui.screens.finance.FinanceMiniBars(
                     values = context.bars,
                     bigLast = true,
                 )
@@ -194,7 +192,7 @@ internal fun renderFinanceActivityBlock(context: com.tajemniktv.tajsos.ui.screen
                     Text(
                         "$${
                             "%,.2f".format(
-                                _root_ide_package_.com.tajemniktv.tajsos.ui.screens.finance.financeSyntheticTxn(
+                                com.tajemniktv.tajsos.ui.screens.finance.financeSyntheticTxn(
                                     item.node.node.title,
                                 ),
                             )
@@ -329,7 +327,7 @@ internal fun renderFinanceQueueControlsBlock(context: com.tajemniktv.tajsos.ui.s
                 horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
                 verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
             ) {
-                _root_ide_package_.com.tajemniktv.tajsos.ui.screens.finance.FinanceMaintenanceView.entries.forEach { view ->
+                com.tajemniktv.tajsos.ui.screens.finance.FinanceMaintenanceView.entries.forEach { view ->
                     FilterChip(
                         selected = context.maintenanceView == view,
                         onClick = { context.onMaintenanceViewChange(view) },

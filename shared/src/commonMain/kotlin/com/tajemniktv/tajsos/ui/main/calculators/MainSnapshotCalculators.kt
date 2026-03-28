@@ -391,7 +391,7 @@ fun calculateInsights(
             }
         }
 
-    return _root_ide_package_.com.tajemniktv.tajsos.ui.InsightsData(
+    return com.tajemniktv.tajsos.ui.InsightsData(
         weeklyCaptures = recentNodes.size,
         weeklyCompletions = recentCompletions.size,
         weeklyFocusHours = weeklyFocusSec / 3600.0,
@@ -440,7 +440,7 @@ fun calculateAreaHealthSnapshot(
     areas: List<NodeEntity>,
 ): com.tajemniktv.tajsos.ui.AreaHealthSnapshot {
     if (areas.isEmpty()) {
-        return _root_ide_package_.com.tajemniktv.tajsos.ui
+        return com.tajemniktv.tajsos.ui
             .AreaHealthSnapshot()
     }
 
@@ -510,7 +510,7 @@ fun calculateAreaHealthSnapshot(
                         recentActivity == 0 &&
                         (activeNodes.isNotEmpty() || openLoops > 0 || deadlines > 0)
 
-                _root_ide_package_.com.tajemniktv.tajsos.ui.AreaHealthMetrics(
+                com.tajemniktv.tajsos.ui.AreaHealthMetrics(
                     areaId = area.id,
                     areaTitle = area.title,
                     status = status,
@@ -557,7 +557,7 @@ fun calculateAreaHealthSnapshot(
                 else -> "balanced"
             }
 
-    return _root_ide_package_.com.tajemniktv.tajsos.ui.AreaHealthSnapshot(
+    return com.tajemniktv.tajsos.ui.AreaHealthSnapshot(
         areas = computed,
         dominantAreaId = dominantAreaId,
         disappearingAreaIds = disappearingAreaIds,
@@ -616,7 +616,7 @@ fun calculateOpenLoopsSnapshot(
                     openLoop.node.openLoopStalenessAt ?: openLoop.node.updatedAt
                 val stalenessDays =
                     ((now - stalenessAnchor).coerceAtLeast(0L) / (24 * 60 * 60 * 1000L)).toInt()
-                _root_ide_package_.com.tajemniktv.tajsos.ui.OpenLoopStatusItem(
+                com.tajemniktv.tajsos.ui.OpenLoopStatusItem(
                     node = openLoop,
                     urgency = urgency,
                     ageDays = ageDays,
@@ -672,7 +672,7 @@ fun calculateOpenLoopsSnapshot(
                 else -> null
             }
 
-    return _root_ide_package_.com.tajemniktv.tajsos.ui.OpenLoopsSnapshot(
+    return com.tajemniktv.tajsos.ui.OpenLoopsSnapshot(
         active = active,
         inbox = inbox,
         review = review,
@@ -762,7 +762,7 @@ fun calculateMaintenanceSnapshot(nodes: List<NodeWithPin>): com.tajemniktv.tajso
                     } else {
                         null
                     }
-                _root_ide_package_.com.tajemniktv.tajsos.ui.MaintenanceStatusItem(
+                com.tajemniktv.tajsos.ui.MaintenanceStatusItem(
                     node = item,
                     urgency = urgency,
                     isRecurring = item.node.isRecurring || item.node.maintenanceInterval != null,
@@ -830,7 +830,7 @@ fun calculateMaintenanceSnapshot(nodes: List<NodeWithPin>): com.tajemniktv.tajso
                 else -> null
             }
 
-    return _root_ide_package_.com.tajemniktv.tajsos.ui.MaintenanceSnapshot(
+    return com.tajemniktv.tajsos.ui.MaintenanceSnapshot(
         active = activeItems,
         recurring = recurring,
         overdue = overdue,
@@ -927,7 +927,7 @@ fun calculateTimeArchitectureSnapshot(
             .map { item ->
                 val due = item.node.dueAt ?: now
                 val daysLeft = ((due - now).coerceAtLeast(0L) / dayMs)
-                _root_ide_package_.com.tajemniktv.tajsos.ui.TimeCountdownItem(
+                com.tajemniktv.tajsos.ui.TimeCountdownItem(
                     node = item,
                     daysLeft = daysLeft,
                 )
@@ -962,14 +962,14 @@ fun calculateTimeArchitectureSnapshot(
             .map { project ->
                 val phase = project.projectStatus ?: "active"
                 val isActive = phase in setOf("active", "exploratory")
-                _root_ide_package_.com.tajemniktv.tajsos.ui.ProjectPhaseItem(
+                com.tajemniktv.tajsos.ui.ProjectPhaseItem(
                     project = project,
                     isActivePhase = isActive,
                     phaseLabel = if (isActive) "active_phase" else "inactive_phase",
                 )
             }.sortedBy { it.project.title.lowercase() }
 
-    return _root_ide_package_.com.tajemniktv.tajsos.ui.TimeArchitectureSnapshot(
+    return com.tajemniktv.tajsos.ui.TimeArchitectureSnapshot(
         todayLayer = todayLayer,
         weekLayer = weekLayer,
         monthLayer = monthLayer,
@@ -1064,7 +1064,7 @@ fun calculateRelationshipSnapshot(
                         person.tags.any { it.normalizedName == "friend" } -> "friend"
                         else -> null
                     }
-            _root_ide_package_.com.tajemniktv.tajsos.ui.RelationshipStatusItem(
+            com.tajemniktv.tajsos.ui.RelationshipStatusItem(
                 person = person,
                 relationshipType = relationshipType,
                 daysSinceLastContact = daysSince,
@@ -1157,7 +1157,7 @@ fun calculateRelationshipSnapshot(
                 else -> null
             }
 
-    return _root_ide_package_.com.tajemniktv.tajsos.ui.RelationshipSnapshot(
+    return com.tajemniktv.tajsos.ui.RelationshipSnapshot(
         people = peopleItems,
         importantRelationships = importantRelationships,
         followUpNeeded = followUpNeeded,
@@ -1223,7 +1223,7 @@ fun calculatePhysicalLogisticsSnapshot(
         placeNodes
             .map { place ->
                 val relatedTasks = relatedTasksForPlace(place.node.id)
-                _root_ide_package_.com.tajemniktv.tajsos.ui.PlaceLogisticsItem(
+                com.tajemniktv.tajsos.ui.PlaceLogisticsItem(
                     place = place,
                     relatedTasks = relatedTasks,
                     remindersCount = relatedTasks.count { it.node.reminderAt != null },
@@ -1374,7 +1374,7 @@ fun calculatePhysicalLogisticsSnapshot(
     val travelPackTemplateReady =
         templates.any { it.name.contains("travel pack", ignoreCase = true) }
 
-    return _root_ide_package_.com.tajemniktv.tajsos.ui.PhysicalLogisticsSnapshot(
+    return com.tajemniktv.tajsos.ui.PhysicalLogisticsSnapshot(
         places = placeItems,
         campusLocations = campusLocations,
         homeZones = homeZones,
@@ -1442,7 +1442,7 @@ fun calculatePersonalRulesSnapshot(
                 relation.relationType == "PLAYBOOK_SUPPORTS_PRINCIPLE"
         }
 
-    return _root_ide_package_.com.tajemniktv.tajsos.ui.PersonalRulesSnapshot(
+    return com.tajemniktv.tajsos.ui.PersonalRulesSnapshot(
         vault = activeRules,
         antiGoals = antiGoals,
         redFlags = redFlags,
@@ -1535,7 +1535,7 @@ fun calculateVaultsSnapshot(nodes: List<NodeWithPin>): com.tajemniktv.tajsos.ui.
                 hasTag(it, "must_find_later") || it.node.isPinned
             }.sortedByDescending { it.node.updatedAt }
 
-    return _root_ide_package_.com.tajemniktv.tajsos.ui.VaultsSnapshot(
+    return com.tajemniktv.tajsos.ui.VaultsSnapshot(
         documentVault = documentVault,
         importantLinksVault = importantLinksVault,
         medicalInfoVault = medicalInfoVault,
@@ -1706,7 +1706,7 @@ fun calculateCapacitySnapshot(
                         .size
                         .times(8)
                         .coerceIn(0, 100)
-                _root_ide_package_.com.tajemniktv.tajsos.ui.LoadTrendPoint(
+                com.tajemniktv.tajsos.ui.LoadTrendPoint(
                     label = "W-${index + 1}",
                     load = entry?.loadScore ?: fallbackLoad,
                     fragmentation = entry?.fragmentationScore ?: fallbackFrag,
@@ -1722,7 +1722,7 @@ fun calculateCapacitySnapshot(
             if (tooManyActiveProjectsWarning != null) add("Freeze or park at least one active project.")
         }
 
-    return _root_ide_package_.com.tajemniktv.tajsos.ui.CapacitySnapshot(
+    return com.tajemniktv.tajsos.ui.CapacitySnapshot(
         loadScore = loadScore,
         fragmentationScore = fragmentationScore,
         tooManyActiveProjectsWarning = tooManyActiveProjectsWarning,
@@ -1824,7 +1824,7 @@ fun calculateLifeOSSignatureSnapshot(
             else -> "System is in adaptive navigation mode."
         }
 
-    return _root_ide_package_.com.tajemniktv.tajsos.ui.LifeOSSignatureSnapshot(
+    return com.tajemniktv.tajsos.ui.LifeOSSignatureSnapshot(
         operatingModesEnabled = modes.isNotEmpty(),
         areaHealthEnabled = areaHealth.areas.isNotEmpty(),
         openLoopsEnabled = openLoops.active.isNotEmpty() || openLoops.resolved.isNotEmpty(),
@@ -1896,7 +1896,7 @@ fun calculateLifeOSSecondBrainSnapshot(
 
     val secondBrain =
         listOf(
-            _root_ide_package_.com.tajemniktv.tajsos.ui.DistinctionQuestionState(
+            com.tajemniktv.tajsos.ui.DistinctionQuestionState(
                 question = "What do I know?",
                 answer =
                     if (knowledgeCount > 0) {
@@ -1906,7 +1906,7 @@ fun calculateLifeOSSecondBrainSnapshot(
                     },
                 answered = knowledgeCount > 0,
             ),
-            _root_ide_package_.com.tajemniktv.tajsos.ui.DistinctionQuestionState(
+            com.tajemniktv.tajsos.ui.DistinctionQuestionState(
                 question = "What did I save?",
                 answer =
                     if (savedCount > 0) {
@@ -1916,7 +1916,7 @@ fun calculateLifeOSSecondBrainSnapshot(
                     },
                 answered = savedCount > 0,
             ),
-            _root_ide_package_.com.tajemniktv.tajsos.ui.DistinctionQuestionState(
+            com.tajemniktv.tajsos.ui.DistinctionQuestionState(
                 question = "What is this connected to?",
                 answer =
                     if (relations.isNotEmpty()) {
@@ -1926,7 +1926,7 @@ fun calculateLifeOSSecondBrainSnapshot(
                     },
                 answered = relations.isNotEmpty(),
             ),
-            _root_ide_package_.com.tajemniktv.tajsos.ui.DistinctionQuestionState(
+            com.tajemniktv.tajsos.ui.DistinctionQuestionState(
                 question = "Where can I find this later?",
                 answer =
                     if (findLaterCount > 0) {
@@ -1988,12 +1988,12 @@ fun calculateLifeOSSecondBrainSnapshot(
 
     val lifeOS =
         listOf(
-            _root_ide_package_.com.tajemniktv.tajsos.ui.DistinctionQuestionState(
+            com.tajemniktv.tajsos.ui.DistinctionQuestionState(
                 question = "What should happen now?",
                 answer = nowAction,
                 answered = true,
             ),
-            _root_ide_package_.com.tajemniktv.tajsos.ui.DistinctionQuestionState(
+            com.tajemniktv.tajsos.ui.DistinctionQuestionState(
                 question = "What part of life needs attention?",
                 answer =
                     pressureArea?.let {
@@ -2006,13 +2006,13 @@ fun calculateLifeOSSecondBrainSnapshot(
                     } ?: "No area pressure signal yet.",
                 answered = pressureArea != null,
             ),
-            _root_ide_package_.com.tajemniktv.tajsos.ui.DistinctionQuestionState(
+            com.tajemniktv.tajsos.ui.DistinctionQuestionState(
                 question = "What am I carrying?",
                 answer =
                     "Load ${capacity.loadScore}, fragmentation ${capacity.fragmentationScore}, open loops ${openLoops.active.size}, decisions ${dashboard.pendingDecisions.size}, maintenance ${maintenance.active.size}.",
                 answered = true,
             ),
-            _root_ide_package_.com.tajemniktv.tajsos.ui.DistinctionQuestionState(
+            com.tajemniktv.tajsos.ui.DistinctionQuestionState(
                 question = "What is decaying?",
                 answer =
                     if (decayingSignals.isNotEmpty()) {
@@ -2022,13 +2022,13 @@ fun calculateLifeOSSecondBrainSnapshot(
                     },
                 answered = decayingSignals.isNotEmpty(),
             ),
-            _root_ide_package_.com.tajemniktv.tajsos.ui.DistinctionQuestionState(
+            com.tajemniktv.tajsos.ui.DistinctionQuestionState(
                 question = "What mode am I in?",
                 answer =
                     "Mode ${(currentMode?.key ?: "UNSET")} • life posture ${signature.modeOfLifeLabel.uppercase()}.",
                 answered = currentMode != null,
             ),
-            _root_ide_package_.com.tajemniktv.tajsos.ui.DistinctionQuestionState(
+            com.tajemniktv.tajsos.ui.DistinctionQuestionState(
                 question = "What protocol helps here?",
                 answer =
                     protocols.recommendedLabel?.let { "Run protocol: $it." }
@@ -2036,7 +2036,7 @@ fun calculateLifeOSSecondBrainSnapshot(
                         ?: "No protocol suggestion available; use a short reset protocol.",
                 answered = protocols.recommendedLabel != null || playbooks.suggestedPlaybookLabel != null,
             ),
-            _root_ide_package_.com.tajemniktv.tajsos.ui.DistinctionQuestionState(
+            com.tajemniktv.tajsos.ui.DistinctionQuestionState(
                 question = "What can I safely ignore?",
                 answer =
                     if (parkedCount > 0) {
@@ -2046,7 +2046,7 @@ fun calculateLifeOSSecondBrainSnapshot(
                     },
                 answered = parkedCount > 0,
             ),
-            _root_ide_package_.com.tajemniktv.tajsos.ui.DistinctionQuestionState(
+            com.tajemniktv.tajsos.ui.DistinctionQuestionState(
                 question = "How do I move through today without dropping everything?",
                 answer =
                     "Use mode ${currentMode?.key ?: "NAVIGATION"}, execute one protocol, and keep focus on one overdue/deadline cluster.",
@@ -2067,7 +2067,7 @@ fun calculateLifeOSSecondBrainSnapshot(
                 else -> "underconfigured"
             }
 
-    return _root_ide_package_.com.tajemniktv.tajsos.ui.LifeOSSecondBrainSnapshot(
+    return com.tajemniktv.tajsos.ui.LifeOSSecondBrainSnapshot(
         secondBrainQuestions = secondBrain,
         lifeOSQuestions = lifeOS,
         secondBrainCoveragePercent = secondCoverage,
@@ -2113,7 +2113,7 @@ fun calculateCombinedDirectionSnapshot(
 
     val commitments =
         listOf(
-            _root_ide_package_.com.tajemniktv.tajsos.ui.DirectionCommitmentStatus(
+            com.tajemniktv.tajsos.ui.DirectionCommitmentStatus(
                 commitment = "Keep the Second Brain layer for storage, notes, connections, and memory",
                 satisfied = storageReady,
                 evidence =
@@ -2128,25 +2128,25 @@ fun calculateCombinedDirectionSnapshot(
                         }
                     }",
             ),
-            _root_ide_package_.com.tajemniktv.tajsos.ui.DirectionCommitmentStatus(
+            com.tajemniktv.tajsos.ui.DirectionCommitmentStatus(
                 commitment = "Wrap it in a LifeOS shell for modes, maintenance, transitions, and action",
                 satisfied = lifeOsShellReady,
                 evidence =
                     "Modes ${if (signature.operatingModesEnabled) "on" else "off"} • Maintenance ${if (signature.maintenanceEnabled) "on" else "off"} • Protocols ${if (signature.transitionProtocolsEnabled) "on" else "off"}",
             ),
-            _root_ide_package_.com.tajemniktv.tajsos.ui.DirectionCommitmentStatus(
+            com.tajemniktv.tajsos.ui.DirectionCommitmentStatus(
                 commitment = "Make TajOS remember life",
                 satisfied = rememberLifeReady,
                 evidence =
                     "Second Brain coverage ${distinction.secondBrainCoveragePercent}% • Relationship records ${relationships.people.size}",
             ),
-            _root_ide_package_.com.tajemniktv.tajsos.ui.DirectionCommitmentStatus(
+            com.tajemniktv.tajsos.ui.DirectionCommitmentStatus(
                 commitment = "Make TajOS help run life",
                 satisfied = runLifeReady,
                 evidence =
                     "LifeOS coverage ${distinction.lifeOSCoveragePercent}% • Next-action signals ${dashboard.upcomingDeadlines.size + dashboard.suggestedContextTasks.size}",
             ),
-            _root_ide_package_.com.tajemniktv.tajsos.ui.DirectionCommitmentStatus(
+            com.tajemniktv.tajsos.ui.DirectionCommitmentStatus(
                 commitment = "Make TajOS help recover from derailment",
                 satisfied = recoveryReady,
                 evidence =
@@ -2164,7 +2164,7 @@ fun calculateCombinedDirectionSnapshot(
                         }
                     }",
             ),
-            _root_ide_package_.com.tajemniktv.tajsos.ui.DirectionCommitmentStatus(
+            com.tajemniktv.tajsos.ui.DirectionCommitmentStatus(
                 commitment = "Make TajOS practical in real-world motion, not only inside neat dashboards",
                 satisfied = practicalMotionReady,
                 evidence =
@@ -2192,7 +2192,7 @@ fun calculateCombinedDirectionSnapshot(
                 else -> "underconfigured"
             }
 
-    return _root_ide_package_.com.tajemniktv.tajsos.ui.CombinedDirectionSnapshot(
+    return com.tajemniktv.tajsos.ui.CombinedDirectionSnapshot(
         commitments = commitments,
         completionPercent = completion,
         practicalitySignals = practicalitySignals,
@@ -2249,31 +2249,31 @@ fun calculateCoreLifeOSShiftSnapshot(
 
     val items =
         listOf(
-            _root_ide_package_.com.tajemniktv.tajsos.ui.CoreLifeOSShiftItem(
+            com.tajemniktv.tajsos.ui.CoreLifeOSShiftItem(
                 criterion = "Treat TajOS as a personal operating layer, not only a storage system",
                 satisfied = operatingLayerReady,
                 evidence =
                     "Direction ${direction.completionPercent}% • posture ${distinction.postureLabel} • LifeOS coverage ${distinction.lifeOSCoveragePercent}%",
             ),
-            _root_ide_package_.com.tajemniktv.tajsos.ui.CoreLifeOSShiftItem(
+            com.tajemniktv.tajsos.ui.CoreLifeOSShiftItem(
                 criterion = "Build TajOS to understand life in motion, not just static information",
                 satisfied = lifeInMotionReady,
                 evidence =
                     "Today ${time.todayLayer.size} • Week ${time.weekLayer.size} • Context suggestions ${dashboard.suggestedContextTasks.size}",
             ),
-            _root_ide_package_.com.tajemniktv.tajsos.ui.CoreLifeOSShiftItem(
+            com.tajemniktv.tajsos.ui.CoreLifeOSShiftItem(
                 criterion = "Make TajOS state-aware, context-aware, and mode-aware",
                 satisfied = stateContextModeReady,
                 evidence =
                     "Mode ${currentMode?.key ?: "unset"} • Context filter ${if (signature.contextAwareFilteringEnabled) "on" else "off"} • Mode suggestion ${dashboard.modeSuggestion ?: "none"}",
             ),
-            _root_ide_package_.com.tajemniktv.tajsos.ui.CoreLifeOSShiftItem(
+            com.tajemniktv.tajsos.ui.CoreLifeOSShiftItem(
                 criterion = "Make TajOS support real-life transitions, not just pages and tasks",
                 satisfied = transitionsReady,
                 evidence =
                     "Protocols active ${protocols.protocols.size} • templates ${protocols.templates.size}",
             ),
-            _root_ide_package_.com.tajemniktv.tajsos.ui.CoreLifeOSShiftItem(
+            com.tajemniktv.tajsos.ui.CoreLifeOSShiftItem(
                 criterion = "Make TajOS track what is decaying, neglected, or overloaded",
                 satisfied = decayOverloadTrackingReady,
                 evidence =
@@ -2288,7 +2288,7 @@ fun calculateCoreLifeOSShiftSnapshot(
                         }
                     } • Loop review ${openLoops.review.size} • Overdue maintenance ${maintenance.overdue.size}",
             ),
-            _root_ide_package_.com.tajemniktv.tajsos.ui.CoreLifeOSShiftItem(
+            com.tajemniktv.tajsos.ui.CoreLifeOSShiftItem(
                 criterion = "Make TajOS help the user move through time, not just save information in place",
                 satisfied = moveThroughTimeReady,
                 evidence =
@@ -2306,7 +2306,7 @@ fun calculateCoreLifeOSShiftSnapshot(
             "Some Core LifeOS Shift criteria are not fully satisfied or not fully integrated yet."
         }
 
-    return _root_ide_package_.com.tajemniktv.tajsos.ui.CoreLifeOSShiftSnapshot(
+    return com.tajemniktv.tajsos.ui.CoreLifeOSShiftSnapshot(
         items = items,
         completionPercent = completion,
         connectedProperly = connectedProperly,
@@ -2414,7 +2414,7 @@ fun calculateStudentBoardState(
         readingBacklog
             .mapNotNull { note ->
                 note.student()?.readingProgressPercent?.let { progress ->
-                    _root_ide_package_.com.tajemniktv.tajsos.ui.StudentProgressItem(
+                    com.tajemniktv.tajsos.ui.StudentProgressItem(
                         node = note,
                         progressPercent = progress.coerceIn(0, 100),
                     )
@@ -2439,7 +2439,7 @@ fun calculateStudentBoardState(
                 val student = item.student() ?: return@mapNotNull null
                 val mastery = student.masteryPercent ?: return@mapNotNull null
                 val topic = student.topic ?: item.node.title
-                _root_ide_package_.com.tajemniktv.tajsos.ui.StudentMasteryItem(
+                com.tajemniktv.tajsos.ui.StudentMasteryItem(
                     node = item,
                     topic = topic,
                     masteryPercent = mastery.coerceIn(0, 100),
@@ -2479,7 +2479,7 @@ fun calculateStudentBoardState(
                     }
                 val masteryValues =
                     entries.mapNotNull { it.second.masteryPercent }.map { it.coerceIn(0, 100) }
-                _root_ide_package_.com.tajemniktv.tajsos.ui.StudentCourseSummary(
+                com.tajemniktv.tajsos.ui.StudentCourseSummary(
                     courseId = courseId,
                     courseName = courseName,
                     semester = entries.firstNotNullOfOrNull { it.second.semester },
@@ -2528,7 +2528,7 @@ fun calculateStudentBoardState(
                         val due = it.node.dueAt ?: return@count false
                         due in now..(now + 7 * 24 * 60 * 60 * 1000L)
                     }
-                _root_ide_package_.com.tajemniktv.tajsos.ui.StudentSemesterSummary(
+                com.tajemniktv.tajsos.ui.StudentSemesterSummary(
                     semester = semester,
                     courseCount = courseCount,
                     openAssignments = openAssignments,
@@ -2579,7 +2579,7 @@ fun calculateStudentBoardState(
             .div(60)
 
     val templateNames = templates.map { it.name.trim().lowercase() }.toSet()
-    return _root_ide_package_.com.tajemniktv.tajsos.ui.StudentBoardState(
+    return com.tajemniktv.tajsos.ui.StudentBoardState(
         lectureTemplateReady = templateNames.contains("lecture note template"),
         readingTemplateReady = templateNames.contains("reading note template"),
         paperSummaryTemplateReady = templateNames.contains("paper summary template"),

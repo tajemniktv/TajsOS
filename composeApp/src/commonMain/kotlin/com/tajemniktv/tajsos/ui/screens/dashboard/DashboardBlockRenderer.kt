@@ -42,7 +42,7 @@ fun DashboardBlockRenderer(
     onNavigateToProject: (Long) -> Unit,
 ) {
     val context =
-        _root_ide_package_.com.tajemniktv.tajsos.ui.screens.dashboard.DashboardBlockContext(
+        com.tajemniktv.tajsos.ui.screens.dashboard.DashboardBlockContext(
             viewModel = viewModel,
             dashboardState = dashboardState,
             pinnedNodes = pinnedNodes,
@@ -60,8 +60,9 @@ fun DashboardBlockRenderer(
             onEditNode = onEditNode,
             onNavigateToProject = onNavigateToProject,
         )
-    _root_ide_package_.com.tajemniktv.tajsos.ui.screens.dashboard.DashboardBlockRegistry
+    com.tajemniktv.tajsos.ui.screens.dashboard.DashboardBlockRegistry
         .resolve(
             blockKey,
         )?.invoke(context)
 }
+

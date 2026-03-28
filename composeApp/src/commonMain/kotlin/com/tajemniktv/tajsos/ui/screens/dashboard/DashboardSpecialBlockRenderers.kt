@@ -28,7 +28,7 @@ internal fun renderBasicsBlock(context: com.tajemniktv.tajsos.ui.screens.dashboa
 
 @Composable
 internal fun renderShoppingListBlock(context: com.tajemniktv.tajsos.ui.screens.dashboard.DashboardBlockContext) {
-    _root_ide_package_.com.tajemniktv.tajsos.ui.screens.dashboard.ErrandListBlock(
+    com.tajemniktv.tajsos.ui.screens.dashboard.ErrandListBlock(
         errands = context.dashboardState.shoppingList,
         onEdit = context.onEditNode,
     )
@@ -36,7 +36,7 @@ internal fun renderShoppingListBlock(context: com.tajemniktv.tajsos.ui.screens.d
 
 @Composable
 internal fun renderTinyWinsBlock(context: com.tajemniktv.tajsos.ui.screens.dashboard.DashboardBlockContext) {
-    _root_ide_package_.com.tajemniktv.tajsos.ui.screens.dashboard.TinyVictoriesBlock(
+    com.tajemniktv.tajsos.ui.screens.dashboard.TinyVictoriesBlock(
         victories = context.dashboardState.tinyVictories,
         onEdit = context.onEditNode,
     )
@@ -44,7 +44,7 @@ internal fun renderTinyWinsBlock(context: com.tajemniktv.tajsos.ui.screens.dashb
 
 @Composable
 internal fun renderCurrentFocusBlock(context: com.tajemniktv.tajsos.ui.screens.dashboard.DashboardBlockContext) {
-    _root_ide_package_.com.tajemniktv.tajsos.ui.screens.dashboard.CurrentTaskBlock(
+    com.tajemniktv.tajsos.ui.screens.dashboard.CurrentTaskBlock(
         activeTask = context.pinnedNodes.firstOrNull(),
         onEdit = context.onEditNode,
     )
@@ -52,7 +52,7 @@ internal fun renderCurrentFocusBlock(context: com.tajemniktv.tajsos.ui.screens.d
 
 @Composable
 internal fun renderClassesBlock(context: com.tajemniktv.tajsos.ui.screens.dashboard.DashboardBlockContext) {
-    _root_ide_package_.com.tajemniktv.tajsos.ui.screens.dashboard.renderStudyModuleBlock(
+    com.tajemniktv.tajsos.ui.screens.dashboard.renderStudyModuleBlock(
         context = context,
         key = "classes",
     )
@@ -60,7 +60,7 @@ internal fun renderClassesBlock(context: com.tajemniktv.tajsos.ui.screens.dashbo
 
 @Composable
 internal fun renderAssignmentsBlock(context: com.tajemniktv.tajsos.ui.screens.dashboard.DashboardBlockContext) {
-    _root_ide_package_.com.tajemniktv.tajsos.ui.screens.dashboard.renderStudyModuleBlock(
+    com.tajemniktv.tajsos.ui.screens.dashboard.renderStudyModuleBlock(
         context = context,
         key = "assignments",
     )
@@ -68,7 +68,7 @@ internal fun renderAssignmentsBlock(context: com.tajemniktv.tajsos.ui.screens.da
 
 @Composable
 internal fun renderRevisionTargetsBlock(context: com.tajemniktv.tajsos.ui.screens.dashboard.DashboardBlockContext) {
-    _root_ide_package_.com.tajemniktv.tajsos.ui.screens.dashboard.renderStudyModuleBlock(
+    com.tajemniktv.tajsos.ui.screens.dashboard.renderStudyModuleBlock(
         context = context,
         key = "revision_targets",
     )
@@ -109,3 +109,4 @@ internal fun renderPaperworkBlock(context: com.tajemniktv.tajsos.ui.screens.dash
         onEditNode = context.onEditNode,
     )
 }
+

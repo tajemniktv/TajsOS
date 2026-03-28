@@ -9,21 +9,21 @@ fun buildNotesDashboardPlan(
 ): com.tajemniktv.tajsos.ui.screens.notes.NotesDashboardPlan =
     when (surface)
     {
-        _root_ide_package_.com.tajemniktv.tajsos.ui.screens.notes.NotesDashboardSurface.MOBILE -> {
-            _root_ide_package_.com.tajemniktv.tajsos.ui.screens.notes.NotesDashboardPlan(
+        com.tajemniktv.tajsos.ui.screens.notes.NotesDashboardSurface.MOBILE -> {
+            com.tajemniktv.tajsos.ui.screens.notes.NotesDashboardPlan(
                 primary =
                     listOf(
-                        _root_ide_package_.com.tajemniktv.tajsos.ui.screens.notes
+                        com.tajemniktv.tajsos.ui.screens.notes
                             .NotesDashboardBlock("notes_main"),
                     ),
             )
         }
 
-        _root_ide_package_.com.tajemniktv.tajsos.ui.screens.notes.NotesDashboardSurface.DESKTOP -> {
-            _root_ide_package_.com.tajemniktv.tajsos.ui.screens.notes.NotesDashboardPlan(
+        com.tajemniktv.tajsos.ui.screens.notes.NotesDashboardSurface.DESKTOP -> {
+            com.tajemniktv.tajsos.ui.screens.notes.NotesDashboardPlan(
                 primary =
                     listOf(
-                        _root_ide_package_.com.tajemniktv.tajsos.ui.screens.notes
+                        com.tajemniktv.tajsos.ui.screens.notes
                             .NotesDashboardBlock("notes_main"),
                     ),
             )

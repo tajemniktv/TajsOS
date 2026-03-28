@@ -9,22 +9,22 @@ fun buildInsightsDashboardPlan(
 ): com.tajemniktv.tajsos.ui.screens.insights.InsightsDashboardPlan =
     when (surface)
     {
-        _root_ide_package_.com.tajemniktv.tajsos.ui.screens.insights.InsightsDashboardSurface.MOBILE -> {
-            _root_ide_package_.com.tajemniktv.tajsos.ui.screens.insights.InsightsDashboardPlan(
+        com.tajemniktv.tajsos.ui.screens.insights.InsightsDashboardSurface.MOBILE -> {
+            com.tajemniktv.tajsos.ui.screens.insights.InsightsDashboardPlan(
                 primary =
                     listOf(
-                        _root_ide_package_.com.tajemniktv.tajsos.ui.screens.insights.InsightsDashboardBlock(
+                        com.tajemniktv.tajsos.ui.screens.insights.InsightsDashboardBlock(
                             "insights_main",
                         ),
                     ),
             )
         }
 
-        _root_ide_package_.com.tajemniktv.tajsos.ui.screens.insights.InsightsDashboardSurface.DESKTOP -> {
-            _root_ide_package_.com.tajemniktv.tajsos.ui.screens.insights.InsightsDashboardPlan(
+        com.tajemniktv.tajsos.ui.screens.insights.InsightsDashboardSurface.DESKTOP -> {
+            com.tajemniktv.tajsos.ui.screens.insights.InsightsDashboardPlan(
                 primary =
                     listOf(
-                        _root_ide_package_.com.tajemniktv.tajsos.ui.screens.insights.InsightsDashboardBlock(
+                        com.tajemniktv.tajsos.ui.screens.insights.InsightsDashboardBlock(
                             "insights_main",
                         ),
                     ),

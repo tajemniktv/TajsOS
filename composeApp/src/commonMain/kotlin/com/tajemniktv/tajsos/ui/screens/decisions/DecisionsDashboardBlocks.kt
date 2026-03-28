@@ -16,11 +16,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -55,7 +54,6 @@ private fun renderDecisionsMainBlock(context: DecisionsDashboardContext) {
     DecisionsMainBlock(viewModel = context.viewModel, onEditNode = context.onEditNode)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun DecisionsMainBlock(
     viewModel: MainViewModel,
@@ -80,7 +78,7 @@ internal fun DecisionsMainBlock(
                 .fillMaxSize()
                 .background(TactileTheme.Background),
     ) {
-        TabRow(
+        SecondaryTabRow(
             selectedTabIndex = selectedTab,
             containerColor = TactileTheme.Surface,
             contentColor = TactileTheme.Primary,

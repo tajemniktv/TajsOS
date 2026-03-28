@@ -18,15 +18,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Schedule
-import androidx.compose.material.icons.filled.TaskAlt
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -117,7 +114,7 @@ fun CalendarHeader(
             Text(
                 "${currentMonth.month.name} ${currentMonth.year}",
                 style = MaterialTheme.typography.headlineMedium,
-                color = Color(0xFFD7CCFF),
+                color = TactileTheme.CalendarHeaderText,
             )
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -224,11 +221,11 @@ fun MonthView(
                             .clip(RoundedCornerShape(10.dp))
                             .background(
                                 if (isSelected) {
-                                    Color(0x338B5CF6)
+                                    TactileTheme.CalendarSelectedDay
                                 } else if (isToday) {
-                                    Color(0x1F8B5CF6)
+                                    TactileTheme.CalendarTodayDay
                                 } else {
-                                    Color(0x140E1328)
+                                    TactileTheme.CalendarIdleDay
                                 },
                             ).clickable { onDateSelected(date) },
                     contentAlignment = Alignment.Center,
@@ -240,7 +237,7 @@ fun MonthView(
                             fontWeight = if (isSelected || isToday) FontWeight.Bold else FontWeight.Normal,
                             color =
                                 if (isSelected) {
-                                    Color(0xFFE8DDFF)
+                                    TactileTheme.CalendarSelectedText
                                 } else if (isToday) {
                                     TactileTheme.Accent
                                 } else {
@@ -346,8 +343,8 @@ fun AgendaRow(
     Surface(
         onClick = onClick,
         shape = RoundedCornerShape(14.dp),
-        color = Color(0x2A1A2038),
-        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0x334D5C8A)),
+        color = TactileTheme.CalendarPanelStrong,
+        border = androidx.compose.foundation.BorderStroke(1.dp, TactileTheme.GhostBorder.copy(alpha = 0.15f)),
         modifier = Modifier.fillMaxWidth(),
     ) {
         Row(
