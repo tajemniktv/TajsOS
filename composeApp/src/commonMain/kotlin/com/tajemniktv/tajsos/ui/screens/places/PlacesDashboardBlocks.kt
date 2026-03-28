@@ -44,12 +44,12 @@ internal fun PlacesMainBlock(
         verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
     ) {
         Text(
-            text = "PLACES & LOGISTICS",
+            text = "CONTEXT & LOGISTICS",
             style = MaterialTheme.typography.displaySmall,
             color = TactileTheme.Text,
         )
         Text(
-            text = "Coordinate errands, packing, travel prep, and reminders tied to physical places.",
+            text = "Coordinate errands, packing, travel prep, and reminders tied to physical context anchors.",
             style = MaterialTheme.typography.bodySmall,
             color = TactileTheme.Muted,
         )

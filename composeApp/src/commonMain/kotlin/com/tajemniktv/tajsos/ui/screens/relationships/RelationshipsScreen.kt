@@ -91,7 +91,7 @@ internal fun PeopleLayer(
     }
 
     if (snapshot.people.isEmpty()) {
-        EmptyState("No relationship anchors yet. Add a person entry to start tracking shared life context.")
+        EmptyState("No relationship anchors yet. Add someone you track to start building shared life context.")
         return
     }
 

@@ -1006,7 +1006,7 @@ fun calculateRelationshipSnapshot(
 
     val people =
         nodes
-            .filter { it.node.type == "person" && it.node.status == "active" }
+            .filter { it.node.isRelationshipAnchor() && it.node.status == "active" }
             .sortedBy { it.node.title.lowercase() }
 
     /**
@@ -1023,7 +1023,7 @@ fun calculateRelationshipSnapshot(
                         relation.toNodeId == personId -> byId[relation.fromNodeId]
                         else -> null
                     }
-            }.filter { it.node.type != "person" }
+            }.filter { !it.node.isRelationshipAnchor() }
             .distinctBy { it.node.id }
 
     val peopleItems =
@@ -1154,7 +1154,7 @@ fun calculateRelationshipSnapshot(
         when
             {
                 followUpNeeded.size >= 8 -> "Several connections need a touchpoint. Pick 1-2 gentle follow-ups today."
-                followUpNeeded.isNotEmpty() -> "A small social maintenance pass could reduce open loops."
+                followUpNeeded.isNotEmpty() -> "A small social maintenance pass could reduce unresolved social work."
                 else -> null
             }
 
@@ -1219,7 +1219,7 @@ fun calculatePhysicalLogisticsSnapshot(
         }
     }
 
-    val placeNodes = activeNodes.filter { it.node.type == "place" }
+    val placeNodes = activeNodes.filter { it.node.isPlaceAnchor() }
     val placeItems =
         placeNodes
             .map { place ->
@@ -1254,8 +1254,8 @@ fun calculatePhysicalLogisticsSnapshot(
             .filter { task ->
                 task.node.locationContext != null ||
                     relations.any { relation ->
-                        relation.fromNodeId == task.node.id && byId[relation.toNodeId]?.node?.type == "place" ||
-                            relation.toNodeId == task.node.id && byId[relation.fromNodeId]?.node?.type == "place"
+                        relation.fromNodeId == task.node.id && byId[relation.toNodeId]?.node?.isPlaceAnchor() == true ||
+                            relation.toNodeId == task.node.id && byId[relation.fromNodeId]?.node?.isPlaceAnchor() == true
                     }
             }.sortedBy { it.node.dueAt ?: Long.MAX_VALUE }
 
@@ -1273,7 +1273,7 @@ fun calculatePhysicalLogisticsSnapshot(
                                     else -> null
                                 } ?: return@firstNotNullOfOrNull null
                         val other = byId[otherId]?.node ?: return@firstNotNullOfOrNull null
-                        if (other.type == "place") other.title else null
+                        if (other.isPlaceAnchor()) other.title else null
                     }
                 linkedPlaceName ?: "GENERAL OUT-OF-HOME"
             }
@@ -1307,7 +1307,7 @@ fun calculatePhysicalLogisticsSnapshot(
 
     val whatToBringLists =
         activeNodes.filter {
-            (it.node.type == "note" || it.node.type == "task") &&
+            (it.node.isKnowledgeItem() || it.node.isTaskItem()) &&
                 (
                     hasLogisticsTag(it, "what_to_bring") ||
                         it.node.title.contains("bring", ignoreCase = true)
@@ -1315,7 +1315,7 @@ fun calculatePhysicalLogisticsSnapshot(
         }
     val packingLists =
         activeNodes.filter {
-            (it.node.type == "note" || it.node.type == "task") &&
+            (it.node.isKnowledgeItem() || it.node.isTaskItem()) &&
                 (
                     hasLogisticsTag(it, "packing_list") ||
                         it.node.title.contains(
@@ -1326,7 +1326,7 @@ fun calculatePhysicalLogisticsSnapshot(
         }
     val leaveHomeChecklists =
         activeNodes.filter {
-            (it.node.type == "note" || it.node.type == "task" || it.node.type == "protocol") &&
+            (it.node.isKnowledgeItem() || it.node.isTaskItem()) &&
                 (
                     hasLogisticsTag(
                         it,
@@ -1360,7 +1360,7 @@ fun calculatePhysicalLogisticsSnapshot(
         }
     val physicalLogisticsNotes =
         activeNodes.filter {
-            it.node.type == "note" &&
+            it.node.isKnowledgeItem() &&
                 (
                     it.node.noteType == "logistics" ||
                         hasLogisticsTag(it, "logistics")

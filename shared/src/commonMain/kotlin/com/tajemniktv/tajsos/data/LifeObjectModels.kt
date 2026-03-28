@@ -248,6 +248,21 @@ fun NodeEntity.isProjectItem(): Boolean = itemKindOrNull() == ItemKind.PROJECT
 fun NodeEntity.isAreaItem(): Boolean = itemKindOrNull() == ItemKind.AREA
 
 /**
+ * Returns true when the node behaves as a tracked relationship anchor.
+ */
+fun NodeEntity.isRelationshipAnchor(): Boolean =
+    type == "person" ||
+        !relationshipContext.isNullOrBlank() ||
+        !socialEnergyNotes.isNullOrBlank() ||
+        lastContactAt != null ||
+        tagsHintContainsRelationship()
+
+/**
+ * Returns true when the node behaves as a physical context or place anchor.
+ */
+fun NodeEntity.isPlaceAnchor(): Boolean = type == "place"
+
+/**
  * Returns true when task-shaped work is specifically about making or revisiting a decision.
  */
 fun NodeEntity.isDecisionSupportItem(): Boolean =
@@ -284,7 +299,20 @@ fun NodeWithPin.isKnowledgeItem(): Boolean = node.isKnowledgeItem()
 
 fun NodeWithPin.isAreaItem(): Boolean = node.isAreaItem()
 
+fun NodeWithPin.isRelationshipAnchor(): Boolean = node.isRelationshipAnchor()
+
+fun NodeWithPin.isPlaceAnchor(): Boolean = node.isPlaceAnchor()
+
 fun NodeWithPin.isDecisionSupportItem(): Boolean = node.isDecisionSupportItem()
+
+private fun NodeEntity.tagsHintContainsRelationship(): Boolean =
+    listOfNotNull(relationshipContext, socialEnergyNotes)
+        .any { text ->
+            listOf("friend", "family", "professor", "relationship", "contact").any {
+                text.contains(it, ignoreCase = true)
+            }
+        }
+
 
 /**
  * Matches a UI-facing kind filter against the collapsed LifeOS object model.

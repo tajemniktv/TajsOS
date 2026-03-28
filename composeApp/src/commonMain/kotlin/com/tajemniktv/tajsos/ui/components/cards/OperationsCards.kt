@@ -480,7 +480,7 @@ fun PersonRelationshipCard(
                 fontWeight = FontWeight.Bold,
             )
             Text(
-                "Role ${(item.relationshipType ?: "general").uppercase()} • Last contact ${item.daysSinceLastContact ?: "?"}d • Follow-up ${item.followUpDueInDays ?: "none"}",
+                "Context ${(item.relationshipType ?: "general").uppercase()} • Last contact ${item.daysSinceLastContact ?: "?"}d • Follow-up ${item.followUpDueInDays ?: "none"}",
                 style = MaterialTheme.typography.bodySmall,
                 color = TactileTheme.Muted,
             )
@@ -578,7 +578,7 @@ fun PersonRelationshipCard(
                 }, label = { Text("ASK NEXT TIME") })
                 AssistChip(
                     onClick = { onEditNode(person.id) },
-                    label = { Text("OPEN PERSON PAGE") },
+                    label = { Text("OPEN RELATIONSHIP") },
                 )
             }
             OutlinedTextField(

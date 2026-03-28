@@ -123,4 +123,31 @@ class LifeObjectModelsTest {
         assertFalse(decisionNode.isResolvedDecisionSupportItem())
         assertTrue(resolvedDecision.isResolvedDecisionSupportItem())
     }
+
+    @Test
+    fun anchorHelpers_keep_relationships_and_places_as_support_semantics_without_new_core_kinds() {
+        val relationshipAnchor =
+            NodeEntity(
+                type = "person",
+                title = "Alice",
+                relationshipContext = "Important friend from university",
+            )
+        val placeAnchor =
+            NodeEntity(
+                type = "place",
+                title = "Main Campus",
+                locationContext = "on_campus",
+            )
+        val taskWithLocation =
+            NodeEntity(
+                type = "task",
+                title = "Pick up package",
+                locationContext = "out_of_home",
+            )
+
+        assertTrue(relationshipAnchor.isRelationshipAnchor())
+        assertTrue(placeAnchor.isPlaceAnchor())
+        assertFalse(taskWithLocation.isPlaceAnchor())
+        assertEquals(ItemKind.TASK, taskWithLocation.itemKindOrNull())
+    }
 }

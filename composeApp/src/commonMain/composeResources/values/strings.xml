@@ -53,7 +53,7 @@
     <string name="screen_education">EDUCATION</string>
     <string name="screen_study">EDUCATION</string>
     <string name="screen_rules">RULES</string>
-    <string name="screen_vaults">VAULTS</string>
+    <string name="screen_vaults">REFERENCE</string>
     <string name="screen_capacity">CAPACITY</string>
     <string name="screen_identity">IDENTITY</string>
     <string name="screen_student">STUDENT</string>
@@ -112,11 +112,11 @@
     <string name="dash_active_reminders">ACTIVE REMINDERS</string>
     <string name="dash_dismiss">Dismiss</string>
     <string name="dash_pinned_knowledge">PINNED KNOWLEDGE</string>
-    <string name="dash_knowledge_vaults">KNOWLEDGE VAULTS</string>
+    <string name="dash_knowledge_vaults">KNOWLEDGE LIBRARY</string>
     <string name="dash_read_later">READ LATER</string>
     <string name="dash_items_count">%1$d ITEMS</string>
     <string name="dash_quotes">QUOTES</string>
-    <string name="dash_ideas">IDEAS</string>
+    <string name="dash_ideas">NOTES</string>
     <string name="dash_unset_count">%1$d UNSET</string>
     <string name="dash_upcoming_deadlines">UPCOMING DEADLINES</string>
     <string name="dash_review_reset">REVIEW &amp; RESET</string>
@@ -143,10 +143,10 @@
     <string name="dash_morning_reset">MORNING RESET</string>
     <string name="dash_morning_reset_desc">Regain orientation and set your intention for the day.</string>
     <string name="dash_evening_shutdown">EVENING SHUTDOWN</string>
-    <string name="dash_evening_shutdown_desc">Close the open loops and prepare for rest.</string>
+    <string name="dash_evening_shutdown_desc">Close unresolved work and prepare for rest.</string>
     <string name="dash_quick_links">QUICK LINKS</string>
     <string name="dash_foundational">FOUNDATIONAL PRINCIPLE</string>
-    <string name="dash_resource_highlights">RESOURCE HIGHLIGHTS</string>
+    <string name="dash_resource_highlights">REFERENCE HIGHLIGHTS</string>
     <string name="dash_forgotten_wisdom">FORGOTTEN WISDOM</string>
     <string name="dash_vibe_morning">Good morning. Let's operate.</string>
     <string name="dash_vibe_afternoon">Steady progress. Keep the momentum.</string>
@@ -156,7 +156,7 @@
     <!-- LifeOS Specific -->
     <string name="dash_area_health">AREA HEALTH</string>
     <string name="dash_system_status">SYSTEM STATUS</string>
-    <string name="dash_open_loops">OPEN LOOPS</string>
+    <string name="dash_open_loops">UNRESOLVED WORK</string>
     <string name="dash_decisions">DECISION QUEUE</string>
     <string name="dash_maintenance">MAINTENANCE QUEUE</string>
     <string name="dash_protocols">PROTOCOLS &amp; PLAYBOOKS</string>
@@ -207,8 +207,8 @@
     <string name="dash_follow_up">FOLLOW-UP NEEDED</string>
     <string name="dash_ask_next_time">ASK ABOUT THIS NEXT TIME</string>
 
-    <!-- Logistics & Vaults -->
-    <string name="dash_vaults">LOGISTICS &amp; VAULTS</string>
+    <!-- Logistics & Reference -->
+    <string name="dash_vaults">LOGISTICS &amp; REFERENCE</string>
     <string name="dash_documents">DOCUMENT VAULT</string>
     <string name="dash_links">IMPORTANT LINKS</string>
     <string name="dash_medical">MEDICAL INFO</string>
@@ -370,7 +370,7 @@
     <string name="insights_friction_alert_title">FRICTION ALERT</string>
     <string name="insights_friction_alert_msg">You postpone %1$s items most often. Is there a hidden blocker here?</string>
     <string name="insights_creative_peak_title">CREATIVE PEAK</string>
-    <string name="insights_creative_peak_msg">You capture most ideas in the %1$s. Keep a capture device ready then!</string>
+    <string name="insights_creative_peak_msg">You capture most knowledge items in the %1$s. Keep a capture device ready then!</string>
     <string name="insights_stagnant_knowledge_title">STAGNANT KNOWLEDGE</string>
     <string name="insights_stagnant_knowledge_msg">%1$s has notes but no active tasks. Seed some actions?</string>
     <string name="insights_radar_drop_title">RADAR DROP</string>
@@ -393,12 +393,12 @@
     <string name="archive_delete">Delete</string>
 
     <!-- Notes Screen -->
-    <string name="notes_title">KNOWLEDGE &amp; IDEAS</string>
+    <string name="notes_title">KNOWLEDGE</string>
     <string name="notes_search_placeholder">Search knowledge...</string>
     <string name="notes_pinned_knowledge">PINNED KNOWLEDGE</string>
-    <string name="notes_ideas">IDEAS</string>
+    <string name="notes_ideas">NOTES</string>
     <string name="notes_notes">NOTES</string>
-    <string name="notes_resources">RESOURCES &amp; ASSETS</string>
+    <string name="notes_resources">REFERENCE</string>
     <string name="notes_empty">NO KNOWLEDGE FOUND</string>
     <string name="notes_no_results">NO MATCHING RESULTS</string>
 
@@ -501,7 +501,7 @@
     <string name="detail_remove_attachment">Remove Attachment</string>
     <string name="detail_add_link">ADD LINK</string>
     <string name="detail_knowledge">KNOWLEDGE</string>
-    <string name="detail_media">MEDIA &amp; RESOURCE</string>
+    <string name="detail_media">MEDIA &amp; LINKS</string>
     <string name="detail_media_type">Media Type</string>
     <string name="detail_author">Author / Artist</string>
     <string name="detail_publisher">Publisher / Platform</string>
@@ -569,7 +569,7 @@
     <string name="project_detail_next_actions">NEXT ACTIONS</string>
     <string name="project_detail_no_tasks">No active tasks.</string>
     <string name="project_detail_linked_notes">LINKED NOTES</string>
-    <string name="project_detail_resources">RESOURCES</string>
+    <string name="project_detail_resources">REFERENCE</string>
     <string name="project_detail_timeline">PROJECT TIMELINE</string>
     <string name="project_detail_inbox_all">PROJECT INBOX &amp; ALL ITEMS</string>
     <string name="project_health">HEALTH</string>
@@ -600,16 +600,16 @@
     <string name="type_task">Task</string>
     <string name="type_note">Note</string>
     <string name="type_record">Record</string>
-    <string name="type_idea">Idea</string>
+    <string name="type_idea">Note</string>
     <string name="type_project">Project</string>
     <string name="type_area">Area</string>
-    <string name="type_resource">Resource</string>
+    <string name="type_resource">Reference</string>
     <string name="media_book">BOOK</string>
     <string name="media_article">ARTICLE</string>
     <string name="media_podcast">PODCAST</string>
     <string name="media_video">VIDEO</string>
     <string name="media_link">LINK</string>
-    <string name="media_other">OTHER RESOURCES</string>
+    <string name="media_other">OTHER REFERENCES</string>
 
 
     <!-- Missing Strings (Decisions & EmptyState & Tasks) -->

@@ -67,9 +67,9 @@ data class TransitionProtocolsSnapshot(
 )
 
 /**
- * A data class tracking the status and necessary follow-up actions for a specific tracked person entity.
+ * A data class tracking the status and necessary follow-up actions for a specific relationship anchor.
  *
- * @param person The [NodeWithPin] representing the person or CRM entry.
+ * @param person The [NodeWithPin] representing the relationship anchor.
  * @param relationshipType A string defining the nature of the relationship (e.g., "Friend", "Professor").
  * @param daysSinceLastContact The calculated number of days since the user last interacted with this person.
  * @param followUpDueInDays The calculated number of days remaining until a scheduled follow-up is due.
@@ -94,12 +94,12 @@ data class RelationshipStatusItem(
 /**
  * A snapshot aggregating all relationship-related nodes, segmenting them by urgency and category.
  *
- * @param people A general list of all [RelationshipStatusItem] entities currently tracked.
+ * @param people A general list of all tracked relationship anchors.
  * @param importantRelationships A subset list of [RelationshipStatusItem] entities explicitly marked as important.
  * @param followUpNeeded A subset list of [RelationshipStatusItem] entities requiring immediate contact or follow-up.
  * @param upcomingImportantDates Contains items with follow-up dueAt values within the next 30 days (not birthdays/anniversaries).
  * @param replyQueue A list of open loop nodes indicating the user is waiting for an external reply.
- * @param sharedPlans A list of actionable nodes linked collaboratively to specific tracked people.
+ * @param sharedPlans A list of actionable nodes linked collaboratively to specific relationship anchors.
  * @param professors A subset list of [RelationshipStatusItem] entities categorized academically.
  * @param friendsAndFamily A subset list of [RelationshipStatusItem] entities categorized personally.
  * @param gentlePrompt A generic nudge derived from backlog size (not a reminder for a specific connection).
