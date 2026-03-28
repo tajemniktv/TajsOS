@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.tajemniktv.tajsos.data.AppPack
 import com.tajemniktv.tajsos.data.PackRegistry
+import com.tajemniktv.tajsos.ui.domain.DomainRegistry
 import org.jetbrains.compose.resources.StringResource
 import tajsos.composeapp.generated.resources.*
 
@@ -143,16 +144,33 @@ sealed class Screen(
         Icons.Default.AttachMoney,
     )
 
+    data object Health : Screen(
+        "health",
+        Res.string.screen_health,
+        Icons.Default.Favorite,
+    )
+
     data object Relationships : Screen(
         "relationships",
         Res.string.screen_relationships,
         Icons.Default.People,
     )
 
-    data object Study : Screen(
-        "study",
-        Res.string.screen_study,
+    data object Education : Screen(
+        "education",
+        Res.string.screen_education,
         Icons.Default.School,
+    )
+
+    /**
+     * Legacy deep-link compatibility route.
+     * Any "study" route is normalized to [Education] in [fromRoute].
+     */
+    data object StudyLegacy : Screen(
+        "study",
+        Res.string.screen_education,
+        Icons.Default.School,
+        isRoot = false,
     )
 
     data object Rules : Screen(
@@ -194,6 +212,7 @@ sealed class Screen(
                     .first()
                     .split("?")
                     .first()
+            if (currentRouteBase == StudyLegacy.route) return Education
             return listOf(
                 NoteDetail,
                 ProjectDetail,
@@ -223,8 +242,9 @@ sealed class Screen(
                 TimeArchitecture,
                 Places,
                 Finances,
+                Health,
                 Relationships,
-                Study,
+                Education,
                 Rules,
                 Vaults,
                 Capacity,
@@ -242,9 +262,7 @@ sealed class Screen(
                         Focus,
                         Decisions,
                         OpenLoops,
-                        Finances,
-                        Relationships,
-                        Study,
+                        *DomainRegistry.screens.toTypedArray(),
                         Calendar,
                     ),
                 Res.string.nav_systems to listOf(Protocols, TimeArchitecture, Places),
@@ -268,7 +286,7 @@ sealed class Screen(
                                         )
                                 }
 
-                                Study -> {
+                                Education -> {
                                     packRegistry.isEnabled(AppPack.STUDENT)
                                 }
 
@@ -277,6 +295,7 @@ sealed class Screen(
                                 TimeArchitecture,
                                 Places,
                                 Finances,
+                                Health,
                                 Relationships,
                                 Rules,
                                 Vaults,

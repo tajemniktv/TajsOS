@@ -20,6 +20,17 @@ val AccentError = Color(0xFFEF4444)
 val AccentCyan = Color(0xFF22D3EE)
 val SubtleBorder = Color(0xFF27272A)
 
+// Vault dashboard tokens
+val VaultShell = Color(0xFF0D1320)
+val VaultGradientStart = Color(0xFF101A2D)
+val VaultGradientMid = Color(0xFF0D1320)
+val VaultGradientEnd = Color(0xFF171324)
+val VaultBorder = Color(0xFF252D3F)
+val VaultSoft = Color(0xFF1A2236)
+val VaultTextStrong = Color(0xFFE7ECF8)
+val VaultTextSubtle = Color(0xFFA3AECA)
+val VaultTextAccent = Color(0xFFC2A4FF)
+
 // Material 3 mappings
 val Purple80 = Color(0xFFD0BCFF)
 val PurpleGrey80 = Color(0xFFCCC2DC)

@@ -85,6 +85,7 @@ import com.tajemniktv.tajsos.ui.screens.decisions.DecisionsScreen
 import com.tajemniktv.tajsos.ui.screens.finance.FinancesScreen
 import com.tajemniktv.tajsos.ui.screens.focus.FocusScreen
 import com.tajemniktv.tajsos.ui.screens.graph.GraphScreen
+import com.tajemniktv.tajsos.ui.screens.health.HealthScreen
 import com.tajemniktv.tajsos.ui.screens.inbox.InboxScreen
 import com.tajemniktv.tajsos.ui.screens.insights.InsightsScreen
 import com.tajemniktv.tajsos.ui.screens.notes.NotesScreen
@@ -93,7 +94,7 @@ import com.tajemniktv.tajsos.ui.screens.places.PlacesScreen
 import com.tajemniktv.tajsos.ui.screens.projects.ProjectsScreen
 import com.tajemniktv.tajsos.ui.screens.protocols.ProtocolsScreen
 import com.tajemniktv.tajsos.ui.screens.relationships.RelationshipsScreen
-import com.tajemniktv.tajsos.ui.screens.study.StudyScreen
+import com.tajemniktv.tajsos.ui.screens.study.EducationScreen
 import com.tajemniktv.tajsos.ui.screens.today.TodayScreen
 import com.tajemniktv.tajsos.ui.screens.vaults.VaultsScreen
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
@@ -443,8 +444,10 @@ private fun AppScaffold(
             }
             composable(Screen.Places.route) { PlacesScreen(viewModel, onEditNode) }
             composable(Screen.Finances.route) { FinancesScreen(viewModel, onEditNode) }
+            composable(Screen.Health.route) { HealthScreen(viewModel, onEditNode) }
             composable(Screen.Relationships.route) { RelationshipsScreen(viewModel, onEditNode) }
-            composable(Screen.Study.route) { StudyScreen(viewModel, onEditNode) }
+            composable(Screen.Education.route) { EducationScreen(viewModel, onEditNode) }
+            composable(Screen.StudyLegacy.route) { EducationScreen(viewModel, onEditNode) }
             composable(Screen.Rules.route) { RulesScreen(viewModel, onEditNode) }
             composable(Screen.Vaults.route) { VaultsScreen(viewModel, onEditNode) }
             composable(Screen.Capacity.route) { CapacityScreen(viewModel) }

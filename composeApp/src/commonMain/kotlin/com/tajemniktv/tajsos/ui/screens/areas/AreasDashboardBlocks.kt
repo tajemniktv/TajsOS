@@ -138,12 +138,7 @@ internal fun AreasMainBlock(
                         area = area,
                         metrics = metricsById[area.id],
                     ) {
-                        onNavigateTo(
-                            Screen.AreaDetail.route.replace(
-                                "{areaId}",
-                                area.id.toString(),
-                            ),
-                        )
+                        onNavigateTo(routeForAreaDetail(area.id))
                     }
                 }
                 item {
@@ -284,3 +279,9 @@ private fun areaStatusColor(status: String): Color =
         "active" -> TactileTheme.Primary
         else -> TactileTheme.Success
     }
+
+internal fun routeForAreaDetail(areaId: Long): String =
+    Screen.AreaDetail.route.replace(
+        "{areaId}",
+        areaId.toString(),
+    )

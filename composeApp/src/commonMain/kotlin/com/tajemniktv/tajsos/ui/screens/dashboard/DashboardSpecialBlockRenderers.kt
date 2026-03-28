@@ -94,7 +94,7 @@ private fun renderStudyModuleBlock(
         nodes = studyNodes.take(5),
         onEditNode = context.onEditNode,
     )
-    TextButton(onClick = { context.onNavigateTo(Screen.Study) }) {
+    TextButton(onClick = { context.onNavigateTo(Screen.Education) }) {
         Text("OPEN STUDY WORKSPACE")
     }
 }

@@ -9,16 +9,16 @@ package com.tajemniktv.tajsos.ui
  */
 val suggestedAreaTitles =
     listOf(
-        "Health",
-        "Studies",
-        "Admin",
-        "Relationships",
-        "Work / Projects",
-        "Money",
-        "Personal maintenance",
-        "Learning",
-        "Therapy / reflection",
-        "Home / environment",
+        "University",
+        "Psychology Degree",
+        "Apartment",
+        "Family Admin",
+        "TajsOS",
+        "Modding",
+        "Personal Growth",
+        "Home Operations",
+        "Career Projects",
+        "Long-term Goals",
     )
 
 /**

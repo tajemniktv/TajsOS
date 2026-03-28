@@ -23,6 +23,15 @@ object TactileTheme {
     val Error = AccentError
     val Accent = AccentCyan
     val Border = SubtleBorder
+    val VaultShell = com.tajemniktv.tajsos.ui.theme.VaultShell
+    val VaultGradientStart = com.tajemniktv.tajsos.ui.theme.VaultGradientStart
+    val VaultGradientMid = com.tajemniktv.tajsos.ui.theme.VaultGradientMid
+    val VaultGradientEnd = com.tajemniktv.tajsos.ui.theme.VaultGradientEnd
+    val VaultBorder = com.tajemniktv.tajsos.ui.theme.VaultBorder
+    val VaultSoft = com.tajemniktv.tajsos.ui.theme.VaultSoft
+    val VaultTextStrong = com.tajemniktv.tajsos.ui.theme.VaultTextStrong
+    val VaultTextSubtle = com.tajemniktv.tajsos.ui.theme.VaultTextSubtle
+    val VaultTextAccent = com.tajemniktv.tajsos.ui.theme.VaultTextAccent
     val SidebarBackground = com.tajemniktv.tajsos.ui.theme.SidebarBackground
     val SidebarWidth = 280.dp
 

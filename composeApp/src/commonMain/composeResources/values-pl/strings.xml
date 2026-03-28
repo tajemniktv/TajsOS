@@ -43,8 +43,10 @@
     <string name="screen_time_architecture">CZAS</string>
     <string name="screen_places">MIEJSCA</string>
     <string name="screen_finances">FINANSE</string>
+    <string name="screen_health">ZDROWIE</string>
     <string name="screen_relationships">RELACJE</string>
-    <string name="screen_study">NAUKA</string>
+    <string name="screen_education">EDUKACJA</string>
+    <string name="screen_study">EDUKACJA</string>
     <string name="screen_rules">ZASADY</string>
     <string name="screen_vaults">SKARBCE</string>
     <string name="screen_capacity">WYDAJNOŚĆ</string>

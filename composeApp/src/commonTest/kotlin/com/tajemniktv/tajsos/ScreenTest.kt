@@ -35,14 +35,14 @@ class ScreenTest {
             Screen.Review,
             Screen.Profile,
             Screen.Decisions,
-            Screen.Operations,
             Screen.OpenLoops,
             Screen.Protocols,
             Screen.TimeArchitecture,
             Screen.Places,
             Screen.Finances,
+            Screen.Health,
             Screen.Relationships,
-            Screen.Study,
+            Screen.Education,
             Screen.Rules,
             Screen.Vaults,
             Screen.Capacity,
@@ -146,8 +146,18 @@ class ScreenTest {
     }
 
     @Test
-    fun study_hasCorrectRoute() {
-        assertEquals("study", Screen.Study.route)
+    fun health_hasCorrectRoute() {
+        assertEquals("health", Screen.Health.route)
+    }
+
+    @Test
+    fun education_hasCorrectRoute() {
+        assertEquals("education", Screen.Education.route)
+    }
+
+    @Test
+    fun studyLegacy_mapsToEducation() {
+        assertEquals(Screen.Education, Screen.fromRoute("study"))
     }
 
     @Test

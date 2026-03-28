@@ -4,6 +4,7 @@
 
 package com.tajemniktv.tajsos.data
 
+import com.tajemniktv.tajsos.domain.DomainKind
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
@@ -29,6 +30,7 @@ data class NodeMetadataEnvelope(
     val finance: FinanceMetadata? = null,
     val people: PeopleMetadata? = null,
     val creator: CreatorMetadata? = null,
+    val area: AreaMetadata? = null,
 )
 
 /**
@@ -82,6 +84,17 @@ data class CreatorMetadata(
 )
 
 /**
+ * Optional area-level metadata.
+ *
+ * Areas remain generic containers; this metadata provides optional domain association
+ * for filtering and read-model aggregation only.
+ */
+@Serializable
+data class AreaMetadata(
+    val associatedDomains: Set<DomainKind> = emptySet(),
+)
+
+/**
  * Safely deserializes the `metadataJson` field into a [NodeMetadataEnvelope].
  *
  * It silently ignores parsing errors or unknown keys (via [nodeMetadataJson] configuration),
@@ -105,3 +118,38 @@ fun NodeEntity.withMetadataEnvelope(envelope: NodeMetadataEnvelope?): NodeEntity
     copy(
         metadataJson = envelope?.let { nodeMetadataJson.encodeToString(it) },
     )
+
+/**
+ * Reads optional typed [AreaMetadata] attached to this node.
+ */
+fun NodeEntity.areaMetadataOrNull(): AreaMetadata? = metadataEnvelopeOrNull()?.area
+
+/**
+ * Returns true when this node is associated with the provided [domain].
+ */
+fun NodeEntity.isAssociatedWithDomain(domain: DomainKind): Boolean =
+    areaMetadataOrNull()?.associatedDomains?.contains(domain) == true
+
+/**
+ * Returns a copy with [domain] added to area-domain associations.
+ */
+fun NodeEntity.withAssociatedDomain(domain: DomainKind): NodeEntity {
+    val existingEnvelope = metadataEnvelopeOrNull() ?: NodeMetadataEnvelope()
+    val existingArea = existingEnvelope.area ?: AreaMetadata()
+    val updatedArea =
+        existingArea.copy(
+            associatedDomains = existingArea.associatedDomains + domain,
+        )
+    return withMetadataEnvelope(existingEnvelope.copy(area = updatedArea))
+}
+
+/**
+ * Returns a copy with [domain] removed from area-domain associations.
+ */
+fun NodeEntity.withoutAssociatedDomain(domain: DomainKind): NodeEntity {
+    val existingEnvelope = metadataEnvelopeOrNull() ?: return this
+    val existingArea = existingEnvelope.area ?: return this
+    val updatedDomains = existingArea.associatedDomains - domain
+    val updatedArea = existingArea.copy(associatedDomains = updatedDomains)
+    return withMetadataEnvelope(existingEnvelope.copy(area = updatedArea))
+}

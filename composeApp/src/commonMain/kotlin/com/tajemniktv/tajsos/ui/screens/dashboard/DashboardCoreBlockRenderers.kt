@@ -290,7 +290,7 @@ internal fun renderTimeArchitectureBlock(context: com.tajemniktv.tajsos.ui.scree
                 description = "Countdown detected in <= 30 days. Tighten weekly plan.",
                 icon = Icons.Default.School,
                 color = TactileTheme.Error,
-                onClick = { context.onNavigateTo(Screen.Study) },
+                onClick = { context.onNavigateTo(Screen.Education) },
             )
         }
         if (timeSnapshot.countdowns.isNotEmpty()) {
@@ -755,7 +755,7 @@ internal fun renderProtocolsBlock(context: com.tajemniktv.tajsos.ui.screens.dash
                             Triple(
                                 Icons.Default.School,
                                 TactileTheme.Accent,
-                                Screen.Study,
+                                Screen.Education,
                             )
                         }
 

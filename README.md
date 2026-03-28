@@ -34,6 +34,9 @@ The app is built around a unified model where different things in life can still
 
 Instead of splitting everything into isolated tools, TajsOS tries to make them work as one system.
 
+Built-in domains (for example Finances, Health, Education, Relationships) are first-class lenses
+over shared system data, while Areas remain generic user-defined containers.
+
 ---
 
 ## Current status

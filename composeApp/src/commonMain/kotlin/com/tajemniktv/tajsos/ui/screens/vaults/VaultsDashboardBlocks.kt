@@ -57,6 +57,7 @@ internal fun VaultsMainBlock(
             viewModel = viewModel,
             snapshot = vaultsSnapshot,
             onEditNode = onEditNode,
+            modifier = Modifier.weight(1f),
         )
     }
 }

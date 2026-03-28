@@ -47,9 +47,11 @@
     <string name="screen_protocols">PROTOCOLS</string>
     <string name="screen_time_architecture">TIME</string>
     <string name="screen_places">PLACES</string>
-    <string name="screen_finances">FINANCE</string>
+    <string name="screen_finances">FINANCES</string>
+    <string name="screen_health">HEALTH</string>
     <string name="screen_relationships">RELATIONSHIPS</string>
-    <string name="screen_study">STUDY</string>
+    <string name="screen_education">EDUCATION</string>
+    <string name="screen_study">EDUCATION</string>
     <string name="screen_rules">RULES</string>
     <string name="screen_vaults">VAULTS</string>
     <string name="screen_capacity">CAPACITY</string>
