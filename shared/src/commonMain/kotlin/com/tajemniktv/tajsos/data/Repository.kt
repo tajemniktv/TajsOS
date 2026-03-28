@@ -467,7 +467,7 @@ class AppRepository(
      * Converts a completed decision into a new, actionable project node.
      *
      * **Side effects:**
-     * - Inserts a new `project` node initialized with the decision's title, outcome, and area.
+     * - Inserts a new project node initialized with the decision's title, outcome (falling back to content), and area.
      * - Establishes a `DERIVED_FROM` relation linking the parent decision to the new project.
      *
      * @param nodeId The ID of the parent decision node.
@@ -499,7 +499,7 @@ class AppRepository(
      * Converts a completed decision into a new, actionable task node.
      *
      * **Side effects:**
-     * - Inserts a new `task` node initialized with the decision's title, outcome, area, and project.
+     * - Inserts a new task node initialized with the decision's title, area, project, and content from its outcome and original content.
      * - Establishes a `DERIVED_FROM` relation linking the parent decision to the new task.
      *
      * @param nodeId The ID of the parent decision node.
