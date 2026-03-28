@@ -127,6 +127,38 @@ internal fun NotesMainBlock(
             }
         }
 
+        val typePinned = remember(filteredNodes) {
+            filteredNodes.filter { it.node.isPinned }
+        }
+        val typeIdeas = remember(filteredNodes) {
+            filteredNodes.filter { !it.node.isPinned && it.node.type == "idea" }
+        }
+        val typeNotes = remember(filteredNodes) {
+            filteredNodes.filter { !it.node.isPinned && it.node.type == "note" }
+        }
+        val typeResources = remember(filteredNodes) {
+            filteredNodes.filter { !it.node.isPinned && it.node.type == "resource" }
+        }
+
+        val nodesByArea = remember(filteredNodes) {
+            filteredNodes.groupBy { it.node.areaId }
+        }
+
+        val nodesByProject = remember(filteredNodes) {
+            filteredNodes.groupBy { it.node.projectId }
+        }
+
+        val nodesByDate = remember(filteredNodes) {
+            filteredNodes.groupBy {
+                val instant = Instant.fromEpochMilliseconds(it.node.createdAt)
+                instant.toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
+            }
+        }
+
+        val nodesByMediaType = remember(filteredNodes) {
+            filteredNodes.groupBy { it.node.mediaType }
+        }
+
         LazyColumn(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -134,15 +166,9 @@ internal fun NotesMainBlock(
             when (selectedGroup)
             {
                 "TYPE" -> {
-                    val pinned = filteredNodes.filter { it.node.isPinned }
-                    val ideas = filteredNodes.filter { !it.node.isPinned && it.node.type == "idea" }
-                    val notes = filteredNodes.filter { !it.node.isPinned && it.node.type == "note" }
-                    val resources =
-                        filteredNodes.filter { !it.node.isPinned && it.node.type == "resource" }
-
-                    if (pinned.isNotEmpty()) {
+                    if (typePinned.isNotEmpty()) {
                         item { GroupHeader(stringResource(Res.string.notes_pinned_knowledge)) }
-                        items(pinned, key = { it.node.id }) { node ->
+                        items(typePinned, key = { it.node.id }) { node ->
                             KnowledgeItem(
                                 node,
                                 viewModel,
@@ -150,9 +176,9 @@ internal fun NotesMainBlock(
                             )
                         }
                     }
-                    if (ideas.isNotEmpty()) {
+                    if (typeIdeas.isNotEmpty()) {
                         item { GroupHeader(stringResource(Res.string.notes_ideas)) }
-                        items(ideas, key = { it.node.id }) { node ->
+                        items(typeIdeas, key = { it.node.id }) { node ->
                             KnowledgeItem(
                                 node,
                                 viewModel,
@@ -160,9 +186,9 @@ internal fun NotesMainBlock(
                             )
                         }
                     }
-                    if (notes.isNotEmpty()) {
+                    if (typeNotes.isNotEmpty()) {
                         item { GroupHeader(stringResource(Res.string.notes_notes)) }
-                        items(notes, key = { it.node.id }) { node ->
+                        items(typeNotes, key = { it.node.id }) { node ->
                             KnowledgeItem(
                                 node,
                                 viewModel,
@@ -170,9 +196,9 @@ internal fun NotesMainBlock(
                             )
                         }
                     }
-                    if (resources.isNotEmpty()) {
+                    if (typeResources.isNotEmpty()) {
                         item { GroupHeader(stringResource(Res.string.notes_resources)) }
-                        items(resources, key = { it.node.id }) { node ->
+                        items(typeResources, key = { it.node.id }) { node ->
                             KnowledgeItem(
                                 node,
                                 viewModel,
@@ -184,7 +210,7 @@ internal fun NotesMainBlock(
 
                 "AREA" -> {
                     allAreas.forEach { area ->
-                        val nodesInArea = filteredNodes.filter { it.node.areaId == area.id }
+                        val nodesInArea = nodesByArea[area.id] ?: emptyList()
                         if (nodesInArea.isNotEmpty()) {
                             item { GroupHeader(area.title.uppercase()) }
                             items(nodesInArea, key = { it.node.id }) { node ->
@@ -196,7 +222,7 @@ internal fun NotesMainBlock(
                             }
                         }
                     }
-                    val unassigned = filteredNodes.filter { it.node.areaId == null }
+                    val unassigned = nodesByArea[null] ?: emptyList()
                     if (unassigned.isNotEmpty()) {
                         item { GroupHeader("UNASSIGNED") }
                         items(unassigned, key = { it.node.id }) { node ->
@@ -211,8 +237,7 @@ internal fun NotesMainBlock(
 
                 "PROJECT" -> {
                     allProjects.forEach { project ->
-                        val nodesInProject =
-                            filteredNodes.filter { it.node.projectId == project.id }
+                        val nodesInProject = nodesByProject[project.id] ?: emptyList()
                         if (nodesInProject.isNotEmpty()) {
                             item { GroupHeader(project.title.uppercase()) }
                             items(nodesInProject, key = { it.node.id }) { node ->
@@ -224,7 +249,7 @@ internal fun NotesMainBlock(
                             }
                         }
                     }
-                    val unassigned = filteredNodes.filter { it.node.projectId == null }
+                    val unassigned = nodesByProject[null] ?: emptyList()
                     if (unassigned.isNotEmpty()) {
                         item { GroupHeader("UNASSIGNED") }
                         items(unassigned, key = { it.node.id }) { node ->
@@ -238,13 +263,7 @@ internal fun NotesMainBlock(
                 }
 
                 "DATE" -> {
-                    val groupedByDate =
-                        filteredNodes.groupBy {
-                            val instant = Instant.fromEpochMilliseconds(it.node.createdAt)
-                            val date = instant.toLocalDateTime(TimeZone.currentSystemDefault()).date
-                            date.toString()
-                        }
-                    groupedByDate.forEach { (date, nodes) ->
+                    nodesByDate.forEach { (date, nodes) ->
                         item { GroupHeader(date) }
                         items(nodes, key = { it.node.id }) { node ->
                             KnowledgeItem(
@@ -266,7 +285,7 @@ internal fun NotesMainBlock(
                             "link" to Res.string.media_link,
                         )
                     mediaTypes.forEach { (type, res) ->
-                        val nodesOfType = filteredNodes.filter { it.node.mediaType == type }
+                        val nodesOfType = nodesByMediaType[type] ?: emptyList()
                         if (nodesOfType.isNotEmpty()) {
                             item { GroupHeader(stringResource(res)) }
                             items(nodesOfType, key = { it.node.id }) { node ->
@@ -278,8 +297,7 @@ internal fun NotesMainBlock(
                             }
                         }
                     }
-                    val other =
-                        filteredNodes.filter { it.node.type == "resource" && it.node.mediaType == null }
+                    val other = (nodesByMediaType[null] ?: emptyList()).filter { it.node.type == "resource" }
                     if (other.isNotEmpty()) {
                         item { GroupHeader(stringResource(Res.string.media_other)) }
                         items(other, key = { it.node.id }) { node ->

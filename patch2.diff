@@ -1,0 +1,355 @@
+<<<<<<< SEARCH
+        LazyColumn(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            when (selectedGroup)
+            {
+                "TYPE" -> {
+                    val pinned = filteredNodes.filter { it.node.isPinned }
+                    val ideas = filteredNodes.filter { !it.node.isPinned && it.node.type == "idea" }
+                    val notes = filteredNodes.filter { !it.node.isPinned && it.node.type == "note" }
+                    val resources =
+                        filteredNodes.filter { !it.node.isPinned && it.node.type == "resource" }
+
+                    if (pinned.isNotEmpty()) {
+                        item { GroupHeader(stringResource(Res.string.notes_pinned_knowledge)) }
+                        items(pinned, key = { it.node.id }) { node ->
+                            KnowledgeItem(
+                                node,
+                                viewModel,
+                                onNoteClick,
+                            )
+                        }
+                    }
+                    if (ideas.isNotEmpty()) {
+                        item { GroupHeader(stringResource(Res.string.notes_ideas)) }
+                        items(ideas, key = { it.node.id }) { node ->
+                            KnowledgeItem(
+                                node,
+                                viewModel,
+                                onNoteClick,
+                            )
+                        }
+                    }
+                    if (notes.isNotEmpty()) {
+                        item { GroupHeader(stringResource(Res.string.notes_notes)) }
+                        items(notes, key = { it.node.id }) { node ->
+                            KnowledgeItem(
+                                node,
+                                viewModel,
+                                onNoteClick,
+                            )
+                        }
+                    }
+                    if (resources.isNotEmpty()) {
+                        item { GroupHeader(stringResource(Res.string.notes_resources)) }
+                        items(resources, key = { it.node.id }) { node ->
+                            KnowledgeItem(
+                                node,
+                                viewModel,
+                                onNoteClick,
+                            )
+                        }
+                    }
+                }
+
+                "AREA" -> {
+                    allAreas.forEach { area ->
+                        val nodesInArea = filteredNodes.filter { it.node.areaId == area.id }
+                        if (nodesInArea.isNotEmpty()) {
+                            item { GroupHeader(area.title.uppercase()) }
+                            items(nodesInArea, key = { it.node.id }) { node ->
+                                KnowledgeItem(
+                                    node,
+                                    viewModel,
+                                    onNoteClick,
+                                )
+                            }
+                        }
+                    }
+                    val unassigned = filteredNodes.filter { it.node.areaId == null }
+                    if (unassigned.isNotEmpty()) {
+                        item { GroupHeader("UNASSIGNED") }
+                        items(unassigned, key = { it.node.id }) { node ->
+                            KnowledgeItem(
+                                node,
+                                viewModel,
+                                onNoteClick,
+                            )
+                        }
+                    }
+                }
+
+                "PROJECT" -> {
+                    allProjects.forEach { project ->
+                        val nodesInProject =
+                            filteredNodes.filter { it.node.projectId == project.id }
+                        if (nodesInProject.isNotEmpty()) {
+                            item { GroupHeader(project.title.uppercase()) }
+                            items(nodesInProject, key = { it.node.id }) { node ->
+                                KnowledgeItem(
+                                    node,
+                                    viewModel,
+                                    onNoteClick,
+                                )
+                            }
+                        }
+                    }
+                    val unassigned = filteredNodes.filter { it.node.projectId == null }
+                    if (unassigned.isNotEmpty()) {
+                        item { GroupHeader("UNASSIGNED") }
+                        items(unassigned, key = { it.node.id }) { node ->
+                            KnowledgeItem(
+                                node,
+                                viewModel,
+                                onNoteClick,
+                            )
+                        }
+                    }
+                }
+
+                "DATE" -> {
+                    val groupedByDate =
+                        filteredNodes.groupBy {
+                            val instant = Instant.fromEpochMilliseconds(it.node.createdAt)
+                            val date = instant.toLocalDateTime(TimeZone.currentSystemDefault()).date
+                            date.toString()
+                        }
+                    groupedByDate.forEach { (date, nodes) ->
+                        item { GroupHeader(date) }
+                        items(nodes, key = { it.node.id }) { node ->
+                            KnowledgeItem(
+                                node,
+                                viewModel,
+                                onNoteClick,
+                            )
+                        }
+                    }
+                }
+
+                "MEDIA" -> {
+                    val mediaTypes =
+                        listOf(
+                            "book" to Res.string.media_book,
+                            "article" to Res.string.media_article,
+                            "podcast" to Res.string.media_podcast,
+                            "video" to Res.string.media_video,
+                            "link" to Res.string.media_link,
+                        )
+                    mediaTypes.forEach { (type, res) ->
+                        val nodesOfType = filteredNodes.filter { it.node.mediaType == type }
+                        if (nodesOfType.isNotEmpty()) {
+                            item { GroupHeader(stringResource(res)) }
+                            items(nodesOfType, key = { it.node.id }) { node ->
+                                KnowledgeItem(
+                                    node,
+                                    viewModel,
+                                    onNoteClick,
+                                )
+                            }
+                        }
+                    }
+                    val other =
+                        filteredNodes.filter { it.node.type == "resource" && it.node.mediaType == null }
+                    if (other.isNotEmpty()) {
+                        item { GroupHeader(stringResource(Res.string.media_other)) }
+                        items(other, key = { it.node.id }) { node ->
+                            KnowledgeItem(
+                                node,
+                                viewModel,
+                                onNoteClick,
+                            )
+                        }
+                    }
+                }
+            }
+=======
+        val typePinned = remember(filteredNodes, selectedGroup) {
+            if (selectedGroup == "TYPE") filteredNodes.filter { it.node.isPinned } else emptyList()
+        }
+        val typeIdeas = remember(filteredNodes, selectedGroup) {
+            if (selectedGroup == "TYPE") filteredNodes.filter { !it.node.isPinned && it.node.type == "idea" } else emptyList()
+        }
+        val typeNotes = remember(filteredNodes, selectedGroup) {
+            if (selectedGroup == "TYPE") filteredNodes.filter { !it.node.isPinned && it.node.type == "note" } else emptyList()
+        }
+        val typeResources = remember(filteredNodes, selectedGroup) {
+            if (selectedGroup == "TYPE") filteredNodes.filter { !it.node.isPinned && it.node.type == "resource" } else emptyList()
+        }
+
+        val nodesByArea = remember(filteredNodes, selectedGroup) {
+            if (selectedGroup == "AREA") filteredNodes.groupBy { it.node.areaId } else emptyMap()
+        }
+
+        val nodesByProject = remember(filteredNodes, selectedGroup) {
+            if (selectedGroup == "PROJECT") filteredNodes.groupBy { it.node.projectId } else emptyMap()
+        }
+
+        val nodesByDate = remember(filteredNodes, selectedGroup) {
+            if (selectedGroup == "DATE") {
+                filteredNodes.groupBy {
+                    val instant = Instant.fromEpochMilliseconds(it.node.createdAt)
+                    instant.toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
+                }
+            } else {
+                emptyMap()
+            }
+        }
+
+        val nodesByMediaType = remember(filteredNodes, selectedGroup) {
+            if (selectedGroup == "MEDIA") filteredNodes.groupBy { it.node.mediaType } else emptyMap()
+        }
+
+        LazyColumn(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            when (selectedGroup)
+            {
+                "TYPE" -> {
+                    if (typePinned.isNotEmpty()) {
+                        item { GroupHeader(stringResource(Res.string.notes_pinned_knowledge)) }
+                        items(typePinned, key = { it.node.id }) { node ->
+                            KnowledgeItem(
+                                node,
+                                viewModel,
+                                onNoteClick,
+                            )
+                        }
+                    }
+                    if (typeIdeas.isNotEmpty()) {
+                        item { GroupHeader(stringResource(Res.string.notes_ideas)) }
+                        items(typeIdeas, key = { it.node.id }) { node ->
+                            KnowledgeItem(
+                                node,
+                                viewModel,
+                                onNoteClick,
+                            )
+                        }
+                    }
+                    if (typeNotes.isNotEmpty()) {
+                        item { GroupHeader(stringResource(Res.string.notes_notes)) }
+                        items(typeNotes, key = { it.node.id }) { node ->
+                            KnowledgeItem(
+                                node,
+                                viewModel,
+                                onNoteClick,
+                            )
+                        }
+                    }
+                    if (typeResources.isNotEmpty()) {
+                        item { GroupHeader(stringResource(Res.string.notes_resources)) }
+                        items(typeResources, key = { it.node.id }) { node ->
+                            KnowledgeItem(
+                                node,
+                                viewModel,
+                                onNoteClick,
+                            )
+                        }
+                    }
+                }
+
+                "AREA" -> {
+                    allAreas.forEach { area ->
+                        val nodesInArea = nodesByArea[area.id] ?: emptyList()
+                        if (nodesInArea.isNotEmpty()) {
+                            item { GroupHeader(area.title.uppercase()) }
+                            items(nodesInArea, key = { it.node.id }) { node ->
+                                KnowledgeItem(
+                                    node,
+                                    viewModel,
+                                    onNoteClick,
+                                )
+                            }
+                        }
+                    }
+                    val unassigned = nodesByArea[null] ?: emptyList()
+                    if (unassigned.isNotEmpty()) {
+                        item { GroupHeader("UNASSIGNED") }
+                        items(unassigned, key = { it.node.id }) { node ->
+                            KnowledgeItem(
+                                node,
+                                viewModel,
+                                onNoteClick,
+                            )
+                        }
+                    }
+                }
+
+                "PROJECT" -> {
+                    allProjects.forEach { project ->
+                        val nodesInProject = nodesByProject[project.id] ?: emptyList()
+                        if (nodesInProject.isNotEmpty()) {
+                            item { GroupHeader(project.title.uppercase()) }
+                            items(nodesInProject, key = { it.node.id }) { node ->
+                                KnowledgeItem(
+                                    node,
+                                    viewModel,
+                                    onNoteClick,
+                                )
+                            }
+                        }
+                    }
+                    val unassigned = nodesByProject[null] ?: emptyList()
+                    if (unassigned.isNotEmpty()) {
+                        item { GroupHeader("UNASSIGNED") }
+                        items(unassigned, key = { it.node.id }) { node ->
+                            KnowledgeItem(
+                                node,
+                                viewModel,
+                                onNoteClick,
+                            )
+                        }
+                    }
+                }
+
+                "DATE" -> {
+                    nodesByDate.forEach { (date, nodes) ->
+                        item { GroupHeader(date) }
+                        items(nodes, key = { it.node.id }) { node ->
+                            KnowledgeItem(
+                                node,
+                                viewModel,
+                                onNoteClick,
+                            )
+                        }
+                    }
+                }
+
+                "MEDIA" -> {
+                    val mediaTypes =
+                        listOf(
+                            "book" to Res.string.media_book,
+                            "article" to Res.string.media_article,
+                            "podcast" to Res.string.media_podcast,
+                            "video" to Res.string.media_video,
+                            "link" to Res.string.media_link,
+                        )
+                    mediaTypes.forEach { (type, res) ->
+                        val nodesOfType = nodesByMediaType[type] ?: emptyList()
+                        if (nodesOfType.isNotEmpty()) {
+                            item { GroupHeader(stringResource(res)) }
+                            items(nodesOfType, key = { it.node.id }) { node ->
+                                KnowledgeItem(
+                                    node,
+                                    viewModel,
+                                    onNoteClick,
+                                )
+                            }
+                        }
+                    }
+                    val other = (nodesByMediaType[null] ?: emptyList()).filter { it.node.type == "resource" }
+                    if (other.isNotEmpty()) {
+                        item { GroupHeader(stringResource(Res.string.media_other)) }
+                        items(other, key = { it.node.id }) { node ->
+                            KnowledgeItem(
+                                node,
+                                viewModel,
+                                onNoteClick,
+                            )
+                        }
+                    }
+                }
+            }
+>>>>>>> REPLACE
