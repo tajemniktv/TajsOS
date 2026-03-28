@@ -32,7 +32,24 @@ import kotlinx.serialization.json.Json
 import kotlin.time.Clock
 
 /**
- * ViewModel for the main dashboard screen, responsible for aggregating and transforming data from the repository
+ * ViewModel responsible for managing the application's main business logic, interactions,
+ * and state, integrating repositories and services to orchestrate functionality.
+ *
+ * This ViewModel serves as a central hub for tasks like managing calendar providers,
+ * synchronizing modes, handling user authentication, enabling biometric features,
+ * managing packs, manipulating nodes, triggering protocols, handling snapshots,
+ * and maintaining application-wide state.
+ *
+ * **Features include:**
+ * - Calendar management: Adding, deleting, and syncing providers.
+ * - Mode switching and settings.
+ * - Node operations: CRUD, recursion, categorization, and content parsing.
+ * - Playbook and protocol manipulation.
+ * - Snapshot generation and restoration of nodes.
+ * - Biometric state management and device availability checks.
+ * - Pack ownership and enablement management.
+ * - Advanced filter and search state handling.
+ * - Relationships and insights management for an enhanced user experience.
  */
 class MainViewModel(
     private val repository: AppRepository,
