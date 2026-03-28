@@ -2262,11 +2262,21 @@ class MainViewModel(
         title: String? = null,
         content: String? = null,
     ) {
+        val normalizedType =
+            when (type.trim().lowercase())
+            {
+                "record" -> "record"
+                "project" -> "project"
+                "area" -> "area"
+                "idea", "resource", "vault", "document" -> "note"
+                "maintenance", "open_loop", "decision", "protocol" -> "task"
+                else -> "task"
+            }
         viewModelScope.launch {
             repository.insertTemplate(
                 TemplateEntity(
                     name = name,
-                    nodeType = type,
+                    nodeType = normalizedType,
                     defaultTitle = title,
                     defaultContent = content,
                 ),

@@ -79,7 +79,7 @@ fun TemplatesScreen(
                                 {
                                     "task"    -> stringResource(Res.string.type_task)
                                     "note"    -> stringResource(Res.string.type_note)
-                                    "idea"    -> stringResource(Res.string.type_idea)
+                                    "record"  -> stringResource(Res.string.type_record)
                                     "project" -> stringResource(Res.string.type_project)
                                     "area"    -> stringResource(Res.string.type_area)
                                     else      -> template.nodeType
@@ -118,12 +118,14 @@ fun TemplatesScreen(
                         label = { Text(stringResource(Res.string.templates_dialog_name)) },
                     )
                     Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
-                        listOf("task", "note", "project").forEach { t ->
+                        listOf("task", "note", "record", "project", "area").forEach { t ->
                             val typeLabel = when (t)
                             {
                                 "task"    -> stringResource(Res.string.type_task)
                                 "note"    -> stringResource(Res.string.type_note)
+                                "record"  -> stringResource(Res.string.type_record)
                                 "project" -> stringResource(Res.string.type_project)
+                                "area"    -> stringResource(Res.string.type_area)
                                 else      -> t
                             }
                             FilterChip(
