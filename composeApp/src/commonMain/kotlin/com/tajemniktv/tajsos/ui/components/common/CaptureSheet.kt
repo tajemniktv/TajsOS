@@ -38,7 +38,7 @@ import tajsos.composeapp.generated.resources.*
  * Renders a modal bottom sheet that collects capture text and related metadata, then submits it via the provided callback.
  *
  * The sheet supports selecting a capture type, optional project/area assignment, templates, recurring/reminder settings,
- * sticky flag, decision category, multi-capture and brain-dump modes, and an optional voice-capture action.
+ * sticky flag, multi-capture and brain-dump modes, and an optional voice-capture action.
  *
  * @param onDismiss Called to close the sheet.
  * @param onCapture Called when the user submits a capture. Arguments (in order):
@@ -51,7 +51,7 @@ import tajsos.composeapp.generated.resources.*
  *  7. `reminderTime` — scheduled reminder time as epoch milliseconds or `null`.
  *  8. `contextScreen` — optional calling-screen identifier passed through.
  *  9. `isSticky` — `true` if the capture is marked sticky.
- *  10. `decisionCategory` — for type "decision", the selected category ("tiny" or "major") or `null`.
+ *  10. Reserved legacy metadata slot, currently passed as `null`.
  * @param projects List of available project nodes for assignment (defaults to empty).
  * @param areas List of available area nodes for assignment (defaults to empty).
  * @param templates List of templates that can prefill the capture text (defaults to empty).
@@ -84,7 +84,6 @@ fun CaptureSheet(
         }
     }
     var selectedType by remember { mutableStateOf("inbox") }
-    var decisionCategory by remember { mutableStateOf<String?>("major") }
     var selectedProjectId by remember { mutableStateOf<Long?>(defaultProjectId) }
     var selectedAreaId by remember { mutableStateOf<Long?>(defaultAreaId) }
 
@@ -218,7 +217,7 @@ fun CaptureSheet(
                                         reminderTime,
                                         contextScreen,
                                         isSticky,
-                                        if (selectedType == "decision") decisionCategory else null,
+                                        null,
                                     )
                                     if (multiCaptureMode || brainDumpMode) {
                                         text = ""
@@ -483,23 +482,7 @@ fun CaptureSheet(
                             )
                         }
 
-                        if (selectedType == "decision") {
-                            Row(
-                                modifier = Modifier.weight(1f),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-                            ) {
-                                listOf("tiny", "major").forEach { cat ->
-                                    FilterChip(
-                                        selected = decisionCategory == cat,
-                                        onClick = { decisionCategory = cat },
-                                        label = { Text(cat.uppercase()) },
-                                    )
-                                }
-                            }
-                        } else {
-                            Spacer(Modifier.weight(1f))
-                        }
+                        Spacer(Modifier.weight(1f))
                     }
                 }
             } else if (selectedType == "project" && areas.isNotEmpty()) {
@@ -534,7 +517,7 @@ fun CaptureSheet(
                             reminderTime,
                             contextScreen,
                             isSticky,
-                                if (selectedType == "decision") decisionCategory else null,
+                            null,
                         )
                         if (multiCaptureMode || brainDumpMode) {
                             text = ""
@@ -556,7 +539,6 @@ fun CaptureSheet(
                             {
                                 "task" -> stringResource(Res.string.type_task)
                                 "note" -> stringResource(Res.string.type_note)
-                                "idea" -> stringResource(Res.string.type_idea)
                                 "project" -> stringResource(Res.string.type_project)
                                 "area" -> stringResource(Res.string.type_area)
                                 else -> selectedType

@@ -109,13 +109,13 @@ internal fun ProtocolsLayer(
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
-                "TRANSITION PROTOCOLS",
+                "ROUTINES & PLAYBOOKS",
                 style = MaterialTheme.typography.labelSmall,
                 color = TactileTheme.Primary,
                 fontWeight = FontWeight.Bold,
             )
             Text(
-                "Templates ${snapshot.templates.size} • Active ${snapshot.protocols.size} • History ${history.size}",
+                "Routine templates ${snapshot.templates.size} • Active runs ${snapshot.protocols.size} • History ${history.size}",
                 style = MaterialTheme.typography.bodySmall,
                 color = TactileTheme.Muted,
             )
@@ -176,7 +176,7 @@ internal fun ProtocolsLayer(
         playbookSnapshot.templates.forEach { template ->
             AssistChip(
                 onClick = { viewModel.applyPlaybookTemplate(template.label) },
-                label = { Text("PLAYBOOK // ${template.label.uppercase()}") },
+                label = { Text("PLAYBOOK ${template.label.uppercase()}") },
             )
         }
     }
@@ -184,7 +184,7 @@ internal fun ProtocolsLayer(
     LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
         item {
             GroupedOpenLoopSection(
-                title = "PROTOCOL TEMPLATES",
+                title = "ROUTINE TEMPLATES",
                 items =
                     snapshot.templates.map { template ->
                         "${template.label.uppercase()} • ${template.checklist.size} STEPS"
@@ -434,7 +434,7 @@ internal fun ProtocolsLayer(
         if (snapshot.protocols.isNotEmpty()) {
             item {
                 GroupedOpenLoopSection(
-                    title = "ACTIVE PROTOCOLS",
+                    title = "ACTIVE ROUTINES",
                     items =
                         snapshot.protocols.map { item ->
                             "${item.node.node.title.uppercase()} • ${item.checklistDone}/${item.checklistTotal} • RUNS ${item.triggerCount}"
@@ -460,7 +460,7 @@ internal fun ProtocolsLayer(
         if (history.isNotEmpty()) {
             item {
                 GroupedOpenLoopSection(
-                    title = "PROTOCOL HISTORY",
+                    title = "ROUTINE HISTORY",
                     items =
                         history.take(12).map { item ->
                             "${item.protocolLabel.uppercase()} • ${formatProtocolTimestamp(item.executedAt)}"

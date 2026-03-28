@@ -43,10 +43,10 @@
     <string name="screen_templates">TEMPLATES</string>
     <string name="screen_review">REVIEW</string>
     <string name="screen_ops">OPS</string>
-    <string name="screen_open_loops">LOOPS</string>
-    <string name="screen_protocols">PROTOCOLS</string>
+    <string name="screen_open_loops">UNRESOLVED</string>
+    <string name="screen_protocols">ROUTINES</string>
     <string name="screen_time_architecture">TIME</string>
-    <string name="screen_places">PLACES</string>
+    <string name="screen_places">CONTEXT</string>
     <string name="screen_finances">FINANCES</string>
     <string name="screen_health">HEALTH</string>
     <string name="screen_relationships">RELATIONSHIPS</string>
@@ -157,9 +157,9 @@
     <string name="dash_area_health">AREA HEALTH</string>
     <string name="dash_system_status">SYSTEM STATUS</string>
     <string name="dash_open_loops">UNRESOLVED WORK</string>
-    <string name="dash_decisions">DECISION QUEUE</string>
+    <string name="dash_decisions">DECISION WORK</string>
     <string name="dash_maintenance">MAINTENANCE QUEUE</string>
-    <string name="dash_protocols">PROTOCOLS &amp; PLAYBOOKS</string>
+    <string name="dash_protocols">ROUTINES &amp; PLAYBOOKS</string>
     <string name="dash_load">SYSTEM LOAD</string>
     <string name="dash_capacity">CAPACITY</string>
     <string name="dash_fragmentation">FRAGMENTATION</string>
