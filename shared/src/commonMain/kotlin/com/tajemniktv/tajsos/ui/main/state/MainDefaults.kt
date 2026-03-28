@@ -11,7 +11,6 @@ val suggestedAreaTitles =
     listOf(
         "Career",
         "Hobbies",
-        "Travelling",
     )
 
 /**
