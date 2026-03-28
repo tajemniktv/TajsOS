@@ -18,6 +18,7 @@ import com.tajemniktv.tajsos.data.InboxEntryEntity
 import com.tajemniktv.tajsos.data.ItemKind
 import com.tajemniktv.tajsos.data.MedicationEntity
 import com.tajemniktv.tajsos.data.ModeEntity
+import com.tajemniktv.tajsos.data.RecordKind
 import com.tajemniktv.tajsos.data.ModeUsageLogEntity
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.data.NodeSnapshotEntity
@@ -269,12 +270,13 @@ class MainViewModel(
     val calendarEntries: StateFlow<List<CalendarEntry>> =
         combine(
             allNodes,
+            repository.getAllScheduleEntries(),
             repository.getCalendarEventsInRange(
                 0,
                 Long.MAX_VALUE,
             ), // In MVP we can fetch all or a large range
-        ) { nodes, externalEvents ->
-            buildCalendarEntries(nodes, externalEvents)
+        ) { nodes, schedules, externalEvents ->
+            buildCalendarEntries(nodes, schedules, externalEvents)
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     fun addCalendarProvider(
@@ -2304,14 +2306,13 @@ class MainViewModel(
             val dateStr = now.toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
 
             val nodeId =
-                repository.insertNode(
-                    NodeEntity(
-                        title = "${type.uppercase()} REVIEW - $dateStr",
-                        content = content,
-                        type = "note",
-                        noteType = "reflection",
-                        inboxState = false,
-                    ),
+                repository.insertLifeItem(
+                    kind = ItemKind.RECORD,
+                    title = "${type.uppercase()} REVIEW - $dateStr",
+                    content = content,
+                    inboxState = false,
+                    source = "review",
+                    recordKind = RecordKind.REFLECTION,
                 )
 
             repository.insertReview(

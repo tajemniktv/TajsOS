@@ -49,6 +49,8 @@ private object NoOpRecordFacetDao : RecordFacetDao {
 }
 
 private object NoOpScheduleEntryDao : ScheduleEntryDao {
+    override fun getAllScheduleEntries(): Flow<List<ScheduleEntryEntity>> = flowOf(emptyList())
+
     override fun getScheduleEntriesForItem(itemId: Long): Flow<List<ScheduleEntryEntity>> = flowOf(emptyList())
 
     override suspend fun getScheduleEntriesByKind(itemId: Long, kind: String): List<ScheduleEntryEntity> = emptyList()
@@ -330,6 +332,11 @@ class AppRepository(
     suspend fun insertCalendarEvents(events: List<CalendarEventEntity>) = calendarEventDao.insertEvents(events)
 
     suspend fun deleteCalendarEventsByProvider(providerId: Long) = calendarEventDao.deleteEventsByProvider(providerId)
+
+    /**
+     * Observes all attached schedule entries across the local system.
+     */
+    fun getAllScheduleEntries(): Flow<List<ScheduleEntryEntity>> = scheduleEntryDao.getAllScheduleEntries()
 
     /**
      * Inserts a new node into the database.

@@ -11,6 +11,8 @@ import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.data.PackRegistry
 import com.tajemniktv.tajsos.data.ProtocolHistoryEntity
+import com.tajemniktv.tajsos.data.ScheduleEntryEntity
+import com.tajemniktv.tajsos.data.ScheduleEntryKind
 import com.tajemniktv.tajsos.data.buildModeQueryProfile
 import com.tajemniktv.tajsos.ui.main.calculators.normalizeProtocolLabel
 import com.tajemniktv.tajsos.ui.main.calculators.parsePlaybookModeKey
@@ -24,26 +26,67 @@ import kotlin.time.Clock
 
 fun buildCalendarEntries(
     nodes: List<NodeWithPin>,
+    scheduleEntries: List<ScheduleEntryEntity>,
     externalEvents: List<CalendarEventEntity>,
 ): List<CalendarEntry> {
     val entries = mutableListOf<CalendarEntry>()
+    val nodesById = nodes.associateBy { it.node.id }
 
+    scheduleEntries.forEach { entry ->
+        val node = nodesById[entry.itemId]?.node ?: return@forEach
+        if (node.status == "archived") return@forEach
+
+        val labelPrefix =
+            when (ScheduleEntryKind.fromStorageKey(entry.kind)) {
+                ScheduleEntryKind.DUE -> "Due"
+                ScheduleEntryKind.REMINDER -> "Reminder"
+                ScheduleEntryKind.START -> "Start"
+                else -> null
+            }
+
+        val title =
+            buildString {
+                if (node.status == "done") append("✓ ")
+                if (labelPrefix != null) {
+                    append(labelPrefix)
+                    append(": ")
+                }
+                append(node.title)
+            }
+
+        entries.add(
+            CalendarEntry(
+                id = "schedule_${entry.id}",
+                title = title,
+                description = node.content.ifBlank { entry.note },
+                startAt = entry.scheduledAt,
+                endAt = entry.endAt ?: (entry.scheduledAt + (3600 * 1000)),
+                isAllDay = false,
+                type = EntryType.INTERNAL,
+                originalId = node.id,
+            ),
+        )
+    }
+
+    val itemsWithSchedule = scheduleEntries.mapTo(mutableSetOf()) { it.itemId }
     nodes.forEach { item ->
         val node = item.node
-        val time = node.startAt ?: node.dueAt ?: node.reminderAt
-        if (time != null && node.status != "archived") {
-            entries.add(
-                CalendarEntry(
-                    id = "node_${node.id}",
-                    title = if (node.status == "done") "✓ ${node.title}" else node.title,
-                    description = node.content,
-                    startAt = time,
-                    endAt = time + (3600 * 1000),
-                    isAllDay = false,
-                    type = EntryType.INTERNAL,
-                    originalId = node.id,
-                ),
-            )
+        if (node.id !in itemsWithSchedule) {
+            val time = node.startAt ?: node.dueAt ?: node.reminderAt
+            if (time != null && node.status != "archived") {
+                entries.add(
+                    CalendarEntry(
+                        id = "node_${node.id}",
+                        title = if (node.status == "done") "✓ ${node.title}" else node.title,
+                        description = node.content,
+                        startAt = time,
+                        endAt = time + (3600 * 1000),
+                        isAllDay = false,
+                        type = EntryType.INTERNAL,
+                        originalId = node.id,
+                    ),
+                )
+            }
         }
     }
 

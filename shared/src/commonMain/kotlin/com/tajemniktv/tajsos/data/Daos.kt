@@ -339,6 +339,9 @@ interface RecordFacetDao {
  */
 @Dao
 interface ScheduleEntryDao {
+    @Query("SELECT * FROM schedule_entries ORDER BY scheduledAt ASC")
+    fun getAllScheduleEntries(): Flow<List<ScheduleEntryEntity>>
+
     @Query("SELECT * FROM schedule_entries WHERE itemId = :itemId ORDER BY scheduledAt ASC")
     fun getScheduleEntriesForItem(itemId: Long): Flow<List<ScheduleEntryEntity>>
 

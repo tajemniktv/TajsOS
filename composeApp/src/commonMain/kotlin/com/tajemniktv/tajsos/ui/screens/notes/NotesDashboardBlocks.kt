@@ -76,7 +76,7 @@ internal fun NotesMainBlock(
 
     val knowledgeNodes =
         remember(activeNodes) {
-            activeNodes.filter { it.node.type in listOf("note", "idea", "resource") }
+            activeNodes.filter { it.node.type in listOf("note", "idea", "resource", "record") }
         }
 
     val filteredNodes =
@@ -139,6 +139,9 @@ internal fun NotesMainBlock(
         val typeResources = remember(filteredNodes) {
             filteredNodes.filter { !it.node.isPinned && it.node.type == "resource" }
         }
+        val typeRecords = remember(filteredNodes) {
+            filteredNodes.filter { !it.node.isPinned && it.node.type == "record" }
+        }
 
         val nodesByArea = remember(filteredNodes) {
             filteredNodes.groupBy { it.node.areaId }
@@ -199,6 +202,16 @@ internal fun NotesMainBlock(
                     if (typeResources.isNotEmpty()) {
                         item { GroupHeader(stringResource(Res.string.notes_resources)) }
                         items(typeResources, key = { it.node.id }) { node ->
+                            KnowledgeItem(
+                                node,
+                                viewModel,
+                                onNoteClick,
+                            )
+                        }
+                    }
+                    if (typeRecords.isNotEmpty()) {
+                        item { GroupHeader("RECORDS") }
+                        items(typeRecords, key = { it.node.id }) { node ->
                             KnowledgeItem(
                                 node,
                                 viewModel,
