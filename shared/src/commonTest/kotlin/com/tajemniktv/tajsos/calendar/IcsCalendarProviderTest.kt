@@ -207,4 +207,35 @@ class IcsCalendarProviderTest {
             // The parser should skip events with malformed dates instead of throwing StringIndexOutOfBoundsException
             assertEquals(0, events.size)
         }
+
+    @Test
+    fun `test skip invalid date values`(): TestResult =
+        runTest {
+            val ics =
+                """
+                BEGIN:VCALENDAR
+                BEGIN:VEVENT
+                UID:invalid-month
+                SUMMARY:Invalid Month
+                DTSTART;VALUE=DATE:20231301
+                END:VEVENT
+                BEGIN:VEVENT
+                UID:non-numeric
+                SUMMARY:Non Numeric
+                DTSTART;VALUE=DATE:202310XX
+                END:VEVENT
+                BEGIN:VEVENT
+                UID:invalid-iso
+                SUMMARY:Invalid ISO
+                DTSTART:20231024T256060Z
+                END:VEVENT
+                END:VCALENDAR
+                """.trimIndent()
+
+            val provider = createProviderWithIcs(ics)
+            val events = provider.fetchEvents(testProviderEntity, defaultFrom, defaultTo)
+
+            // The parser should catch exceptions during date conversion and skip those events
+            assertEquals(0, events.size)
+        }
 }
