@@ -69,6 +69,15 @@ class AppRepository(
         return id
     }
 
+    suspend fun insertNodes(nodes: List<NodeEntity>): List<Long> {
+        val ids = nodeDao.insertNodes(nodes)
+        ids.zip(nodes).forEach { (id, node) ->
+            logEvent("NODE_CREATED", id)
+            syncBelongsToRelations(id, node.projectId, node.areaId)
+        }
+        return ids
+    }
+
     suspend fun updateNode(node: NodeEntity) {
         val oldNode = nodeDao.getNodeById(node.id)
         nodeDao.updateNode(node)
