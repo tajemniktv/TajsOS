@@ -21,9 +21,15 @@ val SurfaceContainerHigh = Color(0xFF1F1F24)
 val SurfaceContainerHighest = Color(0xFF25252B)
 val TextPrimary = Color(0xFFFCF8FE)
 val TextMuted = Color(0xFFA8A2B3)
-val AccentSuccess = Color(0xFF10B981)
-val AccentError = Color(0xFFEF4444)
-val AccentCyan = PrimaryPurpleDim
+val AccentMagenta = Color(0xFFFF6FAE)
+val AccentAmber = Color(0xFFF4B740)
+val AccentGreen = Color(0xFF30D158)
+val AccentRed = Color(0xFFFF5A7A)
+val AccentBlue = Color(0xFF6EA8FF)
+val AccentCyan = Color(0xFF22D3EE)
+// Legacy aliases kept for compatibility with existing screens.
+val AccentSuccess = AccentGreen
+val AccentError = AccentRed
 val SubtleBorder = Color(0xFF4F4A5D)
 val OutlineVariant = Color(0xFF6B6580)
 

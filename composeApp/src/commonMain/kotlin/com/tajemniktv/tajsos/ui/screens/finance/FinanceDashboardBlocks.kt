@@ -2,6 +2,8 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
+@file:Suppress("FunctionName")
+
 package com.tajemniktv.tajsos.ui.screens.finance
 
 import androidx.compose.foundation.BorderStroke
@@ -39,7 +41,14 @@ import com.tajemniktv.tajsos.ui.components.cards.MaintenanceCard
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.screens.maintenanceTypes
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import kotlin.math.abs
+import kotlin.math.roundToInt
 
+/**
+ * Renders the finance dashboard header shell with high-level status chips and dataset volume context.
+ *
+ * @param context Finance dashboard state and callbacks used to project header metadata.
+ */
 @Composable
 internal fun renderFinanceHeaderBlock(context: com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardContext) {
     Surface(
@@ -60,6 +69,11 @@ internal fun renderFinanceHeaderBlock(context: com.tajemniktv.tajsos.ui.screens.
             Text(
                 "Financial dashboard for liquidity, cashflow velocity, and maintenance operations.",
                 style = MaterialTheme.typography.bodySmall,
+                color = TactileTheme.Muted,
+            )
+            Text(
+                "Tracking ${context.allItems.size} maintenance-finance item(s).",
+                style = MaterialTheme.typography.labelSmall,
                 color = TactileTheme.Muted,
             )
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -104,7 +118,7 @@ internal fun renderFinanceMetricsBlock(context: com.tajemniktv.tajsos.ui.screens
                     fontWeight = FontWeight.Bold,
                 )
                 Text(
-                    "$${"%,.2f".format(context.liquidity)}",
+                    formatCurrency(context.liquidity),
                     style = MaterialTheme.typography.displayMedium,
                     color = TactileTheme.Text,
                     fontWeight = FontWeight.ExtraBold,
@@ -190,13 +204,11 @@ internal fun renderFinanceActivityBlock(context: com.tajemniktv.tajsos.ui.screen
                         )
                     }
                     Text(
-                        "$${
-                            "%,.2f".format(
-                                com.tajemniktv.tajsos.ui.screens.finance.financeSyntheticTxn(
-                                    item.node.node.title,
-                                ),
-                            )
-                        }",
+                        formatCurrency(
+                            com.tajemniktv.tajsos.ui.screens.finance.financeSyntheticTxn(
+                                item.node.node.title,
+                            ),
+                        ),
                         color = TactileTheme.Primary,
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold,
@@ -407,3 +419,22 @@ private fun FinanceMiniBars(
 internal fun financeSyntheticLiquidity(title: String): Double = 500.0 + title.length * 140.0 + (title.sumOf { it.code } % 91) * 13.0
 
 internal fun financeSyntheticTxn(title: String): Double = 40.0 + title.length * 12.0 + (title.sumOf { it.code } % 33) * 4.0
+
+/**
+ * Formats a numeric amount as USD-like currency in common code without relying on JVM-only format APIs.
+ */
+private fun formatCurrency(amount: Double): String {
+    val roundedCents = (amount * 100).roundToInt()
+    val sign = if (roundedCents < 0) "-" else ""
+    val absoluteCents = abs(roundedCents)
+    val wholePart = absoluteCents / 100
+    val centsPart = absoluteCents % 100
+    val groupedWhole =
+        wholePart
+            .toString()
+            .reversed()
+            .chunked(3)
+            .joinToString(",")
+            .reversed()
+    return "$sign$$groupedWhole.${centsPart.toString().padStart(2, '0')}"
+}

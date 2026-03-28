@@ -24,6 +24,12 @@ object TactileTheme {
     val SurfaceHighest = SurfaceContainerHighest
     val Text = TextPrimary
     val Muted = TextMuted
+    val AccentMagenta = com.tajemniktv.tajsos.ui.theme.AccentMagenta
+    val AccentAmber = com.tajemniktv.tajsos.ui.theme.AccentAmber
+    val AccentGreen = com.tajemniktv.tajsos.ui.theme.AccentGreen
+    val AccentRed = com.tajemniktv.tajsos.ui.theme.AccentRed
+    val AccentBlue = com.tajemniktv.tajsos.ui.theme.AccentBlue
+    val AccentCyan = com.tajemniktv.tajsos.ui.theme.AccentCyan
     val Success = AccentSuccess
     val Error = AccentError
     val Accent = AccentCyan
