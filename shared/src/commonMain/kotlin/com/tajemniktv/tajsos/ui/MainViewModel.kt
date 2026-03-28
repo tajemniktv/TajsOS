@@ -31,6 +31,9 @@ import kotlinx.datetime.*
 import kotlinx.serialization.json.Json
 import kotlin.time.Clock
 
+/**
+ * ViewModel for the main dashboard screen, responsible for aggregating and transforming data from the repository
+ */
 class MainViewModel(
     private val repository: AppRepository,
     private val preferencesRepository: PreferencesRepository,
