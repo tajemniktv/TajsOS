@@ -4,36 +4,21 @@
 
 package com.tajemniktv.tajsos
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,7 +26,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -50,7 +34,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.tajemniktv.tajsos.data.ModeEntity
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.data.TemplateEntity
 import com.tajemniktv.tajsos.ui.DetailNavigationContract
@@ -58,11 +41,7 @@ import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.common.CaptureSheet
 import com.tajemniktv.tajsos.ui.components.layout.AppLayout
-import com.tajemniktv.tajsos.ui.components.layout.DesktopSearchSurface
-import com.tajemniktv.tajsos.ui.components.layout.LocalHeaderActions
-import com.tajemniktv.tajsos.ui.components.layout.StatusHeader
-import com.tajemniktv.tajsos.ui.components.layout.SystemOnlineStatus
-import com.tajemniktv.tajsos.ui.components.layout.TBoxIcon
+import com.tajemniktv.tajsos.ui.components.layout.rememberAppShellState
 import com.tajemniktv.tajsos.ui.screens.AreaDetailScreen
 import com.tajemniktv.tajsos.ui.screens.CalendarSettingsScreen
 import com.tajemniktv.tajsos.ui.screens.IdentityScreen
@@ -80,7 +59,8 @@ import com.tajemniktv.tajsos.ui.screens.SettingsFeaturePacksScreen
 import com.tajemniktv.tajsos.ui.screens.SettingsHealthScreen
 import com.tajemniktv.tajsos.ui.screens.SettingsScreen
 import com.tajemniktv.tajsos.ui.screens.TaskDetailScreen
-import com.tajemniktv.tajsos.ui.screens.TasksScreen
+import com.tajemniktv.tajsos.ui.screens.tasks.TasksScreen
+import com.tajemniktv.tajsos.ui.screens.tasks.TasksTab
 import com.tajemniktv.tajsos.ui.screens.TemplatesScreen
 import com.tajemniktv.tajsos.ui.screens.TimeArchitectureScreen
 import com.tajemniktv.tajsos.ui.screens.TrackScreen
@@ -105,20 +85,10 @@ import com.tajemniktv.tajsos.ui.screens.relationships.RelationshipsScreen
 import com.tajemniktv.tajsos.ui.screens.study.StudyScreen
 import com.tajemniktv.tajsos.ui.screens.today.TodayScreen
 import com.tajemniktv.tajsos.ui.screens.vaults.VaultsScreen
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
-import kotlinx.coroutines.launch
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
-import tajsos.composeapp.generated.resources.common_back
-import tajsos.composeapp.generated.resources.dash_vibe_afternoon
-import tajsos.composeapp.generated.resources.dash_vibe_evening
-import tajsos.composeapp.generated.resources.dash_vibe_morning
-import tajsos.composeapp.generated.resources.dash_vibe_night
 import tajsos.composeapp.generated.resources.nav_capture
-import kotlin.time.Clock
 
 /**
  * Hosts the application's top-level UI: sets up navigation, collects app state from the ViewModel,
@@ -156,9 +126,6 @@ fun App(
     val allAreas by viewModel.allAreas.collectAsState()
     val allTemplates by viewModel.allTemplates.collectAsState()
     val allNodes by viewModel.allNodes.collectAsState()
-    val latestTrack by viewModel.trackEntries.collectAsState().let {
-        derivedStateOf { it.value.lastOrNull() }
-    }
     val lastActiveProjectId by viewModel.lastActiveProjectId.collectAsState()
     val lastActiveAreaId by viewModel.lastActiveAreaId.collectAsState()
 
@@ -169,10 +136,17 @@ fun App(
     val userProfile by viewModel.userProfile.collectAsState()
 
     var showCaptureSheetState by remember { mutableStateOf(false) }
+    val shellState = rememberAppShellState()
 
-    val screen =
-        remember(currentDestination) {
-            Screen.fromRoute(currentDestination?.route)
+    val screen = remember(currentDestination) { Screen.fromRoute(currentDestination?.route) }
+    val activeTasksTab =
+        remember(navBackStackEntry, screen) {
+            if (screen == Screen.Tasks) {
+                val tabFromArgs = navBackStackEntry?.savedStateHandle?.get<Any>("tab")?.toString()
+                TasksTab.fromRouteSegment(tabFromArgs)
+            } else {
+                TasksTab.COMMAND
+            }
         }
 
     TajsOSTheme(darkTheme = isDarkTheme) {
@@ -196,8 +170,13 @@ fun App(
 
             AppLayout(
                 isDesktop = isDesktop,
+                shellState = shellState,
                 currentDestination = currentDestination,
+                activeTasksTab = activeTasksTab,
                 onNavigate = { screen -> navigate(screen.route) },
+                onNavigateToTasksTab = { tab ->
+                    navigate(Screen.Tasks.route + "?tab=" + tab.routeSegment)
+                },
                 onNewEntry = { showCaptureSheetState = true },
                 currentMode = currentMode,
                 allModes = allModes,
@@ -208,10 +187,6 @@ fun App(
                 scope = scope,
             ) {
                 AppScaffold(
-                    screen = screen,
-                    drawerState = drawerState,
-                    scope = scope,
-                    latestTrack = latestTrack,
                     showCaptureSheet = showCaptureSheetState,
                     onShowCaptureSheet = { showCaptureSheetState = it },
                     navController = navController,
@@ -229,7 +204,6 @@ fun App(
                     lastActiveProjectId = lastActiveProjectId,
                     lastActiveAreaId = lastActiveAreaId,
                     currentDestination = currentDestination,
-                    currentMode = currentMode,
                     isDesktop = isDesktop,
                     onNavigate = navigate,
                 )
@@ -239,40 +213,14 @@ fun App(
 }
 
 /**
- * Renders the app scaffold including the top app bar, floating action button, navigation host, and capture sheet.
+ * Renders route content inside the stable shell frame and handles capture entry overlay behavior.
  *
- * The composable displays a dynamic header based on `screen` and local time, shows a FAB for creating entries when appropriate,
- * hosts the navigation graph, and conditionally presents the capture sheet for creating projects, areas, or nodes.
- *
- * @param screen The current screen descriptor or `null` when unknown; used to derive title, subtitle, and root behavior.
- * @param drawerState Drawer state used to open/close the navigation drawer.
- * @param scope Coroutine scope for launching drawer/opening and other UI coroutines.
- * @param latestTrack Most recent track entry; used by destination screens that display tracking info.
- * @param showCaptureSheet Whether the capture sheet is currently visible.
- * @param onShowCaptureSheet Callback to show or hide the capture sheet.
- * @param navController Navigation controller used by the NavHost.
- * @param viewModel View model providing data and actions for screens and capture operations.
- * @param onVoiceCapture Optional callback invoked when the user triggers voice capture from the UI.
- * @param voiceCaptureResult Optional initial text produced by voice capture; supplied to the capture sheet.
- * @param onVoiceCaptureConsumed Callback invoked after the voice capture result has been consumed.
- * @param allProjects List of available project nodes for selection in the capture sheet.
- * @param allAreas List of available area nodes for selection in the capture sheet.
- * @param allNodes Snapshot of all nodes used to resolve typed detail routes from generic open actions.
- * @param allTemplates List of available templates for the capture sheet.
- * @param lastActiveProjectId Default project id to preselect in the capture sheet, if any.
- * @param lastActiveAreaId Default area id to preselect in the capture sheet, if any.
- * @param currentDestination The current navigation destination; used by child screens for context.
- * @param currentMode Current UI mode providing theme color and related styling.
- * @param isDesktop True when running in a desktop-sized layout (affects header and FAB behavior).
- * @param onNavigate Callback to request navigation to a given route.
+ * The header/sidebar shell is rendered by [AppLayout]. This host keeps content transitions local to
+ * the main content area and shows a mobile floating action button plus capture sheet interactions.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AppScaffold(
-    screen: Screen?,
-    drawerState: DrawerState,
-    scope: kotlinx.coroutines.CoroutineScope,
-    latestTrack: com.tajemniktv.tajsos.data.TrackEntryEntity?,
     showCaptureSheet: Boolean,
     onShowCaptureSheet: (Boolean) -> Unit,
     navController: NavHostController,
@@ -290,148 +238,18 @@ private fun AppScaffold(
     lastActiveProjectId: Long?,
     lastActiveAreaId: Long?,
     currentDestination: NavDestination?,
-    currentMode: ModeEntity?,
     isDesktop: Boolean,
     onNavigate: (String) -> Unit,
 ) {
-    val now = Clock.System.now()
-    val localNow = now.toLocalDateTime(TimeZone.currentSystemDefault())
-    val currentHour = localNow.hour
+    val onEditNode: (Long) -> Unit = { id ->
+        onNavigate(DetailNavigationContract.routeForNodeId(id, allNodes))
+    }
 
-    val vibeStringRes =
-        when (currentHour)
-        {
-            in 5..11 -> Res.string.dash_vibe_morning
-            in 12..17 -> Res.string.dash_vibe_afternoon
-            in 18..22 -> Res.string.dash_vibe_evening
-            else -> Res.string.dash_vibe_night
-        }
-
-    val subtitle =
-        if (screen == Screen.Dashboard) {
-            stringResource(vibeStringRes)
-        } else {
-            screen?.label?.let { stringResource(it) } ?: ""
-        }
-
-    val tintColor = currentMode?.themeColor?.let { Color(it) } ?: TactileTheme.Primary
-
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                navigationIcon = {
-                    if (screen?.isRoot == true) {
-                        if (!isDesktop) {
-                            IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                                TBoxIcon(tintColor = tintColor)
-                            }
-                        }
-                    } else {
-                        IconButton(onClick = { navController.popBackStack() }) {
-                            Icon(
-                                Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = stringResource(Res.string.common_back),
-                                tint = TactileTheme.Text,
-                                modifier = Modifier.size(18.dp),
-                            )
-                        }
-                    }
-                },
-                title = {
-                    StatusHeader(
-                        color = tintColor,
-                        subtitle = subtitle,
-                        subtitleStyle =
-                            if (screen ==
-                                Screen.Dashboard
-                            ) {
-                                MaterialTheme.typography.titleSmall
-                            } else {
-                                MaterialTheme.typography.titleMedium
-                            },
-                    )
-                },
-                actions = {
-                    val localActions = LocalHeaderActions.current
-                    localActions()
-
-                    if (isDesktop && screen == Screen.Dashboard) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            modifier = Modifier.padding(end = 16.dp),
-                        ) {
-                            DesktopSearchSurface()
-
-                            Box(
-                                modifier =
-                                    Modifier
-                                        .size(40.dp)
-                                        .background(
-                                            TactileTheme.Surface,
-                                            RoundedCornerShape(TactileTheme.RadiusMd),
-                                        ).border(
-                                            1.dp,
-                                            TactileTheme.Border,
-                                            RoundedCornerShape(TactileTheme.RadiusMd),
-                                        ),
-                                contentAlignment = Alignment.Center,
-                            ) {
-                                Icon(
-                                    Icons.Default.Notifications,
-                                    contentDescription = null,
-                                    tint = TactileTheme.Text,
-                                    modifier = Modifier.size(20.dp),
-                                )
-                            }
-                        }
-                    } else {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(end = 8.dp),
-                        ) {
-                            SystemOnlineStatus(tintColor = tintColor)
-                            Spacer(Modifier.width(12.dp))
-                            IconButton(onClick = { onNavigate(Screen.Settings.route) }) {
-                                Icon(
-                                    Icons.Default.Settings,
-                                    contentDescription = null,
-                                    tint = TactileTheme.Muted,
-                                )
-                            }
-                        }
-                    }
-                },
-                colors =
-                    TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.background,
-                    ),
-            )
-        },
-        floatingActionButton = {
-            if (!isDesktop || currentDestination?.route != Screen.Dashboard.route) {
-                FloatingActionButton(
-                    onClick = { onShowCaptureSheet(true) },
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
-                    shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                ) {
-                    Icon(
-                        Icons.Default.Add,
-                        contentDescription = stringResource(Res.string.nav_capture),
-                    )
-                }
-            }
-        },
-    ) { innerPadding ->
-        val onEditNode: (Long) -> Unit = { id ->
-            onNavigate(DetailNavigationContract.routeForNodeId(id, allNodes))
-        }
-
+    Box(modifier = Modifier.fillMaxSize()) {
         NavHost(
             navController = navController,
             startDestination = Screen.Dashboard.route,
-            modifier = Modifier.padding(innerPadding),
+            modifier = Modifier.fillMaxSize(),
         ) {
             composable(Screen.Dashboard.route) {
                 DashboardScreen(
@@ -455,7 +273,18 @@ private fun AppScaffold(
             composable(Screen.Today.route) { TodayScreen(viewModel, onEditNode) }
             composable(Screen.Focus.route) { FocusScreen(viewModel) }
             composable(Screen.Track.route) { TrackScreen(viewModel) }
-            composable(Screen.Tasks.route) { TasksScreen(viewModel, onEditNode) }
+            composable(Screen.Tasks.route + "?tab={tab}") { backStackEntry ->
+                val tabSegment = backStackEntry.savedStateHandle.get<Any>("tab")?.toString()
+                val tab = TasksTab.fromRouteSegment(tabSegment)
+                TasksScreen(
+                    viewModel = viewModel,
+                    onEditNode = onEditNode,
+                    currentTab = tab,
+                    onTabChange = { newTab ->
+                        onNavigate(Screen.Tasks.route + "?tab=" + newTab.routeSegment)
+                    },
+                )
+            }
             composable(Screen.Notes.route) { NotesScreen(viewModel, onEditNode) }
             composable(Screen.Calendar.route) { CalendarScreen(viewModel, onEditNode) }
             composable(Screen.Decisions.route) { DecisionsScreen(viewModel, onEditNode) }
@@ -614,6 +443,20 @@ private fun AppScaffold(
                     onPickAvatar = onPickAvatar,
                     pickedAvatarRef = avatarPickResult,
                     onAvatarPickedConsumed = onAvatarPickConsumed,
+                )
+            }
+        }
+
+        if (!isDesktop || currentDestination?.route != Screen.Dashboard.route) {
+            FloatingActionButton(
+                onClick = { onShowCaptureSheet(true) },
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.align(Alignment.BottomEnd).padding(20.dp),
+            ) {
+                Icon(
+                    Icons.Default.Add,
+                    contentDescription = stringResource(Res.string.nav_capture),
                 )
             }
         }
