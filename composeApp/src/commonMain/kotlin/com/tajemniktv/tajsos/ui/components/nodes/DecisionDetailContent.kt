@@ -371,7 +371,7 @@ fun DecisionDetailContent(
                     },
                     confirmButton = {
                         TextButton(
-                            enabled = outcome.isNotBlank(),
+                            enabled = outcome.isNotBlank() && (options.isEmpty() || selectedOptionId != null),
                             onClick = {
                                 viewModel.decideOn(node.id, outcome, selectedOptionId)
                                 showDecideDialog = false
