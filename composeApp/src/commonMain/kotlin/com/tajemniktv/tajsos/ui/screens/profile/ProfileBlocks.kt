@@ -152,7 +152,11 @@ private fun renderSignaturePanelBlock(context: ProfileScreenContext) {
                         .clip(RoundedCornerShape(TactileTheme.RadiusMd))
                         .background(
                             Brush.linearGradient(
-                                colors = listOf(TactileTheme.SurfaceLowest, TactileTheme.SurfaceHigh),
+                                colors =
+                                    listOf(
+                                        TactileTheme.SurfaceLowest,
+                                        TactileTheme.SurfaceHigh,
+                                    ),
                             ),
                         ),
                 contentAlignment = Alignment.Center,
@@ -330,11 +334,23 @@ private fun renderAboutModuleBlock(context: ProfileScreenContext) {
         ) {
             Text(
                 text =
-                    when {
-                        context.justSaved -> stringResource(Res.string.profile_saved)
-                        context.hasChanges -> stringResource(Res.string.profile_unsaved)
-                        else -> stringResource(Res.string.profile_completion, context.completion)
-                    },
+                    when
+                        {
+                            context.justSaved -> {
+                                stringResource(Res.string.profile_saved)
+                            }
+
+                            context.hasChanges -> {
+                                stringResource(Res.string.profile_unsaved)
+                            }
+
+                            else -> {
+                                stringResource(
+                                    Res.string.profile_completion,
+                                    context.completion,
+                                )
+                            }
+                        },
                 style = MaterialTheme.typography.labelSmall,
                 color = if (context.justSaved) TactileTheme.Primary else TactileTheme.Muted,
             )
@@ -552,9 +568,17 @@ private fun MedicationItem(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(medication.substance, style = MaterialTheme.typography.bodyLarge, color = TactileTheme.Text)
+                Text(
+                    medication.substance,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = TactileTheme.Text,
+                )
                 if (medication.brandNames.isNotEmpty()) {
-                    Text(medication.brandNames, style = MaterialTheme.typography.labelSmall, color = TactileTheme.Muted)
+                    Text(
+                        medication.brandNames,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = TactileTheme.Muted,
+                    )
                 }
                 Text(
                     "${medication.dosage ?: ""} ${if (medication.takeAtHour != null) "@ ${medication.takeAtHour}:00" else ""}",
@@ -568,4 +592,3 @@ private fun MedicationItem(
         }
     }
 }
-

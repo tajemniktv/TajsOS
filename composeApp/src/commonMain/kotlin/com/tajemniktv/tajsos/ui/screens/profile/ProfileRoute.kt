@@ -81,7 +81,12 @@ fun ProfileRoute(
                 .fillMaxSize()
                 .background(
                     Brush.verticalGradient(
-                        colors = listOf(TactileTheme.Background, TactileTheme.SurfaceLowest, TactileTheme.Background),
+                        colors =
+                            listOf(
+                                TactileTheme.Background,
+                                TactileTheme.SurfaceLowest,
+                                TactileTheme.Background,
+                            ),
                     ),
                 ),
     ) {
@@ -116,7 +121,10 @@ fun ProfileRoute(
 
         LazyColumn(
             modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd),
-            verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(TactileTheme.SpacingMd),
+            verticalArrangement =
+                androidx.compose.foundation.layout.Arrangement.spacedBy(
+                    TactileTheme.SpacingMd,
+                ),
         ) {
             items(blockSequence) { block ->
                 renderProfileBlock(block.id, context)
@@ -151,7 +159,10 @@ private fun AddMedicationDialog(
         title = { Text(stringResource(Res.string.profile_add_med)) },
         text = {
             androidx.compose.foundation.layout.Column(
-                verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(TactileTheme.SpacingSm),
+                verticalArrangement =
+                    androidx.compose.foundation.layout.Arrangement.spacedBy(
+                        TactileTheme.SpacingSm,
+                    ),
             ) {
                 OutlinedTextField(
                     value = substance,
@@ -186,7 +197,13 @@ private fun AddMedicationDialog(
         confirmButton = {
             Button(
                 onClick = {
-                    onSave(substance, brands, dosage.takeIf { it.isNotEmpty() }, hour.toIntOrNull(), isOptional)
+                    onSave(
+                        substance,
+                        brands,
+                        dosage.takeIf { it.isNotEmpty() },
+                        hour.toIntOrNull(),
+                        isOptional,
+                    )
                 },
             ) {
                 Text(stringResource(Res.string.med_save))

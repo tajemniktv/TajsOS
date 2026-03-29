@@ -1,25 +1,53 @@
 /*
- * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved. 
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
 package com.tajemniktv.tajsos.ui.components.nodes
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tajemniktv.tajsos.data.DecisionOptionEntity
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.cards.OptionCard
@@ -29,7 +57,29 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
-import tajsos.composeapp.generated.resources.*
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.cd_add_option
+import tajsos.composeapp.generated.resources.cd_decision_decided
+import tajsos.composeapp.generated.resources.decision_add
+import tajsos.composeapp.generated.resources.decision_add_option_field
+import tajsos.composeapp.generated.resources.decision_add_option_title
+import tajsos.composeapp.generated.resources.decision_cancel
+import tajsos.composeapp.generated.resources.decision_category_label
+import tajsos.composeapp.generated.resources.decision_convert_project
+import tajsos.composeapp.generated.resources.decision_convert_task
+import tajsos.composeapp.generated.resources.decision_decide
+import tajsos.composeapp.generated.resources.decision_difficult_because_label
+import tajsos.composeapp.generated.resources.decision_easier_if_label
+import tajsos.composeapp.generated.resources.decision_finalize
+import tajsos.composeapp.generated.resources.decision_info_missing_label
+import tajsos.composeapp.generated.resources.decision_no_options
+import tajsos.composeapp.generated.resources.decision_no_outcome
+import tajsos.composeapp.generated.resources.decision_options_label
+import tajsos.composeapp.generated.resources.decision_outcome_label
+import tajsos.composeapp.generated.resources.decision_outcome_reason
+import tajsos.composeapp.generated.resources.decision_selected_option
+import tajsos.composeapp.generated.resources.decision_status_label
+import tajsos.composeapp.generated.resources.decision_tap_to_add
 import kotlin.time.Clock
 
 /**
@@ -48,20 +98,19 @@ fun DecisionDetailContent(
     viewModel: MainViewModel,
     node: NodeEntity,
     onNavigateToProject: (Long) -> Unit,
-)
-{
-    val scope = rememberCoroutineScope()
+) {
+    rememberCoroutineScope()
     val options by viewModel.getOptionsForDecision(node.id).collectAsState(initial = emptyList())
-        val allPeople by viewModel.allNodes.collectAsState()
-        val peopleNodes =
-            remember(allPeople) { allPeople.filter { it.node.type == "person" && it.node.status == "active" } }
-        val relatedPeople by viewModel
-            .getRelatedPeopleForDecision(node.id)
-            .collectAsState(initial = emptyList())
+    val allPeople by viewModel.allNodes.collectAsState()
+    val peopleNodes =
+        remember(allPeople) { allPeople.filter { it.node.type == "person" && it.node.status == "active" } }
+    val relatedPeople by viewModel
+        .getRelatedPeopleForDecision(node.id)
+        .collectAsState(initial = emptyList())
 
     var showAddOptionDialog by remember { mutableStateOf(false) }
     var showDecideDialog by remember { mutableStateOf(false) }
-        var showPeopleDialog by remember { mutableStateOf(false) }
+    var showPeopleDialog by remember { mutableStateOf(false) }
 
     Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
         SectionTitle(stringResource(Res.string.decision_status_label))
@@ -88,88 +137,88 @@ fun DecisionDetailContent(
                         viewModel.updateNode(node.copy(decisionCategory = category))
                     },
                     label = { Text(category.uppercase()) },
+                )
+            }
+        }
+
+        SectionTitle("DECISION REVISIT DATE")
+        Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+            val now = Clock.System.now()
+            val tz = TimeZone.currentSystemDefault()
+            val revisitDateLabel =
+                node.decisionRevisitAt?.let {
+                    kotlin.time.Instant
+                        .fromEpochMilliseconds(it)
+                        .toLocalDateTime(tz)
+                        .date
+                        .toString()
+                } ?: "NONE"
+            AssistChip(
+                onClick = {},
+                label = { Text("Current: $revisitDateLabel") },
+            )
+            FilterChip(
+                selected = false,
+                onClick = {
+                    viewModel.setDecisionRevisit(
+                        node,
+                        now.plus(1, DateTimeUnit.WEEK, tz).toEpochMilliseconds(),
                     )
-                }
-            }
+                },
+                label = { Text("1 WEEK") },
+            )
+            FilterChip(
+                selected = false,
+                onClick = {
+                    viewModel.setDecisionRevisit(
+                        node,
+                        now.plus(1, DateTimeUnit.MONTH, tz).toEpochMilliseconds(),
+                    )
+                },
+                label = { Text("1 MONTH") },
+            )
+            FilterChip(
+                selected = node.decisionRevisitAt == null,
+                onClick = { viewModel.setDecisionRevisit(node, null) },
+                label = { Text("CLEAR") },
+            )
+        }
 
-            SectionTitle("DECISION REVISIT DATE")
-            Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
-                val now = Clock.System.now()
-                val tz = TimeZone.currentSystemDefault()
-                val revisitDateLabel =
-                    node.decisionRevisitAt?.let {
-                        kotlin.time.Instant
-                            .fromEpochMilliseconds(it)
-                            .toLocalDateTime(tz)
-                            .date
-                            .toString()
-                    } ?: "NONE"
-                AssistChip(
-                    onClick = {},
-                    label = { Text("Current: $revisitDateLabel") },
-                )
-                FilterChip(
-                    selected = false,
-                    onClick = {
-                        viewModel.setDecisionRevisit(
-                            node,
-                            now.plus(1, DateTimeUnit.WEEK, tz).toEpochMilliseconds(),
-                        )
-                    },
-                    label = { Text("1 WEEK") },
-                )
-                FilterChip(
-                    selected = false,
-                    onClick = {
-                        viewModel.setDecisionRevisit(
-                            node,
-                            now.plus(1, DateTimeUnit.MONTH, tz).toEpochMilliseconds(),
-                        )
-                    },
-                    label = { Text("1 MONTH") },
-                )
-                FilterChip(
-                    selected = node.decisionRevisitAt == null,
-                    onClick = { viewModel.setDecisionRevisit(node, null) },
-                    label = { Text("CLEAR") },
-                )
+        SectionTitle("RELATED PEOPLE")
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                if (relatedPeople.isEmpty()) "No related people linked." else "${relatedPeople.size} linked",
+                style = MaterialTheme.typography.bodySmall,
+                color = TactileTheme.Muted,
+            )
+            TextButton(onClick = { showPeopleDialog = true }) {
+                Text("LINK PERSON")
             }
-
-            SectionTitle("RELATED PEOPLE")
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    if (relatedPeople.isEmpty()) "No related people linked." else "${relatedPeople.size} linked",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Muted,
-                )
-                TextButton(onClick = { showPeopleDialog = true }) {
-                    Text("LINK PERSON")
-                }
-            }
-            if (relatedPeople.isNotEmpty()) {
-                relatedPeople.forEach { person ->
-                    Surface(
-                        modifier = Modifier.fillMaxWidth(),
-                        color = TactileTheme.Background,
-                        border = BorderStroke(1.dp, TactileTheme.Border),
-                        shape = RoundedCornerShape(2.dp),
+        }
+        if (relatedPeople.isNotEmpty()) {
+            relatedPeople.forEach { person ->
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    color = TactileTheme.Background,
+                    border = BorderStroke(1.dp, TactileTheme.Border),
+                    shape = RoundedCornerShape(2.dp),
+                ) {
+                    Row(
+                        modifier = Modifier.padding(TactileTheme.SpacingSm),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Row(
-                            modifier = Modifier.padding(TactileTheme.SpacingSm),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Text(
-                                person.node.title,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = TactileTheme.Text,
-                            )
-                            TextButton(onClick = {
-                                viewModel.unlinkDecisionFromPerson(
+                        Text(
+                            person.node.title,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = TactileTheme.Text,
+                        )
+                        TextButton(onClick = {
+                            viewModel.unlinkDecisionFromPerson(
                                 node.id,
                                 person.node.id,
                             )
@@ -219,16 +268,14 @@ fun DecisionDetailContent(
             }
         }
 
-        if (options.isEmpty())
-        {
+        if (options.isEmpty()) {
             Text(
                 stringResource(Res.string.decision_no_options),
                 style = MaterialTheme.typography.labelSmall,
                 color = TactileTheme.Muted,
                 modifier = Modifier.padding(vertical = TactileTheme.SpacingSm),
             )
-        } else
-        {
+        } else {
             options.forEach { option ->
                 OptionCard(
                     option = option,
@@ -243,8 +290,7 @@ fun DecisionDetailContent(
             modifier = Modifier.padding(vertical = TactileTheme.SpacingSm),
         )
 
-        if (node.decisionStatus == "decided")
-        {
+        if (node.decisionStatus == "decided") {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     Icons.Default.CheckCircle,
@@ -288,7 +334,7 @@ fun DecisionDetailContent(
         } else
         {
             Button(
-                onClick = { showDecideDialog = true },
+                    onClick = { showDecideDialog = true },
                 colors = ButtonDefaults.buttonColors(containerColor = TactileTheme.Primary),
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(2.dp),
@@ -298,8 +344,7 @@ fun DecisionDetailContent(
         }
     }
 
-    if (showAddOptionDialog)
-    {
+    if (showAddOptionDialog) {
         var optionTitle by remember { mutableStateOf("") }
         AlertDialog(
             onDismissRequest = { showAddOptionDialog = false },
@@ -334,8 +379,7 @@ fun DecisionDetailContent(
         )
     }
 
-    if (showDecideDialog)
-    {
+    if (showDecideDialog) {
         var outcome by remember { mutableStateOf("") }
         var selectedOptionId by remember { mutableStateOf<Long?>(null) }
 
@@ -351,8 +395,10 @@ fun DecisionDetailContent(
                     options.forEach { option ->
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.fillMaxWidth()
-                                .clickable { selectedOptionId = option.id },
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .clickable { selectedOptionId = option.id },
                         ) {
                             RadioButton(
                                 selected = selectedOptionId == option.id,
@@ -360,50 +406,50 @@ fun DecisionDetailContent(
                             )
                             Text(option.title)
                         }
-                            }
-                            OutlinedTextField(
-                                value = outcome,
-                                onValueChange = { outcome = it },
-                                label = { Text(stringResource(Res.string.decision_outcome_reason)) },
-                                modifier = Modifier.fillMaxWidth(),
-                            )
-                        }
+                    }
+                    OutlinedTextField(
+                        value = outcome,
+                        onValueChange = { outcome = it },
+                        label = { Text(stringResource(Res.string.decision_outcome_reason)) },
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    enabled = outcome.isNotBlank() && (options.isEmpty() || selectedOptionId != null),
+                    onClick = {
+                        viewModel.decideOn(node.id, outcome, selectedOptionId)
+                        showDecideDialog = false
                     },
-                    confirmButton = {
-                        TextButton(
-                            enabled = outcome.isNotBlank() && (options.isEmpty() || selectedOptionId != null),
-                            onClick = {
-                                viewModel.decideOn(node.id, outcome, selectedOptionId)
-                                showDecideDialog = false
-                            },
-                        ) { Text(stringResource(Res.string.decision_decide)) }
+                ) { Text(stringResource(Res.string.decision_decide)) }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showDecideDialog = false
                     },
-                    dismissButton = {
-                        TextButton(
-                            onClick = {
-                                showDecideDialog = false
-                            },
-                        ) { Text(stringResource(Res.string.decision_cancel)) }
-                    },
-                    containerColor = TactileTheme.Background,
-                    titleContentColor = TactileTheme.Text,
-                    textContentColor = TactileTheme.Text,
-                )
-            }
+                ) { Text(stringResource(Res.string.decision_cancel)) }
+            },
+            containerColor = TactileTheme.Background,
+            titleContentColor = TactileTheme.Text,
+            textContentColor = TactileTheme.Text,
+        )
+    }
 
-        if (showPeopleDialog) {
-            AlertDialog(
-                onDismissRequest = { showPeopleDialog = false },
-                title = { Text("LINK PERSON TO DECISION") },
-                text = {
-                    if (peopleNodes.isEmpty()) {
-                        Text("No person nodes available.")
-                    } else {
-                        Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
-                            peopleNodes.forEach { person ->
-                                OutlinedButton(
-                                    onClick = {
-                                        viewModel.linkDecisionToPerson(node.id, person.node.id)
+    if (showPeopleDialog) {
+        AlertDialog(
+            onDismissRequest = { showPeopleDialog = false },
+            title = { Text("LINK PERSON TO DECISION") },
+            text = {
+                if (peopleNodes.isEmpty()) {
+                    Text("No person nodes available.")
+                } else {
+                    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+                        peopleNodes.forEach { person ->
+                            OutlinedButton(
+                                onClick = {
+                                    viewModel.linkDecisionToPerson(node.id, person.node.id)
                                     showPeopleDialog = false
                                 },
                                 modifier = Modifier.fillMaxWidth(),
@@ -440,7 +486,7 @@ fun SectionTitle(text: String)
     Text(
         text,
         style = MaterialTheme.typography.labelSmall,
-        color = TactileTheme.Muted,
+            color = TactileTheme.Muted,
         fontWeight = FontWeight.Bold,
         letterSpacing = 1.sp,
     )
@@ -454,8 +500,11 @@ fun SectionTitle(text: String)
  * @param onValueChange Called with the new text whenever the user edits the field.
  */
 @Composable
-fun DecisionField(label: String, value: String, onValueChange: (String) -> Unit)
-{
+fun DecisionField(
+    label: String,
+    value: String,
+    onValueChange: (String) -> Unit,
+) {
     Column {
         SectionTitle(label)
         BasicTextField(
@@ -469,7 +518,7 @@ fun DecisionField(label: String, value: String, onValueChange: (String) -> Unit)
                     if (value.isEmpty())
                     {
                         Text(
-                            stringResource(Res.string.decision_tap_to_add),
+                                stringResource(Res.string.decision_tap_to_add),
                             style = MaterialTheme.typography.bodyMedium,
                             color = TactileTheme.Muted,
                         )

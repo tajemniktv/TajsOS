@@ -6,7 +6,13 @@ package com.tajemniktv.tajsos.ui.components.nodes
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -36,21 +42,22 @@ fun ProjectItem(
     totalItems: Int,
     onLongClick: () -> Unit = {},
     onClick: () -> Unit,
-)
-{
+) {
     Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .combinedClickable(
-                onClick = onClick,
-                onLongClick = onLongClick,
-            ),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .combinedClickable(
+                    onClick = onClick,
+                    onLongClick = onLongClick,
+                ),
         color = TactileTheme.Surface,
         shape = RoundedCornerShape(TactileTheme.RadiusSm),
-        border = androidx.compose.foundation.BorderStroke(
-            1.dp,
-            TactileTheme.Muted.copy(alpha = 0.2f),
-        ),
+        border =
+            androidx.compose.foundation.BorderStroke(
+                1.dp,
+                TactileTheme.Muted.copy(alpha = 0.2f),
+            ),
     ) {
         Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
             Row(
@@ -64,8 +71,7 @@ fun ProjectItem(
                     color = TactileTheme.Primary,
                     fontWeight = androidx.compose.ui.text.font.FontWeight.Black,
                 )
-                if (totalItems > 0)
-                {
+                if (totalItems > 0) {
                     Text(
                         "${(progress * 100).toInt()}%",
                         style = MaterialTheme.typography.labelSmall,
@@ -73,16 +79,14 @@ fun ProjectItem(
                     )
                 }
             }
-            if (project.content.isNotEmpty())
-            {
+            if (project.content.isNotEmpty()) {
                 Text(
                     project.content,
                     style = MaterialTheme.typography.bodySmall,
                     color = TactileTheme.Muted,
                 )
             }
-            if (totalItems > 0)
-            {
+            if (totalItems > 0) {
                 Spacer(modifier = Modifier.height(TactileTheme.SpacingMd))
                 LinearProgressIndicator(
                     progress = { progress },

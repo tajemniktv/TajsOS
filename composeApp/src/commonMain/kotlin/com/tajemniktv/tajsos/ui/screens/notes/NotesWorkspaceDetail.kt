@@ -131,7 +131,12 @@ fun NotesWorkspaceDetail(
             val q = query.trim().lowercase()
             noteItems.filter {
                 (selectedType == null || it.noteType == selectedType) &&
-                    (q.isBlank() || it.title.lowercase().contains(q) || it.content.lowercase().contains(q))
+                    (
+                        q.isBlank() || it.title.lowercase().contains(q) ||
+                            it.content
+                                .lowercase()
+                                .contains(q)
+                    )
             }
         }
 
@@ -139,7 +144,8 @@ fun NotesWorkspaceDetail(
     val linked =
         remember(relations, noteId) {
             relations.mapNotNull { relation ->
-                when (noteId) {
+                when (noteId)
+                {
                     relation.fromNodeId -> relation.toNodeId
                     relation.toNodeId -> relation.fromNodeId
                     else -> null
@@ -168,12 +174,19 @@ fun NotesWorkspaceDetail(
             color = TactileTheme.Surface,
             shape = RoundedCornerShape(TactileTheme.RadiusMd),
         ) {
-            Column(modifier = Modifier.fillMaxSize().padding(12.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Column(
+                modifier = Modifier.fillMaxSize().padding(12.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
                     }
-                    Text("Notes Workspace", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                    Text(
+                        "Notes Workspace",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                    )
                 }
                 OutlinedTextField(
                     value = query,
@@ -183,8 +196,15 @@ fun NotesWorkspaceDetail(
                     leadingIcon = { Icon(Icons.Default.Search, null) },
                     label = { Text("Search notes") },
                 )
-                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    FilterChip(selected = selectedType == null, onClick = { selectedType = null }, label = { Text("ALL") })
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    FilterChip(
+                        selected = selectedType == null,
+                        onClick = { selectedType = null },
+                        label = { Text("ALL") },
+                    )
                     typeOptions.take(8).forEach { type ->
                         FilterChip(
                             selected = selectedType == type,
@@ -204,8 +224,16 @@ fun NotesWorkspaceDetail(
                             shape = RoundedCornerShape(TactileTheme.RadiusSm),
                             color = if (item.id == noteId) TactileTheme.Primary.copy(alpha = 0.18f) else TactileTheme.Background,
                         ) {
-                            Column(modifier = Modifier.padding(10.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                Text(item.title, maxLines = 2, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
+                            Column(
+                                modifier = Modifier.padding(10.dp),
+                                verticalArrangement = Arrangement.spacedBy(4.dp),
+                            ) {
+                                Text(
+                                    item.title,
+                                    maxLines = 2,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.SemiBold,
+                                )
                                 Text(
                                     (item.noteType ?: "note").uppercase(),
                                     style = MaterialTheme.typography.labelSmall,
@@ -227,7 +255,11 @@ fun NotesWorkspaceDetail(
                 modifier = Modifier.fillMaxSize().padding(20.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         AssistChip(
                             onClick = { isEditMode = false },
@@ -243,7 +275,12 @@ fun NotesWorkspaceDetail(
                     if (isEditMode) {
                         AssistChip(
                             onClick = {
-                                viewModel.updateNode(note.copy(title = titleDraft, content = contentDraft))
+                                viewModel.updateNode(
+                                    note.copy(
+                                        title = titleDraft,
+                                        content = contentDraft,
+                                    ),
+                                )
                                 isEditMode = false
                             },
                             label = { Text("SAVE") },
@@ -267,8 +304,15 @@ fun NotesWorkspaceDetail(
                         label = { Text("Content") },
                     )
                 } else {
-                    Text(note.title, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.ExtraBold)
-                    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(
+                        note.title,
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.ExtraBold,
+                    )
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
                         AssistChip(
                             onClick = {},
                             label = { Text((note.noteType ?: "note").uppercase()) },
@@ -278,7 +322,13 @@ fun NotesWorkspaceDetail(
                             AssistChip(onClick = {}, label = { Text(tag.name) })
                         }
                     }
-                    Column(modifier = Modifier.fillMaxWidth().weight(1f).verticalScroll(rememberScrollState())) {
+                    Column(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .weight(1f)
+                                .verticalScroll(rememberScrollState()),
+                    ) {
                         BasicTextField(
                             value = note.content,
                             onValueChange = {},
@@ -302,7 +352,11 @@ fun NotesWorkspaceDetail(
             ) {
                 Text("Area: $areaName", color = TactileTheme.Text)
                 Text("Project: $projectName", color = TactileTheme.Text)
-                Text("Updated: $updatedAt", color = TactileTheme.Muted, style = MaterialTheme.typography.bodySmall)
+                Text(
+                    "Updated: $updatedAt",
+                    color = TactileTheme.Muted,
+                    style = MaterialTheme.typography.bodySmall,
+                )
             }
 
             SidePanelCard(
@@ -322,7 +376,11 @@ fun NotesWorkspaceDetail(
                     }
                 }
                 Spacer(Modifier.height(8.dp))
-                AssistChip(onClick = onNavigateToSearch, label = { Text("Find more links") }, leadingIcon = { Icon(Icons.Default.Link, null) })
+                AssistChip(
+                    onClick = onNavigateToSearch,
+                    label = { Text("Find more links") },
+                    leadingIcon = { Icon(Icons.Default.Link, null) },
+                )
             }
 
             SidePanelCard(
@@ -357,8 +415,15 @@ fun NotesWorkspaceDetail(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            Text(label.take(19), color = TactileTheme.Text, style = MaterialTheme.typography.bodySmall)
-                            AssistChip(onClick = { viewModel.restoreSnapshot(snapshot) }, label = { Text("Restore") })
+                            Text(
+                                label.take(19),
+                                color = TactileTheme.Text,
+                                style = MaterialTheme.typography.bodySmall,
+                            )
+                            AssistChip(
+                                onClick = { viewModel.restoreSnapshot(snapshot) },
+                                label = { Text("Restore") },
+                            )
                         }
                     }
                 }
@@ -378,10 +443,20 @@ private fun SidePanelCard(
         color = TactileTheme.Surface,
         shape = RoundedCornerShape(TactileTheme.RadiusMd),
     ) {
-        Column(modifier = Modifier.fillMaxWidth().padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
                 Icon(icon, null, tint = TactileTheme.Primary)
-                Text(title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+                Text(
+                    title,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold,
+                )
             }
             content()
         }

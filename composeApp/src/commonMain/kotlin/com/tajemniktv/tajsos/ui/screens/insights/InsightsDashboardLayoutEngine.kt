@@ -4,27 +4,25 @@
 
 package com.tajemniktv.tajsos.ui.screens.insights
 
-fun buildInsightsDashboardPlan(
-    surface: com.tajemniktv.tajsos.ui.screens.insights.InsightsDashboardSurface,
-): com.tajemniktv.tajsos.ui.screens.insights.InsightsDashboardPlan =
+fun buildInsightsDashboardPlan(surface: InsightsDashboardSurface): InsightsDashboardPlan =
     when (surface)
     {
-        com.tajemniktv.tajsos.ui.screens.insights.InsightsDashboardSurface.MOBILE -> {
-            com.tajemniktv.tajsos.ui.screens.insights.InsightsDashboardPlan(
+        InsightsDashboardSurface.MOBILE -> {
+            InsightsDashboardPlan(
                 primary =
                     listOf(
-                        com.tajemniktv.tajsos.ui.screens.insights.InsightsDashboardBlock(
+                        InsightsDashboardBlock(
                             "insights_main",
                         ),
                     ),
             )
         }
 
-        com.tajemniktv.tajsos.ui.screens.insights.InsightsDashboardSurface.DESKTOP -> {
-            com.tajemniktv.tajsos.ui.screens.insights.InsightsDashboardPlan(
+        InsightsDashboardSurface.DESKTOP -> {
+            InsightsDashboardPlan(
                 primary =
                     listOf(
-                        com.tajemniktv.tajsos.ui.screens.insights.InsightsDashboardBlock(
+                        InsightsDashboardBlock(
                             "insights_main",
                         ),
                     ),

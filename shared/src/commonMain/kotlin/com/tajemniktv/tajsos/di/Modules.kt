@@ -7,11 +7,13 @@ package com.tajemniktv.tajsos.di
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import com.tajemniktv.tajsos.calendar.CalendarManager
-import com.tajemniktv.tajsos.data.*
+import com.tajemniktv.tajsos.data.AppDatabase
+import com.tajemniktv.tajsos.data.AppRepository
+import com.tajemniktv.tajsos.data.PreferencesRepository
 import com.tajemniktv.tajsos.ui.MainViewModel
-import io.ktor.client.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.serialization.kotlinx.json.*
+import io.ktor.client.HttpClient
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
 /**
@@ -81,6 +83,5 @@ class SharedModule(
     /**
      *
      */
-    fun createViewModel(): MainViewModel =
-        MainViewModel(repository, preferencesRepository, calendarManager)
+    fun createViewModel(): MainViewModel = MainViewModel(repository, preferencesRepository, calendarManager)
 }

@@ -177,21 +177,19 @@ class NodeCommands(
                     )
                 }
 
-                "area"    ->
-                {
+                "area" -> {
                     repository.insertLifeItem(
-                            kind = ItemKind.AREA,
+                        kind = ItemKind.AREA,
                         title = title,
                         content = content,
                         inboxState = inboxState ?: ItemKind.AREA.defaultInboxState(),
                     )
                 }
 
-                else      ->
-                {
-                        repository.insertNode(
-                            NodeEntity(
-                                title = title,
+                else -> {
+                    repository.insertNode(
+                        NodeEntity(
+                            title = title,
                             content = content,
                             type = type,
                             projectId = projectId,

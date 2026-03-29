@@ -11,7 +11,8 @@ import com.tajemniktv.tajsos.ui.components.sidebar.SidebarSection
  * Resolves dedicated contextual sidebar section sets for main/root screens.
  */
 internal fun subSidebarSectionsFor(screen: Screen): List<SidebarSection>? =
-    when (screen) {
+    when (screen)
+    {
         Screen.Dashboard -> dashboardSubSidebarSections()
         Screen.Inbox -> inboxSubSidebarSections()
         Screen.Search -> searchSubSidebarSections()

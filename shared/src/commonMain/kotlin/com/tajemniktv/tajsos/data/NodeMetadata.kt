@@ -127,8 +127,7 @@ fun NodeEntity.areaMetadataOrNull(): AreaMetadata? = metadataEnvelopeOrNull()?.a
 /**
  * Returns true when this node is associated with the provided [domain].
  */
-fun NodeEntity.isAssociatedWithDomain(domain: DomainKind): Boolean =
-    areaMetadataOrNull()?.associatedDomains?.contains(domain) == true
+fun NodeEntity.isAssociatedWithDomain(domain: DomainKind): Boolean = areaMetadataOrNull()?.associatedDomains?.contains(domain) == true
 
 /**
  * Returns a copy with [domain] added to area-domain associations.

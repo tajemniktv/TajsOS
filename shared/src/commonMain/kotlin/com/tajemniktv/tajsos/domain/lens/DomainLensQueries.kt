@@ -145,9 +145,11 @@ object DomainLensQueries {
         val content = node.node.content.lowercase()
         val hasFinanceTag = node.tags.any { it.normalizedName in financeTagMarkers }
         val mentionsFinanceTitle = financeTitleKeywords.any { keyword -> title.contains(keyword) }
-        val mentionsFinanceContent = financeTitleKeywords.any { keyword -> content.contains(keyword) }
+        val mentionsFinanceContent =
+            financeTitleKeywords.any { keyword -> content.contains(keyword) }
         val financeMaintenance = node.node.maintenanceType in financeMaintenanceTypes
-        val referenceFinanceNote = node.node.noteType == "reference" && (mentionsFinanceTitle || hasFinanceTag)
+        val referenceFinanceNote =
+            node.node.noteType == "reference" && (mentionsFinanceTitle || hasFinanceTag)
         return hasFinanceTag || mentionsFinanceTitle || mentionsFinanceContent || financeMaintenance || referenceFinanceNote
     }
 

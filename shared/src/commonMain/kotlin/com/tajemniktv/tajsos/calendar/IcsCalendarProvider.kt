@@ -6,10 +6,12 @@ package com.tajemniktv.tajsos.calendar
 
 import com.tajemniktv.tajsos.data.CalendarEventEntity
 import com.tajemniktv.tajsos.data.CalendarProviderEntity
-import io.ktor.client.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import kotlinx.datetime.*
+import io.ktor.client.HttpClient
+import io.ktor.client.request.get
+import io.ktor.client.statement.bodyAsText
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
 import kotlin.time.Clock
 import kotlin.time.Instant
 
@@ -201,13 +203,13 @@ private class IcsEventBuilder {
     }
 
     /**
-             * Decode ICS escape sequences in a property value.
-             *
-             * Replaces ICS escapes (`\\`, `\;`, `\,`, `\n`, `\N`) with their corresponding characters.
-             *
-             * @param value Raw ICS-escaped string.
-             * @return The string with ICS escape sequences unescaped.
-             */
+     * Decode ICS escape sequences in a property value.
+     *
+     * Replaces ICS escapes (`\\`, `\;`, `\,`, `\n`, `\N`) with their corresponding characters.
+     *
+     * @param value Raw ICS-escaped string.
+     * @return The string with ICS escape sequences unescaped.
+     */
     private fun unescapeIcs(value: String): String =
         value
             .replace("\\\\", "\\")

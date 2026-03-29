@@ -14,8 +14,8 @@ data class NotesDashboardBlock(
 )
 
 data class NotesDashboardPlan(
-    val primary: List<com.tajemniktv.tajsos.ui.screens.notes.NotesDashboardBlock>,
-    val secondary: List<com.tajemniktv.tajsos.ui.screens.notes.NotesDashboardBlock> = emptyList(),
+    val primary: List<NotesDashboardBlock>,
+    val secondary: List<NotesDashboardBlock> = emptyList(),
 )
 
 data class NotesDashboardContext(
@@ -23,4 +23,4 @@ data class NotesDashboardContext(
     val onNoteClick: (Long) -> Unit,
 )
 
-typealias NotesDashboardBlockRenderer = @Composable (com.tajemniktv.tajsos.ui.screens.notes.NotesDashboardContext) -> Unit
+typealias NotesDashboardBlockRenderer = @Composable (NotesDashboardContext) -> Unit

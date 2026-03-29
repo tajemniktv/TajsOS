@@ -27,6 +27,7 @@ val AccentGreen = Color(0xFF30D158)
 val AccentRed = Color(0xFFFF5A7A)
 val AccentBlue = Color(0xFF6EA8FF)
 val AccentCyan = Color(0xFF22D3EE)
+
 // Legacy aliases kept for compatibility with existing screens.
 val AccentSuccess = AccentGreen
 val AccentError = AccentRed

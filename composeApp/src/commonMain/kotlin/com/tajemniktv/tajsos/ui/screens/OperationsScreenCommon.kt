@@ -20,7 +20,14 @@ import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.StringResource
-import tajsos.composeapp.generated.resources.*
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.view_all
+import tajsos.composeapp.generated.resources.view_inbox
+import tajsos.composeapp.generated.resources.view_overdue
+import tajsos.composeapp.generated.resources.view_queue
+import tajsos.composeapp.generated.resources.view_recurring
+import tajsos.composeapp.generated.resources.view_resolved
+import tajsos.composeapp.generated.resources.view_review
 import kotlin.time.Instant
 
 internal enum class OpenLoopView(

@@ -1,11 +1,17 @@
 /*
- * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved. 
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
 package com.tajemniktv.tajsos.ui.components.layout
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -32,12 +38,17 @@ import com.tajemniktv.tajsos.ui.theme.TactileTheme
  * @param color The color used for the icon and label tint and to derive the surface background and border.
  * @param onClick Callback invoked when the card is clicked.
  */
+
+/**
+ *
+ */
 @Composable
-        /**
-         *
-         */
-fun ProtocolTrigger(label: String, icon: ImageVector, color: Color, onClick: () -> Unit)
-{
+fun ProtocolTrigger(
+    label: String,
+    icon: ImageVector,
+    color: Color,
+    onClick: () -> Unit,
+) {
     Surface(
         onClick = onClick,
         modifier = Modifier.width(120.dp),

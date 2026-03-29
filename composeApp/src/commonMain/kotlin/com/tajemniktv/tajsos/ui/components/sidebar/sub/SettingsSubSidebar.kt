@@ -5,8 +5,8 @@
 package com.tajemniktv.tajsos.ui.components.sidebar.sub
 
 import com.tajemniktv.tajsos.ui.Screen
-import com.tajemniktv.tajsos.ui.components.sidebar.SidebarSection
 import com.tajemniktv.tajsos.ui.components.sidebar.SidebarItem
+import com.tajemniktv.tajsos.ui.components.sidebar.SidebarSection
 
 internal fun settingsSubSidebarSections(): List<SidebarSection> =
     listOf(

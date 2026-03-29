@@ -4,27 +4,25 @@
 
 package com.tajemniktv.tajsos.ui.screens.projects
 
-fun buildProjectsDashboardPlan(
-    surface: com.tajemniktv.tajsos.ui.screens.projects.ProjectsDashboardSurface,
-): com.tajemniktv.tajsos.ui.screens.projects.ProjectsDashboardPlan =
+fun buildProjectsDashboardPlan(surface: ProjectsDashboardSurface): ProjectsDashboardPlan =
     when (surface)
     {
-        com.tajemniktv.tajsos.ui.screens.projects.ProjectsDashboardSurface.MOBILE -> {
-            com.tajemniktv.tajsos.ui.screens.projects.ProjectsDashboardPlan(
+        ProjectsDashboardSurface.MOBILE -> {
+            ProjectsDashboardPlan(
                 primary =
                     listOf(
-                        com.tajemniktv.tajsos.ui.screens.projects.ProjectsDashboardBlock(
+                        ProjectsDashboardBlock(
                             "projects_main",
                         ),
                     ),
             )
         }
 
-        com.tajemniktv.tajsos.ui.screens.projects.ProjectsDashboardSurface.DESKTOP -> {
-            com.tajemniktv.tajsos.ui.screens.projects.ProjectsDashboardPlan(
+        ProjectsDashboardSurface.DESKTOP -> {
+            ProjectsDashboardPlan(
                 primary =
                     listOf(
-                        com.tajemniktv.tajsos.ui.screens.projects.ProjectsDashboardBlock(
+                        ProjectsDashboardBlock(
                             "projects_main",
                         ),
                     ),

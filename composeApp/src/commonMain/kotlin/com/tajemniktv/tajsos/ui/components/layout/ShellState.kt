@@ -35,8 +35,9 @@ class AppShellState(
     var notificationsExpanded by mutableStateOf(false)
 
     val isSidebarExpandedPresentation: Boolean
-        get() = sidebarMode == SidebarMode.EXPANDED ||
-            (sidebarMode == SidebarMode.HOVER_EXPAND && hoverExpanded)
+        get() =
+            sidebarMode == SidebarMode.EXPANDED ||
+                (sidebarMode == SidebarMode.HOVER_EXPAND && hoverExpanded)
 }
 
 /**

@@ -6,7 +6,27 @@ package com.tajemniktv.tajsos.ui.lens
 
 import com.tajemniktv.tajsos.ui.Screen
 import org.jetbrains.compose.resources.StringResource
-import tajsos.composeapp.generated.resources.*
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.lens_decision_subtitle
+import tajsos.composeapp.generated.resources.lens_decision_title
+import tajsos.composeapp.generated.resources.lens_finance_subtitle
+import tajsos.composeapp.generated.resources.lens_finance_title
+import tajsos.composeapp.generated.resources.lens_reference_subtitle
+import tajsos.composeapp.generated.resources.lens_reference_title
+import tajsos.composeapp.generated.resources.lens_unresolved_subtitle
+import tajsos.composeapp.generated.resources.lens_unresolved_title
+import tajsos.composeapp.generated.resources.systems_summary_capacity
+import tajsos.composeapp.generated.resources.systems_summary_education
+import tajsos.composeapp.generated.resources.systems_summary_finances
+import tajsos.composeapp.generated.resources.systems_summary_health
+import tajsos.composeapp.generated.resources.systems_summary_identity
+import tajsos.composeapp.generated.resources.systems_summary_open_loops
+import tajsos.composeapp.generated.resources.systems_summary_places
+import tajsos.composeapp.generated.resources.systems_summary_protocols
+import tajsos.composeapp.generated.resources.systems_summary_relationships
+import tajsos.composeapp.generated.resources.systems_summary_rules
+import tajsos.composeapp.generated.resources.systems_summary_time_architecture
+import tajsos.composeapp.generated.resources.systems_summary_vaults
 
 /**
  * Typed UI copy for a top-level lens surface.
@@ -56,7 +76,10 @@ object LensUiContract {
         listOf(
             SystemsModuleCopy(Screen.OpenLoops, Res.string.systems_summary_open_loops),
             SystemsModuleCopy(Screen.Protocols, Res.string.systems_summary_protocols),
-            SystemsModuleCopy(Screen.TimeArchitecture, Res.string.systems_summary_time_architecture),
+            SystemsModuleCopy(
+                Screen.TimeArchitecture,
+                Res.string.systems_summary_time_architecture,
+            ),
             SystemsModuleCopy(Screen.Places, Res.string.systems_summary_places),
             SystemsModuleCopy(Screen.Finances, Res.string.systems_summary_finances),
             SystemsModuleCopy(Screen.Health, Res.string.systems_summary_health),

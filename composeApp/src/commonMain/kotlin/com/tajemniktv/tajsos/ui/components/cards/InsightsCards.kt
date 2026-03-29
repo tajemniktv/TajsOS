@@ -13,8 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -25,7 +23,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.AreaHealthMetrics
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
@@ -45,7 +42,6 @@ import tajsos.composeapp.generated.resources.insights_efficiency_chaos
 import tajsos.composeapp.generated.resources.insights_focus_execution
 import tajsos.composeapp.generated.resources.insights_intake_dynamics
 import tajsos.composeapp.generated.resources.insights_lifestyle_correlations
-import tajsos.composeapp.generated.resources.insights_needs_attention
 import tajsos.composeapp.generated.resources.insights_new_inbox_items
 import tajsos.composeapp.generated.resources.insights_peak_completions
 import tajsos.composeapp.generated.resources.insights_peak_focus

@@ -1,23 +1,22 @@
 /*
- * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved. 
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
 package com.tajemniktv.tajsos.ui.components.modes
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocalDrink
 import androidx.compose.material.icons.filled.MedicalServices
 import androidx.compose.material.icons.filled.Restaurant
-import androidx.compose.material3.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.components.cards.BasicSurvivalCard
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
@@ -34,7 +33,7 @@ import com.tajemniktv.tajsos.ui.theme.TactileTheme
 fun RecoveryBasicsBlock(
     onMedsClick: () -> Unit,
     onHydrationClick: () -> Unit,
-    onFoodClick: () -> Unit
+    onFoodClick: () -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
         Text(
@@ -42,34 +41,33 @@ fun RecoveryBasicsBlock(
             style = MaterialTheme.typography.labelSmall,
             color = TactileTheme.Muted,
             fontWeight = FontWeight.Bold,
-            letterSpacing = 1.sp
+            letterSpacing = 1.sp,
         )
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)
+            horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
         ) {
             BasicSurvivalCard(
                 label = "MEDS",
                 icon = Icons.Default.MedicalServices,
                 color = TactileTheme.Error,
                 onClick = onMedsClick,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             )
             BasicSurvivalCard(
                 label = "WATER",
                 icon = Icons.Default.LocalDrink,
                 color = TactileTheme.Accent,
                 onClick = onHydrationClick,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             )
             BasicSurvivalCard(
                 label = "FOOD",
                 icon = Icons.Default.Restaurant,
                 color = TactileTheme.Success,
                 onClick = onFoodClick,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             )
         }
     }
 }
-

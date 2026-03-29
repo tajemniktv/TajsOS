@@ -47,7 +47,18 @@ import com.tajemniktv.tajsos.ui.lens.LensUiContract
 import com.tajemniktv.tajsos.ui.screens.maintenanceTypes
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
-import tajsos.composeapp.generated.resources.*
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.finance_chip_expense
+import tajsos.composeapp.generated.resources.finance_chip_live
+import tajsos.composeapp.generated.resources.finance_chip_sync_ready
+import tajsos.composeapp.generated.resources.finance_deadlines_chip
+import tajsos.composeapp.generated.resources.finance_empty_queue
+import tajsos.composeapp.generated.resources.finance_header_tracking
+import tajsos.composeapp.generated.resources.finance_item_action
+import tajsos.composeapp.generated.resources.finance_item_note
+import tajsos.composeapp.generated.resources.finance_item_record
+import tajsos.composeapp.generated.resources.finance_metrics_reference_count
+import tajsos.composeapp.generated.resources.finance_queue_label
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -57,7 +68,7 @@ import kotlin.math.roundToInt
  * @param context Finance dashboard state and callbacks used to project header metadata.
  */
 @Composable
-internal fun renderFinanceHeaderBlock(context: com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardContext) {
+internal fun renderFinanceHeaderBlock(context: FinanceDashboardContext) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = TactileTheme.Surface.copy(alpha = 0.6f),
@@ -89,8 +100,14 @@ internal fun renderFinanceHeaderBlock(context: com.tajemniktv.tajsos.ui.screens.
                 color = TactileTheme.Muted,
             )
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                AssistChip(onClick = {}, label = { Text(stringResource(Res.string.finance_chip_live)) })
-                AssistChip(onClick = {}, label = { Text(stringResource(Res.string.finance_chip_sync_ready)) })
+                AssistChip(
+                    onClick = {},
+                    label = { Text(stringResource(Res.string.finance_chip_live)) },
+                )
+                AssistChip(
+                    onClick = {},
+                    label = { Text(stringResource(Res.string.finance_chip_sync_ready)) },
+                )
                 AssistChip(
                     onClick = {},
                     label = { Text(stringResource(Res.string.finance_chip_expense)) },
@@ -108,7 +125,7 @@ internal fun renderFinanceHeaderBlock(context: com.tajemniktv.tajsos.ui.screens.
 }
 
 @Composable
-internal fun renderFinanceMetricsBlock(context: com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardContext) {
+internal fun renderFinanceMetricsBlock(context: FinanceDashboardContext) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
@@ -143,7 +160,7 @@ internal fun renderFinanceMetricsBlock(context: com.tajemniktv.tajsos.ui.screens
                     style = MaterialTheme.typography.bodySmall,
                     color = TactileTheme.Muted,
                 )
-                com.tajemniktv.tajsos.ui.screens.finance.FinanceMiniBars(
+                FinanceMiniBars(
                     values = context.bars,
                     bigLast = false,
                 )
@@ -170,7 +187,7 @@ internal fun renderFinanceMetricsBlock(context: com.tajemniktv.tajsos.ui.screens
                     style = MaterialTheme.typography.bodySmall,
                     color = TactileTheme.Muted,
                 )
-                com.tajemniktv.tajsos.ui.screens.finance.FinanceMiniBars(
+                FinanceMiniBars(
                     values = context.bars,
                     bigLast = true,
                 )
@@ -180,7 +197,7 @@ internal fun renderFinanceMetricsBlock(context: com.tajemniktv.tajsos.ui.screens
 }
 
 @Composable
-internal fun renderFinanceActivityBlock(context: com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardContext) {
+internal fun renderFinanceActivityBlock(context: FinanceDashboardContext) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = TactileTheme.Surface.copy(alpha = 0.7f),
@@ -224,7 +241,7 @@ internal fun renderFinanceActivityBlock(context: com.tajemniktv.tajsos.ui.screen
                     }
                     Text(
                         formatCurrency(
-                            com.tajemniktv.tajsos.ui.screens.finance.financeSyntheticTxn(
+                            financeSyntheticTxn(
                                 item.node.title,
                             ),
                         ),
@@ -239,7 +256,7 @@ internal fun renderFinanceActivityBlock(context: com.tajemniktv.tajsos.ui.screen
 }
 
 @Composable
-internal fun renderFinanceInsightsBlock(context: com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardContext) {
+internal fun renderFinanceInsightsBlock(context: FinanceDashboardContext) {
     val snapshot =
         context.viewModel.maintenanceSnapshot
             .collectAsState()
@@ -299,7 +316,7 @@ internal fun renderFinanceInsightsBlock(context: com.tajemniktv.tajsos.ui.screen
 }
 
 @Composable
-internal fun renderFinanceVaultBlock(context: com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardContext) {
+internal fun renderFinanceVaultBlock(context: FinanceDashboardContext) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = TactileTheme.Surface.copy(alpha = 0.7f),
@@ -330,7 +347,14 @@ internal fun renderFinanceVaultBlock(context: com.tajemniktv.tajsos.ui.screens.f
             }
             AssistChip(
                 onClick = {},
-                label = { Text(stringResource(Res.string.finance_deadlines_chip, context.deadlineItems.size)) },
+                label = {
+                    Text(
+                        stringResource(
+                            Res.string.finance_deadlines_chip,
+                            context.deadlineItems.size,
+                        ),
+                    )
+                },
                 leadingIcon = { Icon(Icons.Default.Sync, null, modifier = Modifier.size(14.dp)) },
             )
         }
@@ -338,7 +362,7 @@ internal fun renderFinanceVaultBlock(context: com.tajemniktv.tajsos.ui.screens.f
 }
 
 @Composable
-internal fun renderFinanceQueueControlsBlock(context: com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardContext) {
+internal fun renderFinanceQueueControlsBlock(context: FinanceDashboardContext) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = TactileTheme.Surface.copy(alpha = 0.7f),
@@ -359,7 +383,7 @@ internal fun renderFinanceQueueControlsBlock(context: com.tajemniktv.tajsos.ui.s
                 horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
                 verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
             ) {
-                com.tajemniktv.tajsos.ui.screens.finance.FinanceMaintenanceView.entries.forEach { view ->
+                FinanceMaintenanceView.entries.forEach { view ->
                     FilterChip(
                         selected = context.maintenanceView == view,
                         onClick = { context.onMaintenanceViewChange(view) },
@@ -372,13 +396,14 @@ internal fun renderFinanceQueueControlsBlock(context: com.tajemniktv.tajsos.ui.s
 }
 
 @Composable
-internal fun renderFinanceQueueListBlock(context: com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardContext) {
+internal fun renderFinanceQueueListBlock(context: FinanceDashboardContext) {
     if (context.itemsInView.isEmpty()) {
         EmptyState(
-            message = stringResource(
-                Res.string.finance_empty_queue,
-                stringResource(context.maintenanceView.label).lowercase(),
-            ),
+            message =
+                stringResource(
+                    Res.string.finance_empty_queue,
+                    stringResource(context.maintenanceView.label).lowercase(),
+                ),
         )
         return
     }
@@ -409,12 +434,25 @@ internal fun renderFinanceQueueListBlock(context: com.tajemniktv.tajsos.ui.scree
 
 @Composable
 private fun financeItemLabel(node: NodeEntity): String =
-    when {
-        node.isTaskItem() -> node.maintenanceType?.uppercase() ?: stringResource(Res.string.finance_item_action)
-        node.isRecordItem() -> stringResource(Res.string.finance_item_record)
-        node.isNoteItem() -> stringResource(Res.string.finance_item_note)
-        else -> node.type.uppercase()
-    }
+    when
+        {
+            node.isTaskItem() -> {
+                node.maintenanceType?.uppercase()
+                    ?: stringResource(Res.string.finance_item_action)
+            }
+
+            node.isRecordItem() -> {
+                stringResource(Res.string.finance_item_record)
+            }
+
+            node.isNoteItem() -> {
+                stringResource(Res.string.finance_item_note)
+            }
+
+            else -> {
+                node.type.uppercase()
+            }
+        }
 
 @Composable
 private fun FinanceMiniBars(

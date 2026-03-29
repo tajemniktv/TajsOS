@@ -14,8 +14,8 @@ data class InboxDashboardBlock(
 )
 
 data class InboxDashboardPlan(
-    val primary: List<com.tajemniktv.tajsos.ui.screens.inbox.InboxDashboardBlock>,
-    val secondary: List<com.tajemniktv.tajsos.ui.screens.inbox.InboxDashboardBlock> = emptyList(),
+    val primary: List<InboxDashboardBlock>,
+    val secondary: List<InboxDashboardBlock> = emptyList(),
 )
 
 data class InboxDashboardContext(
@@ -23,4 +23,4 @@ data class InboxDashboardContext(
     val onEditNode: (Long) -> Unit,
 )
 
-typealias InboxDashboardBlockRenderer = @Composable (com.tajemniktv.tajsos.ui.screens.inbox.InboxDashboardContext) -> Unit
+typealias InboxDashboardBlockRenderer = @Composable (InboxDashboardContext) -> Unit

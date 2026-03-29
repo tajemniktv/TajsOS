@@ -5,16 +5,24 @@
 package com.tajemniktv.tajsos.ui.screens.insights
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,22 +31,12 @@ import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.EventLogEntity
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.components.cards.AdvancedSystemCard
-import com.tajemniktv.tajsos.ui.components.cards.AreaHealthInsightCard
-import com.tajemniktv.tajsos.ui.components.cards.AreaHealthSystemCard
-import com.tajemniktv.tajsos.ui.components.cards.AutoReviewCard
-import com.tajemniktv.tajsos.ui.components.cards.CompletionCard
-import com.tajemniktv.tajsos.ui.components.cards.CorrelationsCard
-import com.tajemniktv.tajsos.ui.components.cards.EfficiencyCard
-import com.tajemniktv.tajsos.ui.components.cards.FocusInsightCard
-import com.tajemniktv.tajsos.ui.components.cards.InsightPatternCard
-import com.tajemniktv.tajsos.ui.components.cards.StateAveragesCard
-import com.tajemniktv.tajsos.ui.components.cards.VaultInsightCard
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
-import tajsos.composeapp.generated.resources.*
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.insights_needs_attention
 import kotlin.time.Instant
 
 /**

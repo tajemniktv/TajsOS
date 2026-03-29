@@ -4,8 +4,8 @@
 
 package com.tajemniktv.tajsos.ui.components.sidebar.sub
 
-import com.tajemniktv.tajsos.ui.components.sidebar.SidebarSection
 import com.tajemniktv.tajsos.ui.components.sidebar.SidebarItem
+import com.tajemniktv.tajsos.ui.components.sidebar.SidebarSection
 
 /**
  * Builds the standard 3-section contextual sidebar model.

@@ -97,8 +97,20 @@ data class ProfileEditorState(
         )
 
     fun initials(): String {
-        val first = firstName.trim().firstOrNull()?.uppercaseChar()?.toString().orEmpty()
-        val second = lastName.trim().firstOrNull()?.uppercaseChar()?.toString().orEmpty()
+        val first =
+            firstName
+                .trim()
+                .firstOrNull()
+                ?.uppercaseChar()
+                ?.toString()
+                .orEmpty()
+        val second =
+            lastName
+                .trim()
+                .firstOrNull()
+                ?.uppercaseChar()
+                ?.toString()
+                .orEmpty()
         return (first + second).ifBlank { nickname.trim().take(2).uppercase() }
     }
 
@@ -144,4 +156,3 @@ data class ProfileEditorState(
 internal fun UserProfile.withoutUpdatedAt(): UserProfile = copy(updatedAt = 0L)
 
 internal val EMAIL_REGEX: Regex = Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")
-

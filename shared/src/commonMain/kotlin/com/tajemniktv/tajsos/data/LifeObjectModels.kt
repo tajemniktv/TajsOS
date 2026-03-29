@@ -189,7 +189,8 @@ fun ItemKind.defaultInboxState(): Boolean = this != ItemKind.PROJECT && this != 
  * screens and calculators continue to read `NodeEntity.type`.
  */
 fun legacyNodeTypeToItemKind(type: String?): ItemKind? =
-    when (type) {
+    when (type)
+    {
         "task",
         "open_loop",
         "maintenance",
@@ -207,8 +208,11 @@ fun legacyNodeTypeToItemKind(type: String?): ItemKind? =
         -> ItemKind.NOTE
 
         "record" -> ItemKind.RECORD
+
         "project" -> ItemKind.PROJECT
+
         "area" -> ItemKind.AREA
+
         else -> null
     }
 
@@ -313,7 +317,6 @@ private fun NodeEntity.tagsHintContainsRelationship(): Boolean =
             }
         }
 
-
 /**
  * Matches a UI-facing kind filter against the collapsed LifeOS object model.
  *
@@ -321,7 +324,8 @@ private fun NodeEntity.tagsHintContainsRelationship(): Boolean =
  * Legacy idea/resource/unresolved-work variants continue to resolve through the smaller primary object set.
  */
 fun NodeEntity.matchesItemFilter(filter: String?): Boolean =
-    when (filter) {
+    when (filter)
+    {
         null -> true
         "task" -> isTaskItem()
         "note" -> isNoteItem()
@@ -340,11 +344,14 @@ fun taskStateFromNodeStatus(value: String?): TaskState? = TaskState.fromStorageK
  * Resolves the canonical project state from current node status values.
  */
 fun projectStateFromNodeStatus(value: String?): ProjectState? =
-    when (value) {
+    when (value)
+    {
         "done",
         "completed",
         -> ProjectState.COMPLETED
+
         "archived" -> ProjectState.ARCHIVED
+
         else -> ProjectState.fromStorageKey(value)
     }
 
@@ -372,7 +379,8 @@ fun TaskState.toNodeStatus(): String = storageKey
  * Converts a project state into the existing node status vocabulary.
  */
 fun ProjectState.toNodeStatus(): String =
-    when (this) {
+    when (this)
+    {
         ProjectState.ACTIVE -> "active"
         ProjectState.ON_HOLD -> "on_hold"
         ProjectState.SOMEDAY -> "someday"

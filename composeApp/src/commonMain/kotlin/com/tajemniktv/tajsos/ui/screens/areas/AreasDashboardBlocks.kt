@@ -13,17 +13,16 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
@@ -69,12 +68,12 @@ import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.add_suggested_areas
 import tajsos.composeapp.generated.resources.areas_balance
 import tajsos.composeapp.generated.resources.areas_create_first
-import tajsos.composeapp.generated.resources.areas_dominant
-import tajsos.composeapp.generated.resources.areas_distribution
 import tajsos.composeapp.generated.resources.areas_dialog_cancel
 import tajsos.composeapp.generated.resources.areas_dialog_create
 import tajsos.composeapp.generated.resources.areas_dialog_name
 import tajsos.composeapp.generated.resources.areas_dialog_new
+import tajsos.composeapp.generated.resources.areas_distribution
+import tajsos.composeapp.generated.resources.areas_dominant
 import tajsos.composeapp.generated.resources.areas_empty
 import tajsos.composeapp.generated.resources.areas_enter
 import tajsos.composeapp.generated.resources.areas_load
@@ -83,7 +82,6 @@ import tajsos.composeapp.generated.resources.areas_new
 import tajsos.composeapp.generated.resources.areas_open_responsibilities
 import tajsos.composeapp.generated.resources.areas_projects_active
 import tajsos.composeapp.generated.resources.areas_recent_activity
-import tajsos.composeapp.generated.resources.areas_status
 import tajsos.composeapp.generated.resources.areas_title
 import tajsos.composeapp.generated.resources.areas_upcoming_deadlines
 import tajsos.composeapp.generated.resources.use_suggested_areas
@@ -148,7 +146,8 @@ internal fun AreasMainBlock(
             }
         } else {
             val dominantName = areas.find { it.id == areaSnapshot.dominantAreaId }?.title ?: "-"
-            val overloadedCount = areaSnapshot.areas.count { it.status == "overloaded" || it.status == "on_fire" }
+            val overloadedCount =
+                areaSnapshot.areas.count { it.status == "overloaded" || it.status == "on_fire" }
             val neglectedCount = areaSnapshot.disappearingAreaIds.size
             AreaTopSummary(
                 dominantArea = dominantName,
@@ -159,9 +158,14 @@ internal fun AreasMainBlock(
                 areas = areas,
                 metricsById = metricsById,
             )
-            AreasCards(areas = areas, allProjects = allProjects, metricsById = metricsById, onOpen = { id ->
-                onNavigateTo(routeForAreaDetail(id))
-            })
+            AreasCards(
+                areas = areas,
+                allProjects = allProjects,
+                metricsById = metricsById,
+                onOpen = { id ->
+                    onNavigateTo(routeForAreaDetail(id))
+                },
+            )
         }
     }
 
@@ -187,24 +191,65 @@ private fun AreaTopSummary(
     metricsById: Map<Long, AreaHealthMetrics>,
 ) {
     Surface(color = TactileTheme.Surface, shape = RoundedCornerShape(TactileTheme.RadiusMd)) {
-        Column(modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingMd), verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
-            Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd), verticalAlignment = Alignment.CenterVertically) {
-                SummaryChip(Icons.Default.Layers, stringResource(Res.string.areas_dominant), dominantArea)
-                SummaryChip(Icons.AutoMirrored.Filled.TrendingUp, stringResource(Res.string.areas_balance), "$balanceLabel ($balanceScore)")
-                SummaryChip(Icons.Default.Warning, stringResource(Res.string.areas_neglected), neglectedCount.toString())
-                SummaryChip(Icons.Default.Speed, stringResource(Res.string.areas_load), overloadedCount.toString())
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingMd),
+            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                SummaryChip(
+                    Icons.Default.Layers,
+                    stringResource(Res.string.areas_dominant),
+                    dominantArea,
+                )
+                SummaryChip(
+                    Icons.AutoMirrored.Filled.TrendingUp,
+                    stringResource(Res.string.areas_balance),
+                    "$balanceLabel ($balanceScore)",
+                )
+                SummaryChip(
+                    Icons.Default.Warning,
+                    stringResource(Res.string.areas_neglected),
+                    neglectedCount.toString(),
+                )
+                SummaryChip(
+                    Icons.Default.Speed,
+                    stringResource(Res.string.areas_load),
+                    overloadedCount.toString(),
+                )
             }
-            Text(stringResource(Res.string.areas_distribution), style = MaterialTheme.typography.labelLarge, color = TactileTheme.Text)
-            Row(modifier = Modifier.fillMaxWidth().height(22.dp), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text(
+                stringResource(Res.string.areas_distribution),
+                style = MaterialTheme.typography.labelLarge,
+                color = TactileTheme.Text,
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth().height(22.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
                 val total = areas.sumOf { (metricsById[it.id]?.activeItems ?: 0).coerceAtLeast(1) }
                 areas.forEach { area ->
-                    val weight = (metricsById[area.id]?.activeItems ?: 0).coerceAtLeast(1).toFloat() / total.toFloat()
+                    val weight =
+                        (metricsById[area.id]?.activeItems ?: 0)
+                            .coerceAtLeast(1)
+                            .toFloat() / total.toFloat()
                     val color = areaStatusColor(metricsById[area.id]?.status ?: "stable")
                     Box(
-                        modifier = Modifier.weight(weight).fillMaxHeight().background(color.copy(alpha = 0.6f), RoundedCornerShape(6.dp)),
+                        modifier =
+                            Modifier
+                                .weight(weight)
+                                .fillMaxHeight()
+                                .background(color.copy(alpha = 0.6f), RoundedCornerShape(6.dp)),
                         contentAlignment = Alignment.CenterStart,
                     ) {
-                        Text(area.title.take(12), modifier = Modifier.padding(horizontal = 8.dp), style = MaterialTheme.typography.labelSmall, color = TactileTheme.Text)
+                        Text(
+                            area.title.take(12),
+                            modifier = Modifier.padding(horizontal = 8.dp),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = TactileTheme.Text,
+                        )
                     }
                 }
             }
@@ -213,7 +258,11 @@ private fun AreaTopSummary(
 }
 
 @Composable
-private fun SummaryChip(icon: ImageVector, label: String, value: String) {
+private fun SummaryChip(
+    icon: ImageVector,
+    label: String,
+    value: String,
+) {
     Surface(color = TactileTheme.SurfaceLow, shape = RoundedCornerShape(TactileTheme.RadiusMd)) {
         Row(
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
@@ -223,7 +272,12 @@ private fun SummaryChip(icon: ImageVector, label: String, value: String) {
             Icon(icon, null, tint = TactileTheme.Primary, modifier = Modifier.size(16.dp))
             Column {
                 Text(label, style = MaterialTheme.typography.labelSmall, color = TactileTheme.Muted)
-                Text(value, style = MaterialTheme.typography.bodySmall, color = TactileTheme.Text, fontWeight = FontWeight.SemiBold)
+                Text(
+                    value,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = TactileTheme.Text,
+                    fontWeight = FontWeight.SemiBold,
+                )
             }
         }
     }
@@ -236,30 +290,45 @@ private fun AreasCards(
     metricsById: Map<Long, AreaHealthMetrics>,
     onOpen: (Long) -> Unit,
 ) {
-    val activeProjectsByAreaId = remember(allProjects) {
-        val counts = mutableMapOf<Long, Int>()
-        for (project in allProjects) {
-            val areaId = project.areaId
-            if (areaId != null && project.projectStateOrNull() == ProjectState.ACTIVE) {
-                counts[areaId] = (counts[areaId] ?: 0) + 1
+    val activeProjectsByAreaId =
+        remember(allProjects) {
+            val counts = mutableMapOf<Long, Int>()
+            for (project in allProjects) {
+                val areaId = project.areaId
+                if (areaId != null && project.projectStateOrNull() == ProjectState.ACTIVE) {
+                    counts[areaId] = (counts[areaId] ?: 0) + 1
+                }
             }
+            counts
         }
-        counts
-    }
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val desktop = maxWidth > 900.dp
         if (desktop) {
-            LazyVerticalGrid(columns = GridCells.Adaptive(minSize = 300.dp), verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm), horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(minSize = 300.dp),
+                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+            ) {
                 items(count = areas.size, key = { index -> areas[index].id }) { index ->
                     val area = areas[index]
-                    AreaCard(area = area, metrics = metricsById[area.id], activeProjects = activeProjectsByAreaId[area.id] ?: 0, onClick = { onOpen(area.id) })
+                    AreaCard(
+                        area = area,
+                        metrics = metricsById[area.id],
+                        activeProjects = activeProjectsByAreaId[area.id] ?: 0,
+                        onClick = { onOpen(area.id) },
+                    )
                 }
             }
         } else {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
                 items(areas, key = { it.id }) { area ->
-                    AreaCard(area = area, metrics = metricsById[area.id], activeProjects = activeProjectsByAreaId[area.id] ?: 0, onClick = { onOpen(area.id) })
+                    AreaCard(
+                        area = area,
+                        metrics = metricsById[area.id],
+                        activeProjects = activeProjectsByAreaId[area.id] ?: 0,
+                        onClick = { onOpen(area.id) },
+                    )
                 }
             }
         }
@@ -282,18 +351,55 @@ private fun AreaCard(
         shape = RoundedCornerShape(TactileTheme.RadiusMd),
         border = BorderStroke(1.dp, color.copy(alpha = 0.28f)),
     ) {
-        Column(modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingMd), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                Text(area.title, style = MaterialTheme.typography.titleMedium, color = TactileTheme.Text, fontWeight = FontWeight.Bold)
-                Text(status.replace("_", " ").uppercase(), style = MaterialTheme.typography.labelSmall, color = color, fontWeight = FontWeight.Bold)
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingMd),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    area.title,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = TactileTheme.Text,
+                    fontWeight = FontWeight.Bold,
+                )
+                Text(
+                    status.replace("_", " ").uppercase(),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = color,
+                    fontWeight = FontWeight.Bold,
+                )
             }
             HorizontalDivider(color = TactileTheme.GhostBorder)
             MetricLine(Icons.Default.Speed, stringResource(Res.string.areas_load), "$load%")
-            MetricLine(Icons.Default.Folder, stringResource(Res.string.areas_projects_active), activeProjects.toString())
-            MetricLine(Icons.Default.CheckCircle, stringResource(Res.string.areas_open_responsibilities), (metrics?.openLoops ?: 0).toString())
-            MetricLine(Icons.Default.EventBusy, stringResource(Res.string.areas_upcoming_deadlines), "${metrics?.overdueDeadlines ?: 0}/${metrics?.deadlines ?: 0}")
-            MetricLine(Icons.Default.History, stringResource(Res.string.areas_recent_activity), "${metrics?.recentActivity ?: 0}")
-            MetricLine(Icons.Default.Warning, stringResource(Res.string.areas_neglected), "${metrics?.neglectedDays ?: 0}d")
+            MetricLine(
+                Icons.Default.Folder,
+                stringResource(Res.string.areas_projects_active),
+                activeProjects.toString(),
+            )
+            MetricLine(
+                Icons.Default.CheckCircle,
+                stringResource(Res.string.areas_open_responsibilities),
+                (metrics?.openLoops ?: 0).toString(),
+            )
+            MetricLine(
+                Icons.Default.EventBusy,
+                stringResource(Res.string.areas_upcoming_deadlines),
+                "${metrics?.overdueDeadlines ?: 0}/${metrics?.deadlines ?: 0}",
+            )
+            MetricLine(
+                Icons.Default.History,
+                stringResource(Res.string.areas_recent_activity),
+                "${metrics?.recentActivity ?: 0}",
+            )
+            MetricLine(
+                Icons.Default.Warning,
+                stringResource(Res.string.areas_neglected),
+                "${metrics?.neglectedDays ?: 0}d",
+            )
             Spacer(modifier = Modifier.height(4.dp))
             OutlinedButton(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
                 Text(stringResource(Res.string.areas_enter))
@@ -303,13 +409,29 @@ private fun AreaCard(
 }
 
 @Composable
-private fun MetricLine(icon: ImageVector, label: String, value: String) {
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+private fun MetricLine(
+    icon: ImageVector,
+    label: String,
+    value: String,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             Icon(icon, null, tint = TactileTheme.Muted, modifier = Modifier.size(14.dp))
             Text(label, style = MaterialTheme.typography.bodySmall, color = TactileTheme.Muted)
         }
-        Text(value, style = MaterialTheme.typography.bodySmall, color = TactileTheme.Text, fontWeight = FontWeight.SemiBold)
+        Text(
+            value,
+            style = MaterialTheme.typography.bodySmall,
+            color = TactileTheme.Text,
+            fontWeight = FontWeight.SemiBold,
+        )
     }
 }
 
@@ -341,7 +463,8 @@ fun AddAreaDialog(
 }
 
 private fun areaStatusColor(status: String): Color =
-    when (status) {
+    when (status)
+    {
         "on_fire" -> TactileTheme.Error
         "overloaded" -> TactileTheme.Accent
         "neglected" -> TactileTheme.Muted
@@ -349,5 +472,4 @@ private fun areaStatusColor(status: String): Color =
         else -> TactileTheme.Success
     }
 
-internal fun routeForAreaDetail(areaId: Long): String =
-    Screen.AreaDetail.route.replace("{areaId}", areaId.toString())
+internal fun routeForAreaDetail(areaId: Long): String = Screen.AreaDetail.route.replace("{areaId}", areaId.toString())

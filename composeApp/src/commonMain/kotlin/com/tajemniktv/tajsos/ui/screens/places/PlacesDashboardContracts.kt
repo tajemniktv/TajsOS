@@ -14,8 +14,8 @@ data class PlacesDashboardBlock(
 )
 
 data class PlacesDashboardPlan(
-    val primary: List<com.tajemniktv.tajsos.ui.screens.places.PlacesDashboardBlock>,
-    val secondary: List<com.tajemniktv.tajsos.ui.screens.places.PlacesDashboardBlock> = emptyList(),
+    val primary: List<PlacesDashboardBlock>,
+    val secondary: List<PlacesDashboardBlock> = emptyList(),
 )
 
 data class PlacesDashboardContext(
@@ -23,4 +23,4 @@ data class PlacesDashboardContext(
     val onEditNode: (Long) -> Unit,
 )
 
-typealias PlacesDashboardBlockRenderer = @Composable (com.tajemniktv.tajsos.ui.screens.places.PlacesDashboardContext) -> Unit
+typealias PlacesDashboardBlockRenderer = @Composable (PlacesDashboardContext) -> Unit

@@ -134,7 +134,12 @@ internal fun HealthMainBlock(
                             color = TactileTheme.Text,
                         )
                         Text(
-                            "Type ${(item.node.node.maintenanceType ?: "manual").replace('_', ' ')} • Urgency ${item.urgency}",
+                            "Type ${
+                                (item.node.node.maintenanceType ?: "manual").replace(
+                                    '_',
+                                    ' ',
+                                )
+                            } • Urgency ${item.urgency}",
                             style = MaterialTheme.typography.bodySmall,
                             color = TactileTheme.Muted,
                         )

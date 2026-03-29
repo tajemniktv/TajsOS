@@ -185,9 +185,14 @@ private fun rememberModeOptions(modes: List<ModeEntity>): List<ShellModeOption> 
 }
 
 private fun timeGreeting(displayName: String): String {
-    val hour = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).hour
+    val hour =
+        Clock.System
+            .now()
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+            .hour
     val dayGreeting =
-        when (hour) {
+        when (hour)
+        {
             in 5..11 -> "Good morning"
             in 12..17 -> "Good afternoon"
             in 18..22 -> "Good evening"

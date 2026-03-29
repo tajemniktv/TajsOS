@@ -37,7 +37,13 @@ import com.tajemniktv.tajsos.ui.components.cards.DashCard
 import com.tajemniktv.tajsos.ui.lens.LensUiContract
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
-import tajsos.composeapp.generated.resources.*
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.decision_no_decisions_category
+import tajsos.composeapp.generated.resources.decision_tab_inbox
+import tajsos.composeapp.generated.resources.decision_tab_log
+import tajsos.composeapp.generated.resources.decision_tab_pending
+import tajsos.composeapp.generated.resources.lens_decision_stale_header
+import tajsos.composeapp.generated.resources.lens_decision_stale_item_age
 
 object DecisionsDashboardBlockRegistry {
     private val renderers: Map<String, DecisionsDashboardBlockRenderer> =
@@ -132,7 +138,13 @@ internal fun DecisionsMainBlock(
                     Spacer(Modifier.height(6.dp))
                     stale.take(3).forEach { item ->
                         Text(
-                            "• ${stringResource(Res.string.lens_decision_stale_item_age, item.node.node.title, item.ageDays)}",
+                            "• ${
+                                stringResource(
+                                    Res.string.lens_decision_stale_item_age,
+                                    item.node.node.title,
+                                    item.ageDays,
+                                )
+                            }",
                             style = MaterialTheme.typography.bodySmall,
                             color = TactileTheme.Text,
                         )

@@ -1,14 +1,29 @@
 /*
- * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved. 
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
 package com.tajemniktv.tajsos.ui.components.modes
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AutoAwesome
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,28 +43,29 @@ import com.tajemniktv.tajsos.ui.theme.TactileTheme
 fun ModeSuggestionBanner(
     suggestion: String,
     onAccept: () -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = TactileTheme.Primary.copy(alpha = 0.1f),
         shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = androidx.compose.foundation.BorderStroke(
-            1.dp,
-            TactileTheme.Primary.copy(alpha = 0.3f)
-        )
+        border =
+            androidx.compose.foundation.BorderStroke(
+                1.dp,
+                TactileTheme.Primary.copy(alpha = 0.3f),
+            ),
     ) {
         Row(
             modifier = Modifier.padding(TactileTheme.SpacingMd),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
                 Icon(
                     Icons.Default.AutoAwesome,
                     contentDescription = null,
                     tint = TactileTheme.Primary,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(20.dp),
                 )
                 Spacer(Modifier.width(TactileTheme.SpacingMd))
                 Column {
@@ -57,12 +73,12 @@ fun ModeSuggestionBanner(
                         "MODE SUGGESTION",
                         style = MaterialTheme.typography.labelSmall,
                         color = TactileTheme.Primary,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
                     )
                     Text(
                         "Switch to $suggestion mode based on current activity?",
                         style = MaterialTheme.typography.bodySmall,
-                        color = TactileTheme.Text
+                        color = TactileTheme.Text,
                     )
                 }
             }
@@ -71,7 +87,7 @@ fun ModeSuggestionBanner(
                     Text(
                         "IGNORE",
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Muted
+                        color = TactileTheme.Muted,
                     )
                 }
                 Button(
@@ -79,7 +95,7 @@ fun ModeSuggestionBanner(
                     colors = ButtonDefaults.buttonColors(containerColor = TactileTheme.Primary),
                     shape = RoundedCornerShape(TactileTheme.RadiusSm),
                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
-                    modifier = Modifier.height(32.dp)
+                    modifier = Modifier.height(32.dp),
                 ) {
                     Text("SWITCH", style = MaterialTheme.typography.labelSmall, color = Color.White)
                 }

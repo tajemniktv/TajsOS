@@ -1,11 +1,18 @@
 /*
- * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved. 
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
 package com.tajemniktv.tajsos.ui.components.nodes
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -39,7 +46,7 @@ fun SuggestionGroup(
     color: Color,
     nodes: List<NodeWithPin>,
     onEditNode: (Long) -> Unit,
-    description: String? = null
+    description: String? = null,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
         Text(
@@ -47,36 +54,40 @@ fun SuggestionGroup(
             style = MaterialTheme.typography.labelSmall,
             color = color,
             fontWeight = FontWeight.Bold,
-            letterSpacing = 1.sp
+            letterSpacing = 1.sp,
         )
-        if (description != null) Text(
-            description,
-            style = MaterialTheme.typography.bodySmall,
-            color = TactileTheme.Muted
-        )
+        if (description != null) {
+            Text(
+                description,
+                style = MaterialTheme.typography.bodySmall,
+                color = TactileTheme.Muted,
+            )
+        }
         nodes.take(2).forEach { nodeWithPin ->
             Surface(
                 onClick = { onEditNode(nodeWithPin.node.id) },
                 modifier = Modifier.fillMaxWidth(),
                 color = TactileTheme.Surface,
                 shape = RoundedCornerShape(TactileTheme.RadiusSm),
-                border = BorderStroke(1.dp, color.copy(alpha = 0.2f))
+                border = BorderStroke(1.dp, color.copy(alpha = 0.2f)),
             ) {
                 Row(
                     modifier = Modifier.padding(TactileTheme.SpacingMd),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Icon(
                         icon,
                         contentDescription = null,
                         tint = color,
-                        modifier = Modifier.size(16.dp)
-                    ); Spacer(Modifier.width(TactileTheme.SpacingMd)); Text(
-                    nodeWithPin.node.title,
-                    style = MaterialTheme.typography.bodyMedium,
-                    maxLines = 1,
-                    modifier = Modifier.weight(1f)
-                )
+                        modifier = Modifier.size(16.dp),
+                    )
+                    Spacer(Modifier.width(TactileTheme.SpacingMd))
+                    Text(
+                        nodeWithPin.node.title,
+                        style = MaterialTheme.typography.bodyMedium,
+                        maxLines = 1,
+                        modifier = Modifier.weight(1f),
+                    )
                 }
             }
         }

@@ -32,7 +32,6 @@ import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Flight
 import androidx.compose.material.icons.filled.FormatQuote
-import androidx.compose.material.icons.filled.Gavel
 import androidx.compose.material.icons.filled.HourglassBottom
 import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material.icons.filled.Lightbulb
@@ -60,7 +59,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -97,7 +95,7 @@ import tajsos.composeapp.generated.resources.dash_suggestion_meds
 import tajsos.composeapp.generated.resources.dash_suggestion_stress
 
 @Composable
-internal fun renderTodayPulseBlock(context: com.tajemniktv.tajsos.ui.screens.dashboard.DashboardBlockContext) {
+internal fun renderTodayPulseBlock(context: DashboardBlockContext) {
     TodayPulseCard(
         progress = context.dailyProgress,
         tasks = context.pinnedNodes,
@@ -111,7 +109,7 @@ internal fun renderTodayPulseBlock(context: com.tajemniktv.tajsos.ui.screens.das
 }
 
 @Composable
-private fun renderForgottenWisdom(context: com.tajemniktv.tajsos.ui.screens.dashboard.DashboardBlockContext) {
+private fun renderForgottenWisdom(context: DashboardBlockContext) {
     val forgottenWisdom = context.dashboardState.forgottenWisdom
     if (forgottenWisdom != null) {
         DashCard(onClick = {
@@ -147,7 +145,7 @@ private fun renderForgottenWisdom(context: com.tajemniktv.tajsos.ui.screens.dash
 }
 
 @Composable
-internal fun renderLoadCapacityBlock(context: com.tajemniktv.tajsos.ui.screens.dashboard.DashboardBlockContext) {
+internal fun renderLoadCapacityBlock(context: DashboardBlockContext) {
     SystemStatusCard(
         load = context.dashboardState.systemLoad,
         fragmentation = context.dashboardState.fragmentation,
@@ -157,7 +155,7 @@ internal fun renderLoadCapacityBlock(context: com.tajemniktv.tajsos.ui.screens.d
 }
 
 @Composable
-internal fun renderAreaHealthBlock(context: com.tajemniktv.tajsos.ui.screens.dashboard.DashboardBlockContext) {
+internal fun renderAreaHealthBlock(context: DashboardBlockContext) {
     if (context.allAreas.isNotEmpty()) {
         Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
             Text(
@@ -195,7 +193,7 @@ internal fun renderAreaHealthBlock(context: com.tajemniktv.tajsos.ui.screens.das
 }
 
 @Composable
-internal fun renderOperationalBlock(context: com.tajemniktv.tajsos.ui.screens.dashboard.DashboardBlockContext) {
+internal fun renderOperationalBlock(context: DashboardBlockContext) {
     if (context.dashboardState.openLoops.isNotEmpty() ||
         context.dashboardState.pendingDecisions.isNotEmpty() ||
         context.dashboardState.maintenanceQueue.isNotEmpty()
@@ -266,7 +264,7 @@ internal fun renderOperationalBlock(context: com.tajemniktv.tajsos.ui.screens.da
 }
 
 @Composable
-internal fun renderTimeArchitectureBlock(context: com.tajemniktv.tajsos.ui.screens.dashboard.DashboardBlockContext) {
+internal fun renderTimeArchitectureBlock(context: DashboardBlockContext) {
     val timeSnapshot by context.viewModel.timeArchitectureSnapshot.collectAsState()
     Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
         Text(
@@ -315,7 +313,7 @@ internal fun renderTimeArchitectureBlock(context: com.tajemniktv.tajsos.ui.scree
 }
 
 @Composable
-internal fun renderSearchBlock(context: com.tajemniktv.tajsos.ui.screens.dashboard.DashboardBlockContext) {
+internal fun renderSearchBlock(context: DashboardBlockContext) {
     OutlinedTextField(
         value = "",
         onValueChange = {
@@ -348,7 +346,7 @@ internal fun renderSearchBlock(context: com.tajemniktv.tajsos.ui.screens.dashboa
 }
 
 @Composable
-internal fun renderAlertsBlock(context: com.tajemniktv.tajsos.ui.screens.dashboard.DashboardBlockContext) {
+internal fun renderAlertsBlock(context: DashboardBlockContext) {
     Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
         context.activeReminders.forEach { node ->
             AlertCard(
@@ -448,7 +446,7 @@ internal fun renderAlertsBlock(context: com.tajemniktv.tajsos.ui.screens.dashboa
 }
 
 @Composable
-internal fun renderStickyBlock(context: com.tajemniktv.tajsos.ui.screens.dashboard.DashboardBlockContext) {
+internal fun renderStickyBlock(context: DashboardBlockContext) {
     if (context.dashboardState.stickyNotes.isNotEmpty()) {
         Row(
             modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
@@ -466,7 +464,7 @@ internal fun renderStickyBlock(context: com.tajemniktv.tajsos.ui.screens.dashboa
 }
 
 @Composable
-internal fun renderFocusBlock(context: com.tajemniktv.tajsos.ui.screens.dashboard.DashboardBlockContext) {
+internal fun renderFocusBlock(context: DashboardBlockContext) {
     FocusCard(
         viewModel = context.viewModel,
         activeSession = context.activeSession,
@@ -484,7 +482,7 @@ internal fun renderFocusBlock(context: com.tajemniktv.tajsos.ui.screens.dashboar
 }
 
 @Composable
-internal fun renderInsightsBlock(context: com.tajemniktv.tajsos.ui.screens.dashboard.DashboardBlockContext) {
+internal fun renderInsightsBlock(context: DashboardBlockContext) {
     LifeSummaryCard(
         captures = context.insights.weeklyCaptures,
         completions = context.insights.weeklyCompletions,
@@ -493,12 +491,12 @@ internal fun renderInsightsBlock(context: com.tajemniktv.tajsos.ui.screens.dashb
 }
 
 @Composable
-internal fun renderActionsBlock(context: com.tajemniktv.tajsos.ui.screens.dashboard.DashboardBlockContext) {
+internal fun renderActionsBlock(context: DashboardBlockContext) {
     StateAwareActionsGrid(viewModel = context.viewModel, onNavigateTo = context.onNavigateTo)
 }
 
 @Composable
-internal fun renderSuggestionsBlock(context: com.tajemniktv.tajsos.ui.screens.dashboard.DashboardBlockContext) {
+internal fun renderSuggestionsBlock(context: DashboardBlockContext) {
     Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingLg)) {
         val suggestedContextKey = context.dashboardState.suggestedContextKey
         if (context.dashboardState.suggestedContextTasks.isNotEmpty() && suggestedContextKey != null) {
@@ -595,7 +593,7 @@ internal fun renderSuggestionsBlock(context: com.tajemniktv.tajsos.ui.screens.da
 }
 
 @Composable
-internal fun renderKnowledgeBlock(context: com.tajemniktv.tajsos.ui.screens.dashboard.DashboardBlockContext) {
+internal fun renderKnowledgeBlock(context: DashboardBlockContext) {
     Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingLg)) {
         Text(
             "KNOWLEDGE & CONTEXT",
@@ -694,7 +692,7 @@ internal fun renderKnowledgeBlock(context: com.tajemniktv.tajsos.ui.screens.dash
 }
 
 @Composable
-internal fun renderProtocolsBlock(context: com.tajemniktv.tajsos.ui.screens.dashboard.DashboardBlockContext) {
+internal fun renderProtocolsBlock(context: DashboardBlockContext) {
     val transitionSnapshot by context.viewModel.transitionProtocolsSnapshot.collectAsState()
     Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
         Text(

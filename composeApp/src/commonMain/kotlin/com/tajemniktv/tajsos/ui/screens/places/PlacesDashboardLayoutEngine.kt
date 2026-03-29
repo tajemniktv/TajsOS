@@ -4,27 +4,25 @@
 
 package com.tajemniktv.tajsos.ui.screens.places
 
-fun buildPlacesDashboardPlan(
-    surface: com.tajemniktv.tajsos.ui.screens.places.PlacesDashboardSurface,
-): com.tajemniktv.tajsos.ui.screens.places.PlacesDashboardPlan =
+fun buildPlacesDashboardPlan(surface: PlacesDashboardSurface): PlacesDashboardPlan =
     when (surface)
     {
-        com.tajemniktv.tajsos.ui.screens.places.PlacesDashboardSurface.MOBILE -> {
-            com.tajemniktv.tajsos.ui.screens.places.PlacesDashboardPlan(
+        PlacesDashboardSurface.MOBILE -> {
+            PlacesDashboardPlan(
                 primary =
                     listOf(
-                        com.tajemniktv.tajsos.ui.screens.places.PlacesDashboardBlock(
+                        PlacesDashboardBlock(
                             "places_main",
                         ),
                     ),
             )
         }
 
-        com.tajemniktv.tajsos.ui.screens.places.PlacesDashboardSurface.DESKTOP -> {
-            com.tajemniktv.tajsos.ui.screens.places.PlacesDashboardPlan(
+        PlacesDashboardSurface.DESKTOP -> {
+            PlacesDashboardPlan(
                 primary =
                     listOf(
-                        com.tajemniktv.tajsos.ui.screens.places.PlacesDashboardBlock(
+                        PlacesDashboardBlock(
                             "places_main",
                         ),
                     ),

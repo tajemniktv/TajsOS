@@ -4,8 +4,6 @@
 
 package com.tajemniktv.tajsos.ui.screens.projects
 
-import com.tajemniktv.tajsos.data.ProjectState
-import com.tajemniktv.tajsos.data.projectStateOrNull
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,6 +27,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.tajemniktv.tajsos.data.ProjectState
+import com.tajemniktv.tajsos.data.projectStateOrNull
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.coroutines.launch
@@ -69,7 +69,11 @@ internal fun ProjectsMainBlock(
                 it.title.contains(searchQuery, ignoreCase = true) &&
                     (
                         if (selectedStatusFilter == "active") {
-                            it.projectStateOrNull() in setOf(ProjectState.ACTIVE, ProjectState.ON_HOLD)
+                            it.projectStateOrNull() in
+                                setOf(
+                                    ProjectState.ACTIVE,
+                                    ProjectState.ON_HOLD,
+                                )
                         } else {
                             it.projectStateOrNull() == ProjectState.SOMEDAY
                         }

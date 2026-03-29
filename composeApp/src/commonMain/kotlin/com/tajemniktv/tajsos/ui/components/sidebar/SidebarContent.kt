@@ -186,8 +186,9 @@ private fun SidebarProfileHeader(
             onClick = onAvatarClick,
             modifier = Modifier.size(44.dp),
             shape = CircleShape,
-            color = currentMode?.themeColor?.let { Color(it) }?.copy(alpha = 0.2f)
-                ?: Color(0xFFFDE68A),
+            color =
+                currentMode?.themeColor?.let { Color(it) }?.copy(alpha = 0.2f)
+                    ?: Color(0xFFFDE68A),
         ) {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -283,9 +284,24 @@ private fun SidebarModeSelector(
 }
 
 private fun profileInitials(profile: UserProfile): String {
-    val first = profile.firstName.trim().firstOrNull()?.uppercaseChar()?.toString().orEmpty()
-    val last = profile.lastName.trim().firstOrNull()?.uppercaseChar()?.toString().orEmpty()
+    val first =
+        profile.firstName
+            .trim()
+            .firstOrNull()
+            ?.uppercaseChar()
+            ?.toString()
+            .orEmpty()
+    val last =
+        profile.lastName
+            .trim()
+            .firstOrNull()
+            ?.uppercaseChar()
+            ?.toString()
+            .orEmpty()
     val initials = first + last
     if (initials.isNotBlank()) return initials
-    return profile.nickname.trim().take(2).uppercase()
+    return profile.nickname
+        .trim()
+        .take(2)
+        .uppercase()
 }

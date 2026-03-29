@@ -55,7 +55,6 @@ import tajsos.composeapp.generated.resources.inbox_placeholder
 import tajsos.composeapp.generated.resources.inbox_process
 import tajsos.composeapp.generated.resources.inbox_quick_capture
 import tajsos.composeapp.generated.resources.inbox_recent_entries
-import tajsos.composeapp.generated.resources.type_idea
 import tajsos.composeapp.generated.resources.type_note
 import tajsos.composeapp.generated.resources.type_task
 

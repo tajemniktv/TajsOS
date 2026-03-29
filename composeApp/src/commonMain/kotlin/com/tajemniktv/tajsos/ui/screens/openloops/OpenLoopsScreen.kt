@@ -22,11 +22,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -41,7 +37,15 @@ import com.tajemniktv.tajsos.ui.screens.OpenLoopView
 import com.tajemniktv.tajsos.ui.screens.openLoopTypes
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
-import tajsos.composeapp.generated.resources.*
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.dash_open_loops
+import tajsos.composeapp.generated.resources.lens_unresolved_archive_resolved
+import tajsos.composeapp.generated.resources.lens_unresolved_decay_index
+import tajsos.composeapp.generated.resources.lens_unresolved_empty
+import tajsos.composeapp.generated.resources.lens_unresolved_group_area
+import tajsos.composeapp.generated.resources.lens_unresolved_group_person
+import tajsos.composeapp.generated.resources.lens_unresolved_group_urgency
+import tajsos.composeapp.generated.resources.lens_unresolved_stats
 
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
@@ -169,7 +173,11 @@ internal fun OpenLoopsLayer(
 
     if (loops.isEmpty()) {
         EmptyState(
-            message = stringResource(Res.string.lens_unresolved_empty, stringResource(openLoopView.label).lowercase()),
+            message =
+                stringResource(
+                    Res.string.lens_unresolved_empty,
+                    stringResource(openLoopView.label).lowercase(),
+                ),
         )
         return
     }

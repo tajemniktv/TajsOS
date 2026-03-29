@@ -12,7 +12,28 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.Font
-import tajsos.composeapp.generated.resources.*
+import tajsos.composeapp.generated.resources.JetBrainsMono_Bold
+import tajsos.composeapp.generated.resources.JetBrainsMono_ExtraBold
+import tajsos.composeapp.generated.resources.JetBrainsMono_ExtraLight
+import tajsos.composeapp.generated.resources.JetBrainsMono_Light
+import tajsos.composeapp.generated.resources.JetBrainsMono_Medium
+import tajsos.composeapp.generated.resources.JetBrainsMono_Regular
+import tajsos.composeapp.generated.resources.JetBrainsMono_SemiBold
+import tajsos.composeapp.generated.resources.JetBrainsMono_Thin
+import tajsos.composeapp.generated.resources.Outfit_Black
+import tajsos.composeapp.generated.resources.Outfit_Bold
+import tajsos.composeapp.generated.resources.Outfit_ExtraBold
+import tajsos.composeapp.generated.resources.Outfit_ExtraLight
+import tajsos.composeapp.generated.resources.Outfit_Light
+import tajsos.composeapp.generated.resources.Outfit_Medium
+import tajsos.composeapp.generated.resources.Outfit_Regular
+import tajsos.composeapp.generated.resources.Outfit_SemiBold
+import tajsos.composeapp.generated.resources.Outfit_Thin
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.SpaceGrotesk_Bold
+import tajsos.composeapp.generated.resources.SpaceGrotesk_Light
+import tajsos.composeapp.generated.resources.SpaceGrotesk_Medium
+import tajsos.composeapp.generated.resources.SpaceGrotesk_Regular
 
 /**
  * Provides the Space Grotesk font family used by the app.
