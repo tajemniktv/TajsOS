@@ -34,13 +34,10 @@ import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.cards.DashCard
+import com.tajemniktv.tajsos.ui.lens.LensUiContract
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
-import tajsos.composeapp.generated.resources.Res
-import tajsos.composeapp.generated.resources.decision_no_decisions_category
-import tajsos.composeapp.generated.resources.decision_tab_inbox
-import tajsos.composeapp.generated.resources.decision_tab_log
-import tajsos.composeapp.generated.resources.decision_tab_pending
+import tajsos.composeapp.generated.resources.*
 
 object DecisionsDashboardBlockRegistry {
     private val renderers: Map<String, DecisionsDashboardBlockRenderer> =
@@ -78,6 +75,20 @@ internal fun DecisionsMainBlock(
                 .fillMaxSize()
                 .background(TactileTheme.Background),
     ) {
+        Text(
+            stringResource(LensUiContract.decisionLens.title),
+            modifier = Modifier.padding(horizontal = TactileTheme.SpacingMd, vertical = 8.dp),
+            style = MaterialTheme.typography.displaySmall,
+            color = TactileTheme.Text,
+            fontWeight = FontWeight.Bold,
+        )
+        Text(
+            stringResource(LensUiContract.decisionLens.subtitle),
+            modifier = Modifier.padding(horizontal = TactileTheme.SpacingMd),
+            style = MaterialTheme.typography.bodySmall,
+            color = TactileTheme.Muted,
+        )
+        Spacer(Modifier.height(8.dp))
         SecondaryTabRow(
             selectedTabIndex = selectedTab,
             containerColor = TactileTheme.Surface,
@@ -113,7 +124,7 @@ internal fun DecisionsMainBlock(
             ) {
                 Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
                     Text(
-                        "DECISION WORK SITTING TOO LONG",
+                        stringResource(Res.string.lens_decision_stale_header),
                         style = MaterialTheme.typography.labelSmall,
                         color = TactileTheme.Error,
                         fontWeight = FontWeight.Bold,
@@ -121,7 +132,7 @@ internal fun DecisionsMainBlock(
                     Spacer(Modifier.height(6.dp))
                     stale.take(3).forEach { item ->
                         Text(
-                            "• ${item.node.node.title} (${item.ageDays}d)",
+                            "• ${stringResource(Res.string.lens_decision_stale_item_age, item.node.node.title, item.ageDays)}",
                             style = MaterialTheme.typography.bodySmall,
                             color = TactileTheme.Text,
                         )

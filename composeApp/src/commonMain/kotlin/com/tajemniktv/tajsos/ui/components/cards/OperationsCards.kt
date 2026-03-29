@@ -38,6 +38,8 @@ import com.tajemniktv.tajsos.ui.OpenLoopStatusItem
 import com.tajemniktv.tajsos.ui.RelationshipStatusItem
 import com.tajemniktv.tajsos.ui.TransitionProtocolItem
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.*
 import kotlin.time.Clock
 
 @Composable
@@ -91,12 +93,23 @@ fun OpenLoopCard(
                 )
             }
             Text(
-                "Type ${(item.node.node.openLoopType ?: "untyped").uppercase()} • ${item.urgency.uppercase()} • Age ${item.ageDays}d • Stale ${item.stalenessDays}d • Decay ${item.decayScore}%",
+                stringResource(
+                    Res.string.open_loop_meta_line,
+                    (item.node.node.openLoopType ?: stringResource(Res.string.open_loop_untyped)).uppercase(),
+                    item.urgency.uppercase(),
+                    item.ageDays,
+                    item.stalenessDays,
+                    item.decayScore,
+                ),
                 style = MaterialTheme.typography.bodySmall,
                 color = urgencyColor,
             )
             Text(
-                "Area ${areaName ?: "Unassigned"} • Person ${item.relatedPersonName ?: "None"}",
+                stringResource(
+                    Res.string.open_loop_meta_line_area,
+                    areaName ?: stringResource(Res.string.open_loop_unassigned),
+                    item.relatedPersonName ?: stringResource(Res.string.open_loop_none),
+                ),
                 style = MaterialTheme.typography.bodySmall,
                 color = TactileTheme.Muted,
             )
@@ -117,14 +130,29 @@ fun OpenLoopCard(
                 horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
                 verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
             ) {
-                AssistChip(onClick = { onEditNode(item.node.node.id) }, label = { Text("OPEN") })
+                AssistChip(
+                    onClick = { onEditNode(item.node.node.id) },
+                    label = { Text(stringResource(Res.string.open_loop_action_open)) },
+                )
                 if (item.node.node.status == "active") {
-                    AssistChip(onClick = onResolve, label = { Text("RESOLVE") })
-                    AssistChip(onClick = onConvertTask, label = { Text("TO TASK") })
-                    AssistChip(onClick = onConvertDecision, label = { Text("TO DECISION") })
-                    AssistChip(onClick = onConvertNote, label = { Text("TO NOTE") })
+                    AssistChip(
+                        onClick = onResolve,
+                        label = { Text(stringResource(Res.string.open_loop_action_resolve)) },
+                    )
+                    AssistChip(
+                        onClick = onConvertTask,
+                        label = { Text(stringResource(Res.string.open_loop_action_convert_task)) },
+                    )
+                    AssistChip(
+                        onClick = onConvertDecision,
+                        label = { Text(stringResource(Res.string.open_loop_action_convert_decision)) },
+                    )
+                    AssistChip(
+                        onClick = onConvertNote,
+                        label = { Text(stringResource(Res.string.open_loop_action_convert_note)) },
+                    )
                 } else {
-                    Button(onClick = onArchive) { Text("ARCHIVE") }
+                    Button(onClick = onArchive) { Text(stringResource(Res.string.open_loop_action_archive)) }
                 }
             }
         }

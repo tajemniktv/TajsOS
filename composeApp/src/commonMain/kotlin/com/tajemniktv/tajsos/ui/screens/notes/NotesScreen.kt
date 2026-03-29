@@ -28,7 +28,7 @@ import kotlin.time.Instant
  * Renders the Notes screen: a searchable, groupable list of knowledge nodes with actions and navigation.
  *
  * The UI collects active nodes, areas, and projects from the provided view model, derives knowledge nodes
- * (types "note", "idea", "resource"), and filters them by the current search query (matching title or content,
+ * (note/record-facing items), and filters them by the current search query (matching title or content,
  * case-insensitively). Results can be grouped by "TYPE", "AREA", "PROJECT", "DATE", or "MEDIA" using the top
  * filter chips. Each non-empty group shows a header and its items; when no results exist an appropriate
  * empty-state message is shown (different message for empty dataset vs. no search results).

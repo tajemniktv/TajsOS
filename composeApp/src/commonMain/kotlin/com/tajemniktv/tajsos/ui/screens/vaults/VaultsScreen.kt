@@ -59,10 +59,13 @@ import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.VaultsSnapshot
+import com.tajemniktv.tajsos.ui.lens.LensUiContract
 import com.tajemniktv.tajsos.ui.screens.GroupedOpenLoopSection
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.*
 import kotlin.time.Clock
 import kotlin.time.Instant
 
@@ -102,12 +105,12 @@ internal fun VaultsLayer(
 
     val categories =
         listOf(
-            "reference" to "REFERENCE",
-            "important_links" to "IMPORTANT LINKS",
-            "health_reference" to "HEALTH",
-            "institutional_reference" to "INSTITUTIONAL",
-            "process_tracking" to "PROCESS TRACKING",
-            "official_deadline" to "OFFICIAL DEADLINE",
+            "reference" to stringResource(Res.string.lens_reference_category_reference),
+            "important_links" to stringResource(Res.string.lens_reference_category_links),
+            "health_reference" to stringResource(Res.string.lens_reference_category_health),
+            "institutional_reference" to stringResource(Res.string.lens_reference_category_institutional),
+            "process_tracking" to stringResource(Res.string.lens_reference_category_process),
+            "official_deadline" to stringResource(Res.string.lens_reference_category_deadlines),
         )
 
     val nowMillis = Clock.System.now().toEpochMilliseconds()
@@ -242,7 +245,7 @@ internal fun VaultsLayer(
                             shape = RoundedCornerShape(14.dp),
                             singleLine = true,
                             leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-                            label = { Text("Search vault") },
+                            label = { Text(stringResource(Res.string.lens_reference_search)) },
                         )
                         if (compact) {
                             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -344,9 +347,12 @@ internal fun VaultsLayer(
                     ) {
                         AssistChip(
                             onClick = { viewModel.markMustFindLater(item.node, false) },
-                            label = { Text("UNMARK MUST-FIND-LATER") },
+                            label = { Text(stringResource(Res.string.lens_reference_action_mark_retrieved)) },
                         )
-                        AssistChip(onClick = { onEditNode(item.node.id) }, label = { Text("OPEN") })
+                        AssistChip(
+                            onClick = { onEditNode(item.node.id) },
+                            label = { Text(stringResource(Res.string.lens_reference_action_open_item)) },
+                        )
                     }
                 }
             }
@@ -366,20 +372,20 @@ private fun VaultHeroPrimary(modifier: Modifier = Modifier) {
             border = BorderStroke(1.dp, TactileTheme.Primary.copy(alpha = 0.35f)),
         ) {
             Text(
-                "SYSTEM SECURE",
+                stringResource(Res.string.dash_module_ready),
                 modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
                 style = MaterialTheme.typography.labelSmall,
                 color = TactileTheme.Primary,
             )
         }
         Text(
-            "Persistent Document Vault",
+            stringResource(LensUiContract.referenceLens.title),
             style = MaterialTheme.typography.displayMedium,
             color = TactileTheme.VaultTextStrong,
             fontWeight = FontWeight.ExtraBold,
         )
         Text(
-            "Centralized repository for high-integrity assets. Data remains local-first while sync stays abstracted.",
+            stringResource(LensUiContract.referenceLens.subtitle),
             style = MaterialTheme.typography.bodyMedium,
             color = TactileTheme.VaultTextSubtle,
             modifier = Modifier.widthIn(max = 720.dp),
@@ -592,12 +598,12 @@ private fun ApplicationStatusCard(
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
-                "Application Status",
+                stringResource(Res.string.lens_reference_app_status),
                 style = MaterialTheme.typography.titleMedium,
                 color = TactileTheme.VaultTextStrong,
             )
             Text(
-                "Live tracking for visas, jobs, housing and authority processes.",
+                stringResource(Res.string.lens_reference_app_status_desc),
                 style = MaterialTheme.typography.bodySmall,
                 color = TactileTheme.VaultTextSubtle,
             )
@@ -619,7 +625,7 @@ private fun ApplicationStatusCard(
                 )
             }
             Text(
-                "$progress active records",
+                stringResource(Res.string.lens_reference_app_status_count, progress),
                 style = MaterialTheme.typography.labelSmall,
                 color = TactileTheme.VaultTextSubtle,
             )
@@ -652,7 +658,7 @@ private fun VaultEntryComposer(
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             Text(
-                "Quick Upload",
+                stringResource(Res.string.lens_reference_quick_capture),
                 style = MaterialTheme.typography.titleSmall,
                 color = TactileTheme.VaultTextStrong,
             )
@@ -660,14 +666,14 @@ private fun VaultEntryComposer(
                 value = entryTitle,
                 onValueChange = onEntryTitleChange,
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("Entry title") },
+                label = { Text(stringResource(Res.string.lens_reference_entry_title)) },
                 singleLine = true,
             )
             OutlinedTextField(
                 value = entryContent,
                 onValueChange = onEntryContentChange,
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("Details / reference") },
+                label = { Text(stringResource(Res.string.lens_reference_entry_content)) },
                 minLines = 2,
             )
             FlowRow(
@@ -687,10 +693,17 @@ private fun VaultEntryComposer(
                 verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
             ) {
                 listOf("note", "record", "task").forEach { type ->
+                    val typeLabel =
+                        when (type) {
+                            "note" -> stringResource(Res.string.type_note)
+                            "record" -> stringResource(Res.string.type_record)
+                            "task" -> stringResource(Res.string.type_task)
+                            else -> type
+                        }
                     FilterChip(
                         selected = entryType == type,
                         onClick = { onEntryTypeChange(type) },
-                        label = { Text(type.uppercase()) },
+                        label = { Text(typeLabel.uppercase()) },
                     )
                 }
             }
@@ -700,11 +713,11 @@ private fun VaultEntryComposer(
             ) {
                 AssistChip(
                     onClick = onSave,
-                    label = { Text("SAVE ENTRY") },
+                    label = { Text(stringResource(Res.string.lens_reference_save_entry)) },
                 )
                 AssistChip(
                     onClick = onSaveApplicationStatus,
-                    label = { Text("APP STATUS +14D") },
+                    label = { Text(stringResource(Res.string.lens_reference_save_status)) },
                 )
             }
         }

@@ -653,4 +653,99 @@
     <string name="cd_decision_tiny">Tiny decision category icon</string>
     <string name="cd_decision_outcome">Decision outcome checkmark</string>
     <string name="track_empty">No tracking history yet.</string>
+
+    <!-- Shared Lens Copy -->
+    <string name="lens_decision_title">DECISION SUPPORT</string>
+    <string name="lens_decision_subtitle">Task-shaped decision work: inbox triage, active choices, and resolved outcomes.</string>
+    <string name="lens_unresolved_title">UNRESOLVED WORK</string>
+    <string name="lens_unresolved_subtitle">Task-shaped unresolved work, waiting-fors, and stale commitments that still need closure.</string>
+    <string name="lens_reference_title">REFERENCE LENS</string>
+    <string name="lens_reference_subtitle">Note and record material viewed as durable reference, paperwork, and retrieval support.</string>
+    <string name="lens_finance_title">FINANCE LENS</string>
+    <string name="lens_finance_subtitle">Money-related tasks, deadlines, records, and reference in one operational view.</string>
+
+    <!-- Systems Dashboard Summaries -->
+    <string name="systems_summary_open_loops">Resolve task-shaped unresolved work, inbox spillover, and review debt.</string>
+    <string name="systems_summary_protocols">Run and maintain transition routines and playbooks.</string>
+    <string name="systems_summary_time_architecture">Manage horizons, countdowns, and focus periods.</string>
+    <string name="systems_summary_places">Coordinate errands, travel packs, and place-based logistics.</string>
+    <string name="systems_summary_finances">Keep bills, renewals, subscriptions, and finance deadlines under control.</string>
+    <string name="systems_summary_health">Track health obligations, meds, and wellbeing signals.</string>
+    <string name="systems_summary_relationships">Maintain follow-ups, shared plans, and contact rhythm.</string>
+    <string name="systems_summary_education">Keep coursework, revision, and study execution visible.</string>
+    <string name="systems_summary_rules">Store and pin personal principles and decision rules.</string>
+    <string name="systems_summary_vaults">Keep reference material, paperwork, and retrieval systems clean.</string>
+    <string name="systems_summary_capacity">Track load, fragmentation, and realistic throughput.</string>
+    <string name="systems_summary_identity">Review signature, distinction, direction, and core-shift state.</string>
+
+    <!-- Shared View Labels -->
+    <string name="view_inbox">INBOX</string>
+    <string name="view_review">REVIEW</string>
+    <string name="view_all">ALL</string>
+    <string name="view_resolved">RESOLVED</string>
+    <string name="view_queue">QUEUE</string>
+    <string name="view_recurring">RECURRING</string>
+    <string name="view_overdue">OVERDUE</string>
+
+    <!-- Decision Lens -->
+    <string name="lens_decision_stale_header">DECISION SUPPORT SITTING TOO LONG</string>
+    <string name="lens_decision_stale_item_age">%1$s (%2$dd)</string>
+
+    <!-- Unresolved Lens -->
+    <string name="lens_unresolved_stats">Active %1$d • Inbox %2$d • Review %3$d • Resolved %4$d</string>
+    <string name="lens_unresolved_decay_index">Decay index: %1$d%%</string>
+    <string name="lens_unresolved_archive_resolved">ARCHIVE RESOLVED ITEMS</string>
+    <string name="lens_unresolved_empty">No unresolved work in %1$s.</string>
+    <string name="lens_unresolved_group_area">BY AREA</string>
+    <string name="lens_unresolved_group_person">BY PERSON</string>
+    <string name="lens_unresolved_group_urgency">BY URGENCY</string>
+
+    <!-- Open Loop Card -->
+    <string name="open_loop_meta_line">Type %1$s • %2$s • Age %3$dd • Stale %4$dd • Decay %5$d%%</string>
+    <string name="open_loop_meta_line_area">Area %1$s • Person %2$s</string>
+    <string name="open_loop_action_open">OPEN ITEM</string>
+    <string name="open_loop_action_resolve">MARK RESOLVED</string>
+    <string name="open_loop_action_convert_task">TO FOLLOW-UP TASK</string>
+    <string name="open_loop_action_convert_decision">TO DECISION SUPPORT</string>
+    <string name="open_loop_action_convert_note">TO NOTE</string>
+    <string name="open_loop_action_archive">ARCHIVE</string>
+    <string name="open_loop_untyped">untyped</string>
+    <string name="open_loop_unassigned">Unassigned</string>
+    <string name="open_loop_none">None</string>
+
+    <!-- Finance Lens -->
+    <string name="finance_header_tracking">Tracking %1$d actions, %2$d knowledge items, and %3$d deadlines.</string>
+    <string name="finance_metrics_reference_count">%1$d finance notes/records</string>
+    <string name="finance_queue_label">QUEUE</string>
+    <string name="finance_empty_queue">No finance maintenance items in %1$s right now.</string>
+    <string name="finance_item_action">ACTION</string>
+    <string name="finance_item_record">RECORD</string>
+    <string name="finance_item_note">NOTE</string>
+    <string name="finance_chip_live">LIVE</string>
+    <string name="finance_chip_sync_ready">SYNC READY</string>
+    <string name="finance_chip_expense">EXPENSE</string>
+    <string name="finance_deadlines_chip">%1$d DEADLINES</string>
+
+    <!-- Reference Lens -->
+    <string name="lens_reference_search">Search reference</string>
+    <string name="lens_reference_category_reference">REFERENCE</string>
+    <string name="lens_reference_category_links">IMPORTANT LINKS</string>
+    <string name="lens_reference_category_health">HEALTH</string>
+    <string name="lens_reference_category_institutional">INSTITUTIONAL</string>
+    <string name="lens_reference_category_process">PROCESS TRACKING</string>
+    <string name="lens_reference_category_deadlines">OFFICIAL DEADLINE</string>
+    <string name="lens_reference_action_mark_retrieved">UNMARK MUST-FIND-LATER</string>
+    <string name="lens_reference_action_open_item">OPEN ITEM</string>
+    <string name="lens_reference_app_status">Application Status</string>
+    <string name="lens_reference_app_status_desc">Live tracking for visas, jobs, housing and authority processes.</string>
+    <string name="lens_reference_app_status_count">%1$d active records</string>
+    <string name="lens_reference_quick_capture">Quick Upload</string>
+    <string name="lens_reference_entry_title">Entry title</string>
+    <string name="lens_reference_entry_content">Details / reference</string>
+    <string name="lens_reference_save_entry">SAVE ENTRY</string>
+    <string name="lens_reference_save_status">APP STATUS +14D</string>
+
+    <!-- Capture -->
+    <string name="capture_sticky">STICKY</string>
+    <string name="capture_label_capture">Capture</string>
 </resources>

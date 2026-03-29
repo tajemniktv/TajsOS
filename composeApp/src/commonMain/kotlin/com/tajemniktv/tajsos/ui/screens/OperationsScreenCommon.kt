@@ -19,23 +19,25 @@ import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.compose.resources.StringResource
+import tajsos.composeapp.generated.resources.*
 import kotlin.time.Instant
 
 internal enum class OpenLoopView(
-    val label: String,
+    val label: StringResource,
 ) {
-    Inbox("INBOX"),
-    Review("REVIEW"),
-    All("ALL"),
-    Resolved("RESOLVED"),
+    Inbox(Res.string.view_inbox),
+    Review(Res.string.view_review),
+    All(Res.string.view_all),
+    Resolved(Res.string.view_resolved),
 }
 
 internal enum class MaintenanceView(
-    val label: String,
+    val label: StringResource,
 ) {
-    Queue("QUEUE"),
-    Recurring("RECURRING"),
-    Overdue("OVERDUE"),
+    Queue(Res.string.view_queue),
+    Recurring(Res.string.view_recurring),
+    Overdue(Res.string.view_overdue),
 }
 
 internal val openLoopTypes =

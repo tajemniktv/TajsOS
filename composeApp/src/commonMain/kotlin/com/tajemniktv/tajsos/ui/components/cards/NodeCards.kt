@@ -55,6 +55,7 @@ import tajsos.composeapp.generated.resources.type_area
 import tajsos.composeapp.generated.resources.type_idea
 import tajsos.composeapp.generated.resources.type_note
 import tajsos.composeapp.generated.resources.type_project
+import tajsos.composeapp.generated.resources.type_record
 import tajsos.composeapp.generated.resources.type_task
 import kotlin.time.Clock
 
@@ -128,7 +129,7 @@ fun NodeCard(
                         {
                             "task" -> stringResource(Res.string.type_task)
                             "note" -> stringResource(Res.string.type_note)
-                            "record" -> "Record"
+                            "record" -> stringResource(Res.string.type_record)
                             "idea" -> stringResource(Res.string.type_idea)
                             "project" -> stringResource(Res.string.type_project)
                             "area" -> stringResource(Res.string.type_area)

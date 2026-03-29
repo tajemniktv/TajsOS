@@ -43,8 +43,11 @@ import com.tajemniktv.tajsos.data.isRecordItem
 import com.tajemniktv.tajsos.data.isTaskItem
 import com.tajemniktv.tajsos.ui.components.cards.MaintenanceCard
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
+import com.tajemniktv.tajsos.ui.lens.LensUiContract
 import com.tajemniktv.tajsos.ui.screens.maintenanceTypes
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.*
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -66,26 +69,31 @@ internal fun renderFinanceHeaderBlock(context: com.tajemniktv.tajsos.ui.screens.
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
-                "FINANCE LENS",
+                stringResource(LensUiContract.financeLens.title),
                 style = MaterialTheme.typography.displaySmall,
                 color = TactileTheme.Text,
             )
             Text(
-                "See money-related actions, reference material, deadlines, and recurring obligations in one place.",
+                stringResource(LensUiContract.financeLens.subtitle),
                 style = MaterialTheme.typography.bodySmall,
                 color = TactileTheme.Muted,
             )
             Text(
-                "Tracking ${context.actionItems.size} actions, ${context.knowledgeItems.size} knowledge items, and ${context.deadlineItems.size} deadlines.",
+                stringResource(
+                    Res.string.finance_header_tracking,
+                    context.actionItems.size,
+                    context.knowledgeItems.size,
+                    context.deadlineItems.size,
+                ),
                 style = MaterialTheme.typography.labelSmall,
                 color = TactileTheme.Muted,
             )
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                AssistChip(onClick = {}, label = { Text("LIVE") })
-                AssistChip(onClick = {}, label = { Text("SYNC READY") })
+                AssistChip(onClick = {}, label = { Text(stringResource(Res.string.finance_chip_live)) })
+                AssistChip(onClick = {}, label = { Text(stringResource(Res.string.finance_chip_sync_ready)) })
                 AssistChip(
                     onClick = {},
-                    label = { Text("EXPENSE") },
+                    label = { Text(stringResource(Res.string.finance_chip_expense)) },
                     leadingIcon = {
                         Icon(
                             Icons.Default.Add,
@@ -128,7 +136,10 @@ internal fun renderFinanceMetricsBlock(context: com.tajemniktv.tajsos.ui.screens
                     fontWeight = FontWeight.ExtraBold,
                 )
                 Text(
-                    "${context.knowledgeItems.size} finance notes/records",
+                    stringResource(
+                        Res.string.finance_metrics_reference_count,
+                        context.knowledgeItems.size,
+                    ),
                     style = MaterialTheme.typography.bodySmall,
                     color = TactileTheme.Muted,
                 )
@@ -319,7 +330,7 @@ internal fun renderFinanceVaultBlock(context: com.tajemniktv.tajsos.ui.screens.f
             }
             AssistChip(
                 onClick = {},
-                label = { Text("${context.deadlineItems.size} DEADLINES") },
+                label = { Text(stringResource(Res.string.finance_deadlines_chip, context.deadlineItems.size)) },
                 leadingIcon = { Icon(Icons.Default.Sync, null, modifier = Modifier.size(14.dp)) },
             )
         }
@@ -339,7 +350,7 @@ internal fun renderFinanceQueueControlsBlock(context: com.tajemniktv.tajsos.ui.s
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
-                "QUEUE",
+                stringResource(Res.string.finance_queue_label),
                 style = MaterialTheme.typography.labelSmall,
                 color = TactileTheme.Muted,
                 fontWeight = FontWeight.Bold,
@@ -352,7 +363,7 @@ internal fun renderFinanceQueueControlsBlock(context: com.tajemniktv.tajsos.ui.s
                     FilterChip(
                         selected = context.maintenanceView == view,
                         onClick = { context.onMaintenanceViewChange(view) },
-                        label = { Text(view.label) },
+                        label = { Text(stringResource(view.label)) },
                     )
                 }
             }
@@ -363,7 +374,12 @@ internal fun renderFinanceQueueControlsBlock(context: com.tajemniktv.tajsos.ui.s
 @Composable
 internal fun renderFinanceQueueListBlock(context: com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardContext) {
     if (context.itemsInView.isEmpty()) {
-        EmptyState(message = "No finance maintenance items in ${context.maintenanceView.label.lowercase()} right now.")
+        EmptyState(
+            message = stringResource(
+                Res.string.finance_empty_queue,
+                stringResource(context.maintenanceView.label).lowercase(),
+            ),
+        )
         return
     }
     for (item in context.itemsInView) {
@@ -391,11 +407,12 @@ internal fun renderFinanceQueueListBlock(context: com.tajemniktv.tajsos.ui.scree
     }
 }
 
+@Composable
 private fun financeItemLabel(node: NodeEntity): String =
     when {
-        node.isTaskItem() -> node.maintenanceType?.uppercase() ?: "ACTION"
-        node.isRecordItem() -> "RECORD"
-        node.isNoteItem() -> "NOTE"
+        node.isTaskItem() -> node.maintenanceType?.uppercase() ?: stringResource(Res.string.finance_item_action)
+        node.isRecordItem() -> stringResource(Res.string.finance_item_record)
+        node.isNoteItem() -> stringResource(Res.string.finance_item_note)
         else -> node.type.uppercase()
     }
 

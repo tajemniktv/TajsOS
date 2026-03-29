@@ -499,8 +499,105 @@
     <!-- Node Types -->
     <string name="type_task">Zadanie</string>
     <string name="type_note">Notatka</string>
+    <string name="type_record">Rekord</string>
     <string name="type_idea">Notatka</string>
     <string name="type_project">Projekt</string>
     <string name="type_area">Obszar</string>
+    <string name="type_resource">Odniesienie</string>
+
+    <!-- Shared Lens Copy -->
+    <string name="lens_decision_title">WSPARCIE DECYZYJNE</string>
+    <string name="lens_decision_subtitle">Zadaniowa praca decyzyjna: triage skrzynki, aktywne wybory i rozstrzygnięte wyniki.</string>
+    <string name="lens_unresolved_title">NIEROZWIĄZANA PRACA</string>
+    <string name="lens_unresolved_subtitle">Nierozwiązana praca zadaniowa, elementy „czekam na” oraz zaległe zobowiązania wymagające domknięcia.</string>
+    <string name="lens_reference_title">SOCZEWKA ODNIESIEŃ</string>
+    <string name="lens_reference_subtitle">Notatki i rekordy widziane jako trwałe odniesienia, dokumenty i wsparcie odzyskiwania informacji.</string>
+    <string name="lens_finance_title">SOCZEWKA FINANSÓW</string>
+    <string name="lens_finance_subtitle">Zadania, terminy, rekordy i odniesienia finansowe w jednym widoku operacyjnym.</string>
+
+    <!-- Systems Dashboard Summaries -->
+    <string name="systems_summary_open_loops">Domykaj zadaniową nierozwiązaną pracę, przepełnienie skrzynki i dług przeglądu.</string>
+    <string name="systems_summary_protocols">Uruchamiaj i utrzymuj rutyny przejściowe oraz playbooki.</string>
+    <string name="systems_summary_time_architecture">Zarządzaj horyzontami, odliczaniem i blokami skupienia.</string>
+    <string name="systems_summary_places">Koordynuj sprawy terenowe, pakiety podróżne i logistykę opartą o kontekst miejsca.</string>
+    <string name="systems_summary_finances">Kontroluj rachunki, odnowienia, subskrypcje i terminy finansowe.</string>
+    <string name="systems_summary_health">Śledź zobowiązania zdrowotne, leki i sygnały dobrostanu.</string>
+    <string name="systems_summary_relationships">Utrzymuj follow-upy, wspólne plany i rytm kontaktu.</string>
+    <string name="systems_summary_education">Utrzymuj widoczność nauki, powtórek i realizacji edukacyjnej.</string>
+    <string name="systems_summary_rules">Przechowuj i przypinaj osobiste zasady oraz reguły decyzji.</string>
+    <string name="systems_summary_vaults">Utrzymuj porządek w odniesieniach, dokumentach i systemach odzyskiwania.</string>
+    <string name="systems_summary_capacity">Śledź obciążenie, fragmentację i realną przepustowość.</string>
+    <string name="systems_summary_identity">Przeglądaj sygnaturę, wyróżnik, kierunek i stan głównej zmiany.</string>
+
+    <!-- Shared View Labels -->
+    <string name="view_inbox">SKRZYNKA</string>
+    <string name="view_review">PRZEGLĄD</string>
+    <string name="view_all">WSZYSTKIE</string>
+    <string name="view_resolved">ROZWIĄZANE</string>
+    <string name="view_queue">KOLEJKA</string>
+    <string name="view_recurring">POWTARZALNE</string>
+    <string name="view_overdue">ZALEGŁE</string>
+
+    <!-- Decision Lens -->
+    <string name="lens_decision_stale_header">WSPARCIE DECYZYJNE ZBYT DŁUGO CZEKA</string>
+    <string name="lens_decision_stale_item_age">%1$s (%2$dd)</string>
+
+    <!-- Unresolved Lens -->
+    <string name="lens_unresolved_stats">Aktywne %1$d • Skrzynka %2$d • Przegląd %3$d • Rozwiązane %4$d</string>
+    <string name="lens_unresolved_decay_index">Wskaźnik rozkładu: %1$d%%</string>
+    <string name="lens_unresolved_archive_resolved">ARCHIWIZUJ ROZWIĄZANE ELEMENTY</string>
+    <string name="lens_unresolved_empty">Brak nierozwiązanej pracy w widoku %1$s.</string>
+    <string name="lens_unresolved_group_area">WG OBSZARU</string>
+    <string name="lens_unresolved_group_person">WG OSOBY</string>
+    <string name="lens_unresolved_group_urgency">WG PILNOŚCI</string>
+
+    <!-- Open Loop Card -->
+    <string name="open_loop_meta_line">Typ %1$s • %2$s • Wiek %3$dd • Zalega %4$dd • Rozkład %5$d%%</string>
+    <string name="open_loop_meta_line_area">Obszar %1$s • Osoba %2$s</string>
+    <string name="open_loop_action_open">OTWÓRZ ELEMENT</string>
+    <string name="open_loop_action_resolve">OZNACZ JAKO ROZWIĄZANE</string>
+    <string name="open_loop_action_convert_task">NA ZADANIE FOLLOW-UP</string>
+    <string name="open_loop_action_convert_decision">NA WSPARCIE DECYZYJNE</string>
+    <string name="open_loop_action_convert_note">NA NOTATKĘ</string>
+    <string name="open_loop_action_archive">ARCHIWIZUJ</string>
+    <string name="open_loop_untyped">bez typu</string>
+    <string name="open_loop_unassigned">Nieprzypisane</string>
+    <string name="open_loop_none">Brak</string>
+
+    <!-- Finance Lens -->
+    <string name="finance_header_tracking">Śledzenie: %1$d działań, %2$d elementów wiedzy i %3$d terminów.</string>
+    <string name="finance_metrics_reference_count">%1$d notatek/rekordów finansowych</string>
+    <string name="finance_queue_label">KOLEJKA</string>
+    <string name="finance_empty_queue">Brak elementów utrzymaniowych finansów w widoku %1$s.</string>
+    <string name="finance_item_action">DZIAŁANIE</string>
+    <string name="finance_item_record">REKORD</string>
+    <string name="finance_item_note">NOTATKA</string>
+    <string name="finance_chip_live">NA ŻYWO</string>
+    <string name="finance_chip_sync_ready">GOTOWE DO SYNCH.</string>
+    <string name="finance_chip_expense">WYDATEK</string>
+    <string name="finance_deadlines_chip">%1$d TERMINÓW</string>
+
+    <!-- Reference Lens -->
+    <string name="lens_reference_search">Szukaj w odniesieniach</string>
+    <string name="lens_reference_category_reference">ODNIESIENIA</string>
+    <string name="lens_reference_category_links">WAŻNE LINKI</string>
+    <string name="lens_reference_category_health">ZDROWIE</string>
+    <string name="lens_reference_category_institutional">INSTYTUCJE</string>
+    <string name="lens_reference_category_process">ŚLEDZENIE PROCESÓW</string>
+    <string name="lens_reference_category_deadlines">OFICJALNY TERMIN</string>
+    <string name="lens_reference_action_mark_retrieved">ODZNACZ „DO ODNALEZIENIA”</string>
+    <string name="lens_reference_action_open_item">OTWÓRZ ELEMENT</string>
+    <string name="lens_reference_app_status">Status aplikacji</string>
+    <string name="lens_reference_app_status_desc">Bieżące śledzenie wiz, pracy, mieszkania i procesów urzędowych.</string>
+    <string name="lens_reference_app_status_count">%1$d aktywnych rekordów</string>
+    <string name="lens_reference_quick_capture">Szybkie dodanie</string>
+    <string name="lens_reference_entry_title">Tytuł wpisu</string>
+    <string name="lens_reference_entry_content">Szczegóły / odniesienie</string>
+    <string name="lens_reference_save_entry">ZAPISZ WPIS</string>
+    <string name="lens_reference_save_status">STATUS +14D</string>
+
+    <!-- Capture -->
+    <string name="capture_sticky">PRZYPIĘTE</string>
+    <string name="capture_label_capture">Przechwyć</string>
 
 </resources>

@@ -62,6 +62,7 @@ import com.tajemniktv.tajsos.ui.components.cards.LifeSummaryCard
 import com.tajemniktv.tajsos.ui.components.cards.ModuleCard
 import com.tajemniktv.tajsos.ui.components.modes.ModeSuggestionBanner
 import com.tajemniktv.tajsos.ui.components.modes.ModeSwitcherHeader
+import com.tajemniktv.tajsos.ui.lens.LensUiContract
 import com.tajemniktv.tajsos.ui.screens.GroupedOpenLoopSection
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.datetime.LocalDateTime
@@ -579,7 +580,7 @@ private fun DashboardOperationsOverview(
             horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
             verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
         ) {
-            dashboardSystemsModules().forEach { (screen, summary) ->
+            dashboardSystemsModules().forEach { module ->
                 Column(
                     modifier =
                         Modifier
@@ -592,18 +593,18 @@ private fun DashboardOperationsOverview(
                                 1.dp,
                                 TactileTheme.Border,
                                 RoundedCornerShape(TactileTheme.RadiusMd),
-                            ).clickable { onNavigateTo(screen) }
+                            ).clickable { onNavigateTo(module.screen) }
                             .padding(TactileTheme.SpacingMd),
                     verticalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
                     Text(
-                        text = screen.route.replace("_", " ").uppercase(),
+                        text = stringResource(module.screen.label).uppercase(),
                         style = MaterialTheme.typography.labelSmall,
                         color = TactileTheme.Primary,
                         fontWeight = FontWeight.Bold,
                     )
                     Text(
-                        text = summary,
+                        text = stringResource(module.summary),
                         style = MaterialTheme.typography.bodySmall,
                         color = TactileTheme.Muted,
                     )
@@ -613,21 +614,7 @@ private fun DashboardOperationsOverview(
     }
 }
 
-private fun dashboardSystemsModules(): List<Pair<Screen, String>> =
-    listOf(
-        Screen.OpenLoops to "Resolve active loops, inbox spillover, and review debt.",
-        Screen.Protocols to "Run and maintain transition protocols and playbooks.",
-        Screen.TimeArchitecture to "Manage horizons, countdowns, and focus periods.",
-        Screen.Places to "Coordinate errands, travel packs, and place-based logistics.",
-        Screen.Finances to "Keep bills, renewals, and subscriptions under control.",
-        Screen.Health to "Track health obligations, meds, and wellbeing signals.",
-        Screen.Relationships to "Maintain follow-ups, shared plans, and contact rhythm.",
-        Screen.Education to "Keep coursework, revision, and study execution visible.",
-        Screen.Rules to "Store and pin personal principles and decision rules.",
-        Screen.Vaults to "Keep reference material, paperwork, and retrieval systems clean.",
-        Screen.Capacity to "Track load, fragmentation, and realistic throughput.",
-        Screen.Identity to "Review signature, distinction, direction, and core-shift state.",
-    )
+private fun dashboardSystemsModules() = LensUiContract.systemsModules
 
 @Composable
 private fun CommandItem(

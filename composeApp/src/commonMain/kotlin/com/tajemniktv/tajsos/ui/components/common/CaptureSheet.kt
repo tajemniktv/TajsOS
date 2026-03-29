@@ -263,10 +263,10 @@ fun CaptureSheet(
                         val typeLabel =
                             when (type)
                             {
-                                "inbox" -> "Capture"
+                                "inbox" -> stringResource(Res.string.capture_label_capture)
                                 "task" -> stringResource(Res.string.type_task)
                                 "note" -> stringResource(Res.string.type_note)
-                                "record" -> "Record"
+                                "record" -> stringResource(Res.string.type_record)
                                 "project" -> stringResource(Res.string.type_project)
                                 "area" -> stringResource(Res.string.type_area)
                                 else -> type
@@ -476,7 +476,7 @@ fun CaptureSheet(
                             )
                             Spacer(Modifier.width(4.dp))
                             Text(
-                                "STICKY",
+                                stringResource(Res.string.capture_sticky),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = TactileTheme.Muted,
                             )
@@ -539,6 +539,7 @@ fun CaptureSheet(
                             {
                                 "task" -> stringResource(Res.string.type_task)
                                 "note" -> stringResource(Res.string.type_note)
+                                "record" -> stringResource(Res.string.type_record)
                                 "project" -> stringResource(Res.string.type_project)
                                 "area" -> stringResource(Res.string.type_area)
                                 else -> selectedType
