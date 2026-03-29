@@ -10,9 +10,9 @@ import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.data.TrackEntryEntity
 import com.tajemniktv.tajsos.ui.DashboardUIState
-import com.tajemniktv.tajsos.ui.InsightsData
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
+import com.tajemniktv.tajsos.ui.main.state.InsightsData
 import kotlinx.datetime.LocalDateTime
 
 /**
@@ -40,4 +40,4 @@ data class DashboardBlockContext(
 /**
  * Function contract for rendering one dashboard block.
  */
-typealias DashboardBlockRendererFn = @Composable (com.tajemniktv.tajsos.ui.screens.dashboard.DashboardBlockContext) -> Unit
+typealias DashboardBlockRendererFn = @Composable (DashboardBlockContext) -> Unit

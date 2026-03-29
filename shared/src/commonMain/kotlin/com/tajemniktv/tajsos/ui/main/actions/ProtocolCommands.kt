@@ -2,7 +2,7 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
-package com.tajemniktv.tajsos.ui
+package com.tajemniktv.tajsos.ui.main.actions
 
 import com.tajemniktv.tajsos.data.AppRepository
 import com.tajemniktv.tajsos.data.NodeEntity
@@ -14,6 +14,8 @@ import com.tajemniktv.tajsos.ui.main.calculators.buildProtocolChecklistContent
 import com.tajemniktv.tajsos.ui.main.calculators.findPlaybookTemplate
 import com.tajemniktv.tajsos.ui.main.calculators.findProtocolTemplate
 import com.tajemniktv.tajsos.ui.main.calculators.normalizeProtocolLabel
+import com.tajemniktv.tajsos.ui.main.state.PlaybookTemplate
+import com.tajemniktv.tajsos.ui.main.state.TransitionProtocolTemplate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlin.time.Clock
@@ -85,7 +87,6 @@ class ProtocolCommands(
                                 template?.let { buildProtocolChecklistContent(it) }
                                     ?: "Operational protocol trigger: $normalized",
                             inboxState = false,
-                            status = "active",
                         ),
                     )
                 }
@@ -94,7 +95,6 @@ class ProtocolCommands(
                 ProtocolHistoryEntity(
                     protocolNodeId = protocolNodeId,
                     notes = "Triggered from $source",
-                    completed = true,
                 ),
             )
         }
@@ -128,7 +128,6 @@ class ProtocolCommands(
                         type = "protocol",
                         title = template.label,
                         content = buildProtocolChecklistContent(template),
-                        status = "active",
                         inboxState = false,
                     ),
                 )
@@ -190,7 +189,6 @@ class ProtocolCommands(
                                 ),
                             areaId = areaId,
                             relationshipContext = relationshipContext,
-                            status = "active",
                             inboxState = false,
                         ),
                     )
@@ -228,7 +226,6 @@ class ProtocolCommands(
                             ),
                         areaId = areaId,
                         relationshipContext = buildPlaybookRelationshipContext(modeKey),
-                        status = "active",
                         inboxState = false,
                     ),
                 )
@@ -315,7 +312,7 @@ class ProtocolCommands(
         val tagId =
             existingTag?.id
                 ?: repository.insertTag(
-                    com.tajemniktv.tajsos.data.TagEntity(
+                    TagEntity(
                         name = tagName.trim(),
                         normalizedName = normalized,
                     ),

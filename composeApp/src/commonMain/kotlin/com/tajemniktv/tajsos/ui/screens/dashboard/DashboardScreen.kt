@@ -53,9 +53,7 @@ import com.tajemniktv.tajsos.data.ModeEntity
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.data.TrackEntryEntity
-import com.tajemniktv.tajsos.ui.CalendarEntry
 import com.tajemniktv.tajsos.ui.DashboardUIState
-import com.tajemniktv.tajsos.ui.InsightsData
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.cards.LifeSummaryCard
@@ -63,6 +61,8 @@ import com.tajemniktv.tajsos.ui.components.cards.ModuleCard
 import com.tajemniktv.tajsos.ui.components.modes.ModeSuggestionBanner
 import com.tajemniktv.tajsos.ui.components.modes.ModeSwitcherHeader
 import com.tajemniktv.tajsos.ui.lens.LensUiContract
+import com.tajemniktv.tajsos.ui.main.state.CalendarEntry
+import com.tajemniktv.tajsos.ui.main.state.InsightsData
 import com.tajemniktv.tajsos.ui.screens.GroupedOpenLoopSection
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.datetime.LocalDateTime

@@ -5,7 +5,7 @@
 package com.tajemniktv.tajsos
 
 import com.tajemniktv.tajsos.data.NodeEntity
-import com.tajemniktv.tajsos.ui.InsightsData
+import com.tajemniktv.tajsos.ui.main.state.InsightsData
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

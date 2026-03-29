@@ -5,22 +5,63 @@
 package com.tajemniktv.tajsos.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.RateReview
+import androidx.compose.material.icons.filled.WbSunny
+import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.common.SelectorDialog
+import com.tajemniktv.tajsos.ui.main.state.InsightsData
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
-import tajsos.composeapp.generated.resources.*
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.review_complete
+import tajsos.composeapp.generated.resources.review_daily
+import tajsos.composeapp.generated.resources.review_monthly
+import tajsos.composeapp.generated.resources.review_next
+import tajsos.composeapp.generated.resources.review_step_archive
+import tajsos.composeapp.generated.resources.review_step_blockers
+import tajsos.composeapp.generated.resources.review_step_cleanup
+import tajsos.composeapp.generated.resources.review_step_goals
+import tajsos.composeapp.generated.resources.review_step_mood_energy
+import tajsos.composeapp.generated.resources.review_step_plan
+import tajsos.composeapp.generated.resources.review_step_stats
+import tajsos.composeapp.generated.resources.review_step_wins
+import tajsos.composeapp.generated.resources.review_weekly
 
 /**
  * Displays a review-type selector and, after a selection, hosts the multi-step review flow UI.
@@ -142,7 +183,7 @@ fun ReviewFlow(
     currentStep: Int,
     viewModel: MainViewModel,
     dashboardState: com.tajemniktv.tajsos.ui.DashboardUIState,
-    insights: com.tajemniktv.tajsos.ui.InsightsData,
+    insights: InsightsData,
     onNext: () -> Unit,
     onComplete: (String, Int?, Int?) -> Unit,
 ) {

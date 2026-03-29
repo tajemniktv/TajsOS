@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -139,7 +140,6 @@ import tajsos.composeapp.generated.resources.type_record
 import kotlin.math.roundToInt
 import kotlin.time.Clock
 import kotlin.time.Instant
-import androidx.compose.foundation.layout.RowScope
 
 /**
  * Project mission-control detail screen scoped to one project outcome.
@@ -746,9 +746,11 @@ private fun ProjectHero(
                         onClick = onStatusClick,
                         label = {
                             Text(
-                                "${stringResource(
-                                    Res.string.project_detail_status,
-                                )}: ${project.projectStateOrNull()?.name ?: project.status}",
+                                "${
+                                    stringResource(
+                                        Res.string.project_detail_status,
+                                    )
+                                }: ${project.projectStateOrNull()?.name ?: project.status}",
                             )
                         },
                         leadingIcon = { Icon(Icons.Default.Tune, contentDescription = null) },

@@ -4,10 +4,10 @@
 
 package com.tajemniktv.tajsos.ui
 
-import com.tajemniktv.tajsos.data.isTaskItem
-import com.tajemniktv.tajsos.data.matchesItemFilter
 import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.data.RelationEntity
+import com.tajemniktv.tajsos.data.isTaskItem
+import com.tajemniktv.tajsos.data.matchesItemFilter
 
 /**
  * A utility object that provides functions to filter, search, and sort lists of nodes

@@ -31,8 +31,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.PersonalRulesSnapshot
-import com.tajemniktv.tajsos.ui.PlaybookSnapshot
+import com.tajemniktv.tajsos.ui.main.state.PersonalRulesSnapshot
+import com.tajemniktv.tajsos.ui.main.state.PlaybookSnapshot
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
 @Composable

@@ -29,7 +29,6 @@ import androidx.compose.material.icons.filled.AccountBalance
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.FolderShared
-import androidx.compose.material.icons.filled.FolderSpecial
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.MedicalInformation
 import androidx.compose.material.icons.filled.Search
@@ -58,14 +57,35 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.VaultsSnapshot
 import com.tajemniktv.tajsos.ui.lens.LensUiContract
+import com.tajemniktv.tajsos.ui.main.state.VaultsSnapshot
 import com.tajemniktv.tajsos.ui.screens.GroupedOpenLoopSection
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
-import tajsos.composeapp.generated.resources.*
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.dash_module_ready
+import tajsos.composeapp.generated.resources.lens_reference_action_mark_retrieved
+import tajsos.composeapp.generated.resources.lens_reference_action_open_item
+import tajsos.composeapp.generated.resources.lens_reference_app_status
+import tajsos.composeapp.generated.resources.lens_reference_app_status_count
+import tajsos.composeapp.generated.resources.lens_reference_app_status_desc
+import tajsos.composeapp.generated.resources.lens_reference_category_deadlines
+import tajsos.composeapp.generated.resources.lens_reference_category_health
+import tajsos.composeapp.generated.resources.lens_reference_category_institutional
+import tajsos.composeapp.generated.resources.lens_reference_category_links
+import tajsos.composeapp.generated.resources.lens_reference_category_process
+import tajsos.composeapp.generated.resources.lens_reference_category_reference
+import tajsos.composeapp.generated.resources.lens_reference_entry_content
+import tajsos.composeapp.generated.resources.lens_reference_entry_title
+import tajsos.composeapp.generated.resources.lens_reference_quick_capture
+import tajsos.composeapp.generated.resources.lens_reference_save_entry
+import tajsos.composeapp.generated.resources.lens_reference_save_status
+import tajsos.composeapp.generated.resources.lens_reference_search
+import tajsos.composeapp.generated.resources.type_note
+import tajsos.composeapp.generated.resources.type_record
+import tajsos.composeapp.generated.resources.type_task
 import kotlin.time.Clock
 import kotlin.time.Instant
 
@@ -694,7 +714,8 @@ private fun VaultEntryComposer(
             ) {
                 listOf("note", "record", "task").forEach { type ->
                     val typeLabel =
-                        when (type) {
+                        when (type)
+                        {
                             "note" -> stringResource(Res.string.type_note)
                             "record" -> stringResource(Res.string.type_record)
                             "task" -> stringResource(Res.string.type_task)
@@ -745,7 +766,10 @@ private fun buildSectionModels(snapshot: VaultsSnapshot): List<VaultSectionModel
         VaultSectionModel("REFERENCE LIBRARY", snapshot.referenceLibrary.map { it.node.title }),
         VaultSectionModel("IMPORTANT LINKS", snapshot.importantLinks.map { it.node.title }),
         VaultSectionModel("HEALTH REFERENCE", snapshot.healthReference.map { it.node.title }),
-        VaultSectionModel("INSTITUTIONAL REFERENCE", snapshot.institutionalReference.map { it.node.title }),
+        VaultSectionModel(
+            "INSTITUTIONAL REFERENCE",
+            snapshot.institutionalReference.map { it.node.title },
+        ),
         VaultSectionModel("PROCESS TRACKING", snapshot.processTracking.map { it.node.title }),
         VaultSectionModel("OFFICIAL DEADLINES", snapshot.officialDeadlines.map { it.node.title }),
     ).filter { it.items.isNotEmpty() }
@@ -759,23 +783,26 @@ private fun latestRelative(
     val hour = 60 * 60 * 1000L
     val day = 24 * hour
 
-    return when {
-        diff < hour -> "Today"
-        diff < day -> "${diff / hour}h ago"
-        diff < day * 7 -> "${diff / day}d ago"
-        else -> formatLocalDate(latest)
-    }
+    return when
+        {
+            diff < hour -> "Today"
+            diff < day -> "${diff / hour}h ago"
+            diff < day * 7 -> "${diff / day}d ago"
+            else -> formatLocalDate(latest)
+        }
 }
 
 private fun formatLocalDate(timestamp: Long): String {
-    val local = Instant.fromEpochMilliseconds(timestamp).toLocalDateTime(TimeZone.currentSystemDefault())
+    val local =
+        Instant.fromEpochMilliseconds(timestamp).toLocalDateTime(TimeZone.currentSystemDefault())
     val day = local.day.toString().padStart(2, '0')
     val month = (local.month.ordinal + 1).toString().padStart(2, '0')
     return "$day/$month/${local.year.toString().takeLast(2)}"
 }
 
 private fun formatLocalTime(timestamp: Long): String {
-    val local = Instant.fromEpochMilliseconds(timestamp).toLocalDateTime(TimeZone.currentSystemDefault())
+    val local =
+        Instant.fromEpochMilliseconds(timestamp).toLocalDateTime(TimeZone.currentSystemDefault())
     val hour = local.hour.toString().padStart(2, '0')
     val minute = local.minute.toString().padStart(2, '0')
     return "$hour:$minute"

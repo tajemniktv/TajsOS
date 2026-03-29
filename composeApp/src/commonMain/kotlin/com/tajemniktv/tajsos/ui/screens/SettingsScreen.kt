@@ -5,12 +5,36 @@
 package com.tajemniktv.tajsos.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -20,7 +44,19 @@ import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
-import tajsos.composeapp.generated.resources.*
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.profile_title
+import tajsos.composeapp.generated.resources.settings_biometric_desc
+import tajsos.composeapp.generated.resources.settings_biometric_lock
+import tajsos.composeapp.generated.resources.settings_biometric_unavailable
+import tajsos.composeapp.generated.resources.settings_calendar_integration
+import tajsos.composeapp.generated.resources.settings_configure_calendars
+import tajsos.composeapp.generated.resources.settings_data_management
+import tajsos.composeapp.generated.resources.settings_export_data
+import tajsos.composeapp.generated.resources.settings_export_success
+import tajsos.composeapp.generated.resources.settings_force_crash
+import tajsos.composeapp.generated.resources.settings_manage_templates
+import tajsos.composeapp.generated.resources.settings_security
 
 /**
  * Renders the app settings screen with security, calendar, templates, data management, and a test crash action.

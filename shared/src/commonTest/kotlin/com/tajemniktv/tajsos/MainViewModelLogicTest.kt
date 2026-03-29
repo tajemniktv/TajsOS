@@ -7,7 +7,7 @@ package com.tajemniktv.tajsos
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.data.TodayPinEntity
-import com.tajemniktv.tajsos.ui.ExportData
+import com.tajemniktv.tajsos.ui.main.state.ExportData
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals

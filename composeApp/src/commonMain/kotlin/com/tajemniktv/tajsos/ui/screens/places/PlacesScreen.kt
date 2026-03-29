@@ -22,7 +22,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,8 +31,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.PhysicalLogisticsSnapshot
 import com.tajemniktv.tajsos.ui.components.cards.NodeCard
+import com.tajemniktv.tajsos.ui.main.state.PhysicalLogisticsSnapshot
 import com.tajemniktv.tajsos.ui.screens.GroupedOpenLoopSection
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 

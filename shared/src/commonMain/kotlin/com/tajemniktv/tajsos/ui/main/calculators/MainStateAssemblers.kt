@@ -2,7 +2,7 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
-package com.tajemniktv.tajsos.ui
+package com.tajemniktv.tajsos.ui.main.calculators
 
 import com.tajemniktv.tajsos.data.AppRepository
 import com.tajemniktv.tajsos.data.CalendarEventEntity
@@ -14,17 +14,24 @@ import com.tajemniktv.tajsos.data.ProtocolHistoryEntity
 import com.tajemniktv.tajsos.data.ScheduleEntryEntity
 import com.tajemniktv.tajsos.data.ScheduleEntryKind
 import com.tajemniktv.tajsos.data.TaskState
+import com.tajemniktv.tajsos.data.TrackEntryEntity
 import com.tajemniktv.tajsos.data.buildModeQueryProfile
 import com.tajemniktv.tajsos.data.isAreaItem
 import com.tajemniktv.tajsos.data.isKnowledgeItem
 import com.tajemniktv.tajsos.data.isNoteItem
 import com.tajemniktv.tajsos.data.isTaskItem
 import com.tajemniktv.tajsos.data.taskStateOrNull
-import com.tajemniktv.tajsos.ui.main.calculators.normalizeProtocolLabel
-import com.tajemniktv.tajsos.ui.main.calculators.parsePlaybookModeKey
-import com.tajemniktv.tajsos.ui.main.calculators.protocolChecklistProgress
-import com.tajemniktv.tajsos.ui.main.calculators.recommendProtocolLabel
-import com.tajemniktv.tajsos.ui.main.calculators.suggestPlaybookLabel
+import com.tajemniktv.tajsos.ui.DashboardUIState
+import com.tajemniktv.tajsos.ui.main.state.CalendarEntry
+import com.tajemniktv.tajsos.ui.main.state.EntryType
+import com.tajemniktv.tajsos.ui.main.state.NodeCategorization
+import com.tajemniktv.tajsos.ui.main.state.PlaybookItem
+import com.tajemniktv.tajsos.ui.main.state.PlaybookSnapshot
+import com.tajemniktv.tajsos.ui.main.state.PlaybookTemplate
+import com.tajemniktv.tajsos.ui.main.state.ProtocolHistoryItem
+import com.tajemniktv.tajsos.ui.main.state.TransitionProtocolItem
+import com.tajemniktv.tajsos.ui.main.state.TransitionProtocolTemplate
+import com.tajemniktv.tajsos.ui.main.state.TransitionProtocolsSnapshot
 import kotlinx.coroutines.flow.first
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -43,7 +50,8 @@ fun buildCalendarEntries(
         if (node.status == "archived") return@forEach
 
         val labelPrefix =
-            when (ScheduleEntryKind.fromStorageKey(entry.kind)) {
+            when (ScheduleEntryKind.fromStorageKey(entry.kind))
+            {
                 ScheduleEntryKind.DUE -> "Due"
                 ScheduleEntryKind.REMINDER -> "Reminder"
                 ScheduleEntryKind.START -> "Start"
@@ -192,7 +200,7 @@ fun buildPlaybookSnapshot(
     protocolNodes: List<NodeWithPin>,
     historyItems: List<ProtocolHistoryItem>,
     mode: ModeEntity?,
-    entries: List<com.tajemniktv.tajsos.data.TrackEntryEntity>,
+    entries: List<TrackEntryEntity>,
     templates: List<PlaybookTemplate>,
 ): PlaybookSnapshot {
     val playbookNodes =
@@ -312,7 +320,7 @@ suspend fun buildDashboardUIState(
     val maintenance =
         filteredNodes.filter { it.node.type == "maintenance" && it.node.status == "active" }
     val maintenanceSnapshot =
-        com.tajemniktv.tajsos.ui.main.calculators.calculateMaintenanceSnapshot(
+        calculateMaintenanceSnapshot(
             nodes,
         )
     val protocols =
@@ -320,7 +328,7 @@ suspend fun buildDashboardUIState(
     val people = filteredNodes.filter { it.node.type == "person" && it.node.status == "active" }
     val openLoopDecayScores =
         openLoops.map {
-            com.tajemniktv.tajsos.ui.main.calculators.openLoopDecayScore(
+            openLoopDecayScore(
                 it.node,
                 now,
             )
@@ -336,7 +344,7 @@ suspend fun buildDashboardUIState(
             }
 
     val areaSnapshot =
-        com.tajemniktv.tajsos.ui.main.calculators.calculateAreaHealthSnapshot(
+        calculateAreaHealthSnapshot(
             nodes,
             areasList,
         )

@@ -2,7 +2,7 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
-package com.tajemniktv.tajsos.ui
+package com.tajemniktv.tajsos.ui.main.state
 
 /**
  * A default list of suggested Area titles provided during the initial onboarding or area creation flow.

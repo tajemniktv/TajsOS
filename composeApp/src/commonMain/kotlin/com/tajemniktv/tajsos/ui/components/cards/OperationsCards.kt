@@ -28,18 +28,28 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.tajemniktv.tajsos.ui.CombinedDirectionSnapshot
-import com.tajemniktv.tajsos.ui.CoreLifeOSShiftItem
-import com.tajemniktv.tajsos.ui.DirectionCommitmentStatus
-import com.tajemniktv.tajsos.ui.DistinctionQuestionState
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.MaintenanceStatusItem
 import com.tajemniktv.tajsos.ui.OpenLoopStatusItem
-import com.tajemniktv.tajsos.ui.RelationshipStatusItem
-import com.tajemniktv.tajsos.ui.TransitionProtocolItem
+import com.tajemniktv.tajsos.ui.main.state.CoreLifeOSShiftItem
+import com.tajemniktv.tajsos.ui.main.state.DirectionCommitmentStatus
+import com.tajemniktv.tajsos.ui.main.state.DistinctionQuestionState
+import com.tajemniktv.tajsos.ui.main.state.RelationshipStatusItem
+import com.tajemniktv.tajsos.ui.main.state.TransitionProtocolItem
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
-import tajsos.composeapp.generated.resources.*
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.open_loop_action_archive
+import tajsos.composeapp.generated.resources.open_loop_action_convert_decision
+import tajsos.composeapp.generated.resources.open_loop_action_convert_note
+import tajsos.composeapp.generated.resources.open_loop_action_convert_task
+import tajsos.composeapp.generated.resources.open_loop_action_open
+import tajsos.composeapp.generated.resources.open_loop_action_resolve
+import tajsos.composeapp.generated.resources.open_loop_meta_line
+import tajsos.composeapp.generated.resources.open_loop_meta_line_area
+import tajsos.composeapp.generated.resources.open_loop_none
+import tajsos.composeapp.generated.resources.open_loop_unassigned
+import tajsos.composeapp.generated.resources.open_loop_untyped
 import kotlin.time.Clock
 
 @Composable
@@ -95,7 +105,10 @@ fun OpenLoopCard(
             Text(
                 stringResource(
                     Res.string.open_loop_meta_line,
-                    (item.node.node.openLoopType ?: stringResource(Res.string.open_loop_untyped)).uppercase(),
+                    (
+                        item.node.node.openLoopType
+                            ?: stringResource(Res.string.open_loop_untyped)
+                    ).uppercase(),
                     item.urgency.uppercase(),
                     item.ageDays,
                     item.stalenessDays,
@@ -595,7 +608,6 @@ fun PersonRelationshipCard(
                     viewModel.createSharedPlanForPerson(
                         person.id,
                         "Shared plan with ${person.title}",
-                        "",
                     )
                 }, label = { Text("SHARED PLAN") })
                 AssistChip(onClick = {

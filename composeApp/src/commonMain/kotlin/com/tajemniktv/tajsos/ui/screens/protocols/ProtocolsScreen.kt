@@ -42,9 +42,10 @@ import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.ModeEntity
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.PlaybookSnapshot
-import com.tajemniktv.tajsos.ui.ProtocolHistoryItem
-import com.tajemniktv.tajsos.ui.TransitionProtocolsSnapshot
+import com.tajemniktv.tajsos.ui.main.state.PlaybookSnapshot
+import com.tajemniktv.tajsos.ui.main.state.ProtocolHistoryItem
+import com.tajemniktv.tajsos.ui.main.state.TransitionProtocolItem
+import com.tajemniktv.tajsos.ui.main.state.TransitionProtocolsSnapshot
 import com.tajemniktv.tajsos.ui.screens.formatProtocolTimestamp
 import com.tajemniktv.tajsos.ui.screens.parseProtocolChecklist
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
@@ -481,7 +482,7 @@ private fun ProtocolLibraryCard(
 
 @Composable
 private fun ProtocolRunSurface(
-    activeProtocol: com.tajemniktv.tajsos.ui.TransitionProtocolItem?,
+    activeProtocol: TransitionProtocolItem?,
     sessionNotes: String,
     onSessionNotesChange: (String) -> Unit,
     sessionPaused: Boolean,
@@ -767,7 +768,7 @@ private fun ProtocolRunMainPanel(
 private fun ProtocolRunSidebar(
     modifier: Modifier = Modifier,
     descriptor: ProtocolDescriptor,
-    activeProtocol: com.tajemniktv.tajsos.ui.TransitionProtocolItem,
+    activeProtocol: TransitionProtocolItem,
     sessionNotes: String,
     onSessionNotesChange: (String) -> Unit,
     upNext: String?,
@@ -901,7 +902,6 @@ private fun buildLibraryItems(
                 stepCount = template.checklist.size,
                 triggerCount = 0,
                 lastRunAt = historyByLabel[normalizeLabel(template.label)],
-                nodeId = null,
             ),
         )
     }

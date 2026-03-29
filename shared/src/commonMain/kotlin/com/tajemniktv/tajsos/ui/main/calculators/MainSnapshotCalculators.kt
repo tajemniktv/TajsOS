@@ -5,6 +5,29 @@
 package com.tajemniktv.tajsos.ui.main.calculators
 
 import com.tajemniktv.tajsos.data.*
+import com.tajemniktv.tajsos.ui.main.state.CapacitySnapshot
+import com.tajemniktv.tajsos.ui.main.state.CombinedDirectionSnapshot
+import com.tajemniktv.tajsos.ui.main.state.CoreLifeOSShiftItem
+import com.tajemniktv.tajsos.ui.main.state.CoreLifeOSShiftSnapshot
+import com.tajemniktv.tajsos.ui.main.state.DirectionCommitmentStatus
+import com.tajemniktv.tajsos.ui.main.state.DistinctionQuestionState
+import com.tajemniktv.tajsos.ui.main.state.InsightsData
+import com.tajemniktv.tajsos.ui.main.state.LifeOSSecondBrainSnapshot
+import com.tajemniktv.tajsos.ui.main.state.LifeOSSignatureSnapshot
+import com.tajemniktv.tajsos.ui.main.state.LoadTrendPoint
+import com.tajemniktv.tajsos.ui.main.state.PersonalRulesSnapshot
+import com.tajemniktv.tajsos.ui.main.state.PhysicalLogisticsSnapshot
+import com.tajemniktv.tajsos.ui.main.state.PlaceLogisticsItem
+import com.tajemniktv.tajsos.ui.main.state.PlaybookSnapshot
+import com.tajemniktv.tajsos.ui.main.state.RelationshipSnapshot
+import com.tajemniktv.tajsos.ui.main.state.RelationshipStatusItem
+import com.tajemniktv.tajsos.ui.main.state.StudentBoardState
+import com.tajemniktv.tajsos.ui.main.state.StudentCourseSummary
+import com.tajemniktv.tajsos.ui.main.state.StudentMasteryItem
+import com.tajemniktv.tajsos.ui.main.state.StudentProgressItem
+import com.tajemniktv.tajsos.ui.main.state.StudentSemesterSummary
+import com.tajemniktv.tajsos.ui.main.state.TransitionProtocolsSnapshot
+import com.tajemniktv.tajsos.ui.main.state.VaultsSnapshot
 import kotlinx.datetime.*
 import kotlin.math.sqrt
 import kotlin.time.Clock
@@ -25,7 +48,7 @@ fun calculateInsights(
     sessions: List<FocusSessionEntity>,
     tracks: List<TrackEntryEntity>,
     projects: List<NodeEntity>,
-): com.tajemniktv.tajsos.ui.InsightsData {
+): InsightsData {
     val now = Clock.System.now().toEpochMilliseconds()
     val sevenDaysAgo = now - (7 * 24 * 60 * 60 * 1000L)
 
@@ -392,7 +415,7 @@ fun calculateInsights(
             }
         }
 
-    return com.tajemniktv.tajsos.ui.InsightsData(
+    return InsightsData(
         weeklyCaptures = recentNodes.size,
         weeklyCompletions = recentCompletions.size,
         weeklyFocusHours = weeklyFocusSec / 3600.0,
@@ -999,7 +1022,7 @@ fun nextMonthlyResetDate(): String {
 fun calculateRelationshipSnapshot(
     nodes: List<NodeWithPin>,
     relations: List<RelationEntity>,
-): com.tajemniktv.tajsos.ui.RelationshipSnapshot {
+): RelationshipSnapshot {
     val now = Clock.System.now().toEpochMilliseconds()
     val dayMs = 24 * 60 * 60 * 1000L
     val byId = nodes.associateBy { it.node.id }
@@ -1065,7 +1088,7 @@ fun calculateRelationshipSnapshot(
                         person.tags.any { it.normalizedName == "friend" } -> "friend"
                         else -> null
                     }
-            com.tajemniktv.tajsos.ui.RelationshipStatusItem(
+            RelationshipStatusItem(
                 person = person,
                 relationshipType = relationshipType,
                 daysSinceLastContact = daysSince,
@@ -1090,7 +1113,7 @@ fun calculateRelationshipSnapshot(
                 val followUpDue = (item.followUpDueInDays ?: Int.MAX_VALUE) <= 3
                 stale || followUpDue || item.pendingReplyCount > 0
             }.sortedWith(
-                compareByDescending<com.tajemniktv.tajsos.ui.RelationshipStatusItem> { it.pendingReplyCount }
+                compareByDescending<RelationshipStatusItem> { it.pendingReplyCount }
                     .thenByDescending { it.daysSinceLastContact ?: 0 },
             )
 
@@ -1158,7 +1181,7 @@ fun calculateRelationshipSnapshot(
                 else -> null
             }
 
-    return com.tajemniktv.tajsos.ui.RelationshipSnapshot(
+    return RelationshipSnapshot(
         people = peopleItems,
         importantRelationships = importantRelationships,
         followUpNeeded = followUpNeeded,
@@ -1175,7 +1198,7 @@ fun calculatePhysicalLogisticsSnapshot(
     nodes: List<NodeWithPin>,
     relations: List<RelationEntity>,
     templates: List<TemplateEntity>,
-): com.tajemniktv.tajsos.ui.PhysicalLogisticsSnapshot {
+): PhysicalLogisticsSnapshot {
     val byId = nodes.associateBy { it.node.id }
     val activeNodes = nodes.filter { it.node.status == "active" }
     val activeTasks = activeNodes.filter { it.node.isTaskItem() }
@@ -1224,7 +1247,7 @@ fun calculatePhysicalLogisticsSnapshot(
         placeNodes
             .map { place ->
                 val relatedTasks = relatedTasksForPlace(place.node.id)
-                com.tajemniktv.tajsos.ui.PlaceLogisticsItem(
+                PlaceLogisticsItem(
                     place = place,
                     relatedTasks = relatedTasks,
                     remindersCount = relatedTasks.count { it.node.reminderAt != null },
@@ -1375,7 +1398,7 @@ fun calculatePhysicalLogisticsSnapshot(
     val travelPackTemplateReady =
         templates.any { it.name.contains("travel pack", ignoreCase = true) }
 
-    return com.tajemniktv.tajsos.ui.PhysicalLogisticsSnapshot(
+    return PhysicalLogisticsSnapshot(
         places = placeItems,
         campusLocations = campusLocations,
         homeZones = homeZones,
@@ -1397,7 +1420,7 @@ fun calculatePhysicalLogisticsSnapshot(
 fun calculatePersonalRulesSnapshot(
     nodes: List<NodeWithPin>,
     relations: List<RelationEntity>,
-): com.tajemniktv.tajsos.ui.PersonalRulesSnapshot {
+): PersonalRulesSnapshot {
     val activeRules =
         nodes
             .filter { it.node.status == "active" }
@@ -1443,7 +1466,7 @@ fun calculatePersonalRulesSnapshot(
                 relation.relationType == "PLAYBOOK_SUPPORTS_PRINCIPLE"
         }
 
-    return com.tajemniktv.tajsos.ui.PersonalRulesSnapshot(
+    return PersonalRulesSnapshot(
         vault = activeRules,
         antiGoals = antiGoals,
         redFlags = redFlags,
@@ -1463,7 +1486,7 @@ fun calculatePersonalRulesSnapshot(
     )
 }
 
-fun calculateVaultsSnapshot(nodes: List<NodeWithPin>): com.tajemniktv.tajsos.ui.VaultsSnapshot {
+fun calculateVaultsSnapshot(nodes: List<NodeWithPin>): VaultsSnapshot {
     val active = nodes.filter { it.node.status == "active" }
 
     /**
@@ -1508,7 +1531,14 @@ fun calculateVaultsSnapshot(nodes: List<NodeWithPin>): com.tajemniktv.tajsos.ui.
                 hasTag(it, "vault_medical") ||
                 matchesAny(
                     it.node.title,
-                    listOf("medical", "health", "doctor", "prescription", "symptom", "insurance"),
+                    listOf(
+                        "medical",
+                        "health",
+                        "doctor",
+                        "prescription",
+                        "symptom",
+                        "insurance",
+                    ),
                 )
         }
     val institutionalReference =
@@ -1518,7 +1548,16 @@ fun calculateVaultsSnapshot(nodes: List<NodeWithPin>): com.tajemniktv.tajsos.ui.
                 hasTag(it, "vault_ids_forms") ||
                 matchesAny(
                     it.node.title,
-                    listOf("university", "campus", "student", "form", "passport", "visa", "id", "account"),
+                    listOf(
+                        "university",
+                        "campus",
+                        "student",
+                        "form",
+                        "passport",
+                        "visa",
+                        "id",
+                        "account",
+                    ),
                 )
         }
     val processTracking =
@@ -1527,7 +1566,14 @@ fun calculateVaultsSnapshot(nodes: List<NodeWithPin>): com.tajemniktv.tajsos.ui.
                 hasTag(it, "vault_application_status") ||
                 matchesAny(
                     it.node.title,
-                    listOf("application", "approval", "renewal", "status", "visa", "enrollment"),
+                    listOf(
+                        "application",
+                        "approval",
+                        "renewal",
+                        "status",
+                        "visa",
+                        "enrollment",
+                    ),
                 ) ||
                 it.node.content.contains("Status:", ignoreCase = true)
         }
@@ -1541,7 +1587,14 @@ fun calculateVaultsSnapshot(nodes: List<NodeWithPin>): com.tajemniktv.tajsos.ui.
                             hasTag(it, "process_tracking") ||
                             matchesAny(
                                 it.node.title,
-                                listOf("deadline", "renewal", "tax", "application", "visa", "enrollment"),
+                                listOf(
+                                    "deadline",
+                                    "renewal",
+                                    "tax",
+                                    "application",
+                                    "visa",
+                                    "enrollment",
+                                ),
                             )
                     )
             }.sortedBy { it.node.dueAt ?: Long.MAX_VALUE }
@@ -1551,7 +1604,7 @@ fun calculateVaultsSnapshot(nodes: List<NodeWithPin>): com.tajemniktv.tajsos.ui.
                 hasTag(it, "must_find_later") || it.node.isPinned
             }.sortedByDescending { it.node.updatedAt }
 
-    return com.tajemniktv.tajsos.ui.VaultsSnapshot(
+    return VaultsSnapshot(
         referenceLibrary = referenceLibrary,
         importantLinks = importantLinks,
         healthReference = healthReference,
@@ -1578,10 +1631,11 @@ fun calculateCapacitySnapshot(
     trackEntries: List<TrackEntryEntity>,
     currentMode: ModeEntity?,
     allModes: List<ModeEntity>,
-): com.tajemniktv.tajsos.ui.CapacitySnapshot {
+): CapacitySnapshot {
     val now = Clock.System.now().toEpochMilliseconds()
     val weekMs = 7L * 24 * 60 * 60 * 1000
-    val activeTasks = nodes.filter { it.node.isTaskItem() && it.node.taskStateOrNull() == TaskState.ACTIVE }
+    val activeTasks =
+        nodes.filter { it.node.isTaskItem() && it.node.taskStateOrNull() == TaskState.ACTIVE }
     val activeProjects =
         projects.filter { it.status == "active" || it.projectStatus == "active" }
     val overdueCount =
@@ -1719,7 +1773,7 @@ fun calculateCapacitySnapshot(
                         .size
                         .times(8)
                         .coerceIn(0, 100)
-                com.tajemniktv.tajsos.ui.LoadTrendPoint(
+                LoadTrendPoint(
                     label = "W-${index + 1}",
                     load = entry?.loadScore ?: fallbackLoad,
                     fragmentation = entry?.fragmentationScore ?: fallbackFrag,
@@ -1735,7 +1789,7 @@ fun calculateCapacitySnapshot(
             if (tooManyActiveProjectsWarning != null) add("Freeze or park at least one active project.")
         }
 
-    return com.tajemniktv.tajsos.ui.CapacitySnapshot(
+    return CapacitySnapshot(
         loadScore = loadScore,
         fragmentationScore = fragmentationScore,
         tooManyActiveProjectsWarning = tooManyActiveProjectsWarning,
@@ -1759,14 +1813,14 @@ fun calculateLifeOSSignatureSnapshot(
     openLoops: com.tajemniktv.tajsos.ui.OpenLoopsSnapshot,
     pendingDecisions: List<NodeWithPin>,
     maintenance: com.tajemniktv.tajsos.ui.MaintenanceSnapshot,
-    relationships: com.tajemniktv.tajsos.ui.RelationshipSnapshot,
-    vaults: com.tajemniktv.tajsos.ui.VaultsSnapshot,
-    capacity: com.tajemniktv.tajsos.ui.CapacitySnapshot,
-    playbooks: com.tajemniktv.tajsos.ui.PlaybookSnapshot,
+    relationships: RelationshipSnapshot,
+    vaults: VaultsSnapshot,
+    capacity: CapacitySnapshot,
+    playbooks: PlaybookSnapshot,
     currentMode: ModeEntity?,
     trackEntries: List<TrackEntryEntity>,
     nodes: List<NodeWithPin>,
-): com.tajemniktv.tajsos.ui.LifeOSSignatureSnapshot {
+): LifeOSSignatureSnapshot {
     val dueTasks =
         nodes.filter {
             it.node.isTaskItem() && it.node.taskStateOrNull() == TaskState.ACTIVE && it.node.dueAt != null
@@ -1839,7 +1893,7 @@ fun calculateLifeOSSignatureSnapshot(
             else -> "System is in adaptive navigation mode."
         }
 
-    return com.tajemniktv.tajsos.ui.LifeOSSignatureSnapshot(
+    return LifeOSSignatureSnapshot(
         operatingModesEnabled = modes.isNotEmpty(),
         areaHealthEnabled = areaHealth.areas.isNotEmpty(),
         openLoopsEnabled = openLoops.active.isNotEmpty() || openLoops.resolved.isNotEmpty(),
@@ -1886,13 +1940,13 @@ fun calculateLifeOSSecondBrainSnapshot(
     areaHealth: com.tajemniktv.tajsos.ui.AreaHealthSnapshot,
     openLoops: com.tajemniktv.tajsos.ui.OpenLoopsSnapshot,
     maintenance: com.tajemniktv.tajsos.ui.MaintenanceSnapshot,
-    capacity: com.tajemniktv.tajsos.ui.CapacitySnapshot,
-    protocols: com.tajemniktv.tajsos.ui.TransitionProtocolsSnapshot,
-    playbooks: com.tajemniktv.tajsos.ui.PlaybookSnapshot,
+    capacity: CapacitySnapshot,
+    protocols: TransitionProtocolsSnapshot,
+    playbooks: PlaybookSnapshot,
     currentMode: ModeEntity?,
-    signature: com.tajemniktv.tajsos.ui.LifeOSSignatureSnapshot,
-    vaults: com.tajemniktv.tajsos.ui.VaultsSnapshot,
-): com.tajemniktv.tajsos.ui.LifeOSSecondBrainSnapshot {
+    signature: LifeOSSignatureSnapshot,
+    vaults: VaultsSnapshot,
+): LifeOSSecondBrainSnapshot {
     val knowledgeCount =
         nodes.count {
             it.node.status == "active" && it.node.isKnowledgeItem()
@@ -1910,7 +1964,7 @@ fun calculateLifeOSSecondBrainSnapshot(
 
     val secondBrain =
         listOf(
-            com.tajemniktv.tajsos.ui.DistinctionQuestionState(
+            DistinctionQuestionState(
                 question = "What do I know?",
                 answer =
                     if (knowledgeCount > 0) {
@@ -1920,7 +1974,7 @@ fun calculateLifeOSSecondBrainSnapshot(
                     },
                 answered = knowledgeCount > 0,
             ),
-            com.tajemniktv.tajsos.ui.DistinctionQuestionState(
+            DistinctionQuestionState(
                 question = "What did I save?",
                 answer =
                     if (savedCount > 0) {
@@ -1930,7 +1984,7 @@ fun calculateLifeOSSecondBrainSnapshot(
                     },
                 answered = savedCount > 0,
             ),
-            com.tajemniktv.tajsos.ui.DistinctionQuestionState(
+            DistinctionQuestionState(
                 question = "What is this connected to?",
                 answer =
                     if (relations.isNotEmpty()) {
@@ -1940,7 +1994,7 @@ fun calculateLifeOSSecondBrainSnapshot(
                     },
                 answered = relations.isNotEmpty(),
             ),
-            com.tajemniktv.tajsos.ui.DistinctionQuestionState(
+            DistinctionQuestionState(
                 question = "Where can I find this later?",
                 answer =
                     if (findLaterCount > 0) {
@@ -2002,12 +2056,11 @@ fun calculateLifeOSSecondBrainSnapshot(
 
     val lifeOS =
         listOf(
-            com.tajemniktv.tajsos.ui.DistinctionQuestionState(
+            DistinctionQuestionState(
                 question = "What should happen now?",
                 answer = nowAction,
-                answered = true,
             ),
-            com.tajemniktv.tajsos.ui.DistinctionQuestionState(
+            DistinctionQuestionState(
                 question = "What part of life needs attention?",
                 answer =
                     pressureArea?.let {
@@ -2020,13 +2073,12 @@ fun calculateLifeOSSecondBrainSnapshot(
                     } ?: "No area pressure signal yet.",
                 answered = pressureArea != null,
             ),
-            com.tajemniktv.tajsos.ui.DistinctionQuestionState(
+            DistinctionQuestionState(
                 question = "What am I carrying?",
                 answer =
                     "Load ${capacity.loadScore}, fragmentation ${capacity.fragmentationScore}, open loops ${openLoops.active.size}, decisions ${dashboard.pendingDecisions.size}, maintenance ${maintenance.active.size}.",
-                answered = true,
             ),
-            com.tajemniktv.tajsos.ui.DistinctionQuestionState(
+            DistinctionQuestionState(
                 question = "What is decaying?",
                 answer =
                     if (decayingSignals.isNotEmpty()) {
@@ -2036,13 +2088,13 @@ fun calculateLifeOSSecondBrainSnapshot(
                     },
                 answered = decayingSignals.isNotEmpty(),
             ),
-            com.tajemniktv.tajsos.ui.DistinctionQuestionState(
+            DistinctionQuestionState(
                 question = "What mode am I in?",
                 answer =
                     "Mode ${(currentMode?.key ?: "UNSET")} • life posture ${signature.modeOfLifeLabel.uppercase()}.",
                 answered = currentMode != null,
             ),
-            com.tajemniktv.tajsos.ui.DistinctionQuestionState(
+            DistinctionQuestionState(
                 question = "What protocol helps here?",
                 answer =
                     protocols.recommendedLabel?.let { "Run protocol: $it." }
@@ -2050,7 +2102,7 @@ fun calculateLifeOSSecondBrainSnapshot(
                         ?: "No protocol suggestion available; use a short reset protocol.",
                 answered = protocols.recommendedLabel != null || playbooks.suggestedPlaybookLabel != null,
             ),
-            com.tajemniktv.tajsos.ui.DistinctionQuestionState(
+            DistinctionQuestionState(
                 question = "What can I safely ignore?",
                 answer =
                     if (parkedCount > 0) {
@@ -2060,11 +2112,10 @@ fun calculateLifeOSSecondBrainSnapshot(
                     },
                 answered = parkedCount > 0,
             ),
-            com.tajemniktv.tajsos.ui.DistinctionQuestionState(
+            DistinctionQuestionState(
                 question = "How do I move through today without dropping everything?",
                 answer =
                     "Use mode ${currentMode?.key ?: "NAVIGATION"}, execute one protocol, and keep focus on one overdue/deadline cluster.",
-                answered = true,
             ),
         )
 
@@ -2081,7 +2132,7 @@ fun calculateLifeOSSecondBrainSnapshot(
                 else -> "underconfigured"
             }
 
-    return com.tajemniktv.tajsos.ui.LifeOSSecondBrainSnapshot(
+    return LifeOSSecondBrainSnapshot(
         secondBrainQuestions = secondBrain,
         lifeOSQuestions = lifeOS,
         secondBrainCoveragePercent = secondCoverage,
@@ -2091,16 +2142,16 @@ fun calculateLifeOSSecondBrainSnapshot(
 }
 
 fun calculateCombinedDirectionSnapshot(
-    distinction: com.tajemniktv.tajsos.ui.LifeOSSecondBrainSnapshot,
-    signature: com.tajemniktv.tajsos.ui.LifeOSSignatureSnapshot,
+    distinction: LifeOSSecondBrainSnapshot,
+    signature: LifeOSSignatureSnapshot,
     dashboard: com.tajemniktv.tajsos.ui.DashboardUIState,
-    logistics: com.tajemniktv.tajsos.ui.PhysicalLogisticsSnapshot,
-    capacity: com.tajemniktv.tajsos.ui.CapacitySnapshot,
-    relationships: com.tajemniktv.tajsos.ui.RelationshipSnapshot,
-    protocols: com.tajemniktv.tajsos.ui.TransitionProtocolsSnapshot,
+    logistics: PhysicalLogisticsSnapshot,
+    capacity: CapacitySnapshot,
+    relationships: RelationshipSnapshot,
+    protocols: TransitionProtocolsSnapshot,
     maintenance: com.tajemniktv.tajsos.ui.MaintenanceSnapshot,
     openLoops: com.tajemniktv.tajsos.ui.OpenLoopsSnapshot,
-): com.tajemniktv.tajsos.ui.CombinedDirectionSnapshot {
+): CombinedDirectionSnapshot {
     val storageReady =
         distinction.secondBrainCoveragePercent >= 75 &&
             dashboard.notesCount > 0
@@ -2127,7 +2178,7 @@ fun calculateCombinedDirectionSnapshot(
 
     val commitments =
         listOf(
-            com.tajemniktv.tajsos.ui.DirectionCommitmentStatus(
+            DirectionCommitmentStatus(
                 commitment = "Keep the Second Brain layer for storage, notes, connections, and memory",
                 satisfied = storageReady,
                 evidence =
@@ -2142,25 +2193,25 @@ fun calculateCombinedDirectionSnapshot(
                         }
                     }",
             ),
-            com.tajemniktv.tajsos.ui.DirectionCommitmentStatus(
+            DirectionCommitmentStatus(
                 commitment = "Wrap it in a LifeOS shell for modes, maintenance, transitions, and action",
                 satisfied = lifeOsShellReady,
                 evidence =
                     "Modes ${if (signature.operatingModesEnabled) "on" else "off"} • Maintenance ${if (signature.maintenanceEnabled) "on" else "off"} • Protocols ${if (signature.transitionProtocolsEnabled) "on" else "off"}",
             ),
-            com.tajemniktv.tajsos.ui.DirectionCommitmentStatus(
+            DirectionCommitmentStatus(
                 commitment = "Make TajOS remember life",
                 satisfied = rememberLifeReady,
                 evidence =
                     "Second Brain coverage ${distinction.secondBrainCoveragePercent}% • Relationship records ${relationships.people.size}",
             ),
-            com.tajemniktv.tajsos.ui.DirectionCommitmentStatus(
+            DirectionCommitmentStatus(
                 commitment = "Make TajOS help run life",
                 satisfied = runLifeReady,
                 evidence =
                     "LifeOS coverage ${distinction.lifeOSCoveragePercent}% • Next-action signals ${dashboard.upcomingDeadlines.size + dashboard.suggestedContextTasks.size}",
             ),
-            com.tajemniktv.tajsos.ui.DirectionCommitmentStatus(
+            DirectionCommitmentStatus(
                 commitment = "Make TajOS help recover from derailment",
                 satisfied = recoveryReady,
                 evidence =
@@ -2178,7 +2229,7 @@ fun calculateCombinedDirectionSnapshot(
                         }
                     }",
             ),
-            com.tajemniktv.tajsos.ui.DirectionCommitmentStatus(
+            DirectionCommitmentStatus(
                 commitment = "Make TajOS practical in real-world motion, not only inside neat dashboards",
                 satisfied = practicalMotionReady,
                 evidence =
@@ -2206,7 +2257,7 @@ fun calculateCombinedDirectionSnapshot(
                 else -> "underconfigured"
             }
 
-    return com.tajemniktv.tajsos.ui.CombinedDirectionSnapshot(
+    return CombinedDirectionSnapshot(
         commitments = commitments,
         completionPercent = completion,
         practicalitySignals = practicalitySignals,
@@ -2215,18 +2266,18 @@ fun calculateCombinedDirectionSnapshot(
 }
 
 fun calculateCoreLifeOSShiftSnapshot(
-    distinction: com.tajemniktv.tajsos.ui.LifeOSSecondBrainSnapshot,
-    signature: com.tajemniktv.tajsos.ui.LifeOSSignatureSnapshot,
-    direction: com.tajemniktv.tajsos.ui.CombinedDirectionSnapshot,
+    distinction: LifeOSSecondBrainSnapshot,
+    signature: LifeOSSignatureSnapshot,
+    direction: CombinedDirectionSnapshot,
     dashboard: com.tajemniktv.tajsos.ui.DashboardUIState,
     time: com.tajemniktv.tajsos.ui.TimeArchitectureSnapshot,
     areaHealth: com.tajemniktv.tajsos.ui.AreaHealthSnapshot,
     openLoops: com.tajemniktv.tajsos.ui.OpenLoopsSnapshot,
     maintenance: com.tajemniktv.tajsos.ui.MaintenanceSnapshot,
-    protocols: com.tajemniktv.tajsos.ui.TransitionProtocolsSnapshot,
-    capacity: com.tajemniktv.tajsos.ui.CapacitySnapshot,
+    protocols: TransitionProtocolsSnapshot,
+    capacity: CapacitySnapshot,
     currentMode: ModeEntity?,
-): com.tajemniktv.tajsos.ui.CoreLifeOSShiftSnapshot {
+): CoreLifeOSShiftSnapshot {
     val operatingLayerReady =
         direction.commitments.any {
             it.commitment == "Keep the Second Brain layer for storage, notes, connections, and memory" && it.satisfied
@@ -2263,31 +2314,31 @@ fun calculateCoreLifeOSShiftSnapshot(
 
     val items =
         listOf(
-            com.tajemniktv.tajsos.ui.CoreLifeOSShiftItem(
+            CoreLifeOSShiftItem(
                 criterion = "Treat TajOS as a personal operating layer, not only a storage system",
                 satisfied = operatingLayerReady,
                 evidence =
                     "Direction ${direction.completionPercent}% • posture ${distinction.postureLabel} • LifeOS coverage ${distinction.lifeOSCoveragePercent}%",
             ),
-            com.tajemniktv.tajsos.ui.CoreLifeOSShiftItem(
+            CoreLifeOSShiftItem(
                 criterion = "Build TajOS to understand life in motion, not just static information",
                 satisfied = lifeInMotionReady,
                 evidence =
                     "Today ${time.todayLayer.size} • Week ${time.weekLayer.size} • Context suggestions ${dashboard.suggestedContextTasks.size}",
             ),
-            com.tajemniktv.tajsos.ui.CoreLifeOSShiftItem(
+            CoreLifeOSShiftItem(
                 criterion = "Make TajOS state-aware, context-aware, and mode-aware",
                 satisfied = stateContextModeReady,
                 evidence =
                     "Mode ${currentMode?.key ?: "unset"} • Context filter ${if (signature.contextAwareFilteringEnabled) "on" else "off"} • Mode suggestion ${dashboard.modeSuggestion ?: "none"}",
             ),
-            com.tajemniktv.tajsos.ui.CoreLifeOSShiftItem(
+            CoreLifeOSShiftItem(
                 criterion = "Make TajOS support real-life transitions, not just pages and tasks",
                 satisfied = transitionsReady,
                 evidence =
                     "Protocols active ${protocols.protocols.size} • templates ${protocols.templates.size}",
             ),
-            com.tajemniktv.tajsos.ui.CoreLifeOSShiftItem(
+            CoreLifeOSShiftItem(
                 criterion = "Make TajOS track what is decaying, neglected, or overloaded",
                 satisfied = decayOverloadTrackingReady,
                 evidence =
@@ -2302,7 +2353,7 @@ fun calculateCoreLifeOSShiftSnapshot(
                         }
                     } • Loop review ${openLoops.review.size} • Overdue maintenance ${maintenance.overdue.size}",
             ),
-            com.tajemniktv.tajsos.ui.CoreLifeOSShiftItem(
+            CoreLifeOSShiftItem(
                 criterion = "Make TajOS help the user move through time, not just save information in place",
                 satisfied = moveThroughTimeReady,
                 evidence =
@@ -2320,7 +2371,7 @@ fun calculateCoreLifeOSShiftSnapshot(
             "Some Core LifeOS Shift criteria are not fully satisfied or not fully integrated yet."
         }
 
-    return com.tajemniktv.tajsos.ui.CoreLifeOSShiftSnapshot(
+    return CoreLifeOSShiftSnapshot(
         items = items,
         completionPercent = completion,
         connectedProperly = connectedProperly,
@@ -2341,11 +2392,11 @@ fun calculateStudentBoardState(
     relations: List<RelationEntity>,
     sessions: List<FocusSessionEntity>,
     templates: List<TemplateEntity>,
-): com.tajemniktv.tajsos.ui.StudentBoardState {
+): StudentBoardState {
     val now = Clock.System.now().toEpochMilliseconds()
     val sevenDaysAgo = now - (7 * 24 * 60 * 60 * 1000L)
     val activeNodes = nodes.filter { it.node.status == "active" }
-    val activeById = activeNodes.associateBy { it.node.id }
+    activeNodes.associateBy { it.node.id }
 
     fun NodeWithPin.hasTag(tag: String): Boolean = tags.any { it.normalizedName == tag.lowercase() }
 
@@ -2428,7 +2479,7 @@ fun calculateStudentBoardState(
         readingBacklog
             .mapNotNull { note ->
                 note.student()?.readingProgressPercent?.let { progress ->
-                    com.tajemniktv.tajsos.ui.StudentProgressItem(
+                    StudentProgressItem(
                         node = note,
                         progressPercent = progress.coerceIn(0, 100),
                     )
@@ -2453,7 +2504,7 @@ fun calculateStudentBoardState(
                 val student = item.student() ?: return@mapNotNull null
                 val mastery = student.masteryPercent ?: return@mapNotNull null
                 val topic = student.topic ?: item.node.title
-                com.tajemniktv.tajsos.ui.StudentMasteryItem(
+                StudentMasteryItem(
                     node = item,
                     topic = topic,
                     masteryPercent = mastery.coerceIn(0, 100),
@@ -2493,7 +2544,7 @@ fun calculateStudentBoardState(
                     }
                 val masteryValues =
                     entries.mapNotNull { it.second.masteryPercent }.map { it.coerceIn(0, 100) }
-                com.tajemniktv.tajsos.ui.StudentCourseSummary(
+                StudentCourseSummary(
                     courseId = courseId,
                     courseName = courseName,
                     semester = entries.firstNotNullOfOrNull { it.second.semester },
@@ -2542,7 +2593,7 @@ fun calculateStudentBoardState(
                         val due = it.node.dueAt ?: return@count false
                         due in now..(now + 7 * 24 * 60 * 60 * 1000L)
                     }
-                com.tajemniktv.tajsos.ui.StudentSemesterSummary(
+                StudentSemesterSummary(
                     semester = semester,
                     courseCount = courseCount,
                     openAssignments = openAssignments,
@@ -2593,7 +2644,7 @@ fun calculateStudentBoardState(
             .div(60)
 
     val templateNames = templates.map { it.name.trim().lowercase() }.toSet()
-    return com.tajemniktv.tajsos.ui.StudentBoardState(
+    return StudentBoardState(
         lectureTemplateReady = templateNames.contains("lecture note template"),
         readingTemplateReady = templateNames.contains("reading note template"),
         paperSummaryTemplateReady = templateNames.contains("paper summary template"),

@@ -11,6 +11,7 @@ import com.tajemniktv.tajsos.data.NodeSnapshotEntity
 import com.tajemniktv.tajsos.data.RelationEntity
 import com.tajemniktv.tajsos.data.defaultInboxState
 import com.tajemniktv.tajsos.ui.main.calculators.calculateNextRecurringDate
+import com.tajemniktv.tajsos.ui.main.state.suggestedAreaTitles
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -55,7 +56,8 @@ class NodeCommands(
                 }
 
             val itemKind =
-                when (autoType) {
+                when (autoType)
+                {
                     "task" -> ItemKind.TASK
                     "note" -> ItemKind.NOTE
                     "record" -> ItemKind.RECORD
@@ -130,8 +132,9 @@ class NodeCommands(
         inboxState: Boolean? = null,
     ): Long =
         withContext(kotlinx.coroutines.Dispatchers.Default) {
-            when (type) {
-                "task" ->
+            when (type)
+            {
+                "task" -> {
                     repository.insertLifeItem(
                         kind = ItemKind.TASK,
                         title = title,
@@ -140,8 +143,9 @@ class NodeCommands(
                         homeAreaId = areaId,
                         inboxState = inboxState ?: ItemKind.TASK.defaultInboxState(),
                     )
+                }
 
-                "note" ->
+                "note" -> {
                     repository.insertLifeItem(
                         kind = ItemKind.NOTE,
                         title = title,
@@ -150,8 +154,9 @@ class NodeCommands(
                         homeAreaId = areaId,
                         inboxState = inboxState ?: ItemKind.NOTE.defaultInboxState(),
                     )
+                }
 
-                "record" ->
+                "record" -> {
                     repository.insertLifeItem(
                         kind = ItemKind.RECORD,
                         title = title,
@@ -160,8 +165,9 @@ class NodeCommands(
                         homeAreaId = areaId,
                         inboxState = inboxState ?: ItemKind.RECORD.defaultInboxState(),
                     )
+                }
 
-                "project" ->
+                "project" -> {
                     repository.insertLifeItem(
                         kind = ItemKind.PROJECT,
                         title = title,
@@ -169,19 +175,23 @@ class NodeCommands(
                         homeAreaId = areaId,
                         inboxState = inboxState ?: ItemKind.PROJECT.defaultInboxState(),
                     )
+                }
 
-                "area" ->
+                "area"    ->
+                {
                     repository.insertLifeItem(
-                        kind = ItemKind.AREA,
+                            kind = ItemKind.AREA,
                         title = title,
                         content = content,
                         inboxState = inboxState ?: ItemKind.AREA.defaultInboxState(),
                     )
+                }
 
-                else ->
-                    repository.insertNode(
-                        NodeEntity(
-                            title = title,
+                else      ->
+                {
+                        repository.insertNode(
+                            NodeEntity(
+                                title = title,
                             content = content,
                             type = type,
                             projectId = projectId,
@@ -200,6 +210,7 @@ class NodeCommands(
                             maintenanceType = if (type == "maintenance") "form" else null,
                         ),
                     )
+                }
             }
         }
 
@@ -638,7 +649,7 @@ class NodeCommands(
         content: String = "",
     ) {
         scope.launch {
-            val markerId = addNodeForResult(title, content, "note", null, null, false)
+            val markerId = addNodeForResult(title, content, "note", inboxState = false)
             val markerNode = repository.getNodeById(markerId) ?: return@launch
             repository.updateNode(
                 markerNode.copy(
@@ -678,7 +689,6 @@ class NodeCommands(
                     content = "Auto-generated monthly reset summary and cleanup marker.",
                     noteType = "reflection",
                     inboxState = false,
-                    status = "active",
                 ),
             )
         }
@@ -713,7 +723,6 @@ class NodeCommands(
                         type = targetType,
                         projectId = source.projectId,
                         areaId = source.areaId,
-                        inboxState = true,
                         decisionStatus = if (targetType == "decision") "pending" else null,
                         decisionCategory = if (targetType == "decision") "major" else null,
                     ),

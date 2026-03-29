@@ -2,7 +2,7 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
-package com.tajemniktv.tajsos.ui
+package com.tajemniktv.tajsos.ui.main.bootstrap
 
 import com.tajemniktv.tajsos.data.AppRepository
 import com.tajemniktv.tajsos.data.ModeEntity
@@ -14,9 +14,7 @@ import com.tajemniktv.tajsos.data.RelationEntity
 import com.tajemniktv.tajsos.data.TemplateEntity
 import com.tajemniktv.tajsos.data.UserEntity
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.firstOrNull
 
 /**
  * A utility class responsible for initializing and populating the local database with core operational data
@@ -58,7 +56,7 @@ class AppBootstrapper(
      */
     private suspend fun seedUserData() {
         if (user.first() == null) {
-            repository.insertUser(UserEntity(nickname = "OPERATOR"))
+            repository.insertUser(UserEntity())
         }
     }
 
@@ -83,7 +81,6 @@ class AppBootstrapper(
                 NodeEntity(
                     title = "Explore the Dashboard",
                     type = "task",
-                    inboxState = true,
                 ),
             )
 
@@ -240,15 +237,12 @@ class AppBootstrapper(
                         name = "Command",
                         description = "Default everyday overview mode. What matters right now?",
                         icon = "dashboard",
-                        sortOrder = 0,
                         themeColor = 0xFF3F51B5.toInt(),
                     ),
                 )
             repository.insertPreference(
                 ModePreferenceEntity(
                     modeId = commandId,
-                    showInbox = true,
-                    showStats = true,
                     dashboardBlocksJson = "[\"today_top_3\", \"resume_context\", \"inbox_count\", \"deadlines\", \"overdue\", \"pinned_note\"]",
                 ),
             )
@@ -417,8 +411,6 @@ class AppBootstrapper(
             repository.insertPreference(
                 ModePreferenceEntity(
                     modeId = allModeId,
-                    showInbox = true,
-                    showStats = true,
                     dashboardBlocksJson = "[\"today_top_3\", \"search\", \"alerts\", \"focus\", \"insights\", \"knowledge\", \"operational\"]",
                 ),
             )

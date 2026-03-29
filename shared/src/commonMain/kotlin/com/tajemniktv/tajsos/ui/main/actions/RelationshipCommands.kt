@@ -2,7 +2,7 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
-package com.tajemniktv.tajsos.ui
+package com.tajemniktv.tajsos.ui.main.actions
 
 import com.tajemniktv.tajsos.data.AppRepository
 import com.tajemniktv.tajsos.data.NodeEntity
@@ -489,7 +489,6 @@ class RelationshipCommands(
             categoryTag = "process_tracking",
             title = title.ifBlank { "Application status" },
             content = "Status: $normalizedStatus",
-            asType = "note",
             dueAt = dueAt,
         )
     }
