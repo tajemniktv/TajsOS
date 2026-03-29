@@ -183,8 +183,8 @@ fun ProjectListContent(
                     totalItems = total,
                     onLongClick = {
                         onNavigateTo(
-                            Screen.NoteDetail.route.replace(
-                                "{noteId}",
+                            Screen.ProjectDetail.route.replace(
+                                "{projectId}",
                                 project.id.toString(),
                             ),
                         )

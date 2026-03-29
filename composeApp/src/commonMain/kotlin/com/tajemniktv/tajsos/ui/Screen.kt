@@ -51,6 +51,20 @@ sealed class Screen(
         isRoot = false,
     )
 
+    data object TaskDetail : Screen(
+        "task/{taskId}",
+        Res.string.type_task,
+        Icons.AutoMirrored.Filled.List,
+        isRoot = false,
+    )
+
+    data object RecordDetail : Screen(
+        "record/{recordId}",
+        Res.string.type_record,
+        Icons.Default.Description,
+        isRoot = false,
+    )
+
     data object Insights : Screen("insights", Res.string.screen_stats, Icons.Default.Info)
 
     data object Archive : Screen("archive", Res.string.screen_archive, Icons.Default.Delete)
@@ -215,6 +229,8 @@ sealed class Screen(
             if (currentRouteBase == StudyLegacy.route) return Education
             return listOf(
                 NoteDetail,
+                TaskDetail,
+                RecordDetail,
                 ProjectDetail,
                 AreaDetail,
                 CalendarSettings,
@@ -351,6 +367,8 @@ sealed class Screen(
             when (screen)
             {
                 NoteDetail -> Notes
+                TaskDetail -> Tasks
+                RecordDetail -> Notes
                 ProjectDetail -> Projects
                 AreaDetail -> Areas
                 CalendarSettings -> Calendar

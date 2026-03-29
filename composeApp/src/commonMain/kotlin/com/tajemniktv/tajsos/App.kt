@@ -54,8 +54,10 @@ import com.tajemniktv.tajsos.data.ModeEntity
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.data.TemplateEntity
 import com.tajemniktv.tajsos.data.UserProfile
+import com.tajemniktv.tajsos.ui.DetailNavigationContract
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
+import com.tajemniktv.tajsos.ui.screens.RecordDetailScreen
 import com.tajemniktv.tajsos.ui.components.common.CaptureSheet
 import com.tajemniktv.tajsos.ui.components.layout.AppLayout
 import com.tajemniktv.tajsos.ui.components.layout.DesktopSearchSurface
@@ -73,6 +75,7 @@ import com.tajemniktv.tajsos.ui.screens.ReviewScreen
 import com.tajemniktv.tajsos.ui.screens.RulesScreen
 import com.tajemniktv.tajsos.ui.screens.SearchScreen
 import com.tajemniktv.tajsos.ui.screens.SettingsScreen
+import com.tajemniktv.tajsos.ui.screens.TaskDetailScreen
 import com.tajemniktv.tajsos.ui.screens.TasksScreen
 import com.tajemniktv.tajsos.ui.screens.TemplatesScreen
 import com.tajemniktv.tajsos.ui.screens.TimeArchitectureScreen
@@ -148,6 +151,7 @@ fun App(
     val allProjects by viewModel.allProjects.collectAsState()
     val allAreas by viewModel.allAreas.collectAsState()
     val allTemplates by viewModel.allTemplates.collectAsState()
+    val allNodes by viewModel.allNodes.collectAsState()
     val latestTrack by viewModel.trackEntries.collectAsState().let {
         derivedStateOf { it.value.lastOrNull() }
     }
@@ -215,6 +219,7 @@ fun App(
                     onAvatarPickConsumed = onAvatarPickConsumed,
                     allProjects = allProjects,
                     allAreas = allAreas,
+                    allNodes = allNodes,
                     allTemplates = allTemplates,
                     lastActiveProjectId = lastActiveProjectId,
                     lastActiveAreaId = lastActiveAreaId,
@@ -247,6 +252,7 @@ fun App(
  * @param onVoiceCaptureConsumed Callback invoked after the voice capture result has been consumed.
  * @param allProjects List of available project nodes for selection in the capture sheet.
  * @param allAreas List of available area nodes for selection in the capture sheet.
+ * @param allNodes Snapshot of all nodes used to resolve typed detail routes from generic open actions.
  * @param allTemplates List of available templates for the capture sheet.
  * @param lastActiveProjectId Default project id to preselect in the capture sheet, if any.
  * @param lastActiveAreaId Default area id to preselect in the capture sheet, if any.
@@ -274,6 +280,7 @@ private fun AppScaffold(
     onAvatarPickConsumed: () -> Unit,
     allProjects: List<NodeEntity>,
     allAreas: List<NodeEntity>,
+    allNodes: List<com.tajemniktv.tajsos.data.NodeWithPin>,
     allTemplates: List<TemplateEntity>,
     lastActiveProjectId: Long?,
     lastActiveAreaId: Long?,
@@ -413,12 +420,7 @@ private fun AppScaffold(
         },
     ) { innerPadding ->
         val onEditNode: (Long) -> Unit = { id ->
-            onNavigate(
-                Screen.NoteDetail.route.replace(
-                    "{noteId}",
-                    id.toString(),
-                ),
-            )
+            onNavigate(DetailNavigationContract.routeForNodeId(id, allNodes))
         }
 
         NavHost(
@@ -533,6 +535,34 @@ private fun AppScaffold(
                 NoteDetailScreen(
                     viewModel,
                     noteId,
+                    onBack = { navController.popBackStack() },
+                    onNavigateToNode = onEditNode,
+                    onNavigateToSearch = { onNavigate(Screen.Search.route) },
+                )
+            }
+            composable(Screen.TaskDetail.route) { backStackEntry ->
+                val taskId =
+                    backStackEntry.savedStateHandle
+                        .get<Any>("taskId")
+                        ?.toString()
+                        ?.toLongOrNull() ?: -1L
+                TaskDetailScreen(
+                    viewModel = viewModel,
+                    taskId = taskId,
+                    onBack = { navController.popBackStack() },
+                    onNavigateToNode = onEditNode,
+                    onNavigateToSearch = { onNavigate(Screen.Search.route) },
+                )
+            }
+            composable(Screen.RecordDetail.route) { backStackEntry ->
+                val recordId =
+                    backStackEntry.savedStateHandle
+                        .get<Any>("recordId")
+                        ?.toString()
+                        ?.toLongOrNull() ?: -1L
+                RecordDetailScreen(
+                    viewModel = viewModel,
+                    recordId = recordId,
                     onBack = { navController.popBackStack() },
                     onNavigateToNode = onEditNode,
                     onNavigateToSearch = { onNavigate(Screen.Search.route) },

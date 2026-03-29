@@ -28,6 +28,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tajemniktv.tajsos.data.ItemKind
+import com.tajemniktv.tajsos.data.isDecisionSupportItem
+import com.tajemniktv.tajsos.data.isNoteItem
+import com.tajemniktv.tajsos.data.isTaskItem
+import com.tajemniktv.tajsos.data.itemKindOrNull
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.ActionButton
 import com.tajemniktv.tajsos.ui.components.cards.ConnectionCard
@@ -281,7 +286,7 @@ fun NoteDetailScreen(
                     onClick = { showStatusDialog = true },
                 )
 
-                if (node.type == "decision") {
+                if (node.isDecisionSupportItem()) {
                     DecisionDetailContent(
                         viewModel = viewModel,
                         node = node,
@@ -320,7 +325,7 @@ fun NoteDetailScreen(
                 }
 
                 // Task Specific Metadata
-                if (node.type == "task") {
+                if (node.isTaskItem()) {
                     Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
                         DetailSectionHeader(
                             title = "OPERATIONAL METADATA",
@@ -481,7 +486,13 @@ fun NoteDetailScreen(
                 }
 
                 // Resource Specific Metadata
-                if (node.type == "resource") {
+                val showMediaMetadata =
+                    node.isNoteItem() &&
+                        (
+                            node.mediaType != null ||
+                                node.rating != null
+                        )
+                if (showMediaMetadata) {
                     Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
                         DetailSectionHeader(
                             title = "RESOURCE DATA",
@@ -915,7 +926,7 @@ fun NoteDetailScreen(
                 }
 
                 // Knowledge / Media Type (if applicable)
-                if (node.type == "note" || node.type == "idea") {
+                if (node.isNoteItem()) {
                     Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
                         DetailSectionHeader(
                             title = "KNOWLEDGE CONFIG",
@@ -1229,7 +1240,7 @@ fun NoteDetailScreen(
         onDismiss = { showMergeDialog = false },
         title = "MERGE NODES",
         prefix = "DATA_MERGE // CONSOLIDATE",
-        options = nodes.filter { it.node.id != noteId && (it.node.type == "note" || it.node.type == "idea") },
+        options = nodes.filter { it.node.id != noteId && it.node.isNoteItem() },
         selectedOption = null,
         onSelect = { other ->
             viewModel.mergeNodes(noteId, listOf(other.node.id))
@@ -1432,7 +1443,7 @@ fun NoteDetailScreen(
         val moreActions =
             remember(node, isAtomicMode) {
                 mutableListOf<MoreAction>().apply {
-                    if (node.type == "note" || node.type == "idea") {
+                    if (node.isNoteItem()) {
                         add(
                             MoreAction(
                                 "atomic",
@@ -1476,7 +1487,7 @@ fun NoteDetailScreen(
                             ),
                         )
                     }
-                    if (node.type == "task") {
+                    if (node.isTaskItem()) {
                         add(
                             MoreAction(
                                 "repeat",
@@ -1546,10 +1557,10 @@ fun NoteDetailScreen(
                         scope.launch {
                             viewModel.getNodeById(noteId)?.let { original ->
                                 val targetType =
-                                    when (original.type)
-                                    {
-                                        "note", "idea" -> if (original.noteType == "idea") "project" else "task"
-                                        "task" -> "project"
+                                    when (original.itemKindOrNull()) {
+                                        ItemKind.NOTE -> if (original.noteType == "idea") "project" else "task"
+                                        ItemKind.TASK -> "project"
+                                        ItemKind.RECORD -> "note"
                                         else -> original.type
                                     }
                                 viewModel.updateNode(original.copy(type = targetType))
