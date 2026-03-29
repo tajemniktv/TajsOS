@@ -283,7 +283,7 @@ sealed class Screen(
                 Res.string.nav_systems to listOf(Projects, Areas, Protocols, TimeArchitecture, Places),
                 Res.string.nav_brain to listOf(Notes, Vaults, Rules),
                 Res.string.nav_status to listOf(Track, Insights, Capacity, Identity, Graph, Review),
-                Res.string.nav_system to listOf(*DomainRegistry.screens.toTypedArray(), Archive, Settings, Profile),
+                Res.string.nav_system to listOf(*DomainRegistry.screens.toTypedArray(), Archive, Settings),
             )
         }
 

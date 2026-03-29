@@ -5,13 +5,13 @@
 package com.tajemniktv.tajsos.ui.components.sidebar
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -30,7 +30,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -38,7 +37,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -53,8 +51,6 @@ import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.nav_role_admin
-import tajsos.composeapp.generated.resources.nav_uptime
-import tajsos.composeapp.generated.resources.nav_uptime_value
 
 /**
  * Sidebar host that switches between the default main sidebar and contextual screen-specific sidebars.
@@ -95,6 +91,10 @@ fun SidebarContent(
         SidebarProfileHeader(
             currentMode = currentMode,
             userProfile = userProfile,
+            onAvatarClick = {
+                onNavigate(Screen.Profile)
+                onNavigateFromSidebar()
+            },
         )
 
         if (allModes.isNotEmpty()) {
@@ -154,16 +154,18 @@ fun SidebarContent(
                 }
             }
         }
-
-        SidebarFooter()
         Spacer(Modifier.height(TactileTheme.SpacingMd))
     }
 }
 
+/**
+ * Renders the sidebar identity header and routes avatar taps to the profile screen.
+ */
 @Composable
 private fun SidebarProfileHeader(
     currentMode: ModeEntity?,
     userProfile: UserProfile,
+    onAvatarClick: () -> Unit,
 ) {
     val displayName = userProfile.resolveDisplayName()
     val avatarInitials = profileInitials(userProfile)
@@ -176,31 +178,32 @@ private fun SidebarProfileHeader(
                 .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Box(
-            modifier =
-                Modifier
-                    .size(44.dp)
-                    .background(
-                        currentMode?.themeColor?.let { Color(it) }?.copy(alpha = 0.2f)
-                            ?: Color(0xFFFDE68A),
-                        CircleShape,
-                    ),
-            contentAlignment = Alignment.Center,
+        Surface(
+            onClick = onAvatarClick,
+            modifier = Modifier.size(44.dp),
+            shape = CircleShape,
+            color = currentMode?.themeColor?.let { Color(it) }?.copy(alpha = 0.2f)
+                ?: Color(0xFFFDE68A),
         ) {
-            if (avatarInitials.isBlank()) {
-                Icon(
-                    Icons.Default.Person,
-                    contentDescription = null,
-                    tint = currentMode?.themeColor?.let { Color(it) } ?: TactileTheme.Primary,
-                    modifier = Modifier.size(24.dp),
-                )
-            } else {
-                Text(
-                    avatarInitials,
-                    color = currentMode?.themeColor?.let { Color(it) } ?: TactileTheme.Primary,
-                    style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Bold,
-                )
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center,
+            ) {
+                if (avatarInitials.isBlank()) {
+                    Icon(
+                        Icons.Default.Person,
+                        contentDescription = null,
+                        tint = currentMode?.themeColor?.let { Color(it) } ?: TactileTheme.Primary,
+                        modifier = Modifier.size(24.dp),
+                    )
+                } else {
+                    Text(
+                        avatarInitials,
+                        color = currentMode?.themeColor?.let { Color(it) } ?: TactileTheme.Primary,
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
             }
         }
         Spacer(Modifier.width(TactileTheme.SpacingMd))
@@ -271,49 +274,6 @@ private fun SidebarModeSelector(
         HorizontalDivider(
             color = TactileTheme.Border.copy(alpha = 0.3f),
             modifier = Modifier.padding(top = TactileTheme.SpacingMd),
-        )
-    }
-}
-
-@Composable
-private fun SidebarFooter() {
-    Column(
-        modifier =
-            Modifier
-                .padding(TactileTheme.SpacingMd)
-                .background(
-                    TactileTheme.Surface.copy(alpha = 0.5f),
-                    RoundedCornerShape(TactileTheme.RadiusMd),
-                ).padding(TactileTheme.SpacingMd),
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                stringResource(Res.string.nav_uptime),
-                style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Muted,
-                fontWeight = FontWeight.Bold,
-            )
-            Text(
-                stringResource(Res.string.nav_uptime_value),
-                style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary,
-                fontWeight = FontWeight.Bold,
-            )
-        }
-        Spacer(Modifier.height(TactileTheme.SpacingSm))
-        LinearProgressIndicator(
-            progress = { 0.999f },
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .height(4.dp),
-            color = TactileTheme.Primary,
-            trackColor = TactileTheme.Muted.copy(alpha = 0.2f),
-            strokeCap = StrokeCap.Round,
         )
     }
 }
