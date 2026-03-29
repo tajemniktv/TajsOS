@@ -227,7 +227,6 @@
     <string name="settings_data_management">DATA MANAGEMENT</string>
     <string name="settings_export_data">EXPORT LOCAL DATA</string>
     <string name="settings_export_success">Data exported (%1$d chars)</string>
-    <string name="settings_force_crash">FORCE TEST CRASH</string>
 
     <!-- Inbox -->
     <string name="inbox_quick_capture">Quick Capture</string>

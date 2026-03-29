@@ -142,7 +142,6 @@
     <string name="settings_data_management">ZARZĄDZANIE DANYMI</string>
     <string name="settings_export_data">EKSPORTUJ DANE LOKALNE</string>
     <string name="settings_export_success">Dane wyeksportowane (%1$d znaków)</string>
-    <string name="settings_force_crash">WYMUŚ TESTOWĄ AWARIĘ</string>
 
     <!-- Inbox -->
     <string name="inbox_quick_capture">Szybkie Przechwytywanie</string>

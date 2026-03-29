@@ -54,19 +54,17 @@ import tajsos.composeapp.generated.resources.settings_configure_calendars
 import tajsos.composeapp.generated.resources.settings_data_management
 import tajsos.composeapp.generated.resources.settings_export_data
 import tajsos.composeapp.generated.resources.settings_export_success
-import tajsos.composeapp.generated.resources.settings_force_crash
 import tajsos.composeapp.generated.resources.settings_manage_templates
 import tajsos.composeapp.generated.resources.settings_security
 
 /**
- * Renders the app settings screen with security, calendar, templates, data management, and a test crash action.
+ * Renders the app settings screen with security, calendar, templates, and data management.
  *
- * The security section shows a biometric toggle that reflects and updates the ViewModel biometric state and is disabled when biometric hardware is unavailable. The data export action calls the ViewModel to obtain exported JSON and displays a snackbar indicating the exported byte length. The force crash button throws a RuntimeException when tapped.
+ * The security section shows a biometric toggle that reflects and updates the ViewModel biometric state and is disabled when biometric hardware is unavailable. The data export action calls the ViewModel to obtain exported JSON and displays a snackbar indicating the exported byte length.
  *
  * @param viewModel Provides observable biometric state and actions for toggling biometric protection and exporting data.
  * @param onNavigateToCalendarSettings Callback invoked when the user requests calendar integration settings.
  * @param onNavigateToTemplates Callback invoked when the user requests template management.
- * @throws RuntimeException Thrown when the "force crash" button is pressed.
  */
 @Composable
 fun SettingsScreen(
@@ -331,17 +329,6 @@ fun SettingsScreen(
                     ),
             ) {
                 Text("Import JSON")
-            }
-
-            Spacer(Modifier.height(TactileTheme.SpacingLg))
-
-            Button(
-                onClick = { throw RuntimeException("Test Crash") },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                colors = ButtonDefaults.buttonColors(containerColor = TactileTheme.Error),
-            ) {
-                Text(stringResource(Res.string.settings_force_crash))
             }
         }
     }
