@@ -314,12 +314,10 @@ fun DecisionDetailContent(
             },
             confirmButton = {
                 TextButton(
+                    enabled = optionTitle.isNotBlank(),
                     onClick = {
-                        if (optionTitle.isNotEmpty())
-                        {
-                            viewModel.addDecisionOption(node.id, optionTitle)
-                            showAddOptionDialog = false
-                        }
+                        viewModel.addDecisionOption(node.id, optionTitle)
+                        showAddOptionDialog = false
                     },
                 ) { Text(stringResource(Res.string.decision_add)) }
             },
@@ -373,11 +371,10 @@ fun DecisionDetailContent(
                     },
                     confirmButton = {
                         TextButton(
+                            enabled = outcome.isNotBlank(),
                             onClick = {
-                                if (outcome.isNotEmpty()) {
-                                    viewModel.decideOn(node.id, outcome, selectedOptionId)
-                                    showDecideDialog = false
-                                }
+                                viewModel.decideOn(node.id, outcome, selectedOptionId)
+                                showDecideDialog = false
                             },
                         ) { Text(stringResource(Res.string.decision_decide)) }
                     },
