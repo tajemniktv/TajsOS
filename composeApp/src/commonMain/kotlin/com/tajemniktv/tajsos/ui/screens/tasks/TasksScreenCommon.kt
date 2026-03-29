@@ -23,9 +23,9 @@ import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.data.TaskState
 import com.tajemniktv.tajsos.data.taskStateOrNull
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
-import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Instant
 
 @Composable
 internal fun TaskTabChip(

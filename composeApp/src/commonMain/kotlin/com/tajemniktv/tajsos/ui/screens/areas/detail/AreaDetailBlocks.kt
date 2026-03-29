@@ -53,8 +53,8 @@ import com.tajemniktv.tajsos.data.taskStateOrNull
 import com.tajemniktv.tajsos.ui.components.cards.LinkedNodeItem
 import com.tajemniktv.tajsos.ui.components.common.DetailHeader
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
-import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -523,8 +523,10 @@ private fun EmptyLabel(text: StringResource) {
 private fun formatTimestamp(timestamp: Long?): String {
     if (timestamp == null) return "-"
     val dt =
-        Instant.fromEpochMilliseconds(timestamp).toLocalDateTime(TimeZone.currentSystemDefault())
-    return "${dt.year}-${dt.monthNumber.toString().padStart(2, '0')}-${
+        kotlin.time.Instant
+            .fromEpochMilliseconds(timestamp)
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+    return "${dt.year}-${dt.month.number.toString().padStart(2, '0')}-${
         dt.day.toString().padStart(2, '0')
     }"
 }

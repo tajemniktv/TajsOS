@@ -103,7 +103,6 @@ import com.tajemniktv.tajsos.ui.components.layout.LocalHeaderActions
 import com.tajemniktv.tajsos.ui.screens.notes.NotesWorkspaceDetail
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
@@ -514,7 +513,7 @@ fun NoteDetailScreen(
                 showSnapshotDialog = false
             },
             optionName = {
-                Instant
+                kotlin.time.Instant
                     .fromEpochMilliseconds(it.timestamp)
                     .toLocalDateTime(TimeZone.currentSystemDefault())
                     .toString()

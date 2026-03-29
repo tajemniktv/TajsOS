@@ -72,7 +72,6 @@ import com.tajemniktv.tajsos.ui.components.common.DetailSectionHeader
 import com.tajemniktv.tajsos.ui.components.nodes.DecisionDetailContent
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
@@ -253,7 +252,7 @@ private fun renderNoteInfoGrid(context: NoteDetailContext) {
             title = "DUE AT",
             value =
                 context.node.dueAt?.let {
-                    Instant
+                    kotlin.time.Instant
                         .fromEpochMilliseconds(it)
                         .toLocalDateTime(TimeZone.currentSystemDefault())
                         .date

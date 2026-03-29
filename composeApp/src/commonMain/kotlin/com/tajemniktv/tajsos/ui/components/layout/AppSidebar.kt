@@ -10,7 +10,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.foundation.background
 import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
@@ -39,7 +38,6 @@ import androidx.compose.material.icons.filled.FiberManualRecord
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.PlainTooltip
@@ -329,7 +327,11 @@ fun ExpandableNavSection(
                     contentDescription = rootLabel,
                     tint = if (isActiveRoot) TactileTheme.Primary else TactileTheme.Muted,
                 )
-                AnimatedVisibility(visible = isExpandedPresentation, enter = fadeIn(), exit = fadeOut()) {
+                AnimatedVisibility(
+                    visible = isExpandedPresentation,
+                    enter = fadeIn(),
+                    exit = fadeOut(),
+                ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
@@ -384,7 +386,10 @@ fun ExpandableNavSection(
                     shadowElevation = 0.dp,
                 ) {
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 8.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 10.dp, vertical = 8.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
@@ -520,7 +525,9 @@ fun UserProfileSidebarSection(
             ) {
                 Surface(
                     shape = CircleShape,
-                    color = currentMode?.themeColor?.let { Color(it).copy(alpha = 0.25f) } ?: TactileTheme.SurfaceHigh,
+                    color =
+                        currentMode?.themeColor?.let { Color(it).copy(alpha = 0.25f) }
+                            ?: TactileTheme.SurfaceHigh,
                     modifier = Modifier.size(32.dp),
                 ) {
                     Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
@@ -602,9 +609,24 @@ private fun SidebarTooltip(
 }
 
 private fun profileInitials(profile: UserProfile): String {
-    val first = profile.firstName.trim().firstOrNull()?.uppercaseChar()?.toString().orEmpty()
-    val last = profile.lastName.trim().firstOrNull()?.uppercaseChar()?.toString().orEmpty()
+    val first =
+        profile.firstName
+            .trim()
+            .firstOrNull()
+            ?.uppercaseChar()
+            ?.toString()
+            .orEmpty()
+    val last =
+        profile.lastName
+            .trim()
+            .firstOrNull()
+            ?.uppercaseChar()
+            ?.toString()
+            .orEmpty()
     val initials = first + last
     if (initials.isNotBlank()) return initials
-    return profile.nickname.trim().take(2).uppercase()
+    return profile.nickname
+        .trim()
+        .take(2)
+        .uppercase()
 }

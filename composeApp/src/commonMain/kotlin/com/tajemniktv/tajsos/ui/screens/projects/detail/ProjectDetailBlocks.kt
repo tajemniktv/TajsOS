@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Label
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Archive
@@ -31,7 +32,6 @@ import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Hub
 import androidx.compose.material.icons.filled.Insights
-import androidx.compose.material.icons.filled.Label
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Tune
@@ -58,7 +58,6 @@ import com.tajemniktv.tajsos.data.taskStateOrNull
 import com.tajemniktv.tajsos.ui.components.cards.LinkedNodeItem
 import com.tajemniktv.tajsos.ui.components.common.DetailHeader
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
-import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
@@ -535,7 +534,7 @@ private fun renderProjectSidebar(context: ProjectDetailContext) {
 
         SidebarCard(
             title = stringResource(Res.string.project_detail_actions),
-            icon = Icons.Default.Label,
+            icon = Icons.AutoMirrored.Filled.Label,
         ) {
             if (context.tags.isEmpty()) {
                 Text(
@@ -696,7 +695,7 @@ fun ProjectTimelineItem(log: EventLogEntity) {
                 fontWeight = FontWeight.Bold,
             )
             val date =
-                Instant
+                kotlin.time.Instant
                     .fromEpochMilliseconds(log.timestamp)
                     .toLocalDateTime(TimeZone.currentSystemDefault())
             Text(
@@ -715,10 +714,10 @@ private fun formatTimestamp(timestamp: Long?): String {
         return "-"
     }
     val date =
-        Instant
+        kotlin.time.Instant
             .fromEpochMilliseconds(timestamp)
             .toLocalDateTime(TimeZone.currentSystemDefault())
-    return "${date.year}-${date.monthNumber.toString().padStart(2, '0')}-${
+    return "${date.year}-${date.month.number.toString().padStart(2, '0')}-${
         date.day.toString().padStart(2, '0')
     }"
 }

@@ -5,16 +5,19 @@
 package com.tajemniktv.tajsos.calendar
 
 import com.tajemniktv.tajsos.data.CalendarProviderEntity
-import io.ktor.client.*
-import io.ktor.client.engine.mock.*
-import io.ktor.http.*
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.mock.MockEngine
+import io.ktor.client.engine.mock.respond
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.headersOf
 import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
-import kotlinx.datetime.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
+import kotlin.time.Instant
 
 class IcsCalendarProviderTest {
     private fun createProviderWithIcs(icsContent: String): IcsCalendarProvider {
@@ -68,8 +71,18 @@ class IcsCalendarProviderTest {
             assertEquals("Test Event", event.title)
             assertEquals("This is a test\nwith newlines", event.description)
             assertEquals("Home", event.location)
-            assertEquals(Instant.parse("2023-10-24T10:00:00Z").toEpochMilliseconds(), event.startAt)
-            assertEquals(Instant.parse("2023-10-24T11:00:00Z").toEpochMilliseconds(), event.endAt)
+            assertEquals(
+                Instant
+                    .parse("2023-10-24T10:00:00Z")
+                    .toEpochMilliseconds(),
+                event.startAt,
+            )
+            assertEquals(
+                Instant
+                    .parse("2023-10-24T11:00:00Z")
+                    .toEpochMilliseconds(),
+                event.endAt,
+            )
             assertEquals(false, event.isAllDay)
         }
 
@@ -95,8 +108,18 @@ class IcsCalendarProviderTest {
             val event = events[0]
             assertEquals("All Day Event", event.title)
             assertTrue(event.isAllDay)
-            assertEquals(Instant.parse("2023-10-25T00:00:00Z").toEpochMilliseconds(), event.startAt)
-            assertEquals(Instant.parse("2023-10-26T00:00:00Z").toEpochMilliseconds(), event.endAt)
+            assertEquals(
+                Instant
+                    .parse("2023-10-25T00:00:00Z")
+                    .toEpochMilliseconds(),
+                event.startAt,
+            )
+            assertEquals(
+                Instant
+                    .parse("2023-10-26T00:00:00Z")
+                    .toEpochMilliseconds(),
+                event.endAt,
+            )
         }
 
     @Test
