@@ -30,9 +30,6 @@ The app is built around a small set of shared life objects that can still stay c
 
 Instead of splitting everything into isolated tools, TajsOS tries to make them work as one system.
 
-Built-in domains (for example Finances, Health, Education, Relationships) are first-class lenses
-over shared system data, while Areas remain user-defined responsibility anchors rather than rigid folders.
-
 ---
 
 ## Current status
