@@ -120,29 +120,12 @@ fun SidebarContent(
                     ),
         ) {
             if (contextualHeader != null && contextScreen != null) {
-                when (contextScreen) {
-                    Screen.Projects ->
-                        ProjectsSidebar(
-                            contextHeader = contextualHeader,
-                            panelLabel = panelLabel,
-                            onBackToMainSidebar = onBackToMainSidebar,
-                        )
-
-                    Screen.Focus ->
-                        FocusSidebar(
-                            contextHeader = contextualHeader,
-                            panelLabel = panelLabel,
-                            onBackToMainSidebar = onBackToMainSidebar,
-                        )
-
-                    else ->
-                        GenericContextSidebar(
-                            screen = contextScreen,
-                            contextHeader = contextualHeader,
-                            panelLabel = panelLabel,
-                            onBackToMainSidebar = onBackToMainSidebar,
-                        )
-                }
+                GenericContextSidebar(
+                    screen = contextScreen,
+                    contextHeader = contextualHeader,
+                    panelLabel = panelLabel,
+                    onBackToMainSidebar = onBackToMainSidebar,
+                )
             } else {
                 MainSidebar(
                     currentDestination = currentDestination,
