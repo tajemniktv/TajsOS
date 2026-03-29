@@ -29,7 +29,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -160,14 +159,18 @@ fun App(
                 }
 
                 val targetScreen = Screen.fromRoute(resolvedRoute)
-                navController.navigate(resolvedRoute) {
-                    if (targetScreen?.isRoot == true) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
+                if (targetScreen?.isRoot == true) {
+                    navController.popBackStack(Screen.Dashboard.route, false)
+                    if (resolvedRoute != Screen.Dashboard.route) {
+                        navController.navigate(resolvedRoute) {
+                            restoreState = true
+                            launchSingleTop = true
                         }
-                        restoreState = true
                     }
-                    launchSingleTop = true
+                } else {
+                    navController.navigate(resolvedRoute) {
+                        launchSingleTop = true
+                    }
                 }
             }
 
