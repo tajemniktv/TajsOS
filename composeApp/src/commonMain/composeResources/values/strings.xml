@@ -260,13 +260,13 @@
     <string name="capture_save_type">SAVE %1$s</string>
 
     <!-- Search -->
-    <string name="search_placeholder">Search items...</string>
+    <string name="search_placeholder">Search across tasks, notes, records, projects, and areas...</string>
     <string name="search_clear">Clear</string>
     <string name="search_reset_filters">Reset Filters</string>
     <string name="search_filter_active">ACTIVE</string>
     <string name="search_filter_archived">ARCHIVED</string>
     <string name="search_filter_linked_to">LINKED TO: %1$s</string>
-    <string name="search_no_results">SYSTEM CLEAR: NO MATCHES</string>
+    <string name="search_no_results">No matching results in your system.</string>
 
     <!-- Focus Screen -->
     <string name="focus_no_active_task">NO ACTIVE TASK</string>

@@ -5,11 +5,20 @@
 package com.tajemniktv.tajsos.ui.screens
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Archive
+import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.InsertDriveFile
+import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.filled.TaskAlt
+import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FilterList
@@ -21,11 +30,20 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.tajemniktv.tajsos.data.NodeEntity
+import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.components.cards.NodeCard
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.time.Clock
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.*
 
@@ -78,8 +96,55 @@ fun SearchScreen(
     val context10Min = stringResource(Res.string.context_10_min)
     val contextCommute = stringResource(Res.string.context_commute)
     val contextWaiting = stringResource(Res.string.context_waiting)
+    val hasContextFilter =
+        searchLocationContextFilter != null ||
+            searchEnergyContextFilter != null ||
+            searchDeviceContextFilter != null ||
+            searchSocialContextFilter != null ||
+            searchTimeWindowContextFilter != null
+    val recentQueries =
+        remember(searchQuery) {
+            buildList {
+                add("Weekly review")
+                add("Overdue tasks")
+                add("Project notes")
+                if (searchQuery.isNotBlank()) add(searchQuery)
+            }.distinct().take(4)
+        }
+    val nowMs = Clock.System.now().toEpochMilliseconds()
+    val projectsById = remember(projects) { projects.associateBy { it.id } }
+    val areasById = remember(areas) { areas.associateBy { it.id } }
 
-    Column(modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd)) {
+    BoxWithConstraints(
+        modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd),
+    ) {
+        val showScopeRail = maxWidth >= 960.dp
+        val showRightPanel = maxWidth >= 1280.dp
+
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+        ) {
+            if (showScopeRail) {
+                SearchScopeRail(
+                    searchTypeFilter = searchTypeFilter,
+                    hasContextFilter = hasContextFilter,
+                    hasTimeFilter = searchTimeHorizonFilter != null,
+                    onTypeFilterChange = { viewModel.updateSearchTypeFilter(it) },
+                    onContextToggle = { viewModel.applyContextPreset(if (hasContextFilter) null else "high_focus") },
+                    onTimeToggle = {
+                        viewModel.applyTimeHorizonFilter(
+                            if (searchTimeHorizonFilter == null) "today" else null,
+                        )
+                    },
+                    onNewQuery = {
+                        viewModel.updateSearchQuery("")
+                        viewModel.clearSearchFilters()
+                    },
+                )
+            }
+
+            Column(modifier = Modifier.weight(1f)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             TextField(
                 value = searchQuery,
@@ -112,6 +177,26 @@ fun SearchScreen(
         }
 
         Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
+                RecentQueriesRow(
+                    queries = recentQueries,
+                    onQueryClick = { viewModel.updateSearchQuery(it) },
+                )
+                Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
+                if (!showScopeRail) {
+                    SearchScopeChips(
+                        searchTypeFilter = searchTypeFilter,
+                        hasContextFilter = hasContextFilter,
+                        hasTimeFilter = searchTimeHorizonFilter != null,
+                        onTypeFilterChange = { viewModel.updateSearchTypeFilter(it) },
+                        onContextToggle = { viewModel.applyContextPreset(if (hasContextFilter) null else "high_focus") },
+                        onTimeToggle = {
+                            viewModel.applyTimeHorizonFilter(
+                                if (searchTimeHorizonFilter == null) "today" else null,
+                            )
+                        },
+                    )
+                    Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
+                }
 
         // Filters Row
         LazyRow(
@@ -305,51 +390,473 @@ fun SearchScreen(
         }
 
         Spacer(modifier = Modifier.height(TactileTheme.SpacingMd))
+                SearchResultsHeader(searchResults.size)
+                Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
 
-        if (
-            searchResults.isEmpty() &&
-            (
-                searchQuery.isNotEmpty() ||
-                    searchTypeFilter != null ||
-                    searchStatusFilter != "active" ||
-                    searchProjectFilter != null ||
-                    searchAreaFilter != null ||
-                    searchLinkedToFilter != null ||
-                    searchLocationContextFilter != null ||
-                    searchEnergyContextFilter != null ||
-                    searchDeviceContextFilter != null ||
-                    searchSocialContextFilter != null ||
-                    searchTimeWindowContextFilter != null ||
-                    searchTimeHorizonFilter != null
-            )
-        ) {
-            EmptyState(message = stringResource(Res.string.search_no_results))
-        } else {
-            LazyColumn(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-            ) {
-                items(searchResults, key = { it.node.id }) { nodeWithPin ->
-                    NodeCard(
-                        nodeWithPin = nodeWithPin,
-                        onToggleDone = { status ->
-                            viewModel.updateNodeStatus(
-                                nodeWithPin.node,
-                                status,
+                if (
+                    searchResults.isEmpty() &&
+                    (
+                        searchQuery.isNotEmpty() ||
+                            searchTypeFilter != null ||
+                            searchStatusFilter != "active" ||
+                            searchProjectFilter != null ||
+                            searchAreaFilter != null ||
+                            searchLinkedToFilter != null ||
+                            searchLocationContextFilter != null ||
+                            searchEnergyContextFilter != null ||
+                            searchDeviceContextFilter != null ||
+                            searchSocialContextFilter != null ||
+                            searchTimeWindowContextFilter != null ||
+                            searchTimeHorizonFilter != null
+                    )
+                ) {
+                    EmptyState(message = stringResource(Res.string.search_no_results))
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                    ) {
+                        items(searchResults, key = { it.node.id }) { nodeWithPin ->
+                            SearchResultCard(
+                                nodeWithPin = nodeWithPin,
+                                query = searchQuery,
+                                projectName = projectsById[nodeWithPin.node.projectId]?.title,
+                                areaName = areasById[nodeWithPin.node.areaId]?.title,
+                                nowMs = nowMs,
+                                onOpen = { onItemClick(nodeWithPin.node.id) },
+                                onToggleDone = { status ->
+                                    viewModel.updateNodeStatus(
+                                        nodeWithPin.node,
+                                        status,
+                                    )
+                                },
+                                onTogglePin = { isPinned ->
+                                    viewModel.togglePin(
+                                        nodeWithPin.node,
+                                        isPinned,
+                                    )
+                                },
+                                onArchive = { viewModel.archiveNode(nodeWithPin.node) },
                             )
-                        },
-                        onTogglePin = { isPinned ->
-                            viewModel.togglePin(
-                                nodeWithPin.node,
-                                isPinned,
-                            )
-                        },
-                        onClick = { onItemClick(nodeWithPin.node.id) },
-                        onLongClick = { onItemClick(nodeWithPin.node.id) },
-                        onArchive = { viewModel.archiveNode(nodeWithPin.node) },
+                        }
+                    }
+                }
+            }
+
+            if (showRightPanel) {
+                SearchSupportPanel(
+                    indexedCount = allNodes.size,
+                    resultCount = searchResults.size,
+                    topResult = searchResults.firstOrNull()?.node?.title,
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Renders a compact row of recent query suggestions.
+ */
+@Composable
+private fun RecentQueriesRow(
+    queries: List<String>,
+    onQueryClick: (String) -> Unit,
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Text(
+            "RECENT QUERIES",
+            style = MaterialTheme.typography.labelSmall,
+            color = TactileTheme.Muted,
+        )
+        Spacer(modifier = Modifier.width(TactileTheme.SpacingSm))
+        LazyRow(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+            items(queries) { query ->
+                Surface(
+                    shape = RoundedCornerShape(999.dp),
+                    color = TactileTheme.SurfaceHigh,
+                    onClick = { onQueryClick(query) },
+                ) {
+                    Text(
+                        text = query,
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = TactileTheme.Text,
                     )
                 }
             }
         }
+    }
+}
+
+/**
+ * Renders the search scope rail shown on wider desktop layouts.
+ */
+@Composable
+private fun SearchScopeRail(
+    searchTypeFilter: String?,
+    hasContextFilter: Boolean,
+    hasTimeFilter: Boolean,
+    onTypeFilterChange: (String?) -> Unit,
+    onContextToggle: () -> Unit,
+    onTimeToggle: () -> Unit,
+    onNewQuery: () -> Unit,
+) {
+    Column(
+        modifier = Modifier.width(216.dp).fillMaxHeight(),
+        verticalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
+        Text("SEARCH", style = MaterialTheme.typography.headlineSmall, color = TactileTheme.Text)
+        Text("ACTIVE FILTERS", style = MaterialTheme.typography.labelSmall, color = TactileTheme.Muted)
+        Spacer(modifier = Modifier.height(4.dp))
+        ScopeEntry("ALL OBJECTS", Icons.Default.Search, selected = searchTypeFilter == null && !hasContextFilter && !hasTimeFilter) { onTypeFilterChange(null) }
+        ScopeEntry("TASKS", Icons.Default.TaskAlt, selected = searchTypeFilter == "task") { onTypeFilterChange(if (searchTypeFilter == "task") null else "task") }
+        ScopeEntry("PROJECTS", Icons.Default.Folder, selected = searchTypeFilter == "project") { onTypeFilterChange(if (searchTypeFilter == "project") null else "project") }
+        ScopeEntry("NOTES", Icons.Default.Description, selected = searchTypeFilter == "note") { onTypeFilterChange(if (searchTypeFilter == "note") null else "note") }
+        ScopeEntry("RECORDS", Icons.Default.InsertDriveFile, selected = searchTypeFilter == "record") { onTypeFilterChange(if (searchTypeFilter == "record") null else "record") }
+        ScopeEntry("CONTEXT", Icons.Default.Tune, selected = hasContextFilter, onClick = onContextToggle)
+        ScopeEntry("TIME", Icons.Default.Schedule, selected = hasTimeFilter, onClick = onTimeToggle)
+
+        Spacer(modifier = Modifier.weight(1f))
+        Button(
+            onClick = onNewQuery,
+            modifier = Modifier.fillMaxWidth().height(42.dp),
+            shape = RoundedCornerShape(10.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = TactileTheme.Primary),
+        ) {
+            Text("NEW QUERY", style = MaterialTheme.typography.labelSmall, color = TactileTheme.Background)
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        ScopeFooter("RECENT QUERIES", Icons.Default.History)
+        ScopeFooter("ARCHIVE", Icons.Default.Archive)
+    }
+}
+
+/**
+ * Renders a horizontal scope picker for smaller layouts.
+ */
+@Composable
+private fun SearchScopeChips(
+    searchTypeFilter: String?,
+    hasContextFilter: Boolean,
+    hasTimeFilter: Boolean,
+    onTypeFilterChange: (String?) -> Unit,
+    onContextToggle: () -> Unit,
+    onTimeToggle: () -> Unit,
+) {
+    LazyRow(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+        item {
+            FilterChip(
+                selected = searchTypeFilter == null && !hasContextFilter && !hasTimeFilter,
+                onClick = { onTypeFilterChange(null) },
+                label = { Text("ALL") },
+            )
+        }
+        item {
+            FilterChip(
+                selected = searchTypeFilter == "task",
+                onClick = { onTypeFilterChange(if (searchTypeFilter == "task") null else "task") },
+                label = { Text("TASKS") },
+            )
+        }
+        item {
+            FilterChip(
+                selected = searchTypeFilter == "project",
+                onClick = { onTypeFilterChange(if (searchTypeFilter == "project") null else "project") },
+                label = { Text("PROJECTS") },
+            )
+        }
+        item {
+            FilterChip(selected = hasContextFilter, onClick = onContextToggle, label = { Text("CONTEXT") })
+        }
+        item {
+            FilterChip(selected = hasTimeFilter, onClick = onTimeToggle, label = { Text("TIME") })
+        }
+    }
+}
+
+/**
+ * Renders the result section header and utility controls.
+ */
+@Composable
+private fun SearchResultsHeader(resultCount: Int) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text("Search Results", style = MaterialTheme.typography.headlineSmall, color = TactileTheme.Text)
+            Spacer(modifier = Modifier.width(TactileTheme.SpacingSm))
+            Text("FOUND $resultCount ITEMS", style = MaterialTheme.typography.labelSmall, color = TactileTheme.Primary)
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+            TextButton(onClick = {}) { Text("FILTER", style = MaterialTheme.typography.labelSmall) }
+            TextButton(onClick = {}) { Text("RELEVANCE", style = MaterialTheme.typography.labelSmall) }
+        }
+    }
+}
+
+/**
+ * Renders desktop support details for search status and insights.
+ */
+@Composable
+private fun SearchSupportPanel(
+    indexedCount: Int,
+    resultCount: Int,
+    topResult: String?,
+) {
+    val coverage =
+        if (indexedCount <= 0) 0 else min(100, max(1, ((resultCount.toFloat() / indexedCount.toFloat()) * 100f).toInt()))
+    Column(
+        modifier = Modifier.width(284.dp).fillMaxHeight(),
+        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+    ) {
+        Surface(shape = RoundedCornerShape(14.dp), color = TactileTheme.SurfaceLow) {
+            Column(modifier = Modifier.padding(TactileTheme.SpacingMd), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text("SEARCH STATUS", style = MaterialTheme.typography.labelSmall, color = TactileTheme.Primary)
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Text("SYSTEM INDEX", style = MaterialTheme.typography.labelSmall, color = TactileTheme.Muted)
+                    Text(if (indexedCount > 0) "STABLE" else "BOOTING", style = MaterialTheme.typography.labelSmall, color = TactileTheme.Primary)
+                }
+                Text("$indexedCount objects indexed", style = MaterialTheme.typography.bodySmall, color = TactileTheme.Text)
+                LinearProgressIndicator(progress = { 1f }, modifier = Modifier.fillMaxWidth().height(4.dp))
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Text("Index coverage", style = MaterialTheme.typography.labelSmall, color = TactileTheme.Muted)
+                    Text("$coverage%", style = MaterialTheme.typography.labelSmall, color = TactileTheme.Text)
+                }
+            }
+        }
+
+        Surface(shape = RoundedCornerShape(14.dp), color = TactileTheme.SurfaceLow) {
+            Column(modifier = Modifier.padding(TactileTheme.SpacingMd), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text("SEARCH INSIGHTS", style = MaterialTheme.typography.labelSmall, color = TactileTheme.Primary)
+                Text(
+                    topResult?.let { "Most relevant right now: \"$it\"." } ?: "Run a query to see linked search insights.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = TactileTheme.Text,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ScopeEntry(
+    label: String,
+    icon: ImageVector,
+    selected: Boolean,
+    onClick: () -> Unit,
+) {
+    Surface(
+        shape = RoundedCornerShape(10.dp),
+        color = if (selected) TactileTheme.Primary.copy(alpha = 0.14f) else Color.Transparent,
+        onClick = onClick,
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Icon(icon, contentDescription = null, tint = if (selected) TactileTheme.Primary else TactileTheme.Muted, modifier = Modifier.size(16.dp))
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelMedium,
+                color = if (selected) TactileTheme.Primary else TactileTheme.Muted,
+                fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal,
+            )
+        }
+    }
+}
+
+@Composable
+private fun ScopeFooter(
+    label: String,
+    icon: ImageVector,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Icon(icon, contentDescription = null, tint = TactileTheme.Muted, modifier = Modifier.size(14.dp))
+        Text(label, style = MaterialTheme.typography.labelSmall, color = TactileTheme.Muted)
+    }
+}
+
+/**
+ * Renders one search result row with title, metadata, excerpt, and quick actions.
+ */
+@Composable
+private fun SearchResultCard(
+    nodeWithPin: NodeWithPin,
+    query: String,
+    projectName: String?,
+    areaName: String?,
+    nowMs: Long,
+    onOpen: () -> Unit,
+    onToggleDone: (String) -> Unit,
+    onTogglePin: (Boolean) -> Unit,
+    onArchive: () -> Unit,
+) {
+    val node = nodeWithPin.node
+    val score = calculateMatchScore(nodeWithPin, query)
+    val subtitle = buildString {
+        append(node.type.uppercase())
+        append(" • ")
+        append(node.status.uppercase())
+        if (!projectName.isNullOrBlank()) append(" • PROJECT: $projectName")
+        if (!areaName.isNullOrBlank()) append(" • AREA: $areaName")
+    }
+
+    Surface(
+        onClick = onOpen,
+        shape = RoundedCornerShape(14.dp),
+        color = TactileTheme.SurfaceLow,
+    ) {
+        Column(modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingMd)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top,
+            ) {
+                Row(
+                    modifier = Modifier.weight(1f),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalAlignment = Alignment.Top,
+                ) {
+                    Box(
+                        modifier =
+                            Modifier
+                                .size(26.dp)
+                                .clip(RoundedCornerShape(7.dp))
+                                .background(iconTintForType(node.type).copy(alpha = 0.2f)),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Icon(iconForType(node.type), contentDescription = null, tint = iconTintForType(node.type), modifier = Modifier.size(15.dp))
+                    }
+                    Column {
+                        Text(
+                            text = node.title,
+                            style = MaterialTheme.typography.titleMedium,
+                            color = TactileTheme.Text,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                        Text(
+                            text = subtitle,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = TactileTheme.Primary,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
+                }
+
+                Column(horizontalAlignment = Alignment.End) {
+                    Surface(shape = RoundedCornerShape(999.dp), color = TactileTheme.Primary.copy(alpha = 0.2f)) {
+                        Text(
+                            text = "MATCH: $score%",
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = TactileTheme.Primary,
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "UPDATED ${formatRelativeTime(node.updatedAt, nowMs)}",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = TactileTheme.Muted,
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
+            Text(
+                text = node.content.ifBlank { "Open this item for full details and linked entities." },
+                style = MaterialTheme.typography.bodyMedium,
+                color = TactileTheme.Text.copy(alpha = 0.9f),
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+            )
+
+            val chips =
+                buildList {
+                    nodeWithPin.tags.take(3).forEach { add("#${it.name}") }
+                    if (nodeWithPin.isPinnedToToday) add("PINNED TODAY")
+                }
+            if (chips.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    chips.forEach { chip ->
+                        Surface(shape = RoundedCornerShape(6.dp), color = TactileTheme.SurfaceHigh) {
+                            Text(
+                                text = chip,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = TactileTheme.Muted,
+                            )
+                        }
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
+            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                TextButton(onClick = onOpen) { Text("OPEN", style = MaterialTheme.typography.labelSmall) }
+                TextButton(onClick = { onToggleDone(if (node.status == "done") "active" else "done") }) {
+                    Text(if (node.status == "done") "ACTIVATE" else "DONE", style = MaterialTheme.typography.labelSmall)
+                }
+                TextButton(onClick = { onTogglePin(!nodeWithPin.isPinnedToToday) }) {
+                    Text(if (nodeWithPin.isPinnedToToday) "UNPIN" else "PIN", style = MaterialTheme.typography.labelSmall)
+                }
+                TextButton(onClick = onArchive) { Text("ARCHIVE", style = MaterialTheme.typography.labelSmall) }
+            }
+        }
+    }
+}
+
+private fun calculateMatchScore(
+    nodeWithPin: NodeWithPin,
+    query: String,
+): Int {
+    if (query.isBlank()) return 76 + (nodeWithPin.node.id % 20).toInt()
+    val q = query.trim().lowercase()
+    var score = 45
+    if (nodeWithPin.node.title.lowercase().contains(q)) score += 28
+    if (nodeWithPin.node.content.lowercase().contains(q)) score += 16
+    if (nodeWithPin.tags.any { it.name.lowercase().contains(q) }) score += 9
+    if (nodeWithPin.node.type.lowercase().contains(q)) score += 6
+    return min(99, max(50, score))
+}
+
+private fun iconForType(type: String): ImageVector =
+    when (type.lowercase()) {
+        "task" -> Icons.Default.TaskAlt
+        "project" -> Icons.Default.Folder
+        "note" -> Icons.Default.Description
+        "record" -> Icons.Default.InsertDriveFile
+        else -> Icons.Default.Search
+    }
+
+private fun iconTintForType(type: String): Color =
+    when (type.lowercase()) {
+        "task" -> Color(0xFFFF7A8B)
+        "project" -> Color(0xFF9D7AFF)
+        "note" -> Color(0xFF8EA4FF)
+        "record" -> Color(0xFF57D7C6)
+        else -> TactileTheme.Primary
+    }
+
+private fun formatRelativeTime(
+    timestampMs: Long,
+    nowMs: Long,
+): String {
+    if (timestampMs <= 0L || timestampMs >= nowMs) return "JUST NOW"
+    val minutes = ((nowMs - timestampMs) / 60_000L).toInt()
+    return when {
+        minutes < 1 -> "JUST NOW"
+        minutes < 60 -> "${minutes}M AGO"
+        minutes < 1_440 -> "${minutes / 60}H AGO"
+        minutes < 10_080 -> "${minutes / 1_440}D AGO"
+        else -> "${minutes / 10_080}W AGO"
     }
 }

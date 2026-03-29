@@ -175,13 +175,13 @@
     <string name="capture_save_type">ZAPISZ %1$s</string>
 
     <!-- Search -->
-    <string name="search_placeholder">Szukaj elementów...</string>
+    <string name="search_placeholder">Szukaj w zadaniach, notatkach, rekordach, projektach i obszarach...</string>
     <string name="search_clear">Wyczyść</string>
     <string name="search_reset_filters">Resetuj filtry</string>
     <string name="search_filter_active">AKTYWNE</string>
     <string name="search_filter_archived">ZARCHIWIZOWANE</string>
     <string name="search_filter_linked_to">POWIĄZANE Z: %1$s</string>
-    <string name="search_no_results">NIE ZNALEZIONO PASUJĄCYCH WYNIKÓW</string>
+    <string name="search_no_results">Brak pasujących wyników w systemie.</string>
 
     <!-- Focus Screen -->
     <string name="focus_no_active_task">BRAK AKTYWNEGO ZADANIA</string>
