@@ -23,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -136,35 +137,30 @@ fun App(
     val userProfile by viewModel.userProfile.collectAsState()
 
     var showCaptureSheetState by remember { mutableStateOf(false) }
+    var selectedTasksTab by rememberSaveable { mutableStateOf(TasksTab.COMMAND) }
     val shellState = rememberAppShellState()
 
     val screen = remember(currentDestination) { Screen.fromRoute(currentDestination?.route) }
-    val activeTasksTab =
-        remember(navBackStackEntry, screen) {
-            if (screen == Screen.Tasks) {
-                val tabFromArgs = navBackStackEntry?.savedStateHandle?.get<Any>("tab")?.toString()
-                TasksTab.fromRouteSegment(tabFromArgs)
-            } else {
-                TasksTab.COMMAND
-            }
-        }
 
     TajsOSTheme(darkTheme = isDarkTheme) {
         BoxWithConstraints {
             val isDesktop = maxWidth > 800.dp
 
             val navigate: (String) -> Unit = { route ->
-                if (currentDestination?.route != route) {
-                    val targetScreen = Screen.fromRoute(route)
-                    navController.navigate(route) {
-                        if (targetScreen?.isRoot == true) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
-                            }
-                            restoreState = true
+                if (route.startsWith(Screen.Tasks.route + "?tab=")) {
+                    val tabSegment = route.substringAfter("?tab=", missingDelimiterValue = "")
+                    selectedTasksTab = TasksTab.fromRouteSegment(tabSegment)
+                }
+
+                val targetScreen = Screen.fromRoute(route)
+                navController.navigate(route) {
+                    if (targetScreen?.isRoot == true) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
                         }
-                        launchSingleTop = true
+                        restoreState = true
                     }
+                    launchSingleTop = true
                 }
             }
 
@@ -172,9 +168,10 @@ fun App(
                 isDesktop = isDesktop,
                 shellState = shellState,
                 currentDestination = currentDestination,
-                activeTasksTab = activeTasksTab,
+                activeTasksTab = selectedTasksTab,
                 onNavigate = { screen -> navigate(screen.route) },
                 onNavigateToTasksTab = { tab ->
+                    selectedTasksTab = tab
                     navigate(Screen.Tasks.route + "?tab=" + tab.routeSegment)
                 },
                 onNewEntry = { showCaptureSheetState = true },
@@ -205,6 +202,11 @@ fun App(
                     lastActiveAreaId = lastActiveAreaId,
                     currentDestination = currentDestination,
                     isDesktop = isDesktop,
+                    currentTasksTab = selectedTasksTab,
+                    onTasksTabChange = { newTab ->
+                        selectedTasksTab = newTab
+                        navigate(Screen.Tasks.route + "?tab=" + newTab.routeSegment)
+                    },
                     onNavigate = navigate,
                 )
             }
@@ -239,6 +241,8 @@ private fun AppScaffold(
     lastActiveAreaId: Long?,
     currentDestination: NavDestination?,
     isDesktop: Boolean,
+    currentTasksTab: TasksTab,
+    onTasksTabChange: (TasksTab) -> Unit,
     onNavigate: (String) -> Unit,
 ) {
     val onEditNode: (Long) -> Unit = { id ->
@@ -273,16 +277,12 @@ private fun AppScaffold(
             composable(Screen.Today.route) { TodayScreen(viewModel, onEditNode) }
             composable(Screen.Focus.route) { FocusScreen(viewModel) }
             composable(Screen.Track.route) { TrackScreen(viewModel) }
-            composable(Screen.Tasks.route + "?tab={tab}") { backStackEntry ->
-                val tabSegment = backStackEntry.savedStateHandle.get<Any>("tab")?.toString()
-                val tab = TasksTab.fromRouteSegment(tabSegment)
+            composable(Screen.Tasks.route + "?tab={tab}") {
                 TasksScreen(
                     viewModel = viewModel,
                     onEditNode = onEditNode,
-                    currentTab = tab,
-                    onTabChange = { newTab ->
-                        onNavigate(Screen.Tasks.route + "?tab=" + newTab.routeSegment)
-                    },
+                    currentTab = currentTasksTab,
+                    onTabChange = onTasksTabChange,
                 )
             }
             composable(Screen.Notes.route) { NotesScreen(viewModel, onEditNode) }
