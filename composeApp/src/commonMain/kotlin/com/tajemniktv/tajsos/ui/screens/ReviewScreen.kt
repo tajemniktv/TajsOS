@@ -139,10 +139,11 @@ fun ReviewScreen(
                 .fillMaxSize()
                 .background(TactileTheme.Background),
     ) {
-        if (reviewType != null) {
-            val steps = if (reviewType == "daily") dailySteps else weeklySteps
+        val type = reviewType
+        if (type != null) {
+            val steps = if (type == "daily") dailySteps else weeklySteps
             ReviewFlow(
-                type = reviewType!!,
+                type = type,
                 steps = steps,
                 currentStep = currentStep,
                 viewModel = viewModel,
@@ -150,7 +151,7 @@ fun ReviewScreen(
                 insights = insights,
                 onNext = { if (currentStep < steps.size - 1) currentStep++ },
                 onComplete = { content, mood, energy ->
-                    viewModel.completeReview(reviewType!!, content, mood, energy)
+                    viewModel.completeReview(type, content, mood, energy)
                     onBack()
                 },
             )

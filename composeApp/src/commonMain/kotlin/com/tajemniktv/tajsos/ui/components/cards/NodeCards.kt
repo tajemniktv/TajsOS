@@ -179,12 +179,13 @@ fun NodeCard(
                             color = TactileTheme.Error.copy(alpha = 0.5f),
                         )
                     }
-                    if (node.energyLevel != null) {
+                    val energyLevel = node.energyLevel
+                    if (energyLevel != null) {
                         Spacer(Modifier.width(8.dp))
                         NodeBadge(
-                            text = "⚡".repeat(node.energyLevel!!),
+                            text = "⚡".repeat(energyLevel),
                             color =
-                                when (node.energyLevel)
+                                when (energyLevel)
                                 {
                                     1 -> TactileTheme.Success
                                     2 -> TactileTheme.Primary
@@ -193,16 +194,17 @@ fun NodeCard(
                                 },
                         )
                     }
-                    if (node.friction != null) {
+                    val friction = node.friction
+                    if (friction != null) {
                         Spacer(Modifier.width(8.dp))
                         val frictionLabel =
-                            when (node.friction)
+                            when (friction)
                             {
                                 "easy" -> stringResource(Res.string.dash_overwhelmed)
                                 "annoying" -> "ANNOYING"
                                 "mentally_heavy" -> "HEAVY"
                                 "unclear" -> "UNCLEAR"
-                                else -> node.friction!!
+                                else -> friction
                             }
                         NodeBadge(text = frictionLabel.uppercase(), color = TactileTheme.Primary)
                     }
