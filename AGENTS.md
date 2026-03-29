@@ -136,6 +136,25 @@ collection of disconnected feature silos.
 - Core app identity and shell structure should remain cohesive and broadly available.
 - Avoid making core navigation feel like fragmented DLC partitions.
 
+### App shell and navigation boundaries
+
+- Desktop layout must keep a persistent operating frame: always-visible left sidebar, always-visible
+  top header, and a route-swapped main content area.
+- Do not reintroduce secondary/contextual/sub-sidebars as a separate panel. Root sections should
+  expand inline within the primary sidebar.
+- Sidebar behavior modes must remain explicit shell state (collapsed, expanded, hover-expand), not
+  implicit local UI toggles.
+- Keep shell interaction state centralized and durable (for example sidebar mode, expanded root
+  section, active shell popovers, and active tasks tab).
+- Root navigation should be deterministic from any screen (including non-root screens like profile);
+  avoid routing logic that can trap users in a non-root screen.
+- Tasks sub-navigation should not depend on fragile argument parsing alone; preserve explicit tab
+  state wiring so sidebar and Tasks screen tab controls stay in sync.
+- Header and sidebar should not unmount during normal screen navigation. Only main content should
+  change across routes.
+- Keep `NEW ENTRY` as a distinct primary action in sidebar footer, separated from navigation links,
+  with profile/account section anchored at the bottom.
+
 ### Bootstrap boundaries
 
 - Keep system defaults, onboarding examples, and dev/demo data conceptually separate.
