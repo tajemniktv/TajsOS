@@ -15,7 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -81,7 +81,10 @@ internal fun TodayMainBlock(
             EmptyState(message = stringResource(Res.string.today_empty))
         } else {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
-                items(todayNodes.take(3), key = { it.id }) { node ->
+                itemsIndexed(
+                    items = todayNodes.take(3),
+                    key = { index, node -> "today_${node.id}_$index" },
+                ) { _, node ->
                     val dismissState =
                         rememberSwipeToDismissBoxState(
                             initialValue = SwipeToDismissBoxValue.Settled,

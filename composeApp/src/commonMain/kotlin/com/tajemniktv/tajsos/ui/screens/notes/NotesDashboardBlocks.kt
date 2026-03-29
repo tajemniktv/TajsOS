@@ -28,6 +28,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.tajemniktv.tajsos.data.isKnowledgeItem
+import com.tajemniktv.tajsos.data.isNoteItem
+import com.tajemniktv.tajsos.data.isRecordItem
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
@@ -42,11 +45,9 @@ import tajsos.composeapp.generated.resources.media_other
 import tajsos.composeapp.generated.resources.media_podcast
 import tajsos.composeapp.generated.resources.media_video
 import tajsos.composeapp.generated.resources.notes_empty
-import tajsos.composeapp.generated.resources.notes_ideas
 import tajsos.composeapp.generated.resources.notes_no_results
 import tajsos.composeapp.generated.resources.notes_notes
 import tajsos.composeapp.generated.resources.notes_pinned_knowledge
-import tajsos.composeapp.generated.resources.notes_resources
 import tajsos.composeapp.generated.resources.notes_search_placeholder
 import tajsos.composeapp.generated.resources.notes_title
 import kotlin.time.Instant
@@ -76,7 +77,7 @@ internal fun NotesMainBlock(
 
     val knowledgeNodes =
         remember(activeNodes) {
-            activeNodes.filter { it.node.type in listOf("note", "idea", "resource") }
+            activeNodes.filter { it.node.isKnowledgeItem() }
         }
 
     val filteredNodes =
@@ -130,14 +131,11 @@ internal fun NotesMainBlock(
         val typePinned = remember(filteredNodes) {
             filteredNodes.filter { it.node.isPinned }
         }
-        val typeIdeas = remember(filteredNodes) {
-            filteredNodes.filter { !it.node.isPinned && it.node.type == "idea" }
-        }
         val typeNotes = remember(filteredNodes) {
-            filteredNodes.filter { !it.node.isPinned && it.node.type == "note" }
+            filteredNodes.filter { !it.node.isPinned && it.node.isNoteItem() }
         }
-        val typeResources = remember(filteredNodes) {
-            filteredNodes.filter { !it.node.isPinned && it.node.type == "resource" }
+        val typeRecords = remember(filteredNodes) {
+            filteredNodes.filter { !it.node.isPinned && it.node.isRecordItem() }
         }
 
         val nodesByArea = remember(filteredNodes) {
@@ -176,16 +174,6 @@ internal fun NotesMainBlock(
                             )
                         }
                     }
-                    if (typeIdeas.isNotEmpty()) {
-                        item { GroupHeader(stringResource(Res.string.notes_ideas)) }
-                        items(typeIdeas, key = { it.node.id }) { node ->
-                            KnowledgeItem(
-                                node,
-                                viewModel,
-                                onNoteClick,
-                            )
-                        }
-                    }
                     if (typeNotes.isNotEmpty()) {
                         item { GroupHeader(stringResource(Res.string.notes_notes)) }
                         items(typeNotes, key = { it.node.id }) { node ->
@@ -196,9 +184,9 @@ internal fun NotesMainBlock(
                             )
                         }
                     }
-                    if (typeResources.isNotEmpty()) {
-                        item { GroupHeader(stringResource(Res.string.notes_resources)) }
-                        items(typeResources, key = { it.node.id }) { node ->
+                    if (typeRecords.isNotEmpty()) {
+                        item { GroupHeader("RECORDS") }
+                        items(typeRecords, key = { it.node.id }) { node ->
                             KnowledgeItem(
                                 node,
                                 viewModel,

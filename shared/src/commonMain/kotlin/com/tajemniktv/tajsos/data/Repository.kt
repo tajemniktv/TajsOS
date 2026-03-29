@@ -6,6 +6,7 @@ package com.tajemniktv.tajsos.data
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -13,6 +14,54 @@ import kotlinx.datetime.toLocalDateTime
 /**
  * AppRepository is the single source of truth for TajsOS's Room database.
  */
+private object NoOpInboxEntryDao : InboxEntryDao {
+    override fun getActiveInboxEntries(): Flow<List<InboxEntryEntity>> = flowOf(emptyList())
+
+    override suspend fun getInboxEntryById(id: Long): InboxEntryEntity? = null
+
+    override suspend fun insertInboxEntry(entry: InboxEntryEntity): Long = 0L
+
+    override suspend fun updateInboxEntry(entry: InboxEntryEntity) = Unit
+}
+
+private object NoOpTaskFacetDao : TaskFacetDao {
+    override suspend fun getTaskFacetByItemId(itemId: Long): TaskFacetEntity? = null
+
+    override fun observeTaskFacet(itemId: Long): Flow<TaskFacetEntity?> = flowOf(null)
+
+    override suspend fun upsertTaskFacet(facet: TaskFacetEntity) = Unit
+}
+
+private object NoOpProjectFacetDao : ProjectFacetDao {
+    override suspend fun getProjectFacetByItemId(itemId: Long): ProjectFacetEntity? = null
+
+    override fun observeProjectFacet(itemId: Long): Flow<ProjectFacetEntity?> = flowOf(null)
+
+    override suspend fun upsertProjectFacet(facet: ProjectFacetEntity) = Unit
+}
+
+private object NoOpRecordFacetDao : RecordFacetDao {
+    override suspend fun getRecordFacetByItemId(itemId: Long): RecordFacetEntity? = null
+
+    override fun observeRecordFacet(itemId: Long): Flow<RecordFacetEntity?> = flowOf(null)
+
+    override suspend fun upsertRecordFacet(facet: RecordFacetEntity) = Unit
+}
+
+private object NoOpScheduleEntryDao : ScheduleEntryDao {
+    override fun getAllScheduleEntries(): Flow<List<ScheduleEntryEntity>> = flowOf(emptyList())
+
+    override fun getScheduleEntriesForItem(itemId: Long): Flow<List<ScheduleEntryEntity>> = flowOf(emptyList())
+
+    override suspend fun getScheduleEntriesByKind(itemId: Long, kind: String): List<ScheduleEntryEntity> = emptyList()
+
+    override suspend fun deleteScheduleEntriesByKind(itemId: Long, kind: String) = Unit
+
+    override suspend fun insertScheduleEntry(entry: ScheduleEntryEntity): Long = 0L
+
+    override suspend fun insertScheduleEntries(entries: List<ScheduleEntryEntity>) = Unit
+}
+
 class AppRepository(
     private val nodeDao: NodeDao,
     private val focusSessionDao: FocusSessionDao,
@@ -31,6 +80,11 @@ class AppRepository(
     private val decisionDao: DecisionDao,
     private val userDao: UserDao,
     private val medicationDao: MedicationDao,
+    private val inboxEntryDao: InboxEntryDao = NoOpInboxEntryDao,
+    private val taskFacetDao: TaskFacetDao = NoOpTaskFacetDao,
+    private val projectFacetDao: ProjectFacetDao = NoOpProjectFacetDao,
+    private val recordFacetDao: RecordFacetDao = NoOpRecordFacetDao,
+    private val scheduleEntryDao: ScheduleEntryDao = NoOpScheduleEntryDao,
 ) {
     /**
      * Retrieves a stream of all nodes stored in the database, including their today-pin status.
@@ -62,6 +116,203 @@ class AppRepository(
      */
     suspend fun getNodeById(id: Long): NodeEntity? = nodeDao.getNodeById(id)
 
+    /**
+     * Observes raw inbox captures that still need semantic triage.
+     */
+    fun getActiveInboxEntries(): Flow<List<InboxEntryEntity>> = inboxEntryDao.getActiveInboxEntries()
+
+    /**
+     * Stores a raw capture entry before it becomes a typed life object.
+     *
+     * @return The auto-generated inbox entry identifier.
+     */
+    suspend fun captureInboxEntry(
+        rawText: String,
+        source: String = "manual",
+        suggestedKind: ItemKind? = null,
+        homeAreaId: Long? = null,
+        activeProjectId: Long? = null,
+        contextScreen: String? = null,
+    ): Long {
+        val trimmed = rawText.trim()
+        if (trimmed.isBlank()) return 0L
+        val entryId =
+            inboxEntryDao.insertInboxEntry(
+                InboxEntryEntity(
+                    rawText = trimmed,
+                    source = source,
+                    suggestedKind = suggestedKind?.storageKey,
+                    homeAreaId = homeAreaId,
+                    activeProjectId = activeProjectId,
+                    contextScreen = contextScreen,
+                ),
+            )
+        logEvent("INBOX_CAPTURED")
+        return entryId
+    }
+
+    /**
+     * Marks a raw inbox capture as intentionally dismissed without creating an item.
+     */
+    suspend fun dismissInboxEntry(entry: InboxEntryEntity) {
+        inboxEntryDao.updateInboxEntry(
+            entry.copy(
+                dismissedAt = kotlin.time.Clock.System.now().toEpochMilliseconds(),
+            ),
+        )
+    }
+
+    /**
+     * Converts a raw inbox capture into one of the core LifeOS item kinds.
+     *
+     * The first line becomes the new item title and remaining lines become the body content.
+     *
+     * @return The created item identifier, or `0` if the entry is missing or blank.
+     */
+    suspend fun triageInboxEntry(
+        entryId: Long,
+        kind: ItemKind,
+    ): Long {
+        val entry = inboxEntryDao.getInboxEntryById(entryId) ?: return 0L
+        val parsed = parseCapturedText(entry.rawText)
+        if (parsed.title.isBlank()) return 0L
+
+        val createdId =
+            insertLifeItem(
+                kind = kind,
+                title = parsed.title,
+                content = parsed.content,
+                homeAreaId = entry.homeAreaId,
+                activeProjectId = entry.activeProjectId,
+                source = "capture",
+                inboxState = false,
+            )
+
+        inboxEntryDao.updateInboxEntry(
+            entry.copy(
+                processedAt = kotlin.time.Clock.System.now().toEpochMilliseconds(),
+                triagedItemId = createdId,
+            ),
+        )
+        logEvent("INBOX_TRIAGED", createdId)
+        return createdId
+    }
+
+    /**
+     * Creates a typed LifeOS item while mirroring the minimum legacy node fields still needed by current UI.
+     */
+    suspend fun insertLifeItem(
+        kind: ItemKind,
+        title: String,
+        content: String = "",
+        homeAreaId: Long? = null,
+        activeProjectId: Long? = null,
+        inboxState: Boolean = kind.defaultInboxState(),
+        source: String = "manual",
+        noteKind: NoteKind? = null,
+        recordKind: RecordKind? = null,
+        taskState: TaskState = TaskState.ACTIVE,
+        projectState: ProjectState = ProjectState.ACTIVE,
+        isRecurring: Boolean = false,
+        recurringInterval: String? = null,
+        reminderAt: Long? = null,
+        startAt: Long? = null,
+        dueAt: Long? = null,
+        color: Int? = null,
+        icon: String? = null,
+        contextScreen: String? = null,
+        isSticky: Boolean = false,
+        purpose: String? = null,
+    ): Long {
+        val node =
+            when (kind) {
+                ItemKind.TASK ->
+                    NodeEntity(
+                        type = kind.storageKey,
+                        title = title,
+                        content = content,
+                        status = taskState.toNodeStatus(),
+                        projectId = activeProjectId,
+                        areaId = homeAreaId,
+                        source = source,
+                        inboxState = inboxState,
+                        contextScreen = contextScreen,
+                        isSticky = isSticky,
+                        dueAt = dueAt,
+                        startAt = startAt,
+                        reminderAt = reminderAt,
+                        isRecurring = isRecurring,
+                        recurringInterval = recurringInterval,
+                    )
+
+                ItemKind.NOTE ->
+                    NodeEntity(
+                        type = kind.storageKey,
+                        title = title,
+                        content = content,
+                        projectId = activeProjectId,
+                        areaId = homeAreaId,
+                        source = source,
+                        inboxState = inboxState,
+                        contextScreen = contextScreen,
+                        isSticky = isSticky,
+                        noteType = noteKind?.storageKey,
+                    )
+
+                ItemKind.RECORD ->
+                    NodeEntity(
+                        type = kind.storageKey,
+                        title = title,
+                        content = content,
+                        projectId = activeProjectId,
+                        areaId = homeAreaId,
+                        source = source,
+                        inboxState = inboxState,
+                        contextScreen = contextScreen,
+                        isSticky = isSticky,
+                    )
+
+                ItemKind.PROJECT ->
+                    NodeEntity(
+                        type = kind.storageKey,
+                        title = title,
+                        content = content,
+                        status = projectState.toNodeStatus(),
+                        areaId = homeAreaId,
+                        source = source,
+                        inboxState = inboxState,
+                        color = color,
+                        icon = icon,
+                        projectWhy = purpose,
+                        projectStatus = projectState.storageKey,
+                        isSticky = isSticky,
+                    )
+
+                ItemKind.AREA ->
+                    NodeEntity(
+                        type = kind.storageKey,
+                        title = title,
+                        content = content,
+                        source = source,
+                        inboxState = inboxState,
+                        color = color,
+                        icon = icon,
+                        isSticky = isSticky,
+                    )
+            }
+
+        val id = insertNode(node)
+        if (kind == ItemKind.RECORD) {
+            recordFacetDao.upsertRecordFacet(
+                RecordFacetEntity(
+                    itemId = id,
+                    kind = recordKind?.storageKey ?: RecordKind.GENERAL.storageKey,
+                ),
+            )
+        }
+        return id
+    }
+
     // ... existing methods ...
 
     // Calendar
@@ -83,6 +334,11 @@ class AppRepository(
     suspend fun deleteCalendarEventsByProvider(providerId: Long) = calendarEventDao.deleteEventsByProvider(providerId)
 
     /**
+     * Observes all attached schedule entries across the local system.
+     */
+    fun getAllScheduleEntries(): Flow<List<ScheduleEntryEntity>> = scheduleEntryDao.getAllScheduleEntries()
+
+    /**
      * Inserts a new node into the database.
      *
      * **Side effects:**
@@ -96,8 +352,22 @@ class AppRepository(
         val id = nodeDao.insertNode(node)
         logEvent("NODE_CREATED", id)
         syncBelongsToRelations(id, node.projectId, node.areaId)
+        syncTypedFacetsFromNode(node.copy(id = id))
+        syncScheduleEntriesForNode(
+            nodeId = id,
+            reminderAt = node.reminderAt,
+            startAt = node.startAt,
+            dueAt = node.dueAt,
+            recurrenceRule = node.recurringInterval,
+        )
         return id
     }
+
+    /**
+     * Inserts multiple nodes while preserving the same side effects as [insertNode].
+     */
+    suspend fun insertNodes(nodes: List<NodeEntity>): List<Long> =
+        nodes.map { insertNode(it) }
 
     /**
      * Updates an existing node in the database.
@@ -129,6 +399,15 @@ class AppRepository(
         if (oldNode.projectId != node.projectId || oldNode.areaId != node.areaId) {
             syncBelongsToRelations(node.id, node.projectId, node.areaId)
         }
+
+        syncTypedFacetsFromNode(node)
+        syncScheduleEntriesForNode(
+            nodeId = node.id,
+            reminderAt = node.reminderAt,
+            startAt = node.startAt,
+            dueAt = node.dueAt,
+            recurrenceRule = node.recurringInterval,
+        )
     }
 
     private suspend fun syncBelongsToRelations(
@@ -154,6 +433,105 @@ class AppRepository(
                     relationType = "BELONGS_TO",
                 ),
             )
+        }
+    }
+
+    /**
+     * Mirrors current node status into the typed facet tables introduced by the LifeOS redesign.
+     */
+    private suspend fun syncTypedFacetsFromNode(node: NodeEntity) {
+        when (node.itemKindOrNull()) {
+            ItemKind.TASK -> {
+                val existing = taskFacetDao.getTaskFacetByItemId(node.id)
+                taskFacetDao.upsertTaskFacet(
+                    TaskFacetEntity(
+                        itemId = node.id,
+                        state = TaskState.fromStorageKey(node.status)?.storageKey ?: TaskState.ACTIVE.storageKey,
+                        energyLevel = node.energyLevel ?: existing?.energyLevel,
+                        friction = node.friction ?: existing?.friction,
+                        nextStep = node.nextSmallestStep ?: existing?.nextStep,
+                        estimatedMinutes = node.estimatedMinutes ?: existing?.estimatedMinutes,
+                        completionNote = node.completionNote ?: existing?.completionNote,
+                        completedAt = node.completedAt ?: existing?.completedAt,
+                        isRecurring = node.isRecurring,
+                        recurringInterval = node.recurringInterval ?: existing?.recurringInterval,
+                    ),
+                )
+            }
+
+            ItemKind.PROJECT -> {
+                val existing = projectFacetDao.getProjectFacetByItemId(node.id)
+                projectFacetDao.upsertProjectFacet(
+                    ProjectFacetEntity(
+                        itemId = node.id,
+                        state = node.projectStatus ?: existing?.state ?: ProjectState.ACTIVE.storageKey,
+                        purpose = node.projectWhy ?: existing?.purpose ?: node.content.ifBlank { null },
+                        isFrozen = node.isFrozen,
+                    ),
+                )
+            }
+
+            ItemKind.RECORD -> {
+                val existing = recordFacetDao.getRecordFacetByItemId(node.id)
+                recordFacetDao.upsertRecordFacet(
+                    RecordFacetEntity(
+                        itemId = node.id,
+                        kind = existing?.kind ?: RecordKind.GENERAL.storageKey,
+                        occurredAt = existing?.occurredAt ?: node.createdAt,
+                    ),
+                )
+            }
+
+            else -> Unit
+        }
+    }
+
+    /**
+     * Persists attach-able schedule state while current UI still reads mirrored node time fields.
+     */
+    private suspend fun syncScheduleEntriesForNode(
+        nodeId: Long,
+        reminderAt: Long?,
+        startAt: Long?,
+        dueAt: Long?,
+        recurrenceRule: String?,
+    ) {
+        val entries = mutableListOf<ScheduleEntryEntity>()
+        if (startAt != null) {
+            scheduleEntryDao.deleteScheduleEntriesByKind(nodeId, ScheduleEntryKind.START.storageKey)
+            entries +=
+                ScheduleEntryEntity(
+                    itemId = nodeId,
+                    kind = ScheduleEntryKind.START.storageKey,
+                    scheduledAt = startAt,
+                    recurrenceRule = recurrenceRule,
+                )
+        }
+        if (dueAt != null) {
+            scheduleEntryDao.deleteScheduleEntriesByKind(nodeId, ScheduleEntryKind.DUE.storageKey)
+            entries +=
+                ScheduleEntryEntity(
+                    itemId = nodeId,
+                    kind = ScheduleEntryKind.DUE.storageKey,
+                    scheduledAt = dueAt,
+                    recurrenceRule = recurrenceRule,
+                )
+        }
+        if (reminderAt != null) {
+            scheduleEntryDao.deleteScheduleEntriesByKind(nodeId, ScheduleEntryKind.REMINDER.storageKey)
+            entries +=
+                ScheduleEntryEntity(
+                    itemId = nodeId,
+                    kind = ScheduleEntryKind.REMINDER.storageKey,
+                    scheduledAt = reminderAt,
+                    recurrenceRule = recurrenceRule,
+                )
+        }
+        if (startAt == null) scheduleEntryDao.deleteScheduleEntriesByKind(nodeId, ScheduleEntryKind.START.storageKey)
+        if (dueAt == null) scheduleEntryDao.deleteScheduleEntriesByKind(nodeId, ScheduleEntryKind.DUE.storageKey)
+        if (reminderAt == null) scheduleEntryDao.deleteScheduleEntriesByKind(nodeId, ScheduleEntryKind.REMINDER.storageKey)
+        if (entries.isNotEmpty()) {
+            scheduleEntryDao.insertScheduleEntries(entries)
         }
     }
 
@@ -407,11 +785,23 @@ class AppRepository(
     suspend fun insertProtocolHistory(history: ProtocolHistoryEntity) = protocolDao.insertProtocolHistory(history)
 
     // Decisions
+
+    /**
+     * Retrieves a reactive stream of decision nodes filtered by their specific decision status.
+     *
+     * @param status The decision status to filter by (e.g., 'decided', 'pending').
+     * @return A Flow emitting a list of matching decision [NodeEntity] objects.
+     */
     fun getDecisionsByStatus(status: String): Flow<List<NodeEntity>> =
         nodeDao.getNodesByType("decision").map { nodes ->
             nodes.filter { it.decisionStatus == status }
         }
 
+    /**
+     * Observes decision nodes that have not yet been triaged or processed from the inbox.
+     *
+     * @return A Flow emitting a list of decision [NodeEntity] objects with an active inbox state.
+     */
     fun getDecisionInbox(): Flow<List<NodeEntity>> =
         nodeDao.getNodesByType("decision").map { nodes ->
             nodes.filter { it.inboxState }

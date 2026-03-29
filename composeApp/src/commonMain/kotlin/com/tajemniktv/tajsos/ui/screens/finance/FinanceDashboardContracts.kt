@@ -6,8 +6,11 @@ package com.tajemniktv.tajsos.ui.screens.finance
 
 import androidx.compose.runtime.Composable
 import com.tajemniktv.tajsos.data.NodeEntity
+import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.MaintenanceStatusItem
+import org.jetbrains.compose.resources.StringResource
+import tajsos.composeapp.generated.resources.*
 
 /**
  * Surface variants for finance dashboard layouts.
@@ -36,11 +39,11 @@ data class FinanceDashboardPlan(
  * Queue filter selection for finance maintenance items.
  */
 enum class FinanceMaintenanceView(
-    val label: String,
+    val label: StringResource,
 ) {
-    Queue("QUEUE"),
-    Recurring("RECURRING"),
-    Overdue("OVERDUE"),
+    Queue(Res.string.view_queue),
+    Recurring(Res.string.view_recurring),
+    Overdue(Res.string.view_overdue),
 }
 
 /**
@@ -54,6 +57,10 @@ data class FinanceDashboardContext(
     val overdue: List<MaintenanceStatusItem>,
     val allItems: List<MaintenanceStatusItem>,
     val itemsInView: List<MaintenanceStatusItem>,
+    val actionItems: List<NodeWithPin>,
+    val knowledgeItems: List<NodeWithPin>,
+    val deadlineItems: List<NodeWithPin>,
+    val recentItems: List<NodeWithPin>,
     val confidence: Int,
     val liquidity: Double,
     val bars: List<Int>,

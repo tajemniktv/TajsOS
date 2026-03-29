@@ -43,12 +43,12 @@ internal fun VaultsMainBlock(
         verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
     ) {
         Text(
-            text = "VAULTS",
+            text = "REFERENCE & RETRIEVE",
             style = MaterialTheme.typography.displaySmall,
             color = TactileTheme.Text,
         )
         Text(
-            text = "Keep reference material, documents, paperwork, and must-find-later items easy to retrieve.",
+            text = "Keep durable reference, official deadlines, and find-later items easy to retrieve without turning storage into a separate product world.",
             style = MaterialTheme.typography.bodySmall,
             color = TactileTheme.Muted,
         )

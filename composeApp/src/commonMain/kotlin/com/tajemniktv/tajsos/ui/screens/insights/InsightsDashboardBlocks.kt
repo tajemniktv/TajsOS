@@ -202,14 +202,15 @@ internal fun InsightsMainBlock(
             }
         }
 
-        if (insights.captureTimePattern != null) {
+        val captureTimePattern = insights.captureTimePattern
+        if (captureTimePattern != null) {
             item {
                 InsightPatternCard(
                     title = stringResource(Res.string.insights_creative_peak_title),
                     message =
                         stringResource(
                             Res.string.insights_creative_peak_msg,
-                            insights.captureTimePattern!!,
+                            captureTimePattern,
                         ),
                     icon = Icons.Default.Lightbulb,
                     color = TactileTheme.Success,

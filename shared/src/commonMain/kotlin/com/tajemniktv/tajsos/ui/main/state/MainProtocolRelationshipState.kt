@@ -2,16 +2,16 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
-package com.tajemniktv.tajsos.ui
+package com.tajemniktv.tajsos.ui.main.state
 
 import com.tajemniktv.tajsos.data.NodeWithPin
 
 /**
- * A data class representing a structural template used to bootstrap transition protocols.
+ * A data class representing a structural template used to bootstrap routines.
  *
  * @param key The unique string identifier for the template (e.g., "morning_startup").
  * @param label The human-readable title or label of the template.
- * @param checklist A list of string tasks forming the default steps of the protocol.
+ * @param checklist A list of string tasks forming the default routine steps.
  */
 data class TransitionProtocolTemplate(
     val key: String,
@@ -20,13 +20,13 @@ data class TransitionProtocolTemplate(
 )
 
 /**
- * A data class wrapping a specific instantiated transition protocol node, tracking its state and usage.
+ * A data class wrapping a specific instantiated routine node, tracking its state and usage.
  *
- * @param node The [NodeWithPin] representing the instantiated protocol.
- * @param checklistDone The number of currently checked off items within the protocol.
- * @param checklistTotal The total number of checklist items defined within the protocol.
- * @param triggerCount The number of times this protocol has been executed historically.
- * @param lastTriggeredAt The epoch timestamp indicating when this protocol was last executed.
+ * @param node The [NodeWithPin] representing the instantiated routine.
+ * @param checklistDone The number of currently checked off items within the routine.
+ * @param checklistTotal The total number of checklist items defined within the routine.
+ * @param triggerCount The number of times this routine has been executed historically.
+ * @param lastTriggeredAt The epoch timestamp indicating when this routine was last executed.
  */
 data class TransitionProtocolItem(
     val node: NodeWithPin,
@@ -37,11 +37,11 @@ data class TransitionProtocolItem(
 )
 
 /**
- * A data class representing a single historical execution record of a transition protocol.
+ * A data class representing a single historical execution record of a routine.
  *
  * @param historyId The unique ID of the historical record.
  * @param protocolNodeId The ID of the node that was executed.
- * @param protocolLabel The name or title of the protocol at the time of execution.
+ * @param protocolLabel The name or title of the routine at the time of execution.
  * @param executedAt The epoch timestamp when the execution was logged.
  * @param notes Optional notes or reflections recorded during the execution.
  */
@@ -54,11 +54,11 @@ data class ProtocolHistoryItem(
 )
 
 /**
- * A snapshot encompassing all currently active and available transition protocols, along with templates and contextual recommendations.
+ * A snapshot encompassing all currently active and available routines, along with templates and contextual recommendations.
  *
  * @param protocols A list of instantiated [TransitionProtocolItem] objects active in the system.
  * @param templates A list of available [TransitionProtocolTemplate] blueprints for creation.
- * @param recommendedLabel An optional system-generated suggestion indicating which protocol should be run right now based on time or context.
+ * @param recommendedLabel An optional system-generated suggestion indicating which routine should be run right now based on time or context.
  */
 data class TransitionProtocolsSnapshot(
     val protocols: List<TransitionProtocolItem> = emptyList(),
@@ -67,17 +67,17 @@ data class TransitionProtocolsSnapshot(
 )
 
 /**
- * A data class tracking the status and necessary follow-up actions for a specific tracked person entity.
+ * A data class tracking the status and necessary follow-up actions for a specific relationship anchor.
  *
- * @param person The [NodeWithPin] representing the person or CRM entry.
+ * @param person The [NodeWithPin] representing the relationship anchor.
  * @param relationshipType A string defining the nature of the relationship (e.g., "Friend", "Professor").
- * @param daysSinceLastContact The calculated number of days since the user last interacted with this person.
+ * @param daysSinceLastContact The calculated number of days since the user last interacted with this relationship anchor.
  * @param followUpDueInDays The calculated number of days remaining until a scheduled follow-up is due.
  * @param isImportant A boolean flag denoting if the relationship is marked as critical or close.
- * @param linkedItemsCount The total number of nodes (tasks, notes) explicitly linked to this person.
- * @param pendingReplyCount The number of open loops indicating the user is waiting for a reply from this person.
- * @param sharedPlansCount The number of active tasks or projects collaboratively shared with this person.
- * @param askAboutNextTimeCount The number of specific "Ask about X" notes linked to this person.
+ * @param linkedItemsCount The total number of nodes (tasks, notes) explicitly linked to this relationship anchor.
+ * @param pendingReplyCount The number of unresolved items indicating the user is waiting for a reply from this relationship anchor.
+ * @param sharedPlansCount The number of active tasks or projects collaboratively shared with this relationship anchor.
+ * @param askAboutNextTimeCount The number of specific "Ask about X" notes linked to this relationship anchor.
  */
 data class RelationshipStatusItem(
     val person: NodeWithPin,
@@ -94,12 +94,12 @@ data class RelationshipStatusItem(
 /**
  * A snapshot aggregating all relationship-related nodes, segmenting them by urgency and category.
  *
- * @param people A general list of all [RelationshipStatusItem] entities currently tracked.
+ * @param people A general list of all tracked relationship anchors.
  * @param importantRelationships A subset list of [RelationshipStatusItem] entities explicitly marked as important.
  * @param followUpNeeded A subset list of [RelationshipStatusItem] entities requiring immediate contact or follow-up.
  * @param upcomingImportantDates Contains items with follow-up dueAt values within the next 30 days (not birthdays/anniversaries).
- * @param replyQueue A list of open loop nodes indicating the user is waiting for an external reply.
- * @param sharedPlans A list of actionable nodes linked collaboratively to specific tracked people.
+ * @param replyQueue A list of unresolved items indicating the user is waiting for an external reply.
+ * @param sharedPlans A list of actionable nodes linked collaboratively to specific relationship anchors.
  * @param professors A subset list of [RelationshipStatusItem] entities categorized academically.
  * @param friendsAndFamily A subset list of [RelationshipStatusItem] entities categorized personally.
  * @param gentlePrompt A generic nudge derived from backlog size (not a reminder for a specific connection).
@@ -117,7 +117,7 @@ data class RelationshipSnapshot(
 )
 
 /**
- * A data class representing a standard structural template for a specific behavioral or functional Playbook.
+ * A data class representing a standard structural template for a specific behavioral or functional playbook.
  *
  * @param key The unique string identifier for the template (e.g., "exam_prep").
  * @param label The human-readable title or label of the template.
@@ -132,7 +132,7 @@ data class PlaybookTemplate(
 )
 
 /**
- * A data class wrapping an active, instantiated Playbook node and tracking its execution metrics.
+ * A data class wrapping an active, instantiated playbook node and tracking its execution metrics.
  *
  * @param node The [NodeWithPin] representing the instantiated playbook.
  * @param checklistDone The number of currently checked off steps within the playbook.
@@ -153,7 +153,7 @@ data class PlaybookItem(
 )
 
 /**
- * A snapshot grouping all available Playbook templates and actively running Playbook instances.
+ * A snapshot grouping all available playbook templates and actively running playbook instances.
  *
  * @param playbooks A list of all actively instantiated [PlaybookItem] entities in the system.
  * @param templates A list of all available [PlaybookTemplate] blueprints for creation.

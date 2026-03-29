@@ -29,7 +29,6 @@ import androidx.compose.material.icons.filled.AccountBalance
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.FolderShared
-import androidx.compose.material.icons.filled.FolderSpecial
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.MedicalInformation
 import androidx.compose.material.icons.filled.Search
@@ -58,11 +57,35 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.VaultsSnapshot
+import com.tajemniktv.tajsos.ui.lens.LensUiContract
+import com.tajemniktv.tajsos.ui.main.state.VaultsSnapshot
 import com.tajemniktv.tajsos.ui.screens.GroupedOpenLoopSection
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.dash_module_ready
+import tajsos.composeapp.generated.resources.lens_reference_action_mark_retrieved
+import tajsos.composeapp.generated.resources.lens_reference_action_open_item
+import tajsos.composeapp.generated.resources.lens_reference_app_status
+import tajsos.composeapp.generated.resources.lens_reference_app_status_count
+import tajsos.composeapp.generated.resources.lens_reference_app_status_desc
+import tajsos.composeapp.generated.resources.lens_reference_category_deadlines
+import tajsos.composeapp.generated.resources.lens_reference_category_health
+import tajsos.composeapp.generated.resources.lens_reference_category_institutional
+import tajsos.composeapp.generated.resources.lens_reference_category_links
+import tajsos.composeapp.generated.resources.lens_reference_category_process
+import tajsos.composeapp.generated.resources.lens_reference_category_reference
+import tajsos.composeapp.generated.resources.lens_reference_entry_content
+import tajsos.composeapp.generated.resources.lens_reference_entry_title
+import tajsos.composeapp.generated.resources.lens_reference_quick_capture
+import tajsos.composeapp.generated.resources.lens_reference_save_entry
+import tajsos.composeapp.generated.resources.lens_reference_save_status
+import tajsos.composeapp.generated.resources.lens_reference_search
+import tajsos.composeapp.generated.resources.type_note
+import tajsos.composeapp.generated.resources.type_record
+import tajsos.composeapp.generated.resources.type_task
 import kotlin.time.Clock
 import kotlin.time.Instant
 
@@ -96,21 +119,18 @@ internal fun VaultsLayer(
 ) {
     var entryTitle by remember { mutableStateOf("") }
     var entryContent by remember { mutableStateOf("") }
-    var selectedCategory by remember { mutableStateOf("vault_document") }
-    var entryType by remember { mutableStateOf("document") }
+    var selectedCategory by remember { mutableStateOf("reference") }
+    var entryType by remember { mutableStateOf("note") }
     var searchQuery by remember { mutableStateOf("") }
 
     val categories =
         listOf(
-            "vault_document" to "DOCUMENT VAULT",
-            "vault_links" to "IMPORTANT LINKS",
-            "vault_medical" to "MEDICAL INFO",
-            "vault_university" to "UNIVERSITY INFO",
-            "vault_ids_forms" to "IDs & FORMS",
-            "vault_application_status" to "APPLICATION STATUS",
-            "vault_receipts_paperwork" to "RECEIPTS / PAPERWORK",
-            "vault_account_reference" to "ACCOUNT / REFERENCE",
-            "vault_official_deadline" to "OFFICIAL DEADLINE",
+            "reference" to stringResource(Res.string.lens_reference_category_reference),
+            "important_links" to stringResource(Res.string.lens_reference_category_links),
+            "health_reference" to stringResource(Res.string.lens_reference_category_health),
+            "institutional_reference" to stringResource(Res.string.lens_reference_category_institutional),
+            "process_tracking" to stringResource(Res.string.lens_reference_category_process),
+            "official_deadline" to stringResource(Res.string.lens_reference_category_deadlines),
         )
 
     val nowMillis = Clock.System.now().toEpochMilliseconds()
@@ -118,81 +138,83 @@ internal fun VaultsLayer(
         remember(snapshot, nowMillis) {
             listOf(
                 VaultCategoryCardData(
-                    title = "General Documents",
-                    subtitle = "Core paperwork and operational docs.",
-                    count = snapshot.documentVault.size,
+                    title = "Reference Library",
+                    subtitle = "Durable notes, document-like material, and saved reference.",
+                    count = snapshot.referenceLibrary.size,
                     icon = Icons.Default.Folder,
-                    stamp = latestRelative(snapshot.documentVault, nowMillis),
-                    badge = "ENCRYPTED",
+                    stamp = latestRelative(snapshot.referenceLibrary, nowMillis),
+                    badge = "READY",
                 ),
                 VaultCategoryCardData(
                     title = "Important Links",
-                    subtitle = "Critical URLs and portal references.",
-                    count = snapshot.importantLinksVault.size,
+                    subtitle = "Critical URLs and portal shortcuts.",
+                    count = snapshot.importantLinks.size,
                     icon = Icons.Default.Link,
-                    stamp = latestRelative(snapshot.importantLinksVault, nowMillis),
+                    stamp = latestRelative(snapshot.importantLinks, nowMillis),
                     badge = "SYNCED",
                 ),
                 VaultCategoryCardData(
-                    title = "Medical Records",
-                    subtitle = "Health documents and provider details.",
-                    count = snapshot.medicalInfoVault.size,
+                    title = "Health Reference",
+                    subtitle = "Provider details, symptom logs, prescriptions, and health notes.",
+                    count = snapshot.healthReference.size,
                     icon = Icons.Default.MedicalInformation,
-                    stamp = latestRelative(snapshot.medicalInfoVault, nowMillis),
+                    stamp = latestRelative(snapshot.healthReference, nowMillis),
                     badge = "SECURE",
                 ),
                 VaultCategoryCardData(
-                    title = "University",
-                    subtitle = "Study IDs, policies, and references.",
-                    count = snapshot.universityInfoVault.size,
-                    icon = Icons.Default.FolderSpecial,
-                    stamp = latestRelative(snapshot.universityInfoVault, nowMillis),
-                ),
-                VaultCategoryCardData(
-                    title = "IDs & Forms",
-                    subtitle = "Documents needed for verification.",
-                    count = snapshot.idsAndFormsVault.size,
-                    icon = Icons.Default.VerifiedUser,
-                    stamp = latestRelative(snapshot.idsAndFormsVault, nowMillis),
-                ),
-                VaultCategoryCardData(
-                    title = "Receipts & Paperwork",
-                    subtitle = "Bureaucratic and financial trails.",
-                    count = snapshot.receiptsPaperwork.size,
-                    icon = Icons.Default.Description,
-                    stamp = latestRelative(snapshot.receiptsPaperwork, nowMillis),
-                ),
-                VaultCategoryCardData(
-                    title = "Accounts & Financials",
-                    subtitle = "Non-sensitive account references.",
-                    count = snapshot.accountReferenceVault.size,
+                    title = "Institutional Reference",
+                    subtitle = "IDs, forms, study/admin reference, and account context.",
+                    count = snapshot.institutionalReference.size,
                     icon = Icons.Default.AccountBalance,
-                    stamp = latestRelative(snapshot.accountReferenceVault, nowMillis),
-                    badge = "VAULTED",
+                    stamp = latestRelative(snapshot.institutionalReference, nowMillis),
+                    badge = "STABLE",
                 ),
                 VaultCategoryCardData(
-                    title = "Application Status",
-                    subtitle = "Tracking visas, jobs, and external pipelines.",
-                    count = snapshot.applicationStatusTracking.size,
+                    title = "Process Tracking",
+                    subtitle = "Applications, renewals, and outside workflows in motion.",
+                    count = snapshot.processTracking.size,
                     icon = Icons.Default.FolderShared,
-                    stamp = latestRelative(snapshot.applicationStatusTracking, nowMillis),
+                    stamp = latestRelative(snapshot.processTracking, nowMillis),
+                ),
+                VaultCategoryCardData(
+                    title = "Official Deadlines",
+                    subtitle = "Hard dates that should not get lost.",
+                    count = snapshot.officialDeadlines.size,
+                    icon = Icons.Default.Description,
+                    stamp = latestRelative(snapshot.officialDeadlines, nowMillis),
+                ),
+                VaultCategoryCardData(
+                    title = "Retrieval Queue",
+                    subtitle = "Pinned or marked items to find later.",
+                    count = snapshot.retrievalQueue.size,
+                    icon = Icons.Default.VerifiedUser,
+                    stamp = latestRelative(snapshot.retrievalQueue, nowMillis),
                 ),
             )
         }
 
-    val totalVaultItems = categoryCards.sumOf { it.count }
+    val totalVaultItems =
+        remember(snapshot) {
+            listOf(
+                snapshot.referenceLibrary,
+                snapshot.importantLinks,
+                snapshot.healthReference,
+                snapshot.institutionalReference,
+                snapshot.processTracking,
+                snapshot.officialDeadlines,
+                snapshot.retrievalQueue,
+            ).flatMap { it }.distinctBy { it.node.id }.size
+        }
     val latestUpdatedAt =
         remember(snapshot) {
             listOf(
-                snapshot.documentVault,
-                snapshot.importantLinksVault,
-                snapshot.medicalInfoVault,
-                snapshot.universityInfoVault,
-                snapshot.idsAndFormsVault,
-                snapshot.applicationStatusTracking,
-                snapshot.receiptsPaperwork,
-                snapshot.accountReferenceVault,
-                snapshot.officialDeadlineReminders,
+                snapshot.referenceLibrary,
+                snapshot.importantLinks,
+                snapshot.healthReference,
+                snapshot.institutionalReference,
+                snapshot.processTracking,
+                snapshot.officialDeadlines,
+                snapshot.retrievalQueue,
             ).flatMap { it }.maxOfOrNull { it.node.updatedAt }
         }
 
@@ -243,7 +265,7 @@ internal fun VaultsLayer(
                             shape = RoundedCornerShape(14.dp),
                             singleLine = true,
                             leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-                            label = { Text("Search vault") },
+                            label = { Text(stringResource(Res.string.lens_reference_search)) },
                         )
                         if (compact) {
                             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -269,8 +291,8 @@ internal fun VaultsLayer(
                         }
                         VaultDashboardCards(
                             cards = categoryCards,
-                            applicationProgress = snapshot.applicationStatusTracking.size,
-                            totalTracked = snapshot.applicationStatusTracking.size + snapshot.officialDeadlineReminders.size,
+                            applicationProgress = snapshot.processTracking.size,
+                            totalTracked = snapshot.processTracking.size + snapshot.officialDeadlines.size,
                         )
                         VaultEntryComposer(
                             entryTitle = entryTitle,
@@ -317,7 +339,7 @@ internal fun VaultsLayer(
             )
         }
 
-        items(snapshot.mustFindLater, key = { it.node.id }) { item ->
+        items(snapshot.retrievalQueue, key = { it.node.id }) { item ->
             Surface(
                 modifier = Modifier.fillMaxWidth(),
                 color = TactileTheme.Surface,
@@ -345,9 +367,12 @@ internal fun VaultsLayer(
                     ) {
                         AssistChip(
                             onClick = { viewModel.markMustFindLater(item.node, false) },
-                            label = { Text("UNMARK MUST-FIND-LATER") },
+                            label = { Text(stringResource(Res.string.lens_reference_action_mark_retrieved)) },
                         )
-                        AssistChip(onClick = { onEditNode(item.node.id) }, label = { Text("OPEN") })
+                        AssistChip(
+                            onClick = { onEditNode(item.node.id) },
+                            label = { Text(stringResource(Res.string.lens_reference_action_open_item)) },
+                        )
                     }
                 }
             }
@@ -367,20 +392,20 @@ private fun VaultHeroPrimary(modifier: Modifier = Modifier) {
             border = BorderStroke(1.dp, TactileTheme.Primary.copy(alpha = 0.35f)),
         ) {
             Text(
-                "SYSTEM SECURE",
+                stringResource(Res.string.dash_module_ready),
                 modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
                 style = MaterialTheme.typography.labelSmall,
                 color = TactileTheme.Primary,
             )
         }
         Text(
-            "Persistent Document Vault",
+            stringResource(LensUiContract.referenceLens.title),
             style = MaterialTheme.typography.displayMedium,
             color = TactileTheme.VaultTextStrong,
             fontWeight = FontWeight.ExtraBold,
         )
         Text(
-            "Centralized repository for high-integrity assets. Data remains local-first while sync stays abstracted.",
+            stringResource(LensUiContract.referenceLens.subtitle),
             style = MaterialTheme.typography.bodyMedium,
             color = TactileTheme.VaultTextSubtle,
             modifier = Modifier.widthIn(max = 720.dp),
@@ -593,12 +618,12 @@ private fun ApplicationStatusCard(
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
-                "Application Status",
+                stringResource(Res.string.lens_reference_app_status),
                 style = MaterialTheme.typography.titleMedium,
                 color = TactileTheme.VaultTextStrong,
             )
             Text(
-                "Live tracking for visas, jobs, housing and authority processes.",
+                stringResource(Res.string.lens_reference_app_status_desc),
                 style = MaterialTheme.typography.bodySmall,
                 color = TactileTheme.VaultTextSubtle,
             )
@@ -620,7 +645,7 @@ private fun ApplicationStatusCard(
                 )
             }
             Text(
-                "$progress active records",
+                stringResource(Res.string.lens_reference_app_status_count, progress),
                 style = MaterialTheme.typography.labelSmall,
                 color = TactileTheme.VaultTextSubtle,
             )
@@ -653,7 +678,7 @@ private fun VaultEntryComposer(
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             Text(
-                "Quick Upload",
+                stringResource(Res.string.lens_reference_quick_capture),
                 style = MaterialTheme.typography.titleSmall,
                 color = TactileTheme.VaultTextStrong,
             )
@@ -661,14 +686,14 @@ private fun VaultEntryComposer(
                 value = entryTitle,
                 onValueChange = onEntryTitleChange,
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("Entry title") },
+                label = { Text(stringResource(Res.string.lens_reference_entry_title)) },
                 singleLine = true,
             )
             OutlinedTextField(
                 value = entryContent,
                 onValueChange = onEntryContentChange,
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("Details / reference") },
+                label = { Text(stringResource(Res.string.lens_reference_entry_content)) },
                 minLines = 2,
             )
             FlowRow(
@@ -687,11 +712,19 @@ private fun VaultEntryComposer(
                 horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
                 verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
             ) {
-                listOf("document", "resource", "note", "vault").forEach { type ->
+                listOf("note", "record", "task").forEach { type ->
+                    val typeLabel =
+                        when (type)
+                        {
+                            "note" -> stringResource(Res.string.type_note)
+                            "record" -> stringResource(Res.string.type_record)
+                            "task" -> stringResource(Res.string.type_task)
+                            else -> type
+                        }
                     FilterChip(
                         selected = entryType == type,
                         onClick = { onEntryTypeChange(type) },
-                        label = { Text(type.uppercase()) },
+                        label = { Text(typeLabel.uppercase()) },
                     )
                 }
             }
@@ -701,11 +734,11 @@ private fun VaultEntryComposer(
             ) {
                 AssistChip(
                     onClick = onSave,
-                    label = { Text("SAVE ENTRY") },
+                    label = { Text(stringResource(Res.string.lens_reference_save_entry)) },
                 )
                 AssistChip(
                     onClick = onSaveApplicationStatus,
-                    label = { Text("APP STATUS +14D") },
+                    label = { Text(stringResource(Res.string.lens_reference_save_status)) },
                 )
             }
         }
@@ -730,15 +763,15 @@ private data class VaultSectionModel(
 
 private fun buildSectionModels(snapshot: VaultsSnapshot): List<VaultSectionModel> =
     listOf(
-        VaultSectionModel("DOCUMENT VAULT", snapshot.documentVault.map { it.node.title }),
-        VaultSectionModel("IMPORTANT LINKS VAULT", snapshot.importantLinksVault.map { it.node.title }),
-        VaultSectionModel("MEDICAL INFO VAULT", snapshot.medicalInfoVault.map { it.node.title }),
-        VaultSectionModel("UNIVERSITY INFO VAULT", snapshot.universityInfoVault.map { it.node.title }),
-        VaultSectionModel("IDs / FORMS VAULT", snapshot.idsAndFormsVault.map { it.node.title }),
-        VaultSectionModel("APPLICATION STATUS TRACKING", snapshot.applicationStatusTracking.map { it.node.title }),
-        VaultSectionModel("RECEIPTS / PAPERWORK", snapshot.receiptsPaperwork.map { it.node.title }),
-        VaultSectionModel("ACCOUNT / REFERENCE VAULT", snapshot.accountReferenceVault.map { it.node.title }),
-        VaultSectionModel("OFFICIAL DEADLINE REMINDERS", snapshot.officialDeadlineReminders.map { it.node.title }),
+        VaultSectionModel("REFERENCE LIBRARY", snapshot.referenceLibrary.map { it.node.title }),
+        VaultSectionModel("IMPORTANT LINKS", snapshot.importantLinks.map { it.node.title }),
+        VaultSectionModel("HEALTH REFERENCE", snapshot.healthReference.map { it.node.title }),
+        VaultSectionModel(
+            "INSTITUTIONAL REFERENCE",
+            snapshot.institutionalReference.map { it.node.title },
+        ),
+        VaultSectionModel("PROCESS TRACKING", snapshot.processTracking.map { it.node.title }),
+        VaultSectionModel("OFFICIAL DEADLINES", snapshot.officialDeadlines.map { it.node.title }),
     ).filter { it.items.isNotEmpty() }
 
 private fun latestRelative(
@@ -750,23 +783,26 @@ private fun latestRelative(
     val hour = 60 * 60 * 1000L
     val day = 24 * hour
 
-    return when {
-        diff < hour -> "Today"
-        diff < day -> "${diff / hour}h ago"
-        diff < day * 7 -> "${diff / day}d ago"
-        else -> formatLocalDate(latest)
-    }
+    return when
+        {
+            diff < hour -> "Today"
+            diff < day -> "${diff / hour}h ago"
+            diff < day * 7 -> "${diff / day}d ago"
+            else -> formatLocalDate(latest)
+        }
 }
 
 private fun formatLocalDate(timestamp: Long): String {
-    val local = Instant.fromEpochMilliseconds(timestamp).toLocalDateTime(TimeZone.currentSystemDefault())
+    val local =
+        Instant.fromEpochMilliseconds(timestamp).toLocalDateTime(TimeZone.currentSystemDefault())
     val day = local.day.toString().padStart(2, '0')
     val month = (local.month.ordinal + 1).toString().padStart(2, '0')
     return "$day/$month/${local.year.toString().takeLast(2)}"
 }
 
 private fun formatLocalTime(timestamp: Long): String {
-    val local = Instant.fromEpochMilliseconds(timestamp).toLocalDateTime(TimeZone.currentSystemDefault())
+    val local =
+        Instant.fromEpochMilliseconds(timestamp).toLocalDateTime(TimeZone.currentSystemDefault())
     val hour = local.hour.toString().padStart(2, '0')
     val minute = local.minute.toString().padStart(2, '0')
     return "$hour:$minute"

@@ -28,6 +28,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tajemniktv.tajsos.data.ItemKind
+import com.tajemniktv.tajsos.data.isDecisionSupportItem
+import com.tajemniktv.tajsos.data.isNoteItem
+import com.tajemniktv.tajsos.data.isTaskItem
+import com.tajemniktv.tajsos.data.itemKindOrNull
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.ActionButton
 import com.tajemniktv.tajsos.ui.components.cards.ConnectionCard
@@ -39,6 +44,7 @@ import com.tajemniktv.tajsos.ui.components.common.DetailSectionHeader
 import com.tajemniktv.tajsos.ui.components.common.SelectorDialog
 import com.tajemniktv.tajsos.ui.components.layout.LocalHeaderActions
 import com.tajemniktv.tajsos.ui.components.nodes.DecisionDetailContent
+import com.tajemniktv.tajsos.ui.screens.notes.NotesWorkspaceDetail
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
@@ -59,6 +65,7 @@ fun NoteDetailScreen(
     onBack: () -> Unit,
     onNavigateToNode: (Long) -> Unit,
     onNavigateToSearch: () -> Unit,
+    isDesktop: Boolean = false,
 ) {
     val scope = rememberCoroutineScope()
     val nodes by viewModel.allNodes.collectAsState()
@@ -79,6 +86,16 @@ fun NoteDetailScreen(
     }
 
     val node = nodeWithPin.node
+    if (isDesktop && node.isNoteItem()) {
+        NotesWorkspaceDetail(
+            viewModel = viewModel,
+            noteId = noteId,
+            onBack = onBack,
+            onNavigateToNode = onNavigateToNode,
+            onNavigateToSearch = onNavigateToSearch,
+        )
+        return
+    }
     var title by remember { mutableStateOf(node.title) }
     var content by remember { mutableStateOf(node.content) }
 
@@ -281,7 +298,7 @@ fun NoteDetailScreen(
                     onClick = { showStatusDialog = true },
                 )
 
-                if (node.type == "decision") {
+                if (node.isDecisionSupportItem()) {
                     DecisionDetailContent(
                         viewModel = viewModel,
                         node = node,
@@ -320,7 +337,7 @@ fun NoteDetailScreen(
                 }
 
                 // Task Specific Metadata
-                if (node.type == "task") {
+                if (node.isTaskItem()) {
                     Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
                         DetailSectionHeader(
                             title = "OPERATIONAL METADATA",
@@ -442,7 +459,8 @@ fun NoteDetailScreen(
                             }
                         }
 
-                        if (node.nextSmallestStep != null) {
+                        val nextStep = node.nextSmallestStep
+                        if (nextStep != null) {
                             Surface(
                                 modifier = Modifier.fillMaxWidth(),
                                 color = TactileTheme.Accent.copy(alpha = 0.1f),
@@ -458,7 +476,7 @@ fun NoteDetailScreen(
                                         fontWeight = FontWeight.Bold,
                                     )
                                     BasicTextField(
-                                        value = node.nextSmallestStep!!,
+                                        value = nextStep,
                                         onValueChange = {
                                             viewModel.updateNode(
                                                 node.copy(
@@ -481,7 +499,13 @@ fun NoteDetailScreen(
                 }
 
                 // Resource Specific Metadata
-                if (node.type == "resource") {
+                val showMediaMetadata =
+                    node.isNoteItem() &&
+                        (
+                            node.mediaType != null ||
+                                node.rating != null
+                        )
+                if (showMediaMetadata) {
                     Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
                         DetailSectionHeader(
                             title = "RESOURCE DATA",
@@ -529,8 +553,9 @@ fun NoteDetailScreen(
                                             color = TactileTheme.Muted,
                                             fontSize = 8.sp,
                                         )
+                                        val rating = node.rating
                                         Text(
-                                            if (node.rating != null) "⭐".repeat(node.rating!!) else "UNRATED",
+                                            if (rating != null) "⭐".repeat(rating) else "UNRATED",
                                             style = MaterialTheme.typography.bodyMedium,
                                             fontWeight = FontWeight.Bold,
                                         )
@@ -915,7 +940,7 @@ fun NoteDetailScreen(
                 }
 
                 // Knowledge / Media Type (if applicable)
-                if (node.type == "note" || node.type == "idea") {
+                if (node.isNoteItem()) {
                     Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
                         DetailSectionHeader(
                             title = "KNOWLEDGE CONFIG",
@@ -1229,7 +1254,7 @@ fun NoteDetailScreen(
         onDismiss = { showMergeDialog = false },
         title = "MERGE NODES",
         prefix = "DATA_MERGE // CONSOLIDATE",
-        options = nodes.filter { it.node.id != noteId && (it.node.type == "note" || it.node.type == "idea") },
+        options = nodes.filter { it.node.id != noteId && it.node.isNoteItem() },
         selectedOption = null,
         onSelect = { other ->
             viewModel.mergeNodes(noteId, listOf(other.node.id))
@@ -1432,7 +1457,7 @@ fun NoteDetailScreen(
         val moreActions =
             remember(node, isAtomicMode) {
                 mutableListOf<MoreAction>().apply {
-                    if (node.type == "note" || node.type == "idea") {
+                    if (node.isNoteItem()) {
                         add(
                             MoreAction(
                                 "atomic",
@@ -1476,7 +1501,7 @@ fun NoteDetailScreen(
                             ),
                         )
                     }
-                    if (node.type == "task") {
+                    if (node.isTaskItem()) {
                         add(
                             MoreAction(
                                 "repeat",
@@ -1546,10 +1571,10 @@ fun NoteDetailScreen(
                         scope.launch {
                             viewModel.getNodeById(noteId)?.let { original ->
                                 val targetType =
-                                    when (original.type)
-                                    {
-                                        "note", "idea" -> if (original.noteType == "idea") "project" else "task"
-                                        "task" -> "project"
+                                    when (original.itemKindOrNull()) {
+                                        ItemKind.NOTE -> if (original.noteType == "idea") "project" else "task"
+                                        ItemKind.TASK -> "project"
+                                        ItemKind.RECORD -> "note"
                                         else -> original.type
                                     }
                                 viewModel.updateNode(original.copy(type = targetType))

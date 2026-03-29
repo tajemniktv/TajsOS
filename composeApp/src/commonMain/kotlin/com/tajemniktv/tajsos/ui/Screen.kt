@@ -51,6 +51,20 @@ sealed class Screen(
         isRoot = false,
     )
 
+    data object TaskDetail : Screen(
+        "task/{taskId}",
+        Res.string.type_task,
+        Icons.AutoMirrored.Filled.List,
+        isRoot = false,
+    )
+
+    data object RecordDetail : Screen(
+        "record/{recordId}",
+        Res.string.type_record,
+        Icons.Default.Description,
+        isRoot = false,
+    )
+
     data object Insights : Screen("insights", Res.string.screen_stats, Icons.Default.Info)
 
     data object Archive : Screen("archive", Res.string.screen_archive, Icons.Default.Delete)
@@ -89,6 +103,34 @@ sealed class Screen(
 
     data object Settings : Screen("settings", Res.string.screen_opts, Icons.Default.Settings)
 
+    data object SettingsHealth : Screen(
+        "settings_health",
+        Res.string.screen_settings_health,
+        Icons.Default.Favorite,
+        isRoot = false,
+    )
+
+    data object SettingsFeaturePacks : Screen(
+        "settings_feature_packs",
+        Res.string.screen_settings_feature_packs,
+        Icons.Default.Extension,
+        isRoot = false,
+    )
+
+    data object SettingsData : Screen(
+        "settings_data",
+        Res.string.screen_settings_data,
+        Icons.Default.Storage,
+        isRoot = false,
+    )
+
+    data object SettingsDebug : Screen(
+        "settings_debug",
+        Res.string.screen_settings_debug,
+        Icons.Default.BugReport,
+        isRoot = false,
+    )
+
     data object Templates : Screen(
         "templates",
         Res.string.screen_templates,
@@ -106,6 +148,7 @@ sealed class Screen(
         "profile",
         Res.string.profile_title,
         Icons.Default.Person,
+        isRoot = false,
     )
 
     data object Decisions : Screen(
@@ -215,9 +258,15 @@ sealed class Screen(
             if (currentRouteBase == StudyLegacy.route) return Education
             return listOf(
                 NoteDetail,
+                TaskDetail,
+                RecordDetail,
                 ProjectDetail,
                 AreaDetail,
                 CalendarSettings,
+                SettingsHealth,
+                SettingsFeaturePacks,
+                SettingsData,
+                SettingsDebug,
                 Dashboard,
                 Inbox,
                 Search,
@@ -262,13 +311,12 @@ sealed class Screen(
                         Focus,
                         Decisions,
                         OpenLoops,
-                        *DomainRegistry.screens.toTypedArray(),
                         Calendar,
                     ),
-                Res.string.nav_systems to listOf(Protocols, TimeArchitecture, Places),
-                Res.string.nav_brain to listOf(Notes, Projects, Areas, Vaults, Rules),
+                Res.string.nav_systems to listOf(Projects, Areas, Protocols, TimeArchitecture, Places),
+                Res.string.nav_brain to listOf(Notes, Vaults, Rules),
                 Res.string.nav_status to listOf(Track, Insights, Capacity, Identity, Graph, Review),
-                Res.string.nav_system to listOf(Archive, Settings, Profile),
+                Res.string.nav_system to listOf(*DomainRegistry.screens.toTypedArray(), Archive, Settings),
             )
         }
 
@@ -352,10 +400,17 @@ sealed class Screen(
             when (screen)
             {
                 NoteDetail -> Notes
+                TaskDetail -> Tasks
+                RecordDetail -> Notes
                 ProjectDetail -> Projects
                 AreaDetail -> Areas
                 CalendarSettings -> Calendar
                 Templates -> Settings
+                Profile -> Settings
+                SettingsHealth -> Settings
+                SettingsFeaturePacks -> Settings
+                SettingsData -> Settings
+                SettingsDebug -> Settings
                 else -> screen
             }
     }

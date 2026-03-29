@@ -40,6 +40,8 @@ import com.tajemniktv.tajsos.ui.screens.GroupedOpenLoopSection
 import com.tajemniktv.tajsos.ui.screens.OpenLoopView
 import com.tajemniktv.tajsos.ui.screens.openLoopTypes
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.*
 
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
@@ -111,18 +113,24 @@ internal fun OpenLoopsLayer(
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
-                "OPEN LOOPS LAYER",
+                stringResource(Res.string.dash_open_loops),
                 style = MaterialTheme.typography.labelSmall,
                 color = TactileTheme.Primary,
                 fontWeight = FontWeight.Bold,
             )
             Text(
-                "Active ${snapshot.active.size} • Inbox ${snapshot.inbox.size} • Review ${snapshot.review.size} • Resolved ${snapshot.resolved.size}",
+                stringResource(
+                    Res.string.lens_unresolved_stats,
+                    snapshot.active.size,
+                    snapshot.inbox.size,
+                    snapshot.review.size,
+                    snapshot.resolved.size,
+                ),
                 style = MaterialTheme.typography.bodySmall,
                 color = TactileTheme.Muted,
             )
             Text(
-                "Decay index: ${snapshot.averageDecayScore}%",
+                stringResource(Res.string.lens_unresolved_decay_index, snapshot.averageDecayScore),
                 style = MaterialTheme.typography.bodySmall,
                 color = if (snapshot.averageDecayScore >= 60) TactileTheme.Error else TactileTheme.Text,
             )
@@ -139,7 +147,7 @@ internal fun OpenLoopsLayer(
                     onClick = { viewModel.archiveResolvedOpenLoops() },
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    Text("ARCHIVE RESOLVED OPEN LOOPS")
+                    Text(stringResource(Res.string.lens_unresolved_archive_resolved))
                 }
             }
         }
@@ -154,13 +162,15 @@ internal fun OpenLoopsLayer(
             FilterChip(
                 selected = openLoopView == view,
                 onClick = { onOpenLoopView(view) },
-                label = { Text(view.label) },
+                label = { Text(stringResource(view.label)) },
             )
         }
     }
 
     if (loops.isEmpty()) {
-        EmptyState(message = "No open loops in ${openLoopView.label.lowercase()}.")
+        EmptyState(
+            message = stringResource(Res.string.lens_unresolved_empty, stringResource(openLoopView.label).lowercase()),
+        )
         return
     }
 
@@ -183,7 +193,7 @@ internal fun OpenLoopsLayer(
         if (openLoopView == OpenLoopView.All) {
             item {
                 GroupedOpenLoopSection(
-                    title = "BY AREA",
+                    title = stringResource(Res.string.lens_unresolved_group_area),
                     items =
                         snapshot.byArea.entries.map { entry ->
                             val areaName =
@@ -198,7 +208,7 @@ internal fun OpenLoopsLayer(
             }
             item {
                 GroupedOpenLoopSection(
-                    title = "BY PERSON",
+                    title = stringResource(Res.string.lens_unresolved_group_person),
                     items =
                         snapshot.byPerson.entries.map { entry ->
                             val personName =
@@ -209,7 +219,7 @@ internal fun OpenLoopsLayer(
             }
             item {
                 GroupedOpenLoopSection(
-                    title = "BY URGENCY",
+                    title = stringResource(Res.string.lens_unresolved_group_urgency),
                     items =
                         snapshot.byUrgency.entries.map { entry ->
                             "${entry.key.uppercase()} • ${entry.value.size}"

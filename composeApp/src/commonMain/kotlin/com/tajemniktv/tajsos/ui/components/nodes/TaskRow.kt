@@ -85,12 +85,13 @@ fun TaskRow(
                     color = if (isDone) TactileTheme.Muted else TactileTheme.Text,
                 )
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    if (node.energyLevel != null)
+                    val energyLevel = node.energyLevel
+                    if (energyLevel != null)
                     {
                         Text(
-                            text = "⚡".repeat(node.energyLevel!!),
+                            text = "⚡".repeat(energyLevel),
                             style = MaterialTheme.typography.labelSmall,
-                            color = when (node.energyLevel)
+                            color = when (energyLevel)
                             {
                                 1    -> TactileTheme.Success
                                 2    -> TactileTheme.Primary
@@ -100,15 +101,16 @@ fun TaskRow(
                         )
                         Spacer(Modifier.width(8.dp))
                     }
-                    if (node.friction != null)
+                    val friction = node.friction
+                    if (friction != null)
                     {
-                        val frictionLabel = when (node.friction)
+                        val frictionLabel = when (friction)
                         {
                             "easy"           -> stringResource(Res.string.dash_overwhelmed)
                             "annoying"       -> stringResource(Res.string.dash_annoying)
                             "mentally_heavy" -> stringResource(Res.string.dash_heavy)
                             "unclear"        -> stringResource(Res.string.dash_unclear)
-                            else             -> node.friction!!
+                            else             -> friction
                         }
                         Text(
                             text = frictionLabel.uppercase(),

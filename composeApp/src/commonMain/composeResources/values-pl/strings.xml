@@ -29,17 +29,21 @@
     <string name="screen_stats">STATYSTYKI</string>
     <string name="screen_archive">ARCHIWUM</string>
     <string name="screen_cal">KAL</string>
-    <string name="screen_cal_opts">OPCJE KAL</string>
+    <string name="screen_cal_opts">USTAWIENIA KALENDARZA</string>
     <string name="screen_graph">GRAF</string>
     <string name="screen_proj">PROJ</string>
     <string name="screen_area">OBSZAR</string>
     <string name="screen_project">PROJEKT</string>
     <string name="screen_opts">OPCJE</string>
+    <string name="screen_settings_health">ZDROWIE</string>
+    <string name="screen_settings_feature_packs">PAKIETY FUNKCJI</string>
+    <string name="screen_settings_data">DANE</string>
+    <string name="screen_settings_debug">DEBUG</string>
     <string name="screen_templates">SZABLONY</string>
     <string name="screen_review">PRZEGLĄD</string>
     <string name="screen_ops">OPERACJE</string>
-    <string name="screen_open_loops">PĘTLE</string>
-    <string name="screen_protocols">PROTOKOŁY</string>
+    <string name="screen_open_loops">NIEROZWIĄZANE</string>
+    <string name="screen_protocols">RUTYNY</string>
     <string name="screen_time_architecture">CZAS</string>
     <string name="screen_places">MIEJSCA</string>
     <string name="screen_finances">FINANSE</string>
@@ -48,7 +52,7 @@
     <string name="screen_education">EDUKACJA</string>
     <string name="screen_study">EDUKACJA</string>
     <string name="screen_rules">ZASADY</string>
-    <string name="screen_vaults">SKARBCE</string>
+    <string name="screen_vaults">ODNIESIENIA</string>
     <string name="screen_capacity">WYDAJNOŚĆ</string>
     <string name="screen_identity">TOŻSAMOŚĆ</string>
     <string name="screen_student">STUDENT</string>
@@ -107,11 +111,11 @@
     <string name="dash_active_reminders">AKTYWNE PRZYPOMNIENIA</string>
     <string name="dash_dismiss">Odrzuć</string>
     <string name="dash_pinned_knowledge">PRZYPIĘTA WIEDZA</string>
-    <string name="dash_knowledge_vaults">SKARBCE WIEDZY</string>
+    <string name="dash_knowledge_vaults">BIBLIOTEKA WIEDZY</string>
     <string name="dash_read_later">DO PRZECZYTANIA</string>
     <string name="dash_items_count">%1$d ELEMENTÓW</string>
     <string name="dash_quotes">CYTATY</string>
-    <string name="dash_ideas">POMYSŁY</string>
+    <string name="dash_ideas">NOTATKI</string>
     <string name="dash_unset_count">%1$d NIEUSTAWIONYCH</string>
     <string name="dash_upcoming_deadlines">NADCHODZĄCE TERMINY</string>
     <string name="dash_review_reset">PRZEGLĄD I RESET</string>
@@ -175,13 +179,13 @@
     <string name="capture_save_type">ZAPISZ %1$s</string>
 
     <!-- Search -->
-    <string name="search_placeholder">Szukaj elementów...</string>
+    <string name="search_placeholder">Szukaj w zadaniach, notatkach, rekordach, projektach i obszarach...</string>
     <string name="search_clear">Wyczyść</string>
     <string name="search_reset_filters">Resetuj filtry</string>
     <string name="search_filter_active">AKTYWNE</string>
     <string name="search_filter_archived">ZARCHIWIZOWANE</string>
     <string name="search_filter_linked_to">POWIĄZANE Z: %1$s</string>
-    <string name="search_no_results">NIE ZNALEZIONO PASUJĄCYCH WYNIKÓW</string>
+    <string name="search_no_results">Brak pasujących wyników w systemie.</string>
 
     <!-- Focus Screen -->
     <string name="focus_no_active_task">BRAK AKTYWNEGO ZADANIA</string>
@@ -190,6 +194,24 @@
     <string name="focus_recent_sessions">OSTATNIE SESJE</string>
     <string name="focus_unknown_task">Nieznane zadanie</string>
     <string name="focus_session_duration">sesja skupienia %1$dm %2$ds</string>
+    <string name="focus_mode">TRYB SKUPIENIA</string>
+    <string name="focus_current_task">Aktualne Zadanie</string>
+    <string name="focus_start">Start</string>
+    <string name="focus_pause">Pauza</string>
+    <string name="focus_resume">Wznów</string>
+    <string name="focus_complete_task">Ukończ Zadanie</string>
+    <string name="focus_end_session">Zakończ Sesję</string>
+    <string name="focus_sessions_today">Dzisiejsze Sesje</string>
+    <string name="focus_focus_minutes_today">Minuty Skupienia</string>
+    <string name="focus_start_now">Zacznij Teraz</string>
+    <string name="focus_open_task">Otwórz Zadanie</string>
+    <string name="focus_replace_step">Zmień Krok</string>
+    <string name="focus_suggested_now">Sugerowane Teraz</string>
+    <string name="focus_quick_wins">Szybkie Wygrane</string>
+    <string name="focus_switch_target">Zmień Cel</string>
+    <string name="focus_capture">Przechwyć</string>
+    <string name="focus_capture_hint">Zapisz rozpraszającą myśl…</string>
+    <string name="focus_capture_save">Zapisz do Skrzynki</string>
 
     <!-- Track Screen -->
     <string name="track_title">ŚLEDZENIE CODZIENNE //</string>
@@ -308,18 +330,85 @@
     <string name="archive_delete">Usuń</string>
 
     <!-- Notes Screen -->
-    <string name="notes_title">WIEDZA I POMYSŁY</string>
+    <string name="notes_title">WIEDZA</string>
     <string name="notes_search_placeholder">Przeszukaj wiedzę...</string>
     <string name="notes_pinned_knowledge">PRZYPIĘTA WIEDZA</string>
-    <string name="notes_ideas">POMYSŁY</string>
+    <string name="notes_ideas">NOTATKI</string>
     <string name="notes_notes">NOTATKI</string>
-    <string name="notes_resources">ZASOBY I AKTYWA</string>
+    <string name="notes_resources">ODNIESIENIA</string>
     <string name="notes_empty">NIE ZNALEZIONO WIEDZY</string>
     <string name="notes_no_results">BRAK PASUJĄCYCH WYNIKÓW</string>
 
     <!-- Tasks Screen -->
     <string name="tasks_title">ZADANIA</string>
     <string name="tasks_empty">NIE ZNALEZIONO ZADAŃ</string>
+    <string name="tasks_workspace_subtitle">Zarządzaj pracą według intencji: Command, Inbox, Today, All Tasks i Archive.</string>
+    <string name="tasks_tab_command">Command</string>
+    <string name="tasks_tab_inbox">Inbox</string>
+    <string name="tasks_tab_today">Dzisiaj</string>
+    <string name="tasks_tab_all_tasks">Wszystkie Zadania</string>
+    <string name="tasks_tab_archive">Archiwum</string>
+    <string name="tasks_command_title">Task Command</string>
+    <string name="tasks_command_subtitle">Działaj na tym, co ważne teraz, z szybkim przejściem do Focus.</string>
+    <string name="tasks_current_priority">Bieżący Priorytet</string>
+    <string name="tasks_queue_title">Kolejka</string>
+    <string name="tasks_quick_add_title">Szybkie Dodawanie</string>
+    <string name="tasks_quick_add_hint">Dodaj zadanie...</string>
+    <string name="tasks_quick_add_action">Dodaj Zadanie</string>
+    <string name="tasks_quick_capture_title">Szybkie Przechwytywanie</string>
+    <string name="tasks_quick_capture_hint">Zapisz rozpraszającą myśl...</string>
+    <string name="tasks_quick_capture_action">Zapisz do Skrzynki</string>
+    <string name="tasks_context_title">Kontekst</string>
+    <string name="tasks_context_active">Aktywne</string>
+    <string name="tasks_context_blocked">Zablokowane</string>
+    <string name="tasks_context_due_soon">Termin Wkrótce</string>
+    <string name="tasks_start_focus_action">Uruchom Focus</string>
+    <string name="tasks_open_action">Otwórz</string>
+    <string name="tasks_pin_today_action">Przypnij na Dziś</string>
+    <string name="tasks_done_action">Ukończ</string>
+    <string name="tasks_do_now_action">Zrób Teraz</string>
+    <string name="tasks_inbox_title">Task Inbox</string>
+    <string name="tasks_inbox_subtitle">Porządkuj szybkie zrzuty i nieprzetworzone elementy zadaniowe.</string>
+    <string name="tasks_inbox_capture_entries">Przechwycone Wpisy</string>
+    <string name="tasks_inbox_empty_entries">Brak przechwyconych wpisów.</string>
+    <string name="tasks_inbox_triage_task">Zamień na Zadanie</string>
+    <string name="tasks_inbox_dismiss">Odrzuć</string>
+    <string name="tasks_inbox_tasks_title">Zadania w Skrzynce</string>
+    <string name="tasks_inbox_empty_tasks">Brak zadań w skrzynce.</string>
+    <string name="tasks_inbox_mark_processed">Oznacz jako Przetworzone</string>
+    <string name="tasks_today_title">Dzisiaj</string>
+    <string name="tasks_today_subtitle">Terminy i pilne zobowiązania.</string>
+    <string name="tasks_today_empty">Brak pilnych zadań na teraz.</string>
+    <string name="tasks_today_overdue">Po Terminie</string>
+    <string name="tasks_today_due_soon">Termin Wkrótce</string>
+    <string name="tasks_today_pinned">Przypięte na Dziś</string>
+    <string name="tasks_all_title">Wszystkie Zadania</string>
+    <string name="tasks_search_placeholder">Szukaj zadań...</string>
+    <string name="tasks_scope_active">Aktywne</string>
+    <string name="tasks_scope_completed">Ukończone</string>
+    <string name="tasks_scope_archived">Zarchiwizowane</string>
+    <string name="tasks_sort_priority">Priorytet</string>
+    <string name="tasks_sort_due">Termin</string>
+    <string name="tasks_sort_updated">Aktualizacja</string>
+    <string name="tasks_sort_title">Tytuł</string>
+    <string name="tasks_column_task">Zadanie</string>
+    <string name="tasks_column_context">Kontekst</string>
+    <string name="tasks_column_due">Termin</string>
+    <string name="tasks_column_status">Status</string>
+    <string name="tasks_details_title">Szczegóły</string>
+    <string name="tasks_detail_status">Status</string>
+    <string name="tasks_detail_due">Termin</string>
+    <string name="tasks_detail_project">Projekt</string>
+    <string name="tasks_detail_area">Obszar</string>
+    <string name="tasks_detail_next_step">Następny Mały Krok</string>
+    <string name="tasks_detail_estimate">Szacunek</string>
+    <string name="tasks_detail_updated">Aktualizacja</string>
+    <string name="tasks_archive_title">Archiwum Zadań</string>
+    <string name="tasks_archive_subtitle">Przeglądaj historię ukończonych i zarchiwizowanych zadań.</string>
+    <string name="tasks_archive_action">Archiwizuj</string>
+    <string name="tasks_restore_action">Przywróć</string>
+    <string name="tasks_delete_action">Usuń</string>
+    <string name="tasks_no_results">Brak zadań dla bieżącego widoku.</string>
 
     <!-- Projects Screen -->
     <string name="projects_title">PROJEKTY</string>
@@ -342,6 +431,18 @@
     <string name="areas_dialog_name">Nazwa</string>
     <string name="areas_dialog_create">UTWÓRZ</string>
     <string name="areas_dialog_cancel">ANULUJ</string>
+    <string name="areas_new">NOWY OBSZAR</string>
+    <string name="areas_dominant">Dominujący</string>
+    <string name="areas_balance">Równowaga</string>
+    <string name="areas_distribution">Rozkład Między Obszarami</string>
+    <string name="areas_neglected">Zaniedbane</string>
+    <string name="areas_load">Obciążenie</string>
+    <string name="areas_status">Status</string>
+    <string name="areas_projects_active">Aktywne projekty</string>
+    <string name="areas_open_responsibilities">Otwarte odpowiedzialności</string>
+    <string name="areas_upcoming_deadlines">Nadchodzące terminy</string>
+    <string name="areas_recent_activity">Ostatnia aktywność</string>
+    <string name="areas_enter">Otwórz Obszar</string>
 
     <!-- Calendar Screen -->
     <string name="cal_agenda_title">AGENDA // %1$s</string>
@@ -476,15 +577,57 @@
     <string name="project_detail_next_actions">NASTĘPNE DZIAŁANIA</string>
     <string name="project_detail_no_tasks">Brak aktywnych zadań.</string>
     <string name="project_detail_linked_notes">POWIĄZANE NOTATKI</string>
-    <string name="project_detail_resources">ZASOBY</string>
+    <string name="project_detail_linked_tasks">POWIĄZANE ZADANIA</string>
+    <string name="project_detail_linked_records">POWIĄZANE REKORDY</string>
+    <string name="project_detail_resources">ODNIESIENIA</string>
     <string name="project_detail_timeline">OŚ CZASU PROJEKTU</string>
     <string name="project_detail_inbox_all">SKRZYNKA PROJEKTU I WSZYSTKIE ELEMENTY</string>
+    <string name="project_detail_mission_control">CENTRUM DOWODZENIA PROJEKTU</string>
+    <string name="project_detail_overview">PRZEGLĄD</string>
+    <string name="project_detail_work">PRACA</string>
+    <string name="project_detail_assets">ZASOBY</string>
+    <string name="project_detail_review">PRZEGLĄD KOŃCOWY</string>
+    <string name="project_detail_contextual_panel">PANEL KONTEKSTOWY</string>
+    <string name="project_detail_relations">RELACJE</string>
+    <string name="project_detail_actions">DZIAŁANIA</string>
+    <string name="project_detail_schedule">HARMONOGRAM</string>
+    <string name="project_detail_status">STATUS</string>
+    <string name="project_detail_health">KONDYCJA</string>
+    <string name="project_detail_target_date">DATA DOCELOWA</string>
+    <string name="project_detail_outcome">REZULTAT</string>
+    <string name="project_detail_goal_fallback">Zdefiniuj jasny rezultat projektu, aby wyrównać pracę, notatki i rekordy.</string>
+    <string name="project_detail_progress_value">%1$d%% ukończono // %2$d/%3$d zadań</string>
+    <string name="project_detail_blockers">BLOKERY</string>
+    <string name="project_detail_empty_work">Brak powiązanych elementów pracy.</string>
+    <string name="project_detail_empty_blockers">Brak aktywnych blokerów.</string>
+    <string name="project_detail_empty_notes">Brak powiązanych notatek.</string>
+    <string name="project_detail_empty_records">Brak powiązanych rekordów.</string>
+    <string name="project_detail_empty_timeline">Brak ostatniej aktywności.</string>
+    <string name="project_detail_empty_assets">Brak dołączonych zasobów.</string>
+    <string name="project_detail_set_status">Ustaw status</string>
 
     <!-- Area Detail -->
     <string name="area_detail_not_found">Nie znaleziono obszaru</string>
     <string name="area_detail_neglected_tasks">%1$d ZANIEDBANYCH ZADAŃ W TYM OBSZARZE</string>
     <string name="area_detail_active_projects">AKTYWNE PROJEKTY</string>
     <string name="area_detail_recent_activity">BEZPOŚREDNIE ELEMENTY I OSTATNIA AKTYWNOŚĆ</string>
+    <string name="area_detail_subtitle">KONTROLA ODPOWIEDZIALNOŚCI</string>
+    <string name="area_detail_mission_control">CENTRUM DOWODZENIA OBSZARU</string>
+    <string name="area_detail_responsibility_fallback">Zdefiniuj odpowiedzialność tego obszaru, aby praca i projekty były spójne w czasie.</string>
+    <string name="area_detail_tab_overview">PRZEGLĄD</string>
+    <string name="area_detail_tab_projects">PROJEKTY</string>
+    <string name="area_detail_tab_work">PRACA</string>
+    <string name="area_detail_tab_notes">NOTATKI</string>
+    <string name="area_detail_tab_timeline">OŚ CZASU</string>
+    <string name="area_detail_tab_review">PRZEGLĄD</string>
+    <string name="area_detail_open_responsibilities">OTWARTE ODPOWIEDZIALNOŚCI</string>
+    <string name="area_detail_pressure">PRESJA / RYZYKO</string>
+    <string name="area_detail_review_signals">SYGNAŁY PRZEGLĄDU</string>
+    <string name="area_detail_context">KONTEKST</string>
+    <string name="area_detail_cadence">RYTM</string>
+    <string name="area_detail_health">KONDYCJA</string>
+    <string name="area_detail_timeline_empty">Brak ostatniej aktywności.</string>
+    <string name="project_detail_empty_projects">Brak powiązanych projektów.</string>
 
     <!-- Graph Screen -->
     <string name="graph_title">WIDOK GRAFU (KLASTRY KONTEKSTOWE)</string>
@@ -499,8 +642,105 @@
     <!-- Node Types -->
     <string name="type_task">Zadanie</string>
     <string name="type_note">Notatka</string>
-    <string name="type_idea">Pomysł</string>
+    <string name="type_record">Rekord</string>
+    <string name="type_idea">Notatka</string>
     <string name="type_project">Projekt</string>
     <string name="type_area">Obszar</string>
+    <string name="type_resource">Odniesienie</string>
+
+    <!-- Shared Lens Copy -->
+    <string name="lens_decision_title">WSPARCIE DECYZYJNE</string>
+    <string name="lens_decision_subtitle">Zadaniowa praca decyzyjna: triage skrzynki, aktywne wybory i rozstrzygnięte wyniki.</string>
+    <string name="lens_unresolved_title">NIEROZWIĄZANA PRACA</string>
+    <string name="lens_unresolved_subtitle">Nierozwiązana praca zadaniowa, elementy „czekam na” oraz zaległe zobowiązania wymagające domknięcia.</string>
+    <string name="lens_reference_title">SOCZEWKA ODNIESIEŃ</string>
+    <string name="lens_reference_subtitle">Notatki i rekordy widziane jako trwałe odniesienia, dokumenty i wsparcie odzyskiwania informacji.</string>
+    <string name="lens_finance_title">SOCZEWKA FINANSÓW</string>
+    <string name="lens_finance_subtitle">Zadania, terminy, rekordy i odniesienia finansowe w jednym widoku operacyjnym.</string>
+
+    <!-- Systems Dashboard Summaries -->
+    <string name="systems_summary_open_loops">Domykaj zadaniową nierozwiązaną pracę, przepełnienie skrzynki i dług przeglądu.</string>
+    <string name="systems_summary_protocols">Uruchamiaj i utrzymuj rutyny przejściowe oraz playbooki.</string>
+    <string name="systems_summary_time_architecture">Zarządzaj horyzontami, odliczaniem i blokami skupienia.</string>
+    <string name="systems_summary_places">Koordynuj sprawy terenowe, pakiety podróżne i logistykę opartą o kontekst miejsca.</string>
+    <string name="systems_summary_finances">Kontroluj rachunki, odnowienia, subskrypcje i terminy finansowe.</string>
+    <string name="systems_summary_health">Śledź zobowiązania zdrowotne, leki i sygnały dobrostanu.</string>
+    <string name="systems_summary_relationships">Utrzymuj follow-upy, wspólne plany i rytm kontaktu.</string>
+    <string name="systems_summary_education">Utrzymuj widoczność nauki, powtórek i realizacji edukacyjnej.</string>
+    <string name="systems_summary_rules">Przechowuj i przypinaj osobiste zasady oraz reguły decyzji.</string>
+    <string name="systems_summary_vaults">Utrzymuj porządek w odniesieniach, dokumentach i systemach odzyskiwania.</string>
+    <string name="systems_summary_capacity">Śledź obciążenie, fragmentację i realną przepustowość.</string>
+    <string name="systems_summary_identity">Przeglądaj sygnaturę, wyróżnik, kierunek i stan głównej zmiany.</string>
+
+    <!-- Shared View Labels -->
+    <string name="view_inbox">SKRZYNKA</string>
+    <string name="view_review">PRZEGLĄD</string>
+    <string name="view_all">WSZYSTKIE</string>
+    <string name="view_resolved">ROZWIĄZANE</string>
+    <string name="view_queue">KOLEJKA</string>
+    <string name="view_recurring">POWTARZALNE</string>
+    <string name="view_overdue">ZALEGŁE</string>
+
+    <!-- Decision Lens -->
+    <string name="lens_decision_stale_header">WSPARCIE DECYZYJNE ZBYT DŁUGO CZEKA</string>
+    <string name="lens_decision_stale_item_age">%1$s (%2$dd)</string>
+
+    <!-- Unresolved Lens -->
+    <string name="lens_unresolved_stats">Aktywne %1$d • Skrzynka %2$d • Przegląd %3$d • Rozwiązane %4$d</string>
+    <string name="lens_unresolved_decay_index">Wskaźnik rozkładu: %1$d%%</string>
+    <string name="lens_unresolved_archive_resolved">ARCHIWIZUJ ROZWIĄZANE ELEMENTY</string>
+    <string name="lens_unresolved_empty">Brak nierozwiązanej pracy w widoku %1$s.</string>
+    <string name="lens_unresolved_group_area">WG OBSZARU</string>
+    <string name="lens_unresolved_group_person">WG OSOBY</string>
+    <string name="lens_unresolved_group_urgency">WG PILNOŚCI</string>
+
+    <!-- Open Loop Card -->
+    <string name="open_loop_meta_line">Typ %1$s • %2$s • Wiek %3$dd • Zalega %4$dd • Rozkład %5$d%%</string>
+    <string name="open_loop_meta_line_area">Obszar %1$s • Osoba %2$s</string>
+    <string name="open_loop_action_open">OTWÓRZ ELEMENT</string>
+    <string name="open_loop_action_resolve">OZNACZ JAKO ROZWIĄZANE</string>
+    <string name="open_loop_action_convert_task">NA ZADANIE FOLLOW-UP</string>
+    <string name="open_loop_action_convert_decision">NA WSPARCIE DECYZYJNE</string>
+    <string name="open_loop_action_convert_note">NA NOTATKĘ</string>
+    <string name="open_loop_action_archive">ARCHIWIZUJ</string>
+    <string name="open_loop_untyped">bez typu</string>
+    <string name="open_loop_unassigned">Nieprzypisane</string>
+    <string name="open_loop_none">Brak</string>
+
+    <!-- Finance Lens -->
+    <string name="finance_header_tracking">Śledzenie: %1$d działań, %2$d elementów wiedzy i %3$d terminów.</string>
+    <string name="finance_metrics_reference_count">%1$d notatek/rekordów finansowych</string>
+    <string name="finance_queue_label">KOLEJKA</string>
+    <string name="finance_empty_queue">Brak elementów utrzymaniowych finansów w widoku %1$s.</string>
+    <string name="finance_item_action">DZIAŁANIE</string>
+    <string name="finance_item_record">REKORD</string>
+    <string name="finance_item_note">NOTATKA</string>
+    <string name="finance_chip_live">NA ŻYWO</string>
+    <string name="finance_chip_sync_ready">GOTOWE DO SYNCH.</string>
+    <string name="finance_chip_expense">WYDATEK</string>
+    <string name="finance_deadlines_chip">%1$d TERMINÓW</string>
+
+    <!-- Reference Lens -->
+    <string name="lens_reference_search">Szukaj w odniesieniach</string>
+    <string name="lens_reference_category_reference">ODNIESIENIA</string>
+    <string name="lens_reference_category_links">WAŻNE LINKI</string>
+    <string name="lens_reference_category_health">ZDROWIE</string>
+    <string name="lens_reference_category_institutional">INSTYTUCJE</string>
+    <string name="lens_reference_category_process">ŚLEDZENIE PROCESÓW</string>
+    <string name="lens_reference_category_deadlines">OFICJALNY TERMIN</string>
+    <string name="lens_reference_action_mark_retrieved">ODZNACZ „DO ODNALEZIENIA”</string>
+    <string name="lens_reference_action_open_item">OTWÓRZ ELEMENT</string>
+    <string name="lens_reference_app_status">Status aplikacji</string>
+    <string name="lens_reference_app_status_desc">Bieżące śledzenie wiz, pracy, mieszkania i procesów urzędowych.</string>
+    <string name="lens_reference_app_status_count">%1$d aktywnych rekordów</string>
+    <string name="lens_reference_quick_capture">Szybkie dodanie</string>
+    <string name="lens_reference_entry_title">Tytuł wpisu</string>
+    <string name="lens_reference_entry_content">Szczegóły / odniesienie</string>
+    <string name="lens_reference_save_entry">ZAPISZ WPIS</string>
+    <string name="lens_reference_save_status">STATUS +14D</string>
+
+    <!-- Capture -->
+    <string name="capture_sticky">PRZYPIĘTE</string>
+    <string name="capture_label_capture">Przechwyć</string>
 
 </resources>

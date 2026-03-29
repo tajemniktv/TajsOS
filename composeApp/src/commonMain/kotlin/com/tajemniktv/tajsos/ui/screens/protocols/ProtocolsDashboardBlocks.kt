@@ -52,7 +52,7 @@ internal fun ProtocolsMainBlock(
             color = TactileTheme.Text,
         )
         Text(
-            text = "Trigger repeatable transition sequences and keep playbooks attached to real contexts.",
+            text = "Browse reusable routines in Library and run them step-by-step in Active mode.",
             style = MaterialTheme.typography.bodySmall,
             color = TactileTheme.Muted,
         )

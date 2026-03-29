@@ -67,9 +67,22 @@ collection of disconnected feature silos.
 
 ### System shape
 
-- Prioritize backend/domain coherence before broad UI surface expansion.
 - Design screens as projections (lenses) over shared state, not isolated feature kingdoms.
 - Preserve local-first behavior as a non-negotiable baseline.
+- Favor a small product-level object spine over a wide taxonomy of peer feature types.
+
+### Life object spine
+
+- Preferred core objects are `InboxEntry`, `Task`, `Note`, `Record`, `Project`, and `Area`.
+- Scheduling/reminders and relations are cross-cutting support structures, not competing top-level
+  item types.
+- Treat “capture” as a workflow/state, not as permanent ontology.
+- Domains such as Health, Education, Relationships, and Finances should act as lenses over shared
+  objects, not hard containers.
+- `Record` exists for temporal/log-like material; do not force journal/reflection/history data into
+  generic notes by default.
+- Notes and tasks are distinct cognitive tools; do not collapse them into one universal item without
+  a strong reason.
 
 ### ViewModel boundaries
 
@@ -86,7 +99,11 @@ collection of disconnected feature silos.
   fields.
 - Prefer typed companion models/tables for deeper domain behavior.
 - Keep relation graph behavior (`RelationEntity`) as a first-class capability.
-- Preserve backward compatibility when evolving data shape.
+- During current pre-alpha development, do not preserve weak legacy ontology just for compatibility.
+- Prefer collapsing legacy pseudo-types such as `idea`, `resource`, `vault`, `open_loop`, and
+  similar special cases into the smaller life-object model when practical.
+- Projects should coordinate outcomes, not act as generic folders.
+- Areas should represent ongoing responsibility, not arbitrary filing categories.
 
 ### Type safety boundaries
 
@@ -128,10 +145,10 @@ collection of disconnected feature silos.
 
 Feature work should reinforce cohesive read models:
 
-- **Now**: urgent execution state across tasks/events/open loops/mode.
+- **Now**: urgent execution state across tasks/events/time pressure/mode.
 - **Plan**: calendar commitments and forward pressure.
 - **Operate**: maintenance, logistics, and routines.
-- **Knowledge**: notes, references, and linked entities.
+- **Knowledge**: notes, records, references, and linked entities.
 - **Review**: trends, outcomes, unfinished loops, reflection.
 
 ## Persistence constraints
@@ -160,6 +177,12 @@ When working in this repo, agents should:
 12. If users request is ambigous, not specific enough or you're not sure what the user meant - Ask
     before doing.
 13. After updating the codebase, check if tests also require updating.
+14. When simplifying ontology, prefer removing or demoting weak pseudo-types over renaming them and
+    keeping the same conceptual sprawl.
+15. Update docs when the preferred life-object model or lens framing changes.
+16. We prefer to avoid using deprecated patterns or APIs.
+17. Prefer following existing code style and conventions in the repo for consistency, unless there's
+    a strong reason to deviate.
 
 ## Documentation touchpoints
 

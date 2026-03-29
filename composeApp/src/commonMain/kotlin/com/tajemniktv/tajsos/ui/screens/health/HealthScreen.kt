@@ -29,7 +29,8 @@ fun HealthScreen(
                 HealthDashboardSurface.MOBILE
             }
         val plan = remember(surface) { buildHealthDashboardPlan(surface) }
-        val context = remember(viewModel, onEditNode) { HealthDashboardContext(viewModel, onEditNode) }
+        val context =
+            remember(viewModel, onEditNode) { HealthDashboardContext(viewModel, onEditNode) }
         Column(modifier = Modifier.fillMaxSize()) {
             plan.primary.forEach { block ->
                 HealthDashboardBlockRegistry.resolve(block.id)?.invoke(context)

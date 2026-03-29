@@ -35,12 +35,12 @@ import com.tajemniktv.tajsos.ui.theme.TactileTheme
 internal fun renderStudyHeaderBlock(context: StudyDashboardContext) {
     Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
         Text(
-            text = "STUDENT / UNIVERSITY BOARD",
+            text = "EDUCATION LENS",
             style = MaterialTheme.typography.displaySmall,
             color = TactileTheme.Text,
         )
         Text(
-            text = "Assignments, exam prep, sessions, concept linking, and progress tracking.",
+            text = "Course work, study notes, reading progress, concept linking, and academic reflection.",
             style = MaterialTheme.typography.bodySmall,
             color = TactileTheme.Muted,
         )
@@ -199,7 +199,7 @@ internal fun renderKnowledgeVaultsBlock(context: StudyDashboardContext) {
     SectionTitle("KNOWLEDGE VAULTS")
     NodeSection(context, "PSYCHOLOGY CONCEPT MAPS", context.state.psychologyConceptMaps)
     NodeSection(context, "GLOSSARY / KNOWLEDGE CARDS", context.state.glossaryCards)
-    NodeSection(context, "RESEARCH IDEA VAULT", context.state.researchIdeaVault)
+    NodeSection(context, "RESEARCH NOTES", context.state.researchIdeaVault)
     NodeSection(context, "QUOTE BANK", context.state.quoteBank)
     NodeSection(context, "CASE / REFLECTION NOTES", context.state.caseReflectionNotes)
     NodeSection(context, "READING BACKLOG", context.state.readingBacklog)

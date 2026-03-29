@@ -14,6 +14,9 @@ import com.tajemniktv.tajsos.di.SharedModule
 import java.awt.FileDialog
 import java.awt.Frame
 import java.io.File
+import org.jetbrains.compose.resources.painterResource
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.app_icon
 
 fun main() =
     application {
@@ -32,6 +35,7 @@ fun main() =
         Window(
             onCloseRequest = ::exitApplication,
             title = "TajsOS",
+            icon = painterResource(Res.drawable.app_icon),
         ) {
             val avatarPickResult = remember { mutableStateOf<String?>(null) }
             App(

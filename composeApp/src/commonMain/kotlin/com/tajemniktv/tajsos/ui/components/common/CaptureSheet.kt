@@ -38,12 +38,12 @@ import tajsos.composeapp.generated.resources.*
  * Renders a modal bottom sheet that collects capture text and related metadata, then submits it via the provided callback.
  *
  * The sheet supports selecting a capture type, optional project/area assignment, templates, recurring/reminder settings,
- * sticky flag, decision category, multi-capture and brain-dump modes, and an optional voice-capture action.
+ * sticky flag, multi-capture and brain-dump modes, and an optional voice-capture action.
  *
  * @param onDismiss Called to close the sheet.
  * @param onCapture Called when the user submits a capture. Arguments (in order):
  *  1. `text` — the entered capture text.
- *  2. `type` — the selected capture type (e.g. "task", "note", "idea", "project", "area", "decision", etc.).
+ *  2. `type` — the selected capture type (for example "inbox", "task", "note", "record", "project", "area").
  *  3. `projectId` — selected project id or `null`.
  *  4. `areaId` — selected area id or `null`.
  *  5. `isRecurring` — `true` if the capture is marked recurring.
@@ -51,7 +51,7 @@ import tajsos.composeapp.generated.resources.*
  *  7. `reminderTime` — scheduled reminder time as epoch milliseconds or `null`.
  *  8. `contextScreen` — optional calling-screen identifier passed through.
  *  9. `isSticky` — `true` if the capture is marked sticky.
- *  10. `decisionCategory` — for type "decision", the selected category ("tiny" or "major") or `null`.
+ *  10. Reserved legacy metadata slot, currently passed as `null`.
  * @param projects List of available project nodes for assignment (defaults to empty).
  * @param areas List of available area nodes for assignment (defaults to empty).
  * @param templates List of templates that can prefill the capture text (defaults to empty).
@@ -83,8 +83,7 @@ fun CaptureSheet(
             text = initialText
         }
     }
-    var selectedType by remember { mutableStateOf("task") }
-    var decisionCategory by remember { mutableStateOf<String?>("major") }
+    var selectedType by remember { mutableStateOf("inbox") }
     var selectedProjectId by remember { mutableStateOf<Long?>(defaultProjectId) }
     var selectedAreaId by remember { mutableStateOf<Long?>(defaultAreaId) }
 
@@ -218,7 +217,7 @@ fun CaptureSheet(
                                         reminderTime,
                                         contextScreen,
                                         isSticky,
-                                        if (selectedType == "decision") decisionCategory else null,
+                                        null,
                                     )
                                     if (multiCaptureMode || brainDumpMode) {
                                         text = ""
@@ -253,13 +252,10 @@ fun CaptureSheet(
                 ) {
                     items(
                         listOf(
+                            "inbox",
                             "task",
                             "note",
-                            "idea",
-                            "resource",
-                            "open_loop",
-                            "decision",
-                            "maintenance",
+                            "record",
                             "project",
                             "area",
                         ),
@@ -267,13 +263,10 @@ fun CaptureSheet(
                         val typeLabel =
                             when (type)
                             {
+                                "inbox" -> stringResource(Res.string.capture_label_capture)
                                 "task" -> stringResource(Res.string.type_task)
                                 "note" -> stringResource(Res.string.type_note)
-                                "idea" -> stringResource(Res.string.type_idea)
-                                "resource" -> stringResource(Res.string.type_resource)
-                                "open_loop" -> stringResource(Res.string.dash_open_loops)
-                                "decision" -> stringResource(Res.string.dash_decisions)
-                                "maintenance" -> stringResource(Res.string.dash_maintenance)
+                                "record" -> stringResource(Res.string.type_record)
                                 "project" -> stringResource(Res.string.type_project)
                                 "area" -> stringResource(Res.string.type_area)
                                 else -> type
@@ -351,7 +344,7 @@ fun CaptureSheet(
                     }
                 }
 
-                if (!brainDumpMode) {
+                if (selectedType != "inbox" && !brainDumpMode) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
@@ -483,29 +476,13 @@ fun CaptureSheet(
                             )
                             Spacer(Modifier.width(4.dp))
                             Text(
-                                "STICKY",
+                                stringResource(Res.string.capture_sticky),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = TactileTheme.Muted,
                             )
                         }
 
-                        if (selectedType == "decision") {
-                            Row(
-                                modifier = Modifier.weight(1f),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-                            ) {
-                                listOf("tiny", "major").forEach { cat ->
-                                    FilterChip(
-                                        selected = decisionCategory == cat,
-                                        onClick = { decisionCategory = cat },
-                                        label = { Text(cat.uppercase()) },
-                                    )
-                                }
-                            }
-                        } else {
-                            Spacer(Modifier.weight(1f))
-                        }
+                        Spacer(Modifier.weight(1f))
                     }
                 }
             } else if (selectedType == "project" && areas.isNotEmpty()) {
@@ -540,7 +517,7 @@ fun CaptureSheet(
                             reminderTime,
                             contextScreen,
                             isSticky,
-                            if (selectedType == "decision") decisionCategory else null,
+                            null,
                         )
                         if (multiCaptureMode || brainDumpMode) {
                             text = ""
@@ -562,7 +539,7 @@ fun CaptureSheet(
                             {
                                 "task" -> stringResource(Res.string.type_task)
                                 "note" -> stringResource(Res.string.type_note)
-                                "idea" -> stringResource(Res.string.type_idea)
+                                "record" -> stringResource(Res.string.type_record)
                                 "project" -> stringResource(Res.string.type_project)
                                 "area" -> stringResource(Res.string.type_area)
                                 else -> selectedType

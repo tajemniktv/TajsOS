@@ -81,6 +81,15 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "com.tajemniktv.tajsos"
             packageVersion = "1.0.0"
+            windows {
+                iconFile.set(project.file("desktop-icons/tajsos-icon.ico"))
+            }
+            macOS {
+                iconFile.set(project.file("desktop-icons/tajsos-icon.icns"))
+            }
+            linux {
+                iconFile.set(project.file("desktop-icons/tajsos-icon.png"))
+            }
         }
     }
 }

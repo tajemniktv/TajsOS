@@ -56,6 +56,23 @@ data class UserProfile(
 )
 
 /**
+ * Resolves the operator's display name using their preferred formatting strategy.
+ */
+fun UserProfile.resolveDisplayName(): String {
+    val first = firstName.trim()
+    val last = lastName.trim()
+    val nick = nickname.trim()
+    val full = listOf(first, last).filter { it.isNotBlank() }.joinToString(" ").trim()
+
+    return when (displayNameFormat) {
+        UserDisplayNameFormat.NICKNAME -> nick.ifBlank { first.ifBlank { "OPERATOR" } }
+        UserDisplayNameFormat.FIRST_NAME -> first.ifBlank { nick.ifBlank { "OPERATOR" } }
+        UserDisplayNameFormat.FIRST_LAST -> full.ifBlank { nick.ifBlank { "OPERATOR" } }
+        UserDisplayNameFormat.FULL_NAME -> full.ifBlank { nick.ifBlank { "OPERATOR" } }
+    }
+}
+
+/**
  * Maps [UserEntity] storage into the typed [UserProfile] model.
  */
 fun UserEntity.toUserProfile(): UserProfile =
@@ -106,4 +123,3 @@ fun UserProfile.toEntity(existing: UserEntity? = null): UserEntity =
         createdAt = existing?.createdAt ?: createdAt,
         updatedAt = Clock.System.now().toEpochMilliseconds(),
     )
-

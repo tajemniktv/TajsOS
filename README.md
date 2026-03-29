@@ -9,33 +9,26 @@ mind.
 ### Features
 
 - a **command center** for what matters now,
-- a **second brain** for notes, ideas, and context,
+- a **knowledge layer** for notes, records, and reference,
 - a **project/life manager** for keeping different domains organized,
 - an **insight layer** for lightweight patterns, reviews, and self-understanding.
 
 ---
 
-### Core ideas
+### Core model
 
-The app is built around a unified model where different things in life can still be connected:
+The app is built around a small set of shared life objects that can still stay connected:
 
-- **Tasks**
-- **Notes**
-- **Ideas**
-- **Projects**
-- **Areas**
-- **People**
-- **Protocols**
-- **Open loops**
-- **Reviews**
-- **Attachments**
-- **Calendar events**
-- **Focus and tracking data**
+- **Inbox captures** for fast intake before forced classification
+- **Tasks** for execution
+- **Notes** for durable knowledge and reference
+- **Records** for chronological reflections, logs, and observations
+- **Projects** for outcomes
+- **Areas** for ongoing responsibility
+- **Relations, schedules, and reminders** as shared layers across the system
+- **Focus, review, and tracking data** as read models over shared life objects
 
 Instead of splitting everything into isolated tools, TajsOS tries to make them work as one system.
-
-Built-in domains (for example Finances, Health, Education, Relationships) are first-class lenses
-over shared system data, while Areas remain generic user-defined containers.
 
 ---
 

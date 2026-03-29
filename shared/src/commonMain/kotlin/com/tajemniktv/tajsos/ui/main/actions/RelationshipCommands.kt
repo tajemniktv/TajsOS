@@ -2,7 +2,7 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
-package com.tajemniktv.tajsos.ui
+package com.tajemniktv.tajsos.ui.main.actions
 
 import com.tajemniktv.tajsos.data.AppRepository
 import com.tajemniktv.tajsos.data.NodeEntity
@@ -452,9 +452,10 @@ class RelationshipCommands(
         scope.launch {
             val cleanTag = categoryTag.trim().lowercase()
             val type =
-                when (asType)
+                when (asType.trim().lowercase())
                 {
-                    "document", "vault", "resource", "note", "maintenance" -> asType
+                    "record" -> "record"
+                    "task", "maintenance" -> "task"
                     else -> "note"
                 }
             val nodeId =
@@ -485,10 +486,9 @@ class RelationshipCommands(
     ) {
         val normalizedStatus = status.trim().ifBlank { "pending" }
         addVaultEntry(
-            categoryTag = "vault_application_status",
+            categoryTag = "process_tracking",
             title = title.ifBlank { "Application status" },
             content = "Status: $normalizedStatus",
-            asType = "document",
             dueAt = dueAt,
         )
     }

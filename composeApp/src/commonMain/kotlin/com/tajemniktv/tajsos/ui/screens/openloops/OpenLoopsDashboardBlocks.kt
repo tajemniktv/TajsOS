@@ -19,8 +19,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.lens.LensUiContract
 import com.tajemniktv.tajsos.ui.screens.OpenLoopView
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import org.jetbrains.compose.resources.stringResource
 
 object OpenLoopsDashboardBlockRegistry {
     private val renderers: Map<String, OpenLoopsDashboardBlockRenderer> =
@@ -50,12 +52,12 @@ internal fun OpenLoopsMainBlock(
         verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
     ) {
         Text(
-            text = "OPEN LOOPS",
+            text = stringResource(LensUiContract.unresolvedLens.title),
             style = MaterialTheme.typography.displaySmall,
             color = TactileTheme.Text,
         )
         Text(
-            text = "Resolve inbox spillover, waiting-fors, pending decisions, and stale unresolved loops.",
+            text = stringResource(LensUiContract.unresolvedLens.subtitle),
             style = MaterialTheme.typography.bodySmall,
             color = TactileTheme.Muted,
         )

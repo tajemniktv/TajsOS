@@ -2,13 +2,17 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
-package com.tajemniktv.tajsos.ui
+package com.tajemniktv.tajsos.ui.main.state
 
 import com.tajemniktv.tajsos.data.ModeEntity
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.data.RelationEntity
-import com.tajemniktv.tajsos.data.TrackEntryEntity
+import com.tajemniktv.tajsos.ui.AreaHealthSnapshot
+import com.tajemniktv.tajsos.ui.DashboardUIState
+import com.tajemniktv.tajsos.ui.MaintenanceSnapshot
+import com.tajemniktv.tajsos.ui.OpenLoopsSnapshot
+import com.tajemniktv.tajsos.ui.TimeArchitectureSnapshot
 
 /**
  * An internal data class bundling the primary inputs required to calculate the [CapacitySnapshot].
@@ -16,8 +20,8 @@ import com.tajemniktv.tajsos.data.TrackEntryEntity
  * @param nodes The complete list of active nodes in the system.
  * @param projects The complete list of active project entities.
  * @param areas The complete list of active area entities.
- * @param maintenance The current [MaintenanceSnapshot] evaluating chore debt.
- * @param openLoops The current [OpenLoopsSnapshot] evaluating unresolved inputs.
+ * @param maintenance The current [com.tajemniktv.tajsos.ui.MaintenanceSnapshot] evaluating chore debt.
+ * @param openLoops The current [com.tajemniktv.tajsos.ui.OpenLoopsSnapshot] evaluating unresolved inputs.
  */
 internal data class CapacityInputs(
     val nodes: List<NodeWithPin>,
@@ -31,7 +35,7 @@ internal data class CapacityInputs(
  * An internal data class bundling the core entity inputs required for LifeOS Signature calculation.
  *
  * @param modes The complete list of user-defined focus modes.
- * @param areaHealth The current [AreaHealthSnapshot] detailing area stability.
+ * @param areaHealth The current [com.tajemniktv.tajsos.ui.AreaHealthSnapshot] detailing area stability.
  * @param openLoops The current [OpenLoopsSnapshot] detailing cognitive load.
  * @param maintenance The current [MaintenanceSnapshot] detailing routine debt.
  * @param relationships The current [RelationshipSnapshot] detailing social obligations.
@@ -48,7 +52,7 @@ internal data class LifeOSSignatureInputs(
  * An internal data class bundling the inputs alongside broader context snapshots for LifeOS Signature calculation.
  *
  * @param inputs The primary [LifeOSSignatureInputs] entity data.
- * @param vaults The current [VaultsSnapshot] evaluating static document structures.
+ * @param vaults The current [VaultsSnapshot] evaluating reference and retrieval structures.
  * @param capacity The current [CapacitySnapshot] evaluating systemic load.
  * @param playbooks The current [PlaybookSnapshot] evaluating behavioral playbooks.
  * @param currentMode The currently active focus Mode, if any.
@@ -66,7 +70,7 @@ internal data class LifeOSSignatureContext(
  *
  * @param nodes The complete list of active nodes in the system.
  * @param relations The complete list of explicit bidirectional links between nodes.
- * @param dashboard The current [DashboardUIState] reflecting immediately visible items.
+ * @param dashboard The current [com.tajemniktv.tajsos.ui.DashboardUIState] reflecting immediately visible items.
  * @param areaHealth The current [AreaHealthSnapshot] detailing structural health.
  * @param openLoops The current [OpenLoopsSnapshot] detailing capture behavior.
  */
@@ -119,7 +123,7 @@ internal data class CombinedDirectionInputs(
  * @param signature The [LifeOSSignatureSnapshot].
  * @param direction The [CombinedDirectionSnapshot] proving structural alignment.
  * @param dashboard The [DashboardUIState].
- * @param time The [TimeArchitectureSnapshot] proving temporal awareness.
+ * @param time The [com.tajemniktv.tajsos.ui.TimeArchitectureSnapshot] proving temporal awareness.
  */
 internal data class CoreLifeOSShiftInputs(
     val distinction: LifeOSSecondBrainSnapshot,

@@ -14,6 +14,8 @@ import com.tajemniktv.tajsos.data.DecisionOptionEntity
 import com.tajemniktv.tajsos.data.EventLogEntity
 import com.tajemniktv.tajsos.data.ExportBundle
 import com.tajemniktv.tajsos.data.FocusSessionEntity
+import com.tajemniktv.tajsos.data.InboxEntryEntity
+import com.tajemniktv.tajsos.data.ItemKind
 import com.tajemniktv.tajsos.data.MedicationEntity
 import com.tajemniktv.tajsos.data.ModeEntity
 import com.tajemniktv.tajsos.data.ModeUsageLogEntity
@@ -23,14 +25,32 @@ import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.data.PackRegistry
 import com.tajemniktv.tajsos.data.PreferencesRepository
 import com.tajemniktv.tajsos.data.ProtocolHistoryEntity
+import com.tajemniktv.tajsos.data.RecordKind
 import com.tajemniktv.tajsos.data.RelationEntity
 import com.tajemniktv.tajsos.data.ReviewEntity
 import com.tajemniktv.tajsos.data.TagEntity
+import com.tajemniktv.tajsos.data.TaskState
 import com.tajemniktv.tajsos.data.TemplateEntity
 import com.tajemniktv.tajsos.data.TrackEntryEntity
 import com.tajemniktv.tajsos.data.TrackMedicationJoinEntity
 import com.tajemniktv.tajsos.data.UserEntity
 import com.tajemniktv.tajsos.data.UserProfile
+import com.tajemniktv.tajsos.data.isAreaItem
+import com.tajemniktv.tajsos.data.isDecisionSupportItem
+import com.tajemniktv.tajsos.data.isProjectItem
+import com.tajemniktv.tajsos.data.isResolvedDecisionSupportItem
+import com.tajemniktv.tajsos.data.taskStateOrNull
+import com.tajemniktv.tajsos.ui.main.actions.DecisionCommands
+import com.tajemniktv.tajsos.ui.main.actions.MainNodeSupport
+import com.tajemniktv.tajsos.ui.main.actions.ProtocolCommands
+import com.tajemniktv.tajsos.ui.main.actions.RelationshipCommands
+import com.tajemniktv.tajsos.ui.main.actions.StudentCommands
+import com.tajemniktv.tajsos.ui.main.bootstrap.AppBootstrapper
+import com.tajemniktv.tajsos.ui.main.calculators.buildCalendarEntries
+import com.tajemniktv.tajsos.ui.main.calculators.buildDashboardUIState
+import com.tajemniktv.tajsos.ui.main.calculators.buildPlaybookSnapshot
+import com.tajemniktv.tajsos.ui.main.calculators.buildProtocolHistoryItems
+import com.tajemniktv.tajsos.ui.main.calculators.buildTransitionProtocolsSnapshot
 import com.tajemniktv.tajsos.ui.main.calculators.calculateAreaHealthSnapshot
 import com.tajemniktv.tajsos.ui.main.calculators.calculateCapacitySnapshot
 import com.tajemniktv.tajsos.ui.main.calculators.calculateCombinedDirectionSnapshot
@@ -46,7 +66,42 @@ import com.tajemniktv.tajsos.ui.main.calculators.calculateRelationshipSnapshot
 import com.tajemniktv.tajsos.ui.main.calculators.calculateStudentBoardState
 import com.tajemniktv.tajsos.ui.main.calculators.calculateTimeArchitectureSnapshot
 import com.tajemniktv.tajsos.ui.main.calculators.calculateVaultsSnapshot
+import com.tajemniktv.tajsos.ui.main.calculators.categorizeNodes
 import com.tajemniktv.tajsos.ui.main.calculators.matchesQuery
+import com.tajemniktv.tajsos.ui.main.state.CalendarEntry
+import com.tajemniktv.tajsos.ui.main.state.CapacityInputs
+import com.tajemniktv.tajsos.ui.main.state.CapacitySnapshot
+import com.tajemniktv.tajsos.ui.main.state.CombinedDirectionInputs
+import com.tajemniktv.tajsos.ui.main.state.CombinedDirectionSnapshot
+import com.tajemniktv.tajsos.ui.main.state.CoreLifeOSShiftContext
+import com.tajemniktv.tajsos.ui.main.state.CoreLifeOSShiftInputs
+import com.tajemniktv.tajsos.ui.main.state.CoreLifeOSShiftSnapshot
+import com.tajemniktv.tajsos.ui.main.state.DecisionStaleItem
+import com.tajemniktv.tajsos.ui.main.state.ExportData
+import com.tajemniktv.tajsos.ui.main.state.InsightsData
+import com.tajemniktv.tajsos.ui.main.state.LifeOSSecondBrainContext
+import com.tajemniktv.tajsos.ui.main.state.LifeOSSecondBrainInputs
+import com.tajemniktv.tajsos.ui.main.state.LifeOSSecondBrainSnapshot
+import com.tajemniktv.tajsos.ui.main.state.LifeOSSignatureContext
+import com.tajemniktv.tajsos.ui.main.state.LifeOSSignatureInputs
+import com.tajemniktv.tajsos.ui.main.state.LifeOSSignatureSnapshot
+import com.tajemniktv.tajsos.ui.main.state.NodeCategorization
+import com.tajemniktv.tajsos.ui.main.state.PersonalRulesSnapshot
+import com.tajemniktv.tajsos.ui.main.state.PhysicalLogisticsSnapshot
+import com.tajemniktv.tajsos.ui.main.state.PlaybookSnapshot
+import com.tajemniktv.tajsos.ui.main.state.PlaybookTemplate
+import com.tajemniktv.tajsos.ui.main.state.ProtocolHistoryItem
+import com.tajemniktv.tajsos.ui.main.state.RelationshipSnapshot
+import com.tajemniktv.tajsos.ui.main.state.SearchFiltersState
+import com.tajemniktv.tajsos.ui.main.state.SearchPrimaryFilters
+import com.tajemniktv.tajsos.ui.main.state.SearchSecondaryFilters
+import com.tajemniktv.tajsos.ui.main.state.SearchTertiaryFilters
+import com.tajemniktv.tajsos.ui.main.state.StudentBoardState
+import com.tajemniktv.tajsos.ui.main.state.TransitionProtocolTemplate
+import com.tajemniktv.tajsos.ui.main.state.TransitionProtocolsSnapshot
+import com.tajemniktv.tajsos.ui.main.state.VaultsSnapshot
+import com.tajemniktv.tajsos.ui.main.state.defaultPlaybookTemplates
+import com.tajemniktv.tajsos.ui.main.state.defaultTransitionProtocolTemplates
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -175,8 +230,8 @@ class MainViewModel(
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val allAreas: StateFlow<List<NodeEntity>> =
-        repository
-            .getNodesByType("area")
+        allNodes
+            .map { nodes -> nodes.map { it.node }.filter { it.isAreaItem() } }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val activeNodes: StateFlow<List<NodeWithPin>> =
@@ -250,8 +305,8 @@ class MainViewModel(
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val allProjects: StateFlow<List<NodeEntity>> =
-        repository
-            .getNodesByType("project")
+        allNodes
+            .map { nodes -> nodes.map { it.node }.filter { it.isProjectItem() } }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val calendarProviders: StateFlow<List<CalendarProviderEntity>> =
@@ -267,12 +322,13 @@ class MainViewModel(
     val calendarEntries: StateFlow<List<CalendarEntry>> =
         combine(
             allNodes,
+            repository.getAllScheduleEntries(),
             repository.getCalendarEventsInRange(
                 0,
                 Long.MAX_VALUE,
             ), // In MVP we can fetch all or a large range
-        ) { nodes, externalEvents ->
-            buildCalendarEntries(nodes, externalEvents)
+        ) { nodes, schedules, externalEvents ->
+            buildCalendarEntries(nodes, schedules, externalEvents)
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     fun addCalendarProvider(
@@ -308,6 +364,14 @@ class MainViewModel(
     val inboxNodes: StateFlow<List<NodeWithPin>> =
         categorizedNodes
             .map { it.inbox }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    /**
+     * Raw capture entries that still need semantic triage into tasks, notes, records, or projects.
+     */
+    val inboxEntries: StateFlow<List<InboxEntryEntity>> =
+        repository
+            .getActiveInboxEntries()
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     private val _isInitialLoadComplete = MutableStateFlow(false)
@@ -971,6 +1035,48 @@ class MainViewModel(
             isSticky = isSticky,
             decisionCategory = decisionCategory,
         )
+    }
+
+    /**
+     * Stores a raw capture entry for later triage instead of forcing an immediate object type.
+     */
+    fun captureInboxEntry(
+        rawText: String,
+        areaId: Long? = null,
+        projectId: Long? = null,
+        suggestedKind: ItemKind? = null,
+        contextScreen: String? = null,
+    ) {
+        viewModelScope.launch {
+            repository.captureInboxEntry(
+                rawText = rawText,
+                suggestedKind = suggestedKind,
+                homeAreaId = areaId,
+                activeProjectId = projectId,
+                contextScreen = contextScreen,
+            )
+        }
+    }
+
+    /**
+     * Converts a raw inbox capture into a typed LifeOS item.
+     */
+    fun triageInboxEntry(
+        entryId: Long,
+        kind: ItemKind,
+    ) {
+        viewModelScope.launch {
+            repository.triageInboxEntry(entryId, kind)
+        }
+    }
+
+    /**
+     * Dismisses a raw inbox capture without creating an item.
+     */
+    fun dismissInboxEntry(entry: InboxEntryEntity) {
+        viewModelScope.launch {
+            repository.dismissInboxEntry(entry)
+        }
     }
 
     /**
@@ -2206,11 +2312,21 @@ class MainViewModel(
         title: String? = null,
         content: String? = null,
     ) {
+        val normalizedType =
+            when (type.trim().lowercase())
+            {
+                "record" -> "record"
+                "project" -> "project"
+                "area" -> "area"
+                "idea", "resource", "vault", "document" -> "note"
+                "maintenance", "open_loop", "decision", "protocol" -> "task"
+                else -> "task"
+            }
         viewModelScope.launch {
             repository.insertTemplate(
                 TemplateEntity(
                     name = name,
-                    nodeType = type,
+                    nodeType = normalizedType,
                     defaultTitle = title,
                     defaultContent = content,
                 ),
@@ -2252,14 +2368,13 @@ class MainViewModel(
             val dateStr = now.toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
 
             val nodeId =
-                repository.insertNode(
-                    NodeEntity(
-                        title = "${type.uppercase()} REVIEW - $dateStr",
-                        content = content,
-                        type = "note",
-                        noteType = "reflection",
-                        inboxState = false,
-                    ),
+                repository.insertLifeItem(
+                    kind = ItemKind.RECORD,
+                    title = "${type.uppercase()} REVIEW - $dateStr",
+                    content = content,
+                    inboxState = false,
+                    source = "review",
+                    recordKind = RecordKind.REFLECTION,
                 )
 
             repository.insertReview(
@@ -2324,19 +2439,24 @@ class MainViewModel(
     val decisionInbox: StateFlow<List<NodeWithPin>> =
         allNodes
             .map { nodes ->
-                nodes.filter { it.node.type == "decision" && it.node.inboxState }
+                nodes.filter { it.node.isDecisionSupportItem() && it.node.inboxState }
             }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val allPendingDecisions: StateFlow<List<NodeWithPin>> =
         allNodes
             .map { nodes ->
-                nodes.filter { it.node.type == "decision" && it.node.status == "active" && !it.node.inboxState }
+                nodes.filter {
+                    it.node.isDecisionSupportItem() &&
+                        it.node.taskStateOrNull() == TaskState.ACTIVE &&
+                        !it.node.inboxState &&
+                        !it.node.isResolvedDecisionSupportItem()
+                }
             }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val decisionLog: StateFlow<List<NodeWithPin>> =
         allNodes
             .map { nodes ->
-                nodes.filter { it.node.type == "decision" && (it.node.decisionStatus == "decided" || it.node.decisionStatus == "expired") }
+                nodes.filter { it.node.isResolvedDecisionSupportItem() }
             }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val stalePendingDecisions: StateFlow<List<DecisionStaleItem>> =
@@ -2345,9 +2465,9 @@ class MainViewModel(
                 val now = Clock.System.now().toEpochMilliseconds()
                 nodes
                     .filter {
-                        it.node.type == "decision" &&
-                            it.node.status == "active" &&
-                            (it.node.decisionStatus == null || it.node.decisionStatus == "pending" || it.node.decisionStatus == "parked")
+                        it.node.isDecisionSupportItem() &&
+                            it.node.taskStateOrNull() == TaskState.ACTIVE &&
+                            !it.node.isResolvedDecisionSupportItem()
                     }.map { decision ->
                         val ageDays =
                             ((now - decision.node.createdAt).coerceAtLeast(0L) / (24 * 60 * 60 * 1000L)).toInt()

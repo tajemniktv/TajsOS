@@ -2,7 +2,7 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
-package com.tajemniktv.tajsos.ui
+package com.tajemniktv.tajsos.ui.main.state
 
 /**
  * A default list of suggested Area titles provided during the initial onboarding or area creation flow.
@@ -11,11 +11,10 @@ val suggestedAreaTitles =
     listOf(
         "Career",
         "Hobbies",
-        "Travelling",
     )
 
 /**
- * A predefined list of standard [TransitionProtocolTemplate] objects used to bootstrap new transition protocols.
+ * A predefined list of standard [TransitionProtocolTemplate] objects used to bootstrap new routines.
  */
 val defaultTransitionProtocolTemplates =
     listOf(

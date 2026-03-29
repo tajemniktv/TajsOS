@@ -2,7 +2,7 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
-package com.tajemniktv.tajsos.ui
+package com.tajemniktv.tajsos.ui.main.calculators
 
 import com.tajemniktv.tajsos.data.AppRepository
 import com.tajemniktv.tajsos.data.CalendarEventEntity
@@ -11,12 +11,27 @@ import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.data.PackRegistry
 import com.tajemniktv.tajsos.data.ProtocolHistoryEntity
+import com.tajemniktv.tajsos.data.ScheduleEntryEntity
+import com.tajemniktv.tajsos.data.ScheduleEntryKind
+import com.tajemniktv.tajsos.data.TaskState
+import com.tajemniktv.tajsos.data.TrackEntryEntity
 import com.tajemniktv.tajsos.data.buildModeQueryProfile
-import com.tajemniktv.tajsos.ui.main.calculators.normalizeProtocolLabel
-import com.tajemniktv.tajsos.ui.main.calculators.parsePlaybookModeKey
-import com.tajemniktv.tajsos.ui.main.calculators.protocolChecklistProgress
-import com.tajemniktv.tajsos.ui.main.calculators.recommendProtocolLabel
-import com.tajemniktv.tajsos.ui.main.calculators.suggestPlaybookLabel
+import com.tajemniktv.tajsos.data.isAreaItem
+import com.tajemniktv.tajsos.data.isKnowledgeItem
+import com.tajemniktv.tajsos.data.isNoteItem
+import com.tajemniktv.tajsos.data.isTaskItem
+import com.tajemniktv.tajsos.data.taskStateOrNull
+import com.tajemniktv.tajsos.ui.DashboardUIState
+import com.tajemniktv.tajsos.ui.main.state.CalendarEntry
+import com.tajemniktv.tajsos.ui.main.state.EntryType
+import com.tajemniktv.tajsos.ui.main.state.NodeCategorization
+import com.tajemniktv.tajsos.ui.main.state.PlaybookItem
+import com.tajemniktv.tajsos.ui.main.state.PlaybookSnapshot
+import com.tajemniktv.tajsos.ui.main.state.PlaybookTemplate
+import com.tajemniktv.tajsos.ui.main.state.ProtocolHistoryItem
+import com.tajemniktv.tajsos.ui.main.state.TransitionProtocolItem
+import com.tajemniktv.tajsos.ui.main.state.TransitionProtocolTemplate
+import com.tajemniktv.tajsos.ui.main.state.TransitionProtocolsSnapshot
 import kotlinx.coroutines.flow.first
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -24,26 +39,68 @@ import kotlin.time.Clock
 
 fun buildCalendarEntries(
     nodes: List<NodeWithPin>,
+    scheduleEntries: List<ScheduleEntryEntity>,
     externalEvents: List<CalendarEventEntity>,
 ): List<CalendarEntry> {
     val entries = mutableListOf<CalendarEntry>()
+    val nodesById = nodes.associateBy { it.node.id }
 
+    scheduleEntries.forEach { entry ->
+        val node = nodesById[entry.itemId]?.node ?: return@forEach
+        if (node.status == "archived") return@forEach
+
+        val labelPrefix =
+            when (ScheduleEntryKind.fromStorageKey(entry.kind))
+            {
+                ScheduleEntryKind.DUE -> "Due"
+                ScheduleEntryKind.REMINDER -> "Reminder"
+                ScheduleEntryKind.START -> "Start"
+                else -> null
+            }
+
+        val title =
+            buildString {
+                if (node.status == "done") append("✓ ")
+                if (labelPrefix != null) {
+                    append(labelPrefix)
+                    append(": ")
+                }
+                append(node.title)
+            }
+
+        entries.add(
+            CalendarEntry(
+                id = "schedule_${entry.id}",
+                title = title,
+                description = node.content.ifBlank { entry.note },
+                startAt = entry.scheduledAt,
+                endAt = entry.endAt ?: (entry.scheduledAt + (3600 * 1000)),
+                isAllDay = false,
+                type = EntryType.INTERNAL,
+                originalId = node.id,
+            ),
+        )
+    }
+
+    val itemsWithSchedule = scheduleEntries.mapTo(mutableSetOf()) { it.itemId }
     nodes.forEach { item ->
         val node = item.node
-        val time = node.startAt ?: node.dueAt ?: node.reminderAt
-        if (time != null && node.status != "archived") {
-            entries.add(
-                CalendarEntry(
-                    id = "node_${node.id}",
-                    title = if (node.status == "done") "✓ ${node.title}" else node.title,
-                    description = node.content,
-                    startAt = time,
-                    endAt = time + (3600 * 1000),
-                    isAllDay = false,
-                    type = EntryType.INTERNAL,
-                    originalId = node.id,
-                ),
-            )
+        if (node.id !in itemsWithSchedule) {
+            val time = node.startAt ?: node.dueAt ?: node.reminderAt
+            if (time != null && node.status != "archived") {
+                entries.add(
+                    CalendarEntry(
+                        id = "node_${node.id}",
+                        title = if (node.status == "done") "✓ ${node.title}" else node.title,
+                        description = node.content,
+                        startAt = time,
+                        endAt = time + (3600 * 1000),
+                        isAllDay = false,
+                        type = EntryType.INTERNAL,
+                        originalId = node.id,
+                    ),
+                )
+            }
         }
     }
 
@@ -143,7 +200,7 @@ fun buildPlaybookSnapshot(
     protocolNodes: List<NodeWithPin>,
     historyItems: List<ProtocolHistoryItem>,
     mode: ModeEntity?,
-    entries: List<com.tajemniktv.tajsos.data.TrackEntryEntity>,
+    entries: List<TrackEntryEntity>,
     templates: List<PlaybookTemplate>,
 ): PlaybookSnapshot {
     val playbookNodes =
@@ -215,7 +272,7 @@ suspend fun buildDashboardUIState(
     if (mode?.key != "ALL") {
         if (includedAreaIds.isNotEmpty()) {
             filteredNodes =
-                filteredNodes.filter { it.node.areaId in includedAreaIds || it.node.type == "area" }
+                filteredNodes.filter { it.node.areaId in includedAreaIds || it.node.isAreaItem() }
         }
         if (excludedAreaIds.isNotEmpty()) {
             filteredNodes = filteredNodes.filter { it.node.areaId !in excludedAreaIds }
@@ -247,12 +304,13 @@ suspend fun buildDashboardUIState(
             }
     }
 
-    val activeTasks = filteredNodes.filter { it.node.type == "task" && it.node.status == "active" }
+    val activeTasks =
+        filteredNodes.filter { it.node.isTaskItem() && it.node.taskStateOrNull() == TaskState.ACTIVE }
     val overdue =
         filteredNodes.filter { it.node.dueAt != null && it.node.dueAt < now && it.node.status == "active" }
     val pinnedK =
         filteredNodes.filter {
-            it.node.isPinned && (it.node.type == "note" || it.node.type == "idea" || it.node.type == "resource")
+            it.node.isPinned && it.node.isKnowledgeItem()
         }
 
     val openLoops =
@@ -262,7 +320,7 @@ suspend fun buildDashboardUIState(
     val maintenance =
         filteredNodes.filter { it.node.type == "maintenance" && it.node.status == "active" }
     val maintenanceSnapshot =
-        com.tajemniktv.tajsos.ui.main.calculators.calculateMaintenanceSnapshot(
+        calculateMaintenanceSnapshot(
             nodes,
         )
     val protocols =
@@ -270,7 +328,7 @@ suspend fun buildDashboardUIState(
     val people = filteredNodes.filter { it.node.type == "person" && it.node.status == "active" }
     val openLoopDecayScores =
         openLoops.map {
-            com.tajemniktv.tajsos.ui.main.calculators.openLoopDecayScore(
+            openLoopDecayScore(
                 it.node,
                 now,
             )
@@ -286,7 +344,7 @@ suspend fun buildDashboardUIState(
             }
 
     val areaSnapshot =
-        com.tajemniktv.tajsos.ui.main.calculators.calculateAreaHealthSnapshot(
+        calculateAreaHealthSnapshot(
             nodes,
             areasList,
         )
@@ -352,7 +410,7 @@ suspend fun buildDashboardUIState(
 
     return DashboardUIState(
         tasksCount = activeTasks.size,
-        notesCount = filteredNodes.count { it.node.type == "note" || it.node.type == "idea" || it.node.type == "resource" },
+        notesCount = filteredNodes.count { it.node.isKnowledgeItem() },
         pinnedKnowledge = pinnedK,
         upcomingDeadlines =
             filteredNodes
@@ -362,18 +420,24 @@ suspend fun buildDashboardUIState(
         overdueNodes = overdue,
         relevantNote =
             filteredNodes
-                .filter { (it.node.type == "note" || it.node.type == "idea") && it.node.status == "active" }
+                .filter { it.node.isNoteItem() && it.node.status == "active" }
                 .sortedByDescending { it.node.updatedAt }
                 .firstOrNull(),
-        lowEnergyTasks = filteredNodes.filter { it.node.type == "task" && it.node.status == "active" && it.node.energyLevel == 1 },
+        lowEnergyTasks =
+            filteredNodes.filter {
+                it.node.isTaskItem() && it.node.taskStateOrNull() == TaskState.ACTIVE && it.node.energyLevel == 1
+            },
         batchableTasks = activeTasks.groupBy { it.node.areaId }.filter { it.value.size >= 3 },
         quickWins =
             filteredNodes.filter {
-                it.node.type == "task" && it.node.status == "active" && it.node.energyLevel == 1 &&
+                it.node.isTaskItem() && it.node.taskStateOrNull() == TaskState.ACTIVE && it.node.energyLevel == 1 &&
                     it.node.friction == "easy"
             },
-        deepWork = filteredNodes.filter { it.node.type == "task" && it.node.status == "active" && it.node.energyLevel == 3 },
-        topTakeaways = filteredNodes.filter { (it.node.type == "note" || it.node.type == "idea") && it.node.noteState == "takeaway" },
+        deepWork =
+            filteredNodes.filter {
+                it.node.isTaskItem() && it.node.taskStateOrNull() == TaskState.ACTIVE && it.node.energyLevel == 3
+            },
+        topTakeaways = filteredNodes.filter { it.node.isNoteItem() && it.node.noteState == "takeaway" },
         readLaterVault = filteredNodes.filter { it.node.noteType == "read_later" && it.node.status == "active" },
         quoteVault = filteredNodes.filter { it.node.noteType == "quote" && it.node.status == "active" },
         ideaIncubator = filteredNodes.filter { it.node.type == "idea" && it.node.status == "active" && it.node.projectId == null },
@@ -383,7 +447,7 @@ suspend fun buildDashboardUIState(
             },
         neglectedThisWeek =
             filteredNodes.filter {
-                it.node.status == "active" && it.node.type == "task" && it.node.updatedAt < sevenDaysAgo
+                it.node.isTaskItem() && it.node.taskStateOrNull() == TaskState.ACTIVE && it.node.updatedAt < sevenDaysAgo
             },
         foundationalNotes =
             filteredNodes

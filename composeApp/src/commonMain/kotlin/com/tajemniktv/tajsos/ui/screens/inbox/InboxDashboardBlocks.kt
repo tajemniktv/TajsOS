@@ -20,6 +20,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilterChip
@@ -28,6 +29,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -39,9 +41,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import com.tajemniktv.tajsos.data.InboxEntryEntity
+import com.tajemniktv.tajsos.data.ItemKind
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.cards.NodeCard
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
+import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.inbox_add
@@ -73,7 +78,8 @@ internal fun InboxMainBlock(
     onEditNode: (Long) -> Unit,
 ) {
     var itemInput by remember { mutableStateOf("") }
-    var selectedType by remember { mutableStateOf("task") }
+    var selectedType by remember { mutableStateOf("inbox") }
+    val inboxEntries by viewModel.inboxEntries.collectAsState()
     val nodes by viewModel.inboxNodes.collectAsState()
 
     Column(
@@ -90,6 +96,11 @@ internal fun InboxMainBlock(
 
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             FilterChip(
+                selected = selectedType == "inbox",
+                onClick = { selectedType = "inbox" },
+                label = { Text("CAPTURE") },
+            )
+            FilterChip(
                 selected = selectedType == "task",
                 onClick = { selectedType = "task" },
                 label = { Text(stringResource(Res.string.type_task)) },
@@ -100,9 +111,9 @@ internal fun InboxMainBlock(
                 label = { Text(stringResource(Res.string.type_note)) },
             )
             FilterChip(
-                selected = selectedType == "idea",
-                onClick = { selectedType = "idea" },
-                label = { Text(stringResource(Res.string.type_idea)) },
+                selected = selectedType == "record",
+                onClick = { selectedType = "record" },
+                label = { Text("RECORD") },
             )
         }
 
@@ -116,7 +127,11 @@ internal fun InboxMainBlock(
             trailingIcon = {
                 FilledIconButton(
                     onClick = {
-                        viewModel.addNode(itemInput, type = selectedType)
+                        if (selectedType == "inbox") {
+                            viewModel.captureInboxEntry(itemInput)
+                        } else {
+                            viewModel.addNode(itemInput, type = selectedType)
+                        }
                         itemInput = ""
                     },
                     enabled = itemInput.isNotBlank(),
@@ -141,7 +156,11 @@ internal fun InboxMainBlock(
                 KeyboardActions(
                     onDone = {
                         if (itemInput.isNotBlank()) {
-                            viewModel.addNode(itemInput, type = selectedType)
+                            if (selectedType == "inbox") {
+                                viewModel.captureInboxEntry(itemInput)
+                            } else {
+                                viewModel.addNode(itemInput, type = selectedType)
+                            }
                             itemInput = ""
                         }
                     },
@@ -150,6 +169,21 @@ internal fun InboxMainBlock(
         )
 
         Spacer(modifier = Modifier.height(24.dp))
+        if (inboxEntries.isNotEmpty()) {
+            Text(
+                "RAW CAPTURE",
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary,
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                inboxEntries.forEach { entry ->
+                    InboxCaptureCard(entry = entry, viewModel = viewModel)
+                }
+            }
+            Spacer(modifier = Modifier.height(24.dp))
+        }
+
         Text(
             stringResource(Res.string.inbox_recent_entries),
             style = MaterialTheme.typography.labelLarge,
@@ -157,7 +191,7 @@ internal fun InboxMainBlock(
         )
         Spacer(modifier = Modifier.height(8.dp))
 
-        if (nodes.isEmpty()) {
+        if (nodes.isEmpty() && inboxEntries.isEmpty()) {
             EmptyState(message = stringResource(Res.string.inbox_empty))
         } else {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -195,6 +229,61 @@ internal fun InboxMainBlock(
                             )
                         }
                     }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun InboxCaptureCard(
+    entry: InboxEntryEntity,
+    viewModel: MainViewModel,
+) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = TactileTheme.Surface,
+        shape = RoundedCornerShape(16.dp),
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            Text(
+                text = entry.rawText,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                FilterChip(
+                    selected = false,
+                    onClick = { viewModel.triageInboxEntry(entry.id, ItemKind.TASK) },
+                    label = { Text("TASK") },
+                )
+                FilterChip(
+                    selected = false,
+                    onClick = { viewModel.triageInboxEntry(entry.id, ItemKind.NOTE) },
+                    label = { Text("NOTE") },
+                )
+                FilterChip(
+                    selected = false,
+                    onClick = { viewModel.triageInboxEntry(entry.id, ItemKind.RECORD) },
+                    label = { Text("RECORD") },
+                )
+                FilterChip(
+                    selected = false,
+                    onClick = { viewModel.triageInboxEntry(entry.id, ItemKind.PROJECT) },
+                    label = { Text("PROJECT") },
+                )
+                IconButton(onClick = { viewModel.dismissInboxEntry(entry) }) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Dismiss capture",
+                    )
                 }
             }
         }

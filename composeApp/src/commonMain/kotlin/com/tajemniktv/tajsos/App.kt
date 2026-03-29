@@ -53,8 +53,11 @@ import androidx.navigation.compose.rememberNavController
 import com.tajemniktv.tajsos.data.ModeEntity
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.data.TemplateEntity
+import com.tajemniktv.tajsos.data.UserProfile
+import com.tajemniktv.tajsos.ui.DetailNavigationContract
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
+import com.tajemniktv.tajsos.ui.screens.RecordDetailScreen
 import com.tajemniktv.tajsos.ui.components.common.CaptureSheet
 import com.tajemniktv.tajsos.ui.components.layout.AppLayout
 import com.tajemniktv.tajsos.ui.components.layout.DesktopSearchSurface
@@ -72,6 +75,11 @@ import com.tajemniktv.tajsos.ui.screens.ReviewScreen
 import com.tajemniktv.tajsos.ui.screens.RulesScreen
 import com.tajemniktv.tajsos.ui.screens.SearchScreen
 import com.tajemniktv.tajsos.ui.screens.SettingsScreen
+import com.tajemniktv.tajsos.ui.screens.SettingsDataScreen
+import com.tajemniktv.tajsos.ui.screens.SettingsDebugScreen
+import com.tajemniktv.tajsos.ui.screens.SettingsFeaturePacksScreen
+import com.tajemniktv.tajsos.ui.screens.SettingsHealthScreen
+import com.tajemniktv.tajsos.ui.screens.TaskDetailScreen
 import com.tajemniktv.tajsos.ui.screens.TasksScreen
 import com.tajemniktv.tajsos.ui.screens.TemplatesScreen
 import com.tajemniktv.tajsos.ui.screens.TimeArchitectureScreen
@@ -147,6 +155,7 @@ fun App(
     val allProjects by viewModel.allProjects.collectAsState()
     val allAreas by viewModel.allAreas.collectAsState()
     val allTemplates by viewModel.allTemplates.collectAsState()
+    val allNodes by viewModel.allNodes.collectAsState()
     val latestTrack by viewModel.trackEntries.collectAsState().let {
         derivedStateOf { it.value.lastOrNull() }
     }
@@ -156,6 +165,7 @@ fun App(
     val currentMode by viewModel.currentMode.collectAsState()
     val allModes by viewModel.allModes.collectAsState()
     val enabledPacks by viewModel.enabledPacks.collectAsState()
+    val userProfile by viewModel.userProfile.collectAsState()
 
     var showCaptureSheetState by remember { mutableStateOf(false) }
 
@@ -191,6 +201,7 @@ fun App(
                 currentMode = currentMode,
                 allModes = allModes,
                 packRegistry = enabledPacks,
+                userProfile = userProfile,
                 onModeSelect = { viewModel.switchMode(it) },
                 drawerState = drawerState,
                 scope = scope,
@@ -212,6 +223,7 @@ fun App(
                     onAvatarPickConsumed = onAvatarPickConsumed,
                     allProjects = allProjects,
                     allAreas = allAreas,
+                    allNodes = allNodes,
                     allTemplates = allTemplates,
                     lastActiveProjectId = lastActiveProjectId,
                     lastActiveAreaId = lastActiveAreaId,
@@ -244,6 +256,7 @@ fun App(
  * @param onVoiceCaptureConsumed Callback invoked after the voice capture result has been consumed.
  * @param allProjects List of available project nodes for selection in the capture sheet.
  * @param allAreas List of available area nodes for selection in the capture sheet.
+ * @param allNodes Snapshot of all nodes used to resolve typed detail routes from generic open actions.
  * @param allTemplates List of available templates for the capture sheet.
  * @param lastActiveProjectId Default project id to preselect in the capture sheet, if any.
  * @param lastActiveAreaId Default area id to preselect in the capture sheet, if any.
@@ -271,6 +284,7 @@ private fun AppScaffold(
     onAvatarPickConsumed: () -> Unit,
     allProjects: List<NodeEntity>,
     allAreas: List<NodeEntity>,
+    allNodes: List<com.tajemniktv.tajsos.data.NodeWithPin>,
     allTemplates: List<TemplateEntity>,
     lastActiveProjectId: Long?,
     lastActiveAreaId: Long?,
@@ -410,12 +424,7 @@ private fun AppScaffold(
         },
     ) { innerPadding ->
         val onEditNode: (Long) -> Unit = { id ->
-            onNavigate(
-                Screen.NoteDetail.route.replace(
-                    "{noteId}",
-                    id.toString(),
-                ),
-            )
+            onNavigate(DetailNavigationContract.routeForNodeId(id, allNodes))
         }
 
         NavHost(
@@ -468,12 +477,19 @@ private fun AppScaffold(
                 TemplatesScreen(viewModel, onBack = { navController.popBackStack() })
             }
             composable(Screen.Settings.route) {
-                SettingsScreen(
-                    viewModel,
-                    onNavigateToProfile = { onNavigate(Screen.Profile.route) },
-                    onNavigateToCalendarSettings = { onNavigate(Screen.CalendarSettings.route) },
-                    onNavigateToTemplates = { onNavigate(Screen.Templates.route) },
-                )
+                SettingsScreen(viewModel)
+            }
+            composable(Screen.SettingsHealth.route) {
+                SettingsHealthScreen(viewModel = viewModel)
+            }
+            composable(Screen.SettingsFeaturePacks.route) {
+                SettingsFeaturePacksScreen(viewModel = viewModel)
+            }
+            composable(Screen.SettingsData.route) {
+                SettingsDataScreen(viewModel = viewModel)
+            }
+            composable(Screen.SettingsDebug.route) {
+                SettingsDebugScreen()
             }
             composable(Screen.CalendarSettings.route) {
                 CalendarSettingsScreen(viewModel)
@@ -498,6 +514,7 @@ private fun AppScaffold(
                     projectId,
                     onEditNode,
                     onBack = { navController.popBackStack() },
+                    isDesktop = isDesktop,
                 )
             }
             composable(Screen.AreaDetail.route) { backStackEntry ->
@@ -519,6 +536,7 @@ private fun AppScaffold(
                     },
                     onEditNode = onEditNode,
                     onBack = { navController.popBackStack() },
+                    isDesktop = isDesktop,
                 )
             }
             composable(Screen.NoteDetail.route) { backStackEntry ->
@@ -533,6 +551,37 @@ private fun AppScaffold(
                     onBack = { navController.popBackStack() },
                     onNavigateToNode = onEditNode,
                     onNavigateToSearch = { onNavigate(Screen.Search.route) },
+                    isDesktop = isDesktop,
+                )
+            }
+            composable(Screen.TaskDetail.route) { backStackEntry ->
+                val taskId =
+                    backStackEntry.savedStateHandle
+                        .get<Any>("taskId")
+                        ?.toString()
+                        ?.toLongOrNull() ?: -1L
+                TaskDetailScreen(
+                    viewModel = viewModel,
+                    taskId = taskId,
+                    onBack = { navController.popBackStack() },
+                    onNavigateToNode = onEditNode,
+                    onNavigateToSearch = { onNavigate(Screen.Search.route) },
+                    isDesktop = isDesktop,
+                )
+            }
+            composable(Screen.RecordDetail.route) { backStackEntry ->
+                val recordId =
+                    backStackEntry.savedStateHandle
+                        .get<Any>("recordId")
+                        ?.toString()
+                        ?.toLongOrNull() ?: -1L
+                RecordDetailScreen(
+                    viewModel = viewModel,
+                    recordId = recordId,
+                    onBack = { navController.popBackStack() },
+                    onNavigateToNode = onEditNode,
+                    onNavigateToSearch = { onNavigate(Screen.Search.route) },
+                    isDesktop = isDesktop,
                 )
             }
             composable(Screen.Insights.route) {
@@ -585,6 +634,15 @@ private fun AppScaffold(
                     ->
                     when (type)
                     {
+                        "inbox" -> {
+                            viewModel.captureInboxEntry(
+                                rawText = text,
+                                areaId = areaId,
+                                projectId = projectId,
+                                contextScreen = ctx,
+                            )
+                        }
+
                         "project" -> {
                             viewModel.addProject(text, areaId = areaId)
                         }

@@ -43,12 +43,12 @@ internal fun RelationshipsMainBlock(
         verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
     ) {
         Text(
-            text = "RELATIONSHIPS WORKSPACE",
+            text = "RELATIONSHIPS LENS",
             style = MaterialTheme.typography.displaySmall,
             color = TactileTheme.Text,
         )
         Text(
-            text = "Manage follow-ups, important people, and relationship continuity.",
+            text = "Track people, shared plans, follow-ups, and relationship continuity across life data.",
             style = MaterialTheme.typography.bodySmall,
             color = TactileTheme.Muted,
         )

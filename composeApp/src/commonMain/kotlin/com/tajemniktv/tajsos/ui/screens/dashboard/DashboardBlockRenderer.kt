@@ -10,9 +10,9 @@ import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.data.TrackEntryEntity
 import com.tajemniktv.tajsos.ui.DashboardUIState
-import com.tajemniktv.tajsos.ui.InsightsData
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
+import com.tajemniktv.tajsos.ui.main.state.InsightsData
 import kotlinx.datetime.LocalDateTime
 
 /**
@@ -42,7 +42,7 @@ fun DashboardBlockRenderer(
     onNavigateToProject: (Long) -> Unit,
 ) {
     val context =
-        com.tajemniktv.tajsos.ui.screens.dashboard.DashboardBlockContext(
+        DashboardBlockContext(
             viewModel = viewModel,
             dashboardState = dashboardState,
             pinnedNodes = pinnedNodes,
@@ -60,9 +60,8 @@ fun DashboardBlockRenderer(
             onEditNode = onEditNode,
             onNavigateToProject = onNavigateToProject,
         )
-    com.tajemniktv.tajsos.ui.screens.dashboard.DashboardBlockRegistry
+    DashboardBlockRegistry
         .resolve(
             blockKey,
         )?.invoke(context)
 }
-

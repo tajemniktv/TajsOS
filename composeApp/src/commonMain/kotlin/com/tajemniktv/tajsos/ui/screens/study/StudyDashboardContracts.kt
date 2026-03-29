@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.data.TemplateEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.StudentBoardState
+import com.tajemniktv.tajsos.ui.main.state.StudentBoardState
 
 /**
  * Surface variants for study dashboard layouts.

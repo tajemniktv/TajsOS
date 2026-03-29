@@ -67,6 +67,8 @@ class RepositoryDelegationTest {
 
         override suspend fun insertNode(node: NodeEntity): Long = 0L
 
+        override suspend fun insertNodes(nodes: List<NodeEntity>): List<Long> = nodes.map { 0L }
+
         override suspend fun updateNode(node: NodeEntity) {
         }
 
@@ -112,10 +114,16 @@ class RepositoryDelegationTest {
         override suspend fun insertRelation(relation: RelationEntity) {
         }
 
+        override suspend fun insertRelations(relations: List<RelationEntity>) {
+        }
+
         override suspend fun deleteRelation(relation: RelationEntity) {
         }
 
         override suspend fun deleteBelongsToRelations(nodeId: Long) {
+        }
+
+        override suspend fun deleteBelongsToRelations(nodeIds: List<Long>) {
         }
 
         override suspend fun getBelongsToRelations(nodeId: Long): List<RelationEntity> = emptyList()
@@ -151,6 +159,9 @@ class RepositoryDelegationTest {
         override fun getLogsForNode(nodeId: Long): Flow<List<EventLogEntity>> = flowOf(emptyList())
 
         override suspend fun insertLog(log: EventLogEntity) {
+        }
+
+        override suspend fun insertLogs(logs: List<EventLogEntity>) {
         }
     }
 

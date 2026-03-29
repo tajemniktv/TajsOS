@@ -32,11 +32,15 @@ fun FinancesScreen(
 ) {
     val snapshot by viewModel.maintenanceSnapshot.collectAsState()
     val allAreas by viewModel.allAreas.collectAsState()
+    val allNodes by viewModel.allNodes.collectAsState()
     var maintenanceView by remember { mutableStateOf(FinanceMaintenanceView.Queue) }
 
     val queue = DomainLensQueries.financeMaintenanceItems(snapshot)
     val recurring = DomainLensQueries.financeRecurringItems(snapshot)
     val overdue = DomainLensQueries.financeOverdueItems(snapshot)
+    val actionItems = DomainLensQueries.financeActionItems(allNodes)
+    val knowledgeItems = DomainLensQueries.financeKnowledgeItems(allNodes)
+    val deadlineItems = DomainLensQueries.financeDeadlineItems(allNodes)
     val itemsInView =
         when (maintenanceView)
         {
@@ -45,19 +49,23 @@ fun FinancesScreen(
             FinanceMaintenanceView.Overdue -> overdue
         }
     val allItems = (queue + recurring + overdue).distinctBy { it.node.node.id }
+    val recentItems =
+        (deadlineItems + actionItems + knowledgeItems)
+            .distinctBy { it.node.id }
+            .sortedByDescending { it.node.updatedAt }
     val liquidity =
-        allItems.sumOf {
+        recentItems.sumOf {
             financeSyntheticLiquidity(
-                it.node.node.title,
+                it.node.title,
             )
         }
     val bars =
         listOf(
-            queue.size + 2,
-            recurring.size + 1,
-            overdue.size + 1,
-            snapshot.breakIfIgnored.size + 1,
-            (snapshot.adminDebtMeter / 10).coerceAtLeast(1),
+            (actionItems.size + 1).coerceAtLeast(1),
+            (knowledgeItems.size + 1).coerceAtLeast(1),
+            (deadlineItems.size + 1).coerceAtLeast(1),
+            (queue.size + recurring.size + 1).coerceAtLeast(1),
+            (overdue.size + 1).coerceAtLeast(1),
         )
     val confidence = (100 - snapshot.adminDebtMeter / 2).coerceIn(35, 98)
 
@@ -65,11 +73,16 @@ fun FinancesScreen(
         remember(
             viewModel,
             allAreas,
+            allNodes,
             queue,
             recurring,
             overdue,
             allItems,
             itemsInView,
+            actionItems,
+            knowledgeItems,
+            deadlineItems,
+            recentItems,
             confidence,
             liquidity,
             bars,
@@ -84,6 +97,10 @@ fun FinancesScreen(
                 overdue = overdue,
                 allItems = allItems,
                 itemsInView = itemsInView,
+                actionItems = actionItems,
+                knowledgeItems = knowledgeItems,
+                deadlineItems = deadlineItems,
+                recentItems = recentItems,
                 confidence = confidence,
                 liquidity = liquidity,
                 bars = bars,

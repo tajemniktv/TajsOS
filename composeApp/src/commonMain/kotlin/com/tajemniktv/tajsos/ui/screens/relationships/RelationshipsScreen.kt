@@ -19,16 +19,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.RelationshipSnapshot
 import com.tajemniktv.tajsos.ui.components.cards.PersonRelationshipCard
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
+import com.tajemniktv.tajsos.ui.main.state.RelationshipSnapshot
 import com.tajemniktv.tajsos.ui.screens.GroupedOpenLoopSection
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
@@ -70,7 +68,7 @@ internal fun PeopleLayer(
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
-                "RELATIONSHIP LAYER",
+                "RELATIONSHIP HEALTH",
                 style = MaterialTheme.typography.labelSmall,
                 color = TactileTheme.Primary,
                 fontWeight = FontWeight.Bold,
@@ -91,7 +89,7 @@ internal fun PeopleLayer(
     }
 
     if (snapshot.people.isEmpty()) {
-        EmptyState("No person nodes yet. Add a `person` node to start relationship tracking.")
+        EmptyState("No relationship anchors yet. Add someone you track to start building shared life context.")
         return
     }
 

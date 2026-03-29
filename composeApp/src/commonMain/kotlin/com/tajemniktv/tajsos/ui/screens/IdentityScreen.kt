@@ -25,15 +25,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.tajemniktv.tajsos.data.NodeEntity
-import com.tajemniktv.tajsos.ui.CombinedDirectionSnapshot
-import com.tajemniktv.tajsos.ui.CoreLifeOSShiftSnapshot
-import com.tajemniktv.tajsos.ui.LifeOSSecondBrainSnapshot
-import com.tajemniktv.tajsos.ui.LifeOSSignatureSnapshot
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.cards.CoreShiftCriterionCard
 import com.tajemniktv.tajsos.ui.components.cards.DirectionCommitmentCard
 import com.tajemniktv.tajsos.ui.components.cards.DistinctionQuestionCard
+import com.tajemniktv.tajsos.ui.main.state.CombinedDirectionSnapshot
+import com.tajemniktv.tajsos.ui.main.state.CoreLifeOSShiftSnapshot
+import com.tajemniktv.tajsos.ui.main.state.LifeOSSecondBrainSnapshot
+import com.tajemniktv.tajsos.ui.main.state.LifeOSSignatureSnapshot
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlin.time.Clock
 

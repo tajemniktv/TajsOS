@@ -8,12 +8,12 @@
     <string name="app_status_ok">TajsOS // STATUS: OK</string>
 
     <!-- Navigation -->
-    <string name="nav_core">CORE</string>
-    <string name="nav_execution">EXECUTION</string>
-    <string name="nav_systems">SYSTEMS</string>
-    <string name="nav_brain">SECOND BRAIN</string>
-    <string name="nav_status">STATUS &amp; INSIGHTS</string>
-    <string name="nav_system">SYSTEM</string>
+    <string name="nav_core">HOME</string>
+    <string name="nav_execution">NOW</string>
+    <string name="nav_systems">OPERATE</string>
+    <string name="nav_brain">KNOWLEDGE</string>
+    <string name="nav_status">REVIEW</string>
+    <string name="nav_system">DOMAINS &amp; SYSTEM</string>
     <string name="nav_menu">Menu</string>
     <string name="nav_capture">Capture</string>
 
@@ -34,26 +34,30 @@
     <string name="screen_stats">STATS</string>
     <string name="screen_archive">ARCHIVE</string>
     <string name="screen_cal">CAL</string>
-    <string name="screen_cal_opts">CAL OPTS</string>
+    <string name="screen_cal_opts">CALENDAR SETTINGS</string>
     <string name="screen_graph">GRAPH</string>
     <string name="screen_proj">PROJ</string>
     <string name="screen_area">AREA</string>
     <string name="screen_project">PROJECT</string>
     <string name="screen_opts">OPTS</string>
+    <string name="screen_settings_health">HEALTH</string>
+    <string name="screen_settings_feature_packs">FEATURE PACKS</string>
+    <string name="screen_settings_data">DATA</string>
+    <string name="screen_settings_debug">DEBUG</string>
     <string name="screen_templates">TEMPLATES</string>
     <string name="screen_review">REVIEW</string>
     <string name="screen_ops">OPS</string>
-    <string name="screen_open_loops">LOOPS</string>
-    <string name="screen_protocols">PROTOCOLS</string>
+    <string name="screen_open_loops">UNRESOLVED</string>
+    <string name="screen_protocols">ROUTINES</string>
     <string name="screen_time_architecture">TIME</string>
-    <string name="screen_places">PLACES</string>
+    <string name="screen_places">CONTEXT</string>
     <string name="screen_finances">FINANCES</string>
     <string name="screen_health">HEALTH</string>
     <string name="screen_relationships">RELATIONSHIPS</string>
     <string name="screen_education">EDUCATION</string>
     <string name="screen_study">EDUCATION</string>
     <string name="screen_rules">RULES</string>
-    <string name="screen_vaults">VAULTS</string>
+    <string name="screen_vaults">REFERENCE</string>
     <string name="screen_capacity">CAPACITY</string>
     <string name="screen_identity">IDENTITY</string>
     <string name="screen_student">STUDENT</string>
@@ -112,11 +116,11 @@
     <string name="dash_active_reminders">ACTIVE REMINDERS</string>
     <string name="dash_dismiss">Dismiss</string>
     <string name="dash_pinned_knowledge">PINNED KNOWLEDGE</string>
-    <string name="dash_knowledge_vaults">KNOWLEDGE VAULTS</string>
+    <string name="dash_knowledge_vaults">KNOWLEDGE LIBRARY</string>
     <string name="dash_read_later">READ LATER</string>
     <string name="dash_items_count">%1$d ITEMS</string>
     <string name="dash_quotes">QUOTES</string>
-    <string name="dash_ideas">IDEAS</string>
+    <string name="dash_ideas">NOTES</string>
     <string name="dash_unset_count">%1$d UNSET</string>
     <string name="dash_upcoming_deadlines">UPCOMING DEADLINES</string>
     <string name="dash_review_reset">REVIEW &amp; RESET</string>
@@ -143,10 +147,10 @@
     <string name="dash_morning_reset">MORNING RESET</string>
     <string name="dash_morning_reset_desc">Regain orientation and set your intention for the day.</string>
     <string name="dash_evening_shutdown">EVENING SHUTDOWN</string>
-    <string name="dash_evening_shutdown_desc">Close the open loops and prepare for rest.</string>
+    <string name="dash_evening_shutdown_desc">Close unresolved work and prepare for rest.</string>
     <string name="dash_quick_links">QUICK LINKS</string>
     <string name="dash_foundational">FOUNDATIONAL PRINCIPLE</string>
-    <string name="dash_resource_highlights">RESOURCE HIGHLIGHTS</string>
+    <string name="dash_resource_highlights">REFERENCE HIGHLIGHTS</string>
     <string name="dash_forgotten_wisdom">FORGOTTEN WISDOM</string>
     <string name="dash_vibe_morning">Good morning. Let's operate.</string>
     <string name="dash_vibe_afternoon">Steady progress. Keep the momentum.</string>
@@ -156,10 +160,10 @@
     <!-- LifeOS Specific -->
     <string name="dash_area_health">AREA HEALTH</string>
     <string name="dash_system_status">SYSTEM STATUS</string>
-    <string name="dash_open_loops">OPEN LOOPS</string>
-    <string name="dash_decisions">DECISION QUEUE</string>
+    <string name="dash_open_loops">UNRESOLVED WORK</string>
+    <string name="dash_decisions">DECISION WORK</string>
     <string name="dash_maintenance">MAINTENANCE QUEUE</string>
-    <string name="dash_protocols">PROTOCOLS &amp; PLAYBOOKS</string>
+    <string name="dash_protocols">ROUTINES &amp; PLAYBOOKS</string>
     <string name="dash_load">SYSTEM LOAD</string>
     <string name="dash_capacity">CAPACITY</string>
     <string name="dash_fragmentation">FRAGMENTATION</string>
@@ -207,8 +211,8 @@
     <string name="dash_follow_up">FOLLOW-UP NEEDED</string>
     <string name="dash_ask_next_time">ASK ABOUT THIS NEXT TIME</string>
 
-    <!-- Logistics & Vaults -->
-    <string name="dash_vaults">LOGISTICS &amp; VAULTS</string>
+    <!-- Logistics & Reference -->
+    <string name="dash_vaults">LOGISTICS &amp; REFERENCE</string>
     <string name="dash_documents">DOCUMENT VAULT</string>
     <string name="dash_links">IMPORTANT LINKS</string>
     <string name="dash_medical">MEDICAL INFO</string>
@@ -260,13 +264,13 @@
     <string name="capture_save_type">SAVE %1$s</string>
 
     <!-- Search -->
-    <string name="search_placeholder">Search items...</string>
+    <string name="search_placeholder">Search across tasks, notes, records, projects, and areas...</string>
     <string name="search_clear">Clear</string>
     <string name="search_reset_filters">Reset Filters</string>
     <string name="search_filter_active">ACTIVE</string>
     <string name="search_filter_archived">ARCHIVED</string>
     <string name="search_filter_linked_to">LINKED TO: %1$s</string>
-    <string name="search_no_results">SYSTEM CLEAR: NO MATCHES</string>
+    <string name="search_no_results">No matching results in your system.</string>
 
     <!-- Focus Screen -->
     <string name="focus_no_active_task">NO ACTIVE TASK</string>
@@ -275,6 +279,24 @@
     <string name="focus_recent_sessions">RECENT SESSIONS</string>
     <string name="focus_unknown_task">Unknown Task</string>
     <string name="focus_session_duration">%1$dm %2$ds focus session</string>
+    <string name="focus_mode">FOCUS MODE</string>
+    <string name="focus_current_task">Current Task</string>
+    <string name="focus_start">Start</string>
+    <string name="focus_pause">Pause</string>
+    <string name="focus_resume">Resume</string>
+    <string name="focus_complete_task">Complete Task</string>
+    <string name="focus_end_session">End Session</string>
+    <string name="focus_sessions_today">Sessions Today</string>
+    <string name="focus_focus_minutes_today">Focus Minutes</string>
+    <string name="focus_start_now">Start Now</string>
+    <string name="focus_open_task">Open Task</string>
+    <string name="focus_replace_step">Replace Step</string>
+    <string name="focus_suggested_now">Suggested Now</string>
+    <string name="focus_quick_wins">Quick Wins</string>
+    <string name="focus_switch_target">Switch Target</string>
+    <string name="focus_capture">Capture</string>
+    <string name="focus_capture_hint">Capture distracting thought…</string>
+    <string name="focus_capture_save">Save to Inbox</string>
 
     <!-- Track Screen -->
     <string name="track_title">DAILY_TRACKING //</string>
@@ -370,7 +392,7 @@
     <string name="insights_friction_alert_title">FRICTION ALERT</string>
     <string name="insights_friction_alert_msg">You postpone %1$s items most often. Is there a hidden blocker here?</string>
     <string name="insights_creative_peak_title">CREATIVE PEAK</string>
-    <string name="insights_creative_peak_msg">You capture most ideas in the %1$s. Keep a capture device ready then!</string>
+    <string name="insights_creative_peak_msg">You capture most knowledge items in the %1$s. Keep a capture device ready then!</string>
     <string name="insights_stagnant_knowledge_title">STAGNANT KNOWLEDGE</string>
     <string name="insights_stagnant_knowledge_msg">%1$s has notes but no active tasks. Seed some actions?</string>
     <string name="insights_radar_drop_title">RADAR DROP</string>
@@ -393,18 +415,85 @@
     <string name="archive_delete">Delete</string>
 
     <!-- Notes Screen -->
-    <string name="notes_title">KNOWLEDGE &amp; IDEAS</string>
+    <string name="notes_title">KNOWLEDGE</string>
     <string name="notes_search_placeholder">Search knowledge...</string>
     <string name="notes_pinned_knowledge">PINNED KNOWLEDGE</string>
-    <string name="notes_ideas">IDEAS</string>
+    <string name="notes_ideas">NOTES</string>
     <string name="notes_notes">NOTES</string>
-    <string name="notes_resources">RESOURCES &amp; ASSETS</string>
+    <string name="notes_resources">REFERENCE</string>
     <string name="notes_empty">NO KNOWLEDGE FOUND</string>
     <string name="notes_no_results">NO MATCHING RESULTS</string>
 
     <!-- Tasks Screen -->
     <string name="tasks_title">TASKS</string>
     <string name="tasks_empty">SYSTEM CLEAR: NO ACTIVE TASKS</string>
+    <string name="tasks_workspace_subtitle">Operate work by intent: Command, Inbox, Today, All Tasks, and Archive.</string>
+    <string name="tasks_tab_command">Command</string>
+    <string name="tasks_tab_inbox">Inbox</string>
+    <string name="tasks_tab_today">Today</string>
+    <string name="tasks_tab_all_tasks">All Tasks</string>
+    <string name="tasks_tab_archive">Archive</string>
+    <string name="tasks_command_title">Task Command</string>
+    <string name="tasks_command_subtitle">Act on what matters now, with quick handoff to Focus.</string>
+    <string name="tasks_current_priority">Current Priority</string>
+    <string name="tasks_queue_title">Queue</string>
+    <string name="tasks_quick_add_title">Quick Add</string>
+    <string name="tasks_quick_add_hint">Add a task...</string>
+    <string name="tasks_quick_add_action">Add Task</string>
+    <string name="tasks_quick_capture_title">Quick Capture</string>
+    <string name="tasks_quick_capture_hint">Capture intrusive thought...</string>
+    <string name="tasks_quick_capture_action">Save to Inbox</string>
+    <string name="tasks_context_title">Context</string>
+    <string name="tasks_context_active">Active</string>
+    <string name="tasks_context_blocked">Blocked</string>
+    <string name="tasks_context_due_soon">Due Soon</string>
+    <string name="tasks_start_focus_action">Start Focus</string>
+    <string name="tasks_open_action">Open</string>
+    <string name="tasks_pin_today_action">Pin Today</string>
+    <string name="tasks_done_action">Done</string>
+    <string name="tasks_do_now_action">Do Now</string>
+    <string name="tasks_inbox_title">Task Inbox</string>
+    <string name="tasks_inbox_subtitle">Triage raw captures and unresolved task-shaped items.</string>
+    <string name="tasks_inbox_capture_entries">Captured Entries</string>
+    <string name="tasks_inbox_empty_entries">No capture entries.</string>
+    <string name="tasks_inbox_triage_task">Convert to Task</string>
+    <string name="tasks_inbox_dismiss">Dismiss</string>
+    <string name="tasks_inbox_tasks_title">Inbox Tasks</string>
+    <string name="tasks_inbox_empty_tasks">No inbox tasks.</string>
+    <string name="tasks_inbox_mark_processed">Mark Processed</string>
+    <string name="tasks_today_title">Today</string>
+    <string name="tasks_today_subtitle">Due and immediate commitments.</string>
+    <string name="tasks_today_empty">No urgent tasks for now.</string>
+    <string name="tasks_today_overdue">Overdue</string>
+    <string name="tasks_today_due_soon">Due Soon</string>
+    <string name="tasks_today_pinned">Pinned Today</string>
+    <string name="tasks_all_title">All Tasks</string>
+    <string name="tasks_search_placeholder">Search tasks...</string>
+    <string name="tasks_scope_active">Active</string>
+    <string name="tasks_scope_completed">Completed</string>
+    <string name="tasks_scope_archived">Archived</string>
+    <string name="tasks_sort_priority">Priority</string>
+    <string name="tasks_sort_due">Due</string>
+    <string name="tasks_sort_updated">Updated</string>
+    <string name="tasks_sort_title">Title</string>
+    <string name="tasks_column_task">Task</string>
+    <string name="tasks_column_context">Context</string>
+    <string name="tasks_column_due">Due</string>
+    <string name="tasks_column_status">Status</string>
+    <string name="tasks_details_title">Details</string>
+    <string name="tasks_detail_status">Status</string>
+    <string name="tasks_detail_due">Due</string>
+    <string name="tasks_detail_project">Project</string>
+    <string name="tasks_detail_area">Area</string>
+    <string name="tasks_detail_next_step">Next Tiny Step</string>
+    <string name="tasks_detail_estimate">Estimate</string>
+    <string name="tasks_detail_updated">Updated</string>
+    <string name="tasks_archive_title">Task Archive</string>
+    <string name="tasks_archive_subtitle">Browse completed and archived work history.</string>
+    <string name="tasks_archive_action">Archive</string>
+    <string name="tasks_restore_action">Restore</string>
+    <string name="tasks_delete_action">Delete</string>
+    <string name="tasks_no_results">No tasks match the current view.</string>
 
     <!-- Projects Screen -->
     <string name="projects_title">PROJECTS</string>
@@ -427,6 +516,18 @@
     <string name="areas_dialog_name">Name</string>
     <string name="areas_dialog_create">CREATE</string>
     <string name="areas_dialog_cancel">CANCEL</string>
+    <string name="areas_new">NEW AREA</string>
+    <string name="areas_dominant">Dominant</string>
+    <string name="areas_balance">Balance</string>
+    <string name="areas_distribution">Distribution Across Areas</string>
+    <string name="areas_neglected">Neglected</string>
+    <string name="areas_load">Load</string>
+    <string name="areas_status">Status</string>
+    <string name="areas_projects_active">Active projects</string>
+    <string name="areas_open_responsibilities">Open responsibilities</string>
+    <string name="areas_upcoming_deadlines">Deadlines due soon</string>
+    <string name="areas_recent_activity">Recent activity</string>
+    <string name="areas_enter">Open Area</string>
     <string name="use_suggested_areas">USE SUGGESTED AREAS</string>
     <string name="add_suggested_areas">ADD SUGGESTED AREAS</string>
 
@@ -501,7 +602,7 @@
     <string name="detail_remove_attachment">Remove Attachment</string>
     <string name="detail_add_link">ADD LINK</string>
     <string name="detail_knowledge">KNOWLEDGE</string>
-    <string name="detail_media">MEDIA &amp; RESOURCE</string>
+    <string name="detail_media">MEDIA &amp; LINKS</string>
     <string name="detail_media_type">Media Type</string>
     <string name="detail_author">Author / Artist</string>
     <string name="detail_publisher">Publisher / Platform</string>
@@ -569,9 +670,34 @@
     <string name="project_detail_next_actions">NEXT ACTIONS</string>
     <string name="project_detail_no_tasks">No active tasks.</string>
     <string name="project_detail_linked_notes">LINKED NOTES</string>
-    <string name="project_detail_resources">RESOURCES</string>
+    <string name="project_detail_linked_tasks">LINKED TASKS</string>
+    <string name="project_detail_linked_records">LINKED RECORDS</string>
+    <string name="project_detail_resources">REFERENCE</string>
     <string name="project_detail_timeline">PROJECT TIMELINE</string>
     <string name="project_detail_inbox_all">PROJECT INBOX &amp; ALL ITEMS</string>
+    <string name="project_detail_mission_control">PROJECT MISSION CONTROL</string>
+    <string name="project_detail_overview">OVERVIEW</string>
+    <string name="project_detail_work">WORK</string>
+    <string name="project_detail_assets">ASSETS</string>
+    <string name="project_detail_review">REVIEW</string>
+    <string name="project_detail_contextual_panel">CONTEXTUAL PANEL</string>
+    <string name="project_detail_relations">RELATIONS</string>
+    <string name="project_detail_actions">ACTIONS</string>
+    <string name="project_detail_schedule">SCHEDULE</string>
+    <string name="project_detail_status">STATUS</string>
+    <string name="project_detail_health">HEALTH</string>
+    <string name="project_detail_target_date">TARGET DATE</string>
+    <string name="project_detail_outcome">OUTCOME</string>
+    <string name="project_detail_goal_fallback">Define a clear project outcome to align work, notes, and records.</string>
+    <string name="project_detail_progress_value">%1$d%% complete // %2$d/%3$d tasks</string>
+    <string name="project_detail_blockers">BLOCKERS</string>
+    <string name="project_detail_empty_work">No linked work items yet.</string>
+    <string name="project_detail_empty_blockers">No blockers right now.</string>
+    <string name="project_detail_empty_notes">No linked notes yet.</string>
+    <string name="project_detail_empty_records">No linked records yet.</string>
+    <string name="project_detail_empty_timeline">No recent activity.</string>
+    <string name="project_detail_empty_assets">No assets attached yet.</string>
+    <string name="project_detail_set_status">Set status</string>
     <string name="project_health">HEALTH</string>
     <string name="project_health_healthy">HEALTHY</string>
     <string name="project_health_neglected">NEGLECTED</string>
@@ -585,6 +711,23 @@
     <string name="area_detail_neglected_tasks">%1$d NEGLECTED TASKS IN THIS AREA</string>
     <string name="area_detail_active_projects">ACTIVE PROJECTS</string>
     <string name="area_detail_recent_activity">DIRECT ITEMS &amp; RECENT ACTIVITY</string>
+    <string name="area_detail_subtitle">RESPONSIBILITY CONTROL</string>
+    <string name="area_detail_mission_control">AREA MISSION CONTROL</string>
+    <string name="area_detail_responsibility_fallback">Define this area responsibility so work and projects stay aligned over time.</string>
+    <string name="area_detail_tab_overview">OVERVIEW</string>
+    <string name="area_detail_tab_projects">PROJECTS</string>
+    <string name="area_detail_tab_work">WORK</string>
+    <string name="area_detail_tab_notes">NOTES</string>
+    <string name="area_detail_tab_timeline">TIMELINE</string>
+    <string name="area_detail_tab_review">REVIEW</string>
+    <string name="area_detail_open_responsibilities">OPEN RESPONSIBILITIES</string>
+    <string name="area_detail_pressure">PRESSURE / RISK</string>
+    <string name="area_detail_review_signals">REVIEW SIGNALS</string>
+    <string name="area_detail_context">CONTEXT</string>
+    <string name="area_detail_cadence">CADENCE</string>
+    <string name="area_detail_health">HEALTH</string>
+    <string name="area_detail_timeline_empty">No recent activity yet.</string>
+    <string name="project_detail_empty_projects">No linked projects yet.</string>
 
     <!-- Graph Screen -->
     <string name="graph_title">GRAPH VIEW (CONTEXT CLUSTERS)</string>
@@ -599,16 +742,17 @@
     <!-- Node Types -->
     <string name="type_task">Task</string>
     <string name="type_note">Note</string>
-    <string name="type_idea">Idea</string>
+    <string name="type_record">Record</string>
+    <string name="type_idea">Note</string>
     <string name="type_project">Project</string>
     <string name="type_area">Area</string>
-    <string name="type_resource">Resource</string>
+    <string name="type_resource">Reference</string>
     <string name="media_book">BOOK</string>
     <string name="media_article">ARTICLE</string>
     <string name="media_podcast">PODCAST</string>
     <string name="media_video">VIDEO</string>
     <string name="media_link">LINK</string>
-    <string name="media_other">OTHER RESOURCES</string>
+    <string name="media_other">OTHER REFERENCES</string>
 
 
     <!-- Missing Strings (Decisions & EmptyState & Tasks) -->
@@ -652,4 +796,99 @@
     <string name="cd_decision_tiny">Tiny decision category icon</string>
     <string name="cd_decision_outcome">Decision outcome checkmark</string>
     <string name="track_empty">No tracking history yet.</string>
+
+    <!-- Shared Lens Copy -->
+    <string name="lens_decision_title">DECISION SUPPORT</string>
+    <string name="lens_decision_subtitle">Task-shaped decision work: inbox triage, active choices, and resolved outcomes.</string>
+    <string name="lens_unresolved_title">UNRESOLVED WORK</string>
+    <string name="lens_unresolved_subtitle">Task-shaped unresolved work, waiting-fors, and stale commitments that still need closure.</string>
+    <string name="lens_reference_title">REFERENCE LENS</string>
+    <string name="lens_reference_subtitle">Note and record material viewed as durable reference, paperwork, and retrieval support.</string>
+    <string name="lens_finance_title">FINANCE LENS</string>
+    <string name="lens_finance_subtitle">Money-related tasks, deadlines, records, and reference in one operational view.</string>
+
+    <!-- Systems Dashboard Summaries -->
+    <string name="systems_summary_open_loops">Resolve task-shaped unresolved work, inbox spillover, and review debt.</string>
+    <string name="systems_summary_protocols">Run and maintain transition routines and playbooks.</string>
+    <string name="systems_summary_time_architecture">Manage horizons, countdowns, and focus periods.</string>
+    <string name="systems_summary_places">Coordinate errands, travel packs, and place-based logistics.</string>
+    <string name="systems_summary_finances">Keep bills, renewals, subscriptions, and finance deadlines under control.</string>
+    <string name="systems_summary_health">Track health obligations, meds, and wellbeing signals.</string>
+    <string name="systems_summary_relationships">Maintain follow-ups, shared plans, and contact rhythm.</string>
+    <string name="systems_summary_education">Keep coursework, revision, and study execution visible.</string>
+    <string name="systems_summary_rules">Store and pin personal principles and decision rules.</string>
+    <string name="systems_summary_vaults">Keep reference material, paperwork, and retrieval systems clean.</string>
+    <string name="systems_summary_capacity">Track load, fragmentation, and realistic throughput.</string>
+    <string name="systems_summary_identity">Review signature, distinction, direction, and core-shift state.</string>
+
+    <!-- Shared View Labels -->
+    <string name="view_inbox">INBOX</string>
+    <string name="view_review">REVIEW</string>
+    <string name="view_all">ALL</string>
+    <string name="view_resolved">RESOLVED</string>
+    <string name="view_queue">QUEUE</string>
+    <string name="view_recurring">RECURRING</string>
+    <string name="view_overdue">OVERDUE</string>
+
+    <!-- Decision Lens -->
+    <string name="lens_decision_stale_header">DECISION SUPPORT SITTING TOO LONG</string>
+    <string name="lens_decision_stale_item_age">%1$s (%2$dd)</string>
+
+    <!-- Unresolved Lens -->
+    <string name="lens_unresolved_stats">Active %1$d • Inbox %2$d • Review %3$d • Resolved %4$d</string>
+    <string name="lens_unresolved_decay_index">Decay index: %1$d%%</string>
+    <string name="lens_unresolved_archive_resolved">ARCHIVE RESOLVED ITEMS</string>
+    <string name="lens_unresolved_empty">No unresolved work in %1$s.</string>
+    <string name="lens_unresolved_group_area">BY AREA</string>
+    <string name="lens_unresolved_group_person">BY PERSON</string>
+    <string name="lens_unresolved_group_urgency">BY URGENCY</string>
+
+    <!-- Open Loop Card -->
+    <string name="open_loop_meta_line">Type %1$s • %2$s • Age %3$dd • Stale %4$dd • Decay %5$d%%</string>
+    <string name="open_loop_meta_line_area">Area %1$s • Person %2$s</string>
+    <string name="open_loop_action_open">OPEN ITEM</string>
+    <string name="open_loop_action_resolve">MARK RESOLVED</string>
+    <string name="open_loop_action_convert_task">TO FOLLOW-UP TASK</string>
+    <string name="open_loop_action_convert_decision">TO DECISION SUPPORT</string>
+    <string name="open_loop_action_convert_note">TO NOTE</string>
+    <string name="open_loop_action_archive">ARCHIVE</string>
+    <string name="open_loop_untyped">untyped</string>
+    <string name="open_loop_unassigned">Unassigned</string>
+    <string name="open_loop_none">None</string>
+
+    <!-- Finance Lens -->
+    <string name="finance_header_tracking">Tracking %1$d actions, %2$d knowledge items, and %3$d deadlines.</string>
+    <string name="finance_metrics_reference_count">%1$d finance notes/records</string>
+    <string name="finance_queue_label">QUEUE</string>
+    <string name="finance_empty_queue">No finance maintenance items in %1$s right now.</string>
+    <string name="finance_item_action">ACTION</string>
+    <string name="finance_item_record">RECORD</string>
+    <string name="finance_item_note">NOTE</string>
+    <string name="finance_chip_live">LIVE</string>
+    <string name="finance_chip_sync_ready">SYNC READY</string>
+    <string name="finance_chip_expense">EXPENSE</string>
+    <string name="finance_deadlines_chip">%1$d DEADLINES</string>
+
+    <!-- Reference Lens -->
+    <string name="lens_reference_search">Search reference</string>
+    <string name="lens_reference_category_reference">REFERENCE</string>
+    <string name="lens_reference_category_links">IMPORTANT LINKS</string>
+    <string name="lens_reference_category_health">HEALTH</string>
+    <string name="lens_reference_category_institutional">INSTITUTIONAL</string>
+    <string name="lens_reference_category_process">PROCESS TRACKING</string>
+    <string name="lens_reference_category_deadlines">OFFICIAL DEADLINE</string>
+    <string name="lens_reference_action_mark_retrieved">UNMARK MUST-FIND-LATER</string>
+    <string name="lens_reference_action_open_item">OPEN ITEM</string>
+    <string name="lens_reference_app_status">Application Status</string>
+    <string name="lens_reference_app_status_desc">Live tracking for visas, jobs, housing and authority processes.</string>
+    <string name="lens_reference_app_status_count">%1$d active records</string>
+    <string name="lens_reference_quick_capture">Quick Upload</string>
+    <string name="lens_reference_entry_title">Entry title</string>
+    <string name="lens_reference_entry_content">Details / reference</string>
+    <string name="lens_reference_save_entry">SAVE ENTRY</string>
+    <string name="lens_reference_save_status">APP STATUS +14D</string>
+
+    <!-- Capture -->
+    <string name="capture_sticky">STICKY</string>
+    <string name="capture_label_capture">Capture</string>
 </resources>

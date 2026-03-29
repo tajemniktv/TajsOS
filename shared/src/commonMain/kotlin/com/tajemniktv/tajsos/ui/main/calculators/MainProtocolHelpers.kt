@@ -8,8 +8,8 @@ import com.tajemniktv.tajsos.data.ModeEntity
 import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.data.TrackEntryEntity
 import com.tajemniktv.tajsos.ui.FilterHelper
-import com.tajemniktv.tajsos.ui.PlaybookTemplate
-import com.tajemniktv.tajsos.ui.TransitionProtocolTemplate
+import com.tajemniktv.tajsos.ui.main.state.PlaybookTemplate
+import com.tajemniktv.tajsos.ui.main.state.TransitionProtocolTemplate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
