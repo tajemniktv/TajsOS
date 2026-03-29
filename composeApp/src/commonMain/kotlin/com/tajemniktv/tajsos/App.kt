@@ -75,7 +75,6 @@ import com.tajemniktv.tajsos.ui.screens.ReviewScreen
 import com.tajemniktv.tajsos.ui.screens.RulesScreen
 import com.tajemniktv.tajsos.ui.screens.SearchScreen
 import com.tajemniktv.tajsos.ui.screens.SettingsScreen
-import com.tajemniktv.tajsos.ui.screens.SettingsAboutScreen
 import com.tajemniktv.tajsos.ui.screens.SettingsDataScreen
 import com.tajemniktv.tajsos.ui.screens.SettingsDebugScreen
 import com.tajemniktv.tajsos.ui.screens.SettingsFeaturePacksScreen
@@ -479,9 +478,6 @@ private fun AppScaffold(
             }
             composable(Screen.Settings.route) {
                 SettingsScreen(viewModel)
-            }
-            composable(Screen.SettingsAbout.route) {
-                SettingsAboutScreen(onNavigateToProfile = { onNavigate(Screen.Profile.route) })
             }
             composable(Screen.SettingsHealth.route) {
                 SettingsHealthScreen(onNavigateToHealth = { onNavigate(Screen.Health.route) })

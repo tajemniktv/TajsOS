@@ -14,7 +14,7 @@ internal fun settingsSubSidebarSections(): List<SidebarSection> =
             title = "User Profile",
             items =
                 listOf(
-                    SidebarItem("About", Screen.SettingsAbout),
+                    SidebarItem("About", Screen.Profile),
                     SidebarItem("Health", Screen.SettingsHealth),
                 ),
         ),

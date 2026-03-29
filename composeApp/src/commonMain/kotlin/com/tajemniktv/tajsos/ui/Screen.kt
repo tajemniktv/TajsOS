@@ -103,13 +103,6 @@ sealed class Screen(
 
     data object Settings : Screen("settings", Res.string.screen_opts, Icons.Default.Settings)
 
-    data object SettingsAbout : Screen(
-        "settings_about",
-        Res.string.screen_settings_about,
-        Icons.Default.Info,
-        isRoot = false,
-    )
-
     data object SettingsHealth : Screen(
         "settings_health",
         Res.string.screen_settings_health,
@@ -269,7 +262,6 @@ sealed class Screen(
                 ProjectDetail,
                 AreaDetail,
                 CalendarSettings,
-                SettingsAbout,
                 SettingsHealth,
                 SettingsFeaturePacks,
                 SettingsData,
@@ -413,7 +405,6 @@ sealed class Screen(
                 AreaDetail -> Areas
                 CalendarSettings -> Calendar
                 Templates -> Settings
-                SettingsAbout -> Settings
                 SettingsHealth -> Settings
                 SettingsFeaturePacks -> Settings
                 SettingsData -> Settings

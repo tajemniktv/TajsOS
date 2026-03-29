@@ -46,7 +46,6 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
-import tajsos.composeapp.generated.resources.profile_title
 import tajsos.composeapp.generated.resources.settings_biometric_desc
 import tajsos.composeapp.generated.resources.settings_biometric_lock
 import tajsos.composeapp.generated.resources.settings_biometric_unavailable
@@ -54,32 +53,6 @@ import tajsos.composeapp.generated.resources.settings_data_management
 import tajsos.composeapp.generated.resources.settings_export_data
 import tajsos.composeapp.generated.resources.settings_export_success
 import tajsos.composeapp.generated.resources.settings_force_crash
-
-/**
- * Renders the settings "About" tab and links to the full user profile editor.
- */
-@Composable
-fun SettingsAboutScreen(
-    onNavigateToProfile: () -> Unit,
-) {
-    SettingsSimpleScaffold(
-        title = "ABOUT",
-        description = "Identity and account-level profile information.",
-    ) {
-        Button(
-            onClick = onNavigateToProfile,
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(TactileTheme.RadiusMd),
-            colors =
-                ButtonDefaults.buttonColors(
-                    containerColor = TactileTheme.Surface,
-                    contentColor = TactileTheme.Primary,
-                ),
-        ) {
-            Text(stringResource(Res.string.profile_title))
-        }
-    }
-}
 
 /**
  * Renders the settings "Health" tab and links to the Health lens screen.
