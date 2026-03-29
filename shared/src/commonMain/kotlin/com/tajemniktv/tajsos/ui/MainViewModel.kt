@@ -454,6 +454,27 @@ class MainViewModel(
         preferencesRepository.isDarkThemeEnabled
             .stateIn(viewModelScope, SharingStarted.Eagerly, true)
 
+    /**
+     * Selected accent color hex string (e.g., "#BA9EFF").
+     */
+    val accentColorHex: StateFlow<String> =
+        preferencesRepository.accentColorHex
+            .stateIn(viewModelScope, SharingStarted.Eagerly, "#BA9EFF")
+
+    /**
+     * Whether glassmorphism effects are enabled.
+     */
+    val isGlassmorphismEnabled: StateFlow<Boolean> =
+        preferencesRepository.isGlassmorphismEnabled
+            .stateIn(viewModelScope, SharingStarted.Eagerly, true)
+
+    /**
+     * Whether to reduce system animations and transitions.
+     */
+    val reduceMotion: StateFlow<Boolean> =
+        preferencesRepository.reduceMotion
+            .stateIn(viewModelScope, SharingStarted.Eagerly, false)
+
     val enabledPacks: StateFlow<PackRegistry> =
         preferencesRepository.enabledPacks
             .stateIn(
@@ -931,6 +952,35 @@ class MainViewModel(
         }
     }
 
+    /**
+     * Persists application accent color preference.
+     *
+     * @param colorHex The color in hex format (e.g., "#BA9EFF").
+     */
+    fun setAccentColor(colorHex: String) {
+        viewModelScope.launch {
+            preferencesRepository.updateAccentColor(colorHex)
+        }
+    }
+
+    /**
+     * Persists application glassmorphism preference.
+     */
+    fun setGlassmorphismEnabled(enabled: Boolean) {
+        viewModelScope.launch {
+            preferencesRepository.updateGlassmorphismEnabled(enabled)
+        }
+    }
+
+    /**
+     * Persists application reduce motion preference.
+     */
+    fun setReduceMotion(enabled: Boolean) {
+        viewModelScope.launch {
+            preferencesRepository.updateReduceMotion(enabled)
+        }
+    }
+
     fun setPackEnabled(
         pack: AppPack,
         enabled: Boolean,
@@ -1223,6 +1273,14 @@ class MainViewModel(
         status: String,
     ) {
         nodeCommands.updateNodeStatus(node, status)
+    }
+
+    /**
+     * Sweeps stale tasks into the someday state.
+     * @param cutoffDays The threshold in days before a task is considered stale.
+     */
+    fun sweepStaleTasks(cutoffDays: Int = 3) {
+        nodeCommands.sweepStaleTasks(cutoffDays)
     }
 
     suspend fun getNodeById(id: Long): NodeEntity? = repository.getNodeById(id)

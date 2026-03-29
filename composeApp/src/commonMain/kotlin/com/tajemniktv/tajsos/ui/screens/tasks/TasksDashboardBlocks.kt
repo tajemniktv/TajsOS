@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import com.tajemniktv.tajsos.data.ItemKind
 import com.tajemniktv.tajsos.data.TaskState
 import com.tajemniktv.tajsos.data.taskStateOrNull
@@ -62,11 +64,15 @@ private fun renderTasksTabs(context: TasksDashboardContext) {
 @Composable
 private fun renderTasksViewCommand(context: TasksDashboardContext) {
     val viewModel = context.viewModel
+    val dashboardUIState by viewModel.dashboardUIState.collectAsState()
+    
     TasksCommandView(
         tasks = context.activeTasks.filter { it.taskStateOrNull() != TaskState.DONE },
         projectById = context.projectById,
         areaById = context.areaById,
         todayTaskIds = context.todayTaskIds,
+        staleTasksCount = dashboardUIState.staleTasksCount,
+        onSweepStaleTasks = { viewModel.sweepStaleTasks() },
         onOpen = context.onEditNode,
         onStartFocus = { viewModel.startFocusSession(it.id) },
         onDone = { viewModel.updateNodeStatus(it, TaskState.DONE.storageKey) },

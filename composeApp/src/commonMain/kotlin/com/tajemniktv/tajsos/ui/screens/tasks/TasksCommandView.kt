@@ -72,6 +72,8 @@ internal fun TasksCommandView(
     projectById: Map<Long, String>,
     areaById: Map<Long, String>,
     todayTaskIds: Set<Long>,
+    staleTasksCount: Int = 0,
+    onSweepStaleTasks: () -> Unit = {},
     onOpen: (Long) -> Unit,
     onStartFocus: (NodeEntity) -> Unit,
     onDone: (NodeEntity) -> Unit,
@@ -149,6 +151,8 @@ internal fun TasksCommandView(
                                     ?: Long.MAX_VALUE
                             ) <= now + 24L * 60 * 60 * 1000
                         },
+                    staleTasksCount = staleTasksCount,
+                    onSweepStaleTasks = onSweepStaleTasks,
                     onQuickAddChanged = { quickAdd = it },
                     onCaptureChanged = { capture = it },
                     onQuickAdd = {
@@ -204,6 +208,8 @@ internal fun TasksCommandView(
                                     ?: Long.MAX_VALUE
                             ) <= now + 24L * 60 * 60 * 1000
                         },
+                    staleTasksCount = staleTasksCount,
+                    onSweepStaleTasks = onSweepStaleTasks,
                     onQuickAddChanged = { quickAdd = it },
                     onCaptureChanged = { capture = it },
                     onQuickAdd = {
@@ -361,11 +367,15 @@ private fun CommandSidebar(
     activeCount: Int,
     blockedCount: Int,
     dueSoonCount: Int,
+    staleTasksCount: Int = 0,
+    onSweepStaleTasks: () -> Unit = {},
     onQuickAddChanged: (String) -> Unit,
     onCaptureChanged: (String) -> Unit,
     onQuickAdd: () -> Unit,
     onCapture: () -> Unit,
 ) {
+    var showSweepDialog by remember { mutableStateOf(false) }
+
     Surface(
         modifier = modifier,
         shape = RoundedCornerShape(TactileTheme.RadiusMd),
@@ -420,6 +430,46 @@ private fun CommandSidebar(
             ContextRow(stringResource(Res.string.tasks_context_active), activeCount)
             ContextRow(stringResource(Res.string.tasks_context_blocked), blockedCount)
             ContextRow(stringResource(Res.string.tasks_context_due_soon), dueSoonCount)
+
+            if (staleTasksCount > 0) {
+                HorizontalDivider(color = TactileTheme.Border)
+                OutlinedButton(
+                    onClick = { showSweepDialog = true },
+                    modifier = Modifier.fillMaxWidth(),
+                    border = BorderStroke(1.dp, TactileTheme.Primary.copy(alpha = 0.5f))
+                ) {
+                    Text("Sweep $staleTasksCount Stale Tasks", color = TactileTheme.Primary)
+                }
+            }
         }
+    }
+
+    if (showSweepDialog) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { showSweepDialog = false },
+            title = {
+                Text("Clear overdue backlog?")
+            },
+            text = {
+                Text("You have $staleTasksCount stale overdue tasks. Want me to sweep them into Someday?")
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        onSweepStaleTasks()
+                        showSweepDialog = false
+                    }
+                ) {
+                    Text("Sweep to Someday")
+                }
+            },
+            dismissButton = {
+                OutlinedButton(
+                    onClick = { showSweepDialog = false }
+                ) {
+                    Text("Cancel")
+                }
+            }
+        )
     }
 }

@@ -31,6 +31,25 @@ class NodeCommands(
     private val parseInternalLinks: (Long) -> Unit,
     private val setTagOnNode: suspend (Long, String, Boolean) -> Unit,
 ) {
+
+    fun sweepStaleTasks(cutoffDays: Int = 3) {
+        scope.launch {
+            val now = Clock.System.now()
+            val nodes = currentAllNodes()
+            val staleTasks = com.tajemniktv.tajsos.ui.main.calculators.calculateStaleTasks(nodes, now, cutoffDays)
+            
+            staleTasks.forEach { node ->
+                repository.updateNode(
+                    node.copy(
+                        status = com.tajemniktv.tajsos.data.TaskState.SOMEDAY.storageKey,
+                        postponeCount = node.postponeCount + 1,
+                        updatedAt = Clock.System.now().toEpochMilliseconds(),
+                    )
+                )
+            }
+        }
+    }
+
     fun addNode(
         title: String,
         content: String = "",
