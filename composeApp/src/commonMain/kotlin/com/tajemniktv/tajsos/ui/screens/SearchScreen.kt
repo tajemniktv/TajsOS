@@ -6,28 +6,55 @@ package com.tajemniktv.tajsos.ui.screens
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.InsertDriveFile
 import androidx.compose.material.icons.filled.Archive
-import androidx.compose.material.icons.filled.Description
-import androidx.compose.material.icons.filled.History
-import androidx.compose.material.icons.filled.InsertDriveFile
-import androidx.compose.material.icons.filled.Schedule
-import androidx.compose.material.icons.filled.TaskAlt
-import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Folder
+import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.InsertDriveFile
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.Place
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.TaskAlt
+import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,16 +63,41 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.context_10_min
+import tajsos.composeapp.generated.resources.context_brain_works
+import tajsos.composeapp.generated.resources.context_campus
+import tajsos.composeapp.generated.resources.context_commute
+import tajsos.composeapp.generated.resources.context_emotionally_wrecked
+import tajsos.composeapp.generated.resources.context_high_focus
+import tajsos.composeapp.generated.resources.context_home
+import tajsos.composeapp.generated.resources.context_internet
+import tajsos.composeapp.generated.resources.context_laptop
+import tajsos.composeapp.generated.resources.context_low_energy
+import tajsos.composeapp.generated.resources.context_out
+import tajsos.composeapp.generated.resources.context_phone
+import tajsos.composeapp.generated.resources.context_privacy
+import tajsos.composeapp.generated.resources.context_waiting
+import tajsos.composeapp.generated.resources.search_clear
+import tajsos.composeapp.generated.resources.search_filter_active
+import tajsos.composeapp.generated.resources.search_filter_archived
+import tajsos.composeapp.generated.resources.search_filter_linked_to
+import tajsos.composeapp.generated.resources.search_no_results
+import tajsos.composeapp.generated.resources.search_placeholder
+import tajsos.composeapp.generated.resources.search_reset_filters
+import tajsos.composeapp.generated.resources.type_area
+import tajsos.composeapp.generated.resources.type_note
+import tajsos.composeapp.generated.resources.type_project
+import tajsos.composeapp.generated.resources.type_record
+import tajsos.composeapp.generated.resources.type_task
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.time.Clock
-import org.jetbrains.compose.resources.stringResource
-import tajsos.composeapp.generated.resources.*
 
 /**
  * Renders the search screen UI: a query field, filter chips (status, type, project, area, linked-to),
@@ -145,38 +197,38 @@ fun SearchScreen(
             }
 
             Column(modifier = Modifier.weight(1f)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            TextField(
-                value = searchQuery,
-                onValueChange = { viewModel.updateSearchQuery(it) },
-                modifier = Modifier.weight(1f),
-                placeholder = { Text(stringResource(Res.string.search_placeholder)) },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-                trailingIcon = {
-                    if (searchQuery.isNotEmpty()) {
-                        IconButton(onClick = { viewModel.updateSearchQuery("") }) {
-                            Icon(
-                                Icons.Default.Clear,
-                                contentDescription = stringResource(Res.string.search_clear),
-                            )
-                        }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    TextField(
+                        value = searchQuery,
+                        onValueChange = { viewModel.updateSearchQuery(it) },
+                        modifier = Modifier.weight(1f),
+                        placeholder = { Text(stringResource(Res.string.search_placeholder)) },
+                        leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                        trailingIcon = {
+                            if (searchQuery.isNotEmpty()) {
+                                IconButton(onClick = { viewModel.updateSearchQuery("") }) {
+                                    Icon(
+                                        Icons.Default.Clear,
+                                        contentDescription = stringResource(Res.string.search_clear),
+                                    )
+                                }
+                            }
+                        },
+                        colors =
+                            TextFieldDefaults.colors(
+                                focusedContainerColor = TactileTheme.Surface,
+                                unfocusedContainerColor = TactileTheme.Surface,
+                            ),
+                    )
+                    IconButton(onClick = { viewModel.clearSearchFilters() }) {
+                        Icon(
+                            Icons.Default.FilterList,
+                            contentDescription = stringResource(Res.string.search_reset_filters),
+                        )
                     }
-                },
-                colors =
-                    TextFieldDefaults.colors(
-                        focusedContainerColor = TactileTheme.Surface,
-                        unfocusedContainerColor = TactileTheme.Surface,
-                    ),
-            )
-            IconButton(onClick = { viewModel.clearSearchFilters() }) {
-                Icon(
-                    Icons.Default.FilterList,
-                    contentDescription = stringResource(Res.string.search_reset_filters),
-                )
-            }
-        }
+                }
 
-        Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
+                Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
                 RecentQueriesRow(
                     queries = recentQueries,
                     onQueryClick = { viewModel.updateSearchQuery(it) },
@@ -198,198 +250,209 @@ fun SearchScreen(
                     Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
                 }
 
-        // Filters Row
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            item {
-                FilterChip(
-                    selected = searchStatusFilter == "active",
-                    onClick = { viewModel.updateSearchStatusFilter(if (searchStatusFilter == "active") null else "active") },
-                    label = { Text(stringResource(Res.string.search_filter_active)) },
-                )
-            }
-            item {
-                FilterChip(
-                    selected = searchStatusFilter == "archived",
-                    onClick = { viewModel.updateSearchStatusFilter(if (searchStatusFilter == "archived") null else "archived") },
-                    label = { Text(stringResource(Res.string.search_filter_archived)) },
-                )
-            }
-            val types = listOf("task", "note", "record", "project", "area")
-            items(types) { type ->
-                val typeLabel =
-                    when (type)
-                    {
-                        "task" -> stringResource(Res.string.type_task)
-                        "note" -> stringResource(Res.string.type_note)
-                        "record" -> stringResource(Res.string.type_record)
-                        "project" -> stringResource(Res.string.type_project)
-                        "area" -> stringResource(Res.string.type_area)
-                        else -> type
-                    }
-                FilterChip(
-                    selected = searchTypeFilter == type,
-                    onClick = { viewModel.updateSearchTypeFilter(if (searchTypeFilter == type) null else type) },
-                    label = { Text(typeLabel.uppercase()) },
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
-
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            val contexts =
-                listOf(
-                    "at_home" to contextHome,
-                    "on_campus" to contextCampus,
-                    "out_of_home" to contextOut,
-                    "laptop_required" to contextLaptop,
-                    "phone_okay" to contextPhone,
-                    "needs_internet" to contextInternet,
-                    "needs_privacy" to contextPrivacy,
-                    "low_energy" to contextLowEnergy,
-                    "high_focus" to contextHighFocus,
-                    "brain_works" to contextBrainWorks,
-                    "emotionally_wrecked" to contextEmotionallyWrecked,
-                    "10_minute" to context10Min,
-                    "commute_friendly" to contextCommute,
-                    "waiting_room" to contextWaiting,
-                )
-            item {
-                FilterChip(
-                    selected =
-                        searchLocationContextFilter != null ||
-                            searchEnergyContextFilter != null ||
-                            searchDeviceContextFilter != null ||
-                            searchSocialContextFilter != null ||
-                            searchTimeWindowContextFilter != null,
-                    onClick = { viewModel.applyContextPreset(null) },
-                    label = { Text("CONTEXT OFF") },
-                )
-            }
-            items(contexts) { (key, label) ->
-                val selected =
-                    searchLocationContextFilter == key ||
-                        searchEnergyContextFilter == key ||
-                        searchDeviceContextFilter == key ||
-                        searchSocialContextFilter == key ||
-                        searchTimeWindowContextFilter == key
-                FilterChip(
-                    selected = selected,
-                    onClick = { viewModel.applyContextPreset(if (selected) null else key) },
-                    label = { Text(label) },
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
-
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            val horizons =
-                listOf(
-                    "today" to "TODAY",
-                    "week" to "THIS WEEK",
-                    "month" to "THIS MONTH",
-                    "semester" to "SEMESTER",
-                    "short" to "SHORT",
-                    "long" to "LONG",
-                )
-            item {
-                FilterChip(
-                    selected = searchTimeHorizonFilter == null,
-                    onClick = { viewModel.applyTimeHorizonFilter(null) },
-                    label = { Text("HORIZON OFF") },
-                )
-            }
-            items(horizons) { (key, label) ->
-                FilterChip(
-                    selected = searchTimeHorizonFilter == key,
-                    onClick = {
-                        viewModel.applyTimeHorizonFilter(
-                            if (searchTimeHorizonFilter == key) null else key,
-                        )
-                    },
-                    label = { Text(label) },
-                )
-            }
-        }
-
-        if (projects.isNotEmpty() || areas.isNotEmpty() || searchLinkedToFilter != null) {
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                if (searchLinkedToFilter != null) {
-                    val linkedNode = allNodes.find { it.node.id == searchLinkedToFilter }?.node
+                // Filters Row
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
                     item {
                         FilterChip(
-                            selected = true,
-                            onClick = { viewModel.updateSearchLinkedToFilter(null) },
-                            label = {
-                                Text(
-                                    stringResource(
-                                        Res.string.search_filter_linked_to,
-                                        linkedNode?.title ?: "...",
-                                    ),
-                                )
-                            },
-                            leadingIcon = {
-                                Icon(
-                                    Icons.Default.Link,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(16.dp),
-                                )
-                            },
-                            trailingIcon = {
-                                Icon(
-                                    Icons.Default.Close,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(16.dp),
-                                )
-                            },
+                            selected = searchStatusFilter == "active",
+                            onClick = { viewModel.updateSearchStatusFilter(if (searchStatusFilter == "active") null else "active") },
+                            label = { Text(stringResource(Res.string.search_filter_active)) },
+                        )
+                    }
+                    item {
+                        FilterChip(
+                            selected = searchStatusFilter == "archived",
+                            onClick = { viewModel.updateSearchStatusFilter(if (searchStatusFilter == "archived") null else "archived") },
+                            label = { Text(stringResource(Res.string.search_filter_archived)) },
+                        )
+                    }
+                    val types = listOf("task", "note", "record", "project", "area")
+                    items(types) { type ->
+                        val typeLabel =
+                            when (type)
+                            {
+                                "task" -> stringResource(Res.string.type_task)
+                                "note" -> stringResource(Res.string.type_note)
+                                "record" -> stringResource(Res.string.type_record)
+                                "project" -> stringResource(Res.string.type_project)
+                                "area" -> stringResource(Res.string.type_area)
+                                else -> type
+                            }
+                        FilterChip(
+                            selected = searchTypeFilter == type,
+                            onClick = { viewModel.updateSearchTypeFilter(if (searchTypeFilter == type) null else type) },
+                            label = { Text(typeLabel.uppercase()) },
                         )
                     }
                 }
-                items(areas) { area ->
-                    FilterChip(
-                        selected = searchAreaFilter == area.id,
-                        onClick = { viewModel.updateSearchAreaFilter(if (searchAreaFilter == area.id) null else area.id) },
-                        label = { Text(area.title) },
-                        leadingIcon = {
-                            Icon(
-                                Icons.Default.Place,
-                                contentDescription = null,
-                                modifier = Modifier.size(16.dp),
-                            )
-                        },
-                    )
-                }
-                items(projects) { project ->
-                    FilterChip(
-                        selected = searchProjectFilter == project.id,
-                        onClick = { viewModel.updateSearchProjectFilter(if (searchProjectFilter == project.id) null else project.id) },
-                        label = { Text(project.title) },
-                        leadingIcon = {
-                            Icon(
-                                Icons.Default.Folder,
-                                contentDescription = null,
-                                modifier = Modifier.size(16.dp),
-                            )
-                        },
-                    )
-                }
-            }
-        }
 
-        Spacer(modifier = Modifier.height(TactileTheme.SpacingMd))
+                Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
+
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    val contexts =
+                        listOf(
+                            "at_home" to contextHome,
+                            "on_campus" to contextCampus,
+                            "out_of_home" to contextOut,
+                            "laptop_required" to contextLaptop,
+                            "phone_okay" to contextPhone,
+                            "needs_internet" to contextInternet,
+                            "needs_privacy" to contextPrivacy,
+                            "low_energy" to contextLowEnergy,
+                            "high_focus" to contextHighFocus,
+                            "brain_works" to contextBrainWorks,
+                            "emotionally_wrecked" to contextEmotionallyWrecked,
+                            "10_minute" to context10Min,
+                            "commute_friendly" to contextCommute,
+                            "waiting_room" to contextWaiting,
+                        )
+                    item {
+                        FilterChip(
+                            selected =
+                                searchLocationContextFilter != null ||
+                                    searchEnergyContextFilter != null ||
+                                    searchDeviceContextFilter != null ||
+                                    searchSocialContextFilter != null ||
+                                    searchTimeWindowContextFilter != null,
+                            onClick = { viewModel.applyContextPreset(null) },
+                            label = { Text("CONTEXT OFF") },
+                        )
+                    }
+                    items(contexts) { (key, label) ->
+                        val selected =
+                            searchLocationContextFilter == key ||
+                                searchEnergyContextFilter == key ||
+                                searchDeviceContextFilter == key ||
+                                searchSocialContextFilter == key ||
+                                searchTimeWindowContextFilter == key
+                        FilterChip(
+                            selected = selected,
+                            onClick = { viewModel.applyContextPreset(if (selected) null else key) },
+                            label = { Text(label) },
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
+
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    val horizons =
+                        listOf(
+                            "today" to "TODAY",
+                            "week" to "THIS WEEK",
+                            "month" to "THIS MONTH",
+                            "semester" to "SEMESTER",
+                            "short" to "SHORT",
+                            "long" to "LONG",
+                        )
+                    item {
+                        FilterChip(
+                            selected = searchTimeHorizonFilter == null,
+                            onClick = { viewModel.applyTimeHorizonFilter(null) },
+                            label = { Text("HORIZON OFF") },
+                        )
+                    }
+                    items(horizons) { (key, label) ->
+                        FilterChip(
+                            selected = searchTimeHorizonFilter == key,
+                            onClick = {
+                                viewModel.applyTimeHorizonFilter(
+                                    if (searchTimeHorizonFilter == key) null else key,
+                                )
+                            },
+                            label = { Text(label) },
+                        )
+                    }
+                }
+
+                if (projects.isNotEmpty() || areas.isNotEmpty() || searchLinkedToFilter != null) {
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        if (searchLinkedToFilter != null) {
+                            val linkedNode =
+                                allNodes.find { it.node.id == searchLinkedToFilter }?.node
+                            item {
+                                FilterChip(
+                                    selected = true,
+                                    onClick = { viewModel.updateSearchLinkedToFilter(null) },
+                                    label = {
+                                        Text(
+                                            stringResource(
+                                                Res.string.search_filter_linked_to,
+                                                linkedNode?.title ?: "...",
+                                            ),
+                                        )
+                                    },
+                                    leadingIcon = {
+                                        Icon(
+                                            Icons.Default.Link,
+                                            contentDescription = null,
+                                            modifier = Modifier.size(16.dp),
+                                        )
+                                    },
+                                    trailingIcon = {
+                                        Icon(
+                                            Icons.Default.Close,
+                                            contentDescription = null,
+                                            modifier = Modifier.size(16.dp),
+                                        )
+                                    },
+                                )
+                            }
+                        }
+                        items(areas) { area ->
+                            FilterChip(
+                                selected = searchAreaFilter == area.id,
+                                onClick = { viewModel.updateSearchAreaFilter(if (searchAreaFilter == area.id) null else area.id) },
+                                label = { Text(area.title) },
+                                leadingIcon = {
+                                    Icon(
+                                        Icons.Default.Place,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(16.dp),
+                                    )
+                                },
+                            )
+                        }
+                        items(projects) { project ->
+                            FilterChip(
+                                selected = searchProjectFilter == project.id,
+                                onClick = {
+                                    viewModel.updateSearchProjectFilter(
+                                        if (searchProjectFilter ==
+                                            project.id
+                                        ) {
+                                            null
+                                        } else {
+                                            project.id
+                                        },
+                                    )
+                                },
+                                label = { Text(project.title) },
+                                leadingIcon = {
+                                    Icon(
+                                        Icons.Default.Folder,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(16.dp),
+                                    )
+                                },
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(TactileTheme.SpacingMd))
                 SearchResultsHeader(searchResults.size)
                 Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
 
@@ -506,14 +569,43 @@ private fun SearchScopeRail(
         verticalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         Text("SEARCH", style = MaterialTheme.typography.headlineSmall, color = TactileTheme.Text)
-        Text("ACTIVE FILTERS", style = MaterialTheme.typography.labelSmall, color = TactileTheme.Muted)
+        Text(
+            "ACTIVE FILTERS",
+            style = MaterialTheme.typography.labelSmall,
+            color = TactileTheme.Muted,
+        )
         Spacer(modifier = Modifier.height(4.dp))
-        ScopeEntry("ALL OBJECTS", Icons.Default.Search, selected = searchTypeFilter == null && !hasContextFilter && !hasTimeFilter) { onTypeFilterChange(null) }
-        ScopeEntry("TASKS", Icons.Default.TaskAlt, selected = searchTypeFilter == "task") { onTypeFilterChange(if (searchTypeFilter == "task") null else "task") }
-        ScopeEntry("PROJECTS", Icons.Default.Folder, selected = searchTypeFilter == "project") { onTypeFilterChange(if (searchTypeFilter == "project") null else "project") }
-        ScopeEntry("NOTES", Icons.Default.Description, selected = searchTypeFilter == "note") { onTypeFilterChange(if (searchTypeFilter == "note") null else "note") }
-        ScopeEntry("RECORDS", Icons.Default.InsertDriveFile, selected = searchTypeFilter == "record") { onTypeFilterChange(if (searchTypeFilter == "record") null else "record") }
-        ScopeEntry("CONTEXT", Icons.Default.Tune, selected = hasContextFilter, onClick = onContextToggle)
+        ScopeEntry(
+            "ALL OBJECTS",
+            Icons.Default.Search,
+            selected = searchTypeFilter == null && !hasContextFilter && !hasTimeFilter,
+        ) { onTypeFilterChange(null) }
+        ScopeEntry(
+            "TASKS",
+            Icons.Default.TaskAlt,
+            selected = searchTypeFilter == "task",
+        ) { onTypeFilterChange(if (searchTypeFilter == "task") null else "task") }
+        ScopeEntry(
+            "PROJECTS",
+            Icons.Default.Folder,
+            selected = searchTypeFilter == "project",
+        ) { onTypeFilterChange(if (searchTypeFilter == "project") null else "project") }
+        ScopeEntry(
+            "NOTES",
+            Icons.Default.Description,
+            selected = searchTypeFilter == "note",
+        ) { onTypeFilterChange(if (searchTypeFilter == "note") null else "note") }
+        ScopeEntry(
+            "RECORDS",
+            Icons.Default.InsertDriveFile,
+            selected = searchTypeFilter == "record",
+        ) { onTypeFilterChange(if (searchTypeFilter == "record") null else "record") }
+        ScopeEntry(
+            "CONTEXT",
+            Icons.Default.Tune,
+            selected = hasContextFilter,
+            onClick = onContextToggle,
+        )
         ScopeEntry("TIME", Icons.Default.Schedule, selected = hasTimeFilter, onClick = onTimeToggle)
 
         Spacer(modifier = Modifier.weight(1f))
@@ -523,7 +615,11 @@ private fun SearchScopeRail(
             shape = RoundedCornerShape(10.dp),
             colors = ButtonDefaults.buttonColors(containerColor = TactileTheme.Primary),
         ) {
-            Text("NEW QUERY", style = MaterialTheme.typography.labelSmall, color = TactileTheme.Background)
+            Text(
+                "NEW QUERY",
+                style = MaterialTheme.typography.labelSmall,
+                color = TactileTheme.Background,
+            )
         }
         Spacer(modifier = Modifier.height(8.dp))
         ScopeFooter("RECENT QUERIES", Icons.Default.History)
@@ -566,7 +662,11 @@ private fun SearchScopeChips(
             )
         }
         item {
-            FilterChip(selected = hasContextFilter, onClick = onContextToggle, label = { Text("CONTEXT") })
+            FilterChip(
+                selected = hasContextFilter,
+                onClick = onContextToggle,
+                label = { Text("CONTEXT") },
+            )
         }
         item {
             FilterChip(selected = hasTimeFilter, onClick = onTimeToggle, label = { Text("TIME") })
@@ -585,13 +685,26 @@ private fun SearchResultsHeader(resultCount: Int) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("Search Results", style = MaterialTheme.typography.headlineSmall, color = TactileTheme.Text)
+            Text(
+                "Search Results",
+                style = MaterialTheme.typography.headlineSmall,
+                color = TactileTheme.Text,
+            )
             Spacer(modifier = Modifier.width(TactileTheme.SpacingSm))
-            Text("FOUND $resultCount ITEMS", style = MaterialTheme.typography.labelSmall, color = TactileTheme.Primary)
+            Text(
+                "FOUND $resultCount ITEMS",
+                style = MaterialTheme.typography.labelSmall,
+                color = TactileTheme.Primary,
+            )
         }
         Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
             TextButton(onClick = {}) { Text("FILTER", style = MaterialTheme.typography.labelSmall) }
-            TextButton(onClick = {}) { Text("RELEVANCE", style = MaterialTheme.typography.labelSmall) }
+            TextButton(onClick = {}) {
+                Text(
+                    "RELEVANCE",
+                    style = MaterialTheme.typography.labelSmall,
+                )
+            }
         }
     }
 }
@@ -606,32 +719,85 @@ private fun SearchSupportPanel(
     topResult: String?,
 ) {
     val coverage =
-        if (indexedCount <= 0) 0 else min(100, max(1, ((resultCount.toFloat() / indexedCount.toFloat()) * 100f).toInt()))
+        if (indexedCount <= 0)
+        {
+            0
+        } else
+        {
+            min(
+                100,
+                max(1, ((resultCount.toFloat() / indexedCount.toFloat()) * 100f).toInt()),
+                )
+            }
     Column(
         modifier = Modifier.width(284.dp).fillMaxHeight(),
         verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
     ) {
         Surface(shape = RoundedCornerShape(14.dp), color = TactileTheme.SurfaceLow) {
-            Column(modifier = Modifier.padding(TactileTheme.SpacingMd), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text("SEARCH STATUS", style = MaterialTheme.typography.labelSmall, color = TactileTheme.Primary)
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text("SYSTEM INDEX", style = MaterialTheme.typography.labelSmall, color = TactileTheme.Muted)
-                    Text(if (indexedCount > 0) "STABLE" else "BOOTING", style = MaterialTheme.typography.labelSmall, color = TactileTheme.Primary)
+            Column(
+                modifier = Modifier.padding(TactileTheme.SpacingMd),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Text(
+                    "SEARCH STATUS",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TactileTheme.Primary,
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    Text(
+                        "SYSTEM INDEX",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = TactileTheme.Muted,
+                    )
+                    Text(
+                        if (indexedCount > 0) "STABLE" else "BOOTING",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = TactileTheme.Primary,
+                    )
                 }
-                Text("$indexedCount objects indexed", style = MaterialTheme.typography.bodySmall, color = TactileTheme.Text)
-                LinearProgressIndicator(progress = { 1f }, modifier = Modifier.fillMaxWidth().height(4.dp))
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text("Index coverage", style = MaterialTheme.typography.labelSmall, color = TactileTheme.Muted)
-                    Text("$coverage%", style = MaterialTheme.typography.labelSmall, color = TactileTheme.Text)
+                Text(
+                    "$indexedCount objects indexed",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = TactileTheme.Text,
+                )
+                LinearProgressIndicator(
+                    progress = { 1f },
+                    modifier = Modifier.fillMaxWidth().height(4.dp),
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    Text(
+                        "Index coverage",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = TactileTheme.Muted,
+                    )
+                    Text(
+                        "$coverage%",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = TactileTheme.Text,
+                    )
                 }
             }
         }
 
         Surface(shape = RoundedCornerShape(14.dp), color = TactileTheme.SurfaceLow) {
-            Column(modifier = Modifier.padding(TactileTheme.SpacingMd), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text("SEARCH INSIGHTS", style = MaterialTheme.typography.labelSmall, color = TactileTheme.Primary)
+            Column(
+                modifier = Modifier.padding(TactileTheme.SpacingMd),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
                 Text(
-                    topResult?.let { "Most relevant right now: \"$it\"." } ?: "Run a query to see linked search insights.",
+                    "SEARCH INSIGHTS",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TactileTheme.Primary,
+                )
+                Text(
+                    topResult?.let { "Most relevant right now: \"$it\"." }
+                        ?: "Run a query to see linked search insights.",
                     style = MaterialTheme.typography.bodySmall,
                     color = TactileTheme.Text,
                 )
@@ -657,7 +823,12 @@ private fun ScopeEntry(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Icon(icon, contentDescription = null, tint = if (selected) TactileTheme.Primary else TactileTheme.Muted, modifier = Modifier.size(16.dp))
+            Icon(
+                icon,
+                contentDescription = null,
+                tint = if (selected) TactileTheme.Primary else TactileTheme.Muted,
+                modifier = Modifier.size(16.dp),
+            )
             Text(
                 text = label,
                 style = MaterialTheme.typography.labelMedium,
@@ -677,7 +848,12 @@ private fun ScopeFooter(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Icon(icon, contentDescription = null, tint = TactileTheme.Muted, modifier = Modifier.size(14.dp))
+        Icon(
+            icon,
+            contentDescription = null,
+            tint = TactileTheme.Muted,
+            modifier = Modifier.size(14.dp),
+        )
         Text(label, style = MaterialTheme.typography.labelSmall, color = TactileTheme.Muted)
     }
 }
@@ -699,13 +875,14 @@ private fun SearchResultCard(
 ) {
     val node = nodeWithPin.node
     val score = calculateMatchScore(nodeWithPin, query)
-    val subtitle = buildString {
-        append(node.type.uppercase())
-        append(" • ")
-        append(node.status.uppercase())
-        if (!projectName.isNullOrBlank()) append(" • PROJECT: $projectName")
-        if (!areaName.isNullOrBlank()) append(" • AREA: $areaName")
-    }
+    val subtitle =
+        buildString {
+            append(node.type.uppercase())
+            append(" • ")
+            append(node.status.uppercase())
+            if (!projectName.isNullOrBlank()) append(" • PROJECT: $projectName")
+            if (!areaName.isNullOrBlank()) append(" • AREA: $areaName")
+        }
 
     Surface(
         onClick = onOpen,
@@ -731,7 +908,12 @@ private fun SearchResultCard(
                                 .background(iconTintForType(node.type).copy(alpha = 0.2f)),
                         contentAlignment = Alignment.Center,
                     ) {
-                        Icon(iconForType(node.type), contentDescription = null, tint = iconTintForType(node.type), modifier = Modifier.size(15.dp))
+                        Icon(
+                            iconForType(node.type),
+                            contentDescription = null,
+                            tint = iconTintForType(node.type),
+                            modifier = Modifier.size(15.dp),
+                        )
                     }
                     Column {
                         Text(
@@ -752,7 +934,10 @@ private fun SearchResultCard(
                 }
 
                 Column(horizontalAlignment = Alignment.End) {
-                    Surface(shape = RoundedCornerShape(999.dp), color = TactileTheme.Primary.copy(alpha = 0.2f)) {
+                    Surface(
+                        shape = RoundedCornerShape(999.dp),
+                        color = TactileTheme.Primary.copy(alpha = 0.2f),
+                    ) {
                         Text(
                             text = "MATCH: $score%",
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
@@ -787,7 +972,10 @@ private fun SearchResultCard(
                 Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     chips.forEach { chip ->
-                        Surface(shape = RoundedCornerShape(6.dp), color = TactileTheme.SurfaceHigh) {
+                        Surface(
+                            shape = RoundedCornerShape(6.dp),
+                            color = TactileTheme.SurfaceHigh,
+                        ) {
                             Text(
                                 text = chip,
                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
@@ -801,14 +989,30 @@ private fun SearchResultCard(
 
             Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
             Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                TextButton(onClick = onOpen) { Text("OPEN", style = MaterialTheme.typography.labelSmall) }
+                TextButton(onClick = onOpen) {
+                    Text(
+                        "OPEN",
+                        style = MaterialTheme.typography.labelSmall,
+                    )
+                }
                 TextButton(onClick = { onToggleDone(if (node.status == "done") "active" else "done") }) {
-                    Text(if (node.status == "done") "ACTIVATE" else "DONE", style = MaterialTheme.typography.labelSmall)
+                    Text(
+                        if (node.status == "done") "ACTIVATE" else "DONE",
+                        style = MaterialTheme.typography.labelSmall,
+                    )
                 }
                 TextButton(onClick = { onTogglePin(!nodeWithPin.isPinnedToToday) }) {
-                    Text(if (nodeWithPin.isPinnedToToday) "UNPIN" else "PIN", style = MaterialTheme.typography.labelSmall)
+                    Text(
+                        if (nodeWithPin.isPinnedToToday) "UNPIN" else "PIN",
+                        style = MaterialTheme.typography.labelSmall,
+                    )
                 }
-                TextButton(onClick = onArchive) { Text("ARCHIVE", style = MaterialTheme.typography.labelSmall) }
+                TextButton(onClick = onArchive) {
+                    Text(
+                        "ARCHIVE",
+                        style = MaterialTheme.typography.labelSmall,
+                    )
+                }
             }
         }
     }
@@ -821,24 +1025,42 @@ private fun calculateMatchScore(
     if (query.isBlank()) return 76 + (nodeWithPin.node.id % 20).toInt()
     val q = query.trim().lowercase()
     var score = 45
-    if (nodeWithPin.node.title.lowercase().contains(q)) score += 28
-    if (nodeWithPin.node.content.lowercase().contains(q)) score += 16
+    if (nodeWithPin.node.title
+            .lowercase()
+            .contains(q)
+    )
+    {
+        score += 28
+    }
+    if (nodeWithPin.node.content
+            .lowercase()
+            .contains(q)
+    ) {
+        score += 16
+    }
     if (nodeWithPin.tags.any { it.name.lowercase().contains(q) }) score += 9
-    if (nodeWithPin.node.type.lowercase().contains(q)) score += 6
+    if (nodeWithPin.node.type
+            .lowercase()
+            .contains(q)
+    ) {
+        score += 6
+    }
     return min(99, max(50, score))
 }
 
 private fun iconForType(type: String): ImageVector =
-    when (type.lowercase()) {
+    when (type.lowercase())
+    {
         "task" -> Icons.Default.TaskAlt
         "project" -> Icons.Default.Folder
         "note" -> Icons.Default.Description
-        "record" -> Icons.Default.InsertDriveFile
+        "record" -> Icons.AutoMirrored.Filled.InsertDriveFile
         else -> Icons.Default.Search
     }
 
 private fun iconTintForType(type: String): Color =
-    when (type.lowercase()) {
+    when (type.lowercase())
+    {
         "task" -> Color(0xFFFF7A8B)
         "project" -> Color(0xFF9D7AFF)
         "note" -> Color(0xFF8EA4FF)
@@ -852,11 +1074,12 @@ private fun formatRelativeTime(
 ): String {
     if (timestampMs <= 0L || timestampMs >= nowMs) return "JUST NOW"
     val minutes = ((nowMs - timestampMs) / 60_000L).toInt()
-    return when {
-        minutes < 1 -> "JUST NOW"
-        minutes < 60 -> "${minutes}M AGO"
-        minutes < 1_440 -> "${minutes / 60}H AGO"
+    return when
+    {
+        minutes < 1      -> "JUST NOW"
+        minutes < 60     -> "${minutes}M AGO"
+        minutes < 1_440  -> "${minutes / 60}H AGO"
         minutes < 10_080 -> "${minutes / 1_440}D AGO"
-        else -> "${minutes / 10_080}W AGO"
-    }
+            else -> "${minutes / 10_080}W AGO"
+        }
 }

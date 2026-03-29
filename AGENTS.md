@@ -75,11 +75,15 @@ collection of disconnected feature silos.
 ### Life object spine
 
 - Preferred core objects are `InboxEntry`, `Task`, `Note`, `Record`, `Project`, and `Area`.
-- Scheduling/reminders and relations are cross-cutting support structures, not competing top-level item types.
+- Scheduling/reminders and relations are cross-cutting support structures, not competing top-level
+  item types.
 - Treat “capture” as a workflow/state, not as permanent ontology.
-- Domains such as Health, Education, Relationships, and Finances should act as lenses over shared objects, not hard containers.
-- `Record` exists for temporal/log-like material; do not force journal/reflection/history data into generic notes by default.
-- Notes and tasks are distinct cognitive tools; do not collapse them into one universal item without a strong reason.
+- Domains such as Health, Education, Relationships, and Finances should act as lenses over shared
+  objects, not hard containers.
+- `Record` exists for temporal/log-like material; do not force journal/reflection/history data into
+  generic notes by default.
+- Notes and tasks are distinct cognitive tools; do not collapse them into one universal item without
+  a strong reason.
 
 ### ViewModel boundaries
 
@@ -97,7 +101,8 @@ collection of disconnected feature silos.
 - Prefer typed companion models/tables for deeper domain behavior.
 - Keep relation graph behavior (`RelationEntity`) as a first-class capability.
 - During current pre-alpha development, do not preserve weak legacy ontology just for compatibility.
-- Prefer collapsing legacy pseudo-types such as `idea`, `resource`, `vault`, `open_loop`, and similar special cases into the smaller life-object model when practical.
+- Prefer collapsing legacy pseudo-types such as `idea`, `resource`, `vault`, `open_loop`, and
+  similar special cases into the smaller life-object model when practical.
 - Projects should coordinate outcomes, not act as generic folders.
 - Areas should represent ongoing responsibility, not arbitrary filing categories.
 
@@ -173,8 +178,10 @@ When working in this repo, agents should:
 12. If users request is ambigous, not specific enough or you're not sure what the user meant - Ask
     before doing.
 13. After updating the codebase, check if tests also require updating.
-14. When simplifying ontology, prefer removing or demoting weak pseudo-types over renaming them and keeping the same conceptual sprawl.
+14. When simplifying ontology, prefer removing or demoting weak pseudo-types over renaming them and
+    keeping the same conceptual sprawl.
 15. Update docs when the preferred life-object model or lens framing changes.
+16. We prefer to avoid using deprecated patterns or APIs.
 
 ## Documentation touchpoints
 
