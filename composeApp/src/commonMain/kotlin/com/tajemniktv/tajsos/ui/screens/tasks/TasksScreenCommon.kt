@@ -5,6 +5,7 @@
 package com.tajemniktv.tajsos.ui.screens.tasks
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,7 +15,6 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Arrangement
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -28,7 +28,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
 @Composable
-internal fun taskTabChip(
+internal fun TaskTabChip(
     selected: Boolean,
     label: String,
     onClick: () -> Unit,
@@ -37,7 +37,7 @@ internal fun taskTabChip(
 }
 
 @Composable
-internal fun statusPill(state: TaskState) {
+internal fun StatusPill(state: TaskState) {
     val color =
         when (state)
         {
@@ -63,22 +63,28 @@ internal fun statusPill(state: TaskState) {
 }
 
 @Composable
-internal fun detailRow(
+internal fun DetailRow(
     label: String,
     value: String,
 ) {
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
         Text(label, style = MaterialTheme.typography.bodySmall, color = TactileTheme.Muted)
         Text(value, style = MaterialTheme.typography.bodySmall, color = TactileTheme.Text)
     }
 }
 
 @Composable
-internal fun contextRow(
+internal fun ContextRow(
     label: String,
     value: Int,
 ) {
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
         Text(label, style = MaterialTheme.typography.bodySmall, color = TactileTheme.Muted)
         Text(
             value.toString(),

@@ -7,7 +7,6 @@ package com.tajemniktv.tajsos.ui.components.sidebar
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -128,7 +127,7 @@ internal fun ContextSidebarScaffold(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Icon(
-                        Icons.Default.Add,
+                        item.screen?.icon ?: Icons.Default.Add,
                         contentDescription = null,
                         tint = TactileTheme.Muted,
                         modifier = Modifier.size(16.dp),

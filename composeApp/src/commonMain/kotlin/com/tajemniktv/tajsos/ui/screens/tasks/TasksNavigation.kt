@@ -38,7 +38,6 @@ enum class TasksTab(
     fun toScreen(): Screen = Screen.Sub(Screen.Tasks, routeSegment, label, icon)
 
     companion object {
-        fun fromRouteSegment(segment: String?): TasksTab =
-            entries.find { it.routeSegment == segment } ?: COMMAND
+        fun fromRouteSegment(segment: String?): TasksTab = entries.find { it.routeSegment == segment } ?: COMMAND
     }
 }

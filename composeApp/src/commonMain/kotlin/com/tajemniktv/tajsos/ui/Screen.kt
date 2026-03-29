@@ -6,13 +6,93 @@ package com.tajemniktv.tajsos.ui
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.AllInclusive
+import androidx.compose.material.icons.filled.AttachMoney
+import androidx.compose.material.icons.filled.BugReport
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Event
+import androidx.compose.material.icons.filled.Extension
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Gavel
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Inventory2
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.People
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Place
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Psychology
+import androidx.compose.material.icons.filled.QuestionMark
+import androidx.compose.material.icons.filled.RateReview
+import androidx.compose.material.icons.filled.RocketLaunch
+import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.filled.School
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Speed
+import androidx.compose.material.icons.filled.Storage
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.tajemniktv.tajsos.data.AppPack
 import com.tajemniktv.tajsos.data.PackRegistry
+import com.tajemniktv.tajsos.ui.Screen.Companion.fromRoute
 import com.tajemniktv.tajsos.ui.domain.DomainRegistry
 import org.jetbrains.compose.resources.StringResource
-import tajsos.composeapp.generated.resources.*
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.dash_decisions
+import tajsos.composeapp.generated.resources.nav_brain
+import tajsos.composeapp.generated.resources.nav_core
+import tajsos.composeapp.generated.resources.nav_execution
+import tajsos.composeapp.generated.resources.nav_status
+import tajsos.composeapp.generated.resources.nav_system
+import tajsos.composeapp.generated.resources.nav_systems
+import tajsos.composeapp.generated.resources.profile_title
+import tajsos.composeapp.generated.resources.screen_archive
+import tajsos.composeapp.generated.resources.screen_area
+import tajsos.composeapp.generated.resources.screen_cal
+import tajsos.composeapp.generated.resources.screen_cal_opts
+import tajsos.composeapp.generated.resources.screen_capacity
+import tajsos.composeapp.generated.resources.screen_dash
+import tajsos.composeapp.generated.resources.screen_education
+import tajsos.composeapp.generated.resources.screen_finances
+import tajsos.composeapp.generated.resources.screen_focus
+import tajsos.composeapp.generated.resources.screen_graph
+import tajsos.composeapp.generated.resources.screen_health
+import tajsos.composeapp.generated.resources.screen_identity
+import tajsos.composeapp.generated.resources.screen_inbox
+import tajsos.composeapp.generated.resources.screen_note
+import tajsos.composeapp.generated.resources.screen_notes
+import tajsos.composeapp.generated.resources.screen_open_loops
+import tajsos.composeapp.generated.resources.screen_opts
+import tajsos.composeapp.generated.resources.screen_places
+import tajsos.composeapp.generated.resources.screen_proj
+import tajsos.composeapp.generated.resources.screen_project
+import tajsos.composeapp.generated.resources.screen_protocols
+import tajsos.composeapp.generated.resources.screen_relationships
+import tajsos.composeapp.generated.resources.screen_review
+import tajsos.composeapp.generated.resources.screen_rules
+import tajsos.composeapp.generated.resources.screen_search
+import tajsos.composeapp.generated.resources.screen_settings_appearance
+import tajsos.composeapp.generated.resources.screen_settings_data
+import tajsos.composeapp.generated.resources.screen_settings_debug
+import tajsos.composeapp.generated.resources.screen_settings_feature_packs
+import tajsos.composeapp.generated.resources.screen_settings_health
+import tajsos.composeapp.generated.resources.screen_stats
+import tajsos.composeapp.generated.resources.screen_tasks
+import tajsos.composeapp.generated.resources.screen_templates
+import tajsos.composeapp.generated.resources.screen_time_architecture
+import tajsos.composeapp.generated.resources.screen_today
+import tajsos.composeapp.generated.resources.screen_track
+import tajsos.composeapp.generated.resources.screen_vaults
+import tajsos.composeapp.generated.resources.type_record
+import tajsos.composeapp.generated.resources.type_task
 
 /**
  * Screen defines the navigation graph of the app.
@@ -247,6 +327,23 @@ sealed class Screen(
         Icons.Default.Psychology,
     )
 
+    /**
+     * Generic sub-screen for any root screen with nested content/tabs.
+     *
+     * @param parent The parent root screen (e.g., Screen.Tasks).
+     * @param subRoute The unique sub-route segment (e.g., "inbox").
+     * @param label Resource for the sub-screen's display label.
+     * @param icon Icon representing the sub-screen.
+     * @param paramName The name of the query parameter used for sub-navigation.
+     */
+    class Sub(
+        val parent: Screen,
+        subRoute: String,
+        label: StringResource,
+        icon: ImageVector,
+        val paramName: String = "tab",
+    ) : Screen("${parent.route}?$paramName=$subRoute", label, icon, isRoot = false)
+
     companion object {
         /**
          * Finds the Screen corresponding to the base segment of a navigation route.
@@ -321,10 +418,22 @@ sealed class Screen(
                         OpenLoops,
                         Calendar,
                     ),
-                Res.string.nav_systems to listOf(Projects, Areas, Protocols, TimeArchitecture, Places),
+                Res.string.nav_systems to
+                    listOf(
+                        Projects,
+                        Areas,
+                        Protocols,
+                        TimeArchitecture,
+                        Places,
+                    ),
                 Res.string.nav_brain to listOf(Notes, Vaults, Rules),
                 Res.string.nav_status to listOf(Track, Insights, Capacity, Identity, Graph, Review),
-                Res.string.nav_system to listOf(*DomainRegistry.screens.toTypedArray(), Archive, Settings),
+                Res.string.nav_system to
+                    listOf(
+                        *DomainRegistry.screens.toTypedArray(),
+                        Archive,
+                        Settings,
+                    ),
             )
         }
 
@@ -420,6 +529,7 @@ sealed class Screen(
                 SettingsFeaturePacks -> Settings
                 SettingsData -> Settings
                 SettingsDebug -> Settings
+                is Sub -> screen.parent
                 else -> screen
             }
     }
