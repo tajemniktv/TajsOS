@@ -75,6 +75,11 @@ import com.tajemniktv.tajsos.ui.screens.ReviewScreen
 import com.tajemniktv.tajsos.ui.screens.RulesScreen
 import com.tajemniktv.tajsos.ui.screens.SearchScreen
 import com.tajemniktv.tajsos.ui.screens.SettingsScreen
+import com.tajemniktv.tajsos.ui.screens.SettingsAboutScreen
+import com.tajemniktv.tajsos.ui.screens.SettingsDataScreen
+import com.tajemniktv.tajsos.ui.screens.SettingsDebugScreen
+import com.tajemniktv.tajsos.ui.screens.SettingsFeaturePacksScreen
+import com.tajemniktv.tajsos.ui.screens.SettingsHealthScreen
 import com.tajemniktv.tajsos.ui.screens.TaskDetailScreen
 import com.tajemniktv.tajsos.ui.screens.TasksScreen
 import com.tajemniktv.tajsos.ui.screens.TemplatesScreen
@@ -473,12 +478,22 @@ private fun AppScaffold(
                 TemplatesScreen(viewModel, onBack = { navController.popBackStack() })
             }
             composable(Screen.Settings.route) {
-                SettingsScreen(
-                    viewModel,
-                    onNavigateToProfile = { onNavigate(Screen.Profile.route) },
-                    onNavigateToCalendarSettings = { onNavigate(Screen.CalendarSettings.route) },
-                    onNavigateToTemplates = { onNavigate(Screen.Templates.route) },
-                )
+                SettingsScreen(viewModel)
+            }
+            composable(Screen.SettingsAbout.route) {
+                SettingsAboutScreen(onNavigateToProfile = { onNavigate(Screen.Profile.route) })
+            }
+            composable(Screen.SettingsHealth.route) {
+                SettingsHealthScreen(onNavigateToHealth = { onNavigate(Screen.Health.route) })
+            }
+            composable(Screen.SettingsFeaturePacks.route) {
+                SettingsFeaturePacksScreen(viewModel = viewModel)
+            }
+            composable(Screen.SettingsData.route) {
+                SettingsDataScreen(viewModel = viewModel)
+            }
+            composable(Screen.SettingsDebug.route) {
+                SettingsDebugScreen()
             }
             composable(Screen.CalendarSettings.route) {
                 CalendarSettingsScreen(viewModel)

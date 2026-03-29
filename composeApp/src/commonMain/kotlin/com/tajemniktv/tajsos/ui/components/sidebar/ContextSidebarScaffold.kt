@@ -5,6 +5,7 @@
 package com.tajemniktv.tajsos.ui.components.sidebar
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 
 /**
@@ -40,6 +42,7 @@ internal fun ContextSidebarScaffold(
     panelLabel: String,
     sections: List<SidebarSection>,
     onBackToMainSidebar: () -> Unit,
+    onNavigate: (Screen) -> Unit = {},
 ) {
     Row(
         modifier =
@@ -105,7 +108,14 @@ internal fun ContextSidebarScaffold(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 12.dp, vertical = 2.dp),
+                        .padding(horizontal = 12.dp, vertical = 2.dp)
+                        .then(
+                            if (item.screen != null) {
+                                Modifier.clickable { onNavigate(item.screen) }
+                            } else {
+                                Modifier
+                            },
+                        ),
                 color = Color.Transparent,
                 shape = RoundedCornerShape(TactileTheme.RadiusSm),
                 border = BorderStroke(1.dp, TactileTheme.Border.copy(alpha = 0.25f)),
@@ -125,7 +135,7 @@ internal fun ContextSidebarScaffold(
                     )
                     Spacer(Modifier.width(10.dp))
                     Text(
-                        item,
+                        item.label,
                         style = MaterialTheme.typography.labelLarge,
                         color = TactileTheme.Muted,
                         fontSize = 12.sp,
@@ -143,5 +153,13 @@ internal fun ContextSidebarScaffold(
  */
 internal data class SidebarSection(
     val title: String,
-    val items: List<String>,
+    val items: List<SidebarItem>,
+)
+
+/**
+ * Sidebar item model with an optional navigation target.
+ */
+internal data class SidebarItem(
+    val label: String,
+    val screen: Screen? = null,
 )

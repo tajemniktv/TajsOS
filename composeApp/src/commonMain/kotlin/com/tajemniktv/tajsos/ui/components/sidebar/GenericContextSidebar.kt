@@ -18,11 +18,13 @@ internal fun GenericContextSidebar(
     contextHeader: String,
     panelLabel: String,
     onBackToMainSidebar: () -> Unit,
+    onNavigate: (Screen) -> Unit,
 ) {
     ContextSidebarScaffold(
         contextHeader = contextHeader,
         panelLabel = panelLabel,
         onBackToMainSidebar = onBackToMainSidebar,
+        onNavigate = onNavigate,
         sections = subSidebarSectionsFor(screen) ?: placeholderSectionsFor(screen),
     )
 }
@@ -34,27 +36,27 @@ private fun placeholderSectionsFor(screen: Screen): List<SidebarSection> {
             title = "PRIMARY",
             items =
                 listOf(
-                    "$screenTag overview placeholder",
-                    "$screenTag shortcuts placeholder",
-                    "$screenTag quick filters placeholder",
+                    SidebarItem("$screenTag overview placeholder"),
+                    SidebarItem("$screenTag shortcuts placeholder"),
+                    SidebarItem("$screenTag quick filters placeholder"),
                 ),
         ),
         SidebarSection(
             title = "WORKFLOW",
             items =
                 listOf(
-                    "$screenTag actions placeholder",
-                    "$screenTag pinned context placeholder",
-                    "$screenTag automation placeholder",
+                    SidebarItem("$screenTag actions placeholder"),
+                    SidebarItem("$screenTag pinned context placeholder"),
+                    SidebarItem("$screenTag automation placeholder"),
                 ),
         ),
         SidebarSection(
             title = "INSIGHTS",
             items =
                 listOf(
-                    "$screenTag metrics placeholder",
-                    "$screenTag anomalies placeholder",
-                    "$screenTag recommendations placeholder",
+                    SidebarItem("$screenTag metrics placeholder"),
+                    SidebarItem("$screenTag anomalies placeholder"),
+                    SidebarItem("$screenTag recommendations placeholder"),
                 ),
         ),
     )

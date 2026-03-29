@@ -103,6 +103,41 @@ sealed class Screen(
 
     data object Settings : Screen("settings", Res.string.screen_opts, Icons.Default.Settings)
 
+    data object SettingsAbout : Screen(
+        "settings_about",
+        Res.string.screen_settings_about,
+        Icons.Default.Info,
+        isRoot = false,
+    )
+
+    data object SettingsHealth : Screen(
+        "settings_health",
+        Res.string.screen_settings_health,
+        Icons.Default.Favorite,
+        isRoot = false,
+    )
+
+    data object SettingsFeaturePacks : Screen(
+        "settings_feature_packs",
+        Res.string.screen_settings_feature_packs,
+        Icons.Default.Extension,
+        isRoot = false,
+    )
+
+    data object SettingsData : Screen(
+        "settings_data",
+        Res.string.screen_settings_data,
+        Icons.Default.Storage,
+        isRoot = false,
+    )
+
+    data object SettingsDebug : Screen(
+        "settings_debug",
+        Res.string.screen_settings_debug,
+        Icons.Default.BugReport,
+        isRoot = false,
+    )
+
     data object Templates : Screen(
         "templates",
         Res.string.screen_templates,
@@ -234,6 +269,11 @@ sealed class Screen(
                 ProjectDetail,
                 AreaDetail,
                 CalendarSettings,
+                SettingsAbout,
+                SettingsHealth,
+                SettingsFeaturePacks,
+                SettingsData,
+                SettingsDebug,
                 Dashboard,
                 Inbox,
                 Search,
@@ -373,6 +413,11 @@ sealed class Screen(
                 AreaDetail -> Areas
                 CalendarSettings -> Calendar
                 Templates -> Settings
+                SettingsAbout -> Settings
+                SettingsHealth -> Settings
+                SettingsFeaturePacks -> Settings
+                SettingsData -> Settings
+                SettingsDebug -> Settings
                 else -> screen
             }
     }

@@ -125,6 +125,10 @@ fun SidebarContent(
                     contextHeader = contextualHeader,
                     panelLabel = panelLabel,
                     onBackToMainSidebar = onBackToMainSidebar,
+                    onNavigate = { target ->
+                        onNavigate(target)
+                        onNavigateFromSidebar()
+                    },
                 )
             } else {
                 MainSidebar(

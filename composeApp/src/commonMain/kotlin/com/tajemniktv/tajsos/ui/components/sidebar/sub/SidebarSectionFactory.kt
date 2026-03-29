@@ -5,6 +5,7 @@
 package com.tajemniktv.tajsos.ui.components.sidebar.sub
 
 import com.tajemniktv.tajsos.ui.components.sidebar.SidebarSection
+import com.tajemniktv.tajsos.ui.components.sidebar.SidebarItem
 
 /**
  * Builds the standard 3-section contextual sidebar model.
@@ -15,7 +16,7 @@ internal fun sidebarSections(
     insights: List<String>,
 ): List<SidebarSection> =
     listOf(
-        SidebarSection(title = "PRIMARY", items = primary),
-        SidebarSection(title = "WORKFLOW", items = workflow),
-        SidebarSection(title = "INSIGHTS", items = insights),
+        SidebarSection(title = "PRIMARY", items = primary.map(::SidebarItem)),
+        SidebarSection(title = "WORKFLOW", items = workflow.map(::SidebarItem)),
+        SidebarSection(title = "INSIGHTS", items = insights.map(::SidebarItem)),
     )

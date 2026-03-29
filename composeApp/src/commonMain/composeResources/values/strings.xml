@@ -40,6 +40,11 @@
     <string name="screen_area">AREA</string>
     <string name="screen_project">PROJECT</string>
     <string name="screen_opts">OPTS</string>
+    <string name="screen_settings_about">ABOUT</string>
+    <string name="screen_settings_health">HEALTH</string>
+    <string name="screen_settings_feature_packs">FEATURE PACKS</string>
+    <string name="screen_settings_data">DATA</string>
+    <string name="screen_settings_debug">DEBUG</string>
     <string name="screen_templates">TEMPLATES</string>
     <string name="screen_review">REVIEW</string>
     <string name="screen_ops">OPS</string>
