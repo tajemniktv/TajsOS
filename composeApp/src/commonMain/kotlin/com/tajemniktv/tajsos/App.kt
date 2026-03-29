@@ -53,11 +53,9 @@ import androidx.navigation.compose.rememberNavController
 import com.tajemniktv.tajsos.data.ModeEntity
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.data.TemplateEntity
-import com.tajemniktv.tajsos.data.UserProfile
 import com.tajemniktv.tajsos.ui.DetailNavigationContract
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
-import com.tajemniktv.tajsos.ui.screens.RecordDetailScreen
 import com.tajemniktv.tajsos.ui.components.common.CaptureSheet
 import com.tajemniktv.tajsos.ui.components.layout.AppLayout
 import com.tajemniktv.tajsos.ui.components.layout.DesktopSearchSurface
@@ -71,15 +69,16 @@ import com.tajemniktv.tajsos.ui.screens.IdentityScreen
 import com.tajemniktv.tajsos.ui.screens.NoteDetailScreen
 import com.tajemniktv.tajsos.ui.screens.ProfileScreen
 import com.tajemniktv.tajsos.ui.screens.ProjectDetailScreen
+import com.tajemniktv.tajsos.ui.screens.RecordDetailScreen
 import com.tajemniktv.tajsos.ui.screens.ReviewScreen
 import com.tajemniktv.tajsos.ui.screens.RulesScreen
 import com.tajemniktv.tajsos.ui.screens.SearchScreen
-import com.tajemniktv.tajsos.ui.screens.SettingsScreen
+import com.tajemniktv.tajsos.ui.screens.SettingsAppearanceScreen
 import com.tajemniktv.tajsos.ui.screens.SettingsDataScreen
 import com.tajemniktv.tajsos.ui.screens.SettingsDebugScreen
 import com.tajemniktv.tajsos.ui.screens.SettingsFeaturePacksScreen
 import com.tajemniktv.tajsos.ui.screens.SettingsHealthScreen
-import com.tajemniktv.tajsos.ui.screens.SettingsAppearanceScreen
+import com.tajemniktv.tajsos.ui.screens.SettingsScreen
 import com.tajemniktv.tajsos.ui.screens.TaskDetailScreen
 import com.tajemniktv.tajsos.ui.screens.TasksScreen
 import com.tajemniktv.tajsos.ui.screens.TemplatesScreen
@@ -103,7 +102,7 @@ import com.tajemniktv.tajsos.ui.screens.places.PlacesScreen
 import com.tajemniktv.tajsos.ui.screens.projects.ProjectsScreen
 import com.tajemniktv.tajsos.ui.screens.protocols.ProtocolsScreen
 import com.tajemniktv.tajsos.ui.screens.relationships.RelationshipsScreen
-import com.tajemniktv.tajsos.ui.screens.study.EducationScreen
+import com.tajemniktv.tajsos.ui.screens.study.StudyScreen
 import com.tajemniktv.tajsos.ui.screens.today.TodayScreen
 import com.tajemniktv.tajsos.ui.screens.vaults.VaultsScreen
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
@@ -469,8 +468,8 @@ private fun AppScaffold(
             composable(Screen.Finances.route) { FinancesScreen(viewModel, onEditNode) }
             composable(Screen.Health.route) { HealthScreen(viewModel, onEditNode) }
             composable(Screen.Relationships.route) { RelationshipsScreen(viewModel, onEditNode) }
-            composable(Screen.Education.route) { EducationScreen(viewModel, onEditNode) }
-            composable(Screen.StudyLegacy.route) { EducationScreen(viewModel, onEditNode) }
+            composable(Screen.Education.route) { StudyScreen(viewModel, onEditNode) }
+            composable(Screen.StudyLegacy.route) { StudyScreen(viewModel, onEditNode) }
             composable(Screen.Rules.route) { RulesScreen(viewModel, onEditNode) }
             composable(Screen.Vaults.route) { VaultsScreen(viewModel, onEditNode) }
             composable(Screen.Capacity.route) { CapacityScreen(viewModel) }
