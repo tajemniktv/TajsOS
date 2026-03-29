@@ -785,11 +785,23 @@ class AppRepository(
     suspend fun insertProtocolHistory(history: ProtocolHistoryEntity) = protocolDao.insertProtocolHistory(history)
 
     // Decisions
+
+    /**
+     * Retrieves a reactive stream of decision nodes filtered by their specific decision status.
+     *
+     * @param status The decision status to filter by (e.g., 'decided', 'pending').
+     * @return A Flow emitting a list of matching decision [NodeEntity] objects.
+     */
     fun getDecisionsByStatus(status: String): Flow<List<NodeEntity>> =
         nodeDao.getNodesByType("decision").map { nodes ->
             nodes.filter { it.decisionStatus == status }
         }
 
+    /**
+     * Observes decision nodes that have not yet been triaged or processed from the inbox.
+     *
+     * @return A Flow emitting a list of decision [NodeEntity] objects with an active inbox state.
+     */
     fun getDecisionInbox(): Flow<List<NodeEntity>> =
         nodeDao.getNodesByType("decision").map { nodes ->
             nodes.filter { it.inboxState }
