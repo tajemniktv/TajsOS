@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -42,31 +41,11 @@ import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.common.CaptureSheet
 import com.tajemniktv.tajsos.ui.components.layout.AppLayout
 import com.tajemniktv.tajsos.ui.components.layout.rememberAppShellState
-import com.tajemniktv.tajsos.ui.screens.AreaDetailScreen
-import com.tajemniktv.tajsos.ui.screens.CalendarSettingsScreen
-import com.tajemniktv.tajsos.ui.screens.IdentityScreen
-import com.tajemniktv.tajsos.ui.screens.NoteDetailScreen
-import com.tajemniktv.tajsos.ui.screens.ProfileScreen
-import com.tajemniktv.tajsos.ui.screens.ProjectDetailScreen
-import com.tajemniktv.tajsos.ui.screens.RecordDetailScreen
-import com.tajemniktv.tajsos.ui.screens.ReviewScreen
-import com.tajemniktv.tajsos.ui.screens.RulesScreen
-import com.tajemniktv.tajsos.ui.screens.SearchScreen
-import com.tajemniktv.tajsos.ui.screens.SettingsAppearanceScreen
-import com.tajemniktv.tajsos.ui.screens.SettingsDataScreen
-import com.tajemniktv.tajsos.ui.screens.SettingsDebugScreen
-import com.tajemniktv.tajsos.ui.screens.SettingsFeaturePacksScreen
-import com.tajemniktv.tajsos.ui.screens.SettingsHealthScreen
-import com.tajemniktv.tajsos.ui.screens.SettingsScreen
-import com.tajemniktv.tajsos.ui.screens.TaskDetailScreen
-import com.tajemniktv.tajsos.ui.screens.tasks.TasksScreen
-import com.tajemniktv.tajsos.ui.screens.tasks.TasksTab
-import com.tajemniktv.tajsos.ui.screens.TemplatesScreen
-import com.tajemniktv.tajsos.ui.screens.TimeArchitectureScreen
-import com.tajemniktv.tajsos.ui.screens.TrackScreen
 import com.tajemniktv.tajsos.ui.screens.archive.ArchiveScreen
 import com.tajemniktv.tajsos.ui.screens.areas.AreasScreen
+import com.tajemniktv.tajsos.ui.screens.areas.detail.AreaDetailScreen
 import com.tajemniktv.tajsos.ui.screens.calendar.CalendarScreen
+import com.tajemniktv.tajsos.ui.screens.calendar.CalendarSettingsScreen
 import com.tajemniktv.tajsos.ui.screens.capacity.CapacityScreen
 import com.tajemniktv.tajsos.ui.screens.dashboard.DashboardScreen
 import com.tajemniktv.tajsos.ui.screens.decisions.DecisionsScreen
@@ -74,16 +53,31 @@ import com.tajemniktv.tajsos.ui.screens.finance.FinancesScreen
 import com.tajemniktv.tajsos.ui.screens.focus.FocusScreen
 import com.tajemniktv.tajsos.ui.screens.graph.GraphScreen
 import com.tajemniktv.tajsos.ui.screens.health.HealthScreen
+import com.tajemniktv.tajsos.ui.screens.identity.IdentityScreen
 import com.tajemniktv.tajsos.ui.screens.inbox.InboxScreen
 import com.tajemniktv.tajsos.ui.screens.insights.InsightsScreen
 import com.tajemniktv.tajsos.ui.screens.notes.NotesScreen
+import com.tajemniktv.tajsos.ui.screens.notes.detail.NoteDetailScreen
 import com.tajemniktv.tajsos.ui.screens.openloops.OpenLoopsScreen
 import com.tajemniktv.tajsos.ui.screens.places.PlacesScreen
+import com.tajemniktv.tajsos.ui.screens.profile.ProfileScreen
 import com.tajemniktv.tajsos.ui.screens.projects.ProjectsScreen
+import com.tajemniktv.tajsos.ui.screens.projects.detail.ProjectDetailScreen
 import com.tajemniktv.tajsos.ui.screens.protocols.ProtocolsScreen
+import com.tajemniktv.tajsos.ui.screens.records.detail.RecordDetailScreen
 import com.tajemniktv.tajsos.ui.screens.relationships.RelationshipsScreen
+import com.tajemniktv.tajsos.ui.screens.review.ReviewScreen
+import com.tajemniktv.tajsos.ui.screens.rules.RulesScreen
+import com.tajemniktv.tajsos.ui.screens.search.SearchScreen
+import com.tajemniktv.tajsos.ui.screens.settings.SettingsScreen
 import com.tajemniktv.tajsos.ui.screens.study.StudyScreen
+import com.tajemniktv.tajsos.ui.screens.tasks.TasksScreen
+import com.tajemniktv.tajsos.ui.screens.tasks.TasksTab
+import com.tajemniktv.tajsos.ui.screens.tasks.detail.TaskDetailScreen
+import com.tajemniktv.tajsos.ui.screens.templates.TemplatesScreen
+import com.tajemniktv.tajsos.ui.screens.timearchitecture.TimeArchitectureScreen
 import com.tajemniktv.tajsos.ui.screens.today.TodayScreen
+import com.tajemniktv.tajsos.ui.screens.track.TrackScreen
 import com.tajemniktv.tajsos.ui.screens.vaults.VaultsScreen
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
@@ -139,7 +133,7 @@ fun App(
     var selectedTasksTab by rememberSaveable { mutableStateOf(TasksTab.COMMAND) }
     val shellState = rememberAppShellState()
 
-    val screen = remember(currentDestination) { Screen.fromRoute(currentDestination?.route) }
+    remember(currentDestination) { Screen.fromRoute(currentDestination?.route) }
 
     TajsOSTheme(darkTheme = isDarkTheme) {
         BoxWithConstraints {
@@ -154,7 +148,8 @@ fun App(
                     }
 
                 if (resolvedRoute.startsWith(Screen.Tasks.route + "?tab=")) {
-                    val tabSegment = resolvedRoute.substringAfter("?tab=", missingDelimiterValue = "")
+                    val tabSegment =
+                        resolvedRoute.substringAfter("?tab=", missingDelimiterValue = "")
                     selectedTasksTab = TasksTab.fromRouteSegment(tabSegment)
                 }
 
@@ -328,19 +323,19 @@ private fun AppScaffold(
                 SettingsScreen(viewModel)
             }
             composable(Screen.SettingsHealth.route) {
-                SettingsHealthScreen(viewModel = viewModel)
+                SettingsScreen(viewModel, screenId = "health")
             }
             composable(Screen.SettingsAppearance.route) {
-                SettingsAppearanceScreen(viewModel = viewModel)
+                SettingsScreen(viewModel, screenId = "appearance")
             }
             composable(Screen.SettingsFeaturePacks.route) {
-                SettingsFeaturePacksScreen(viewModel = viewModel)
+                SettingsScreen(viewModel, screenId = "feature_packs")
             }
             composable(Screen.SettingsData.route) {
-                SettingsDataScreen(viewModel = viewModel)
+                SettingsScreen(viewModel, screenId = "data")
             }
             composable(Screen.SettingsDebug.route) {
-                SettingsDebugScreen()
+                SettingsScreen(viewModel, screenId = "debug")
             }
             composable(Screen.CalendarSettings.route) {
                 CalendarSettingsScreen(viewModel)

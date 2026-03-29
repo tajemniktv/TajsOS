@@ -22,7 +22,7 @@
     <string name="nav_uptime_value">99.9%</string>
 
     <!-- Screens -->
-    <string name="screen_dash">DASH</string>
+    <string name="screen_dash">DASHBOARD</string>
     <string name="screen_inbox">INBOX</string>
     <string name="screen_search">FIND</string>
     <string name="screen_today">TODAY</string>
