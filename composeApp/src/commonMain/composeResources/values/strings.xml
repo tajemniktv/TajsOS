@@ -34,7 +34,7 @@
     <string name="screen_stats">STATS</string>
     <string name="screen_archive">ARCHIVE</string>
     <string name="screen_cal">CAL</string>
-    <string name="screen_cal_opts">CAL OPTS</string>
+    <string name="screen_cal_opts">CALENDAR SETTINGS</string>
     <string name="screen_graph">GRAPH</string>
     <string name="screen_proj">PROJ</string>
     <string name="screen_area">AREA</string>

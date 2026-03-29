@@ -41,6 +41,5 @@ internal fun subSidebarSectionsFor(screen: Screen): List<SidebarSection>? =
         Screen.Education -> educationSubSidebarSections()
         Screen.Archive -> archiveSubSidebarSections()
         Screen.Settings -> settingsSubSidebarSections()
-        Screen.Profile -> profileSubSidebarSections()
         else -> null
     }

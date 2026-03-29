@@ -29,7 +29,7 @@
     <string name="screen_stats">STATYSTYKI</string>
     <string name="screen_archive">ARCHIWUM</string>
     <string name="screen_cal">KAL</string>
-    <string name="screen_cal_opts">OPCJE KAL</string>
+    <string name="screen_cal_opts">USTAWIENIA KALENDARZA</string>
     <string name="screen_graph">GRAF</string>
     <string name="screen_proj">PROJ</string>
     <string name="screen_area">OBSZAR</string>

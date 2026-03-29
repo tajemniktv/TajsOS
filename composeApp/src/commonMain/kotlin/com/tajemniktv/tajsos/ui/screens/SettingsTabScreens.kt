@@ -17,8 +17,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -29,6 +31,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -40,12 +43,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.AppPack
+import com.tajemniktv.tajsos.data.MedicationEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.common_back
+import tajsos.composeapp.generated.resources.med_brand_names
+import tajsos.composeapp.generated.resources.med_delete
+import tajsos.composeapp.generated.resources.med_dosage
+import tajsos.composeapp.generated.resources.med_is_optional
+import tajsos.composeapp.generated.resources.med_save
+import tajsos.composeapp.generated.resources.med_substance
+import tajsos.composeapp.generated.resources.med_take_at
+import tajsos.composeapp.generated.resources.profile_add_med
+import tajsos.composeapp.generated.resources.profile_medications
 import tajsos.composeapp.generated.resources.settings_biometric_desc
 import tajsos.composeapp.generated.resources.settings_biometric_lock
 import tajsos.composeapp.generated.resources.settings_biometric_unavailable
@@ -59,24 +73,60 @@ import tajsos.composeapp.generated.resources.settings_force_crash
  */
 @Composable
 fun SettingsHealthScreen(
-    onNavigateToHealth: () -> Unit,
+    viewModel: MainViewModel,
 ) {
+    val medications by viewModel.medications.collectAsState()
+    var showAddMedicationDialog by remember { mutableStateOf(false) }
+
     SettingsSimpleScaffold(
         title = "HEALTH",
-        description = "Open health-related routines, signals, and tracking surfaces.",
+        description = "Manage medications used by tracking and health workflows.",
     ) {
-        Button(
-            onClick = onNavigateToHealth,
+        Row(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(TactileTheme.RadiusMd),
-            colors =
-                ButtonDefaults.buttonColors(
-                    containerColor = TactileTheme.Surface,
-                    contentColor = TactileTheme.Primary,
-                ),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text("Open Health")
+            Text(
+                stringResource(Res.string.profile_medications),
+                style = MaterialTheme.typography.titleMedium,
+                color = TactileTheme.Text,
+            )
+            OutlinedButton(
+                onClick = { showAddMedicationDialog = true },
+                shape = RoundedCornerShape(TactileTheme.RadiusSm),
+            ) {
+                Text(stringResource(Res.string.profile_add_med))
+            }
         }
+
+        Spacer(Modifier.height(TactileTheme.SpacingMd))
+
+        if (medications.isEmpty()) {
+            Text(
+                "No medication entries configured yet.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = TactileTheme.Muted,
+            )
+        } else {
+            medications.forEach { medication ->
+                SettingsMedicationItem(
+                    medication = medication,
+                    onDelete = { viewModel.deleteMedication(medication) },
+                )
+                Spacer(Modifier.height(TactileTheme.SpacingSm))
+            }
+        }
+    }
+
+    if (showAddMedicationDialog) {
+        SettingsAddMedicationDialog(
+            onDismiss = { showAddMedicationDialog = false },
+            onSave = { substance, brands, dosage, hour, optional ->
+                viewModel.addMedication(substance, brands, dosage, hour, optional)
+                showAddMedicationDialog = false
+            },
+        )
     }
 }
 
@@ -364,4 +414,127 @@ private fun SettingsSimpleScaffold(
             content()
         }
     }
+}
+
+/**
+ * Renders one medication row for the settings health screen.
+ */
+@Composable
+private fun SettingsMedicationItem(
+    medication: MedicationEntity,
+    onDelete: () -> Unit,
+) {
+    Column(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .background(
+                    color = TactileTheme.Surface,
+                    shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                )
+                .padding(TactileTheme.SpacingMd),
+    ) {
+        Text(
+            medication.substance,
+            style = MaterialTheme.typography.titleSmall,
+            color = TactileTheme.Text,
+        )
+        if (medication.brandNames.isNotBlank()) {
+            Spacer(Modifier.height(TactileTheme.SpacingXs))
+            Text(
+                medication.brandNames,
+                style = MaterialTheme.typography.bodySmall,
+                color = TactileTheme.Muted,
+            )
+        }
+        Spacer(Modifier.height(TactileTheme.SpacingSm))
+        Text(
+            buildString {
+                if (!medication.dosage.isNullOrBlank()) append(medication.dosage)
+                if (medication.takeAtHour != null) {
+                    if (isNotBlank()) append(" • ")
+                    append("@ ${medication.takeAtHour}:00")
+                }
+                if (medication.isOptional) {
+                    if (isNotBlank()) append(" • ")
+                    append("Optional")
+                }
+            }.ifBlank { "No dosage schedule configured." },
+            style = MaterialTheme.typography.bodySmall,
+            color = TactileTheme.Muted,
+        )
+        Spacer(Modifier.height(TactileTheme.SpacingSm))
+        TextButton(onClick = onDelete) {
+            Text(stringResource(Res.string.med_delete))
+        }
+    }
+}
+
+/**
+ * Dialog used by the settings health tab to add medication records.
+ */
+@Composable
+private fun SettingsAddMedicationDialog(
+    onDismiss: () -> Unit,
+    onSave: (String, String, String?, Int?, Boolean) -> Unit,
+) {
+    var substance by remember { mutableStateOf("") }
+    var brands by remember { mutableStateOf("") }
+    var dosage by remember { mutableStateOf("") }
+    var hour by remember { mutableStateOf("") }
+    var isOptional by remember { mutableStateOf(false) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(Res.string.profile_add_med)) },
+        text = {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+            ) {
+                OutlinedTextField(
+                    value = substance,
+                    onValueChange = { substance = it },
+                    label = { Text(stringResource(Res.string.med_substance)) },
+                    shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                )
+                OutlinedTextField(
+                    value = brands,
+                    onValueChange = { brands = it },
+                    label = { Text(stringResource(Res.string.med_brand_names)) },
+                    shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                )
+                OutlinedTextField(
+                    value = dosage,
+                    onValueChange = { dosage = it },
+                    label = { Text(stringResource(Res.string.med_dosage)) },
+                    shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                )
+                OutlinedTextField(
+                    value = hour,
+                    onValueChange = { hour = it },
+                    label = { Text(stringResource(Res.string.med_take_at)) },
+                    shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Checkbox(checked = isOptional, onCheckedChange = { isOptional = it })
+                    Text(stringResource(Res.string.med_is_optional))
+                }
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    onSave(substance, brands, dosage.takeIf { it.isNotEmpty() }, hour.toIntOrNull(), isOptional)
+                },
+                enabled = substance.isNotBlank(),
+            ) {
+                Text(stringResource(Res.string.med_save))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(Res.string.common_back))
+            }
+        },
+    )
 }

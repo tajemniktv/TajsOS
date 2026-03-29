@@ -480,7 +480,7 @@ private fun AppScaffold(
                 SettingsScreen(viewModel)
             }
             composable(Screen.SettingsHealth.route) {
-                SettingsHealthScreen(onNavigateToHealth = { onNavigate(Screen.Health.route) })
+                SettingsHealthScreen(viewModel = viewModel)
             }
             composable(Screen.SettingsFeaturePacks.route) {
                 SettingsFeaturePacksScreen(viewModel = viewModel)

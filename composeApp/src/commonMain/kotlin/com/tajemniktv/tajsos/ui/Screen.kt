@@ -148,6 +148,7 @@ sealed class Screen(
         "profile",
         Res.string.profile_title,
         Icons.Default.Person,
+        isRoot = false,
     )
 
     data object Decisions : Screen(
@@ -405,6 +406,7 @@ sealed class Screen(
                 AreaDetail -> Areas
                 CalendarSettings -> Calendar
                 Templates -> Settings
+                Profile -> Settings
                 SettingsHealth -> Settings
                 SettingsFeaturePacks -> Settings
                 SettingsData -> Settings
