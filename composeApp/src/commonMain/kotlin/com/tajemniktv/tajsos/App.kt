@@ -503,6 +503,7 @@ private fun AppScaffold(
                     projectId,
                     onEditNode,
                     onBack = { navController.popBackStack() },
+                    isDesktop = isDesktop,
                 )
             }
             composable(Screen.AreaDetail.route) { backStackEntry ->
@@ -524,6 +525,7 @@ private fun AppScaffold(
                     },
                     onEditNode = onEditNode,
                     onBack = { navController.popBackStack() },
+                    isDesktop = isDesktop,
                 )
             }
             composable(Screen.NoteDetail.route) { backStackEntry ->

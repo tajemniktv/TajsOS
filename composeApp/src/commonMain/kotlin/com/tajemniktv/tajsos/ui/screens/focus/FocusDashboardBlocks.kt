@@ -4,9 +4,8 @@
 
 package com.tajemniktv.tajsos.ui.screens.focus
 
-import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,20 +16,27 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.Inbox
+import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.Stop
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
@@ -40,267 +46,145 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tajemniktv.tajsos.data.ItemKind
+import com.tajemniktv.tajsos.data.NodeEntity
+import com.tajemniktv.tajsos.data.TaskState
+import com.tajemniktv.tajsos.data.isTaskItem
+import com.tajemniktv.tajsos.data.taskStateOrNull
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.components.common.AbortSlider
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
-import tajsos.composeapp.generated.resources.focus_engage
+import tajsos.composeapp.generated.resources.focus_capture
+import tajsos.composeapp.generated.resources.focus_capture_hint
+import tajsos.composeapp.generated.resources.focus_capture_save
+import tajsos.composeapp.generated.resources.focus_complete_task
+import tajsos.composeapp.generated.resources.focus_current_task
+import tajsos.composeapp.generated.resources.focus_end_session
+import tajsos.composeapp.generated.resources.focus_focus_minutes_today
+import tajsos.composeapp.generated.resources.focus_mode
 import tajsos.composeapp.generated.resources.focus_next_tiny_step
 import tajsos.composeapp.generated.resources.focus_no_active_task
+import tajsos.composeapp.generated.resources.focus_open_task
+import tajsos.composeapp.generated.resources.focus_pause
+import tajsos.composeapp.generated.resources.focus_quick_wins
 import tajsos.composeapp.generated.resources.focus_recent_sessions
+import tajsos.composeapp.generated.resources.focus_replace_step
+import tajsos.composeapp.generated.resources.focus_resume
 import tajsos.composeapp.generated.resources.focus_session_duration
+import tajsos.composeapp.generated.resources.focus_sessions_today
+import tajsos.composeapp.generated.resources.focus_start
+import tajsos.composeapp.generated.resources.focus_start_now
+import tajsos.composeapp.generated.resources.focus_suggested_now
+import tajsos.composeapp.generated.resources.focus_switch_target
 import tajsos.composeapp.generated.resources.focus_unknown_task
 
 object FocusDashboardBlockRegistry {
-    private val renderers: Map<String, FocusDashboardBlockRenderer> =
-        mapOf("focus_main" to ::renderFocusMainBlock)
-
+    private val renderers: Map<String, FocusDashboardBlockRenderer> = mapOf("focus_main" to ::renderFocusMainBlock)
     fun resolve(id: String): FocusDashboardBlockRenderer? = renderers[id]
 }
 
-@Composable
-private fun renderFocusMainBlock(context: FocusDashboardContext) {
-    FocusMainBlock(viewModel = context.viewModel)
-}
+@Composable private fun renderFocusMainBlock(context: FocusDashboardContext) = FocusMainBlock(context.viewModel)
 
-/**
- * Displays the focus cockpit with a circular timer dial, active task controls, and recent sessions.
- *
- * The screen preserves existing focus behavior by using the same view model actions for starting,
- * stopping, and editing focus content while presenting the data with a denser visual layout.
- *
- * @param viewModel The MainViewModel exposing focus state, nodes, sessions, and actions.
- */
 @Composable
 internal fun FocusMainBlock(viewModel: MainViewModel) {
     val activeSession by viewModel.activeSession.collectAsState()
     val todayNodes by viewModel.todayNodes.collectAsState()
     val allNodes by viewModel.allNodes.collectAsState()
     val allSessions by viewModel.allSessions.collectAsState()
-
-    val currentNode =
-        remember(activeSession, todayNodes, allNodes) {
-            activeSession?.let { session ->
-                todayNodes.find { it.id == session.nodeId }
-                    ?: allNodes.find { it.node.id == session.nodeId }?.node
-            } ?: todayNodes.firstOrNull()
-        }
-
-    var timeSeconds by remember { mutableIntStateOf(0) }
-    LaunchedEffect(activeSession) {
-        if (activeSession != null) {
-            while (true) {
-                val now =
-                    kotlin.time.Clock.System
-                        .now()
-                        .toEpochMilliseconds()
-                val session = activeSession
-                if (session != null) {
-                    timeSeconds = ((now - session.startedAt) / 1000L).toInt()
-                }
-                delay(1000L)
-            }
-        } else {
-            timeSeconds = 0
-        }
+    val tasks = remember(todayNodes, allNodes) {
+        (todayNodes + allNodes.map { it.node }).filter { it.isTaskItem() && it.status != "archived" && it.taskStateOrNull() != TaskState.DONE }.distinctBy { it.id }
     }
-
-    if (currentNode == null) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text(
-                stringResource(Res.string.focus_no_active_task),
-                style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Muted,
-            )
-        }
+    val current = remember(activeSession, tasks) { activeSession?.let { s -> tasks.find { it.id == s.nodeId } } ?: tasks.firstOrNull() }
+    if (current == null) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text(stringResource(Res.string.focus_no_active_task), color = TactileTheme.Muted) }
         return
     }
+    val suggestions = remember(tasks, activeSession) { tasks.sortedByDescending { (if (it.id == activeSession?.nodeId) 20 else 0) + (if (it.dueAt != null) 8 else 0) + (if ((it.estimatedMinutes ?: 999) <= 45) 4 else 0) }.take(5) }
+    val quickWins = remember(tasks) { tasks.filter { (it.estimatedMinutes ?: Int.MAX_VALUE) <= 15 || it.energyLevel == 1 || it.friction == "easy" }.take(4) }
+    var seconds by remember { mutableIntStateOf(0) }
+    LaunchedEffect(activeSession) {
+        if (activeSession != null) while (true) { seconds = ((kotlin.time.Clock.System.now().toEpochMilliseconds() - (activeSession?.startedAt ?: 0L)) / 1000L).toInt(); delay(1000L) } else seconds = 0
+    }
+    var step by remember(current.id) { mutableStateOf(current.nextSmallestStep ?: current.content) }
+    var capture by remember { mutableStateOf("") }
+    val sessionsToday = allSessions.count()
+    val minutesToday = allSessions.sumOf { it.durationSec } / 60
+    val timer = "${(seconds / 60).toString().padStart(2, '0')}:${(seconds % 60).toString().padStart(2, '0')}"
 
-    val minutes = timeSeconds / 60
-    val seconds = timeSeconds % 60
-    val timeString = "${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}"
-    val targetDurationSec = 25 * 60
-    val progress =
-        if (activeSession == null) 0f else (timeSeconds % targetDurationSec) / targetDurationSec.toFloat()
-    val finishedSessions = allSessions.count { it.endedAt != null }
-    val totalFocusedMinutes = allSessions.sumOf { it.durationSec } / 60
-
-    Box(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .background(
-                    brush =
-                        Brush.verticalGradient(
-                            colors =
-                                listOf(
-                                    Color(0xFF090A12),
-                                    Color(0xFF0D1021),
-                                    Color(0xFF08090F),
-                                ),
-                        ),
-                ),
-    ) {
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(
-                        horizontal = TactileTheme.SpacingLg,
-                        vertical = TactileTheme.SpacingMd,
-                    ),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Text(
-                text = "DEEP WORK MODE",
-                style =
-                    MaterialTheme.typography.labelSmall.copy(
-                        letterSpacing = 2.sp,
-                        color = TactileTheme.Primary.copy(alpha = 0.8f),
-                    ),
-            )
-            Spacer(Modifier.height(TactileTheme.SpacingSm))
-            Text(
-                text = currentNode.title,
-                style =
-                    MaterialTheme.typography.titleLarge.copy(
-                        color = TactileTheme.Text,
-                        fontWeight = FontWeight.SemiBold,
-                    ),
-                textAlign = TextAlign.Center,
-            )
-
-            Spacer(Modifier.height(TactileTheme.SpacingLg))
-            FocusTimerDial(
-                timeString = timeString,
-                progress = progress,
-                finishedSessions = finishedSessions,
-                totalFocusedMinutes = totalFocusedMinutes,
-            )
-            Spacer(Modifier.height(TactileTheme.SpacingLg))
-
-            OutlinedTextField(
-                value = currentNode.content,
-                onValueChange = { viewModel.updateNode(currentNode.copy(content = it)) },
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(18.dp)),
-                label = {
-                    Text(
-                        stringResource(Res.string.focus_next_tiny_step),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Muted,
-                    )
-                },
-                textStyle = MaterialTheme.typography.bodyLarge.copy(color = TactileTheme.Text),
-                singleLine = true,
-                colors =
-                    OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = TactileTheme.Primary,
-                        unfocusedBorderColor = TactileTheme.Border,
-                        focusedContainerColor = Color(0x22262B3A),
-                        unfocusedContainerColor = Color(0x1A262B3A),
-                        focusedTextColor = TactileTheme.Text,
-                        unfocusedTextColor = TactileTheme.Text,
-                    ),
-            )
-
-            Spacer(Modifier.height(TactileTheme.SpacingMd))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
-            ) {
-                FocusActionCard(
-                    modifier = Modifier.weight(1f),
-                    icon = if (activeSession == null) Icons.Default.PlayArrow else Icons.Default.Stop,
-                    label = if (activeSession == null) stringResource(Res.string.focus_engage) else "STOP",
-                    onClick = {
-                        if (activeSession == null) {
-                            viewModel.startFocusSession(currentNode.id)
-                        } else {
-                            viewModel.stopFocusSession()
-                        }
-                    },
-                    isDanger = activeSession != null,
-                )
-                FocusStatCard(
-                    modifier = Modifier.weight(1f),
-                    label = stringResource(Res.string.focus_recent_sessions),
-                    value = finishedSessions.toString().padStart(2, '0'),
-                )
-                FocusStatCard(
-                    modifier = Modifier.weight(1f),
-                    label = "FOCUS MIN",
-                    value = totalFocusedMinutes.toString().padStart(2, '0'),
-                )
+    Column(modifier = Modifier.fillMaxSize().background(TactileTheme.Background).verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Surface(color = TactileTheme.Surface, shape = RoundedCornerShape(TactileTheme.RadiusMd), border = BorderStroke(1.dp, TactileTheme.GhostBorder)) {
+            Column(modifier = Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(stringResource(Res.string.focus_mode), color = TactileTheme.Primary, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
+                Text(stringResource(Res.string.focus_current_task), color = TactileTheme.Muted, style = MaterialTheme.typography.labelMedium)
+                Text(current.title, style = MaterialTheme.typography.headlineSmall, color = TactileTheme.Text, fontWeight = FontWeight.Bold)
+                Text(timer, style = MaterialTheme.typography.displayLarge.copy(letterSpacing = (-1).sp), color = TactileTheme.Text)
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    AssistChip(onClick = {}, label = { Text("${stringResource(Res.string.focus_sessions_today)}: $sessionsToday") })
+                    AssistChip(onClick = {}, label = { Text("${stringResource(Res.string.focus_focus_minutes_today)}: $minutesToday") })
+                }
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+                    Button(onClick = { if (activeSession == null) viewModel.startFocusSession(current.id) else viewModel.stopFocusSession(completed = false, interrupted = true) }, modifier = Modifier.weight(1f)) {
+                        Icon(if (activeSession == null) Icons.Default.PlayArrow else Icons.Default.Pause, null); Spacer(Modifier.size(6.dp)); Text(if (activeSession == null) stringResource(Res.string.focus_start) else stringResource(Res.string.focus_pause))
+                    }
+                    OutlinedButton(onClick = { viewModel.resumeLastSession() }, modifier = Modifier.weight(1f)) { Icon(Icons.Default.PlayArrow, null); Spacer(Modifier.size(6.dp)); Text(stringResource(Res.string.focus_resume)) }
+                    OutlinedButton(onClick = { viewModel.updateNodeStatus(current, "done") }, modifier = Modifier.weight(1f)) { Icon(Icons.Default.Check, null); Spacer(Modifier.size(6.dp)); Text(stringResource(Res.string.focus_complete_task)) }
+                    OutlinedButton(onClick = { viewModel.stopFocusSession() }, modifier = Modifier.weight(1f)) { Icon(Icons.Default.Stop, null); Spacer(Modifier.size(6.dp)); Text(stringResource(Res.string.focus_end_session)) }
+                }
             }
+        }
 
-            if (activeSession != null) {
-                Spacer(Modifier.height(TactileTheme.SpacingMd))
-                AbortSlider(onAbort = { viewModel.stopFocusSession() })
+        Surface(color = TactileTheme.Surface, shape = RoundedCornerShape(TactileTheme.RadiusMd), border = BorderStroke(1.dp, TactileTheme.GhostBorder)) {
+            Column(modifier = Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(stringResource(Res.string.focus_next_tiny_step), style = MaterialTheme.typography.titleMedium, color = TactileTheme.Text, fontWeight = FontWeight.SemiBold)
+                OutlinedTextField(value = step, onValueChange = { step = it }, modifier = Modifier.fillMaxWidth(), colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = TactileTheme.Primary, unfocusedBorderColor = TactileTheme.Border))
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+                    OutlinedButton(onClick = { viewModel.updateNode(current.copy(nextSmallestStep = step)) }, modifier = Modifier.weight(1f)) { Text(stringResource(Res.string.focus_replace_step)) }
+                    OutlinedButton(onClick = { viewModel.updateNodeStatus(current, "done") }, modifier = Modifier.weight(1f)) { Text(stringResource(Res.string.focus_complete_task)) }
+                    OutlinedButton(onClick = { viewModel.togglePin(current, true) }, modifier = Modifier.weight(1f)) { Text(stringResource(Res.string.focus_open_task)) }
+                    OutlinedButton(onClick = { if (activeSession == null) viewModel.startFocusSession(current.id) }, modifier = Modifier.weight(1f)) { Text(stringResource(Res.string.focus_start_now)) }
+                }
             }
+        }
 
-            Spacer(Modifier.height(TactileTheme.SpacingMd))
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                items(allSessions.take(5)) { session ->
-                    if (session.endedAt != null) {
-                        val sessionNode =
-                            remember(session, allNodes) {
-                                allNodes.find { it.node.id == session.nodeId }?.node
-                            }
-                        Surface(
-                            shape = RoundedCornerShape(14.dp),
-                            color = Color(0x1AFFFFFF),
-                            border =
-                                androidx.compose.foundation.BorderStroke(
-                                    1.dp,
-                                    TactileTheme.Border,
-                                ),
-                            modifier = Modifier.width(230.dp),
-                        ) {
-                            Column(
-                                modifier = Modifier.padding(12.dp),
-                                verticalArrangement = Arrangement.spacedBy(4.dp),
-                            ) {
-                                Text(
-                                    text =
-                                        sessionNode?.title
-                                            ?: stringResource(Res.string.focus_unknown_task),
-                                    style = MaterialTheme.typography.labelLarge.copy(color = TactileTheme.Text),
-                                    maxLines = 1,
-                                )
-                                Text(
-                                    text =
-                                        stringResource(
-                                            Res.string.focus_session_duration,
-                                            session.durationSec / 60,
-                                            session.durationSec % 60,
-                                        ),
-                                    style = MaterialTheme.typography.labelSmall.copy(color = TactileTheme.Muted),
-                                )
-                            }
+        FocusListCard(stringResource(Res.string.focus_suggested_now), suggestions) { task ->
+            if (activeSession != null) viewModel.stopFocusSession(completed = false, interrupted = true, note = "Switched target")
+            viewModel.startFocusSession(task.id)
+        }
+        FocusListCard(stringResource(Res.string.focus_quick_wins), quickWins) { task ->
+            if (activeSession != null) viewModel.stopFocusSession(completed = false, interrupted = true, note = "Switched target")
+            viewModel.startFocusSession(task.id)
+        }
+
+        Surface(color = TactileTheme.Surface, shape = RoundedCornerShape(TactileTheme.RadiusMd), border = BorderStroke(1.dp, TactileTheme.GhostBorder)) {
+            Column(modifier = Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(stringResource(Res.string.focus_capture), style = MaterialTheme.typography.titleMedium, color = TactileTheme.Text, fontWeight = FontWeight.SemiBold)
+                OutlinedTextField(value = capture, onValueChange = { capture = it }, modifier = Modifier.fillMaxWidth(), placeholder = { Text(stringResource(Res.string.focus_capture_hint)) }, colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = TactileTheme.Primary, unfocusedBorderColor = TactileTheme.Border))
+                Button(onClick = { if (capture.isNotBlank()) { viewModel.captureInboxEntry(capture, current.areaId, current.projectId, ItemKind.TASK, "focus"); capture = "" } }, modifier = Modifier.fillMaxWidth()) {
+                    Icon(Icons.Default.Inbox, null); Spacer(Modifier.size(6.dp)); Text(stringResource(Res.string.focus_capture_save))
+                }
+            }
+        }
+
+        Surface(color = TactileTheme.Surface, shape = RoundedCornerShape(TactileTheme.RadiusMd), border = BorderStroke(1.dp, TactileTheme.GhostBorder)) {
+            Column(modifier = Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(stringResource(Res.string.focus_recent_sessions), style = MaterialTheme.typography.titleMedium, color = TactileTheme.Text, fontWeight = FontWeight.SemiBold)
+                LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.height(220.dp)) {
+                    items(allSessions.take(8)) { s ->
+                        val title = allNodes.find { it.node.id == s.nodeId }?.node?.title ?: stringResource(Res.string.focus_unknown_task)
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                            Column { Text(title, style = MaterialTheme.typography.bodyMedium, color = TactileTheme.Text); Text(stringResource(Res.string.focus_session_duration, s.durationSec / 60, s.durationSec % 60), style = MaterialTheme.typography.bodySmall, color = TactileTheme.Muted) }
+                            Icon(Icons.Default.History, null, tint = TactileTheme.Muted)
                         }
                     }
                 }
@@ -310,190 +194,26 @@ internal fun FocusMainBlock(viewModel: MainViewModel) {
 }
 
 @Composable
-private fun FocusTimerDial(
-    timeString: String,
-    progress: Float,
-    finishedSessions: Int,
-    totalFocusedMinutes: Int,
-) {
-    Box(
-        modifier =
-            Modifier
-                .size(360.dp)
-                .background(Color(0x120D1233), RoundedCornerShape(28.dp))
-                .border(1.dp, Color(0x332C3358), RoundedCornerShape(28.dp)),
-        contentAlignment = Alignment.Center,
-    ) {
-        Canvas(modifier = Modifier.size(300.dp)) {
-            val strokeWidth = 12.dp.toPx()
-            val sweep = 360f * progress.coerceIn(0f, 1f)
-            drawArc(
-                color = Color(0x1FB4A9FF),
-                startAngle = -90f,
-                sweepAngle = 360f,
-                useCenter = false,
-                style = Stroke(width = strokeWidth, cap = StrokeCap.Round),
-                topLeft = Offset(strokeWidth / 2f, strokeWidth / 2f),
-                size = Size(size.width - strokeWidth, size.height - strokeWidth),
-            )
-            drawArc(
-                brush = Brush.linearGradient(colors = listOf(Color(0xFF8B5CF6), Color(0xFFAA77FF))),
-                startAngle = -90f,
-                sweepAngle = sweep,
-                useCenter = false,
-                style = Stroke(width = strokeWidth, cap = StrokeCap.Round),
-                topLeft = Offset(strokeWidth / 2f, strokeWidth / 2f),
-                size = Size(size.width - strokeWidth, size.height - strokeWidth),
-            )
-        }
-
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                text = timeString,
-                style =
-                    MaterialTheme.typography.displayLarge.copy(
-                        fontSize = 86.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        letterSpacing = (-2).sp,
-                    ),
-                color = TactileTheme.Text,
-            )
-            Spacer(Modifier.height(10.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(22.dp)) {
-                FocusDialMetric(
-                    value = finishedSessions.toString().padStart(2, '0'),
-                    label = "SESSIONS",
-                )
-                FocusDialMetric(
-                    value = totalFocusedMinutes.toString().padStart(2, '0'),
-                    label = "FOCUS MIN",
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun FocusDialMetric(
-    value: String,
-    label: String,
-) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = value,
-            style = MaterialTheme.typography.titleMedium.copy(color = TactileTheme.Text),
-        )
-        Text(
-            text = label,
-            style =
-                MaterialTheme.typography.labelSmall.copy(
-                    color = TactileTheme.Muted,
-                    letterSpacing = 1.sp,
-                ),
-        )
-    }
-}
-
-@Composable
-private fun FocusActionCard(
-    modifier: Modifier = Modifier,
-    icon: ImageVector,
-    label: String,
-    onClick: () -> Unit,
-    isDanger: Boolean = false,
-) {
-    ElevatedCard(
-        modifier =
-            modifier.border(
-                width = 1.dp,
-                color = TactileTheme.Border,
-                shape = RoundedCornerShape(18.dp),
-            ),
-        shape = RoundedCornerShape(18.dp),
-        colors = CardDefaults.elevatedCardColors(containerColor = Color(0x1E1F2436)),
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 0.dp),
-    ) {
-        Button(
-            onClick = onClick,
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .height(98.dp),
-            colors =
-                ButtonDefaults.buttonColors(
-                    containerColor = Color.Transparent,
-                    contentColor = if (isDanger) Color(0xFFFF6B8A) else TactileTheme.Primary,
-                ),
-            shape = RoundedCornerShape(18.dp),
-        ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Box(
-                    modifier =
-                        Modifier
-                            .size(38.dp)
-                            .background(Color(0x20000000), CircleShape),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Icon(icon, contentDescription = null)
+private fun FocusListCard(title: String, nodes: List<NodeEntity>, onPick: (NodeEntity) -> Unit) {
+    Surface(color = TactileTheme.Surface, shape = RoundedCornerShape(TactileTheme.RadiusMd), border = BorderStroke(1.dp, TactileTheme.GhostBorder)) {
+        Column(modifier = Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(title, style = MaterialTheme.typography.titleMedium, color = TactileTheme.Text, fontWeight = FontWeight.SemiBold)
+            if (nodes.isEmpty()) {
+                Text(stringResource(Res.string.focus_no_active_task), style = MaterialTheme.typography.bodySmall, color = TactileTheme.Muted)
+            } else {
+                nodes.forEach { task ->
+                    ElevatedCard(colors = CardDefaults.elevatedCardColors(containerColor = TactileTheme.SurfaceLow), shape = RoundedCornerShape(TactileTheme.RadiusMd), elevation = CardDefaults.elevatedCardElevation(defaultElevation = 0.dp)) {
+                        Row(modifier = Modifier.fillMaxWidth().padding(10.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                Text(task.title, style = MaterialTheme.typography.bodyLarge, color = TactileTheme.Text)
+                                val tiny = listOfNotNull(task.nextSmallestStep, task.estimatedMinutes?.let { "${it}m" }).joinToString(" • ").ifBlank { "-" }
+                                Text(tiny, style = MaterialTheme.typography.bodySmall, color = TactileTheme.Muted)
+                            }
+                            OutlinedButton(onClick = { onPick(task) }) { Icon(Icons.Default.SkipNext, null); Spacer(Modifier.size(6.dp)); Text(stringResource(Res.string.focus_switch_target)) }
+                        }
+                    }
                 }
-                Spacer(Modifier.height(8.dp))
-                Text(
-                    text = label,
-                    style =
-                        MaterialTheme.typography.labelMedium.copy(
-                            letterSpacing = 1.sp,
-                            fontWeight = FontWeight.SemiBold,
-                        ),
-                )
             }
-        }
-    }
-}
-
-@Composable
-private fun FocusStatCard(
-    modifier: Modifier = Modifier,
-    label: String,
-    value: String,
-) {
-    ElevatedCard(
-        modifier =
-            modifier
-                .height(98.dp)
-                .border(
-                    width = 1.dp,
-                    color = TactileTheme.Border,
-                    shape = RoundedCornerShape(18.dp),
-                ),
-        shape = RoundedCornerShape(18.dp),
-        colors = CardDefaults.elevatedCardColors(containerColor = Color(0x1E1F2436)),
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 0.dp),
-    ) {
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(12.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Text(
-                text = value,
-                style =
-                    MaterialTheme.typography.headlineSmall.copy(
-                        color = TactileTheme.Text,
-                        fontWeight = FontWeight.Bold,
-                    ),
-            )
-            Spacer(Modifier.height(4.dp))
-            Text(
-                text = label,
-                style =
-                    MaterialTheme.typography.labelSmall.copy(
-                        color = TactileTheme.Muted,
-                        letterSpacing = 1.sp,
-                    ),
-            )
         }
     }
 }
