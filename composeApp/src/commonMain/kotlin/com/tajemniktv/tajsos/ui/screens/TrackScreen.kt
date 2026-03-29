@@ -356,9 +356,10 @@ fun TrackHistoryItem(entry: TrackEntryEntity) {
                 StatusChip("ENG", entry.energyScore)
                 StatusChip("COG", entry.focusScore)
                 StatusChip("SYS", entry.anxietyScore)
-                if (entry.sleepScore != null) {
+                val sleep = entry.sleepScore
+                if (sleep != null) {
                     Text(
-                        stringResource(Res.string.track_history_sleep, entry.sleepScore!!),
+                        stringResource(Res.string.track_history_sleep, sleep),
                         style = MaterialTheme.typography.labelSmall,
                         color = TactileTheme.Text,
                     )

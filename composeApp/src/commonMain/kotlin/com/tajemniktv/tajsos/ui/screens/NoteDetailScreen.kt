@@ -459,7 +459,8 @@ fun NoteDetailScreen(
                             }
                         }
 
-                        if (node.nextSmallestStep != null) {
+                        val nextStep = node.nextSmallestStep
+                        if (nextStep != null) {
                             Surface(
                                 modifier = Modifier.fillMaxWidth(),
                                 color = TactileTheme.Accent.copy(alpha = 0.1f),
@@ -475,7 +476,7 @@ fun NoteDetailScreen(
                                         fontWeight = FontWeight.Bold,
                                     )
                                     BasicTextField(
-                                        value = node.nextSmallestStep!!,
+                                        value = nextStep,
                                         onValueChange = {
                                             viewModel.updateNode(
                                                 node.copy(
@@ -552,8 +553,9 @@ fun NoteDetailScreen(
                                             color = TactileTheme.Muted,
                                             fontSize = 8.sp,
                                         )
+                                        val rating = node.rating
                                         Text(
-                                            if (node.rating != null) "⭐".repeat(node.rating!!) else "UNRATED",
+                                            if (rating != null) "⭐".repeat(rating) else "UNRATED",
                                             style = MaterialTheme.typography.bodyMedium,
                                             fontWeight = FontWeight.Bold,
                                         )
