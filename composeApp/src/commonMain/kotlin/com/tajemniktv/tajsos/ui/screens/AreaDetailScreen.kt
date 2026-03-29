@@ -4,12 +4,6 @@
 
 package com.tajemniktv.tajsos.ui.screens
 
-import com.tajemniktv.tajsos.data.ProjectState
-import com.tajemniktv.tajsos.data.TaskState
-import com.tajemniktv.tajsos.data.isNoteItem
-import com.tajemniktv.tajsos.data.isTaskItem
-import com.tajemniktv.tajsos.data.projectStateOrNull
-import com.tajemniktv.tajsos.data.taskStateOrNull
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -38,7 +32,6 @@ import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.EventBusy
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.History
-import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -55,6 +48,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.tajemniktv.tajsos.data.ProjectState
+import com.tajemniktv.tajsos.data.TaskState
+import com.tajemniktv.tajsos.data.isNoteItem
+import com.tajemniktv.tajsos.data.isTaskItem
+import com.tajemniktv.tajsos.data.projectStateOrNull
+import com.tajemniktv.tajsos.data.taskStateOrNull
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.cards.InfoCard
 import com.tajemniktv.tajsos.ui.components.cards.LinkedNodeItem
@@ -240,9 +239,11 @@ fun AreaDetailScreen(
                         )
                         InfoCard(
                             title = "ACTIVE TASKS",
-                            value = nodesWithPinInArea.count {
-                                it.node.isTaskItem() && it.node.taskStateOrNull() == TaskState.ACTIVE
-                            }.toString(),
+                            value =
+                                nodesWithPinInArea
+                                    .count {
+                                        it.node.isTaskItem() && it.node.taskStateOrNull() == TaskState.ACTIVE
+                                    }.toString(),
                             icon = Icons.Default.CheckCircle,
                             color = TactileTheme.Accent,
                             modifier = Modifier.weight(1f),
@@ -284,7 +285,13 @@ fun AreaDetailScreen(
 
                 // Active Projects
                 val activeProjects =
-                    projects.filter { it.projectStateOrNull() in setOf(ProjectState.ACTIVE, ProjectState.ON_HOLD) }
+                    projects.filter {
+                        it.projectStateOrNull() in
+                            setOf(
+                                ProjectState.ACTIVE,
+                                ProjectState.ON_HOLD,
+                            )
+                    }
                 if (activeProjects.isNotEmpty()) {
                     Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
                         DetailSectionHeader(
@@ -295,7 +302,8 @@ fun AreaDetailScreen(
                             LinkedNodeItem(
                                 title = project.title,
                                 subtitle =
-                                    when (project.projectStateOrNull()) {
+                                    when (project.projectStateOrNull())
+                                    {
                                         ProjectState.ON_HOLD -> "On hold project"
                                         else -> "Active project"
                                     },
@@ -317,21 +325,23 @@ fun AreaDetailScreen(
                                 LinkedNodeItem(
                                     title = item.node.title,
                                     subtitle =
-                                        when {
-                                            item.node.isTaskItem() -> "TASK"
-                                            item.node.type == "record" -> "RECORD"
-                                            item.node.isNoteItem() -> "NOTE"
-                                            item.node.projectStateOrNull() != null -> "PROJECT"
-                                            else -> item.node.type.uppercase()
-                                        },
+                                        when
+                                            {
+                                                item.node.isTaskItem() -> "TASK"
+                                                item.node.type == "record" -> "RECORD"
+                                                item.node.isNoteItem() -> "NOTE"
+                                                item.node.projectStateOrNull() != null -> "PROJECT"
+                                                else -> item.node.type.uppercase()
+                                            },
                                     icon =
-                                        when {
-                                            item.node.isTaskItem() -> Icons.Default.CheckCircle
-                                            item.node.type == "record" -> Icons.Default.History
-                                            item.node.isNoteItem() -> Icons.Default.Description
-                                            item.node.projectStateOrNull() != null -> Icons.Default.Folder
-                                            else -> Icons.Default.Description
-                                        },
+                                        when
+                                            {
+                                                item.node.isTaskItem() -> Icons.Default.CheckCircle
+                                                item.node.type == "record" -> Icons.Default.History
+                                                item.node.isNoteItem() -> Icons.Default.Description
+                                                item.node.projectStateOrNull() != null -> Icons.Default.Folder
+                                                else -> Icons.Default.Description
+                                            },
                                     onClick = { onEditNode(item.node.id) },
                                 )
                             }
