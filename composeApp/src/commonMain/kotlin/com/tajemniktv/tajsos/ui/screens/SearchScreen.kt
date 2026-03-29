@@ -25,22 +25,15 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.InsertDriveFile
-import androidx.compose.material.icons.filled.Archive
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Folder
-import androidx.compose.material.icons.filled.History
-import androidx.compose.material.icons.filled.InsertDriveFile
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.Place
-import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.TaskAlt
-import androidx.compose.material.icons.filled.Tune
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -60,7 +53,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeWithPin
@@ -148,12 +140,6 @@ fun SearchScreen(
     val context10Min = stringResource(Res.string.context_10_min)
     val contextCommute = stringResource(Res.string.context_commute)
     val contextWaiting = stringResource(Res.string.context_waiting)
-    val hasContextFilter =
-        searchLocationContextFilter != null ||
-            searchEnergyContextFilter != null ||
-            searchDeviceContextFilter != null ||
-            searchSocialContextFilter != null ||
-            searchTimeWindowContextFilter != null
     val recentQueries =
         remember(searchQuery) {
             buildList {
@@ -170,32 +156,12 @@ fun SearchScreen(
     BoxWithConstraints(
         modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd),
     ) {
-        val showScopeRail = maxWidth >= 960.dp
         val showRightPanel = maxWidth >= 1280.dp
 
         Row(
             modifier = Modifier.fillMaxSize(),
             horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
         ) {
-            if (showScopeRail) {
-                SearchScopeRail(
-                    searchTypeFilter = searchTypeFilter,
-                    hasContextFilter = hasContextFilter,
-                    hasTimeFilter = searchTimeHorizonFilter != null,
-                    onTypeFilterChange = { viewModel.updateSearchTypeFilter(it) },
-                    onContextToggle = { viewModel.applyContextPreset(if (hasContextFilter) null else "high_focus") },
-                    onTimeToggle = {
-                        viewModel.applyTimeHorizonFilter(
-                            if (searchTimeHorizonFilter == null) "today" else null,
-                        )
-                    },
-                    onNewQuery = {
-                        viewModel.updateSearchQuery("")
-                        viewModel.clearSearchFilters()
-                    },
-                )
-            }
-
             Column(modifier = Modifier.weight(1f)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     TextField(
@@ -234,21 +200,6 @@ fun SearchScreen(
                     onQueryClick = { viewModel.updateSearchQuery(it) },
                 )
                 Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
-                if (!showScopeRail) {
-                    SearchScopeChips(
-                        searchTypeFilter = searchTypeFilter,
-                        hasContextFilter = hasContextFilter,
-                        hasTimeFilter = searchTimeHorizonFilter != null,
-                        onTypeFilterChange = { viewModel.updateSearchTypeFilter(it) },
-                        onContextToggle = { viewModel.applyContextPreset(if (hasContextFilter) null else "high_focus") },
-                        onTimeToggle = {
-                            viewModel.applyTimeHorizonFilter(
-                                if (searchTimeHorizonFilter == null) "today" else null,
-                            )
-                        },
-                    )
-                    Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
-                }
 
                 // Filters Row
                 LazyRow(
@@ -551,128 +502,6 @@ private fun RecentQueriesRow(
     }
 }
 
-/**
- * Renders the search scope rail shown on wider desktop layouts.
- */
-@Composable
-private fun SearchScopeRail(
-    searchTypeFilter: String?,
-    hasContextFilter: Boolean,
-    hasTimeFilter: Boolean,
-    onTypeFilterChange: (String?) -> Unit,
-    onContextToggle: () -> Unit,
-    onTimeToggle: () -> Unit,
-    onNewQuery: () -> Unit,
-) {
-    Column(
-        modifier = Modifier.width(216.dp).fillMaxHeight(),
-        verticalArrangement = Arrangement.spacedBy(6.dp),
-    ) {
-        Text("SEARCH", style = MaterialTheme.typography.headlineSmall, color = TactileTheme.Text)
-        Text(
-            "ACTIVE FILTERS",
-            style = MaterialTheme.typography.labelSmall,
-            color = TactileTheme.Muted,
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        ScopeEntry(
-            "ALL OBJECTS",
-            Icons.Default.Search,
-            selected = searchTypeFilter == null && !hasContextFilter && !hasTimeFilter,
-        ) { onTypeFilterChange(null) }
-        ScopeEntry(
-            "TASKS",
-            Icons.Default.TaskAlt,
-            selected = searchTypeFilter == "task",
-        ) { onTypeFilterChange(if (searchTypeFilter == "task") null else "task") }
-        ScopeEntry(
-            "PROJECTS",
-            Icons.Default.Folder,
-            selected = searchTypeFilter == "project",
-        ) { onTypeFilterChange(if (searchTypeFilter == "project") null else "project") }
-        ScopeEntry(
-            "NOTES",
-            Icons.Default.Description,
-            selected = searchTypeFilter == "note",
-        ) { onTypeFilterChange(if (searchTypeFilter == "note") null else "note") }
-        ScopeEntry(
-            "RECORDS",
-            Icons.Default.InsertDriveFile,
-            selected = searchTypeFilter == "record",
-        ) { onTypeFilterChange(if (searchTypeFilter == "record") null else "record") }
-        ScopeEntry(
-            "CONTEXT",
-            Icons.Default.Tune,
-            selected = hasContextFilter,
-            onClick = onContextToggle,
-        )
-        ScopeEntry("TIME", Icons.Default.Schedule, selected = hasTimeFilter, onClick = onTimeToggle)
-
-        Spacer(modifier = Modifier.weight(1f))
-        Button(
-            onClick = onNewQuery,
-            modifier = Modifier.fillMaxWidth().height(42.dp),
-            shape = RoundedCornerShape(10.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = TactileTheme.Primary),
-        ) {
-            Text(
-                "NEW QUERY",
-                style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Background,
-            )
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        ScopeFooter("RECENT QUERIES", Icons.Default.History)
-        ScopeFooter("ARCHIVE", Icons.Default.Archive)
-    }
-}
-
-/**
- * Renders a horizontal scope picker for smaller layouts.
- */
-@Composable
-private fun SearchScopeChips(
-    searchTypeFilter: String?,
-    hasContextFilter: Boolean,
-    hasTimeFilter: Boolean,
-    onTypeFilterChange: (String?) -> Unit,
-    onContextToggle: () -> Unit,
-    onTimeToggle: () -> Unit,
-) {
-    LazyRow(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
-        item {
-            FilterChip(
-                selected = searchTypeFilter == null && !hasContextFilter && !hasTimeFilter,
-                onClick = { onTypeFilterChange(null) },
-                label = { Text("ALL") },
-            )
-        }
-        item {
-            FilterChip(
-                selected = searchTypeFilter == "task",
-                onClick = { onTypeFilterChange(if (searchTypeFilter == "task") null else "task") },
-                label = { Text("TASKS") },
-            )
-        }
-        item {
-            FilterChip(
-                selected = searchTypeFilter == "project",
-                onClick = { onTypeFilterChange(if (searchTypeFilter == "project") null else "project") },
-                label = { Text("PROJECTS") },
-            )
-        }
-        item {
-            FilterChip(
-                selected = hasContextFilter,
-                onClick = onContextToggle,
-                label = { Text("CONTEXT") },
-            )
-        }
-        item {
-            FilterChip(selected = hasTimeFilter, onClick = onTimeToggle, label = { Text("TIME") })
-        }
-    }
-}
 
 /**
  * Renders the result section header and utility controls.
@@ -806,57 +635,6 @@ private fun SearchSupportPanel(
     }
 }
 
-@Composable
-private fun ScopeEntry(
-    label: String,
-    icon: ImageVector,
-    selected: Boolean,
-    onClick: () -> Unit,
-) {
-    Surface(
-        shape = RoundedCornerShape(10.dp),
-        color = if (selected) TactileTheme.Primary.copy(alpha = 0.14f) else Color.Transparent,
-        onClick = onClick,
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            Icon(
-                icon,
-                contentDescription = null,
-                tint = if (selected) TactileTheme.Primary else TactileTheme.Muted,
-                modifier = Modifier.size(16.dp),
-            )
-            Text(
-                text = label,
-                style = MaterialTheme.typography.labelMedium,
-                color = if (selected) TactileTheme.Primary else TactileTheme.Muted,
-                fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal,
-            )
-        }
-    }
-}
-
-@Composable
-private fun ScopeFooter(
-    label: String,
-    icon: ImageVector,
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        Icon(
-            icon,
-            contentDescription = null,
-            tint = TactileTheme.Muted,
-            modifier = Modifier.size(14.dp),
-        )
-        Text(label, style = MaterialTheme.typography.labelSmall, color = TactileTheme.Muted)
-    }
-}
 
 /**
  * Renders one search result row with title, metadata, excerpt, and quick actions.

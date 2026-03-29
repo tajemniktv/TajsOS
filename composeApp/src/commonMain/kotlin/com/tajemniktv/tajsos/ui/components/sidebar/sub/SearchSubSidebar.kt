@@ -8,7 +8,7 @@ import com.tajemniktv.tajsos.ui.components.sidebar.SidebarSection
 
 internal fun searchSubSidebarSections(): List<SidebarSection> =
     sidebarSections(
-        primary = listOf("all objects", "tasks", "projects", "notes", "records"),
-        workflow = listOf("context scope", "time scope", "recent queries"),
-        insights = listOf("search status", "relevance mapping", "archive"),
+        primary = listOf("ALL OBJECTS", "TASKS", "PROJECTS", "NOTES", "RECORDS"),
+        workflow = listOf("CONTEXT", "TIME", "RECENT QUERIES"),
+        insights = listOf("SEARCH STATUS", "SEARCH INSIGHTS", "ARCHIVE"),
     )
