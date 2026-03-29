@@ -236,19 +236,30 @@ private fun AreasCards(
     metricsById: Map<Long, AreaHealthMetrics>,
     onOpen: (Long) -> Unit,
 ) {
+    val activeProjectsByAreaId = remember(allProjects) {
+        val counts = mutableMapOf<Long, Int>()
+        for (project in allProjects) {
+            val areaId = project.areaId
+            if (areaId != null && project.projectStateOrNull() == ProjectState.ACTIVE) {
+                counts[areaId] = (counts[areaId] ?: 0) + 1
+            }
+        }
+        counts
+    }
+
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val desktop = maxWidth > 900.dp
         if (desktop) {
             LazyVerticalGrid(columns = GridCells.Adaptive(minSize = 300.dp), verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm), horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
                 items(count = areas.size, key = { index -> areas[index].id }) { index ->
                     val area = areas[index]
-                    AreaCard(area = area, metrics = metricsById[area.id], activeProjects = allProjects.count { it.areaId == area.id && it.projectStateOrNull() == ProjectState.ACTIVE }, onClick = { onOpen(area.id) })
+                    AreaCard(area = area, metrics = metricsById[area.id], activeProjects = activeProjectsByAreaId[area.id] ?: 0, onClick = { onOpen(area.id) })
                 }
             }
         } else {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
                 items(areas, key = { it.id }) { area ->
-                    AreaCard(area = area, metrics = metricsById[area.id], activeProjects = allProjects.count { it.areaId == area.id && it.projectStateOrNull() == ProjectState.ACTIVE }, onClick = { onOpen(area.id) })
+                    AreaCard(area = area, metrics = metricsById[area.id], activeProjects = activeProjectsByAreaId[area.id] ?: 0, onClick = { onOpen(area.id) })
                 }
             }
         }
