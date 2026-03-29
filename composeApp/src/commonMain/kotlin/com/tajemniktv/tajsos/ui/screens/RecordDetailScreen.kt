@@ -20,6 +20,7 @@ fun RecordDetailScreen(
     onBack: () -> Unit,
     onNavigateToNode: (Long) -> Unit,
     onNavigateToSearch: () -> Unit,
+    isDesktop: Boolean = false,
 ) {
     NoteDetailScreen(
         viewModel = viewModel,
@@ -27,5 +28,6 @@ fun RecordDetailScreen(
         onBack = onBack,
         onNavigateToNode = onNavigateToNode,
         onNavigateToSearch = onNavigateToSearch,
+        isDesktop = isDesktop,
     )
 }

@@ -538,6 +538,7 @@ private fun AppScaffold(
                     onBack = { navController.popBackStack() },
                     onNavigateToNode = onEditNode,
                     onNavigateToSearch = { onNavigate(Screen.Search.route) },
+                    isDesktop = isDesktop,
                 )
             }
             composable(Screen.TaskDetail.route) { backStackEntry ->
@@ -552,6 +553,7 @@ private fun AppScaffold(
                     onBack = { navController.popBackStack() },
                     onNavigateToNode = onEditNode,
                     onNavigateToSearch = { onNavigate(Screen.Search.route) },
+                    isDesktop = isDesktop,
                 )
             }
             composable(Screen.RecordDetail.route) { backStackEntry ->
@@ -566,6 +568,7 @@ private fun AppScaffold(
                     onBack = { navController.popBackStack() },
                     onNavigateToNode = onEditNode,
                     onNavigateToSearch = { onNavigate(Screen.Search.route) },
+                    isDesktop = isDesktop,
                 )
             }
             composable(Screen.Insights.route) {

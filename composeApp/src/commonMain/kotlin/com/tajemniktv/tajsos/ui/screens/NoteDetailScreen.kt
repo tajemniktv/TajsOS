@@ -44,6 +44,7 @@ import com.tajemniktv.tajsos.ui.components.common.DetailSectionHeader
 import com.tajemniktv.tajsos.ui.components.common.SelectorDialog
 import com.tajemniktv.tajsos.ui.components.layout.LocalHeaderActions
 import com.tajemniktv.tajsos.ui.components.nodes.DecisionDetailContent
+import com.tajemniktv.tajsos.ui.screens.notes.NotesWorkspaceDetail
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
@@ -64,6 +65,7 @@ fun NoteDetailScreen(
     onBack: () -> Unit,
     onNavigateToNode: (Long) -> Unit,
     onNavigateToSearch: () -> Unit,
+    isDesktop: Boolean = false,
 ) {
     val scope = rememberCoroutineScope()
     val nodes by viewModel.allNodes.collectAsState()
@@ -84,6 +86,16 @@ fun NoteDetailScreen(
     }
 
     val node = nodeWithPin.node
+    if (isDesktop && node.isNoteItem()) {
+        NotesWorkspaceDetail(
+            viewModel = viewModel,
+            noteId = noteId,
+            onBack = onBack,
+            onNavigateToNode = onNavigateToNode,
+            onNavigateToSearch = onNavigateToSearch,
+        )
+        return
+    }
     var title by remember { mutableStateOf(node.title) }
     var content by remember { mutableStateOf(node.content) }
 
