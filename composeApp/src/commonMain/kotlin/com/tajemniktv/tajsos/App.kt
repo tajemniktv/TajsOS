@@ -79,6 +79,7 @@ import com.tajemniktv.tajsos.ui.screens.SettingsDataScreen
 import com.tajemniktv.tajsos.ui.screens.SettingsDebugScreen
 import com.tajemniktv.tajsos.ui.screens.SettingsFeaturePacksScreen
 import com.tajemniktv.tajsos.ui.screens.SettingsHealthScreen
+import com.tajemniktv.tajsos.ui.screens.SettingsAppearanceScreen
 import com.tajemniktv.tajsos.ui.screens.TaskDetailScreen
 import com.tajemniktv.tajsos.ui.screens.TasksScreen
 import com.tajemniktv.tajsos.ui.screens.TemplatesScreen
@@ -165,6 +166,7 @@ fun App(
     val currentMode by viewModel.currentMode.collectAsState()
     val allModes by viewModel.allModes.collectAsState()
     val enabledPacks by viewModel.enabledPacks.collectAsState()
+    val isDarkTheme by viewModel.isDarkTheme.collectAsState()
     val userProfile by viewModel.userProfile.collectAsState()
 
     var showCaptureSheetState by remember { mutableStateOf(false) }
@@ -174,7 +176,7 @@ fun App(
             Screen.fromRoute(currentDestination?.route)
         }
 
-    TajsOSTheme {
+    TajsOSTheme(darkTheme = isDarkTheme) {
         BoxWithConstraints {
             val isDesktop = maxWidth > 800.dp
 
@@ -481,6 +483,9 @@ private fun AppScaffold(
             }
             composable(Screen.SettingsHealth.route) {
                 SettingsHealthScreen(viewModel = viewModel)
+            }
+            composable(Screen.SettingsAppearance.route) {
+                SettingsAppearanceScreen(viewModel = viewModel)
             }
             composable(Screen.SettingsFeaturePacks.route) {
                 SettingsFeaturePacksScreen(viewModel = viewModel)

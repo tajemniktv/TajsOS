@@ -5,7 +5,10 @@
 package com.tajemniktv.tajsos.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -14,7 +17,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
@@ -25,6 +30,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -41,6 +47,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.AppPack
 import com.tajemniktv.tajsos.data.MedicationEntity
@@ -379,6 +386,157 @@ fun SettingsPreferencesScreen(
 }
 
 /**
+ * Renders the settings "Appearance" tab with visual customization controls.
+ * Most controls are placeholders except theme mode, which updates the real app theme.
+ */
+@Composable
+fun SettingsAppearanceScreen(
+    viewModel: MainViewModel,
+) {
+    val isDarkTheme by viewModel.isDarkTheme.collectAsState()
+    var selectedAccentIndex by remember { mutableStateOf(0) }
+    var glassmorphismEnabled by remember { mutableStateOf(true) }
+    var hideLabelsOnCollapse by remember { mutableStateOf(false) }
+    var reduceMotion by remember { mutableStateOf(false) }
+
+    Scaffold(containerColor = TactileTheme.Background) { innerPadding ->
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(TactileTheme.Background)
+                    .verticalScroll(rememberScrollState())
+                    .padding(innerPadding)
+                    .padding(horizontal = TactileTheme.SpacingLg, vertical = TactileTheme.SpacingMd),
+            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingLg),
+        ) {
+            Text(
+                text = "Appearance",
+                style = MaterialTheme.typography.headlineMedium,
+                color = TactileTheme.Text,
+            )
+            Text(
+                text = "Customize the visual identity and interface behavior of your operating system.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = TactileTheme.Muted,
+            )
+
+            AppearanceSectionCard(title = "Theme Settings") {
+                AppearanceSettingRow(
+                    title = "Theme Mode",
+                    description = "Switch between dark and light theme.",
+                ) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+                        OutlinedButton(
+                            onClick = { viewModel.setDarkTheme(true) },
+                            shape = RoundedCornerShape(TactileTheme.RadiusSm),
+                            colors =
+                                ButtonDefaults.outlinedButtonColors(
+                                    containerColor =
+                                        if (isDarkTheme) {
+                                            TactileTheme.Primary.copy(alpha = 0.2f)
+                                        } else {
+                                            Color.Transparent
+                                        },
+                                ),
+                        ) {
+                            Text("Dark")
+                        }
+                        OutlinedButton(
+                            onClick = { viewModel.setDarkTheme(false) },
+                            shape = RoundedCornerShape(TactileTheme.RadiusSm),
+                            colors =
+                                ButtonDefaults.outlinedButtonColors(
+                                    containerColor =
+                                        if (!isDarkTheme) {
+                                            TactileTheme.Primary.copy(alpha = 0.2f)
+                                        } else {
+                                            Color.Transparent
+                                        },
+                                ),
+                        ) {
+                            Text("Light")
+                        }
+                    }
+                }
+
+                AppearanceSettingRow(
+                    title = "Accent Color",
+                    description = "Primary color for actions and highlights.",
+                ) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+                        AppearanceAccentDot(
+                            color = Color(0xFFB388FF),
+                            selected = selectedAccentIndex == 0,
+                            onClick = { selectedAccentIndex = 0 },
+                        )
+                        AppearanceAccentDot(
+                            color = Color(0xFF60A5FA),
+                            selected = selectedAccentIndex == 1,
+                            onClick = { selectedAccentIndex = 1 },
+                        )
+                        AppearanceAccentDot(
+                            color = Color(0xFFFB7185),
+                            selected = selectedAccentIndex == 2,
+                            onClick = { selectedAccentIndex = 2 },
+                        )
+                    }
+                }
+
+                AppearanceSettingRow(
+                    title = "Glassmorphism Effects",
+                    description = "Enable translucent blur on navigation and modals.",
+                ) {
+                    Switch(
+                        checked = glassmorphismEnabled,
+                        onCheckedChange = { glassmorphismEnabled = it },
+                        colors = SwitchDefaults.colors(checkedThumbColor = TactileTheme.Primary),
+                    )
+                }
+            }
+
+            AppearanceSectionCard(title = "Sidebar Behavior") {
+                AppearanceSettingRow(
+                    title = "Default Sidebar State",
+                    description = "How the sidebar appears when the app starts.",
+                ) {
+                    OutlinedButton(
+                        onClick = {},
+                        shape = RoundedCornerShape(TactileTheme.RadiusSm),
+                    ) {
+                        Text("Expanded")
+                    }
+                }
+
+                AppearanceSettingRow(
+                    title = "Hide Labels on Collapse",
+                    description = "Only show icons when sidebar is minimized.",
+                ) {
+                    Switch(
+                        checked = hideLabelsOnCollapse,
+                        onCheckedChange = { hideLabelsOnCollapse = it },
+                        colors = SwitchDefaults.colors(checkedThumbColor = TactileTheme.Primary),
+                    )
+                }
+            }
+
+            AppearanceSectionCard(title = "Interface Refinement") {
+                AppearanceSettingRow(
+                    title = "Reduce Motion",
+                    description = "Minimize system animations and transitions.",
+                ) {
+                    Switch(
+                        checked = reduceMotion,
+                        onCheckedChange = { reduceMotion = it },
+                        colors = SwitchDefaults.colors(checkedThumbColor = TactileTheme.Primary),
+                    )
+                }
+            }
+        }
+    }
+}
+
+/**
  * Shared settings tab scaffold used by all new settings tab screens.
  */
 @Composable
@@ -414,6 +572,88 @@ private fun SettingsSimpleScaffold(
             content()
         }
     }
+}
+
+@Composable
+private fun AppearanceSectionCard(
+    title: String,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Column(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .background(
+                    color = TactileTheme.SurfaceLow.copy(alpha = 0.55f),
+                    shape = RoundedCornerShape(14.dp),
+                ).border(
+                    width = 1.dp,
+                    color = TactileTheme.Border.copy(alpha = 0.35f),
+                    shape = RoundedCornerShape(14.dp),
+                )
+                .padding(TactileTheme.SpacingMd),
+        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleMedium,
+            color = TactileTheme.Text,
+        )
+        HorizontalDivider(color = TactileTheme.Border.copy(alpha = 0.3f))
+        content()
+    }
+}
+
+@Composable
+private fun AppearanceSettingRow(
+    title: String,
+    description: String,
+    control: @Composable () -> Unit,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(
+            modifier = Modifier.weight(1f).padding(end = TactileTheme.SpacingMd),
+            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingXs),
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodyLarge,
+                color = TactileTheme.Text,
+            )
+            Text(
+                text = description,
+                style = MaterialTheme.typography.bodySmall,
+                color = TactileTheme.Muted,
+            )
+        }
+        Box(contentAlignment = Alignment.CenterEnd) {
+            control()
+        }
+    }
+}
+
+@Composable
+private fun AppearanceAccentDot(
+    color: Color,
+    selected: Boolean,
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier =
+            Modifier
+                .size(22.dp)
+                .background(color = color, shape = CircleShape)
+                .border(
+                    width = if (selected) 2.dp else 0.dp,
+                    color = if (selected) TactileTheme.Text else Color.Transparent,
+                    shape = CircleShape,
+                )
+                .clickable(onClick = onClick),
+    )
 }
 
 /**

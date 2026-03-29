@@ -36,6 +36,7 @@
     <string name="screen_project">PROJEKT</string>
     <string name="screen_opts">OPCJE</string>
     <string name="screen_settings_health">ZDROWIE</string>
+    <string name="screen_settings_appearance">WYGLĄD</string>
     <string name="screen_settings_feature_packs">PAKIETY FUNKCJI</string>
     <string name="screen_settings_data">DANE</string>
     <string name="screen_settings_debug">DEBUG</string>

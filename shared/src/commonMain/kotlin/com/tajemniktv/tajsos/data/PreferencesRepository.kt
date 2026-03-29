@@ -21,6 +21,7 @@ class PreferencesRepository(
 ) {
     private object PreferencesKeys {
         val BIOMETRIC_ENABLED = booleanPreferencesKey("biometric_enabled")
+        val DARK_THEME_ENABLED = booleanPreferencesKey("dark_theme_enabled")
         val ACTIVE_MODE_ID = longPreferencesKey("active_mode_id")
         val OWNED_PACKS = stringSetPreferencesKey("owned_packs")
         val ENABLED_PACKS = stringSetPreferencesKey("enabled_packs")
@@ -36,6 +37,12 @@ class PreferencesRepository(
         dataStore.data
             .map { preferences ->
                 preferences[PreferencesKeys.ACTIVE_MODE_ID]
+            }
+
+    val isDarkThemeEnabled: Flow<Boolean> =
+        dataStore.data
+            .map { preferences ->
+                preferences[PreferencesKeys.DARK_THEME_ENABLED] ?: true
             }
 
     val enabledPacks: Flow<PackRegistry> =
@@ -66,6 +73,12 @@ class PreferencesRepository(
             } else {
                 preferences.remove(PreferencesKeys.ACTIVE_MODE_ID)
             }
+        }
+    }
+
+    suspend fun updateDarkThemeEnabled(enabled: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.DARK_THEME_ENABLED] = enabled
         }
     }
 

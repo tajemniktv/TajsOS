@@ -27,6 +27,7 @@ class ScreenTest {
             Screen.ProjectDetail,
             Screen.AreaDetail,
             Screen.Settings,
+            Screen.SettingsAppearance,
             Screen.Graph,
             Screen.Inbox,
             Screen.Calendar,
@@ -68,6 +69,11 @@ class ScreenTest {
     @Test
     fun settings_hasCorrectRoute() {
         assertEquals("settings", Screen.Settings.route)
+    }
+
+    @Test
+    fun settingsAppearance_hasCorrectRoute() {
+        assertEquals("settings_appearance", Screen.SettingsAppearance.route)
     }
 
     @Test

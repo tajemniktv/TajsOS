@@ -23,6 +23,7 @@ internal fun settingsSubSidebarSections(): List<SidebarSection> =
             items =
                 listOf(
                     SidebarItem("Preferences", Screen.Settings),
+                    SidebarItem("Appearance", Screen.SettingsAppearance),
                     SidebarItem("Calendar", Screen.CalendarSettings),
                     SidebarItem("Feature Packs", Screen.SettingsFeaturePacks),
                     SidebarItem("Data", Screen.SettingsData),

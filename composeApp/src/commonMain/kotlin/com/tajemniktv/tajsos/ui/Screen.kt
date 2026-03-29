@@ -110,6 +110,13 @@ sealed class Screen(
         isRoot = false,
     )
 
+    data object SettingsAppearance : Screen(
+        "settings_appearance",
+        Res.string.screen_settings_appearance,
+        Icons.Default.Palette,
+        isRoot = false,
+    )
+
     data object SettingsFeaturePacks : Screen(
         "settings_feature_packs",
         Res.string.screen_settings_feature_packs,
@@ -264,6 +271,7 @@ sealed class Screen(
                 AreaDetail,
                 CalendarSettings,
                 SettingsHealth,
+                SettingsAppearance,
                 SettingsFeaturePacks,
                 SettingsData,
                 SettingsDebug,
@@ -408,6 +416,7 @@ sealed class Screen(
                 Templates -> Settings
                 Profile -> Settings
                 SettingsHealth -> Settings
+                SettingsAppearance -> Settings
                 SettingsFeaturePacks -> Settings
                 SettingsData -> Settings
                 SettingsDebug -> Settings
