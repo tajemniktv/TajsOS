@@ -147,13 +147,20 @@ fun App(
             val isDesktop = maxWidth > 800.dp
 
             val navigate: (String) -> Unit = { route ->
-                if (route.startsWith(Screen.Tasks.route + "?tab=")) {
-                    val tabSegment = route.substringAfter("?tab=", missingDelimiterValue = "")
+                val resolvedRoute =
+                    if (route == Screen.Tasks.route) {
+                        Screen.Tasks.route + "?tab=" + selectedTasksTab.routeSegment
+                    } else {
+                        route
+                    }
+
+                if (resolvedRoute.startsWith(Screen.Tasks.route + "?tab=")) {
+                    val tabSegment = resolvedRoute.substringAfter("?tab=", missingDelimiterValue = "")
                     selectedTasksTab = TasksTab.fromRouteSegment(tabSegment)
                 }
 
-                val targetScreen = Screen.fromRoute(route)
-                navController.navigate(route) {
+                val targetScreen = Screen.fromRoute(resolvedRoute)
+                navController.navigate(resolvedRoute) {
                     if (targetScreen?.isRoot == true) {
                         popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true
@@ -277,6 +284,14 @@ private fun AppScaffold(
             composable(Screen.Today.route) { TodayScreen(viewModel, onEditNode) }
             composable(Screen.Focus.route) { FocusScreen(viewModel) }
             composable(Screen.Track.route) { TrackScreen(viewModel) }
+            composable(Screen.Tasks.route) {
+                TasksScreen(
+                    viewModel = viewModel,
+                    onEditNode = onEditNode,
+                    currentTab = currentTasksTab,
+                    onTabChange = onTasksTabChange,
+                )
+            }
             composable(Screen.Tasks.route + "?tab={tab}") {
                 TasksScreen(
                     viewModel = viewModel,
