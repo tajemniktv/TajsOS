@@ -67,7 +67,6 @@ collection of disconnected feature silos.
 
 ### System shape
 
-- Prioritize backend/domain coherence before broad UI surface expansion.
 - Design screens as projections (lenses) over shared state, not isolated feature kingdoms.
 - Preserve local-first behavior as a non-negotiable baseline.
 - Favor a small product-level object spine over a wide taxonomy of peer feature types.
@@ -182,6 +181,8 @@ When working in this repo, agents should:
     keeping the same conceptual sprawl.
 15. Update docs when the preferred life-object model or lens framing changes.
 16. We prefer to avoid using deprecated patterns or APIs.
+17. Prefer following existing code style and conventions in the repo for consistency, unless there's
+    a strong reason to deviate.
 
 ## Documentation touchpoints
 
