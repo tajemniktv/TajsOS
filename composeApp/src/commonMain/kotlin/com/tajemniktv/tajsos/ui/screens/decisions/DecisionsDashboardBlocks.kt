@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.cards.DashCard
+import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.lens.LensUiContract
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import org.jetbrains.compose.resources.stringResource
@@ -168,12 +169,7 @@ fun DecisionList(
     onEdit: (Long) -> Unit,
 ) {
     if (nodes.isEmpty()) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text(
-                stringResource(Res.string.decision_no_decisions_category),
-                color = TactileTheme.Muted,
-            )
-        }
+        EmptyState(message = stringResource(Res.string.decision_no_decisions_category))
     } else {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),

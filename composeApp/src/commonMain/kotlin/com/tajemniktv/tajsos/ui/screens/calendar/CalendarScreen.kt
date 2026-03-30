@@ -46,6 +46,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.main.state.CalendarEntry
 import com.tajemniktv.tajsos.ui.main.state.EntryType
 import com.tajemniktv.tajsos.ui.theme.TactileTheme
@@ -327,13 +328,7 @@ fun AgendaView(
         }
 
     if (dayEntries.isEmpty()) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text(
-                stringResource(Res.string.cal_no_events),
-                color = TactileTheme.Muted,
-                style = MaterialTheme.typography.labelSmall,
-            )
-        }
+        EmptyState(message = stringResource(Res.string.cal_no_events))
     } else {
         LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
             items(dayEntries) { entry ->
