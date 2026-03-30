@@ -360,35 +360,59 @@ class FilterHelperTest {
         assertEquals(1, longNodes.size)
         assertEquals(4L, longNodes[0].node.id)
 
+    }
+
+    @Test
+    fun testFilterTimeHorizonExtended() {
+        val now = kotlin.time.Clock.System.now().toEpochMilliseconds()
+        val dayMs = 24 * 60 * 60 * 1000L
+
+        // Node due today (within 24h)
+        val nodeToday = createTestNode(1, "Today", type = "task", dueAt = now + (dayMs / 2))
+        // Node due this week (within 7 days, e.g. 3 days)
+        val nodeWeek = createTestNode(2, "Week", type = "task", dueAt = now + (3 * dayMs))
+        // Node due in a month (within 30 days, e.g. 15 days)
+        val nodeMonth = createTestNode(3, "Month", type = "task", dueAt = now + (15 * dayMs))
+        // Node due in a semester (within 120 days, e.g. 90 days)
+        val nodeSemester = createTestNode(6, "Semester", type = "task", dueAt = now + (90 * dayMs))
+        // Node due long term (after 30 days, e.g. 40 days)
+        val nodeLong = createTestNode(4, "Long", type = "task", dueAt = now + (40 * dayMs))
+        // Node with no due date
+        val nodeNoDue = createTestNode(5, "No Due", type = "task")
+
+        val nodesWithSemester = listOf(nodeToday, nodeWeek, nodeMonth, nodeSemester, nodeLong, nodeNoDue)
+
+        fun filterWithHorizonExtended(horizon: String): List<NodeWithPin> {
+            return FilterHelper.filterAndSortNodes(
+                nodes = nodesWithSemester,
+                query = "",
+                type = null,
+                status = null,
+                projectId = null,
+                areaId = null,
+                linkedToId = null,
+                maxMins = null,
+                energy = null,
+                friction = null,
+                locationContext = null,
+                energyContext = null,
+                deviceContext = null,
+                socialContext = null,
+                timeWindowContext = null,
+                timeHorizon = horizon,
+                relations = emptyList(),
+            )
+        }
+
         // "month" includes today, week, and month (due <= 30 days)
-        val monthNodes = filterWithHorizon("month")
+        val monthNodes = filterWithHorizonExtended("month")
         assertEquals(3, monthNodes.size)
         assertTrue(monthNodes.any { it.node.id == 1L })
         assertTrue(monthNodes.any { it.node.id == 2L })
         assertTrue(monthNodes.any { it.node.id == 3L })
 
         // "semester" includes today, week, month, and semester (due <= 120 days)
-        val nodeSemester = createTestNode(6, "Semester", type = "task", dueAt = now + (90 * dayMs))
-        val nodesWithSemester = listOf(nodeToday, nodeWeek, nodeMonth, nodeSemester, nodeLong, nodeNoDue)
-        val semesterNodes = FilterHelper.filterAndSortNodes(
-            nodes = nodesWithSemester,
-            query = "",
-            type = null,
-            status = null,
-            projectId = null,
-            areaId = null,
-            linkedToId = null,
-            maxMins = null,
-            energy = null,
-            friction = null,
-            locationContext = null,
-            energyContext = null,
-            deviceContext = null,
-            socialContext = null,
-            timeWindowContext = null,
-            timeHorizon = "semester",
-            relations = emptyList(),
-        )
+        val semesterNodes = filterWithHorizonExtended("semester")
         assertEquals(5, semesterNodes.size, "Expected 5 nodes for semester, got ${semesterNodes.map { it.node.id }}")
         assertTrue(semesterNodes.any { it.node.id == 1L })
         assertTrue(semesterNodes.any { it.node.id == 2L })
@@ -397,25 +421,7 @@ class FilterHelperTest {
         assertTrue(semesterNodes.any { it.node.id == 6L })
 
         // "short" includes today and week (due <= 7 days)
-        val shortNodes = FilterHelper.filterAndSortNodes(
-            nodes = nodesWithSemester,
-            query = "",
-            type = null,
-            status = null,
-            projectId = null,
-            areaId = null,
-            linkedToId = null,
-            maxMins = null,
-            energy = null,
-            friction = null,
-            locationContext = null,
-            energyContext = null,
-            deviceContext = null,
-            socialContext = null,
-            timeWindowContext = null,
-            timeHorizon = "short",
-            relations = emptyList(),
-        )
+        val shortNodes = filterWithHorizonExtended("short")
         assertEquals(2, shortNodes.size)
         assertTrue(shortNodes.any { it.node.id == 1L })
         assertTrue(shortNodes.any { it.node.id == 2L })
