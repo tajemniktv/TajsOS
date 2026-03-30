@@ -359,6 +359,66 @@ class FilterHelperTest {
         val longNodes = filterWithHorizon("long")
         assertEquals(1, longNodes.size)
         assertEquals(4L, longNodes[0].node.id)
+
+        // "month" includes today, week, and month (due <= 30 days)
+        val monthNodes = filterWithHorizon("month")
+        assertEquals(3, monthNodes.size)
+        assertTrue(monthNodes.any { it.node.id == 1L })
+        assertTrue(monthNodes.any { it.node.id == 2L })
+        assertTrue(monthNodes.any { it.node.id == 3L })
+
+        // "semester" includes today, week, month, and semester (due <= 120 days)
+        val nodeSemester = createTestNode(6, "Semester", type = "task", dueAt = now + (90 * dayMs))
+        val nodesWithSemester = listOf(nodeToday, nodeWeek, nodeMonth, nodeSemester, nodeLong, nodeNoDue)
+        val semesterNodes = FilterHelper.filterAndSortNodes(
+            nodes = nodesWithSemester,
+            query = "",
+            type = null,
+            status = null,
+            projectId = null,
+            areaId = null,
+            linkedToId = null,
+            maxMins = null,
+            energy = null,
+            friction = null,
+            locationContext = null,
+            energyContext = null,
+            deviceContext = null,
+            socialContext = null,
+            timeWindowContext = null,
+            timeHorizon = "semester",
+            relations = emptyList(),
+        )
+        assertEquals(5, semesterNodes.size, "Expected 5 nodes for semester, got ${semesterNodes.map { it.node.id }}")
+        assertTrue(semesterNodes.any { it.node.id == 1L })
+        assertTrue(semesterNodes.any { it.node.id == 2L })
+        assertTrue(semesterNodes.any { it.node.id == 3L })
+        assertTrue(semesterNodes.any { it.node.id == 4L })
+        assertTrue(semesterNodes.any { it.node.id == 6L })
+
+        // "short" includes today and week (due <= 7 days)
+        val shortNodes = FilterHelper.filterAndSortNodes(
+            nodes = nodesWithSemester,
+            query = "",
+            type = null,
+            status = null,
+            projectId = null,
+            areaId = null,
+            linkedToId = null,
+            maxMins = null,
+            energy = null,
+            friction = null,
+            locationContext = null,
+            energyContext = null,
+            deviceContext = null,
+            socialContext = null,
+            timeWindowContext = null,
+            timeHorizon = "short",
+            relations = emptyList(),
+        )
+        assertEquals(2, shortNodes.size)
+        assertTrue(shortNodes.any { it.node.id == 1L })
+        assertTrue(shortNodes.any { it.node.id == 2L })
     }
 
     @Test
