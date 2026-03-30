@@ -348,7 +348,7 @@ fun CaptureSheet(
                         FilterChip(
                             selected = false,
                             onClick = {
-                                if (template.defaultTitle != null) text = template.defaultTitle!!
+                                template.defaultTitle?.let { text = it }
                                 // Apply other template defaults if needed
                             },
                             label = { Text(template.name) },

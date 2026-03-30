@@ -119,13 +119,13 @@ fun calculateInsights(
 
     val completionsByArea =
         recentCompletions
-            .filter { it.node.areaId != null }
-            .groupBy { it.node.areaId!! }
+            .mapNotNull { item -> item.node.areaId?.let { it to item } }
+            .groupBy({ it.first }, { it.second })
             .mapValues { it.value.size }
     val completionsByProject =
         recentCompletions
-            .filter { it.node.projectId != null }
-            .groupBy { it.node.projectId!! }
+            .mapNotNull { item -> item.node.projectId?.let { it to item } }
+            .groupBy({ it.first }, { it.second })
             .mapValues { it.value.size }
 
     val inboxGrowth = recentNodes.count { it.node.inboxState }
@@ -299,8 +299,8 @@ fun calculateInsights(
     // Insight Cards Logic (Roadmap Section 7)
     val mostPostponedAreaId =
         nodes
-            .filter { it.node.areaId != null && it.node.postponeCount > 0 }
-            .groupBy { it.node.areaId!! }
+            .mapNotNull { item -> item.node.areaId?.takeIf { item.node.postponeCount > 0 }?.let { it to item } }
+            .groupBy({ it.first }, { it.second })
             .maxByOrNull { entry -> entry.value.sumOf { it.node.postponeCount } }
             ?.key
 
@@ -670,7 +670,7 @@ fun calculateOpenLoopsSnapshot(
             .sortedByDescending { it.node.node.completedAt ?: 0L }
 
     val byArea = active.groupBy { it.node.node.areaId }
-    val byPerson = active.filter { it.relatedPersonId != null }.groupBy { it.relatedPersonId!! }
+    val byPerson = active.mapNotNull { item -> item.relatedPersonId?.let { it to item } }.groupBy({ it.first }, { it.second })
     val byUrgency =
         linkedMapOf(
             "critical" to active.filter { it.urgency == "critical" },
