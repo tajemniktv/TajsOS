@@ -1078,7 +1078,12 @@ class MainViewModel(
     }
 
     /**
-     * Converts a raw inbox capture into a typed LifeOS item.
+     * Converts a raw inbox capture into a typed LifeOS item by proxying the request to [AppRepository.triageInboxEntry].
+     *
+     * The conversion is executed asynchronously within the [viewModelScope].
+     *
+     * @param entryId The ID of the raw inbox entry to triage.
+     * @param kind The target [ItemKind] to convert the entry into.
      */
     fun triageInboxEntry(
         entryId: Long,
