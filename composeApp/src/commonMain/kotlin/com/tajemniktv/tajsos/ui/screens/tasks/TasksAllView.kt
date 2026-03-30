@@ -99,43 +99,49 @@ internal fun TasksAllView(
     var selectedId by remember { mutableStateOf<Long?>(null) }
 
     val base =
-        when (scope)
-        {
-            TaskScope.ACTIVE -> activeTasks.filter { it.taskStateOrNull() != TaskState.DONE }
-            TaskScope.COMPLETED -> activeTasks.filter { it.taskStateOrNull() == TaskState.DONE }
-            TaskScope.ARCHIVED -> archivedTasks
+        remember(scope, activeTasks, archivedTasks) {
+            when (scope)
+            {
+                TaskScope.ACTIVE -> activeTasks.filter { it.taskStateOrNull() != TaskState.DONE }
+                TaskScope.COMPLETED -> activeTasks.filter { it.taskStateOrNull() == TaskState.DONE }
+                TaskScope.ARCHIVED -> archivedTasks
+            }
         }
     val filtered =
-        base.filter {
-            query.isBlank() ||
-                it.title.contains(
-                    query,
-                    true,
-                ) || it.content.contains(query, true)
+        remember(base, query) {
+            base.filter {
+                query.isBlank() ||
+                    it.title.contains(
+                        query,
+                        true,
+                    ) || it.content.contains(query, true)
+            }
         }
     val sorted =
-        when (sort)
-        {
-            TaskSort.PRIORITY -> {
-                filtered.sortedByDescending {
-                    scoreTask(
-                        it,
-                        Clock.System.now().toEpochMilliseconds(),
-                        emptySet(),
-                    )
+        remember(filtered, sort) {
+            when (sort)
+            {
+                TaskSort.PRIORITY -> {
+                    filtered.sortedByDescending {
+                        scoreTask(
+                            it,
+                            Clock.System.now().toEpochMilliseconds(),
+                            emptySet(),
+                        )
+                    }
                 }
-            }
 
-            TaskSort.DUE -> {
-                filtered.sortedBy { it.dueAt ?: Long.MAX_VALUE }
-            }
+                TaskSort.DUE -> {
+                    filtered.sortedBy { it.dueAt ?: Long.MAX_VALUE }
+                }
 
-            TaskSort.UPDATED -> {
-                filtered.sortedByDescending { it.updatedAt }
-            }
+                TaskSort.UPDATED -> {
+                    filtered.sortedByDescending { it.updatedAt }
+                }
 
-            TaskSort.TITLE -> {
-                filtered.sortedBy { it.title.lowercase() }
+                TaskSort.TITLE -> {
+                    filtered.sortedBy { it.title.lowercase() }
+                }
             }
         }
     val selected = sorted.find { it.id == selectedId } ?: sorted.firstOrNull()
