@@ -15,7 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.tajemniktv.tajsos.data.isTaskItem
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 @Composable
 fun TasksScreen(
@@ -60,8 +60,8 @@ fun TasksScreen(
     val plan = remember(surface, currentTab) { buildTasksDashboardPlan(surface, currentTab) }
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+        modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd),
+        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
     ) {
         plan.primary.forEach { block ->
             TasksDashboardBlockRegistry.resolve(block.id)?.invoke(context)

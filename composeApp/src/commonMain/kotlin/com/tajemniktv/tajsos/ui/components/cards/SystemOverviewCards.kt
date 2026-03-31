@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.ui.AreaHealthMetrics
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.dash_capacity
@@ -50,15 +50,15 @@ fun SystemStatusCard(
     Surface(
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
-        color = if (warning != null) TactileTheme.Error.copy(alpha = 0.05f) else TactileTheme.Surface,
-        shape = RoundedCornerShape(TactileTheme.RadiusLg),
+        color = if (warning != null) TajsOSTheme.Error.copy(alpha = 0.05f) else TajsOSTheme.Surface,
+        shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
         border =
             BorderStroke(
                 1.dp,
-                if (warning != null) TactileTheme.Error.copy(alpha = 0.3f) else TactileTheme.Border,
-            ),
+                if (warning != null) TajsOSTheme.Error.copy(alpha = 0.3f) else TajsOSTheme.Border
+            )
     ) {
-        Column(modifier = Modifier.padding(TactileTheme.SpacingLg)) {
+        Column(modifier = Modifier.padding(TajsOSTheme.SpacingLg)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -67,7 +67,7 @@ fun SystemStatusCard(
                 Text(
                     stringResource(Res.string.dash_system_status),
                     style = MaterialTheme.typography.labelSmall,
-                    color = if (warning != null) TactileTheme.Error else TactileTheme.Primary,
+                    color = if (warning != null) TajsOSTheme.Error else TajsOSTheme.Primary,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 1.sp,
                 )
@@ -75,12 +75,12 @@ fun SystemStatusCard(
                     Icon(
                         Icons.Default.Warning,
                         contentDescription = null,
-                        tint = TactileTheme.Error,
+                        tint = TajsOSTheme.Error,
                         modifier = Modifier.size(16.dp),
                     )
                 }
             }
-            Spacer(Modifier.height(TactileTheme.SpacingMd))
+            Spacer(Modifier.height(TajsOSTheme.SpacingMd))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -102,11 +102,11 @@ fun SystemStatusCard(
                 )
             }
             if (warning != null) {
-                Spacer(Modifier.height(TactileTheme.SpacingMd))
+                Spacer(Modifier.height(TajsOSTheme.SpacingMd))
                 Text(
                     warning,
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Error,
+                    color = TajsOSTheme.Error,
                     fontWeight = FontWeight.ExtraBold,
                 )
             }
@@ -127,7 +127,7 @@ private fun StatusMetric(
             color = color,
             fontWeight = FontWeight.Bold,
         )
-        Text(label, style = MaterialTheme.typography.labelSmall, color = TactileTheme.Muted)
+        Text(label, style = MaterialTheme.typography.labelSmall, color = TajsOSTheme.Muted)
     }
 }
 
@@ -138,9 +138,9 @@ private fun getLoadColor(
     val v = if (inverse) 100 - value else value
     return when
         {
-            v > 80 -> TactileTheme.Error
-            v > 50 -> TactileTheme.Accent
-            else -> TactileTheme.Success
+        v > 80 -> TajsOSTheme.Error
+            v > 50 -> TajsOSTheme.Accent
+            else -> TajsOSTheme.Success
         }
 }
 
@@ -156,25 +156,25 @@ fun AreaHealthCard(
     val (color, statusLabel) =
         when (status)
         {
-            "on_fire" -> TactileTheme.Error to "ON FIRE"
-            "overloaded" -> TactileTheme.Error to "OVERLOADED"
-            "neglected" -> TactileTheme.Muted to "NEGLECTED"
-            "active" -> TactileTheme.Primary to "ACTIVE"
-            else -> TactileTheme.Success to "STABLE"
+            "on_fire" -> TajsOSTheme.Error to "ON FIRE"
+            "overloaded" -> TajsOSTheme.Error to "OVERLOADED"
+            "neglected" -> TajsOSTheme.Muted to "NEGLECTED"
+            "active" -> TajsOSTheme.Primary to "ACTIVE"
+            else -> TajsOSTheme.Success to "STABLE"
         }
 
     Surface(
         onClick = onClick,
         modifier = modifier.width(190.dp),
-        color = TactileTheme.Surface,
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+        color = TajsOSTheme.Surface,
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         border = BorderStroke(1.dp, color.copy(alpha = 0.3f)),
     ) {
-        Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+        Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
             Text(
                 area.title.uppercase(),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Text,
+                color = TajsOSTheme.Text,
                 fontWeight = FontWeight.ExtraBold,
                 maxLines = 1,
             )
@@ -198,7 +198,7 @@ fun AreaHealthCard(
                 Text(
                     "O ${metrics?.openLoops ?: 0} • D ${metrics?.deadlines ?: 0}",
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted
                 )
             }
             Spacer(Modifier.height(4.dp))
@@ -213,7 +213,7 @@ fun AreaHealthCard(
                 Text(
                     "DISAPPEARING FROM RADAR",
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Error,
+                    color = TajsOSTheme.Error
                 )
             }
         }

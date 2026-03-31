@@ -28,7 +28,7 @@ import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.data.isNoteItem
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.common.SelectorDialog
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 /**
  * Renders the study workspace as a block-based dashboard.
@@ -187,8 +187,8 @@ fun StudyScreen(
 
         if (surface == StudyDashboardSurface.MOBILE) {
             LazyColumn(
-                modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd),
-                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+                modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd),
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
             ) {
                 items(plan.primary, key = { it.id }) { block ->
                     StudyDashboardBlockRegistry.resolve(block.id)?.invoke(context)
@@ -196,12 +196,12 @@ fun StudyScreen(
             }
         } else {
             Row(
-                modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd),
-                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+                modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd),
+                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
             ) {
                 LazyColumn(
                     modifier = Modifier.weight(1.35f),
-                    verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+                    verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
                 ) {
                     items(plan.primary, key = { it.id }) { block ->
                         StudyDashboardBlockRegistry.resolve(block.id)?.invoke(context)
@@ -210,7 +210,7 @@ fun StudyScreen(
 
                 LazyColumn(
                     modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+                    verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
                 ) {
                     items(plan.secondary, key = { it.id }) { block ->
                         Column(modifier = Modifier.width(720.dp)) {

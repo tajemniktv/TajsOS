@@ -18,7 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.archive_delete
@@ -46,7 +46,7 @@ private fun renderTemplatesList(context: TemplatesDashboardContext) {
     } else {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
         ) {
             items(templates) { template ->
                 ListItem(
@@ -69,11 +69,11 @@ private fun renderTemplatesList(context: TemplatesDashboardContext) {
                             Icon(
                                 Icons.Default.Delete,
                                 contentDescription = stringResource(Res.string.archive_delete),
-                                tint = TactileTheme.Error,
+                                tint = TajsOSTheme.Error
                             )
                         }
                     },
-                    colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
+                    colors = ListItemDefaults.colors(containerColor = TajsOSTheme.Surface)
                 )
             }
         }

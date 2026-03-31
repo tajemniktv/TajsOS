@@ -31,7 +31,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeEntity
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.dash_annoying
@@ -52,6 +52,7 @@ import tajsos.composeapp.generated.resources.task_row_unpin_desc
  * @param node The task node to render.
  * @param onToggleDone Callback invoked when the checkbox is toggled; receives the new status string (`"done"` when checked, `"active"` when unchecked).
  * @param onUnpin Callback invoked when the unpin action is pressed.
+ * @param modifier The modifier to be applied to the layout.
  * @param onLongClick Optional long-click handler for the row.
  * @param onClick Optional click handler for the row.
  * @param onArchive Optional archive handler invoked when the archive action (shown only for completed tasks) is pressed.
@@ -62,6 +63,7 @@ fun TaskRow(
     node: NodeEntity,
     onToggleDone: (String) -> Unit,
     onUnpin: () -> Unit,
+    modifier: Modifier = Modifier,
     onLongClick: () -> Unit = {},
     onClick: () -> Unit = {},
     onArchive: () -> Unit = {},
@@ -69,12 +71,12 @@ fun TaskRow(
     val isDone = node.status == "done"
     Surface(
         modifier =
-            Modifier
+            modifier
                 .fillMaxWidth()
                 .height(80.dp)
                 .drawBehind {
                     drawRect(
-                        color = TactileTheme.Primary,
+                        color = TajsOSTheme.Primary,
                         topLeft = Offset.Zero,
                         size =
                             androidx.compose.ui.geometry
@@ -84,16 +86,16 @@ fun TaskRow(
                     onClick = onClick,
                     onLongClick = onLongClick,
                 ),
-        color = TactileTheme.Surface,
+        color = TajsOSTheme.Surface
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = TactileTheme.SpacingMd),
+            modifier = Modifier.padding(horizontal = TajsOSTheme.SpacingMd),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Checkbox(
                 checked = isDone,
                 onCheckedChange = { onToggleDone(if (it) "done" else "active") },
-                colors = CheckboxDefaults.colors(checkedColor = TactileTheme.Primary),
+                colors = CheckboxDefaults.colors(checkedColor = TajsOSTheme.Primary)
             )
             Column(modifier = Modifier.weight(1f)) {
                 Text(
@@ -102,7 +104,7 @@ fun TaskRow(
                         MaterialTheme.typography.bodyLarge.copy(
                             textDecoration = if (isDone) TextDecoration.LineThrough else null,
                         ),
-                    color = if (isDone) TactileTheme.Muted else TactileTheme.Text,
+                    color = if (isDone) TajsOSTheme.Muted else TajsOSTheme.Text
                 )
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     val energyLevel = node.energyLevel
@@ -113,11 +115,11 @@ fun TaskRow(
                             color =
                                 when (energyLevel)
                                 {
-                                    1 -> TactileTheme.Success
-                                    2 -> TactileTheme.Primary
-                                    3 -> TactileTheme.Error
-                                    else -> TactileTheme.Muted
-                                },
+                                    1 -> TajsOSTheme.Success
+                                    2 -> TajsOSTheme.Primary
+                                    3 -> TajsOSTheme.Error
+                                    else -> TajsOSTheme.Muted
+                                }
                         )
                         Spacer(Modifier.width(8.dp))
                     }
@@ -135,18 +137,18 @@ fun TaskRow(
                         Text(
                             text = frictionLabel.uppercase(),
                             style = MaterialTheme.typography.labelSmall,
-                            color = TactileTheme.Primary,
+                            color = TajsOSTheme.Primary
                         )
                         Spacer(Modifier.width(8.dp))
                     }
-                    if (node.status != "active" && node.status != "done") {
+                    if ((node.status != "active") && (node.status != "done")) {
                         val statusColor =
                             when (node.status)
                             {
-                                "blocked" -> TactileTheme.Error
-                                "on_hold" -> TactileTheme.Accent
-                                "someday" -> TactileTheme.Muted
-                                else -> TactileTheme.Primary
+                                "blocked" -> TajsOSTheme.Error
+                                "on_hold" -> TajsOSTheme.Accent
+                                "someday" -> TajsOSTheme.Muted
+                                else -> TajsOSTheme.Primary
                             }
                         Text(
                             text = node.status.uppercase().replace("_", " "),
@@ -155,12 +157,11 @@ fun TaskRow(
                         )
                         Spacer(Modifier.width(8.dp))
                     }
-                    if (!node.nextSmallestStep.isNullOrEmpty())
-                    {
+                    if (!node.nextSmallestStep.isNullOrEmpty()) {
                         Text(
-                                text = "↳ ${node.nextSmallestStep}",
-                                style = MaterialTheme.typography.labelSmall,
-                            color = TactileTheme.Accent,
+                            text = "↳ ${node.nextSmallestStep}",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = TajsOSTheme.Accent,
                             maxLines = 1,
                             overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
                         )
@@ -170,18 +171,18 @@ fun TaskRow(
             if (isDone)
             {
                 IconButton(onClick = onArchive) {
-                    Icon(
-                            imageVector = Icons.Default.Delete,
-                        contentDescription = stringResource(Res.string.detail_archive),
-                        tint = TactileTheme.Muted,
-                    )
+                        Icon(
+                        imageVector = Icons.Default.Delete,
+                            contentDescription = stringResource(Res.string.detail_archive),
+                        tint = TajsOSTheme.Muted,
+                        )
+                    }
                 }
-            }
             IconButton(onClick = onUnpin) {
                 Icon(
                     Icons.Default.Close,
                     contentDescription = stringResource(Res.string.task_row_unpin_desc),
-                    tint = TactileTheme.Muted,
+                    tint = TajsOSTheme.Muted
                 )
             }
         }

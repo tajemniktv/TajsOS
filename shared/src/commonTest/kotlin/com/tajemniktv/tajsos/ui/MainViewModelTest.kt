@@ -214,7 +214,9 @@ class MainViewModelTest {
     class FakeDataStore : DataStore<Preferences> {
         override val data: Flow<Preferences> = flowOf(emptyPreferences())
 
-        override suspend fun updateData(transform: suspend (t: Preferences) -> Preferences): Preferences = emptyPreferences()
+        override suspend fun updateData(
+            transform: suspend (t: Preferences) -> Preferences
+        ): Preferences = transform(emptyPreferences())
     }
 
     @Test

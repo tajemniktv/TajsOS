@@ -33,7 +33,7 @@ import com.tajemniktv.tajsos.data.taskStateOrNull
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.screens.notes.detail.NoteDetailScreen
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.Json
@@ -241,10 +241,10 @@ fun TaskDetailScreen(
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
                     .padding(
-                        horizontal = TactileTheme.SpacingLg,
-                        vertical = TactileTheme.SpacingMd,
+                        horizontal = TajsOSTheme.SpacingLg,
+                        vertical = TajsOSTheme.SpacingMd
                     ),
-            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingLg),
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingLg)
         ) {
             if (surface == TaskDetailSurface.DESKTOP) {
                 // Header is first in primary, but we want it full width above the split
@@ -252,12 +252,12 @@ fun TaskDetailScreen(
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+                    horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
                     verticalAlignment = Alignment.Top,
                 ) {
                     Column(
                         modifier = Modifier.weight(2f),
-                        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+                        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
                     ) {
                         plan.primary.filterNot { it.id == "task_header" }.forEach { block ->
                             TaskDetailBlockRegistry.resolve(block.id)?.invoke(context)
@@ -266,7 +266,7 @@ fun TaskDetailScreen(
 
                     Column(
                         modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+                        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
                     ) {
                         plan.secondary.forEach { block ->
                             TaskDetailBlockRegistry.resolve(block.id)?.invoke(context)

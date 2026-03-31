@@ -34,7 +34,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.empty_state_default_desc
@@ -76,28 +76,28 @@ fun EmptyState(
     ) {
         Surface(
             color = Color.Transparent,
-            shape = RoundedCornerShape(TactileTheme.RadiusMd),
+            shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
             border =
                 androidx.compose.foundation.BorderStroke(
                     1.dp,
-                    TactileTheme.Primary.copy(alpha = 0.2f),
-                ),
+                    TajsOSTheme.Primary.copy(alpha = 0.2f)
+                )
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(TactileTheme.SpacingLg),
+                modifier = Modifier.padding(TajsOSTheme.SpacingLg)
             ) {
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
                     modifier = Modifier.size(48.dp),
-                    tint = TactileTheme.Primary.copy(alpha = alpha),
+                    tint = TajsOSTheme.Primary.copy(alpha = alpha)
                 )
-                Spacer(modifier = Modifier.height(TactileTheme.SpacingMd))
+                Spacer(modifier = Modifier.height(TajsOSTheme.SpacingMd))
                 Text(
                     text = message,
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted,
                     textAlign = TextAlign.Center,
                 )
                 if (description != null) {
@@ -105,7 +105,7 @@ fun EmptyState(
                     Text(
                         text = description,
                         style = MaterialTheme.typography.labelSmall.copy(letterSpacing = 2.sp),
-                        color = TactileTheme.Primary.copy(alpha = 0.2f),
+                        color = TajsOSTheme.Primary.copy(alpha = 0.2f)
                     )
                 }
 

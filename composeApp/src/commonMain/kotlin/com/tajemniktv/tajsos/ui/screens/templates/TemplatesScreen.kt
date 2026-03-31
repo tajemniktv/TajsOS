@@ -33,7 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.layout.LocalHeaderActions
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.templates_add_desc
@@ -84,8 +84,8 @@ fun TemplatesScreen(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .background(TactileTheme.Background)
-                    .padding(TactileTheme.SpacingMd),
+                    .background(TajsOSTheme.Background)
+                    .padding(TajsOSTheme.SpacingMd)
         ) {
             plan.primary.forEach { block ->
                 TemplatesDashboardBlockRegistry.resolve(block.id)?.invoke(context)
@@ -100,13 +100,13 @@ fun TemplatesScreen(
             onDismissRequest = { showAddDialog = false },
             title = { Text(stringResource(Res.string.templates_new_dialog)) },
             text = {
-                Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+                Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                     TextField(
                         value = name,
                         onValueChange = { name = it },
                         label = { Text(stringResource(Res.string.templates_dialog_name)) },
                     )
-                    Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                         listOf("task", "note", "record", "project", "area").forEach { t ->
                             val typeLabel =
                                 when (t)

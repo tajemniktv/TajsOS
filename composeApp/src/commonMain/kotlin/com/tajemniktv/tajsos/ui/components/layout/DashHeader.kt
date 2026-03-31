@@ -32,7 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 /**
  * Renders the dashboard header with a left menu badge and status block and a right-side system indicator with a settings button.
@@ -47,7 +47,7 @@ fun DashHeader(
     vibe: String,
     onMenuClick: () -> Unit,
     onSettingsClick: () -> Unit,
-    tintColor: Color = TactileTheme.Primary,
+    tintColor: Color = TajsOSTheme.Primary
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -63,7 +63,7 @@ fun DashHeader(
                     Modifier
                         .size(32.dp)
                         .clip(RoundedCornerShape(4.dp))
-                        .background(TactileTheme.Surface),
+                        .background(TajsOSTheme.Surface),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
@@ -85,7 +85,7 @@ fun DashHeader(
             Surface(
                 color = Color.Black.copy(alpha = 0.5f),
                 shape = CircleShape,
-                border = BorderStroke(1.dp, TactileTheme.Border),
+                border = BorderStroke(1.dp, TajsOSTheme.Border)
             ) {
                 Row(
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
@@ -96,20 +96,24 @@ fun DashHeader(
                             Modifier
                                 .size(6.dp)
                                 .clip(CircleShape)
-                                .background(if (tintColor == TactileTheme.Primary) TactileTheme.Success else tintColor),
+                                .background(
+                                    if (tintColor ==
+                                        TajsOSTheme.Primary) {
+                                        TajsOSTheme.Success
+                                    } else tintColor),
                     )
                     Spacer(Modifier.width(8.dp))
                     Text(
                         "SYSTEM: ONLINE",
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold,
-                        color = TactileTheme.Text,
+                        color = TajsOSTheme.Text
                     )
                 }
             }
             Spacer(Modifier.width(12.dp))
             IconButton(onClick = onSettingsClick) {
-                Icon(Icons.Default.Settings, contentDescription = null, tint = TactileTheme.Muted)
+                Icon(Icons.Default.Settings, contentDescription = null, tint = TajsOSTheme.Muted)
             }
         }
     }

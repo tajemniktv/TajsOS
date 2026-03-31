@@ -57,7 +57,7 @@ import com.tajemniktv.tajsos.data.projectStateOrNull
 import com.tajemniktv.tajsos.data.taskStateOrNull
 import com.tajemniktv.tajsos.ui.components.cards.LinkedNodeItem
 import com.tajemniktv.tajsos.ui.components.common.DetailHeader
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
@@ -123,8 +123,8 @@ private fun renderProjectHero(context: ProjectDetailContext) {
     val project = context.project
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.SurfaceHighest,
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+        color = TajsOSTheme.SurfaceHighest,
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -133,14 +133,14 @@ private fun renderProjectHero(context: ProjectDetailContext) {
             Text(
                 text = stringResource(Res.string.project_detail_outcome),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary,
+                color = TajsOSTheme.Primary,
                 fontWeight = FontWeight.Bold,
                 fontSize = 11.sp,
             )
             Text(
                 text = context.outcomeText,
                 style = MaterialTheme.typography.bodyLarge,
-                color = TactileTheme.Text,
+                color = TajsOSTheme.Text
             )
 
             Row(
@@ -183,7 +183,7 @@ private fun renderProjectHero(context: ProjectDetailContext) {
                         text = "${(context.progress * 100f).roundToInt()}%",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = TactileTheme.Text,
+                        color = TajsOSTheme.Text
                     )
                     Text(
                         text =
@@ -194,7 +194,7 @@ private fun renderProjectHero(context: ProjectDetailContext) {
                                 context.totalTasksCount,
                             ),
                         style = MaterialTheme.typography.bodySmall,
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted
                     )
                 }
             }
@@ -202,8 +202,8 @@ private fun renderProjectHero(context: ProjectDetailContext) {
             LinearProgressIndicator(
                 progress = { context.progress.coerceIn(0f, 1f) },
                 modifier = Modifier.fillMaxWidth().height(7.dp),
-                color = if (project.isFrozen) TactileTheme.Muted else TactileTheme.Primary,
-                trackColor = TactileTheme.SurfaceLow,
+                color = if (project.isFrozen) TajsOSTheme.Muted else TajsOSTheme.Primary,
+                trackColor = TajsOSTheme.SurfaceLow
             )
 
             Row(
@@ -257,8 +257,8 @@ private fun renderProjectTabs(context: ProjectDetailContext) {
 private fun renderProjectContent(context: ProjectDetailContext) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.SurfaceLow,
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+        color = TajsOSTheme.SurfaceLow,
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(14.dp),
@@ -482,14 +482,14 @@ private fun renderProjectSidebar(context: ProjectDetailContext) {
             if (context.relatedNodeIds.isEmpty()) {
                 Text(
                     stringResource(Res.string.project_detail_empty_work),
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted
                 )
             } else {
                 context.relatedNodeIds.take(8).forEach { id ->
                     val node = context.nodesById[id]?.node ?: return@forEach
                     Text(
                         text = "• ${node.title}",
-                        color = TactileTheme.Text,
+                        color = TajsOSTheme.Text,
                         modifier =
                             Modifier
                                 .fillMaxWidth()
@@ -510,9 +510,9 @@ private fun renderProjectSidebar(context: ProjectDetailContext) {
                 Icon(
                     Icons.Default.AccessTime,
                     contentDescription = null,
-                    tint = TactileTheme.Primary,
+                    tint = TajsOSTheme.Primary
                 )
-                Text(formatTimestamp(context.targetDate), color = TactileTheme.Text)
+                Text(formatTimestamp(context.targetDate), color = TajsOSTheme.Text)
             }
         }
 
@@ -523,11 +523,11 @@ private fun renderProjectSidebar(context: ProjectDetailContext) {
             if (context.attachmentNames.isEmpty()) {
                 Text(
                     stringResource(Res.string.project_detail_empty_assets),
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted
                 )
             } else {
                 context.attachmentNames.take(6).forEach {
-                    Text("• $it", color = TactileTheme.Text)
+                    Text("• $it", color = TajsOSTheme.Text)
                 }
             }
         }
@@ -539,7 +539,7 @@ private fun renderProjectSidebar(context: ProjectDetailContext) {
             if (context.tags.isEmpty()) {
                 Text(
                     stringResource(Res.string.project_detail_empty_timeline),
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted
                 )
             } else {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -560,8 +560,8 @@ private fun SidebarCard(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+        color = TajsOSTheme.Surface,
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(12.dp),
@@ -571,7 +571,7 @@ private fun SidebarCard(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                Icon(icon, contentDescription = null, tint = TactileTheme.Primary)
+                Icon(icon, contentDescription = null, tint = TajsOSTheme.Primary)
                 Text(
                     title,
                     style = MaterialTheme.typography.titleSmall,
@@ -587,10 +587,9 @@ private fun SidebarCard(
 private fun SidebarValueRow(
     label: String,
     value: String,
-    valueColor: Color = TactileTheme.Text,
-) {
+    valueColor: Color = TajsOSTheme.Text) {
     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-        Text(label, style = MaterialTheme.typography.labelSmall, color = TactileTheme.Muted)
+        Text(label, style = MaterialTheme.typography.labelSmall, color = TajsOSTheme.Muted)
         Text(value, style = MaterialTheme.typography.bodyMedium, color = valueColor)
     }
 }
@@ -605,27 +604,27 @@ private fun ProjectSectionTitle(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Icon(icon, contentDescription = null, tint = TactileTheme.Primary)
+        Icon(icon, contentDescription = null, tint = TajsOSTheme.Primary)
         Text(
             text = stringResource(title),
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.Bold,
-            color = TactileTheme.Text,
+            color = TajsOSTheme.Text
         )
     }
-    HorizontalDivider(color = TactileTheme.GhostBorder)
+    HorizontalDivider(color = TajsOSTheme.GhostBorder)
 }
 
 @Composable
 private fun ProjectEmptyState(text: StringResource) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+        color = TajsOSTheme.Surface,
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
     ) {
         Text(
             text = stringResource(text),
-            color = TactileTheme.Muted,
+            color = TajsOSTheme.Muted,
             modifier = Modifier.padding(12.dp),
         )
     }
@@ -636,12 +635,12 @@ private fun MissionMetric(
     label: String,
     value: String,
     icon: ImageVector,
-    tone: Color = TactileTheme.Primary,
+    tone: Color = TajsOSTheme.Primary
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+        color = TajsOSTheme.Surface,
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(12.dp),
@@ -657,12 +656,12 @@ private fun MissionMetric(
                     Text(
                         label,
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted
                     )
                     Text(
                         value,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = TactileTheme.Text,
+                        color = TajsOSTheme.Text
                     )
                 }
             }
@@ -684,14 +683,14 @@ fun ProjectTimelineItem(log: EventLogEntity) {
                 Modifier
                     .width(8.dp)
                     .height(8.dp)
-                    .background(TactileTheme.Muted, RoundedCornerShape(99.dp)),
+                    .background(TajsOSTheme.Muted, RoundedCornerShape(99.dp))
         )
         Spacer(Modifier.width(12.dp))
         Column {
             Text(
                 text = log.eventType.replace("_", " "),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Text,
+                color = TajsOSTheme.Text,
                 fontWeight = FontWeight.Bold,
             )
             val date =
@@ -703,7 +702,7 @@ fun ProjectTimelineItem(log: EventLogEntity) {
                     date.minute.toString().padStart(2, '0')
                 } // ${date.day}/${date.month.number}",
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted
             )
         }
     }

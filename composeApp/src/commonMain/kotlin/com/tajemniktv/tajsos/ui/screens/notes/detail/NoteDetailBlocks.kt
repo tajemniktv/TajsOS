@@ -70,7 +70,7 @@ import com.tajemniktv.tajsos.ui.components.cards.StatusCard
 import com.tajemniktv.tajsos.ui.components.common.DetailHeader
 import com.tajemniktv.tajsos.ui.components.common.DetailSectionHeader
 import com.tajemniktv.tajsos.ui.components.nodes.DecisionDetailContent
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -141,8 +141,8 @@ private fun renderNoteActionButton(context: NoteDetailContext) {
                 )
             }
         },
-        containerColor = TactileTheme.Primary,
-        contentColor = TactileTheme.Background,
+        containerColor = TajsOSTheme.Primary,
+        contentColor = TajsOSTheme.Background,
         icon = Icons.Default.Add,
         modifier = Modifier.fillMaxWidth(),
     )
@@ -156,7 +156,7 @@ private fun renderNoteRelationshipInspector(context: NoteDetailContext) {
     val forwardLinks = relations.filter { it.fromNodeId == noteId }
     val nodesMap = context.nodesMap
 
-    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+    Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)) {
         DetailSectionHeader(
             title = stringResource(Res.string.detail_relationship_inspector),
             icon = Icons.Default.Hub,
@@ -172,7 +172,7 @@ private fun renderNoteRelationshipInspector(context: NoteDetailContext) {
                 Text(
                     stringResource(Res.string.detail_backlinks).uppercase(),
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted,
                     fontSize = 8.sp,
                     fontWeight = FontWeight.Bold,
                 )
@@ -221,11 +221,11 @@ private fun renderNoteStatusCard(context: NoteDetailContext) {
         color =
             when (context.node.status)
             {
-                "active" -> TactileTheme.Success
-                "done" -> TactileTheme.Primary
-                "archived" -> TactileTheme.Muted
-                "blocked" -> TactileTheme.Error
-                else -> TactileTheme.Accent
+                "active" -> TajsOSTheme.Success
+                "done" -> TajsOSTheme.Primary
+                "archived" -> TajsOSTheme.Muted
+                "blocked" -> TajsOSTheme.Error
+                else -> TajsOSTheme.Accent
             },
         onClick = context.onShowStatusDialog,
     )
@@ -246,7 +246,7 @@ private fun renderNoteDecisionContent(context: NoteDetailContext) {
 private fun renderNoteInfoGrid(context: NoteDetailContext) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+        horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
     ) {
         InfoCard(
             title = "DUE AT",
@@ -276,7 +276,7 @@ private fun renderNoteInfoGrid(context: NoteDetailContext) {
 private fun renderNoteTaskMetadata(context: NoteDetailContext) {
     val node = context.node
     val viewModel = context.viewModel
-    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+    Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)) {
         DetailSectionHeader(
             title = "OPERATIONAL METADATA",
             icon = Icons.Default.Settings,
@@ -284,11 +284,11 @@ private fun renderNoteTaskMetadata(context: NoteDetailContext) {
 
         Surface(
             modifier = Modifier.fillMaxWidth(),
-            color = TactileTheme.Surface,
-            shape = RoundedCornerShape(TactileTheme.RadiusMd),
-            border = BorderStroke(1.dp, TactileTheme.Border),
+            color = TajsOSTheme.Surface,
+            shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+            border = BorderStroke(1.dp, TajsOSTheme.Border)
         ) {
-            Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+            Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -302,8 +302,8 @@ private fun renderNoteTaskMetadata(context: NoteDetailContext) {
                         Text(
                             "ENERGY",
                             style = MaterialTheme.typography.labelSmall,
-                            color = TactileTheme.Muted,
-                            fontSize = 8.sp,
+                            color = TajsOSTheme.Muted,
+                            fontSize = 8.sp
                         )
                         Text(
                             when (node.energyLevel)
@@ -318,11 +318,11 @@ private fun renderNoteTaskMetadata(context: NoteDetailContext) {
                             color =
                                 when (node.energyLevel)
                                 {
-                                    1 -> TactileTheme.Success
-                                    2 -> TactileTheme.Primary
-                                    3 -> TactileTheme.Error
-                                    else -> TactileTheme.Text
-                                },
+                                    1 -> TajsOSTheme.Success
+                                    2 -> TajsOSTheme.Primary
+                                    3 -> TajsOSTheme.Error
+                                    else -> TajsOSTheme.Text
+                                }
                         )
                     }
                     Column(
@@ -334,8 +334,8 @@ private fun renderNoteTaskMetadata(context: NoteDetailContext) {
                         Text(
                             "FRICTION",
                             style = MaterialTheme.typography.labelSmall,
-                            color = TactileTheme.Muted,
-                            fontSize = 8.sp,
+                            color = TajsOSTheme.Muted,
+                            fontSize = 8.sp
                         )
                         Text(
                             (node.friction ?: "STANDARD")
@@ -362,8 +362,8 @@ private fun renderNoteTaskMetadata(context: NoteDetailContext) {
                         Text(
                             "ESTIMATE",
                             style = MaterialTheme.typography.labelSmall,
-                            color = TactileTheme.Muted,
-                            fontSize = 8.sp,
+                            color = TajsOSTheme.Muted,
+                            fontSize = 8.sp
                         )
                         Text(
                             node.estimatedMinutes?.let { "$it min" } ?: "NOT SET",
@@ -376,8 +376,8 @@ private fun renderNoteTaskMetadata(context: NoteDetailContext) {
                             Text(
                                 "CRITICAL",
                                 style = MaterialTheme.typography.labelSmall,
-                                color = TactileTheme.Muted,
-                                fontSize = 8.sp,
+                                color = TajsOSTheme.Muted,
+                                fontSize = 8.sp
                             )
                             Spacer(Modifier.width(8.dp))
                             Switch(
@@ -401,15 +401,15 @@ private fun renderNoteTaskMetadata(context: NoteDetailContext) {
         if (nextStep != null) {
             Surface(
                 modifier = Modifier.fillMaxWidth(),
-                color = TactileTheme.Accent.copy(alpha = 0.1f),
-                shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                border = BorderStroke(1.dp, TactileTheme.Accent.copy(alpha = 0.3f)),
+                color = TajsOSTheme.Accent.copy(alpha = 0.1f),
+                shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+                border = BorderStroke(1.dp, TajsOSTheme.Accent.copy(alpha = 0.3f))
             ) {
-                Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+                Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
                     Text(
                         "NEXT SMALLEST STEP",
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Accent,
+                        color = TajsOSTheme.Accent,
                         fontSize = 8.sp,
                         fontWeight = FontWeight.Bold,
                     )
@@ -424,10 +424,10 @@ private fun renderNoteTaskMetadata(context: NoteDetailContext) {
                         },
                         textStyle =
                             MaterialTheme.typography.bodyMedium.copy(
-                                color = TactileTheme.Text,
-                                fontWeight = FontWeight.Medium,
+                                color = TajsOSTheme.Text,
+                                fontWeight = FontWeight.Medium
                             ),
-                        cursorBrush = SolidColor(TactileTheme.Accent),
+                        cursorBrush = SolidColor(TajsOSTheme.Accent),
                         modifier = Modifier.fillMaxWidth(),
                     )
                 }
@@ -440,7 +440,7 @@ private fun renderNoteTaskMetadata(context: NoteDetailContext) {
 private fun renderNoteResourceMetadata(context: NoteDetailContext) {
     val node = context.node
     val viewModel = context.viewModel
-    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+    Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)) {
         DetailSectionHeader(
             title = "RESOURCE DATA",
             icon = Icons.AutoMirrored.Filled.LibraryBooks,
@@ -448,11 +448,11 @@ private fun renderNoteResourceMetadata(context: NoteDetailContext) {
 
         Surface(
             modifier = Modifier.fillMaxWidth(),
-            color = TactileTheme.Surface,
-            shape = RoundedCornerShape(TactileTheme.RadiusMd),
-            border = BorderStroke(1.dp, TactileTheme.Border),
+            color = TajsOSTheme.Surface,
+            shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+            border = BorderStroke(1.dp, TajsOSTheme.Border)
         ) {
-            Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+            Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -466,8 +466,8 @@ private fun renderNoteResourceMetadata(context: NoteDetailContext) {
                         Text(
                             "MEDIA TYPE",
                             style = MaterialTheme.typography.labelSmall,
-                            color = TactileTheme.Muted,
-                            fontSize = 8.sp,
+                            color = TajsOSTheme.Muted,
+                            fontSize = 8.sp
                         )
                         Text(
                             (node.mediaType ?: "Link").uppercase(),
@@ -484,8 +484,8 @@ private fun renderNoteResourceMetadata(context: NoteDetailContext) {
                         Text(
                             "RATING",
                             style = MaterialTheme.typography.labelSmall,
-                            color = TactileTheme.Muted,
-                            fontSize = 8.sp,
+                            color = TajsOSTheme.Muted,
+                            fontSize = 8.sp
                         )
                         val rating = node.rating
                         Text(
@@ -500,16 +500,16 @@ private fun renderNoteResourceMetadata(context: NoteDetailContext) {
                     Text(
                         "AUTHOR / SOURCE",
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Muted,
-                        fontSize = 8.sp,
+                        color = TajsOSTheme.Muted,
+                        fontSize = 8.sp
                     )
                     BasicTextField(
                         value = node.author ?: "",
                         onValueChange = { viewModel.updateNode(node.copy(author = it)) },
                         textStyle =
                             MaterialTheme.typography.bodyMedium.copy(
-                                color = TactileTheme.Text,
-                                fontWeight = FontWeight.Bold,
+                                color = TajsOSTheme.Text,
+                                fontWeight = FontWeight.Bold
                             ),
                         modifier = Modifier.fillMaxWidth(),
                     )
@@ -529,10 +529,10 @@ private fun renderNoteContextGraph(context: NoteDetailContext) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = Color.Black.copy(alpha = 0.3f),
-        shape = RoundedCornerShape(TactileTheme.RadiusLg),
-        border = BorderStroke(1.dp, TactileTheme.Border.copy(alpha = 0.5f)),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
+        border = BorderStroke(1.dp, TajsOSTheme.Border.copy(alpha = 0.5f))
     ) {
-        Column(modifier = Modifier.padding(TactileTheme.SpacingLg)) {
+        Column(modifier = Modifier.padding(TajsOSTheme.SpacingLg)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -544,16 +544,16 @@ private fun renderNoteContextGraph(context: NoteDetailContext) {
                             Modifier
                                 .size(32.dp)
                                 .background(
-                                    TactileTheme.Surface,
-                                    RoundedCornerShape(8.dp),
+                                    TajsOSTheme.Surface,
+                                    RoundedCornerShape(8.dp)
                                 ),
                         contentAlignment = Alignment.Center,
                     ) {
                         Icon(
                             Icons.Default.Psychology,
                             null,
-                            tint = TactileTheme.Primary,
-                            modifier = Modifier.size(18.dp),
+                            tint = TajsOSTheme.Primary,
+                            modifier = Modifier.size(18.dp)
                         )
                     }
                     Spacer(Modifier.width(12.dp))
@@ -564,9 +564,9 @@ private fun renderNoteContextGraph(context: NoteDetailContext) {
                     )
                 }
                 Surface(
-                    color = TactileTheme.Surface,
+                    color = TajsOSTheme.Surface,
                     shape = CircleShape,
-                    border = BorderStroke(1.dp, TactileTheme.Border),
+                    border = BorderStroke(1.dp, TajsOSTheme.Border)
                 ) {
                     Text(
                         "${tags.size} Tags",
@@ -576,12 +576,12 @@ private fun renderNoteContextGraph(context: NoteDetailContext) {
                                 horizontal = 8.dp,
                                 vertical = 2.dp,
                             ),
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted
                     )
                 }
             }
 
-            Spacer(Modifier.height(TactileTheme.SpacingLg))
+            Spacer(Modifier.height(TajsOSTheme.SpacingLg))
 
             FlowRow(
                 modifier = Modifier.fillMaxWidth(),
@@ -610,17 +610,17 @@ private fun renderNoteContextGraph(context: NoteDetailContext) {
                         },
                         colors =
                             AssistChipDefaults.assistChipColors(
-                                containerColor = TactileTheme.Surface,
-                                labelColor = TactileTheme.Text,
+                                containerColor = TajsOSTheme.Surface,
+                                labelColor = TajsOSTheme.Text
                             ),
-                        shape = RoundedCornerShape(TactileTheme.RadiusSm),
+                        shape = RoundedCornerShape(TajsOSTheme.RadiusSm)
                     )
                 }
                 IconButton(
                     onClick = context.onShowTagDialog,
                     modifier = Modifier.size(32.dp),
                 ) {
-                    Icon(Icons.Default.Add, null, tint = TactileTheme.Primary)
+                    Icon(Icons.Default.Add, null, tint = TajsOSTheme.Primary)
                 }
             }
         }
@@ -630,29 +630,29 @@ private fun renderNoteContextGraph(context: NoteDetailContext) {
 @Composable
 private fun renderNoteCadence(context: NoteDetailContext) {
     val node = context.node
-    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+    Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)) {
         Surface(
             modifier = Modifier.fillMaxWidth(),
-            color = TactileTheme.Surface,
-            shape = RoundedCornerShape(TactileTheme.RadiusMd),
-            border = BorderStroke(1.dp, TactileTheme.Border),
+            color = TajsOSTheme.Surface,
+            shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+            border = BorderStroke(1.dp, TajsOSTheme.Border)
         ) {
             Row(
-                modifier = Modifier.padding(TactileTheme.SpacingMd),
+                modifier = Modifier.padding(TajsOSTheme.SpacingMd),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Icon(
                     Icons.Default.Repeat,
                     null,
-                    tint = TactileTheme.Muted,
-                    modifier = Modifier.size(20.dp),
+                    tint = TajsOSTheme.Muted,
+                    modifier = Modifier.size(20.dp)
                 )
-                Spacer(Modifier.width(TactileTheme.SpacingMd))
+                Spacer(Modifier.width(TajsOSTheme.SpacingMd))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         "RECURRING SCHEDULE",
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted,
                         fontSize = 8.sp,
                         fontWeight = FontWeight.Bold,
                     )
@@ -673,7 +673,7 @@ private fun renderNoteCadence(context: NoteDetailContext) {
                     Text(
                         "MODIFY",
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted
                     )
                 }
             }
@@ -688,18 +688,18 @@ private fun renderNoteAwarePlanning(context: NoteDetailContext) {
     val viewModel = context.viewModel
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = BorderStroke(1.dp, TactileTheme.Border),
+        color = TajsOSTheme.Surface,
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+        border = BorderStroke(1.dp, TajsOSTheme.Border)
     ) {
         Column(
-            modifier = Modifier.padding(TactileTheme.SpacingMd),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
                 "CONTEXT-AWARE PLANNING",
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted,
                 fontSize = 8.sp,
                 fontWeight = FontWeight.Bold,
             )
@@ -744,8 +744,8 @@ private fun renderNoteAwarePlanning(context: NoteDetailContext) {
                 Text(
                     title,
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Primary,
-                    fontSize = 9.sp,
+                    color = TajsOSTheme.Primary,
+                    fontSize = 9.sp
                 )
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -803,19 +803,19 @@ private fun renderNoteOrganization(context: NoteDetailContext) {
 
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = BorderStroke(1.dp, TactileTheme.Border),
+        color = TajsOSTheme.Surface,
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+        border = BorderStroke(1.dp, TajsOSTheme.Border)
     ) {
-        Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+        Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
             Text(
                 "ORGANIZATION",
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted,
                 fontSize = 8.sp,
                 fontWeight = FontWeight.Bold,
             )
-            Spacer(Modifier.height(TactileTheme.SpacingSm))
+            Spacer(Modifier.height(TajsOSTheme.SpacingSm))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -830,8 +830,8 @@ private fun renderNoteOrganization(context: NoteDetailContext) {
                     Text(
                         "AREA",
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Primary,
-                        fontSize = 8.sp,
+                        color = TajsOSTheme.Primary,
+                        fontSize = 8.sp
                     )
                     Text(
                         area?.title ?: "Unassigned",
@@ -848,8 +848,8 @@ private fun renderNoteOrganization(context: NoteDetailContext) {
                     Text(
                         "PROJECT",
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Primary,
-                        fontSize = 8.sp,
+                        color = TajsOSTheme.Primary,
+                        fontSize = 8.sp
                     )
                     Text(
                         project?.title ?: "None",
@@ -866,7 +866,7 @@ private fun renderNoteOrganization(context: NoteDetailContext) {
 private fun renderNoteAttachments(context: NoteDetailContext) {
     val viewModel = context.viewModel
     val noteId = context.node.id
-    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+    Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
         DetailSectionHeader(title = "ATTACHMENTS", icon = Icons.Default.Attachment)
         context.attachments.forEach { attachment ->
             LinkedNodeItem(
@@ -893,7 +893,7 @@ private fun renderNoteAttachments(context: NoteDetailContext) {
 @Composable
 private fun renderNoteKnowledgeConfig(context: NoteDetailContext) {
     val node = context.node
-    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+    Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)) {
         DetailSectionHeader(
             title = "KNOWLEDGE CONFIG",
             icon = Icons.AutoMirrored.Filled.MenuBook,
@@ -901,11 +901,11 @@ private fun renderNoteKnowledgeConfig(context: NoteDetailContext) {
 
         Surface(
             modifier = Modifier.fillMaxWidth(),
-            color = TactileTheme.Surface,
-            shape = RoundedCornerShape(TactileTheme.RadiusMd),
-            border = BorderStroke(1.dp, TactileTheme.Border),
+            color = TajsOSTheme.Surface,
+            shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+            border = BorderStroke(1.dp, TajsOSTheme.Border)
         ) {
-            Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+            Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -919,8 +919,8 @@ private fun renderNoteKnowledgeConfig(context: NoteDetailContext) {
                         Text(
                             "NOTE TYPE",
                             style = MaterialTheme.typography.labelSmall,
-                            color = TactileTheme.Muted,
-                            fontSize = 8.sp,
+                            color = TajsOSTheme.Muted,
+                            fontSize = 8.sp
                         )
                         Text(
                             (node.noteType ?: "Standard").uppercase(),
@@ -937,8 +937,8 @@ private fun renderNoteKnowledgeConfig(context: NoteDetailContext) {
                         Text(
                             "STATE",
                             style = MaterialTheme.typography.labelSmall,
-                            color = TactileTheme.Muted,
-                            fontSize = 8.sp,
+                            color = TajsOSTheme.Muted,
+                            fontSize = 8.sp
                         )
                         Text(
                             (node.noteState ?: "Raw").uppercase(),
@@ -955,35 +955,35 @@ private fun renderNoteKnowledgeConfig(context: NoteDetailContext) {
 @Composable
 private fun renderNoteContentEditor(context: NoteDetailContext) {
     val node = context.node
-    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+    Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
         DetailSectionHeader(title = "CONTENT", icon = Icons.Default.Description)
         BasicTextField(
             value = node.content,
             onValueChange = context.onUpdateContent,
             textStyle =
                 (if (context.isAtomicMode) MaterialTheme.typography.titleLarge else MaterialTheme.typography.bodyLarge).copy(
-                    color = TactileTheme.Text,
+                    color = TajsOSTheme.Text,
                 ),
-            cursorBrush = SolidColor(TactileTheme.Primary),
+            cursorBrush = SolidColor(TajsOSTheme.Primary),
             modifier =
                 Modifier
                     .fillMaxWidth()
                     .heightIn(min = 200.dp)
                     .background(
-                        TactileTheme.Surface,
-                        RoundedCornerShape(TactileTheme.RadiusMd),
+                        TajsOSTheme.Surface,
+                        RoundedCornerShape(TajsOSTheme.RadiusMd)
                     ).border(
                         1.dp,
-                        TactileTheme.Border,
-                        RoundedCornerShape(TactileTheme.RadiusMd),
-                    ).padding(TactileTheme.SpacingMd),
+                        TajsOSTheme.Border,
+                        RoundedCornerShape(TajsOSTheme.RadiusMd)
+                    ).padding(TajsOSTheme.SpacingMd),
             decorationBox = { innerTextField ->
                 Box {
                     if (node.content.isEmpty()) {
                         Text(
                             stringResource(Res.string.detail_start_writing),
                             style = MaterialTheme.typography.bodyLarge,
-                            color = TactileTheme.Muted,
+                            color = TajsOSTheme.Muted,
                         )
                     }
                     innerTextField()

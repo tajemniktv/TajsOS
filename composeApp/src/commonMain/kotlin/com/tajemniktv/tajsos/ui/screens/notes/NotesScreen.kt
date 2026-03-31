@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.cards.NodeCard
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 /**
  * Renders the Notes screen: a searchable, groupable list of knowledge nodes with actions and navigation.
@@ -77,8 +77,8 @@ fun GroupHeader(title: String) {
     Text(
         text = title,
         style = MaterialTheme.typography.labelSmall,
-        color = TactileTheme.Primary,
-        modifier = Modifier.padding(top = TactileTheme.SpacingMd, bottom = TactileTheme.SpacingSm),
+        color = TajsOSTheme.Primary,
+        modifier = Modifier.padding(top = TajsOSTheme.SpacingMd, bottom = TajsOSTheme.SpacingSm)
     )
 }
 

@@ -64,7 +64,7 @@ import com.tajemniktv.tajsos.ui.lens.LensUiContract
 import com.tajemniktv.tajsos.ui.main.state.CalendarEntry
 import com.tajemniktv.tajsos.ui.main.state.InsightsData
 import com.tajemniktv.tajsos.ui.screens.GroupedOpenLoopSection
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -222,10 +222,10 @@ private fun DashboardUnifiedContent(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .background(TactileTheme.Background)
+                    .background(TajsOSTheme.Background)
                     .verticalScroll(rememberScrollState())
-                    .padding(TactileTheme.SpacingMd),
-            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingLg),
+                    .padding(TajsOSTheme.SpacingMd),
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingLg)
         ) {
             layoutPlan.primary.forEach { block ->
                 RenderDashboardBlock(block = block, context = context)
@@ -242,9 +242,9 @@ private fun DashboardUnifiedContent(
         modifier =
             Modifier
                 .fillMaxSize()
-                .background(TactileTheme.Background)
-                .padding(TactileTheme.SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingLg),
+                .background(TajsOSTheme.Background)
+                .padding(TajsOSTheme.SpacingMd),
+        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingLg)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth().weight(1f),
@@ -337,7 +337,7 @@ private fun RenderDashboardBlock(
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = { Text("CMD + K to capture anything...") },
                 leadingIcon = { Icon(Icons.Default.Terminal, contentDescription = null) },
-                shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
             )
         }
 
@@ -376,15 +376,15 @@ private fun RenderDashboardBlock(
         "system_clock" -> {
             Surface(
                 modifier = Modifier.fillMaxWidth(),
-                color = TactileTheme.Surface,
-                shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                border = BorderStroke(1.dp, TactileTheme.Border),
+                color = TajsOSTheme.Surface,
+                shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+                border = BorderStroke(1.dp, TajsOSTheme.Border)
             ) {
                 Column(Modifier.padding(20.dp)) {
                     Text(
                         "SYSTEM CLOCK",
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted
                     )
                     Text(
                         context.localNow.time
@@ -398,7 +398,7 @@ private fun RenderDashboardBlock(
                             .toString()
                             .uppercase(),
                         style = MaterialTheme.typography.labelMedium,
-                        color = TactileTheme.Primary,
+                        color = TajsOSTheme.Primary,
                         letterSpacing = 2.sp,
                     )
                 }
@@ -412,9 +412,9 @@ private fun RenderDashboardBlock(
         "command_bar" -> {
             Surface(
                 modifier = Modifier.fillMaxWidth(),
-                color = TactileTheme.Surface.copy(alpha = 0.5f),
-                shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                border = BorderStroke(1.dp, TactileTheme.Border),
+                color = TajsOSTheme.Surface.copy(alpha = 0.5f),
+                shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+                border = BorderStroke(1.dp, TajsOSTheme.Border)
             ) {
                 Row(
                     modifier = Modifier.padding(12.dp).fillMaxWidth(),
@@ -432,7 +432,7 @@ private fun RenderDashboardBlock(
                         modifier =
                             Modifier
                                 .clickable { context.onNewEntry() }
-                                .background(TactileTheme.Primary, RoundedCornerShape(4.dp))
+                                .background(TajsOSTheme.Primary, RoundedCornerShape(4.dp))
                                 .padding(horizontal = 12.dp, vertical = 6.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
@@ -487,19 +487,19 @@ fun DashboardModules(
     onNavigateTo: (Screen) -> Unit,
     viewModel: MainViewModel,
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+    Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)) {
         Text(
             "CORE MODULES",
             style = MaterialTheme.typography.labelSmall,
-            color = TactileTheme.Muted,
+            color = TajsOSTheme.Muted,
             fontWeight = FontWeight.Bold,
             letterSpacing = 1.sp,
         )
 
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+            horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
         ) {
             val itemModifier = Modifier.weight(1f).widthIn(min = 160.dp)
 
@@ -517,7 +517,7 @@ fun DashboardModules(
                 icon = Icons.Default.Inbox,
                 status = "$inboxCount",
                 onClick = { onNavigateTo(Screen.Inbox) },
-                color = TactileTheme.Accent,
+                color = TajsOSTheme.Accent
             )
 
             ModuleCard(
@@ -526,7 +526,7 @@ fun DashboardModules(
                 icon = Icons.Default.AccountTree,
                 status = "${allProjects.size}",
                 onClick = { onNavigateTo(Screen.Projects) },
-                color = TactileTheme.Success,
+                color = TajsOSTheme.Success
             )
 
             ModuleCard(
@@ -535,7 +535,7 @@ fun DashboardModules(
                 icon = Icons.Default.Timer,
                 status = if (activeSession != null) "ACTIVE" else "READY",
                 onClick = { onNavigateTo(Screen.Focus) },
-                color = if (activeSession != null) TactileTheme.Primary else TactileTheme.Muted,
+                color = if (activeSession != null) TajsOSTheme.Primary else TajsOSTheme.Muted
             )
         }
     }
@@ -554,11 +554,11 @@ private fun DashboardOperationsOverview(
     val relationshipSnapshot by viewModel.relationshipSnapshot.collectAsState()
     val coreLifeOSShiftSnapshot by viewModel.coreLifeOSShiftSnapshot.collectAsState()
 
-    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+    Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)) {
         Text(
             "SYSTEMS OVERVIEW",
             style = MaterialTheme.typography.labelSmall,
-            color = TactileTheme.Muted,
+            color = TajsOSTheme.Muted,
             fontWeight = FontWeight.Bold,
             letterSpacing = 1.sp,
         )
@@ -577,8 +577,8 @@ private fun DashboardOperationsOverview(
 
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+            horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
         ) {
             dashboardSystemsModules().forEach { module ->
                 Column(
@@ -587,26 +587,26 @@ private fun DashboardOperationsOverview(
                             .weight(1f)
                             .widthIn(min = 180.dp)
                             .background(
-                                TactileTheme.Surface,
-                                RoundedCornerShape(TactileTheme.RadiusMd),
+                                TajsOSTheme.Surface,
+                                RoundedCornerShape(TajsOSTheme.RadiusMd)
                             ).border(
                                 1.dp,
-                                TactileTheme.Border,
-                                RoundedCornerShape(TactileTheme.RadiusMd),
+                                TajsOSTheme.Border,
+                                RoundedCornerShape(TajsOSTheme.RadiusMd)
                             ).clickable { onNavigateTo(module.screen) }
-                            .padding(TactileTheme.SpacingMd),
+                            .padding(TajsOSTheme.SpacingMd),
                     verticalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
                     Text(
                         text = stringResource(module.screen.label).uppercase(),
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Primary,
+                        color = TajsOSTheme.Primary,
                         fontWeight = FontWeight.Bold,
                     )
                     Text(
                         text = stringResource(module.summary),
                         style = MaterialTheme.typography.bodySmall,
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted
                     )
                 }
             }
@@ -626,17 +626,17 @@ private fun CommandItem(
             key,
             modifier =
                 Modifier
-                    .background(TactileTheme.Border, RoundedCornerShape(4.dp))
+                    .background(TajsOSTheme.Border, RoundedCornerShape(4.dp))
                     .padding(horizontal = 6.dp, vertical = 2.dp),
             style = MaterialTheme.typography.labelSmall,
-            color = TactileTheme.Text,
+            color = TajsOSTheme.Text,
             fontWeight = FontWeight.Bold,
         )
         Spacer(Modifier.width(8.dp))
         Text(
             action,
             style = MaterialTheme.typography.labelSmall,
-            color = TactileTheme.Muted,
+            color = TajsOSTheme.Muted,
             fontWeight = FontWeight.Bold,
         )
     }

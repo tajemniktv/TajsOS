@@ -28,7 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.InboxEntryEntity
 import com.tajemniktv.tajsos.data.NodeEntity
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.tasks_inbox_capture_entries
@@ -55,7 +55,7 @@ internal fun TasksInboxView(
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
     ) {
         Text(
             stringResource(Res.string.tasks_inbox_title),
@@ -65,17 +65,17 @@ internal fun TasksInboxView(
         Text(
             stringResource(Res.string.tasks_inbox_subtitle),
             style = MaterialTheme.typography.bodySmall,
-            color = TactileTheme.Muted,
+            color = TajsOSTheme.Muted
         )
 
         Surface(
-            shape = RoundedCornerShape(TactileTheme.RadiusMd),
-            color = TactileTheme.Surface,
-            border = BorderStroke(1.dp, TactileTheme.Border),
+            shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+            color = TajsOSTheme.Surface,
+            border = BorderStroke(1.dp, TajsOSTheme.Border)
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingMd),
-                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
             ) {
                 Text(
                     stringResource(Res.string.tasks_inbox_capture_entries),
@@ -85,7 +85,7 @@ internal fun TasksInboxView(
                 if (inboxEntries.isEmpty()) {
                     Text(
                         stringResource(Res.string.tasks_inbox_empty_entries),
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted
                     )
                 } else {
                     inboxEntries.take(20).forEach { entry ->
@@ -98,15 +98,17 @@ internal fun TasksInboxView(
                                 Text(
                                     entry.rawText,
                                     style = MaterialTheme.typography.bodyMedium,
-                                    color = TactileTheme.Text,
+                                    color = TajsOSTheme.Text
                                 )
                                 Text(
                                     shortDate(entry.capturedAt),
                                     style = MaterialTheme.typography.bodySmall,
-                                    color = TactileTheme.Muted,
+                                    color = TajsOSTheme.Muted
                                 )
                             }
-                            Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
+                            ) {
                                 OutlinedButton(onClick = { onTriageTask(entry) }) {
                                     Text(
                                         stringResource(Res.string.tasks_inbox_triage_task),
@@ -120,20 +122,20 @@ internal fun TasksInboxView(
                                 }
                             }
                         }
-                        HorizontalDivider(color = TactileTheme.Border)
+                        HorizontalDivider(color = TajsOSTheme.Border)
                     }
                 }
             }
         }
 
         Surface(
-            shape = RoundedCornerShape(TactileTheme.RadiusMd),
-            color = TactileTheme.Surface,
-            border = BorderStroke(1.dp, TactileTheme.Border),
+            shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+            color = TajsOSTheme.Surface,
+            border = BorderStroke(1.dp, TajsOSTheme.Border)
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingMd),
-                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
             ) {
                 Text(
                     stringResource(Res.string.tasks_inbox_tasks_title),
@@ -143,7 +145,7 @@ internal fun TasksInboxView(
                 if (inboxTasks.isEmpty()) {
                     Text(
                         stringResource(Res.string.tasks_inbox_empty_tasks),
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted,
                     )
                 } else {
                     inboxTasks.forEach { task ->
@@ -156,7 +158,7 @@ internal fun TasksInboxView(
                                 Text(
                                     task.title,
                                     style = MaterialTheme.typography.bodyLarge,
-                                    color = TactileTheme.Text,
+                                    color = TajsOSTheme.Text,
                                 )
                                 val context =
                                     listOfNotNull(
@@ -167,11 +169,12 @@ internal fun TasksInboxView(
                                     Text(
                                         context,
                                         style = MaterialTheme.typography.bodySmall,
-                                        color = TactileTheme.Muted,
+                                        color = TajsOSTheme.Muted,
                                     )
                                 }
                             }
-                            Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                                 OutlinedButton(onClick = { onOpen(task.id) }) {
                                     Text(
                                         stringResource(
@@ -186,7 +189,7 @@ internal fun TasksInboxView(
                                 }
                             }
                         }
-                        HorizontalDivider(color = TactileTheme.Border)
+                        HorizontalDivider(color = TajsOSTheme.Border)
                     }
                 }
             }

@@ -60,7 +60,7 @@ import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.lens.LensUiContract
 import com.tajemniktv.tajsos.ui.main.state.VaultsSnapshot
 import com.tajemniktv.tajsos.ui.screens.GroupedOpenLoopSection
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
@@ -230,14 +230,14 @@ internal fun VaultsLayer(
 
     LazyColumn(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
     ) {
         item("vault_hero") {
             Surface(
                 modifier = Modifier.fillMaxWidth(),
-                color = TactileTheme.VaultShell,
+                color = TajsOSTheme.VaultShell,
                 shape = RoundedCornerShape(22.dp),
-                border = BorderStroke(1.dp, TactileTheme.VaultBorder),
+                border = BorderStroke(1.dp, TajsOSTheme.VaultBorder)
             ) {
                 BoxWithConstraints {
                     val compact = maxWidth < 860.dp
@@ -250,10 +250,10 @@ internal fun VaultsLayer(
                                         Brush.linearGradient(
                                             colors =
                                                 listOf(
-                                                    TactileTheme.VaultGradientStart,
-                                                    TactileTheme.VaultGradientMid,
-                                                    TactileTheme.VaultGradientEnd,
-                                                ),
+                                                    TajsOSTheme.VaultGradientStart,
+                                                    TajsOSTheme.VaultGradientMid,
+                                                    TajsOSTheme.VaultGradientEnd
+                                                )
                                         ),
                                 ).padding(22.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -342,28 +342,28 @@ internal fun VaultsLayer(
         items(snapshot.retrievalQueue, key = { it.node.id }) { item ->
             Surface(
                 modifier = Modifier.fillMaxWidth(),
-                color = TactileTheme.Surface,
-                shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                border = BorderStroke(1.dp, TactileTheme.Primary),
+                color = TajsOSTheme.Surface,
+                shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+                border = BorderStroke(1.dp, TajsOSTheme.Primary)
             ) {
                 Column(
-                    modifier = Modifier.padding(TactileTheme.SpacingMd),
+                    modifier = Modifier.padding(TajsOSTheme.SpacingMd),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Text(
                         item.node.title,
                         style = MaterialTheme.typography.titleSmall,
-                        color = TactileTheme.Text,
+                        color = TajsOSTheme.Text,
                         fontWeight = FontWeight.Bold,
                     )
                     Text(
                         "Type ${item.node.type.uppercase()}",
                         style = MaterialTheme.typography.bodySmall,
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted
                     )
                     FlowRow(
-                        horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-                        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                        horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+                        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
                     ) {
                         AssistChip(
                             onClick = { viewModel.markMustFindLater(item.node, false) },
@@ -387,27 +387,27 @@ private fun VaultHeroPrimary(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Surface(
-            color = TactileTheme.Primary.copy(alpha = 0.14f),
+            color = TajsOSTheme.Primary.copy(alpha = 0.14f),
             shape = RoundedCornerShape(999.dp),
-            border = BorderStroke(1.dp, TactileTheme.Primary.copy(alpha = 0.35f)),
+            border = BorderStroke(1.dp, TajsOSTheme.Primary.copy(alpha = 0.35f))
         ) {
             Text(
                 stringResource(Res.string.dash_module_ready),
                 modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary,
+                color = TajsOSTheme.Primary
             )
         }
         Text(
             stringResource(LensUiContract.referenceLens.title),
             style = MaterialTheme.typography.displayMedium,
-            color = TactileTheme.VaultTextStrong,
+            color = TajsOSTheme.VaultTextStrong,
             fontWeight = FontWeight.ExtraBold,
         )
         Text(
             stringResource(LensUiContract.referenceLens.subtitle),
             style = MaterialTheme.typography.bodyMedium,
-            color = TactileTheme.VaultTextSubtle,
+            color = TajsOSTheme.VaultTextSubtle,
             modifier = Modifier.widthIn(max = 720.dp),
         )
     }
@@ -425,18 +425,18 @@ private fun VaultHeroStats(
         Text(
             "TOTAL CAPACITY",
             style = MaterialTheme.typography.labelSmall,
-            color = TactileTheme.VaultTextSubtle,
+            color = TajsOSTheme.VaultTextSubtle
         )
         Text(
             "$totalVaultItems ITEMS",
             style = MaterialTheme.typography.titleLarge,
-            color = TactileTheme.VaultTextStrong,
+            color = TajsOSTheme.VaultTextStrong,
             fontWeight = FontWeight.Bold,
         )
         Text(
             "LAST SYNC ${latestUpdatedAt?.let(::formatLocalTime) ?: "NO DATA"}",
             style = MaterialTheme.typography.labelSmall,
-            color = TactileTheme.VaultTextAccent,
+            color = TajsOSTheme.VaultTextAccent
         )
     }
 }
@@ -528,10 +528,10 @@ private fun VaultCard(
         colors =
             CardDefaults.cardColors(
                 containerColor =
-                    if (prominent) TactileTheme.VaultSoft else TactileTheme.VaultShell,
+                    if (prominent) TajsOSTheme.VaultSoft else TajsOSTheme.VaultShell
             ),
         shape = RoundedCornerShape(if (prominent) 18.dp else 14.dp),
-        border = BorderStroke(1.dp, TactileTheme.VaultBorder),
+        border = BorderStroke(1.dp, TajsOSTheme.VaultBorder)
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(14.dp),
@@ -547,22 +547,22 @@ private fun VaultCard(
                         Modifier
                             .size(34.dp)
                             .clip(RoundedCornerShape(10.dp))
-                            .background(TactileTheme.Primary.copy(alpha = 0.2f)),
+                            .background(TajsOSTheme.Primary.copy(alpha = 0.2f)),
                     contentAlignment = Alignment.Center,
                 ) {
-                    Icon(data.icon, contentDescription = null, tint = TactileTheme.Primary)
+                    Icon(data.icon, contentDescription = null, tint = TajsOSTheme.Primary)
                 }
                 if (data.badge != null) {
                     Surface(
-                        color = TactileTheme.Surface.copy(alpha = 0.45f),
+                        color = TajsOSTheme.Surface.copy(alpha = 0.45f),
                         shape = RoundedCornerShape(999.dp),
-                        border = BorderStroke(1.dp, TactileTheme.VaultBorder),
+                        border = BorderStroke(1.dp, TajsOSTheme.VaultBorder)
                     ) {
                         Text(
                             data.badge,
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                             style = MaterialTheme.typography.labelSmall,
-                            color = TactileTheme.VaultTextSubtle,
+                            color = TajsOSTheme.VaultTextSubtle
                         )
                     }
                 }
@@ -570,13 +570,13 @@ private fun VaultCard(
             Text(
                 data.title,
                 style = MaterialTheme.typography.titleMedium,
-                color = TactileTheme.VaultTextStrong,
+                color = TajsOSTheme.VaultTextStrong,
                 fontWeight = FontWeight.SemiBold,
             )
             Text(
                 data.subtitle,
                 style = MaterialTheme.typography.bodySmall,
-                color = TactileTheme.VaultTextSubtle,
+                color = TajsOSTheme.VaultTextSubtle
             )
             Spacer(Modifier.height(4.dp))
             Row(
@@ -586,13 +586,13 @@ private fun VaultCard(
                 Text(
                     "${data.count} items",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = TactileTheme.VaultTextStrong,
+                    color = TajsOSTheme.VaultTextStrong,
                     fontWeight = FontWeight.Bold,
                 )
                 Text(
                     data.stamp,
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.VaultTextAccent,
+                    color = TajsOSTheme.VaultTextAccent
                 )
             }
         }
@@ -609,9 +609,9 @@ private fun ApplicationStatusCard(
 
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = TactileTheme.VaultSoft),
+        colors = CardDefaults.cardColors(containerColor = TajsOSTheme.VaultSoft),
         shape = RoundedCornerShape(16.dp),
-        border = BorderStroke(1.dp, TactileTheme.VaultBorder),
+        border = BorderStroke(1.dp, TajsOSTheme.VaultBorder)
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(14.dp),
@@ -620,12 +620,12 @@ private fun ApplicationStatusCard(
             Text(
                 stringResource(Res.string.lens_reference_app_status),
                 style = MaterialTheme.typography.titleMedium,
-                color = TactileTheme.VaultTextStrong,
+                color = TajsOSTheme.VaultTextStrong
             )
             Text(
                 stringResource(Res.string.lens_reference_app_status_desc),
                 style = MaterialTheme.typography.bodySmall,
-                color = TactileTheme.VaultTextSubtle,
+                color = TajsOSTheme.VaultTextSubtle
             )
             Box(
                 modifier =
@@ -633,7 +633,7 @@ private fun ApplicationStatusCard(
                         .fillMaxWidth()
                         .height(6.dp)
                         .clip(RoundedCornerShape(999.dp))
-                        .background(TactileTheme.Background.copy(alpha = 0.65f)),
+                        .background(TajsOSTheme.Background.copy(alpha = 0.65f))
             ) {
                 Box(
                     modifier =
@@ -641,13 +641,13 @@ private fun ApplicationStatusCard(
                             .fillMaxWidth(progressRatio.coerceIn(0f, 1f))
                             .height(6.dp)
                             .clip(RoundedCornerShape(999.dp))
-                            .background(TactileTheme.Primary),
+                            .background(TajsOSTheme.Primary)
                 )
             }
             Text(
                 stringResource(Res.string.lens_reference_app_status_count, progress),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.VaultTextSubtle,
+                color = TajsOSTheme.VaultTextSubtle
             )
         }
     }
@@ -669,9 +669,9 @@ private fun VaultEntryComposer(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = TactileTheme.VaultShell),
+        colors = CardDefaults.cardColors(containerColor = TajsOSTheme.VaultShell),
         shape = RoundedCornerShape(16.dp),
-        border = BorderStroke(1.dp, TactileTheme.VaultBorder),
+        border = BorderStroke(1.dp, TajsOSTheme.VaultBorder)
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(14.dp),
@@ -680,7 +680,7 @@ private fun VaultEntryComposer(
             Text(
                 stringResource(Res.string.lens_reference_quick_capture),
                 style = MaterialTheme.typography.titleSmall,
-                color = TactileTheme.VaultTextStrong,
+                color = TajsOSTheme.VaultTextStrong
             )
             OutlinedTextField(
                 value = entryTitle,
@@ -697,8 +697,8 @@ private fun VaultEntryComposer(
                 minLines = 2,
             )
             FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
             ) {
                 categories.forEach { (key, label) ->
                     FilterChip(
@@ -709,8 +709,8 @@ private fun VaultEntryComposer(
                 }
             }
             FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
             ) {
                 listOf("note", "record", "task").forEach { type ->
                     val typeLabel =
@@ -729,8 +729,8 @@ private fun VaultEntryComposer(
                 }
             }
             FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
             ) {
                 AssistChip(
                     onClick = onSave,

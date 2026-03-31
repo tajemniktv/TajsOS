@@ -18,7 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 @Composable
 fun AreaHealthOverviewCard(
@@ -29,43 +29,43 @@ fun AreaHealthOverviewCard(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
+        color = TajsOSTheme.Surface,
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TactileTheme.RadiusMd),
-        border = BorderStroke(1.dp, TactileTheme.Border),
+                .RoundedCornerShape(TajsOSTheme.RadiusMd),
+        border = BorderStroke(1.dp, TajsOSTheme.Border)
     ) {
         Column(
-            modifier = Modifier.padding(TactileTheme.SpacingMd),
+            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
                 "LIFE AREAS HEALTH",
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary,
+                color = TajsOSTheme.Primary,
                 fontWeight = FontWeight.Bold,
             )
             Text(
                 "Dominant this week: ${dominantArea ?: "N/A"}",
                 style = MaterialTheme.typography.bodyMedium,
-                color = TactileTheme.Text,
+                color = TajsOSTheme.Text
             )
             Text(
                 "Imbalance: $imbalanceScore% (${imbalanceLabel.uppercase()})",
                 style = MaterialTheme.typography.bodySmall,
-                color = if (imbalanceScore >= 60) TactileTheme.Error else TactileTheme.Muted,
+                color = if (imbalanceScore >= 60) TajsOSTheme.Error else TajsOSTheme.Muted
             )
             LinearProgressIndicator(
                 progress = { (imbalanceScore / 100f).coerceIn(0f, 1f) },
                 modifier = Modifier.fillMaxWidth().height(6.dp),
-                color = if (imbalanceScore >= 60) TactileTheme.Error else TactileTheme.Primary,
-                trackColor = TactileTheme.Border,
+                color = if (imbalanceScore >= 60) TajsOSTheme.Error else TajsOSTheme.Primary,
+                trackColor = TajsOSTheme.Border
             )
             if (disappearingCount > 0) {
                 Text(
                     "Radar drop detected in $disappearingCount area(s).",
                     style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Error,
+                    color = TajsOSTheme.Error
                 )
             }
         }

@@ -107,7 +107,7 @@ fun App(
     onVoiceCaptureConsumed: () -> Unit = {},
     onPickAvatar: (() -> Unit)? = null,
     avatarPickResult: String? = null,
-    onAvatarPickConsumed: () -> Unit = {},
+    onAvatarPickConsumed: () -> Unit = {}
 ) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -127,15 +127,36 @@ fun App(
     val allModes by viewModel.allModes.collectAsState()
     val enabledPacks by viewModel.enabledPacks.collectAsState()
     val isDarkTheme by viewModel.isDarkTheme.collectAsState()
+    val accentColorHex by viewModel.accentColorHex.collectAsState()
     val userProfile by viewModel.userProfile.collectAsState()
 
     var showCaptureSheetState by remember { mutableStateOf(false) }
     var selectedTasksTab by rememberSaveable { mutableStateOf(TasksTab.COMMAND) }
     val shellState = rememberAppShellState()
 
+    val accentColor =
+        remember(accentColorHex) {
+            try {
+                val hex = accentColorHex.removePrefix("#")
+                if (hex.length == 6) {
+                    androidx.compose.ui.graphics.Color(
+                        red = hex.substring(0, 2).toInt(16),
+                        green = hex.substring(2, 4).toInt(16),
+                        blue = hex.substring(4, 6).toInt(16)
+                    )
+                } else {
+                    androidx.compose.ui.graphics
+                        .Color(0xFFBA9EFF)
+                }
+            } catch (e: Exception) {
+                androidx.compose.ui.graphics
+                    .Color(0xFFBA9EFF)
+            }
+        }
+
     remember(currentDestination) { Screen.fromRoute(currentDestination?.route) }
 
-    TajsOSTheme(darkTheme = isDarkTheme) {
+    TajsOSTheme(darkTheme = isDarkTheme, accentColor = accentColor) {
         BoxWithConstraints {
             val isDesktop = maxWidth > 800.dp
 
@@ -186,7 +207,7 @@ fun App(
                 userProfile = userProfile,
                 onModeSelect = { viewModel.switchMode(it) },
                 drawerState = drawerState,
-                scope = scope,
+                scope = scope
             ) {
                 AppScaffold(
                     showCaptureSheet = showCaptureSheetState,
@@ -212,7 +233,7 @@ fun App(
                         selectedTasksTab = newTab
                         navigate(Screen.Tasks.route + "?tab=" + newTab.routeSegment)
                     },
-                    onNavigate = navigate,
+                    onNavigate = navigate
                 )
             }
         }
@@ -248,7 +269,7 @@ private fun AppScaffold(
     isDesktop: Boolean,
     currentTasksTab: TasksTab,
     onTasksTabChange: (TasksTab) -> Unit,
-    onNavigate: (String) -> Unit,
+    onNavigate: (String) -> Unit
 ) {
     val onEditNode: (Long) -> Unit = { id ->
         onNavigate(DetailNavigationContract.routeForNodeId(id, allNodes))
@@ -258,7 +279,7 @@ private fun AppScaffold(
         NavHost(
             navController = navController,
             startDestination = Screen.Dashboard.route,
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize()
         ) {
             composable(Screen.Dashboard.route) {
                 DashboardScreen(
@@ -269,12 +290,12 @@ private fun AppScaffold(
                         onNavigate(
                             Screen.ProjectDetail.route.replace(
                                 "{projectId}",
-                                id.toString(),
-                            ),
+                                id.toString()
+                            )
                         )
                     },
                     onNewEntry = { onShowCaptureSheet(true) },
-                    currentDestination = currentDestination,
+                    currentDestination = currentDestination
                 )
             }
             composable(Screen.Inbox.route) { InboxScreen(viewModel, onEditNode) }
@@ -287,7 +308,7 @@ private fun AppScaffold(
                     viewModel = viewModel,
                     onEditNode = onEditNode,
                     currentTab = currentTasksTab,
-                    onTabChange = onTasksTabChange,
+                    onTabChange = onTasksTabChange
                 )
             }
             composable(Screen.Tasks.route + "?tab={tab}") {
@@ -295,7 +316,7 @@ private fun AppScaffold(
                     viewModel = viewModel,
                     onEditNode = onEditNode,
                     currentTab = currentTasksTab,
-                    onTabChange = onTasksTabChange,
+                    onTabChange = onTasksTabChange
                 )
             }
             composable(Screen.Notes.route) { NotesScreen(viewModel, onEditNode) }
@@ -322,6 +343,20 @@ private fun AppScaffold(
             composable(Screen.Settings.route) {
                 SettingsScreen(viewModel)
             }
+            val settingsPref = Screen.Settings.children.first {
+                it is Screen.Sub &&
+                    it.route.contains("preferences")
+            }
+            composable(settingsPref.route) {
+                SettingsScreen(viewModel)
+            }
+            val settingsCal = Screen.Settings.children.first {
+                it is Screen.Sub &&
+                    it.route.contains("calendar")
+            }
+            composable(settingsCal.route) {
+                CalendarSettingsScreen(viewModel)
+            }
             composable(Screen.SettingsHealth.route) {
                 SettingsScreen(viewModel, screenId = "health")
             }
@@ -343,7 +378,7 @@ private fun AppScaffold(
             composable(Screen.Projects.route) {
                 ProjectsScreen(
                     viewModel,
-                    onNavigateTo = { route -> onNavigate(route) },
+                    onNavigateTo = { route -> onNavigate(route) }
                 )
             }
             composable(Screen.Areas.route) {
@@ -360,7 +395,7 @@ private fun AppScaffold(
                     projectId,
                     onEditNode,
                     onBack = { navController.popBackStack() },
-                    isDesktop = isDesktop,
+                    isDesktop = isDesktop
                 )
             }
             composable(Screen.AreaDetail.route) { backStackEntry ->
@@ -376,13 +411,13 @@ private fun AppScaffold(
                         onNavigate(
                             Screen.ProjectDetail.route.replace(
                                 "{projectId}",
-                                id.toString(),
-                            ),
+                                id.toString()
+                            )
                         )
                     },
                     onEditNode = onEditNode,
                     onBack = { navController.popBackStack() },
-                    isDesktop = isDesktop,
+                    isDesktop = isDesktop
                 )
             }
             composable(Screen.NoteDetail.route) { backStackEntry ->
@@ -397,7 +432,7 @@ private fun AppScaffold(
                     onBack = { navController.popBackStack() },
                     onNavigateToNode = onEditNode,
                     onNavigateToSearch = { onNavigate(Screen.Search.route) },
-                    isDesktop = isDesktop,
+                    isDesktop = isDesktop
                 )
             }
             composable(Screen.TaskDetail.route) { backStackEntry ->
@@ -412,7 +447,7 @@ private fun AppScaffold(
                     onBack = { navController.popBackStack() },
                     onNavigateToNode = onEditNode,
                     onNavigateToSearch = { onNavigate(Screen.Search.route) },
-                    isDesktop = isDesktop,
+                    isDesktop = isDesktop
                 )
             }
             composable(Screen.RecordDetail.route) { backStackEntry ->
@@ -427,7 +462,7 @@ private fun AppScaffold(
                     onBack = { navController.popBackStack() },
                     onNavigateToNode = onEditNode,
                     onNavigateToSearch = { onNavigate(Screen.Search.route) },
-                    isDesktop = isDesktop,
+                    isDesktop = isDesktop
                 )
             }
             composable(Screen.Insights.route) {
@@ -437,10 +472,10 @@ private fun AppScaffold(
                         onNavigate(
                             Screen.ProjectDetail.route.replace(
                                 "{projectId}",
-                                id.toString(),
-                            ),
+                                id.toString()
+                            )
                         )
-                    },
+                    }
                 )
             }
             composable(Screen.Graph.route) {
@@ -455,7 +490,7 @@ private fun AppScaffold(
                     viewModel = viewModel,
                     onPickAvatar = onPickAvatar,
                     pickedAvatarRef = avatarPickResult,
-                    onAvatarPickedConsumed = onAvatarPickConsumed,
+                    onAvatarPickedConsumed = onAvatarPickConsumed
                 )
             }
         }
@@ -465,11 +500,11 @@ private fun AppScaffold(
                 onClick = { onShowCaptureSheet(true) },
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary,
-                modifier = Modifier.align(Alignment.BottomEnd).padding(20.dp),
+                modifier = Modifier.align(Alignment.BottomEnd).padding(20.dp)
             ) {
                 Icon(
                     Icons.Default.Add,
-                    contentDescription = stringResource(Res.string.nav_capture),
+                    contentDescription = stringResource(Res.string.nav_capture)
                 )
             }
         }
@@ -480,17 +515,16 @@ private fun AppScaffold(
                     onShowCaptureSheet(false)
                     onVoiceCaptureConsumed()
                 },
-                onCapture = {
-                    text,
-                    type,
-                    projectId,
-                    areaId,
-                    isRec,
-                    recInt,
-                    remAt,
-                    ctx,
-                    sticky,
-                    decisionCat,
+                onCapture = { text,
+                              type,
+                              projectId,
+                              areaId,
+                              isRec,
+                              recInt,
+                              remAt,
+                              ctx,
+                              sticky,
+                              decisionCat
                     ->
                     when (type)
                     {
@@ -499,7 +533,7 @@ private fun AppScaffold(
                                 rawText = text,
                                 areaId = areaId,
                                 projectId = projectId,
-                                contextScreen = ctx,
+                                contextScreen = ctx
                             )
                         }
 
@@ -522,7 +556,7 @@ private fun AppScaffold(
                                 reminderAt = remAt,
                                 contextScreen = ctx,
                                 isSticky = sticky,
-                                decisionCategory = decisionCat,
+                                decisionCategory = decisionCat
                             )
                         }
                     }
@@ -535,7 +569,7 @@ private fun AppScaffold(
                 defaultAreaId = lastActiveAreaId,
                 initialText = voiceCaptureResult ?: "",
                 onVoiceCaptureClick = onVoiceCapture,
-                contextScreen = currentDestination?.route,
+                contextScreen = currentDestination?.route
             )
         }
     }

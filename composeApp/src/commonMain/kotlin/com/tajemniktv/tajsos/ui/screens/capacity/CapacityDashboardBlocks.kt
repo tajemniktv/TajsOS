@@ -24,7 +24,7 @@ import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.main.state.CapacitySnapshot
 import com.tajemniktv.tajsos.ui.screens.GroupedOpenLoopSection
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 object CapacityDashboardBlockRegistry {
     private val renderers: Map<String, CapacityDashboardBlockRenderer> =
@@ -44,18 +44,18 @@ internal fun CapacityMainBlock(viewModel: MainViewModel) {
     val allAreas by viewModel.allAreas.collectAsState()
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+        modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd),
+        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
     ) {
         Text(
             text = "CAPACITY",
             style = MaterialTheme.typography.displaySmall,
-            color = TactileTheme.Text,
+            color = TajsOSTheme.Text
         )
         Text(
             text = "Measure current load, fragmentation, and whether the system is asking for more than you can carry.",
             style = MaterialTheme.typography.bodySmall,
-            color = TactileTheme.Muted,
+            color = TajsOSTheme.Muted
         )
 
         CapacityLayer(snapshot = capacitySnapshot, allAreas = allAreas)
@@ -69,24 +69,24 @@ internal fun CapacityLayer(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = BorderStroke(1.dp, TactileTheme.Border),
+        color = TajsOSTheme.Surface,
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+        border = BorderStroke(1.dp, TajsOSTheme.Border)
     ) {
         Column(
-            modifier = Modifier.padding(TactileTheme.SpacingMd),
+            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
                 "LOAD & CAPACITY",
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary,
+                color = TajsOSTheme.Primary,
                 fontWeight = FontWeight.Bold,
             )
             Text(
                 "Load ${snapshot.loadScore} • Fragmentation ${snapshot.fragmentationScore}",
                 style = MaterialTheme.typography.bodySmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted
             )
             listOfNotNull(
                 snapshot.tooManyActiveProjectsWarning,
@@ -101,14 +101,14 @@ internal fun CapacityLayer(
                 Text(
                     warning,
                     style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Error,
+                    color = TajsOSTheme.Error,
                     fontWeight = FontWeight.Bold,
                 )
             }
         }
     }
 
-    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+    Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
         if (snapshot.loadByArea.isNotEmpty()) {
             GroupedOpenLoopSection(
                 title = "LOAD BY AREA",

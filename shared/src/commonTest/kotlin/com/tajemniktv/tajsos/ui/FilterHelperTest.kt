@@ -381,7 +381,6 @@ class FilterHelperTest {
         val noteNode = createTestNode(
             id = 3,
             title = "Note",
-            type = "note",
             locationContext = "home",
         )
 

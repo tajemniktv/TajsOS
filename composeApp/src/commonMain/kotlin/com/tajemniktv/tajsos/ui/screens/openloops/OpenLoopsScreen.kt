@@ -35,7 +35,7 @@ import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.screens.GroupedOpenLoopSection
 import com.tajemniktv.tajsos.ui.screens.OpenLoopView
 import com.tajemniktv.tajsos.ui.screens.openLoopTypes
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.dash_open_loops
@@ -108,18 +108,18 @@ internal fun OpenLoopsLayer(
 
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = BorderStroke(1.dp, TactileTheme.Border),
+        color = TajsOSTheme.Surface,
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+        border = BorderStroke(1.dp, TajsOSTheme.Border)
     ) {
         Column(
-            modifier = Modifier.padding(TactileTheme.SpacingMd),
+            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
                 stringResource(Res.string.dash_open_loops),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary,
+                color = TajsOSTheme.Primary,
                 fontWeight = FontWeight.Bold,
             )
             Text(
@@ -131,18 +131,22 @@ internal fun OpenLoopsLayer(
                     snapshot.resolved.size,
                 ),
                 style = MaterialTheme.typography.bodySmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted
             )
             Text(
                 stringResource(Res.string.lens_unresolved_decay_index, snapshot.averageDecayScore),
                 style = MaterialTheme.typography.bodySmall,
-                color = if (snapshot.averageDecayScore >= 60) TactileTheme.Error else TactileTheme.Text,
+                color = if (snapshot.averageDecayScore >=
+                    60
+                ) {
+                    TajsOSTheme.Error
+                    } else TajsOSTheme.Text,
             )
             snapshot.overloadWarning?.let { overloadWarning ->
                 Text(
                     overloadWarning,
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Error,
+                    color = TajsOSTheme.Error,
                     fontWeight = FontWeight.Bold,
                 )
             }
@@ -159,8 +163,8 @@ internal fun OpenLoopsLayer(
 
     FlowRow(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+        horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
     ) {
         OpenLoopView.entries.forEach { view ->
             FilterChip(
@@ -176,13 +180,13 @@ internal fun OpenLoopsLayer(
             message =
                 stringResource(
                     Res.string.lens_unresolved_empty,
-                    stringResource(openLoopView.label).lowercase(),
-                ),
+                    stringResource(openLoopView.label).lowercase()
+                )
         )
         return
     }
 
-    LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+    LazyColumn(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
         items(loops, key = { it.node.node.id }) { loop ->
             OpenLoopCard(
                 item = loop,

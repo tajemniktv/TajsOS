@@ -2,16 +2,15 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
-package com.tajemniktv.tajsos
+package com.tajemniktv.tajsos.data
 
-import com.tajemniktv.tajsos.data.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
 
 /**
  * Tests for AppRepository delegation to new DAO methods introduced in this PR:
@@ -22,6 +21,7 @@ import kotlin.test.assertEquals
  * Each test creates a fake NodeDao that records which method was called and
  * returns a predictable Flow, then verifies AppRepository passes through correctly.
  */
+@Suppress("TestMethodWithoutAssertion")
 class RepositoryDelegationTest {
     // ---------------------------------------------------------------------------
     // Fake implementations
@@ -31,7 +31,7 @@ class RepositoryDelegationTest {
     private class FakeNodeDao(
         private val projectWithPinsFlow: Flow<List<NodeWithPin>> = flowOf(emptyList()),
         private val areaWithPinsFlow: Flow<List<NodeWithPin>> = flowOf(emptyList()),
-        private val projectsByAreaFlow: Flow<List<NodeEntity>> = flowOf(emptyList()),
+        private val projectsByAreaFlow: Flow<List<NodeEntity>> = flowOf(emptyList())
     ) : NodeDao {
         var lastProjectWithPinsId: Long? = null
         var lastAreaWithPinsId: Long? = null
@@ -59,7 +59,8 @@ class RepositoryDelegationTest {
 
         override fun getNodesByType(type: String): Flow<List<NodeEntity>> = flowOf(emptyList())
 
-        override fun getNodesByProject(projectId: Long): Flow<List<NodeEntity>> = flowOf(emptyList())
+        override fun getNodesByProject(projectId: Long): Flow<List<NodeEntity>> =
+            flowOf(emptyList())
 
         override fun getNodesByArea(areaId: Long): Flow<List<NodeEntity>> = flowOf(emptyList())
 
@@ -105,11 +106,14 @@ class RepositoryDelegationTest {
         override suspend fun insertTrackMedication(join: TrackMedicationJoinEntity) {
         }
 
-        override fun getTrackMedications(trackEntryId: Long): Flow<List<TrackMedicationJoinEntity>> = flowOf(emptyList())
+        override fun getTrackMedications(
+            trackEntryId: Long
+        ): Flow<List<TrackMedicationJoinEntity>> = flowOf(emptyList())
     }
 
     private class FakeRelationDao : RelationDao {
-        override fun getRelationsForNode(nodeId: Long): Flow<List<RelationEntity>> = flowOf(emptyList())
+        override fun getRelationsForNode(nodeId: Long): Flow<List<RelationEntity>> =
+            flowOf(emptyList())
 
         override suspend fun insertRelation(relation: RelationEntity) {
         }
@@ -128,10 +132,7 @@ class RepositoryDelegationTest {
 
         override suspend fun getBelongsToRelations(nodeId: Long): List<RelationEntity> = emptyList()
 
-        override suspend fun anyRelationExists(
-            from: Long,
-            to: Long,
-        ): Boolean = false
+        override suspend fun anyRelationExists(from: Long, to: Long): Boolean = false
 
         override fun getAllRelations(): Flow<List<RelationEntity>> = flowOf(emptyList())
     }
@@ -146,10 +147,7 @@ class RepositoryDelegationTest {
         override suspend fun attachTagToNode(nodeTag: NodeTagEntity) {
         }
 
-        override suspend fun detachTagFromNode(
-            nodeId: Long,
-            tagId: Long,
-        ) {
+        override suspend fun detachTagFromNode(nodeId: Long, tagId: Long) {
         }
     }
 
@@ -166,7 +164,8 @@ class RepositoryDelegationTest {
     }
 
     private class FakeAttachmentDao : AttachmentDao {
-        override fun getAttachmentsForNode(nodeId: Long): Flow<List<AttachmentEntity>> = flowOf(emptyList())
+        override fun getAttachmentsForNode(nodeId: Long): Flow<List<AttachmentEntity>> =
+            flowOf(emptyList())
 
         override suspend fun insertAttachment(attachment: AttachmentEntity) {
         }
@@ -206,7 +205,7 @@ class RepositoryDelegationTest {
             protocolDao = FakeProtocolDao(),
             decisionDao = FakeDecisionDao(),
             userDao = FakeUserDao(),
-            medicationDao = FakeMedicationDao(),
+            medicationDao = FakeMedicationDao()
         )
 
     // ---------------------------------------------------------------------------
@@ -214,168 +213,155 @@ class RepositoryDelegationTest {
     // ---------------------------------------------------------------------------
 
     @Test
-    fun getNodesByProjectWithPins_delegatesToNodeDao(): TestResult =
-        runTest {
-            val projectId = 42L
-            val expectedNode = NodeEntity(id = 1L, type = "task", title = "Task in Project")
-            val expectedFlow = flowOf(listOf(NodeWithPin(node = expectedNode, pin = null)))
-            val fakeDao = FakeNodeDao(projectWithPinsFlow = expectedFlow)
+    fun getNodesByProjectWithPins_delegatesToNodeDao(): TestResult = runTest {
+        val projectId = 42L
+        val expectedNode = NodeEntity(id = 1L, type = "task", title = "Task in Project")
+        val expectedFlow = flowOf(listOf(NodeWithPin(node = expectedNode, pin = null)))
+        val fakeDao = FakeNodeDao(projectWithPinsFlow = expectedFlow)
 
-            val repo = buildRepository(fakeDao)
-            val result = repo.getNodesByProjectWithPins(projectId).first()
+        val repo = buildRepository(fakeDao)
+        val result = repo.getNodesByProjectWithPins(projectId).first()
 
-            assertEquals(projectId, fakeDao.lastProjectWithPinsId)
-            assertEquals(1, result.size)
-            assertEquals("Task in Project", result.first().node.title)
-        }
-
-    @Test
-    fun getNodesByProjectWithPins_returnsEmptyListWhenNoNodes(): TestResult =
-        runTest {
-            val fakeDao = FakeNodeDao(projectWithPinsFlow = flowOf(emptyList()))
-            val repo = buildRepository(fakeDao)
-            val result = repo.getNodesByProjectWithPins(99L).first()
-            assertEquals(emptyList(), result)
-        }
+        assertEquals(projectId, fakeDao.lastProjectWithPinsId)
+        assertEquals(1, result.size)
+        assertEquals("Task in Project", result.first().node.title)
+    }
 
     @Test
-    fun getNodesByProjectWithPins_passesCorrectProjectIdToDao(): TestResult =
-        runTest {
-            val fakeDao = FakeNodeDao()
-            val repo = buildRepository(fakeDao)
-            repo.getNodesByProjectWithPins(77L).first()
-            assertEquals(77L, fakeDao.lastProjectWithPinsId)
-        }
+    fun getNodesByProjectWithPins_returnsEmptyListWhenNoNodes(): TestResult = runTest {
+        val fakeDao = FakeNodeDao(projectWithPinsFlow = flowOf(emptyList()))
+        val repo = buildRepository(fakeDao)
+        val result = repo.getNodesByProjectWithPins(99L).first()
+        assertEquals(emptyList(), result)
+    }
+
+    @Test
+    fun getNodesByProjectWithPins_passesCorrectProjectIdToDao(): TestResult = runTest {
+        val fakeDao = FakeNodeDao()
+        val repo = buildRepository(fakeDao)
+        repo.getNodesByProjectWithPins(77L).first()
+        assertEquals(77L, fakeDao.lastProjectWithPinsId)
+    }
 
     // ---------------------------------------------------------------------------
     // getNodesByAreaWithPins delegation
     // ---------------------------------------------------------------------------
 
     @Test
-    fun getNodesByAreaWithPins_delegatesToNodeDao(): TestResult =
-        runTest {
-            val areaId = 10L
-            val expectedNode = NodeEntity(id = 2L, type = "note", title = "Note in Area")
-            val expectedFlow = flowOf(listOf(NodeWithPin(node = expectedNode, pin = null)))
-            val fakeDao = FakeNodeDao(areaWithPinsFlow = expectedFlow)
+    fun getNodesByAreaWithPins_delegatesToNodeDao(): TestResult = runTest {
+        val areaId = 10L
+        val expectedNode = NodeEntity(id = 2L, type = "note", title = "Note in Area")
+        val expectedFlow = flowOf(listOf(NodeWithPin(node = expectedNode, pin = null)))
+        val fakeDao = FakeNodeDao(areaWithPinsFlow = expectedFlow)
 
-            val repo = buildRepository(fakeDao)
-            val result = repo.getNodesByAreaWithPins(areaId).first()
+        val repo = buildRepository(fakeDao)
+        val result = repo.getNodesByAreaWithPins(areaId).first()
 
-            assertEquals(areaId, fakeDao.lastAreaWithPinsId)
-            assertEquals(1, result.size)
-            assertEquals("Note in Area", result.first().node.title)
-        }
-
-    @Test
-    fun getNodesByAreaWithPins_returnsEmptyListWhenNoNodes(): TestResult =
-        runTest {
-            val fakeDao = FakeNodeDao(areaWithPinsFlow = flowOf(emptyList()))
-            val repo = buildRepository(fakeDao)
-            val result = repo.getNodesByAreaWithPins(5L).first()
-            assertEquals(emptyList(), result)
-        }
+        assertEquals(areaId, fakeDao.lastAreaWithPinsId)
+        assertEquals(1, result.size)
+        assertEquals("Note in Area", result.first().node.title)
+    }
 
     @Test
-    fun getNodesByAreaWithPins_passesCorrectAreaIdToDao(): TestResult =
-        runTest {
-            val fakeDao = FakeNodeDao()
-            val repo = buildRepository(fakeDao)
-            repo.getNodesByAreaWithPins(55L).first()
-            assertEquals(55L, fakeDao.lastAreaWithPinsId)
-        }
+    fun getNodesByAreaWithPins_returnsEmptyListWhenNoNodes(): TestResult = runTest {
+        val fakeDao = FakeNodeDao(areaWithPinsFlow = flowOf(emptyList()))
+        val repo = buildRepository(fakeDao)
+        val result = repo.getNodesByAreaWithPins(5L).first()
+        assertEquals(emptyList(), result)
+    }
 
     @Test
-    fun getNodesByAreaWithPins_multiplePinnedNodes_areAllReturned(): TestResult =
-        runTest {
-            val node1 = NodeEntity(id = 1L, type = "task", title = "First")
-            val node2 = NodeEntity(id = 2L, type = "note", title = "Second")
-            val expectedFlow =
-                flowOf(
-                    listOf(
-                        NodeWithPin(node = node1, pin = null),
-                        NodeWithPin(node = node2, pin = null),
-                    ),
+    fun getNodesByAreaWithPins_passesCorrectAreaIdToDao(): TestResult = runTest {
+        val fakeDao = FakeNodeDao()
+        val repo = buildRepository(fakeDao)
+        repo.getNodesByAreaWithPins(55L).first()
+        assertEquals(55L, fakeDao.lastAreaWithPinsId)
+    }
+
+    @Test
+    fun getNodesByAreaWithPins_multiplePinnedNodes_areAllReturned(): TestResult = runTest {
+        val node1 = NodeEntity(id = 1L, type = "task", title = "First")
+        val node2 = NodeEntity(id = 2L, type = "note", title = "Second")
+        val expectedFlow =
+            flowOf(
+                listOf(
+                    NodeWithPin(node = node1, pin = null),
+                    NodeWithPin(node = node2, pin = null)
                 )
-            val fakeDao = FakeNodeDao(areaWithPinsFlow = expectedFlow)
-            val repo = buildRepository(fakeDao)
-            val result = repo.getNodesByAreaWithPins(1L).first()
-            assertEquals(2, result.size)
-        }
+            )
+        val fakeDao = FakeNodeDao(areaWithPinsFlow = expectedFlow)
+        val repo = buildRepository(fakeDao)
+        val result = repo.getNodesByAreaWithPins(1L).first()
+        assertEquals(2, result.size)
+    }
 
     // ---------------------------------------------------------------------------
     // getProjectsByArea delegation
     // ---------------------------------------------------------------------------
 
     @Test
-    fun getProjectsByArea_delegatesToNodeDao(): TestResult =
-        runTest {
-            val areaId = 7L
-            val expectedProject = NodeEntity(id = 3L, type = "project", title = "My Project")
-            val expectedFlow = flowOf(listOf(expectedProject))
-            val fakeDao = FakeNodeDao(projectsByAreaFlow = expectedFlow)
+    fun getProjectsByArea_delegatesToNodeDao(): TestResult = runTest {
+        val areaId = 7L
+        val expectedProject = NodeEntity(id = 3L, type = "project", title = "My Project")
+        val expectedFlow = flowOf(listOf(expectedProject))
+        val fakeDao = FakeNodeDao(projectsByAreaFlow = expectedFlow)
 
-            val repo = buildRepository(fakeDao)
-            val result = repo.getProjectsByArea(areaId).first()
+        val repo = buildRepository(fakeDao)
+        val result = repo.getProjectsByArea(areaId).first()
 
-            assertEquals(areaId, fakeDao.lastProjectsByAreaId)
-            assertEquals(1, result.size)
-            assertEquals("My Project", result.first().title)
-            assertEquals("project", result.first().type)
-        }
-
-    @Test
-    fun getProjectsByArea_returnsEmptyListWhenNoProjects(): TestResult =
-        runTest {
-            val fakeDao = FakeNodeDao(projectsByAreaFlow = flowOf(emptyList()))
-            val repo = buildRepository(fakeDao)
-            val result = repo.getProjectsByArea(3L).first()
-            assertEquals(emptyList(), result)
-        }
+        assertEquals(areaId, fakeDao.lastProjectsByAreaId)
+        assertEquals(1, result.size)
+        assertEquals("My Project", result.first().title)
+        assertEquals("project", result.first().type)
+    }
 
     @Test
-    fun getProjectsByArea_passesCorrectAreaIdToDao(): TestResult =
-        runTest {
-            val fakeDao = FakeNodeDao()
-            val repo = buildRepository(fakeDao)
-            repo.getProjectsByArea(33L).first()
-            assertEquals(33L, fakeDao.lastProjectsByAreaId)
-        }
+    fun getProjectsByArea_returnsEmptyListWhenNoProjects(): TestResult = runTest {
+        val fakeDao = FakeNodeDao(projectsByAreaFlow = flowOf(emptyList()))
+        val repo = buildRepository(fakeDao)
+        val result = repo.getProjectsByArea(3L).first()
+        assertEquals(emptyList(), result)
+    }
 
     @Test
-    fun getProjectsByArea_multipleProjects_areAllReturned(): TestResult =
-        runTest {
-            val proj1 = NodeEntity(id = 1L, type = "project", title = "Alpha")
-            val proj2 = NodeEntity(id = 2L, type = "project", title = "Beta")
-            val proj3 = NodeEntity(id = 3L, type = "project", title = "Gamma")
-            val expectedFlow = flowOf(listOf(proj1, proj2, proj3))
-            val fakeDao = FakeNodeDao(projectsByAreaFlow = expectedFlow)
-            val repo = buildRepository(fakeDao)
-            val result = repo.getProjectsByArea(1L).first()
-            assertEquals(3, result.size)
-        }
+    fun getProjectsByArea_passesCorrectAreaIdToDao(): TestResult = runTest {
+        val fakeDao = FakeNodeDao()
+        val repo = buildRepository(fakeDao)
+        repo.getProjectsByArea(33L).first()
+        assertEquals(33L, fakeDao.lastProjectsByAreaId)
+    }
+
+    @Test
+    fun getProjectsByArea_multipleProjects_areAllReturned(): TestResult = runTest {
+        val proj1 = NodeEntity(id = 1L, type = "project", title = "Alpha")
+        val proj2 = NodeEntity(id = 2L, type = "project", title = "Beta")
+        val proj3 = NodeEntity(id = 3L, type = "project", title = "Gamma")
+        val expectedFlow = flowOf(listOf(proj1, proj2, proj3))
+        val fakeDao = FakeNodeDao(projectsByAreaFlow = expectedFlow)
+        val repo = buildRepository(fakeDao)
+        val result = repo.getProjectsByArea(1L).first()
+        assertEquals(3, result.size)
+    }
 
     // ---------------------------------------------------------------------------
     // Regression: pre-existing delegation methods still work
     // ---------------------------------------------------------------------------
 
     @Test
-    fun getNodesByProject_delegatesToNodeDao(): TestResult =
-        runTest {
-            // getNodesByProject (non-WithPins) was present before this PR; still works
-            val fakeDao = FakeNodeDao()
-            val repo = buildRepository(fakeDao)
-            val result = repo.getNodesByProject(1L).first()
-            assertEquals(emptyList(), result)
-        }
+    fun getNodesByProject_delegatesToNodeDao(): TestResult = runTest {
+        // getNodesByProject (non-WithPins) was present before this PR; still works
+        val fakeDao = FakeNodeDao()
+        val repo = buildRepository(fakeDao)
+        val result = repo.getNodesByProject(1L).first()
+        assertEquals(emptyList(), result)
+    }
 
     @Test
-    fun getNodesByArea_delegatesToNodeDao(): TestResult =
-        runTest {
-            // getNodesByArea (non-WithPins) was present before this PR; still works
-            val fakeDao = FakeNodeDao()
-            val repo = buildRepository(fakeDao)
-            val result = repo.getNodesByArea(1L).first()
-            assertEquals(emptyList(), result)
-        }
+    fun getNodesByArea_delegatesToNodeDao(): TestResult = runTest {
+        // getNodesByArea (non-WithPins) was present before this PR; still works
+        val fakeDao = FakeNodeDao()
+        val repo = buildRepository(fakeDao)
+        val result = repo.getNodesByArea(1L).first()
+        assertEquals(emptyList(), result)
+    }
 }

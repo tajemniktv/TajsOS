@@ -31,6 +31,7 @@ import com.tajemniktv.tajsos.ui.main.state.VaultsSnapshot
 import kotlinx.datetime.*
 import kotlin.math.sqrt
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.days
 import kotlin.time.Instant
 
 /**
@@ -2672,4 +2673,29 @@ fun calculateStudentBoardState(
         studySessionsThisWeek = studySessionsThisWeek,
         studyMinutesThisWeek = studyMinutesThisWeek,
     )
+}
+
+/**
+ * Calculates a list of stale tasks that are overdue by more than the threshold.
+ * Excludes completed, archived, already someday, pinned, and recurring tasks.
+ *
+ * @param nodes The complete list of nodes in the system.
+ * @param now The current time to use for calculations.
+ * @param cutoffDays The threshold in days before a task is considered stale.
+ */
+fun calculateStaleTasks(
+    nodes: List<NodeEntity>,
+    now: Instant,
+    cutoffDays: Int = 3,
+): List<NodeEntity> {
+    val cutoffThreshold = (now - cutoffDays.days).toEpochMilliseconds()
+    return nodes.filter { node ->
+        node.isTaskItem() &&
+            node.status == "active" &&
+            node.taskStateOrNull() == TaskState.ACTIVE &&
+            !node.isPinned &&
+            (!node.isRecurring && node.recurringInterval == null) &&
+            node.dueAt != null &&
+            node.dueAt < cutoffThreshold
+    }
 }

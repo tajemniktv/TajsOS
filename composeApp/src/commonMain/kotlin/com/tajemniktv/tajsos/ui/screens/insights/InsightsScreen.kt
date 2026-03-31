@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.EventLogEntity
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
@@ -106,36 +106,36 @@ fun ProjectEntropyItem(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
-        shape = RoundedCornerShape(TactileTheme.RadiusSm),
+        color = TajsOSTheme.Surface,
+        shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
         border =
             BorderStroke(
                 1.dp,
-                TactileTheme.Muted.copy(alpha = 0.1f),
+                TajsOSTheme.Muted.copy(alpha = 0.1f)
             ),
         onClick = onClick,
     ) {
         Row(
-            modifier = Modifier.padding(TactileTheme.SpacingMd),
+            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     project.title.uppercase(),
                     style = MaterialTheme.typography.titleSmall,
-                    color = TactileTheme.Text,
+                    color = TajsOSTheme.Text
                 )
                 Text(
                     "Entropy: ${(entropy * 100).toInt()}% (Unstructured/Postponed)",
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted
                 )
             }
             LinearProgressIndicator(
                 progress = { entropy.toFloat() },
                 modifier = Modifier.width(60.dp).height(4.dp),
-                color = if (entropy > 0.7) TactileTheme.Error else TactileTheme.Primary,
-                trackColor = TactileTheme.Border,
+                color = if (entropy > 0.7) TajsOSTheme.Error else TajsOSTheme.Primary,
+                trackColor = TajsOSTheme.Border,
                 strokeCap = StrokeCap.Round,
             )
         }
@@ -160,28 +160,28 @@ fun ActivityLogItem(log: EventLogEntity) {
 
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
-        shape = RoundedCornerShape(TactileTheme.RadiusSm),
+        color = TajsOSTheme.Surface,
+        shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
         border =
             BorderStroke(
                 1.dp,
-                TactileTheme.Muted.copy(alpha = 0.1f),
-            ),
+                TajsOSTheme.Muted.copy(alpha = 0.1f)
+            )
     ) {
         Row(
-            modifier = Modifier.padding(TactileTheme.SpacingMd),
+            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 timeStr,
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted,
                 modifier = Modifier.width(48.dp),
             )
             Text(
                 log.eventType.replace("_", " "),
                 style = MaterialTheme.typography.bodySmall,
-                color = TactileTheme.Primary,
+                color = TajsOSTheme.Primary,
                 modifier = Modifier.weight(1f),
             )
         }
@@ -205,31 +205,31 @@ fun NeglectedProjectItem(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
-        shape = RoundedCornerShape(TactileTheme.RadiusSm),
+        color = TajsOSTheme.Surface,
+        shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
         border =
             BorderStroke(
                 1.dp,
-                TactileTheme.Error.copy(alpha = 0.3f),
+                TajsOSTheme.Error.copy(alpha = 0.3f)
             ),
         onClick = onClick,
     ) {
         Row(
-            modifier = Modifier.padding(TactileTheme.SpacingMd),
+            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(Icons.Default.Warning, contentDescription = null, tint = TactileTheme.Error)
-            Spacer(Modifier.width(TactileTheme.SpacingMd))
+            Icon(Icons.Default.Warning, contentDescription = null, tint = TajsOSTheme.Error)
+            Spacer(Modifier.width(TajsOSTheme.SpacingMd))
             Column {
                 Text(
                     project.title.uppercase(),
                     style = MaterialTheme.typography.titleMedium,
-                    color = TactileTheme.Text,
+                    color = TajsOSTheme.Text
                 )
                 Text(
                     stringResource(Res.string.insights_needs_attention),
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Error,
+                    color = TajsOSTheme.Error
                 )
             }
         }

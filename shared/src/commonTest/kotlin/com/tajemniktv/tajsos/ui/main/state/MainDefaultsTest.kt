@@ -2,9 +2,8 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
-package com.tajemniktv.tajsos.ui
+package com.tajemniktv.tajsos.ui.main.state
 
-import com.tajemniktv.tajsos.ui.main.state.suggestedAreaTitles
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue

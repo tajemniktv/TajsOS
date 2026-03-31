@@ -22,7 +22,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 /**
  * Renders a Material3 button with a fixed height, rounded corners, an optional leading icon, and an uppercase bold label.
@@ -39,8 +39,8 @@ fun ActionButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    containerColor: Color = TactileTheme.Surface,
-    contentColor: Color = TactileTheme.Text,
+    containerColor: Color = TajsOSTheme.Surface,
+    contentColor: Color = TajsOSTheme.Text,
     icon: ImageVector? = null,
 ) {
     Button(
@@ -51,7 +51,7 @@ fun ActionButton(
                 containerColor = containerColor,
                 contentColor = contentColor,
             ),
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         contentPadding = PaddingValues(horizontal = 16.dp),
     ) {
         if (icon != null) {

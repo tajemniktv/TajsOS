@@ -25,7 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.data.ModeEntity
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 /**
  * Renders a header labeled "OPERATING MODE" with a horizontally scrollable row of selectable mode chips.
@@ -48,33 +48,33 @@ fun ModeSwitcherHeader(
         Text(
             "OPERATING MODE",
             style = MaterialTheme.typography.labelSmall,
-            color = TactileTheme.Muted,
+            color = TajsOSTheme.Muted,
             fontWeight = FontWeight.Bold,
             letterSpacing = 1.sp,
             fontSize = 10.sp,
         )
-        Spacer(Modifier.height(TactileTheme.SpacingSm))
+        Spacer(Modifier.height(TajsOSTheme.SpacingSm))
         LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+            horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             items(allModes) { mode ->
                 val isSelected = mode.id == currentMode?.id
-                val color = mode.themeColor?.let { Color(it) } ?: TactileTheme.Primary
+                val color = mode.themeColor?.let { Color(it) } ?: TajsOSTheme.Primary
                 Surface(
                     onClick = { onModeSelect(mode.id) },
                     color = if (isSelected) color.copy(alpha = 0.15f) else Color.Transparent,
-                    shape = RoundedCornerShape(TactileTheme.RadiusSm),
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
                     border =
                         BorderStroke(
                             1.dp,
-                            if (isSelected) color else TactileTheme.Border.copy(alpha = 0.3f),
-                        ),
+                            if (isSelected) color else TajsOSTheme.Border.copy(alpha = 0.3f)
+                        )
                 ) {
                     Text(
                         mode.name.uppercase(),
                         style = MaterialTheme.typography.labelSmall,
-                        color = if (isSelected) color else TactileTheme.Muted,
+                        color = if (isSelected) color else TajsOSTheme.Muted,
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
                     )

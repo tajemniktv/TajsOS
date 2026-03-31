@@ -29,7 +29,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlin.math.roundToInt
 
 /**
@@ -49,8 +49,8 @@ fun AbortSlider(onAbort: () -> Unit) {
             Modifier
                 .width(300.dp)
                 .height(56.dp)
-                .background(TactileTheme.Surface, RoundedCornerShape(TactileTheme.RadiusMd))
-                .border(1.dp, TactileTheme.Muted, RoundedCornerShape(TactileTheme.RadiusMd)),
+                .background(TajsOSTheme.Surface, RoundedCornerShape(TajsOSTheme.RadiusMd))
+                .border(1.dp, TajsOSTheme.Muted, RoundedCornerShape(TajsOSTheme.RadiusMd)),
         contentAlignment = Alignment.CenterStart,
     ) {
         Text(
@@ -58,14 +58,14 @@ fun AbortSlider(onAbort: () -> Unit) {
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.labelSmall,
-            color = TactileTheme.Muted,
+            color = TajsOSTheme.Muted
         )
         Box(
             modifier =
                 Modifier
                     .offset { IntOffset(offset.roundToInt(), 0) }
                     .size(56.dp)
-                    .background(TactileTheme.Error, RoundedCornerShape(TactileTheme.RadiusMd))
+                    .background(TajsOSTheme.Error, RoundedCornerShape(TajsOSTheme.RadiusMd))
                     .draggable(
                         orientation = Orientation.Horizontal,
                         state =

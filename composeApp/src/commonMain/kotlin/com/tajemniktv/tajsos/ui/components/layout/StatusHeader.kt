@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 /**
  * Displays a two-line status header: an uppercased status line prefixed with "TAJSOS // STATUS:" and an optional uppercased subtitle.
@@ -28,7 +28,7 @@ import com.tajemniktv.tajsos.ui.theme.TactileTheme
 fun StatusHeader(
     modifier: Modifier = Modifier,
     status: String = "OK",
-    color: Color = TactileTheme.Primary,
+    color: Color = TajsOSTheme.Primary,
     subtitle: String? = null,
     subtitleStyle: androidx.compose.ui.text.TextStyle = MaterialTheme.typography.titleMedium,
 ) {
@@ -44,7 +44,7 @@ fun StatusHeader(
             Text(
                 text = subtitle.uppercase(),
                 style = subtitleStyle,
-                color = TactileTheme.Text,
+                color = TajsOSTheme.Text,
                 fontWeight = FontWeight.ExtraBold,
             )
         }

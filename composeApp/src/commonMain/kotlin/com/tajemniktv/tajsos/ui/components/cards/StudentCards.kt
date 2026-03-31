@@ -33,20 +33,20 @@ import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.data.TemplateEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.main.state.StudentBoardState
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 @Composable
 fun StudentSummaryCard(state: StudentBoardState) {
-    Card(colors = CardDefaults.cardColors(containerColor = TactileTheme.Surface)) {
+    Card(colors = CardDefaults.cardColors(containerColor = TajsOSTheme.Surface)) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingMd),
-            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+            modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
         ) {
             Text("SEMESTER DASHBOARD", style = MaterialTheme.typography.titleMedium)
             val examLine =
                 state.examCountdownDays?.let { "Next exam in ${it}d" } ?: "No exam deadlines yet"
-            Text(examLine, style = MaterialTheme.typography.bodyMedium, color = TactileTheme.Accent)
-            Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+            Text(examLine, style = MaterialTheme.typography.bodyMedium, color = TajsOSTheme.Accent)
+            Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                 AssistChip(
                     onClick = {},
                     label = { Text("Assignments ${state.assignmentTracker.size}") },
@@ -86,18 +86,18 @@ fun TemplateQuickActionsCard(
     val paperTemplate =
         templates.firstOrNull { it.name.equals("Paper Summary Template", ignoreCase = true) }
 
-    Card(colors = CardDefaults.cardColors(containerColor = TactileTheme.Surface)) {
+    Card(colors = CardDefaults.cardColors(containerColor = TajsOSTheme.Surface)) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingMd),
-            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+            modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
         ) {
             Text("TEMPLATES", style = MaterialTheme.typography.titleMedium)
             Text(
                 "Lecture, reading, and paper summary templates are seeded and can be inserted directly.",
                 style = MaterialTheme.typography.bodySmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted
             )
-            Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                 AssistChip(
                     onClick = {},
                     label = { Text(if (state.lectureTemplateReady) "Lecture Ready" else "Lecture Missing") },
@@ -119,7 +119,7 @@ fun TemplateQuickActionsCard(
                     leadingIcon = { Icon(Icons.Default.LocalLibrary, contentDescription = null) },
                 )
             }
-            Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                 OutlinedTextField(
                     modifier = Modifier.weight(1f),
                     value = courseId,
@@ -142,7 +142,7 @@ fun TemplateQuickActionsCard(
                 label = { Text("Course Name") },
                 singleLine = true,
             )
-            Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                 Button(
                     enabled = lectureTemplate != null,
                     onClick = { lectureTemplate?.let { onCreate(it, "lecture") } },
@@ -178,16 +178,16 @@ fun ProgressControlCard(
     onIncrease: () -> Unit,
     onOpen: () -> Unit,
 ) {
-    Card(colors = CardDefaults.cardColors(containerColor = TactileTheme.Surface)) {
-        Column(modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingMd)) {
+    Card(colors = CardDefaults.cardColors(containerColor = TajsOSTheme.Surface)) {
+        Column(modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd)) {
             Text(title, style = MaterialTheme.typography.titleSmall)
-            Text("$value%", style = MaterialTheme.typography.bodySmall, color = TactileTheme.Accent)
-            Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+            Text("$value%", style = MaterialTheme.typography.bodySmall, color = TajsOSTheme.Accent)
+            Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                 OutlinedButton(onClick = onDecrease) { Text("-10") }
                 OutlinedButton(onClick = onIncrease) { Text("+10") }
                 OutlinedButton(onClick = onOpen) { Text("Open") }
             }
-            Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                 OutlinedButton(onClick = onOpen) { Text("Details") }
                 OutlinedButton(onClick = {}) { Text("ID ${node.id}") }
             }
@@ -210,8 +210,8 @@ fun StudentNodeCard(
         onArchive = { viewModel.archiveNode(node.node) },
     )
     Row(
-        modifier = Modifier.fillMaxWidth().padding(bottom = TactileTheme.SpacingSm),
-        horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+        modifier = Modifier.fillMaxWidth().padding(bottom = TajsOSTheme.SpacingSm),
+        horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
     ) {
         OutlinedButton(onClick = { viewModel.toggleFlashcardCandidate(node.node, true) }) {
             Text("Flashcard")

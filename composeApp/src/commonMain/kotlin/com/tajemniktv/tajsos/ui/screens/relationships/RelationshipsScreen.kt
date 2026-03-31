@@ -28,7 +28,7 @@ import com.tajemniktv.tajsos.ui.components.cards.PersonRelationshipCard
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.main.state.RelationshipSnapshot
 import com.tajemniktv.tajsos.ui.screens.GroupedOpenLoopSection
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
@@ -59,30 +59,30 @@ internal fun PeopleLayer(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = BorderStroke(1.dp, TactileTheme.Border),
+        color = TajsOSTheme.Surface,
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+        border = BorderStroke(1.dp, TajsOSTheme.Border)
     ) {
         Column(
-            modifier = Modifier.padding(TactileTheme.SpacingMd),
+            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
                 "RELATIONSHIP HEALTH",
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary,
+                color = TajsOSTheme.Primary,
                 fontWeight = FontWeight.Bold,
             )
             Text(
                 "People ${snapshot.people.size} • Follow-up ${snapshot.followUpNeeded.size} • Reply queue ${snapshot.replyQueue.size}",
                 style = MaterialTheme.typography.bodySmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted
             )
             snapshot.gentlePrompt?.let { prompt ->
                 Text(
                     prompt,
                     style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Accent,
+                    color = TajsOSTheme.Accent
                 )
             }
         }
@@ -93,7 +93,7 @@ internal fun PeopleLayer(
         return
     }
 
-    LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+    LazyColumn(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
         if (snapshot.importantRelationships.isNotEmpty()) {
             item {
                 GroupedOpenLoopSection(

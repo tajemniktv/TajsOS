@@ -33,7 +33,7 @@ import com.tajemniktv.tajsos.data.isNoteItem
 import com.tajemniktv.tajsos.data.isRecordItem
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
@@ -92,7 +92,7 @@ internal fun NotesMainBlock(
             }
         }
 
-    Column(modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd)) {
+    Column(modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd)) {
         Text(
             stringResource(Res.string.notes_title),
             style = MaterialTheme.typography.displaySmall,
@@ -113,11 +113,11 @@ internal fun NotesMainBlock(
             shape = MaterialTheme.shapes.medium,
         )
 
-        Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
+        Spacer(modifier = Modifier.height(TajsOSTheme.SpacingSm))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+            horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
         ) {
             listOf("TYPE", "AREA", "PROJECT", "DATE", "MEDIA").forEach { group ->
                 FilterChip(

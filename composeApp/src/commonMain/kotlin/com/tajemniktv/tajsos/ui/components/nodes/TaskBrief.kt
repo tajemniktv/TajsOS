@@ -29,7 +29,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 /**
  * Renders a clickable task row with a circular completion indicator and title.
@@ -40,6 +40,7 @@ import com.tajemniktv.tajsos.ui.theme.TactileTheme
  * @param title The task title displayed as a single-line text.
  * @param isDone Whether the task is marked complete.
  * @param onToggle Called when the circular completion indicator is tapped.
+ * @param modifier The modifier to be applied to the layout.
  * @param onClick Called when the task row (surface) is tapped.
  */
 @Composable
@@ -47,13 +48,14 @@ fun TaskBrief(
     title: String,
     isDone: Boolean,
     onToggle: () -> Unit,
+    modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
     Surface(
         onClick = onClick,
         color = Color.Black.copy(alpha = 0.2f),
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+        modifier = modifier.fillMaxWidth()
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
@@ -64,10 +66,10 @@ fun TaskBrief(
                     Modifier
                         .size(20.dp)
                         .clip(CircleShape)
-                        .background(if (isDone) TactileTheme.Primary else Color.Transparent)
+                        .background(if (isDone) TajsOSTheme.Primary else Color.Transparent)
                         .border(
                             1.dp,
-                            if (isDone) TactileTheme.Primary else TactileTheme.Muted,
+                            if (isDone) TajsOSTheme.Primary else TajsOSTheme.Muted,
                             CircleShape,
                         ).clickable { onToggle() },
                 contentAlignment = Alignment.Center,
@@ -85,7 +87,7 @@ fun TaskBrief(
             Text(
                 title,
                 style = MaterialTheme.typography.bodyMedium,
-                color = if (isDone) TactileTheme.Muted else TactileTheme.Text,
+                color = if (isDone) TajsOSTheme.Muted else TajsOSTheme.Text,
                 fontWeight = FontWeight.Medium,
                 maxLines = 1,
             )

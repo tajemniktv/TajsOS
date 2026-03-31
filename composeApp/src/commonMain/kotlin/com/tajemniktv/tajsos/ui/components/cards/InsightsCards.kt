@@ -25,7 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.AreaHealthMetrics
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.insights_archive
@@ -61,24 +61,24 @@ import tajsos.composeapp.generated.resources.track_meds
 fun AutoReviewCard(review: String) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Primary.copy(alpha = 0.05f),
+        color = TajsOSTheme.Primary.copy(alpha = 0.05f),
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TactileTheme.RadiusMd),
+                .RoundedCornerShape(TajsOSTheme.RadiusMd),
         border =
             androidx.compose.foundation.BorderStroke(
                 1.dp,
-                TactileTheme.Primary.copy(alpha = 0.2f),
-            ),
+                TajsOSTheme.Primary.copy(alpha = 0.2f)
+            )
     ) {
-        Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+        Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
             Text(
                 stringResource(Res.string.insights_auto_prepared_review),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary,
+                color = TajsOSTheme.Primary
             )
             Spacer(Modifier.height(8.dp))
-            Text(review, style = MaterialTheme.typography.bodyMedium, color = TactileTheme.Text)
+            Text(review, style = MaterialTheme.typography.bodyMedium, color = TajsOSTheme.Text)
         }
     }
 }
@@ -90,21 +90,21 @@ fun CompletionCard(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
+        color = TajsOSTheme.Surface,
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TactileTheme.RadiusMd),
+                .RoundedCornerShape(TajsOSTheme.RadiusMd),
         border =
             androidx.compose.foundation.BorderStroke(
                 1.dp,
-                TactileTheme.Muted.copy(alpha = 0.2f),
-            ),
+                TajsOSTheme.Muted.copy(alpha = 0.2f)
+            )
     ) {
-        Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+        Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
             Text(
                 stringResource(Res.string.insights_capacity),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary,
+                color = TajsOSTheme.Primary
             )
             Spacer(Modifier.height(8.dp))
             Row(
@@ -116,24 +116,24 @@ fun CompletionCard(
                     Text(
                         "$captures",
                         style = MaterialTheme.typography.displaySmall,
-                        color = TactileTheme.Text,
+                        color = TajsOSTheme.Text
                     )
                     Text(
                         stringResource(Res.string.insights_captures),
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted
                     )
                 }
                 Column(horizontalAlignment = Alignment.End) {
                     Text(
                         "$completions",
                         style = MaterialTheme.typography.displaySmall,
-                        color = TactileTheme.Success,
+                        color = TajsOSTheme.Success
                     )
                     Text(
                         stringResource(Res.string.insights_completions),
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted
                     )
                 }
             }
@@ -142,8 +142,8 @@ fun CompletionCard(
             LinearProgressIndicator(
                 progress = { rate },
                 modifier = Modifier.fillMaxWidth().height(4.dp),
-                color = if (rate >= 0.8f) TactileTheme.Success else TactileTheme.Primary,
-                trackColor = TactileTheme.Muted.copy(alpha = 0.2f),
+                color = if (rate >= 0.8f) TajsOSTheme.Success else TajsOSTheme.Primary,
+                trackColor = TajsOSTheme.Muted.copy(alpha = 0.2f)
             )
         }
     }
@@ -157,21 +157,21 @@ fun FocusInsightCard(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
+        color = TajsOSTheme.Surface,
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TactileTheme.RadiusMd),
+                .RoundedCornerShape(TajsOSTheme.RadiusMd),
         border =
             androidx.compose.foundation.BorderStroke(
                 1.dp,
-                TactileTheme.Muted.copy(alpha = 0.2f),
-            ),
+                TajsOSTheme.Muted.copy(alpha = 0.2f)
+            )
     ) {
-        Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+        Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
             Text(
                 stringResource(Res.string.insights_focus_execution),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary,
+                color = TajsOSTheme.Primary
             )
             Spacer(Modifier.height(8.dp))
             Row(
@@ -182,24 +182,24 @@ fun FocusInsightCard(
                     Text(
                         "${((hours * 10).toInt() / 10.0)}",
                         style = MaterialTheme.typography.displaySmall,
-                        color = TactileTheme.Text,
+                        color = TajsOSTheme.Text
                     )
                     Text(
                         stringResource(Res.string.insights_total_hours),
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted
                     )
                 }
                 Column(horizontalAlignment = Alignment.End) {
                     Text(
                         "$avgMin",
                         style = MaterialTheme.typography.displaySmall,
-                        color = TactileTheme.Primary,
+                        color = TajsOSTheme.Primary
                     )
                     Text(
                         stringResource(Res.string.insights_avg_session_min),
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted
                     )
                 }
             }
@@ -209,7 +209,7 @@ fun FocusInsightCard(
                 Text(
                     stringResource(Res.string.insights_peak_focus, formattedHour),
                     style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted
                 )
             }
         }
@@ -227,21 +227,21 @@ fun EfficiencyCard(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
+        color = TajsOSTheme.Surface,
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TactileTheme.RadiusMd),
+                .RoundedCornerShape(TajsOSTheme.RadiusMd),
         border =
             androidx.compose.foundation.BorderStroke(
                 1.dp,
-                TactileTheme.Muted.copy(alpha = 0.2f),
-            ),
+                TajsOSTheme.Muted.copy(alpha = 0.2f)
+            )
     ) {
-        Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+        Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
             Text(
                 stringResource(Res.string.insights_efficiency_chaos),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary,
+                color = TajsOSTheme.Primary
             )
             Spacer(Modifier.height(16.dp))
             Row(
@@ -251,17 +251,17 @@ fun EfficiencyCard(
                 MetricSummary(
                     "${(archiveRate * 100).toInt()}%",
                     stringResource(Res.string.insights_archive),
-                    TactileTheme.Text,
+                    TajsOSTheme.Text
                 )
                 MetricSummary(
                     "$postpones",
                     stringResource(Res.string.insights_postpones),
-                    TactileTheme.Error,
+                    TajsOSTheme.Error
                 )
                 MetricSummary(
                     "$chaos",
                     stringResource(Res.string.insights_chaos),
-                    if (chaos > 50) TactileTheme.Error else TactileTheme.Text,
+                    if (chaos > 50) TajsOSTheme.Error else TajsOSTheme.Text
                 )
             }
             Spacer(Modifier.height(16.dp))
@@ -280,7 +280,7 @@ fun EfficiencyCard(
                 Text(
                     stringResource(Res.string.insights_pressure, pressureLabel),
                     style = MaterialTheme.typography.bodySmall,
-                    color = if (pressure > 5.0) TactileTheme.Error else TactileTheme.Muted,
+                    color = if (pressure > 5.0) TajsOSTheme.Error else TajsOSTheme.Muted
                 )
                 Text(
                     stringResource(
@@ -288,7 +288,7 @@ fun EfficiencyCard(
                         ((switching * 10).toInt() / 10.0).toString(),
                     ),
                     style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted
                 )
             }
             if (productiveHour != -1) {
@@ -298,7 +298,7 @@ fun EfficiencyCard(
                 Text(
                     stringResource(Res.string.insights_peak_completions, formattedHour),
                     style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Accent,
+                    color = TajsOSTheme.Accent
                 )
             }
         }
@@ -312,21 +312,21 @@ fun VaultInsightCard(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
+        color = TajsOSTheme.Surface,
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TactileTheme.RadiusMd),
+                .RoundedCornerShape(TajsOSTheme.RadiusMd),
         border =
             androidx.compose.foundation.BorderStroke(
                 1.dp,
-                TactileTheme.Muted.copy(alpha = 0.2f),
-            ),
+                TajsOSTheme.Muted.copy(alpha = 0.2f)
+            )
     ) {
-        Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+        Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
             Text(
                 stringResource(Res.string.insights_intake_dynamics),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary,
+                color = TajsOSTheme.Primary
             )
             Spacer(Modifier.height(8.dp))
             Row(
@@ -337,12 +337,12 @@ fun VaultInsightCard(
                     Text(
                         "$inboxGrowth",
                         style = MaterialTheme.typography.displaySmall,
-                        color = TactileTheme.Accent,
+                        color = TajsOSTheme.Accent
                     )
                     Text(
                         stringResource(Res.string.insights_new_inbox_items),
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted
                     )
                 }
                 Column(horizontalAlignment = Alignment.End) {
@@ -351,12 +351,12 @@ fun VaultInsightCard(
                     Text(
                         "$ratio%",
                         style = MaterialTheme.typography.displaySmall,
-                        color = TactileTheme.Text,
+                        color = TajsOSTheme.Text
                     )
                     Text(
                         stringResource(Res.string.insights_unprocessed_rate),
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted
                     )
                 }
             }
@@ -371,21 +371,21 @@ fun AdvancedSystemCard(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
+        color = TajsOSTheme.Surface,
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TactileTheme.RadiusMd),
+                .RoundedCornerShape(TajsOSTheme.RadiusMd),
         border =
             androidx.compose.foundation.BorderStroke(
                 1.dp,
-                TactileTheme.Muted.copy(alpha = 0.2f),
-            ),
+                TajsOSTheme.Muted.copy(alpha = 0.2f)
+            )
     ) {
-        Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+        Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
             Text(
                 stringResource(Res.string.insights_system_stability),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary,
+                color = TajsOSTheme.Primary
             )
             Spacer(Modifier.height(8.dp))
             Row(
@@ -404,19 +404,19 @@ fun AdvancedSystemCard(
                     Text(
                         stabilityLabel,
                         style = MaterialTheme.typography.headlineSmall,
-                        color = TactileTheme.Text,
+                        color = TajsOSTheme.Text
                     )
                     Text(
                         stringResource(Res.string.insights_context_stability),
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted
                     )
                 }
                 CircularProgressIndicator(
                     progress = { stability.toFloat() },
                     modifier = Modifier.size(40.dp),
-                    color = if (stability > 0.5) TactileTheme.Success else TactileTheme.Primary,
-                    trackColor = TactileTheme.Border,
+                    color = if (stability > 0.5) TajsOSTheme.Success else TajsOSTheme.Primary,
+                    trackColor = TajsOSTheme.Border,
                     strokeCap = androidx.compose.ui.graphics.StrokeCap.Round,
                 )
             }
@@ -425,7 +425,7 @@ fun AdvancedSystemCard(
                 Text(
                     summary,
                     style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Text.copy(alpha = 0.8f),
+                    color = TajsOSTheme.Text.copy(alpha = 0.8f)
                 )
             }
         }
@@ -440,21 +440,21 @@ fun StateAveragesCard(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
+        color = TajsOSTheme.Surface,
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TactileTheme.RadiusMd),
+                .RoundedCornerShape(TajsOSTheme.RadiusMd),
         border =
             androidx.compose.foundation.BorderStroke(
                 1.dp,
-                TactileTheme.Muted.copy(alpha = 0.2f),
-            ),
+                TajsOSTheme.Muted.copy(alpha = 0.2f)
+            )
     ) {
-        Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+        Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
             Text(
                 stringResource(Res.string.insights_biometrics),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary,
+                color = TajsOSTheme.Primary
             )
             Spacer(Modifier.height(8.dp))
             Row(
@@ -479,21 +479,21 @@ fun CorrelationsCard(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
+        color = TajsOSTheme.Surface,
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TactileTheme.RadiusMd),
+                .RoundedCornerShape(TajsOSTheme.RadiusMd),
         border =
             androidx.compose.foundation.BorderStroke(
                 1.dp,
-                TactileTheme.Muted.copy(alpha = 0.2f),
-            ),
+                TajsOSTheme.Muted.copy(alpha = 0.2f)
+            )
     ) {
-        Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+        Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
             Text(
                 stringResource(Res.string.insights_lifestyle_correlations),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary,
+                color = TajsOSTheme.Primary,
             )
             Spacer(Modifier.height(16.dp))
             CorrelationItem(
@@ -504,7 +504,7 @@ fun CorrelationsCard(
             )
             HorizontalDivider(
                 Modifier.padding(vertical = 8.dp),
-                color = TactileTheme.Muted.copy(alpha = 0.1f),
+                color = TajsOSTheme.Muted.copy(alpha = 0.1f)
             )
             CorrelationItem(
                 "${stringResource(Res.string.track_label_recovery_cycles)} → ${stringResource(Res.string.track_label_cognitive_lock)}",
@@ -514,7 +514,7 @@ fun CorrelationsCard(
             )
             HorizontalDivider(
                 Modifier.padding(vertical = 8.dp),
-                color = TactileTheme.Muted.copy(alpha = 0.1f),
+                color = TajsOSTheme.Muted.copy(alpha = 0.1f)
             )
             CorrelationItem(
                 "${stringResource(Res.string.track_label_energy_reserves)} → ${stringResource(Res.string.insights_captures)}",
@@ -524,7 +524,7 @@ fun CorrelationsCard(
             )
             HorizontalDivider(
                 Modifier.padding(vertical = 8.dp),
-                color = TactileTheme.Muted.copy(alpha = 0.1f),
+                color = TajsOSTheme.Muted.copy(alpha = 0.1f)
             )
             CorrelationItem(
                 "${stringResource(Res.string.track_meds)} → ${stringResource(Res.string.track_label_cognitive_lock)}",
@@ -537,7 +537,7 @@ fun CorrelationsCard(
                 Text(
                     stringResource(Res.string.insights_avoidance_pattern, avoid.toInt()),
                     style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Error,
+                    color = TajsOSTheme.Error,
                 )
             }
         }
@@ -552,27 +552,26 @@ private fun CorrelationItem(
     neutralMsg: String,
 ) {
     Column {
-        Text(label, style = MaterialTheme.typography.labelSmall, color = TactileTheme.Muted)
+        Text(label, style = MaterialTheme.typography.labelSmall, color = TajsOSTheme.Muted)
         Text(
             if (value > 0.5) positiveMsg else neutralMsg,
             style = MaterialTheme.typography.bodyMedium,
-            color = if (value > 0.5) TactileTheme.Success else TactileTheme.Text,
+            color = if (value > 0.5) TajsOSTheme.Success else TajsOSTheme.Text
         )
     }
 }
 
 @Composable
-private fun MetricItem(
-    label: String,
+private fun MetricItem(label: String,
     value: Double,
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             "${((value * 10).toInt() / 10.0)}",
             style = MaterialTheme.typography.headlineMedium,
-            color = TactileTheme.Text,
+            color = TajsOSTheme.Text,
         )
-        Text(label, style = MaterialTheme.typography.labelSmall, color = TactileTheme.Muted)
+        Text(label, style = MaterialTheme.typography.labelSmall, color = TajsOSTheme.Muted)
     }
 }
 
@@ -584,7 +583,7 @@ private fun MetricSummary(
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(value, style = MaterialTheme.typography.headlineSmall, color = color)
-        Text(label, style = MaterialTheme.typography.labelSmall, color = TactileTheme.Muted)
+        Text(label, style = MaterialTheme.typography.labelSmall, color = TajsOSTheme.Muted)
     }
 }
 
@@ -600,21 +599,21 @@ fun InsightPatternCard(
         color = color.copy(alpha = 0.05f),
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TactileTheme.RadiusMd),
+                .RoundedCornerShape(TajsOSTheme.RadiusMd),
         border = androidx.compose.foundation.BorderStroke(1.dp, color.copy(alpha = 0.2f)),
     ) {
         Row(
-            modifier = Modifier.padding(TactileTheme.SpacingMd),
-            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(icon, contentDescription = null, tint = color, modifier = Modifier.size(32.dp))
-            Spacer(Modifier.width(TactileTheme.SpacingMd))
+            Spacer(Modifier.width(TajsOSTheme.SpacingMd))
             Column {
                 Text(title, style = MaterialTheme.typography.labelSmall, color = color)
                 Text(
                     message,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = TactileTheme.Text,
+                    color = TajsOSTheme.Text,
                 )
             }
         }
@@ -630,34 +629,34 @@ fun AreaHealthSystemCard(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
+        color = TajsOSTheme.Surface,
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TactileTheme.RadiusMd),
-        border = androidx.compose.foundation.BorderStroke(1.dp, TactileTheme.Border),
+                .RoundedCornerShape(TajsOSTheme.RadiusMd),
+        border = androidx.compose.foundation.BorderStroke(1.dp, TajsOSTheme.Border)
     ) {
-        Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+        Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
             Text(
                 "LIFE AREAS HEALTH",
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary,
+                color = TajsOSTheme.Primary,
             )
             Spacer(Modifier.height(8.dp))
             Text(
                 "Dominant area this week: ${dominantArea ?: "N/A"}",
                 style = MaterialTheme.typography.bodyMedium,
-                color = TactileTheme.Text,
+                color = TajsOSTheme.Text,
             )
             Text(
                 "Imbalance: $imbalanceScore% (${imbalanceLabel.uppercase()})",
                 style = MaterialTheme.typography.bodySmall,
-                color = if (imbalanceScore >= 60) TactileTheme.Error else TactileTheme.Muted,
+                color = if (imbalanceScore >= 60) TajsOSTheme.Error else TajsOSTheme.Muted
             )
             if (disappearingCount > 0) {
                 Text(
                     "Areas disappearing from radar: $disappearingCount",
                     style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Error,
+                    color = TajsOSTheme.Error,
                 )
             }
         }
@@ -669,25 +668,25 @@ fun AreaHealthInsightCard(area: AreaHealthMetrics) {
     val color =
         when (area.status)
         {
-            "on_fire" -> TactileTheme.Error
-            "overloaded" -> TactileTheme.Accent
-            "neglected" -> TactileTheme.Muted
-            "active" -> TactileTheme.Primary
-            else -> TactileTheme.Success
+            "on_fire"    -> TajsOSTheme.Error
+            "overloaded" -> TajsOSTheme.Accent
+            "neglected" -> TajsOSTheme.Muted
+            "active" -> TajsOSTheme.Primary
+            else -> TajsOSTheme.Success
         }
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
+        color = TajsOSTheme.Surface,
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TactileTheme.RadiusSm),
+                .RoundedCornerShape(TajsOSTheme.RadiusSm),
         border = androidx.compose.foundation.BorderStroke(1.dp, color.copy(alpha = 0.25f)),
     ) {
-        Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+        Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
             Text(
                 area.areaTitle.uppercase(),
                 style = MaterialTheme.typography.titleSmall,
-                color = TactileTheme.Text,
+                color = TajsOSTheme.Text,
             )
             Spacer(Modifier.height(4.dp))
             Text(
@@ -698,7 +697,7 @@ fun AreaHealthInsightCard(area: AreaHealthMetrics) {
             Text(
                 "Open loops ${area.openLoops} • Deadlines ${area.deadlines} • Recent ${area.recentActivity}",
                 style = MaterialTheme.typography.bodySmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted,
             )
         }
     }

@@ -48,7 +48,7 @@ import com.tajemniktv.tajsos.ui.main.state.TransitionProtocolItem
 import com.tajemniktv.tajsos.ui.main.state.TransitionProtocolsSnapshot
 import com.tajemniktv.tajsos.ui.screens.formatProtocolTimestamp
 import com.tajemniktv.tajsos.ui.screens.parseProtocolChecklist
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlin.math.max
 
 /**
@@ -163,7 +163,7 @@ internal fun ProtocolsLayer(
 
     Column(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
     ) {
         ProtocolsHeader(
             protocolCount = libraryItems.size,
@@ -174,13 +174,13 @@ internal fun ProtocolsLayer(
 
         Surface(
             modifier = Modifier.fillMaxWidth(),
-            color = TactileTheme.SurfaceLowest,
-            shape = RoundedCornerShape(TactileTheme.RadiusMd),
-            border = BorderStroke(1.dp, TactileTheme.Border.copy(alpha = 0.6f)),
+            color = TajsOSTheme.SurfaceLowest,
+            shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+            border = BorderStroke(1.dp, TajsOSTheme.Border.copy(alpha = 0.6f))
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingSm),
-                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingSm),
+                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
             ) {
                 ProtocolView.entries.forEach { view ->
                     FilterChip(
@@ -194,7 +194,7 @@ internal fun ProtocolsLayer(
 
         Column(
             modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
         ) {
             when (protocolViewState.value)
             {
@@ -257,9 +257,9 @@ private fun ProtocolsHeader(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
-        shape = RoundedCornerShape(TactileTheme.RadiusLg),
-        border = BorderStroke(1.dp, TactileTheme.Border),
+        color = TajsOSTheme.Surface,
+        shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
+        border = BorderStroke(1.dp, TajsOSTheme.Border)
     ) {
         Column(
             modifier =
@@ -270,27 +270,27 @@ private fun ProtocolsHeader(
                             Brush.verticalGradient(
                                 colors =
                                     listOf(
-                                        TactileTheme.SurfaceHighest.copy(alpha = 0.52f),
-                                        TactileTheme.Surface.copy(alpha = 0.9f),
-                                    ),
+                                        TajsOSTheme.SurfaceHighest.copy(alpha = 0.52f),
+                                        TajsOSTheme.Surface.copy(alpha = 0.9f)
+                                    )
                             ),
-                    ).padding(TactileTheme.SpacingLg),
-            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                    ).padding(TajsOSTheme.SpacingLg),
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
         ) {
             Text(
                 text = "Protocols",
                 style = MaterialTheme.typography.displaySmall,
-                color = TactileTheme.Text,
+                color = TajsOSTheme.Text
             )
             Text(
                 text =
                     "Reusable guided procedures for repeatable situations. Browse in Library and run them step-by-step in Active mode.",
                 style = MaterialTheme.typography.bodyMedium,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted
             )
             FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
             ) {
                 HeaderStatChip(label = "Library", value = "$protocolCount")
                 HeaderStatChip(label = "Active", value = "$activeCount")
@@ -312,21 +312,21 @@ private fun HeaderStatChip(
     value: String,
 ) {
     Surface(
-        color = TactileTheme.SurfaceHighest.copy(alpha = 0.9f),
-        border = BorderStroke(1.dp, TactileTheme.Border.copy(alpha = 0.45f)),
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+        color = TajsOSTheme.SurfaceHighest.copy(alpha = 0.9f),
+        border = BorderStroke(1.dp, TajsOSTheme.Border.copy(alpha = 0.45f)),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
     ) {
         Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
             Text(
                 text = label,
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted,
                 fontWeight = FontWeight.Bold,
             )
             Text(
                 text = value,
                 style = MaterialTheme.typography.bodySmall,
-                color = TactileTheme.Text,
+                color = TajsOSTheme.Text,
                 fontWeight = FontWeight.SemiBold,
             )
         }
@@ -359,7 +359,7 @@ private fun ProtocolLibrarySurface(
             }
         }
 
-    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+    Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)) {
         OutlinedTextField(
             value = searchQuery,
             onValueChange = onSearchQueryChange,
@@ -369,8 +369,8 @@ private fun ProtocolLibrarySurface(
             singleLine = true,
         )
         FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+            horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
         ) {
             ProtocolCategory.entries.forEach { category ->
                 FilterChip(
@@ -384,21 +384,21 @@ private fun ProtocolLibrarySurface(
         if (filtered.isEmpty()) {
             Surface(
                 modifier = Modifier.fillMaxWidth(),
-                color = TactileTheme.Surface,
-                border = BorderStroke(1.dp, TactileTheme.Border),
-                shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                color = TajsOSTheme.Surface,
+                border = BorderStroke(1.dp, TajsOSTheme.Border),
+                shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
             ) {
                 Text(
                     text = "No protocols match this filter. Clear search or choose another category.",
-                    modifier = Modifier.padding(TactileTheme.SpacingMd),
+                    modifier = Modifier.padding(TajsOSTheme.SpacingMd),
                     style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted
                 )
             }
         } else {
             FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
-                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
             ) {
                 filtered.forEach { item ->
                     ProtocolLibraryCard(
@@ -420,48 +420,48 @@ private fun ProtocolLibraryCard(
 ) {
     Surface(
         modifier = Modifier.width(360.dp),
-        color = TactileTheme.Surface,
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = BorderStroke(1.dp, TactileTheme.Border),
+        color = TajsOSTheme.Surface,
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+        border = BorderStroke(1.dp, TajsOSTheme.Border)
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingMd),
-            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+            modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
         ) {
             Text(
                 text = item.category.label.uppercase(),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary,
+                color = TajsOSTheme.Primary,
                 fontWeight = FontWeight.Bold,
             )
             Text(
                 text = item.title,
                 style = MaterialTheme.typography.titleMedium,
-                color = TactileTheme.Text,
+                color = TajsOSTheme.Text,
                 fontWeight = FontWeight.SemiBold,
             )
             Text(
                 text = item.purpose,
                 style = MaterialTheme.typography.bodySmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted
             )
             Text(
                 text = "Use when: ${item.useWhen}",
                 style = MaterialTheme.typography.bodySmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted
             )
             Text(
                 text =
                     "Estimated time ${item.estimatedDurationMinutes}m • Steps ${item.stepCount} • Runs ${item.triggerCount}",
                 style = MaterialTheme.typography.bodySmall,
-                color = TactileTheme.Text,
+                color = TajsOSTheme.Text
             )
             Text(
                 text = "Last run: ${item.lastRunAt?.let(::formatProtocolTimestamp) ?: "Not yet"}",
                 style = MaterialTheme.typography.bodySmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted
             )
-            Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                 Button(onClick = onRun) {
                     Text("Run")
                 }
@@ -497,28 +497,28 @@ private fun ProtocolRunSurface(
     if (activeProtocol == null) {
         Surface(
             modifier = Modifier.fillMaxWidth(),
-            color = TactileTheme.Surface,
-            shape = RoundedCornerShape(TactileTheme.RadiusMd),
-            border = BorderStroke(1.dp, TactileTheme.Border),
+            color = TajsOSTheme.Surface,
+            shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+            border = BorderStroke(1.dp, TajsOSTheme.Border)
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingMd),
-                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
             ) {
                 Text(
                     "No active protocol selected",
                     style = MaterialTheme.typography.titleMedium,
-                    color = TactileTheme.Text,
+                    color = TajsOSTheme.Text,
                     fontWeight = FontWeight.Bold,
                 )
                 Text(
                     "Pick a protocol to start a guided run session.",
                     style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted
                 )
                 FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-                    verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                    horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+                    verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
                 ) {
                     suggestedProtocols.forEach { item ->
                         AssistChip(
@@ -554,12 +554,12 @@ private fun ProtocolRunSurface(
         if (isDesktop) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
                 verticalAlignment = Alignment.Top,
             ) {
                 Column(
                     modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+                    verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
                 ) {
                     ProtocolRunMainPanel(
                         protocolTitle = activeProtocol.node.node.title,
@@ -600,7 +600,7 @@ private fun ProtocolRunSurface(
                 )
             }
         } else {
-            Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+            Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)) {
                 ProtocolRunMainPanel(
                     protocolTitle = activeProtocol.node.node.title,
                     paused = sessionPaused,
@@ -659,81 +659,81 @@ private fun ProtocolRunMainPanel(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
-        shape = RoundedCornerShape(TactileTheme.RadiusLg),
-        border = BorderStroke(1.dp, TactileTheme.Border),
+        color = TajsOSTheme.Surface,
+        shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
+        border = BorderStroke(1.dp, TajsOSTheme.Border)
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingLg),
-            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+            modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingLg),
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
         ) {
             Text(
                 text = protocolTitle,
                 style = MaterialTheme.typography.headlineSmall,
-                color = TactileTheme.Text,
+                color = TajsOSTheme.Text,
                 fontWeight = FontWeight.SemiBold,
             )
             Text(
                 text = if (paused) "Session paused" else "Session running",
                 style = MaterialTheme.typography.bodySmall,
-                color = if (paused) TactileTheme.AccentAmber else TactileTheme.Success,
-                fontWeight = FontWeight.Bold,
+                color = if (paused) TajsOSTheme.AccentAmber else TajsOSTheme.Success,
+                fontWeight = FontWeight.Bold
             )
             Text(
                 text = "$doneCount / $stepCount steps complete",
                 style = MaterialTheme.typography.bodySmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted
             )
             LinearProgressIndicator(
                 progress = { progress.coerceIn(0f, 1f) },
                 modifier = Modifier.fillMaxWidth().height(8.dp),
-                color = TactileTheme.Primary,
-                trackColor = TactileTheme.SurfaceHighest,
+                color = TajsOSTheme.Primary,
+                trackColor = TajsOSTheme.SurfaceHighest
             )
 
             Surface(
                 modifier = Modifier.fillMaxWidth(),
-                color = TactileTheme.SurfaceLowest,
-                shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                border = BorderStroke(1.dp, TactileTheme.Border.copy(alpha = 0.7f)),
+                color = TajsOSTheme.SurfaceLowest,
+                shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+                border = BorderStroke(1.dp, TajsOSTheme.Border.copy(alpha = 0.7f))
             ) {
                 Column(
-                    modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingMd),
-                    verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                    modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
+                    verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
                 ) {
                     Text(
                         text = "Current step",
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Primary,
-                        fontWeight = FontWeight.Bold,
+                        color = TajsOSTheme.Primary,
+                        fontWeight = FontWeight.Bold
                     )
                     if (currentStep != null) {
                         Text(
                             text = "${currentStepIndex + 1}. ${currentStep.second}",
                             style = MaterialTheme.typography.titleLarge,
-                            color = TactileTheme.Text,
-                            fontWeight = FontWeight.SemiBold,
+                            color = TajsOSTheme.Text,
+                            fontWeight = FontWeight.SemiBold
                         )
                         if (!upNext.isNullOrBlank()) {
                             Text(
                                 text = "Up next: $upNext",
                                 style = MaterialTheme.typography.bodySmall,
-                                color = TactileTheme.Muted,
+                                color = TajsOSTheme.Muted
                             )
                         }
                     } else {
                         Text(
                             text = "This protocol has no checklist steps yet.",
                             style = MaterialTheme.typography.bodySmall,
-                            color = TactileTheme.Muted,
+                            color = TajsOSTheme.Muted
                         )
                     }
                 }
             }
 
             FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
             ) {
                 Button(
                     onClick = onCompleteStep,
@@ -778,19 +778,19 @@ private fun ProtocolRunSidebar(
 ) {
     Surface(
         modifier = modifier,
-        color = TactileTheme.Surface,
-        shape = RoundedCornerShape(TactileTheme.RadiusLg),
-        border = BorderStroke(1.dp, TactileTheme.Border),
+        color = TajsOSTheme.Surface,
+        shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
+        border = BorderStroke(1.dp, TajsOSTheme.Border)
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingMd),
-            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+            modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
         ) {
             Text(
                 text = "Session Notes",
                 style = MaterialTheme.typography.titleSmall,
-                color = TactileTheme.Text,
-                fontWeight = FontWeight.SemiBold,
+                color = TajsOSTheme.Text,
+                fontWeight = FontWeight.SemiBold
             )
             OutlinedTextField(
                 value = sessionNotes,
@@ -803,20 +803,20 @@ private fun ProtocolRunSidebar(
             Text(
                 text = "Use when: ${descriptor.useWhen}",
                 style = MaterialTheme.typography.bodySmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted
             )
             if (!upNext.isNullOrBlank()) {
                 Surface(
-                    color = TactileTheme.SurfaceHighest.copy(alpha = 0.8f),
-                    shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                    border = BorderStroke(1.dp, TactileTheme.Border.copy(alpha = 0.5f)),
+                    color = TajsOSTheme.SurfaceHighest.copy(alpha = 0.8f),
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+                    border = BorderStroke(1.dp, TajsOSTheme.Border.copy(alpha = 0.5f))
                 ) {
                     Text(
                         text = "Up next: $upNext",
                         modifier = Modifier.padding(10.dp),
                         style = MaterialTheme.typography.bodySmall,
-                        color = TactileTheme.Text,
-                        fontWeight = FontWeight.Medium,
+                        color = TajsOSTheme.Text,
+                        fontWeight = FontWeight.Medium
                     )
                 }
             }
@@ -824,18 +824,18 @@ private fun ProtocolRunSidebar(
                 text =
                     "Last run: ${activeProtocol.lastTriggeredAt?.let(::formatProtocolTimestamp) ?: "Not yet"}",
                 style = MaterialTheme.typography.bodySmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted,
             )
             if (checklist.any { it.first }) {
                 Text(
                     text = "Adjustments",
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Primary,
-                    fontWeight = FontWeight.Bold,
+                    color = TajsOSTheme.Primary,
+                    fontWeight = FontWeight.Bold
                 )
                 FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-                    verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                    horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+                    verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
                 ) {
                     checklist.forEachIndexed { index, step ->
                         if (step.first) {

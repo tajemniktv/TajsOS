@@ -2,11 +2,8 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
-package com.tajemniktv.tajsos
+package com.tajemniktv.tajsos.data
 
-import com.tajemniktv.tajsos.data.NodeEntity
-import com.tajemniktv.tajsos.data.NodeWithPin
-import com.tajemniktv.tajsos.data.TodayPinEntity
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse

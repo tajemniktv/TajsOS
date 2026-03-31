@@ -11,12 +11,12 @@ import androidx.compose.ui.window.application
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import com.tajemniktv.tajsos.data.createDatabase
 import com.tajemniktv.tajsos.di.SharedModule
-import java.awt.FileDialog
-import java.awt.Frame
-import java.io.File
 import org.jetbrains.compose.resources.painterResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.app_icon
+import java.awt.FileDialog
+import java.awt.Frame
+import java.io.File
 
 fun main() =
     application {

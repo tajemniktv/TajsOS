@@ -68,7 +68,7 @@ class DomainLensQueriesEdgeTest {
 
     @Test
     fun sorting_financeActionItems_places_null_dueAt_last() {
-        val taskNoDate = createNode(1, "Finance item", dueAt = null)
+        val taskNoDate = createNode(1, "Finance item")
         val taskLater = createNode(2, "Finance item", dueAt = 2000L)
         val taskEarlier = createNode(3, "Finance item", dueAt = 1000L)
 
@@ -78,7 +78,7 @@ class DomainLensQueriesEdgeTest {
 
     @Test
     fun sorting_healthActionItems_places_null_dueAt_last() {
-        val taskNoDate = createNode(1, "Health item", dueAt = null)
+        val taskNoDate = createNode(1, "Health item")
         val taskLater = createNode(2, "Health item", dueAt = 2000L)
         val taskEarlier = createNode(3, "Health item", dueAt = 1000L)
 

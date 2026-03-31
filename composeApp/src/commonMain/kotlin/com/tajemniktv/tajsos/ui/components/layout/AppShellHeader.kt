@@ -43,10 +43,19 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupProperties
+import com.tajemniktv.tajsos.ui.components.notifications.NotificationUiModel
+import com.tajemniktv.tajsos.ui.components.notifications.TajsNotificationWidget
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 /**
  * Mode option model shown by the header mode switcher.
+ *
+ * @property id Unique identifier for the mode.
+ * @property name Display name of the mode.
+ * @property color Theme color associated with the mode.
+ * @property isSelectable Whether this mode can be actively selected by the user.
  */
 data class ShellModeOption(
     val id: Long,
@@ -57,6 +66,15 @@ data class ShellModeOption(
 
 /**
  * Fixed shell header with greeting, global search, mode switcher, and notifications popover.
+ *
+ * @param greeting The greeting message (e.g., "Good morning, user").
+ * @param protocolText The text indicating current protocol state.
+ * @param currentModeLabel The label of the currently active mode.
+ * @param modeOptions Available modes to switch to.
+ * @param notifications List of current notifications.
+ * @param shellState The current UI state of the app shell components.
+ * @param onModeSelect Callback when a mode is selected from the switcher.
+ * @param modifier The modifier to be applied to the layout.
  */
 @Composable
 fun AppShellHeader(
@@ -64,14 +82,14 @@ fun AppShellHeader(
     protocolText: String,
     currentModeLabel: String,
     modeOptions: List<ShellModeOption>,
-    notifications: List<String>,
+    notifications: List<NotificationUiModel>,
     shellState: AppShellState,
     onModeSelect: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
-        color = TactileTheme.SurfaceLow,
+        color = TajsOSTheme.SurfaceLow,
         tonalElevation = 0.dp,
         shadowElevation = 0.dp,
     ) {
@@ -95,11 +113,10 @@ fun AppShellHeader(
                 modeOptions = modeOptions,
                 expanded = shellState.modeDropdownExpanded,
                 onExpandedChange = { shellState.modeDropdownExpanded = it },
-                onModeSelect = {
-                    onModeSelect(it)
-                    shellState.modeDropdownExpanded = false
-                },
-            )
+            ) {
+                onModeSelect(it)
+                shellState.modeDropdownExpanded = false
+            }
             Spacer(Modifier.width(10.dp))
             NotificationsPopover(
                 expanded = shellState.notificationsExpanded,
@@ -123,7 +140,7 @@ fun HeaderGreeting(
         Text(
             text = greeting,
             style = MaterialTheme.typography.titleLarge,
-            color = TactileTheme.Text,
+            color = TajsOSTheme.Text,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
@@ -131,7 +148,7 @@ fun HeaderGreeting(
         Text(
             text = protocolText.uppercase(),
             style = MaterialTheme.typography.labelSmall,
-            color = TactileTheme.Muted,
+            color = TajsOSTheme.Muted,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
@@ -149,19 +166,19 @@ fun GlobalSearchBar(modifier: Modifier = Modifier) {
         readOnly = true,
         singleLine = true,
         modifier = modifier,
-        textStyle = MaterialTheme.typography.bodyMedium.copy(color = TactileTheme.Text),
+        textStyle = MaterialTheme.typography.bodyMedium.copy(color = TajsOSTheme.Text),
         placeholder = {
             Text(
                 text = "Search across TajsOS",
                 style = MaterialTheme.typography.bodyMedium,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted
             )
         },
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Search,
                 contentDescription = null,
-                tint = TactileTheme.Muted,
+                tint = TajsOSTheme.Muted
             )
         },
         shape = RoundedCornerShape(12.dp),
@@ -170,6 +187,13 @@ fun GlobalSearchBar(modifier: Modifier = Modifier) {
 
 /**
  * Status + mode dropdown trigger used in the shell header.
+ *
+ * @param currentModeLabel The label of the currently active mode.
+ * @param modeOptions Available modes to switch to.
+ * @param expanded Whether the mode dropdown is currently expanded.
+ * @param onExpandedChange Callback to update the expanded state.
+ * @param modifier The modifier to be applied to the layout.
+ * @param onModeSelect Callback when a mode is selected.
  */
 @Composable
 fun HeaderModeSwitcher(
@@ -177,6 +201,7 @@ fun HeaderModeSwitcher(
     modeOptions: List<ShellModeOption>,
     expanded: Boolean,
     onExpandedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
     onModeSelect: (Long) -> Unit,
 ) {
     val pulseTransition = rememberInfiniteTransition(label = "modePulse")
@@ -191,11 +216,11 @@ fun HeaderModeSwitcher(
         label = "modePulseAlpha",
     )
 
-    Box {
+    Box(modifier = modifier) {
         Surface(
             onClick = { onExpandedChange(!expanded) },
             shape = RoundedCornerShape(12.dp),
-            color = TactileTheme.SurfaceHigh,
+            color = TajsOSTheme.SurfaceHigh,
             tonalElevation = 0.dp,
             shadowElevation = 0.dp,
         ) {
@@ -209,18 +234,18 @@ fun HeaderModeSwitcher(
                         Modifier
                             .size(8.dp)
                             .alpha(pulseAlpha)
-                            .background(TactileTheme.Success, CircleShape),
+                            .background(TajsOSTheme.Success, CircleShape)
                 )
                 Text(
                     text = "SYSTEM: ${currentModeLabel.uppercase()}",
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Text,
+                    color = TajsOSTheme.Text,
                     maxLines = 1,
                 )
                 Icon(
                     imageVector = Icons.Default.KeyboardArrowDown,
                     contentDescription = null,
-                    tint = TactileTheme.Muted,
+                    tint = TajsOSTheme.Muted,
                     modifier = Modifier.size(16.dp),
                 )
             }
@@ -229,7 +254,7 @@ fun HeaderModeSwitcher(
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { onExpandedChange(false) },
-            containerColor = TactileTheme.SurfaceHigh,
+            containerColor = TajsOSTheme.SurfaceHigh
         ) {
             modeOptions.forEach { option ->
                 DropdownMenuItem(
@@ -246,7 +271,7 @@ fun HeaderModeSwitcher(
                             )
                             Text(
                                 text = option.name,
-                                color = if (option.isSelectable) TactileTheme.Text else TactileTheme.Muted,
+                                color = if (option.isSelectable) TajsOSTheme.Text else TajsOSTheme.Muted,
                                 style = MaterialTheme.typography.bodyMedium,
                             )
                         }
@@ -262,60 +287,68 @@ fun HeaderModeSwitcher(
 
 /**
  * Bell trigger + anchored lightweight notifications panel.
+ *
+ * @param expanded Whether the notification popover is expanded.
+ * @param notifications List of current notifications.
+ * @param onExpandedChange Callback to update the expanded state.
+ * @param modifier The modifier to be applied to the layout.
  */
 @Composable
 fun NotificationsPopover(
     expanded: Boolean,
-    notifications: List<String>,
+    notifications: List<NotificationUiModel>,
     onExpandedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    Box {
+    Box(modifier = modifier) {
         Surface(
             shape = RoundedCornerShape(12.dp),
-            color = TactileTheme.SurfaceHigh,
+            color = TajsOSTheme.SurfaceHigh,
             tonalElevation = 0.dp,
             shadowElevation = 0.dp,
         ) {
-            IconButton(
-                onClick = { onExpandedChange(!expanded) },
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Notifications,
-                    contentDescription = "Notifications",
-                    tint = TactileTheme.Text,
-                )
+            Box {
+                IconButton(
+                    onClick = { onExpandedChange(!expanded) }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Notifications,
+                        contentDescription = "Notifications",
+                        tint = TajsOSTheme.Text
+                    )
+                }
+
+                if (notifications.any { it.isUnread }) {
+                    Box(
+                        modifier =
+                            Modifier
+                                .align(Alignment.TopEnd)
+                                .padding(top = 8.dp, end = 8.dp)
+                                .size(6.dp)
+                                .background(TajsOSTheme.AccentCyan, CircleShape)
+                    )
+                }
             }
         }
 
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { onExpandedChange(false) },
-            containerColor = TactileTheme.SurfaceHigh,
-        ) {
-            if (notifications.isEmpty()) {
-                DropdownMenuItem(
-                    text = {
-                        Text(
-                            "No notifications",
-                            color = TactileTheme.Muted,
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                    },
-                    onClick = { onExpandedChange(false) },
-                )
-            } else {
-                notifications.take(4).forEach { item ->
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                item,
-                                color = TactileTheme.Text,
-                                style = MaterialTheme.typography.bodyMedium,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                        },
-                        onClick = { onExpandedChange(false) },
+        if (expanded) {
+            Popup(
+                alignment = Alignment.TopEnd,
+                onDismissRequest = { onExpandedChange(false) },
+                properties = PopupProperties(focusable = true)
+            ) {
+                Surface(
+                    modifier =
+                        Modifier
+                            .padding(top = 48.dp, end = 16.dp),
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
+                    color = TajsOSTheme.SurfaceHighest,
+                    tonalElevation = 8.dp,
+                    shadowElevation = 8.dp
+                ) {
+                    TajsNotificationWidget(
+                        notifications = notifications,
+                        title = "SYSTEM STATUS"
                     )
                 }
             }

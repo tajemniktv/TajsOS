@@ -22,7 +22,6 @@ class DomainLensQueriesTest {
                         id = 10,
                         type = "task",
                         title = "Pay rent",
-                        status = "active",
                         dueAt = 2_000L,
                     ),
                 pin = null,
@@ -35,7 +34,6 @@ class DomainLensQueriesTest {
                         id = 11,
                         type = "note",
                         title = "Insurance policy reference",
-                        status = "active",
                         noteType = "reference",
                     ),
                 pin = null,
@@ -48,7 +46,6 @@ class DomainLensQueriesTest {
                         id = 12,
                         type = "note",
                         title = "Tax filing deadline",
-                        status = "active",
                         dueAt = 1_000L,
                     ),
                 pin = null,
@@ -56,7 +53,7 @@ class DomainLensQueriesTest {
             )
         val unrelatedRecord =
             NodeWithPin(
-                node = NodeEntity(id = 13, type = "record", title = "Therapy reflection", status = "active"),
+                node = NodeEntity(id = 13, type = "record", title = "Therapy reflection"),
                 pin = null,
                 tags = emptyList(),
             )
@@ -69,7 +66,6 @@ class DomainLensQueriesTest {
                                 id = 14,
                                 type = "maintenance",
                                 title = "Renew bank card",
-                                status = "active",
                                 maintenanceType = "renewal",
                             ),
                         pin = null,
@@ -98,19 +94,19 @@ class DomainLensQueriesTest {
     fun healthQueries_include_actions_knowledge_and_maintenance_without_special_domain_types() {
         val healthTask =
             NodeWithPin(
-                node = NodeEntity(id = 1, type = "task", title = "Book doctor appointment", status = "active"),
+                node = NodeEntity(id = 1, type = "task", title = "Book doctor appointment"),
                 pin = null,
                 tags = listOf(TagEntity(id = 1, name = "health", normalizedName = "health")),
             )
         val healthRecord =
             NodeWithPin(
-                node = NodeEntity(id = 2, type = "record", title = "Symptom log", status = "active"),
+                node = NodeEntity(id = 2, type = "record", title = "Symptom log"),
                 pin = null,
                 tags = listOf(TagEntity(id = 2, name = "symptom", normalizedName = "symptom")),
             )
         val unrelatedNote =
             NodeWithPin(
-                node = NodeEntity(id = 3, type = "note", title = "Design references", status = "active"),
+                node = NodeEntity(id = 3, type = "note", title = "Design references"),
                 pin = null,
                 tags = emptyList(),
             )
@@ -123,7 +119,6 @@ class DomainLensQueriesTest {
                                 id = 4,
                                 type = "maintenance",
                                 title = "Refill prescription",
-                                status = "active",
                                 maintenanceType = "prescription",
                             ),
                         pin = null,

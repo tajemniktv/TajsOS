@@ -39,7 +39,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeWithPin
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
@@ -86,22 +86,22 @@ fun NodeCard(
                 .fillMaxWidth()
                 .graphicsLayer(scaleX = animatedScale, scaleY = animatedScale)
                 .combinedClickable(onClick = onClick, onLongClick = onLongClick),
-        color = TactileTheme.Surface,
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+        color = TajsOSTheme.Surface,
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         border =
             BorderStroke(
                 1.dp,
-                if (isPinnedToToday) TactileTheme.Primary else TactileTheme.Border,
-            ),
+                if (isPinnedToToday) TajsOSTheme.Primary else TajsOSTheme.Border
+            )
     ) {
         Row(
-            modifier = Modifier.padding(TactileTheme.SpacingMd).fillMaxWidth(),
+            modifier = Modifier.padding(TajsOSTheme.SpacingMd).fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Checkbox(
                 checked = isDone,
                 onCheckedChange = { onToggleDone(if (it) "done" else "active") },
-                colors = CheckboxDefaults.colors(checkedColor = TactileTheme.Primary),
+                colors = CheckboxDefaults.colors(checkedColor = TajsOSTheme.Primary)
             )
             Column(modifier = Modifier.weight(1f)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -111,14 +111,14 @@ fun NodeCard(
                             MaterialTheme.typography.bodyLarge.copy(
                                 textDecoration = if (isDone) TextDecoration.LineThrough else null,
                             ),
-                        color = if (isDone) TactileTheme.Muted else TactileTheme.Text,
+                        color = if (isDone) TajsOSTheme.Muted else TajsOSTheme.Text,
                         modifier = Modifier.weight(1f, fill = false),
                     )
                     if (node.isPinned) {
                         Icon(
                             imageVector = Icons.Default.Favorite,
                             contentDescription = stringResource(Res.string.detail_favorite),
-                            tint = TactileTheme.Primary,
+                            tint = TajsOSTheme.Primary,
                             modifier = Modifier.padding(start = 4.dp).size(12.dp),
                         )
                     }
@@ -147,7 +147,7 @@ fun NodeCard(
                                 } else {
                                     ""
                                 },
-                        color = TactileTheme.Primary,
+                        color = TajsOSTheme.Primary
                     )
                     val dueAt = node.dueAt
                     if (dueAt != null) {
@@ -159,14 +159,14 @@ fun NodeCard(
                         Icon(
                             Icons.Default.DateRange,
                             contentDescription = null,
-                            tint = if (node.isHardDeadline) TactileTheme.Error else TactileTheme.Accent,
+                            tint = if (node.isHardDeadline) TajsOSTheme.Error else TajsOSTheme.Accent,
                             modifier = Modifier.size(10.dp),
                         )
                         Spacer(Modifier.width(2.dp))
                         Text(
                             text = "${due.day}/${due.month.number}${if (node.isHardDeadline) "!" else ""}",
                             style = MaterialTheme.typography.labelSmall,
-                            color = if (node.isHardDeadline) TactileTheme.Error else TactileTheme.Accent,
+                            color = if (node.isHardDeadline) TajsOSTheme.Error else TajsOSTheme.Accent
                         )
                     }
                     val staleTime =
@@ -176,7 +176,7 @@ fun NodeCard(
                         Text(
                             text = stringResource(Res.string.node_stale),
                             style = MaterialTheme.typography.labelSmall,
-                            color = TactileTheme.Error.copy(alpha = 0.5f),
+                            color = TajsOSTheme.Error.copy(alpha = 0.5f)
                         )
                     }
                     val energyLevel = node.energyLevel
@@ -187,11 +187,11 @@ fun NodeCard(
                             color =
                                 when (energyLevel)
                                 {
-                                    1 -> TactileTheme.Success
-                                    2 -> TactileTheme.Primary
-                                    3 -> TactileTheme.Error
-                                    else -> TactileTheme.Muted
-                                },
+                                    1 -> TajsOSTheme.Success
+                                    2 -> TajsOSTheme.Primary
+                                    3 -> TajsOSTheme.Error
+                                    else -> TajsOSTheme.Muted
+                                }
                         )
                     }
                     val friction = node.friction
@@ -206,17 +206,17 @@ fun NodeCard(
                                 "unclear" -> "UNCLEAR"
                                 else -> friction
                             }
-                        NodeBadge(text = frictionLabel.uppercase(), color = TactileTheme.Primary)
+                        NodeBadge(text = frictionLabel.uppercase(), color = TajsOSTheme.Primary)
                     }
                     if (node.status != "active" && node.status != "done") {
                         Spacer(Modifier.width(8.dp))
                         val statusColor =
                             when (node.status)
                             {
-                                "blocked" -> TactileTheme.Error
-                                "on_hold" -> TactileTheme.Accent
-                                "someday" -> TactileTheme.Muted
-                                else -> TactileTheme.Primary
+                                "blocked" -> TajsOSTheme.Error
+                                "on_hold" -> TajsOSTheme.Accent
+                                "someday" -> TajsOSTheme.Muted
+                                else -> TajsOSTheme.Primary
                             }
                         NodeBadge(
                             text = node.status.uppercase().replace("_", " "),
@@ -228,7 +228,7 @@ fun NodeCard(
                     Text(
                         text = "↳ ${node.nextSmallestStep}",
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Accent,
+                        color = TajsOSTheme.Accent,
                         maxLines = 1,
                         overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
                     )
@@ -239,7 +239,7 @@ fun NodeCard(
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = stringResource(Res.string.detail_archive),
-                        tint = TactileTheme.Muted,
+                        tint = TajsOSTheme.Muted
                     )
                 }
             }
@@ -249,10 +249,10 @@ fun NodeCard(
                     contentDescription = stringResource(Res.string.node_pin_today_desc),
                     tint =
                         if (isPinnedToToday) {
-                            TactileTheme.Primary
+                            TajsOSTheme.Primary
                         } else {
-                            TactileTheme.Muted.copy(
-                                alpha = 0.5f,
+                            TajsOSTheme.Muted.copy(
+                                alpha = 0.5f
                             )
                         },
                 )
@@ -267,7 +267,7 @@ private fun NodeBadge(
     color: Color,
 ) {
     Surface(
-        color = TactileTheme.Primary.copy(alpha = 0.1f),
+        color = TajsOSTheme.Primary.copy(alpha = 0.1f),
         shape = RoundedCornerShape(4.dp),
     ) {
         Text(

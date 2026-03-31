@@ -60,7 +60,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.isNoteItem
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Instant
@@ -91,7 +91,7 @@ fun NotesWorkspaceDetail(
 
     if (current == null) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("Note not found", color = TactileTheme.Muted)
+            Text("Note not found", color = TajsOSTheme.Muted)
         }
         return
     }
@@ -165,14 +165,14 @@ fun NotesWorkspaceDetail(
         modifier =
             Modifier
                 .fillMaxSize()
-                .background(TactileTheme.Background)
+                .background(TajsOSTheme.Background)
                 .padding(12.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Surface(
             modifier = Modifier.width(320.dp).fillMaxHeight(),
-            color = TactileTheme.Surface,
-            shape = RoundedCornerShape(TactileTheme.RadiusMd),
+            color = TajsOSTheme.Surface,
+            shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
         ) {
             Column(
                 modifier = Modifier.fillMaxSize().padding(12.dp),
@@ -213,7 +213,7 @@ fun NotesWorkspaceDetail(
                         )
                     }
                 }
-                HorizontalDivider(color = TactileTheme.Border)
+                HorizontalDivider(color = TajsOSTheme.Border)
                 LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     items(filtered, key = { it.id }) { item ->
                         Surface(
@@ -221,8 +221,12 @@ fun NotesWorkspaceDetail(
                                 Modifier
                                     .fillMaxWidth()
                                     .clickable { onNavigateToNode(item.id) },
-                            shape = RoundedCornerShape(TactileTheme.RadiusSm),
-                            color = if (item.id == noteId) TactileTheme.Primary.copy(alpha = 0.18f) else TactileTheme.Background,
+                            shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
+                            color = if (item.id ==
+                                noteId
+                            ) {
+                                TajsOSTheme.Primary.copy(alpha = 0.18f)
+                                } else TajsOSTheme.Background,
                         ) {
                             Column(
                                 modifier = Modifier.padding(10.dp),
@@ -237,7 +241,7 @@ fun NotesWorkspaceDetail(
                                 Text(
                                     (item.noteType ?: "note").uppercase(),
                                     style = MaterialTheme.typography.labelSmall,
-                                    color = TactileTheme.Muted,
+                                    color = TajsOSTheme.Muted,
                                 )
                             }
                         }
@@ -248,8 +252,8 @@ fun NotesWorkspaceDetail(
 
         Surface(
             modifier = Modifier.weight(1f).fillMaxHeight(),
-            color = TactileTheme.Surface,
-            shape = RoundedCornerShape(TactileTheme.RadiusMd),
+            color = TajsOSTheme.Surface,
+            shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         ) {
             Column(
                 modifier = Modifier.fillMaxSize().padding(20.dp),
@@ -333,8 +337,9 @@ fun NotesWorkspaceDetail(
                             value = note.content,
                             onValueChange = {},
                             readOnly = true,
-                            textStyle = MaterialTheme.typography.bodyLarge.copy(color = TactileTheme.Text),
-                            cursorBrush = SolidColor(TactileTheme.Primary),
+                            textStyle = MaterialTheme.typography.bodyLarge.copy(
+                                color = TajsOSTheme.Text),
+                            cursorBrush = SolidColor(TajsOSTheme.Primary),
                             modifier = Modifier.fillMaxWidth(),
                         )
                     }
@@ -344,17 +349,17 @@ fun NotesWorkspaceDetail(
 
         Column(
             modifier = Modifier.width(320.dp).fillMaxHeight(),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             SidePanelCard(
                 title = "Context",
-                icon = Icons.AutoMirrored.Filled.MenuBook,
+                icon = Icons.AutoMirrored.Filled.MenuBook
             ) {
-                Text("Area: $areaName", color = TactileTheme.Text)
-                Text("Project: $projectName", color = TactileTheme.Text)
+                Text("Area: $areaName", color = TajsOSTheme.Text)
+                Text("Project: $projectName", color = TajsOSTheme.Text)
                 Text(
                     "Updated: $updatedAt",
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted,
                     style = MaterialTheme.typography.bodySmall,
                 )
             }
@@ -364,14 +369,14 @@ fun NotesWorkspaceDetail(
                 icon = Icons.Default.Hub,
             ) {
                 if (linked.isEmpty()) {
-                    Text("No linked items", color = TactileTheme.Muted)
+                    Text("No linked items", color = TajsOSTheme.Muted)
                 } else {
                     linked.take(6).forEach { id ->
                         val linkedNode = nodesById[id]?.node ?: return@forEach
                         Text(
                             "• ${linkedNode.title}",
                             modifier = Modifier.clickable { onNavigateToNode(linkedNode.id) },
-                            color = TactileTheme.Text,
+                            color = TajsOSTheme.Text,
                         )
                     }
                 }
@@ -388,10 +393,10 @@ fun NotesWorkspaceDetail(
                 icon = Icons.Default.Attachment,
             ) {
                 if (attachments.isEmpty()) {
-                    Text("No attachments", color = TactileTheme.Muted)
+                    Text("No attachments", color = TajsOSTheme.Muted)
                 } else {
                     attachments.take(4).forEach {
-                        Text("• ${it.title ?: it.uriOrPath}", color = TactileTheme.Text)
+                        Text("• ${it.title ?: it.uriOrPath}", color = TajsOSTheme.Text)
                     }
                 }
             }
@@ -401,7 +406,7 @@ fun NotesWorkspaceDetail(
                 icon = Icons.Default.History,
             ) {
                 if (snapshots.isEmpty()) {
-                    Text("No snapshots", color = TactileTheme.Muted)
+                    Text("No snapshots", color = TajsOSTheme.Muted)
                 } else {
                     snapshots.take(4).forEach { snapshot ->
                         val label =
@@ -413,11 +418,11 @@ fun NotesWorkspaceDetail(
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
                                 label.take(19),
-                                color = TactileTheme.Text,
+                                color = TajsOSTheme.Text,
                                 style = MaterialTheme.typography.bodySmall,
                             )
                             AssistChip(
@@ -436,12 +441,12 @@ fun NotesWorkspaceDetail(
 private fun SidePanelCard(
     title: String,
     icon: androidx.compose.ui.graphics.vector.ImageVector,
-    content: @Composable ColumnScope.() -> Unit,
+    content: @Composable ColumnScope.() -> Unit
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+        color = TajsOSTheme.Surface,
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(12.dp),
@@ -451,7 +456,7 @@ private fun SidePanelCard(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                Icon(icon, null, tint = TactileTheme.Primary)
+                Icon(icon, null, tint = TajsOSTheme.Primary)
                 Text(
                     title,
                     style = MaterialTheme.typography.titleSmall,

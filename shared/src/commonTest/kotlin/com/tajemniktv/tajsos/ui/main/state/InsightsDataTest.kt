@@ -2,10 +2,9 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
-package com.tajemniktv.tajsos
+package com.tajemniktv.tajsos.ui.main.state
 
 import com.tajemniktv.tajsos.data.NodeEntity
-import com.tajemniktv.tajsos.ui.main.state.InsightsData
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -79,7 +78,7 @@ class InsightsDataTest {
                 avgMood = 4.2,
                 avgEnergy = 3.8,
                 avgFocus = 4.0,
-                neglectedProjects = listOf(project),
+                neglectedProjects = listOf(project)
             )
 
         assertEquals(10, data.weeklyCaptures)

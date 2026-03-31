@@ -2,11 +2,10 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
-package com.tajemniktv.tajsos
+package com.tajemniktv.tajsos.ui.domain
 
 import com.tajemniktv.tajsos.domain.DomainKind
 import com.tajemniktv.tajsos.ui.Screen
-import com.tajemniktv.tajsos.ui.domain.DomainRegistry
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -19,9 +18,9 @@ class DomainRegistryTest {
                 DomainKind.FINANCES,
                 DomainKind.HEALTH,
                 DomainKind.EDUCATION,
-                DomainKind.RELATIONSHIPS,
+                DomainKind.RELATIONSHIPS
             ),
-            DomainRegistry.definitions.map { it.kind }.toSet(),
+            DomainRegistry.definitions.map { it.kind }.toSet()
         )
     }
 

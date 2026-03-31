@@ -41,7 +41,7 @@ import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.MedicationEntity
 import com.tajemniktv.tajsos.data.UserDisplayNameFormat
 import com.tajemniktv.tajsos.data.resolveDisplayName
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.profile_bio
@@ -105,17 +105,17 @@ private fun renderIdentityHeaderBlock(context: ProfileScreenContext) {
                 Text(
                     "SYSTEM AUTH: SECURE",
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.AccentGreen,
+                    color = TajsOSTheme.AccentGreen
                 )
                 Text(
                     "IDENTITY MANAGEMENT",
                     style = MaterialTheme.typography.headlineMedium,
-                    color = TactileTheme.Text,
+                    color = TajsOSTheme.Text
                 )
                 Text(
                     displayName.uppercase(),
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted
                 )
                 val avatarRef = context.editor.avatarRef
                 if (!avatarRef.isNullOrBlank()) {
@@ -124,7 +124,7 @@ private fun renderIdentityHeaderBlock(context: ProfileScreenContext) {
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.bodySmall,
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted
                     )
                 }
             }
@@ -142,21 +142,21 @@ private fun renderSignaturePanelBlock(context: ProfileScreenContext) {
     ModulePanel {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+            horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Box(
                 modifier =
                     Modifier
                         .size(108.dp)
-                        .clip(RoundedCornerShape(TactileTheme.RadiusMd))
+                        .clip(RoundedCornerShape(TajsOSTheme.RadiusMd))
                         .background(
                             Brush.linearGradient(
                                 colors =
                                     listOf(
-                                        TactileTheme.SurfaceLowest,
-                                        TactileTheme.SurfaceHigh,
-                                    ),
+                                        TajsOSTheme.SurfaceLowest,
+                                        TajsOSTheme.SurfaceHigh
+                                    )
                             ),
                         ),
                 contentAlignment = Alignment.Center,
@@ -166,31 +166,31 @@ private fun renderSignaturePanelBlock(context: ProfileScreenContext) {
                     Icon(
                         Icons.Default.Person,
                         contentDescription = null,
-                        tint = TactileTheme.Primary,
+                        tint = TajsOSTheme.Primary,
                         modifier = Modifier.size(44.dp),
                     )
                 } else {
                     Text(
                         initials,
                         style = MaterialTheme.typography.headlineMedium,
-                        color = TactileTheme.Primary,
+                        color = TajsOSTheme.Primary
                     )
                 }
             }
 
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
             ) {
                 Text(
                     "NEURAL SIGNATURE",
                     style = MaterialTheme.typography.titleMedium,
-                    color = TactileTheme.Text,
+                    color = TajsOSTheme.Text
                 )
                 Text(
                     context.editor.avatarRef ?: stringResource(Res.string.profile_empty_hint),
                     style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -198,7 +198,7 @@ private fun renderSignaturePanelBlock(context: ProfileScreenContext) {
                     Button(
                         onClick = { context.onPickAvatar?.invoke() },
                         enabled = context.onPickAvatar != null,
-                        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                        shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
                     ) {
                         Icon(
                             Icons.Default.Edit,
@@ -323,7 +323,7 @@ private fun renderAboutModuleBlock(context: ProfileScreenContext) {
             onValueChange = { context.onEditorChange(context.editor.copy(bio = it)) },
             label = { Text(stringResource(Res.string.profile_bio)) },
             modifier = Modifier.fillMaxWidth().height(124.dp),
-            shape = RoundedCornerShape(TactileTheme.RadiusMd),
+            shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
             singleLine = false,
             colors = profileFieldColors(),
         )
@@ -352,7 +352,7 @@ private fun renderAboutModuleBlock(context: ProfileScreenContext) {
                             }
                         },
                 style = MaterialTheme.typography.labelSmall,
-                color = if (context.justSaved) TactileTheme.Primary else TactileTheme.Muted,
+                color = if (context.justSaved) TajsOSTheme.Primary else TajsOSTheme.Muted
             )
             Button(
                 onClick = {
@@ -363,12 +363,12 @@ private fun renderAboutModuleBlock(context: ProfileScreenContext) {
                     context.onSaveProfile()
                 },
                 enabled = context.hasChanges,
-                shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                 colors =
                     ButtonDefaults.buttonColors(
-                        containerColor = TactileTheme.Primary,
-                        contentColor = TactileTheme.Background,
-                    ),
+                        containerColor = TajsOSTheme.Primary,
+                        contentColor = TajsOSTheme.Background
+                    )
             ) {
                 Text(
                     stringResource(Res.string.profile_save),
@@ -392,7 +392,7 @@ private fun renderMedicationsModuleBlock(context: ProfileScreenContext) {
                 Icon(
                     Icons.Default.Add,
                     contentDescription = null,
-                    tint = TactileTheme.Primary,
+                    tint = TajsOSTheme.Primary
                 )
             }
         }
@@ -400,7 +400,7 @@ private fun renderMedicationsModuleBlock(context: ProfileScreenContext) {
             Text(
                 "No medication entries configured.",
                 style = MaterialTheme.typography.bodySmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted
             )
         } else {
             context.medications.forEach { med ->
@@ -419,15 +419,15 @@ private fun TinyStatCard(
     value: String,
 ) {
     Surface(
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        color = TactileTheme.SurfaceHighest.copy(alpha = 0.88f),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+        color = TajsOSTheme.SurfaceHighest.copy(alpha = 0.88f)
     ) {
         Column(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            Text(title, style = MaterialTheme.typography.labelSmall, color = TactileTheme.Muted)
-            Text(value, style = MaterialTheme.typography.titleSmall, color = TactileTheme.Primary)
+            Text(title, style = MaterialTheme.typography.labelSmall, color = TajsOSTheme.Muted)
+            Text(value, style = MaterialTheme.typography.titleSmall, color = TajsOSTheme.Primary)
         }
     }
 }
@@ -438,14 +438,14 @@ private fun ModulePanel(
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Surface(
-        color = TactileTheme.SurfaceLow.copy(alpha = backgroundAlpha),
-        shape = RoundedCornerShape(TactileTheme.RadiusLg),
+        color = TajsOSTheme.SurfaceLow.copy(alpha = backgroundAlpha),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
         modifier = Modifier.fillMaxWidth(),
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingMd),
-            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-            content = content,
+            modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+            content = content
         )
     }
 }
@@ -455,7 +455,7 @@ private fun ModuleTitle(title: String) {
     Text(
         title.uppercase(),
         style = MaterialTheme.typography.labelSmall,
-        color = TactileTheme.Primary,
+        color = TajsOSTheme.Primary
     )
 }
 
@@ -472,7 +472,7 @@ private fun ProfileField(
         onValueChange = onValueChange,
         label = { Text(label) },
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         isError = isError,
         supportingText = {
             if (supportingText != null) {
@@ -486,15 +486,15 @@ private fun ProfileField(
 @Composable
 private fun profileFieldColors() =
     OutlinedTextFieldDefaults.colors(
-        focusedTextColor = TactileTheme.Text,
-        unfocusedTextColor = TactileTheme.Text,
-        focusedContainerColor = TactileTheme.SurfaceLowest.copy(alpha = 0.95f),
-        unfocusedContainerColor = TactileTheme.SurfaceLowest.copy(alpha = 0.92f),
-        focusedBorderColor = TactileTheme.Primary.copy(alpha = 0.8f),
-        unfocusedBorderColor = TactileTheme.GhostBorder.copy(alpha = 0.25f),
-        cursorColor = TactileTheme.Primary,
-        focusedLabelColor = TactileTheme.Primary,
-        unfocusedLabelColor = TactileTheme.Muted,
+        focusedTextColor = TajsOSTheme.Text,
+        unfocusedTextColor = TajsOSTheme.Text,
+        focusedContainerColor = TajsOSTheme.SurfaceLowest.copy(alpha = 0.95f),
+        unfocusedContainerColor = TajsOSTheme.SurfaceLowest.copy(alpha = 0.92f),
+        focusedBorderColor = TajsOSTheme.Primary.copy(alpha = 0.8f),
+        unfocusedBorderColor = TajsOSTheme.GhostBorder.copy(alpha = 0.25f),
+        cursorColor = TajsOSTheme.Primary,
+        focusedLabelColor = TajsOSTheme.Primary,
+        unfocusedLabelColor = TajsOSTheme.Muted
     )
 
 @Composable
@@ -506,7 +506,7 @@ private fun ProfileDisplayNameFormatSelector(
         Text(
             stringResource(Res.string.profile_display_format),
             style = MaterialTheme.typography.labelSmall,
-            color = TactileTheme.Primary,
+            color = TajsOSTheme.Primary
         )
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             ProfileFormatChip(
@@ -545,8 +545,8 @@ private fun ProfileFormatChip(
         onClick = onClick,
         colors =
             ButtonDefaults.textButtonColors(
-                contentColor = if (selected) TactileTheme.Primary else TactileTheme.Muted,
-            ),
+                contentColor = if (selected) TajsOSTheme.Primary else TajsOSTheme.Muted
+            )
     ) {
         Text(label)
     }
@@ -559,11 +559,11 @@ private fun MedicationItem(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface.copy(alpha = 0.7f),
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+        color = TajsOSTheme.Surface.copy(alpha = 0.7f),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
     ) {
         Row(
-            modifier = Modifier.padding(TactileTheme.SpacingMd),
+            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -571,23 +571,23 @@ private fun MedicationItem(
                 Text(
                     medication.substance,
                     style = MaterialTheme.typography.bodyLarge,
-                    color = TactileTheme.Text,
+                    color = TajsOSTheme.Text
                 )
                 if (medication.brandNames.isNotEmpty()) {
                     Text(
                         medication.brandNames,
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted
                     )
                 }
                 Text(
                     "${medication.dosage ?: ""} ${if (medication.takeAtHour != null) "@ ${medication.takeAtHour}:00" else ""}",
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Primary,
+                    color = TajsOSTheme.Primary
                 )
             }
             IconButton(onClick = onDelete) {
-                Icon(Icons.Default.Delete, contentDescription = "Delete", tint = TactileTheme.Error)
+                Icon(Icons.Default.Delete, contentDescription = "Delete", tint = TajsOSTheme.Error)
             }
         }
     }

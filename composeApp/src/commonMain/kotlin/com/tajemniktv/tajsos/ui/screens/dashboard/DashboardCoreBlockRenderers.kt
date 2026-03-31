@@ -24,7 +24,6 @@ import androidx.compose.material.icons.filled.BatteryChargingFull
 import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Brightness3
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.EventRepeat
@@ -49,7 +48,6 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -77,7 +75,10 @@ import com.tajemniktv.tajsos.ui.components.cards.VaultCard
 import com.tajemniktv.tajsos.ui.components.layout.ProtocolTrigger
 import com.tajemniktv.tajsos.ui.components.modes.StateAwareActionsGrid
 import com.tajemniktv.tajsos.ui.components.nodes.SuggestionGroup
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.components.notifications.NotificationUiModel
+import com.tajemniktv.tajsos.ui.components.notifications.NotificationVariant
+import com.tajemniktv.tajsos.ui.components.notifications.TajsNotificationCard
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.dash_area_health
@@ -118,18 +119,18 @@ private fun renderForgottenWisdom(context: DashboardBlockContext) {
                     .node.id,
             )
         }) {
-            Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+            Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
                 Text(
                     "FORGOTTEN WISDOM",
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted,
                     fontWeight = FontWeight.Bold,
                 )
                 Text(
                     forgottenWisdom
                         .node.title,
                     style = MaterialTheme.typography.titleSmall,
-                    color = TactileTheme.Text,
+                    color = TajsOSTheme.Text
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
@@ -137,7 +138,7 @@ private fun renderForgottenWisdom(context: DashboardBlockContext) {
                         .node.content
                         .take(100) + "...",
                     style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted
                 )
             }
         }
@@ -157,11 +158,11 @@ internal fun renderLoadCapacityBlock(context: DashboardBlockContext) {
 @Composable
 internal fun renderAreaHealthBlock(context: DashboardBlockContext) {
     if (context.allAreas.isNotEmpty()) {
-        Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+        Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
             Text(
                 stringResource(Res.string.dash_area_health),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.sp,
             )
@@ -169,12 +170,16 @@ internal fun renderAreaHealthBlock(context: DashboardBlockContext) {
                 Text(
                     "IMBALANCE ${context.dashboardState.areaImbalanceScore}% // ${context.dashboardState.areaImbalanceLabel.uppercase()}",
                     style = MaterialTheme.typography.labelSmall,
-                    color = if (context.dashboardState.areaImbalanceScore >= 60) TactileTheme.Error else TactileTheme.Accent,
+                    color = if (context.dashboardState.areaImbalanceScore >=
+                        60
+                    ) {
+                        TajsOSTheme.Error
+                        } else TajsOSTheme.Accent,
                 )
             }
             Row(
                 modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
             ) {
                 context.allAreas.forEach { area ->
                     AreaHealthCard(
@@ -198,11 +203,11 @@ internal fun renderOperationalBlock(context: DashboardBlockContext) {
         context.dashboardState.pendingDecisions.isNotEmpty() ||
         context.dashboardState.maintenanceQueue.isNotEmpty()
     ) {
-        Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+        Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)) {
             Text(
                 "LIFE OS // OPERATIONAL",
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Accent,
+                color = TajsOSTheme.Accent,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 2.sp,
             )
@@ -211,7 +216,7 @@ internal fun renderOperationalBlock(context: DashboardBlockContext) {
                 Text(
                     text = "OPEN OPEN LOOPS",
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Primary,
+                    color = TajsOSTheme.Primary,
                 )
             }
 
@@ -219,14 +224,14 @@ internal fun renderOperationalBlock(context: DashboardBlockContext) {
                 Text(
                     warning,
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Error,
+                    color = TajsOSTheme.Error,
                 )
             }
             context.dashboardState.maintenanceOverdueWarning?.let { warning ->
                 Text(
                     warning,
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Error,
+                    color = TajsOSTheme.Error,
                 )
             }
 
@@ -234,7 +239,7 @@ internal fun renderOperationalBlock(context: DashboardBlockContext) {
                 SuggestionGroup(
                     title = stringResource(Res.string.dash_open_loops),
                     icon = Icons.Default.AllInclusive,
-                    color = TactileTheme.Accent,
+                    color = TajsOSTheme.Accent,
                     nodes = context.dashboardState.openLoops,
                     onEditNode = context.onEditNode,
                 )
@@ -244,7 +249,7 @@ internal fun renderOperationalBlock(context: DashboardBlockContext) {
                 SuggestionGroup(
                     title = stringResource(Res.string.dash_decisions),
                     icon = Icons.Default.QuestionMark,
-                    color = TactileTheme.Primary,
+                    color = TajsOSTheme.Primary,
                     nodes = context.dashboardState.pendingDecisions,
                     onEditNode = context.onEditNode,
                 )
@@ -254,7 +259,7 @@ internal fun renderOperationalBlock(context: DashboardBlockContext) {
                 SuggestionGroup(
                     title = stringResource(Res.string.dash_maintenance),
                     icon = Icons.Default.Settings,
-                    color = TactileTheme.Success,
+                    color = TajsOSTheme.Success,
                     nodes = context.dashboardState.maintenanceQueue,
                     onEditNode = context.onEditNode,
                 )
@@ -266,11 +271,11 @@ internal fun renderOperationalBlock(context: DashboardBlockContext) {
 @Composable
 internal fun renderTimeArchitectureBlock(context: DashboardBlockContext) {
     val timeSnapshot by context.viewModel.timeArchitectureSnapshot.collectAsState()
-    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+    Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)) {
         Text(
             "TIME ARCHITECTURE",
             style = MaterialTheme.typography.labelSmall,
-            color = TactileTheme.Accent,
+            color = TajsOSTheme.Accent,
             fontWeight = FontWeight.Bold,
             letterSpacing = 1.sp,
         )
@@ -279,7 +284,7 @@ internal fun renderTimeArchitectureBlock(context: DashboardBlockContext) {
             value = "TODAY ${timeSnapshot.todayLayer.size} • WEEK ${timeSnapshot.weekLayer.size} • MONTH ${timeSnapshot.monthLayer.size}",
             secondaryLabel = "SEMESTER ${timeSnapshot.semesterLayer.size}",
             icon = Icons.Default.Schedule,
-            iconColor = TactileTheme.Primary,
+            iconColor = TajsOSTheme.Primary,
             onClick = { context.onNavigateTo(Screen.TimeArchitecture) },
         )
         if (timeSnapshot.examPeriodMode) {
@@ -287,7 +292,7 @@ internal fun renderTimeArchitectureBlock(context: DashboardBlockContext) {
                 title = "EXAM PERIOD MODE",
                 description = "Countdown detected in <= 30 days. Tighten weekly plan.",
                 icon = Icons.Default.School,
-                color = TactileTheme.Error,
+                color = TajsOSTheme.Error,
                 onClick = { context.onNavigateTo(Screen.Education) },
             )
         }
@@ -295,7 +300,7 @@ internal fun renderTimeArchitectureBlock(context: DashboardBlockContext) {
             SuggestionGroup(
                 title = "COUNTDOWNS",
                 icon = Icons.Default.HourglassBottom,
-                color = TactileTheme.Accent,
+                color = TajsOSTheme.Accent,
                 nodes = timeSnapshot.countdowns.map { it.node },
                 onEditNode = context.onEditNode,
             )
@@ -304,7 +309,7 @@ internal fun renderTimeArchitectureBlock(context: DashboardBlockContext) {
             SuggestionGroup(
                 title = "SHORT HORIZON",
                 icon = Icons.Default.Bolt,
-                color = TactileTheme.Success,
+                color = TajsOSTheme.Success,
                 nodes = timeSnapshot.shortHorizonTasks,
                 onEditNode = context.onEditNode,
             )
@@ -331,114 +336,149 @@ internal fun renderSearchBlock(context: DashboardBlockContext) {
             Icon(
                 Icons.Default.Search,
                 contentDescription = null,
-                tint = TactileTheme.Primary,
+                tint = TajsOSTheme.Primary,
             )
         },
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         colors =
             OutlinedTextFieldDefaults.colors(
-                unfocusedBorderColor = TactileTheme.Border,
-                focusedBorderColor = TactileTheme.Primary,
-                unfocusedContainerColor = TactileTheme.Surface,
-                focusedContainerColor = TactileTheme.Surface,
-            ),
+                unfocusedBorderColor = TajsOSTheme.Border,
+                focusedBorderColor = TajsOSTheme.Primary,
+                unfocusedContainerColor = TajsOSTheme.Surface,
+                focusedContainerColor = TajsOSTheme.Surface,
+            )
     )
 }
 
 @Composable
 internal fun renderAlertsBlock(context: DashboardBlockContext) {
-    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+    Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
         context.activeReminders.forEach { node ->
-            AlertCard(
-                title = "REMINDER: ${node.title}",
-                description = "Active notification threshold reached.",
-                icon = Icons.Default.NotificationsActive,
-                color = TactileTheme.Error,
-                action = {
-                    IconButton(
-                        onClick = { context.viewModel.updateNode(node.copy(reminderAt = null)) },
-                        modifier = Modifier.padding(0.dp),
-                    ) {
-                        Icon(
-                            Icons.Default.Check,
-                            contentDescription = null,
-                            tint = TactileTheme.Error,
-                        )
-                    }
-                },
-                onClick = { context.onEditNode(node.id) },
+            TajsNotificationCard(
+                notification =
+                    NotificationUiModel(
+                        id = "REM-${node.id}",
+                        title = "REMINDER: ${node.title}",
+                        body = "Active notification threshold reached.",
+                        category = "REMINDER",
+                        variant = NotificationVariant.ALERT,
+                        icon = Icons.Default.NotificationsActive,
+                        onClick = { context.onEditNode(node.id) }
+                    )
             )
         }
 
         if (context.needsWeeklyReview) {
-            AlertCard(
-                title = stringResource(Res.string.dash_review_pending),
-                description = stringResource(Res.string.dash_review_pending_desc),
-                icon = Icons.Default.EventRepeat,
-                color = TactileTheme.Primary,
-                onClick = { context.onNavigateTo(Screen.Review) },
+            TajsNotificationCard(
+                notification =
+                    NotificationUiModel(
+                        id = "SYS-REV",
+                        title = stringResource(Res.string.dash_review_pending),
+                        body = stringResource(Res.string.dash_review_pending_desc),
+                        category = "REVIEW",
+                        variant = NotificationVariant.INFO,
+                        icon = Icons.Default.EventRepeat,
+                        onClick = { context.onNavigateTo(Screen.Review) },
+                    )
             )
         }
 
         if (context.inboxNodes.isNotEmpty()) {
-            AlertCard(
-                title =
-                    if (context.inboxNodes.size > 10) {
-                        stringResource(Res.string.dash_inbox_overflow, context.inboxNodes.size)
-                    } else {
-                        stringResource(Res.string.dash_inbox_new, context.inboxNodes.size)
-                    },
-                description = "Process items to clear your mental buffer.",
-                icon = if (context.inboxNodes.size > 10) Icons.Default.Warning else Icons.Default.MailOutline,
-                color = if (context.inboxNodes.size > 10) TactileTheme.Error else TactileTheme.Accent,
-                onClick = { context.onNavigateTo(Screen.Inbox) },
+            TajsNotificationCard(
+                notification =
+                    NotificationUiModel(
+                        id = "INB-001",
+                        title =
+                            if (context.inboxNodes.size > 10) {
+                                stringResource(
+                                    Res.string.dash_inbox_overflow,
+                                    context.inboxNodes.size
+                                )
+                            } else {
+                                stringResource(Res.string.dash_inbox_new, context.inboxNodes.size)
+                            },
+                        body = "Process items to clear your mental buffer.",
+                        category = "INBOX",
+                        variant = if (context.inboxNodes.size >
+                            10
+                        ) {
+                            NotificationVariant.ALERT
+                        } else {
+                            NotificationVariant.SYNC
+                        },
+                        icon = if (context.inboxNodes.size >
+                            10) Icons.Default.Warning else {
+                            Icons.Default.MailOutline
+                        },
+                        onClick = { context.onNavigateTo(Screen.Inbox) }
+                    )
             )
         }
 
         if (context.dashboardState.overdueNodes.isNotEmpty()) {
-            AlertCard(
-                title = "${context.dashboardState.overdueNodes.size} OVERDUE ENTRIES",
-                description = "Deadlines exceeded. System integrity at risk.",
-                icon = Icons.Default.Warning,
-                color = TactileTheme.Error,
-                onClick = {
-                    context.viewModel.clearSearchFilters()
-                    context.viewModel.updateSearchStatusFilter("active")
-                    context.onNavigateTo(Screen.Search)
-                },
+            TajsNotificationCard(
+                notification =
+                    NotificationUiModel(
+                        id = "SYS-OVER",
+                        title = "${context.dashboardState.overdueNodes.size} OVERDUE ENTRIES",
+                        body = "Deadlines exceeded. System integrity at risk.",
+                        category = "CRITICAL",
+                        variant = NotificationVariant.ALERT,
+                        icon = Icons.Default.Warning,
+                        onClick = {
+                            context.viewModel.clearSearchFilters()
+                            context.viewModel.updateSearchStatusFilter("active")
+                            context.onNavigateTo(Screen.Search)
+                        }
+                    )
             )
         }
 
         context.moodToday?.let { mood ->
             if ((mood.anxietyScore ?: 0) >= 4) {
-                AlertCard(
-                    title = "STRESS DETECTED",
-                    description = stringResource(Res.string.dash_suggestion_stress),
-                    icon = Icons.Default.Psychology,
-                    color = TactileTheme.Accent,
-                    onClick = { context.onNavigateTo(Screen.Review) },
+                TajsNotificationCard(
+                    notification =
+                        NotificationUiModel(
+                            id = "MUD-STR",
+                            title = "STRESS DETECTED",
+                            body = stringResource(Res.string.dash_suggestion_stress),
+                            category = "WELLNESS",
+                            variant = NotificationVariant.WARNING,
+                            icon = Icons.Default.Psychology,
+                            onClick = { context.onNavigateTo(Screen.Review) }
+                        )
                 )
             }
             if ((mood.focusScore ?: 5) <= 2) {
-                AlertCard(
-                    title = "LOW FOCUS PHASE",
-                    description = stringResource(Res.string.dash_suggestion_low_focus),
-                    icon = Icons.Default.Lightbulb,
-                    color = TactileTheme.Accent,
-                    onClick = {
-                        context.viewModel.clearSearchFilters()
-                        context.viewModel.updateSearchMaxMinutesFilter(5)
-                        context.onNavigateTo(Screen.Search)
-                    },
+                TajsNotificationCard(
+                    notification =
+                        NotificationUiModel(
+                            id = "MUD-FOC",
+                            title = "LOW FOCUS PHASE",
+                            body = stringResource(Res.string.dash_suggestion_low_focus),
+                            category = "WELLNESS",
+                            variant = NotificationVariant.LOW_PRIORITY,
+                            icon = Icons.Default.Lightbulb,
+                            onClick = {
+                                context.viewModel.clearSearchFilters()
+                                context.viewModel.updateSearchMaxMinutesFilter(5)
+                                context.onNavigateTo(Screen.Search)
+                            }
+                        )
                 )
             }
             if (!mood.tookMeds && context.localNow.hour >= 10) {
-                AlertCard(
-                    title = "MEDICATION LOG PENDING",
-                    description = stringResource(Res.string.dash_suggestion_meds),
-                    icon = Icons.Default.MedicalServices,
-                    color = TactileTheme.Accent,
-                    onClick = { context.onNavigateTo(Screen.Track) },
+                TajsNotificationCard(
+                    notification =
+                        NotificationUiModel(
+                            id = "MUD-MED",
+                            title = "MEDICATION LOG PENDING",
+                            body = stringResource(Res.string.dash_suggestion_meds),
+                            category = "LOGISTIC",
+                            variant = NotificationVariant.WARNING,
+                            icon = Icons.Default.MedicalServices,
+                            onClick = { context.onNavigateTo(Screen.Track) },
+                        ),
                 )
             }
         }
@@ -450,7 +490,7 @@ internal fun renderStickyBlock(context: DashboardBlockContext) {
     if (context.dashboardState.stickyNotes.isNotEmpty()) {
         Row(
             modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
-            horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+            horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
         ) {
             context.dashboardState.stickyNotes.forEach { note ->
                 StickyNoteCard(
@@ -486,7 +526,7 @@ internal fun renderInsightsBlock(context: DashboardBlockContext) {
     LifeSummaryCard(
         captures = context.insights.weeklyCaptures,
         completions = context.insights.weeklyCompletions,
-        onClick = { context.onNavigateTo(Screen.Insights) },
+        onClick = { context.onNavigateTo(Screen.Insights) }
     )
 }
 
@@ -497,19 +537,20 @@ internal fun renderActionsBlock(context: DashboardBlockContext) {
 
 @Composable
 internal fun renderSuggestionsBlock(context: DashboardBlockContext) {
-    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingLg)) {
+    Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingLg)) {
         val suggestedContextKey = context.dashboardState.suggestedContextKey
         if (context.dashboardState.suggestedContextTasks.isNotEmpty() && suggestedContextKey != null) {
             SuggestionGroup(
                 title = "CONTEXT MATCH // ${suggestedContextKey.replace("_", " ").uppercase()}",
                 icon = Icons.Default.Explore,
-                color = TactileTheme.Primary,
+                color = TajsOSTheme.Primary,
                 nodes = context.dashboardState.suggestedContextTasks,
                 onEditNode = context.onEditNode,
             )
         }
 
-        if (context.dashboardState.lowEnergyTasks.isNotEmpty() && (
+        if (context.dashboardState.lowEnergyTasks.isNotEmpty() &&
+            (
                 context.moodToday?.energyScore
                     ?: 5
             ) <= 2
@@ -517,7 +558,7 @@ internal fun renderSuggestionsBlock(context: DashboardBlockContext) {
             SuggestionGroup(
                 title = "RECOVERY MODE // LOW ENERGY",
                 icon = Icons.Default.BatteryChargingFull,
-                color = TactileTheme.Success,
+                color = TajsOSTheme.Success,
                 nodes = context.dashboardState.lowEnergyTasks,
                 onEditNode = context.onEditNode,
             )
@@ -533,7 +574,7 @@ internal fun renderSuggestionsBlock(context: DashboardBlockContext) {
             SuggestionGroup(
                 title = "BATCH SUGGESTION // $areaName",
                 icon = Icons.Default.Layers,
-                color = TactileTheme.Accent,
+                color = TajsOSTheme.Accent,
                 nodes = firstBatch,
                 onEditNode = context.onEditNode,
                 description = "You have ${firstBatch.size} tasks in $areaName. Batch them?",
@@ -544,7 +585,7 @@ internal fun renderSuggestionsBlock(context: DashboardBlockContext) {
             SuggestionGroup(
                 title = "QUICK WINS // EASY FRICTION",
                 icon = Icons.Default.Bolt,
-                color = TactileTheme.Success,
+                color = TajsOSTheme.Success,
                 nodes = context.dashboardState.quickWins,
                 onEditNode = context.onEditNode,
             )
@@ -554,9 +595,9 @@ internal fun renderSuggestionsBlock(context: DashboardBlockContext) {
             SuggestionGroup(
                 title = "DEEP WORK // HIGH ENERGY",
                 icon = Icons.Default.Psychology,
-                color = TactileTheme.Primary,
+                color = TajsOSTheme.Primary,
                 nodes = context.dashboardState.deepWork,
-                onEditNode = context.onEditNode,
+                onEditNode = context.onEditNode
             )
         }
 
@@ -564,9 +605,9 @@ internal fun renderSuggestionsBlock(context: DashboardBlockContext) {
             SuggestionGroup(
                 title = "NEEDS ATTENTION // CRITICAL PROJECTS",
                 icon = Icons.Default.AccountTree,
-                color = TactileTheme.Error,
+                color = TajsOSTheme.Error,
                 nodes = context.dashboardState.criticalProjects.map { NodeWithPin(it, null) },
-                onEditNode = { context.onNavigateToProject(it) },
+                onEditNode = { context.onNavigateToProject(it) }
             )
         }
 
@@ -574,7 +615,7 @@ internal fun renderSuggestionsBlock(context: DashboardBlockContext) {
             SuggestionGroup(
                 title = "DESERVES ATTENTION // NEGLECTED",
                 icon = Icons.Default.NotificationImportant,
-                color = TactileTheme.Accent,
+                color = TajsOSTheme.Accent,
                 nodes = context.dashboardState.deservesAttention,
                 onEditNode = context.onEditNode,
             )
@@ -584,7 +625,7 @@ internal fun renderSuggestionsBlock(context: DashboardBlockContext) {
             SuggestionGroup(
                 title = "UPCOMING DEADLINES",
                 icon = Icons.Default.DateRange,
-                color = TactileTheme.Accent,
+                color = TajsOSTheme.Accent,
                 nodes = context.dashboardState.upcomingDeadlines,
                 onEditNode = context.onEditNode,
             )
@@ -594,18 +635,18 @@ internal fun renderSuggestionsBlock(context: DashboardBlockContext) {
 
 @Composable
 internal fun renderKnowledgeBlock(context: DashboardBlockContext) {
-    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingLg)) {
+    Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingLg)) {
         Text(
             "KNOWLEDGE & CONTEXT",
             style = MaterialTheme.typography.labelSmall,
-            color = TactileTheme.Accent,
+            color = TajsOSTheme.Accent,
             fontWeight = FontWeight.Bold,
             letterSpacing = 1.sp,
         )
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+            horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
         ) {
             VaultCard(
                 modifier = Modifier.weight(1f),
@@ -639,9 +680,9 @@ internal fun renderKnowledgeBlock(context: DashboardBlockContext) {
             SuggestionGroup(
                 title = "PINNED KNOWLEDGE",
                 icon = Icons.Default.Favorite,
-                color = TactileTheme.Primary,
+                color = TajsOSTheme.Primary,
                 nodes = context.dashboardState.pinnedKnowledge,
-                onEditNode = context.onEditNode,
+                onEditNode = context.onEditNode
             )
         }
 
@@ -649,9 +690,9 @@ internal fun renderKnowledgeBlock(context: DashboardBlockContext) {
             SuggestionGroup(
                 title = "FOUNDATIONAL PRINCIPLE",
                 icon = Icons.Default.AutoAwesome,
-                color = TactileTheme.Accent,
+                color = TajsOSTheme.Accent,
                 nodes = context.dashboardState.foundationalNotes,
-                onEditNode = context.onEditNode,
+                onEditNode = context.onEditNode
             )
         }
 
@@ -661,7 +702,7 @@ internal fun renderKnowledgeBlock(context: DashboardBlockContext) {
             SuggestionGroup(
                 title = "RESOURCE HIGHLIGHTS",
                 icon = Icons.AutoMirrored.Filled.LibraryBooks,
-                color = TactileTheme.Primary,
+                color = TajsOSTheme.Primary,
                 nodes = context.dashboardState.resourceHighlights,
                 onEditNode = context.onEditNode,
             )
@@ -673,7 +714,7 @@ internal fun renderKnowledgeBlock(context: DashboardBlockContext) {
                 value = project.title,
                 secondaryLabel = "LAST UPDATED",
                 icon = Icons.AutoMirrored.Filled.List,
-                iconColor = TactileTheme.Primary,
+                iconColor = TajsOSTheme.Primary,
                 onClick = { context.onNavigateToProject(project.id) },
             )
         }
@@ -684,8 +725,8 @@ internal fun renderKnowledgeBlock(context: DashboardBlockContext) {
                 value = nodeWithPin.node.title,
                 secondaryLabel = "RECENT ACTIVITY",
                 icon = Icons.Default.Edit,
-                iconColor = TactileTheme.Primary,
-                onClick = { context.onEditNode(nodeWithPin.node.id) },
+                iconColor = TajsOSTheme.Primary,
+                onClick = { context.onEditNode(nodeWithPin.node.id) }
             )
         }
     }
@@ -694,11 +735,11 @@ internal fun renderKnowledgeBlock(context: DashboardBlockContext) {
 @Composable
 internal fun renderProtocolsBlock(context: DashboardBlockContext) {
     val transitionSnapshot by context.viewModel.transitionProtocolsSnapshot.collectAsState()
-    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+    Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
         Text(
             stringResource(Res.string.dash_protocols),
             style = MaterialTheme.typography.labelSmall,
-            color = TactileTheme.Muted,
+            color = TajsOSTheme.Muted,
             fontWeight = FontWeight.Bold,
             letterSpacing = 1.sp,
         )
@@ -706,12 +747,12 @@ internal fun renderProtocolsBlock(context: DashboardBlockContext) {
             Text(
                 "SUGGESTED NOW // ${recommended.uppercase()}",
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Accent,
+                color = TajsOSTheme.Accent,
             )
         }
         Row(
             modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
-            horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+            horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
         ) {
             context.viewModel.transitionProtocolTemplates.forEach { template ->
                 val (icon, color, destination) =
@@ -720,31 +761,31 @@ internal fun renderProtocolsBlock(context: DashboardBlockContext) {
                         "morning_startup" -> {
                             Triple(
                                 Icons.Default.WbSunny,
-                                TactileTheme.Primary,
-                                Screen.Review,
+                                TajsOSTheme.Primary,
+                                Screen.Review
                             )
                         }
 
                         "deep_work_entry" -> {
                             Triple(
                                 Icons.Default.Psychology,
-                                TactileTheme.Accent,
-                                Screen.Focus,
+                                TajsOSTheme.Accent,
+                                Screen.Focus
                             )
                         }
 
                         "shutdown_ritual" -> {
                             Triple(
                                 Icons.Default.Brightness3,
-                                TactileTheme.Success,
-                                Screen.Review,
+                                TajsOSTheme.Success,
+                                Screen.Review
                             )
                         }
 
                         "recovery_after_derailment" -> {
                             Triple(
                                 Icons.Default.MedicalServices,
-                                TactileTheme.Error,
+                                TajsOSTheme.Error,
                                 Screen.Track,
                             )
                         }
@@ -752,7 +793,7 @@ internal fun renderProtocolsBlock(context: DashboardBlockContext) {
                         "exam_week" -> {
                             Triple(
                                 Icons.Default.School,
-                                TactileTheme.Accent,
+                                TajsOSTheme.Accent,
                                 Screen.Education,
                             )
                         }
@@ -760,7 +801,7 @@ internal fun renderProtocolsBlock(context: DashboardBlockContext) {
                         "travel_day" -> {
                             Triple(
                                 Icons.Default.Flight,
-                                TactileTheme.Primary,
+                                TajsOSTheme.Primary,
                                 Screen.Places,
                             )
                         }
@@ -768,7 +809,7 @@ internal fun renderProtocolsBlock(context: DashboardBlockContext) {
                         else -> {
                             Triple(
                                 Icons.Default.RocketLaunch,
-                                TactileTheme.Primary,
+                                TajsOSTheme.Primary,
                                 Screen.Protocols,
                             )
                         }
@@ -780,7 +821,7 @@ internal fun renderProtocolsBlock(context: DashboardBlockContext) {
                     onClick = {
                         context.viewModel.triggerProtocol(template.label)
                         context.onNavigateTo(destination)
-                    },
+                    }
                 )
             }
         }
@@ -789,7 +830,7 @@ internal fun renderProtocolsBlock(context: DashboardBlockContext) {
             SuggestionGroup(
                 title = "ACTIVE PROTOCOLS",
                 icon = Icons.Default.RocketLaunch,
-                color = TactileTheme.Primary,
+                color = TajsOSTheme.Primary,
                 nodes = context.dashboardState.activeProtocols,
                 onEditNode = context.onEditNode,
             )

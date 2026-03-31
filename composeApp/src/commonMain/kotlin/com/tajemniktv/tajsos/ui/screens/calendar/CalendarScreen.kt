@@ -48,7 +48,7 @@ import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.main.state.CalendarEntry
 import com.tajemniktv.tajsos.ui.main.state.EntryType
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
@@ -142,7 +142,7 @@ fun CalendarHeader(
             Text(
                 "${currentMonth.month.name} ${currentMonth.year}",
                 style = MaterialTheme.typography.headlineMedium,
-                color = TactileTheme.CalendarHeaderText,
+                color = TajsOSTheme.CalendarHeaderText
             )
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -150,14 +150,14 @@ fun CalendarHeader(
                 Text(
                     stringResource(Res.string.cal_today),
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Primary,
+                    color = TajsOSTheme.Primary
                 )
             }
             IconButton(onClick = onSyncClick) {
                 Icon(
                     Icons.Default.Refresh,
                     contentDescription = stringResource(Res.string.cal_sync),
-                    tint = TactileTheme.Muted,
+                    tint = TajsOSTheme.Muted,
                     modifier = Modifier.size(20.dp),
                 )
             }
@@ -220,7 +220,7 @@ fun MonthView(
                 modifier = Modifier.padding(vertical = 8.dp),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted
             )
         }
 
@@ -249,12 +249,12 @@ fun MonthView(
                             .clip(RoundedCornerShape(10.dp))
                             .background(
                                 if (isSelected) {
-                                    TactileTheme.CalendarSelectedDay
+                                    TajsOSTheme.CalendarSelectedDay
                                 } else if (isToday) {
-                                    TactileTheme.CalendarTodayDay
+                                    TajsOSTheme.CalendarTodayDay
                                 } else {
-                                    TactileTheme.CalendarIdleDay
-                                },
+                                    TajsOSTheme.CalendarIdleDay
+                                }
                             ).clickable { onDateSelected(date) },
                     contentAlignment = Alignment.Center,
                 ) {
@@ -265,12 +265,12 @@ fun MonthView(
                             fontWeight = if (isSelected || isToday) FontWeight.Bold else FontWeight.Normal,
                             color =
                                 if (isSelected) {
-                                    TactileTheme.CalendarSelectedText
+                                    TajsOSTheme.CalendarSelectedText
                                 } else if (isToday) {
-                                    TactileTheme.Accent
+                                    TajsOSTheme.Accent
                                 } else {
-                                    TactileTheme.Text
-                                },
+                                    TajsOSTheme.Text
+                                }
                         )
                         if (dayEntries.isNotEmpty()) {
                             Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
@@ -279,7 +279,7 @@ fun MonthView(
                                         Modifier
                                             .size(4.dp)
                                             .clip(CircleShape)
-                                            .background(TactileTheme.Accent),
+                                            .background(TajsOSTheme.Accent)
                                     )
                                 }
                                 if (dayEntries.size > 3) {
@@ -287,7 +287,7 @@ fun MonthView(
                                         Modifier
                                             .size(2.dp)
                                             .clip(CircleShape)
-                                            .background(TactileTheme.Accent),
+                                            .background(TajsOSTheme.Accent)
                                     )
                                 }
                             }
@@ -330,12 +330,12 @@ fun AgendaView(
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text(
                 stringResource(Res.string.cal_no_events),
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted,
                 style = MaterialTheme.typography.labelSmall,
             )
         }
     } else {
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
             items(dayEntries) { entry ->
                 AgendaRow(entry, onClick = { onEntryClick(entry) })
             }
@@ -371,41 +371,41 @@ fun AgendaRow(
     Surface(
         onClick = onClick,
         shape = RoundedCornerShape(14.dp),
-        color = TactileTheme.CalendarPanelStrong,
+        color = TajsOSTheme.CalendarPanelStrong,
         border =
             androidx.compose.foundation.BorderStroke(
                 1.dp,
-                TactileTheme.GhostBorder.copy(alpha = 0.15f),
+                TajsOSTheme.GhostBorder.copy(alpha = 0.15f)
             ),
         modifier = Modifier.fillMaxWidth(),
     ) {
         Row(
-            modifier = Modifier.padding(TactileTheme.SpacingMd),
+            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 timeStr,
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted,
                 modifier = Modifier.width(60.dp),
             )
             VerticalDivider(
                 modifier = Modifier.height(24.dp).padding(horizontal = 8.dp),
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted
             )
             Column {
                 Text(
                     entry.title,
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
-                    color = TactileTheme.Text,
+                    color = TajsOSTheme.Text
                 )
                 val description = entry.description
                 if (!description.isNullOrBlank()) {
                     Text(
                         description,
                         style = MaterialTheme.typography.bodySmall,
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted,
                         maxLines = 1,
                     )
                 }
@@ -416,7 +416,7 @@ fun AgendaRow(
                     Modifier
                         .size(8.dp)
                         .clip(CircleShape)
-                        .background(TactileTheme.Primary),
+                        .background(TajsOSTheme.Primary)
                 )
             }
         }

@@ -41,7 +41,7 @@ import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.data.TaskState
 import com.tajemniktv.tajsos.data.taskStateOrNull
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.tasks_command_subtitle
@@ -72,6 +72,8 @@ internal fun TasksCommandView(
     projectById: Map<Long, String>,
     areaById: Map<Long, String>,
     todayTaskIds: Set<Long>,
+    staleTasksCount: Int = 0,
+    onSweepStaleTasks: () -> Unit = {},
     onOpen: (Long) -> Unit,
     onStartFocus: (NodeEntity) -> Unit,
     onDone: (NodeEntity) -> Unit,
@@ -100,11 +102,11 @@ internal fun TasksCommandView(
         if (desktop) {
             Row(
                 modifier = Modifier.fillMaxSize(),
-                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
             ) {
                 Column(
                     modifier = Modifier.weight(2f),
-                    verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+                    verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
                 ) {
                     Text(
                         stringResource(Res.string.tasks_command_title),
@@ -114,7 +116,7 @@ internal fun TasksCommandView(
                     Text(
                         stringResource(Res.string.tasks_command_subtitle),
                         style = MaterialTheme.typography.bodySmall,
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted
                     )
                     if (current == null) {
                         EmptyState(message = stringResource(Res.string.tasks_empty))
@@ -131,7 +133,7 @@ internal fun TasksCommandView(
                         Text(
                             stringResource(Res.string.tasks_queue_title),
                             style = MaterialTheme.typography.titleMedium,
-                            color = TactileTheme.Text,
+                            color = TajsOSTheme.Text
                         )
                         QueueList(queue, projectById, areaById, onOpen, onStartFocus, onDone)
                     }
@@ -149,6 +151,8 @@ internal fun TasksCommandView(
                                     ?: Long.MAX_VALUE
                             ) <= now + 24L * 60 * 60 * 1000
                         },
+                    staleTasksCount = staleTasksCount,
+                    onSweepStaleTasks = onSweepStaleTasks,
                     onQuickAddChanged = { quickAdd = it },
                     onCaptureChanged = { capture = it },
                     onQuickAdd = {
@@ -170,7 +174,7 @@ internal fun TasksCommandView(
         } else {
             Column(
                 modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
             ) {
                 Text(
                     stringResource(Res.string.tasks_command_title),
@@ -204,6 +208,8 @@ internal fun TasksCommandView(
                                     ?: Long.MAX_VALUE
                             ) <= now + 24L * 60 * 60 * 1000
                         },
+                    staleTasksCount = staleTasksCount,
+                    onSweepStaleTasks = onSweepStaleTasks,
                     onQuickAddChanged = { quickAdd = it },
                     onCaptureChanged = { capture = it },
                     onQuickAdd = {
@@ -237,34 +243,34 @@ private fun PriorityTaskCard(
     onPinToday: (NodeEntity) -> Unit,
 ) {
     Surface(
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        color = TactileTheme.Surface,
-        border = BorderStroke(1.dp, TactileTheme.Border),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+        color = TajsOSTheme.Surface,
+        border = BorderStroke(1.dp, TajsOSTheme.Border)
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingMd),
-            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+            modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
         ) {
             Text(
                 stringResource(Res.string.tasks_current_priority),
                 style = MaterialTheme.typography.labelMedium,
-                color = TactileTheme.Primary,
+                color = TajsOSTheme.Primary
             )
             Text(
                 task.title,
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
-                color = TactileTheme.Text,
+                color = TajsOSTheme.Text
             )
             if (task.content.isNotBlank()) {
                 Text(
                     task.content,
                     style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted,
                     maxLines = 3,
                 )
             }
-            Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                 task.projectId
                     ?.let { projectById[it] }
                     ?.let { AssistChip(onClick = {}, label = { Text(it) }) }
@@ -274,7 +280,7 @@ private fun PriorityTaskCard(
                 task.dueAt?.let { AssistChip(onClick = {}, label = { Text(shortDate(it)) }) }
             }
             Row(
-                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Button(onClick = { onStartFocus(task) }, modifier = Modifier.weight(1f)) {
@@ -310,14 +316,14 @@ private fun QueueList(
     onDone: (NodeEntity) -> Unit,
 ) {
     Surface(
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        color = TactileTheme.Surface,
-        border = BorderStroke(1.dp, TactileTheme.Border),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+        color = TajsOSTheme.Surface,
+        border = BorderStroke(1.dp, TajsOSTheme.Border)
     ) {
         Column {
             tasks.forEach { task ->
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingMd),
+                    modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -325,7 +331,7 @@ private fun QueueList(
                         Text(
                             task.title,
                             style = MaterialTheme.typography.bodyLarge,
-                            color = TactileTheme.Text,
+                            color = TajsOSTheme.Text
                         )
                         val context =
                             listOfNotNull(
@@ -337,17 +343,17 @@ private fun QueueList(
                             Text(
                                 context,
                                 style = MaterialTheme.typography.bodySmall,
-                                color = TactileTheme.Muted,
+                                color = TajsOSTheme.Muted
                             )
                         }
                     }
-                    Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                         OutlinedButton(onClick = { onDoNow(task) }) { Text(stringResource(Res.string.tasks_do_now_action)) }
                         OutlinedButton(onClick = { onOpen(task.id) }) { Text(stringResource(Res.string.tasks_open_action)) }
                         IconButton(onClick = { onDone(task) }) { Icon(Icons.Default.Check, null) }
                     }
                 }
-                HorizontalDivider(color = TactileTheme.Border)
+                HorizontalDivider(color = TajsOSTheme.Border)
             }
         }
     }
@@ -361,20 +367,24 @@ private fun CommandSidebar(
     activeCount: Int,
     blockedCount: Int,
     dueSoonCount: Int,
+    staleTasksCount: Int = 0,
+    onSweepStaleTasks: () -> Unit = {},
     onQuickAddChanged: (String) -> Unit,
     onCaptureChanged: (String) -> Unit,
     onQuickAdd: () -> Unit,
     onCapture: () -> Unit,
 ) {
+    var showSweepDialog by remember { mutableStateOf(false) }
+
     Surface(
         modifier = modifier,
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        color = TactileTheme.Surface,
-        border = BorderStroke(1.dp, TactileTheme.Border),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+        color = TajsOSTheme.Surface,
+        border = BorderStroke(1.dp, TajsOSTheme.Border)
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingMd),
-            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+            modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
         ) {
             Text(
                 stringResource(Res.string.tasks_quick_add_title),
@@ -394,7 +404,7 @@ private fun CommandSidebar(
                     ),
                 )
             }
-            HorizontalDivider(color = TactileTheme.Border)
+            HorizontalDivider(color = TajsOSTheme.Border)
             Text(
                 stringResource(Res.string.tasks_quick_capture_title),
                 style = MaterialTheme.typography.titleMedium,
@@ -411,7 +421,7 @@ private fun CommandSidebar(
                     stringResource(Res.string.tasks_quick_capture_action),
                 )
             }
-            HorizontalDivider(color = TactileTheme.Border)
+            HorizontalDivider(color = TajsOSTheme.Border)
             Text(
                 stringResource(Res.string.tasks_context_title),
                 style = MaterialTheme.typography.titleMedium,
@@ -420,6 +430,46 @@ private fun CommandSidebar(
             ContextRow(stringResource(Res.string.tasks_context_active), activeCount)
             ContextRow(stringResource(Res.string.tasks_context_blocked), blockedCount)
             ContextRow(stringResource(Res.string.tasks_context_due_soon), dueSoonCount)
+
+            if (staleTasksCount > 0) {
+                HorizontalDivider(color = TajsOSTheme.Border)
+                OutlinedButton(
+                    onClick = { showSweepDialog = true },
+                    modifier = Modifier.fillMaxWidth(),
+                    border = BorderStroke(1.dp, TajsOSTheme.Primary.copy(alpha = 0.5f))
+                ) {
+                    Text("Sweep $staleTasksCount Stale Tasks", color = TajsOSTheme.Primary)
+                }
+            }
         }
+    }
+
+    if (showSweepDialog) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { showSweepDialog = false },
+            title = {
+                Text("Clear overdue backlog?")
+            },
+            text = {
+                Text("You have $staleTasksCount stale overdue tasks. Want me to sweep them into Someday?")
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        onSweepStaleTasks()
+                        showSweepDialog = false
+                    }
+                ) {
+                    Text("Sweep to Someday")
+                }
+            },
+            dismissButton = {
+                OutlinedButton(
+                    onClick = { showSweepDialog = false }
+                ) {
+                    Text("Cancel")
+                }
+            },
+        )
     }
 }

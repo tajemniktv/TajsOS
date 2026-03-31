@@ -24,10 +24,10 @@ class ModeQueryProfileTest {
         val profile =
             buildModeQueryProfile(
                 preference = preference,
-                areaFilters = listOf(ModeAreaFilterEntity(modeId = 42, areaId = 8, include = true)),
+                areaFilters = listOf(ModeAreaFilterEntity(modeId = 42, areaId = 8)),
                 typeFilters =
                     listOf(
-                        ModeTypeFilterEntity(modeId = 42, nodeType = "task", include = true),
+                        ModeTypeFilterEntity(modeId = 42, nodeType = "task"),
                         ModeTypeFilterEntity(modeId = 42, nodeType = "note", include = false),
                     ),
             )

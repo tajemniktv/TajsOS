@@ -52,7 +52,7 @@ import com.tajemniktv.tajsos.data.projectStateOrNull
 import com.tajemniktv.tajsos.data.taskStateOrNull
 import com.tajemniktv.tajsos.ui.components.cards.LinkedNodeItem
 import com.tajemniktv.tajsos.ui.components.common.DetailHeader
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
@@ -108,8 +108,8 @@ private fun renderAreaHeader(context: AreaDetailContext) {
 @Composable
 private fun renderAreaHero(context: AreaDetailContext) {
     Surface(
-        color = TactileTheme.SurfaceHighest,
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+        color = TajsOSTheme.SurfaceHighest,
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(14.dp),
@@ -118,13 +118,13 @@ private fun renderAreaHero(context: AreaDetailContext) {
             Text(
                 stringResource(Res.string.area_detail_mission_control),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary,
+                color = TajsOSTheme.Primary,
                 fontWeight = FontWeight.Bold,
             )
             Text(
                 context.statement,
                 style = MaterialTheme.typography.bodyLarge,
-                color = TactileTheme.Text,
+                color = TajsOSTheme.Text
             )
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 AssistChip(onClick = {
@@ -148,11 +148,11 @@ private fun renderAreaHero(context: AreaDetailContext) {
                 modifier = Modifier.fillMaxWidth().height(7.dp),
                 color =
                     if (context.load >= 70) {
-                        TactileTheme.Error
+                        TajsOSTheme.Error
                     } else {
-                        TactileTheme.Primary
+                        TajsOSTheme.Primary
                     },
-                trackColor = TactileTheme.SurfaceLow,
+                trackColor = TajsOSTheme.SurfaceLow
             )
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 FilledTonalButton(onClick = {}) { Text(stringResource(Res.string.area_detail_tab_work)) }
@@ -180,8 +180,8 @@ private fun renderAreaTabs(context: AreaDetailContext) {
 @Composable
 private fun renderAreaContent(context: AreaDetailContext) {
     Surface(
-        color = TactileTheme.SurfaceLow,
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+        color = TajsOSTheme.SurfaceLow,
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(14.dp),
@@ -350,13 +350,13 @@ private fun renderAreaContent(context: AreaDetailContext) {
                         "Load",
                         "${context.load}%",
                         Icons.Default.Speed,
-                        if (context.load >= 70) TactileTheme.Error else TactileTheme.Primary,
+                        if (context.load >= 70) TajsOSTheme.Error else TajsOSTheme.Primary
                     )
                     MetricRow(
                         stringResource(Res.string.area_detail_cadence),
                         context.cadence,
                         Icons.AutoMirrored.Filled.TrendingUp,
-                        TactileTheme.Primary,
+                        TajsOSTheme.Primary
                     )
                 }
             }
@@ -407,14 +407,14 @@ private fun renderAreaSidebar(context: AreaDetailContext) {
             if (context.relationIds.isEmpty()) {
                 Text(
                     stringResource(Res.string.project_detail_empty_work),
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted
                 )
             }
             context.relationIds.take(8).forEach { id ->
                 val node = context.nodesById[id]?.node ?: return@forEach
                 Text(
                     "• ${node.title}",
-                    color = TactileTheme.Text,
+                    color = TajsOSTheme.Text,
                     modifier = Modifier.fillMaxWidth().clickable { },
                 )
             }
@@ -426,10 +426,10 @@ private fun renderAreaSidebar(context: AreaDetailContext) {
             if (context.attachmentNames.isEmpty()) {
                 Text(
                     stringResource(Res.string.project_detail_empty_assets),
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted
                 )
             }
-            context.attachmentNames.take(6).forEach { Text("• $it", color = TactileTheme.Text) }
+            context.attachmentNames.take(6).forEach { Text("• $it", color = TajsOSTheme.Text) }
         }
         SidebarBlock(
             title = stringResource(Res.string.area_detail_review_signals),
@@ -438,7 +438,7 @@ private fun renderAreaSidebar(context: AreaDetailContext) {
             if (context.tags.isEmpty()) {
                 Text(
                     stringResource(Res.string.detail_unassign),
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted
                 )
             }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -454,7 +454,7 @@ private fun SidebarBlock(
     icon: ImageVector,
     content: @Composable () -> Unit,
 ) {
-    Surface(color = TactileTheme.Surface, shape = RoundedCornerShape(TactileTheme.RadiusMd)) {
+    Surface(color = TajsOSTheme.Surface, shape = RoundedCornerShape(TajsOSTheme.RadiusMd)) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -463,7 +463,7 @@ private fun SidebarBlock(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Icon(icon, null, tint = TactileTheme.Primary)
+                Icon(icon, null, tint = TajsOSTheme.Primary)
                 Text(
                     title,
                     style = MaterialTheme.typography.titleSmall,
@@ -480,7 +480,7 @@ private fun MetricRow(
     label: String,
     value: String,
     icon: ImageVector,
-    tone: Color = TactileTheme.Text,
+    tone: Color = TajsOSTheme.Text
 ) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -488,8 +488,8 @@ private fun MetricRow(
     ) {
         Icon(icon, null, tint = tone)
         Column {
-            Text(label, style = MaterialTheme.typography.labelSmall, color = TactileTheme.Muted)
-            Text(value, style = MaterialTheme.typography.bodyMedium, color = TactileTheme.Text)
+            Text(label, style = MaterialTheme.typography.labelSmall, color = TajsOSTheme.Muted)
+            Text(value, style = MaterialTheme.typography.bodyMedium, color = TajsOSTheme.Text)
         }
     }
 }
@@ -503,20 +503,20 @@ private fun SectionHeader(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Icon(icon, null, tint = TactileTheme.Primary)
+        Icon(icon, null, tint = TajsOSTheme.Primary)
         Text(
             stringResource(title),
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.Bold,
         )
     }
-    HorizontalDivider(color = TactileTheme.GhostBorder)
+    HorizontalDivider(color = TajsOSTheme.GhostBorder)
 }
 
 @Composable
 private fun EmptyLabel(text: StringResource) {
-    Surface(color = TactileTheme.Surface, shape = RoundedCornerShape(TactileTheme.RadiusMd)) {
-        Text(stringResource(text), color = TactileTheme.Muted, modifier = Modifier.padding(12.dp))
+    Surface(color = TajsOSTheme.Surface, shape = RoundedCornerShape(TajsOSTheme.RadiusMd)) {
+        Text(stringResource(text), color = TajsOSTheme.Muted, modifier = Modifier.padding(12.dp))
     }
 }
 

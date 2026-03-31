@@ -43,6 +43,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
@@ -61,7 +62,7 @@ import com.tajemniktv.tajsos.data.UserProfile
 import com.tajemniktv.tajsos.data.resolveDisplayName
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.screens.tasks.TasksTab
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -77,6 +78,7 @@ fun AppSidebar(
     shellState: AppShellState,
     menuGroups: List<Pair<StringResource, List<Screen>>>,
     currentRootScreen: Screen?,
+    currentScreen: Screen?,
     activeTasksTab: TasksTab,
     currentMode: ModeEntity?,
     userProfile: UserProfile,
@@ -119,7 +121,7 @@ fun AppSidebar(
                     interactionSource = hoverInteraction,
                     enabled = shellState.sidebarMode == SidebarMode.HOVER_EXPAND,
                 ),
-        color = TactileTheme.SurfaceLowest,
+        color = TajsOSTheme.SurfaceLowest,
         shape = RoundedCornerShape(0.dp),
         tonalElevation = 0.dp,
         shadowElevation = 0.dp,
@@ -140,7 +142,7 @@ fun AppSidebar(
                         Text(
                             text = stringResource(groupTitle).uppercase(),
                             style = MaterialTheme.typography.labelSmall,
-                            color = TactileTheme.Muted,
+                            color = TajsOSTheme.Muted,
                             modifier =
                                 Modifier.padding(
                                     horizontal = 16.dp,
@@ -153,29 +155,33 @@ fun AppSidebar(
 
                     screens.forEach { rootScreen ->
                         val isActiveRoot = currentRootScreen?.route == rootScreen.route
-                        val expandable = rootScreen == Screen.Tasks
+                        val children = rootScreen.children
+                        val expandable = children.isNotEmpty()
                         ExpandableNavSection(
                             screen = rootScreen,
+                            currentScreen = currentScreen,
                             isExpandedPresentation = showExpandedContent,
                             isActiveRoot = isActiveRoot,
-                            isExpandedRoot = shellState.expandedRootRoute == rootScreen.route,
+                            isExpandedRoot = shellState.isRootExpanded(rootScreen.route),
                             activeTasksTab = activeTasksTab,
-                            expandable = expandable,
                             onRootClick = {
                                 if (expandable) {
-                                    shellState.expandedRootRoute =
-                                        if (shellState.expandedRootRoute == rootScreen.route) {
-                                            null
-                                        } else {
-                                            rootScreen.route
-                                        }
+                                    shellState.toggleRootExpanded(rootScreen.route)
+                                } else {
+                                    onNavigate(rootScreen)
                                 }
-                                onNavigate(rootScreen)
                             },
-                            onTaskChildClick = { tab ->
-                                shellState.expandedRootRoute = Screen.Tasks.route
-                                onNavigateToTasksTab(tab)
-                            },
+                            onChildClick = { child ->
+                                if (child is Screen.Sub && child.parent == Screen.Tasks) {
+                                    val tab =
+                                        TasksTab.fromRouteSegment(
+                                            child.route.substringAfterLast("=")
+                                        )
+                                    onNavigateToTasksTab(tab)
+                                } else {
+                                    onNavigate(child)
+                                }
+                            }
                         )
                     }
                 }
@@ -205,7 +211,7 @@ fun SidebarLogoHeader(showExpandedContent: Boolean) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        TBoxIcon(tintColor = TactileTheme.Primary)
+        TBoxIcon(tintColor = TajsOSTheme.Primary)
         AnimatedVisibility(
             visible = showExpandedContent,
             enter = fadeIn() + slideInHorizontally(initialOffsetX = { -it / 2 }),
@@ -214,7 +220,7 @@ fun SidebarLogoHeader(showExpandedContent: Boolean) {
             Text(
                 text = "TAJSOS",
                 style = MaterialTheme.typography.titleMedium,
-                color = TactileTheme.Text,
+                color = TajsOSTheme.Text,
                 fontWeight = FontWeight.Bold,
             )
         }
@@ -280,8 +286,8 @@ private fun SidebarModeButton(
             Text(
                 text = if (showExpandedContent) label else label.first().toString(),
                 style = MaterialTheme.typography.labelSmall,
-                color = if (selected) TactileTheme.Primary else TactileTheme.Muted,
-                maxLines = 1,
+                color = if (selected) TajsOSTheme.Primary else TajsOSTheme.Muted,
+                maxLines = 1
             )
         }
     }
@@ -293,15 +299,17 @@ private fun SidebarModeButton(
 @Composable
 fun ExpandableNavSection(
     screen: Screen,
+    currentScreen: Screen?,
     isExpandedPresentation: Boolean,
     isActiveRoot: Boolean,
     isExpandedRoot: Boolean,
     activeTasksTab: TasksTab,
-    expandable: Boolean,
     onRootClick: () -> Unit,
-    onTaskChildClick: (TasksTab) -> Unit,
+    onChildClick: (Screen) -> Unit,
 ) {
     val rootLabel = stringResource(screen.label)
+    val children = screen.children
+    val expandable = children.isNotEmpty()
 
     SidebarTooltip(enabled = !isExpandedPresentation, text = rootLabel) {
         Surface(
@@ -310,7 +318,7 @@ fun ExpandableNavSection(
             shape = RoundedCornerShape(10.dp),
             color =
                 if (isActiveRoot) {
-                    TactileTheme.Primary.copy(alpha = 0.17f)
+                    TajsOSTheme.Primary.copy(alpha = 0.17f)
                 } else {
                     Color.Transparent
                 },
@@ -325,7 +333,7 @@ fun ExpandableNavSection(
                 Icon(
                     imageVector = screen.icon,
                     contentDescription = rootLabel,
-                    tint = if (isActiveRoot) TactileTheme.Primary else TactileTheme.Muted,
+                    tint = if (isActiveRoot) TajsOSTheme.Primary else TajsOSTheme.Muted,
                 )
                 AnimatedVisibility(
                     visible = isExpandedPresentation,
@@ -339,7 +347,7 @@ fun ExpandableNavSection(
                         Text(
                             text = rootLabel,
                             style = MaterialTheme.typography.bodyMedium,
-                            color = if (isActiveRoot) TactileTheme.Text else TactileTheme.Muted,
+                            color = if (isActiveRoot) TajsOSTheme.Text else TajsOSTheme.Muted,
                             fontWeight = if (isActiveRoot) FontWeight.SemiBold else FontWeight.Normal,
                             modifier = Modifier.weight(1f),
                             maxLines = 1,
@@ -349,7 +357,7 @@ fun ExpandableNavSection(
                             Icon(
                                 imageVector = if (isExpandedRoot) Icons.Default.ArrowDropDown else Icons.AutoMirrored.Filled.ArrowRight,
                                 contentDescription = null,
-                                tint = TactileTheme.Muted,
+                                tint = TajsOSTheme.Muted,
                             )
                         }
                     }
@@ -364,20 +372,27 @@ fun ExpandableNavSection(
             modifier = Modifier.fillMaxWidth().padding(start = 34.dp, end = 10.dp),
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
-            listOf(
-                TasksTab.INBOX,
-                TasksTab.TODAY,
-                TasksTab.ALL,
-                TasksTab.ARCHIVE,
-                TasksTab.COMMAND,
-            ).forEach { tab ->
-                val isActiveChild = isActiveRoot && activeTasksTab == tab
+            children.forEach { child ->
+                val isActiveChild =
+                    if (child is Screen.Sub && child.parent == Screen.Tasks) {
+                        val tab =
+                            TasksTab.fromRouteSegment(
+                                child.route.substringAfterLast("=")
+                            )
+                        // If current screen is NOT tasks or child of tasks, we don't highlight anything.
+                        // This prevents "Command" (the default) from being highlighted when on Dashboard.
+                        val isActuallyTasks =
+                            currentScreen?.route?.startsWith(Screen.Tasks.route) == true
+                        isActuallyTasks && activeTasksTab == tab
+                    } else {
+                        currentScreen?.route == child.route
+                    }
                 Surface(
-                    onClick = { onTaskChildClick(tab) },
+                    onClick = { onChildClick(child) },
                     modifier = Modifier.fillMaxWidth(),
                     color =
                         if (isActiveChild) {
-                            TactileTheme.Primary.copy(alpha = 0.12f)
+                            TajsOSTheme.Primary.copy(alpha = 0.12f)
                         } else {
                             Color.Transparent
                         },
@@ -394,23 +409,36 @@ fun ExpandableNavSection(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         Icon(
-                            imageVector = if (tab == TasksTab.ALL) Icons.AutoMirrored.Filled.List else tab.icon,
+                            imageVector =
+                                if (child is Screen.Sub && child.parent == Screen.Tasks) {
+                                    val tab =
+                                        TasksTab.fromRouteSegment(
+                                            child.route.substringAfterLast("=")
+                                        )
+                                    if (tab == TasksTab.ALL) {
+                                        Icons.AutoMirrored.Filled.List
+                                    } else {
+                                        tab.icon
+                                    }
+                                } else {
+                                    child.icon
+                                },
                             contentDescription = null,
                             tint =
                                 if (isActiveChild) {
-                                    TactileTheme.Primary
+                                    TajsOSTheme.Primary
                                 } else {
-                                    TactileTheme.Muted.copy(alpha = 0.75f)
+                                    TajsOSTheme.Muted.copy(alpha = 0.75f)
                                 },
                             modifier = Modifier.size(14.dp),
                         )
                         Text(
-                            text = stringResource(tab.label),
+                            text = stringResource(child.label),
                             style = MaterialTheme.typography.bodySmall,
-                            color = if (isActiveChild) TactileTheme.Text else TactileTheme.Muted,
+                            color = if (isActiveChild) TajsOSTheme.Text else TajsOSTheme.Muted,
                             fontWeight = if (isActiveChild) FontWeight.SemiBold else FontWeight.Normal,
                             maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
                 }
@@ -463,7 +491,7 @@ fun NewEntryButton(
         Surface(
             onClick = onClick,
             shape = RoundedCornerShape(12.dp),
-            color = TactileTheme.Primary,
+            color = TajsOSTheme.Primary,
             modifier = Modifier.fillMaxWidth().height(if (expanded) 46.dp else 42.dp),
             tonalElevation = 0.dp,
             shadowElevation = 0.dp,
@@ -476,7 +504,7 @@ fun NewEntryButton(
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = label,
-                    tint = TactileTheme.Background,
+                    tint = TajsOSTheme.Background,
                 )
                 AnimatedVisibility(visible = expanded, enter = fadeIn(), exit = fadeOut()) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -484,7 +512,7 @@ fun NewEntryButton(
                         Text(
                             text = label,
                             style = MaterialTheme.typography.labelMedium,
-                            color = TactileTheme.Background,
+                            color = TajsOSTheme.Background,
                             fontWeight = FontWeight.Bold,
                             maxLines = 1,
                         )
@@ -514,7 +542,7 @@ fun UserProfileSidebarSection(
             onClick = onClick,
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
-            color = TactileTheme.SurfaceLow,
+            color = TajsOSTheme.SurfaceLow,
             tonalElevation = 0.dp,
             shadowElevation = 0.dp,
         ) {
@@ -527,7 +555,7 @@ fun UserProfileSidebarSection(
                     shape = CircleShape,
                     color =
                         currentMode?.themeColor?.let { Color(it).copy(alpha = 0.25f) }
-                            ?: TactileTheme.SurfaceHigh,
+                            ?: TajsOSTheme.SurfaceHigh,
                     modifier = Modifier.size(32.dp),
                 ) {
                     Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
@@ -535,13 +563,13 @@ fun UserProfileSidebarSection(
                             Icon(
                                 imageVector = Icons.Default.Person,
                                 contentDescription = null,
-                                tint = TactileTheme.Muted,
+                                tint = TajsOSTheme.Muted,
                                 modifier = Modifier.size(18.dp),
                             )
                         } else {
                             Text(
                                 text = initials,
-                                color = TactileTheme.Text,
+                                color = TajsOSTheme.Text,
                                 style = MaterialTheme.typography.labelSmall,
                                 maxLines = 1,
                             )
@@ -553,7 +581,7 @@ fun UserProfileSidebarSection(
                         Text(
                             text = displayName,
                             style = MaterialTheme.typography.bodyMedium,
-                            color = TactileTheme.Text,
+                            color = TajsOSTheme.Text,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                         )
@@ -565,13 +593,13 @@ fun UserProfileSidebarSection(
                             Icon(
                                 imageVector = Icons.Default.FiberManualRecord,
                                 contentDescription = null,
-                                tint = TactileTheme.Success,
+                                tint = TajsOSTheme.Success,
                                 modifier = Modifier.size(9.dp),
                             )
                             Text(
                                 text = modeName,
                                 style = MaterialTheme.typography.labelSmall,
-                                color = TactileTheme.Muted,
+                                color = TajsOSTheme.Muted,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                             )
@@ -596,7 +624,7 @@ private fun SidebarTooltip(
     }
 
     TooltipBox(
-        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Above),
         tooltip = {
             PlainTooltip {
                 Text(text)

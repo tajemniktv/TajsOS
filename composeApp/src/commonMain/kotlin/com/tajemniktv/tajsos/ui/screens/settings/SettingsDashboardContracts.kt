@@ -42,6 +42,9 @@ data class SettingsDashboardContext(
     val isBiometricEnabled: Boolean?,
     val isBiometricHardwareAvailable: Boolean,
     val isDarkTheme: Boolean,
+    val accentColorHex: String,
+    val isGlassmorphismEnabled: Boolean,
+    val reduceMotion: Boolean,
     val importPayload: String,
     val onImportPayloadChange: (String) -> Unit,
     val onSaveMedication: (String, String, String?, Int?, Boolean) -> Unit,
@@ -53,6 +56,9 @@ data class SettingsDashboardContext(
     val onImportData: () -> Unit,
     val onSetBiometricEnabled: (Boolean) -> Unit,
     val onSetDarkTheme: (Boolean) -> Unit,
+    val onSetAccentColor: (String) -> Unit,
+    val onSetGlassmorphismEnabled: (Boolean) -> Unit,
+    val onSetReduceMotion: (Boolean) -> Unit,
     val onForceCrash: () -> Unit,
 )
 

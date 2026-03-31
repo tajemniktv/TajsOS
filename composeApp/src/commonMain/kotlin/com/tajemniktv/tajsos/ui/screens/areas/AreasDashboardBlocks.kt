@@ -62,7 +62,7 @@ import com.tajemniktv.tajsos.ui.AreaHealthMetrics
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.add_suggested_areas
@@ -110,8 +110,8 @@ internal fun AreasMainBlock(
     var showAddDialog by remember { mutableStateOf(false) }
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+        modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd),
+        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -121,9 +121,9 @@ internal fun AreasMainBlock(
             Text(
                 text = stringResource(Res.string.areas_title),
                 style = MaterialTheme.typography.displaySmall,
-                color = TactileTheme.Text,
+                color = TajsOSTheme.Text
             )
-            Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                 OutlinedButton(onClick = { viewModel.addSuggestedAreas() }) {
                     Text(stringResource(Res.string.add_suggested_areas))
                 }
@@ -135,11 +135,11 @@ internal fun AreasMainBlock(
 
         if (areas.isEmpty()) {
             EmptyState(message = stringResource(Res.string.areas_empty)) {
-                Spacer(modifier = Modifier.height(TactileTheme.SpacingMd))
+                Spacer(modifier = Modifier.height(TajsOSTheme.SpacingMd))
                 Button(onClick = { showAddDialog = true }) {
                     Text(stringResource(Res.string.areas_create_first))
                 }
-                Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
+                Spacer(modifier = Modifier.height(TajsOSTheme.SpacingSm))
                 OutlinedButton(onClick = { viewModel.addSuggestedAreas() }) {
                     Text(stringResource(Res.string.use_suggested_areas))
                 }
@@ -190,13 +190,13 @@ private fun AreaTopSummary(
     areas: List<NodeEntity>,
     metricsById: Map<Long, AreaHealthMetrics>,
 ) {
-    Surface(color = TactileTheme.Surface, shape = RoundedCornerShape(TactileTheme.RadiusMd)) {
+    Surface(color = TajsOSTheme.Surface, shape = RoundedCornerShape(TajsOSTheme.RadiusMd)) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingMd),
-            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+            modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
         ) {
             Row(
-                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 SummaryChip(
@@ -223,7 +223,7 @@ private fun AreaTopSummary(
             Text(
                 stringResource(Res.string.areas_distribution),
                 style = MaterialTheme.typography.labelLarge,
-                color = TactileTheme.Text,
+                color = TajsOSTheme.Text
             )
             Row(
                 modifier = Modifier.fillMaxWidth().height(22.dp),
@@ -248,7 +248,7 @@ private fun AreaTopSummary(
                             area.title.take(12),
                             modifier = Modifier.padding(horizontal = 8.dp),
                             style = MaterialTheme.typography.labelSmall,
-                            color = TactileTheme.Text,
+                            color = TajsOSTheme.Text
                         )
                     }
                 }
@@ -263,19 +263,19 @@ private fun SummaryChip(
     label: String,
     value: String,
 ) {
-    Surface(color = TactileTheme.SurfaceLow, shape = RoundedCornerShape(TactileTheme.RadiusMd)) {
+    Surface(color = TajsOSTheme.SurfaceLow, shape = RoundedCornerShape(TajsOSTheme.RadiusMd)) {
         Row(
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(icon, null, tint = TactileTheme.Primary, modifier = Modifier.size(16.dp))
+            Icon(icon, null, tint = TajsOSTheme.Primary, modifier = Modifier.size(16.dp))
             Column {
-                Text(label, style = MaterialTheme.typography.labelSmall, color = TactileTheme.Muted)
+                Text(label, style = MaterialTheme.typography.labelSmall, color = TajsOSTheme.Muted)
                 Text(
                     value,
                     style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Text,
+                    color = TajsOSTheme.Text,
                     fontWeight = FontWeight.SemiBold,
                 )
             }
@@ -307,8 +307,8 @@ private fun AreasCards(
         if (desktop) {
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(minSize = 300.dp),
-                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
             ) {
                 items(count = areas.size, key = { index -> areas[index].id }) { index ->
                     val area = areas[index]
@@ -321,7 +321,7 @@ private fun AreasCards(
                 }
             }
         } else {
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                 items(areas, key = { it.id }) { area ->
                     AreaCard(
                         area = area,
@@ -347,12 +347,12 @@ private fun AreaCard(
     val load = metrics?.stressLoad ?: 0
     Surface(
         modifier = Modifier.fillMaxWidth().clickable(onClick = onClick),
-        color = TactileTheme.Surface,
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+        color = TajsOSTheme.Surface,
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         border = BorderStroke(1.dp, color.copy(alpha = 0.28f)),
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingMd),
+            modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Row(
@@ -363,7 +363,7 @@ private fun AreaCard(
                 Text(
                     area.title,
                     style = MaterialTheme.typography.titleMedium,
-                    color = TactileTheme.Text,
+                    color = TajsOSTheme.Text,
                     fontWeight = FontWeight.Bold,
                 )
                 Text(
@@ -373,7 +373,7 @@ private fun AreaCard(
                     fontWeight = FontWeight.Bold,
                 )
             }
-            HorizontalDivider(color = TactileTheme.GhostBorder)
+            HorizontalDivider(color = TajsOSTheme.GhostBorder)
             MetricLine(Icons.Default.Speed, stringResource(Res.string.areas_load), "$load%")
             MetricLine(
                 Icons.Default.Folder,
@@ -423,13 +423,13 @@ private fun MetricLine(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(icon, null, tint = TactileTheme.Muted, modifier = Modifier.size(14.dp))
-            Text(label, style = MaterialTheme.typography.bodySmall, color = TactileTheme.Muted)
+            Icon(icon, null, tint = TajsOSTheme.Muted, modifier = Modifier.size(14.dp))
+            Text(label, style = MaterialTheme.typography.bodySmall, color = TajsOSTheme.Muted)
         }
         Text(
             value,
             style = MaterialTheme.typography.bodySmall,
-            color = TactileTheme.Text,
+            color = TajsOSTheme.Text,
             fontWeight = FontWeight.SemiBold,
         )
     }
@@ -465,11 +465,11 @@ fun AddAreaDialog(
 private fun areaStatusColor(status: String): Color =
     when (status)
     {
-        "on_fire" -> TactileTheme.Error
-        "overloaded" -> TactileTheme.Accent
-        "neglected" -> TactileTheme.Muted
-        "active" -> TactileTheme.Primary
-        else -> TactileTheme.Success
+        "on_fire" -> TajsOSTheme.Error
+        "overloaded" -> TajsOSTheme.Accent
+        "neglected" -> TajsOSTheme.Muted
+        "active" -> TajsOSTheme.Primary
+        else -> TajsOSTheme.Success
     }
 
 internal fun routeForAreaDetail(areaId: Long): String = Screen.AreaDetail.route.replace("{areaId}", areaId.toString())

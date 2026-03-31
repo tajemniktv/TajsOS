@@ -411,6 +411,7 @@ suspend fun buildDashboardUIState(
     return DashboardUIState(
         tasksCount = activeTasks.size,
         notesCount = filteredNodes.count { it.node.isKnowledgeItem() },
+        staleTasksCount = calculateStaleTasks(nodes.map { it.node }, Clock.System.now(), 3).size,
         pinnedKnowledge = pinnedK,
         upcomingDeadlines =
             filteredNodes
