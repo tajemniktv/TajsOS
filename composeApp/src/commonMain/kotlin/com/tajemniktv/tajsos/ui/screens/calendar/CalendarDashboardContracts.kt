@@ -14,8 +14,8 @@ data class CalendarDashboardBlock(
 )
 
 data class CalendarDashboardPlan(
-    val primary: List<com.tajemniktv.tajsos.ui.screens.calendar.CalendarDashboardBlock>,
-    val secondary: List<com.tajemniktv.tajsos.ui.screens.calendar.CalendarDashboardBlock> = emptyList(),
+    val primary: List<CalendarDashboardBlock>,
+    val secondary: List<CalendarDashboardBlock> = emptyList(),
 )
 
 data class CalendarDashboardContext(
@@ -23,4 +23,4 @@ data class CalendarDashboardContext(
     val onEditNode: (Long) -> Unit,
 )
 
-typealias CalendarDashboardBlockRenderer = @Composable (com.tajemniktv.tajsos.ui.screens.calendar.CalendarDashboardContext) -> Unit
+typealias CalendarDashboardBlockRenderer = @Composable (CalendarDashboardContext) -> Unit

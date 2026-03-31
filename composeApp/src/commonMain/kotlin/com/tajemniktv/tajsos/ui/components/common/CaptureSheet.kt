@@ -4,7 +4,16 @@
 
 package com.tajemniktv.tajsos.ui.components.common
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,8 +26,24 @@ import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -27,12 +52,41 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.data.TemplateEntity
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.datetime.plus
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
-import tajsos.composeapp.generated.resources.*
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.capture_assign_to_area
+import tajsos.composeapp.generated.resources.capture_brain_dump_active
+import tajsos.composeapp.generated.resources.capture_dump
+import tajsos.composeapp.generated.resources.capture_interval_daily
+import tajsos.composeapp.generated.resources.capture_interval_monthly
+import tajsos.composeapp.generated.resources.capture_interval_weekly
+import tajsos.composeapp.generated.resources.capture_label_capture
+import tajsos.composeapp.generated.resources.capture_multi
+import tajsos.composeapp.generated.resources.capture_no_reminder
+import tajsos.composeapp.generated.resources.capture_placeholder_area
+import tajsos.composeapp.generated.resources.capture_placeholder_dump_thought
+import tajsos.composeapp.generated.resources.capture_placeholder_next_thought
+import tajsos.composeapp.generated.resources.capture_placeholder_project
+import tajsos.composeapp.generated.resources.capture_process_later
+import tajsos.composeapp.generated.resources.capture_quick_capture
+import tajsos.composeapp.generated.resources.capture_recurring
+import tajsos.composeapp.generated.resources.capture_save_continue
+import tajsos.composeapp.generated.resources.capture_save_type
+import tajsos.composeapp.generated.resources.capture_sticky
+import tajsos.composeapp.generated.resources.capture_type
+import tajsos.composeapp.generated.resources.capture_use_template
+import tajsos.composeapp.generated.resources.capture_voice
+import tajsos.composeapp.generated.resources.screen_area
+import tajsos.composeapp.generated.resources.screen_project
+import tajsos.composeapp.generated.resources.type_area
+import tajsos.composeapp.generated.resources.type_note
+import tajsos.composeapp.generated.resources.type_project
+import tajsos.composeapp.generated.resources.type_record
+import tajsos.composeapp.generated.resources.type_task
 
 /**
  * Renders a modal bottom sheet that collects capture text and related metadata, then submits it via the provided callback.
@@ -100,22 +154,22 @@ fun CaptureSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = TactileTheme.Surface,
+        containerColor = TajsOSTheme.Surface,
         shape =
             RoundedCornerShape(
-                topStart = TactileTheme.RadiusLg,
-                topEnd = TactileTheme.RadiusLg,
-            ),
+                topStart = TajsOSTheme.RadiusLg,
+                topEnd = TajsOSTheme.RadiusLg
+            )
     ) {
         Column(
             modifier =
                 Modifier
-                    .padding(TactileTheme.SpacingMd)
+                    .padding(TajsOSTheme.SpacingMd)
                     .fillMaxWidth()
                     .navigationBarsPadding()
                     .imePadding()
                     .verticalScroll(androidx.compose.foundation.rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -131,14 +185,14 @@ fun CaptureSheet(
                         )
                     },
                     style = MaterialTheme.typography.labelSmall,
-                    color = if (brainDumpMode) TactileTheme.Primary else TactileTheme.Muted,
+                    color = if (brainDumpMode) TajsOSTheme.Primary else TajsOSTheme.Muted
                 )
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         stringResource(Res.string.capture_multi),
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted
                     )
                     Switch(
                         checked = multiCaptureMode || brainDumpMode,
@@ -146,7 +200,7 @@ fun CaptureSheet(
                         enabled = !brainDumpMode,
                         modifier = Modifier.scale(0.7f),
                     )
-                    Spacer(Modifier.width(TactileTheme.SpacingSm))
+                    Spacer(Modifier.width(TajsOSTheme.SpacingSm))
                     FilterChip(
                         selected = brainDumpMode,
                         onClick = {
@@ -168,9 +222,11 @@ fun CaptureSheet(
                     modifier =
                         Modifier
                             .weight(1f)
-                            .padding(vertical = TactileTheme.SpacingMd),
-                    textStyle = MaterialTheme.typography.displayMedium.copy(color = TactileTheme.Text),
-                    cursorBrush = SolidColor(TactileTheme.Primary),
+                            .padding(vertical = TajsOSTheme.SpacingMd),
+                    textStyle = MaterialTheme.typography.displayMedium.copy(
+                        color = TajsOSTheme.Text
+                    ),
+                    cursorBrush = SolidColor(TajsOSTheme.Primary),
                     decorationBox = { innerTextField ->
                         if (text.isEmpty()) {
                             val placeholder =
@@ -197,7 +253,7 @@ fun CaptureSheet(
                             Text(
                                 placeholder,
                                 style = MaterialTheme.typography.displayMedium,
-                                color = TactileTheme.Muted,
+                                color = TajsOSTheme.Muted,
                             )
                         }
                         innerTextField()
@@ -234,7 +290,7 @@ fun CaptureSheet(
                         Icon(
                             imageVector = Icons.Default.Mic,
                             contentDescription = stringResource(Res.string.capture_voice),
-                            tint = TactileTheme.Primary,
+                            tint = TajsOSTheme.Primary,
                         )
                     }
                 }
@@ -244,11 +300,11 @@ fun CaptureSheet(
                 Text(
                     stringResource(Res.string.capture_type),
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Primary,
+                    color = TajsOSTheme.Primary,
                 )
                 LazyRow(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                    horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
                 ) {
                     items(
                         listOf(
@@ -284,17 +340,17 @@ fun CaptureSheet(
                 Text(
                     stringResource(Res.string.capture_use_template),
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Primary,
+                    color = TajsOSTheme.Primary,
                 )
                 LazyRow(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                    horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
                 ) {
                     items(templates.filter { it.nodeType == selectedType }) { template ->
                         FilterChip(
                             selected = false,
                             onClick = {
-                                if (template.defaultTitle != null) text = template.defaultTitle!!
+                                template.defaultTitle?.let { text = it }
                                 // Apply other template defaults if needed
                             },
                             label = { Text(template.name) },
@@ -308,9 +364,9 @@ fun CaptureSheet(
                     Text(
                         stringResource(Res.string.screen_area).uppercase(),
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Primary,
+                        color = TajsOSTheme.Primary
                     )
-                    LazyRow(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+                    LazyRow(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                         items(areas) { area ->
                             FilterChip(
                                 selected = selectedAreaId == area.id,
@@ -328,9 +384,9 @@ fun CaptureSheet(
                     Text(
                         stringResource(Res.string.screen_project).uppercase(),
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Primary,
+                        color = TajsOSTheme.Primary
                     )
-                    LazyRow(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+                    LazyRow(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                         items(projects) { project ->
                             FilterChip(
                                 selected = selectedProjectId == project.id,
@@ -347,7 +403,7 @@ fun CaptureSheet(
                 if (selectedType != "inbox" && !brainDumpMode) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+                        horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
                     ) {
                         Row(
                             modifier = Modifier.weight(1f),
@@ -356,19 +412,20 @@ fun CaptureSheet(
                             Checkbox(
                                 checked = isRecurring,
                                 onCheckedChange = { isRecurring = it },
-                                colors = CheckboxDefaults.colors(checkedColor = TactileTheme.Primary),
+                                colors = CheckboxDefaults.colors(
+                                    checkedColor = TajsOSTheme.Primary),
                             )
                             Icon(
                                 Icons.Default.Refresh,
                                 contentDescription = null,
-                                tint = TactileTheme.Muted,
+                                tint = TajsOSTheme.Muted,
                                 modifier = Modifier.size(16.dp),
                             )
                             Spacer(Modifier.width(4.dp))
                             Text(
                                 stringResource(Res.string.capture_recurring),
                                 style = MaterialTheme.typography.labelSmall,
-                                color = TactileTheme.Muted,
+                                color = TajsOSTheme.Muted,
                             )
                         }
 
@@ -413,7 +470,8 @@ fun CaptureSheet(
                                 Icon(
                                     Icons.Default.Notifications,
                                     contentDescription = null,
-                                    tint = if (reminderTime != null) TactileTheme.Primary else TactileTheme.Muted,
+                                    tint = if (reminderTime !=
+                                        null) TajsOSTheme.Primary else TajsOSTheme.Muted,
                                 )
                             }
                             Text(
@@ -425,13 +483,13 @@ fun CaptureSheet(
                                     )
                                 },
                                 style = MaterialTheme.typography.labelSmall,
-                                color = if (reminderTime != null) TactileTheme.Primary else TactileTheme.Muted,
+                                color = if (reminderTime != null) TajsOSTheme.Primary else TajsOSTheme.Muted,
                             )
                         }
                     }
 
                     if (isRecurring) {
-                        LazyRow(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+                        LazyRow(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                             items(listOf("DAILY", "WEEKLY", "MONTHLY")) { interval ->
                                 val intervalLabel =
                                     when (interval)
@@ -457,7 +515,7 @@ fun CaptureSheet(
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+                        horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
                     ) {
                         Row(
                             modifier = Modifier.weight(1f),
@@ -466,19 +524,19 @@ fun CaptureSheet(
                             Checkbox(
                                 checked = isSticky,
                                 onCheckedChange = { isSticky = it },
-                                colors = CheckboxDefaults.colors(checkedColor = TactileTheme.Primary),
+                                colors = CheckboxDefaults.colors(checkedColor = TajsOSTheme.Primary),
                             )
                             Icon(
                                 Icons.Default.PushPin,
                                 contentDescription = null,
-                                tint = TactileTheme.Muted,
+                                tint = TajsOSTheme.Muted,
                                 modifier = Modifier.size(16.dp),
                             )
                             Spacer(Modifier.width(4.dp))
                             Text(
                                 stringResource(Res.string.capture_sticky),
                                 style = MaterialTheme.typography.labelSmall,
-                                color = TactileTheme.Muted,
+                                color = TajsOSTheme.Muted,
                             )
                         }
 
@@ -489,9 +547,9 @@ fun CaptureSheet(
                 Text(
                     stringResource(Res.string.capture_assign_to_area),
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Primary,
+                    color = TajsOSTheme.Primary
                 )
-                LazyRow(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                     items(areas) { area ->
                         FilterChip(
                             selected = selectedAreaId == area.id,
@@ -528,7 +586,7 @@ fun CaptureSheet(
                 },
                 enabled = text.isNotBlank(),
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
             ) {
                 val saveLabel =
                     if (multiCaptureMode || brainDumpMode) {

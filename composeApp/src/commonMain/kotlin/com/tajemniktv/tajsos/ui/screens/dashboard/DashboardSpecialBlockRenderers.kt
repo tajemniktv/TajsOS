@@ -18,7 +18,7 @@ import com.tajemniktv.tajsos.ui.components.modes.RecoveryBasicsBlock
 import com.tajemniktv.tajsos.ui.components.nodes.SuggestionGroup
 
 @Composable
-internal fun renderBasicsBlock(context: com.tajemniktv.tajsos.ui.screens.dashboard.DashboardBlockContext) {
+internal fun renderBasicsBlock(context: DashboardBlockContext) {
     RecoveryBasicsBlock(
         onMedsClick = { context.onNavigateTo(Screen.Track) },
         onHydrationClick = { },
@@ -27,48 +27,48 @@ internal fun renderBasicsBlock(context: com.tajemniktv.tajsos.ui.screens.dashboa
 }
 
 @Composable
-internal fun renderShoppingListBlock(context: com.tajemniktv.tajsos.ui.screens.dashboard.DashboardBlockContext) {
-    com.tajemniktv.tajsos.ui.screens.dashboard.ErrandListBlock(
+internal fun renderShoppingListBlock(context: DashboardBlockContext) {
+    ErrandListBlock(
         errands = context.dashboardState.shoppingList,
         onEdit = context.onEditNode,
     )
 }
 
 @Composable
-internal fun renderTinyWinsBlock(context: com.tajemniktv.tajsos.ui.screens.dashboard.DashboardBlockContext) {
-    com.tajemniktv.tajsos.ui.screens.dashboard.TinyVictoriesBlock(
+internal fun renderTinyWinsBlock(context: DashboardBlockContext) {
+    TinyVictoriesBlock(
         victories = context.dashboardState.tinyVictories,
         onEdit = context.onEditNode,
     )
 }
 
 @Composable
-internal fun renderCurrentFocusBlock(context: com.tajemniktv.tajsos.ui.screens.dashboard.DashboardBlockContext) {
-    com.tajemniktv.tajsos.ui.screens.dashboard.CurrentTaskBlock(
+internal fun renderCurrentFocusBlock(context: DashboardBlockContext) {
+    CurrentTaskBlock(
         activeTask = context.pinnedNodes.firstOrNull(),
         onEdit = context.onEditNode,
     )
 }
 
 @Composable
-internal fun renderClassesBlock(context: com.tajemniktv.tajsos.ui.screens.dashboard.DashboardBlockContext) {
-    com.tajemniktv.tajsos.ui.screens.dashboard.renderStudyModuleBlock(
+internal fun renderClassesBlock(context: DashboardBlockContext) {
+    renderStudyModuleBlock(
         context = context,
         key = "classes",
     )
 }
 
 @Composable
-internal fun renderAssignmentsBlock(context: com.tajemniktv.tajsos.ui.screens.dashboard.DashboardBlockContext) {
-    com.tajemniktv.tajsos.ui.screens.dashboard.renderStudyModuleBlock(
+internal fun renderAssignmentsBlock(context: DashboardBlockContext) {
+    renderStudyModuleBlock(
         context = context,
         key = "assignments",
     )
 }
 
 @Composable
-internal fun renderRevisionTargetsBlock(context: com.tajemniktv.tajsos.ui.screens.dashboard.DashboardBlockContext) {
-    com.tajemniktv.tajsos.ui.screens.dashboard.renderStudyModuleBlock(
+internal fun renderRevisionTargetsBlock(context: DashboardBlockContext) {
+    renderStudyModuleBlock(
         context = context,
         key = "revision_targets",
     )
@@ -76,7 +76,7 @@ internal fun renderRevisionTargetsBlock(context: com.tajemniktv.tajsos.ui.screen
 
 @Composable
 private fun renderStudyModuleBlock(
-    context: com.tajemniktv.tajsos.ui.screens.dashboard.DashboardBlockContext,
+    context: DashboardBlockContext,
     key: String,
 ) {
     val studentBoard by context.viewModel.studentBoardState.collectAsState()
@@ -100,7 +100,7 @@ private fun renderStudyModuleBlock(
 }
 
 @Composable
-internal fun renderPaperworkBlock(context: com.tajemniktv.tajsos.ui.screens.dashboard.DashboardBlockContext) {
+internal fun renderPaperworkBlock(context: DashboardBlockContext) {
     SuggestionGroup(
         title = "ADMIN // PAPERWORK",
         icon = Icons.Default.Gavel,
@@ -109,4 +109,3 @@ internal fun renderPaperworkBlock(context: com.tajemniktv.tajsos.ui.screens.dash
         onEditNode = context.onEditNode,
     )
 }
-

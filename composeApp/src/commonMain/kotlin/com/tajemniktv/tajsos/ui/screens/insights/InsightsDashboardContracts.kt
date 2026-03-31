@@ -14,8 +14,8 @@ data class InsightsDashboardBlock(
 )
 
 data class InsightsDashboardPlan(
-    val primary: List<com.tajemniktv.tajsos.ui.screens.insights.InsightsDashboardBlock>,
-    val secondary: List<com.tajemniktv.tajsos.ui.screens.insights.InsightsDashboardBlock> = emptyList(),
+    val primary: List<InsightsDashboardBlock>,
+    val secondary: List<InsightsDashboardBlock> = emptyList(),
 )
 
 data class InsightsDashboardContext(
@@ -23,4 +23,4 @@ data class InsightsDashboardContext(
     val onNavigateToProject: (Long) -> Unit,
 )
 
-typealias InsightsDashboardBlockRenderer = @Composable (com.tajemniktv.tajsos.ui.screens.insights.InsightsDashboardContext) -> Unit
+typealias InsightsDashboardBlockRenderer = @Composable (InsightsDashboardContext) -> Unit

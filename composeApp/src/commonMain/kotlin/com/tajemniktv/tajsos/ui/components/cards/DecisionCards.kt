@@ -25,7 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.DecisionOptionEntity
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.cd_delete_option
@@ -38,11 +38,11 @@ fun OptionCard(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Background,
-        border = BorderStroke(1.dp, TactileTheme.Border),
+        color = TajsOSTheme.Background,
+        border = BorderStroke(1.dp, TajsOSTheme.Border),
         shape = RoundedCornerShape(2.dp),
     ) {
-        Column(modifier = Modifier.padding(TactileTheme.SpacingSm)) {
+        Column(modifier = Modifier.padding(TajsOSTheme.SpacingSm)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -57,7 +57,7 @@ fun OptionCard(
                     Icon(
                         Icons.Default.Delete,
                         contentDescription = stringResource(Res.string.cd_delete_option),
-                        tint = TactileTheme.Muted,
+                        tint = TajsOSTheme.Muted,
                         modifier = Modifier.size(16.dp),
                     )
                 }
@@ -66,7 +66,7 @@ fun OptionCard(
                 Text(
                     it,
                     style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted
                 )
             }
         }

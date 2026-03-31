@@ -10,6 +10,25 @@ package com.tajemniktv.tajsos.ui.screens.health
 fun buildHealthDashboardPlan(surface: HealthDashboardSurface): HealthDashboardPlan =
     when (surface)
     {
-        HealthDashboardSurface.MOBILE -> HealthDashboardPlan(primary = listOf(HealthDashboardBlock("health_main")))
-        HealthDashboardSurface.DESKTOP -> HealthDashboardPlan(primary = listOf(HealthDashboardBlock("health_main")))
+        HealthDashboardSurface.MOBILE -> {
+            HealthDashboardPlan(
+                primary =
+                    listOf(
+                        HealthDashboardBlock(
+                            "health_main",
+                        ),
+                    ),
+            )
+        }
+
+        HealthDashboardSurface.DESKTOP -> {
+            HealthDashboardPlan(
+                primary =
+                    listOf(
+                        HealthDashboardBlock(
+                            "health_main",
+                        ),
+                    ),
+            )
+        }
     }

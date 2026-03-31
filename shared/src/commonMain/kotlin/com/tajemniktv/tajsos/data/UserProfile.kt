@@ -64,7 +64,8 @@ fun UserProfile.resolveDisplayName(): String {
     val nick = nickname.trim()
     val full = listOf(first, last).filter { it.isNotBlank() }.joinToString(" ").trim()
 
-    return when (displayNameFormat) {
+    return when (displayNameFormat)
+    {
         UserDisplayNameFormat.NICKNAME -> nick.ifBlank { first.ifBlank { "OPERATOR" } }
         UserDisplayNameFormat.FIRST_NAME -> first.ifBlank { nick.ifBlank { "OPERATOR" } }
         UserDisplayNameFormat.FIRST_LAST -> full.ifBlank { nick.ifBlank { "OPERATOR" } }
@@ -92,7 +93,9 @@ fun UserEntity.toUserProfile(): UserProfile =
         occupation = occupation,
         website = website,
         preferredGreeting = preferredGreeting,
-        displayNameFormat = UserDisplayNameFormat.entries.firstOrNull { it.name == displayNameFormat } ?: UserDisplayNameFormat.NICKNAME,
+        displayNameFormat =
+            UserDisplayNameFormat.entries.firstOrNull { it.name == displayNameFormat }
+                ?: UserDisplayNameFormat.NICKNAME,
         createdAt = createdAt,
         updatedAt = updatedAt,
     )

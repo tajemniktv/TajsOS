@@ -46,7 +46,7 @@ import com.tajemniktv.tajsos.data.ItemKind
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.cards.NodeCard
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.inbox_add
@@ -55,7 +55,6 @@ import tajsos.composeapp.generated.resources.inbox_placeholder
 import tajsos.composeapp.generated.resources.inbox_process
 import tajsos.composeapp.generated.resources.inbox_quick_capture
 import tajsos.composeapp.generated.resources.inbox_recent_entries
-import tajsos.composeapp.generated.resources.type_idea
 import tajsos.composeapp.generated.resources.type_note
 import tajsos.composeapp.generated.resources.type_task
 
@@ -242,7 +241,7 @@ private fun InboxCaptureCard(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
+        color = TajsOSTheme.Surface,
         shape = RoundedCornerShape(16.dp),
     ) {
         Column(

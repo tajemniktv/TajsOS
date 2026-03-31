@@ -4,27 +4,25 @@
 
 package com.tajemniktv.tajsos.ui.screens.openloops
 
-fun buildOpenLoopsDashboardPlan(
-    surface: com.tajemniktv.tajsos.ui.screens.openloops.OpenLoopsDashboardSurface,
-): com.tajemniktv.tajsos.ui.screens.openloops.OpenLoopsDashboardPlan =
+fun buildOpenLoopsDashboardPlan(surface: OpenLoopsDashboardSurface): OpenLoopsDashboardPlan =
     when (surface)
     {
-        com.tajemniktv.tajsos.ui.screens.openloops.OpenLoopsDashboardSurface.MOBILE -> {
-            com.tajemniktv.tajsos.ui.screens.openloops.OpenLoopsDashboardPlan(
+        OpenLoopsDashboardSurface.MOBILE -> {
+            OpenLoopsDashboardPlan(
                 primary =
                     listOf(
-                        com.tajemniktv.tajsos.ui.screens.openloops.OpenLoopsDashboardBlock(
+                        OpenLoopsDashboardBlock(
                             "openloops_main",
                         ),
                     ),
             )
         }
 
-        com.tajemniktv.tajsos.ui.screens.openloops.OpenLoopsDashboardSurface.DESKTOP -> {
-            com.tajemniktv.tajsos.ui.screens.openloops.OpenLoopsDashboardPlan(
+        OpenLoopsDashboardSurface.DESKTOP -> {
+            OpenLoopsDashboardPlan(
                 primary =
                     listOf(
-                        com.tajemniktv.tajsos.ui.screens.openloops.OpenLoopsDashboardBlock(
+                        OpenLoopsDashboardBlock(
                             "openloops_main",
                         ),
                     ),

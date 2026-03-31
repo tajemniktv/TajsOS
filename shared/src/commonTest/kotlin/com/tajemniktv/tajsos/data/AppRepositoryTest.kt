@@ -429,7 +429,7 @@ class AppRepositoryTest {
                     DecisionOptionEntity(decisionNodeId = nodeId, title = "Option B"),
                 )
 
-            repository.decideOn(nodeId, "Decided not to choose", null)
+            repository.decideOn(nodeId, "Decided not to choose")
 
             val updatedNode = repository.getNodeById(nodeId)
             assertNotNull(updatedNode)

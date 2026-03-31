@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved. 
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
 package com.tajemniktv.tajsos.ui.components.layout
@@ -7,12 +7,23 @@ package com.tajemniktv.tajsos.ui.components.layout
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,7 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 /**
  * Renders the dashboard header with a left menu badge and status block and a right-side system indicator with a settings button.
@@ -36,33 +47,34 @@ fun DashHeader(
     vibe: String,
     onMenuClick: () -> Unit,
     onSettingsClick: () -> Unit,
-    tintColor: Color = TactileTheme.Primary
+    tintColor: Color = TajsOSTheme.Primary
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.clickable { onMenuClick() }) {
+            modifier = Modifier.clickable { onMenuClick() },
+        ) {
             Box(
-                modifier = Modifier
-                    .size(32.dp)
-                    .clip(RoundedCornerShape(4.dp))
-                    .background(TactileTheme.Surface),
-                contentAlignment = Alignment.Center
+                modifier =
+                    Modifier
+                        .size(32.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .background(TajsOSTheme.Surface),
+                contentAlignment = Alignment.Center,
             ) {
                 Text(
                     "T",
                     color = tintColor,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
+                    fontSize = 18.sp,
                 )
             }
             Spacer(Modifier.width(12.dp))
             StatusHeader(
-                status = "OK",
                 color = tintColor,
                 subtitle = vibe,
                 subtitleStyle = MaterialTheme.typography.titleSmall,
@@ -73,28 +85,35 @@ fun DashHeader(
             Surface(
                 color = Color.Black.copy(alpha = 0.5f),
                 shape = CircleShape,
-                border = BorderStroke(1.dp, TactileTheme.Border)
+                border = BorderStroke(1.dp, TajsOSTheme.Border)
             ) {
                 Row(
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Box(
-                        modifier = Modifier.size(6.dp).clip(CircleShape)
-                            .background(if (tintColor == TactileTheme.Primary) TactileTheme.Success else tintColor)
+                        modifier =
+                            Modifier
+                                .size(6.dp)
+                                .clip(CircleShape)
+                                .background(
+                                    if (tintColor ==
+                                        TajsOSTheme.Primary) {
+                                        TajsOSTheme.Success
+                                    } else tintColor),
                     )
                     Spacer(Modifier.width(8.dp))
                     Text(
                         "SYSTEM: ONLINE",
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold,
-                        color = TactileTheme.Text
+                        color = TajsOSTheme.Text
                     )
                 }
             }
             Spacer(Modifier.width(12.dp))
             IconButton(onClick = onSettingsClick) {
-                Icon(Icons.Default.Settings, contentDescription = null, tint = TactileTheme.Muted)
+                Icon(Icons.Default.Settings, contentDescription = null, tint = TajsOSTheme.Muted)
             }
         }
     }

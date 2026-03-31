@@ -4,27 +4,23 @@
 
 package com.tajemniktv.tajsos.ui.screens.notes
 
-fun buildNotesDashboardPlan(
-    surface: com.tajemniktv.tajsos.ui.screens.notes.NotesDashboardSurface,
-): com.tajemniktv.tajsos.ui.screens.notes.NotesDashboardPlan =
+fun buildNotesDashboardPlan(surface: NotesDashboardSurface): NotesDashboardPlan =
     when (surface)
     {
-        com.tajemniktv.tajsos.ui.screens.notes.NotesDashboardSurface.MOBILE -> {
-            com.tajemniktv.tajsos.ui.screens.notes.NotesDashboardPlan(
+        NotesDashboardSurface.MOBILE -> {
+            NotesDashboardPlan(
                 primary =
                     listOf(
-                        com.tajemniktv.tajsos.ui.screens.notes
-                            .NotesDashboardBlock("notes_main"),
+                        NotesDashboardBlock("notes_main"),
                     ),
             )
         }
 
-        com.tajemniktv.tajsos.ui.screens.notes.NotesDashboardSurface.DESKTOP -> {
-            com.tajemniktv.tajsos.ui.screens.notes.NotesDashboardPlan(
+        NotesDashboardSurface.DESKTOP -> {
+            NotesDashboardPlan(
                 primary =
                     listOf(
-                        com.tajemniktv.tajsos.ui.screens.notes
-                            .NotesDashboardBlock("notes_main"),
+                        NotesDashboardBlock("notes_main"),
                     ),
             )
         }

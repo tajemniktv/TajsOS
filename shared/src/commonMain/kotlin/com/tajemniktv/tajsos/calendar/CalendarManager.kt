@@ -1,16 +1,16 @@
 /*
- * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved. 
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
 package com.tajemniktv.tajsos.calendar
 
-import com.tajemniktv.tajsos.data.*
-import io.ktor.client.*
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
-import kotlinx.datetime.*
+import com.tajemniktv.tajsos.data.AppRepository
+import com.tajemniktv.tajsos.data.CalendarEventEntity
+import com.tajemniktv.tajsos.data.CalendarProviderEntity
+import io.ktor.client.HttpClient
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.first
 import kotlin.time.Clock
-import kotlin.time.Instant
 import kotlin.time.Duration.Companion.days
 
 /**
@@ -25,11 +25,12 @@ import kotlin.time.Duration.Companion.days
  */
 class CalendarManager(
     private val repository: AppRepository,
-    httpClient: HttpClient
+    httpClient: HttpClient,
 ) {
-    private val providers = listOf(
-        IcsCalendarProvider(httpClient)
-    )
+    private val providers =
+        listOf(
+            IcsCalendarProvider(httpClient),
+        )
 
     /**
      * Synchronizes local calendar events for all enabled calendar providers.
@@ -40,28 +41,30 @@ class CalendarManager(
      * provider's local events with the deduplicated set, and updates the provider's
      * `lastSyncedAt` timestamp.
      */
-    suspend fun syncAll() = coroutineScope {
-        val allProviders = repository.getAllCalendarProviders().first().orEmpty()
-        val now = Clock.System.now()
-        val from = now.minus(30.days)
-        val to = now.plus(90.days)
+    suspend fun syncAll() =
+        coroutineScope {
+            val allProviders = repository.getAllCalendarProviders().first().orEmpty()
+            val now = Clock.System.now()
+            val from = now.minus(30.days)
+            val to = now.plus(90.days)
 
-        allProviders.forEach { providerEntity ->
-            if (providerEntity.isEnabled) {
-                val provider = providers.find { it.type == providerEntity.type }
-                if (provider != null) {
-                    val events = provider.sync(providerEntity, from, to)
+            allProviders.forEach { providerEntity ->
+                if (providerEntity.isEnabled) {
+                    val provider = providers.find { it.type == providerEntity.type }
+                    if (provider != null) {
+                        val events = provider.sync(providerEntity, from, to)
 
-                    // Deduplicate events by externalId to ensure no duplicates from malformed sources
-                    val deduplicatedEvents = events.distinctBy { it.externalId ?: "${it.title}_${it.startAt}" }
+                        // Deduplicate events by externalId to ensure no duplicates from malformed sources
+                        val deduplicatedEvents =
+                            events.distinctBy { it.externalId ?: "${it.title}_${it.startAt}" }
 
-                    repository.deleteCalendarEventsByProvider(providerEntity.id)
-                    repository.insertCalendarEvents(deduplicatedEvents)
-                    repository.updateCalendarProvider(providerEntity.copy(lastSyncedAt = now.toEpochMilliseconds()))
+                        repository.deleteCalendarEventsByProvider(providerEntity.id)
+                        repository.insertCalendarEvents(deduplicatedEvents)
+                        repository.updateCalendarProvider(providerEntity.copy(lastSyncedAt = now.toEpochMilliseconds()))
+                    }
                 }
             }
         }
-    }
 }
 
 /**

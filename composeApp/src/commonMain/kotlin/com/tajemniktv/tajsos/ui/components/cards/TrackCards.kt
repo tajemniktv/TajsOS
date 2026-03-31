@@ -28,7 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.data.MedicationEntity
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.track_dosage_confirmed
@@ -48,10 +48,10 @@ fun MedicationSyncCard(
                 Icon(
                     Icons.Default.MailOutline,
                     contentDescription = null,
-                    tint = TactileTheme.Primary,
+                    tint = TajsOSTheme.Primary,
                     modifier = Modifier.size(24.dp),
                 )
-                Spacer(Modifier.width(TactileTheme.SpacingMd))
+                Spacer(Modifier.width(TajsOSTheme.SpacingMd))
                 Column {
                     Text(
                         stringResource(Res.string.track_medication_synk),
@@ -60,26 +60,26 @@ fun MedicationSyncCard(
                                 fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
                                 letterSpacing = 1.sp,
                             ),
-                        color = TactileTheme.Text,
+                        color = TajsOSTheme.Text
                     )
                     Text(
                         stringResource(Res.string.track_dosage_confirmed),
                         style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted
                     )
                 }
                 Spacer(Modifier.weight(1f))
                 Checkbox(
                     checked = allMedsTaken,
                     onCheckedChange = { onToggleAll() },
-                    colors = CheckboxDefaults.colors(checkedColor = TactileTheme.Primary),
+                    colors = CheckboxDefaults.colors(checkedColor = TajsOSTheme.Primary)
                 )
             }
 
             if (medications.isNotEmpty()) {
-                Spacer(Modifier.height(TactileTheme.SpacingSm))
-                HorizontalDivider(color = TactileTheme.Muted.copy(alpha = 0.2f))
-                Spacer(Modifier.height(TactileTheme.SpacingSm))
+                Spacer(Modifier.height(TajsOSTheme.SpacingSm))
+                HorizontalDivider(color = TajsOSTheme.Muted.copy(alpha = 0.2f))
+                Spacer(Modifier.height(TajsOSTheme.SpacingSm))
 
                 medications.forEach { med ->
                     Row(
@@ -93,13 +93,16 @@ fun MedicationSyncCard(
                         Text(
                             text = med.substance,
                             style = MaterialTheme.typography.bodySmall,
-                            color = if (selectedMedIds.contains(med.id)) TactileTheme.Text else TactileTheme.Muted,
+                            color = if (selectedMedIds.contains(
+                                    med.id
+                                )
+                            ) TajsOSTheme.Text else TajsOSTheme.Muted,
                         )
                         if (!med.brandNames.isNullOrEmpty()) {
                             Text(
                                 text = " (${med.brandNames})",
                                 style = MaterialTheme.typography.labelSmall.copy(fontSize = 8.sp),
-                                color = TactileTheme.Muted,
+                                color = TajsOSTheme.Muted,
                             )
                         }
                         Spacer(Modifier.weight(1f))
@@ -107,7 +110,7 @@ fun MedicationSyncCard(
                             Icon(
                                 Icons.Default.Check,
                                 contentDescription = null,
-                                tint = TactileTheme.Primary,
+                                tint = TajsOSTheme.Primary,
                                 modifier = Modifier.size(16.dp),
                             )
                         }

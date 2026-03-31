@@ -1,11 +1,16 @@
 /*
- * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved. 
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
 package com.tajemniktv.tajsos.ui.components.modes
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BatteryChargingFull
@@ -22,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 /**
  * Renders a horizontal row of three equally sized actionable cards that apply preset search filters and navigate to the Search screen.
@@ -33,50 +38,67 @@ import com.tajemniktv.tajsos.ui.theme.TactileTheme
  * @param onNavigateTo Callback invoked with the destination Screen; called with Screen.Search after a card is selected.
  */
 @Composable
-fun StateAwareActionsGrid(viewModel: MainViewModel, onNavigateTo: (Screen) -> Unit) {
+fun StateAwareActionsGrid(
+    viewModel: MainViewModel,
+    onNavigateTo: (Screen) -> Unit,
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)
+        horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
     ) {
         listOf(
             Triple(Icons.Default.Bolt, "OVERWHELMED", "Easy wins"),
             Triple(Icons.Default.BatteryChargingFull, "CANNOT THINK", "Low energy"),
-            Triple(Icons.Default.Timer, "10 MINUTES", "Quick steps")
+            Triple(Icons.Default.Timer, "10 MINUTES", "Quick steps"),
         ).forEach { (icon, title, desc) ->
             Surface(
                 onClick = {
-                    viewModel.clearSearchFilters(); when (title) {
-                    "OVERWHELMED" -> {
-                        viewModel.updateSearchFrictionFilter("easy"); viewModel.updateSearchEnergyFilter(
-                            1
-                        )
-                    }; "CANNOT THINK" -> viewModel.updateSearchEnergyFilter(1); "10 MINUTES" -> viewModel.updateSearchMaxMinutesFilter(
-                        10
-                    )
-                }; onNavigateTo(Screen.Search)
+                    viewModel.clearSearchFilters()
+                    when (title)
+                    {
+                        "OVERWHELMED" -> {
+                            viewModel.updateSearchFrictionFilter("easy")
+                            viewModel.updateSearchEnergyFilter(
+                                1,
+                            )
+                        }
+
+                        "CANNOT THINK" -> {
+                            viewModel.updateSearchEnergyFilter(1)
+                        }
+
+                        "10 MINUTES" -> {
+                            viewModel.updateSearchMaxMinutesFilter(
+                                10,
+                            )
+                        }
+                    }
+                    onNavigateTo(Screen.Search)
                 },
                 modifier = Modifier.weight(1f),
-                color = TactileTheme.Surface,
-                shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                border = BorderStroke(1.dp, TactileTheme.Border)
+                color = TajsOSTheme.Surface,
+                shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+                border = BorderStroke(1.dp, TajsOSTheme.Border)
             ) {
-                Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+                Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
                     Icon(
                         icon,
                         contentDescription = null,
-                        tint = TactileTheme.Primary,
-                        modifier = Modifier.size(20.dp)
-                    ); Text(
-                    title,
-                    style = MaterialTheme.typography.labelSmall,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 10.sp
-                ); Text(
-                    desc,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Muted,
-                    fontSize = 9.sp
-                )
+                        tint = TajsOSTheme.Primary,
+                        modifier = Modifier.size(20.dp),
+                    )
+                    Text(
+                        title,
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 10.sp,
+                    )
+                    Text(
+                        desc,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = TajsOSTheme.Muted,
+                        fontSize = 9.sp,
+                    )
                 }
             }
         }

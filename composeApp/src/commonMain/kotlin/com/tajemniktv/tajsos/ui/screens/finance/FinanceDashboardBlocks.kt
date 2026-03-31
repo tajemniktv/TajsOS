@@ -45,9 +45,20 @@ import com.tajemniktv.tajsos.ui.components.cards.MaintenanceCard
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.lens.LensUiContract
 import com.tajemniktv.tajsos.ui.screens.maintenanceTypes
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
-import tajsos.composeapp.generated.resources.*
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.finance_chip_expense
+import tajsos.composeapp.generated.resources.finance_chip_live
+import tajsos.composeapp.generated.resources.finance_chip_sync_ready
+import tajsos.composeapp.generated.resources.finance_deadlines_chip
+import tajsos.composeapp.generated.resources.finance_empty_queue
+import tajsos.composeapp.generated.resources.finance_header_tracking
+import tajsos.composeapp.generated.resources.finance_item_action
+import tajsos.composeapp.generated.resources.finance_item_note
+import tajsos.composeapp.generated.resources.finance_item_record
+import tajsos.composeapp.generated.resources.finance_metrics_reference_count
+import tajsos.composeapp.generated.resources.finance_queue_label
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -57,26 +68,26 @@ import kotlin.math.roundToInt
  * @param context Finance dashboard state and callbacks used to project header metadata.
  */
 @Composable
-internal fun renderFinanceHeaderBlock(context: com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardContext) {
+internal fun renderFinanceHeaderBlock(context: FinanceDashboardContext) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface.copy(alpha = 0.6f),
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = BorderStroke(1.dp, TactileTheme.Border),
+        color = TajsOSTheme.Surface.copy(alpha = 0.6f),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+        border = BorderStroke(1.dp, TajsOSTheme.Border)
     ) {
         Column(
-            modifier = Modifier.padding(TactileTheme.SpacingMd),
+            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
                 stringResource(LensUiContract.financeLens.title),
                 style = MaterialTheme.typography.displaySmall,
-                color = TactileTheme.Text,
+                color = TajsOSTheme.Text
             )
             Text(
                 stringResource(LensUiContract.financeLens.subtitle),
                 style = MaterialTheme.typography.bodySmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted
             )
             Text(
                 stringResource(
@@ -86,11 +97,17 @@ internal fun renderFinanceHeaderBlock(context: com.tajemniktv.tajsos.ui.screens.
                     context.deadlineItems.size,
                 ),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted
             )
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                AssistChip(onClick = {}, label = { Text(stringResource(Res.string.finance_chip_live)) })
-                AssistChip(onClick = {}, label = { Text(stringResource(Res.string.finance_chip_sync_ready)) })
+                AssistChip(
+                    onClick = {},
+                    label = { Text(stringResource(Res.string.finance_chip_live)) },
+                )
+                AssistChip(
+                    onClick = {},
+                    label = { Text(stringResource(Res.string.finance_chip_sync_ready)) },
+                )
                 AssistChip(
                     onClick = {},
                     label = { Text(stringResource(Res.string.finance_chip_expense)) },
@@ -108,31 +125,31 @@ internal fun renderFinanceHeaderBlock(context: com.tajemniktv.tajsos.ui.screens.
 }
 
 @Composable
-internal fun renderFinanceMetricsBlock(context: com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardContext) {
+internal fun renderFinanceMetricsBlock(context: FinanceDashboardContext) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+        horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
     ) {
         Surface(
             modifier = Modifier.weight(1f),
-            color = TactileTheme.Surface.copy(alpha = 0.65f),
-            border = BorderStroke(1.dp, TactileTheme.Border),
-            shape = RoundedCornerShape(TactileTheme.RadiusMd),
+            color = TajsOSTheme.Surface.copy(alpha = 0.65f),
+            border = BorderStroke(1.dp, TajsOSTheme.Border),
+            shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
         ) {
             Column(
-                modifier = Modifier.padding(TactileTheme.SpacingMd),
+                modifier = Modifier.padding(TajsOSTheme.SpacingMd),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Text(
                     "REFERENCE WEIGHT",
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted,
                     fontWeight = FontWeight.Bold,
                 )
                 Text(
                     formatCurrency(context.liquidity),
                     style = MaterialTheme.typography.displayMedium,
-                    color = TactileTheme.Text,
+                    color = TajsOSTheme.Text,
                     fontWeight = FontWeight.ExtraBold,
                 )
                 Text(
@@ -141,9 +158,9 @@ internal fun renderFinanceMetricsBlock(context: com.tajemniktv.tajsos.ui.screens
                         context.knowledgeItems.size,
                     ),
                     style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted
                 )
-                com.tajemniktv.tajsos.ui.screens.finance.FinanceMiniBars(
+                FinanceMiniBars(
                     values = context.bars,
                     bigLast = false,
                 )
@@ -151,26 +168,26 @@ internal fun renderFinanceMetricsBlock(context: com.tajemniktv.tajsos.ui.screens
         }
         Surface(
             modifier = Modifier.weight(1f),
-            color = TactileTheme.Surface.copy(alpha = 0.65f),
-            border = BorderStroke(1.dp, TactileTheme.Border),
-            shape = RoundedCornerShape(TactileTheme.RadiusMd),
+            color = TajsOSTheme.Surface.copy(alpha = 0.65f),
+            border = BorderStroke(1.dp, TajsOSTheme.Border),
+            shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
         ) {
             Column(
-                modifier = Modifier.padding(TactileTheme.SpacingMd),
+                modifier = Modifier.padding(TajsOSTheme.SpacingMd),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Text(
                     "PRESSURE",
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted,
                     fontWeight = FontWeight.Bold,
                 )
                 Text(
                     "${context.deadlineItems.size} dated items • ${context.overdue.size} overdue • ${context.queue.size + context.recurring.size} recurring/admin",
                     style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted
                 )
-                com.tajemniktv.tajsos.ui.screens.finance.FinanceMiniBars(
+                FinanceMiniBars(
                     values = context.bars,
                     bigLast = true,
                 )
@@ -180,21 +197,21 @@ internal fun renderFinanceMetricsBlock(context: com.tajemniktv.tajsos.ui.screens
 }
 
 @Composable
-internal fun renderFinanceActivityBlock(context: com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardContext) {
+internal fun renderFinanceActivityBlock(context: FinanceDashboardContext) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface.copy(alpha = 0.7f),
-        border = BorderStroke(1.dp, TactileTheme.Border),
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+        color = TajsOSTheme.Surface.copy(alpha = 0.7f),
+        border = BorderStroke(1.dp, TajsOSTheme.Border),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
     ) {
         Column(
-            modifier = Modifier.padding(TactileTheme.SpacingMd),
+            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
                 "RECENT ACTIVITY",
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Text,
+                color = TajsOSTheme.Text,
                 fontWeight = FontWeight.Bold,
             )
             for (item in context.recentItems.take(5)) {
@@ -213,22 +230,22 @@ internal fun renderFinanceActivityBlock(context: com.tajemniktv.tajsos.ui.screen
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             style = MaterialTheme.typography.bodyMedium,
-                            color = TactileTheme.Text,
+                            color = TajsOSTheme.Text,
                             fontWeight = FontWeight.SemiBold,
                         )
                         Text(
                             financeItemLabel(item.node),
                             style = MaterialTheme.typography.labelSmall,
-                            color = TactileTheme.Muted,
+                            color = TajsOSTheme.Muted
                         )
                     }
                     Text(
                         formatCurrency(
-                            com.tajemniktv.tajsos.ui.screens.finance.financeSyntheticTxn(
+                            financeSyntheticTxn(
                                 item.node.title,
                             ),
                         ),
-                        color = TactileTheme.Primary,
+                        color = TajsOSTheme.Primary,
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold,
                     )
@@ -239,25 +256,25 @@ internal fun renderFinanceActivityBlock(context: com.tajemniktv.tajsos.ui.screen
 }
 
 @Composable
-internal fun renderFinanceInsightsBlock(context: com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardContext) {
+internal fun renderFinanceInsightsBlock(context: FinanceDashboardContext) {
     val snapshot =
         context.viewModel.maintenanceSnapshot
             .collectAsState()
             .value
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface.copy(alpha = 0.7f),
-        border = BorderStroke(1.dp, TactileTheme.Border),
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+        color = TajsOSTheme.Surface.copy(alpha = 0.7f),
+        border = BorderStroke(1.dp, TajsOSTheme.Border),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
     ) {
         Column(
-            modifier = Modifier.padding(TactileTheme.SpacingMd),
+            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
                 "LENS INSIGHTS",
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Text,
+                color = TajsOSTheme.Text,
                 fontWeight = FontWeight.Bold,
             )
             val insightItems =
@@ -270,67 +287,74 @@ internal fun renderFinanceInsightsBlock(context: com.tajemniktv.tajsos.ui.screen
             for (item in insightItems) {
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
-                    color = TactileTheme.Background.copy(alpha = 0.35f),
-                    shape = RoundedCornerShape(TactileTheme.RadiusSm),
-                    border = BorderStroke(1.dp, TactileTheme.Border.copy(alpha = 0.7f)),
+                    color = TajsOSTheme.Background.copy(alpha = 0.35f),
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
+                    border = BorderStroke(1.dp, TajsOSTheme.Border.copy(alpha = 0.7f))
                 ) {
                     Text(
                         item,
                         modifier = Modifier.padding(10.dp),
                         style = MaterialTheme.typography.bodySmall,
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted
                     )
                 }
             }
             Text(
                 "MODEL CONFIDENCE ${context.confidence}%",
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary,
+                color = TajsOSTheme.Primary,
                 fontWeight = FontWeight.Bold,
             )
             LinearProgressIndicator(
                 progress = { context.confidence / 100f },
                 modifier = Modifier.fillMaxWidth().height(6.dp),
-                color = TactileTheme.Primary,
-                trackColor = TactileTheme.Border.copy(alpha = 0.3f),
+                color = TajsOSTheme.Primary,
+                trackColor = TajsOSTheme.Border.copy(alpha = 0.3f)
             )
         }
     }
 }
 
 @Composable
-internal fun renderFinanceVaultBlock(context: com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardContext) {
+internal fun renderFinanceVaultBlock(context: FinanceDashboardContext) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface.copy(alpha = 0.7f),
-        border = BorderStroke(1.dp, TactileTheme.Border),
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+        color = TajsOSTheme.Surface.copy(alpha = 0.7f),
+        border = BorderStroke(1.dp, TajsOSTheme.Border),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
     ) {
         Column(
-            modifier = Modifier.padding(TactileTheme.SpacingMd),
+            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
                 "REFERENCE COVERAGE",
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted,
                 fontWeight = FontWeight.Bold,
             )
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                Icon(Icons.Default.Lock, null, tint = TactileTheme.Primary)
+                Icon(Icons.Default.Lock, null, tint = TajsOSTheme.Primary)
                 Text(
                     "${context.knowledgeItems.size} SAVED",
                     style = MaterialTheme.typography.titleMedium,
-                    color = TactileTheme.Text,
+                    color = TajsOSTheme.Text,
                     fontWeight = FontWeight.Bold,
                 )
             }
             AssistChip(
                 onClick = {},
-                label = { Text(stringResource(Res.string.finance_deadlines_chip, context.deadlineItems.size)) },
+                label = {
+                    Text(
+                        stringResource(
+                            Res.string.finance_deadlines_chip,
+                            context.deadlineItems.size,
+                        ),
+                    )
+                },
                 leadingIcon = { Icon(Icons.Default.Sync, null, modifier = Modifier.size(14.dp)) },
             )
         }
@@ -338,28 +362,28 @@ internal fun renderFinanceVaultBlock(context: com.tajemniktv.tajsos.ui.screens.f
 }
 
 @Composable
-internal fun renderFinanceQueueControlsBlock(context: com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardContext) {
+internal fun renderFinanceQueueControlsBlock(context: FinanceDashboardContext) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface.copy(alpha = 0.7f),
-        border = BorderStroke(1.dp, TactileTheme.Border),
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+        color = TajsOSTheme.Surface.copy(alpha = 0.7f),
+        border = BorderStroke(1.dp, TajsOSTheme.Border),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
     ) {
         Column(
-            modifier = Modifier.padding(TactileTheme.SpacingMd),
+            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
                 stringResource(Res.string.finance_queue_label),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted,
                 fontWeight = FontWeight.Bold,
             )
             FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
             ) {
-                com.tajemniktv.tajsos.ui.screens.finance.FinanceMaintenanceView.entries.forEach { view ->
+                FinanceMaintenanceView.entries.forEach { view ->
                     FilterChip(
                         selected = context.maintenanceView == view,
                         onClick = { context.onMaintenanceViewChange(view) },
@@ -372,13 +396,14 @@ internal fun renderFinanceQueueControlsBlock(context: com.tajemniktv.tajsos.ui.s
 }
 
 @Composable
-internal fun renderFinanceQueueListBlock(context: com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardContext) {
+internal fun renderFinanceQueueListBlock(context: FinanceDashboardContext) {
     if (context.itemsInView.isEmpty()) {
         EmptyState(
-            message = stringResource(
-                Res.string.finance_empty_queue,
-                stringResource(context.maintenanceView.label).lowercase(),
-            ),
+            message =
+                stringResource(
+                    Res.string.finance_empty_queue,
+                    stringResource(context.maintenanceView.label).lowercase(),
+                ),
         )
         return
     }
@@ -409,12 +434,25 @@ internal fun renderFinanceQueueListBlock(context: com.tajemniktv.tajsos.ui.scree
 
 @Composable
 private fun financeItemLabel(node: NodeEntity): String =
-    when {
-        node.isTaskItem() -> node.maintenanceType?.uppercase() ?: stringResource(Res.string.finance_item_action)
-        node.isRecordItem() -> stringResource(Res.string.finance_item_record)
-        node.isNoteItem() -> stringResource(Res.string.finance_item_note)
-        else -> node.type.uppercase()
-    }
+    when
+        {
+            node.isTaskItem() -> {
+                node.maintenanceType?.uppercase()
+                    ?: stringResource(Res.string.finance_item_action)
+            }
+
+            node.isRecordItem() -> {
+                stringResource(Res.string.finance_item_record)
+            }
+
+            node.isNoteItem() -> {
+                stringResource(Res.string.finance_item_note)
+            }
+
+            else -> {
+                node.type.uppercase()
+            }
+        }
 
 @Composable
 private fun FinanceMiniBars(
@@ -437,10 +475,10 @@ private fun FinanceMiniBars(
                         .background(
                             color =
                                 if (bigLast && index == values.lastIndex) {
-                                    TactileTheme.Primary
+                                    TajsOSTheme.Primary
                                 } else {
-                                    TactileTheme.Primary.copy(
-                                        alpha = 0.55f,
+                                    TajsOSTheme.Primary.copy(
+                                        alpha = 0.55f
                                     )
                                 },
                             shape = RoundedCornerShape(6.dp),

@@ -34,7 +34,7 @@ import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.cards.NodeCard
 import com.tajemniktv.tajsos.ui.main.state.PhysicalLogisticsSnapshot
 import com.tajemniktv.tajsos.ui.screens.GroupedOpenLoopSection
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
@@ -88,18 +88,18 @@ internal fun PlacesLayer(
 
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = BorderStroke(1.dp, TactileTheme.Border),
+        color = TajsOSTheme.Surface,
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+        border = BorderStroke(1.dp, TajsOSTheme.Border)
     ) {
         Column(
-            modifier = Modifier.padding(TactileTheme.SpacingMd),
+            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
                 "PHYSICAL LOGISTICS",
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary,
+                color = TajsOSTheme.Primary,
                 fontWeight = FontWeight.Bold,
             )
             Text(
@@ -109,24 +109,24 @@ internal fun PlacesLayer(
                     }
                 }",
                 style = MaterialTheme.typography.bodySmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted
             )
             Text(
                 "Travel pack template: ${if (snapshot.travelPackTemplateReady) "READY" else "MISSING"}",
                 style = MaterialTheme.typography.bodySmall,
-                color = if (snapshot.travelPackTemplateReady) TactileTheme.Success else TactileTheme.Accent,
+                color = if (snapshot.travelPackTemplateReady) TajsOSTheme.Success else TajsOSTheme.Accent
             )
         }
     }
 
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = BorderStroke(1.dp, TactileTheme.Border),
+        color = TajsOSTheme.Surface,
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+        border = BorderStroke(1.dp, TajsOSTheme.Border)
     ) {
         Column(
-            modifier = Modifier.padding(TactileTheme.SpacingMd),
+            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             OutlinedTextField(
@@ -136,8 +136,8 @@ internal fun PlacesLayer(
                 label = { Text("Place name") },
             )
             FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
             ) {
                 AssistChip(
                     onClick = {
@@ -170,12 +170,12 @@ internal fun PlacesLayer(
 
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = BorderStroke(1.dp, TactileTheme.Border),
+        color = TajsOSTheme.Surface,
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+        border = BorderStroke(1.dp, TajsOSTheme.Border)
     ) {
         Column(
-            modifier = Modifier.padding(TactileTheme.SpacingMd),
+            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             OutlinedTextField(
@@ -192,8 +192,8 @@ internal fun PlacesLayer(
                 minLines = 2,
             )
             FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
             ) {
                 AssistChip(
                     onClick = { viewModel.createWhatToBringList(logisticsTitle) },
@@ -235,7 +235,7 @@ internal fun PlacesLayer(
         }
     }
 
-    LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+    LazyColumn(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
         if (snapshot.campusLocations.isNotEmpty()) {
             item {
                 GroupedOpenLoopSection(
@@ -328,24 +328,24 @@ internal fun PlacesLayer(
         items(snapshot.places, key = { it.place.node.id }) { place ->
             Surface(
                 modifier = Modifier.fillMaxWidth(),
-                color = TactileTheme.Surface,
-                shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                border = BorderStroke(1.dp, TactileTheme.Border),
+                color = TajsOSTheme.Surface,
+                shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+                border = BorderStroke(1.dp, TajsOSTheme.Border)
             ) {
                 Column(
-                    modifier = Modifier.padding(TactileTheme.SpacingMd),
+                    modifier = Modifier.padding(TajsOSTheme.SpacingMd),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Text(
                         place.place.node.title,
                         style = MaterialTheme.typography.titleSmall,
-                        color = TactileTheme.Text,
+                        color = TajsOSTheme.Text,
                         fontWeight = FontWeight.Bold,
                     )
                     Text(
                         "Related tasks ${place.relatedTasks.size} • Reminders ${place.remindersCount}",
                         style = MaterialTheme.typography.bodySmall,
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted
                     )
                     if (place.relatedTasks.isNotEmpty()) {
                         GroupedOpenLoopSection(
@@ -360,8 +360,8 @@ internal fun PlacesLayer(
                         )
                     }
                     FlowRow(
-                        horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-                        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                        horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+                        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
                     ) {
                         AssistChip(
                             onClick = { onEditNode(place.place.node.id) },

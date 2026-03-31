@@ -1,0 +1,341 @@
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
+package com.tajemniktv.tajsos.ui.screens.projects.detail
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Adjust
+import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material.icons.filled.WbSunny
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.tajemniktv.tajsos.data.ProjectState
+import com.tajemniktv.tajsos.data.TaskState
+import com.tajemniktv.tajsos.data.isNoteItem
+import com.tajemniktv.tajsos.data.isRecordItem
+import com.tajemniktv.tajsos.data.isTaskItem
+import com.tajemniktv.tajsos.data.projectStateOrNull
+import com.tajemniktv.tajsos.data.taskStateOrNull
+import com.tajemniktv.tajsos.data.toNodeStatus
+import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.components.common.SelectorDialog
+import com.tajemniktv.tajsos.ui.components.layout.LocalHeaderActions
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.project_detail_not_found
+import tajsos.composeapp.generated.resources.project_health_critical
+import tajsos.composeapp.generated.resources.project_health_frozen
+import tajsos.composeapp.generated.resources.project_health_healthy
+import tajsos.composeapp.generated.resources.project_health_neglected
+import tajsos.composeapp.generated.resources.project_health_on_hold
+import tajsos.composeapp.generated.resources.project_set_status
+
+/**
+ * Project mission-control detail screen scoped to one project outcome.
+ */
+@Composable
+fun ProjectDetailScreen(
+    viewModel: MainViewModel,
+    projectId: Long,
+    onEditNode: (Long) -> Unit,
+    onBack: () -> Unit,
+    isDesktop: Boolean = false,
+) {
+    val nodes by viewModel.allNodes.collectAsState()
+    val allAreas by viewModel.allAreas.collectAsState()
+    val nodeWithPin = remember(nodes, projectId) { nodes.find { it.node.id == projectId } }
+
+    if (nodeWithPin == null) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text(
+                stringResource(Res.string.project_detail_not_found),
+                color = TajsOSTheme.Muted,
+                modifier = Modifier.padding(TajsOSTheme.SpacingMd)
+            )
+        }
+        return
+    }
+
+    val project = nodeWithPin.node
+    val nodesWithPinForProject by viewModel
+        .getNodesForProject(projectId)
+        .collectAsState(initial = emptyList())
+    val relations by viewModel.getRelationsForNode(projectId).collectAsState(initial = emptyList())
+    val attachments by viewModel
+        .getAttachmentsForNode(projectId)
+        .collectAsState(initial = emptyList())
+    val logs by viewModel.getLogsForNode(projectId).collectAsState(initial = emptyList())
+    val tags by viewModel.getTagsForNode(projectId).collectAsState(initial = emptyList())
+
+    val areaName = allAreas.find { it.id == project.areaId }?.title
+
+    var showStatusDialog by remember { mutableStateOf(false) }
+    var selectedTab by rememberSaveable(projectId) { mutableStateOf(ProjectDetailTab.Overview) }
+
+    val projectItems = remember(nodesWithPinForProject) { nodesWithPinForProject.map { it.node } }
+    val projectTasks = remember(projectItems) { projectItems.filter { it.isTaskItem() } }
+    val linkedNotes = remember(projectItems) { projectItems.filter { it.isNoteItem() } }
+    val linkedRecords = remember(projectItems) { projectItems.filter { it.isRecordItem() } }
+
+    val now =
+        kotlin.time.Clock.System
+            .now()
+            .toEpochMilliseconds()
+    val staleTime = now - (14 * 24 * 60 * 60 * 1000L)
+
+    val completedTasks = projectTasks.filter { it.taskStateOrNull() == TaskState.DONE }
+    val activeTasks = projectTasks.filter { it.taskStateOrNull() == TaskState.ACTIVE }
+    val blockedTasks =
+        projectTasks.filter {
+            it.taskStateOrNull() == TaskState.BLOCKED ||
+                (
+                    it.taskStateOrNull() == TaskState.ACTIVE && it.isHardDeadline && (
+                        it.dueAt
+                            ?: Long.MAX_VALUE
+                    ) < now
+                )
+        }
+    val nextActions = activeTasks.filterNot { task -> blockedTasks.any { it.id == task.id } }
+    val upcomingMilestones =
+        projectTasks
+            .filter { it.dueAt != null }
+            .sortedBy { it.dueAt }
+            .take(5)
+
+    val hasCriticalOverdue =
+        blockedTasks.any { it.isHardDeadline && (it.dueAt ?: Long.MAX_VALUE) < now }
+    val isNeglected =
+        projectItems.none { it.updatedAt >= staleTime } &&
+            project.projectStateOrNull() == ProjectState.ACTIVE &&
+            !project.isFrozen
+
+    val (healthLabel, healthColor) =
+        when
+            {
+                project.isFrozen -> {
+                    stringResource(Res.string.project_health_frozen) to TajsOSTheme.Accent
+                }
+
+                project.projectStateOrNull() == ProjectState.ON_HOLD -> {
+                    stringResource(Res.string.project_health_on_hold) to TajsOSTheme.Muted
+                }
+
+                hasCriticalOverdue -> {
+                    stringResource(Res.string.project_health_critical) to TajsOSTheme.Error
+                }
+
+                isNeglected -> {
+                    stringResource(Res.string.project_health_neglected) to
+                        TajsOSTheme.Error
+                }
+
+                else -> {
+                    stringResource(Res.string.project_health_healthy) to
+                            TajsOSTheme.Success
+                }
+            }
+
+    val progress =
+        if (projectTasks.isNotEmpty()) {
+            completedTasks.size.toFloat() / projectTasks.size.toFloat()
+        } else {
+            0f
+        }
+
+    val outcomeText =
+        project.projectWhy
+            ?.trim()
+            ?.takeIf(String::isNotEmpty)
+            ?: project.content.trim().takeIf(String::isNotEmpty)
+            ?: "No specific outcome defined yet." // Fallback string
+
+    val targetDate = project.dueAt ?: upcomingMilestones.firstOrNull()?.dueAt
+
+    val nodesById = remember(nodes) { nodes.associateBy { it.node.id } }
+    val relatedNodeIds =
+        remember(relations, projectId) {
+            relations.mapNotNull { relation ->
+                when (projectId)
+                {
+                    relation.fromNodeId -> relation.toNodeId
+                    relation.toNodeId -> relation.fromNodeId
+                    else -> null
+                }
+            }
+        }
+
+    LaunchedEffect(projectId) {
+        viewModel.setLastActiveContext(projectId, project.areaId)
+    }
+
+    val actions: @Composable RowScope.() -> Unit = {
+        IconButton(onClick = { showStatusDialog = true }) {
+            Icon(Icons.Default.Tune, contentDescription = null, modifier = Modifier.size(18.dp))
+        }
+        IconButton(onClick = { onEditNode(projectId) }) {
+            Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(18.dp))
+        }
+        IconButton(onClick = { viewModel.updateNode(project.copy(isFrozen = !project.isFrozen)) }) {
+            Icon(
+                if (project.isFrozen) Icons.Default.WbSunny else Icons.Default.Schedule,
+                contentDescription = null,
+                tint = if (project.isFrozen) TajsOSTheme.Primary else TajsOSTheme.Muted,
+                modifier = Modifier.size(18.dp),
+            )
+        }
+        IconButton(
+            onClick = {
+                viewModel.archiveNode(project)
+                onBack()
+            },
+        ) {
+            Icon(Icons.Default.Delete, contentDescription = null, modifier = Modifier.size(18.dp))
+        }
+    }
+
+    CompositionLocalProvider(LocalHeaderActions provides actions) {
+        val context =
+            ProjectDetailContext(
+                viewModel = viewModel,
+                project = project,
+                areaName = areaName,
+                healthLabel = healthLabel,
+                healthColor = healthColor,
+                progress = progress,
+                completedTasksCount = completedTasks.size,
+                totalTasksCount = projectTasks.size,
+                outcomeText = outcomeText,
+                targetDate = targetDate,
+                selectedTab = selectedTab,
+                onSelectTab = { selectedTab = it },
+                nextActions = nextActions,
+                blockedTasks = blockedTasks,
+                linkedNotes = linkedNotes,
+                linkedRecords = linkedRecords,
+                linkedTasks = projectTasks,
+                timeline = logs,
+                attachments = attachments,
+                milestones = upcomingMilestones,
+                tags = tags.map { it.name },
+                relatedNodeIds = relatedNodeIds,
+                nodesById = nodesById,
+                attachmentNames = attachments.map { it.title ?: it.uriOrPath },
+                onEditNode = onEditNode,
+                onStatusClick = { showStatusDialog = true },
+            )
+
+        BoxWithConstraints(
+            modifier = Modifier.fillMaxSize().background(TajsOSTheme.Background)
+        ) {
+            val surface =
+                if (isDesktop && maxWidth >= 1180.dp) {
+                    ProjectDetailSurface.DESKTOP
+                } else {
+                    ProjectDetailSurface.MOBILE
+                }
+
+            val plan = remember(surface) { buildProjectDetailPlan(surface) }
+
+            Column(
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(12.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                if (surface == ProjectDetailSurface.DESKTOP) {
+                    // Header and Hero are full width
+                    ProjectDetailBlockRegistry.resolve("project_header")?.invoke(context)
+                    ProjectDetailBlockRegistry.resolve("project_hero")?.invoke(context)
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
+                        Column(
+                            modifier = Modifier.weight(1f).fillMaxHeight(),
+                            verticalArrangement = Arrangement.spacedBy(12.dp),
+                        ) {
+                            ProjectDetailBlockRegistry.resolve("project_tabs")?.invoke(context)
+                            ProjectDetailBlockRegistry.resolve("project_content")?.invoke(context)
+                        }
+
+                        Column(
+                            modifier = Modifier.width(320.dp).fillMaxHeight(),
+                            verticalArrangement = Arrangement.spacedBy(12.dp),
+                        ) {
+                            plan.secondary.forEach { block ->
+                                ProjectDetailBlockRegistry.resolve(block.id)?.invoke(context)
+                            }
+                        }
+                    }
+                } else {
+                    plan.primary.forEach { block ->
+                        ProjectDetailBlockRegistry.resolve(block.id)?.invoke(context)
+                    }
+                }
+            }
+        }
+    }
+
+    if (showStatusDialog) {
+        SelectorDialog(
+            show = true,
+            onDismiss = { showStatusDialog = false },
+            title = stringResource(Res.string.project_set_status),
+            options = listOf("active", "on_hold", "someday"),
+            selectedOption = project.projectStateOrNull()?.toNodeStatus() ?: project.status,
+            onSelect = { status ->
+                viewModel.updateNodeStatus(project, status)
+                showStatusDialog = false
+            },
+            optionName = { it },
+            optionIcon = { status ->
+                when (status)
+                {
+                    "active" -> Icons.Default.PlayArrow
+                    "on_hold" -> Icons.Default.Schedule
+                    "someday" -> Icons.Default.CalendarToday
+                    else -> Icons.Default.Adjust
+                }
+            },
+            optionSubtext = { status -> "PROJECT_${status.uppercase()}" },
+        )
+    }
+}

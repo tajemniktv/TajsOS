@@ -53,9 +53,15 @@ private object NoOpScheduleEntryDao : ScheduleEntryDao {
 
     override fun getScheduleEntriesForItem(itemId: Long): Flow<List<ScheduleEntryEntity>> = flowOf(emptyList())
 
-    override suspend fun getScheduleEntriesByKind(itemId: Long, kind: String): List<ScheduleEntryEntity> = emptyList()
+    override suspend fun getScheduleEntriesByKind(
+        itemId: Long,
+        kind: String,
+    ): List<ScheduleEntryEntity> = emptyList()
 
-    override suspend fun deleteScheduleEntriesByKind(itemId: Long, kind: String) = Unit
+    override suspend fun deleteScheduleEntriesByKind(
+        itemId: Long,
+        kind: String,
+    ) = Unit
 
     override suspend fun insertScheduleEntry(entry: ScheduleEntryEntity): Long = 0L
 
@@ -157,7 +163,10 @@ class AppRepository(
     suspend fun dismissInboxEntry(entry: InboxEntryEntity) {
         inboxEntryDao.updateInboxEntry(
             entry.copy(
-                dismissedAt = kotlin.time.Clock.System.now().toEpochMilliseconds(),
+                dismissedAt =
+                    kotlin.time.Clock.System
+                        .now()
+                        .toEpochMilliseconds(),
             ),
         )
     }
@@ -167,7 +176,13 @@ class AppRepository(
      *
      * The first line becomes the new item title and remaining lines become the body content.
      *
-     * @return The created item identifier, or `0` if the entry is missing or blank.
+     * **Side effects:**
+     * - Updates the inbox entry to mark it as processed, setting `processedAt` and `triagedItemId`.
+     * - Logs an "INBOX_TRIAGED" event with the newly created item ID.
+     *
+     * @param entryId The ID of the raw inbox entry to triage.
+     * @param kind The target [ItemKind] to convert the entry into.
+     * @return The created item identifier, or `0L` if the entry is missing or the parsed title is blank.
      */
     suspend fun triageInboxEntry(
         entryId: Long,
@@ -190,7 +205,10 @@ class AppRepository(
 
         inboxEntryDao.updateInboxEntry(
             entry.copy(
-                processedAt = kotlin.time.Clock.System.now().toEpochMilliseconds(),
+                processedAt =
+                    kotlin.time.Clock.System
+                        .now()
+                        .toEpochMilliseconds(),
                 triagedItemId = createdId,
             ),
         )
@@ -225,8 +243,9 @@ class AppRepository(
         purpose: String? = null,
     ): Long {
         val node =
-            when (kind) {
-                ItemKind.TASK ->
+            when (kind)
+            {
+                ItemKind.TASK -> {
                     NodeEntity(
                         type = kind.storageKey,
                         title = title,
@@ -244,8 +263,9 @@ class AppRepository(
                         isRecurring = isRecurring,
                         recurringInterval = recurringInterval,
                     )
+                }
 
-                ItemKind.NOTE ->
+                ItemKind.NOTE -> {
                     NodeEntity(
                         type = kind.storageKey,
                         title = title,
@@ -258,8 +278,9 @@ class AppRepository(
                         isSticky = isSticky,
                         noteType = noteKind?.storageKey,
                     )
+                }
 
-                ItemKind.RECORD ->
+                ItemKind.RECORD -> {
                     NodeEntity(
                         type = kind.storageKey,
                         title = title,
@@ -271,8 +292,9 @@ class AppRepository(
                         contextScreen = contextScreen,
                         isSticky = isSticky,
                     )
+                }
 
-                ItemKind.PROJECT ->
+                ItemKind.PROJECT -> {
                     NodeEntity(
                         type = kind.storageKey,
                         title = title,
@@ -287,8 +309,9 @@ class AppRepository(
                         projectStatus = projectState.storageKey,
                         isSticky = isSticky,
                     )
+                }
 
-                ItemKind.AREA ->
+                ItemKind.AREA    -> {
                     NodeEntity(
                         type = kind.storageKey,
                         title = title,
@@ -299,6 +322,7 @@ class AppRepository(
                         icon = icon,
                         isSticky = isSticky,
                     )
+                }
             }
 
         val id = insertNode(node)
@@ -366,8 +390,7 @@ class AppRepository(
     /**
      * Inserts multiple nodes while preserving the same side effects as [insertNode].
      */
-    suspend fun insertNodes(nodes: List<NodeEntity>): List<Long> =
-        nodes.map { insertNode(it) }
+    suspend fun insertNodes(nodes: List<NodeEntity>): List<Long> = nodes.map { insertNode(it) }
 
     /**
      * Updates an existing node in the database.
@@ -440,13 +463,16 @@ class AppRepository(
      * Mirrors current node status into the typed facet tables introduced by the LifeOS redesign.
      */
     private suspend fun syncTypedFacetsFromNode(node: NodeEntity) {
-        when (node.itemKindOrNull()) {
+        when (node.itemKindOrNull())
+        {
             ItemKind.TASK -> {
                 val existing = taskFacetDao.getTaskFacetByItemId(node.id)
                 taskFacetDao.upsertTaskFacet(
                     TaskFacetEntity(
                         itemId = node.id,
-                        state = TaskState.fromStorageKey(node.status)?.storageKey ?: TaskState.ACTIVE.storageKey,
+                        state =
+                            TaskState.fromStorageKey(node.status)?.storageKey
+                                ?: TaskState.ACTIVE.storageKey,
                         energyLevel = node.energyLevel ?: existing?.energyLevel,
                         friction = node.friction ?: existing?.friction,
                         nextStep = node.nextSmallestStep ?: existing?.nextStep,
@@ -464,8 +490,12 @@ class AppRepository(
                 projectFacetDao.upsertProjectFacet(
                     ProjectFacetEntity(
                         itemId = node.id,
-                        state = node.projectStatus ?: existing?.state ?: ProjectState.ACTIVE.storageKey,
-                        purpose = node.projectWhy ?: existing?.purpose ?: node.content.ifBlank { null },
+                        state =
+                            node.projectStatus ?: existing?.state
+                                ?: ProjectState.ACTIVE.storageKey,
+                        purpose =
+                            node.projectWhy ?: existing?.purpose
+                                ?: node.content.ifBlank { null },
                         isFrozen = node.isFrozen,
                     ),
                 )
@@ -482,7 +512,10 @@ class AppRepository(
                 )
             }
 
-            else -> Unit
+            else ->
+            {
+                Unit
+            }
         }
     }
 
@@ -518,7 +551,10 @@ class AppRepository(
                 )
         }
         if (reminderAt != null) {
-            scheduleEntryDao.deleteScheduleEntriesByKind(nodeId, ScheduleEntryKind.REMINDER.storageKey)
+            scheduleEntryDao.deleteScheduleEntriesByKind(
+                nodeId,
+                ScheduleEntryKind.REMINDER.storageKey,
+            )
             entries +=
                 ScheduleEntryEntity(
                     itemId = nodeId,
@@ -527,9 +563,25 @@ class AppRepository(
                     recurrenceRule = recurrenceRule,
                 )
         }
-        if (startAt == null) scheduleEntryDao.deleteScheduleEntriesByKind(nodeId, ScheduleEntryKind.START.storageKey)
-        if (dueAt == null) scheduleEntryDao.deleteScheduleEntriesByKind(nodeId, ScheduleEntryKind.DUE.storageKey)
-        if (reminderAt == null) scheduleEntryDao.deleteScheduleEntriesByKind(nodeId, ScheduleEntryKind.REMINDER.storageKey)
+        if (startAt == null)
+        {
+            scheduleEntryDao.deleteScheduleEntriesByKind(
+                    nodeId,
+                    ScheduleEntryKind.START.storageKey,
+                )
+            }
+        if (dueAt == null) {
+            scheduleEntryDao.deleteScheduleEntriesByKind(
+                nodeId,
+                ScheduleEntryKind.DUE.storageKey,
+            )
+        }
+        if (reminderAt == null) {
+            scheduleEntryDao.deleteScheduleEntriesByKind(
+                nodeId,
+                ScheduleEntryKind.REMINDER.storageKey,
+            )
+        }
         if (entries.isNotEmpty()) {
             scheduleEntryDao.insertScheduleEntries(entries)
         }

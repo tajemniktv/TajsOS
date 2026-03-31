@@ -49,52 +49,50 @@ private val desktopSecondaryDefaults =
  * Builds finance dashboard plan from defaults or optional JSON override.
  */
 fun buildFinanceDashboardPlan(
-    surface: com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardSurface,
+    surface: FinanceDashboardSurface,
     layoutOverrideJson: String? = null,
-): com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardPlan {
+): FinanceDashboardPlan {
     val parsed =
-        com.tajemniktv.tajsos.ui.screens.finance.parseStructured(
+        parseStructured(
             layoutOverrideJson,
         )
     if (parsed != null) {
-        return com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardPlan(
+        return FinanceDashboardPlan(
             primary =
                 parsed.primary.distinct().map {
-                    com.tajemniktv.tajsos.ui.screens.finance
-                        .FinanceDashboardBlock(it)
+                    FinanceDashboardBlock(it)
                 },
             secondary =
                 parsed.secondary.distinct().map {
-                    com.tajemniktv.tajsos.ui.screens.finance
-                        .FinanceDashboardBlock(it)
+                    FinanceDashboardBlock(it)
                 },
         )
     }
 
     return when (surface)
     {
-        com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardSurface.MOBILE -> {
-            com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardPlan(
+        FinanceDashboardSurface.MOBILE -> {
+            FinanceDashboardPlan(
                 primary =
-                    com.tajemniktv.tajsos.ui.screens.finance.mobileDefaults.map {
-                        com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardBlock(
+                    mobileDefaults.map {
+                        FinanceDashboardBlock(
                             it,
                         )
                     },
             )
         }
 
-        com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardSurface.DESKTOP -> {
-            com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardPlan(
+        FinanceDashboardSurface.DESKTOP -> {
+            FinanceDashboardPlan(
                 primary =
-                    com.tajemniktv.tajsos.ui.screens.finance.desktopPrimaryDefaults.map {
-                        com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardBlock(
+                    desktopPrimaryDefaults.map {
+                        FinanceDashboardBlock(
                             it,
                         )
                     },
                 secondary =
-                    com.tajemniktv.tajsos.ui.screens.finance.desktopSecondaryDefaults.map {
-                        com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardBlock(
+                    desktopSecondaryDefaults.map {
+                        FinanceDashboardBlock(
                             it,
                         )
                     },
@@ -103,11 +101,11 @@ fun buildFinanceDashboardPlan(
     }
 }
 
-private fun parseStructured(raw: String?): com.tajemniktv.tajsos.ui.screens.finance.FinanceLayoutJsonV1? {
+private fun parseStructured(raw: String?): FinanceLayoutJsonV1? {
     if (raw.isNullOrBlank()) return null
     return runCatching {
-        com.tajemniktv.tajsos.ui.screens.finance.financeLayoutJson
-            .decodeFromString<com.tajemniktv.tajsos.ui.screens.finance.FinanceLayoutJsonV1>(
+        financeLayoutJson
+            .decodeFromString<FinanceLayoutJsonV1>(
                 raw,
             )
     }.getOrNull()

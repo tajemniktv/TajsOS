@@ -33,12 +33,48 @@ object DetailNavigationContract {
         node: NodeEntity?,
         fallbackNodeId: Long,
     ): String =
-        when (node?.itemKindOrNull()) {
-            ItemKind.TASK -> Screen.TaskDetail.route.replace("{taskId}", fallbackNodeId.toString())
-            ItemKind.NOTE -> Screen.NoteDetail.route.replace("{noteId}", fallbackNodeId.toString())
-            ItemKind.RECORD -> Screen.RecordDetail.route.replace("{recordId}", fallbackNodeId.toString())
-            ItemKind.PROJECT -> Screen.ProjectDetail.route.replace("{projectId}", fallbackNodeId.toString())
-            ItemKind.AREA -> Screen.AreaDetail.route.replace("{areaId}", fallbackNodeId.toString())
-            null -> Screen.NoteDetail.route.replace("{noteId}", fallbackNodeId.toString())
+        when (node?.itemKindOrNull())
+        {
+            ItemKind.TASK -> {
+                Screen.TaskDetail.route.replace(
+                    "{taskId}",
+                    fallbackNodeId.toString(),
+                )
+            }
+
+            ItemKind.NOTE -> {
+                Screen.NoteDetail.route.replace(
+                    "{noteId}",
+                    fallbackNodeId.toString(),
+                )
+            }
+
+            ItemKind.RECORD -> {
+                Screen.RecordDetail.route.replace(
+                    "{recordId}",
+                    fallbackNodeId.toString(),
+                )
+            }
+
+            ItemKind.PROJECT -> {
+                Screen.ProjectDetail.route.replace(
+                    "{projectId}",
+                    fallbackNodeId.toString(),
+                )
+            }
+
+            ItemKind.AREA -> {
+                Screen.AreaDetail.route.replace(
+                    "{areaId}",
+                    fallbackNodeId.toString(),
+                )
+            }
+
+            null -> {
+                Screen.NoteDetail.route.replace(
+                    "{noteId}",
+                    fallbackNodeId.toString(),
+                )
+            }
         }
 }

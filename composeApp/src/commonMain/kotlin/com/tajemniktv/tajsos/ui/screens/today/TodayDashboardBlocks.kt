@@ -28,7 +28,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,7 +36,7 @@ import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.components.nodes.TaskRow
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.today_empty
@@ -68,19 +67,19 @@ internal fun TodayMainBlock(
         modifier =
             Modifier
                 .fillMaxSize()
-                .padding(TactileTheme.SpacingMd),
+                .padding(TajsOSTheme.SpacingMd)
     ) {
         Text(
             stringResource(Res.string.today_payload),
             style = MaterialTheme.typography.displayLarge,
-            color = TactileTheme.Text,
+            color = TajsOSTheme.Text
         )
-        Spacer(Modifier.height(TactileTheme.SpacingLg))
+        Spacer(Modifier.height(TajsOSTheme.SpacingLg))
 
         if (todayNodes.isEmpty()) {
             EmptyState(message = stringResource(Res.string.today_empty))
         } else {
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                 itemsIndexed(
                     items = todayNodes.take(3),
                     key = { index, node -> "today_${node.id}_$index" },
@@ -105,7 +104,7 @@ internal fun TodayMainBlock(
                                 if (dismissState.dismissDirection ==
                                     SwipeToDismissBoxValue.StartToEnd
                                 ) {
-                                    TactileTheme.Success
+                                    TajsOSTheme.Success
                                 } else {
                                     Color.Transparent
                                 }
@@ -140,8 +139,8 @@ internal fun TodayMainBlock(
                                 .padding(vertical = 4.dp)
                                 .border(
                                     1.dp,
-                                    TactileTheme.Border,
-                                    RoundedCornerShape(TactileTheme.RadiusMd),
+                                    TajsOSTheme.Border,
+                                    RoundedCornerShape(TajsOSTheme.RadiusMd)
                                 ),
                             contentAlignment = Alignment.Center,
                         ) {
@@ -151,7 +150,7 @@ internal fun TodayMainBlock(
                                     todayNodes.size + index + 1,
                                 ),
                                 style = MaterialTheme.typography.labelSmall.copy(letterSpacing = 1.sp),
-                                color = TactileTheme.Muted.copy(alpha = 0.5f),
+                                color = TajsOSTheme.Muted.copy(alpha = 0.5f)
                             )
                         }
                     }

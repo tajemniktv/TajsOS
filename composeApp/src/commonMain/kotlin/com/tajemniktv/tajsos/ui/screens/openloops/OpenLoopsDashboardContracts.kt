@@ -14,8 +14,8 @@ data class OpenLoopsDashboardBlock(
 )
 
 data class OpenLoopsDashboardPlan(
-    val primary: List<com.tajemniktv.tajsos.ui.screens.openloops.OpenLoopsDashboardBlock>,
-    val secondary: List<com.tajemniktv.tajsos.ui.screens.openloops.OpenLoopsDashboardBlock> = emptyList(),
+    val primary: List<OpenLoopsDashboardBlock>,
+    val secondary: List<OpenLoopsDashboardBlock> = emptyList(),
 )
 
 data class OpenLoopsDashboardContext(
@@ -23,4 +23,4 @@ data class OpenLoopsDashboardContext(
     val onEditNode: (Long) -> Unit,
 )
 
-typealias OpenLoopsDashboardBlockRenderer = @Composable (com.tajemniktv.tajsos.ui.screens.openloops.OpenLoopsDashboardContext) -> Unit
+typealias OpenLoopsDashboardBlockRenderer = @Composable (OpenLoopsDashboardContext) -> Unit

@@ -41,28 +41,37 @@ import com.tajemniktv.tajsos.data.FocusSessionEntity
 import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.nodes.TaskBrief
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlin.time.Clock
 
+/**
+ * A sticky note style card for quick information.
+ *
+ * @param title The title of the note.
+ * @param content The content text of the note.
+ * @param onClick Callback when the card is clicked.
+ * @param modifier The modifier to be applied to the layout.
+ */
 @Composable
 fun StickyNoteCard(
     title: String,
     content: String,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Surface(
         onClick = onClick,
-        modifier = Modifier.width(200.dp),
-        color = TactileTheme.Accent.copy(alpha = 0.1f),
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = BorderStroke(1.dp, TactileTheme.Accent.copy(alpha = 0.3f)),
+        modifier = modifier.width(200.dp),
+        color = TajsOSTheme.Accent.copy(alpha = 0.1f),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+        border = BorderStroke(1.dp, TajsOSTheme.Accent.copy(alpha = 0.3f))
     ) {
-        Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+        Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
             Text(
                 title,
                 style = MaterialTheme.typography.labelSmall,
                 maxLines = 1,
-                color = TactileTheme.Accent,
+                color = TajsOSTheme.Accent,
                 fontWeight = FontWeight.Bold,
             )
             Spacer(Modifier.height(4.dp))
@@ -70,12 +79,22 @@ fun StickyNoteCard(
                 content,
                 style = MaterialTheme.typography.bodySmall,
                 maxLines = 3,
-                color = TactileTheme.Text,
+                color = TajsOSTheme.Text
             )
         }
     }
 }
 
+/**
+ * A dashboard card showing the "Daily Pulse" progress and top active tasks.
+ *
+ * @param progress The progress value (0f..1f).
+ * @param tasks The list of tasks to display.
+ * @param onToggleTask Callback when a task is toggled.
+ * @param onTaskClick Callback when a task is clicked.
+ * @param onClick Callback when the card header/body is clicked.
+ * @param modifier The modifier to be applied to the layout.
+ */
 @Composable
 fun TodayPulseCard(
     progress: Float,
@@ -83,9 +102,10 @@ fun TodayPulseCard(
     onToggleTask: (NodeWithPin) -> Unit,
     onTaskClick: (Long) -> Unit,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    DashCard(onClick = onClick) {
-        Column(modifier = Modifier.padding(TactileTheme.SpacingLg)) {
+    DashCard(modifier = modifier, onClick = onClick) {
+        Column(modifier = Modifier.padding(TajsOSTheme.SpacingLg)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -95,7 +115,7 @@ fun TodayPulseCard(
                     Text(
                         "TODAY",
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Primary,
+                        color = TajsOSTheme.Primary,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 1.sp,
                     )
@@ -103,26 +123,29 @@ fun TodayPulseCard(
                         "Daily Pulse",
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold,
-                        color = TactileTheme.Text,
+                        color = TajsOSTheme.Text
                     )
                 }
                 ProgressRing(progress = progress)
             }
-            Spacer(Modifier.height(TactileTheme.SpacingLg))
-            Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
-                tasks.filter { it.node.status == "active" }.take(3).forEach { nodeWithPin ->
-                    TaskBrief(
-                        title = nodeWithPin.node.title,
-                        isDone = false,
-                        onToggle = { onToggleTask(nodeWithPin) },
-                        onClick = { onTaskClick(nodeWithPin.node.id) },
-                    )
-                }
+            Spacer(Modifier.height(TajsOSTheme.SpacingLg))
+            Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)) {
+                tasks
+                    .asSequence()
+                    .filter { it.node.status == "active" }
+                    .take(3)
+                    .forEach { nodeWithPin ->
+                        TaskBrief(
+                            title = nodeWithPin.node.title,
+                            isDone = false,
+                            onToggle = { onToggleTask(nodeWithPin) }
+                        ) { onTaskClick(nodeWithPin.node.id) }
+                    }
                 if (tasks.none { it.node.status == "active" }) {
                     Text(
                         "System clear for today.",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = TactileTheme.Success,
+                        color = TajsOSTheme.Success,
                         fontWeight = FontWeight.Medium,
                     )
                 }
@@ -131,19 +154,29 @@ fun TodayPulseCard(
     }
 }
 
+/**
+ * A dashboard card showing the current focus session status.
+ *
+ * @param viewModel The main view model for data access.
+ * @param activeSession The currently active focus session, if any.
+ * @param onToggleFocus Callback when the focus switch is toggled.
+ * @param onClick Callback when the card is clicked.
+ * @param modifier The modifier to be applied to the layout.
+ */
 @Composable
 fun FocusCard(
     viewModel: MainViewModel,
     activeSession: FocusSessionEntity?,
     onToggleFocus: () -> Unit,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val allNodes by viewModel.allNodes.collectAsState()
     val activeTask =
         activeSession?.let { session -> allNodes.find { it.node.id == session.nodeId }?.node }
 
-    DashCard(onClick = onClick) {
-        Column(modifier = Modifier.padding(TactileTheme.SpacingLg)) {
+    DashCard(modifier = modifier, onClick = onClick) {
+        Column(modifier = Modifier.padding(TajsOSTheme.SpacingLg)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -153,7 +186,7 @@ fun FocusCard(
                     Text(
                         "FOCUS",
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Primary,
+                        color = TajsOSTheme.Primary,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 1.sp,
                     )
@@ -161,7 +194,7 @@ fun FocusCard(
                         if (activeSession != null) "Deep Work Phase" else "System Standby",
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
-                        color = TactileTheme.Text,
+                        color = TajsOSTheme.Text
                     )
                 }
                 if (activeSession != null) {
@@ -175,12 +208,12 @@ fun FocusCard(
                             m.toString().padStart(2, '0')
                         }:${s.toString().padStart(2, '0')}",
                         style = MaterialTheme.typography.labelLarge,
-                        color = TactileTheme.Primary,
+                        color = TajsOSTheme.Primary,
                         fontWeight = FontWeight.Bold,
                     )
                 }
             }
-            Spacer(Modifier.height(TactileTheme.SpacingMd))
+            Spacer(Modifier.height(TajsOSTheme.SpacingMd))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -189,7 +222,7 @@ fun FocusCard(
                 Text(
                     if (activeTask != null) "Active: ${activeTask.title}" else "Ready to engage",
                     style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted,
                     maxLines = 1,
                     modifier = Modifier.weight(1f),
                 )
@@ -199,62 +232,71 @@ fun FocusCard(
                     colors =
                         SwitchDefaults.colors(
                             checkedThumbColor = Color.White,
-                            checkedTrackColor = TactileTheme.Primary,
-                            uncheckedThumbColor = TactileTheme.Muted,
-                            uncheckedTrackColor = TactileTheme.Surface,
-                        ),
+                            checkedTrackColor = TajsOSTheme.Primary,
+                            uncheckedThumbColor = TajsOSTheme.Muted,
+                            uncheckedTrackColor = TajsOSTheme.Surface
+                        )
                 )
             }
         }
     }
 }
 
+/**
+ * A dashboard card providing a summary of life metrics (captures vs completions).
+ *
+ * @param captures The number of captures in the current week.
+ * @param completions The number of completions in the current week.
+ * @param onClick Callback when the card is clicked.
+ * @param modifier The modifier to be applied to the layout.
+ */
 @Composable
 fun LifeSummaryCard(
     captures: Int,
     completions: Int,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    DashCard(onClick = onClick) {
-        Column(modifier = Modifier.padding(TactileTheme.SpacingLg)) {
+    DashCard(modifier = modifier, onClick = onClick) {
+        Column(modifier = Modifier.padding(TajsOSTheme.SpacingLg)) {
             Text(
                 "LIFE SUMMARY",
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary,
+                color = TajsOSTheme.Primary,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.sp,
             )
-            Spacer(Modifier.height(TactileTheme.SpacingMd))
+            Spacer(Modifier.height(TajsOSTheme.SpacingMd))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Column {
                     Text(
-                        "$captures",
+                        captures.toString(),
                         style = MaterialTheme.typography.headlineLarge,
-                        color = TactileTheme.Text,
+                        color = TajsOSTheme.Text
                     )
                     Text(
                         "CAPTURES / WEEK",
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted
                     )
                 }
                 Column(horizontalAlignment = Alignment.End) {
                     Text(
-                        "$completions",
+                        completions.toString(),
                         style = MaterialTheme.typography.headlineLarge,
-                        color = TactileTheme.Success,
+                        color = TajsOSTheme.Success
                     )
                     Text(
                         "DONE / WEEK",
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted
                     )
                 }
             }
-            Spacer(Modifier.height(TactileTheme.SpacingMd))
+            Spacer(Modifier.height(TajsOSTheme.SpacingMd))
             LinearProgressIndicator(
                 progress = {
                     if (captures > 0) {
@@ -267,14 +309,25 @@ fun LifeSummaryCard(
                     }
                 },
                 modifier = Modifier.fillMaxWidth().height(8.dp),
-                color = TactileTheme.Primary,
-                trackColor = TactileTheme.Border,
+                color = TajsOSTheme.Primary,
+                trackColor = TajsOSTheme.Border,
                 strokeCap = StrokeCap.Round,
             )
         }
     }
 }
 
+/**
+ * A metric card with an icon, label, and primary value.
+ *
+ * @param modifier The modifier to be applied to the layout.
+ * @param label The primary label of the metric.
+ * @param value The value of the metric.
+ * @param secondaryLabel An optional secondary label or badge.
+ * @param icon The icon to display.
+ * @param iconColor The color of the icon and secondary label.
+ * @param onClick Callback when the card is clicked.
+ */
 @Composable
 fun MetricCard(
     modifier: Modifier = Modifier,
@@ -286,7 +339,7 @@ fun MetricCard(
     onClick: () -> Unit,
 ) {
     DashCard(modifier = modifier, onClick = onClick) {
-        Column(modifier = Modifier.padding(TactileTheme.SpacingLg)) {
+        Column(modifier = Modifier.padding(TajsOSTheme.SpacingLg)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -304,12 +357,12 @@ fun MetricCard(
                     fontWeight = FontWeight.Bold,
                 )
             }
-            Spacer(Modifier.height(TactileTheme.SpacingMd))
+            Spacer(Modifier.height(TajsOSTheme.SpacingMd))
             Column {
                 Text(
                     label,
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 1.sp,
                 )
@@ -317,14 +370,23 @@ fun MetricCard(
                     value,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = TactileTheme.Text,
-                    maxLines = 1,
+                    color = TajsOSTheme.Text,
+                    maxLines = 1
                 )
             }
         }
     }
 }
 
+/**
+ * A card representing a "vault" or storage area with an item count.
+ *
+ * @param modifier The modifier to be applied to the layout.
+ * @param title The title of the vault.
+ * @param count The number of items in the vault.
+ * @param icon The icon to display.
+ * @param onClick Callback when the card is clicked.
+ */
 @Composable
 fun VaultCard(
     modifier: Modifier = Modifier,
@@ -336,15 +398,15 @@ fun VaultCard(
     Surface(
         onClick = onClick,
         modifier = modifier,
-        color = TactileTheme.Surface,
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = BorderStroke(1.dp, TactileTheme.Border),
+        color = TajsOSTheme.Surface,
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+        border = BorderStroke(1.dp, TajsOSTheme.Border)
     ) {
-        Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+        Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
             Icon(
                 icon,
                 contentDescription = null,
-                tint = TactileTheme.Accent,
+                tint = TajsOSTheme.Accent,
                 modifier = Modifier.size(20.dp),
             )
             Text(
@@ -356,21 +418,27 @@ fun VaultCard(
             Text(
                 "$count ITEMS",
                 style = MaterialTheme.typography.bodySmall,
-                color = TactileTheme.Muted,
-                fontSize = 8.sp,
+                color = TajsOSTheme.Muted,
+                fontSize = 8.sp
             )
         }
     }
 }
 
+/**
+ * A ring component visualizing progress (0f..1f).
+ *
+ * @param progress The progress value (0f..1f).
+ * @param modifier The modifier to be applied to the layout.
+ */
 @Composable
-fun ProgressRing(progress: Float) {
+fun ProgressRing(progress: Float, modifier: Modifier = Modifier) {
     val anim by animateFloatAsState(targetValue = progress)
-    Box(contentAlignment = Alignment.Center, modifier = Modifier.size(60.dp)) {
+    Box(contentAlignment = Alignment.Center, modifier = modifier.size(60.dp)) {
         Canvas(modifier = Modifier.size(60.dp)) {
             drawCircle(color = Color.White.copy(alpha = 0.1f), style = Stroke(width = 4.dp.toPx()))
             drawArc(
-                color = TactileTheme.Primary,
+                color = TajsOSTheme.Primary,
                 startAngle = -90f,
                 sweepAngle = 360 * anim,
                 useCenter = false,
@@ -381,7 +449,7 @@ fun ProgressRing(progress: Float) {
             "${(progress * 100).toInt()}%",
             style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.Bold,
-            color = TactileTheme.Text,
+            color = TajsOSTheme.Text
         )
     }
 }

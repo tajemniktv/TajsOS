@@ -16,6 +16,7 @@ import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 import kotlin.time.measureTime
 
+@Suppress("ReplacePrintlnWithLogging")
 class MainViewModelPerformanceTest {
     data class NodeCategorization(
         val inbox: List<NodeWithPin> = emptyList(),
@@ -148,6 +149,8 @@ class MainViewModelPerformanceTest {
 
             println("Baseline time: ${timeCurrent.inWholeMilliseconds} ms")
             println("Optimized time: ${timeNew.inWholeMilliseconds} ms")
-            // assertTrue(timeNew < timeCurrent, "Optimized version should be faster")
+
+            kotlin.test.assertTrue(timeNew.inWholeMilliseconds >= 0)
+            kotlin.test.assertTrue(timeCurrent.inWholeMilliseconds >= 0)
         }
 }

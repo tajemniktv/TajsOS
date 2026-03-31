@@ -42,6 +42,7 @@ import com.tajemniktv.tajsos.data.isResolvedDecisionSupportItem
 import com.tajemniktv.tajsos.data.taskStateOrNull
 import com.tajemniktv.tajsos.ui.main.actions.DecisionCommands
 import com.tajemniktv.tajsos.ui.main.actions.MainNodeSupport
+import com.tajemniktv.tajsos.ui.main.actions.NodeCommands
 import com.tajemniktv.tajsos.ui.main.actions.ProtocolCommands
 import com.tajemniktv.tajsos.ui.main.actions.RelationshipCommands
 import com.tajemniktv.tajsos.ui.main.actions.StudentCommands
@@ -445,6 +446,35 @@ class MainViewModel(
     val isBiometricEnabled: StateFlow<Boolean?> =
         preferencesRepository.isBiometricEnabled
             .stateIn(viewModelScope, SharingStarted.Eagerly, null)
+
+    /**
+     * Persisted application theme mode.
+     * `true` selects dark theme, `false` selects light theme.
+     */
+    val isDarkTheme: StateFlow<Boolean> =
+        preferencesRepository.isDarkThemeEnabled
+            .stateIn(viewModelScope, SharingStarted.Eagerly, true)
+
+    /**
+     * Selected accent color hex string (e.g., "#BA9EFF").
+     */
+    val accentColorHex: StateFlow<String> =
+        preferencesRepository.accentColorHex
+            .stateIn(viewModelScope, SharingStarted.Eagerly, "#BA9EFF")
+
+    /**
+     * Whether glassmorphism effects are enabled.
+     */
+    val isGlassmorphismEnabled: StateFlow<Boolean> =
+        preferencesRepository.isGlassmorphismEnabled
+            .stateIn(viewModelScope, SharingStarted.Eagerly, true)
+
+    /**
+     * Whether to reduce system animations and transitions.
+     */
+    val reduceMotion: StateFlow<Boolean> =
+        preferencesRepository.reduceMotion
+            .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
     val enabledPacks: StateFlow<PackRegistry> =
         preferencesRepository.enabledPacks
@@ -912,6 +942,46 @@ class MainViewModel(
         }
     }
 
+    /**
+     * Persists application theme preference.
+     *
+     * @param enabled `true` for dark theme, `false` for light theme.
+     */
+    fun setDarkTheme(enabled: Boolean) {
+        viewModelScope.launch {
+            preferencesRepository.updateDarkThemeEnabled(enabled)
+        }
+    }
+
+    /**
+     * Persists application accent color preference.
+     *
+     * @param colorHex The color in hex format (e.g., "#BA9EFF").
+     */
+    fun setAccentColor(colorHex: String) {
+        viewModelScope.launch {
+            preferencesRepository.updateAccentColor(colorHex)
+        }
+    }
+
+    /**
+     * Persists application glassmorphism preference.
+     */
+    fun setGlassmorphismEnabled(enabled: Boolean) {
+        viewModelScope.launch {
+            preferencesRepository.updateGlassmorphismEnabled(enabled)
+        }
+    }
+
+    /**
+     * Persists application reduce motion preference.
+     */
+    fun setReduceMotion(enabled: Boolean) {
+        viewModelScope.launch {
+            preferencesRepository.updateReduceMotion(enabled)
+        }
+    }
+
     fun setPackEnabled(
         pack: AppPack,
         enabled: Boolean,
@@ -1059,7 +1129,12 @@ class MainViewModel(
     }
 
     /**
-     * Converts a raw inbox capture into a typed LifeOS item.
+     * Converts a raw inbox capture into a typed LifeOS item by proxying the request to [AppRepository.triageInboxEntry].
+     *
+     * The conversion is executed asynchronously within the [viewModelScope].
+     *
+     * @param entryId The ID of the raw inbox entry to triage.
+     * @param kind The target [ItemKind] to convert the entry into.
      */
     fun triageInboxEntry(
         entryId: Long,
@@ -1204,6 +1279,14 @@ class MainViewModel(
         status: String,
     ) {
         nodeCommands.updateNodeStatus(node, status)
+    }
+
+    /**
+     * Sweeps stale tasks into the someday state.
+     * @param cutoffDays The threshold in days before a task is considered stale.
+     */
+    fun sweepStaleTasks(cutoffDays: Int = 3) {
+        nodeCommands.sweepStaleTasks(cutoffDays)
     }
 
     suspend fun getNodeById(id: Long): NodeEntity? = repository.getNodeById(id)
@@ -1434,23 +1517,26 @@ class MainViewModel(
     fun setPersonRelationshipType(
         person: NodeEntity,
         type: String?,
-    ) {
+    )
+    {
         relationshipCommands.setPersonRelationshipType(person, type)
-    }
+        }
 
     fun linkPersonToNode(
         personId: Long,
         nodeId: Long,
-    ) {
+    )
+    {
         relationshipCommands.linkPersonToNode(personId, nodeId)
-    }
+        }
 
     fun unlinkPersonFromNode(
         personId: Long,
         nodeId: Long,
-    ) {
+    )
+    {
         relationshipCommands.unlinkPersonFromNode(personId, nodeId)
-    }
+        }
 
     fun createReplyNeededForPerson(
         personId: Long,
@@ -1471,9 +1557,10 @@ class MainViewModel(
     fun createAskAboutNextTimeNote(
         personId: Long,
         prompt: String,
-    ) {
+    )
+    {
         relationshipCommands.createAskAboutNextTimeNote(personId, prompt)
-    }
+        }
 
     fun addPlace(
         title: String,
@@ -1486,16 +1573,18 @@ class MainViewModel(
     fun linkNodeToPlace(
         nodeId: Long,
         placeId: Long,
-    ) {
+    )
+    {
         relationshipCommands.linkNodeToPlace(nodeId, placeId)
-    }
+        }
 
     fun unlinkNodeFromPlace(
         nodeId: Long,
         placeId: Long,
-    ) {
+    )
+    {
         relationshipCommands.unlinkNodeFromPlace(nodeId, placeId)
-    }
+        }
 
     fun createWhatToBringList(
         title: String,
@@ -1531,9 +1620,10 @@ class MainViewModel(
     fun addPhysicalLogisticsNote(
         title: String,
         content: String,
-    ) {
-        relationshipCommands.addPhysicalLogisticsNote(title, content)
-    }
+    )
+    {
+            relationshipCommands.addPhysicalLogisticsNote(title, content)
+        }
 
     fun addPersonalRule(
         title: String,
@@ -1585,9 +1675,10 @@ class MainViewModel(
     fun markMustFindLater(
         node: NodeEntity,
         enabled: Boolean,
-    ) {
+    )
+    {
         relationshipCommands.markMustFindLater(node, enabled)
-    }
+        }
 
     fun runMonthlyReset() {
         nodeCommands.runMonthlyReset()
@@ -1599,7 +1690,8 @@ class MainViewModel(
      * @param projectId The id of the project whose nodes should be returned.
      * @return A Flow that emits lists of NodeWithPin for the specified project.
      */
-    fun getNodesForProject(projectId: Long): Flow<List<NodeWithPin>> = repository.getNodesByProjectWithPins(projectId)
+    fun getNodesForProject(projectId: Long): Flow<List<NodeWithPin>> =
+        repository.getNodesByProjectWithPins(projectId)
 
     /**
      * Retrieves nodes (including pin state) that belong to the specified area.
@@ -1607,7 +1699,8 @@ class MainViewModel(
      * @param areaId The id of the area to fetch nodes for.
      * @return A Flow that emits lists of `NodeWithPin` belonging to the specified area.
      */
-    fun getNodesForArea(areaId: Long): Flow<List<NodeWithPin>> = repository.getNodesByAreaWithPins(areaId)
+    fun getNodesForArea(areaId: Long): Flow<List<NodeWithPin>> =
+        repository.getNodesByAreaWithPins(areaId)
 
     /**
      * Provides a reactive stream of projects assigned to the specified area.
@@ -1615,7 +1708,8 @@ class MainViewModel(
      * @param areaId The id of the area whose projects to retrieve.
      * @return A Flow that emits lists of `NodeEntity` representing projects belonging to the given area.
      */
-    fun getProjectsForArea(areaId: Long): Flow<List<NodeEntity>> = repository.getProjectsByArea(areaId)
+    fun getProjectsForArea(areaId: Long): Flow<List<NodeEntity>> =
+        repository.getProjectsByArea(areaId)
 
     /**
      * Creates and inserts a track entry for the current local date using the provided scores and metadata.
@@ -1733,7 +1827,8 @@ class MainViewModel(
         }
     }
 
-    fun getMedicationsForEntry(trackEntryId: Long): Flow<List<TrackMedicationJoinEntity>> = repository.getTrackMedications(trackEntryId)
+    fun getMedicationsForEntry(trackEntryId: Long): Flow<List<TrackMedicationJoinEntity>> =
+        repository.getTrackMedications(trackEntryId)
 
     fun startFocusSession(nodeId: Long) {
         viewModelScope.launch {
@@ -1786,9 +1881,10 @@ class MainViewModel(
     fun setLastActiveContext(
         projectId: Long?,
         areaId: Long?,
-    ) {
+    )
+    {
         if (projectId != null) _lastActiveProjectId.value = projectId
-        if (areaId != null) _lastActiveAreaId.value = areaId
+            if (areaId != null) _lastActiveAreaId.value = areaId
     }
 
     private val _searchQuery = MutableStateFlow("")
@@ -2153,26 +2249,28 @@ class MainViewModel(
     fun addTag(
         name: String,
         color: Int? = null,
-    ) {
+    )
+    {
         viewModelScope.launch {
             repository.insertTag(
                 TagEntity(
                     name = name,
                     normalizedName = name.lowercase().trim(),
-                    color = color,
-                ),
-            )
-        }
+                        color = color,
+                    ),
+                )
+            }
     }
 
     fun attachTagToNode(
         nodeId: Long,
         tagId: Long,
-    ) {
+    )
+    {
         viewModelScope.launch {
             repository.attachTagToNode(nodeId, tagId)
+            }
         }
-    }
 
     fun detachTagFromNode(
         nodeId: Long,
@@ -2190,7 +2288,8 @@ class MainViewModel(
     fun setReadingProgress(
         node: NodeEntity,
         progressPercent: Int,
-    ) {
+    )
+    {
         studentCommands.setReadingProgress(node, progressPercent)
     }
 
@@ -2235,7 +2334,8 @@ class MainViewModel(
     fun toggleFlashcardCandidate(
         node: NodeEntity,
         enabled: Boolean,
-    ) {
+    )
+    {
         studentCommands.toggleFlashcardCandidate(node, enabled)
     }
 
@@ -2256,11 +2356,13 @@ class MainViewModel(
     fun linkPaperToNote(
         paperNodeId: Long,
         noteNodeId: Long,
-    ) {
+    )
+    {
         studentCommands.linkPaperToNote(paperNodeId, noteNodeId)
-    }
+        }
 
-    fun getAttachmentsForNode(nodeId: Long): Flow<List<AttachmentEntity>> = repository.getAttachmentsForNode(nodeId)
+    fun getAttachmentsForNode(nodeId: Long): Flow<List<AttachmentEntity>> =
+        repository.getAttachmentsForNode(nodeId)
 
     fun addAttachment(
         nodeId: Long,
@@ -2311,14 +2413,15 @@ class MainViewModel(
         type: String,
         title: String? = null,
         content: String? = null,
-    ) {
+    )
+    {
         val normalizedType =
             when (type.trim().lowercase())
             {
                 "record" -> "record"
-                "project" -> "project"
-                "area" -> "area"
-                "idea", "resource", "vault", "document" -> "note"
+                    "project" -> "project"
+                    "area" -> "area"
+                    "idea", "resource", "vault", "document" -> "note"
                 "maintenance", "open_loop", "decision", "protocol" -> "task"
                 else -> "task"
             }
@@ -2362,14 +2465,15 @@ class MainViewModel(
         content: String,
         mood: Int? = null,
         energy: Int? = null,
-    ) {
+    )
+    {
         viewModelScope.launch {
             val now = Clock.System.now()
             val dateStr = now.toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
 
-            val nodeId =
-                repository.insertLifeItem(
-                    kind = ItemKind.RECORD,
+                val nodeId =
+                    repository.insertLifeItem(
+                        kind = ItemKind.RECORD,
                     title = "${type.uppercase()} REVIEW - $dateStr",
                     content = content,
                     inboxState = false,
@@ -2382,16 +2486,16 @@ class MainViewModel(
                     type = type,
                     date = dateStr,
                     resultNodeId = nodeId,
-                    moodScore = mood,
-                    energyScore = energy,
+                        moodScore = mood,
+                        energyScore = energy,
                 ),
             )
 
             if (mood != null || energy != null) {
                 addTrackEntry(mood = mood, energy = energy, note = "Linked to $type review")
             }
+            }
         }
-    }
 
     suspend fun getLastReviewByType(type: String) = repository.getLastReviewByType(type)
 
@@ -2470,7 +2574,10 @@ class MainViewModel(
                             !it.node.isResolvedDecisionSupportItem()
                     }.map { decision ->
                         val ageDays =
-                            ((now - decision.node.createdAt).coerceAtLeast(0L) / (24 * 60 * 60 * 1000L)).toInt()
+                            (
+                                (now - decision.node.createdAt).coerceAtLeast(0L) /
+                                    (24 * 60 * 60 * 1000L)
+                                    ).toInt()
                         DecisionStaleItem(node = decision, ageDays = ageDays)
                     }.filter { it.ageDays >= 7 }
                     .sortedByDescending { it.ageDays }
@@ -2482,9 +2589,18 @@ class MainViewModel(
                 relations
                     .filter { relation ->
                         relation.relationType == "RELATED_PERSON" &&
-                            (relation.fromNodeId == decisionId || relation.toNodeId == decisionId)
+                            (
+                                relation.fromNodeId == decisionId ||
+                                    relation.toNodeId == decisionId
+                                    )
                     }.map { relation ->
-                        if (relation.fromNodeId == decisionId) relation.toNodeId else relation.fromNodeId
+                        if (relation.fromNodeId ==
+                            decisionId
+                        ) {
+                            relation.toNodeId
+                        } else {
+                            relation.fromNodeId
+                        }
                     }.toSet()
             nodes.filter { it.node.id in personIds && it.node.type == "person" }
         }
@@ -2492,21 +2608,24 @@ class MainViewModel(
     fun linkDecisionToPerson(
         decisionId: Long,
         personId: Long,
-    ) {
+    )
+    {
         decisionCommands.linkDecisionToPerson(decisionId, personId)
     }
 
     fun unlinkDecisionFromPerson(
         decisionId: Long,
         personId: Long,
-    ) {
+    )
+    {
         decisionCommands.unlinkDecisionFromPerson(decisionId, personId)
     }
 
     fun setDecisionRevisit(
         node: NodeEntity,
         revisitAt: Long?,
-    ) {
+    )
+    {
         decisionCommands.setDecisionRevisit(node, revisitAt)
     }
 
@@ -2516,19 +2635,23 @@ class MainViewModel(
         nodeId: Long,
         title: String,
         description: String? = null,
-    ) {
+    )
+    {
         decisionCommands.addDecisionOption(nodeId, title, description)
     }
 
-    fun updateDecisionOption(option: DecisionOptionEntity) = decisionCommands.updateDecisionOption(option)
+    fun updateDecisionOption(option: DecisionOptionEntity) =
+        decisionCommands.updateDecisionOption(option)
 
-    fun deleteDecisionOption(option: DecisionOptionEntity) = decisionCommands.deleteDecisionOption(option)
+    fun deleteDecisionOption(option: DecisionOptionEntity) =
+        decisionCommands.deleteDecisionOption(option)
 
     fun decideOn(
         nodeId: Long,
         outcome: String,
         selectedOptionId: Long? = null,
-    ) {
+    )
+    {
         decisionCommands.decideOn(nodeId, outcome, selectedOptionId)
     }
 

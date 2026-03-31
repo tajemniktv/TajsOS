@@ -4,31 +4,28 @@
 
 package com.tajemniktv.tajsos.ui.screens.calendar
 
-fun buildCalendarDashboardPlan(
-    surface: com.tajemniktv.tajsos.ui.screens.calendar.CalendarDashboardSurface,
-): com.tajemniktv.tajsos.ui.screens.calendar.CalendarDashboardPlan =
+fun buildCalendarDashboardPlan(surface: CalendarDashboardSurface): CalendarDashboardPlan =
     when (surface)
     {
-        com.tajemniktv.tajsos.ui.screens.calendar.CalendarDashboardSurface.MOBILE -> {
-            com.tajemniktv.tajsos.ui.screens.calendar.CalendarDashboardPlan(
+        CalendarDashboardSurface.MOBILE -> {
+            CalendarDashboardPlan(
                 primary =
                     listOf(
-                        com.tajemniktv.tajsos.ui.screens.calendar.CalendarDashboardBlock(
+                        CalendarDashboardBlock(
                             "calendar_main",
                         ),
                     ),
             )
         }
 
-        com.tajemniktv.tajsos.ui.screens.calendar.CalendarDashboardSurface.DESKTOP -> {
-            com.tajemniktv.tajsos.ui.screens.calendar.CalendarDashboardPlan(
+        CalendarDashboardSurface.DESKTOP -> {
+            CalendarDashboardPlan(
                 primary =
                     listOf(
-                        com.tajemniktv.tajsos.ui.screens.calendar.CalendarDashboardBlock(
+                        CalendarDashboardBlock(
                             "calendar_main",
                         ),
                     ),
             )
         }
     }
-

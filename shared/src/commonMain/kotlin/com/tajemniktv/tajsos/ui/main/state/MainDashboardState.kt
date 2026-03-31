@@ -67,6 +67,7 @@ import com.tajemniktv.tajsos.data.NodeWithPin
 data class DashboardUIState(
     val tasksCount: Int = 0,
     val notesCount: Int = 0,
+    val staleTasksCount: Int = 0,
     val pinnedKnowledge: List<NodeWithPin> = emptyList(),
     val upcomingDeadlines: List<NodeWithPin> = emptyList(),
     val overdueNodes: List<NodeWithPin> = emptyList(),

@@ -32,7 +32,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 @Composable
 fun InfoCard(
@@ -40,17 +40,17 @@ fun InfoCard(
     value: String,
     icon: ImageVector,
     modifier: Modifier = Modifier,
-    color: Color = TactileTheme.Primary,
+    color: Color = TajsOSTheme.Primary,
     onClick: () -> Unit = {},
 ) {
     Surface(
         onClick = onClick,
         modifier = modifier,
-        color = TactileTheme.Surface,
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = BorderStroke(1.dp, TactileTheme.Border),
+        color = TajsOSTheme.Surface,
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+        border = BorderStroke(1.dp, TajsOSTheme.Border)
     ) {
-        Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+        Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -59,18 +59,18 @@ fun InfoCard(
                 Icon(
                     icon,
                     contentDescription = null,
-                    tint = TactileTheme.Muted,
+                    tint = TajsOSTheme.Muted,
                     modifier = Modifier.size(16.dp),
                 )
                 Text(
                     text = title.uppercase(),
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted,
                     fontWeight = FontWeight.Bold,
                     fontSize = 8.sp,
                 )
             }
-            Spacer(Modifier.width(TactileTheme.SpacingSm))
+            Spacer(Modifier.width(TajsOSTheme.SpacingSm))
             Text(
                 text = value,
                 style = MaterialTheme.typography.titleMedium,
@@ -85,32 +85,32 @@ fun InfoCard(
 fun StatusCard(
     status: String,
     modifier: Modifier = Modifier,
-    color: Color = TactileTheme.Success,
+    color: Color = TajsOSTheme.Success,
     onClick: () -> Unit = {},
 ) {
     Surface(
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = BorderStroke(1.dp, TactileTheme.Border),
+        color = TajsOSTheme.Surface,
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+        border = BorderStroke(1.dp, TajsOSTheme.Border)
     ) {
-        Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+        Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
             Text(
                 text = "STATUS",
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted,
                 fontWeight = FontWeight.Bold,
                 fontSize = 8.sp,
             )
-            Spacer(Modifier.width(TactileTheme.SpacingSm))
+            Spacer(Modifier.width(TajsOSTheme.SpacingSm))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Box(modifier = Modifier.size(8.dp).background(color, CircleShape))
                 Spacer(Modifier.width(8.dp))
                 Text(
                     text = status.uppercase(),
                     style = MaterialTheme.typography.titleLarge,
-                    color = TactileTheme.Text,
+                    color = TajsOSTheme.Text,
                     fontWeight = FontWeight.ExtraBold,
                 )
             }
@@ -129,46 +129,46 @@ fun LinkedNodeItem(
     Surface(
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = BorderStroke(1.dp, TactileTheme.Border),
+        color = TajsOSTheme.Surface,
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+        border = BorderStroke(1.dp, TajsOSTheme.Border)
     ) {
         Row(
-            modifier = Modifier.padding(TactileTheme.SpacingMd),
+            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Box(
                 modifier =
                     Modifier
                         .size(40.dp)
-                        .background(TactileTheme.Background, RoundedCornerShape(8.dp)),
+                        .background(TajsOSTheme.Background, RoundedCornerShape(8.dp)),
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
                     icon,
                     contentDescription = null,
-                    tint = TactileTheme.Muted,
+                    tint = TajsOSTheme.Muted,
                     modifier = Modifier.size(20.dp),
                 )
             }
-            Spacer(Modifier.width(TactileTheme.SpacingMd))
+            Spacer(Modifier.width(TajsOSTheme.SpacingMd))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleSmall,
-                    color = TactileTheme.Text,
+                    color = TajsOSTheme.Text,
                     fontWeight = FontWeight.Bold,
                 )
                 Text(
                     text = subtitle,
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted
                 )
             }
             Icon(
                 Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = null,
-                tint = TactileTheme.Muted,
+                tint = TajsOSTheme.Muted,
                 modifier = Modifier.size(20.dp),
             )
         }
@@ -185,25 +185,25 @@ fun ConnectionCard(
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
         color = Color.Transparent,
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = BorderStroke(1.dp, TactileTheme.Border.copy(alpha = 0.5f)),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+        border = BorderStroke(1.dp, TajsOSTheme.Border.copy(alpha = 0.5f))
     ) {
         Row(
-            modifier = Modifier.padding(TactileTheme.SpacingMd),
+            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
         ) {
             Icon(
                 Icons.Default.Add,
                 contentDescription = null,
-                tint = TactileTheme.Muted,
+                tint = TajsOSTheme.Muted,
                 modifier = Modifier.size(16.dp),
             )
             Spacer(Modifier.width(8.dp))
             Text(
                 text = text.uppercase(),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.sp,
             )

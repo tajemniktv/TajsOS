@@ -30,7 +30,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.archive_delete
@@ -65,7 +65,7 @@ internal fun ArchiveMainBlock(
     val archivedNodes by viewModel.archivedNodes.collectAsState()
     val isInitialLoadComplete by viewModel.isInitialLoadComplete.collectAsState()
 
-    Column(modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd)) {
+    Column(modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd)) {
         Text(
             stringResource(Res.string.archive_title),
             style = MaterialTheme.typography.displaySmall,
@@ -73,9 +73,9 @@ internal fun ArchiveMainBlock(
         Text(
             stringResource(Res.string.archive_subtitle),
             style = MaterialTheme.typography.labelSmall,
-            color = TactileTheme.Muted,
+            color = TajsOSTheme.Muted
         )
-        Spacer(modifier = Modifier.height(TactileTheme.SpacingMd))
+        Spacer(modifier = Modifier.height(TajsOSTheme.SpacingMd))
 
         if (archivedNodes.isEmpty() && isInitialLoadComplete) {
             EmptyState(message = stringResource(Res.string.archive_empty))
@@ -110,14 +110,14 @@ internal fun ArchiveMainBlock(
                                     Icon(
                                         Icons.Default.Refresh,
                                         contentDescription = stringResource(Res.string.archive_restore),
-                                        tint = TactileTheme.Primary,
+                                        tint = TajsOSTheme.Primary
                                     )
                                 }
                                 IconButton(onClick = { viewModel.deleteNodePermanently(nodeWithPin.node) }) {
                                     Icon(
                                         Icons.Default.Delete,
                                         contentDescription = stringResource(Res.string.archive_delete),
-                                        tint = TactileTheme.Error,
+                                        tint = TajsOSTheme.Error
                                     )
                                 }
                             }
@@ -127,9 +127,9 @@ internal fun ArchiveMainBlock(
                                 onClick = { onEditNode(nodeWithPin.node.id) },
                                 onLongClick = { onEditNode(nodeWithPin.node.id) },
                             ),
-                        colors = ListItemDefaults.colors(containerColor = TactileTheme.Surface),
+                        colors = ListItemDefaults.colors(containerColor = TajsOSTheme.Surface)
                     )
-                    HorizontalDivider(color = TactileTheme.Muted.copy(alpha = 0.5f))
+                    HorizontalDivider(color = TajsOSTheme.Muted.copy(alpha = 0.5f))
                 }
             }
         }

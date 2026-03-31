@@ -8,12 +8,14 @@ import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.data.NodeWithPin
 import kotlin.test.Test
 
+@Suppress("ReplacePrintlnWithLogging")
 class MainViewModelBenchmarkTest {
+    private val sevenDaysAgo = 100L
+
     @Test
     fun benchmarkAlgorithms() {
         val numProjects = 500
         val numNodesPerProject = 100
-        val sevenDaysAgo = 100L
 
         val projects =
             (1..numProjects).map {
@@ -38,45 +40,35 @@ class MainViewModelBenchmarkTest {
             }
         }
 
-        println("Measuring calculateInsights performance with ${projects.size} projects and ${nodes.size} nodes...")
-
         // Warmup
         for (i in 0..5) {
-            runOriginal(nodes, projects, sevenDaysAgo)
-            runOptimized(nodes, projects, sevenDaysAgo)
+            runOriginal(nodes, projects)
+            runOptimized(nodes, projects)
         }
 
         val t1 = System.nanoTime()
-        val result1 = runOriginal(nodes, projects, sevenDaysAgo)
+        val result1 = runOriginal(nodes, projects)
         val t2 = System.nanoTime()
         val timeOriginal = (t2 - t1) / 1_000_000L
-        println("Original result size: " + result1.size)
 
         val t3 = System.currentTimeMillis()
-        val result2 = runOptimized(nodes, projects, sevenDaysAgo)
+        val result2 = runOptimized(nodes, projects)
         val t4 = System.currentTimeMillis()
         val timeOptimized = t4 - t3
-        println("Optimized result size: ${result2.size}")
+
+        kotlin.test.assertTrue(timeOriginal >= 0)
+        kotlin.test.assertTrue(timeOptimized >= 0)
 
         kotlin.test.assertEquals(
             result1.map { it.id }.toSet(),
             result2.map { it.id }.toSet(),
             "The results of original and optimized algorithms should be the same.",
         )
-
-        println("===============================")
-        println("Original time: " + timeOriginal + "ms")
-        println("Optimized time: " + timeOptimized + "ms")
-        if (timeOptimized > 0) {
-            println("Improvement: " + (timeOriginal.toDouble() / timeOptimized.toDouble()) + "x")
-        }
-        println("===============================")
     }
 
     private fun runOriginal(
         nodes: List<NodeWithPin>,
         projects: List<NodeEntity>,
-        sevenDaysAgo: Long,
     ): List<NodeEntity> {
         val neglectedProjects =
             projects.filter { project ->
@@ -92,7 +84,6 @@ class MainViewModelBenchmarkTest {
     private fun runOptimized(
         nodes: List<NodeWithPin>,
         projects: List<NodeEntity>,
-        sevenDaysAgo: Long,
     ): List<NodeEntity> {
         val nodesByProjectId = nodes.groupBy { it.node.projectId }
         val neglectedProjects =

@@ -4,7 +4,13 @@
 
 package com.tajemniktv.tajsos.data
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Transaction
+import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -12,7 +18,6 @@ import kotlinx.coroutines.flow.Flow
  */
 @Dao
 interface NodeDao {
-
     @Transaction
     @Query("SELECT * FROM nodes ORDER BY createdAt DESC")
     fun getAllNodesWithPins(): Flow<List<NodeWithPin>>
@@ -23,7 +28,7 @@ interface NodeDao {
         INNER JOIN today_pins ON nodes.id = today_pins.nodeId 
         WHERE nodes.status = 'active' AND today_pins.date = :date
         ORDER BY today_pins.position ASC
-    """
+    """,
     )
     fun getTodayNodes(date: String): Flow<List<NodeEntity>>
 
@@ -206,8 +211,13 @@ interface RelationDao {
     @Query("SELECT * FROM relations WHERE fromNodeId = :nodeId AND relationType = 'BELONGS_TO'")
     suspend fun getBelongsToRelations(nodeId: Long): List<RelationEntity>
 
-    @Query("SELECT EXISTS(SELECT 1 FROM relations WHERE ((fromNodeId = :from AND toNodeId = :to) OR (fromNodeId = :to AND toNodeId = :from)))")
-    suspend fun anyRelationExists(from: Long, to: Long): Boolean
+    @Query(
+        "SELECT EXISTS(SELECT 1 FROM relations WHERE ((fromNodeId = :from AND toNodeId = :to) OR (fromNodeId = :to AND toNodeId = :from)))",
+    )
+    suspend fun anyRelationExists(
+        from: Long,
+        to: Long,
+    ): Boolean
 
     @Query("SELECT * FROM relations")
     fun getAllRelations(): Flow<List<RelationEntity>>
@@ -227,7 +237,7 @@ interface TagDao {
         SELECT tags.* FROM tags 
         INNER JOIN node_tags ON tags.id = node_tags.tagId 
         WHERE node_tags.nodeId = :nodeId
-    """
+    """,
     )
     fun getTagsForNode(nodeId: Long): Flow<List<TagEntity>>
 
@@ -235,7 +245,10 @@ interface TagDao {
     suspend fun attachTagToNode(nodeTag: NodeTagEntity)
 
     @Query("DELETE FROM node_tags WHERE nodeId = :nodeId AND tagId = :tagId")
-    suspend fun detachTagFromNode(nodeId: Long, tagId: Long)
+    suspend fun detachTagFromNode(
+        nodeId: Long,
+        tagId: Long,
+    )
 }
 
 @Dao
@@ -346,10 +359,16 @@ interface ScheduleEntryDao {
     fun getScheduleEntriesForItem(itemId: Long): Flow<List<ScheduleEntryEntity>>
 
     @Query("SELECT * FROM schedule_entries WHERE itemId = :itemId AND kind = :kind ORDER BY scheduledAt ASC")
-    suspend fun getScheduleEntriesByKind(itemId: Long, kind: String): List<ScheduleEntryEntity>
+    suspend fun getScheduleEntriesByKind(
+        itemId: Long,
+        kind: String,
+    ): List<ScheduleEntryEntity>
 
     @Query("DELETE FROM schedule_entries WHERE itemId = :itemId AND kind = :kind")
-    suspend fun deleteScheduleEntriesByKind(itemId: Long, kind: String)
+    suspend fun deleteScheduleEntriesByKind(
+        itemId: Long,
+        kind: String,
+    )
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertScheduleEntry(entry: ScheduleEntryEntity): Long
@@ -421,7 +440,10 @@ interface CalendarProviderDao {
 @Dao
 interface CalendarEventDao {
     @Query("SELECT * FROM calendar_events WHERE startAt >= :from AND startAt <= :to")
-    fun getEventsInRange(from: Long, to: Long): Flow<List<CalendarEventEntity>>
+    fun getEventsInRange(
+        from: Long,
+        to: Long,
+    ): Flow<List<CalendarEventEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertEvents(events: List<CalendarEventEntity>)
@@ -478,7 +500,10 @@ interface ModeDao {
     suspend fun insertUsageLog(log: ModeUsageLogEntity): Long
 
     @Query("UPDATE mode_usage_logs SET deactivatedAt = :timestamp WHERE id = :id")
-    suspend fun deactivateLog(id: Long, timestamp: Long)
+    suspend fun deactivateLog(
+        id: Long,
+        timestamp: Long,
+    )
 }
 
 @Dao

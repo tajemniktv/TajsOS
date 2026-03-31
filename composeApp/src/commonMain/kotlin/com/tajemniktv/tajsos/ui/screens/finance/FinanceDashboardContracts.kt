@@ -10,7 +10,10 @@ import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.MaintenanceStatusItem
 import org.jetbrains.compose.resources.StringResource
-import tajsos.composeapp.generated.resources.*
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.view_overdue
+import tajsos.composeapp.generated.resources.view_queue
+import tajsos.composeapp.generated.resources.view_recurring
 
 /**
  * Surface variants for finance dashboard layouts.
@@ -31,8 +34,8 @@ data class FinanceDashboardBlock(
  * Finance dashboard layout plan.
  */
 data class FinanceDashboardPlan(
-    val primary: List<com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardBlock>,
-    val secondary: List<com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardBlock> = emptyList(),
+    val primary: List<FinanceDashboardBlock>,
+    val secondary: List<FinanceDashboardBlock> = emptyList(),
 )
 
 /**
@@ -64,12 +67,12 @@ data class FinanceDashboardContext(
     val confidence: Int,
     val liquidity: Double,
     val bars: List<Int>,
-    val maintenanceView: com.tajemniktv.tajsos.ui.screens.finance.FinanceMaintenanceView,
-    val onMaintenanceViewChange: (com.tajemniktv.tajsos.ui.screens.finance.FinanceMaintenanceView) -> Unit,
+    val maintenanceView: FinanceMaintenanceView,
+    val onMaintenanceViewChange: (FinanceMaintenanceView) -> Unit,
     val onEditNode: (Long) -> Unit,
 )
 
 /**
  * Function signature for one finance dashboard block renderer.
  */
-typealias FinanceDashboardBlockRenderer = @Composable (com.tajemniktv.tajsos.ui.screens.finance.FinanceDashboardContext) -> Unit
+typealias FinanceDashboardBlockRenderer = @Composable (FinanceDashboardContext) -> Unit

@@ -14,8 +14,8 @@ data class ProtocolsDashboardBlock(
 )
 
 data class ProtocolsDashboardPlan(
-    val primary: List<com.tajemniktv.tajsos.ui.screens.protocols.ProtocolsDashboardBlock>,
-    val secondary: List<com.tajemniktv.tajsos.ui.screens.protocols.ProtocolsDashboardBlock> = emptyList(),
+    val primary: List<ProtocolsDashboardBlock>,
+    val secondary: List<ProtocolsDashboardBlock> = emptyList(),
 )
 
 data class ProtocolsDashboardContext(
@@ -23,4 +23,4 @@ data class ProtocolsDashboardContext(
     val onEditNode: (Long) -> Unit,
 )
 
-typealias ProtocolsDashboardBlockRenderer = @Composable (com.tajemniktv.tajsos.ui.screens.protocols.ProtocolsDashboardContext) -> Unit
+typealias ProtocolsDashboardBlockRenderer = @Composable (ProtocolsDashboardContext) -> Unit

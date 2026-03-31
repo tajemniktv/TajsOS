@@ -33,7 +33,7 @@ import com.tajemniktv.tajsos.data.isNoteItem
 import com.tajemniktv.tajsos.data.isRecordItem
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
@@ -92,7 +92,7 @@ internal fun NotesMainBlock(
             }
         }
 
-    Column(modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd)) {
+    Column(modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd)) {
         Text(
             stringResource(Res.string.notes_title),
             style = MaterialTheme.typography.displaySmall,
@@ -113,11 +113,11 @@ internal fun NotesMainBlock(
             shape = MaterialTheme.shapes.medium,
         )
 
-        Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
+        Spacer(modifier = Modifier.height(TajsOSTheme.SpacingSm))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+            horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
         ) {
             listOf("TYPE", "AREA", "PROJECT", "DATE", "MEDIA").forEach { group ->
                 FilterChip(
@@ -128,34 +128,41 @@ internal fun NotesMainBlock(
             }
         }
 
-        val typePinned = remember(filteredNodes) {
-            filteredNodes.filter { it.node.isPinned }
-        }
-        val typeNotes = remember(filteredNodes) {
-            filteredNodes.filter { !it.node.isPinned && it.node.isNoteItem() }
-        }
-        val typeRecords = remember(filteredNodes) {
-            filteredNodes.filter { !it.node.isPinned && it.node.isRecordItem() }
-        }
-
-        val nodesByArea = remember(filteredNodes) {
-            filteredNodes.groupBy { it.node.areaId }
-        }
-
-        val nodesByProject = remember(filteredNodes) {
-            filteredNodes.groupBy { it.node.projectId }
-        }
-
-        val nodesByDate = remember(filteredNodes) {
-            filteredNodes.groupBy {
-                val instant = Instant.fromEpochMilliseconds(it.node.createdAt)
-                instant.toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
+        val typePinned =
+            remember(filteredNodes) {
+                filteredNodes.filter { it.node.isPinned }
             }
-        }
+        val typeNotes =
+            remember(filteredNodes) {
+                filteredNodes.filter { !it.node.isPinned && it.node.isNoteItem() }
+            }
+        val typeRecords =
+            remember(filteredNodes) {
+                filteredNodes.filter { !it.node.isPinned && it.node.isRecordItem() }
+            }
 
-        val nodesByMediaType = remember(filteredNodes) {
-            filteredNodes.groupBy { it.node.mediaType }
-        }
+        val nodesByArea =
+            remember(filteredNodes) {
+                filteredNodes.groupBy { it.node.areaId }
+            }
+
+        val nodesByProject =
+            remember(filteredNodes) {
+                filteredNodes.groupBy { it.node.projectId }
+            }
+
+        val nodesByDate =
+            remember(filteredNodes) {
+                filteredNodes.groupBy {
+                    val instant = Instant.fromEpochMilliseconds(it.node.createdAt)
+                    instant.toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
+                }
+            }
+
+        val nodesByMediaType =
+            remember(filteredNodes) {
+                filteredNodes.groupBy { it.node.mediaType }
+            }
 
         LazyColumn(
             modifier = Modifier.weight(1f),
@@ -285,7 +292,11 @@ internal fun NotesMainBlock(
                             }
                         }
                     }
-                    val other = (nodesByMediaType[null] ?: emptyList()).filter { it.node.type == "resource" }
+                    val other =
+                        (
+                            nodesByMediaType[null]
+                                ?: emptyList()
+                        ).filter { it.node.type == "resource" }
                     if (other.isNotEmpty()) {
                         item { GroupHeader(stringResource(Res.string.media_other)) }
                         items(other, key = { it.node.id }) { node ->

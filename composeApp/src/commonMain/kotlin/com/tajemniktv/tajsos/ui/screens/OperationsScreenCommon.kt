@@ -16,11 +16,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.StringResource
-import tajsos.composeapp.generated.resources.*
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.view_all
+import tajsos.composeapp.generated.resources.view_inbox
+import tajsos.composeapp.generated.resources.view_overdue
+import tajsos.composeapp.generated.resources.view_queue
+import tajsos.composeapp.generated.resources.view_recurring
+import tajsos.composeapp.generated.resources.view_resolved
+import tajsos.composeapp.generated.resources.view_review
 import kotlin.time.Instant
 
 internal enum class OpenLoopView(
@@ -71,24 +78,24 @@ internal fun GroupedOpenLoopSection(
     if (items.isEmpty()) return
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
+        color = TajsOSTheme.Surface,
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TactileTheme.RadiusMd),
-        border = BorderStroke(1.dp, TactileTheme.Border),
+                .RoundedCornerShape(TajsOSTheme.RadiusMd),
+        border = BorderStroke(1.dp, TajsOSTheme.Border)
     ) {
         Column(
-            modifier = Modifier.padding(TactileTheme.SpacingMd),
+            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
             verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
             Text(
                 title,
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary,
+                color = TajsOSTheme.Primary,
                 fontWeight = FontWeight.Bold,
             )
             items.forEach {
-                Text(it, style = MaterialTheme.typography.bodySmall, color = TactileTheme.Text)
+                Text(it, style = MaterialTheme.typography.bodySmall, color = TajsOSTheme.Text)
             }
         }
     }

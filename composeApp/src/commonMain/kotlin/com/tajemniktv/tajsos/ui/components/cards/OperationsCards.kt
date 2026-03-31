@@ -36,7 +36,7 @@ import com.tajemniktv.tajsos.ui.main.state.DirectionCommitmentStatus
 import com.tajemniktv.tajsos.ui.main.state.DistinctionQuestionState
 import com.tajemniktv.tajsos.ui.main.state.RelationshipStatusItem
 import com.tajemniktv.tajsos.ui.main.state.TransitionProtocolItem
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.open_loop_action_archive
@@ -69,28 +69,28 @@ fun OpenLoopCard(
     val urgencyColor =
         when (item.urgency)
         {
-            "critical" -> TactileTheme.Error
-            "high" -> TactileTheme.Accent
-            "medium" -> TactileTheme.Primary
-            else -> TactileTheme.Success
+            "critical" -> TajsOSTheme.Error
+            "high" -> TajsOSTheme.Accent
+            "medium" -> TajsOSTheme.Primary
+            else -> TajsOSTheme.Success
         }
 
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
+        color = TajsOSTheme.Surface,
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TactileTheme.RadiusMd),
+                .RoundedCornerShape(TajsOSTheme.RadiusMd),
         border = BorderStroke(1.dp, urgencyColor.copy(alpha = 0.25f)),
     ) {
         Column(
-            modifier = Modifier.padding(TactileTheme.SpacingMd),
+            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
                 item.node.node.title,
                 style = MaterialTheme.typography.titleMedium,
-                color = TactileTheme.Text,
+                color = TajsOSTheme.Text,
                 fontWeight = FontWeight.Bold,
             )
             if (item.node.node.content
@@ -99,7 +99,7 @@ fun OpenLoopCard(
                 Text(
                     item.node.node.content,
                     style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted
                 )
             }
             Text(
@@ -124,11 +124,11 @@ fun OpenLoopCard(
                     item.relatedPersonName ?: stringResource(Res.string.open_loop_none),
                 ),
                 style = MaterialTheme.typography.bodySmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted
             )
             FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
             ) {
                 openLoopTypes.forEach { type ->
                     FilterChip(
@@ -138,10 +138,10 @@ fun OpenLoopCard(
                     )
                 }
             }
-            HorizontalDivider(color = TactileTheme.Border)
+            HorizontalDivider(color = TajsOSTheme.Border)
             FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
             ) {
                 AssistChip(
                     onClick = { onEditNode(item.node.node.id) },
@@ -188,28 +188,28 @@ fun MaintenanceCard(
     val urgencyColor =
         when (item.urgency)
         {
-            "critical" -> TactileTheme.Error
-            "high" -> TactileTheme.Accent
-            "medium" -> TactileTheme.Primary
-            else -> TactileTheme.Success
+            "critical" -> TajsOSTheme.Error
+            "high" -> TajsOSTheme.Accent
+            "medium" -> TajsOSTheme.Primary
+            else -> TajsOSTheme.Success
         }
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
+        color = TajsOSTheme.Surface,
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TactileTheme.RadiusMd),
+                .RoundedCornerShape(TajsOSTheme.RadiusMd),
         border = BorderStroke(1.dp, urgencyColor.copy(alpha = 0.25f)),
     ) {
         Column(
-            modifier = Modifier.padding(TactileTheme.SpacingMd),
+            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
                 item.node.node.title,
                 style = MaterialTheme.typography.titleMedium,
-                color = TactileTheme.Text,
-                fontWeight = FontWeight.Bold,
+                color = TajsOSTheme.Text,
+                fontWeight = FontWeight.Bold
             )
             Text(
                 "${
@@ -221,11 +221,11 @@ fun MaintenanceCard(
             Text(
                 "Area ${areaName ?: "Unassigned"} • Overdue ${item.overdueDays}d${item.dueInDays?.let { " • Due in ${it}d" } ?: ""}",
                 style = MaterialTheme.typography.bodySmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted
             )
             FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
             ) {
                 maintenanceTypes.forEach { type ->
                     FilterChip(
@@ -236,8 +236,8 @@ fun MaintenanceCard(
                 }
             }
             FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
             ) {
                 FilterChip(
                     selected = item.node.node.recurringInterval == "DAILY",
@@ -271,10 +271,10 @@ fun MaintenanceCard(
                 }, label = { Text("DUE +7D") })
                 AssistChip(onClick = { onSetOverdue(null) }, label = { Text("CLEAR DUE") })
             }
-            HorizontalDivider(color = TactileTheme.Border)
+            HorizontalDivider(color = TajsOSTheme.Border)
             FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
             ) {
                 AssistChip(onClick = { onEditNode(item.node.node.id) }, label = { Text("OPEN") })
                 if (item.node.node.status == "active") {
@@ -303,33 +303,33 @@ fun ProtocolCard(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
+        color = TajsOSTheme.Surface,
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TactileTheme.RadiusMd),
-        border = BorderStroke(1.dp, TactileTheme.Border),
+                .RoundedCornerShape(TajsOSTheme.RadiusMd),
+        border = BorderStroke(1.dp, TajsOSTheme.Border)
     ) {
         Column(
-            modifier = Modifier.padding(TactileTheme.SpacingMd),
+            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
                 item.node.node.title
                     .uppercase(),
                 style = MaterialTheme.typography.titleSmall,
-                color = TactileTheme.Text,
-                fontWeight = FontWeight.Bold,
+                color = TajsOSTheme.Text,
+                fontWeight = FontWeight.Bold
             )
             Text(
                 "Checklist ${item.checklistDone}/${item.checklistTotal} • Runs ${item.triggerCount}",
                 style = MaterialTheme.typography.bodySmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted
             )
             item.lastTriggeredAt?.let {
                 Text(
                     "Last run ${formatTimestamp(it)}",
                     style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted
                 )
             }
             if (checklistItems.isNotEmpty()) {
@@ -342,8 +342,8 @@ fun ProtocolCard(
                 }
             }
             FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
             ) {
                 AssistChip(onClick = { onEditNode(item.node.node.id) }, label = { Text("OPEN") })
                 AssistChip(onClick = onRun, label = { Text("RUN") })
@@ -357,30 +357,30 @@ fun ProtocolCard(
 fun DistinctionQuestionCard(item: DistinctionQuestionState) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
+        color = TajsOSTheme.Surface,
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TactileTheme.RadiusMd),
+                .RoundedCornerShape(TajsOSTheme.RadiusMd),
         border =
             BorderStroke(
                 1.dp,
-                if (item.answered) TactileTheme.Border else TactileTheme.Error.copy(alpha = 0.5f),
-            ),
+                if (item.answered) TajsOSTheme.Border else TajsOSTheme.Error.copy(alpha = 0.5f)
+            )
     ) {
         Column(
-            modifier = Modifier.padding(TactileTheme.SpacingMd),
+            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
             verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
             Text(
                 item.question.uppercase(),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary,
-                fontWeight = FontWeight.Bold,
+                color = TajsOSTheme.Primary,
+                fontWeight = FontWeight.Bold
             )
             Text(
                 item.answer,
                 style = MaterialTheme.typography.bodySmall,
-                color = if (item.answered) TactileTheme.Text else TactileTheme.Error,
+                color = if (item.answered) TajsOSTheme.Text else TajsOSTheme.Error
             )
         }
     }
@@ -390,42 +390,42 @@ fun DistinctionQuestionCard(item: DistinctionQuestionState) {
 fun DirectionCommitmentCard(item: DirectionCommitmentStatus) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
+        color = TajsOSTheme.Surface,
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TactileTheme.RadiusMd),
+                .RoundedCornerShape(TajsOSTheme.RadiusMd),
         border =
             BorderStroke(
                 1.dp,
                 if (item.satisfied) {
-                    TactileTheme.Success.copy(alpha = 0.5f)
+                    TajsOSTheme.Success.copy(alpha = 0.5f)
                 } else {
-                    TactileTheme.Error.copy(
-                        alpha = 0.5f,
+                    TajsOSTheme.Error.copy(
+                        alpha = 0.5f
                     )
                 },
             ),
     ) {
         Column(
-            modifier = Modifier.padding(TactileTheme.SpacingMd),
+            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
             verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
             Text(
                 item.commitment.uppercase(),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary,
-                fontWeight = FontWeight.Bold,
+                color = TajsOSTheme.Primary,
+                fontWeight = FontWeight.Bold
             )
             Text(
                 if (item.satisfied) "Satisfied" else "Needs work",
                 style = MaterialTheme.typography.bodySmall,
-                color = if (item.satisfied) TactileTheme.Success else TactileTheme.Error,
-                fontWeight = FontWeight.Bold,
+                color = if (item.satisfied) TajsOSTheme.Success else TajsOSTheme.Error,
+                fontWeight = FontWeight.Bold
             )
             Text(
                 item.evidence,
                 style = MaterialTheme.typography.bodySmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted,
             )
         }
     }
@@ -435,42 +435,42 @@ fun DirectionCommitmentCard(item: DirectionCommitmentStatus) {
 fun CoreShiftCriterionCard(item: CoreLifeOSShiftItem) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
+        color = TajsOSTheme.Surface,
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TactileTheme.RadiusMd),
+                .RoundedCornerShape(TajsOSTheme.RadiusMd),
         border =
             BorderStroke(
                 1.dp,
                 if (item.satisfied) {
-                    TactileTheme.Success.copy(alpha = 0.5f)
+                    TajsOSTheme.Success.copy(alpha = 0.5f)
                 } else {
-                    TactileTheme.Error.copy(
-                        alpha = 0.5f,
+                    TajsOSTheme.Error.copy(
+                        alpha = 0.5f
                     )
                 },
             ),
     ) {
         Column(
-            modifier = Modifier.padding(TactileTheme.SpacingMd),
+            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
             verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
             Text(
                 item.criterion.uppercase(),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary,
-                fontWeight = FontWeight.Bold,
+                color = TajsOSTheme.Primary,
+                fontWeight = FontWeight.Bold
             )
             Text(
                 if (item.satisfied) "Satisfied" else "Needs attention",
                 style = MaterialTheme.typography.bodySmall,
-                color = if (item.satisfied) TactileTheme.Success else TactileTheme.Error,
-                fontWeight = FontWeight.Bold,
+                color = if (item.satisfied) TajsOSTheme.Success else TajsOSTheme.Error,
+                fontWeight = FontWeight.Bold
             )
             Text(
                 item.evidence,
                 style = MaterialTheme.typography.bodySmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted,
             )
         }
     }
@@ -500,39 +500,39 @@ fun PersonRelationshipCard(
 
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
+        color = TajsOSTheme.Surface,
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TactileTheme.RadiusMd),
+                .RoundedCornerShape(TajsOSTheme.RadiusMd),
         border =
             BorderStroke(
                 1.dp,
-                if (item.isImportant) TactileTheme.Primary else TactileTheme.Border,
-            ),
+                if (item.isImportant) TajsOSTheme.Primary else TajsOSTheme.Border
+            )
     ) {
         Column(
-            modifier = Modifier.padding(TactileTheme.SpacingMd),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
                 person.title,
                 style = MaterialTheme.typography.titleMedium,
-                color = TactileTheme.Text,
-                fontWeight = FontWeight.Bold,
+                color = TajsOSTheme.Text,
+                fontWeight = FontWeight.Bold
             )
             Text(
                 "Context ${(item.relationshipType ?: "general").uppercase()} • Last contact ${item.daysSinceLastContact ?: "?"}d • Follow-up ${item.followUpDueInDays ?: "none"}",
                 style = MaterialTheme.typography.bodySmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted,
             )
             Text(
                 "Linked ${item.linkedItemsCount} • Replies ${item.pendingReplyCount} • Shared plans ${item.sharedPlansCount} • Ask-next-time ${item.askAboutNextTimeCount}",
                 style = MaterialTheme.typography.bodySmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted,
             )
             FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
             ) {
                 FilterChip(
                     selected = item.isImportant,
@@ -561,8 +561,8 @@ fun PersonRelationshipCard(
                 )
             }
             FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
             ) {
                 AssistChip(
                     onClick = { viewModel.setPersonLastContactNow(person) },
@@ -594,8 +594,8 @@ fun PersonRelationshipCard(
                 )
             }
             FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
             ) {
                 AssistChip(onClick = {
                     viewModel.createReplyNeededForPerson(

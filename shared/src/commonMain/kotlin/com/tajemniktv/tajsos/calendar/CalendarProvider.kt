@@ -28,7 +28,7 @@ interface CalendarProvider {
     suspend fun fetchEvents(
         provider: CalendarProviderEntity,
         from: Instant,
-        to: Instant
+        to: Instant,
     ): List<CalendarEventEntity>
 
     /**
@@ -42,8 +42,6 @@ interface CalendarProvider {
     suspend fun sync(
         provider: CalendarProviderEntity,
         from: Instant,
-        to: Instant
-    ): List<CalendarEventEntity> {
-        return fetchEvents(provider, from, to)
-    }
+        to: Instant,
+    ): List<CalendarEventEntity> = fetchEvents(provider, from, to)
 }

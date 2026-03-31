@@ -14,8 +14,8 @@ data class ProjectsDashboardBlock(
 )
 
 data class ProjectsDashboardPlan(
-    val primary: List<com.tajemniktv.tajsos.ui.screens.projects.ProjectsDashboardBlock>,
-    val secondary: List<com.tajemniktv.tajsos.ui.screens.projects.ProjectsDashboardBlock> = emptyList(),
+    val primary: List<ProjectsDashboardBlock>,
+    val secondary: List<ProjectsDashboardBlock> = emptyList(),
 )
 
 data class ProjectsDashboardContext(
@@ -23,4 +23,4 @@ data class ProjectsDashboardContext(
     val onNavigateTo: (String) -> Unit,
 )
 
-typealias ProjectsDashboardBlockRenderer = @Composable (com.tajemniktv.tajsos.ui.screens.projects.ProjectsDashboardContext) -> Unit
+typealias ProjectsDashboardBlockRenderer = @Composable (ProjectsDashboardContext) -> Unit

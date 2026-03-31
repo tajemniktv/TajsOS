@@ -9,7 +9,6 @@ import com.tajemniktv.tajsos.data.PackRegistry
 import com.tajemniktv.tajsos.ui.DashboardUIState
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import kotlin.collections.plus
 
 /**
  * Defines supported dashboard surfaces for layout planning.

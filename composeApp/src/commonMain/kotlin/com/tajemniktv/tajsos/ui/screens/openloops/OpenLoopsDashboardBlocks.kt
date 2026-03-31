@@ -21,7 +21,7 @@ import androidx.compose.ui.Modifier
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.lens.LensUiContract
 import com.tajemniktv.tajsos.ui.screens.OpenLoopView
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 
 object OpenLoopsDashboardBlockRegistry {
@@ -48,18 +48,18 @@ internal fun OpenLoopsMainBlock(
     var openLoopView by remember { mutableStateOf(OpenLoopView.Inbox) }
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+        modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd),
+        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
     ) {
         Text(
             text = stringResource(LensUiContract.unresolvedLens.title),
             style = MaterialTheme.typography.displaySmall,
-            color = TactileTheme.Text,
+            color = TajsOSTheme.Text
         )
         Text(
             text = stringResource(LensUiContract.unresolvedLens.subtitle),
             style = MaterialTheme.typography.bodySmall,
-            color = TactileTheme.Muted,
+            color = TajsOSTheme.Muted
         )
 
         OpenLoopsLayer(

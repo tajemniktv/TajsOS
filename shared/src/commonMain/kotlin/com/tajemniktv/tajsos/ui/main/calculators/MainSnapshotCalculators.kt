@@ -31,6 +31,7 @@ import com.tajemniktv.tajsos.ui.main.state.VaultsSnapshot
 import kotlinx.datetime.*
 import kotlin.math.sqrt
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.days
 import kotlin.time.Instant
 
 /**
@@ -119,13 +120,13 @@ fun calculateInsights(
 
     val completionsByArea =
         recentCompletions
-            .filter { it.node.areaId != null }
-            .groupBy { it.node.areaId!! }
+            .mapNotNull { item -> item.node.areaId?.let { it to item } }
+            .groupBy({ it.first }, { it.second })
             .mapValues { it.value.size }
     val completionsByProject =
         recentCompletions
-            .filter { it.node.projectId != null }
-            .groupBy { it.node.projectId!! }
+            .mapNotNull { item -> item.node.projectId?.let { it to item } }
+            .groupBy({ it.first }, { it.second })
             .mapValues { it.value.size }
 
     val inboxGrowth = recentNodes.count { it.node.inboxState }
@@ -299,8 +300,8 @@ fun calculateInsights(
     // Insight Cards Logic (Roadmap Section 7)
     val mostPostponedAreaId =
         nodes
-            .filter { it.node.areaId != null && it.node.postponeCount > 0 }
-            .groupBy { it.node.areaId!! }
+            .mapNotNull { item -> item.node.areaId?.takeIf { item.node.postponeCount > 0 }?.let { it to item } }
+            .groupBy({ it.first }, { it.second })
             .maxByOrNull { entry -> entry.value.sumOf { it.node.postponeCount } }
             ?.key
 
@@ -670,7 +671,7 @@ fun calculateOpenLoopsSnapshot(
             .sortedByDescending { it.node.node.completedAt ?: 0L }
 
     val byArea = active.groupBy { it.node.node.areaId }
-    val byPerson = active.filter { it.relatedPersonId != null }.groupBy { it.relatedPersonId!! }
+    val byPerson = active.mapNotNull { item -> item.relatedPersonId?.let { it to item } }.groupBy({ it.first }, { it.second })
     val byUrgency =
         linkedMapOf(
             "critical" to active.filter { it.urgency == "critical" },
@@ -2672,4 +2673,29 @@ fun calculateStudentBoardState(
         studySessionsThisWeek = studySessionsThisWeek,
         studyMinutesThisWeek = studyMinutesThisWeek,
     )
+}
+
+/**
+ * Calculates a list of stale tasks that are overdue by more than the threshold.
+ * Excludes completed, archived, already someday, pinned, and recurring tasks.
+ *
+ * @param nodes The complete list of nodes in the system.
+ * @param now The current time to use for calculations.
+ * @param cutoffDays The threshold in days before a task is considered stale.
+ */
+fun calculateStaleTasks(
+    nodes: List<NodeEntity>,
+    now: Instant,
+    cutoffDays: Int = 3,
+): List<NodeEntity> {
+    val cutoffThreshold = (now - cutoffDays.days).toEpochMilliseconds()
+    return nodes.filter { node ->
+        node.isTaskItem() &&
+            node.status == "active" &&
+            node.taskStateOrNull() == TaskState.ACTIVE &&
+            !node.isPinned &&
+            (!node.isRecurring && node.recurringInterval == null) &&
+            node.dueAt != null &&
+            node.dueAt < cutoffThreshold
+    }
 }

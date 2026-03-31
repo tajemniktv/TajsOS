@@ -28,7 +28,7 @@ class MainNodeSupport(
     private val repository: AppRepository,
     private val scope: CoroutineScope,
     private val currentNodes: () -> List<NodeWithPin>,
-    private val currentTags: () -> List<TagEntity>,
+    private val currentTags: () -> List<TagEntity>
 ) {
     /**
      * Inspects a node's primary content field, parses out explicitly defined internal links
@@ -59,8 +59,8 @@ class MainNodeSupport(
                                     RelationEntity(
                                         fromNodeId = nodeId,
                                         toNodeId = target.node.id,
-                                        relationType = "MENTION",
-                                    ),
+                                        relationType = "MENTION"
+                                    )
                                 )
                             }
                     }
@@ -77,11 +77,7 @@ class MainNodeSupport(
      * @param tagName The raw, un-normalized string name of the tag.
      * @param enabled If true, attaches the tag to the node. If false, detaches the tag.
      */
-    suspend fun setTagOnNode(
-        nodeId: Long,
-        tagName: String,
-        enabled: Boolean,
-    ) {
+    suspend fun setTagOnNode(nodeId: Long, tagName: String, enabled: Boolean) {
         val normalized = tagName.trim().lowercase()
         val existingTag = currentTags().firstOrNull { it.normalizedName == normalized }
         val tagId =
@@ -89,8 +85,8 @@ class MainNodeSupport(
                 ?: repository.insertTag(
                     TagEntity(
                         name = tagName.trim(),
-                        normalizedName = normalized,
-                    ),
+                        normalizedName = normalized
+                    )
                 )
         if (enabled) {
             repository.attachTagToNode(nodeId, tagId)

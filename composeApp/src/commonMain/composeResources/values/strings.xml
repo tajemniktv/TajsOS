@@ -22,7 +22,7 @@
     <string name="nav_uptime_value">99.9%</string>
 
     <!-- Screens -->
-    <string name="screen_dash">DASH</string>
+    <string name="screen_dash">DASHBOARD</string>
     <string name="screen_inbox">INBOX</string>
     <string name="screen_search">FIND</string>
     <string name="screen_today">TODAY</string>
@@ -41,6 +41,7 @@
     <string name="screen_project">PROJECT</string>
     <string name="screen_opts">OPTS</string>
     <string name="screen_settings_health">HEALTH</string>
+    <string name="screen_settings_appearance">APPEARANCE</string>
     <string name="screen_settings_feature_packs">FEATURE PACKS</string>
     <string name="screen_settings_data">DATA</string>
     <string name="screen_settings_debug">DEBUG</string>
@@ -221,6 +222,7 @@
 
     <!-- Settings -->
     <string name="settings_title">SETTINGS</string>
+    <string name="settings_tab_preferences">Preferences</string>
     <string name="settings_security">SECURITY</string>
     <string name="settings_biometric_lock">BIOMETRIC LOCK</string>
     <string name="settings_biometric_desc">Require authentication to open</string>
@@ -423,6 +425,10 @@
     <string name="notes_resources">REFERENCE</string>
     <string name="notes_empty">NO KNOWLEDGE FOUND</string>
     <string name="notes_no_results">NO MATCHING RESULTS</string>
+    <string name="notes_tab_workspace">Workspace</string>
+    <string name="notes_tab_recent">Recent</string>
+    <string name="notes_tab_reference">Reference</string>
+    <string name="notes_tab_rules">Rules</string>
 
     <!-- Tasks Screen -->
     <string name="tasks_title">TASKS</string>

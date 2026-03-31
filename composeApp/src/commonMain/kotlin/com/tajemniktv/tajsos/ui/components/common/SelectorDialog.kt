@@ -6,12 +6,25 @@ package com.tajemniktv.tajsos.ui.components.common
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 /**
  * Displays a full-screen selector dialog presenting a grid of selectable options.
@@ -33,6 +46,10 @@ import com.tajemniktv.tajsos.ui.theme.TactileTheme
  * @param onDismiss Callback invoked when the dialog should be dismissed.
  * @param title Dialog title displayed in the header.
  * @param prefix Short label shown above the title; defaults to "SYSTEM_SELECTOR // MODULE_INTAKE".
+ * @param show Whether the selector is visible.
+ * @param onDismiss Callback invoked when the selector is dismissed.
+ * @param title The primary title to display.
+ * @param prefix Functional prefix for the selector header.
  * @param options List of items to render as selectable tiles.
  * @param selectedOption Currently highlighted option, or `null` if none.
  * @param onSelect Callback invoked with the option that was tapped.
@@ -63,14 +80,14 @@ fun <T> SelectorDialog(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .background(TactileTheme.Background.copy(alpha = 0.95f)),
-            color = TactileTheme.Background.copy(alpha = 0.95f),
+                    .background(TajsOSTheme.Background.copy(alpha = 0.95f)),
+            color = TajsOSTheme.Background.copy(alpha = 0.95f)
         ) {
             Column(
                 modifier =
                     Modifier
                         .fillMaxSize()
-                        .padding(TactileTheme.SpacingMd),
+                        .padding(TajsOSTheme.SpacingMd)
             ) {
                 // Header
                 Row(
@@ -82,47 +99,47 @@ fun <T> SelectorDialog(
                         Text(
                             prefix.uppercase(),
                             style = MaterialTheme.typography.labelSmall,
-                            color = TactileTheme.Muted,
+                            color = TajsOSTheme.Muted,
                             fontWeight = FontWeight.Bold,
                             letterSpacing = 1.sp,
                         )
                         Text(
                             title.uppercase(),
                             style = MaterialTheme.typography.headlineMedium,
-                            color = TactileTheme.Text,
+                            color = TajsOSTheme.Text,
                             fontWeight = FontWeight.ExtraBold,
                         )
                     }
                     Surface(
                         color = Color.Black.copy(alpha = 0.5f),
                         shape = RoundedCornerShape(4.dp),
-                        border = BorderStroke(1.dp, TactileTheme.Border),
+                        border = BorderStroke(1.dp, TajsOSTheme.Border)
                     ) {
                         Text(
                             "STATUS: READY",
                             style = MaterialTheme.typography.labelSmall,
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                            color = TactileTheme.Muted,
+                            color = TajsOSTheme.Muted,
                             fontWeight = FontWeight.Bold,
                         )
                     }
                 }
 
-                Spacer(Modifier.height(TactileTheme.SpacingLg))
+                Spacer(Modifier.height(TajsOSTheme.SpacingLg))
 
                 // Grid
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
-                    horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
-                    verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+                    horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
+                    verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
                     modifier = Modifier.weight(1f),
                 ) {
                     items(options) { option ->
                         val isSelected = option == selectedOption
                         Surface(
                             onClick = { onSelect(option) },
-                            color = if (isSelected) TactileTheme.Primary else TactileTheme.Surface,
-                            shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                            color = if (isSelected) TajsOSTheme.Primary else TajsOSTheme.Surface,
+                            shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                             modifier = Modifier.height(140.dp),
                             border =
                                 if (isSelected) {
@@ -130,34 +147,38 @@ fun <T> SelectorDialog(
                                 } else {
                                     BorderStroke(
                                         1.dp,
-                                        TactileTheme.Border,
+                                        TajsOSTheme.Border
                                     )
                                 },
                         ) {
                             Column(
-                                modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd),
+                                modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd),
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.Center,
                             ) {
                                 Icon(
                                     optionIcon(option),
                                     contentDescription = null,
-                                    tint = if (isSelected) TactileTheme.Background else TactileTheme.Primary,
+                                    tint = if (isSelected) TajsOSTheme.Background else TajsOSTheme.Primary,
                                     modifier = Modifier.size(32.dp),
                                 )
-                                Spacer(Modifier.height(TactileTheme.SpacingMd))
+                                Spacer(Modifier.height(TajsOSTheme.SpacingMd))
                                 Text(
                                     optionName(option).uppercase(),
                                     style = MaterialTheme.typography.labelLarge,
                                     fontWeight = FontWeight.ExtraBold,
-                                    color = if (isSelected) TactileTheme.Background else TactileTheme.Text,
+                                    color = if (isSelected) TajsOSTheme.Background else TajsOSTheme.Text
                                 )
                                 val sub = optionSubtext(option)
                                 if (sub.isNotEmpty()) {
                                     Text(
                                         sub.uppercase(),
                                         style = MaterialTheme.typography.labelSmall,
-                                        color = if (isSelected) TactileTheme.Background.copy(alpha = 0.7f) else TactileTheme.Muted,
+                                        color = if (isSelected) {
+                                            TajsOSTheme.Background.copy(
+                                                alpha = 0.7f
+                                        )
+                                        } else TajsOSTheme.Muted,
                                         fontSize = 8.sp,
                                         fontWeight = FontWeight.Bold,
                                     )
@@ -169,7 +190,7 @@ fun <T> SelectorDialog(
 
                 // Footer
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = TactileTheme.SpacingMd),
+                    modifier = Modifier.fillMaxWidth().padding(vertical = TajsOSTheme.SpacingMd),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -177,14 +198,14 @@ fun <T> SelectorDialog(
                         Text(
                             "TAJS_OS_v1.2.0  •  NEURAL_INTERFACE",
                             style = MaterialTheme.typography.labelSmall,
-                            color = TactileTheme.Muted,
+                            color = TajsOSTheme.Muted,
                             fontSize = 8.sp,
-                            fontWeight = FontWeight.Bold,
+                            fontWeight = FontWeight.Bold
                         )
                         Text(
                             "ACTIVE",
                             style = MaterialTheme.typography.labelSmall,
-                            color = TactileTheme.Muted,
+                            color = TajsOSTheme.Muted,
                             fontSize = 8.sp,
                             fontWeight = FontWeight.Bold,
                         )
@@ -193,10 +214,10 @@ fun <T> SelectorDialog(
                         onClick = onDismiss,
                         colors =
                             ButtonDefaults.buttonColors(
-                                containerColor = TactileTheme.Surface,
-                                contentColor = TactileTheme.Text,
+                                containerColor = TajsOSTheme.Surface,
+                                contentColor = TajsOSTheme.Text,
                             ),
-                        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                         modifier = Modifier.height(48.dp),
                     ) {
                         Text(

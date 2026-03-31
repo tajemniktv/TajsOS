@@ -4,27 +4,23 @@
 
 package com.tajemniktv.tajsos.ui.screens.inbox
 
-fun buildInboxDashboardPlan(
-    surface: com.tajemniktv.tajsos.ui.screens.inbox.InboxDashboardSurface,
-): com.tajemniktv.tajsos.ui.screens.inbox.InboxDashboardPlan =
+fun buildInboxDashboardPlan(surface: InboxDashboardSurface): InboxDashboardPlan =
     when (surface)
     {
-        com.tajemniktv.tajsos.ui.screens.inbox.InboxDashboardSurface.MOBILE -> {
-            com.tajemniktv.tajsos.ui.screens.inbox.InboxDashboardPlan(
+        InboxDashboardSurface.MOBILE -> {
+            InboxDashboardPlan(
                 primary =
                     listOf(
-                        com.tajemniktv.tajsos.ui.screens.inbox
-                            .InboxDashboardBlock("inbox_main"),
+                        InboxDashboardBlock("inbox_main"),
                     ),
             )
         }
 
-        com.tajemniktv.tajsos.ui.screens.inbox.InboxDashboardSurface.DESKTOP -> {
-            com.tajemniktv.tajsos.ui.screens.inbox.InboxDashboardPlan(
+        InboxDashboardSurface.DESKTOP -> {
+            InboxDashboardPlan(
                 primary =
                     listOf(
-                        com.tajemniktv.tajsos.ui.screens.inbox
-                            .InboxDashboardBlock("inbox_main"),
+                        InboxDashboardBlock("inbox_main"),
                     ),
             )
         }

@@ -27,6 +27,26 @@ val AccentGreen = Color(0xFF30D158)
 val AccentRed = Color(0xFFFF5A7A)
 val AccentBlue = Color(0xFF6EA8FF)
 val AccentCyan = Color(0xFF22D3EE)
+
+// Standard Accent Options (matched with Settings UI)
+val PaletteAccentPurple = Color(0xFFB388FF)
+val PaletteAccentBlue = Color(0xFF60A5FA)
+val PaletteAccentRose = Color(0xFFFB7185)
+val PaletteAccentAmber = Color(0xFFFBBF24)
+val PaletteAccentGreen = Color(0xFF34D399)
+
+// Light Theme Palette - "High-Key Industrial"
+val LightBackground = Color(0xFFF8F9FA)
+val LightSurface = Color(0xFFFFFFFF)
+val LightSurfaceLowest = Color(0xFFF1F3F5)
+val LightSurfaceLow = Color(0xFFE9ECEF)
+val LightSurfaceHigh = Color(0xFFDEE2E6)
+val LightSurfaceHighest = Color(0xFFCED4DA)
+val LightTextPrimary = Color(0xFF1A1A1E)
+val LightTextMuted = Color(0xFF6C757D)
+val LightBorder = Color(0xFFADB5BD).copy(alpha = 0.5f)
+val LightOutlineVariant = Color(0xFFADB5BD).copy(alpha = 0.25f)
+
 // Legacy aliases kept for compatibility with existing screens.
 val AccentSuccess = AccentGreen
 val AccentError = AccentRed

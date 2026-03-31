@@ -29,7 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.TextUnit
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.graph_subtitle
@@ -107,8 +107,8 @@ internal fun GraphMainBlock(
                         color =
                             when (relation.relationType)
                             {
-                                "BELONGS_TO" -> TactileTheme.Primary.copy(alpha = 0.3f)
-                                "DEPENDS_ON" -> TactileTheme.Error.copy(alpha = 0.3f)
+                                "BELONGS_TO" -> TajsOSTheme.Primary.copy(alpha = 0.3f)
+                                "DEPENDS_ON" -> TajsOSTheme.Error.copy(alpha = 0.3f)
                                 else -> Color.White.copy(alpha = 0.1f)
                             },
                         start = start + offset,
@@ -124,27 +124,27 @@ internal fun GraphMainBlock(
                     when (nodeWithPin.node.type)
                     {
                         "project" -> {
-                            TactileTheme.Primary
+                            TajsOSTheme.Primary
                         }
 
                         "area" -> {
-                            TactileTheme.Accent
+                            TajsOSTheme.Accent
                         }
 
                         "task" -> {
                             if (nodeWithPin.node.status == "done") {
-                                TactileTheme.Success
+                                TajsOSTheme.Success
                             } else {
-                                TactileTheme.Muted
+                                TajsOSTheme.Muted
                             }
                         }
 
                         "note", "idea" -> {
-                            TactileTheme.Accent
+                            TajsOSTheme.Accent
                         }
 
                         else -> {
-                            TactileTheme.Muted
+                            TajsOSTheme.Muted
                         }
                     }
 
@@ -170,16 +170,16 @@ internal fun GraphMainBlock(
             }
         }
 
-        Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+        Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
             Text(
                 stringResource(Res.string.graph_title),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary,
+                color = TajsOSTheme.Primary
             )
             Text(
                 stringResource(Res.string.graph_subtitle),
                 style = MaterialTheme.typography.bodySmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted
             )
         }
     }
