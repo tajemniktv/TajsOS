@@ -134,8 +134,8 @@ private fun DashboardUnifiedContent(
     val allModes by viewModel.allModes.collectAsState()
     val enabledPacks by viewModel.enabledPacks.collectAsState()
 
-    val pinnedNodes = allNodes.filter { it.pin != null }
-    val completedTodayCount = pinnedNodes.count { it.node.status == "done" }
+    val pinnedNodes = remember(allNodes) { allNodes.filter { it.pin != null } }
+    val completedTodayCount = remember(pinnedNodes) { pinnedNodes.count { it.node.status == "done" } }
     val totalTodayCount = pinnedNodes.size
     val dailyProgress =
         if (totalTodayCount > 0) completedTodayCount.toFloat() / totalTodayCount else 0f
