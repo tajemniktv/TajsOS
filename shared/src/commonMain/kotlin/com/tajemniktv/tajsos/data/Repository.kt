@@ -218,6 +218,29 @@ class AppRepository(
 
     /**
      * Creates a typed LifeOS item while mirroring the minimum legacy node fields still needed by current UI.
+     *
+     * @param kind The primary item kind (e.g., TASK, NOTE, PROJECT).
+     * @param title The display title for the new item.
+     * @param content Optional body content or description.
+     * @param homeAreaId The optional ID of the area this item belongs to.
+     * @param activeProjectId The optional ID of the project this item belongs to.
+     * @param inboxState Whether this item sits in the triage inbox. Defaults based on [ItemKind].
+     * @param source How the item was created (e.g., "manual", "capture").
+     * @param noteKind For note items, the specific semantic subtype (e.g., JOURNAL, CONCEPT).
+     * @param recordKind For record items, the specific subtype (e.g., HEALTH_LOG).
+     * @param taskState For task items, the execution state. Defaults to ACTIVE.
+     * @param projectState For project items, the lifecycle state. Defaults to ACTIVE.
+     * @param isRecurring Whether the item should spawn a new instance when completed.
+     * @param recurringInterval The recurrence rule if [isRecurring] is true.
+     * @param reminderAt Timestamp for when the user should be reminded.
+     * @param startAt Timestamp for when work on this item is scheduled to start.
+     * @param dueAt Timestamp for the item's deadline or target completion.
+     * @param color Optional hex color used for visual representation, mostly for projects and areas.
+     * @param icon Optional icon identifier used for visual representation.
+     * @param contextScreen The screen context where this item was originally created.
+     * @param isSticky Whether the item should be pinned prominently in dashboards.
+     * @param purpose For project items, an explicit "why" or goal statement.
+     * @return The auto-generated database ID of the newly inserted item.
      */
     suspend fun insertLifeItem(
         kind: ItemKind,
