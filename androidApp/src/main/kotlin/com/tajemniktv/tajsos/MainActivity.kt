@@ -97,8 +97,9 @@ class MainActivity : FragmentActivity() {
 val currentPendingIntent by pendingIntent
 
             LaunchedEffect(isAuthenticated, currentPendingIntent) {
-                if (isAuthenticated && currentPendingIntent != null) {
-                    processPendingIntent(currentPendingIntent!!)
+                val intent = currentPendingIntent
+                if (isAuthenticated && intent != null) {
+                    processPendingIntent(intent)
                 }
             }
 
@@ -111,10 +112,10 @@ val currentPendingIntent by pendingIntent
                         viewModel = viewModel,
                         onVoiceCapture = { triggerVoiceCapture() },
                         voiceCaptureResult = voiceText,
-                        onVoiceCaptureConsumed = { voiceCaptureResult.value = null },
+                        onVoiceCaptureConsume = { voiceCaptureResult.value = null },
                         onPickAvatar = { avatarPickerLauncher.launch("image/*") },
                         avatarPickResult = avatarRef,
-                        onAvatarPickConsumed = { avatarPickResult.value = null },
+                        onAvatarPickConsume = { avatarPickResult.value = null },
                     )
                 } else if (isBiometricEnabled == true) {
                     Box(
