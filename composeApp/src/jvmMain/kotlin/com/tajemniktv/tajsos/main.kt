@@ -53,7 +53,7 @@ fun main() =
                         }
                 },
                 avatarPickResult = avatarPickResult.value,
-                onAvatarPickConsumed = { avatarPickResult.value = null },
+                onAvatarPickConsume = { avatarPickResult.value = null },
             )
         }
     }

@@ -1,8 +1,11 @@
 root = true
 
+[*]
+insert_final_newline = true
+
 [*.{kt,kts}]
-ktlint_code_style = android_studio
 ktlint_standard = enabled
 ktlint_experimental = enabled
+ktlint_custom-rule-set = enabled
 ktlint_function_naming_ignore_when_annotated_with = Composable
 compose_disallow_material2 = true

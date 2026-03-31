@@ -103,7 +103,6 @@ import com.tajemniktv.tajsos.ui.main.state.TransitionProtocolsSnapshot
 import com.tajemniktv.tajsos.ui.main.state.VaultsSnapshot
 import com.tajemniktv.tajsos.ui.main.state.defaultPlaybookTemplates
 import com.tajemniktv.tajsos.ui.main.state.defaultTransitionProtocolTemplates
-import kotlin.time.Clock
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -122,6 +121,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.Json
+import kotlin.time.Clock
 
 /**
  * ViewModel responsible for managing the application's main business logic, interactions,
@@ -146,14 +146,14 @@ import kotlinx.serialization.json.Json
 class MainViewModel(
     private val repository: AppRepository,
     private val preferencesRepository: PreferencesRepository,
-    private val calendarManager: com.tajemniktv.tajsos.calendar.CalendarManager
+    private val calendarManager: com.tajemniktv.tajsos.calendar.CalendarManager,
 ) : ViewModel() {
     private val appBootstrapper by lazy {
         AppBootstrapper(
             repository = repository,
             preferencesRepository = preferencesRepository,
             allNodes = allNodes,
-            user = user
+            user = user,
         )
     }
     private val mainNodeSupport by lazy {
@@ -161,7 +161,7 @@ class MainViewModel(
             repository = repository,
             scope = viewModelScope,
             currentNodes = { allNodes.value },
-            currentTags = { allTags.value }
+            currentTags = { allTags.value },
         )
     }
     private val nodeCommands by lazy {
@@ -172,7 +172,7 @@ class MainViewModel(
             currentTodayNodes = { todayNodes.value },
             currentAllNodes = { allNodes.value.map { it.node } },
             parseInternalLinks = mainNodeSupport::parseInternalLinks,
-            setTagOnNode = mainNodeSupport::setTagOnNode
+            setTagOnNode = mainNodeSupport::setTagOnNode,
         )
     }
     private val protocolCommands by lazy {
@@ -182,7 +182,7 @@ class MainViewModel(
             currentNodes = { allNodes.value },
             currentTags = { allTags.value },
             protocolTemplates = { transitionProtocolTemplates },
-            playbookTemplates = { playbookTemplates }
+            playbookTemplates = { playbookTemplates },
         )
     }
     private val studentCommands by lazy {
@@ -192,7 +192,7 @@ class MainViewModel(
             currentTags = { allTags.value },
             addNodeForResult = ::addNodeForResult,
             startFocusSession = ::startFocusSession,
-            addRelation = ::addRelation
+            addRelation = ::addRelation,
         )
     }
     private val decisionCommands by lazy {
@@ -200,7 +200,7 @@ class MainViewModel(
             repository = repository,
             scope = viewModelScope,
             addRelation = ::addRelation,
-            updateNode = ::updateNode
+            updateNode = ::updateNode,
         )
     }
     private val relationshipCommands by lazy {
@@ -211,7 +211,7 @@ class MainViewModel(
             addNodeForResult = ::addNodeForResult,
             addRelation = ::addRelation,
             updateNode = ::updateNode,
-            setTagOnNode = mainNodeSupport::setTagOnNode
+            setTagOnNode = mainNodeSupport::setTagOnNode,
         )
     }
 
@@ -263,7 +263,7 @@ class MainViewModel(
             allModesRaw,
             preferencesRepository.activeModeId,
             allAreas,
-            preferencesRepository.enabledPacks
+            preferencesRepository.enabledPacks,
         ) { nodes, modesList, activeId, areasList, packs ->
             buildDashboardUIState(
                 repository = repository,
@@ -271,7 +271,7 @@ class MainViewModel(
                 modesList = modesList,
                 activeId = activeId,
                 areasList = areasList,
-                packs = packs
+                packs = packs,
             )
         }.distinctUntilChanged()
             .flowOn(Dispatchers.Default)
@@ -326,16 +326,20 @@ class MainViewModel(
             repository.getAllScheduleEntries(),
             repository.getCalendarEventsInRange(
                 0,
-                Long.MAX_VALUE
-            ) // In MVP we can fetch all or a large range
+                Long.MAX_VALUE,
+            ), // In MVP we can fetch all or a large range
         ) { nodes, schedules, externalEvents ->
             buildCalendarEntries(nodes, schedules, externalEvents)
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    fun addCalendarProvider(name: String, type: String, url: String? = null) {
+    fun addCalendarProvider(
+        name: String,
+        type: String,
+        url: String? = null,
+    ) {
         viewModelScope.launch {
             repository.insertCalendarProvider(
-                CalendarProviderEntity(name = name, type = type, url = url)
+                CalendarProviderEntity(name = name, type = type, url = url),
             )
         }
     }
@@ -421,8 +425,8 @@ class MainViewModel(
             repository.insertModeUsageLog(
                 ModeUsageLogEntity(
                     modeId = modeId,
-                    activationSource = "manual"
-                )
+                    activationSource = "manual",
+                ),
             )
         }
     }
@@ -432,7 +436,7 @@ class MainViewModel(
             allNodes,
             allSessions,
             trackEntries,
-            allProjects
+            allProjects,
         ) { nodes, sessions, tracks, projects ->
             calculateInsights(nodes, sessions, tracks, projects)
         }.distinctUntilChanged()
@@ -479,8 +483,8 @@ class MainViewModel(
                 SharingStarted.Eagerly,
                 PackRegistry(
                     ownedPackKeys = AppPack.defaultFreePackKeys,
-                    enabledPackKeys = AppPack.defaultFreePackKeys
-                )
+                    enabledPackKeys = AppPack.defaultFreePackKeys,
+                ),
             )
 
     val protocolHistory: StateFlow<List<ProtocolHistoryEntity>> =
@@ -509,12 +513,12 @@ class MainViewModel(
             buildTransitionProtocolsSnapshot(
                 protocolNodes,
                 historyItems,
-                transitionProtocolTemplates
+                transitionProtocolTemplates,
             )
         }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000),
-            TransitionProtocolsSnapshot()
+            TransitionProtocolsSnapshot(),
         )
 
     val timeArchitectureSnapshot: StateFlow<TimeArchitectureSnapshot> =
@@ -522,7 +526,7 @@ class MainViewModel(
             calculateTimeArchitectureSnapshot(
                 nodes = nodes,
                 todayLayerNodes = todayLayerNodes,
-                projects = projects
+                projects = projects,
             )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), TimeArchitectureSnapshot())
 
@@ -538,7 +542,7 @@ class MainViewModel(
             transitionProtocolNodes,
             protocolHistoryItems,
             currentMode,
-            trackEntries
+            trackEntries,
         ) { protocolNodes, historyItems, mode, entries ->
             buildPlaybookSnapshot(protocolNodes, historyItems, mode, entries, playbookTemplates)
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), PlaybookSnapshot())
@@ -547,7 +551,7 @@ class MainViewModel(
         combine(
             allNodes,
             allRelations,
-            repository.getAllTemplates()
+            repository.getAllTemplates(),
         ) { nodes, relations, templates ->
             calculatePhysicalLogisticsSnapshot(nodes, relations, templates)
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), PhysicalLogisticsSnapshot())
@@ -568,14 +572,14 @@ class MainViewModel(
             allProjects,
             allAreas,
             maintenanceSnapshot,
-            openLoopsSnapshot
+            openLoopsSnapshot,
         ) { nodes, projects, areas, maintenance, openLoops ->
             CapacityInputs(
                 nodes = nodes,
                 projects = projects,
                 areas = areas,
                 maintenance = maintenance,
-                openLoops = openLoops
+                openLoops = openLoops,
             )
         }.stateIn(
             viewModelScope,
@@ -585,8 +589,8 @@ class MainViewModel(
                 projects = emptyList(),
                 areas = emptyList(),
                 maintenance = MaintenanceSnapshot(),
-                openLoops = OpenLoopsSnapshot()
-            )
+                openLoops = OpenLoopsSnapshot(),
+            ),
         )
 
     val capacitySnapshot: StateFlow<CapacitySnapshot> =
@@ -594,7 +598,7 @@ class MainViewModel(
             capacityInputs,
             trackEntries,
             currentMode,
-            allModes
+            allModes,
         ) { inputs, entries, currentMode, allModes ->
             calculateCapacitySnapshot(
                 nodes = inputs.nodes,
@@ -604,7 +608,7 @@ class MainViewModel(
                 openLoops = inputs.openLoops,
                 trackEntries = entries,
                 currentMode = currentMode,
-                allModes = allModes
+                allModes = allModes,
             )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), CapacitySnapshot())
 
@@ -614,14 +618,14 @@ class MainViewModel(
             areaHealthSnapshot,
             openLoopsSnapshot,
             maintenanceSnapshot,
-            relationshipSnapshot
+            relationshipSnapshot,
         ) { modes, areaHealth, openLoops, maintenance, relationships ->
             LifeOSSignatureInputs(
                 modes = modes,
                 areaHealth = areaHealth,
                 openLoops = openLoops,
                 maintenance = maintenance,
-                relationships = relationships
+                relationships = relationships,
             )
         }.stateIn(
             viewModelScope,
@@ -631,8 +635,8 @@ class MainViewModel(
                 areaHealth = AreaHealthSnapshot(),
                 openLoops = OpenLoopsSnapshot(),
                 maintenance = MaintenanceSnapshot(),
-                relationships = RelationshipSnapshot()
-            )
+                relationships = RelationshipSnapshot(),
+            ),
         )
 
     private val lifeOSSignatureContext: StateFlow<LifeOSSignatureContext> =
@@ -641,14 +645,14 @@ class MainViewModel(
             vaultsSnapshot,
             capacitySnapshot,
             playbookSnapshot,
-            currentMode
+            currentMode,
         ) { inputs, vaults, capacity, playbooks, currentMode ->
             LifeOSSignatureContext(
                 inputs = inputs,
                 vaults = vaults,
                 capacity = capacity,
                 playbooks = playbooks,
-                currentMode = currentMode
+                currentMode = currentMode,
             )
         }.stateIn(
             viewModelScope,
@@ -660,20 +664,20 @@ class MainViewModel(
                         areaHealth = AreaHealthSnapshot(),
                         openLoops = OpenLoopsSnapshot(),
                         maintenance = MaintenanceSnapshot(),
-                        relationships = RelationshipSnapshot()
+                        relationships = RelationshipSnapshot(),
                     ),
                 vaults = VaultsSnapshot(),
                 capacity = CapacitySnapshot(),
                 playbooks = PlaybookSnapshot(),
-                currentMode = null
-            )
+                currentMode = null,
+            ),
         )
 
     val lifeOSSignatureSnapshot: StateFlow<LifeOSSignatureSnapshot> =
         combine(
             lifeOSSignatureContext,
             trackEntries,
-            activeNodes
+            activeNodes,
         ) { context, entries, nodes ->
             val pendingDecisions =
                 nodes.filter {
@@ -693,7 +697,7 @@ class MainViewModel(
                 playbooks = context.playbooks,
                 currentMode = context.currentMode,
                 trackEntries = entries,
-                nodes = nodes
+                nodes = nodes,
             )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), LifeOSSignatureSnapshot())
 
@@ -703,14 +707,14 @@ class MainViewModel(
             allRelations,
             dashboardUIState,
             areaHealthSnapshot,
-            openLoopsSnapshot
+            openLoopsSnapshot,
         ) { nodes, relations, dashboard, areaHealth, openLoops ->
             LifeOSSecondBrainInputs(
                 nodes = nodes,
                 relations = relations,
                 dashboard = dashboard,
                 areaHealth = areaHealth,
-                openLoops = openLoops
+                openLoops = openLoops,
             )
         }.stateIn(
             viewModelScope,
@@ -720,8 +724,8 @@ class MainViewModel(
                 relations = emptyList(),
                 dashboard = DashboardUIState(),
                 areaHealth = AreaHealthSnapshot(),
-                openLoops = OpenLoopsSnapshot()
-            )
+                openLoops = OpenLoopsSnapshot(),
+            ),
         )
 
     private val lifeOSSecondBrainContext: StateFlow<LifeOSSecondBrainContext> =
@@ -730,14 +734,14 @@ class MainViewModel(
             maintenanceSnapshot,
             capacitySnapshot,
             transitionProtocolsSnapshot,
-            playbookSnapshot
+            playbookSnapshot,
         ) { inputs, maintenance, capacity, protocols, playbooks ->
             LifeOSSecondBrainContext(
                 inputs = inputs,
                 maintenance = maintenance,
                 capacity = capacity,
                 protocols = protocols,
-                playbooks = playbooks
+                playbooks = playbooks,
             )
         }.stateIn(
             viewModelScope,
@@ -749,13 +753,13 @@ class MainViewModel(
                         relations = emptyList(),
                         dashboard = DashboardUIState(),
                         areaHealth = AreaHealthSnapshot(),
-                        openLoops = OpenLoopsSnapshot()
+                        openLoops = OpenLoopsSnapshot(),
                     ),
                 maintenance = MaintenanceSnapshot(),
                 capacity = CapacitySnapshot(),
                 protocols = TransitionProtocolsSnapshot(),
-                playbooks = PlaybookSnapshot()
-            )
+                playbooks = PlaybookSnapshot(),
+            ),
         )
 
     val lifeOSSecondBrainSnapshot: StateFlow<LifeOSSecondBrainSnapshot> =
@@ -763,7 +767,7 @@ class MainViewModel(
             lifeOSSecondBrainContext,
             currentMode,
             lifeOSSignatureSnapshot,
-            vaultsSnapshot
+            vaultsSnapshot,
         ) { context, mode, signature, vaults ->
             calculateLifeOSSecondBrainSnapshot(
                 nodes = context.inputs.nodes,
@@ -777,7 +781,7 @@ class MainViewModel(
                 playbooks = context.playbooks,
                 currentMode = mode,
                 signature = signature,
-                vaults = vaults
+                vaults = vaults,
             )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), LifeOSSecondBrainSnapshot())
 
@@ -787,14 +791,14 @@ class MainViewModel(
             lifeOSSignatureSnapshot,
             dashboardUIState,
             physicalLogisticsSnapshot,
-            capacitySnapshot
+            capacitySnapshot,
         ) { distinction, signature, dashboard, logistics, capacity ->
             CombinedDirectionInputs(
                 distinction = distinction,
                 signature = signature,
                 dashboard = dashboard,
                 logistics = logistics,
-                capacity = capacity
+                capacity = capacity,
             )
         }.stateIn(
             viewModelScope,
@@ -804,8 +808,8 @@ class MainViewModel(
                 signature = LifeOSSignatureSnapshot(),
                 dashboard = DashboardUIState(),
                 logistics = PhysicalLogisticsSnapshot(),
-                capacity = CapacitySnapshot()
-            )
+                capacity = CapacitySnapshot(),
+            ),
         )
 
     val combinedDirectionSnapshot: StateFlow<CombinedDirectionSnapshot> =
@@ -814,7 +818,7 @@ class MainViewModel(
             relationshipSnapshot,
             transitionProtocolsSnapshot,
             maintenanceSnapshot,
-            openLoopsSnapshot
+            openLoopsSnapshot,
         ) { inputs, relationships, protocols, maintenance, openLoops ->
             calculateCombinedDirectionSnapshot(
                 distinction = inputs.distinction,
@@ -825,7 +829,7 @@ class MainViewModel(
                 relationships = relationships,
                 protocols = protocols,
                 maintenance = maintenance,
-                openLoops = openLoops
+                openLoops = openLoops,
             )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), CombinedDirectionSnapshot())
 
@@ -835,14 +839,14 @@ class MainViewModel(
             lifeOSSignatureSnapshot,
             combinedDirectionSnapshot,
             dashboardUIState,
-            timeArchitectureSnapshot
+            timeArchitectureSnapshot,
         ) { distinction, signature, direction, dashboard, time ->
             CoreLifeOSShiftInputs(
                 distinction = distinction,
                 signature = signature,
                 direction = direction,
                 dashboard = dashboard,
-                time = time
+                time = time,
             )
         }.stateIn(
             viewModelScope,
@@ -852,8 +856,8 @@ class MainViewModel(
                 signature = LifeOSSignatureSnapshot(),
                 direction = CombinedDirectionSnapshot(),
                 dashboard = DashboardUIState(),
-                time = TimeArchitectureSnapshot()
-            )
+                time = TimeArchitectureSnapshot(),
+            ),
         )
 
     private val coreLifeOSShiftContext: StateFlow<CoreLifeOSShiftContext> =
@@ -862,14 +866,14 @@ class MainViewModel(
             areaHealthSnapshot,
             openLoopsSnapshot,
             maintenanceSnapshot,
-            transitionProtocolsSnapshot
+            transitionProtocolsSnapshot,
         ) { inputs, areaHealth, openLoops, maintenance, protocols ->
             CoreLifeOSShiftContext(
                 inputs = inputs,
                 areaHealth = areaHealth,
                 openLoops = openLoops,
                 maintenance = maintenance,
-                protocols = protocols
+                protocols = protocols,
             )
         }.stateIn(
             viewModelScope,
@@ -881,20 +885,20 @@ class MainViewModel(
                         signature = LifeOSSignatureSnapshot(),
                         direction = CombinedDirectionSnapshot(),
                         dashboard = DashboardUIState(),
-                        time = TimeArchitectureSnapshot()
+                        time = TimeArchitectureSnapshot(),
                     ),
                 areaHealth = AreaHealthSnapshot(),
                 openLoops = OpenLoopsSnapshot(),
                 maintenance = MaintenanceSnapshot(),
-                protocols = TransitionProtocolsSnapshot()
-            )
+                protocols = TransitionProtocolsSnapshot(),
+            ),
         )
 
     val coreLifeOSShiftSnapshot: StateFlow<CoreLifeOSShiftSnapshot> =
         combine(
             coreLifeOSShiftContext,
             capacitySnapshot,
-            currentMode
+            currentMode,
         ) { context, capacity, mode ->
             calculateCoreLifeOSShiftSnapshot(
                 distinction = context.inputs.distinction,
@@ -907,7 +911,7 @@ class MainViewModel(
                 maintenance = context.maintenance,
                 protocols = context.protocols,
                 capacity = capacity,
-                currentMode = mode
+                currentMode = mode,
             )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), CoreLifeOSShiftSnapshot())
 
@@ -978,19 +982,28 @@ class MainViewModel(
         }
     }
 
-    fun setPackEnabled(pack: AppPack, enabled: Boolean) {
+    fun setPackEnabled(
+        pack: AppPack,
+        enabled: Boolean,
+    ) {
         viewModelScope.launch {
             preferencesRepository.setPackEnabled(pack, enabled)
         }
     }
 
-    fun setPackOwned(pack: AppPack, owned: Boolean) {
+    fun setPackOwned(
+        pack: AppPack,
+        owned: Boolean,
+    ) {
         viewModelScope.launch {
             preferencesRepository.setPackOwned(pack, owned)
         }
     }
 
-    fun triggerProtocol(protocolLabel: String, source: String = "dashboard") {
+    fun triggerProtocol(
+        protocolLabel: String,
+        source: String = "dashboard",
+    ) {
         protocolCommands.triggerProtocol(protocolLabel, source)
     }
 
@@ -1001,7 +1014,7 @@ class MainViewModel(
     fun applyPlaybookTemplate(
         playbookLabel: String,
         modeKey: String? = null,
-        areaId: Long? = null
+        areaId: Long? = null,
     ) {
         protocolCommands.applyPlaybookTemplate(playbookLabel, modeKey, areaId)
     }
@@ -1010,23 +1023,29 @@ class MainViewModel(
         label: String,
         checklistLines: List<String>,
         modeKey: String? = null,
-        areaId: Long? = null
+        areaId: Long? = null,
     ) {
         protocolCommands.saveCustomPlaybook(label, checklistLines, modeKey, areaId)
     }
 
-    fun setPlaybookModeLink(playbookNode: NodeEntity, modeKey: String?) {
+    fun setPlaybookModeLink(
+        playbookNode: NodeEntity,
+        modeKey: String?,
+    ) {
         protocolCommands.setPlaybookModeLink(playbookNode, modeKey, ::updateNode)
     }
 
-    fun setPlaybookAreaLink(playbookNode: NodeEntity, areaId: Long?) {
+    fun setPlaybookAreaLink(
+        playbookNode: NodeEntity,
+        areaId: Long?,
+    ) {
         protocolCommands.setPlaybookAreaLink(playbookNode, areaId, ::updateNode)
     }
 
     fun toggleProtocolChecklistStep(
         protocolNode: NodeEntity,
         checklistIndex: Int,
-        checked: Boolean
+        checked: Boolean,
     ) {
         protocolCommands.toggleProtocolChecklistStep(protocolNode, checklistIndex, checked)
     }
@@ -1068,7 +1087,7 @@ class MainViewModel(
         inboxState: Boolean? = null,
         contextScreen: String? = null,
         isSticky: Boolean = false,
-        decisionCategory: String? = null
+        decisionCategory: String? = null,
     ) {
         nodeCommands.addNode(
             title = title,
@@ -1084,7 +1103,7 @@ class MainViewModel(
             inboxState = inboxState,
             contextScreen = contextScreen,
             isSticky = isSticky,
-            decisionCategory = decisionCategory
+            decisionCategory = decisionCategory,
         )
     }
 
@@ -1096,7 +1115,7 @@ class MainViewModel(
         areaId: Long? = null,
         projectId: Long? = null,
         suggestedKind: ItemKind? = null,
-        contextScreen: String? = null
+        contextScreen: String? = null,
     ) {
         viewModelScope.launch {
             repository.captureInboxEntry(
@@ -1104,7 +1123,7 @@ class MainViewModel(
                 suggestedKind = suggestedKind,
                 homeAreaId = areaId,
                 activeProjectId = projectId,
-                contextScreen = contextScreen
+                contextScreen = contextScreen,
             )
         }
     }
@@ -1117,7 +1136,10 @@ class MainViewModel(
      * @param entryId The ID of the raw inbox entry to triage.
      * @param kind The target [ItemKind] to convert the entry into.
      */
-    fun triageInboxEntry(entryId: Long, kind: ItemKind) {
+    fun triageInboxEntry(
+        entryId: Long,
+        kind: ItemKind,
+    ) {
         viewModelScope.launch {
             repository.triageInboxEntry(entryId, kind)
         }
@@ -1150,7 +1172,7 @@ class MainViewModel(
         type: String = "task",
         projectId: Long? = null,
         areaId: Long? = null,
-        inboxState: Boolean? = null
+        inboxState: Boolean? = null,
     ): Long = nodeCommands.addNodeForResult(title, content, type, projectId, areaId, inboxState)
 
     /**
@@ -1220,7 +1242,10 @@ class MainViewModel(
      * @param primaryNodeId The ID of the node that will receive the merged content.
      * @param otherNodeIds The list of node IDs to merge and archive.
      */
-    fun mergeNodes(primaryNodeId: Long, otherNodeIds: List<Long>) {
+    fun mergeNodes(
+        primaryNodeId: Long,
+        otherNodeIds: List<Long>,
+    ) {
         nodeCommands.mergeNodes(primaryNodeId, otherNodeIds)
     }
 
@@ -1249,7 +1274,10 @@ class MainViewModel(
      * @param node The node to update.
      * @param status The new status value.
      */
-    fun updateNodeStatus(node: NodeEntity, status: String) {
+    fun updateNodeStatus(
+        node: NodeEntity,
+        status: String,
+    ) {
         nodeCommands.updateNodeStatus(node, status)
     }
 
@@ -1288,7 +1316,10 @@ class MainViewModel(
      * @param node The node to update.
      * @param isPinned The new pinned status.
      */
-    fun togglePin(node: NodeEntity, isPinned: Boolean) {
+    fun togglePin(
+        node: NodeEntity,
+        isPinned: Boolean,
+    ) {
         nodeCommands.togglePin(node, isPinned)
     }
 
@@ -1318,7 +1349,11 @@ class MainViewModel(
      * @param description An optional description for the project.
      * @param areaId The ID of the area this project belongs to, if any.
      */
-    fun addProject(name: String, description: String = "", areaId: Long? = null) {
+    fun addProject(
+        name: String,
+        description: String = "",
+        areaId: Long? = null,
+    ) {
         nodeCommands.addProject(name, description, areaId)
     }
 
@@ -1335,7 +1370,10 @@ class MainViewModel(
         nodeCommands.addSuggestedAreas()
     }
 
-    fun updateOpenLoopType(node: NodeEntity, openLoopType: String) {
+    fun updateOpenLoopType(
+        node: NodeEntity,
+        openLoopType: String,
+    ) {
         nodeCommands.updateOpenLoopType(node, openLoopType)
     }
 
@@ -1351,7 +1389,10 @@ class MainViewModel(
         nodeCommands.convertOpenLoopToNote(nodeId)
     }
 
-    fun resolveOpenLoop(nodeId: Long, resolutionNote: String? = null) {
+    fun resolveOpenLoop(
+        nodeId: Long,
+        resolutionNote: String? = null,
+    ) {
         nodeCommands.resolveOpenLoop(nodeId, resolutionNote)
     }
 
@@ -1359,23 +1400,38 @@ class MainViewModel(
         nodeCommands.archiveResolvedOpenLoops()
     }
 
-    fun updateMaintenanceType(node: NodeEntity, maintenanceType: String) {
+    fun updateMaintenanceType(
+        node: NodeEntity,
+        maintenanceType: String,
+    ) {
         nodeCommands.updateMaintenanceType(node, maintenanceType)
     }
 
-    fun setMaintenanceOverdueAt(node: NodeEntity, timestamp: Long?) {
+    fun setMaintenanceOverdueAt(
+        node: NodeEntity,
+        timestamp: Long?,
+    ) {
         nodeCommands.setMaintenanceOverdueAt(node, timestamp)
     }
 
-    fun setMaintenanceRecurring(node: NodeEntity, interval: String?) {
+    fun setMaintenanceRecurring(
+        node: NodeEntity,
+        interval: String?,
+    ) {
         nodeCommands.setMaintenanceRecurring(node, interval)
     }
 
-    fun setProjectActivePhase(project: NodeEntity, active: Boolean) {
+    fun setProjectActivePhase(
+        project: NodeEntity,
+        active: Boolean,
+    ) {
         nodeCommands.setProjectActivePhase(project, active)
     }
 
-    fun setTemporaryFocusPeriod(node: NodeEntity, days: Int) {
+    fun setTemporaryFocusPeriod(
+        node: NodeEntity,
+        days: Int,
+    ) {
         nodeCommands.setTemporaryFocusPeriod(node, days)
     }
 
@@ -1383,15 +1439,24 @@ class MainViewModel(
         nodeCommands.clearTemporaryFocusPeriod(node)
     }
 
-    fun setWorkDate(node: NodeEntity, workAt: Long?) {
+    fun setWorkDate(
+        node: NodeEntity,
+        workAt: Long?,
+    ) {
         nodeCommands.setWorkDate(node, workAt)
     }
 
-    fun toggleSeasonalGoal(node: NodeEntity, enabled: Boolean) {
+    fun toggleSeasonalGoal(
+        node: NodeEntity,
+        enabled: Boolean,
+    ) {
         nodeCommands.toggleSeasonalGoal(node, enabled)
     }
 
-    fun addLifePeriodMarker(title: String, content: String = "") {
+    fun addLifePeriodMarker(
+        title: String,
+        content: String = "",
+    ) {
         nodeCommands.addLifePeriodMarker(title, content)
     }
 
@@ -1414,63 +1479,117 @@ class MainViewModel(
         relationshipCommands.setPersonLastContactNow(person)
     }
 
-    fun setPersonFollowUpInDays(person: NodeEntity, days: Int?) {
+    fun setPersonFollowUpInDays(
+        person: NodeEntity,
+        days: Int?,
+    ) {
         relationshipCommands.setPersonFollowUpInDays(person, days)
     }
 
-    fun setPersonImportantDate(person: NodeEntity, timestamp: Long?) {
+    fun setPersonImportantDate(
+        person: NodeEntity,
+        timestamp: Long?,
+    ) {
         relationshipCommands.setPersonImportantDate(person, timestamp)
     }
 
-    fun setPersonSocialEnergyNotes(person: NodeEntity, notes: String?) {
+    fun setPersonSocialEnergyNotes(
+        person: NodeEntity,
+        notes: String?,
+    ) {
         relationshipCommands.setPersonSocialEnergyNotes(person, notes)
     }
 
-    fun setPersonRelationshipContext(person: NodeEntity, context: String?) {
+    fun setPersonRelationshipContext(
+        person: NodeEntity,
+        context: String?,
+    ) {
         relationshipCommands.setPersonRelationshipContext(person, context)
     }
 
-    fun markImportantRelationship(person: NodeEntity, important: Boolean) {
+    fun markImportantRelationship(
+        person: NodeEntity,
+        important: Boolean,
+    ) {
         relationshipCommands.markImportantRelationship(person, important)
     }
 
-    fun setPersonRelationshipType(person: NodeEntity, type: String?) {
+    fun setPersonRelationshipType(
+        person: NodeEntity,
+        type: String?,
+    )
+    {
         relationshipCommands.setPersonRelationshipType(person, type)
-    }
+        }
 
-    fun linkPersonToNode(personId: Long, nodeId: Long) {
+    fun linkPersonToNode(
+        personId: Long,
+        nodeId: Long,
+    )
+    {
         relationshipCommands.linkPersonToNode(personId, nodeId)
-    }
+        }
 
-    fun unlinkPersonFromNode(personId: Long, nodeId: Long) {
+    fun unlinkPersonFromNode(
+        personId: Long,
+        nodeId: Long,
+    )
+    {
         relationshipCommands.unlinkPersonFromNode(personId, nodeId)
-    }
+        }
 
-    fun createReplyNeededForPerson(personId: Long, title: String, content: String = "") {
+    fun createReplyNeededForPerson(
+        personId: Long,
+        title: String,
+        content: String = "",
+    ) {
         relationshipCommands.createReplyNeededForPerson(personId, title, content)
     }
 
-    fun createSharedPlanForPerson(personId: Long, title: String, content: String = "") {
+    fun createSharedPlanForPerson(
+        personId: Long,
+        title: String,
+        content: String = "",
+    ) {
         relationshipCommands.createSharedPlanForPerson(personId, title, content)
     }
 
-    fun createAskAboutNextTimeNote(personId: Long, prompt: String) {
+    fun createAskAboutNextTimeNote(
+        personId: Long,
+        prompt: String,
+    )
+    {
         relationshipCommands.createAskAboutNextTimeNote(personId, prompt)
-    }
+        }
 
-    fun addPlace(title: String, campus: Boolean = false, home: Boolean = false) {
+    fun addPlace(
+        title: String,
+        campus: Boolean = false,
+        home: Boolean = false,
+    ) {
         relationshipCommands.addPlace(title, campus, home)
     }
 
-    fun linkNodeToPlace(nodeId: Long, placeId: Long) {
+    fun linkNodeToPlace(
+        nodeId: Long,
+        placeId: Long,
+    )
+    {
         relationshipCommands.linkNodeToPlace(nodeId, placeId)
-    }
+        }
 
-    fun unlinkNodeFromPlace(nodeId: Long, placeId: Long) {
+    fun unlinkNodeFromPlace(
+        nodeId: Long,
+        placeId: Long,
+    )
+    {
         relationshipCommands.unlinkNodeFromPlace(nodeId, placeId)
-    }
+        }
 
-    fun createWhatToBringList(title: String, placeId: Long? = null) {
+    fun createWhatToBringList(
+        title: String,
+        placeId: Long? = null,
+    ) {
         relationshipCommands.createWhatToBringList(title, placeId)
     }
 
@@ -1498,23 +1617,40 @@ class MainViewModel(
         relationshipCommands.ensureTravelPackTemplate()
     }
 
-    fun addPhysicalLogisticsNote(title: String, content: String) {
-        relationshipCommands.addPhysicalLogisticsNote(title, content)
-    }
+    fun addPhysicalLogisticsNote(
+        title: String,
+        content: String,
+    )
+    {
+            relationshipCommands.addPhysicalLogisticsNote(title, content)
+        }
 
-    fun addPersonalRule(title: String, content: String = "", categoryTag: String) {
+    fun addPersonalRule(
+        title: String,
+        content: String = "",
+        categoryTag: String,
+    ) {
         relationshipCommands.addPersonalRule(title, content, categoryTag)
     }
 
-    fun pinOperatingPrinciple(node: NodeEntity, pinned: Boolean) {
+    fun pinOperatingPrinciple(
+        node: NodeEntity,
+        pinned: Boolean,
+    ) {
         relationshipCommands.pinOperatingPrinciple(node, pinned)
     }
 
-    fun linkPrincipleToPlaybook(principleId: Long, playbookNodeId: Long) {
+    fun linkPrincipleToPlaybook(
+        principleId: Long,
+        playbookNodeId: Long,
+    ) {
         relationshipCommands.linkPrincipleToPlaybook(principleId, playbookNodeId)
     }
 
-    fun unlinkPrincipleFromPlaybook(principleId: Long, playbookNodeId: Long) {
+    fun unlinkPrincipleFromPlaybook(
+        principleId: Long,
+        playbookNodeId: Long,
+    ) {
         relationshipCommands.unlinkPrincipleFromPlaybook(principleId, playbookNodeId)
     }
 
@@ -1523,18 +1659,26 @@ class MainViewModel(
         title: String,
         content: String = "",
         asType: String = "note",
-        dueAt: Long? = null
+        dueAt: Long? = null,
     ) {
         relationshipCommands.addVaultEntry(categoryTag, title, content, asType, dueAt)
     }
 
-    fun createApplicationStatusEntry(title: String, status: String, dueAt: Long? = null) {
+    fun createApplicationStatusEntry(
+        title: String,
+        status: String,
+        dueAt: Long? = null,
+    ) {
         relationshipCommands.createApplicationStatusEntry(title, status, dueAt)
     }
 
-    fun markMustFindLater(node: NodeEntity, enabled: Boolean) {
+    fun markMustFindLater(
+        node: NodeEntity,
+        enabled: Boolean,
+    )
+    {
         relationshipCommands.markMustFindLater(node, enabled)
-    }
+        }
 
     fun runMonthlyReset() {
         nodeCommands.runMonthlyReset()
@@ -1592,7 +1736,7 @@ class MainViewModel(
         cognitivePulse: Int? = null,
         systemPulse: Int? = null,
         recoveryPulse: Float? = null,
-        medicationIds: Set<Long> = emptySet()
+        medicationIds: Set<Long> = emptySet(),
     ) {
         viewModelScope.launch {
             val entryId =
@@ -1610,8 +1754,8 @@ class MainViewModel(
                         anxietyScore = anxiety ?: systemPulse,
                         sleepScore = sleep ?: recoveryPulse,
                         tookMeds = tookMeds,
-                        symptomNote = note
-                    )
+                        symptomNote = note,
+                    ),
                 )
 
             // Insert medication tracking
@@ -1620,8 +1764,8 @@ class MainViewModel(
                     TrackMedicationJoinEntity(
                         trackEntryId = entryId,
                         medicationId = medId,
-                        wasTaken = true
-                    )
+                        wasTaken = true,
+                    ),
                 )
             }
         }
@@ -1632,8 +1776,8 @@ class MainViewModel(
             val currentProfile = userProfile.value
             repository.saveUserProfile(
                 currentProfile.copy(
-                    nickname = name.trim().ifBlank { currentProfile.nickname }
-                )
+                    nickname = name.trim().ifBlank { currentProfile.nickname },
+                ),
             )
         }
     }
@@ -1652,7 +1796,7 @@ class MainViewModel(
         brandNames: String = "",
         dosage: String? = null,
         takeAtHour: Int? = null,
-        isOptional: Boolean = false
+        isOptional: Boolean = false,
     ) {
         viewModelScope.launch {
             repository.insertMedication(
@@ -1661,8 +1805,8 @@ class MainViewModel(
                     brandNames = brandNames,
                     dosage = dosage,
                     takeAtHour = takeAtHour,
-                    isOptional = isOptional
-                )
+                    isOptional = isOptional,
+                ),
             )
         }
     }
@@ -1671,8 +1815,8 @@ class MainViewModel(
         viewModelScope.launch {
             repository.updateMedication(
                 medication.copy(
-                    updatedAt = Clock.System.now().toEpochMilliseconds()
-                )
+                    updatedAt = Clock.System.now().toEpochMilliseconds(),
+                ),
             )
         }
     }
@@ -1692,8 +1836,8 @@ class MainViewModel(
                 repository.insertSession(
                     FocusSessionEntity(
                         nodeId = nodeId,
-                        startedAt = Clock.System.now().toEpochMilliseconds()
-                    )
+                        startedAt = Clock.System.now().toEpochMilliseconds(),
+                    ),
                 )
             }
         }
@@ -1702,7 +1846,7 @@ class MainViewModel(
     fun stopFocusSession(
         completed: Boolean = true,
         interrupted: Boolean = false,
-        note: String? = null
+        note: String? = null,
     ) {
         viewModelScope.launch {
             activeSession.value?.let { session ->
@@ -1714,8 +1858,8 @@ class MainViewModel(
                         durationSec = duration,
                         completed = completed,
                         interrupted = interrupted,
-                        note = note
-                    )
+                        note = note,
+                    ),
                 )
             }
         }
@@ -1734,9 +1878,13 @@ class MainViewModel(
     private val _lastActiveAreaId = MutableStateFlow<Long?>(null)
     val lastActiveAreaId: StateFlow<Long?> = _lastActiveAreaId.asStateFlow()
 
-    fun setLastActiveContext(projectId: Long?, areaId: Long?) {
+    fun setLastActiveContext(
+        projectId: Long?,
+        areaId: Long?,
+    )
+    {
         if (projectId != null) _lastActiveProjectId.value = projectId
-        if (areaId != null) _lastActiveAreaId.value = areaId
+            if (areaId != null) _lastActiveAreaId.value = areaId
     }
 
     private val _searchQuery = MutableStateFlow("")
@@ -1791,14 +1939,14 @@ class MainViewModel(
             _searchTypeFilter,
             _searchStatusFilter,
             _searchProjectFilter,
-            _searchAreaFilter
+            _searchAreaFilter,
         ) { query, type, status, projectId, areaId ->
             SearchPrimaryFilters(
                 query = query,
                 type = type,
                 status = status,
                 projectId = projectId,
-                areaId = areaId
+                areaId = areaId,
             )
         }.stateIn(
             viewModelScope,
@@ -1808,8 +1956,8 @@ class MainViewModel(
                 type = null,
                 status = "active",
                 projectId = null,
-                areaId = null
-            )
+                areaId = null,
+            ),
         )
 
     private val searchSecondaryFilters: StateFlow<SearchSecondaryFilters> =
@@ -1818,14 +1966,14 @@ class MainViewModel(
             _searchMaxMinutesFilter,
             _searchEnergyFilter,
             _searchFrictionFilter,
-            _searchLocationContextFilter
+            _searchLocationContextFilter,
         ) { linkedToId, maxMins, energy, friction, locationContext ->
             SearchSecondaryFilters(
                 linkedToId = linkedToId,
                 maxMins = maxMins,
                 energy = energy,
                 friction = friction,
-                locationContext = locationContext
+                locationContext = locationContext,
             )
         }.stateIn(
             viewModelScope,
@@ -1835,8 +1983,8 @@ class MainViewModel(
                 maxMins = null,
                 energy = null,
                 friction = null,
-                locationContext = null
-            )
+                locationContext = null,
+            ),
         )
 
     private val searchTertiaryFilters: StateFlow<SearchTertiaryFilters> =
@@ -1845,14 +1993,14 @@ class MainViewModel(
             _searchDeviceContextFilter,
             _searchSocialContextFilter,
             _searchTimeWindowContextFilter,
-            _searchTimeHorizonFilter
+            _searchTimeHorizonFilter,
         ) { energyContext, deviceContext, socialContext, timeWindowContext, timeHorizon ->
             SearchTertiaryFilters(
                 energyContext = energyContext,
                 deviceContext = deviceContext,
                 socialContext = socialContext,
                 timeWindowContext = timeWindowContext,
-                timeHorizon = timeHorizon
+                timeHorizon = timeHorizon,
             )
         }.stateIn(
             viewModelScope,
@@ -1862,15 +2010,15 @@ class MainViewModel(
                 deviceContext = null,
                 socialContext = null,
                 timeWindowContext = null,
-                timeHorizon = null
-            )
+                timeHorizon = null,
+            ),
         )
 
     private val searchFiltersState: StateFlow<SearchFiltersState> =
         combine(
             searchPrimaryFilters,
             searchSecondaryFilters,
-            searchTertiaryFilters
+            searchTertiaryFilters,
         ) { primary, secondary, tertiary ->
             SearchFiltersState(
                 query = primary.query,
@@ -1887,7 +2035,7 @@ class MainViewModel(
                 deviceContext = tertiary.deviceContext,
                 socialContext = tertiary.socialContext,
                 timeWindowContext = tertiary.timeWindowContext,
-                timeHorizon = tertiary.timeHorizon
+                timeHorizon = tertiary.timeHorizon,
             )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), SearchFiltersState())
 
@@ -1895,7 +2043,7 @@ class MainViewModel(
         combine(
             allNodes,
             searchFiltersState,
-            allRelations
+            allRelations,
         ) { nodes, filters, relations ->
             FilterHelper.filterAndSortNodes(
                 nodes = nodes,
@@ -1914,7 +2062,7 @@ class MainViewModel(
                 socialContext = filters.socialContext,
                 timeWindowContext = filters.timeWindowContext,
                 timeHorizon = filters.timeHorizon,
-                relations = relations
+                relations = relations,
             )
         }.flowOn(Dispatchers.Default)
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
@@ -2027,56 +2175,60 @@ class MainViewModel(
         _searchTimeHorizonFilter.value = horizon
     }
 
-    fun getFilteredNodes(query: String): Flow<List<NodeWithPin>> = allNodes.map { nodes ->
-        if (query.isBlank()) {
-            nodes
-        } else {
-            nodes.filter { matchesQuery(it, query) }
+    fun getFilteredNodes(query: String): Flow<List<NodeWithPin>> =
+        allNodes.map { nodes ->
+            if (query.isBlank()) {
+                nodes
+            } else {
+                nodes.filter { matchesQuery(it, query) }
+            }
         }
-    }
 
     /**
      * Suggests potentially related nodes based on shared tags or title keywords.
      */
-    fun getNoteSuggestions(nodeId: Long): Flow<List<NodeWithPin>> = allNodes.map { nodes ->
-        val currentNodeWithPin = nodes.find { it.node.id == nodeId } ?: return@map emptyList()
-        val currentNode = currentNodeWithPin.node
-        val currentTags = currentNodeWithPin.tags.map { it.id }.toSet()
+    fun getNoteSuggestions(nodeId: Long): Flow<List<NodeWithPin>> =
+        allNodes.map { nodes ->
+            val currentNodeWithPin = nodes.find { it.node.id == nodeId } ?: return@map emptyList()
+            val currentNode = currentNodeWithPin.node
+            val currentTags = currentNodeWithPin.tags.map { it.id }.toSet()
 
-        nodes
-            .filter { other ->
-                other.node.id != nodeId &&
-                    other.node.status != "archived" &&
-                    other.node.type in listOf("note", "idea", "resource", "project") &&
-                    (
-                        other.tags.any { it.id in currentTags } ||
-                            other.node.title.split(" ").any { word ->
-                                word.length > 3 &&
-                                    currentNode.title.contains(
-                                        word,
-                                        ignoreCase = true
-                                    )
-                            }
+            nodes
+                .filter { other ->
+                    other.node.id != nodeId &&
+                        other.node.status != "archived" &&
+                        other.node.type in listOf("note", "idea", "resource", "project") &&
+                        (
+                            other.tags.any { it.id in currentTags } ||
+                                other.node.title.split(" ").any { word ->
+                                    word.length > 3 &&
+                                        currentNode.title.contains(
+                                            word,
+                                            ignoreCase = true,
+                                        )
+                                }
                         )
-            }.take(5)
-    }
+                }.take(5)
+        }
 
-    fun getRelationsForNode(nodeId: Long): Flow<List<RelationEntity>> =
-        repository.getRelationsForNode(nodeId)
+    fun getRelationsForNode(nodeId: Long): Flow<List<RelationEntity>> = repository.getRelationsForNode(nodeId)
 
-    fun getSnapshotsForNode(nodeId: Long): Flow<List<NodeSnapshotEntity>> =
-        repository.getSnapshotsForNode(nodeId)
+    fun getSnapshotsForNode(nodeId: Long): Flow<List<NodeSnapshotEntity>> = repository.getSnapshotsForNode(nodeId)
 
     fun getLogsForNode(nodeId: Long): Flow<List<EventLogEntity>> = repository.getLogsForNode(nodeId)
 
-    fun addRelation(fromNodeId: Long, toNodeId: Long, type: String) {
+    fun addRelation(
+        fromNodeId: Long,
+        toNodeId: Long,
+        type: String,
+    ) {
         viewModelScope.launch {
             repository.insertRelation(
                 RelationEntity(
                     fromNodeId = fromNodeId,
                     toNodeId = toNodeId,
-                    relationType = type
-                )
+                    relationType = type,
+                ),
             )
         }
     }
@@ -2094,25 +2246,36 @@ class MainViewModel(
 
     fun getTagsForNode(nodeId: Long): Flow<List<TagEntity>> = repository.getTagsForNode(nodeId)
 
-    fun addTag(name: String, color: Int? = null) {
+    fun addTag(
+        name: String,
+        color: Int? = null,
+    )
+    {
         viewModelScope.launch {
             repository.insertTag(
                 TagEntity(
                     name = name,
                     normalizedName = name.lowercase().trim(),
-                    color = color
+                        color = color,
+                    ),
                 )
-            )
-        }
+            }
     }
 
-    fun attachTagToNode(nodeId: Long, tagId: Long) {
+    fun attachTagToNode(
+        nodeId: Long,
+        tagId: Long,
+    )
+    {
         viewModelScope.launch {
             repository.attachTagToNode(nodeId, tagId)
+            }
         }
-    }
 
-    fun detachTagFromNode(nodeId: Long, tagId: Long) {
+    fun detachTagFromNode(
+        nodeId: Long,
+        tagId: Long,
+    ) {
         viewModelScope.launch {
             repository.detachTagFromNode(nodeId, tagId)
         }
@@ -2122,11 +2285,19 @@ class MainViewModel(
         studentCommands.startStudySession(nodeId)
     }
 
-    fun setReadingProgress(node: NodeEntity, progressPercent: Int) {
+    fun setReadingProgress(
+        node: NodeEntity,
+        progressPercent: Int,
+    )
+    {
         studentCommands.setReadingProgress(node, progressPercent)
     }
 
-    fun setTopicMastery(node: NodeEntity, topic: String?, masteryPercent: Int) {
+    fun setTopicMastery(
+        node: NodeEntity,
+        topic: String?,
+        masteryPercent: Int,
+    ) {
         studentCommands.setTopicMastery(node, topic, masteryPercent)
     }
 
@@ -2135,7 +2306,7 @@ class MainViewModel(
         courseId: String?,
         courseName: String?,
         semester: String?,
-        assignmentType: String? = null
+        assignmentType: String? = null,
     ) {
         studentCommands.setStudentCourse(node, courseId, courseName, semester, assignmentType)
     }
@@ -2147,7 +2318,7 @@ class MainViewModel(
         courseId: String? = null,
         courseName: String? = null,
         semester: String? = null,
-        topic: String? = null
+        topic: String? = null,
     ) {
         studentCommands.addStudentNote(
             title,
@@ -2156,38 +2327,57 @@ class MainViewModel(
             courseId,
             courseName,
             semester,
-            topic
+            topic,
         )
     }
 
-    fun toggleFlashcardCandidate(node: NodeEntity, enabled: Boolean) {
+    fun toggleFlashcardCandidate(
+        node: NodeEntity,
+        enabled: Boolean,
+    )
+    {
         studentCommands.toggleFlashcardCandidate(node, enabled)
     }
 
-    fun toggleRevisitBeforeExam(node: NodeEntity, enabled: Boolean) {
+    fun toggleRevisitBeforeExam(
+        node: NodeEntity,
+        enabled: Boolean,
+    ) {
         studentCommands.toggleRevisitBeforeExam(node, enabled)
     }
 
-    fun linkTopicToNote(topicNodeId: Long, noteNodeId: Long) {
+    fun linkTopicToNote(
+        topicNodeId: Long,
+        noteNodeId: Long,
+    ) {
         studentCommands.linkTopicToNote(topicNodeId, noteNodeId)
     }
 
-    fun linkPaperToNote(paperNodeId: Long, noteNodeId: Long) {
+    fun linkPaperToNote(
+        paperNodeId: Long,
+        noteNodeId: Long,
+    )
+    {
         studentCommands.linkPaperToNote(paperNodeId, noteNodeId)
-    }
+        }
 
     fun getAttachmentsForNode(nodeId: Long): Flow<List<AttachmentEntity>> =
         repository.getAttachmentsForNode(nodeId)
 
-    fun addAttachment(nodeId: Long, type: String, uri: String, title: String? = null) {
+    fun addAttachment(
+        nodeId: Long,
+        type: String,
+        uri: String,
+        title: String? = null,
+    ) {
         viewModelScope.launch {
             repository.insertAttachment(
                 AttachmentEntity(
                     nodeId = nodeId,
                     assetType = type,
                     uriOrPath = uri,
-                    title = title
-                )
+                    title = title,
+                ),
             )
         }
     }
@@ -2213,19 +2403,25 @@ class MainViewModel(
             allNodes,
             allRelations,
             allSessions,
-            allTemplates
+            allTemplates,
         ) { nodes, relations, sessions, templates ->
             calculateStudentBoardState(nodes, relations, sessions, templates)
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), StudentBoardState())
 
-    fun addTemplate(name: String, type: String, title: String? = null, content: String? = null) {
+    fun addTemplate(
+        name: String,
+        type: String,
+        title: String? = null,
+        content: String? = null,
+    )
+    {
         val normalizedType =
             when (type.trim().lowercase())
             {
                 "record" -> "record"
-                "project" -> "project"
-                "area" -> "area"
-                "idea", "resource", "vault", "document" -> "note"
+                    "project" -> "project"
+                    "area" -> "area"
+                    "idea", "resource", "vault", "document" -> "note"
                 "maintenance", "open_loop", "decision", "protocol" -> "task"
                 else -> "task"
             }
@@ -2235,8 +2431,8 @@ class MainViewModel(
                     name = name,
                     nodeType = normalizedType,
                     defaultTitle = title,
-                    defaultContent = content
-                )
+                    defaultContent = content,
+                ),
             )
         }
     }
@@ -2264,19 +2460,25 @@ class MainViewModel(
             .getAllReviews()
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    fun completeReview(type: String, content: String, mood: Int? = null, energy: Int? = null) {
+    fun completeReview(
+        type: String,
+        content: String,
+        mood: Int? = null,
+        energy: Int? = null,
+    )
+    {
         viewModelScope.launch {
             val now = Clock.System.now()
             val dateStr = now.toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
 
-            val nodeId =
-                repository.insertLifeItem(
-                    kind = ItemKind.RECORD,
+                val nodeId =
+                    repository.insertLifeItem(
+                        kind = ItemKind.RECORD,
                     title = "${type.uppercase()} REVIEW - $dateStr",
                     content = content,
                     inboxState = false,
                     source = "review",
-                    recordKind = RecordKind.REFLECTION
+                    recordKind = RecordKind.REFLECTION,
                 )
 
             repository.insertReview(
@@ -2284,55 +2486,58 @@ class MainViewModel(
                     type = type,
                     date = dateStr,
                     resultNodeId = nodeId,
-                    moodScore = mood,
-                    energyScore = energy
-                )
+                        moodScore = mood,
+                        energyScore = energy,
+                ),
             )
 
             if (mood != null || energy != null) {
                 addTrackEntry(mood = mood, energy = energy, note = "Linked to $type review")
             }
+            }
         }
-    }
 
     suspend fun getLastReviewByType(type: String) = repository.getLastReviewByType(type)
 
-    suspend fun exportDataJson(): String = withContext(Dispatchers.Default) {
-        val nodes = allNodes.value.map { it.node }
-        val data = ExportData(version = 2, nodes = nodes)
-        Json.encodeToString(data)
-    }
-
-    suspend fun exportBundleJson(): String = withContext(Dispatchers.Default) {
-        val enabledPacks = preferencesRepository.enabledPacks.first().enabledPackKeys
-        val bundle = repository.buildExportBundle(enabledPacks = enabledPacks)
-        Json.encodeToString(bundle)
-    }
-
-    suspend fun importDataJson(payload: String): String = withContext(Dispatchers.Default) {
-        val content = payload.trim()
-        if (content.isBlank()) return@withContext "Import failed: empty payload."
-
-        val bundleResult =
-            runCatching {
-                Json.decodeFromString<ExportBundle>(content)
-            }.getOrNull()
-        if (bundleResult != null) {
-            val report = repository.importBundle(bundleResult)
-            return@withContext "Imported bundle: ${report.nodes} nodes, ${report.relations} relations, ${report.events} events."
+    suspend fun exportDataJson(): String =
+        withContext(Dispatchers.Default) {
+            val nodes = allNodes.value.map { it.node }
+            val data = ExportData(version = 2, nodes = nodes)
+            Json.encodeToString(data)
         }
 
-        val legacyResult =
-            runCatching {
-                Json.decodeFromString<ExportData>(content)
-            }.getOrNull()
-        if (legacyResult != null) {
-            val count = repository.importLegacyNodes(legacyResult.nodes)
-            return@withContext "Imported legacy export: $count nodes."
+    suspend fun exportBundleJson(): String =
+        withContext(Dispatchers.Default) {
+            val enabledPacks = preferencesRepository.enabledPacks.first().enabledPackKeys
+            val bundle = repository.buildExportBundle(enabledPacks = enabledPacks)
+            Json.encodeToString(bundle)
         }
 
-        "Import failed: unrecognized JSON export format."
-    }
+    suspend fun importDataJson(payload: String): String =
+        withContext(Dispatchers.Default) {
+            val content = payload.trim()
+            if (content.isBlank()) return@withContext "Import failed: empty payload."
+
+            val bundleResult =
+                runCatching {
+                    Json.decodeFromString<ExportBundle>(content)
+                }.getOrNull()
+            if (bundleResult != null) {
+                val report = repository.importBundle(bundleResult)
+                return@withContext "Imported bundle: ${report.nodes} nodes, ${report.relations} relations, ${report.events} events."
+            }
+
+            val legacyResult =
+                runCatching {
+                    Json.decodeFromString<ExportData>(content)
+                }.getOrNull()
+            if (legacyResult != null) {
+                val count = repository.importLegacyNodes(legacyResult.nodes)
+                return@withContext "Imported legacy export: $count nodes."
+            }
+
+            "Import failed: unrecognized JSON export format."
+        }
 
     // Decisions
     val decisionInbox: StateFlow<List<NodeWithPin>> =
@@ -2372,7 +2577,7 @@ class MainViewModel(
                             (
                                 (now - decision.node.createdAt).coerceAtLeast(0L) /
                                     (24 * 60 * 60 * 1000L)
-                                ).toInt()
+                                    ).toInt()
                         DecisionStaleItem(node = decision, ageDays = ageDays)
                     }.filter { it.ageDays >= 7 }
                     .sortedByDescending { it.ageDays }
@@ -2387,7 +2592,7 @@ class MainViewModel(
                             (
                                 relation.fromNodeId == decisionId ||
                                     relation.toNodeId == decisionId
-                                )
+                                    )
                     }.map { relation ->
                         if (relation.fromNodeId ==
                             decisionId
@@ -2400,21 +2605,38 @@ class MainViewModel(
             nodes.filter { it.node.id in personIds && it.node.type == "person" }
         }
 
-    fun linkDecisionToPerson(decisionId: Long, personId: Long) {
+    fun linkDecisionToPerson(
+        decisionId: Long,
+        personId: Long,
+    )
+    {
         decisionCommands.linkDecisionToPerson(decisionId, personId)
     }
 
-    fun unlinkDecisionFromPerson(decisionId: Long, personId: Long) {
+    fun unlinkDecisionFromPerson(
+        decisionId: Long,
+        personId: Long,
+    )
+    {
         decisionCommands.unlinkDecisionFromPerson(decisionId, personId)
     }
 
-    fun setDecisionRevisit(node: NodeEntity, revisitAt: Long?) {
+    fun setDecisionRevisit(
+        node: NodeEntity,
+        revisitAt: Long?,
+    )
+    {
         decisionCommands.setDecisionRevisit(node, revisitAt)
     }
 
     fun getOptionsForDecision(nodeId: Long) = repository.getOptionsForDecision(nodeId)
 
-    fun addDecisionOption(nodeId: Long, title: String, description: String? = null) {
+    fun addDecisionOption(
+        nodeId: Long,
+        title: String,
+        description: String? = null,
+    )
+    {
         decisionCommands.addDecisionOption(nodeId, title, description)
     }
 
@@ -2424,7 +2646,12 @@ class MainViewModel(
     fun deleteDecisionOption(option: DecisionOptionEntity) =
         decisionCommands.deleteDecisionOption(option)
 
-    fun decideOn(nodeId: Long, outcome: String, selectedOptionId: Long? = null) {
+    fun decideOn(
+        nodeId: Long,
+        outcome: String,
+        selectedOptionId: Long? = null,
+    )
+    {
         decisionCommands.decideOn(nodeId, outcome, selectedOptionId)
     }
 
