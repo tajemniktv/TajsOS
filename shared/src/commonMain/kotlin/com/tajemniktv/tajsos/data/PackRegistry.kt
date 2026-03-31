@@ -4,6 +4,8 @@
 
 package com.tajemniktv.tajsos.data
 
+import androidx.compose.runtime.Immutable
+
 /**
  * Represents the available feature packs in TajsOS.
  *
@@ -36,6 +38,7 @@ enum class AppPack(
  * @property ownedPackKeys The set of pack keys that the user currently owns.
  * @property enabledPackKeys The set of pack keys that the user has currently enabled.
  */
+@Immutable
 data class PackRegistry(
     val ownedPackKeys: Set<String>,
     val enabledPackKeys: Set<String>,

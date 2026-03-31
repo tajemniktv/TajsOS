@@ -4,6 +4,7 @@
 
 package com.tajemniktv.tajsos.ui
 
+import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tajemniktv.tajsos.data.AppPack
@@ -123,26 +124,7 @@ import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.Json
 import kotlin.time.Clock
 
-/**
- * ViewModel responsible for managing the application's main business logic, interactions,
- * and state, integrating repositories and services to orchestrate functionality.
- *
- * This ViewModel serves as a central hub for tasks like managing calendar providers,
- * synchronizing modes, handling user authentication, enabling biometric features,
- * managing packs, manipulating nodes, triggering protocols, handling snapshots,
- * and maintaining application-wide state.
- *
- * **Features include:**
- * - Calendar management: Adding, deleting, and syncing providers.
- * - Mode switching and settings.
- * - Node operations: CRUD, recursion, categorization, and content parsing.
- * - Playbook and protocol manipulation.
- * - Snapshot generation and restoration of nodes.
- * - Biometric state management and device availability checks.
- * - Pack ownership and enablement management.
- * - Advanced filter and search state handling.
- * - Relationships and insights management for an enhanced user experience.
- */
+@Stable
 class MainViewModel(
     private val repository: AppRepository,
     private val preferencesRepository: PreferencesRepository,
@@ -1517,26 +1499,23 @@ class MainViewModel(
     fun setPersonRelationshipType(
         person: NodeEntity,
         type: String?,
-    )
-    {
+    ) {
         relationshipCommands.setPersonRelationshipType(person, type)
-        }
+    }
 
     fun linkPersonToNode(
         personId: Long,
         nodeId: Long,
-    )
-    {
+    ) {
         relationshipCommands.linkPersonToNode(personId, nodeId)
-        }
+    }
 
     fun unlinkPersonFromNode(
         personId: Long,
         nodeId: Long,
-    )
-    {
+    ) {
         relationshipCommands.unlinkPersonFromNode(personId, nodeId)
-        }
+    }
 
     fun createReplyNeededForPerson(
         personId: Long,
@@ -1559,8 +1538,8 @@ class MainViewModel(
         prompt: String,
     )
     {
-        relationshipCommands.createAskAboutNextTimeNote(personId, prompt)
-        }
+            relationshipCommands.createAskAboutNextTimeNote(personId, prompt)
+    }
 
     fun addPlace(
         title: String,
@@ -1573,18 +1552,17 @@ class MainViewModel(
     fun linkNodeToPlace(
         nodeId: Long,
         placeId: Long,
-    )
-    {
+    ) {
         relationshipCommands.linkNodeToPlace(nodeId, placeId)
-        }
+    }
 
     fun unlinkNodeFromPlace(
         nodeId: Long,
         placeId: Long,
     )
     {
-        relationshipCommands.unlinkNodeFromPlace(nodeId, placeId)
-        }
+            relationshipCommands.unlinkNodeFromPlace(nodeId, placeId)
+    }
 
     fun createWhatToBringList(
         title: String,
@@ -1620,10 +1598,9 @@ class MainViewModel(
     fun addPhysicalLogisticsNote(
         title: String,
         content: String,
-    )
-    {
-            relationshipCommands.addPhysicalLogisticsNote(title, content)
-        }
+    ) {
+        relationshipCommands.addPhysicalLogisticsNote(title, content)
+    }
 
     fun addPersonalRule(
         title: String,
@@ -1677,8 +1654,8 @@ class MainViewModel(
         enabled: Boolean,
     )
     {
-        relationshipCommands.markMustFindLater(node, enabled)
-        }
+            relationshipCommands.markMustFindLater(node, enabled)
+    }
 
     fun runMonthlyReset() {
         nodeCommands.runMonthlyReset()
@@ -1690,8 +1667,7 @@ class MainViewModel(
      * @param projectId The id of the project whose nodes should be returned.
      * @return A Flow that emits lists of NodeWithPin for the specified project.
      */
-    fun getNodesForProject(projectId: Long): Flow<List<NodeWithPin>> =
-        repository.getNodesByProjectWithPins(projectId)
+    fun getNodesForProject(projectId: Long): Flow<List<NodeWithPin>> = repository.getNodesByProjectWithPins(projectId)
 
     /**
      * Retrieves nodes (including pin state) that belong to the specified area.
@@ -1699,8 +1675,7 @@ class MainViewModel(
      * @param areaId The id of the area to fetch nodes for.
      * @return A Flow that emits lists of `NodeWithPin` belonging to the specified area.
      */
-    fun getNodesForArea(areaId: Long): Flow<List<NodeWithPin>> =
-        repository.getNodesByAreaWithPins(areaId)
+    fun getNodesForArea(areaId: Long): Flow<List<NodeWithPin>> = repository.getNodesByAreaWithPins(areaId)
 
     /**
      * Provides a reactive stream of projects assigned to the specified area.
@@ -1708,8 +1683,7 @@ class MainViewModel(
      * @param areaId The id of the area whose projects to retrieve.
      * @return A Flow that emits lists of `NodeEntity` representing projects belonging to the given area.
      */
-    fun getProjectsForArea(areaId: Long): Flow<List<NodeEntity>> =
-        repository.getProjectsByArea(areaId)
+    fun getProjectsForArea(areaId: Long): Flow<List<NodeEntity>> = repository.getProjectsByArea(areaId)
 
     /**
      * Creates and inserts a track entry for the current local date using the provided scores and metadata.
@@ -1827,8 +1801,7 @@ class MainViewModel(
         }
     }
 
-    fun getMedicationsForEntry(trackEntryId: Long): Flow<List<TrackMedicationJoinEntity>> =
-        repository.getTrackMedications(trackEntryId)
+    fun getMedicationsForEntry(trackEntryId: Long): Flow<List<TrackMedicationJoinEntity>> = repository.getTrackMedications(trackEntryId)
 
     fun startFocusSession(nodeId: Long) {
         viewModelScope.launch {
@@ -1884,8 +1857,8 @@ class MainViewModel(
     )
     {
         if (projectId != null) _lastActiveProjectId.value = projectId
-            if (areaId != null) _lastActiveAreaId.value = areaId
-    }
+        if (areaId != null) _lastActiveAreaId.value = areaId
+        }
 
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
@@ -2252,15 +2225,15 @@ class MainViewModel(
     )
     {
         viewModelScope.launch {
-            repository.insertTag(
+                repository.insertTag(
                 TagEntity(
                     name = name,
                     normalizedName = name.lowercase().trim(),
-                        color = color,
+                    color = color,
                     ),
                 )
             }
-    }
+        }
 
     fun attachTagToNode(
         nodeId: Long,
@@ -2269,8 +2242,8 @@ class MainViewModel(
     {
         viewModelScope.launch {
             repository.attachTagToNode(nodeId, tagId)
-            }
         }
+    }
 
     fun detachTagFromNode(
         nodeId: Long,
@@ -2359,10 +2332,9 @@ class MainViewModel(
     )
     {
         studentCommands.linkPaperToNote(paperNodeId, noteNodeId)
-        }
+    }
 
-    fun getAttachmentsForNode(nodeId: Long): Flow<List<AttachmentEntity>> =
-        repository.getAttachmentsForNode(nodeId)
+    fun getAttachmentsForNode(nodeId: Long): Flow<List<AttachmentEntity>> = repository.getAttachmentsForNode(nodeId)
 
     fun addAttachment(
         nodeId: Long,
@@ -2416,14 +2388,14 @@ class MainViewModel(
     )
     {
         val normalizedType =
-            when (type.trim().lowercase())
+                when (type.trim().lowercase())
             {
                 "record" -> "record"
-                    "project" -> "project"
+                "project" -> "project"
                     "area" -> "area"
                     "idea", "resource", "vault", "document" -> "note"
-                "maintenance", "open_loop", "decision", "protocol" -> "task"
-                else -> "task"
+                    "maintenance", "open_loop", "decision", "protocol" -> "task"
+                    else -> "task"
             }
         viewModelScope.launch {
             repository.insertTemplate(
@@ -2469,13 +2441,13 @@ class MainViewModel(
     {
         viewModelScope.launch {
             val now = Clock.System.now()
-            val dateStr = now.toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
+                val dateStr = now.toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
 
-                val nodeId =
-                    repository.insertLifeItem(
+            val nodeId =
+                repository.insertLifeItem(
                         kind = ItemKind.RECORD,
-                    title = "${type.uppercase()} REVIEW - $dateStr",
-                    content = content,
+                        title = "${type.uppercase()} REVIEW - $dateStr",
+                        content = content,
                     inboxState = false,
                     source = "review",
                     recordKind = RecordKind.REFLECTION,
@@ -2486,16 +2458,16 @@ class MainViewModel(
                     type = type,
                     date = dateStr,
                     resultNodeId = nodeId,
-                        moodScore = mood,
-                        energyScore = energy,
-                ),
-            )
+                    moodScore = mood,
+                    energyScore = energy,
+                    ),
+                )
 
-            if (mood != null || energy != null) {
+                if (mood != null || energy != null) {
                 addTrackEntry(mood = mood, energy = energy, note = "Linked to $type review")
             }
-            }
         }
+    }
 
     suspend fun getLastReviewByType(type: String) = repository.getLastReviewByType(type)
 
@@ -2640,11 +2612,9 @@ class MainViewModel(
         decisionCommands.addDecisionOption(nodeId, title, description)
     }
 
-    fun updateDecisionOption(option: DecisionOptionEntity) =
-        decisionCommands.updateDecisionOption(option)
+    fun updateDecisionOption(option: DecisionOptionEntity) = decisionCommands.updateDecisionOption(option)
 
-    fun deleteDecisionOption(option: DecisionOptionEntity) =
-        decisionCommands.deleteDecisionOption(option)
+    fun deleteDecisionOption(option: DecisionOptionEntity) = decisionCommands.deleteDecisionOption(option)
 
     fun decideOn(
         nodeId: Long,

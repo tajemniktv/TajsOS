@@ -4,6 +4,7 @@
 
 package com.tajemniktv.tajsos.data
 
+import androidx.compose.runtime.Immutable
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.Index
@@ -18,6 +19,7 @@ import kotlinx.serialization.Serializable
  */
 @Entity(tableName = "nodes")
 @Serializable
+@Immutable
 data class NodeEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     /**
@@ -182,6 +184,7 @@ data class NodeEntity(
  */
 @Entity(tableName = "modes")
 @Serializable
+@Immutable
 data class ModeEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     /**
@@ -498,6 +501,7 @@ data class RelationEntity(
  */
 @Entity(tableName = "tags")
 @Serializable
+@Immutable
 data class TagEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val name: String,
@@ -563,6 +567,7 @@ data class AttachmentEntity(
  */
 @Entity(tableName = "templates")
 @Serializable
+@Immutable
 data class TemplateEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val name: String,
@@ -661,6 +666,7 @@ data class CalendarEventEntity(
     indices = [Index(value = ["nodeId"])],
 )
 @Serializable
+@Immutable
 data class NodeSnapshotEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val nodeId: Long,
@@ -675,6 +681,7 @@ data class NodeSnapshotEntity(
 /**
  * NodeWithPin is a "POJO" used by Room to perform a JOIN.
  */
+@Immutable
 data class NodeWithPin(
     @Embedded val node: NodeEntity,
     @Relation(

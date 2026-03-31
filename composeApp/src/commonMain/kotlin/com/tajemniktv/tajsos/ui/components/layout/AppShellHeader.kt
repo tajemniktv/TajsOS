@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -73,6 +74,7 @@ data class ShellModeOption(
  * @param modeOptions Available modes to switch to.
  * @param notifications List of current notifications.
  * @param shellState The current UI state of the app shell components.
+ * @param isDesktop Whether the current environment is a desktop layout.
  * @param onModeSelect Callback when a mode is selected from the switcher.
  * @param modifier The modifier to be applied to the layout.
  */
@@ -84,12 +86,16 @@ fun AppShellHeader(
     modeOptions: List<ShellModeOption>,
     notifications: List<NotificationUiModel>,
     shellState: AppShellState,
+    isDesktop: Boolean,
     onModeSelect: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Surface(
-        modifier = modifier.fillMaxWidth(),
-        color = TajsOSTheme.SurfaceLow,
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .then(if (!isDesktop) Modifier.statusBarsPadding() else Modifier),
+            color = TajsOSTheme.SurfaceLow,
         tonalElevation = 0.dp,
         shadowElevation = 0.dp,
     ) {
@@ -97,17 +103,26 @@ fun AppShellHeader(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 24.dp, vertical = 16.dp),
+                    .padding(
+                        horizontal = if (isDesktop) 24.dp else 16.dp,
+                        vertical = if (isDesktop) 16.dp else 12.dp,
+                    ),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             HeaderGreeting(
                 greeting = greeting,
                 protocolText = protocolText,
-                modifier = Modifier.width(320.dp),
+                modifier = if (isDesktop) Modifier.width(320.dp) else Modifier.weight(1f),
             )
-            Spacer(Modifier.width(24.dp))
-            GlobalSearchBar(modifier = Modifier.weight(1f))
-            Spacer(Modifier.width(24.dp))
+
+            if (isDesktop) {
+                Spacer(Modifier.width(24.dp))
+                GlobalSearchBar(modifier = Modifier.weight(1f))
+                Spacer(Modifier.width(24.dp))
+            } else {
+                Spacer(Modifier.width(12.dp))
+            }
+
             HeaderModeSwitcher(
                 currentModeLabel = currentModeLabel,
                 modeOptions = modeOptions,

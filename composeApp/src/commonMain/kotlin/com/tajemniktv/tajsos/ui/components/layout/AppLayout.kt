@@ -133,6 +133,7 @@ fun AppLayout(
                     modeOptions = modeOptions,
                     notifications = notifications,
                     shellState = shellState,
+                    isDesktop = true,
                     onModeSelect = onModeSelect,
                     modifier = Modifier.padding(bottom = 2.dp),
                 )
@@ -182,6 +183,7 @@ fun AppLayout(
                     modeOptions = modeOptions,
                     notifications = notifications,
                     shellState = shellState,
+                    isDesktop = false,
                     onModeSelect = onModeSelect,
                 )
                 Box(modifier = Modifier.fillMaxSize()) {

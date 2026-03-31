@@ -8,6 +8,10 @@ plugins {
     alias(libs.plugins.composeCompiler)
 }
 
+composeCompiler {
+    stabilityConfigurationFiles.add(layout.projectDirectory.file("../compose_compiler_config.conf"))
+}
+
 android {
     signingConfigs {
         create("release") {

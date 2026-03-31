@@ -3,7 +3,6 @@
  */
 
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -14,12 +13,22 @@ plugins {
     alias(libs.plugins.composeHotReload)
 }
 
+composeCompiler {
+    stabilityConfigurationFiles.add(layout.projectDirectory.file("../compose_compiler_config.conf"))
+}
+
 kotlin {
     // Android target configured via android block (replaces androidTarget + android{}) (Earlier: androidLibrary)
     android {
         namespace = "com.tajemniktv.tajsos.composeapp"
-        compileSdk = libs.versions.android.compileSdk.get().toInt()
-        minSdk = libs.versions.android.minSdk.get().toInt()
+        compileSdk =
+            libs.versions.android.compileSdk
+                .get()
+                .toInt()
+        minSdk =
+            libs.versions.android.minSdk
+                .get()
+                .toInt()
 
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_25)
@@ -33,7 +42,7 @@ kotlin {
 
     listOf(
         iosArm64(),
-        iosSimulatorArm64()
+        iosSimulatorArm64(),
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = "TajsOS"
