@@ -176,7 +176,13 @@ class AppRepository(
      *
      * The first line becomes the new item title and remaining lines become the body content.
      *
-     * @return The created item identifier, or `0` if the entry is missing or blank.
+     * **Side effects:**
+     * - Updates the inbox entry to mark it as processed, setting `processedAt` and `triagedItemId`.
+     * - Logs an "INBOX_TRIAGED" event with the newly created item ID.
+     *
+     * @param entryId The ID of the raw inbox entry to triage.
+     * @param kind The target [ItemKind] to convert the entry into.
+     * @return The created item identifier, or `0L` if the entry is missing or the parsed title is blank.
      */
     suspend fun triageInboxEntry(
         entryId: Long,
