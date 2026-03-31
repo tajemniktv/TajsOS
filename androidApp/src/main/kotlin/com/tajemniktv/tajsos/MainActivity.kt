@@ -125,8 +125,9 @@ class MainActivity : FragmentActivity() {
             val currentPendingIntent by pendingIntent
 
             LaunchedEffect(isAuthenticated, currentPendingIntent) {
-                if (isAuthenticated && currentPendingIntent != null) {
-                    processPendingIntent(currentPendingIntent!!)
+                val intent = currentPendingIntent
+                if (isAuthenticated && intent != null) {
+                    processPendingIntent(intent)
                 }
             }
 
