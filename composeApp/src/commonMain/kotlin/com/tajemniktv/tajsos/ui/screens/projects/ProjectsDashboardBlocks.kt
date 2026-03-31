@@ -30,7 +30,7 @@ import androidx.compose.ui.Modifier
 import com.tajemniktv.tajsos.data.ProjectState
 import com.tajemniktv.tajsos.data.projectStateOrNull
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
@@ -89,14 +89,14 @@ internal fun ProjectsMainBlock(
         modifier =
             Modifier
                 .fillMaxSize()
-                .padding(TactileTheme.SpacingMd),
+                .padding(TajsOSTheme.SpacingMd)
     ) {
         Text(
             text = stringResource(Res.string.projects_title),
             style = MaterialTheme.typography.displaySmall,
-            color = TactileTheme.Text,
+            color = TajsOSTheme.Text
         )
-        Spacer(modifier = Modifier.height(TactileTheme.SpacingMd))
+        Spacer(modifier = Modifier.height(TajsOSTheme.SpacingMd))
 
         OutlinedTextField(
             value = searchQuery,
@@ -107,9 +107,9 @@ internal fun ProjectsMainBlock(
             shape = MaterialTheme.shapes.medium,
         )
 
-        Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
+        Spacer(modifier = Modifier.height(TajsOSTheme.SpacingSm))
 
-        Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
             FilterChip(
                 selected = selectedStatusFilter == "active",
                 onClick = { selectedStatusFilter = "active" },
@@ -122,7 +122,7 @@ internal fun ProjectsMainBlock(
             )
         }
 
-        Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
+        Spacer(modifier = Modifier.height(TajsOSTheme.SpacingSm))
 
         ProjectListContent(
             state = ProjectListState(filteredProjects, searchQuery, nodesByProjectId),

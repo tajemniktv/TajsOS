@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 /**
  * Renders a horizontal row of three equally sized actionable cards that apply preset search filters and navigate to the Search screen.
@@ -44,7 +44,7 @@ fun StateAwareActionsGrid(
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+        horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
     ) {
         listOf(
             Triple(Icons.Default.Bolt, "OVERWHELMED", "Easy wins"),
@@ -76,15 +76,15 @@ fun StateAwareActionsGrid(
                     onNavigateTo(Screen.Search)
                 },
                 modifier = Modifier.weight(1f),
-                color = TactileTheme.Surface,
-                shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                border = BorderStroke(1.dp, TactileTheme.Border),
+                color = TajsOSTheme.Surface,
+                shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+                border = BorderStroke(1.dp, TajsOSTheme.Border)
             ) {
-                Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+                Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
                     Icon(
                         icon,
                         contentDescription = null,
-                        tint = TactileTheme.Primary,
+                        tint = TajsOSTheme.Primary,
                         modifier = Modifier.size(20.dp),
                     )
                     Text(
@@ -96,7 +96,7 @@ fun StateAwareActionsGrid(
                     Text(
                         desc,
                         style = MaterialTheme.typography.bodySmall,
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted,
                         fontSize = 9.sp,
                     )
                 }

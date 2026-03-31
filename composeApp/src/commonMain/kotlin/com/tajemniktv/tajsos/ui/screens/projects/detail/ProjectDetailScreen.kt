@@ -54,7 +54,7 @@ import com.tajemniktv.tajsos.data.toNodeStatus
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.common.SelectorDialog
 import com.tajemniktv.tajsos.ui.components.layout.LocalHeaderActions
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.project_detail_not_found
@@ -84,8 +84,8 @@ fun ProjectDetailScreen(
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text(
                 stringResource(Res.string.project_detail_not_found),
-                color = TactileTheme.Muted,
-                modifier = Modifier.padding(TactileTheme.SpacingMd),
+                color = TajsOSTheme.Muted,
+                modifier = Modifier.padding(TajsOSTheme.SpacingMd)
             )
         }
         return
@@ -148,25 +148,25 @@ fun ProjectDetailScreen(
         when
             {
                 project.isFrozen -> {
-                    stringResource(Res.string.project_health_frozen) to TactileTheme.Accent
+                    stringResource(Res.string.project_health_frozen) to TajsOSTheme.Accent
                 }
 
                 project.projectStateOrNull() == ProjectState.ON_HOLD -> {
-                    stringResource(Res.string.project_health_on_hold) to TactileTheme.Muted
+                    stringResource(Res.string.project_health_on_hold) to TajsOSTheme.Muted
                 }
 
                 hasCriticalOverdue -> {
-                    stringResource(Res.string.project_health_critical) to TactileTheme.Error
+                    stringResource(Res.string.project_health_critical) to TajsOSTheme.Error
                 }
 
                 isNeglected -> {
                     stringResource(Res.string.project_health_neglected) to
-                        TactileTheme.Error
+                        TajsOSTheme.Error
                 }
 
                 else -> {
                     stringResource(Res.string.project_health_healthy) to
-                        TactileTheme.Success
+                            TajsOSTheme.Success
                 }
             }
 
@@ -214,7 +214,7 @@ fun ProjectDetailScreen(
             Icon(
                 if (project.isFrozen) Icons.Default.WbSunny else Icons.Default.Schedule,
                 contentDescription = null,
-                tint = if (project.isFrozen) TactileTheme.Primary else TactileTheme.Muted,
+                tint = if (project.isFrozen) TajsOSTheme.Primary else TajsOSTheme.Muted,
                 modifier = Modifier.size(18.dp),
             )
         }
@@ -260,7 +260,7 @@ fun ProjectDetailScreen(
             )
 
         BoxWithConstraints(
-            modifier = Modifier.fillMaxSize().background(TactileTheme.Background),
+            modifier = Modifier.fillMaxSize().background(TajsOSTheme.Background)
         ) {
             val surface =
                 if (isDesktop && maxWidth >= 1180.dp) {

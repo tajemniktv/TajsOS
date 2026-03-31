@@ -18,7 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 @Composable
 fun DashCard(
@@ -29,8 +29,8 @@ fun DashCard(
     Surface(
         onClick = onClick,
         modifier = modifier,
-        color = TactileTheme.Surface,
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+        color = TajsOSTheme.Surface,
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         border = BorderStroke(1.dp, Color.White.copy(alpha = 0.05f)),
         content = content,
     )
@@ -46,9 +46,9 @@ fun TactileCard(
         modifier =
             modifier
                 .fillMaxWidth()
-                .background(TactileTheme.Surface, RoundedCornerShape(TactileTheme.RadiusMd))
+                .background(TajsOSTheme.Surface, RoundedCornerShape(TajsOSTheme.RadiusMd))
                 .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
-                .padding(TactileTheme.SpacingMd),
+                .padding(TajsOSTheme.SpacingMd),
         contentAlignment = Alignment.CenterStart,
         content = content,
     )

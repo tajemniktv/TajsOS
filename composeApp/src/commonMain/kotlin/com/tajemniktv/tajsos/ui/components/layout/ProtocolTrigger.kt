@@ -25,7 +25,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 /**
  * Displays a fixed-width clickable card containing an icon above an uppercase label,
@@ -53,11 +53,11 @@ fun ProtocolTrigger(
         onClick = onClick,
         modifier = Modifier.width(120.dp),
         color = color.copy(alpha = 0.1f),
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         border = BorderStroke(1.dp, color.copy(alpha = 0.3f)),
     ) {
         Column(
-            modifier = Modifier.padding(TactileTheme.SpacingMd),
+            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {

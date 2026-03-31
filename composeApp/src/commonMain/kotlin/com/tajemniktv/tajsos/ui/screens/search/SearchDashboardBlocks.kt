@@ -50,7 +50,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.context_10_min
@@ -118,9 +118,9 @@ private fun renderSearchInput(context: SearchDashboardContext) {
             },
             colors =
                 TextFieldDefaults.colors(
-                    focusedContainerColor = TactileTheme.Surface,
-                    unfocusedContainerColor = TactileTheme.Surface,
-                ),
+                    focusedContainerColor = TajsOSTheme.Surface,
+                    unfocusedContainerColor = TajsOSTheme.Surface
+                )
         )
         IconButton(onClick = { viewModel.clearSearchFilters() }) {
             Icon(
@@ -142,10 +142,10 @@ private fun renderSearchRecent(context: SearchDashboardContext) {
 @Composable
 private fun renderSearchFilters(context: SearchDashboardContext) {
     val viewModel = context.viewModel
-    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+    Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
         // Status and Type Filters
         LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+            horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             item {
@@ -184,7 +184,7 @@ private fun renderSearchFilters(context: SearchDashboardContext) {
 
         // Context Filters
         LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+            horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             val contexts =
@@ -233,7 +233,7 @@ private fun renderSearchFilters(context: SearchDashboardContext) {
 
         // Horizon Filters
         LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+            horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             val horizons =
@@ -268,7 +268,7 @@ private fun renderSearchFilters(context: SearchDashboardContext) {
         // Project and Area Filters
         if (context.areasById.isNotEmpty() || context.projectsById.isNotEmpty() || context.searchLinkedToFilter != null) {
             LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 if (context.searchLinkedToFilter != null) {
@@ -372,7 +372,7 @@ private fun renderSearchResultsList(context: SearchDashboardContext) {
     ) {
         EmptyState(message = stringResource(Res.string.search_no_results))
     } else {
-        Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+        Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
             context.searchResults.forEach { nodeWithPin ->
                 SearchResultCard(
                     nodeWithPin = nodeWithPin,
@@ -425,21 +425,21 @@ private fun RecentQueriesRow(
         Text(
             "RECENT QUERIES",
             style = MaterialTheme.typography.labelSmall,
-            color = TactileTheme.Muted,
+            color = TajsOSTheme.Muted
         )
-        Spacer(modifier = Modifier.width(TactileTheme.SpacingSm))
-        LazyRow(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+        Spacer(modifier = Modifier.width(TajsOSTheme.SpacingSm))
+        LazyRow(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
             items(queries) { query ->
                 Surface(
                     shape = RoundedCornerShape(999.dp),
-                    color = TactileTheme.SurfaceHigh,
+                    color = TajsOSTheme.SurfaceHigh,
                     onClick = { onQueryClick(query) },
                 ) {
                     Text(
                         text = query,
                         modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Text,
+                        color = TajsOSTheme.Text
                     )
                 }
             }
@@ -461,13 +461,13 @@ private fun SearchResultsHeader(resultCount: Int) {
             Text(
                 "Search Results",
                 style = MaterialTheme.typography.headlineSmall,
-                color = TactileTheme.Text,
+                color = TajsOSTheme.Text
             )
-            Spacer(modifier = Modifier.width(TactileTheme.SpacingSm))
+            Spacer(modifier = Modifier.width(TajsOSTheme.SpacingSm))
             Text(
                 "FOUND $resultCount ITEMS",
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary,
+                color = TajsOSTheme.Primary
             )
         }
         Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
@@ -502,17 +502,17 @@ private fun SearchSupportPanel(
         }
     Column(
         modifier = Modifier.width(284.dp).fillMaxHeight(),
-        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
     ) {
-        Surface(shape = RoundedCornerShape(14.dp), color = TactileTheme.SurfaceLow) {
+        Surface(shape = RoundedCornerShape(14.dp), color = TajsOSTheme.SurfaceLow) {
             Column(
-                modifier = Modifier.padding(TactileTheme.SpacingMd),
+                modifier = Modifier.padding(TajsOSTheme.SpacingMd),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Text(
                     "SEARCH STATUS",
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Primary,
+                    color = TajsOSTheme.Primary
                 )
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -521,18 +521,18 @@ private fun SearchSupportPanel(
                     Text(
                         "SYSTEM INDEX",
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted
                     )
                     Text(
                         if (indexedCount > 0) "STABLE" else "BOOTING",
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Primary,
+                        color = TajsOSTheme.Primary
                     )
                 }
                 Text(
                     "$indexedCount objects indexed",
                     style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Text,
+                    color = TajsOSTheme.Text
                 )
                 LinearProgressIndicator(
                     progress = { 1f },
@@ -545,32 +545,32 @@ private fun SearchSupportPanel(
                     Text(
                         "Index coverage",
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted
                     )
                     Text(
                         "$coverage%",
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Text,
+                        color = TajsOSTheme.Text
                     )
                 }
             }
         }
 
-        Surface(shape = RoundedCornerShape(14.dp), color = TactileTheme.SurfaceLow) {
+        Surface(shape = RoundedCornerShape(14.dp), color = TajsOSTheme.SurfaceLow) {
             Column(
-                modifier = Modifier.padding(TactileTheme.SpacingMd),
+                modifier = Modifier.padding(TajsOSTheme.SpacingMd),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Text(
                     "SEARCH INSIGHTS",
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Primary,
+                    color = TajsOSTheme.Primary
                 )
                 Text(
                     topResult?.let { "Most relevant right now: \"$it\"." }
                         ?: "Run a query to see linked search insights.",
                     style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Text,
+                    color = TajsOSTheme.Text
                 )
             }
         }
@@ -606,9 +606,9 @@ private fun SearchResultCard(
     Surface(
         onClick = onOpen,
         shape = RoundedCornerShape(14.dp),
-        color = TactileTheme.SurfaceLow,
+        color = TajsOSTheme.SurfaceLow
     ) {
-        Column(modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingMd)) {
+        Column(modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -638,14 +638,14 @@ private fun SearchResultCard(
                         Text(
                             text = node.title,
                             style = MaterialTheme.typography.titleMedium,
-                            color = TactileTheme.Text,
+                            color = TajsOSTheme.Text,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                         )
                         Text(
                             text = subtitle,
                             style = MaterialTheme.typography.labelSmall,
-                            color = TactileTheme.Primary,
+                            color = TajsOSTheme.Primary,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                         )
@@ -655,29 +655,29 @@ private fun SearchResultCard(
                 Column(horizontalAlignment = Alignment.End) {
                     Surface(
                         shape = RoundedCornerShape(999.dp),
-                        color = TactileTheme.Primary.copy(alpha = 0.2f),
+                        color = TajsOSTheme.Primary.copy(alpha = 0.2f)
                     ) {
                         Text(
                             text = "MATCH: $score%",
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                             style = MaterialTheme.typography.labelSmall,
-                            color = TactileTheme.Primary,
+                            color = TajsOSTheme.Primary
                         )
                     }
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = "UPDATED ${formatRelativeTime(node.updatedAt, nowMs)}",
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
+            Spacer(modifier = Modifier.height(TajsOSTheme.SpacingSm))
             Text(
                 text = node.content.ifBlank { "Open this item for full details and linked entities." },
                 style = MaterialTheme.typography.bodyMedium,
-                color = TactileTheme.Text.copy(alpha = 0.9f),
+                color = TajsOSTheme.Text.copy(alpha = 0.9f),
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -688,25 +688,25 @@ private fun SearchResultCard(
                     if (nodeWithPin.isPinnedToToday) add("PINNED TODAY")
                 }
             if (chips.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
+                Spacer(modifier = Modifier.height(TajsOSTheme.SpacingSm))
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     chips.forEach { chip ->
                         Surface(
                             shape = RoundedCornerShape(6.dp),
-                            color = TactileTheme.SurfaceHigh,
+                            color = TajsOSTheme.SurfaceHigh
                         ) {
                             Text(
                                 text = chip,
                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                                 style = MaterialTheme.typography.labelSmall,
-                                color = TactileTheme.Muted,
+                                color = TajsOSTheme.Muted
                             )
                         }
                     }
                 }
             }
 
-            Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
+            Spacer(modifier = Modifier.height(TajsOSTheme.SpacingSm))
             Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                 TextButton(onClick = onOpen) {
                     Text(
@@ -783,7 +783,7 @@ private fun iconTintForType(type: String): Color =
         "project" -> Color(0xFF9D7AFF)
         "note" -> Color(0xFF8EA4FF)
         "record" -> Color(0xFF57D7C6)
-        else -> TactileTheme.Primary
+        else -> TajsOSTheme.Primary
     }
 
 private fun formatRelativeTime(

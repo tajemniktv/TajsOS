@@ -45,7 +45,7 @@ import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.data.TaskState
 import com.tajemniktv.tajsos.data.taskStateOrNull
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.tasks_all_title
@@ -143,7 +143,7 @@ internal fun TasksAllView(
 
     Column(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
     ) {
         Text(
             stringResource(Res.string.tasks_all_title),
@@ -152,7 +152,7 @@ internal fun TasksAllView(
         )
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+            horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             OutlinedTextField(
@@ -195,13 +195,13 @@ internal fun TasksAllView(
             if (maxWidth > 1080.dp) {
                 Row(
                     modifier = Modifier.fillMaxSize(),
-                    horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+                    horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
                 ) {
                     Surface(
                         modifier = Modifier.weight(2f),
-                        shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                        color = TactileTheme.Surface,
-                        border = BorderStroke(1.dp, TactileTheme.Border),
+                        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+                        color = TajsOSTheme.Surface,
+                        border = BorderStroke(1.dp, TajsOSTheme.Border)
                     ) {
                         TaskTable(
                             sorted,
@@ -213,9 +213,9 @@ internal fun TasksAllView(
                     }
                     Surface(
                         modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                        color = TactileTheme.Surface,
-                        border = BorderStroke(1.dp, TactileTheme.Border),
+                        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+                        color = TajsOSTheme.Surface,
+                        border = BorderStroke(1.dp, TajsOSTheme.Border)
                     ) {
                         TaskDetails(
                             selected,
@@ -231,9 +231,9 @@ internal fun TasksAllView(
                 }
             } else {
                 Surface(
-                    shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                    color = TactileTheme.Surface,
-                    border = BorderStroke(1.dp, TactileTheme.Border),
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+                    color = TajsOSTheme.Surface,
+                    border = BorderStroke(1.dp, TajsOSTheme.Border)
                 ) {
                     Column(modifier = Modifier.fillMaxSize()) {
                         TaskTable(
@@ -243,7 +243,7 @@ internal fun TasksAllView(
                             areaById,
                             onSelect = { selectedId = it },
                         )
-                        HorizontalDivider(color = TactileTheme.Border)
+                        HorizontalDivider(color = TajsOSTheme.Border)
                         TaskDetails(
                             selected,
                             projectById,
@@ -275,31 +275,31 @@ private fun TaskTable(
     }
     Column(modifier = Modifier.fillMaxSize()) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingMd),
+            modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Text(
                 stringResource(Res.string.tasks_column_task),
                 style = MaterialTheme.typography.labelMedium,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted
             )
             Text(
                 stringResource(Res.string.tasks_column_context),
                 style = MaterialTheme.typography.labelMedium,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted
             )
             Text(
                 stringResource(Res.string.tasks_column_due),
                 style = MaterialTheme.typography.labelMedium,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted
             )
             Text(
                 stringResource(Res.string.tasks_column_status),
                 style = MaterialTheme.typography.labelMedium,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted
             )
         }
-        HorizontalDivider(color = TactileTheme.Border)
+        HorizontalDivider(color = TajsOSTheme.Border)
         LazyColumn {
             items(tasks, key = { it.id }) { task ->
                 val selected = task.id == selectedId
@@ -307,8 +307,14 @@ private fun TaskTable(
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .background(if (selected) TactileTheme.Primary.copy(alpha = 0.1f) else Color.Transparent)
-                            .padding(TactileTheme.SpacingMd),
+                            .background(
+                                if (selected) {
+                                    TajsOSTheme.Primary.copy(
+                                        alpha = 0.1f
+                                    )
+                                } else Color.Transparent
+                            )
+                            .padding(TajsOSTheme.SpacingMd),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -316,39 +322,39 @@ private fun TaskTable(
                         Text(
                             task.title,
                             style = MaterialTheme.typography.bodyLarge,
-                            color = TactileTheme.Text,
+                            color = TajsOSTheme.Text,
                             fontWeight = FontWeight.SemiBold,
                         )
                         task.nextSmallestStep?.takeIf { it.isNotBlank() }?.let {
                             Text(
                                 it,
                                 style = MaterialTheme.typography.bodySmall,
-                                color = TactileTheme.Muted,
+                                color = TajsOSTheme.Muted,
                             )
                         }
                     }
                     Text(
                         listOfNotNull(
                             task.projectId?.let { projectById[it] },
-                            task.areaId?.let { areaById[it] },
+                            task.areaId?.let { areaById[it] }
                         ).joinToString(" • ").ifBlank { "-" },
                         modifier = Modifier.weight(1f),
                         style = MaterialTheme.typography.bodySmall,
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted,
                     )
                     Text(
                         task.dueAt?.let(::shortDate) ?: "-",
                         modifier = Modifier.weight(0.8f),
                         style = MaterialTheme.typography.bodySmall,
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted
                     )
                     StatusPill(task.taskStateOrNull() ?: TaskState.ACTIVE)
                 }
                 OutlinedButton(
                     onClick = { onSelect(task.id) },
-                    modifier = Modifier.padding(horizontal = TactileTheme.SpacingMd),
+                    modifier = Modifier.padding(horizontal = TajsOSTheme.SpacingMd),
                 ) { Text(stringResource(Res.string.tasks_open_action)) }
-                HorizontalDivider(color = TactileTheme.Border)
+                HorizontalDivider(color = TajsOSTheme.Border)
             }
         }
     }
@@ -363,20 +369,20 @@ private fun TaskDetails(
     onDone: (NodeEntity) -> Unit,
     onArchive: (NodeEntity) -> Unit,
     onRestore: (NodeEntity) -> Unit,
-    onDelete: (NodeEntity) -> Unit,
+    onDelete: (NodeEntity) -> Unit
 ) {
     if (task == null) {
         Box(
-            modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingMd),
-            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
+            contentAlignment = Alignment.Center
         ) {
-            Text(stringResource(Res.string.tasks_no_results), color = TactileTheme.Muted)
+            Text(stringResource(Res.string.tasks_no_results), color = TajsOSTheme.Muted)
         }
         return
     }
     Column(
-        modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+        modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
+        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
     ) {
         Text(
             stringResource(Res.string.tasks_details_title),
@@ -387,16 +393,16 @@ private fun TaskDetails(
             task.title,
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
-            color = TactileTheme.Text,
+            color = TajsOSTheme.Text
         )
         task.content.takeIf { it.isNotBlank() }?.let {
             Text(
                 it,
                 style = MaterialTheme.typography.bodyMedium,
-                color = TactileTheme.Text,
+                color = TajsOSTheme.Text,
             )
         }
-        HorizontalDivider(color = TactileTheme.Border)
+        HorizontalDivider(color = TajsOSTheme.Border)
         DetailRow(
             stringResource(Res.string.tasks_detail_status),
             (task.taskStateOrNull() ?: TaskState.ACTIVE).storageKey,
@@ -413,12 +419,12 @@ private fun TaskDetails(
         DetailRow(stringResource(Res.string.tasks_detail_next_step), task.nextSmallestStep ?: "-")
         DetailRow(
             stringResource(Res.string.tasks_detail_estimate),
-            task.estimatedMinutes?.let { "${it}m" } ?: "-",
+            task.estimatedMinutes?.let { "${it}m" } ?: "-"
         )
         DetailRow(stringResource(Res.string.tasks_detail_updated), shortDate(task.updatedAt))
 
         Row(
-            horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+            horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
             modifier = Modifier.fillMaxWidth(),
         ) {
             OutlinedButton(onClick = { onOpen(task.id) }, modifier = Modifier.weight(1f)) {
@@ -441,7 +447,7 @@ private fun TaskDetails(
             }
         }
         Row(
-            horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+            horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
             modifier = Modifier.fillMaxWidth(),
         ) {
             OutlinedButton(onClick = { onArchive(task) }, modifier = Modifier.weight(1f)) {
@@ -450,9 +456,9 @@ private fun TaskDetails(
                 Text(stringResource(Res.string.tasks_archive_action))
             }
             OutlinedButton(onClick = { onDelete(task) }, modifier = Modifier.weight(1f)) {
-                Icon(Icons.Default.Delete, null, tint = TactileTheme.Error)
+                Icon(Icons.Default.Delete, null, tint = TajsOSTheme.Error)
                 Spacer(Modifier.width(4.dp))
-                Text(stringResource(Res.string.tasks_delete_action), color = TactileTheme.Error)
+                Text(stringResource(Res.string.tasks_delete_action), color = TajsOSTheme.Error)
             }
         }
     }

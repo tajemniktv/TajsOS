@@ -28,7 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.archive_empty
@@ -48,7 +48,7 @@ internal fun TasksArchiveView(
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
     ) {
         Text(
             stringResource(Res.string.tasks_archive_title),
@@ -58,21 +58,21 @@ internal fun TasksArchiveView(
         Text(
             stringResource(Res.string.tasks_archive_subtitle),
             style = MaterialTheme.typography.bodySmall,
-            color = TactileTheme.Muted,
+            color = TajsOSTheme.Muted
         )
         if (archivedTasks.isEmpty()) {
             EmptyState(message = stringResource(Res.string.archive_empty))
             return@Column
         }
         Surface(
-            shape = RoundedCornerShape(TactileTheme.RadiusMd),
-            color = TactileTheme.Surface,
-            border = BorderStroke(1.dp, TactileTheme.Border),
+            shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+            color = TajsOSTheme.Surface,
+            border = BorderStroke(1.dp, TajsOSTheme.Border)
         ) {
             Column {
                 archivedTasks.forEach { task ->
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingMd),
+                        modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
@@ -80,7 +80,7 @@ internal fun TasksArchiveView(
                             Text(
                                 task.title,
                                 style = MaterialTheme.typography.bodyLarge,
-                                color = TactileTheme.Text,
+                                color = TajsOSTheme.Text
                             )
                             val context =
                                 listOfNotNull(
@@ -92,23 +92,23 @@ internal fun TasksArchiveView(
                                 Text(
                                     context,
                                     style = MaterialTheme.typography.bodySmall,
-                                    color = TactileTheme.Muted,
+                                    color = TajsOSTheme.Muted
                                 )
                             }
                         }
-                        Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+                        Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                             OutlinedButton(onClick = { onOpen(task.id) }) { Text(stringResource(Res.string.tasks_open_action)) }
                             OutlinedButton(onClick = { onRestore(task) }) { Text(stringResource(Res.string.tasks_restore_action)) }
                             IconButton(onClick = { onDelete(task) }) {
                                 Icon(
                                     Icons.Default.Delete,
                                     null,
-                                    tint = TactileTheme.Error,
+                                    tint = TajsOSTheme.Error
                                 )
                             }
                         }
                     }
-                    HorizontalDivider(color = TactileTheme.Border)
+                    HorizontalDivider(color = TajsOSTheme.Border)
                 }
             }
         }

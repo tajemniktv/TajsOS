@@ -33,7 +33,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.TimeArchitectureSnapshot
 import com.tajemniktv.tajsos.ui.screens.formatProtocolTimestamp
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 object TimeArchitectureDashboardBlockRegistry {
     private val renderers: Map<String, TimeArchitectureDashboardBlockRenderer> =
@@ -51,16 +51,16 @@ object TimeArchitectureDashboardBlockRegistry {
 
 @Composable
 private fun renderTimeHeader(context: TimeArchitectureDashboardContext) {
-    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+    Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)) {
         Text(
             text = "TIME ARCHITECTURE",
             style = MaterialTheme.typography.displaySmall,
-            color = TactileTheme.Text,
+            color = TajsOSTheme.Text
         )
         Text(
             text = "Temporal structure for horizons, reset cadence, and anchor markers.",
             style = MaterialTheme.typography.bodySmall,
-            color = TactileTheme.Muted,
+            color = TajsOSTheme.Muted
         )
     }
 }
@@ -108,12 +108,12 @@ private fun renderTimeMap(context: TimeArchitectureDashboardContext) {
 
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.SurfaceLow,
-        shape = RoundedCornerShape(TactileTheme.RadiusLg),
-        border = BorderStroke(1.dp, TactileTheme.GhostBorder.copy(alpha = 0.18f)),
+        color = TajsOSTheme.SurfaceLow,
+        shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
+        border = BorderStroke(1.dp, TajsOSTheme.GhostBorder.copy(alpha = 0.18f))
     ) {
         Column(
-            modifier = Modifier.padding(TactileTheme.SpacingMd),
+            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Row(
@@ -124,43 +124,43 @@ private fun renderTimeMap(context: TimeArchitectureDashboardContext) {
                     Text(
                         "Structural Time Map",
                         style = MaterialTheme.typography.headlineSmall,
-                        color = TactileTheme.Text,
+                        color = TajsOSTheme.Text
                     )
                     Text(
                         "Current horizon: ${selectedHorizon.label}",
                         style = MaterialTheme.typography.bodySmall,
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted
                     )
                 }
                 Text(
                     "Today ${snapshot.todayLayer.size} • Week ${snapshot.weekLayer.size} • Month ${snapshot.monthLayer.size} • Semester ${snapshot.semesterLayer.size}",
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Primary,
+                    color = TajsOSTheme.Primary
                 )
             }
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
             ) {
                 StructuralCard(
                     title = "Active Window",
                     label = "${horizonItems.size} items in ${selectedHorizon.label.lowercase()}",
                     modifier = Modifier.weight(1f),
-                    tone = TactileTheme.SurfaceHigh,
+                    tone = TajsOSTheme.SurfaceHigh
                 ) {
                     if (horizonItems.isEmpty()) {
                         Text(
                             text = "No items in this horizon.",
                             style = MaterialTheme.typography.bodySmall,
-                            color = TactileTheme.Muted,
+                            color = TajsOSTheme.Muted
                         )
                     } else {
                         horizonItems.take(3).forEach { item ->
                             Text(
                                 text = "• ${item.node.title}",
                                 style = MaterialTheme.typography.bodySmall,
-                                color = TactileTheme.Text,
+                                color = TajsOSTheme.Text
                             )
                         }
                     }
@@ -170,19 +170,19 @@ private fun renderTimeMap(context: TimeArchitectureDashboardContext) {
                     title = "Reserve Window",
                     label = "Long-range load and semester pressure",
                     modifier = Modifier.weight(1f),
-                    tone = TactileTheme.SurfaceHighest,
+                    tone = TajsOSTheme.SurfaceHighest
                 ) {
                     val reserveCount = snapshot.longHorizonTasks.size + snapshot.semesterLayer.size
                     Text(
                         text = "$reserveCount long-horizon commitments tracked",
                         style = MaterialTheme.typography.bodySmall,
-                        color = TactileTheme.Text,
+                        color = TajsOSTheme.Text
                     )
                     if (snapshot.examPeriodMode) {
                         Text(
                             text = "Exam-period pressure detected",
                             style = MaterialTheme.typography.bodySmall,
-                            color = TactileTheme.Error,
+                            color = TajsOSTheme.Error,
                             fontWeight = FontWeight.SemiBold,
                         )
                     }
@@ -197,8 +197,8 @@ private fun renderTimeMap(context: TimeArchitectureDashboardContext) {
                 ) {
                     weeklyBuckets.forEach { (day, count) ->
                         Surface(
-                            color = TactileTheme.SurfaceHigh,
-                            shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                            color = TajsOSTheme.SurfaceHigh,
+                            shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                             modifier = Modifier.width(118.dp),
                         ) {
                             Column(
@@ -208,17 +208,17 @@ private fun renderTimeMap(context: TimeArchitectureDashboardContext) {
                                 Text(
                                     day,
                                     style = MaterialTheme.typography.labelSmall,
-                                    color = TactileTheme.Muted,
+                                    color = TajsOSTheme.Muted
                                 )
                                 Text(
                                     "$count",
                                     style = MaterialTheme.typography.titleLarge,
-                                    color = TactileTheme.Text,
+                                    color = TajsOSTheme.Text
                                 )
                                 Text(
                                     "scheduled",
                                     style = MaterialTheme.typography.bodySmall,
-                                    color = TactileTheme.Muted,
+                                    color = TajsOSTheme.Muted
                                 )
                             }
                         }
@@ -235,22 +235,22 @@ private fun renderTimeCadenceAnchors(context: TimeArchitectureDashboardContext) 
     val viewModel = context.viewModel
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+        horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
     ) {
         Surface(
             modifier = Modifier.weight(1f),
-            color = TactileTheme.SurfaceLow,
-            shape = RoundedCornerShape(TactileTheme.RadiusLg),
-            border = BorderStroke(1.dp, TactileTheme.GhostBorder.copy(alpha = 0.15f)),
+            color = TajsOSTheme.SurfaceLow,
+            shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
+            border = BorderStroke(1.dp, TajsOSTheme.GhostBorder.copy(alpha = 0.15f))
         ) {
             Column(
-                modifier = Modifier.padding(TactileTheme.SpacingMd),
+                modifier = Modifier.padding(TajsOSTheme.SpacingMd),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 Text(
                     "Resets & Cadence",
                     style = MaterialTheme.typography.headlineSmall,
-                    color = TactileTheme.Text,
+                    color = TajsOSTheme.Text
                 )
                 CadenceRow(
                     title = "Daily startup",
@@ -275,12 +275,12 @@ private fun renderTimeCadenceAnchors(context: TimeArchitectureDashboardContext) 
 
         Surface(
             modifier = Modifier.weight(1f),
-            color = TactileTheme.SurfaceLow,
-            shape = RoundedCornerShape(TactileTheme.RadiusLg),
-            border = BorderStroke(1.dp, TactileTheme.GhostBorder.copy(alpha = 0.15f)),
+            color = TajsOSTheme.SurfaceLow,
+            shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
+            border = BorderStroke(1.dp, TajsOSTheme.GhostBorder.copy(alpha = 0.15f))
         ) {
             Column(
-                modifier = Modifier.padding(TactileTheme.SpacingMd),
+                modifier = Modifier.padding(TajsOSTheme.SpacingMd),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 Row(
@@ -290,7 +290,7 @@ private fun renderTimeCadenceAnchors(context: TimeArchitectureDashboardContext) 
                     Text(
                         "Temporal Anchors",
                         style = MaterialTheme.typography.headlineSmall,
-                        color = TactileTheme.Text,
+                        color = TajsOSTheme.Text
                     )
                     AssistChip(
                         onClick = { viewModel.addLifePeriodMarker("New period marker") },
@@ -302,7 +302,7 @@ private fun renderTimeCadenceAnchors(context: TimeArchitectureDashboardContext) 
                     Text(
                         "No anchor markers yet.",
                         style = MaterialTheme.typography.bodySmall,
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted
                     )
                 } else {
                     anchorRows.take(6).forEach { anchor ->
@@ -326,18 +326,18 @@ private fun renderTimeProjectPhases(context: TimeArchitectureDashboardContext) {
     if (snapshot.projectPhases.isNotEmpty()) {
         Surface(
             modifier = Modifier.fillMaxWidth(),
-            color = TactileTheme.SurfaceLow,
-            shape = RoundedCornerShape(TactileTheme.RadiusLg),
-            border = BorderStroke(1.dp, TactileTheme.GhostBorder.copy(alpha = 0.15f)),
+            color = TajsOSTheme.SurfaceLow,
+            shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
+            border = BorderStroke(1.dp, TajsOSTheme.GhostBorder.copy(alpha = 0.15f))
         ) {
             Column(
-                modifier = Modifier.padding(TactileTheme.SpacingMd),
+                modifier = Modifier.padding(TajsOSTheme.SpacingMd),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 Text(
                     "Project Horizon Signals",
                     style = MaterialTheme.typography.titleLarge,
-                    color = TactileTheme.Text,
+                    color = TajsOSTheme.Text
                 )
                 snapshot.projectPhases.take(3).forEach { phase ->
                     Row(
@@ -348,12 +348,12 @@ private fun renderTimeProjectPhases(context: TimeArchitectureDashboardContext) {
                             Text(
                                 phase.project.title,
                                 style = MaterialTheme.typography.titleSmall,
-                                color = TactileTheme.Text,
+                                color = TajsOSTheme.Text
                             )
                             Text(
                                 phase.phaseLabel.replace("_", " "),
                                 style = MaterialTheme.typography.labelSmall,
-                                color = TactileTheme.Muted,
+                                color = TajsOSTheme.Muted
                             )
                         }
                         FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -390,18 +390,18 @@ private fun renderTimeHorizonQueue(context: TimeArchitectureDashboardContext) {
     if (horizonItems.isNotEmpty()) {
         Surface(
             modifier = Modifier.fillMaxWidth(),
-            color = TactileTheme.SurfaceLow,
-            shape = RoundedCornerShape(TactileTheme.RadiusLg),
-            border = BorderStroke(1.dp, TactileTheme.GhostBorder.copy(alpha = 0.15f)),
+            color = TajsOSTheme.SurfaceLow,
+            shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
+            border = BorderStroke(1.dp, TajsOSTheme.GhostBorder.copy(alpha = 0.15f))
         ) {
             Column(
-                modifier = Modifier.padding(TactileTheme.SpacingMd),
+                modifier = Modifier.padding(TajsOSTheme.SpacingMd),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Text(
                     "Horizon Queue • ${selectedHorizon.label}",
                     style = MaterialTheme.typography.titleLarge,
-                    color = TactileTheme.Text,
+                    color = TajsOSTheme.Text
                 )
                 horizonItems.take(6).forEach { item ->
                     HorizonQueueRow(
@@ -427,7 +427,7 @@ private fun StructuralCard(
     Surface(
         modifier = modifier,
         color = tone,
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
     ) {
         Column(
             modifier = Modifier.padding(12.dp),
@@ -436,12 +436,12 @@ private fun StructuralCard(
             Text(
                 text = title,
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary,
+                color = TajsOSTheme.Primary
             )
             Text(
                 text = label,
                 style = MaterialTheme.typography.bodySmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted
             )
             content()
         }
@@ -455,21 +455,21 @@ private fun CadenceRow(
     status: String,
 ) {
     Surface(
-        color = TactileTheme.SurfaceHigh,
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+        color = TajsOSTheme.SurfaceHigh,
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 10.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                Text(title, style = MaterialTheme.typography.titleSmall, color = TactileTheme.Text)
-                Text(detail, style = MaterialTheme.typography.bodySmall, color = TactileTheme.Muted)
+                Text(title, style = MaterialTheme.typography.titleSmall, color = TajsOSTheme.Text)
+                Text(detail, style = MaterialTheme.typography.bodySmall, color = TajsOSTheme.Muted)
             }
             Text(
                 text = status.uppercase(),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary,
+                color = TajsOSTheme.Primary
             )
         }
     }
@@ -491,19 +491,19 @@ private fun AnchorRow(
                     .padding(top = 6.dp)
                     .width(8.dp)
                     .height(8.dp)
-                    .background(TactileTheme.Primary, shape = RoundedCornerShape(50)),
+                    .background(TajsOSTheme.Primary, shape = RoundedCornerShape(50))
         )
         Column(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
-            Text(title, style = MaterialTheme.typography.titleSmall, color = TactileTheme.Text)
-            Text(coordinate, style = MaterialTheme.typography.bodySmall, color = TactileTheme.Muted)
+            Text(title, style = MaterialTheme.typography.titleSmall, color = TajsOSTheme.Text)
+            Text(coordinate, style = MaterialTheme.typography.bodySmall, color = TajsOSTheme.Muted)
         }
         Text(
             level.uppercase(),
             style = MaterialTheme.typography.labelSmall,
-            color = TactileTheme.Primary,
+            color = TajsOSTheme.Primary
         )
     }
 }
@@ -517,8 +517,8 @@ private fun HorizonQueueRow(
     onSet14Day: () -> Unit,
 ) {
     Surface(
-        color = TactileTheme.SurfaceHigh,
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+        color = TajsOSTheme.SurfaceHigh,
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         modifier =
             Modifier
                 .fillMaxWidth()
@@ -531,8 +531,8 @@ private fun HorizonQueueRow(
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodyLarge,
-                color = TactileTheme.Text,
-                modifier = Modifier.weight(1f),
+                color = TajsOSTheme.Text,
+                modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.width(8.dp))
             FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {

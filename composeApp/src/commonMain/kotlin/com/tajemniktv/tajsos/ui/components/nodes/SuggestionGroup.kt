@@ -27,7 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.data.NodeWithPin
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 /**
  * Renders a titled suggestion section displaying up to two clickable node entries with an optional description.
@@ -48,7 +48,7 @@ fun SuggestionGroup(
     onEditNode: (Long) -> Unit,
     description: String? = null,
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+    Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
         Text(
             title,
             style = MaterialTheme.typography.labelSmall,
@@ -60,19 +60,19 @@ fun SuggestionGroup(
             Text(
                 description,
                 style = MaterialTheme.typography.bodySmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted
             )
         }
         nodes.take(2).forEach { nodeWithPin ->
             Surface(
                 onClick = { onEditNode(nodeWithPin.node.id) },
                 modifier = Modifier.fillMaxWidth(),
-                color = TactileTheme.Surface,
-                shape = RoundedCornerShape(TactileTheme.RadiusSm),
+                color = TajsOSTheme.Surface,
+                shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
                 border = BorderStroke(1.dp, color.copy(alpha = 0.2f)),
             ) {
                 Row(
-                    modifier = Modifier.padding(TactileTheme.SpacingMd),
+                    modifier = Modifier.padding(TajsOSTheme.SpacingMd),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Icon(
@@ -81,7 +81,7 @@ fun SuggestionGroup(
                         tint = color,
                         modifier = Modifier.size(16.dp),
                     )
-                    Spacer(Modifier.width(TactileTheme.SpacingMd))
+                    Spacer(Modifier.width(TajsOSTheme.SpacingMd))
                     Text(
                         nodeWithPin.node.title,
                         style = MaterialTheme.typography.bodyMedium,

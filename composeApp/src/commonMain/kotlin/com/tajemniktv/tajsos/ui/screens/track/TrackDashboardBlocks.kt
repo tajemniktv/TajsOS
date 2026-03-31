@@ -37,7 +37,7 @@ import com.tajemniktv.tajsos.ui.components.TactileTextField
 import com.tajemniktv.tajsos.ui.components.cards.MedicationSyncCard
 import com.tajemniktv.tajsos.ui.components.cards.TactileCard
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.track_active
@@ -82,17 +82,17 @@ object TrackDashboardBlockRegistry {
 private fun renderTrackHeader(context: TrackDashboardContext) {
     Column {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(Icons.Default.MailOutline, contentDescription = null, tint = TactileTheme.Primary)
-            Spacer(Modifier.width(TactileTheme.SpacingSm))
+            Icon(Icons.Default.MailOutline, contentDescription = null, tint = TajsOSTheme.Primary)
+            Spacer(Modifier.width(TajsOSTheme.SpacingSm))
             Text(
                 "TAJS OS",
                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                color = TactileTheme.Text,
+                color = TajsOSTheme.Text
             )
             Spacer(Modifier.weight(1f))
-            Icon(Icons.Default.AccountCircle, contentDescription = null, tint = TactileTheme.Muted)
+            Icon(Icons.Default.AccountCircle, contentDescription = null, tint = TajsOSTheme.Muted)
         }
-        Spacer(Modifier.height(TactileTheme.SpacingLg))
+        Spacer(Modifier.height(TajsOSTheme.SpacingLg))
         Text(
             stringResource(Res.string.track_title),
             style =
@@ -100,24 +100,24 @@ private fun renderTrackHeader(context: TrackDashboardContext) {
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 2.sp,
                 ),
-            color = TactileTheme.Text,
+            color = TajsOSTheme.Text
         )
         Text(
             stringResource(Res.string.track_subtitle),
             style =
                 MaterialTheme.typography.displayMedium.copy(
                     fontWeight = FontWeight.Bold,
-                    color = TactileTheme.Primary,
+                    color = TajsOSTheme.Primary,
                     letterSpacing = 2.sp,
                 ),
         )
-        Spacer(Modifier.height(TactileTheme.SpacingSm))
+        Spacer(Modifier.height(TajsOSTheme.SpacingSm))
         Text(
             stringResource(Res.string.track_description),
             style = MaterialTheme.typography.bodySmall,
             color = Color(0xFF52525B),
         )
-        Spacer(Modifier.height(TactileTheme.SpacingLg))
+        Spacer(Modifier.height(TajsOSTheme.SpacingLg))
     }
 }
 
@@ -197,10 +197,10 @@ private fun renderTrackBio(context: TrackDashboardContext) {
             Icon(
                 Icons.Default.Settings,
                 contentDescription = null,
-                tint = TactileTheme.Primary,
+                tint = TajsOSTheme.Primary,
                 modifier = Modifier.size(24.dp),
             )
-            Spacer(Modifier.width(TactileTheme.SpacingMd))
+            Spacer(Modifier.width(TajsOSTheme.SpacingMd))
             Column {
                 Text(
                     stringResource(Res.string.track_bio_feedback),
@@ -209,12 +209,12 @@ private fun renderTrackBio(context: TrackDashboardContext) {
                             fontWeight = FontWeight.Bold,
                             letterSpacing = 1.sp,
                         ),
-                    color = TactileTheme.Text,
+                    color = TajsOSTheme.Text
                 )
                 Text(
                     stringResource(Res.string.track_sync_in_progress),
                     style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted
                 )
             }
             Spacer(Modifier.weight(1f))
@@ -241,8 +241,8 @@ private fun renderTrackSaveButton(context: TrackDashboardContext) {
     Button(
         onClick = context.onSave,
         modifier = Modifier.fillMaxWidth().height(56.dp),
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        colors = ButtonDefaults.buttonColors(containerColor = TactileTheme.Primary),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+        colors = ButtonDefaults.buttonColors(containerColor = TajsOSTheme.Primary)
     ) {
         Text(
             stringResource(Res.string.track_save),
@@ -258,11 +258,11 @@ private fun renderTrackSaveButton(context: TrackDashboardContext) {
 @Composable
 private fun renderTrackHistoryHeader(context: TrackDashboardContext) {
     Column {
-        Spacer(Modifier.height(TactileTheme.SpacingLg))
+        Spacer(Modifier.height(TajsOSTheme.SpacingLg))
         Text(
             stringResource(Res.string.track_history),
             style = MaterialTheme.typography.labelSmall,
-            color = TactileTheme.Primary,
+            color = TajsOSTheme.Primary
         )
     }
 }
@@ -272,7 +272,7 @@ private fun renderTrackHistoryList(context: TrackDashboardContext) {
     if (context.trackEntries.isEmpty()) {
         EmptyState(stringResource(Res.string.track_empty))
     } else {
-        Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+        Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)) {
             context.trackEntries.forEach { entry ->
                 TrackHistoryItem(entry)
             }
@@ -284,15 +284,15 @@ private fun renderTrackHistoryList(context: TrackDashboardContext) {
 private fun TrackHistoryItem(entry: TrackEntryEntity) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface.copy(alpha = 0.5f),
-        shape = RoundedCornerShape(TactileTheme.RadiusSm),
+        color = TajsOSTheme.Surface.copy(alpha = 0.5f),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
         border =
             androidx.compose.foundation.BorderStroke(
                 1.dp,
-                TactileTheme.Muted.copy(alpha = 0.2f),
-            ),
+                TajsOSTheme.Muted.copy(alpha = 0.2f)
+            )
     ) {
-        Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+        Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -300,18 +300,18 @@ private fun TrackHistoryItem(entry: TrackEntryEntity) {
                 Text(
                     entry.date,
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Primary,
+                    color = TajsOSTheme.Primary
                 )
                 if (entry.tookMeds) {
                     Text(
                         stringResource(Res.string.track_history_meds_ok),
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Success,
+                        color = TajsOSTheme.Success
                     )
                 }
             }
             Spacer(Modifier.height(4.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)) {
                 StatusChip("AFF", entry.moodScore)
                 StatusChip("ENG", entry.energyScore)
                 StatusChip("COG", entry.focusScore)
@@ -321,16 +321,16 @@ private fun TrackHistoryItem(entry: TrackEntryEntity) {
                     Text(
                         stringResource(Res.string.track_history_sleep, sleep),
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Text,
+                        color = TajsOSTheme.Text
                     )
                 }
             }
             if (entry.symptomNote.isNotEmpty()) {
-                Spacer(Modifier.height(TactileTheme.SpacingSm))
+                Spacer(Modifier.height(TajsOSTheme.SpacingSm))
                 Text(
                     entry.symptomNote,
                     style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted
                 )
             }
         }
@@ -346,6 +346,6 @@ private fun StatusChip(
     Text(
         text = "$label: $value",
         style = MaterialTheme.typography.labelSmall,
-        color = TactileTheme.Text,
+        color = TajsOSTheme.Text
     )
 }

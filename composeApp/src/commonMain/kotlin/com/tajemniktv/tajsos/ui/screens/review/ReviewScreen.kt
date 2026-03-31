@@ -17,7 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.review_step_archive
 import tajsos.composeapp.generated.resources.review_step_blockers
@@ -94,7 +94,7 @@ fun ReviewScreen(
         modifier =
             Modifier
                 .fillMaxSize()
-                .background(TactileTheme.Background),
+                .background(TajsOSTheme.Background)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             plan.primary.forEach { block ->

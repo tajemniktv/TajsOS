@@ -51,7 +51,7 @@ import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.cards.OptionCard
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.plus
@@ -112,9 +112,9 @@ fun DecisionDetailContent(
     var showDecideDialog by remember { mutableStateOf(false) }
     var showPeopleDialog by remember { mutableStateOf(false) }
 
-    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+    Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)) {
         SectionTitle(stringResource(Res.string.decision_status_label))
-        Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
             val statuses = listOf("pending", "parked", "expired")
             statuses.forEach { status ->
                 FilterChip(
@@ -128,7 +128,7 @@ fun DecisionDetailContent(
         }
 
         SectionTitle(stringResource(Res.string.decision_category_label))
-        Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
             val categories = listOf("tiny", "major")
             categories.forEach { category ->
                 FilterChip(
@@ -142,7 +142,7 @@ fun DecisionDetailContent(
         }
 
         SectionTitle("DECISION REVISIT DATE")
-        Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
             val now = Clock.System.now()
             val tz = TimeZone.currentSystemDefault()
             val revisitDateLabel =
@@ -193,7 +193,7 @@ fun DecisionDetailContent(
             Text(
                 if (relatedPeople.isEmpty()) "No related people linked." else "${relatedPeople.size} linked",
                 style = MaterialTheme.typography.bodySmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted
             )
             TextButton(onClick = { showPeopleDialog = true }) {
                 Text("LINK PERSON")
@@ -203,19 +203,19 @@ fun DecisionDetailContent(
             relatedPeople.forEach { person ->
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
-                    color = TactileTheme.Background,
-                    border = BorderStroke(1.dp, TactileTheme.Border),
+                    color = TajsOSTheme.Background,
+                    border = BorderStroke(1.dp, TajsOSTheme.Border),
                     shape = RoundedCornerShape(2.dp),
                 ) {
                     Row(
-                        modifier = Modifier.padding(TactileTheme.SpacingSm),
+                        modifier = Modifier.padding(TajsOSTheme.SpacingSm),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
                             person.node.title,
                             style = MaterialTheme.typography.bodyMedium,
-                            color = TactileTheme.Text,
+                            color = TajsOSTheme.Text
                         )
                         TextButton(onClick = {
                             viewModel.unlinkDecisionFromPerson(
@@ -249,8 +249,8 @@ fun DecisionDetailContent(
         )
 
         HorizontalDivider(
-            color = TactileTheme.Border,
-            modifier = Modifier.padding(vertical = TactileTheme.SpacingSm),
+            color = TajsOSTheme.Border,
+            modifier = Modifier.padding(vertical = TajsOSTheme.SpacingSm)
         )
 
         Row(
@@ -263,7 +263,7 @@ fun DecisionDetailContent(
                 Icon(
                     Icons.Default.Add,
                     contentDescription = stringResource(Res.string.cd_add_option),
-                    tint = TactileTheme.Primary,
+                    tint = TajsOSTheme.Primary
                 )
             }
         }
@@ -272,8 +272,8 @@ fun DecisionDetailContent(
             Text(
                 stringResource(Res.string.decision_no_options),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Muted,
-                modifier = Modifier.padding(vertical = TactileTheme.SpacingSm),
+                color = TajsOSTheme.Muted,
+                modifier = Modifier.padding(vertical = TajsOSTheme.SpacingSm)
             )
         } else {
             options.forEach { option ->
@@ -286,8 +286,8 @@ fun DecisionDetailContent(
         }
 
         HorizontalDivider(
-            color = TactileTheme.Border,
-            modifier = Modifier.padding(vertical = TactileTheme.SpacingSm),
+            color = TajsOSTheme.Border,
+            modifier = Modifier.padding(vertical = TajsOSTheme.SpacingSm)
         )
 
         if (node.decisionStatus == "decided") {
@@ -295,28 +295,28 @@ fun DecisionDetailContent(
                 Icon(
                     Icons.Default.CheckCircle,
                     contentDescription = stringResource(Res.string.cd_decision_decided),
-                    tint = TactileTheme.Success,
+                    tint = TajsOSTheme.Success
                 )
-                Spacer(modifier = Modifier.width(TactileTheme.SpacingSm))
+                Spacer(modifier = Modifier.width(TajsOSTheme.SpacingSm))
                 Column {
                     Text(
                         stringResource(Res.string.decision_outcome_label),
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Success,
+                        color = TajsOSTheme.Success
                     )
                     Text(
                         node.decisionOutcome ?: stringResource(Res.string.decision_no_outcome),
                         style = MaterialTheme.typography.bodyLarge,
-                        color = TactileTheme.Text,
+                        color = TajsOSTheme.Text
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(TactileTheme.SpacingSm))
+            Spacer(modifier = Modifier.height(TajsOSTheme.SpacingSm))
 
             Button(
                 onClick = { viewModel.convertDecisionToProject(node.id) },
-                colors = ButtonDefaults.buttonColors(containerColor = TactileTheme.Accent),
+                colors = ButtonDefaults.buttonColors(containerColor = TajsOSTheme.Accent),
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(2.dp),
             ) {
@@ -327,15 +327,14 @@ fun DecisionDetailContent(
                 onClick = { viewModel.convertDecisionToTask(node.id) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(2.dp),
-                border = BorderStroke(1.dp, TactileTheme.Border),
+                border = BorderStroke(1.dp, TajsOSTheme.Border)
             ) {
-                Text(stringResource(Res.string.decision_convert_task), color = TactileTheme.Text)
+                Text(stringResource(Res.string.decision_convert_task), color = TajsOSTheme.Text)
             }
-        } else
-        {
+        } else {
             Button(
-                    onClick = { showDecideDialog = true },
-                colors = ButtonDefaults.buttonColors(containerColor = TactileTheme.Primary),
+                onClick = { showDecideDialog = true },
+                colors = ButtonDefaults.buttonColors(containerColor = TajsOSTheme.Primary),
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(2.dp),
             ) {
@@ -373,9 +372,9 @@ fun DecisionDetailContent(
                     },
                 ) { Text(stringResource(Res.string.decision_cancel)) }
             },
-            containerColor = TactileTheme.Background,
-            titleContentColor = TactileTheme.Text,
-            textContentColor = TactileTheme.Text,
+            containerColor = TajsOSTheme.Background,
+            titleContentColor = TajsOSTheme.Text,
+            textContentColor = TajsOSTheme.Text
         )
     }
 
@@ -387,7 +386,7 @@ fun DecisionDetailContent(
             onDismissRequest = { showDecideDialog = false },
             title = { Text(stringResource(Res.string.decision_finalize)) },
             text = {
-                Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+                Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)) {
                     Text(
                         stringResource(Res.string.decision_selected_option),
                         style = MaterialTheme.typography.labelSmall,
@@ -431,9 +430,9 @@ fun DecisionDetailContent(
                     },
                 ) { Text(stringResource(Res.string.decision_cancel)) }
             },
-            containerColor = TactileTheme.Background,
-            titleContentColor = TactileTheme.Text,
-            textContentColor = TactileTheme.Text,
+            containerColor = TajsOSTheme.Background,
+            titleContentColor = TajsOSTheme.Text,
+            textContentColor = TajsOSTheme.Text
         )
     }
 
@@ -445,7 +444,7 @@ fun DecisionDetailContent(
                 if (peopleNodes.isEmpty()) {
                     Text("No person nodes available.")
                 } else {
-                    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+                    Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                         peopleNodes.forEach { person ->
                             OutlinedButton(
                                 onClick = {
@@ -466,9 +465,9 @@ fun DecisionDetailContent(
                 }
             },
             dismissButton = {},
-            containerColor = TactileTheme.Background,
-            titleContentColor = TactileTheme.Text,
-            textContentColor = TactileTheme.Text,
+            containerColor = TajsOSTheme.Background,
+            titleContentColor = TajsOSTheme.Text,
+            textContentColor = TajsOSTheme.Text
         )
     }
 }
@@ -481,12 +480,11 @@ fun DecisionDetailContent(
  * @param text The header text to display.
  */
 @Composable
-fun SectionTitle(text: String)
-{
+fun SectionTitle(text: String) {
     Text(
         text,
         style = MaterialTheme.typography.labelSmall,
-            color = TactileTheme.Muted,
+        color = TajsOSTheme.Muted,
         fontWeight = FontWeight.Bold,
         letterSpacing = 1.sp,
     )
@@ -510,17 +508,16 @@ fun DecisionField(
         BasicTextField(
             value = value,
             onValueChange = onValueChange,
-            modifier = Modifier.fillMaxWidth().padding(vertical = TactileTheme.SpacingSm),
-            textStyle = MaterialTheme.typography.bodyMedium.copy(color = TactileTheme.Text),
-            cursorBrush = SolidColor(TactileTheme.Primary),
+            modifier = Modifier.fillMaxWidth().padding(vertical = TajsOSTheme.SpacingSm),
+            textStyle = MaterialTheme.typography.bodyMedium.copy(color = TajsOSTheme.Text),
+            cursorBrush = SolidColor(TajsOSTheme.Primary),
             decorationBox = { innerTextField ->
                 Box {
-                    if (value.isEmpty())
-                    {
+                    if (value.isEmpty()) {
                         Text(
-                                stringResource(Res.string.decision_tap_to_add),
+                            stringResource(Res.string.decision_tap_to_add),
                             style = MaterialTheme.typography.bodyMedium,
-                            color = TactileTheme.Muted,
+                            color = TajsOSTheme.Muted
                         )
                     }
                     innerTextField()

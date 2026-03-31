@@ -25,7 +25,7 @@ import com.tajemniktv.tajsos.domain.lens.DomainLensQueries
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.screens.GroupedOpenLoopSection
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 object HealthDashboardBlockRegistry {
     private val renderers: Map<String, HealthDashboardBlockRenderer> =
@@ -58,33 +58,33 @@ internal fun HealthMainBlock(
     val latestTrack = trackEntries.firstOrNull()
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+        modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd),
+        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
     ) {
         Surface(
             modifier = Modifier.fillMaxWidth(),
-            color = TactileTheme.Surface,
-            shape = RoundedCornerShape(TactileTheme.RadiusMd),
-            border = BorderStroke(1.dp, TactileTheme.Border),
+            color = TajsOSTheme.Surface,
+            shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+            border = BorderStroke(1.dp, TajsOSTheme.Border)
         ) {
             Column(
-                modifier = Modifier.padding(TactileTheme.SpacingMd),
+                modifier = Modifier.padding(TajsOSTheme.SpacingMd),
                 verticalArrangement = Arrangement.spacedBy(6.dp),
             ) {
                 Text(
                     "HEALTH LENS",
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Primary,
+                    color = TajsOSTheme.Primary
                 )
                 Text(
                     "Actions ${healthActions.size} • Maintenance ${healthQueue.size} • Knowledge ${healthKnowledge.size}",
                     style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted
                 )
                 Text(
                     "Latest track: mood ${latestTrack?.moodScore ?: "-"} • energy ${latestTrack?.energyScore ?: "-"} • focus ${latestTrack?.focusScore ?: "-"}",
                     style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted
                 )
             }
         }
@@ -115,23 +115,23 @@ internal fun HealthMainBlock(
             )
         }
 
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
             items(healthQueue, key = { it.node.node.id }) { item ->
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
-                    color = TactileTheme.Surface,
-                    shape = RoundedCornerShape(TactileTheme.RadiusSm),
-                    border = BorderStroke(1.dp, TactileTheme.Border),
+                    color = TajsOSTheme.Surface,
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
+                    border = BorderStroke(1.dp, TajsOSTheme.Border),
                     onClick = { onEditNode(item.node.node.id) },
                 ) {
                     Column(
-                        modifier = Modifier.padding(TactileTheme.SpacingMd),
+                        modifier = Modifier.padding(TajsOSTheme.SpacingMd),
                         verticalArrangement = Arrangement.spacedBy(4.dp),
                     ) {
                         Text(
                             item.node.node.title,
                             style = MaterialTheme.typography.titleSmall,
-                            color = TactileTheme.Text,
+                            color = TajsOSTheme.Text
                         )
                         Text(
                             "Type ${
@@ -141,7 +141,7 @@ internal fun HealthMainBlock(
                                 )
                             } • Urgency ${item.urgency}",
                             style = MaterialTheme.typography.bodySmall,
-                            color = TactileTheme.Muted,
+                            color = TajsOSTheme.Muted
                         )
                     }
                 }

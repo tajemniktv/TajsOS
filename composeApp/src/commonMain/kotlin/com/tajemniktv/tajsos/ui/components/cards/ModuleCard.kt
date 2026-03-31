@@ -34,7 +34,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 @Composable
 fun ModuleCard(
@@ -43,7 +43,7 @@ fun ModuleCard(
     icon: ImageVector,
     status: String,
     onClick: () -> Unit,
-    color: Color = TactileTheme.Primary,
+    color: Color = TajsOSTheme.Primary
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -62,14 +62,14 @@ fun ModuleCard(
                         onClick()
                     },
                 ),
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        color = TactileTheme.Surface,
-        border = BorderStroke(1.dp, TactileTheme.Border.copy(alpha = 0.5f)),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+        color = TajsOSTheme.Surface,
+        border = BorderStroke(1.dp, TajsOSTheme.Border.copy(alpha = 0.5f)),
         shadowElevation = 2.dp,
     ) {
         Column(
-            modifier = Modifier.padding(TactileTheme.SpacingMd),
-            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingXs),
+            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingXs)
         ) {
             Box(
                 modifier =
@@ -77,7 +77,7 @@ fun ModuleCard(
                         .size(40.dp)
                         .background(
                             color.copy(alpha = 0.1f),
-                            RoundedCornerShape(TactileTheme.RadiusSm),
+                            RoundedCornerShape(TajsOSTheme.RadiusSm)
                         ),
                 contentAlignment = Alignment.Center,
             ) {
@@ -89,12 +89,12 @@ fun ModuleCard(
                 )
             }
 
-            Spacer(Modifier.height(TactileTheme.SpacingSm))
+            Spacer(Modifier.height(TajsOSTheme.SpacingSm))
 
             Text(
                 text = title.uppercase(),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted,
                 fontWeight = FontWeight.ExtraBold,
                 letterSpacing = 1.sp,
             )
@@ -102,7 +102,7 @@ fun ModuleCard(
             Text(
                 text = status,
                 style = MaterialTheme.typography.titleMedium,
-                color = TactileTheme.Text,
+                color = TajsOSTheme.Text,
                 fontWeight = FontWeight.Bold,
             )
         }

@@ -14,7 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 @Composable
 fun IdentityScreen(
@@ -40,8 +40,8 @@ fun IdentityScreen(
     val plan = remember(surface) { buildIdentityDashboardPlan(surface) }
 
     LazyColumn(
-        modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+        modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd),
+        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
     ) {
         plan.primary.forEach { block ->
             item(key = block.id) {

@@ -2,17 +2,17 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
-package com.tajemniktv.tajsos
+package com.tajemniktv.tajsos.ui
 
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.data.TodayPinEntity
 import com.tajemniktv.tajsos.ui.main.state.ExportData
-import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import kotlinx.serialization.json.Json
 
 /**
  * Tests for the pure logic patterns used by MainViewModel after the PR changes.
@@ -41,7 +41,7 @@ class MainViewModelLogicTest {
         isRecurring: Boolean = false,
         recurringInterval: String? = null,
         projectId: Long? = null,
-        areaId: Long? = null,
+        areaId: Long? = null
     ) = NodeEntity(
         id = id,
         type = type,
@@ -53,13 +53,11 @@ class MainViewModelLogicTest {
         isRecurring = isRecurring,
         recurringInterval = recurringInterval,
         projectId = projectId,
-        areaId = areaId,
+        areaId = areaId
     )
 
-    private fun makeNodeWithPin(
-        node: NodeEntity,
-        pin: TodayPinEntity? = null,
-    ) = NodeWithPin(node = node, pin = pin)
+    private fun makeNodeWithPin(node: NodeEntity, pin: TodayPinEntity? = null) =
+        NodeWithPin(node = node, pin = pin)
 
     // ---------------------------------------------------------------------------
     // inboxNodes filter logic
@@ -69,7 +67,7 @@ class MainViewModelLogicTest {
     fun inboxFilter_includesActiveTasksWithInboxState() {
         val nodes =
             listOf(
-                makeNodeWithPin(makeNode()),
+                makeNodeWithPin(makeNode())
             )
         val result =
             nodes.filter {
@@ -85,7 +83,7 @@ class MainViewModelLogicTest {
     fun inboxFilter_excludesArchivedNodes() {
         val nodes =
             listOf(
-                makeNodeWithPin(makeNode(status = "archived")),
+                makeNodeWithPin(makeNode(status = "archived"))
             )
         val result =
             nodes.filter {
@@ -101,7 +99,7 @@ class MainViewModelLogicTest {
     fun inboxFilter_excludesProjectNodes() {
         val nodes =
             listOf(
-                makeNodeWithPin(makeNode(type = "project")),
+                makeNodeWithPin(makeNode(type = "project"))
             )
         val result =
             nodes.filter {
@@ -117,7 +115,7 @@ class MainViewModelLogicTest {
     fun inboxFilter_excludesAreaNodes() {
         val nodes =
             listOf(
-                makeNodeWithPin(makeNode(type = "area")),
+                makeNodeWithPin(makeNode(type = "area"))
             )
         val result =
             nodes.filter {
@@ -133,7 +131,7 @@ class MainViewModelLogicTest {
     fun inboxFilter_excludesNodesWithInboxStateFalse() {
         val nodes =
             listOf(
-                makeNodeWithPin(makeNode(inboxState = false)),
+                makeNodeWithPin(makeNode(inboxState = false))
             )
         val result =
             nodes.filter {
@@ -151,7 +149,7 @@ class MainViewModelLogicTest {
             listOf(
                 makeNodeWithPin(makeNode(type = "note")),
                 makeNodeWithPin(makeNode(type = "idea")),
-                makeNodeWithPin(makeNode(type = "resource")),
+                makeNodeWithPin(makeNode(type = "resource"))
             )
         val result =
             nodes.filter {
@@ -173,7 +171,7 @@ class MainViewModelLogicTest {
             listOf(
                 makeNodeWithPin(makeNode(status = "archived")),
                 makeNodeWithPin(makeNode()),
-                makeNodeWithPin(makeNode(status = "done")),
+                makeNodeWithPin(makeNode(status = "done"))
             )
         val result = nodes.filter { it.node.status == "archived" }
         assertEquals(1, result.size)
@@ -185,7 +183,7 @@ class MainViewModelLogicTest {
         val nodes =
             listOf(
                 makeNodeWithPin(makeNode()),
-                makeNodeWithPin(makeNode(status = "done")),
+                makeNodeWithPin(makeNode(status = "done"))
             )
         val result = nodes.filter { it.node.status == "archived" }
         assertTrue(result.isEmpty())
@@ -197,7 +195,7 @@ class MainViewModelLogicTest {
             listOf(
                 makeNodeWithPin(makeNode(id = 1L, status = "archived")),
                 makeNodeWithPin(makeNode(id = 2L, status = "archived")),
-                makeNodeWithPin(makeNode(id = 3L)),
+                makeNodeWithPin(makeNode(id = 3L))
             )
         val result = nodes.filter { it.node.status == "archived" }
         assertEquals(2, result.size)
@@ -233,7 +231,7 @@ class MainViewModelLogicTest {
     fun searchFilter_returnsEmptyListForBlankQuery() {
         val nodes =
             listOf(
-                makeNodeWithPin(makeNode(title = "Hello World")),
+                makeNodeWithPin(makeNode(title = "Hello World"))
             )
         val query = ""
         val result =
@@ -253,7 +251,7 @@ class MainViewModelLogicTest {
         val nodes =
             listOf(
                 makeNodeWithPin(makeNode(title = "Buy groceries")),
-                makeNodeWithPin(makeNode(title = "Read a book")),
+                makeNodeWithPin(makeNode(title = "Read a book"))
             )
         val query = "groceries"
         val result =
@@ -269,7 +267,7 @@ class MainViewModelLogicTest {
     fun searchFilter_isCaseInsensitive() {
         val nodes =
             listOf(
-                makeNodeWithPin(makeNode(title = "Important Meeting")),
+                makeNodeWithPin(makeNode(title = "Important Meeting"))
             )
         val query = "important"
         val result =
@@ -297,7 +295,7 @@ class MainViewModelLogicTest {
                 status = "done",
                 updatedAt = now,
                 completedAt = now,
-                archivedAt = null, // archived only set if status == "archived"
+                archivedAt = null // archived only set if status == "archived"
             )
         assertEquals("done", updated.status)
         assertEquals(now, updated.completedAt)
@@ -316,7 +314,7 @@ class MainViewModelLogicTest {
                 status = "archived",
                 updatedAt = now,
                 completedAt = null,
-                archivedAt = now,
+                archivedAt = now
             )
         assertEquals("archived", updated.status)
         assertEquals(now, updated.archivedAt)

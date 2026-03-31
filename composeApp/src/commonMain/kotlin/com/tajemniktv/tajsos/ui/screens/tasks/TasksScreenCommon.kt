@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.data.TaskState
 import com.tajemniktv.tajsos.data.taskStateOrNull
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Instant
@@ -41,12 +41,12 @@ internal fun StatusPill(state: TaskState) {
     val color =
         when (state)
         {
-            TaskState.ACTIVE -> TactileTheme.Primary
+            TaskState.ACTIVE -> TajsOSTheme.Primary
             TaskState.DONE -> Color(0xFF2BAE66)
             TaskState.ON_HOLD -> Color(0xFFF5A623)
-            TaskState.SOMEDAY -> TactileTheme.Muted
-            TaskState.BLOCKED -> TactileTheme.Error
-            TaskState.ARCHIVED -> TactileTheme.Muted
+            TaskState.SOMEDAY -> TajsOSTheme.Muted
+            TaskState.BLOCKED -> TajsOSTheme.Error
+            TaskState.ARCHIVED -> TajsOSTheme.Muted
         }
     Box(
         modifier =
@@ -71,8 +71,8 @@ internal fun DetailRow(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        Text(label, style = MaterialTheme.typography.bodySmall, color = TactileTheme.Muted)
-        Text(value, style = MaterialTheme.typography.bodySmall, color = TactileTheme.Text)
+        Text(label, style = MaterialTheme.typography.bodySmall, color = TajsOSTheme.Muted)
+        Text(value, style = MaterialTheme.typography.bodySmall, color = TajsOSTheme.Text)
     }
 }
 
@@ -85,11 +85,11 @@ internal fun ContextRow(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        Text(label, style = MaterialTheme.typography.bodySmall, color = TactileTheme.Muted)
+        Text(label, style = MaterialTheme.typography.bodySmall, color = TajsOSTheme.Muted)
         Text(
             value.toString(),
             style = MaterialTheme.typography.bodyMedium,
-            color = TactileTheme.Text,
+            color = TajsOSTheme.Text,
             fontWeight = FontWeight.SemiBold,
         )
     }

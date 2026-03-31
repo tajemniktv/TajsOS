@@ -44,7 +44,7 @@ import com.tajemniktv.tajsos.data.projectStateOrNull
 import com.tajemniktv.tajsos.data.taskStateOrNull
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.layout.LocalHeaderActions
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.area_detail_not_found
@@ -65,7 +65,7 @@ fun AreaDetailScreen(
     val nodeWithPin = remember(nodes, areaId) { nodes.find { it.node.id == areaId } }
     if (nodeWithPin == null) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text(stringResource(Res.string.area_detail_not_found), color = TactileTheme.Muted)
+            Text(stringResource(Res.string.area_detail_not_found), color = TajsOSTheme.Muted)
         }
         return
     }
@@ -110,11 +110,11 @@ fun AreaDetailScreen(
     val healthColor =
         when (metrics?.status)
         {
-            "on_fire" -> TactileTheme.Error
-            "overloaded" -> TactileTheme.Accent
-            "neglected" -> TactileTheme.Muted
-            "active" -> TactileTheme.Primary
-            else -> TactileTheme.Success
+            "on_fire" -> TajsOSTheme.Error
+            "overloaded" -> TajsOSTheme.Accent
+            "neglected" -> TajsOSTheme.Muted
+            "active" -> TajsOSTheme.Primary
+            else -> TajsOSTheme.Success
         }
     val load = (metrics?.stressLoad ?: 0).coerceIn(0, 100)
     val cadence = if ((metrics?.neglectedDays ?: 0) >= 10) "Biweekly" else "Weekly"
@@ -177,7 +177,7 @@ fun AreaDetailScreen(
         )
 
     CompositionLocalProvider(LocalHeaderActions provides actions) {
-        BoxWithConstraints(modifier = Modifier.fillMaxSize().background(TactileTheme.Background)) {
+        BoxWithConstraints(modifier = Modifier.fillMaxSize().background(TajsOSTheme.Background)) {
             val surface =
                 if (isDesktop && maxWidth >= 1180.dp) {
                     AreaDetailSurface.DESKTOP

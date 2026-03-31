@@ -28,7 +28,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
+import kotlin.time.Clock
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.tasks_do_now_action
@@ -40,7 +41,6 @@ import tajsos.composeapp.generated.resources.tasks_today_overdue
 import tajsos.composeapp.generated.resources.tasks_today_pinned
 import tajsos.composeapp.generated.resources.tasks_today_subtitle
 import tajsos.composeapp.generated.resources.tasks_today_title
-import kotlin.time.Clock
 
 @Composable
 internal fun TasksTodayView(
@@ -50,7 +50,7 @@ internal fun TasksTodayView(
     areaById: Map<Long, String>,
     onOpen: (Long) -> Unit,
     onDone: (NodeEntity) -> Unit,
-    onDoNow: (NodeEntity) -> Unit,
+    onDoNow: (NodeEntity) -> Unit
 ) {
     val now = Clock.System.now().toEpochMilliseconds()
     val tomorrow = now + 24L * 60 * 60 * 1000
@@ -65,17 +65,17 @@ internal fun TasksTodayView(
 
     Column(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
     ) {
         Text(
             stringResource(Res.string.tasks_today_title),
             style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.Bold
         )
         Text(
             stringResource(Res.string.tasks_today_subtitle),
             style = MaterialTheme.typography.bodySmall,
-            color = TactileTheme.Muted,
+            color = TajsOSTheme.Muted
         )
         if (overdue.isEmpty() && dueSoon.isEmpty() && pinned.isEmpty()) {
             EmptyState(message = stringResource(Res.string.tasks_today_empty))
@@ -88,7 +88,7 @@ internal fun TasksTodayView(
             areaById,
             onOpen,
             onDone,
-            onDoNow,
+            onDoNow
         )
         TodaySection(
             stringResource(Res.string.tasks_today_due_soon),
@@ -97,7 +97,7 @@ internal fun TasksTodayView(
             areaById,
             onOpen,
             onDone,
-            onDoNow,
+            onDoNow
         )
         TodaySection(
             stringResource(Res.string.tasks_today_pinned),
@@ -106,7 +106,7 @@ internal fun TasksTodayView(
             areaById,
             onOpen,
             onDone,
-            onDoNow,
+            onDoNow
         )
     }
 }
@@ -119,58 +119,62 @@ private fun TodaySection(
     areaById: Map<Long, String>,
     onOpen: (Long) -> Unit,
     onDone: (NodeEntity) -> Unit,
-    onDoNow: (NodeEntity) -> Unit,
+    onDoNow: (NodeEntity) -> Unit
 ) {
     Surface(
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        color = TactileTheme.Surface,
-        border = BorderStroke(1.dp, TactileTheme.Border),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+        color = TajsOSTheme.Surface,
+        border = BorderStroke(1.dp, TajsOSTheme.Border)
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingMd),
-            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+            modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
         ) {
             Text(
                 title,
                 style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold,
+                fontWeight = FontWeight.SemiBold
             )
             if (tasks.isEmpty()) {
-                Text(stringResource(Res.string.tasks_no_results), color = TactileTheme.Muted)
+                Text(stringResource(Res.string.tasks_no_results), color = TajsOSTheme.Muted)
             } else {
                 tasks.take(8).forEach { task ->
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
                                 task.title,
                                 style = MaterialTheme.typography.bodyLarge,
-                                color = TactileTheme.Text,
+                                color = TajsOSTheme.Text
                             )
                             val context =
                                 listOfNotNull(
                                     task.projectId?.let { projectById[it] },
                                     task.areaId?.let { areaById[it] },
-                                    task.dueAt?.let(::shortDate),
+                                    task.dueAt?.let(::shortDate)
                                 ).joinToString(" • ")
                             if (context.isNotBlank()) {
                                 Text(
                                     context,
                                     style = MaterialTheme.typography.bodySmall,
-                                    color = TactileTheme.Muted,
+                                    color = TajsOSTheme.Muted
                                 )
                             }
                         }
-                        Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
-                            OutlinedButton(onClick = { onDoNow(task) }) { Text(stringResource(Res.string.tasks_do_now_action)) }
-                            OutlinedButton(onClick = { onOpen(task.id) }) { Text(stringResource(Res.string.tasks_open_action)) }
+                        Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
+                            OutlinedButton(onClick = {
+                                onDoNow(task)
+                            }) { Text(stringResource(Res.string.tasks_do_now_action)) }
+                            OutlinedButton(onClick = {
+                                onOpen(task.id)
+                            }) { Text(stringResource(Res.string.tasks_open_action)) }
                             IconButton(onClick = { onDone(task) }) {
                                 Icon(
                                     Icons.Default.Check,
-                                    null,
+                                    null
                                 )
                             }
                         }

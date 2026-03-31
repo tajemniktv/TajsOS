@@ -46,7 +46,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.AppPack
 import com.tajemniktv.tajsos.data.MedicationEntity
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.PaletteAccentAmber
+import com.tajemniktv.tajsos.ui.theme.PaletteAccentBlue
+import com.tajemniktv.tajsos.ui.theme.PaletteAccentGreen
+import com.tajemniktv.tajsos.ui.theme.PaletteAccentRose
+import com.tajemniktv.tajsos.ui.theme.PrimaryPurple
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.common_back
@@ -95,23 +100,23 @@ private fun renderSettingsHealth(context: SettingsDashboardContext) {
             Text(
                 stringResource(Res.string.profile_medications),
                 style = MaterialTheme.typography.titleMedium,
-                color = TactileTheme.Text,
+                color = TajsOSTheme.Text
             )
             OutlinedButton(
                 onClick = { showAddMedicationDialog = true },
-                shape = RoundedCornerShape(TactileTheme.RadiusSm),
+                shape = RoundedCornerShape(TajsOSTheme.RadiusSm)
             ) {
                 Text(stringResource(Res.string.profile_add_med))
             }
         }
 
-        Spacer(Modifier.height(TactileTheme.SpacingMd))
+        Spacer(Modifier.height(TajsOSTheme.SpacingMd))
 
         if (context.medications.isEmpty()) {
             Text(
                 "No medication entries configured yet.",
                 style = MaterialTheme.typography.bodyMedium,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted
             )
         } else {
             context.medications.forEach { medication ->
@@ -119,7 +124,7 @@ private fun renderSettingsHealth(context: SettingsDashboardContext) {
                     medication = medication,
                     onDelete = { context.onDeleteMedication(medication) },
                 )
-                Spacer(Modifier.height(TactileTheme.SpacingSm))
+                Spacer(Modifier.height(TajsOSTheme.SpacingSm))
             }
         }
     }
@@ -149,7 +154,7 @@ private fun renderSettingsFeaturePacks(context: SettingsDashboardContext) {
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .padding(vertical = TactileTheme.SpacingSm),
+                        .padding(vertical = TajsOSTheme.SpacingSm),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
@@ -161,7 +166,7 @@ private fun renderSettingsFeaturePacks(context: SettingsDashboardContext) {
                                 append(if (pack.isFree) " (Free)" else " (Premium)")
                             },
                         style = MaterialTheme.typography.bodyLarge,
-                        color = TactileTheme.Text,
+                        color = TajsOSTheme.Text
                     )
                     Text(
                         text =
@@ -171,14 +176,14 @@ private fun renderSettingsFeaturePacks(context: SettingsDashboardContext) {
                                 "Unlock this premium pack to enable its modes and modules"
                             },
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted
                     )
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     if (!isOwned && !pack.isFree) {
                         OutlinedButton(
                             onClick = { context.onSetPackOwned(pack, true) },
-                            shape = RoundedCornerShape(TactileTheme.RadiusSm),
+                            shape = RoundedCornerShape(TajsOSTheme.RadiusSm)
                         ) {
                             Text("Unlock")
                         }
@@ -187,7 +192,7 @@ private fun renderSettingsFeaturePacks(context: SettingsDashboardContext) {
                         Switch(
                             checked = isEnabled,
                             onCheckedChange = { context.onSetPackEnabled(pack, it) },
-                            colors = SwitchDefaults.colors(checkedThumbColor = TactileTheme.Primary),
+                            colors = SwitchDefaults.colors(checkedThumbColor = TajsOSTheme.Primary)
                         )
                     }
                 }
@@ -205,32 +210,32 @@ private fun renderSettingsData(context: SettingsDashboardContext) {
         Button(
             onClick = context.onExportData,
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(TactileTheme.RadiusMd),
+            shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
             colors =
                 ButtonDefaults.buttonColors(
-                    containerColor = TactileTheme.Surface,
-                    contentColor = TactileTheme.Primary,
-                ),
+                    containerColor = TajsOSTheme.Surface,
+                    contentColor = TajsOSTheme.Primary
+                )
         ) {
             Text(stringResource(Res.string.settings_export_data))
         }
 
-        Spacer(Modifier.height(TactileTheme.SpacingMd))
+        Spacer(Modifier.height(TajsOSTheme.SpacingMd))
 
         Button(
             onClick = context.onExportBundle,
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(TactileTheme.RadiusMd),
+            shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
             colors =
                 ButtonDefaults.buttonColors(
-                    containerColor = TactileTheme.Surface,
-                    contentColor = TactileTheme.Primary,
-                ),
+                    containerColor = TajsOSTheme.Surface,
+                    contentColor = TajsOSTheme.Primary
+                )
         ) {
             Text("Export Full Bundle")
         }
 
-        Spacer(Modifier.height(TactileTheme.SpacingMd))
+        Spacer(Modifier.height(TajsOSTheme.SpacingMd))
 
         OutlinedTextField(
             value = context.importPayload,
@@ -241,22 +246,22 @@ private fun renderSettingsData(context: SettingsDashboardContext) {
             singleLine = false,
             colors =
                 OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = TactileTheme.Border,
-                    focusedBorderColor = TactileTheme.Primary,
-                ),
+                    unfocusedBorderColor = TajsOSTheme.Border,
+                    focusedBorderColor = TajsOSTheme.Primary
+                )
         )
 
-        Spacer(Modifier.height(TactileTheme.SpacingSm))
+        Spacer(Modifier.height(TajsOSTheme.SpacingSm))
 
         Button(
             onClick = context.onImportData,
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(TactileTheme.RadiusMd),
+            shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
             colors =
                 ButtonDefaults.buttonColors(
-                    containerColor = TactileTheme.Surface,
-                    contentColor = TactileTheme.Primary,
-                ),
+                    containerColor = TajsOSTheme.Surface,
+                    contentColor = TajsOSTheme.Primary
+                )
         ) {
             Text("Import JSON")
         }
@@ -272,8 +277,8 @@ private fun renderSettingsDebug(context: SettingsDashboardContext) {
         Button(
             onClick = context.onForceCrash,
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(TactileTheme.RadiusMd),
-            colors = ButtonDefaults.buttonColors(containerColor = TactileTheme.Error),
+            shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+            colors = ButtonDefaults.buttonColors(containerColor = TajsOSTheme.Error)
         ) {
             Text(stringResource(Res.string.settings_force_crash))
         }
@@ -282,28 +287,41 @@ private fun renderSettingsDebug(context: SettingsDashboardContext) {
 
 @Composable
 private fun renderSettingsAppearance(context: SettingsDashboardContext) {
-    var selectedAccentIndex by remember { mutableStateOf(0) }
-    var glassmorphismEnabled by remember { mutableStateOf(true) }
     var hideLabelsOnCollapse by remember { mutableStateOf(false) }
-    var reduceMotion by remember { mutableStateOf(false) }
+
+    val accentOptions =
+        listOf(
+            PrimaryPurple,
+            PaletteAccentBlue,
+            PaletteAccentRose,
+            PaletteAccentAmber,
+            PaletteAccentGreen
+        )
+
+    fun Color.toHex(): String {
+        val r = (red * 255).toInt().toString(16).padStart(2, '0')
+        val g = (green * 255).toInt().toString(16).padStart(2, '0')
+        val b = (blue * 255).toInt().toString(16).padStart(2, '0')
+        return "#$r$g$b".uppercase()
+    }
 
     Column(
         modifier =
             Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = TactileTheme.SpacingLg, vertical = TactileTheme.SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingLg),
+                .padding(horizontal = TajsOSTheme.SpacingLg, vertical = TajsOSTheme.SpacingMd),
+        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingLg)
     ) {
         Text(
             text = "Appearance",
             style = MaterialTheme.typography.headlineMedium,
-            color = TactileTheme.Text,
+            color = TajsOSTheme.Text
         )
         Text(
             text = "Customize the visual identity and interface behavior of your operating system.",
             style = MaterialTheme.typography.bodyMedium,
-            color = TactileTheme.Muted,
+            color = TajsOSTheme.Muted
         )
 
         AppearanceSectionCard(title = "Theme Settings") {
@@ -311,15 +329,15 @@ private fun renderSettingsAppearance(context: SettingsDashboardContext) {
                 title = "Theme Mode",
                 description = "Switch between dark and light theme.",
             ) {
-                Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+                Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                     OutlinedButton(
                         onClick = { context.onSetDarkTheme(true) },
-                        shape = RoundedCornerShape(TactileTheme.RadiusSm),
+                        shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
                         colors =
                             ButtonDefaults.outlinedButtonColors(
                                 containerColor =
                                     if (context.isDarkTheme) {
-                                        TactileTheme.Primary.copy(alpha = 0.2f)
+                                        TajsOSTheme.Primary.copy(alpha = 0.2f)
                                     } else {
                                         Color.Transparent
                                     },
@@ -329,12 +347,12 @@ private fun renderSettingsAppearance(context: SettingsDashboardContext) {
                     }
                     OutlinedButton(
                         onClick = { context.onSetDarkTheme(false) },
-                        shape = RoundedCornerShape(TactileTheme.RadiusSm),
+                        shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
                         colors =
                             ButtonDefaults.outlinedButtonColors(
                                 containerColor =
                                     if (!context.isDarkTheme) {
-                                        TactileTheme.Primary.copy(alpha = 0.2f)
+                                        TajsOSTheme.Primary.copy(alpha = 0.2f)
                                     } else {
                                         Color.Transparent
                                     },
@@ -349,22 +367,18 @@ private fun renderSettingsAppearance(context: SettingsDashboardContext) {
                 title = "Accent Color",
                 description = "Primary color for actions and highlights.",
             ) {
-                Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
-                    AppearanceAccentDot(
-                        color = Color(0xFFB388FF),
-                        selected = selectedAccentIndex == 0,
-                        onClick = { selectedAccentIndex = 0 },
-                    )
-                    AppearanceAccentDot(
-                        color = Color(0xFF60A5FA),
-                        selected = selectedAccentIndex == 1,
-                        onClick = { selectedAccentIndex = 1 },
-                    )
-                    AppearanceAccentDot(
-                        color = Color(0xFFFB7185),
-                        selected = selectedAccentIndex == 2,
-                        onClick = { selectedAccentIndex = 2 },
-                    )
+                Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
+                    accentOptions.forEach { color ->
+                        AppearanceAccentDot(
+                            color = color,
+                            selected =
+                                context.accentColorHex.uppercase() ==
+                                    color
+                                        .toHex()
+                                        .uppercase(),
+                            onClick = { context.onSetAccentColor(color.toHex()) }
+                        )
+                    }
                 }
             }
 
@@ -373,9 +387,9 @@ private fun renderSettingsAppearance(context: SettingsDashboardContext) {
                 description = "Enable translucent blur on navigation and modals.",
             ) {
                 Switch(
-                    checked = glassmorphismEnabled,
-                    onCheckedChange = { glassmorphismEnabled = it },
-                    colors = SwitchDefaults.colors(checkedThumbColor = TactileTheme.Primary),
+                    checked = context.isGlassmorphismEnabled,
+                    onCheckedChange = { context.onSetGlassmorphismEnabled(it) },
+                    colors = SwitchDefaults.colors(checkedThumbColor = TajsOSTheme.Primary)
                 )
             }
         }
@@ -387,7 +401,7 @@ private fun renderSettingsAppearance(context: SettingsDashboardContext) {
             ) {
                 OutlinedButton(
                     onClick = {},
-                    shape = RoundedCornerShape(TactileTheme.RadiusSm),
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusSm)
                 ) {
                     Text("Expanded")
                 }
@@ -400,7 +414,7 @@ private fun renderSettingsAppearance(context: SettingsDashboardContext) {
                 Switch(
                     checked = hideLabelsOnCollapse,
                     onCheckedChange = { hideLabelsOnCollapse = it },
-                    colors = SwitchDefaults.colors(checkedThumbColor = TactileTheme.Primary),
+                    colors = SwitchDefaults.colors(checkedThumbColor = TajsOSTheme.Primary)
                 )
             }
         }
@@ -411,9 +425,9 @@ private fun renderSettingsAppearance(context: SettingsDashboardContext) {
                 description = "Minimize system animations and transitions.",
             ) {
                 Switch(
-                    checked = reduceMotion,
-                    onCheckedChange = { reduceMotion = it },
-                    colors = SwitchDefaults.colors(checkedThumbColor = TactileTheme.Primary),
+                    checked = context.reduceMotion,
+                    onCheckedChange = { context.onSetReduceMotion(it) },
+                    colors = SwitchDefaults.colors(checkedThumbColor = TajsOSTheme.Primary)
                 )
             }
         }
@@ -430,7 +444,7 @@ private fun renderSettingsPreferences(context: SettingsDashboardContext) {
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .padding(vertical = TactileTheme.SpacingSm),
+                    .padding(vertical = TajsOSTheme.SpacingSm),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
@@ -438,7 +452,7 @@ private fun renderSettingsPreferences(context: SettingsDashboardContext) {
                 Text(
                     stringResource(Res.string.settings_biometric_lock),
                     style = MaterialTheme.typography.bodyLarge,
-                    color = TactileTheme.Text,
+                    color = TajsOSTheme.Text
                 )
                 Text(
                     if (context.isBiometricHardwareAvailable) {
@@ -447,14 +461,14 @@ private fun renderSettingsPreferences(context: SettingsDashboardContext) {
                         stringResource(Res.string.settings_biometric_unavailable)
                     },
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted
                 )
             }
             Switch(
                 enabled = context.isBiometricHardwareAvailable,
                 checked = context.isBiometricEnabled == true,
                 onCheckedChange = { context.onSetBiometricEnabled(it) },
-                colors = SwitchDefaults.colors(checkedThumbColor = TactileTheme.Primary),
+                colors = SwitchDefaults.colors(checkedThumbColor = TajsOSTheme.Primary)
             )
         }
     }
@@ -471,20 +485,20 @@ private fun SettingsSimpleScaffold(
             Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(TactileTheme.SpacingMd),
+                .padding(TajsOSTheme.SpacingMd)
     ) {
         Text(
             title,
             style = MaterialTheme.typography.labelSmall,
-            color = TactileTheme.Primary,
+            color = TajsOSTheme.Primary,
         )
-        Spacer(Modifier.height(TactileTheme.SpacingSm))
+        Spacer(Modifier.height(TajsOSTheme.SpacingSm))
         Text(
             description,
             style = MaterialTheme.typography.bodyMedium,
-            color = TactileTheme.Muted,
+            color = TajsOSTheme.Muted,
         )
-        Spacer(Modifier.height(TactileTheme.SpacingLg))
+        Spacer(Modifier.height(TajsOSTheme.SpacingLg))
         content()
     }
 }
@@ -499,21 +513,21 @@ private fun AppearanceSectionCard(
             Modifier
                 .fillMaxWidth()
                 .background(
-                    color = TactileTheme.SurfaceLow.copy(alpha = 0.55f),
-                    shape = RoundedCornerShape(14.dp),
+                    color = TajsOSTheme.SurfaceLow.copy(alpha = 0.55f),
+                    shape = RoundedCornerShape(14.dp)
                 ).border(
                     width = 1.dp,
-                    color = TactileTheme.Border.copy(alpha = 0.35f),
-                    shape = RoundedCornerShape(14.dp),
-                ).padding(TactileTheme.SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+                    color = TajsOSTheme.Border.copy(alpha = 0.35f),
+                    shape = RoundedCornerShape(14.dp)
+                ).padding(TajsOSTheme.SpacingMd),
+        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
     ) {
         Text(
             text = title,
             style = MaterialTheme.typography.titleMedium,
-            color = TactileTheme.Text,
+            color = TajsOSTheme.Text,
         )
-        HorizontalDivider(color = TactileTheme.Border.copy(alpha = 0.3f))
+        HorizontalDivider(color = TajsOSTheme.Border.copy(alpha = 0.3f))
         content()
     }
 }
@@ -530,18 +544,18 @@ private fun AppearanceSettingRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(
-            modifier = Modifier.weight(1f).padding(end = TactileTheme.SpacingMd),
-            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingXs),
+            modifier = Modifier.weight(1f).padding(end = TajsOSTheme.SpacingMd),
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingXs)
         ) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodyLarge,
-                color = TactileTheme.Text,
+                color = TajsOSTheme.Text,
             )
             Text(
                 text = description,
                 style = MaterialTheme.typography.bodySmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted,
             )
         }
         Box(contentAlignment = Alignment.CenterEnd) {
@@ -563,8 +577,8 @@ private fun AppearanceAccentDot(
                 .background(color = color, shape = CircleShape)
                 .border(
                     width = if (selected) 2.dp else 0.dp,
-                    color = if (selected) TactileTheme.Text else Color.Transparent,
-                    shape = CircleShape,
+                    color = if (selected) TajsOSTheme.Text else Color.Transparent,
+                    shape = CircleShape
                 ).clickable(onClick = onClick),
     )
 }
@@ -579,24 +593,24 @@ private fun SettingsMedicationItem(
             Modifier
                 .fillMaxWidth()
                 .background(
-                    color = TactileTheme.Surface,
-                    shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                ).padding(TactileTheme.SpacingMd),
+                    color = TajsOSTheme.Surface,
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
+                ).padding(TajsOSTheme.SpacingMd)
     ) {
         Text(
             medication.substance,
             style = MaterialTheme.typography.titleSmall,
-            color = TactileTheme.Text,
+            color = TajsOSTheme.Text,
         )
         if (medication.brandNames.isNotBlank()) {
-            Spacer(Modifier.height(TactileTheme.SpacingXs))
+            Spacer(Modifier.height(TajsOSTheme.SpacingXs))
             Text(
                 medication.brandNames,
                 style = MaterialTheme.typography.bodySmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted,
             )
         }
-        Spacer(Modifier.height(TactileTheme.SpacingSm))
+        Spacer(Modifier.height(TajsOSTheme.SpacingSm))
         Text(
             buildString {
                 if (!medication.dosage.isNullOrBlank()) append(medication.dosage)
@@ -610,9 +624,9 @@ private fun SettingsMedicationItem(
                 }
             }.ifBlank { "No dosage schedule configured." },
             style = MaterialTheme.typography.bodySmall,
-            color = TactileTheme.Muted,
+            color = TajsOSTheme.Muted,
         )
-        Spacer(Modifier.height(TactileTheme.SpacingSm))
+        Spacer(Modifier.height(TajsOSTheme.SpacingSm))
         TextButton(onClick = onDelete) {
             Text(stringResource(Res.string.med_delete))
         }
@@ -635,31 +649,31 @@ private fun SettingsAddMedicationDialog(
         title = { Text(stringResource(Res.string.profile_add_med)) },
         text = {
             Column(
-                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
             ) {
                 OutlinedTextField(
                     value = substance,
                     onValueChange = { substance = it },
                     label = { Text(stringResource(Res.string.med_substance)) },
-                    shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
                 )
                 OutlinedTextField(
                     value = brands,
                     onValueChange = { brands = it },
                     label = { Text(stringResource(Res.string.med_brand_names)) },
-                    shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
                 )
                 OutlinedTextField(
                     value = dosage,
                     onValueChange = { dosage = it },
                     label = { Text(stringResource(Res.string.med_dosage)) },
-                    shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
                 )
                 OutlinedTextField(
                     value = hour,
                     onValueChange = { hour = it },
                     label = { Text(stringResource(Res.string.med_take_at)) },
-                    shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
                 )
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Checkbox(checked = isOptional, onCheckedChange = { isOptional = it })

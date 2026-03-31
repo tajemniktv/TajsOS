@@ -16,7 +16,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 object VaultsDashboardBlockRegistry {
     private val renderers: Map<String, VaultsDashboardBlockRenderer> =
@@ -39,18 +39,18 @@ internal fun VaultsMainBlock(
     val vaultsSnapshot by viewModel.vaultsSnapshot.collectAsState()
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+        modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd),
+        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
     ) {
         Text(
             text = "REFERENCE & RETRIEVE",
             style = MaterialTheme.typography.displaySmall,
-            color = TactileTheme.Text,
+            color = TajsOSTheme.Text
         )
         Text(
             text = "Keep durable reference, official deadlines, and find-later items easy to retrieve without turning storage into a separate product world.",
             style = MaterialTheme.typography.bodySmall,
-            color = TactileTheme.Muted,
+            color = TajsOSTheme.Muted
         )
 
         VaultsLayer(

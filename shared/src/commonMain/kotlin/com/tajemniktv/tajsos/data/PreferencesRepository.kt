@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -22,6 +23,9 @@ class PreferencesRepository(
     private object PreferencesKeys {
         val BIOMETRIC_ENABLED = booleanPreferencesKey("biometric_enabled")
         val DARK_THEME_ENABLED = booleanPreferencesKey("dark_theme_enabled")
+        val ACCENT_COLOR = stringPreferencesKey("accent_color")
+        val GLASSMORPHISM_ENABLED = booleanPreferencesKey("glassmorphism_enabled")
+        val REDUCE_MOTION = booleanPreferencesKey("reduce_motion")
         val ACTIVE_MODE_ID = longPreferencesKey("active_mode_id")
         val OWNED_PACKS = stringSetPreferencesKey("owned_packs")
         val ENABLED_PACKS = stringSetPreferencesKey("enabled_packs")
@@ -43,6 +47,33 @@ class PreferencesRepository(
         dataStore.data
             .map { preferences ->
                 preferences[PreferencesKeys.DARK_THEME_ENABLED] ?: true
+            }
+
+    /**
+     * Selected accent color hex string (e.g., "#BA9EFF").
+     */
+    val accentColorHex: Flow<String> =
+        dataStore.data
+            .map { preferences ->
+                preferences[PreferencesKeys.ACCENT_COLOR] ?: "#BA9EFF"
+            }
+
+    /**
+     * Whether glassmorphism effects are enabled.
+     */
+    val isGlassmorphismEnabled: Flow<Boolean> =
+        dataStore.data
+            .map { preferences ->
+                preferences[PreferencesKeys.GLASSMORPHISM_ENABLED] ?: true
+            }
+
+    /**
+     * Whether to reduce system animations and transitions.
+     */
+    val reduceMotion: Flow<Boolean> =
+        dataStore.data
+            .map { preferences ->
+                preferences[PreferencesKeys.REDUCE_MOTION] ?: false
             }
 
     val enabledPacks: Flow<PackRegistry> =
@@ -79,6 +110,35 @@ class PreferencesRepository(
     suspend fun updateDarkThemeEnabled(enabled: Boolean) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.DARK_THEME_ENABLED] = enabled
+        }
+    }
+
+    /**
+     * Persists the selected accent color.
+     *
+     * @param colorHex The color in hex format (e.g., "#BA9EFF").
+     */
+    suspend fun updateAccentColor(colorHex: String) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.ACCENT_COLOR] = colorHex
+        }
+    }
+
+    /**
+     * Updates the glassmorphism preference.
+     */
+    suspend fun updateGlassmorphismEnabled(enabled: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.GLASSMORPHISM_ENABLED] = enabled
+        }
+    }
+
+    /**
+     * Updates the reduce motion preference.
+     */
+    suspend fun updateReduceMotion(enabled: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.REDUCE_MOTION] = enabled
         }
     }
 

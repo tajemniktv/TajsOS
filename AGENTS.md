@@ -46,6 +46,10 @@ collection of disconnected feature silos.
 
 ## Architecture
 
+### Current targets
+
+For now, the current targets are androidApp and composeApp (JVM), so test builds against those.
+
 ### Platforms and modules
 
 - Active Gradle modules: `:androidApp`, `:composeApp`, `:shared`, `:server`.
@@ -193,7 +197,7 @@ When working in this repo, agents should:
 9. Validate assumptions from current code, not old docs.
 10. After a successful build/test, commit changes.
 11. When modifying or creating visual aspects of the app, consult DESIGN.md
-12. If users request is ambigous, not specific enough or you're not sure what the user meant - Ask
+12. If users request is ambigous, not specific enough, or you're not sure what the user meant - Ask
     before doing.
 13. After updating the codebase, check if tests also require updating.
 14. When simplifying ontology, prefer removing or demoting weak pseudo-types over renaming them and

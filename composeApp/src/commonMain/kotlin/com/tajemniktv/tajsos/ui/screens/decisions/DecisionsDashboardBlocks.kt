@@ -35,7 +35,7 @@ import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.cards.DashCard
 import com.tajemniktv.tajsos.ui.lens.LensUiContract
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.decision_no_decisions_category
@@ -79,26 +79,26 @@ internal fun DecisionsMainBlock(
         modifier =
             Modifier
                 .fillMaxSize()
-                .background(TactileTheme.Background),
+                .background(TajsOSTheme.Background)
     ) {
         Text(
             stringResource(LensUiContract.decisionLens.title),
-            modifier = Modifier.padding(horizontal = TactileTheme.SpacingMd, vertical = 8.dp),
+            modifier = Modifier.padding(horizontal = TajsOSTheme.SpacingMd, vertical = 8.dp),
             style = MaterialTheme.typography.displaySmall,
-            color = TactileTheme.Text,
+            color = TajsOSTheme.Text,
             fontWeight = FontWeight.Bold,
         )
         Text(
             stringResource(LensUiContract.decisionLens.subtitle),
-            modifier = Modifier.padding(horizontal = TactileTheme.SpacingMd),
+            modifier = Modifier.padding(horizontal = TajsOSTheme.SpacingMd),
             style = MaterialTheme.typography.bodySmall,
-            color = TactileTheme.Muted,
+            color = TajsOSTheme.Muted
         )
         Spacer(Modifier.height(8.dp))
         SecondaryTabRow(
             selectedTabIndex = selectedTab,
-            containerColor = TactileTheme.Surface,
-            contentColor = TactileTheme.Primary,
+            containerColor = TajsOSTheme.Surface,
+            contentColor = TajsOSTheme.Primary
         ) {
             tabs.forEachIndexed { index, title ->
                 Tab(
@@ -117,22 +117,22 @@ internal fun DecisionsMainBlock(
 
         if (selectedTab == 1 && stale.isNotEmpty()) {
             Surface(
-                modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingMd),
-                color = TactileTheme.Error.copy(alpha = 0.08f),
+                modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
+                color = TajsOSTheme.Error.copy(alpha = 0.08f),
                 border =
                     androidx.compose.foundation.BorderStroke(
                         1.dp,
-                        TactileTheme.Error.copy(alpha = 0.25f),
+                        TajsOSTheme.Error.copy(alpha = 0.25f)
                     ),
                 shape =
                     androidx.compose.foundation.shape
-                        .RoundedCornerShape(TactileTheme.RadiusMd),
+                        .RoundedCornerShape(TajsOSTheme.RadiusMd)
             ) {
-                Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+                Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
                     Text(
                         stringResource(Res.string.lens_decision_stale_header),
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Error,
+                        color = TajsOSTheme.Error,
                         fontWeight = FontWeight.Bold,
                     )
                     Spacer(Modifier.height(6.dp))
@@ -146,7 +146,7 @@ internal fun DecisionsMainBlock(
                                 )
                             }",
                             style = MaterialTheme.typography.bodySmall,
-                            color = TactileTheme.Text,
+                            color = TajsOSTheme.Text
                         )
                     }
                 }
@@ -171,28 +171,28 @@ fun DecisionList(
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text(
                 stringResource(Res.string.decision_no_decisions_category),
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted
             )
         }
     } else {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(TactileTheme.SpacingMd),
-            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+            contentPadding = PaddingValues(TajsOSTheme.SpacingMd),
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
         ) {
             items(nodes) { node ->
                 DashCard(onClick = { onEdit(node.node.id) }) {
-                    Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+                    Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
                         Text(
                             node.node.title,
                             style = MaterialTheme.typography.titleMedium,
-                            color = TactileTheme.Text,
+                            color = TajsOSTheme.Text
                         )
                         if (node.node.content.isNotEmpty()) {
                             Text(
                                 node.node.content,
                                 style = MaterialTheme.typography.bodySmall,
-                                color = TactileTheme.Muted,
+                                color = TajsOSTheme.Muted,
                                 maxLines = 2,
                             )
                         }

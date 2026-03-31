@@ -32,7 +32,7 @@ import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.components.nodes.ProjectItem
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.projects_create_first
@@ -56,10 +56,7 @@ import tajsos.composeapp.generated.resources.projects_filter_someday
  * @param onNavigateTo Callback invoked with a navigation route when navigating from a project item.
  */
 @Composable
-fun ProjectsScreen(
-    viewModel: MainViewModel,
-    onNavigateTo: (String) -> Unit,
-) {
+fun ProjectsScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit) {
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val surface =
             if (maxWidth >
@@ -72,21 +69,21 @@ fun ProjectsScreen(
         val plan =
             remember(surface) {
                 buildProjectsDashboardPlan(
-                    surface,
+                    surface
                 )
             }
         val context =
             remember(viewModel, onNavigateTo) {
                 ProjectsDashboardContext(
                     viewModel,
-                    onNavigateTo,
+                    onNavigateTo
                 )
             }
         Column(modifier = Modifier.fillMaxSize()) {
             plan.primary.forEach { block ->
                 ProjectsDashboardBlockRegistry
                     .resolve(
-                        block.id,
+                        block.id
                     )?.invoke(context)
             }
         }
@@ -102,10 +99,7 @@ fun ProjectsScreen(
  * @param onConfirm Called with the entered project `name`, `description`, and `status` (`"active"` or `"someday"`) when the user confirms creation.
  */
 @Composable
-fun AddProjectDialog(
-    onDismiss: () -> Unit,
-    onConfirm: (String, String, String) -> Unit,
-) {
+fun AddProjectDialog(onDismiss: () -> Unit, onConfirm: (String, String, String) -> Unit) {
     var name by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var status by remember { mutableStateOf("active") }
@@ -118,27 +112,27 @@ fun AddProjectDialog(
                 TextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text(stringResource(Res.string.projects_dialog_name)) },
+                    label = { Text(stringResource(Res.string.projects_dialog_name)) }
                 )
                 TextField(
                     value = description,
                     onValueChange = { description = it },
-                    label = { Text(stringResource(Res.string.projects_dialog_description)) },
+                    label = { Text(stringResource(Res.string.projects_dialog_description)) }
                 )
-                Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+                Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                     listOf("active", "someday").forEach { s ->
                         val label =
                             if (s == "active") {
                                 stringResource(Res.string.projects_filter_active)
                             } else {
                                 stringResource(
-                                    Res.string.projects_filter_someday,
+                                    Res.string.projects_filter_someday
                                 )
                             }
                         FilterChip(
                             selected = status == s,
                             onClick = { status = s },
-                            label = { Text(label.uppercase()) },
+                            label = { Text(label.uppercase()) }
                         )
                     }
                 }
@@ -147,21 +141,23 @@ fun AddProjectDialog(
         confirmButton = {
             Button(
                 onClick = { onConfirm(name, description, status) },
-                enabled = name.isNotBlank(),
+                enabled = name.isNotBlank()
             ) {
                 Text(stringResource(Res.string.projects_dialog_create))
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(Res.string.projects_dialog_cancel)) }
-        },
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(Res.string.projects_dialog_cancel))
+            }
+        }
     )
 }
 
 data class ProjectListState(
     val filteredProjects: List<NodeEntity>,
     val searchQuery: String,
-    val nodesByProjectId: Map<Long?, List<NodeWithPin>>,
+    val nodesByProjectId: Map<Long?, List<NodeWithPin>>
 )
 
 /**
@@ -178,19 +174,19 @@ data class ProjectListState(
 fun ProjectListContent(
     state: ProjectListState,
     onNavigateTo: (String) -> Unit,
-    onShowAddDialog: () -> Unit,
+    onShowAddDialog: () -> Unit
 ) {
     if (state.filteredProjects.isEmpty() && state.searchQuery.isEmpty()) {
         EmptyState(
-            message = stringResource(Res.string.projects_empty),
+            message = stringResource(Res.string.projects_empty)
         ) {
-            Spacer(modifier = Modifier.height(TactileTheme.SpacingMd))
+            Spacer(modifier = Modifier.height(TajsOSTheme.SpacingMd))
             Button(onClick = onShowAddDialog) {
                 Text(stringResource(Res.string.projects_create_first))
             }
         }
     } else {
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
             items(state.filteredProjects, key = { it.id }) { project ->
                 val projectNodes = state.nodesByProjectId[project.id] ?: emptyList()
                 val total = projectNodes.size
@@ -205,16 +201,16 @@ fun ProjectListContent(
                         onNavigateTo(
                             Screen.ProjectDetail.route.replace(
                                 "{projectId}",
-                                project.id.toString(),
-                            ),
+                                project.id.toString()
+                            )
                         )
-                    },
+                    }
                 ) {
                     onNavigateTo(
                         Screen.ProjectDetail.route.replace(
                             "{projectId}",
-                            project.id.toString(),
-                        ),
+                            project.id.toString()
+                        )
                     )
                 }
             }

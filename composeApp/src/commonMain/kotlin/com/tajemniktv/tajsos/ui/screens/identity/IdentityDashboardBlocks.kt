@@ -26,7 +26,7 @@ import com.tajemniktv.tajsos.ui.components.cards.DirectionCommitmentCard
 import com.tajemniktv.tajsos.ui.components.cards.DistinctionQuestionCard
 import com.tajemniktv.tajsos.ui.screens.GroupedOpenLoopSection
 import com.tajemniktv.tajsos.ui.screens.formatProtocolTimestamp
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 object IdentityDashboardBlockRegistry {
     private val renderers: Map<String, IdentityDashboardBlockRenderer> =
@@ -43,16 +43,16 @@ object IdentityDashboardBlockRegistry {
 
 @Composable
 private fun renderIdentityHeader(context: IdentityDashboardContext) {
-    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+    Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)) {
         Text(
             text = "IDENTITY & OPERATING MODEL",
             style = MaterialTheme.typography.displaySmall,
-            color = TactileTheme.Text,
+            color = TajsOSTheme.Text
         )
         Text(
             text = "Review signature, second-brain distinction, direction commitments, and core-shift progress together.",
             style = MaterialTheme.typography.bodySmall,
-            color = TactileTheme.Muted,
+            color = TajsOSTheme.Muted
         )
     }
 }
@@ -83,39 +83,39 @@ private fun renderIdentitySignature(context: IdentityDashboardContext) {
     val enabledCount = capabilities.count { it.second }
     val missingCapabilities = capabilities.filterNot { it.second }.map { it.first }
 
-    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+    Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)) {
         Surface(
             modifier = Modifier.fillMaxWidth(),
-            color = TactileTheme.Surface,
-            shape = RoundedCornerShape(TactileTheme.RadiusMd),
-            border = BorderStroke(1.dp, TactileTheme.Border),
+            color = TajsOSTheme.Surface,
+            shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+            border = BorderStroke(1.dp, TajsOSTheme.Border)
         ) {
             Column(
-                modifier = Modifier.padding(TactileTheme.SpacingMd),
+                modifier = Modifier.padding(TajsOSTheme.SpacingMd),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Text(
                     "LIFEOS SIGNATURE",
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Primary,
+                    color = TajsOSTheme.Primary,
                     fontWeight = FontWeight.Bold,
                 )
                 Text(
                     "Capabilities $enabledCount/${capabilities.size} • Work-date coverage ${snapshot.workDateDueCoveragePercent}%",
                     style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted
                 )
                 Text(
                     "Mode of life: ${snapshot.modeOfLifeLabel.replace('_', ' ').uppercase()}",
                     style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Accent,
+                    color = TajsOSTheme.Accent,
                     fontWeight = FontWeight.Bold,
                 )
                 if (snapshot.modeOfLifeReason.isNotBlank()) {
                     Text(
                         snapshot.modeOfLifeReason,
                         style = MaterialTheme.typography.bodySmall,
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted
                     )
                 }
             }
@@ -123,8 +123,8 @@ private fun renderIdentitySignature(context: IdentityDashboardContext) {
 
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+            horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
         ) {
             capabilities.forEach { (label, enabled) ->
                 FilterChip(
@@ -136,7 +136,7 @@ private fun renderIdentitySignature(context: IdentityDashboardContext) {
             }
         }
 
-        Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+        Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
             if (missingCapabilities.isNotEmpty()) {
                 GroupedOpenLoopSection(
                     title = "MISSING SIGNATURE CAPABILITIES",
@@ -146,30 +146,30 @@ private fun renderIdentitySignature(context: IdentityDashboardContext) {
 
             Surface(
                 modifier = Modifier.fillMaxWidth(),
-                color = TactileTheme.Surface,
-                shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                border = BorderStroke(1.dp, TactileTheme.Border),
+                color = TajsOSTheme.Surface,
+                shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+                border = BorderStroke(1.dp, TajsOSTheme.Border)
             ) {
                 Column(
-                    modifier = Modifier.padding(TactileTheme.SpacingMd),
+                    modifier = Modifier.padding(TajsOSTheme.SpacingMd),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Text(
                         "WORK DATE VS DUE DATE",
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Primary,
+                        color = TajsOSTheme.Primary,
                         fontWeight = FontWeight.Bold,
                     )
                     Text(
                         "Coverage ${snapshot.workDateDueCoveragePercent}% • Missing work date ${snapshot.workDateDueItems.size}",
                         style = MaterialTheme.typography.bodySmall,
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted
                     )
                     if (snapshot.workDateDueItems.isEmpty()) {
                         Text(
                             "All active due tasks have a work date.",
                             style = MaterialTheme.typography.bodySmall,
-                            color = TactileTheme.Success,
+                            color = TajsOSTheme.Success,
                             fontWeight = FontWeight.Bold,
                         )
                     }
@@ -186,28 +186,28 @@ private fun renderIdentitySignature(context: IdentityDashboardContext) {
                 val dueMinusDay = dueAt?.minus(24L * 60 * 60 * 1000)
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
-                    color = TactileTheme.Surface,
-                    shape = RoundedCornerShape(TactileTheme.RadiusMd),
-                    border = BorderStroke(1.dp, TactileTheme.Border),
+                    color = TajsOSTheme.Surface,
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+                    border = BorderStroke(1.dp, TajsOSTheme.Border)
                 ) {
                     Column(
-                        modifier = Modifier.padding(TactileTheme.SpacingMd),
+                        modifier = Modifier.padding(TajsOSTheme.SpacingMd),
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         Text(
                             node.title,
                             style = MaterialTheme.typography.titleSmall,
-                            color = TactileTheme.Text,
+                            color = TajsOSTheme.Text,
                             fontWeight = FontWeight.Bold,
                         )
                         Text(
                             "Due ${dueAt?.let { formatProtocolTimestamp(it) } ?: "No due date"} • Work date missing",
                             style = MaterialTheme.typography.bodySmall,
-                            color = TactileTheme.Muted,
+                            color = TajsOSTheme.Muted
                         )
                         FlowRow(
-                            horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-                            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                            horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+                            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
                         ) {
                             AssistChip(onClick = { onEditNode(node.id) }, label = { Text("OPEN") })
                             AssistChip(
@@ -235,32 +235,32 @@ private fun renderIdentitySignature(context: IdentityDashboardContext) {
 @Composable
 private fun renderIdentityDistinction(context: IdentityDashboardContext) {
     val snapshot = context.secondBrainSnapshot
-    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+    Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
         Surface(
             modifier = Modifier.fillMaxWidth(),
-            color = TactileTheme.Surface,
-            shape = RoundedCornerShape(TactileTheme.RadiusMd),
-            border = BorderStroke(1.dp, TactileTheme.Border),
+            color = TajsOSTheme.Surface,
+            shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+            border = BorderStroke(1.dp, TajsOSTheme.Border)
         ) {
             Column(
-                modifier = Modifier.padding(TactileTheme.SpacingMd),
+                modifier = Modifier.padding(TajsOSTheme.SpacingMd),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Text(
                     "LIFEOS VS SECOND BRAIN",
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Primary,
+                    color = TajsOSTheme.Primary,
                     fontWeight = FontWeight.Bold,
                 )
                 Text(
                     "Second Brain coverage ${snapshot.secondBrainCoveragePercent}% • LifeOS coverage ${snapshot.lifeOSCoveragePercent}%",
                     style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted
                 )
                 Text(
                     "System posture: ${snapshot.postureLabel.replace('_', ' ').uppercase()}",
                     style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Accent,
+                    color = TajsOSTheme.Accent,
                     fontWeight = FontWeight.Bold,
                 )
             }
@@ -291,21 +291,21 @@ private fun renderIdentityDistinction(context: IdentityDashboardContext) {
 @Composable
 private fun renderIdentityDirection(context: IdentityDashboardContext) {
     val snapshot = context.directionSnapshot
-    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+    Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
         Surface(
             modifier = Modifier.fillMaxWidth(),
-            color = TactileTheme.Surface,
-            shape = RoundedCornerShape(TactileTheme.RadiusMd),
-            border = BorderStroke(1.dp, TactileTheme.Border),
+            color = TajsOSTheme.Surface,
+            shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+            border = BorderStroke(1.dp, TajsOSTheme.Border)
         ) {
             Column(
-                modifier = Modifier.padding(TactileTheme.SpacingMd),
+                modifier = Modifier.padding(TajsOSTheme.SpacingMd),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Text(
                     "COMBINED DIRECTION",
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Primary,
+                    color = TajsOSTheme.Primary,
                     fontWeight = FontWeight.Bold,
                 )
                 Text(
@@ -316,7 +316,7 @@ private fun renderIdentityDirection(context: IdentityDashboardContext) {
                         ).uppercase()
                     }",
                     style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted
                 )
             }
         }
@@ -336,33 +336,33 @@ private fun renderIdentityDirection(context: IdentityDashboardContext) {
 @Composable
 private fun renderIdentityCoreShift(context: IdentityDashboardContext) {
     val snapshot = context.coreShiftSnapshot
-    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+    Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
         Surface(
             modifier = Modifier.fillMaxWidth(),
-            color = TactileTheme.Surface,
-            shape = RoundedCornerShape(TactileTheme.RadiusMd),
-            border = BorderStroke(1.dp, TactileTheme.Border),
+            color = TajsOSTheme.Surface,
+            shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+            border = BorderStroke(1.dp, TajsOSTheme.Border)
         ) {
             Column(
-                modifier = Modifier.padding(TactileTheme.SpacingMd),
+                modifier = Modifier.padding(TajsOSTheme.SpacingMd),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Text(
                     "CORE LIFEOS SHIFT",
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Primary,
+                    color = TajsOSTheme.Primary,
                     fontWeight = FontWeight.Bold,
                 )
                 Text(
                     "Section 1 completion ${snapshot.completionPercent}% • Connected ${if (snapshot.connectedProperly) "YES" else "NO"}",
                     style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted
                 )
                 snapshot.integrationWarning?.let { warning ->
                     Text(
                         warning,
                         style = MaterialTheme.typography.bodySmall,
-                        color = TactileTheme.Error,
+                        color = TajsOSTheme.Error,
                         fontWeight = FontWeight.Bold,
                     )
                 }

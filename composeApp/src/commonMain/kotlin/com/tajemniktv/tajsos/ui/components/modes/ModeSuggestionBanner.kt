@@ -30,7 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 /**
  * Renders a themed banner suggesting a mode change and exposes actions to accept or dismiss it.
@@ -47,16 +47,16 @@ fun ModeSuggestionBanner(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Primary.copy(alpha = 0.1f),
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+        color = TajsOSTheme.Primary.copy(alpha = 0.1f),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         border =
             androidx.compose.foundation.BorderStroke(
                 1.dp,
-                TactileTheme.Primary.copy(alpha = 0.3f),
-            ),
+                TajsOSTheme.Primary.copy(alpha = 0.3f)
+            )
     ) {
         Row(
-            modifier = Modifier.padding(TactileTheme.SpacingMd),
+            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
@@ -64,21 +64,21 @@ fun ModeSuggestionBanner(
                 Icon(
                     Icons.Default.AutoAwesome,
                     contentDescription = null,
-                    tint = TactileTheme.Primary,
+                    tint = TajsOSTheme.Primary,
                     modifier = Modifier.size(20.dp),
                 )
-                Spacer(Modifier.width(TactileTheme.SpacingMd))
+                Spacer(Modifier.width(TajsOSTheme.SpacingMd))
                 Column {
                     Text(
                         "MODE SUGGESTION",
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Primary,
+                        color = TajsOSTheme.Primary,
                         fontWeight = FontWeight.Bold,
                     )
                     Text(
                         "Switch to $suggestion mode based on current activity?",
                         style = MaterialTheme.typography.bodySmall,
-                        color = TactileTheme.Text,
+                        color = TajsOSTheme.Text
                     )
                 }
             }
@@ -87,13 +87,13 @@ fun ModeSuggestionBanner(
                     Text(
                         "IGNORE",
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted
                     )
                 }
                 Button(
                     onClick = onAccept,
-                    colors = ButtonDefaults.buttonColors(containerColor = TactileTheme.Primary),
-                    shape = RoundedCornerShape(TactileTheme.RadiusSm),
+                    colors = ButtonDefaults.buttonColors(containerColor = TajsOSTheme.Primary),
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
                     modifier = Modifier.height(32.dp),
                 ) {

@@ -29,7 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.common_back
@@ -83,10 +83,10 @@ fun ProfileRoute(
                     Brush.verticalGradient(
                         colors =
                             listOf(
-                                TactileTheme.Background,
-                                TactileTheme.SurfaceLowest,
-                                TactileTheme.Background,
-                            ),
+                                TajsOSTheme.Background,
+                                TajsOSTheme.SurfaceLowest,
+                                TajsOSTheme.Background
+                            )
                     ),
                 ),
     ) {
@@ -120,11 +120,11 @@ fun ProfileRoute(
             )
 
         LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd),
+            modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd),
             verticalArrangement =
                 androidx.compose.foundation.layout.Arrangement.spacedBy(
-                    TactileTheme.SpacingMd,
-                ),
+                    TajsOSTheme.SpacingMd
+                )
         ) {
             items(blockSequence) { block ->
                 renderProfileBlock(block.id, context)
@@ -161,32 +161,32 @@ private fun AddMedicationDialog(
             androidx.compose.foundation.layout.Column(
                 verticalArrangement =
                     androidx.compose.foundation.layout.Arrangement.spacedBy(
-                        TactileTheme.SpacingSm,
-                    ),
+                        TajsOSTheme.SpacingSm
+                    )
             ) {
                 OutlinedTextField(
                     value = substance,
                     onValueChange = { substance = it },
                     label = { Text(stringResource(Res.string.med_substance)) },
-                    shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
                 )
                 OutlinedTextField(
                     value = brands,
                     onValueChange = { brands = it },
                     label = { Text(stringResource(Res.string.med_brand_names)) },
-                    shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
                 )
                 OutlinedTextField(
                     value = dosage,
                     onValueChange = { dosage = it },
                     label = { Text(stringResource(Res.string.med_dosage)) },
-                    shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
                 )
                 OutlinedTextField(
                     value = hour,
                     onValueChange = { hour = it },
                     label = { Text(stringResource(Res.string.med_take_at)) },
-                    shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
                 )
                 androidx.compose.foundation.layout.Row(verticalAlignment = Alignment.CenterVertically) {
                     Checkbox(checked = isOptional, onCheckedChange = { isOptional = it })

@@ -23,7 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.screens.GroupedOpenLoopSection
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 object RulesDashboardBlockRegistry {
     private val renderers: Map<String, RulesDashboardBlockRenderer> =
@@ -40,16 +40,16 @@ object RulesDashboardBlockRegistry {
 
 @Composable
 private fun renderRulesHeader(context: RulesDashboardContext) {
-    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+    Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)) {
         Text(
             text = "RULES",
             style = MaterialTheme.typography.displaySmall,
-            color = TactileTheme.Text,
+            color = TajsOSTheme.Text
         )
         Text(
             text = "Keep anti-goals, principles, constraints, and recovery reminders in one retrievable system.",
             style = MaterialTheme.typography.bodySmall,
-            color = TactileTheme.Muted,
+            color = TajsOSTheme.Muted
         )
     }
 }
@@ -59,24 +59,24 @@ private fun renderRulesStats(context: RulesDashboardContext) {
     val snapshot = context.snapshot
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = BorderStroke(1.dp, TactileTheme.Border),
+        color = TajsOSTheme.Surface,
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+        border = BorderStroke(1.dp, TajsOSTheme.Border)
     ) {
         Column(
-            modifier = Modifier.padding(TactileTheme.SpacingMd),
+            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
                 "PERSONAL RULES VAULT",
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary,
+                color = TajsOSTheme.Primary,
                 fontWeight = FontWeight.Bold,
             )
             Text(
                 "Rules ${snapshot.vault.size} • Pinned ${snapshot.pinnedPrinciples.size} • Playbook links ${snapshot.playbookLinksCount}",
                 style = MaterialTheme.typography.bodySmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted
             )
         }
     }
@@ -105,12 +105,12 @@ private fun renderRulesInput(context: RulesDashboardContext) {
 
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TactileTheme.Surface,
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
-        border = BorderStroke(1.dp, TactileTheme.Border),
+        color = TajsOSTheme.Surface,
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+        border = BorderStroke(1.dp, TajsOSTheme.Border)
     ) {
         Column(
-            modifier = Modifier.padding(TactileTheme.SpacingMd),
+            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             OutlinedTextField(
@@ -127,8 +127,8 @@ private fun renderRulesInput(context: RulesDashboardContext) {
                 minLines = 2,
             )
             FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
             ) {
                 ruleCategories.forEach { (tag, label) ->
                     FilterChip(
@@ -149,7 +149,7 @@ private fun renderRulesInput(context: RulesDashboardContext) {
 @Composable
 private fun renderRulesGroupedSections(context: RulesDashboardContext) {
     val snapshot = context.snapshot
-    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+    Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
         if (snapshot.antiGoals.isNotEmpty()) {
             GroupedOpenLoopSection(
                 "ANTI-GOALS",
@@ -237,40 +237,40 @@ private fun renderRulesList(context: RulesDashboardContext) {
     val playbookSnapshot = context.playbookSnapshot
     val viewModel = context.viewModel
 
-    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+    Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
         snapshot.vault.forEach { rule ->
             val isPinned = snapshot.pinnedPrinciples.any { it.node.id == rule.node.id }
             Surface(
                 modifier = Modifier.fillMaxWidth(),
-                color = TactileTheme.Surface,
-                shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                color = TajsOSTheme.Surface,
+                shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                 border =
                     BorderStroke(
                         1.dp,
-                        if (isPinned) TactileTheme.Primary else TactileTheme.Border,
-                    ),
+                        if (isPinned) TajsOSTheme.Primary else TajsOSTheme.Border
+                    )
             ) {
                 Column(
-                    modifier = Modifier.padding(TactileTheme.SpacingMd),
+                    modifier = Modifier.padding(TajsOSTheme.SpacingMd),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Text(
                         rule.node.title,
                         style = MaterialTheme.typography.titleSmall,
-                        color = TactileTheme.Text,
+                        color = TajsOSTheme.Text,
                         fontWeight = FontWeight.Bold,
                     )
                     if (rule.node.content.isNotBlank()) {
                         Text(
                             rule.node.content,
                             style = MaterialTheme.typography.bodySmall,
-                            color = TactileTheme.Muted,
+                            color = TajsOSTheme.Muted
                         )
                     }
                     @OptIn(ExperimentalLayoutApi::class)
                     FlowRow(
-                        horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-                        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                        horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+                        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
                     ) {
                         AssistChip(
                             onClick = { viewModel.pinOperatingPrinciple(rule.node, !isPinned) },
@@ -285,12 +285,12 @@ private fun renderRulesList(context: RulesDashboardContext) {
                         Text(
                             "LINK TO PLAYBOOK",
                             style = MaterialTheme.typography.labelSmall,
-                            color = TactileTheme.Muted,
+                            color = TajsOSTheme.Muted
                         )
                         @OptIn(ExperimentalLayoutApi::class)
                         FlowRow(
-                            horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
-                            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                            horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+                            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
                         ) {
                             playbookSnapshot.playbooks.take(8).forEach { playbook ->
                                 AssistChip(

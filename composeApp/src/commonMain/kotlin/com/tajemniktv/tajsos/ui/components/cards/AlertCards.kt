@@ -23,7 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 @Composable
 fun AlertCard(
@@ -38,15 +38,15 @@ fun AlertCard(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
         color = color.copy(alpha = 0.05f),
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         border = BorderStroke(1.dp, color.copy(alpha = 0.3f)),
     ) {
         Row(
-            modifier = Modifier.padding(TactileTheme.SpacingMd),
+            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(icon, contentDescription = null, tint = color)
-            Spacer(Modifier.width(TactileTheme.SpacingMd))
+            Spacer(Modifier.width(TajsOSTheme.SpacingMd))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     title,
@@ -57,7 +57,7 @@ fun AlertCard(
                 Text(
                     description,
                     style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Text,
+                    color = TajsOSTheme.Text
                 )
             }
             action?.invoke()

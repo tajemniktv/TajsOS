@@ -57,12 +57,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.TaskState
 import com.tajemniktv.tajsos.data.taskStateOrNull
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
 private val detailPanelShape = RoundedCornerShape(12.dp)
-private val detailPanelBorder = TactileTheme.GhostBorder.copy(alpha = 0.22f)
+private val detailPanelBorder = TajsOSTheme.GhostBorder.copy(alpha = 0.22f)
 
 private enum class HeaderBadgeTone {
     Critical,
@@ -108,14 +108,14 @@ private fun renderTaskHeader(context: TaskDetailContext) {
             }
 
     Surface(
-        color = TactileTheme.SurfaceLow,
+        color = TajsOSTheme.SurfaceLow,
         shape = detailPanelShape,
         tonalElevation = 2.dp,
         border = BorderStroke(1.dp, detailPanelBorder),
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingMd),
-            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+            modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -131,14 +131,14 @@ private fun renderTaskHeader(context: TaskDetailContext) {
                         projectName = context.projectById[task.projectId ?: -1],
                     )
                     Row(
-                        horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                        horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         TaskStateBadge(label = badgeLabel, tone = badgeTone)
                         Text(
                             text = "TASK-${task.id}",
                             style = MaterialTheme.typography.labelSmall,
-                            color = TactileTheme.Muted,
+                            color = TajsOSTheme.Muted
                         )
                     }
                     if (context.isEditing) {
@@ -150,7 +150,7 @@ private fun renderTaskHeader(context: TaskDetailContext) {
                         Text(
                             text = task.title,
                             style = MaterialTheme.typography.displayMedium,
-                            color = TactileTheme.Text,
+                            color = TajsOSTheme.Text,
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
                             fontWeight = FontWeight.Bold,
@@ -183,7 +183,7 @@ private fun renderTaskHeader(context: TaskDetailContext) {
                                     Icons.Default.Tag,
                                     contentDescription = null,
                                     modifier = Modifier.size(14.dp),
-                                    tint = TactileTheme.Primary,
+                                    tint = TajsOSTheme.Primary
                                 )
                             },
                             label = { Text(tag.name) },
@@ -207,30 +207,30 @@ private fun TaskPathRow(
         Text(
             text = "TASKS",
             style = MaterialTheme.typography.labelSmall,
-            color = TactileTheme.Muted,
+            color = TajsOSTheme.Muted
         )
         Icon(
             imageVector = Icons.AutoMirrored.Filled.ArrowForward,
             contentDescription = null,
-            tint = TactileTheme.Muted,
+            tint = TajsOSTheme.Muted,
             modifier = Modifier.size(12.dp),
         )
         Text(
             text = areaName ?: "UNSCOPED",
             style = MaterialTheme.typography.labelSmall,
-            color = TactileTheme.Primary,
+            color = TajsOSTheme.Primary
         )
         projectName?.let {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                 contentDescription = null,
-                tint = TactileTheme.Muted,
+                tint = TajsOSTheme.Muted,
                 modifier = Modifier.size(12.dp),
             )
             Text(
                 text = it.uppercase(),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Text,
+                color = TajsOSTheme.Text,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -245,15 +245,15 @@ private fun HeaderTitleEditor(
 ) {
     Surface(
         shape = RoundedCornerShape(10.dp),
-        color = TactileTheme.SurfaceHighest,
-        border = BorderStroke(1.dp, TactileTheme.GhostBorder.copy(alpha = 0.25f)),
+        color = TajsOSTheme.SurfaceHighest,
+        border = BorderStroke(1.dp, TajsOSTheme.GhostBorder.copy(alpha = 0.25f))
     ) {
         BasicTextField(
             value = value,
             onValueChange = onValueChange,
             modifier = Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 12.dp),
-            textStyle = MaterialTheme.typography.displaySmall.copy(color = TactileTheme.Text),
-            cursorBrush = SolidColor(TactileTheme.Primary),
+            textStyle = MaterialTheme.typography.displaySmall.copy(color = TajsOSTheme.Text),
+            cursorBrush = SolidColor(TajsOSTheme.Primary),
             singleLine = true,
         )
     }
@@ -298,10 +298,10 @@ private fun TaskActionBar(
                     onClick = onComplete,
                     colors =
                         ButtonDefaults.buttonColors(
-                            containerColor = TactileTheme.Primary,
-                            contentColor = TactileTheme.Background,
-                            disabledContainerColor = TactileTheme.SurfaceHighest,
-                            disabledContentColor = TactileTheme.Muted,
+                            containerColor = TajsOSTheme.Primary,
+                            contentColor = TajsOSTheme.Background,
+                            disabledContainerColor = TajsOSTheme.SurfaceHighest,
+                            disabledContentColor = TajsOSTheme.Muted
                         ),
                     enabled = canComplete,
                 ) {
@@ -317,27 +317,29 @@ private fun TaskActionBar(
 @Composable
 private fun renderTaskDescription(context: TaskDetailContext) {
     Surface(
-        color = TactileTheme.SurfaceLow,
+        color = TajsOSTheme.SurfaceLow,
         shape = detailPanelShape,
         border = BorderStroke(1.dp, detailPanelBorder),
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingMd),
+            modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             SectionTitle("Technical Directives")
             if (context.isEditing) {
                 Surface(
                     shape = RoundedCornerShape(10.dp),
-                    color = TactileTheme.SurfaceHighest,
-                    border = BorderStroke(1.dp, TactileTheme.GhostBorder.copy(alpha = 0.22f)),
+                    color = TajsOSTheme.SurfaceHighest,
+                    border = BorderStroke(1.dp, TajsOSTheme.GhostBorder.copy(alpha = 0.22f))
                 ) {
                     BasicTextField(
                         value = context.draftDescription,
                         onValueChange = context.onDraftDescriptionChange,
                         modifier = Modifier.fillMaxWidth().height(160.dp).padding(12.dp),
-                        textStyle = MaterialTheme.typography.bodyLarge.copy(color = TactileTheme.Text),
-                        cursorBrush = SolidColor(TactileTheme.Primary),
+                        textStyle = MaterialTheme.typography.bodyLarge.copy(
+                            color = TajsOSTheme.Text
+                        ),
+                        cursorBrush = SolidColor(TajsOSTheme.Primary),
                     )
                 }
             } else {
@@ -346,13 +348,13 @@ private fun renderTaskDescription(context: TaskDetailContext) {
                     Text(
                         text = "No execution notes yet. Add constraints, dependencies, or operator notes.",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted,
                     )
                 } else {
                     Text(
                         text = clean,
                         style = MaterialTheme.typography.bodyLarge,
-                        color = TactileTheme.Text,
+                        color = TajsOSTheme.Text,
                     )
                 }
             }
@@ -369,14 +371,14 @@ private fun renderTaskDescription(context: TaskDetailContext) {
                     chips.take(6).forEach { chip ->
                         Surface(
                             shape = RoundedCornerShape(999.dp),
-                            color = TactileTheme.Primary.copy(alpha = 0.15f),
-                            border = BorderStroke(1.dp, TactileTheme.Primary.copy(alpha = 0.35f)),
+                            color = TajsOSTheme.Primary.copy(alpha = 0.15f),
+                            border = BorderStroke(1.dp, TajsOSTheme.Primary.copy(alpha = 0.35f)),
                         ) {
                             Text(
                                 text = chip,
                                 modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
                                 style = MaterialTheme.typography.labelSmall,
-                                color = TactileTheme.Primary,
+                                color = TajsOSTheme.Primary,
                             )
                         }
                     }
@@ -389,12 +391,12 @@ private fun renderTaskDescription(context: TaskDetailContext) {
 @Composable
 private fun renderTaskSubtasks(context: TaskDetailContext) {
     Surface(
-        color = TactileTheme.SurfaceLow,
+        color = TajsOSTheme.SurfaceLow,
         shape = detailPanelShape,
-        border = BorderStroke(1.dp, detailPanelBorder),
+        border = BorderStroke(1.dp, detailPanelBorder)
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingMd),
+            modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             Row(
@@ -407,7 +409,7 @@ private fun renderTaskSubtasks(context: TaskDetailContext) {
                     Text(
                         text = "${context.doneSubtasksCount} of ${context.totalSubtasksCount} complete",
                         style = MaterialTheme.typography.labelSmall,
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted,
                     )
                 }
             }
@@ -416,8 +418,8 @@ private fun renderTaskSubtasks(context: TaskDetailContext) {
                 LinearProgressIndicator(
                     progress = { context.subtaskProgress },
                     modifier = Modifier.fillMaxWidth(),
-                    color = TactileTheme.Primary,
-                    trackColor = TactileTheme.SurfaceHighest,
+                    color = TajsOSTheme.Primary,
+                    trackColor = TajsOSTheme.SurfaceHighest,
                 )
             }
 
@@ -425,7 +427,7 @@ private fun renderTaskSubtasks(context: TaskDetailContext) {
                 Text(
                     text = "No subtasks yet. Add checklist lines in description or split this task into subtasks.",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted,
                 )
             } else {
                 context.subtasks.forEach { subtask ->
@@ -447,24 +449,24 @@ private fun SubtaskRow(
             TaskSubtaskState.COMPLETE -> {
                 Triple(
                     Icons.Outlined.CheckCircleOutline,
-                    TactileTheme.Primary,
-                    TactileTheme.Primary.copy(alpha = 0.12f),
+                    TajsOSTheme.Primary,
+                    TajsOSTheme.Primary.copy(alpha = 0.12f),
                 )
             }
 
             TaskSubtaskState.ACTIVE -> {
                 Triple(
                     Icons.Default.RadioButtonChecked,
-                    TactileTheme.AccentBlue,
-                    TactileTheme.AccentBlue.copy(alpha = 0.1f),
+                    TajsOSTheme.AccentBlue,
+                    TajsOSTheme.AccentBlue.copy(alpha = 0.1f),
                 )
             }
 
             TaskSubtaskState.QUEUED -> {
                 Triple(
                     Icons.Outlined.Circle,
-                    TactileTheme.Muted,
-                    TactileTheme.SurfaceHighest,
+                    TajsOSTheme.Muted,
+                    TajsOSTheme.SurfaceHighest,
                 )
             }
         }
@@ -473,7 +475,7 @@ private fun SubtaskRow(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(10.dp),
         color = background,
-        border = BorderStroke(1.dp, TactileTheme.GhostBorder.copy(alpha = 0.18f)),
+        border = BorderStroke(1.dp, TajsOSTheme.GhostBorder.copy(alpha = 0.18f)),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 10.dp),
@@ -492,7 +494,8 @@ private fun SubtaskRow(
                 Text(
                     text = subtask.title,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = if (subtask.state == TaskSubtaskState.COMPLETE) TactileTheme.Muted else TactileTheme.Text,
+                    color = if (subtask.state ==
+                        TaskSubtaskState.COMPLETE) TajsOSTheme.Muted else TajsOSTheme.Text,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -515,12 +518,12 @@ private fun SubtaskRow(
 @Composable
 private fun renderTaskAttachments(context: TaskDetailContext) {
     Surface(
-        color = TactileTheme.SurfaceLow,
+        color = TajsOSTheme.SurfaceLow,
         shape = detailPanelShape,
-        border = BorderStroke(1.dp, detailPanelBorder),
+        border = BorderStroke(1.dp, detailPanelBorder)
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingMd),
+            modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             SectionTitle("Attachments")
@@ -528,7 +531,7 @@ private fun renderTaskAttachments(context: TaskDetailContext) {
                 Text(
                     text = "No attachments linked to this task.",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted,
                 )
             } else {
                 context.attachmentItems.forEachIndexed { index, attachment ->
@@ -537,7 +540,7 @@ private fun renderTaskAttachments(context: TaskDetailContext) {
                         onRemove = { context.onRemoveAttachment(attachment.id) },
                     )
                     if (index < context.attachmentItems.lastIndex) {
-                        HorizontalDivider(color = TactileTheme.GhostBorder.copy(alpha = 0.15f))
+                        HorizontalDivider(color = TajsOSTheme.GhostBorder.copy(alpha = 0.15f))
                     }
                 }
             }
@@ -563,13 +566,13 @@ private fun AttachmentRow(
             Icon(
                 imageVector = Icons.Default.Attachment,
                 contentDescription = null,
-                tint = TactileTheme.Primary,
+                tint = TajsOSTheme.Primary,
             )
             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Text(
                     text = attachment.title,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = TactileTheme.Text,
+                    color = TajsOSTheme.Text,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -580,12 +583,12 @@ private fun AttachmentRow(
                             attachment.sizeLabel,
                         ).joinToString(" • "),
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted,
                 )
             }
         }
         IconButton(onClick = onRemove) {
-            Icon(Icons.Default.Delete, contentDescription = null, tint = TactileTheme.Muted)
+            Icon(Icons.Default.Delete, contentDescription = null, tint = TajsOSTheme.Muted)
         }
     }
 }
@@ -593,12 +596,12 @@ private fun AttachmentRow(
 @Composable
 private fun renderTaskHistory(context: TaskDetailContext) {
     Surface(
-        color = TactileTheme.SurfaceLow,
+        color = TajsOSTheme.SurfaceLow,
         shape = detailPanelShape,
-        border = BorderStroke(1.dp, detailPanelBorder),
+        border = BorderStroke(1.dp, detailPanelBorder)
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingMd),
+            modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             SectionTitle("History")
@@ -606,7 +609,7 @@ private fun renderTaskHistory(context: TaskDetailContext) {
                 Text(
                     text = "No tracked activity yet.",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted,
                 )
             } else {
                 context.historyItems.forEach { item ->
@@ -632,21 +635,21 @@ private fun HistoryRow(item: TaskHistoryUi) {
             Icon(
                 imageVector = Icons.Default.Circle,
                 contentDescription = null,
-                tint = TactileTheme.Primary.copy(alpha = 0.8f),
+                tint = TajsOSTheme.Primary.copy(alpha = 0.8f),
                 modifier = Modifier.padding(top = 4.dp).size(8.dp),
             )
             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Text(
                     text = item.title,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = TactileTheme.Text,
+                    color = TajsOSTheme.Text,
                     fontWeight = FontWeight.SemiBold,
                 )
                 item.subtitle?.let {
                     Text(
                         text = it,
                         style = MaterialTheme.typography.bodySmall,
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted,
                     )
                 }
             }
@@ -654,7 +657,7 @@ private fun HistoryRow(item: TaskHistoryUi) {
         Text(
             text = item.timestampLabel,
             style = MaterialTheme.typography.labelSmall,
-            color = TactileTheme.Muted,
+            color = TajsOSTheme.Muted,
         )
     }
 }
@@ -667,12 +670,12 @@ private fun renderTaskMetadata(context: TaskDetailContext) {
     val state = task.taskStateOrNull() ?: TaskState.ACTIVE
 
     Surface(
-        color = TactileTheme.SurfaceLow,
+        color = TajsOSTheme.SurfaceLow,
         shape = detailPanelShape,
-        border = BorderStroke(1.dp, detailPanelBorder),
+        border = BorderStroke(1.dp, detailPanelBorder)
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingMd),
+            modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Row(
@@ -683,12 +686,12 @@ private fun renderTaskMetadata(context: TaskDetailContext) {
                 Text(
                     text = "System Status",
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted,
                 )
                 StatusPill(state)
             }
 
-            HorizontalDivider(color = TactileTheme.GhostBorder.copy(alpha = 0.15f))
+            HorizontalDivider(color = TajsOSTheme.GhostBorder.copy(alpha = 0.15f))
 
             TaskPropertyRow(
                 icon = Icons.Default.Info,
@@ -732,22 +735,22 @@ private fun renderTaskMetadata(context: TaskDetailContext) {
             )
 
             if (context.subtaskProgress != null) {
-                HorizontalDivider(color = TactileTheme.GhostBorder.copy(alpha = 0.15f))
+                HorizontalDivider(color = TajsOSTheme.GhostBorder.copy(alpha = 0.15f))
                 Text(
                     text = "Execution Progress",
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted,
                 )
                 LinearProgressIndicator(
                     progress = { context.subtaskProgress },
                     modifier = Modifier.fillMaxWidth(),
-                    color = TactileTheme.Primary,
-                    trackColor = TactileTheme.SurfaceHighest,
+                    color = TajsOSTheme.Primary,
+                    trackColor = TajsOSTheme.SurfaceHighest,
                 )
                 Text(
                     text = "${context.doneSubtasksCount}/${context.totalSubtasksCount} subtasks complete",
                     style = MaterialTheme.typography.bodySmall,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted,
                 )
             }
         }
@@ -759,12 +762,12 @@ private fun StatusPill(state: TaskState) {
     val (label, tint) =
         when (state)
         {
-            TaskState.ACTIVE -> "ACTIVE" to TactileTheme.AccentBlue
-            TaskState.DONE -> "DONE" to TactileTheme.AccentGreen
-            TaskState.BLOCKED -> "BLOCKED" to TactileTheme.Error
-            TaskState.ON_HOLD -> "ON HOLD" to TactileTheme.AccentAmber
-            TaskState.SOMEDAY -> "QUEUED" to TactileTheme.Muted
-            TaskState.ARCHIVED -> "ARCHIVED" to TactileTheme.Muted
+            TaskState.ACTIVE -> "ACTIVE" to TajsOSTheme.AccentBlue
+            TaskState.DONE -> "DONE" to TajsOSTheme.AccentGreen
+            TaskState.BLOCKED -> "BLOCKED" to TajsOSTheme.Error
+            TaskState.ON_HOLD -> "ON HOLD" to TajsOSTheme.AccentAmber
+            TaskState.SOMEDAY -> "QUEUED" to TajsOSTheme.Muted
+            TaskState.ARCHIVED -> "ARCHIVED" to TajsOSTheme.Muted
         }
 
     Surface(
@@ -800,19 +803,19 @@ private fun TaskPropertyRow(
             Icon(
                 icon,
                 contentDescription = null,
-                tint = TactileTheme.Muted,
+                tint = TajsOSTheme.Muted,
                 modifier = Modifier.size(14.dp),
             )
             Text(
                 text = label,
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted,
             )
         }
         Text(
             text = value,
             style = MaterialTheme.typography.bodySmall,
-            color = TactileTheme.Text,
+            color = TajsOSTheme.Text,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
         )
@@ -824,7 +827,7 @@ private fun SectionTitle(title: String) {
     Text(
         text = title.uppercase(),
         style = MaterialTheme.typography.labelSmall,
-        color = TactileTheme.Primary,
+        color = TajsOSTheme.Primary,
     )
 }
 
@@ -869,14 +872,13 @@ private fun formatDateTime(epochMillis: Long): String {
 @Composable
 private fun TaskStateBadge(
     label: String,
-    tone: HeaderBadgeTone,
-) {
+    tone: HeaderBadgeTone) {
     val tint =
         when (tone)
         {
-            HeaderBadgeTone.Critical -> TactileTheme.Error
-            HeaderBadgeTone.Stable -> TactileTheme.AccentGreen
-            HeaderBadgeTone.Neutral -> TactileTheme.Primary
+            HeaderBadgeTone.Critical -> TajsOSTheme.Error
+            HeaderBadgeTone.Stable -> TajsOSTheme.AccentGreen
+            HeaderBadgeTone.Neutral  -> TajsOSTheme.Primary
         }
 
     Surface(

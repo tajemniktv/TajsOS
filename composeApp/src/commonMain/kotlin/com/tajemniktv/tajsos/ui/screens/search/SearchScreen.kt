@@ -17,7 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlin.time.Clock
 
 @Composable
@@ -82,7 +82,7 @@ fun SearchScreen(
         )
 
     BoxWithConstraints(
-        modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd),
+        modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd)
     ) {
         val surface =
             if (maxWidth >= 1280.dp) SearchDashboardSurface.DESKTOP else SearchDashboardSurface.MOBILE
@@ -90,11 +90,11 @@ fun SearchScreen(
 
         Row(
             modifier = Modifier.fillMaxSize(),
-            horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+            horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
         ) {
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
             ) {
                 plan.primary.forEach { block ->
                     SearchDashboardBlockRegistry.resolve(block.id)?.invoke(context)

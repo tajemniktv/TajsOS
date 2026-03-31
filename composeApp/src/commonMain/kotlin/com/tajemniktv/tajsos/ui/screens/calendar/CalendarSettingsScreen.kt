@@ -21,7 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.cal_settings_dialog_add
@@ -52,8 +52,8 @@ fun CalendarSettingsScreen(viewModel: MainViewModel) {
         modifier =
             Modifier
                 .fillMaxSize()
-                .padding(TactileTheme.SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+                .padding(TajsOSTheme.SpacingMd),
+        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
     ) {
         plan.primary.forEach { block ->
             CalendarSettingsBlockRegistry.resolve(block.id)?.invoke(context)
@@ -84,7 +84,7 @@ private fun AddCalendarDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(Res.string.cal_settings_dialog_title)) },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+            Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                 TextField(
                     value = name,
                     onValueChange = { name = it },

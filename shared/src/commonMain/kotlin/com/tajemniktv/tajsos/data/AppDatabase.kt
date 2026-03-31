@@ -45,10 +45,10 @@ import androidx.room.RoomDatabaseConstructor
         DecisionOptionEntity::class,
         UserEntity::class,
         MedicationEntity::class,
-        TrackMedicationJoinEntity::class,
+        TrackMedicationJoinEntity::class
     ],
     version = 30,
-    exportSchema = false,
+    exportSchema = false
 )
 @ConstructedBy(AppDatabaseConstructor::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -180,6 +180,5 @@ expect object AppDatabaseConstructor : RoomDatabaseConstructor<AppDatabase> {
  * @param builder The platform-specific Room database builder.
  * @return A fully initialized [AppDatabase] instance.
  */
-fun getDatabaseBuilder(builder: RoomDatabase.Builder<AppDatabase>): AppDatabase =
-    builder
-        .build()
+fun getDatabaseBuilder(builder: RoomDatabase.Builder<AppDatabase>): AppDatabase = builder
+    .build()

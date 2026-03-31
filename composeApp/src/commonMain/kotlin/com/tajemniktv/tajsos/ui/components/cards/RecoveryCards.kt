@@ -23,7 +23,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 @Composable
 fun BasicSurvivalCard(
@@ -36,12 +36,12 @@ fun BasicSurvivalCard(
     Surface(
         onClick = onClick,
         modifier = modifier,
-        color = TactileTheme.Surface,
-        shape = RoundedCornerShape(TactileTheme.RadiusMd),
+        color = TajsOSTheme.Surface,
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         border = BorderStroke(1.dp, color.copy(alpha = 0.2f)),
     ) {
         Column(
-            modifier = Modifier.padding(TactileTheme.SpacingMd),
+            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Icon(icon, contentDescription = null, tint = color, modifier = Modifier.size(24.dp))
@@ -49,7 +49,7 @@ fun BasicSurvivalCard(
             Text(
                 label,
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Text,
+                color = TajsOSTheme.Text,
                 fontWeight = FontWeight.Bold,
                 fontSize = 9.sp,
             )

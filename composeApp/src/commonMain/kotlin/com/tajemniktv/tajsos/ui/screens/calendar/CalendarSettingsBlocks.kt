@@ -25,7 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.tajemniktv.tajsos.data.CalendarProviderEntity
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.archive_delete
@@ -53,13 +53,13 @@ private fun renderCalendarSettingsHeader(context: CalendarSettingsContext) {
         Text(
             stringResource(Res.string.cal_settings_title),
             style = MaterialTheme.typography.displaySmall,
-            color = TactileTheme.Text,
+            color = TajsOSTheme.Text
         )
         IconButton(onClick = context.onShowAddDialog) {
             Icon(
                 Icons.Default.Add,
                 contentDescription = stringResource(Res.string.cal_settings_add),
-                tint = TactileTheme.Primary,
+                tint = TajsOSTheme.Primary
             )
         }
     }
@@ -70,7 +70,7 @@ private fun renderCalendarSettingsList(context: CalendarSettingsContext) {
     if (context.providers.isEmpty()) {
         EmptyState(message = stringResource(Res.string.cal_settings_empty))
     } else {
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
             items(context.providers) { provider ->
                 ProviderRow(
                     provider = provider,
@@ -88,29 +88,29 @@ private fun ProviderRow(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = TactileTheme.Surface),
+        colors = CardDefaults.cardColors(containerColor = TajsOSTheme.Surface)
     ) {
         Row(
-            modifier = Modifier.padding(TactileTheme.SpacingMd),
+            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     provider.name,
                     style = MaterialTheme.typography.titleMedium,
-                    color = TactileTheme.Text,
+                    color = TajsOSTheme.Text
                 )
                 Text(
                     provider.type,
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted
                 )
                 val url = provider.url
                 if (url != null) {
                     Text(
                         url,
                         style = MaterialTheme.typography.bodySmall,
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted,
                         maxLines = 1,
                     )
                 }
@@ -119,7 +119,7 @@ private fun ProviderRow(
                 Icon(
                     Icons.Default.Delete,
                     contentDescription = stringResource(Res.string.archive_delete),
-                    tint = TactileTheme.Error,
+                    tint = TajsOSTheme.Error
                 )
             }
         }

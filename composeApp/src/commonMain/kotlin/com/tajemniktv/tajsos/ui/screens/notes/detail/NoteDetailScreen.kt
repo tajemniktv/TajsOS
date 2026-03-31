@@ -101,7 +101,7 @@ import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.common.SelectorDialog
 import com.tajemniktv.tajsos.ui.components.layout.LocalHeaderActions
 import com.tajemniktv.tajsos.ui.screens.notes.NotesWorkspaceDetail
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -129,11 +129,11 @@ fun NoteDetailScreen(
     if (nodeWithPin == null) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             if (nodes.isEmpty()) {
-                CircularProgressIndicator(color = TactileTheme.Primary)
+                CircularProgressIndicator(color = TajsOSTheme.Primary)
             } else {
                 Text(
                     stringResource(Res.string.detail_not_found, noteId),
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted
                 )
             }
         }
@@ -191,7 +191,7 @@ fun NoteDetailScreen(
             Icon(
                 if (node.isPinned) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                 contentDescription = null,
-                tint = if (node.isPinned) TactileTheme.Primary else TactileTheme.Text,
+                tint = if (node.isPinned) TajsOSTheme.Primary else TajsOSTheme.Text,
                 modifier = Modifier.size(18.dp),
             )
         }
@@ -281,7 +281,7 @@ fun NoteDetailScreen(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .background(TactileTheme.Background),
+                    .background(TajsOSTheme.Background)
         ) {
             val surface = if (isDesktop) NoteDetailSurface.DESKTOP else NoteDetailSurface.MOBILE
             val plan =
@@ -291,11 +291,11 @@ fun NoteDetailScreen(
                 modifier =
                     Modifier
                         .fillMaxSize()
-                        .background(TactileTheme.Background)
+                        .background(TajsOSTheme.Background)
                         .verticalScroll(rememberScrollState())
-                        .padding(horizontal = TactileTheme.SpacingMd)
-                        .padding(bottom = TactileTheme.SpacingMd),
-                verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingLg),
+                        .padding(horizontal = TajsOSTheme.SpacingMd)
+                        .padding(bottom = TajsOSTheme.SpacingMd),
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingLg)
             ) {
                 plan.primary.forEach { block ->
                     NoteDetailBlockRegistry.resolve(block.id)?.invoke(context)
@@ -304,9 +304,9 @@ fun NoteDetailScreen(
 
             FloatingActionButton(
                 onClick = { showRelationDialog = true },
-                containerColor = TactileTheme.Primary,
-                contentColor = TactileTheme.Background,
-                shape = RoundedCornerShape(TactileTheme.RadiusMd),
+                containerColor = TajsOSTheme.Primary,
+                contentColor = TajsOSTheme.Background,
+                shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                 modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
             ) {
                 Icon(Icons.Default.Link, contentDescription = null)

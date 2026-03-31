@@ -19,7 +19,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 /**
  * Displays a two-line header with an uppercase primary title and an uppercase secondary subtitle.
@@ -37,14 +37,14 @@ fun DetailHeader(
         Text(
             text = title.uppercase(),
             style = MaterialTheme.typography.headlineSmall,
-            color = TactileTheme.Primary,
+            color = TajsOSTheme.Primary,
             fontWeight = FontWeight.ExtraBold,
             letterSpacing = 2.sp,
         )
         Text(
             text = subtitle.uppercase(),
             style = MaterialTheme.typography.labelSmall,
-            color = TactileTheme.Muted,
+            color = TajsOSTheme.Muted,
             fontWeight = FontWeight.Bold,
             letterSpacing = 1.sp,
         )
@@ -67,7 +67,7 @@ fun DetailSectionHeader(
     title: String,
     modifier: Modifier = Modifier,
     icon: ImageVector? = null,
-    color: Color = TactileTheme.Muted,
+    color: Color = TajsOSTheme.Muted
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),

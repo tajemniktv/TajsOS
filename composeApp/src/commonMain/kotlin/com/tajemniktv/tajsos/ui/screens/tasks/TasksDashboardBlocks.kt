@@ -15,7 +15,7 @@ import androidx.compose.runtime.getValue
 import com.tajemniktv.tajsos.data.ItemKind
 import com.tajemniktv.tajsos.data.TaskState
 import com.tajemniktv.tajsos.data.taskStateOrNull
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.tasks_title
@@ -38,19 +38,19 @@ object TasksDashboardBlockRegistry {
 
 @Composable
 private fun renderTasksHeader(context: TasksDashboardContext) {
-    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd)) {
+    Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)) {
         Text(stringResource(Res.string.tasks_title), style = MaterialTheme.typography.displaySmall)
         Text(
             stringResource(Res.string.tasks_workspace_subtitle),
             style = MaterialTheme.typography.bodySmall,
-            color = TactileTheme.Muted,
+            color = TajsOSTheme.Muted
         )
     }
 }
 
 @Composable
 private fun renderTasksTabs(context: TasksDashboardContext) {
-    Row(horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+    Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
         TasksTab.entries.forEach { tab ->
             TaskTabChip(
                 selected = tab == context.currentTab,
@@ -65,7 +65,7 @@ private fun renderTasksTabs(context: TasksDashboardContext) {
 private fun renderTasksViewCommand(context: TasksDashboardContext) {
     val viewModel = context.viewModel
     val dashboardUIState by viewModel.dashboardUIState.collectAsState()
-    
+
     TasksCommandView(
         tasks = context.activeTasks.filter { it.taskStateOrNull() != TaskState.DONE },
         projectById = context.projectById,

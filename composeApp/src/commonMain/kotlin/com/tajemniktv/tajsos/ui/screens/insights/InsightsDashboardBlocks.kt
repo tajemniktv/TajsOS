@@ -34,7 +34,7 @@ import com.tajemniktv.tajsos.ui.components.cards.FocusInsightCard
 import com.tajemniktv.tajsos.ui.components.cards.InsightPatternCard
 import com.tajemniktv.tajsos.ui.components.cards.StateAveragesCard
 import com.tajemniktv.tajsos.ui.components.cards.VaultInsightCard
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.insights_cards_title
@@ -81,21 +81,21 @@ internal fun InsightsMainBlock(
         modifier =
             Modifier
                 .fillMaxSize()
-                .padding(TactileTheme.SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+                .padding(TajsOSTheme.SpacingMd),
+        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
     ) {
         item {
             Text(
                 stringResource(Res.string.insights_title),
                 style = MaterialTheme.typography.displayMedium,
-                color = TactileTheme.Text,
+                color = TajsOSTheme.Text
             )
             Text(
                 stringResource(Res.string.insights_subtitle),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary,
+                color = TajsOSTheme.Primary
             )
-            Spacer(Modifier.height(TactileTheme.SpacingLg))
+            Spacer(Modifier.height(TajsOSTheme.SpacingLg))
         }
 
         if (insights.autoPreparedReview.isNotBlank()) {
@@ -166,7 +166,7 @@ internal fun InsightsMainBlock(
             Text(
                 stringResource(Res.string.insights_cards_title),
                 style = MaterialTheme.typography.labelSmall,
-                color = TactileTheme.Primary,
+                color = TajsOSTheme.Primary
             )
         }
 
@@ -196,7 +196,7 @@ internal fun InsightsMainBlock(
                                 area.title,
                             ),
                         icon = Icons.Default.History,
-                        color = TactileTheme.Error,
+                        color = TajsOSTheme.Error
                     )
                 }
             }
@@ -213,7 +213,7 @@ internal fun InsightsMainBlock(
                             captureTimePattern,
                         ),
                     icon = Icons.Default.Lightbulb,
-                    color = TactileTheme.Success,
+                    color = TajsOSTheme.Success
                 )
             }
         }
@@ -228,7 +228,7 @@ internal fun InsightsMainBlock(
                             insights.projectsWithoutTasks.first().title,
                         ),
                     icon = Icons.Default.Warning,
-                    color = TactileTheme.Accent,
+                    color = TajsOSTheme.Accent
                 )
             }
         }
@@ -240,7 +240,7 @@ internal fun InsightsMainBlock(
                     title = stringResource(Res.string.insights_radar_drop_title),
                     message = stringResource(Res.string.insights_radar_drop_msg, area.title),
                     icon = Icons.Default.LocationOff,
-                    color = TactileTheme.Error,
+                    color = TajsOSTheme.Error
                 )
             }
         }
@@ -250,7 +250,7 @@ internal fun InsightsMainBlock(
                 Text(
                     stringResource(Res.string.insights_neglected_projects),
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Primary,
+                    color = TajsOSTheme.Primary
                 )
             }
             items(insights.neglectedProjects) { project ->
@@ -268,7 +268,7 @@ internal fun InsightsMainBlock(
                 Text(
                     stringResource(Res.string.insights_high_entropy_projects),
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Error,
+                    color = TajsOSTheme.Error
                 )
             }
             items(highEntropyProjects.keys.toList()) { projectId ->
@@ -290,7 +290,7 @@ internal fun InsightsMainBlock(
                 Text(
                     stringResource(Res.string.insights_recent_activity),
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Primary,
+                    color = TajsOSTheme.Primary
                 )
             }
             items(recentLogs) { log ->
@@ -299,7 +299,7 @@ internal fun InsightsMainBlock(
         }
 
         item {
-            Spacer(modifier = Modifier.height(TactileTheme.SpacingLg))
+            Spacer(modifier = Modifier.height(TajsOSTheme.SpacingLg))
         }
     }
 }

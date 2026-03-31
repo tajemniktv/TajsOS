@@ -26,10 +26,10 @@ enum class SidebarMode {
 @Stable
 class AppShellState(
     initialSidebarMode: SidebarMode = SidebarMode.EXPANDED,
-    initialExpandedRootRoute: String? = null,
+    initialExpandedRootRoutes: Set<String> = emptySet()
 ) {
     var sidebarMode by mutableStateOf(initialSidebarMode)
-    var expandedRootRoute by mutableStateOf(initialExpandedRootRoute)
+    var expandedRootRoutes by mutableStateOf(initialExpandedRootRoutes)
     var hoverExpanded by mutableStateOf(false)
     var modeDropdownExpanded by mutableStateOf(false)
     var notificationsExpanded by mutableStateOf(false)
@@ -38,6 +38,17 @@ class AppShellState(
         get() =
             sidebarMode == SidebarMode.EXPANDED ||
                 (sidebarMode == SidebarMode.HOVER_EXPAND && hoverExpanded)
+
+    fun toggleRootExpanded(route: String) {
+        expandedRootRoutes =
+            if (expandedRootRoutes.contains(route)) {
+                expandedRootRoutes - route
+            } else {
+                expandedRootRoutes + route
+            }
+    }
+
+    fun isRootExpanded(route: String): Boolean = expandedRootRoutes.contains(route)
 }
 
 /**
@@ -46,11 +57,10 @@ class AppShellState(
 @Composable
 fun rememberAppShellState(
     initialSidebarMode: SidebarMode = SidebarMode.EXPANDED,
-    initialExpandedRootRoute: String? = null,
-): AppShellState =
-    remember {
-        AppShellState(
+    initialExpandedRootRoutes: Set<String> = emptySet()
+): AppShellState = remember {
+    AppShellState(
             initialSidebarMode = initialSidebarMode,
-            initialExpandedRootRoute = initialExpandedRootRoute,
-        )
-    }
+            initialExpandedRootRoutes = initialExpandedRootRoutes
+    )
+}

@@ -19,6 +19,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 import kotlin.time.Instant
 
+@Suppress("TestMethodWithoutAssertion")
 class IcsCalendarProviderTest {
     private fun createProviderWithIcs(icsContent: String): IcsCalendarProvider {
         val mockEngine =

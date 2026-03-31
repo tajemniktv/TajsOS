@@ -29,20 +29,20 @@ import com.tajemniktv.tajsos.ui.components.cards.StudentNodeCard
 import com.tajemniktv.tajsos.ui.components.cards.StudentSummaryCard
 import com.tajemniktv.tajsos.ui.components.cards.TemplateQuickActionsCard
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 @Composable
 internal fun renderStudyHeaderBlock(context: StudyDashboardContext) {
-    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+    Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
         Text(
             text = "EDUCATION LENS",
             style = MaterialTheme.typography.displaySmall,
-            color = TactileTheme.Text,
+            color = TajsOSTheme.Text
         )
         Text(
             text = "Course work, study notes, reading progress, concept linking, and academic reflection.",
             style = MaterialTheme.typography.bodySmall,
-            color = TactileTheme.Muted,
+            color = TajsOSTheme.Muted
         )
     }
 }
@@ -213,9 +213,9 @@ internal fun renderFlashcardCandidatesBlock(context: StudyDashboardContext) {
         return
     }
     context.state.flashcardCandidates.take(12).forEach { item ->
-        Card(colors = CardDefaults.cardColors(containerColor = TactileTheme.Surface)) {
+        Card(colors = CardDefaults.cardColors(containerColor = TajsOSTheme.Surface)) {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingMd),
+                modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Column(modifier = Modifier.weight(1f)) {
@@ -223,7 +223,7 @@ internal fun renderFlashcardCandidatesBlock(context: StudyDashboardContext) {
                     Text(
                         "Candidate for flashcard export",
                         style = MaterialTheme.typography.bodySmall,
-                        color = TactileTheme.Muted,
+                        color = TajsOSTheme.Muted
                     )
                 }
                 OutlinedButton(onClick = {
@@ -242,14 +242,14 @@ internal fun renderFlashcardCandidatesBlock(context: StudyDashboardContext) {
 @Composable
 internal fun renderLinksGraphBlock(context: StudyDashboardContext) {
     SectionTitle("LINKS & GRAPH")
-    Card(colors = CardDefaults.cardColors(containerColor = TactileTheme.Surface)) {
-        Column(modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingMd)) {
+    Card(colors = CardDefaults.cardColors(containerColor = TajsOSTheme.Surface)) {
+        Column(modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd)) {
             Text("TOPIC-TO-NOTE LINKING", style = MaterialTheme.typography.titleMedium)
             Text(
                 "Existing links: ${context.state.topicToNoteLinks}",
                 style = MaterialTheme.typography.bodySmall,
             )
-            Spacer(Modifier.height(TactileTheme.SpacingSm))
+            Spacer(Modifier.height(TajsOSTheme.SpacingSm))
             Button(onClick = context.onOpenTopicLink) {
                 Icon(Icons.Default.Link, contentDescription = null)
                 Text("Create Topic Link")
@@ -257,14 +257,14 @@ internal fun renderLinksGraphBlock(context: StudyDashboardContext) {
         }
     }
 
-    Card(colors = CardDefaults.cardColors(containerColor = TactileTheme.Surface)) {
-        Column(modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingMd)) {
+    Card(colors = CardDefaults.cardColors(containerColor = TajsOSTheme.Surface)) {
+        Column(modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd)) {
             Text("PAPER-TO-NOTE LINKING", style = MaterialTheme.typography.titleMedium)
             Text(
                 "Existing links: ${context.state.paperToNoteLinks}",
                 style = MaterialTheme.typography.bodySmall,
             )
-            Spacer(Modifier.height(TactileTheme.SpacingSm))
+            Spacer(Modifier.height(TajsOSTheme.SpacingSm))
             Button(onClick = context.onOpenPaperLink) {
                 Icon(Icons.Default.Link, contentDescription = null)
                 Text("Create Paper Link")
@@ -272,8 +272,8 @@ internal fun renderLinksGraphBlock(context: StudyDashboardContext) {
         }
     }
 
-    Card(colors = CardDefaults.cardColors(containerColor = TactileTheme.Surface)) {
-        Column(modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingMd)) {
+    Card(colors = CardDefaults.cardColors(containerColor = TajsOSTheme.Surface)) {
+        Column(modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd)) {
             Text("PSYCHOLOGY CONCEPT KNOWLEDGE GRAPH", style = MaterialTheme.typography.titleMedium)
             Text(
                 "Concept nodes: ${context.state.conceptGraphNodes}",
@@ -286,7 +286,7 @@ internal fun renderLinksGraphBlock(context: StudyDashboardContext) {
             Text(
                 "Use Graph screen for full visual graph exploration.",
                 style = MaterialTheme.typography.bodySmall,
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted
             )
         }
     }
@@ -300,8 +300,8 @@ internal fun renderCourseDashboardBlock(context: StudyDashboardContext) {
         return
     }
     context.state.courseDashboard.forEach { summary ->
-        Card(colors = CardDefaults.cardColors(containerColor = TactileTheme.Surface)) {
-            Column(modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingMd)) {
+        Card(colors = CardDefaults.cardColors(containerColor = TajsOSTheme.Surface)) {
+            Column(modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd)) {
                 Text(summary.courseName, style = MaterialTheme.typography.titleMedium)
                 Text("Course: ${summary.courseId}", style = MaterialTheme.typography.bodySmall)
                 Text(
@@ -333,8 +333,8 @@ internal fun renderSemesterDashboardBlock(context: StudyDashboardContext) {
         return
     }
     context.state.semesterDashboard.forEach { summary ->
-        Card(colors = CardDefaults.cardColors(containerColor = TactileTheme.Surface)) {
-            Column(modifier = Modifier.fillMaxWidth().padding(TactileTheme.SpacingMd)) {
+        Card(colors = CardDefaults.cardColors(containerColor = TajsOSTheme.Surface)) {
+            Column(modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd)) {
                 Text(summary.semester, style = MaterialTheme.typography.titleMedium)
                 Text("Courses: ${summary.courseCount}", style = MaterialTheme.typography.bodySmall)
                 Text(
@@ -363,7 +363,7 @@ private fun NodeSection(
     Text(
         text = title,
         style = MaterialTheme.typography.titleSmall,
-        color = TactileTheme.Text,
+        color = TajsOSTheme.Text,
         fontWeight = FontWeight.Medium,
     )
     if (nodes.isEmpty()) {
@@ -380,7 +380,7 @@ private fun SectionTitle(title: String) {
     Text(
         text = title,
         style = MaterialTheme.typography.titleMedium,
-        color = TactileTheme.Text,
+        color = TajsOSTheme.Text,
         fontWeight = FontWeight.SemiBold,
     )
 }

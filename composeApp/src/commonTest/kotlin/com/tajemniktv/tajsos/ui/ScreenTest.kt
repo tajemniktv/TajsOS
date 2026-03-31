@@ -2,13 +2,13 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
-package com.tajemniktv.tajsos
+package com.tajemniktv.tajsos.ui
 
-import com.tajemniktv.tajsos.ui.Screen
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+@Suppress("TestMethodWithoutAssertion")
 class ScreenTest {
     private val allScreens: List<Screen> =
         listOf(
@@ -47,7 +47,7 @@ class ScreenTest {
             Screen.Rules,
             Screen.Vaults,
             Screen.Capacity,
-            Screen.Identity,
+            Screen.Identity
         )
 
     @Test

@@ -19,7 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.components.cards.BasicSurvivalCard
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 /**
  * Displays a "SURVIVAL BASICS" header and a row of three equally sized actionable cards:
@@ -35,36 +35,36 @@ fun RecoveryBasicsBlock(
     onHydrationClick: () -> Unit,
     onFoodClick: () -> Unit,
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+    Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
         Text(
             "SURVIVAL BASICS",
             style = MaterialTheme.typography.labelSmall,
-            color = TactileTheme.Muted,
+            color = TajsOSTheme.Muted,
             fontWeight = FontWeight.Bold,
             letterSpacing = 1.sp,
         )
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+            horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
         ) {
             BasicSurvivalCard(
                 label = "MEDS",
                 icon = Icons.Default.MedicalServices,
-                color = TactileTheme.Error,
+                color = TajsOSTheme.Error,
                 onClick = onMedsClick,
                 modifier = Modifier.weight(1f),
             )
             BasicSurvivalCard(
                 label = "WATER",
                 icon = Icons.Default.LocalDrink,
-                color = TactileTheme.Accent,
+                color = TajsOSTheme.Accent,
                 onClick = onHydrationClick,
                 modifier = Modifier.weight(1f),
             )
             BasicSurvivalCard(
                 label = "FOOD",
                 icon = Icons.Default.Restaurant,
-                color = TactileTheme.Success,
+                color = TajsOSTheme.Success,
                 onClick = onFoodClick,
                 modifier = Modifier.weight(1f),
             )

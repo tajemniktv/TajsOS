@@ -8,9 +8,9 @@ import com.tajemniktv.tajsos.domain.DomainKind
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 class NodeMetadataTest {
     @Test
@@ -22,9 +22,9 @@ class NodeMetadataTest {
                     StudentMetadata(
                         courseId = "psy-101",
                         assignmentType = "exam",
-                        semester = "2026-S",
+                        semester = "2026-S"
                     ),
-                creator = CreatorMetadata(ideaStage = "exploring"),
+                creator = CreatorMetadata(ideaStage = "exploring")
             )
 
         val encoded = node.withMetadataEnvelope(envelope)
@@ -49,16 +49,16 @@ class NodeMetadataTest {
                 NodeMetadataEnvelope(
                     area =
                         AreaMetadata(
-                            associatedDomains = setOf(DomainKind.EDUCATION, DomainKind.HEALTH),
-                        ),
-                ),
+                            associatedDomains = setOf(DomainKind.EDUCATION, DomainKind.HEALTH)
+                        )
+                )
             )
         val decoded = encoded.areaMetadataOrNull()
 
         assertNotNull(decoded)
         assertEquals(
             setOf(DomainKind.EDUCATION, DomainKind.HEALTH),
-            decoded.associatedDomains,
+            decoded.associatedDomains
         )
     }
 

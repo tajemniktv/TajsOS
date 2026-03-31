@@ -34,23 +34,36 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlin.math.roundToInt
 
+/**
+ * A tactile-themed slider component with glow effects and value display.
+ *
+ * @param label The text label for the slider.
+ * @param value The current value of the slider.
+ * @param onValueChange Callback to be invoked when the value changes.
+ * @param modifier The modifier to be applied to the layout.
+ * @param valueRange The range of values the slider can represent.
+ * @param steps The number of discrete steps in the slider.
+ * @param minLabel The label for the minimum value.
+ * @param maxLabel The label for the maximum value.
+ * @param valueSuffix The suffix for the displayed value (e.g., "/ 05").
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TactileSlider(
     label: String,
     value: Float,
     onValueChange: (Float) -> Unit,
+    modifier: Modifier = Modifier,
     valueRange: ClosedFloatingPointRange<Float> = 0f..5f,
     steps: Int = 4,
     minLabel: String = "",
     maxLabel: String = "",
     valueSuffix: String = "/ 05",
 ) {
-    Column(modifier = Modifier.fillMaxWidth().padding(vertical = TactileTheme.SpacingSm)) {
+    Column(modifier = modifier.fillMaxWidth().padding(vertical = TajsOSTheme.SpacingSm)) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -63,12 +76,12 @@ fun TactileSlider(
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 2.sp,
                     ),
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted
             )
             Row(verticalAlignment = Alignment.Bottom) {
                 Text(
                     text =
-                        if (value % 1 == 0f) {
+                        if ((value % 1f) == 0f) {
                             value
                                 .roundToInt()
                                 .toString()
@@ -81,18 +94,18 @@ fun TactileSlider(
                             fontWeight = FontWeight.Bold,
                             fontSize = 24.sp,
                         ),
-                    color = TactileTheme.Primary,
+                    color = TajsOSTheme.Primary
                 )
                 Text(
                     text = " $valueSuffix",
                     style = MaterialTheme.typography.labelSmall,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted,
                     modifier = Modifier.padding(bottom = 4.dp),
                 )
             }
         }
 
-        Spacer(Modifier.height(TactileTheme.SpacingSm))
+        Spacer(Modifier.height(TajsOSTheme.SpacingSm))
 
         Slider(
             value = value,
@@ -119,8 +132,8 @@ fun TactileSlider(
                                 .size(20.dp)
                                 .blur(8.dp)
                                 .background(
-                                    TactileTheme.Primary.copy(alpha = 0.5f),
-                                    RoundedCornerShape(4.dp),
+                                    TajsOSTheme.Primary.copy(alpha = 0.5f),
+                                    RoundedCornerShape(4.dp)
                                 ),
                     )
                     // Core thumb
@@ -128,7 +141,7 @@ fun TactileSlider(
                         modifier =
                             Modifier
                                 .size(16.dp)
-                                .background(TactileTheme.Primary, RoundedCornerShape(4.dp)),
+                                .background(TajsOSTheme.Primary, RoundedCornerShape(4.dp))
                     )
                 }
             },
@@ -142,25 +155,35 @@ fun TactileSlider(
             Text(
                 minLabel,
                 style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted
             )
             Text(
                 maxLabel,
                 style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
-                color = TactileTheme.Muted,
+                color = TajsOSTheme.Muted
             )
         }
     }
 }
 
+/**
+ * A tactile-themed text field component with a placeholder and label.
+ *
+ * @param value The current text value.
+ * @param onValueChange Callback when text changes.
+ * @param label The label text above the field.
+ * @param modifier The modifier to be applied to the layout.
+ * @param placeholder The placeholder text to show when value is empty.
+ */
 @Composable
 fun TactileTextField(
     value: String,
     onValueChange: (String) -> Unit,
     label: String,
+    modifier: Modifier = Modifier,
     placeholder: String = "Type system log entries here...",
 ) {
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = modifier.fillMaxWidth()) {
         Text(
             text = label,
             style =
@@ -168,31 +191,31 @@ fun TactileTextField(
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 1.sp,
                 ),
-            color = TactileTheme.Primary,
+            color = TajsOSTheme.Primary
         )
-        Spacer(Modifier.height(TactileTheme.SpacingMd))
+        Spacer(Modifier.height(TajsOSTheme.SpacingMd))
         Box(
             modifier =
                 Modifier
                     .fillMaxWidth()
                     .heightIn(min = 120.dp)
-                    .background(Color.Black, RoundedCornerShape(TactileTheme.RadiusMd))
-                    .border(1.dp, Color(0xFF1C1C21), RoundedCornerShape(TactileTheme.RadiusMd))
-                    .padding(TactileTheme.SpacingMd),
+                    .background(Color.Black, RoundedCornerShape(TajsOSTheme.RadiusMd))
+                    .border(1.dp, Color(0xFF1C1C21), RoundedCornerShape(TajsOSTheme.RadiusMd))
+                    .padding(TajsOSTheme.SpacingMd)
         ) {
             if (value.isEmpty()) {
                 Text(
                     text = placeholder,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = TactileTheme.Muted,
+                    color = TajsOSTheme.Muted
                 )
             }
             BasicTextField(
                 value = value,
                 onValueChange = onValueChange,
                 modifier = Modifier.fillMaxWidth(),
-                textStyle = MaterialTheme.typography.bodyMedium.copy(color = TactileTheme.Text),
-                cursorBrush = SolidColor(TactileTheme.Primary),
+                textStyle = MaterialTheme.typography.bodyMedium.copy(color = TajsOSTheme.Text),
+                cursorBrush = SolidColor(TajsOSTheme.Primary)
             )
         }
     }
@@ -200,10 +223,9 @@ fun TactileTextField(
 
 @Preview
 @Composable
-private fun TactileSliderPreview()
-{
+private fun TactileSliderPreview() {
     TajsOSTheme {
-            Surface(color = TactileTheme.Background) {
+        Surface(color = TajsOSTheme.Background) {
             Column(Modifier.padding(16.dp)) {
                 TactileSlider(
                     label = "ENERGY_RESERVES",
@@ -212,7 +234,7 @@ private fun TactileSliderPreview()
                     minLabel = "DEPLETED",
                     maxLabel = "OPTIMAL",
                 )
-                }
             }
         }
+    }
 }

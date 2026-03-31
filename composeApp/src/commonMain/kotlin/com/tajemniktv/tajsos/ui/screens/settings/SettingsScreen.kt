@@ -27,6 +27,9 @@ fun SettingsScreen(
     val isBiometricEnabled by viewModel.isBiometricEnabled.collectAsState()
     val isBiometricHardwareAvailable by viewModel.isBiometricHardwareAvailable.collectAsState()
     val isDarkTheme by viewModel.isDarkTheme.collectAsState()
+    val accentColorHex by viewModel.accentColorHex.collectAsState()
+    val isGlassmorphismEnabled by viewModel.isGlassmorphismEnabled.collectAsState()
+    val reduceMotion by viewModel.reduceMotion.collectAsState()
 
     var importPayload by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
@@ -39,6 +42,9 @@ fun SettingsScreen(
             isBiometricEnabled = isBiometricEnabled,
             isBiometricHardwareAvailable = isBiometricHardwareAvailable,
             isDarkTheme = isDarkTheme,
+            accentColorHex = accentColorHex,
+            isGlassmorphismEnabled = isGlassmorphismEnabled,
+            reduceMotion = reduceMotion,
             importPayload = importPayload,
             onImportPayloadChange = { importPayload = it },
             onSaveMedication = { substance, brands, dosage, hour, optional ->
@@ -65,6 +71,9 @@ fun SettingsScreen(
             },
             onSetBiometricEnabled = { viewModel.setBiometricEnabled(it) },
             onSetDarkTheme = { viewModel.setDarkTheme(it) },
+            onSetAccentColor = { viewModel.setAccentColor(it) },
+            onSetGlassmorphismEnabled = { viewModel.setGlassmorphismEnabled(it) },
+            onSetReduceMotion = { viewModel.setReduceMotion(it) },
             onForceCrash = { throw RuntimeException("Test Crash") },
         )
 

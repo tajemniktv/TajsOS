@@ -37,7 +37,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.components.common.SelectorDialog
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.review_complete
@@ -110,17 +110,17 @@ private fun renderReviewFlow(context: ReviewDashboardContext) {
     val dashboardState = context.dashboardState
     val viewModel = context.viewModel
 
-    Column(modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd)) {
+    Column(modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd)) {
         LinearProgressIndicator(
             progress = { (currentStep + 1).toFloat() / steps.size },
             modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
-            color = TactileTheme.Primary,
+            color = TajsOSTheme.Primary
         )
 
         Text(
             stringResource(steps[currentStep]),
             style = MaterialTheme.typography.headlineSmall,
-            color = TactileTheme.Primary,
+            color = TajsOSTheme.Primary
         )
 
         Spacer(Modifier.height(16.dp))
@@ -178,7 +178,7 @@ private fun renderReviewFlow(context: ReviewDashboardContext) {
                                             Icon(
                                                 Icons.Default.Delete,
                                                 contentDescription = "Archive",
-                                                tint = TactileTheme.Error,
+                                                tint = TajsOSTheme.Error
                                             )
                                         }
                                     },

@@ -36,7 +36,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.main.state.EntryType
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
@@ -101,34 +101,34 @@ internal fun CalendarMainBlock(
                     Brush.verticalGradient(
                         colors =
                             listOf(
-                                TactileTheme.CalendarGradientStart,
-                                TactileTheme.CalendarGradientMid,
-                                TactileTheme.CalendarGradientEnd,
-                            ),
+                                TajsOSTheme.CalendarGradientStart,
+                                TajsOSTheme.CalendarGradientMid,
+                                TajsOSTheme.CalendarGradientEnd
+                            )
                     ),
                 ),
     ) {
-        BoxWithConstraints(modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd)) {
+        BoxWithConstraints(modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd)) {
             if (maxWidth > 1100.dp) {
                 Row(
                     modifier = Modifier.fillMaxSize(),
-                    horizontalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+                    horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
                 ) {
                     Surface(
                         modifier = Modifier.weight(1.75f).fillMaxHeight(),
                         shape =
                             androidx.compose.foundation.shape
                                 .RoundedCornerShape(20.dp),
-                        color = TactileTheme.CalendarPanel,
+                        color = TajsOSTheme.CalendarPanel,
                         border =
                             androidx.compose.foundation.BorderStroke(
                                 1.dp,
-                                TactileTheme.GhostBorder.copy(alpha = 0.15f),
-                            ),
+                                TajsOSTheme.GhostBorder.copy(alpha = 0.15f)
+                            )
                     ) {
                         Column(
-                            modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd),
-                            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                            modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd),
+                            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
                         ) {
                             CalendarHeader(
                                 currentMonth = currentMonth,
@@ -163,22 +163,22 @@ internal fun CalendarMainBlock(
                         shape =
                             androidx.compose.foundation.shape
                                 .RoundedCornerShape(20.dp),
-                        color = TactileTheme.CalendarPanelSoft,
+                        color = TajsOSTheme.CalendarPanelSoft,
                         border =
                             androidx.compose.foundation.BorderStroke(
                                 1.dp,
-                                TactileTheme.GhostBorder.copy(alpha = 0.15f),
-                            ),
+                                TajsOSTheme.GhostBorder.copy(alpha = 0.15f)
+                            )
                     ) {
                         Column(
-                            modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd),
-                            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+                            modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd),
+                            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
                         ) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Icon(
                                     Icons.Default.Schedule,
                                     contentDescription = null,
-                                    tint = TactileTheme.Primary,
+                                    tint = TajsOSTheme.Primary
                                 )
                                 Spacer(Modifier.width(8.dp))
                                 Text(
@@ -187,7 +187,7 @@ internal fun CalendarMainBlock(
                                         selectedDate.toString(),
                                     ),
                                     style = MaterialTheme.typography.labelSmall,
-                                    color = TactileTheme.Primary,
+                                    color = TajsOSTheme.Primary
                                 )
                             }
                             Box(modifier = Modifier.weight(1f)) {
@@ -202,25 +202,25 @@ internal fun CalendarMainBlock(
                                 )
                             }
 
-                            HorizontalDivider(color = TactileTheme.Border.copy(alpha = 0.6f))
+                            HorizontalDivider(color = TajsOSTheme.Border.copy(alpha = 0.6f))
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Icon(
                                     Icons.Default.TaskAlt,
                                     contentDescription = null,
-                                    tint = TactileTheme.Accent,
+                                    tint = TajsOSTheme.Accent
                                 )
                                 Spacer(Modifier.width(8.dp))
                                 Text(
                                     "PENDING",
                                     style = MaterialTheme.typography.labelSmall,
-                                    color = TactileTheme.Accent,
+                                    color = TajsOSTheme.Accent
                                 )
                             }
                             if (pendingNodes.isEmpty()) {
                                 Text(
                                     "No pending nodes due soon.",
                                     style = MaterialTheme.typography.bodySmall,
-                                    color = TactileTheme.Muted,
+                                    color = TajsOSTheme.Muted
                                 )
                             } else {
                                 pendingNodes.forEach { node ->
@@ -230,12 +230,12 @@ internal fun CalendarMainBlock(
                                             androidx.compose.foundation.shape.RoundedCornerShape(
                                                 12.dp,
                                             ),
-                                        color = TactileTheme.CalendarPanelStrong,
+                                        color = TajsOSTheme.CalendarPanelStrong,
                                         border =
                                             androidx.compose.foundation.BorderStroke(
                                                 1.dp,
-                                                TactileTheme.GhostBorder.copy(alpha = 0.15f),
-                                            ),
+                                                TajsOSTheme.GhostBorder.copy(alpha = 0.15f)
+                                            )
                                     ) {
                                         Row(
                                             modifier =
@@ -248,7 +248,7 @@ internal fun CalendarMainBlock(
                                             Text(
                                                 node.title,
                                                 style = MaterialTheme.typography.bodySmall,
-                                                color = TactileTheme.Text,
+                                                color = TajsOSTheme.Text,
                                                 modifier = Modifier.weight(1f),
                                                 maxLines = 1,
                                             )
@@ -263,7 +263,7 @@ internal fun CalendarMainBlock(
                                             Text(
                                                 dueText,
                                                 style = MaterialTheme.typography.labelSmall,
-                                                color = TactileTheme.Muted,
+                                                color = TajsOSTheme.Muted
                                             )
                                         }
                                     }
@@ -275,23 +275,23 @@ internal fun CalendarMainBlock(
             } else {
                 Column(
                     modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingMd),
+                    verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
                 ) {
                     Surface(
                         modifier = Modifier.fillMaxWidth(),
                         shape =
                             androidx.compose.foundation.shape
                                 .RoundedCornerShape(20.dp),
-                        color = TactileTheme.CalendarPanel,
+                        color = TajsOSTheme.CalendarPanel,
                         border =
                             androidx.compose.foundation.BorderStroke(
                                 1.dp,
-                                TactileTheme.GhostBorder.copy(alpha = 0.15f),
-                            ),
+                                TajsOSTheme.GhostBorder.copy(alpha = 0.15f)
+                            )
                     ) {
                         Column(
-                            modifier = Modifier.padding(TactileTheme.SpacingMd),
-                            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
+                            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
                         ) {
                             CalendarHeader(
                                 currentMonth = currentMonth,
@@ -326,16 +326,16 @@ internal fun CalendarMainBlock(
                         shape =
                             androidx.compose.foundation.shape
                                 .RoundedCornerShape(20.dp),
-                        color = TactileTheme.CalendarPanelSoft,
+                        color = TajsOSTheme.CalendarPanelSoft,
                         border =
                             androidx.compose.foundation.BorderStroke(
                                 1.dp,
-                                TactileTheme.GhostBorder.copy(alpha = 0.15f),
-                            ),
+                                TajsOSTheme.GhostBorder.copy(alpha = 0.15f)
+                            )
                     ) {
                         Column(
-                            modifier = Modifier.fillMaxSize().padding(TactileTheme.SpacingMd),
-                            verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm),
+                            modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd),
+                            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
                         ) {
                             Text(
                                 stringResource(
@@ -343,7 +343,7 @@ internal fun CalendarMainBlock(
                                     selectedDate.toString(),
                                 ),
                                 style = MaterialTheme.typography.labelSmall,
-                                color = TactileTheme.Primary,
+                                color = TajsOSTheme.Primary
                             )
                             AgendaView(
                                 selectedDate = selectedDate,

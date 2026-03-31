@@ -21,7 +21,7 @@ import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.ui.components.cards.AlertCard
 import com.tajemniktv.tajsos.ui.components.cards.DashCard
 import com.tajemniktv.tajsos.ui.components.nodes.SuggestionGroup
-import com.tajemniktv.tajsos.ui.theme.TactileTheme
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 /**
  * Renders the current focused task area or an empty-state alert when no active task is set.
@@ -43,27 +43,27 @@ fun CurrentTaskBlock(
             title = "NO ACTIVE TASK",
             description = "Assign a task to focus on.",
             icon = Icons.Default.Info,
-            color = TactileTheme.Muted,
+            color = TajsOSTheme.Muted,
             onClick = {},
         )
     } else {
-        Column(verticalArrangement = Arrangement.spacedBy(TactileTheme.SpacingSm)) {
+        Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
             com.tajemniktv.tajsos.ui.components.common.DetailSectionHeader(
                 title = "CURRENT FOCUS",
                 icon = Icons.Default.CenterFocusStrong,
             )
             DashCard(onClick = { onEdit(activeTask.node.id) }) {
-                Column(modifier = Modifier.padding(TactileTheme.SpacingMd)) {
+                Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
                     Text(
                         activeTask.node.title,
                         style = MaterialTheme.typography.titleLarge,
-                        color = TactileTheme.Primary,
+                        color = TajsOSTheme.Primary
                     )
                     if (activeTask.node.nextSmallestStep != null) {
                         Text(
                             "NEXT: ${activeTask.node.nextSmallestStep}",
                             style = MaterialTheme.typography.bodySmall,
-                            color = TactileTheme.Accent,
+                            color = TajsOSTheme.Accent
                         )
                     }
                 }

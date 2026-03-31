@@ -222,6 +222,7 @@
 
     <!-- Settings -->
     <string name="settings_title">SETTINGS</string>
+    <string name="settings_tab_preferences">Preferences</string>
     <string name="settings_security">SECURITY</string>
     <string name="settings_biometric_lock">BIOMETRIC LOCK</string>
     <string name="settings_biometric_desc">Require authentication to open</string>
@@ -424,6 +425,10 @@
     <string name="notes_resources">REFERENCE</string>
     <string name="notes_empty">NO KNOWLEDGE FOUND</string>
     <string name="notes_no_results">NO MATCHING RESULTS</string>
+    <string name="notes_tab_workspace">Workspace</string>
+    <string name="notes_tab_recent">Recent</string>
+    <string name="notes_tab_reference">Reference</string>
+    <string name="notes_tab_rules">Rules</string>
 
     <!-- Tasks Screen -->
     <string name="tasks_title">TASKS</string>
