@@ -40,7 +40,13 @@ class IcsCalendarProvider(
         to: Instant,
     ): List<CalendarEventEntity> {
         val url = provider.url ?: return emptyList()
-        if (!url.startsWith("http://") && !url.startsWith("https://")) {
+        val parsedUrl = try {
+            io.ktor.http.Url(url)
+        } catch (e: Exception) {
+            return emptyList()
+        }
+        val scheme = parsedUrl.protocol.name.lowercase()
+        if (scheme != "http" && scheme != "https") {
             return emptyList()
         }
         return try {
