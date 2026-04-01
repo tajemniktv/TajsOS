@@ -415,7 +415,7 @@ private fun CommandSidebar(
             Button(
                 onClick = onQuickAdd,
                 modifier = Modifier.fillMaxWidth(),
-                enabled = quickAdd.isNotBlank(),
+                enabled = quickAdd.trim().isNotBlank(),
             ) {
                 Text(
                     stringResource(
