@@ -55,11 +55,39 @@ class IcsCalendarProvider(
         }
     }
 
+    /**
+     * Validates that a string is an HTTP/HTTPS URL and blocks internal or private network hosts
+     * to prevent Server-Side Request Forgery (SSRF).
+     *
+     * It parses the URL and explicitly rejects loopback addresses (e.g., 127.0.0.1, ::1),
+     * link-local addresses (169.254.x.x), private RFC1918 ranges (10.x.x.x, 172.16.x.x, 192.168.x.x),
+     * unique-local IPv6 addresses, and known metadata hosts (e.g., "localhost", "metadata.google.internal").
+     *
+     * @param url The raw URL string to validate.
+     * @return `true` if the URL has a valid scheme and an external routable host, `false` otherwise
+     *         (or if parsing throws an exception).
+     */
     private fun isValidHttpUrl(url: String): Boolean {
         return try {
             val parsedUrl = io.ktor.http.Url(url)
             val scheme = parsedUrl.protocol.name.lowercase()
-            scheme == "http" || scheme == "https"
+            if (scheme != "http" && scheme != "https") return false
+
+            val host = parsedUrl.host.lowercase()
+            if (host == "localhost" || host == "metadata.google.internal" || host == "169.254.169.254") return false
+            if (host.startsWith("127.") || host.startsWith("10.") || host.startsWith("192.168.")) return false
+
+            val hostParts = host.split(".")
+            if (hostParts.size == 4) {
+                val first = hostParts[0].toIntOrNull()
+                val second = hostParts[1].toIntOrNull()
+                if (first == 172 && second != null && second in 16..31) return false
+                if (first == 169 && second == 254) return false
+            }
+
+            if (host.contains("::1") || host.startsWith("fc00:") || host.startsWith("fd00:") || host.startsWith("fe80:")) return false
+
+            true
         } catch (e: Exception) {
             false
         }
