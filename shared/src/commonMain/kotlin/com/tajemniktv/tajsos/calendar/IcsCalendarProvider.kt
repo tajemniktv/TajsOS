@@ -40,21 +40,7 @@ class IcsCalendarProvider(
         to: Instant,
     ): List<CalendarEventEntity> {
         val url = provider.url ?: return emptyList()
-        val parsedUrl = try {
-            io.ktor.http.Url(url)
-        val parsedUrl = try {
-            io.ktor.http.Url(url)
-        } catch (e: Exception) {
-            return emptyList()
-        }
-        if (parsedUrl.protocol != io.ktor.http.URLProtocol.HTTP &&
-            parsedUrl.protocol != io.ktor.http.URLProtocol.HTTPS) {
-            return emptyList()
-        }
-        if (!isPublicRoutableHost(parsedUrl.host)) {
-            println("ICS calendar URL rejected: non-public host blocked")
-            return emptyList()
-        }
+        if (!isValidHttpUrl(url)) return emptyList()
         return try {
             val response = client.get(url)
             if (response.status.value in 200..299) {
@@ -65,9 +51,17 @@ class IcsCalendarProvider(
                 emptyList()
             }
         } catch (e: Exception) {
-            val sanitizedMessage = sanitizeErrorMessage(e.message ?: "Unknown error")
-            println("ICS calendar fetch failed: $sanitizedMessage")
             emptyList()
+        }
+    }
+
+    private fun isValidHttpUrl(url: String): Boolean {
+        return try {
+            val parsedUrl = io.ktor.http.Url(url)
+            val scheme = parsedUrl.protocol.name.lowercase()
+            scheme == "http" || scheme == "https"
+        } catch (e: Exception) {
+            false
         }
     }
 
@@ -130,106 +124,6 @@ class IcsCalendarProvider(
                 }
         }
         return events
-    }
-
-    /**
-     * Sanitizes error messages by redacting potentially sensitive URL or user-specific data.
-     *
-     * @param message The original error message.
-     * @return A sanitized version safe for logging.
-     */
-    private fun sanitizeErrorMessage(message: String): String {
-        // Redact common URL patterns and user-specific data
-        return message
-            .replace(Regex("https?://[^\\s]+"), "[REDACTED_URL]")
-            .replace(Regex("\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b"), "[REDACTED_EMAIL]")
-            .replace(Regex("\\b(?:\\d{1,3}\\.){3}\\d{1,3}\\b"), "[REDACTED_IP]")
-            .replace(Regex("\\b[0-9a-fA-F:]+:[0-9a-fA-F:]+\\b"), "[REDACTED_IPV6]")
-    }
-
-    /**
-     * Checks if a host is a public, routable address.
-     * Rejects loopback, link-local, private (RFC1918), and IPv6 unique-local addresses.
-     *
-     * @param host The hostname or IP address to validate.
-     * @return true if the host is public and routable, false otherwise.
-     */
-    private fun isPublicRoutableHost(host: String): Boolean {
-        // Check if it's an IPv4 address
-        val ipv4Pattern = Regex("^(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})$")
-        val ipv4Match = ipv4Pattern.matchEntire(host)
-        if (ipv4Match != null) {
-            val octets = ipv4Match.groupValues.drop(1).map { it.toIntOrNull() ?: 256 }
-            if (octets.any { it > 255 }) return false
-
-            val first = octets[0]
-            val second = octets[1]
-
-            // Loopback: 127.0.0.0/8
-            if (first == 127) return false
-
-            // Link-local: 169.254.0.0/16
-            if (first == 169 && second == 254) return false
-
-            // RFC1918 private ranges:
-            // 10.0.0.0/8
-            if (first == 10) return false
-            // 172.16.0.0/12
-            if (first == 172 && second in 16..31) return false
-            // 192.168.0.0/16
-            if (first == 192 && second == 168) return false
-
-            return true
-        }
-
-        // Check if it's an IPv6 address (simplified check)
-        if (host.contains(':')) {
-            val normalized = normalizeIPv6(host)
-
-            // ::1 is loopback
-            if (normalized == "0000:0000:0000:0000:0000:0000:0000:0001") return false
-
-            // fe80::/10 is link-local (fe80-febf)
-            if (normalized.startsWith("fe8") || normalized.startsWith("fe9") ||
-                normalized.startsWith("fea") || normalized.startsWith("feb")) {
-                return false
-            }
-
-            // fc00::/7 is unique-local (fc00-fdff)
-            if (normalized.startsWith("fc") || normalized.startsWith("fd")) {
-                return false
-            }
-
-            return true
-        }
-
-        // For hostnames, allow them (DNS will resolve them)
-        // Additional checks could be added for known metadata service hostnames
-        return true
-    }
-
-    /**
-     * Normalizes an IPv6 address to a consistent format for comparison.
-     * This is a simplified implementation that handles basic IPv6 formats.
-     *
-     * @param ipv6 The IPv6 address string.
-     * @return A normalized IPv6 address string in lowercase.
-     */
-    private fun normalizeIPv6(ipv6: String): String {
-        val cleaned = ipv6.lowercase().trim()
-
-        // Handle :: expansion
-        if (cleaned.contains("::")) {
-            val parts = cleaned.split("::")
-            val leftParts = if (parts[0].isEmpty()) emptyList() else parts[0].split(":")
-            val rightParts = if (parts.size < 2 || parts[1].isEmpty()) emptyList() else parts[1].split(":")
-            val missingParts = 8 - leftParts.size - rightParts.size
-            val expanded = leftParts + List(missingParts) { "0" } + rightParts
-            return expanded.joinToString(":") { it.padStart(4, '0') }
-        }
-
-        // Already expanded, just pad each segment
-        return cleaned.split(":").joinToString(":") { it.padStart(4, '0') }
     }
 }
 
