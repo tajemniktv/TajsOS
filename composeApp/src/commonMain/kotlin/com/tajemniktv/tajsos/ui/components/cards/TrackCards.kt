@@ -60,19 +60,19 @@ fun MedicationSyncCard(
                                 fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
                                 letterSpacing = 1.sp,
                             ),
-                        color = TajsOSTheme.Text
+                        color = TajsOSTheme.Text,
                     )
                     Text(
                         stringResource(Res.string.track_dosage_confirmed),
                         style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
-                        color = TajsOSTheme.Muted
+                        color = TajsOSTheme.Muted,
                     )
                 }
                 Spacer(Modifier.weight(1f))
                 Checkbox(
                     checked = allMedsTaken,
                     onCheckedChange = { onToggleAll() },
-                    colors = CheckboxDefaults.colors(checkedColor = TajsOSTheme.Primary)
+                    colors = CheckboxDefaults.colors(checkedColor = TajsOSTheme.Primary),
                 )
             }
 
@@ -93,10 +93,15 @@ fun MedicationSyncCard(
                         Text(
                             text = med.substance,
                             style = MaterialTheme.typography.bodySmall,
-                            color = if (selectedMedIds.contains(
-                                    med.id
-                                )
-                            ) TajsOSTheme.Text else TajsOSTheme.Muted,
+                            color =
+                                if (selectedMedIds.contains(
+                                        med.id,
+                                    )
+                                ) {
+                                    TajsOSTheme.Text
+                                } else {
+                                    TajsOSTheme.Muted
+                                },
                         )
                         if (!med.brandNames.isNullOrEmpty()) {
                             Text(

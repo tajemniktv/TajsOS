@@ -16,11 +16,11 @@ import kotlinx.serialization.Serializable
 enum class ItemKind(
     val storageKey: String,
 ) {
-    TASK("task"),
-    NOTE("note"),
-    RECORD("record"),
-    PROJECT("project"),
-    AREA("area"),
+    TASK("task"), // NON-NLS
+    NOTE("note"), // NON-NLS
+    RECORD("record"), // NON-NLS
+    PROJECT("project"), // NON-NLS
+    AREA("area"), // NON-NLS
     ;
 
     companion object {
@@ -38,12 +38,12 @@ enum class ItemKind(
 enum class TaskState(
     val storageKey: String,
 ) {
-    ACTIVE("active"),
-    DONE("done"),
-    ON_HOLD("on_hold"),
-    SOMEDAY("someday"),
-    BLOCKED("blocked"),
-    ARCHIVED("archived"),
+    ACTIVE("active"), // NON-NLS
+    DONE("done"), // NON-NLS
+    ON_HOLD("on_hold"), // NON-NLS
+    SOMEDAY("someday"), // NON-NLS
+    BLOCKED("blocked"), // NON-NLS
+    ARCHIVED("archived"), // NON-NLS
     ;
 
     companion object {
@@ -61,11 +61,11 @@ enum class TaskState(
 enum class ProjectState(
     val storageKey: String,
 ) {
-    ACTIVE("active"),
-    ON_HOLD("on_hold"),
-    SOMEDAY("someday"),
-    COMPLETED("completed"),
-    ARCHIVED("archived"),
+    ACTIVE("active"), // NON-NLS
+    ON_HOLD("on_hold"), // NON-NLS
+    SOMEDAY("someday"), // NON-NLS
+    COMPLETED("completed"), // NON-NLS
+    ARCHIVED("archived"), // NON-NLS
     ;
 
     companion object {
@@ -83,16 +83,16 @@ enum class ProjectState(
 enum class NoteKind(
     val storageKey: String,
 ) {
-    GENERAL("general"),
-    KNOWLEDGE("knowledge"),
-    REFERENCE("reference"),
-    REFLECTION("reflection"),
-    JOURNAL("journal"),
-    LOGISTICS("logistics"),
-    CONCEPT("concept"),
-    MEETING("meeting"),
-    READING("reading"),
-    EVERGREEN("evergreen"),
+    GENERAL("general"), // NON-NLS
+    KNOWLEDGE("knowledge"), // NON-NLS
+    REFERENCE("reference"), // NON-NLS
+    REFLECTION("reflection"), // NON-NLS
+    JOURNAL("journal"), // NON-NLS
+    LOGISTICS("logistics"), // NON-NLS
+    CONCEPT("concept"), // NON-NLS
+    MEETING("meeting"), // NON-NLS
+    READING("reading"), // NON-NLS
+    EVERGREEN("evergreen"), // NON-NLS
     ;
 
     companion object {
@@ -110,11 +110,11 @@ enum class NoteKind(
 enum class NoteState(
     val storageKey: String,
 ) {
-    ACTIVE("active"),
-    RAW("raw"),
-    HIGHLIGHTED("highlighted"),
-    DISTILLED("distilled"),
-    TAKEAWAY("takeaway"),
+    ACTIVE("active"), // NON-NLS
+    RAW("raw"), // NON-NLS
+    HIGHLIGHTED("highlighted"), // NON-NLS
+    DISTILLED("distilled"), // NON-NLS
+    TAKEAWAY("takeaway"), // NON-NLS
     ;
 
     companion object {
@@ -132,14 +132,14 @@ enum class NoteState(
 enum class RecordKind(
     val storageKey: String,
 ) {
-    GENERAL("general"),
-    JOURNAL("journal"),
-    REFLECTION("reflection"),
-    HEALTH_LOG("health_log"),
-    CONTACT_LOG("contact_log"),
-    SESSION_LOG("session_log"),
-    EVENT_LOG("event_log"),
-    SYMPTOM_LOG("symptom_log"),
+    GENERAL("general"), // NON-NLS
+    JOURNAL("journal"), // NON-NLS
+    REFLECTION("reflection"), // NON-NLS
+    HEALTH_LOG("health_log"), // NON-NLS
+    CONTACT_LOG("contact_log"), // NON-NLS
+    SESSION_LOG("session_log"), // NON-NLS
+    EVENT_LOG("event_log"), // NON-NLS
+    SYMPTOM_LOG("symptom_log"), // NON-NLS
     ;
 
     companion object {
@@ -157,11 +157,11 @@ enum class RecordKind(
 enum class AreaHealthStatus(
     val storageKey: String,
 ) {
-    ACTIVE("active"),
-    STABLE("stable"),
-    NEGLECTED("neglected"),
-    OVERLOADED("overloaded"),
-    ON_FIRE("on_fire"),
+    ACTIVE("active"), // NON-NLS
+    STABLE("stable"), // NON-NLS
+    NEGLECTED("neglected"), // NON-NLS
+    OVERLOADED("overloaded"), // NON-NLS
+    ON_FIRE("on_fire"), // NON-NLS
     ;
 
     companion object {
@@ -179,10 +179,10 @@ enum class AreaHealthStatus(
 enum class ScheduleEntryKind(
     val storageKey: String,
 ) {
-    START("start"),
-    DUE("due"),
-    REMINDER("reminder"),
-    EVENT("event"),
+    START("start"), // NON-NLS
+    DUE("due"), // NON-NLS
+    REMINDER("reminder"), // NON-NLS
+    EVENT("event"), // NON-NLS
     ;
 
     companion object {
@@ -200,9 +200,9 @@ enum class ScheduleEntryKind(
 enum class RichContentFormat(
     val storageKey: String,
 ) {
-    MARKDOWN("markdown"),
-    PLAIN_TEXT("plain_text"),
-    BLOCKS_JSON("blocks_json"),
+    MARKDOWN("markdown"), // NON-NLS
+    PLAIN_TEXT("plain_text"), // NON-NLS
+    BLOCKS_JSON("blocks_json"), // NON-NLS
     ;
 
     companion object {
@@ -220,17 +220,17 @@ enum class RichContentFormat(
 enum class RelationKind(
     val storageKey: String,
 ) {
-    RELATED("RELATED"),
-    MENTION("MENTION"),
-    DEPENDS_ON("DEPENDS_ON"),
-    BELONGS_TO("BELONGS_TO"),
-    REFERENCE("REFERENCE"),
-    DERIVED_FROM("DERIVED_FROM"),
-    INSPIRED_BY("INSPIRED_BY"),
-    RELATED_PERSON("RELATED_PERSON"),
-    PLACE_CONTEXT("PLACE_CONTEXT"),
-    TOPIC_LINK("TOPIC_LINK"),
-    PAPER_REFERENCE("PAPER_REFERENCE"),
+    RELATED("RELATED"), // NON-NLS
+    MENTION("MENTION"), // NON-NLS
+    DEPENDS_ON("DEPENDS_ON"), // NON-NLS
+    BELONGS_TO("BELONGS_TO"), // NON-NLS
+    REFERENCE("REFERENCE"), // NON-NLS
+    DERIVED_FROM("DERIVED_FROM"), // NON-NLS
+    INSPIRED_BY("INSPIRED_BY"), // NON-NLS
+    RELATED_PERSON("RELATED_PERSON"), // NON-NLS
+    PLACE_CONTEXT("PLACE_CONTEXT"), // NON-NLS
+    TOPIC_LINK("TOPIC_LINK"), // NON-NLS
+    PAPER_REFERENCE("PAPER_REFERENCE"), // NON-NLS
     ;
 
     companion object {
@@ -248,11 +248,11 @@ enum class RelationKind(
 enum class SavedViewLens(
     val storageKey: String,
 ) {
-    NOW("now"),
-    PLAN("plan"),
-    OPERATE("operate"),
-    KNOWLEDGE("knowledge"),
-    REVIEW("review"),
+    NOW("now"), // NON-NLS
+    PLAN("plan"), // NON-NLS
+    OPERATE("operate"), // NON-NLS
+    KNOWLEDGE("knowledge"), // NON-NLS
+    REVIEW("review"), // NON-NLS
     ;
 
     companion object {
@@ -270,10 +270,10 @@ enum class SavedViewLens(
 enum class SavedViewLayout(
     val storageKey: String,
 ) {
-    LIST("list"),
-    TABLE("table"),
-    BOARD("board"),
-    MATRIX("matrix"),
+    LIST("list"), // NON-NLS
+    TABLE("table"), // NON-NLS
+    BOARD("board"), // NON-NLS
+    MATRIX("matrix"), // NON-NLS
     ;
 
     companion object {
@@ -291,19 +291,19 @@ enum class SavedViewLayout(
 enum class SavedViewFieldKey(
     val storageKey: String,
 ) {
-    TITLE("title"),
-    STATUS("status"),
-    KIND("kind"),
-    AREA("area"),
-    PROJECT("project"),
-    DOMAIN("domain"),
-    DUE_DATE("due_date"),
-    START_DATE("start_date"),
-    OCCURRED_AT("occurred_at"),
-    CREATED_AT("created_at"),
-    UPDATED_AT("updated_at"),
-    TAG("tag"),
-    PINNED("pinned"),
+    TITLE("title"), // NON-NLS
+    STATUS("status"), // NON-NLS
+    KIND("kind"), // NON-NLS
+    AREA("area"), // NON-NLS
+    PROJECT("project"), // NON-NLS
+    DOMAIN("domain"), // NON-NLS
+    DUE_DATE("due_date"), // NON-NLS
+    START_DATE("start_date"), // NON-NLS
+    OCCURRED_AT("occurred_at"), // NON-NLS
+    CREATED_AT("created_at"), // NON-NLS
+    UPDATED_AT("updated_at"), // NON-NLS
+    TAG("tag"), // NON-NLS
+    PINNED("pinned"), // NON-NLS
     ;
 
     companion object {
@@ -321,9 +321,9 @@ enum class SavedViewFieldKey(
 enum class SavedViewMeasure(
     val storageKey: String,
 ) {
-    COUNT("count"),
-    ESTIMATED_MINUTES("estimated_minutes"),
-    COMPLETED_COUNT("completed_count"),
+    COUNT("count"), // NON-NLS
+    ESTIMATED_MINUTES("estimated_minutes"), // NON-NLS
+    COMPLETED_COUNT("completed_count"), // NON-NLS
     ;
 
     companion object {
@@ -341,16 +341,16 @@ enum class SavedViewMeasure(
 enum class SavedViewFilterOperator(
     val storageKey: String,
 ) {
-    EQUALS("equals"),
-    NOT_EQUALS("not_equals"),
-    IN_SET("in_set"),
-    CONTAINS("contains"),
-    BEFORE("before"),
-    AFTER("after"),
-    IS_TRUE("is_true"),
-    IS_FALSE("is_false"),
-    IS_NULL("is_null"),
-    IS_NOT_NULL("is_not_null"),
+    EQUALS("equals"), // NON-NLS
+    NOT_EQUALS("not_equals"), // NON-NLS
+    IN_SET("in_set"), // NON-NLS
+    CONTAINS("contains"), // NON-NLS
+    BEFORE("before"), // NON-NLS
+    AFTER("after"), // NON-NLS
+    IS_TRUE("is_true"), // NON-NLS
+    IS_FALSE("is_false"), // NON-NLS
+    IS_NULL("is_null"), // NON-NLS
+    IS_NOT_NULL("is_not_null"), // NON-NLS
     ;
 
     companion object {
@@ -368,12 +368,12 @@ enum class SavedViewFilterOperator(
 enum class SavedViewValueType(
     val storageKey: String,
 ) {
-    STRING("string"),
-    NUMBER("number"),
-    BOOLEAN("boolean"),
-    DATE("date"),
-    ENUM("enum"),
-    REFERENCE("reference"),
+    STRING("string"), // NON-NLS
+    NUMBER("number"), // NON-NLS
+    BOOLEAN("boolean"), // NON-NLS
+    DATE("date"), // NON-NLS
+    ENUM("enum"), // NON-NLS
+    REFERENCE("reference"), // NON-NLS
     ;
 
     companion object {
@@ -391,8 +391,8 @@ enum class SavedViewValueType(
 enum class SavedViewSortDirection(
     val storageKey: String,
 ) {
-    ASCENDING("asc"),
-    DESCENDING("desc"),
+    ASCENDING("asc"), // NON-NLS
+    DESCENDING("desc"), // NON-NLS
     ;
 
     companion object {

@@ -105,7 +105,7 @@ fun VaultsScreen(
         ) {
             plan.primary.forEach { block ->
                 item(key = block.id) {
-                    VaultsDashboardBlockRegistry.resolve(block.id)?.invoke(context)
+                    VaultsDashboardBlocks.resolve(block.id)?.invoke(context)
                 }
             }
         }

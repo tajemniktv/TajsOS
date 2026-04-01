@@ -55,7 +55,7 @@ fun TaskBrief(
         onClick = onClick,
         color = Color.Black.copy(alpha = 0.2f),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth(),
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),

@@ -69,6 +69,47 @@ import com.tajemniktv.tajsos.data.taskStateOrNull
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.capture_interval_daily
+import tajsos.composeapp.generated.resources.capture_interval_monthly
+import tajsos.composeapp.generated.resources.capture_interval_weekly
+import tajsos.composeapp.generated.resources.common_add
+import tajsos.composeapp.generated.resources.common_cancel
+import tajsos.composeapp.generated.resources.common_edit
+import tajsos.composeapp.generated.resources.common_save
+import tajsos.composeapp.generated.resources.dash_system_status
+import tajsos.composeapp.generated.resources.detail_area
+import tajsos.composeapp.generated.resources.detail_attachments
+import tajsos.composeapp.generated.resources.detail_due_at
+import tajsos.composeapp.generated.resources.detail_estimate_mins
+import tajsos.composeapp.generated.resources.detail_no_due_date
+import tajsos.composeapp.generated.resources.detail_not_set
+import tajsos.composeapp.generated.resources.detail_one_time
+import tajsos.composeapp.generated.resources.detail_project
+import tajsos.composeapp.generated.resources.detail_split_subtasks
+import tajsos.composeapp.generated.resources.detail_status
+import tajsos.composeapp.generated.resources.detail_tag_new_placeholder
+import tajsos.composeapp.generated.resources.protocol_no_steps
+import tajsos.composeapp.generated.resources.protocol_steps_complete
+import tajsos.composeapp.generated.resources.screen_history
+import tajsos.composeapp.generated.resources.screen_tasks
+import tajsos.composeapp.generated.resources.screen_today
+import tajsos.composeapp.generated.resources.task_detail_active
+import tajsos.composeapp.generated.resources.task_detail_blocked
+import tajsos.composeapp.generated.resources.task_detail_complete
+import tajsos.composeapp.generated.resources.task_detail_complete_action
+import tajsos.composeapp.generated.resources.task_detail_completed_status
+import tajsos.composeapp.generated.resources.task_detail_critical
+import tajsos.composeapp.generated.resources.task_detail_directives_section
+import tajsos.composeapp.generated.resources.task_detail_id_label
+import tajsos.composeapp.generated.resources.task_detail_no_attachments
+import tajsos.composeapp.generated.resources.task_detail_no_notes
+import tajsos.composeapp.generated.resources.task_detail_on_hold
+import tajsos.composeapp.generated.resources.task_detail_queued
+import tajsos.composeapp.generated.resources.task_detail_snooze
+import tajsos.composeapp.generated.resources.tasks_detail_updated
+import tajsos.composeapp.generated.resources.track_empty
 
 private val detailPanelShape = RoundedCornerShape(12.dp)
 private val detailPanelBorder = TajsOSTheme.GhostBorder.copy(alpha = 0.22f)
@@ -79,7 +120,7 @@ private enum class HeaderBadgeTone {
     Neutral,
 }
 
-object TaskDetailBlockRegistry {
+object TaskDetailBlocks {
     private val renderers: Map<String, TaskDetailBlockRenderer> =
         mapOf(
             "task_header" to ::renderTaskHeader,
@@ -108,12 +149,12 @@ private fun renderTaskHeader(context: TaskDetailContext) {
     val badgeLabel =
         when
             {
-                task.isHardDeadline -> "CRITICAL"
-                state == TaskState.DONE -> "COMPLETE"
-                state == TaskState.BLOCKED -> "BLOCKED"
-                state == TaskState.ON_HOLD -> "ON HOLD"
-                state == TaskState.SOMEDAY -> "QUEUED"
-                else -> "ACTIVE"
+                task.isHardDeadline -> stringResource(Res.string.task_detail_critical)
+                state == TaskState.DONE -> stringResource(Res.string.task_detail_complete)
+                state == TaskState.BLOCKED -> stringResource(Res.string.task_detail_blocked)
+                state == TaskState.ON_HOLD -> stringResource(Res.string.task_detail_on_hold)
+                state == TaskState.SOMEDAY -> stringResource(Res.string.task_detail_queued)
+                else -> stringResource(Res.string.task_detail_active)
             }
 
     Surface(
@@ -145,7 +186,11 @@ private fun renderTaskHeader(context: TaskDetailContext) {
                     ) {
                         TaskStateBadge(label = badgeLabel, tone = badgeTone)
                         Text(
-                            text = "TASK-${task.id}",
+                            text =
+                                stringResource(
+                                    Res.string.task_detail_id_label,
+                                    task.id.toString(),
+                                ),
                             style = MaterialTheme.typography.labelSmall,
                             color = TajsOSTheme.Muted,
                         )
@@ -214,7 +259,7 @@ private fun TaskPathRow(
         horizontalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         Text(
-            text = "TASKS",
+            text = stringResource(Res.string.screen_tasks),
             style = MaterialTheme.typography.labelSmall,
             color = TajsOSTheme.Muted,
         )
@@ -285,10 +330,10 @@ private fun TaskActionBar(
         if (isEditing) {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedButton(onClick = onCancel) {
-                    Text("Cancel")
+                    Text(stringResource(Res.string.common_cancel))
                 }
                 Button(onClick = onSave) {
-                    Text("Save")
+                    Text(stringResource(Res.string.common_save))
                 }
             }
         } else {
@@ -296,12 +341,12 @@ private fun TaskActionBar(
                 OutlinedButton(onClick = onToggleEdit) {
                     Icon(Icons.Default.Edit, contentDescription = null)
                     Spacer(Modifier.width(6.dp))
-                    Text("Edit")
+                    Text(stringResource(Res.string.common_edit))
                 }
                 OutlinedButton(onClick = onSnooze) {
                     Icon(Icons.Default.AccessTime, contentDescription = null)
                     Spacer(Modifier.width(6.dp))
-                    Text("Snooze")
+                    Text(stringResource(Res.string.task_detail_snooze))
                 }
                 Button(
                     onClick = onComplete,
@@ -316,7 +361,13 @@ private fun TaskActionBar(
                 ) {
                     Icon(Icons.Default.CheckCircle, contentDescription = null)
                     Spacer(Modifier.width(6.dp))
-                    Text(if (canComplete) "Complete Task" else "Completed")
+                    Text(
+                        if (canComplete) {
+                            stringResource(Res.string.task_detail_complete_action)
+                        } else {
+                            stringResource(Res.string.task_detail_completed_status)
+                        },
+                    )
                 }
             }
         }
@@ -334,7 +385,7 @@ private fun renderTaskDescription(context: TaskDetailContext) {
             modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            SectionTitle("Technical Directives")
+            SectionTitle(stringResource(Res.string.task_detail_directives_section))
             if (context.isEditing) {
                 Surface(
                     shape = RoundedCornerShape(10.dp),
@@ -356,7 +407,7 @@ private fun renderTaskDescription(context: TaskDetailContext) {
                 val clean = context.task.content.trim()
                 if (clean.isBlank()) {
                     Text(
-                        text = "No execution notes yet. Add constraints, dependencies, or operator notes.",
+                        text = stringResource(Res.string.task_detail_no_notes),
                         style = MaterialTheme.typography.bodyMedium,
                         color = TajsOSTheme.Muted,
                     )
@@ -418,7 +469,12 @@ private fun renderTaskSubtasks(context: TaskDetailContext) {
                 SectionTitle("Subtask Matrix")
                 if (context.totalSubtasksCount > 0) {
                     Text(
-                        text = "${context.doneSubtasksCount} of ${context.totalSubtasksCount} complete",
+                        text =
+                            stringResource(
+                                Res.string.protocol_steps_complete,
+                                context.doneSubtasksCount.toString(),
+                                context.totalSubtasksCount.toString(),
+                            ),
                         style = MaterialTheme.typography.labelSmall,
                         color = TajsOSTheme.Muted,
                     )
@@ -426,7 +482,7 @@ private fun renderTaskSubtasks(context: TaskDetailContext) {
             }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedButton(onClick = context.onSplitIntoSubtasks) {
-                    Text("Split into child tasks")
+                    Text(stringResource(Res.string.detail_split_subtasks))
                 }
             }
             Row(
@@ -439,7 +495,7 @@ private fun renderTaskSubtasks(context: TaskDetailContext) {
                     onValueChange = { newChecklistItem = it },
                     modifier = Modifier.weight(1f),
                     singleLine = true,
-                    label = { Text("Add checklist row") },
+                    label = { Text(stringResource(Res.string.detail_tag_new_placeholder)) },
                 )
                 Button(
                     onClick = {
@@ -447,13 +503,13 @@ private fun renderTaskSubtasks(context: TaskDetailContext) {
                         newChecklistItem = ""
                     },
                 ) {
-                    Text("Add")
+                    Text(stringResource(Res.string.common_add))
                 }
             }
 
             if (context.subtaskProgress != null) {
                 LinearProgressIndicator(
-                    progress = { context.subtaskProgress },
+                    progress = { context.subtaskProgress!! },
                     modifier = Modifier.fillMaxWidth(),
                     color = TajsOSTheme.Primary,
                     trackColor = TajsOSTheme.SurfaceHighest,
@@ -462,7 +518,7 @@ private fun renderTaskSubtasks(context: TaskDetailContext) {
 
             if (context.subtasks.isEmpty()) {
                 Text(
-                    text = "No subtasks yet. Add checklist lines in description or split this task into subtasks.",
+                    text = stringResource(Res.string.protocol_no_steps),
                     style = MaterialTheme.typography.bodyMedium,
                     color = TajsOSTheme.Muted,
                 )
@@ -587,10 +643,10 @@ private fun renderTaskAttachments(context: TaskDetailContext) {
             modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            SectionTitle("Attachments")
+            SectionTitle(stringResource(Res.string.detail_attachments))
             if (context.attachmentItems.isEmpty()) {
                 Text(
-                    text = "No attachments linked to this task.",
+                    text = stringResource(Res.string.task_detail_no_attachments),
                     style = MaterialTheme.typography.bodyMedium,
                     color = TajsOSTheme.Muted,
                 )
@@ -665,10 +721,10 @@ private fun renderTaskHistory(context: TaskDetailContext) {
             modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            SectionTitle("History")
+            SectionTitle(stringResource(Res.string.screen_history))
             if (context.historyItems.isEmpty()) {
                 Text(
-                    text = "No tracked activity yet.",
+                    text = stringResource(Res.string.track_empty),
                     style = MaterialTheme.typography.bodyMedium,
                     color = TajsOSTheme.Muted,
                 )
@@ -745,7 +801,7 @@ private fun renderTaskMetadata(context: TaskDetailContext) {
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = "System Status",
+                    text = stringResource(Res.string.dash_system_status),
                     style = MaterialTheme.typography.labelSmall,
                     color = TajsOSTheme.Muted,
                 )
@@ -756,24 +812,44 @@ private fun renderTaskMetadata(context: TaskDetailContext) {
 
             TaskEditablePropertyRow(
                 icon = Icons.Default.Info,
-                label = "Status",
+                label = stringResource(Res.string.detail_status),
                 selected = state.storageKey.replace("_", " ").uppercase(),
                 options =
                     listOf(
-                        TaskPropertyOption(TaskState.ACTIVE.storageKey, "ACTIVE"),
-                        TaskPropertyOption(TaskState.BLOCKED.storageKey, "BLOCKED"),
-                        TaskPropertyOption(TaskState.ON_HOLD.storageKey, "ON HOLD"),
-                        TaskPropertyOption(TaskState.SOMEDAY.storageKey, "QUEUED"),
-                        TaskPropertyOption(TaskState.DONE.storageKey, "DONE"),
+                        TaskPropertyOption(
+                            TaskState.ACTIVE.storageKey,
+                            stringResource(Res.string.task_detail_active),
+                        ),
+                        TaskPropertyOption(
+                            TaskState.BLOCKED.storageKey,
+                            stringResource(Res.string.task_detail_blocked),
+                        ),
+                        TaskPropertyOption(
+                            TaskState.ON_HOLD.storageKey,
+                            stringResource(Res.string.task_detail_on_hold),
+                        ),
+                        TaskPropertyOption(
+                            TaskState.SOMEDAY.storageKey,
+                            stringResource(Res.string.task_detail_queued),
+                        ),
+                        TaskPropertyOption(
+                            TaskState.DONE.storageKey,
+                            stringResource(Res.string.task_detail_complete),
+                        ),
                     ),
                 onSelect = context.onStatusChange,
             )
             TaskEditablePropertyRow(
                 icon = Icons.Default.Info,
-                label = "Domain",
-                selected = areaName ?: "Not set",
+                label = stringResource(Res.string.detail_area),
+                selected = areaName ?: stringResource(Res.string.detail_not_set),
                 options =
-                    listOf(TaskPropertyOption("__none__", "Not set")) +
+                    listOf(
+                        TaskPropertyOption(
+                            "__none__",
+                            stringResource(Res.string.detail_not_set),
+                        ),
+                    ) +
                         context.areas.map {
                             TaskPropertyOption(
                                 it.first.toString(),
@@ -786,10 +862,15 @@ private fun renderTaskMetadata(context: TaskDetailContext) {
             )
             TaskEditablePropertyRow(
                 icon = Icons.Default.Tag,
-                label = "Project",
-                selected = projectName ?: "Not set",
+                label = stringResource(Res.string.detail_project),
+                selected = projectName ?: stringResource(Res.string.detail_not_set),
                 options =
-                    listOf(TaskPropertyOption("__none__", "Not set")) +
+                    listOf(
+                        TaskPropertyOption(
+                            "__none__",
+                            stringResource(Res.string.detail_not_set),
+                        ),
+                    ) +
                         context.projects.map {
                             TaskPropertyOption(
                                 it.first.toString(),
@@ -802,12 +883,20 @@ private fun renderTaskMetadata(context: TaskDetailContext) {
             )
             TaskEditablePropertyRow(
                 icon = Icons.Default.CalendarMonth,
-                label = "Deadline",
-                selected = task.dueAt?.let(::formatDateTime) ?: "No due date",
+                label = stringResource(Res.string.detail_due_at),
+                selected =
+                    task.dueAt?.let(::formatDateTime)
+                        ?: stringResource(Res.string.detail_no_due_date),
                 options =
                     listOf(
-                        TaskPropertyOption(TaskDuePreset.None.name, "No due date"),
-                        TaskPropertyOption(TaskDuePreset.Today.name, "Today"),
+                        TaskPropertyOption(
+                            TaskDuePreset.None.name,
+                            stringResource(Res.string.detail_no_due_date),
+                        ),
+                        TaskPropertyOption(
+                            TaskDuePreset.Today.name,
+                            stringResource(Res.string.screen_today),
+                        ),
                         TaskPropertyOption(TaskDuePreset.Tomorrow.name, "Tomorrow"),
                         TaskPropertyOption(TaskDuePreset.InSevenDays.name, "In 7 days"),
                     ),
@@ -820,14 +909,23 @@ private fun renderTaskMetadata(context: TaskDetailContext) {
                     if (task.isRecurring) {
                         task.recurringInterval?.replace("_", " ")?.uppercase() ?: "Recurring"
                     } else {
-                        "One-off"
+                        stringResource(Res.string.detail_one_time)
                     },
                 options =
                     listOf(
-                        TaskPropertyOption("__none__", "One-off"),
-                        TaskPropertyOption("daily", "DAILY"),
-                        TaskPropertyOption("weekly", "WEEKLY"),
-                        TaskPropertyOption("monthly", "MONTHLY"),
+                        TaskPropertyOption("__none__", stringResource(Res.string.detail_one_time)),
+                        TaskPropertyOption(
+                            "daily",
+                            stringResource(Res.string.capture_interval_daily),
+                        ),
+                        TaskPropertyOption(
+                            "weekly",
+                            stringResource(Res.string.capture_interval_weekly),
+                        ),
+                        TaskPropertyOption(
+                            "monthly",
+                            stringResource(Res.string.capture_interval_monthly),
+                        ),
                     ),
                 onSelect = { value ->
                     context.onRecurrenceChange(if (value == "__none__") null else value)
@@ -836,14 +934,32 @@ private fun renderTaskMetadata(context: TaskDetailContext) {
             TaskEditablePropertyRow(
                 icon = Icons.Default.HourglassBottom,
                 label = "Effort",
-                selected = task.estimatedMinutes?.let { "$it min" } ?: "Unestimated",
+                selected =
+                    task.estimatedMinutes?.let {
+                        stringResource(
+                            Res.string.detail_estimate_mins,
+                            it.toString(),
+                        )
+                    } ?: stringResource(Res.string.detail_not_set),
                 options =
                     listOf(
-                        TaskPropertyOption("__none__", "Unestimated"),
-                        TaskPropertyOption("15", "15 min"),
-                        TaskPropertyOption("30", "30 min"),
-                        TaskPropertyOption("60", "60 min"),
-                        TaskPropertyOption("120", "120 min"),
+                        TaskPropertyOption("__none__", stringResource(Res.string.detail_not_set)),
+                        TaskPropertyOption(
+                            "15",
+                            stringResource(Res.string.detail_estimate_mins, "15"),
+                        ),
+                        TaskPropertyOption(
+                            "30",
+                            stringResource(Res.string.detail_estimate_mins, "30"),
+                        ),
+                        TaskPropertyOption(
+                            "60",
+                            stringResource(Res.string.detail_estimate_mins, "60"),
+                        ),
+                        TaskPropertyOption(
+                            "120",
+                            stringResource(Res.string.detail_estimate_mins, "120"),
+                        ),
                     ),
                 onSelect = { value ->
                     context.onEstimateChange(value.toIntOrNull())
@@ -869,18 +985,23 @@ private fun renderTaskMetadata(context: TaskDetailContext) {
             if (context.subtaskProgress != null) {
                 HorizontalDivider(color = TajsOSTheme.GhostBorder.copy(alpha = 0.15f))
                 Text(
-                    text = "Execution Progress",
+                    text = stringResource(Res.string.tasks_detail_updated),
                     style = MaterialTheme.typography.labelSmall,
                     color = TajsOSTheme.Muted,
                 )
                 LinearProgressIndicator(
-                    progress = { context.subtaskProgress },
+                    progress = { context.subtaskProgress!! },
                     modifier = Modifier.fillMaxWidth(),
                     color = TajsOSTheme.Primary,
                     trackColor = TajsOSTheme.SurfaceHighest,
                 )
                 Text(
-                    text = "${context.doneSubtasksCount}/${context.totalSubtasksCount} subtasks complete",
+                    text =
+                        stringResource(
+                            Res.string.protocol_steps_complete,
+                            context.doneSubtasksCount.toString(),
+                            context.totalSubtasksCount.toString(),
+                        ),
                     style = MaterialTheme.typography.bodySmall,
                     color = TajsOSTheme.Muted,
                 )
@@ -1074,11 +1195,11 @@ private fun TaskStateBadge(
     Surface(
         shape = RoundedCornerShape(999.dp),
         color = tint.copy(alpha = 0.16f),
-            border = BorderStroke(1.dp, tint.copy(alpha = 0.35f)),
-    ) {
-        Text(
-            text = label,
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+        border = BorderStroke(1.dp, tint.copy(alpha = 0.35f)),
+        ) {
+            Text(
+                text = label,
+                modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
             style = MaterialTheme.typography.labelSmall,
             color = tint,
         )

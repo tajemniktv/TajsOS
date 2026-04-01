@@ -40,7 +40,7 @@ fun ArchiveScreen(
         ) {
             plan.primary.forEach { block ->
                 item(key = block.id) {
-                    ArchiveDashboardBlockRegistry.resolve(block.id)?.invoke(context)
+                    ArchiveDashboardBlocks.resolve(block.id)?.invoke(context)
                 }
             }
         }

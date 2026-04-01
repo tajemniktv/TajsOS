@@ -50,6 +50,9 @@ import androidx.compose.ui.window.PopupProperties
 import com.tajemniktv.tajsos.ui.components.notifications.NotificationUiModel
 import com.tajemniktv.tajsos.ui.components.notifications.TajsNotificationWidget
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.header_search_placeholder
 
 /**
  * Mode option model shown by the header mode switcher.
@@ -197,7 +200,7 @@ fun GlobalSearchBar(modifier: Modifier = Modifier) {
         textStyle = MaterialTheme.typography.bodyMedium.copy(color = TajsOSTheme.Text),
         placeholder = {
             Text(
-                text = "Search across TajsOS",
+                text = stringResource(Res.string.header_search_placeholder),
                 style = MaterialTheme.typography.bodyMedium,
                 color = TajsOSTheme.Muted,
             )

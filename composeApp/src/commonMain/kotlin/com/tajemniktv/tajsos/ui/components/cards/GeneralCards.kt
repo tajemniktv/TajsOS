@@ -48,7 +48,7 @@ fun InfoCard(
         modifier = modifier,
         color = TajsOSTheme.Surface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.Border)
+        border = BorderStroke(1.dp, TajsOSTheme.Border),
     ) {
         Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
             Row(
@@ -93,7 +93,7 @@ fun StatusCard(
         modifier = modifier.fillMaxWidth(),
         color = TajsOSTheme.Surface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.Border)
+        border = BorderStroke(1.dp, TajsOSTheme.Border),
     ) {
         Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
             Text(
@@ -131,7 +131,7 @@ fun LinkedNodeItem(
         modifier = modifier.fillMaxWidth(),
         color = TajsOSTheme.Surface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.Border)
+        border = BorderStroke(1.dp, TajsOSTheme.Border),
     ) {
         Row(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -162,7 +162,7 @@ fun LinkedNodeItem(
                 Text(
                     text = subtitle,
                     style = MaterialTheme.typography.labelSmall,
-                    color = TajsOSTheme.Muted
+                    color = TajsOSTheme.Muted,
                 )
             }
             Icon(
@@ -186,7 +186,7 @@ fun ConnectionCard(
         modifier = modifier.fillMaxWidth(),
         color = Color.Transparent,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.Border.copy(alpha = 0.5f))
+        border = BorderStroke(1.dp, TajsOSTheme.Border.copy(alpha = 0.5f)),
     ) {
         Row(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),

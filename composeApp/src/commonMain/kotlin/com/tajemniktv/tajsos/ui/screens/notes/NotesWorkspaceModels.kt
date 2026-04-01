@@ -73,7 +73,11 @@ fun NodeWithPin.toNotesWorkspaceItem(
         id = node.id,
         title = node.title.ifBlank { "Untitled note" },
         content = node.content,
-        preview = node.content.trim().replace('\n', ' ').take(120),
+        preview =
+            node.content
+                .trim()
+                .replace('\n', ' ')
+                .take(120),
         createdAt = node.createdAt,
         updatedAt = node.updatedAt,
         isPinned = node.isSticky || isPinnedToToday,
@@ -98,20 +102,24 @@ fun inferNotesDomain(node: NodeWithPin): NotesDomain {
             append(' ')
             append(node.tags.joinToString(" ") { it.name })
         }.lowercase()
-    return when {
-        searchable.contains("study") || searchable.contains("exam") || searchable.contains("course") -> {
-            NotesDomain.STUDY
+    return when
+        {
+            searchable.contains("study") || searchable.contains("exam") || searchable.contains("course") -> {
+                NotesDomain.STUDY
+            }
+
+            searchable.contains("work") || searchable.contains("client") || searchable.contains("meeting") -> {
+                NotesDomain.WORK
+            }
+
+            searchable.contains("health") || searchable.contains("med") || searchable.contains("symptom") -> {
+                NotesDomain.HEALTH
+            }
+
+            else -> {
+                NotesDomain.PERSONAL
+            }
         }
-        searchable.contains("work") || searchable.contains("client") || searchable.contains("meeting") -> {
-            NotesDomain.WORK
-        }
-        searchable.contains("health") || searchable.contains("med") || searchable.contains("symptom") -> {
-            NotesDomain.HEALTH
-        }
-        else -> {
-            NotesDomain.PERSONAL
-        }
-    }
 }
 
 /**
@@ -134,4 +142,3 @@ fun buildLinkedTaskIndex(
     }
     return linked.mapValues { it.value.toList() }
 }
-

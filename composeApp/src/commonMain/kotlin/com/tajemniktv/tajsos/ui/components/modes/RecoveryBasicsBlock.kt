@@ -45,7 +45,7 @@ fun RecoveryBasicsBlock(
         )
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
+            horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
         ) {
             BasicSurvivalCard(
                 label = "MEDS",

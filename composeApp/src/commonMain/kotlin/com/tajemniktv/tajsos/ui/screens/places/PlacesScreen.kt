@@ -34,6 +34,22 @@ import com.tajemniktv.tajsos.ui.components.cards.NodeCard
 import com.tajemniktv.tajsos.ui.main.state.PhysicalLogisticsSnapshot
 import com.tajemniktv.tajsos.ui.screens.GroupedOpenLoopSection
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.places_add_campus_location
+import tajsos.composeapp.generated.resources.places_add_home_zone
+import tajsos.composeapp.generated.resources.places_add_place
+import tajsos.composeapp.generated.resources.places_class_bring_list
+import tajsos.composeapp.generated.resources.places_dont_forget_set
+import tajsos.composeapp.generated.resources.places_ensure_travel_pack_template
+import tajsos.composeapp.generated.resources.places_event_prep_list
+import tajsos.composeapp.generated.resources.places_leave_home_checklist
+import tajsos.composeapp.generated.resources.places_packing_list
+import tajsos.composeapp.generated.resources.places_physical_logistics_note
+import tajsos.composeapp.generated.resources.places_placeholder_list_title
+import tajsos.composeapp.generated.resources.places_placeholder_logistics_notes
+import tajsos.composeapp.generated.resources.places_placeholder_place_name
+import tajsos.composeapp.generated.resources.places_what_to_bring
 
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
@@ -136,7 +152,7 @@ internal fun PlacesLayer(
                 value = newPlaceTitle,
                 onValueChange = { newPlaceTitle = it },
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("Place name") },
+                label = { Text(stringResource(Res.string.places_placeholder_place_name)) },
             )
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
@@ -147,25 +163,25 @@ internal fun PlacesLayer(
                         viewModel.addPlace(newPlaceTitle, campus = true)
                         newPlaceTitle = ""
                     },
-                    label = { Text("ADD CAMPUS LOCATION") },
+                    label = { Text(stringResource(Res.string.places_add_campus_location)) },
                 )
                 AssistChip(
                     onClick = {
                         viewModel.addPlace(newPlaceTitle, home = true)
                         newPlaceTitle = ""
                     },
-                    label = { Text("ADD HOME ZONE") },
+                    label = { Text(stringResource(Res.string.places_add_home_zone)) },
                 )
                 AssistChip(
                     onClick = {
                         viewModel.addPlace(newPlaceTitle)
                         newPlaceTitle = ""
                     },
-                    label = { Text("ADD PLACE") },
+                    label = { Text(stringResource(Res.string.places_add_place)) },
                 )
                 AssistChip(
                     onClick = { viewModel.ensureTravelPackTemplate() },
-                    label = { Text("ENSURE TRAVEL PACK TEMPLATE") },
+                    label = { Text(stringResource(Res.string.places_ensure_travel_pack_template)) },
                 )
             }
         }
@@ -185,13 +201,13 @@ internal fun PlacesLayer(
                 value = logisticsTitle,
                 onValueChange = { logisticsTitle = it },
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("List / note title") },
+                label = { Text(stringResource(Res.string.places_placeholder_list_title)) },
             )
             OutlinedTextField(
                 value = logisticsContent,
                 onValueChange = { logisticsContent = it },
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("Optional logistics notes") },
+                label = { Text(stringResource(Res.string.places_placeholder_logistics_notes)) },
                 minLines = 2,
             )
             FlowRow(
@@ -200,11 +216,11 @@ internal fun PlacesLayer(
             ) {
                 AssistChip(
                     onClick = { viewModel.createWhatToBringList(logisticsTitle) },
-                    label = { Text("WHAT TO BRING") },
+                    label = { Text(stringResource(Res.string.places_what_to_bring)) },
                 )
                 AssistChip(
                     onClick = { viewModel.createPackingList(logisticsTitle) },
-                    label = { Text("PACKING LIST") },
+                    label = { Text(stringResource(Res.string.places_packing_list)) },
                 )
                 AssistChip(
                     onClick = {
@@ -212,19 +228,19 @@ internal fun PlacesLayer(
                             if (logisticsTitle.isBlank()) "Leave-home checklist" else logisticsTitle,
                         )
                     },
-                    label = { Text("LEAVE HOME CHECKLIST") },
+                    label = { Text(stringResource(Res.string.places_leave_home_checklist)) },
                 )
                 AssistChip(
                     onClick = { viewModel.createDontForgetSet(logisticsTitle) },
-                    label = { Text("DON'T FORGET SET") },
+                    label = { Text(stringResource(Res.string.places_dont_forget_set)) },
                 )
                 AssistChip(
                     onClick = { viewModel.createEventPreparationList(logisticsTitle) },
-                    label = { Text("EVENT PREP LIST") },
+                    label = { Text(stringResource(Res.string.places_event_prep_list)) },
                 )
                 AssistChip(
                     onClick = { viewModel.createClassBringList(logisticsTitle) },
-                    label = { Text("CLASS BRING LIST") },
+                    label = { Text(stringResource(Res.string.places_class_bring_list)) },
                 )
                 AssistChip(
                     onClick = {
@@ -232,7 +248,7 @@ internal fun PlacesLayer(
                         logisticsTitle = ""
                         logisticsContent = ""
                     },
-                    label = { Text("PHYSICAL LOGISTICS NOTE") },
+                    label = { Text(stringResource(Res.string.places_physical_logistics_note)) },
                 )
             }
         }

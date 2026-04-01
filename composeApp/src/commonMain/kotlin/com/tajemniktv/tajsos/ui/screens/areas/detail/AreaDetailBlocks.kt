@@ -82,7 +82,7 @@ import tajsos.composeapp.generated.resources.project_detail_status
 import tajsos.composeapp.generated.resources.type_note
 import tajsos.composeapp.generated.resources.type_record
 
-object AreaDetailBlockRegistry {
+object AreaDetailBlocks {
     private val renderers: Map<String, AreaDetailBlockRenderer> =
         mapOf(
             "area_header" to ::renderAreaHeader,

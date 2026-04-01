@@ -39,6 +39,10 @@ import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.inbox_empty
 import tajsos.composeapp.generated.resources.inbox_process
 import tajsos.composeapp.generated.resources.inbox_recent_entries
+import tajsos.composeapp.generated.resources.type_note
+import tajsos.composeapp.generated.resources.type_project
+import tajsos.composeapp.generated.resources.type_record
+import tajsos.composeapp.generated.resources.type_task
 
 object InboxDashboardBlockRegistry {
     private val renderers: Map<String, InboxDashboardBlockRenderer> =
@@ -159,22 +163,22 @@ private fun InboxCaptureCard(
                 FilterChip(
                     selected = false,
                     onClick = { viewModel.triageInboxEntry(entry.id, ItemKind.TASK) },
-                    label = { Text("TASK") },
+                    label = { Text(stringResource(Res.string.type_task).uppercase()) },
                 )
                 FilterChip(
                     selected = false,
                     onClick = { viewModel.triageInboxEntry(entry.id, ItemKind.NOTE) },
-                    label = { Text("NOTE") },
+                    label = { Text(stringResource(Res.string.type_note).uppercase()) },
                 )
                 FilterChip(
                     selected = false,
                     onClick = { viewModel.triageInboxEntry(entry.id, ItemKind.RECORD) },
-                    label = { Text("RECORD") },
+                    label = { Text(stringResource(Res.string.type_record).uppercase()) },
                 )
                 FilterChip(
                     selected = false,
                     onClick = { viewModel.triageInboxEntry(entry.id, ItemKind.PROJECT) },
-                    label = { Text("PROJECT") },
+                    label = { Text(stringResource(Res.string.type_project).uppercase()) },
                 )
                 IconButton(onClick = { viewModel.dismissInboxEntry(entry) }) {
                     Icon(

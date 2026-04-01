@@ -41,7 +41,7 @@ import tajsos.composeapp.generated.resources.today_empty
 import tajsos.composeapp.generated.resources.today_payload
 import tajsos.composeapp.generated.resources.today_slot_standby
 
-object TodayDashboardBlockRegistry {
+object TodayDashboardBlocks {
     private val renderers: Map<String, TodayDashboardBlockRenderer> =
         mapOf("today_main" to ::renderTodayMainBlock)
 

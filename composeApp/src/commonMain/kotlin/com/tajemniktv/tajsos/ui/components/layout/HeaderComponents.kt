@@ -66,7 +66,7 @@ fun SystemOnlineStatus(tintColor: Color) {
     Surface(
         color = Color.Black.copy(alpha = 0.5f),
         shape = CircleShape,
-        border = BorderStroke(1.dp, TajsOSTheme.Border)
+        border = BorderStroke(1.dp, TajsOSTheme.Border),
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
@@ -79,9 +79,13 @@ fun SystemOnlineStatus(tintColor: Color) {
                         .clip(CircleShape)
                         .background(
                             if (tintColor ==
-                                TajsOSTheme.Primary) {
+                                TajsOSTheme.Primary
+                            ) {
                                 TajsOSTheme.Success
-                            } else tintColor),
+                            } else {
+                                tintColor
+                            },
+                        ),
             )
             Spacer(Modifier.width(8.dp))
             Text(
@@ -109,7 +113,7 @@ fun DesktopSearchSurface() {
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
                 Icons.Default.Search,

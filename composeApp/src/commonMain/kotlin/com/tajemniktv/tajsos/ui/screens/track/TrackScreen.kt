@@ -121,7 +121,7 @@ fun TrackScreen(viewModel: MainViewModel) {
     ) {
         plan.primary.forEach { block ->
             item(key = block.id) {
-                TrackDashboardBlockRegistry.resolve(block.id)?.invoke(context)
+                TrackDashboardBlocks.resolve(block.id)?.invoke(context)
             }
         }
     }

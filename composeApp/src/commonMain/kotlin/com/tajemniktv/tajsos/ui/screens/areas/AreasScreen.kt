@@ -39,7 +39,7 @@ fun AreasScreen(
                     .padding(bottom = 80.dp),
         ) {
             plan.primary.forEach { block ->
-                AreasDashboardBlockRegistry.resolve(block.id)?.invoke(context)
+                AreasDashboardBlocks.resolve(block.id)?.invoke(context)
             }
         }
     }

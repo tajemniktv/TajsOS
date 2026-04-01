@@ -168,7 +168,7 @@ fun ProjectDetailScreen(
 
                 else -> {
                     stringResource(Res.string.project_health_healthy) to
-                            TajsOSTheme.Success
+                        TajsOSTheme.Success
                 }
             }
 

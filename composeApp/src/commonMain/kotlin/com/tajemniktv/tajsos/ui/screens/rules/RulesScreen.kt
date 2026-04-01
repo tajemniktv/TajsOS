@@ -63,7 +63,7 @@ fun RulesScreen(
     ) {
         plan.primary.forEach { block ->
             item(key = block.id) {
-                RulesDashboardBlockRegistry.resolve(block.id)?.invoke(context)
+                RulesDashboardBlocks.resolve(block.id)?.invoke(context)
             }
         }
     }

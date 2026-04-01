@@ -63,6 +63,29 @@ import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.archive_restore
+import tajsos.composeapp.generated.resources.common_area
+import tajsos.composeapp.generated.resources.common_edit
+import tajsos.composeapp.generated.resources.common_project
+import tajsos.composeapp.generated.resources.common_save
+import tajsos.composeapp.generated.resources.common_updated
+import tajsos.composeapp.generated.resources.detail_attachments
+import tajsos.composeapp.generated.resources.detail_content
+import tajsos.composeapp.generated.resources.detail_no_attachments_simple
+import tajsos.composeapp.generated.resources.detail_no_linked_items
+import tajsos.composeapp.generated.resources.detail_no_snapshots
+import tajsos.composeapp.generated.resources.detail_relations
+import tajsos.composeapp.generated.resources.detail_title
+import tajsos.composeapp.generated.resources.notes_action_find_links
+import tajsos.composeapp.generated.resources.notes_action_view
+import tajsos.composeapp.generated.resources.notes_empty
+import tajsos.composeapp.generated.resources.notes_placeholder_search
+import tajsos.composeapp.generated.resources.notes_workspace_title
+import tajsos.composeapp.generated.resources.screen_history
+import tajsos.composeapp.generated.resources.tasks_context_title
+import tajsos.composeapp.generated.resources.view_all
 import kotlin.time.Instant
 
 /**
@@ -91,7 +114,7 @@ fun NotesWorkspaceDetail(
 
     if (current == null) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("Note not found", color = TajsOSTheme.Muted)
+            Text(stringResource(Res.string.notes_empty), color = TajsOSTheme.Muted)
         }
         return
     }
@@ -132,7 +155,8 @@ fun NotesWorkspaceDetail(
             noteItems.filter {
                 (selectedType == null || it.noteType == selectedType) &&
                     (
-                        q.isBlank() || it.title.lowercase().contains(q) ||
+                        q.isBlank() ||
+                            it.title.lowercase().contains(q) ||
                             it.content
                                 .lowercase()
                                 .contains(q)
@@ -172,7 +196,7 @@ fun NotesWorkspaceDetail(
         Surface(
             modifier = Modifier.width(320.dp).fillMaxHeight(),
             color = TajsOSTheme.Surface,
-            shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
+            shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         ) {
             Column(
                 modifier = Modifier.fillMaxSize().padding(12.dp),
@@ -183,7 +207,7 @@ fun NotesWorkspaceDetail(
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
                     }
                     Text(
-                        "Notes Workspace",
+                        stringResource(Res.string.notes_workspace_title),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                     )
@@ -194,7 +218,7 @@ fun NotesWorkspaceDetail(
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     leadingIcon = { Icon(Icons.Default.Search, null) },
-                    label = { Text("Search notes") },
+                    label = { Text(stringResource(Res.string.notes_placeholder_search)) },
                 )
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -203,7 +227,7 @@ fun NotesWorkspaceDetail(
                     FilterChip(
                         selected = selectedType == null,
                         onClick = { selectedType = null },
-                        label = { Text("ALL") },
+                        label = { Text(stringResource(Res.string.view_all)) },
                     )
                     typeOptions.take(8).forEach { type ->
                         FilterChip(
@@ -222,11 +246,14 @@ fun NotesWorkspaceDetail(
                                     .fillMaxWidth()
                                     .clickable { onNavigateToNode(item.id) },
                             shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
-                            color = if (item.id ==
-                                noteId
-                            ) {
-                                TajsOSTheme.Primary.copy(alpha = 0.18f)
-                                } else TajsOSTheme.Background,
+                            color =
+                                if (item.id ==
+                                    noteId
+                                ) {
+                                    TajsOSTheme.Primary.copy(alpha = 0.18f)
+                                } else {
+                                    TajsOSTheme.Background
+                                },
                         ) {
                             Column(
                                 modifier = Modifier.padding(10.dp),
@@ -267,12 +294,12 @@ fun NotesWorkspaceDetail(
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         AssistChip(
                             onClick = { isEditMode = false },
-                            label = { Text("VIEW") },
+                            label = { Text(stringResource(Res.string.notes_action_view)) },
                             leadingIcon = { Icon(Icons.Default.Visibility, null) },
                         )
                         AssistChip(
                             onClick = { isEditMode = true },
-                            label = { Text("EDIT") },
+                            label = { Text(stringResource(Res.string.common_edit).uppercase()) },
                             leadingIcon = { Icon(Icons.Default.Edit, null) },
                         )
                     }
@@ -287,7 +314,7 @@ fun NotesWorkspaceDetail(
                                 )
                                 isEditMode = false
                             },
-                            label = { Text("SAVE") },
+                            label = { Text(stringResource(Res.string.common_save).uppercase()) },
                             leadingIcon = { Icon(Icons.Default.Save, null) },
                         )
                     }
@@ -298,14 +325,14 @@ fun NotesWorkspaceDetail(
                         value = titleDraft,
                         onValueChange = { titleDraft = it },
                         modifier = Modifier.fillMaxWidth(),
-                        label = { Text("Title") },
+                        label = { Text(stringResource(Res.string.detail_title)) },
                         singleLine = true,
                     )
                     OutlinedTextField(
                         value = contentDraft,
                         onValueChange = { contentDraft = it },
                         modifier = Modifier.fillMaxWidth().weight(1f),
-                        label = { Text("Content") },
+                        label = { Text(stringResource(Res.string.detail_content)) },
                     )
                 } else {
                     Text(
@@ -337,8 +364,10 @@ fun NotesWorkspaceDetail(
                             value = note.content,
                             onValueChange = {},
                             readOnly = true,
-                            textStyle = MaterialTheme.typography.bodyLarge.copy(
-                                color = TajsOSTheme.Text),
+                            textStyle =
+                                MaterialTheme.typography.bodyLarge.copy(
+                                    color = TajsOSTheme.Text,
+                                ),
                             cursorBrush = SolidColor(TajsOSTheme.Primary),
                             modifier = Modifier.fillMaxWidth(),
                         )
@@ -349,27 +378,36 @@ fun NotesWorkspaceDetail(
 
         Column(
             modifier = Modifier.width(320.dp).fillMaxHeight(),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             SidePanelCard(
-                title = "Context",
-                icon = Icons.AutoMirrored.Filled.MenuBook
+                title = stringResource(Res.string.tasks_context_title),
+                icon = Icons.AutoMirrored.Filled.MenuBook,
             ) {
-                Text("Area: $areaName", color = TajsOSTheme.Text)
-                Text("Project: $projectName", color = TajsOSTheme.Text)
                 Text(
-                    "Updated: $updatedAt",
+                    "${stringResource(Res.string.common_area)}: $areaName",
+                    color = TajsOSTheme.Text,
+                )
+                Text(
+                    "${stringResource(Res.string.common_project)}: $projectName",
+                    color = TajsOSTheme.Text,
+                )
+                Text(
+                    "${stringResource(Res.string.common_updated)}: $updatedAt",
                     color = TajsOSTheme.Muted,
                     style = MaterialTheme.typography.bodySmall,
                 )
             }
 
             SidePanelCard(
-                title = "Relations",
+                title = stringResource(Res.string.detail_relations),
                 icon = Icons.Default.Hub,
             ) {
                 if (linked.isEmpty()) {
-                    Text("No linked items", color = TajsOSTheme.Muted)
+                    Text(
+                        stringResource(Res.string.detail_no_linked_items),
+                        color = TajsOSTheme.Muted,
+                    )
                 } else {
                     linked.take(6).forEach { id ->
                         val linkedNode = nodesById[id]?.node ?: return@forEach
@@ -383,17 +421,20 @@ fun NotesWorkspaceDetail(
                 Spacer(Modifier.height(8.dp))
                 AssistChip(
                     onClick = onNavigateToSearch,
-                    label = { Text("Find more links") },
+                    label = { Text(stringResource(Res.string.notes_action_find_links)) },
                     leadingIcon = { Icon(Icons.Default.Link, null) },
                 )
             }
 
             SidePanelCard(
-                title = "Attachments",
+                title = stringResource(Res.string.detail_attachments),
                 icon = Icons.Default.Attachment,
             ) {
                 if (attachments.isEmpty()) {
-                    Text("No attachments", color = TajsOSTheme.Muted)
+                    Text(
+                        stringResource(Res.string.detail_no_attachments_simple),
+                        color = TajsOSTheme.Muted,
+                    )
                 } else {
                     attachments.take(4).forEach {
                         Text("• ${it.title ?: it.uriOrPath}", color = TajsOSTheme.Text)
@@ -402,11 +443,11 @@ fun NotesWorkspaceDetail(
             }
 
             SidePanelCard(
-                title = "History",
+                title = stringResource(Res.string.screen_history),
                 icon = Icons.Default.History,
             ) {
                 if (snapshots.isEmpty()) {
-                    Text("No snapshots", color = TajsOSTheme.Muted)
+                    Text(stringResource(Res.string.detail_no_snapshots), color = TajsOSTheme.Muted)
                 } else {
                     snapshots.take(4).forEach { snapshot ->
                         val label =
@@ -418,7 +459,7 @@ fun NotesWorkspaceDetail(
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Text(
                                 label.take(19),
@@ -427,7 +468,7 @@ fun NotesWorkspaceDetail(
                             )
                             AssistChip(
                                 onClick = { viewModel.restoreSnapshot(snapshot) },
-                                label = { Text("Restore") },
+                                label = { Text(stringResource(Res.string.archive_restore)) },
                             )
                         }
                     }
@@ -441,7 +482,7 @@ fun NotesWorkspaceDetail(
 private fun SidePanelCard(
     title: String,
     icon: androidx.compose.ui.graphics.vector.ImageVector,
-    content: @Composable ColumnScope.() -> Unit
+    content: @Composable ColumnScope.() -> Unit,
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),

@@ -48,7 +48,7 @@ internal fun TasksArchiveView(
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
     ) {
         Text(
             stringResource(Res.string.tasks_archive_title),
@@ -58,7 +58,7 @@ internal fun TasksArchiveView(
         Text(
             stringResource(Res.string.tasks_archive_subtitle),
             style = MaterialTheme.typography.bodySmall,
-            color = TajsOSTheme.Muted
+            color = TajsOSTheme.Muted,
         )
         if (archivedTasks.isEmpty()) {
             EmptyState(message = stringResource(Res.string.archive_empty))
@@ -67,7 +67,7 @@ internal fun TasksArchiveView(
         Surface(
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
             color = TajsOSTheme.Surface,
-            border = BorderStroke(1.dp, TajsOSTheme.Border)
+            border = BorderStroke(1.dp, TajsOSTheme.Border),
         ) {
             Column {
                 archivedTasks.forEach { task ->
@@ -80,7 +80,7 @@ internal fun TasksArchiveView(
                             Text(
                                 task.title,
                                 style = MaterialTheme.typography.bodyLarge,
-                                color = TajsOSTheme.Text
+                                color = TajsOSTheme.Text,
                             )
                             val context =
                                 listOfNotNull(
@@ -92,7 +92,7 @@ internal fun TasksArchiveView(
                                 Text(
                                     context,
                                     style = MaterialTheme.typography.bodySmall,
-                                    color = TajsOSTheme.Muted
+                                    color = TajsOSTheme.Muted,
                                 )
                             }
                         }
@@ -103,7 +103,7 @@ internal fun TasksArchiveView(
                                 Icon(
                                     Icons.Default.Delete,
                                     null,
-                                    tint = TajsOSTheme.Error
+                                    tint = TajsOSTheme.Error,
                                 )
                             }
                         }

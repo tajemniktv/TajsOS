@@ -54,7 +54,8 @@ fun NotesRoute(
     val allNodes by viewModel.allNodes.collectAsState()
     val allRelations by viewModel.allRelations.collectAsState()
     val nodesById = remember(allNodes) { allNodes.associate { it.node.id to it.node } }
-    val linkedTaskIndex = remember(allRelations, nodesById) { buildLinkedTaskIndex(allRelations, nodesById) }
+    val linkedTaskIndex =
+        remember(allRelations, nodesById) { buildLinkedTaskIndex(allRelations, nodesById) }
     val allNotes =
         remember(allNodes, linkedTaskIndex) {
             allNodes
@@ -88,7 +89,10 @@ fun NotesRoute(
 
     val filteredNotes =
         remember(allNotes, searchQuery, listFilter, domainFilter, sortOrder) {
-            val now = kotlin.time.Clock.System.now().toEpochMilliseconds()
+            val now =
+                kotlin.time.Clock.System
+                    .now()
+                    .toEpochMilliseconds()
             val recentWindow = 7L * 24 * 60 * 60 * 1000
             allNotes
                 .asSequence()
@@ -100,7 +104,8 @@ fun NotesRoute(
                             note.content.lowercase().contains(query) ||
                             note.tags.any { it.lowercase().contains(query) }
                     val matchesFilter =
-                        when (listFilter) {
+                        when (listFilter)
+                        {
                             NotesListFilter.ALL -> !note.isArchived
                             NotesListFilter.PINNED -> !note.isArchived && note.isPinned
                             NotesListFilter.RECENT -> !note.isArchived && (now - note.updatedAt) <= recentWindow
@@ -110,16 +115,20 @@ fun NotesRoute(
                     val matchesDomain = domainFilter == null || note.domain == domainFilter
                     matchesQuery && matchesFilter && matchesDomain
                 }.sortedWith(
-                    when (sortOrder) {
-                        NotesSortOrder.UPDATED -> compareByDescending<NotesWorkspaceItem> { it.updatedAt }
-                        NotesSortOrder.CREATED -> compareByDescending<NotesWorkspaceItem> { it.createdAt }
-                        NotesSortOrder.ALPHABETICAL -> compareBy { it.title.lowercase() }
-                    },
+                    when (sortOrder)
+                        {
+                            NotesSortOrder.UPDATED -> compareByDescending<NotesWorkspaceItem> { it.updatedAt }
+                            NotesSortOrder.CREATED -> compareByDescending<NotesWorkspaceItem> { it.createdAt }
+                            NotesSortOrder.ALPHABETICAL -> compareBy { it.title.lowercase() }
+                        },
                 ).toList()
         }
 
-    val selectedNote = remember(allNotes, selectedNoteId) { allNotes.find { it.id == selectedNoteId } }
-    val selectedAttachments by viewModel.getAttachmentsForNode(selectedNote?.id ?: -1L).collectAsState(initial = emptyList())
+    val selectedNote =
+        remember(allNotes, selectedNoteId) { allNotes.find { it.id == selectedNoteId } }
+    val selectedAttachments by viewModel
+        .getAttachmentsForNode(selectedNote?.id ?: -1L)
+        .collectAsState(initial = emptyList())
     val relatedNodes =
         remember(allRelations, nodesById, selectedNoteId) {
             if (selectedNoteId <= 0L) {
@@ -128,7 +137,8 @@ fun NotesRoute(
                 allRelations
                     .asSequence()
                     .mapNotNull { relation ->
-                        when (selectedNoteId) {
+                        when (selectedNoteId)
+                        {
                             relation.fromNodeId -> nodesById[relation.toNodeId]
                             relation.toNodeId -> nodesById[relation.fromNodeId]
                             else -> null
@@ -155,7 +165,6 @@ fun NotesRoute(
                 val newId =
                     viewModel.addNodeForResult(
                         title = "Untitled note",
-                        content = "",
                         type = "note",
                         inboxState = false,
                     )
@@ -204,7 +213,10 @@ fun NotesRoute(
                         onTitleChange = { viewModel.updateNode(selectedNote.source.copy(title = it)) },
                         onContentChange = { viewModel.updateNode(selectedNote.source.copy(content = it)) },
                         onToggleFavorite = { viewModel.togglePermanentPin(selectedNote.source) },
-                        onArchive = { viewModel.archiveNode(selectedNote.source); mobileInDetail = false },
+                        onArchive = {
+                            viewModel.archiveNode(selectedNote.source)
+                            mobileInDetail = false
+                        },
                         onToggleFocusMode = { focusMode = !focusMode },
                         onToggleContextPanel = {},
                         onDuplicate = {
@@ -248,8 +260,24 @@ fun NotesRoute(
                         focusMode = true,
                         contextPanelVisible = false,
                         focusTitleSignal = focusTitleSignal,
-                        onTitleChange = { title -> selectedNote?.let { viewModel.updateNode(it.source.copy(title = title)) } },
-                        onContentChange = { content -> selectedNote?.let { viewModel.updateNode(it.source.copy(content = content)) } },
+                        onTitleChange = { title ->
+                            selectedNote?.let {
+                                viewModel.updateNode(
+                                    it.source.copy(
+                                        title = title,
+                                    ),
+                                )
+                            }
+                        },
+                        onContentChange = { content ->
+                            selectedNote?.let {
+                                viewModel.updateNode(
+                                    it.source.copy(
+                                        content = content,
+                                    ),
+                                )
+                            }
+                        },
                         onToggleFavorite = { selectedNote?.let { viewModel.togglePermanentPin(it.source) } },
                         onArchive = { selectedNote?.let { viewModel.archiveNode(it.source) } },
                         onToggleFocusMode = { focusMode = false },
@@ -304,8 +332,22 @@ fun NotesRoute(
                             focusMode = false,
                             contextPanelVisible = contextVisible,
                             focusTitleSignal = focusTitleSignal,
-                            onTitleChange = { title -> selectedNote?.let { viewModel.updateNode(it.source.copy(title = title)) } },
-                            onContentChange = { content -> selectedNote?.let { viewModel.updateNode(it.source.copy(content = content)) } },
+                            onTitleChange = { title ->
+                                selectedNote?.let {
+                                    viewModel.updateNode(
+                                        it.source.copy(
+                                            title = title,
+                                        ),
+                                    )
+                                }
+                            },
+                            onContentChange = { content ->
+                                selectedNote?.let {
+                                    viewModel.updateNode(
+                                        it.source.copy(content = content),
+                                    )
+                                }
+                            },
                             onToggleFavorite = { selectedNote?.let { viewModel.togglePermanentPin(it.source) } },
                             onArchive = { selectedNote?.let { viewModel.archiveNode(it.source) } },
                             onToggleFocusMode = { focusMode = true },

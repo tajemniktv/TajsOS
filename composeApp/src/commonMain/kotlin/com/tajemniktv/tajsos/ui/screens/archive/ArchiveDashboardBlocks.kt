@@ -42,9 +42,9 @@ import tajsos.composeapp.generated.resources.type_note
 import tajsos.composeapp.generated.resources.type_project
 import tajsos.composeapp.generated.resources.type_task
 
-object ArchiveDashboardBlockRegistry {
+object ArchiveDashboardBlocks {
     private val renderers: Map<String, ArchiveDashboardBlockRenderer> =
-        mapOf("archive_main" to ::renderArchiveMainBlock)
+        mapOf("archive_main" to ::renderArchiveMainBlock) // NON-NLS
 
     fun resolve(id: String): ArchiveDashboardBlockRenderer? = renderers[id]
 }

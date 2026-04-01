@@ -130,10 +130,11 @@ fun App(
     val isDarkTheme by viewModel.isDarkTheme.collectAsState()
     val accentColorHex by viewModel.accentColorHex.collectAsState()
     val userProfile by viewModel.userProfile.collectAsState()
+    val sidebarMode by viewModel.sidebarMode.collectAsState()
 
     var showCaptureSheetState by remember { mutableStateOf(value = false) }
     var selectedTasksTab by rememberSaveable { mutableStateOf(TasksTab.COMMAND) }
-    val shellState = rememberAppShellState()
+    val shellState = rememberAppShellState(sidebarMode = sidebarMode)
 
     val accentColor =
         remember(accentColorHex) {
@@ -664,7 +665,7 @@ private fun handleOnCapture(
                 rawText = text,
                 areaId = areaId,
                 projectId = projectId,
-                contextScreen = ctx
+                contextScreen = ctx,
             )
         }
 
@@ -687,7 +688,7 @@ private fun handleOnCapture(
                 reminderAt = remAt,
                 contextScreen = ctx,
                 isSticky = sticky,
-                decisionCategory = decisionCat
+                decisionCategory = decisionCat,
             )
         }
     }

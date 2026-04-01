@@ -58,7 +58,7 @@ fun AbortSlider(onAbort: () -> Unit) {
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.labelSmall,
-            color = TajsOSTheme.Muted
+            color = TajsOSTheme.Muted,
         )
         Box(
             modifier =

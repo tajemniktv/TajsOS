@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AttachFile
@@ -94,7 +93,12 @@ fun NotesContextPanel(
             }
             item {
                 ContextSection(title = "Domain", icon = Icons.Default.Category) {
-                    Text(selectedNote.domain.name.lowercase().replaceFirstChar(Char::titlecase), color = TajsOSTheme.Text)
+                    Text(
+                        selectedNote.domain.name
+                            .lowercase()
+                            .replaceFirstChar(Char::titlecase),
+                        color = TajsOSTheme.Text,
+                    )
                 }
             }
             item {
@@ -106,7 +110,11 @@ fun NotesContextPanel(
                             Text(
                                 text = task.title,
                                 color = TajsOSTheme.Text,
-                                modifier = Modifier.fillMaxWidth().clickable { onOpenNode(task.id) }.padding(vertical = 2.dp),
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .clickable { onOpenNode(task.id) }
+                                        .padding(vertical = 2.dp),
                             )
                         }
                     }
@@ -121,7 +129,11 @@ fun NotesContextPanel(
                             Text(
                                 text = note.title,
                                 color = TajsOSTheme.Text,
-                                modifier = Modifier.fillMaxWidth().clickable { onOpenNode(note.id) }.padding(vertical = 2.dp),
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .clickable { onOpenNode(note.id) }
+                                        .padding(vertical = 2.dp),
                             )
                         }
                     }

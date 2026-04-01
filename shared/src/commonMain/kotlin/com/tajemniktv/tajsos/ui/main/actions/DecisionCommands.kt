@@ -38,7 +38,7 @@ class DecisionCommands(
         decisionId: Long,
         personId: Long,
     ) {
-        addRelation(decisionId, personId, "RELATED_PERSON")
+        addRelation(decisionId, personId, "RELATED_PERSON") // NON-NLS
     }
 
     /**
@@ -54,7 +54,7 @@ class DecisionCommands(
         scope.launch {
             val relation =
                 repository.getRelationsForNode(decisionId).first().firstOrNull {
-                    it.relationType == "RELATED_PERSON" &&
+                    it.relationType == "RELATED_PERSON" && // NON-NLS
                         (
                             (it.fromNodeId == decisionId && it.toNodeId == personId) ||
                                 (it.fromNodeId == personId && it.toNodeId == decisionId)
@@ -76,7 +76,7 @@ class DecisionCommands(
         node: NodeEntity,
         revisitAt: Long?,
     ) {
-        if (node.type != "decision") return
+        if (node.type != "decision") return // NON-NLS
         updateNode(node.copy(decisionRevisitAt = revisitAt))
     }
 

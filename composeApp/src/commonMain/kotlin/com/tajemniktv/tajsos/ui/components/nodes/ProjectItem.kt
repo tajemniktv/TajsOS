@@ -56,8 +56,8 @@ fun ProjectItem(
         border =
             androidx.compose.foundation.BorderStroke(
                 1.dp,
-                TajsOSTheme.Muted.copy(alpha = 0.2f)
-            )
+                TajsOSTheme.Muted.copy(alpha = 0.2f),
+            ),
     ) {
         Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
             Row(
@@ -75,7 +75,7 @@ fun ProjectItem(
                     Text(
                         "${(progress * 100).toInt()}%",
                         style = MaterialTheme.typography.labelSmall,
-                        color = TajsOSTheme.Muted
+                        color = TajsOSTheme.Muted,
                     )
                 }
             }
@@ -83,7 +83,7 @@ fun ProjectItem(
                 Text(
                     project.content,
                     style = MaterialTheme.typography.bodySmall,
-                    color = TajsOSTheme.Muted
+                    color = TajsOSTheme.Muted,
                 )
             }
             if (totalItems > 0) {
@@ -92,7 +92,7 @@ fun ProjectItem(
                     progress = { progress },
                     modifier = Modifier.fillMaxWidth().height(2.dp),
                     color = TajsOSTheme.Primary,
-                    trackColor = TajsOSTheme.Muted.copy(alpha = 0.2f)
+                    trackColor = TajsOSTheme.Muted.copy(alpha = 0.2f),
                 )
             }
         }

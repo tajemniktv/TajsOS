@@ -75,7 +75,7 @@ fun TasksScreen(
             verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
         ) {
             plan.primary.forEach { block ->
-                TasksDashboardBlockRegistry.resolve(block.id)?.invoke(context)
+                TasksDashboardBlocks.resolve(block.id)?.invoke(context)
             }
         }
     }

@@ -110,7 +110,7 @@ fun CalendarScreen(
                     .padding(bottom = 80.dp),
         ) {
             plan.primary.forEach { block ->
-                CalendarDashboardBlockRegistry
+                CalendarDashboardBlocks
                     .resolve(
                         block.id,
                     )?.invoke(context)

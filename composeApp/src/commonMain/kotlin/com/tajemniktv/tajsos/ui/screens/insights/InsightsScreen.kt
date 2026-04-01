@@ -111,7 +111,7 @@ fun ProjectEntropyItem(
         border =
             BorderStroke(
                 1.dp,
-                TajsOSTheme.Muted.copy(alpha = 0.1f)
+                TajsOSTheme.Muted.copy(alpha = 0.1f),
             ),
         onClick = onClick,
     ) {
@@ -123,12 +123,12 @@ fun ProjectEntropyItem(
                 Text(
                     project.title.uppercase(),
                     style = MaterialTheme.typography.titleSmall,
-                    color = TajsOSTheme.Text
+                    color = TajsOSTheme.Text,
                 )
                 Text(
                     "Entropy: ${(entropy * 100).toInt()}% (Unstructured/Postponed)",
                     style = MaterialTheme.typography.labelSmall,
-                    color = TajsOSTheme.Muted
+                    color = TajsOSTheme.Muted,
                 )
             }
             LinearProgressIndicator(
@@ -165,8 +165,8 @@ fun ActivityLogItem(log: EventLogEntity) {
         border =
             BorderStroke(
                 1.dp,
-                TajsOSTheme.Muted.copy(alpha = 0.1f)
-            )
+                TajsOSTheme.Muted.copy(alpha = 0.1f),
+            ),
     ) {
         Row(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -210,7 +210,7 @@ fun NeglectedProjectItem(
         border =
             BorderStroke(
                 1.dp,
-                TajsOSTheme.Error.copy(alpha = 0.3f)
+                TajsOSTheme.Error.copy(alpha = 0.3f),
             ),
         onClick = onClick,
     ) {
@@ -224,12 +224,12 @@ fun NeglectedProjectItem(
                 Text(
                     project.title.uppercase(),
                     style = MaterialTheme.typography.titleMedium,
-                    color = TajsOSTheme.Text
+                    color = TajsOSTheme.Text,
                 )
                 Text(
                     stringResource(Res.string.insights_needs_attention),
                     style = MaterialTheme.typography.labelSmall,
-                    color = TajsOSTheme.Error
+                    color = TajsOSTheme.Error,
                 )
             }
         }

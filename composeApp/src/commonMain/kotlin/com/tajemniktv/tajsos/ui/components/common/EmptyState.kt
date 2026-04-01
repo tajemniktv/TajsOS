@@ -80,18 +80,18 @@ fun EmptyState(
             border =
                 androidx.compose.foundation.BorderStroke(
                     1.dp,
-                    TajsOSTheme.Primary.copy(alpha = 0.2f)
-                )
+                    TajsOSTheme.Primary.copy(alpha = 0.2f),
+                ),
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(TajsOSTheme.SpacingLg)
+                modifier = Modifier.padding(TajsOSTheme.SpacingLg),
             ) {
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
                     modifier = Modifier.size(48.dp),
-                    tint = TajsOSTheme.Primary.copy(alpha = alpha)
+                    tint = TajsOSTheme.Primary.copy(alpha = alpha),
                 )
                 Spacer(modifier = Modifier.height(TajsOSTheme.SpacingMd))
                 Text(
@@ -105,7 +105,7 @@ fun EmptyState(
                     Text(
                         text = description,
                         style = MaterialTheme.typography.labelSmall.copy(letterSpacing = 2.sp),
-                        color = TajsOSTheme.Primary.copy(alpha = 0.2f)
+                        color = TajsOSTheme.Primary.copy(alpha = 0.2f),
                     )
                 }
 

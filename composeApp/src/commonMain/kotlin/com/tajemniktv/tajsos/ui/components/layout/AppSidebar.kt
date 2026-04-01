@@ -39,7 +39,6 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -61,11 +60,15 @@ import com.tajemniktv.tajsos.data.ModeEntity
 import com.tajemniktv.tajsos.data.UserProfile
 import com.tajemniktv.tajsos.data.resolveDisplayName
 import com.tajemniktv.tajsos.ui.Screen
+import com.tajemniktv.tajsos.ui.SidebarMode
 import com.tajemniktv.tajsos.ui.screens.tasks.TasksTab
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.common_no_active_mode
+import tajsos.composeapp.generated.resources.sidebar_brand
 
 private val ExpandedSidebarWidth = 304.dp
 private val CollapsedSidebarWidth = 86.dp
@@ -128,7 +131,6 @@ fun AppSidebar(
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             SidebarLogoHeader(showExpandedContent = showExpandedContent)
-            SidebarModeControl(shellState = shellState, showExpandedContent = showExpandedContent)
 
             Column(
                 modifier =
@@ -175,13 +177,13 @@ fun AppSidebar(
                                 if (child is Screen.Sub && child.parent == Screen.Tasks) {
                                     val tab =
                                         TasksTab.fromRouteSegment(
-                                            child.route.substringAfterLast("=")
+                                            child.route.substringAfterLast("="),
                                         )
                                     onNavigateToTasksTab(tab)
                                 } else {
                                     onNavigate(child)
                                 }
-                            }
+                            },
                         )
                     }
                 }
@@ -218,76 +220,10 @@ fun SidebarLogoHeader(showExpandedContent: Boolean) {
             exit = fadeOut() + slideOutHorizontally(targetOffsetX = { -it / 2 }),
         ) {
             Text(
-                text = "TAJSOS",
+                text = stringResource(Res.string.sidebar_brand),
                 style = MaterialTheme.typography.titleMedium,
                 color = TajsOSTheme.Text,
                 fontWeight = FontWeight.Bold,
-            )
-        }
-    }
-}
-
-/**
- * Sidebar mode toggle controls.
- */
-@Composable
-fun SidebarModeControl(
-    shellState: AppShellState,
-    showExpandedContent: Boolean,
-) {
-    Row(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally),
-    ) {
-        SidebarModeButton(
-            label = "EXP",
-            selected = shellState.sidebarMode == SidebarMode.EXPANDED,
-            onClick = { shellState.sidebarMode = SidebarMode.EXPANDED },
-            showExpandedContent = showExpandedContent,
-            tooltip = "Expanded sidebar mode",
-        )
-        SidebarModeButton(
-            label = "COL",
-            selected = shellState.sidebarMode == SidebarMode.COLLAPSED,
-            onClick = { shellState.sidebarMode = SidebarMode.COLLAPSED },
-            showExpandedContent = showExpandedContent,
-            tooltip = "Collapsed sidebar mode",
-        )
-        SidebarModeButton(
-            label = "HOV",
-            selected = shellState.sidebarMode == SidebarMode.HOVER_EXPAND,
-            onClick = { shellState.sidebarMode = SidebarMode.HOVER_EXPAND },
-            showExpandedContent = showExpandedContent,
-            tooltip = "Hover-expand sidebar mode",
-        )
-    }
-}
-
-@Composable
-private fun SidebarModeButton(
-    label: String,
-    selected: Boolean,
-    onClick: () -> Unit,
-    showExpandedContent: Boolean,
-    tooltip: String,
-) {
-    SidebarTooltip(enabled = !showExpandedContent, text = tooltip) {
-        OutlinedButton(
-            onClick = onClick,
-            modifier =
-                Modifier
-                    .width(if (showExpandedContent) 80.dp else 40.dp)
-                    .height(34.dp),
-            shape = RoundedCornerShape(8.dp),
-        ) {
-            Text(
-                text = if (showExpandedContent) label else label.first().toString(),
-                style = MaterialTheme.typography.labelSmall,
-                color = if (selected) TajsOSTheme.Primary else TajsOSTheme.Muted,
-                maxLines = 1
             )
         }
     }
@@ -377,7 +313,7 @@ fun ExpandableNavSection(
                     if (child is Screen.Sub && child.parent == Screen.Tasks) {
                         val tab =
                             TasksTab.fromRouteSegment(
-                                child.route.substringAfterLast("=")
+                                child.route.substringAfterLast("="),
                             )
                         // If current screen is NOT tasks or child of tasks, we don't highlight anything.
                         // This prevents "Command" (the default) from being highlighted when on Dashboard.
@@ -413,7 +349,7 @@ fun ExpandableNavSection(
                                 if (child is Screen.Sub && child.parent == Screen.Tasks) {
                                     val tab =
                                         TasksTab.fromRouteSegment(
-                                            child.route.substringAfterLast("=")
+                                            child.route.substringAfterLast("="),
                                         )
                                     if (tab == TasksTab.ALL) {
                                         Icons.AutoMirrored.Filled.List
@@ -438,7 +374,7 @@ fun ExpandableNavSection(
                             color = if (isActiveChild) TajsOSTheme.Text else TajsOSTheme.Muted,
                             fontWeight = if (isActiveChild) FontWeight.SemiBold else FontWeight.Normal,
                             maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
+                            overflow = TextOverflow.Ellipsis,
                         )
                     }
                 }
@@ -534,7 +470,7 @@ fun UserProfileSidebarSection(
     onClick: () -> Unit,
 ) {
     val displayName = userProfile.resolveDisplayName()
-    val modeName = currentMode?.name ?: "No active mode"
+    val modeName = currentMode?.name ?: stringResource(Res.string.common_no_active_mode)
     val initials = profileInitials(userProfile)
 
     SidebarTooltip(enabled = !expanded, text = displayName) {

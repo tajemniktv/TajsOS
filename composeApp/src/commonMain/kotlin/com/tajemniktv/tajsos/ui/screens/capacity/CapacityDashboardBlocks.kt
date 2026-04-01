@@ -25,8 +25,12 @@ import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.main.state.CapacitySnapshot
 import com.tajemniktv.tajsos.ui.screens.GroupedOpenLoopSection
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.capacity_desc
+import tajsos.composeapp.generated.resources.capacity_title
 
-object CapacityDashboardBlockRegistry {
+object CapacityDashboardBlocks {
     private val renderers: Map<String, CapacityDashboardBlockRenderer> =
         mapOf("capacity_main" to ::renderCapacityMainBlock)
 
@@ -45,17 +49,17 @@ internal fun CapacityMainBlock(viewModel: MainViewModel) {
 
     Column(
         modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
     ) {
         Text(
-            text = "CAPACITY",
+            text = stringResource(Res.string.capacity_title),
             style = MaterialTheme.typography.displaySmall,
-            color = TajsOSTheme.Text
+            color = TajsOSTheme.Text,
         )
         Text(
-            text = "Measure current load, fragmentation, and whether the system is asking for more than you can carry.",
+            text = stringResource(Res.string.capacity_desc),
             style = MaterialTheme.typography.bodySmall,
-            color = TajsOSTheme.Muted
+            color = TajsOSTheme.Muted,
         )
 
         CapacityLayer(snapshot = capacitySnapshot, allAreas = allAreas)
@@ -71,7 +75,7 @@ internal fun CapacityLayer(
         modifier = Modifier.fillMaxWidth(),
         color = TajsOSTheme.Surface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.Border)
+        border = BorderStroke(1.dp, TajsOSTheme.Border),
     ) {
         Column(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -86,7 +90,7 @@ internal fun CapacityLayer(
             Text(
                 "Load ${snapshot.loadScore} • Fragmentation ${snapshot.fragmentationScore}",
                 style = MaterialTheme.typography.bodySmall,
-                color = TajsOSTheme.Muted
+                color = TajsOSTheme.Muted,
             )
             listOfNotNull(
                 snapshot.tooManyActiveProjectsWarning,

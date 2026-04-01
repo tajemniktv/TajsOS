@@ -160,9 +160,12 @@ class MainActivity : FragmentActivity() {
                                 tint = MaterialTheme.colorScheme.primary,
                             )
                             Spacer(modifier = Modifier.height(16.dp))
-                            Text("App Locked", style = MaterialTheme.typography.headlineMedium)
+                            Text(
+                                getString(R.string.auth_app_locked),
+                                style = MaterialTheme.typography.headlineMedium,
+                            )
                             Button(onClick = { showBiometricPrompt(viewModel) }) {
-                                Text("Unlock")
+                                Text(getString(R.string.auth_unlock))
                             }
                         }
                     }
@@ -218,7 +221,11 @@ class MainActivity : FragmentActivity() {
                     intent.getParcelableExtra(Intent.EXTRA_STREAM)
                 }
             imageUri?.let { uri ->
-                val nodeId = viewModel.addNodeForResult(title = "Shared Image", type = "resource")
+                val nodeId =
+                    viewModel.addNodeForResult(
+                        title = getString(R.string.intent_shared_image),
+                        type = "resource",
+                    )
                 viewModel.addAttachment(nodeId, "IMAGE", uri.toString())
             }
         }
@@ -240,7 +247,11 @@ class MainActivity : FragmentActivity() {
                     intent.getParcelableArrayListExtra<Uri>(Intent.EXTRA_STREAM)
                 }
             imageUris?.let { uris ->
-                val nodeId = viewModel.addNodeForResult(title = "Shared Images", type = "resource")
+                val nodeId =
+                    viewModel.addNodeForResult(
+                        title = getString(R.string.intent_shared_images),
+                        type = "resource",
+                    )
                 uris.forEach { uri ->
                     viewModel.addAttachment(nodeId, "IMAGE", uri.toString())
                 }
@@ -269,7 +280,7 @@ class MainActivity : FragmentActivity() {
                     RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                     RecognizerIntent.LANGUAGE_MODEL_FREE_FORM,
                 )
-                putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak now...")
+                putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.voice_speak_now))
             }
         try {
             speechRecognizerLauncher.launch(intent)
@@ -306,7 +317,7 @@ class MainActivity : FragmentActivity() {
         val promptInfo =
             BiometricPrompt.PromptInfo
                 .Builder()
-                .setTitle("Biometric login")
+                .setTitle(getString(R.string.auth_biometric_title))
                 .setAllowedAuthenticators(
                     BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.DEVICE_CREDENTIAL,
                 ).build()

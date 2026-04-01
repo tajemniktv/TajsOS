@@ -71,6 +71,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.dash_placeholder_capture_shortcut
 import tajsos.composeapp.generated.resources.screen_focus
 import tajsos.composeapp.generated.resources.screen_inbox
 import tajsos.composeapp.generated.resources.screen_project
@@ -342,7 +343,13 @@ private fun RenderDashboardBlock(
                 value = "",
                 onValueChange = {},
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("CMD + K to capture anything...") },
+                placeholder = {
+                    Text(
+                        stringResource(Res.string.dash_placeholder_capture_shortcut),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = TajsOSTheme.Muted,
+                    )
+                },
                 leadingIcon = { Icon(Icons.Default.Terminal, contentDescription = null) },
                 shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
             )

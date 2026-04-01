@@ -103,7 +103,7 @@ fun SearchScreen(
                 verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
             ) {
                 plan.primary.forEach { block ->
-                    SearchDashboardBlockRegistry.resolve(block.id)?.invoke(context)
+                    SearchDashboardBlocks.resolve(block.id)?.invoke(context)
                 }
             }
 
@@ -111,7 +111,7 @@ fun SearchScreen(
                 Column(modifier = Modifier.padding(top = 64.dp)) {
                     // Offset for search field
                     plan.secondary.forEach { block ->
-                        SearchDashboardBlockRegistry.resolve(block.id)?.invoke(context)
+                        SearchDashboardBlocks.resolve(block.id)?.invoke(context)
                     }
                 }
             }

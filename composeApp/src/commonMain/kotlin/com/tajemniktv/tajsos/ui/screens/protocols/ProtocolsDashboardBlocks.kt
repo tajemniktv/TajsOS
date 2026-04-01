@@ -17,8 +17,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.protocols_desc
+import tajsos.composeapp.generated.resources.protocols_title
 
-object ProtocolsDashboardBlockRegistry {
+object ProtocolsDashboardBlocks {
     private val renderers: Map<String, ProtocolsDashboardBlockRenderer> =
         mapOf("protocols_main" to ::renderProtocolsMainBlock)
 
@@ -44,17 +48,17 @@ internal fun ProtocolsMainBlock(
 
     Column(
         modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
     ) {
         Text(
-            text = "PROTOCOLS",
+            text = stringResource(Res.string.protocols_title),
             style = MaterialTheme.typography.displaySmall,
-            color = TajsOSTheme.Text
+            color = TajsOSTheme.Text,
         )
         Text(
-            text = "Browse reusable routines in Library and run them step-by-step in Active mode.",
+            text = stringResource(Res.string.protocols_desc),
             style = MaterialTheme.typography.bodySmall,
-            color = TajsOSTheme.Muted
+            color = TajsOSTheme.Muted,
         )
 
         ProtocolsLayer(

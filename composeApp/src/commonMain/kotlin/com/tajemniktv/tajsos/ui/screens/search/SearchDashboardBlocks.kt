@@ -85,7 +85,7 @@ import tajsos.composeapp.generated.resources.type_task
 import kotlin.math.max
 import kotlin.math.min
 
-object SearchDashboardBlockRegistry {
+object SearchDashboardBlocks {
     private val renderers: Map<String, SearchDashboardBlockRenderer> =
         mapOf(
             "search_input" to ::renderSearchInput,

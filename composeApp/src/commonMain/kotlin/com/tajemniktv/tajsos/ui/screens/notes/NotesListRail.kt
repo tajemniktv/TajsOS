@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -205,7 +204,11 @@ fun NotesListItem(
             TajsOSTheme.SurfaceHighest.copy(alpha = 0.55f)
         }
     Surface(
-        modifier = modifier.fillMaxWidth().clip(RoundedCornerShape(TajsOSTheme.RadiusMd)).clickable(onClick = onClick),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(TajsOSTheme.RadiusMd))
+                .clickable(onClick = onClick),
         color = surfaceColor,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
     ) {
@@ -248,7 +251,9 @@ fun NotesListItem(
                 overflow = TextOverflow.Ellipsis,
             )
             Text(
-                text = "${note.domain.name.lowercase().replaceFirstChar(Char::titlecase)} • ${relativeDateLabel(note.updatedAt)}",
+                text = "${
+                    note.domain.name.lowercase().replaceFirstChar(Char::titlecase)
+                } • ${relativeDateLabel(note.updatedAt)}",
                 style = MaterialTheme.typography.labelSmall,
                 color = TajsOSTheme.Muted,
                 maxLines = 1,
@@ -274,8 +279,7 @@ private fun NotesTokenButton(
                     } else {
                         TajsOSTheme.SurfaceHighest.copy(alpha = 0.5f)
                     },
-                )
-                .clickable(onClick = onClick)
+                ).clickable(onClick = onClick)
                 .padding(horizontal = 10.dp, vertical = 6.dp),
     ) {
         Text(
@@ -287,16 +291,32 @@ private fun NotesTokenButton(
 }
 
 private fun relativeDateLabel(epochMillis: Long): String {
-    val now = kotlin.time.Clock.System.now().toEpochMilliseconds()
+    val now =
+        kotlin.time.Clock.System
+            .now()
+            .toEpochMilliseconds()
     val day = 24 * 60 * 60 * 1000L
     val diff = (now - epochMillis).coerceAtLeast(0L)
-    return when {
-        diff < day -> "Today"
-        diff < day * 2 -> "Yesterday"
-        diff < day * 7 -> "${diff / day}d ago"
-        else -> {
-            val dt = Instant.fromEpochMilliseconds(epochMillis).toLocalDateTime(TimeZone.currentSystemDefault())
-            "${dt.date}"
+    return when
+        {
+            diff < day -> {
+                "Today"
+            }
+
+            diff < day * 2 -> {
+                "Yesterday"
+            }
+
+            diff < day * 7 -> {
+                "${diff / day}d ago"
+            }
+
+            else -> {
+                val dt =
+                    Instant
+                        .fromEpochMilliseconds(epochMillis)
+                        .toLocalDateTime(TimeZone.currentSystemDefault())
+                "${dt.date}"
         }
     }
 }

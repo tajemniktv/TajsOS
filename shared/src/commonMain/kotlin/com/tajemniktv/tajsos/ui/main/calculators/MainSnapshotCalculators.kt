@@ -56,7 +56,7 @@ fun calculateInsights(
     val recentNodes = nodes.filter { it.node.createdAt >= sevenDaysAgo }
     val recentCompletions =
         nodes.filter {
-            it.node.status == "done" && (it.node.completedAt ?: 0) >= sevenDaysAgo
+            it.node.status == "done" && (it.node.completedAt ?: 0) >= sevenDaysAgo // NON-NLS
         }
 
     val recentSessions = sessions.filter { it.startedAt >= sevenDaysAgo && it.endedAt != null }
@@ -110,10 +110,14 @@ fun calculateInsights(
     val neglectedProjects =
         projects.filter { project ->
             val projectNodes = nodesByProjectId[project.id] ?: emptyList()
-            val hasActiveItems = projectNodes.any { it.node.status == "active" }
+            val hasActiveItems = projectNodes.any { it.node.status == "active" } // NON-NLS
             val hasRecentCompletions =
                 projectNodes.any {
-                    it.node.status == "done" && (it.node.completedAt ?: 0) >= sevenDaysAgo
+                    it.node.status == "done" &&
+                        (
+                            it.node.completedAt
+                                ?: 0
+                        ) >= sevenDaysAgo // NON-NLS
                 }
             hasActiveItems && !hasRecentCompletions
         }
@@ -132,7 +136,7 @@ fun calculateInsights(
     val inboxGrowth = recentNodes.count { it.node.inboxState }
     val archivedCount =
         nodes.count {
-            it.node.status == "archived" && (it.node.archivedAt ?: 0) >= sevenDaysAgo
+            it.node.status == "archived" && (it.node.archivedAt ?: 0) >= sevenDaysAgo // NON-NLS
         }
     val archiveRate =
         if (recentNodes.isNotEmpty()) archivedCount.toDouble() / recentNodes.size else 0.0
@@ -144,7 +148,7 @@ fun calculateInsights(
         if (recentTaskCompletions > 0) activeTasks.toDouble() / recentTaskCompletions else activeTasks.toDouble()
 
     val overdueCount =
-        nodes.count { it.node.dueAt != null && it.node.dueAt < now && it.node.status == "active" }
+        nodes.count { it.node.dueAt != null && it.node.dueAt < now && it.node.status == "active" } // NON-NLS
     val chaosScore =
         (overdueCount * 10) + (inboxGrowth * 5) + (if (backlogPressure > 5) 50 else 0)
 
@@ -300,8 +304,11 @@ fun calculateInsights(
     // Insight Cards Logic (Roadmap Section 7)
     val mostPostponedAreaId =
         nodes
-            .mapNotNull { item -> item.node.areaId?.takeIf { item.node.postponeCount > 0 }?.let { it to item } }
-            .groupBy({ it.first }, { it.second })
+            .mapNotNull { item ->
+                item.node.areaId
+                    ?.takeIf { item.node.postponeCount > 0 }
+                    ?.let { it to item }
+            }.groupBy({ it.first }, { it.second })
             .maxByOrNull { entry -> entry.value.sumOf { it.node.postponeCount } }
             ?.key
 
@@ -502,12 +509,14 @@ fun calculateAreaHealthSnapshot(
                     (
                         (
                             (
-                                now - (
-                                    lastActivityAt
-                                        ?: now
-                                )
+                                    now -
+                                    (
+                                        lastActivityAt
+                                            ?: now
+                                    )
                             ).coerceAtLeast(0L)
-                        ) / (24 * 60 * 60 * 1000L)
+                        ) /
+                            (24 * 60 * 60 * 1000L)
                     ).toInt()
 
                 val stressLoad =
@@ -671,7 +680,10 @@ fun calculateOpenLoopsSnapshot(
             .sortedByDescending { it.node.node.completedAt ?: 0L }
 
     val byArea = active.groupBy { it.node.node.areaId }
-    val byPerson = active.mapNotNull { item -> item.relatedPersonId?.let { it to item } }.groupBy({ it.first }, { it.second })
+    val byPerson =
+        active
+            .mapNotNull { item -> item.relatedPersonId?.let { it to item } }
+            .groupBy({ it.first }, { it.second })
     val byUrgency =
         linkedMapOf(
             "critical" to active.filter { it.urgency == "critical" },
@@ -801,7 +813,9 @@ fun calculateMaintenanceSnapshot(nodes: List<NodeWithPin>): com.tajemniktv.tajso
                         "high" -> 3
                         "medium" -> 2
                         else -> 1
-                    } * 100 + it.overdueDays
+                } *
+                        100 +
+                        it.overdueDays
             }
 
     val recurring = activeItems.filter { it.isRecurring }
@@ -821,7 +835,8 @@ fun calculateMaintenanceSnapshot(nodes: List<NodeWithPin>): com.tajemniktv.tajso
                 (
                     it.node.node.maintenanceType
                         ?: "manual"
-                ) in criticalTypes || it.urgency == "critical"
+                        ) in criticalTypes ||
+                        it.urgency == "critical"
             }.take(6)
 
     val byType = activeItems.groupBy { it.node.node.maintenanceType ?: "manual" }
@@ -886,7 +901,9 @@ fun maintenanceUrgency(
                     "bill",
                     "prescription",
                     "renewal",
-                ) && due != null && due < now + (3 * 24 * 60 * 60 * 1000L) -> "high"
+                ) &&
+                    due != null &&
+                    due < now + (3 * 24 * 60 * 60 * 1000L) -> "high"
 
             due != null && due < now + (3 * 24 * 60 * 60 * 1000L) -> "high"
 
@@ -1225,20 +1242,22 @@ fun calculatePhysicalLogisticsSnapshot(
         return activeTasks.filter { task ->
             task.node.id in relationTaskIds ||
                 (
-                    task.node.locationContext == "on_campus" && (
-                        byId[placeId]?.node?.title?.contains(
-                            "campus",
-                            ignoreCase = true,
-                        ) == true
-                    )
+                        task.node.locationContext == "on_campus" &&
+                                (
+                            byId[placeId]?.node?.title?.contains(
+                                "campus",
+                                ignoreCase = true,
+                            ) == true
+                        )
                 ) ||
                 (
-                    task.node.locationContext == "at_home" && (
-                        byId[placeId]?.node?.title?.contains(
-                            "home",
-                            ignoreCase = true,
-                        ) == true
-                    )
+                    task.node.locationContext == "at_home" &&
+                        (
+                            byId[placeId]?.node?.title?.contains(
+                                            "home",
+                                ignoreCase = true,
+                            ) == true
+                        )
                 )
         }
     }
@@ -1278,8 +1297,10 @@ fun calculatePhysicalLogisticsSnapshot(
             .filter { task ->
                 task.node.locationContext != null ||
                     relations.any { relation ->
-                        relation.fromNodeId == task.node.id && byId[relation.toNodeId]?.node?.isPlaceAnchor() == true ||
-                            relation.toNodeId == task.node.id && byId[relation.fromNodeId]?.node?.isPlaceAnchor() == true
+                        relation.fromNodeId == task.node.id &&
+                                byId[relation.toNodeId]?.node?.isPlaceAnchor() == true ||
+                                relation.toNodeId == task.node.id &&
+                            byId[relation.fromNodeId]?.node?.isPlaceAnchor() == true
                     }
             }.sortedBy { it.node.dueAt ?: Long.MAX_VALUE }
 
@@ -1355,7 +1376,8 @@ fun calculatePhysicalLogisticsSnapshot(
                     hasLogisticsTag(
                         it,
                         "leave_home_checklist",
-                    ) || it.node.title.contains("leave home", ignoreCase = true)
+                    ) ||
+                            it.node.title.contains("leave home", ignoreCase = true)
                 )
         }
     val dontForgetSets =
@@ -1650,8 +1672,10 @@ fun calculateCapacitySnapshot(
         ).coerceIn(0, 100)
     val fragmentationScore =
         (
-            activeTasks.groupBy { it.node.projectId }.size * 7 +
-                activeTasks.groupBy { it.node.areaId }.size * 4
+                activeTasks.groupBy { it.node.projectId }.size *
+                        7 +
+                        activeTasks.groupBy { it.node.areaId }.size *
+                        4
         ).coerceIn(0, 100)
 
     val tooManyActiveProjectsWarning =
@@ -1699,8 +1723,10 @@ fun calculateCapacitySnapshot(
             }.toMutableMap<Long?, Int>()
     val unassignedLoad =
         (
-            activeTasks.count { it.node.areaId == null } * 2 +
-                openLoops.active.count { it.node.node.areaId == null } * 3
+                activeTasks.count { it.node.areaId == null } *
+                        2 +
+                        openLoops.active.count { it.node.node.areaId == null } *
+                        3
         ).coerceIn(0, 100)
     loadByArea[null] = unassignedLoad
 
@@ -1759,13 +1785,16 @@ fun calculateCapacitySnapshot(
                         .maxByOrNull { it.createdAt }
                 val fallbackLoad =
                     (
-                        nodes.count { it.node.status == "active" && it.node.createdAt <= bucketEnd } * 2 +
+                            nodes.count { it.node.status == "active" && it.node.createdAt <= bucketEnd } *
+                                    2 +
                             nodes.count {
-                                it.node.status == "active" && (
-                                    it.node.dueAt
-                                        ?: Long.MAX_VALUE
-                                ) < bucketEnd
-                            } * 3
+                                it.node.status == "active" &&
+                                    (
+                                        it.node.dueAt
+                                            ?: Long.MAX_VALUE
+                                                ) < bucketEnd
+                            } *
+                            3
                     ).coerceIn(0, 100)
                 val fallbackFrag =
                     nodes
@@ -1848,7 +1877,9 @@ fun calculateLifeOSSignatureSnapshot(
     val modeOfLife =
         when
             {
-                anxiety >= 4 || energy <= 2 || currentMode?.key in
+            anxiety >= 4 ||
+                    energy <= 2 ||
+                    currentMode?.key in
                     setOf(
                         "RECOVERY",
                         "LOW_BATTERY",
@@ -1867,7 +1898,9 @@ fun calculateLifeOSSignatureSnapshot(
                         "FOCUS",
                         "DEEP_WORK",
                         "STUDY",
-                    ) && capacity.loadScore < 75 -> {
+                    ) &&
+                        capacity.loadScore < 75 ->
+                {
                     "execution"
                 }
 
@@ -2406,23 +2439,25 @@ fun calculateStudentBoardState(
     val assignmentTracker =
         activeNodes
             .filter { item ->
-                item.node.isTaskItem() && (
-                    item.student()?.assignmentType != null ||
-                        item.hasTag("assignment")
-                )
+                item.node.isTaskItem() &&
+                        (
+                                item.student()?.assignmentType != null ||
+                                        item.hasTag("assignment")
+                                )
             }.sortedBy { it.node.dueAt ?: Long.MAX_VALUE }
 
     val examNodes =
         activeNodes
             .filter { item ->
-                item.node.dueAt != null && (
-                    item.hasTag("exam") ||
-                        item.student()?.assignmentType.equals(
-                            "exam",
-                            ignoreCase = true,
-                        ) ||
-                        item.node.title.contains("exam", ignoreCase = true)
-                )
+                item.node.dueAt != null &&
+                    (
+                        item.hasTag("exam") ||
+                            item.student()?.assignmentType.equals(
+                                            "exam",
+                                            ignoreCase = true,
+                            ) ||
+                            item.node.title.contains("exam", ignoreCase = true)
+                    )
             }.sortedBy { it.node.dueAt ?: Long.MAX_VALUE }
 
     val examCountdownNode = examNodes.firstOrNull()

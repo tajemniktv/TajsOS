@@ -137,7 +137,7 @@ fun CaptureSheet(
             text = initialText
         }
     }
-    var selectedType by remember { mutableStateOf("inbox") }
+    var selectedType by remember { mutableStateOf("inbox") } // NON-NLS
     var selectedProjectId by remember { mutableStateOf<Long?>(defaultProjectId) }
     var selectedAreaId by remember { mutableStateOf<Long?>(defaultAreaId) }
 
@@ -158,8 +158,8 @@ fun CaptureSheet(
         shape =
             RoundedCornerShape(
                 topStart = TajsOSTheme.RadiusLg,
-                topEnd = TajsOSTheme.RadiusLg
-            )
+                topEnd = TajsOSTheme.RadiusLg,
+            ),
     ) {
         Column(
             modifier =
@@ -169,7 +169,7 @@ fun CaptureSheet(
                     .navigationBarsPadding()
                     .imePadding()
                     .verticalScroll(androidx.compose.foundation.rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -185,14 +185,14 @@ fun CaptureSheet(
                         )
                     },
                     style = MaterialTheme.typography.labelSmall,
-                    color = if (brainDumpMode) TajsOSTheme.Primary else TajsOSTheme.Muted
+                    color = if (brainDumpMode) TajsOSTheme.Primary else TajsOSTheme.Muted,
                 )
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         stringResource(Res.string.capture_multi),
                         style = MaterialTheme.typography.labelSmall,
-                        color = TajsOSTheme.Muted
+                        color = TajsOSTheme.Muted,
                     )
                     Switch(
                         checked = multiCaptureMode || brainDumpMode,
@@ -223,9 +223,10 @@ fun CaptureSheet(
                         Modifier
                             .weight(1f)
                             .padding(vertical = TajsOSTheme.SpacingMd),
-                    textStyle = MaterialTheme.typography.displayMedium.copy(
-                        color = TajsOSTheme.Text
-                    ),
+                    textStyle =
+                        MaterialTheme.typography.displayMedium.copy(
+                            color = TajsOSTheme.Text,
+                        ),
                     cursorBrush = SolidColor(TajsOSTheme.Primary),
                     decorationBox = { innerTextField ->
                         if (text.isEmpty()) {
@@ -308,23 +309,35 @@ fun CaptureSheet(
                 ) {
                     items(
                         listOf(
-                            "inbox",
-                            "task",
-                            "note",
-                            "record",
-                            "project",
-                            "area",
+                            "inbox", // NON-NLS
+                            "task", // NON-NLS
+                            "note", // NON-NLS
+                            "record", // NON-NLS
+                            "project", // NON-NLS
+                            "area", // NON-NLS
                         ),
                     ) { type ->
                         val typeLabel =
                             when (type)
                             {
                                 "inbox" -> stringResource(Res.string.capture_label_capture)
+
+                                // NON-NLS
                                 "task" -> stringResource(Res.string.type_task)
+
+                                // NON-NLS
                                 "note" -> stringResource(Res.string.type_note)
+
+                                // NON-NLS
                                 "record" -> stringResource(Res.string.type_record)
+
+                                // NON-NLS
                                 "project" -> stringResource(Res.string.type_project)
+
+                                // NON-NLS
                                 "area" -> stringResource(Res.string.type_area)
+
+                                // NON-NLS
                                 else -> type
                             }
                         FilterChip(
@@ -364,7 +377,7 @@ fun CaptureSheet(
                     Text(
                         stringResource(Res.string.screen_area).uppercase(),
                         style = MaterialTheme.typography.labelSmall,
-                        color = TajsOSTheme.Primary
+                        color = TajsOSTheme.Primary,
                     )
                     LazyRow(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                         items(areas) { area ->
@@ -384,7 +397,7 @@ fun CaptureSheet(
                     Text(
                         stringResource(Res.string.screen_project).uppercase(),
                         style = MaterialTheme.typography.labelSmall,
-                        color = TajsOSTheme.Primary
+                        color = TajsOSTheme.Primary,
                     )
                     LazyRow(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                         items(projects) { project ->
@@ -412,8 +425,10 @@ fun CaptureSheet(
                             Checkbox(
                                 checked = isRecurring,
                                 onCheckedChange = { isRecurring = it },
-                                colors = CheckboxDefaults.colors(
-                                    checkedColor = TajsOSTheme.Primary),
+                                colors =
+                                    CheckboxDefaults.colors(
+                                        checkedColor = TajsOSTheme.Primary,
+                                    ),
                             )
                             Icon(
                                 Icons.Default.Refresh,
@@ -470,8 +485,14 @@ fun CaptureSheet(
                                 Icon(
                                     Icons.Default.Notifications,
                                     contentDescription = null,
-                                    tint = if (reminderTime !=
-                                        null) TajsOSTheme.Primary else TajsOSTheme.Muted,
+                                    tint =
+                                        if (reminderTime !=
+                                            null
+                                        ) {
+                                            TajsOSTheme.Primary
+                                        } else {
+                                            TajsOSTheme.Muted
+                                        },
                                 )
                             }
                             Text(
@@ -491,12 +512,19 @@ fun CaptureSheet(
                     if (isRecurring) {
                         LazyRow(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                             items(listOf("DAILY", "WEEKLY", "MONTHLY")) { interval ->
+                                // NON-NLS
                                 val intervalLabel =
                                     when (interval)
                                     {
                                         "DAILY" -> stringResource(Res.string.capture_interval_daily)
+
+                                        // NON-NLS
                                         "WEEKLY" -> stringResource(Res.string.capture_interval_weekly)
+
+                                        // NON-NLS
                                         "MONTHLY" -> stringResource(Res.string.capture_interval_monthly)
+
+                                        // NON-NLS
                                         else -> interval
                                     }
                                 FilterChip(
@@ -547,7 +575,7 @@ fun CaptureSheet(
                 Text(
                     stringResource(Res.string.capture_assign_to_area),
                     style = MaterialTheme.typography.labelSmall,
-                    color = TajsOSTheme.Primary
+                    color = TajsOSTheme.Primary,
                 )
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                     items(areas) { area ->

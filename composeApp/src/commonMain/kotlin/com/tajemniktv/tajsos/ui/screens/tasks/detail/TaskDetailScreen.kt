@@ -354,7 +354,7 @@ fun TaskDetailScreen(
         ) {
             if (surface == TaskDetailSurface.DESKTOP) {
                 // Header is first in primary, but we want it full width above the split
-                TaskDetailBlockRegistry.resolve("task_header")?.invoke(context)
+                TaskDetailBlocks.resolve("task_header")?.invoke(context)
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -366,7 +366,7 @@ fun TaskDetailScreen(
                         verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
                     ) {
                         plan.primary.filterNot { it.id == "task_header" }.forEach { block ->
-                            TaskDetailBlockRegistry.resolve(block.id)?.invoke(context)
+                            TaskDetailBlocks.resolve(block.id)?.invoke(context)
                         }
                     }
 
@@ -375,13 +375,13 @@ fun TaskDetailScreen(
                         verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
                     ) {
                         plan.secondary.forEach { block ->
-                            TaskDetailBlockRegistry.resolve(block.id)?.invoke(context)
+                            TaskDetailBlocks.resolve(block.id)?.invoke(context)
                         }
                     }
                 }
             } else {
                 plan.primary.forEach { block ->
-                    TaskDetailBlockRegistry.resolve(block.id)?.invoke(context)
+                    TaskDetailBlocks.resolve(block.id)?.invoke(context)
                 }
             }
         }
@@ -415,8 +415,8 @@ private fun parseInlineChecklistLines(content: String): List<InlineChecklistLine
     content.lines().mapNotNull { line ->
         val value = line.trim()
         when
-        {
-            value.startsWith("- [x] ", ignoreCase = true) -> {
+            {
+                value.startsWith("- [x] ", ignoreCase = true) -> {
                     InlineChecklistLine(
                         title = value.removePrefix("- [x] ").trim(),
                         checked = true,

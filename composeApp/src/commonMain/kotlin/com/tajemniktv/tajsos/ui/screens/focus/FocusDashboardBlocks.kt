@@ -147,9 +147,9 @@ internal fun FocusMainBlock(viewModel: MainViewModel) {
                     (
                         it.estimatedMinutes
                             ?: Int.MAX_VALUE
-                            ) <= 15 ||
-                            it.energyLevel == 1 ||
-                            it.friction == "easy"
+                    ) <= 15 ||
+                        it.energyLevel == 1 ||
+                        it.friction == "easy"
                 }.take(4)
         }
     var seconds by remember { mutableIntStateOf(0) }
@@ -164,7 +164,7 @@ internal fun FocusMainBlock(viewModel: MainViewModel) {
                                 .toEpochMilliseconds() -
                                     (
                                     activeSession?.startedAt
-                                                ?: 0L
+                                        ?: 0L
                                 )
                         ) /
                             1000L

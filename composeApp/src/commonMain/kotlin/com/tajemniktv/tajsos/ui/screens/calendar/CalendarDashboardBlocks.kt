@@ -49,7 +49,7 @@ import tajsos.composeapp.generated.resources.cal_agenda_title
 import kotlin.time.Clock
 import kotlin.time.Instant
 
-object CalendarDashboardBlockRegistry {
+object CalendarDashboardBlocks {
     private val renderers: Map<String, CalendarDashboardBlockRenderer> =
         mapOf("calendar_main" to ::renderCalendarMainBlock)
 

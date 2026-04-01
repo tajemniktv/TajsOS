@@ -97,7 +97,9 @@ fun NotesEditorPane(
             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                 Column(modifier = Modifier.fillMaxWidth().widthIn(max = 880.dp)) {
                     Text(
-                        text = "NOTES > ${note.domain.name.lowercase().replaceFirstChar(Char::titlecase)}",
+                        text = "NOTES > ${
+                            note.domain.name.lowercase().replaceFirstChar(Char::titlecase)
+                        }",
                         style = MaterialTheme.typography.labelSmall,
                         color = TajsOSTheme.Muted,
                     )
@@ -130,12 +132,13 @@ fun NotesEditorPane(
                     BasicTextField(
                         value = note.content,
                         onValueChange = onContentChange,
-                        textStyle = MaterialTheme.typography.bodyLarge.merge(
-                            TextStyle(
-                                color = TajsOSTheme.Text,
-                                lineHeight = MaterialTheme.typography.bodyLarge.lineHeight * 1.35f,
+                        textStyle =
+                            MaterialTheme.typography.bodyLarge.merge(
+                                TextStyle(
+                                    color = TajsOSTheme.Text,
+                                    lineHeight = MaterialTheme.typography.bodyLarge.lineHeight * 1.35f,
+                                ),
                             ),
-                        ),
                         modifier =
                             Modifier
                                 .fillMaxWidth()
@@ -143,8 +146,7 @@ fun NotesEditorPane(
                                 .background(
                                     color = TajsOSTheme.SurfaceHigh.copy(alpha = 0.5f),
                                     shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                                )
-                                .padding(18.dp),
+                                ).padding(18.dp),
                     )
                 }
             }

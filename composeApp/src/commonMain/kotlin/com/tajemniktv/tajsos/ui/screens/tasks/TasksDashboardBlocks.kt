@@ -21,7 +21,7 @@ import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.tasks_title
 import tajsos.composeapp.generated.resources.tasks_workspace_subtitle
 
-object TasksDashboardBlockRegistry {
+object TasksDashboardBlocks {
     private val renderers: Map<String, TasksDashboardBlockRenderer> =
         mapOf(
             "tasks_header" to ::renderTasksHeader,

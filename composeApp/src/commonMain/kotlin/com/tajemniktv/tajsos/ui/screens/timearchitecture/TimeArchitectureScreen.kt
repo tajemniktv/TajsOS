@@ -52,7 +52,7 @@ fun TimeArchitectureScreen(
     ) {
         plan.primary.forEach { block ->
             item(key = block.id) {
-                TimeArchitectureDashboardBlockRegistry.resolve(block.id)?.invoke(context)
+                TimeArchitectureDashboardBlocks.resolve(block.id)?.invoke(context)
             }
         }
     }

@@ -220,7 +220,7 @@ class MainViewModel(
     val activeNodes: StateFlow<List<NodeWithPin>> =
         allNodes
             .map { list ->
-                list.filter { it.node.status != "archived" }
+                list.filter { it.node.status != "archived" } // NON-NLS
             }.flowOn(Dispatchers.Default)
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
@@ -388,7 +388,7 @@ class MainViewModel(
 
     val currentMode: StateFlow<ModeEntity?> =
         combine(allModes, currentModeId) { modes, id ->
-            modes.find { it.id == id } ?: modes.firstOrNull { it.key == "COMMAND" }
+            modes.find { it.id == id } ?: modes.firstOrNull { it.key == "COMMAND" } // NON-NLS
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
     init {
@@ -407,7 +407,7 @@ class MainViewModel(
             repository.insertModeUsageLog(
                 ModeUsageLogEntity(
                     modeId = modeId,
-                    activationSource = "manual",
+                    activationSource = "manual", // NON-NLS
                 ),
             )
         }
@@ -458,6 +458,13 @@ class MainViewModel(
         preferencesRepository.reduceMotion
             .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
+    /**
+     * Persisted sidebar behavior mode.
+     */
+    val sidebarMode: StateFlow<SidebarMode> =
+        preferencesRepository.sidebarMode
+            .stateIn(viewModelScope, SharingStarted.Eagerly, SidebarMode.EXPANDED)
+
     val enabledPacks: StateFlow<PackRegistry> =
         preferencesRepository.enabledPacks
             .stateIn(
@@ -481,7 +488,7 @@ class MainViewModel(
         allNodes
             .map { nodes ->
                 nodes
-                    .filter { it.node.type == "protocol" && it.node.status != "archived" }
+                    .filter { it.node.type == "protocol" && it.node.status != "archived" } // NON-NLS
                     .sortedByDescending { it.node.updatedAt }
             }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
@@ -964,6 +971,15 @@ class MainViewModel(
         }
     }
 
+    /**
+     * Updates the sidebar behavior mode.
+     */
+    fun setSidebarMode(mode: SidebarMode) {
+        viewModelScope.launch {
+            preferencesRepository.updateSidebarMode(mode)
+        }
+    }
+
     fun setPackEnabled(
         pack: AppPack,
         enabled: Boolean,
@@ -984,7 +1000,7 @@ class MainViewModel(
 
     fun triggerProtocol(
         protocolLabel: String,
-        source: String = "dashboard",
+        source: String = "dashboard", // NON-NLS
     ) {
         protocolCommands.triggerProtocol(protocolLabel, source)
     }
@@ -1058,7 +1074,7 @@ class MainViewModel(
     fun addNode(
         title: String,
         content: String = "",
-        type: String = "task",
+        type: String = "task", // NON-NLS
         projectId: Long? = null,
         areaId: Long? = null,
         isRecurring: Boolean = false,
@@ -1151,7 +1167,7 @@ class MainViewModel(
     suspend fun addNodeForResult(
         title: String,
         content: String = "",
-        type: String = "task",
+        type: String = "task", // NON-NLS
         projectId: Long? = null,
         areaId: Long? = null,
         inboxState: Boolean? = null,
@@ -1280,7 +1296,7 @@ class MainViewModel(
      * @param node The node to archive.
      */
     fun archiveNode(node: NodeEntity) {
-        updateNodeStatus(node, "archived")
+        updateNodeStatus(node, "archived") // NON-NLS
     }
 
     /**
@@ -1575,10 +1591,9 @@ class MainViewModel(
     fun unlinkNodeFromPlace(
         nodeId: Long,
         placeId: Long,
-    )
-    {
-            relationshipCommands.unlinkNodeFromPlace(nodeId, placeId)
-        }
+    ) {
+        relationshipCommands.unlinkNodeFromPlace(nodeId, placeId)
+    }
 
     fun createWhatToBringList(
         title: String,
@@ -1880,7 +1895,8 @@ class MainViewModel(
     private val _searchTypeFilter = MutableStateFlow<String?>(null)
     val searchTypeFilter: StateFlow<String?> = _searchTypeFilter.asStateFlow()
 
-    private val _searchStatusFilter = MutableStateFlow<String?>("active") // Default: active
+    private val _searchStatusFilter =
+        MutableStateFlow<String?>("active") // Default: active // NON-NLS
     val searchStatusFilter: StateFlow<String?> = _searchStatusFilter.asStateFlow()
 
     private val _searchProjectFilter = MutableStateFlow<Long?>(null)
@@ -1920,7 +1936,7 @@ class MainViewModel(
     private val _searchTimeHorizonFilter = MutableStateFlow<String?>(null)
     val searchTimeHorizonFilter: StateFlow<String?> = _searchTimeHorizonFilter.asStateFlow()
 
-    private val _searchSortMode = MutableStateFlow("relevance")
+    private val _searchSortMode = MutableStateFlow("relevance") // NON-NLS
     val searchSortMode: StateFlow<String> = _searchSortMode.asStateFlow()
 
     private val _recentSearchQueries = MutableStateFlow<List<String>>(emptyList())
@@ -2136,15 +2152,14 @@ class MainViewModel(
         _searchTimeHorizonFilter.value = horizon
     }
 
-    fun updateSearchSortMode(sortMode: String)
-    {
+    fun updateSearchSortMode(sortMode: String) {
         _searchSortMode.value = sortMode
-        }
+    }
 
     fun clearSearchFilters() {
         _searchQuery.value = ""
         _searchTypeFilter.value = null
-        _searchStatusFilter.value = "active"
+        _searchStatusFilter.value = "active" // NON-NLS
         _searchProjectFilter.value = null
         _searchAreaFilter.value = null
         _searchLinkedToFilter.value = null
@@ -2167,21 +2182,82 @@ class MainViewModel(
         _searchTimeWindowContextFilter.value = null
         when (contextKey)
         {
-            "at_home" -> _searchLocationContextFilter.value = "at_home"
-            "on_campus" -> _searchLocationContextFilter.value = "on_campus"
-            "out_of_home" -> _searchLocationContextFilter.value = "out_of_home"
-            "laptop_required" -> _searchDeviceContextFilter.value = "laptop_required"
-            "phone_okay" -> _searchDeviceContextFilter.value = "phone_okay"
-            "needs_internet" -> _searchDeviceContextFilter.value = "needs_internet"
-            "needs_privacy" -> _searchSocialContextFilter.value = "needs_privacy"
-            "low_energy" -> _searchEnergyContextFilter.value = "low_energy"
-            "high_focus" -> _searchEnergyContextFilter.value = "high_focus"
-            "brain_works" -> _searchEnergyContextFilter.value = "brain_works"
-            "emotionally_wrecked" -> _searchEnergyContextFilter.value = "emotionally_wrecked"
-            "10_minute" -> _searchTimeWindowContextFilter.value = "10_minute"
-            "commute_friendly" -> _searchSocialContextFilter.value = "commute_friendly"
-            "waiting_room" -> _searchTimeWindowContextFilter.value = "waiting_room"
-            null -> Unit
+            "at_home" -> {
+                _searchLocationContextFilter.value = "at_home"
+            }
+
+            // NON-NLS
+            "on_campus" -> {
+                _searchLocationContextFilter.value = "on_campus"
+            }
+
+            // NON-NLS
+            "out_of_home" -> {
+                _searchLocationContextFilter.value = "out_of_home"
+            }
+
+            // NON-NLS
+            "laptop_required" -> {
+                _searchDeviceContextFilter.value = "laptop_required"
+            }
+
+            // NON-NLS
+            "phone_okay" -> {
+                _searchDeviceContextFilter.value = "phone_okay"
+            }
+
+            // NON-NLS
+            "needs_internet" -> {
+                _searchDeviceContextFilter.value = "needs_internet"
+            }
+
+            // NON-NLS
+            "needs_privacy" -> {
+                _searchSocialContextFilter.value = "needs_privacy"
+            }
+
+            // NON-NLS
+            "low_energy" -> {
+                _searchEnergyContextFilter.value = "low_energy"
+            }
+
+            // NON-NLS
+            "high_focus" -> {
+                _searchEnergyContextFilter.value = "high_focus"
+            }
+
+            // NON-NLS
+            "brain_works" -> {
+                _searchEnergyContextFilter.value = "brain_works"
+            }
+
+            // NON-NLS
+            "emotionally_wrecked" -> {
+                _searchEnergyContextFilter.value =
+                    "emotionally_wrecked"
+            }
+
+            // NON-NLS
+            "10_minute" -> {
+                _searchTimeWindowContextFilter.value = "10_minute"
+            }
+
+            // NON-NLS
+            "commute_friendly" -> {
+                _searchSocialContextFilter.value =
+                    "commute_friendly"
+            }
+
+            // NON-NLS
+            "waiting_room" -> {
+                _searchTimeWindowContextFilter.value =
+                    "waiting_room"
+            }
+
+            // NON-NLS
+            null -> {
+                Unit
+            }
         }
     }
 
@@ -2210,8 +2286,14 @@ class MainViewModel(
             nodes
                 .filter { other ->
                     other.node.id != nodeId &&
-                        other.node.status != "archived" &&
-                        other.node.type in listOf("note", "idea", "resource", "project") &&
+                            other.node.status != "archived" && // NON-NLS
+                            other.node.type in
+                            listOf(
+                                "note",
+                                "idea",
+                                "resource",
+                                "project",
+                        ) && // NON-NLS
                         (
                             other.tags.any { it.id in currentTags } ||
                                 other.node.title.split(" ").any { word ->
@@ -2268,8 +2350,8 @@ class MainViewModel(
         viewModelScope.launch {
             repository.insertTag(
                 TagEntity(
-                        name = name,
-                        normalizedName = name.lowercase().trim(),
+                    name = name,
+                    normalizedName = name.lowercase().trim(),
                     color = color,
                 ),
             )
@@ -2283,8 +2365,8 @@ class MainViewModel(
     {
         viewModelScope.launch {
             repository.attachTagToNode(nodeId, tagId)
+            }
         }
-    }
 
     fun detachTagFromNode(
         nodeId: Long,
@@ -2431,24 +2513,34 @@ class MainViewModel(
         val normalizedType =
             when (type.trim().lowercase())
             {
-                    "record" -> "record"
-                    "project" -> "project"
-                "area"                                             -> "area"
+                "record"                                           -> "record"
+
+                // NON-NLS
+                "project"                                          -> "project"
+
+                // NON-NLS
+                    "area"                                             -> "area"
+
+                // NON-NLS
                     "idea", "resource", "vault", "document" -> "note"
+
+                    // NON-NLS
                     "maintenance", "open_loop", "decision", "protocol" -> "task"
-                    else -> "task"
+
+                    // NON-NLS
+                    else -> "task" // NON-NLS
                 }
             viewModelScope.launch {
                 repository.insertTemplate(
                     TemplateEntity(
-                    name = name,
-                    nodeType = normalizedType,
-                    defaultTitle = title,
-                    defaultContent = content,
-                ),
-            )
+                        name = name,
+                        nodeType = normalizedType,
+                        defaultTitle = title,
+                        defaultContent = content,
+                    ),
+                )
+            }
         }
-    }
 
     fun updateTemplate(template: TemplateEntity) {
         viewModelScope.launch {
@@ -2482,30 +2574,34 @@ class MainViewModel(
     {
         viewModelScope.launch {
             val now = Clock.System.now()
-                val dateStr = now.toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
+            val dateStr = now.toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
 
-                val nodeId =
-                    repository.insertLifeItem(
-                        kind = ItemKind.RECORD,
-                    title = "${type.uppercase()} REVIEW - $dateStr",
-                        content = content,
+            val nodeId =
+                repository.insertLifeItem(
+                    kind = ItemKind.RECORD,
+                        title = "${type.uppercase()} REVIEW - $dateStr",
+                    content = content,
                         inboxState = false,
                         source = "review",
-                    recordKind = RecordKind.REFLECTION,
-                )
+                        recordKind = RecordKind.REFLECTION,
+                    )
 
-            repository.insertReview(
+                repository.insertReview(
                 ReviewEntity(
                     type = type,
-                    date = dateStr,
-                    resultNodeId = nodeId,
-                    moodScore = mood,
+                        date = dateStr,
+                        resultNodeId = nodeId,
+                        moodScore = mood,
                     energyScore = energy,
                 ),
             )
 
             if (mood != null || energy != null) {
-                    addTrackEntry(mood = mood, energy = energy, note = "Linked to $type review")
+                addTrackEntry(
+                    mood = mood,
+                    energy = energy,
+                    note = "Linked to $type review",
+                ) // NON-NLS
             }
         }
     }
@@ -2601,7 +2697,7 @@ class MainViewModel(
             val personIds =
                 relations
                     .filter { relation ->
-                        relation.relationType == "RELATED_PERSON" &&
+                        relation.relationType == "RELATED_PERSON" && // NON-NLS
                             (
                                 relation.fromNodeId == decisionId ||
                                     relation.toNodeId == decisionId
@@ -2615,7 +2711,7 @@ class MainViewModel(
                             relation.fromNodeId
                         }
                     }.toSet()
-            nodes.filter { it.node.id in personIds && it.node.type == "person" }
+            nodes.filter { it.node.id in personIds && it.node.type == "person" } // NON-NLS
         }
 
     fun linkDecisionToPerson(
@@ -2624,7 +2720,7 @@ class MainViewModel(
     )
     {
         decisionCommands.linkDecisionToPerson(decisionId, personId)
-    }
+        }
 
     fun unlinkDecisionFromPerson(
         decisionId: Long,
@@ -2632,7 +2728,7 @@ class MainViewModel(
     )
     {
         decisionCommands.unlinkDecisionFromPerson(decisionId, personId)
-    }
+        }
 
     fun setDecisionRevisit(
         node: NodeEntity,

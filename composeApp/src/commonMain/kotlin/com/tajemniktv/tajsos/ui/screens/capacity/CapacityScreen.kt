@@ -35,7 +35,7 @@ fun CapacityScreen(viewModel: MainViewModel) {
                     .padding(bottom = 80.dp),
         ) {
             plan.primary.forEach { block ->
-                CapacityDashboardBlockRegistry.resolve(block.id)?.invoke(context)
+                CapacityDashboardBlocks.resolve(block.id)?.invoke(context)
             }
         }
     }

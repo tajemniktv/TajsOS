@@ -44,7 +44,7 @@ fun StateAwareActionsGrid(
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
+        horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
     ) {
         listOf(
             Triple(Icons.Default.Bolt, "OVERWHELMED", "Easy wins"),
@@ -78,7 +78,7 @@ fun StateAwareActionsGrid(
                 modifier = Modifier.weight(1f),
                 color = TajsOSTheme.Surface,
                 shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                border = BorderStroke(1.dp, TajsOSTheme.Border)
+                border = BorderStroke(1.dp, TajsOSTheme.Border),
             ) {
                 Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
                     Icon(

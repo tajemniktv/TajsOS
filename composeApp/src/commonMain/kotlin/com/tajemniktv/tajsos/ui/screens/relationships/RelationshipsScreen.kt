@@ -46,7 +46,7 @@ fun RelationshipsScreen(
         ) {
             plan.primary.forEach { block ->
                 item(key = block.id) {
-                    RelationshipsDashboardBlockRegistry.resolve(block.id)?.invoke(context)
+                    RelationshipsDashboardBlocks.resolve(block.id)?.invoke(context)
                 }
             }
         }

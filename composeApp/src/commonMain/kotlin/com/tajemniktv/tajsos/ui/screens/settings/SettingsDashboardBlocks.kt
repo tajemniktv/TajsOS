@@ -43,6 +43,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.AppPack
 import com.tajemniktv.tajsos.data.MedicationEntity
+import com.tajemniktv.tajsos.ui.SidebarMode
 import com.tajemniktv.tajsos.ui.theme.PaletteAccentAmber
 import com.tajemniktv.tajsos.ui.theme.PaletteAccentBlue
 import com.tajemniktv.tajsos.ui.theme.PaletteAccentGreen
@@ -61,13 +62,18 @@ import tajsos.composeapp.generated.resources.med_substance
 import tajsos.composeapp.generated.resources.med_take_at
 import tajsos.composeapp.generated.resources.profile_add_med
 import tajsos.composeapp.generated.resources.profile_medications
+import tajsos.composeapp.generated.resources.settings_appearance_desc
+import tajsos.composeapp.generated.resources.settings_appearance_title
 import tajsos.composeapp.generated.resources.settings_biometric_desc
 import tajsos.composeapp.generated.resources.settings_biometric_lock
 import tajsos.composeapp.generated.resources.settings_biometric_unavailable
 import tajsos.composeapp.generated.resources.settings_export_data
 import tajsos.composeapp.generated.resources.settings_force_crash
+import tajsos.composeapp.generated.resources.settings_theme_mode
+import tajsos.composeapp.generated.resources.settings_theme_mode_desc
+import tajsos.composeapp.generated.resources.settings_theme_settings
 
-object SettingsDashboardBlockRegistry {
+object SettingsDashboardBlocks {
     private val renderers: Map<String, SettingsDashboardBlockRenderer> =
         mapOf(
             "settings_health" to ::renderSettingsHealth,
@@ -310,20 +316,20 @@ private fun renderSettingsAppearance(context: SettingsDashboardContext) {
         verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingLg),
     ) {
         Text(
-            text = "Appearance",
+            text = stringResource(Res.string.settings_appearance_title),
             style = MaterialTheme.typography.headlineMedium,
             color = TajsOSTheme.Text,
         )
         Text(
-            text = "Customize the visual identity and interface behavior of your operating system.",
+            text = stringResource(Res.string.settings_appearance_desc),
             style = MaterialTheme.typography.bodyMedium,
             color = TajsOSTheme.Muted,
         )
 
-        AppearanceSectionCard(title = "Theme Settings") {
+        AppearanceSectionCard(title = stringResource(Res.string.settings_theme_settings)) {
             AppearanceSettingRow(
-                title = "Theme Mode",
-                description = "Switch between dark and light theme.",
+                title = stringResource(Res.string.settings_theme_mode),
+                description = stringResource(Res.string.settings_theme_mode_desc),
             ) {
                 Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                     OutlinedButton(
@@ -392,14 +398,34 @@ private fun renderSettingsAppearance(context: SettingsDashboardContext) {
 
         AppearanceSectionCard(title = "Sidebar Behavior") {
             AppearanceSettingRow(
-                title = "Default Sidebar State",
-                description = "How the sidebar appears when the app starts.",
+                title = "Sidebar Mode",
+                description = "Choose how the sidebar should behave.",
             ) {
-                OutlinedButton(
-                    onClick = {},
-                    shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
-                ) {
-                    Text("Expanded")
+                Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
+                    SidebarMode.entries.forEach { mode ->
+                        val label =
+                            when (mode)
+                            {
+                                SidebarMode.EXPANDED -> "Expanded"
+                                SidebarMode.COLLAPSED -> "Collapsed"
+                                SidebarMode.HOVER_EXPAND -> "Hover"
+                            }
+                        OutlinedButton(
+                            onClick = { context.onSetSidebarMode(mode) },
+                            shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
+                            colors =
+                                ButtonDefaults.outlinedButtonColors(
+                                    containerColor =
+                                        if (context.sidebarMode == mode) {
+                                            TajsOSTheme.Primary.copy(alpha = 0.2f)
+                                        } else {
+                                            Color.Transparent
+                                        },
+                                ),
+                        ) {
+                            Text(label)
+                        }
+                    }
                 }
             }
 

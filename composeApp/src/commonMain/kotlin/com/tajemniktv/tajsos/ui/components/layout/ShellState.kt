@@ -5,20 +5,13 @@
 package com.tajemniktv.tajsos.ui.components.layout
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-
-/**
- * Sidebar behavior modes supported by the shell.
- */
-enum class SidebarMode {
-    EXPANDED,
-    COLLAPSED,
-    HOVER_EXPAND,
-}
+import com.tajemniktv.tajsos.ui.SidebarMode
 
 /**
  * Centralized state holder for top-level shell interaction.
@@ -26,7 +19,7 @@ enum class SidebarMode {
 @Stable
 class AppShellState(
     initialSidebarMode: SidebarMode = SidebarMode.EXPANDED,
-    initialExpandedRootRoutes: Set<String> = emptySet()
+    initialExpandedRootRoutes: Set<String> = emptySet(),
 ) {
     var sidebarMode by mutableStateOf(initialSidebarMode)
     var expandedRootRoutes by mutableStateOf(initialExpandedRootRoutes)
@@ -56,11 +49,21 @@ class AppShellState(
  */
 @Composable
 fun rememberAppShellState(
-    initialSidebarMode: SidebarMode = SidebarMode.EXPANDED,
-    initialExpandedRootRoutes: Set<String> = emptySet()
-): AppShellState = remember {
-    AppShellState(
-            initialSidebarMode = initialSidebarMode,
-            initialExpandedRootRoutes = initialExpandedRootRoutes
-    )
+    sidebarMode: SidebarMode = SidebarMode.EXPANDED,
+    initialExpandedRootRoutes: Set<String> = emptySet(),
+): AppShellState {
+    val shellState =
+        remember {
+            AppShellState(
+                initialSidebarMode = sidebarMode,
+                initialExpandedRootRoutes = initialExpandedRootRoutes,
+            )
+        }
+
+    // Sync shellState with the provided sidebarMode from persistent settings.
+    LaunchedEffect(sidebarMode) {
+        shellState.sidebarMode = sidebarMode
+    }
+
+    return shellState
 }

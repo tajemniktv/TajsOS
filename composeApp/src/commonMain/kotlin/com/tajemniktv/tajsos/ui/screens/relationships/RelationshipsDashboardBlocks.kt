@@ -17,10 +17,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.relationships_desc
+import tajsos.composeapp.generated.resources.relationships_title
 
-object RelationshipsDashboardBlockRegistry {
+object RelationshipsDashboardBlocks {
     private val renderers: Map<String, RelationshipsDashboardBlockRenderer> =
-        mapOf("relationships_main" to ::renderRelationshipsMainBlock)
+        mapOf("relationships_main" to ::renderRelationshipsMainBlock) // NON-NLS
 
     fun resolve(id: String): RelationshipsDashboardBlockRenderer? = renderers[id]
 }
@@ -40,17 +44,17 @@ internal fun RelationshipsMainBlock(
 
     Column(
         modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
     ) {
         Text(
-            text = "RELATIONSHIPS LENS",
+            text = stringResource(Res.string.relationships_title),
             style = MaterialTheme.typography.displaySmall,
-            color = TajsOSTheme.Text
+            color = TajsOSTheme.Text,
         )
         Text(
-            text = "Track people, shared plans, follow-ups, and relationship continuity across life data.",
+            text = stringResource(Res.string.relationships_desc),
             style = MaterialTheme.typography.bodySmall,
-            color = TajsOSTheme.Muted
+            color = TajsOSTheme.Muted,
         )
 
         PeopleLayer(

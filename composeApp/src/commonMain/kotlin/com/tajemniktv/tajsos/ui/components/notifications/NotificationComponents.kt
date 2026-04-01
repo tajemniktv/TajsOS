@@ -44,7 +44,10 @@ import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
  * Premium "system-monitor" notification card with futuristic aesthetics.
  */
 @Composable
-fun TajsNotificationCard(notification: NotificationUiModel, modifier: Modifier = Modifier) {
+fun TajsNotificationCard(
+    notification: NotificationUiModel,
+    modifier: Modifier = Modifier,
+) {
     val accentColor =
         when (notification.variant)
         {
@@ -62,31 +65,31 @@ fun TajsNotificationCard(notification: NotificationUiModel, modifier: Modifier =
                 .clip(RoundedCornerShape(TajsOSTheme.RadiusMd))
                 .clickable { notification.onClick() },
         color = TajsOSTheme.SurfaceLow,
-        shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
     ) {
         Column {
             Row(
                 modifier = Modifier.padding(TajsOSTheme.SpacingMd),
-                verticalAlignment = Alignment.Top
+                verticalAlignment = Alignment.Top,
             ) {
                 // Icon or Unread Dot
                 Box(
                     modifier = Modifier.size(24.dp),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     if (notification.isUnread) {
                         Box(
                             modifier =
                                 Modifier
                                     .size(8.dp)
-                                    .background(accentColor, CircleShape)
+                                    .background(accentColor, CircleShape),
                         )
                     } else if (notification.icon != null) {
                         Icon(
                             imageVector = notification.icon,
                             contentDescription = null,
                             tint = accentColor,
-                            modifier = Modifier.size(18.dp)
+                            modifier = Modifier.size(18.dp),
                         )
                     } else {
                         // Default small icon if nothing else
@@ -94,7 +97,7 @@ fun TajsNotificationCard(notification: NotificationUiModel, modifier: Modifier =
                             modifier =
                                 Modifier
                                     .size(4.dp)
-                                    .background(accentColor.copy(alpha = 0.5f), CircleShape)
+                                    .background(accentColor.copy(alpha = 0.5f), CircleShape),
                         )
                     }
                 }
@@ -106,25 +109,25 @@ fun TajsNotificationCard(notification: NotificationUiModel, modifier: Modifier =
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
                             text = notification.category.uppercase(),
                             style =
                                 MaterialTheme.typography.labelSmall.copy(
                                     letterSpacing = 1.sp,
-                                    fontWeight = FontWeight.Black
+                                    fontWeight = FontWeight.Black,
                                 ),
-                            color = accentColor.copy(alpha = 0.8f)
+                            color = accentColor.copy(alpha = 0.8f),
                         )
                         Text(
                             text = notification.id.uppercase(),
                             style =
                                 MaterialTheme.typography.labelSmall.copy(
                                     fontSize = 9.sp,
-                                    letterSpacing = 0.5.sp
+                                    letterSpacing = 0.5.sp,
                                 ),
-                            color = TajsOSTheme.Muted.copy(alpha = 0.6f)
+                            color = TajsOSTheme.Muted.copy(alpha = 0.6f),
                         )
                     }
 
@@ -136,7 +139,7 @@ fun TajsNotificationCard(notification: NotificationUiModel, modifier: Modifier =
                         style = MaterialTheme.typography.titleSmall,
                         color = TajsOSTheme.Text,
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
                     )
 
                     // Body
@@ -145,7 +148,7 @@ fun TajsNotificationCard(notification: NotificationUiModel, modifier: Modifier =
                         style = MaterialTheme.typography.bodySmall,
                         color = TajsOSTheme.Muted,
                         maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
                     )
                 }
             }
@@ -159,7 +162,7 @@ fun TajsNotificationCard(notification: NotificationUiModel, modifier: Modifier =
                             .fillMaxWidth()
                             .height(2.dp),
                     color = accentColor,
-                    trackColor = Color.Transparent
+                    trackColor = Color.Transparent,
                 )
             } else {
                 Box(
@@ -167,7 +170,7 @@ fun TajsNotificationCard(notification: NotificationUiModel, modifier: Modifier =
                         Modifier
                             .fillMaxWidth()
                             .height(1.dp)
-                            .background(accentColor.copy(alpha = 0.15f))
+                            .background(accentColor.copy(alpha = 0.15f)),
                 )
             }
         }
@@ -181,35 +184,35 @@ fun TajsNotificationCard(notification: NotificationUiModel, modifier: Modifier =
 fun TajsNotificationWidget(
     notifications: List<NotificationUiModel>,
     modifier: Modifier = Modifier,
-    title: String = "SYSTEM ALERTS"
+    title: String = "SYSTEM ALERTS",
 ) {
     Column(
         modifier =
             modifier
                 .width(320.dp)
                 .padding(TajsOSTheme.SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
+        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 text = title,
                 style =
                     MaterialTheme.typography.labelMedium.copy(
                         letterSpacing = 2.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
                     ),
-                color = TajsOSTheme.Muted
+                color = TajsOSTheme.Muted,
             )
             if (notifications.any { it.isUnread }) {
                 Box(
                     modifier =
                         Modifier
                             .size(6.dp)
-                            .background(TajsOSTheme.AccentCyan, CircleShape)
+                            .background(TajsOSTheme.AccentCyan, CircleShape),
                 )
             }
         }
@@ -220,12 +223,12 @@ fun TajsNotificationWidget(
                     Modifier
                         .fillMaxWidth()
                         .padding(vertical = TajsOSTheme.SpacingLg),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 Text(
                     "No active system alerts.",
                     style = MaterialTheme.typography.bodySmall,
-                    color = TajsOSTheme.Muted.copy(alpha = 0.5f)
+                    color = TajsOSTheme.Muted.copy(alpha = 0.5f),
                 )
             }
         } else {
@@ -245,7 +248,7 @@ private fun PreviewNotificationCards() {
                 Modifier
                     .background(Color(0xFF0E0E12))
                     .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             TajsNotificationCard(
                 notification =
@@ -255,8 +258,8 @@ private fun PreviewNotificationCards() {
                         body = "Local records have been synchronized with the neural node.",
                         category = "SYSTEM",
                         variant = NotificationVariant.SYNC,
-                        icon = Icons.Default.Sync
-                    )
+                        icon = Icons.Default.Sync,
+                    ),
             )
             TajsNotificationCard(
                 notification =
@@ -267,8 +270,8 @@ private fun PreviewNotificationCards() {
                         category = "SECURITY",
                         variant = NotificationVariant.ALERT,
                         isUnread = true,
-                        icon = Icons.Default.Warning
-                    )
+                        icon = Icons.Default.Warning,
+                    ),
             )
             TajsNotificationCard(
                 notification =
@@ -279,8 +282,8 @@ private fun PreviewNotificationCards() {
                         category = "STORAGE",
                         variant = NotificationVariant.WARNING,
                         progress = 0.85f,
-                        icon = Icons.Default.Info
-                    )
+                        icon = Icons.Default.Info,
+                    ),
             )
         }
     }
@@ -299,7 +302,7 @@ private fun PreviewNotificationWidget() {
                             title = "Sync Complete",
                             body = "Local node up to date.",
                             category = "SYSTEM",
-                            variant = NotificationVariant.SYNC
+                            variant = NotificationVariant.SYNC,
                         ),
                         NotificationUiModel(
                             id = "SEC-042",
@@ -307,9 +310,9 @@ private fun PreviewNotificationWidget() {
                             body = "Intrusion detected.",
                             category = "SECURITY",
                             variant = NotificationVariant.ALERT,
-                            isUnread = true
-                        )
-                    )
+                            isUnread = true,
+                        ),
+                    ),
             )
         }
     }

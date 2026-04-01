@@ -53,7 +53,7 @@ fun CalendarSettingsScreen(viewModel: MainViewModel) {
             Modifier
                 .fillMaxSize()
                 .padding(TajsOSTheme.SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
     ) {
         plan.primary.forEach { block ->
             CalendarSettingsBlockRegistry.resolve(block.id)?.invoke(context)

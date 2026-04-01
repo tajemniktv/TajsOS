@@ -57,7 +57,7 @@ fun AlertCard(
                 Text(
                     description,
                     style = MaterialTheme.typography.bodySmall,
-                    color = TajsOSTheme.Text
+                    color = TajsOSTheme.Text,
                 )
             }
             action?.invoke()

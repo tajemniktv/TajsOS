@@ -296,7 +296,7 @@ fun NoteDetailScreen(
                 verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingLg),
             ) {
                 plan.primary.forEach { block ->
-                    NoteDetailBlockRegistry.resolve(block.id)?.invoke(context)
+                    NoteDetailBlocks.resolve(block.id)?.invoke(context)
                 }
             }
 

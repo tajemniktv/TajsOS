@@ -83,7 +83,7 @@ import tajsos.composeapp.generated.resources.areas_title
 import tajsos.composeapp.generated.resources.areas_upcoming_deadlines
 import tajsos.composeapp.generated.resources.use_suggested_areas
 
-object AreasDashboardBlockRegistry {
+object AreasDashboardBlocks {
     private val renderers: Map<String, AreasDashboardBlockRenderer> =
         mapOf("areas_main" to ::renderAreasMainBlock)
 

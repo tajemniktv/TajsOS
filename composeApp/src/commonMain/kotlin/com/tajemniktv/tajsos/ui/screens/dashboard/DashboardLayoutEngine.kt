@@ -373,7 +373,8 @@ fun buildDashboardLayoutPlan(
                 if (dynamicContent.isNotEmpty()) {
                     normalizeBlocks(
                         ids =
-                            listOf("mode_controls") + dynamicContent.map { it.id } +
+                            listOf("mode_controls") +
+                                dynamicContent.map { it.id } +
                                 listOf(
                                     "modules",
                                     "operations_overview",

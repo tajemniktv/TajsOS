@@ -42,7 +42,7 @@ fun DecisionsScreen(
                     .padding(bottom = 80.dp),
         ) {
             plan.primary.forEach { block ->
-                DecisionsDashboardBlockRegistry.resolve(block.id)?.invoke(context)
+                DecisionsDashboardBlocks.resolve(block.id)?.invoke(context)
             }
         }
     }

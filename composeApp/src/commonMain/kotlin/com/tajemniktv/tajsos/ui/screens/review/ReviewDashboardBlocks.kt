@@ -36,10 +36,22 @@ import com.tajemniktv.tajsos.ui.components.common.SelectorDialog
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.detail_archive
+import tajsos.composeapp.generated.resources.review_archived_summary
+import tajsos.composeapp.generated.resources.review_capacity_summary
 import tajsos.composeapp.generated.resources.review_complete
 import tajsos.composeapp.generated.resources.review_daily
+import tajsos.composeapp.generated.resources.review_energy_level
+import tajsos.composeapp.generated.resources.review_execution_ratio
+import tajsos.composeapp.generated.resources.review_focus_summary
 import tajsos.composeapp.generated.resources.review_monthly
+import tajsos.composeapp.generated.resources.review_mood_level
 import tajsos.composeapp.generated.resources.review_next
+import tajsos.composeapp.generated.resources.review_placeholder_thoughts
+import tajsos.composeapp.generated.resources.review_prompt_energy_level
+import tajsos.composeapp.generated.resources.review_prompt_how_feeling
+import tajsos.composeapp.generated.resources.review_prompt_numbers_feedback
+import tajsos.composeapp.generated.resources.review_select_type
 import tajsos.composeapp.generated.resources.review_step_archive
 import tajsos.composeapp.generated.resources.review_step_blockers
 import tajsos.composeapp.generated.resources.review_step_cleanup
@@ -50,7 +62,7 @@ import tajsos.composeapp.generated.resources.review_step_stats
 import tajsos.composeapp.generated.resources.review_step_wins
 import tajsos.composeapp.generated.resources.review_weekly
 
-object ReviewDashboardBlockRegistry {
+object ReviewDashboardBlocks {
     private val renderers: Map<String, ReviewDashboardBlockRenderer> =
         mapOf(
             "review_selector" to ::renderReviewSelector,
@@ -69,7 +81,7 @@ private fun renderReviewSelector(context: ReviewDashboardContext) {
     SelectorDialog(
         show = context.reviewType == null,
         onDismiss = context.onBack,
-        title = "SELECT REVIEW TYPE",
+        title = stringResource(Res.string.review_select_type),
         options = listOf("daily", "weekly", "monthly"),
         selectedOption = null,
         onSelect = { context.onReviewTypeSelect(it) },
@@ -126,33 +138,48 @@ private fun renderReviewFlow(context: ReviewDashboardContext) {
             {
                 Res.string.review_step_mood_energy -> {
                     Column {
-                        Text("How are you feeling right now?")
+                        Text(stringResource(Res.string.review_prompt_how_feeling))
                         Slider(
                             value = mood.toFloat(),
                             onValueChange = { context.onMoodChange(it.toInt()) },
                             valueRange = 1f..5f,
                             steps = 3,
                         )
-                        Text("Mood: $mood/5")
+                        Text(stringResource(Res.string.review_mood_level, mood.toString()))
                         Spacer(Modifier.height(24.dp))
-                        Text("What is your energy level?")
+                        Text(stringResource(Res.string.review_prompt_energy_level))
                         Slider(
                             value = energy.toFloat(),
                             onValueChange = { context.onEnergyChange(it.toInt()) },
                             valueRange = 1f..5f,
                             steps = 3,
                         )
-                        Text("Energy: $energy/5")
+                        Text(stringResource(Res.string.review_energy_level, energy.toString()))
                     }
                 }
 
                 Res.string.review_step_stats -> {
                     Column {
-                        Text("Capacity: ${insights.weeklyCompletions} tasks done.")
-                        Text("Execution Ratio: ${(insights.captureToActionRatio * 100).toInt()}%")
-                        Text("Focus: ${insights.weeklyFocusHours.toInt()} hours.")
+                        Text(
+                            stringResource(
+                                Res.string.review_capacity_summary,
+                                insights.weeklyCompletions.toString(),
+                            ),
+                        )
+                        Text(
+                            stringResource(
+                                Res.string.review_execution_ratio,
+                                (insights.captureToActionRatio * 100).toInt().toString(),
+                            ),
+                        )
+                        Text(
+                            stringResource(
+                                Res.string.review_focus_summary,
+                                insights.weeklyFocusHours.toInt().toString(),
+                            ),
+                        )
                         Spacer(Modifier.height(16.dp))
-                        Text("How do you feel about these numbers?")
+                        Text(stringResource(Res.string.review_prompt_numbers_feedback))
                         TextField(
                             value = answers[currentStep] ?: "",
                             onValueChange = { context.onAnswerChange(currentStep, it) },
@@ -164,7 +191,12 @@ private fun renderReviewFlow(context: ReviewDashboardContext) {
                 Res.string.review_step_archive -> {
                     val archivedSuggestions = dashboardState.archivedThisWeek
                     Column {
-                        Text("You archived ${archivedSuggestions.size} items this week. Anything else to let go of?")
+                        Text(
+                            stringResource(
+                                Res.string.review_archived_summary,
+                                archivedSuggestions.size.toString(),
+                            ),
+                        )
                         Column {
                             dashboardState.neglectedThisWeek.take(5).forEach { item ->
                                 ListItem(
@@ -173,7 +205,7 @@ private fun renderReviewFlow(context: ReviewDashboardContext) {
                                         IconButton(onClick = { viewModel.archiveNode(item.node) }) {
                                             Icon(
                                                 Icons.Default.Delete,
-                                                contentDescription = "Archive",
+                                                contentDescription = stringResource(Res.string.detail_archive),
                                                 tint = TajsOSTheme.Error,
                                             )
                                         }
@@ -194,7 +226,7 @@ private fun renderReviewFlow(context: ReviewDashboardContext) {
                         value = answers[currentStep] ?: "",
                         onValueChange = { context.onAnswerChange(currentStep, it) },
                         modifier = Modifier.fillMaxWidth().fillMaxHeight(),
-                        placeholder = { Text("Write your thoughts here...") },
+                        placeholder = { Text(stringResource(Res.string.review_placeholder_thoughts)) },
                     )
                 }
             }

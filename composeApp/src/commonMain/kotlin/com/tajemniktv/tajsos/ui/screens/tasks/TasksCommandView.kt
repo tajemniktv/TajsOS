@@ -44,6 +44,8 @@ import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.common_cancel
+import tajsos.composeapp.generated.resources.tasks_action_sweep
 import tajsos.composeapp.generated.resources.tasks_command_subtitle
 import tajsos.composeapp.generated.resources.tasks_command_title
 import tajsos.composeapp.generated.resources.tasks_context_active
@@ -53,7 +55,9 @@ import tajsos.composeapp.generated.resources.tasks_context_title
 import tajsos.composeapp.generated.resources.tasks_current_priority
 import tajsos.composeapp.generated.resources.tasks_done_action
 import tajsos.composeapp.generated.resources.tasks_empty
+import tajsos.composeapp.generated.resources.tasks_msg_stale_overdue
 import tajsos.composeapp.generated.resources.tasks_open_action
+import tajsos.composeapp.generated.resources.tasks_prompt_clear_overdue
 import tajsos.composeapp.generated.resources.tasks_queue_title
 import tajsos.composeapp.generated.resources.tasks_quick_add_action
 import tajsos.composeapp.generated.resources.tasks_quick_add_hint
@@ -463,10 +467,10 @@ private fun CommandSidebar(
         androidx.compose.material3.AlertDialog(
             onDismissRequest = { showSweepDialog = false },
             title = {
-                Text("Clear overdue backlog?")
+                Text(stringResource(Res.string.tasks_prompt_clear_overdue))
             },
             text = {
-                Text("You have $staleTasksCount stale overdue tasks. Want me to sweep them into Someday?")
+                Text(stringResource(Res.string.tasks_msg_stale_overdue, staleTasksCount.toString()))
             },
             confirmButton = {
                 Button(
@@ -475,14 +479,14 @@ private fun CommandSidebar(
                         showSweepDialog = false
                     },
                 ) {
-                    Text("Sweep to Someday")
+                    Text(stringResource(Res.string.tasks_action_sweep))
                 }
             },
             dismissButton = {
                 OutlinedButton(
                     onClick = { showSweepDialog = false },
                 ) {
-                    Text("Cancel")
+                    Text(stringResource(Res.string.common_cancel))
                 }
             },
         )

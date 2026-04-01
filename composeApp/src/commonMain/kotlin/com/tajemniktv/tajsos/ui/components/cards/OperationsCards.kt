@@ -99,7 +99,7 @@ fun OpenLoopCard(
                 Text(
                     item.node.node.content,
                     style = MaterialTheme.typography.bodySmall,
-                    color = TajsOSTheme.Muted
+                    color = TajsOSTheme.Muted,
                 )
             }
             Text(
@@ -124,11 +124,11 @@ fun OpenLoopCard(
                     item.relatedPersonName ?: stringResource(Res.string.open_loop_none),
                 ),
                 style = MaterialTheme.typography.bodySmall,
-                color = TajsOSTheme.Muted
+                color = TajsOSTheme.Muted,
             )
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
-                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
             ) {
                 openLoopTypes.forEach { type ->
                     FilterChip(
@@ -141,7 +141,7 @@ fun OpenLoopCard(
             HorizontalDivider(color = TajsOSTheme.Border)
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
-                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
             ) {
                 AssistChip(
                     onClick = { onEditNode(item.node.node.id) },
@@ -209,7 +209,7 @@ fun MaintenanceCard(
                 item.node.node.title,
                 style = MaterialTheme.typography.titleMedium,
                 color = TajsOSTheme.Text,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
             Text(
                 "${
@@ -221,11 +221,11 @@ fun MaintenanceCard(
             Text(
                 "Area ${areaName ?: "Unassigned"} • Overdue ${item.overdueDays}d${item.dueInDays?.let { " • Due in ${it}d" } ?: ""}",
                 style = MaterialTheme.typography.bodySmall,
-                color = TajsOSTheme.Muted
+                color = TajsOSTheme.Muted,
             )
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
-                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
             ) {
                 maintenanceTypes.forEach { type ->
                     FilterChip(
@@ -237,7 +237,7 @@ fun MaintenanceCard(
             }
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
-                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
             ) {
                 FilterChip(
                     selected = item.node.node.recurringInterval == "DAILY",
@@ -274,7 +274,7 @@ fun MaintenanceCard(
             HorizontalDivider(color = TajsOSTheme.Border)
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
-                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
             ) {
                 AssistChip(onClick = { onEditNode(item.node.node.id) }, label = { Text("OPEN") })
                 if (item.node.node.status == "active") {
@@ -307,7 +307,7 @@ fun ProtocolCard(
         shape =
             androidx.compose.foundation.shape
                 .RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.Border)
+        border = BorderStroke(1.dp, TajsOSTheme.Border),
     ) {
         Column(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -318,18 +318,18 @@ fun ProtocolCard(
                     .uppercase(),
                 style = MaterialTheme.typography.titleSmall,
                 color = TajsOSTheme.Text,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
             Text(
                 "Checklist ${item.checklistDone}/${item.checklistTotal} • Runs ${item.triggerCount}",
                 style = MaterialTheme.typography.bodySmall,
-                color = TajsOSTheme.Muted
+                color = TajsOSTheme.Muted,
             )
             item.lastTriggeredAt?.let {
                 Text(
                     "Last run ${formatTimestamp(it)}",
                     style = MaterialTheme.typography.bodySmall,
-                    color = TajsOSTheme.Muted
+                    color = TajsOSTheme.Muted,
                 )
             }
             if (checklistItems.isNotEmpty()) {
@@ -343,7 +343,7 @@ fun ProtocolCard(
             }
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
-                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
             ) {
                 AssistChip(onClick = { onEditNode(item.node.node.id) }, label = { Text("OPEN") })
                 AssistChip(onClick = onRun, label = { Text("RUN") })
@@ -364,8 +364,8 @@ fun DistinctionQuestionCard(item: DistinctionQuestionState) {
         border =
             BorderStroke(
                 1.dp,
-                if (item.answered) TajsOSTheme.Border else TajsOSTheme.Error.copy(alpha = 0.5f)
-            )
+                if (item.answered) TajsOSTheme.Border else TajsOSTheme.Error.copy(alpha = 0.5f),
+            ),
     ) {
         Column(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -375,12 +375,12 @@ fun DistinctionQuestionCard(item: DistinctionQuestionState) {
                 item.question.uppercase(),
                 style = MaterialTheme.typography.labelSmall,
                 color = TajsOSTheme.Primary,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
             Text(
                 item.answer,
                 style = MaterialTheme.typography.bodySmall,
-                color = if (item.answered) TajsOSTheme.Text else TajsOSTheme.Error
+                color = if (item.answered) TajsOSTheme.Text else TajsOSTheme.Error,
             )
         }
     }
@@ -401,7 +401,7 @@ fun DirectionCommitmentCard(item: DirectionCommitmentStatus) {
                     TajsOSTheme.Success.copy(alpha = 0.5f)
                 } else {
                     TajsOSTheme.Error.copy(
-                        alpha = 0.5f
+                        alpha = 0.5f,
                     )
                 },
             ),
@@ -414,13 +414,13 @@ fun DirectionCommitmentCard(item: DirectionCommitmentStatus) {
                 item.commitment.uppercase(),
                 style = MaterialTheme.typography.labelSmall,
                 color = TajsOSTheme.Primary,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
             Text(
                 if (item.satisfied) "Satisfied" else "Needs work",
                 style = MaterialTheme.typography.bodySmall,
                 color = if (item.satisfied) TajsOSTheme.Success else TajsOSTheme.Error,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
             Text(
                 item.evidence,
@@ -446,7 +446,7 @@ fun CoreShiftCriterionCard(item: CoreLifeOSShiftItem) {
                     TajsOSTheme.Success.copy(alpha = 0.5f)
                 } else {
                     TajsOSTheme.Error.copy(
-                        alpha = 0.5f
+                        alpha = 0.5f,
                     )
                 },
             ),
@@ -459,13 +459,13 @@ fun CoreShiftCriterionCard(item: CoreLifeOSShiftItem) {
                 item.criterion.uppercase(),
                 style = MaterialTheme.typography.labelSmall,
                 color = TajsOSTheme.Primary,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
             Text(
                 if (item.satisfied) "Satisfied" else "Needs attention",
                 style = MaterialTheme.typography.bodySmall,
                 color = if (item.satisfied) TajsOSTheme.Success else TajsOSTheme.Error,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
             Text(
                 item.evidence,
@@ -507,18 +507,18 @@ fun PersonRelationshipCard(
         border =
             BorderStroke(
                 1.dp,
-                if (item.isImportant) TajsOSTheme.Primary else TajsOSTheme.Border
-            )
+                if (item.isImportant) TajsOSTheme.Primary else TajsOSTheme.Border,
+            ),
     ) {
         Column(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
                 person.title,
                 style = MaterialTheme.typography.titleMedium,
                 color = TajsOSTheme.Text,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
             Text(
                 "Context ${(item.relationshipType ?: "general").uppercase()} • Last contact ${item.daysSinceLastContact ?: "?"}d • Follow-up ${item.followUpDueInDays ?: "none"}",
@@ -532,7 +532,7 @@ fun PersonRelationshipCard(
             )
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
-                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
             ) {
                 FilterChip(
                     selected = item.isImportant,
@@ -562,7 +562,7 @@ fun PersonRelationshipCard(
             }
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
-                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
             ) {
                 AssistChip(
                     onClick = { viewModel.setPersonLastContactNow(person) },
@@ -595,7 +595,7 @@ fun PersonRelationshipCard(
             }
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
-                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
             ) {
                 AssistChip(onClick = {
                     viewModel.createReplyNeededForPerson(

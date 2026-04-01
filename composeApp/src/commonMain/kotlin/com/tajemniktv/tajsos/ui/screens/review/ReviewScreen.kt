@@ -108,7 +108,7 @@ fun ReviewScreen(
                     .padding(bottom = 80.dp),
         ) {
             plan.primary.forEach { block ->
-                ReviewDashboardBlockRegistry.resolve(block.id)?.invoke(context)
+                ReviewDashboardBlocks.resolve(block.id)?.invoke(context)
             }
         }
     }

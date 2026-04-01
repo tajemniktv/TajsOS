@@ -42,7 +42,7 @@ import tajsos.composeapp.generated.resources.decision_tab_pending
 import tajsos.composeapp.generated.resources.lens_decision_stale_header
 import tajsos.composeapp.generated.resources.lens_decision_stale_item_age
 
-object DecisionsDashboardBlockRegistry {
+object DecisionsDashboardBlocks {
     private val renderers: Map<String, DecisionsDashboardBlockRenderer> =
         mapOf("decisions_main" to ::renderDecisionsMainBlock)
 

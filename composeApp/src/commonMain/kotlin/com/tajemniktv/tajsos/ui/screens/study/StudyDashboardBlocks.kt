@@ -30,19 +30,23 @@ import com.tajemniktv.tajsos.ui.components.cards.StudentSummaryCard
 import com.tajemniktv.tajsos.ui.components.cards.TemplateQuickActionsCard
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.education_desc
+import tajsos.composeapp.generated.resources.education_title
 
 @Composable
 internal fun renderStudyHeaderBlock(context: StudyDashboardContext) {
     Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
         Text(
-            text = "EDUCATION LENS",
+            text = stringResource(Res.string.education_title),
             style = MaterialTheme.typography.displaySmall,
-            color = TajsOSTheme.Text
+            color = TajsOSTheme.Text,
         )
         Text(
-            text = "Course work, study notes, reading progress, concept linking, and academic reflection.",
+            text = stringResource(Res.string.education_desc),
             style = MaterialTheme.typography.bodySmall,
-            color = TajsOSTheme.Muted
+            color = TajsOSTheme.Muted,
         )
     }
 }
@@ -223,7 +227,7 @@ internal fun renderFlashcardCandidatesBlock(context: StudyDashboardContext) {
                     Text(
                         "Candidate for flashcard export",
                         style = MaterialTheme.typography.bodySmall,
-                        color = TajsOSTheme.Muted
+                        color = TajsOSTheme.Muted,
                     )
                 }
                 OutlinedButton(onClick = {
@@ -286,7 +290,7 @@ internal fun renderLinksGraphBlock(context: StudyDashboardContext) {
             Text(
                 "Use Graph screen for full visual graph exploration.",
                 style = MaterialTheme.typography.bodySmall,
-                color = TajsOSTheme.Muted
+                color = TajsOSTheme.Muted,
             )
         }
     }

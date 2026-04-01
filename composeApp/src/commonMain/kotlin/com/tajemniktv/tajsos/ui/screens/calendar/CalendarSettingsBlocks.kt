@@ -53,13 +53,13 @@ private fun renderCalendarSettingsHeader(context: CalendarSettingsContext) {
         Text(
             stringResource(Res.string.cal_settings_title),
             style = MaterialTheme.typography.displaySmall,
-            color = TajsOSTheme.Text
+            color = TajsOSTheme.Text,
         )
         IconButton(onClick = context.onShowAddDialog) {
             Icon(
                 Icons.Default.Add,
                 contentDescription = stringResource(Res.string.cal_settings_add),
-                tint = TajsOSTheme.Primary
+                tint = TajsOSTheme.Primary,
             )
         }
     }
@@ -88,7 +88,7 @@ private fun ProviderRow(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = TajsOSTheme.Surface)
+        colors = CardDefaults.cardColors(containerColor = TajsOSTheme.Surface),
     ) {
         Row(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -98,12 +98,12 @@ private fun ProviderRow(
                 Text(
                     provider.name,
                     style = MaterialTheme.typography.titleMedium,
-                    color = TajsOSTheme.Text
+                    color = TajsOSTheme.Text,
                 )
                 Text(
                     provider.type,
                     style = MaterialTheme.typography.labelSmall,
-                    color = TajsOSTheme.Muted
+                    color = TajsOSTheme.Muted,
                 )
                 val url = provider.url
                 if (url != null) {
@@ -119,7 +119,7 @@ private fun ProviderRow(
                 Icon(
                     Icons.Default.Delete,
                     contentDescription = stringResource(Res.string.archive_delete),
-                    tint = TajsOSTheme.Error
+                    tint = TajsOSTheme.Error,
                 )
             }
         }

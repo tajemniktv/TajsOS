@@ -18,9 +18,9 @@ class DomainRegistryTest {
                 DomainKind.FINANCES,
                 DomainKind.HEALTH,
                 DomainKind.EDUCATION,
-                DomainKind.RELATIONSHIPS
+                DomainKind.RELATIONSHIPS,
             ),
-            DomainRegistry.definitions.map { it.kind }.toSet()
+            DomainRegistry.definitions.map { it.kind }.toSet(),
         )
     }
 

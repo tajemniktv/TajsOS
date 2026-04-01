@@ -45,7 +45,7 @@ fun TodayScreen(
                     .padding(bottom = 80.dp),
         ) {
             plan.primary.forEach { block ->
-                TodayDashboardBlockRegistry.resolve(block.id)?.invoke(context)
+                TodayDashboardBlocks.resolve(block.id)?.invoke(context)
             }
         }
     }

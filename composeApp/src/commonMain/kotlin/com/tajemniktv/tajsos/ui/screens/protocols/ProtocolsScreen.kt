@@ -49,6 +49,54 @@ import com.tajemniktv.tajsos.ui.main.state.TransitionProtocolsSnapshot
 import com.tajemniktv.tajsos.ui.screens.formatProtocolTimestamp
 import com.tajemniktv.tajsos.ui.screens.parseProtocolChecklist
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.common_edit
+import tajsos.composeapp.generated.resources.common_open
+import tajsos.composeapp.generated.resources.common_pause
+import tajsos.composeapp.generated.resources.common_resume
+import tajsos.composeapp.generated.resources.notes_notes
+import tajsos.composeapp.generated.resources.protocol_complete_step
+import tajsos.composeapp.generated.resources.protocol_current_step
+import tajsos.composeapp.generated.resources.protocol_no_steps
+import tajsos.composeapp.generated.resources.protocol_session_paused
+import tajsos.composeapp.generated.resources.protocol_session_running
+import tajsos.composeapp.generated.resources.protocol_steps_complete
+import tajsos.composeapp.generated.resources.protocol_up_next
+import tajsos.composeapp.generated.resources.protocols_action_end_session
+import tajsos.composeapp.generated.resources.protocols_action_mark_not_done
+import tajsos.composeapp.generated.resources.protocols_action_open
+import tajsos.composeapp.generated.resources.protocols_action_previous
+import tajsos.composeapp.generated.resources.protocols_action_run
+import tajsos.composeapp.generated.resources.protocols_action_run_item
+import tajsos.composeapp.generated.resources.protocols_action_skip
+import tajsos.composeapp.generated.resources.protocols_active
+import tajsos.composeapp.generated.resources.protocols_category_admin
+import tajsos.composeapp.generated.resources.protocols_category_all
+import tajsos.composeapp.generated.resources.protocols_category_emotional
+import tajsos.composeapp.generated.resources.protocols_category_health
+import tajsos.composeapp.generated.resources.protocols_category_home
+import tajsos.composeapp.generated.resources.protocols_category_relationships
+import tajsos.composeapp.generated.resources.protocols_category_study
+import tajsos.composeapp.generated.resources.protocols_category_work
+import tajsos.composeapp.generated.resources.protocols_desc_full
+import tajsos.composeapp.generated.resources.protocols_label_adjustments
+import tajsos.composeapp.generated.resources.protocols_label_estimated_time
+import tajsos.composeapp.generated.resources.protocols_label_last_run
+import tajsos.composeapp.generated.resources.protocols_label_last_run_item
+import tajsos.composeapp.generated.resources.protocols_label_search
+import tajsos.composeapp.generated.resources.protocols_label_suggested
+import tajsos.composeapp.generated.resources.protocols_label_use_when
+import tajsos.composeapp.generated.resources.protocols_library
+import tajsos.composeapp.generated.resources.protocols_no_active
+import tajsos.composeapp.generated.resources.protocols_no_matches
+import tajsos.composeapp.generated.resources.protocols_no_runs
+import tajsos.composeapp.generated.resources.protocols_not_yet
+import tajsos.composeapp.generated.resources.protocols_pick_to_start
+import tajsos.composeapp.generated.resources.protocols_placeholder_notes
+import tajsos.composeapp.generated.resources.protocols_placeholder_search
+import tajsos.composeapp.generated.resources.protocols_session_notes
+import tajsos.composeapp.generated.resources.screen_protocols
 import kotlin.math.max
 
 /**
@@ -79,30 +127,30 @@ fun ProtocolsScreen(
                     .padding(bottom = 80.dp),
         ) {
             plan.primary.forEach { block ->
-                ProtocolsDashboardBlockRegistry.resolve(block.id)?.invoke(context)
+                ProtocolsDashboardBlocks.resolve(block.id)?.invoke(context)
             }
         }
     }
 }
 
 private enum class ProtocolView(
-    val label: String,
+    val label: @Composable () -> String,
 ) {
-    Library("Library"),
-    Active("Active"),
+    Library({ stringResource(Res.string.protocols_library) }),
+    Active({ stringResource(Res.string.protocols_active) }),
 }
 
 private enum class ProtocolCategory(
-    val label: String,
+    val label: @Composable () -> String,
 ) {
-    All("All"),
-    Health("Health"),
-    Work("Work"),
-    Study("Study"),
-    Home("Home"),
-    EmotionalRegulation("Emotional regulation"),
-    Admin("Admin"),
-    Relationships("Relationships"),
+    All({ stringResource(Res.string.protocols_category_all) }),
+    Health({ stringResource(Res.string.protocols_category_health) }),
+    Work({ stringResource(Res.string.protocols_category_work) }),
+    Study({ stringResource(Res.string.protocols_category_study) }),
+    Home({ stringResource(Res.string.protocols_category_home) }),
+    EmotionalRegulation({ stringResource(Res.string.protocols_category_emotional) }),
+    Admin({ stringResource(Res.string.protocols_category_admin) }),
+    Relationships({ stringResource(Res.string.protocols_category_relationships) }),
 }
 
 private data class ProtocolDescriptor(
@@ -192,7 +240,7 @@ internal fun ProtocolsLayer(
                     FilterChip(
                         selected = protocolViewState.value == view,
                         onClick = { protocolViewState.value = view },
-                        label = { Text(view.label) },
+                        label = { Text(view.label()) },
                     )
                 }
             }
@@ -284,13 +332,12 @@ private fun ProtocolsHeader(
             verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
         ) {
             Text(
-                text = "Protocols",
+                text = stringResource(Res.string.screen_protocols),
                 style = MaterialTheme.typography.displaySmall,
                 color = TajsOSTheme.Text,
             )
             Text(
-                text =
-                    "Reusable guided procedures for repeatable situations. Browse in Library and run them step-by-step in Active mode.",
+                text = stringResource(Res.string.protocols_desc_full),
                 style = MaterialTheme.typography.bodyMedium,
                 color = TajsOSTheme.Muted,
             )
@@ -298,14 +345,25 @@ private fun ProtocolsHeader(
                 horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
                 verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
             ) {
-                HeaderStatChip(label = "Library", value = "$protocolCount")
-                HeaderStatChip(label = "Active", value = "$activeCount")
                 HeaderStatChip(
-                    label = "Last run",
-                    value = lastRunAt?.let(::formatProtocolTimestamp) ?: "No runs yet",
+                    label = stringResource(Res.string.protocols_library),
+                    value = "$protocolCount",
+                )
+                HeaderStatChip(
+                    label = stringResource(Res.string.protocols_active),
+                    value = "$activeCount",
+                )
+                HeaderStatChip(
+                    label = stringResource(Res.string.protocols_label_last_run),
+                    value =
+                        lastRunAt?.let(::formatProtocolTimestamp)
+                            ?: stringResource(Res.string.protocols_no_runs),
                 )
                 if (!recommendedLabel.isNullOrBlank()) {
-                    HeaderStatChip(label = "Suggested", value = recommendedLabel)
+                    HeaderStatChip(
+                        label = stringResource(Res.string.protocols_label_suggested),
+                        value = recommendedLabel,
+                    )
                 }
             }
         }
@@ -370,8 +428,8 @@ private fun ProtocolLibrarySurface(
             value = searchQuery,
             onValueChange = onSearchQueryChange,
             modifier = Modifier.fillMaxWidth(),
-            label = { Text("Search protocols") },
-            placeholder = { Text("Morning reset, study startup, shutdown routine...") },
+            label = { Text(stringResource(Res.string.protocols_label_search)) },
+            placeholder = { Text(stringResource(Res.string.protocols_placeholder_search)) },
             singleLine = true,
         )
         FlowRow(
@@ -382,7 +440,7 @@ private fun ProtocolLibrarySurface(
                 FilterChip(
                     selected = selectedCategory == category,
                     onClick = { onCategorySelected(category) },
-                    label = { Text(category.label) },
+                    label = { Text(category.label()) },
                 )
             }
         }
@@ -395,7 +453,7 @@ private fun ProtocolLibrarySurface(
                 shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
             ) {
                 Text(
-                    text = "No protocols match this filter. Clear search or choose another category.",
+                    text = stringResource(Res.string.protocols_no_matches),
                     modifier = Modifier.padding(TajsOSTheme.SpacingMd),
                     style = MaterialTheme.typography.bodySmall,
                     color = TajsOSTheme.Muted,
@@ -435,7 +493,7 @@ private fun ProtocolLibraryCard(
             verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
         ) {
             Text(
-                text = item.category.label.uppercase(),
+                text = item.category.label().uppercase(),
                 style = MaterialTheme.typography.labelSmall,
                 color = TajsOSTheme.Primary,
                 fontWeight = FontWeight.Bold,
@@ -452,34 +510,44 @@ private fun ProtocolLibraryCard(
                 color = TajsOSTheme.Muted,
             )
             Text(
-                text = "Use when: ${item.useWhen}",
+                text = "${stringResource(Res.string.protocols_label_use_when)}: ${item.useWhen}",
                 style = MaterialTheme.typography.bodySmall,
                 color = TajsOSTheme.Muted,
             )
             Text(
                 text =
-                    "Estimated time ${item.estimatedDurationMinutes}m • Steps ${item.stepCount} • Runs ${item.triggerCount}",
+                    stringResource(
+                        Res.string.protocols_label_estimated_time,
+                        item.estimatedDurationMinutes.toString(),
+                        item.stepCount.toString(),
+                        item.triggerCount.toString(),
+                    ),
                 style = MaterialTheme.typography.bodySmall,
                 color = TajsOSTheme.Text,
             )
             Text(
-                text = "Last run: ${item.lastRunAt?.let(::formatProtocolTimestamp) ?: "Not yet"}",
+                text =
+                    stringResource(
+                        Res.string.protocols_label_last_run_item,
+                        item.lastRunAt?.let(::formatProtocolTimestamp)
+                            ?: stringResource(Res.string.protocols_not_yet),
+                    ),
                 style = MaterialTheme.typography.bodySmall,
                 color = TajsOSTheme.Muted,
             )
             Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                 Button(onClick = onRun) {
-                    Text("Run")
+                    Text(stringResource(Res.string.protocols_action_run))
                 }
                 AssistChip(
                     onClick = onOpen,
                     enabled = item.nodeId != null,
-                    label = { Text("Open") },
+                    label = { Text(stringResource(Res.string.common_open)) },
                 )
                 AssistChip(
                     onClick = onOpen,
                     enabled = item.nodeId != null,
-                    label = { Text("Edit") },
+                    label = { Text(stringResource(Res.string.common_edit)) },
                 )
             }
         }
@@ -512,13 +580,13 @@ private fun ProtocolRunSurface(
                 verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
             ) {
                 Text(
-                    "No active protocol selected",
+                    stringResource(Res.string.protocols_no_active),
                     style = MaterialTheme.typography.titleMedium,
                     color = TajsOSTheme.Text,
                     fontWeight = FontWeight.Bold,
                 )
                 Text(
-                    "Pick a protocol to start a guided run session.",
+                    stringResource(Res.string.protocols_pick_to_start),
                     style = MaterialTheme.typography.bodySmall,
                     color = TajsOSTheme.Muted,
                 )
@@ -529,7 +597,14 @@ private fun ProtocolRunSurface(
                     suggestedProtocols.forEach { item ->
                         AssistChip(
                             onClick = { onSelectProtocol(item.title) },
-                            label = { Text("Run ${item.title}") },
+                            label = {
+                                Text(
+                                    stringResource(
+                                        Res.string.protocols_action_run_item,
+                                        item.title,
+                                    ),
+                                )
+                            },
                         )
                     }
                 }
@@ -680,13 +755,25 @@ private fun ProtocolRunMainPanel(
                 fontWeight = FontWeight.SemiBold,
             )
             Text(
-                text = if (paused) "Session paused" else "Session running",
+                text =
+                    if (paused) {
+                        stringResource(Res.string.protocol_session_paused)
+                    } else {
+                        stringResource(
+                            Res.string.protocol_session_running,
+                        )
+                    },
                 style = MaterialTheme.typography.bodySmall,
                 color = if (paused) TajsOSTheme.AccentAmber else TajsOSTheme.Success,
                 fontWeight = FontWeight.Bold,
             )
             Text(
-                text = "$doneCount / $stepCount steps complete",
+                text =
+                    stringResource(
+                        Res.string.protocol_steps_complete,
+                        doneCount.toString(),
+                        stepCount.toString(),
+                    ),
                 style = MaterialTheme.typography.bodySmall,
                 color = TajsOSTheme.Muted,
             )
@@ -708,7 +795,7 @@ private fun ProtocolRunMainPanel(
                     verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
                 ) {
                     Text(
-                        text = "Current step",
+                        text = stringResource(Res.string.protocol_current_step),
                         style = MaterialTheme.typography.labelSmall,
                         color = TajsOSTheme.Primary,
                         fontWeight = FontWeight.Bold,
@@ -722,14 +809,14 @@ private fun ProtocolRunMainPanel(
                         )
                         if (!upNext.isNullOrBlank()) {
                             Text(
-                                text = "Up next: $upNext",
+                                text = stringResource(Res.string.protocol_up_next, upNext),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = TajsOSTheme.Muted,
                             )
                         }
                     } else {
                         Text(
-                            text = "This protocol has no checklist steps yet.",
+                            text = stringResource(Res.string.protocol_no_steps),
                             style = MaterialTheme.typography.bodySmall,
                             color = TajsOSTheme.Muted,
                         )
@@ -745,25 +832,35 @@ private fun ProtocolRunMainPanel(
                     onClick = onCompleteStep,
                     enabled = currentStep != null && !currentStep.first && !paused,
                 ) {
-                    Text("Complete Step")
+                    Text(stringResource(Res.string.protocol_complete_step))
                 }
                 AssistChip(
                     onClick = onPreviousStep,
-                    enabled = currentStep != null && currentStepIndex > 0,
-                    label = { Text("Previous") },
+                    enabled = currentStepIndex > 0 && !paused,
+                    label = { Text(stringResource(Res.string.protocols_action_previous)) },
                 )
                 AssistChip(
                     onClick = onSkipStep,
-                    enabled = currentStep != null,
-                    label = { Text("Skip") },
+                    enabled = currentStep != null && !currentStep.first && !paused,
+                    label = { Text(stringResource(Res.string.protocols_action_skip)) },
                 )
                 AssistChip(
                     onClick = onTogglePause,
-                    label = { Text(if (paused) "Resume" else "Pause") },
+                    label = {
+                        Text(
+                            if (paused) {
+                                stringResource(Res.string.common_resume)
+                            } else {
+                                stringResource(
+                                    Res.string.common_pause,
+                                )
+                            },
+                        )
+                    },
                 )
                 AssistChip(
                     onClick = onEnd,
-                    label = { Text("End Session") },
+                    label = { Text(stringResource(Res.string.protocols_action_end_session)) },
                 )
             }
         }
@@ -793,7 +890,7 @@ private fun ProtocolRunSidebar(
             verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
         ) {
             Text(
-                text = "Session Notes",
+                text = stringResource(Res.string.protocols_session_notes),
                 style = MaterialTheme.typography.titleSmall,
                 color = TajsOSTheme.Text,
                 fontWeight = FontWeight.SemiBold,
@@ -802,12 +899,12 @@ private fun ProtocolRunSidebar(
                 value = sessionNotes,
                 onValueChange = onSessionNotesChange,
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("Notes") },
-                placeholder = { Text("Capture observations or adjustments for next run...") },
+                label = { Text(stringResource(Res.string.notes_notes)) },
+                placeholder = { Text(stringResource(Res.string.protocols_placeholder_notes)) },
                 minLines = 4,
             )
             Text(
-                text = "Use when: ${descriptor.useWhen}",
+                text = "${stringResource(Res.string.protocols_label_use_when)}: ${descriptor.useWhen}",
                 style = MaterialTheme.typography.bodySmall,
                 color = TajsOSTheme.Muted,
             )
@@ -818,7 +915,7 @@ private fun ProtocolRunSidebar(
                     border = BorderStroke(1.dp, TajsOSTheme.Border.copy(alpha = 0.5f)),
                 ) {
                     Text(
-                        text = "Up next: $upNext",
+                        text = stringResource(Res.string.protocol_up_next, upNext),
                         modifier = Modifier.padding(10.dp),
                         style = MaterialTheme.typography.bodySmall,
                         color = TajsOSTheme.Text,
@@ -828,13 +925,17 @@ private fun ProtocolRunSidebar(
             }
             Text(
                 text =
-                    "Last run: ${activeProtocol.lastTriggeredAt?.let(::formatProtocolTimestamp) ?: "Not yet"}",
+                    stringResource(
+                        Res.string.protocols_label_last_run_item,
+                        activeProtocol.lastTriggeredAt?.let(::formatProtocolTimestamp)
+                            ?: stringResource(Res.string.protocols_not_yet),
+                    ),
                 style = MaterialTheme.typography.bodySmall,
                 color = TajsOSTheme.Muted,
             )
             if (checklist.any { it.first }) {
                 Text(
-                    text = "Adjustments",
+                    text = stringResource(Res.string.protocols_label_adjustments),
                     style = MaterialTheme.typography.labelSmall,
                     color = TajsOSTheme.Primary,
                     fontWeight = FontWeight.Bold,
@@ -847,7 +948,14 @@ private fun ProtocolRunSidebar(
                         if (step.first) {
                             AssistChip(
                                 onClick = { onUncheckStep(index) },
-                                label = { Text("Mark not done: ${index + 1}") },
+                                label = {
+                                    Text(
+                                        stringResource(
+                                            Res.string.protocols_action_mark_not_done,
+                                            (index + 1).toString(),
+                                        ),
+                                    )
+                                },
                             )
                         }
                     }
@@ -855,7 +963,7 @@ private fun ProtocolRunSidebar(
             }
             AssistChip(
                 onClick = { onOpen(activeProtocol.node.node.id) },
-                label = { Text("Open Protocol") },
+                label = { Text(stringResource(Res.string.protocols_action_open)) },
             )
         }
     }

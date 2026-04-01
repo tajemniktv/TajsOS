@@ -85,10 +85,10 @@ fun TemplatesScreen(
                 Modifier
                     .fillMaxSize()
                     .background(TajsOSTheme.Background)
-                    .padding(TajsOSTheme.SpacingMd)
+                    .padding(TajsOSTheme.SpacingMd),
         ) {
             plan.primary.forEach { block ->
-                TemplatesDashboardBlockRegistry.resolve(block.id)?.invoke(context)
+                TemplatesDashboardBlocks.resolve(block.id)?.invoke(context)
             }
         }
     }

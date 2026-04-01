@@ -37,6 +37,7 @@ import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.graph_no_data
 import tajsos.composeapp.generated.resources.graph_subtitle
 import tajsos.composeapp.generated.resources.graph_title
 
@@ -100,7 +101,7 @@ internal fun GraphMainBlock(
                 border = androidx.compose.foundation.BorderStroke(1.dp, TajsOSTheme.Border),
             ) {
                 Text(
-                    text = "No graph data yet. Create items and relations to populate the graph.",
+                    text = stringResource(Res.string.graph_no_data),
                     style = MaterialTheme.typography.bodyMedium,
                     color = TajsOSTheme.Muted,
                     modifier = Modifier.padding(TajsOSTheme.SpacingMd),

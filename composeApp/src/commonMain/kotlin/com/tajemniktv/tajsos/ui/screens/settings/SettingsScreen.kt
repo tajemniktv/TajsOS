@@ -34,6 +34,7 @@ fun SettingsScreen(
     val accentColorHex by viewModel.accentColorHex.collectAsState()
     val isGlassmorphismEnabled by viewModel.isGlassmorphismEnabled.collectAsState()
     val reduceMotion by viewModel.reduceMotion.collectAsState()
+    val sidebarMode by viewModel.sidebarMode.collectAsState()
 
     var importPayload by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
@@ -49,6 +50,7 @@ fun SettingsScreen(
             accentColorHex = accentColorHex,
             isGlassmorphismEnabled = isGlassmorphismEnabled,
             reduceMotion = reduceMotion,
+            sidebarMode = sidebarMode,
             importPayload = importPayload,
             onImportPayloadChange = { importPayload = it },
             onSaveMedication = { substance, brands, dosage, hour, optional ->
@@ -78,6 +80,7 @@ fun SettingsScreen(
             onSetAccentColor = { viewModel.setAccentColor(it) },
             onSetGlassmorphismEnabled = { viewModel.setGlassmorphismEnabled(it) },
             onSetReduceMotion = { viewModel.setReduceMotion(it) },
+            onSetSidebarMode = { viewModel.setSidebarMode(it) },
             onForceCrash = { throw RuntimeException("Test Crash") },
         )
 
@@ -91,7 +94,7 @@ fun SettingsScreen(
                 .padding(bottom = 80.dp),
     ) {
         plan.primary.forEach { block ->
-            SettingsDashboardBlockRegistry.resolve(block.id)?.invoke(context)
+            SettingsDashboardBlocks.resolve(block.id)?.invoke(context)
         }
     }
 }

@@ -13,6 +13,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.header_status_label
 
 /**
  * Displays a two-line status header: an uppercased status line prefixed with "TAJSOS // STATUS:" and an optional uppercased subtitle.
@@ -34,7 +37,7 @@ fun StatusHeader(
 ) {
     Column(modifier = modifier) {
         Text(
-            text = "TAJSOS // STATUS: ${status.uppercase()}",
+            text = stringResource(Res.string.header_status_label, status.uppercase()),
             style = MaterialTheme.typography.labelSmall,
             color = color,
             fontWeight = FontWeight.Bold,
