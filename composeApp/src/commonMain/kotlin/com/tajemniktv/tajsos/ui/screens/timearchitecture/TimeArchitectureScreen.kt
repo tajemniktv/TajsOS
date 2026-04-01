@@ -15,6 +15,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
@@ -45,8 +46,9 @@ fun TimeArchitectureScreen(
         modifier =
             Modifier
                 .fillMaxSize()
-                .padding(TajsOSTheme.SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+                .padding(TajsOSTheme.SpacingMd)
+                .padding(bottom = 80.dp),
+        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
     ) {
         plan.primary.forEach { block ->
             item(key = block.id) {

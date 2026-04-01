@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -82,7 +84,12 @@ fun SearchScreen(
         )
 
     BoxWithConstraints(
-        modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd)
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(TajsOSTheme.SpacingMd)
+                .padding(bottom = 80.dp),
     ) {
         val surface =
             if (maxWidth >= 1280.dp) SearchDashboardSurface.DESKTOP else SearchDashboardSurface.MOBILE
@@ -90,11 +97,11 @@ fun SearchScreen(
 
         Row(
             modifier = Modifier.fillMaxSize(),
-            horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+            horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
         ) {
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
             ) {
                 plan.primary.forEach { block ->
                     SearchDashboardBlockRegistry.resolve(block.id)?.invoke(context)

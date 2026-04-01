@@ -187,8 +187,12 @@ fun StudyScreen(
 
         if (surface == StudyDashboardSurface.MOBILE) {
             LazyColumn(
-                modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd),
-                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(TajsOSTheme.SpacingMd)
+                        .padding(bottom = 80.dp),
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
             ) {
                 items(plan.primary, key = { it.id }) { block ->
                     StudyDashboardBlockRegistry.resolve(block.id)?.invoke(context)
@@ -197,11 +201,11 @@ fun StudyScreen(
         } else {
             Row(
                 modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd),
-                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
             ) {
                 LazyColumn(
-                    modifier = Modifier.weight(1.35f),
-                    verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+                    modifier = Modifier.weight(1.35f).padding(bottom = 80.dp),
+                    verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
                 ) {
                     items(plan.primary, key = { it.id }) { block ->
                         StudyDashboardBlockRegistry.resolve(block.id)?.invoke(context)
@@ -209,8 +213,8 @@ fun StudyScreen(
                 }
 
                 LazyColumn(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+                    modifier = Modifier.weight(1f).padding(bottom = 80.dp),
+                    verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
                 ) {
                     items(plan.secondary, key = { it.id }) { block ->
                         Column(modifier = Modifier.width(720.dp)) {

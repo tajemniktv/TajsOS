@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -193,8 +191,8 @@ internal fun InboxMainBlock(
         if (nodes.isEmpty() && inboxEntries.isEmpty()) {
             EmptyState(message = stringResource(Res.string.inbox_empty))
         } else {
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                items(nodes, key = { it.node.id }) { nodeWithPin ->
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                nodes.forEach { nodeWithPin ->
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),

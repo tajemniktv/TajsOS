@@ -8,12 +8,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.FilterChip
@@ -92,7 +89,7 @@ internal fun NotesMainBlock(
             }
         }
 
-    Column(modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd)) {
+    Column(modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd)) {
         Text(
             stringResource(Res.string.notes_title),
             style = MaterialTheme.typography.displaySmall,
@@ -117,7 +114,7 @@ internal fun NotesMainBlock(
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
+            horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
         ) {
             listOf("TYPE", "AREA", "PROJECT", "DATE", "MEDIA").forEach { group ->
                 FilterChip(
@@ -164,16 +161,15 @@ internal fun NotesMainBlock(
                 filteredNodes.groupBy { it.node.mediaType }
             }
 
-        LazyColumn(
-            modifier = Modifier.weight(1f),
+        Column(
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             when (selectedGroup)
             {
                 "TYPE" -> {
                     if (typePinned.isNotEmpty()) {
-                        item { GroupHeader(stringResource(Res.string.notes_pinned_knowledge)) }
-                        items(typePinned, key = { it.node.id }) { node ->
+                        GroupHeader(stringResource(Res.string.notes_pinned_knowledge))
+                        typePinned.forEach { node ->
                             KnowledgeItem(
                                 node,
                                 viewModel,
@@ -182,8 +178,8 @@ internal fun NotesMainBlock(
                         }
                     }
                     if (typeNotes.isNotEmpty()) {
-                        item { GroupHeader(stringResource(Res.string.notes_notes)) }
-                        items(typeNotes, key = { it.node.id }) { node ->
+                        GroupHeader(stringResource(Res.string.notes_notes))
+                        typeNotes.forEach { node ->
                             KnowledgeItem(
                                 node,
                                 viewModel,
@@ -192,8 +188,8 @@ internal fun NotesMainBlock(
                         }
                     }
                     if (typeRecords.isNotEmpty()) {
-                        item { GroupHeader("RECORDS") }
-                        items(typeRecords, key = { it.node.id }) { node ->
+                        GroupHeader("RECORDS")
+                        typeRecords.forEach { node ->
                             KnowledgeItem(
                                 node,
                                 viewModel,
@@ -207,8 +203,8 @@ internal fun NotesMainBlock(
                     allAreas.forEach { area ->
                         val nodesInArea = nodesByArea[area.id] ?: emptyList()
                         if (nodesInArea.isNotEmpty()) {
-                            item { GroupHeader(area.title.uppercase()) }
-                            items(nodesInArea, key = { it.node.id }) { node ->
+                            GroupHeader(area.title.uppercase())
+                            nodesInArea.forEach { node ->
                                 KnowledgeItem(
                                     node,
                                     viewModel,
@@ -219,8 +215,8 @@ internal fun NotesMainBlock(
                     }
                     val unassigned = nodesByArea[null] ?: emptyList()
                     if (unassigned.isNotEmpty()) {
-                        item { GroupHeader("UNASSIGNED") }
-                        items(unassigned, key = { it.node.id }) { node ->
+                        GroupHeader("UNASSIGNED")
+                        unassigned.forEach { node ->
                             KnowledgeItem(
                                 node,
                                 viewModel,
@@ -234,8 +230,8 @@ internal fun NotesMainBlock(
                     allProjects.forEach { project ->
                         val nodesInProject = nodesByProject[project.id] ?: emptyList()
                         if (nodesInProject.isNotEmpty()) {
-                            item { GroupHeader(project.title.uppercase()) }
-                            items(nodesInProject, key = { it.node.id }) { node ->
+                            GroupHeader(project.title.uppercase())
+                            nodesInProject.forEach { node ->
                                 KnowledgeItem(
                                     node,
                                     viewModel,
@@ -246,8 +242,8 @@ internal fun NotesMainBlock(
                     }
                     val unassigned = nodesByProject[null] ?: emptyList()
                     if (unassigned.isNotEmpty()) {
-                        item { GroupHeader("UNASSIGNED") }
-                        items(unassigned, key = { it.node.id }) { node ->
+                        GroupHeader("UNASSIGNED")
+                        unassigned.forEach { node ->
                             KnowledgeItem(
                                 node,
                                 viewModel,
@@ -259,8 +255,8 @@ internal fun NotesMainBlock(
 
                 "DATE" -> {
                     nodesByDate.forEach { (date, nodes) ->
-                        item { GroupHeader(date) }
-                        items(nodes, key = { it.node.id }) { node ->
+                        GroupHeader(date)
+                        nodes.forEach { node ->
                             KnowledgeItem(
                                 node,
                                 viewModel,
@@ -282,8 +278,8 @@ internal fun NotesMainBlock(
                     mediaTypes.forEach { (type, res) ->
                         val nodesOfType = nodesByMediaType[type] ?: emptyList()
                         if (nodesOfType.isNotEmpty()) {
-                            item { GroupHeader(stringResource(res)) }
-                            items(nodesOfType, key = { it.node.id }) { node ->
+                            GroupHeader(stringResource(res))
+                            nodesOfType.forEach { node ->
                                 KnowledgeItem(
                                     node,
                                     viewModel,
@@ -298,8 +294,8 @@ internal fun NotesMainBlock(
                                 ?: emptyList()
                         ).filter { it.node.type == "resource" }
                     if (other.isNotEmpty()) {
-                        item { GroupHeader(stringResource(Res.string.media_other)) }
-                        items(other, key = { it.node.id }) { node ->
+                        GroupHeader(stringResource(Res.string.media_other))
+                        other.forEach { node ->
                             KnowledgeItem(
                                 node,
                                 viewModel,
@@ -311,18 +307,16 @@ internal fun NotesMainBlock(
             }
 
             if (filteredNodes.isEmpty()) {
-                item {
-                    EmptyState(
-                        message =
-                            if (searchQuery.isEmpty()) {
-                                stringResource(Res.string.notes_empty)
-                            } else {
-                                stringResource(
-                                    Res.string.notes_no_results,
-                                )
-                            },
-                    )
-                }
+                EmptyState(
+                    message =
+                        if (searchQuery.isEmpty()) {
+                            stringResource(Res.string.notes_empty)
+                        } else {
+                            stringResource(
+                                Res.string.notes_no_results,
+                            )
+                        },
+                )
             }
         }
     }

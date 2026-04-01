@@ -85,7 +85,7 @@ fun ProjectDetailScreen(
             Text(
                 stringResource(Res.string.project_detail_not_found),
                 color = TajsOSTheme.Muted,
-                modifier = Modifier.padding(TajsOSTheme.SpacingMd)
+                modifier = Modifier.padding(TajsOSTheme.SpacingMd),
             )
         }
         return
@@ -124,10 +124,12 @@ fun ProjectDetailScreen(
         projectTasks.filter {
             it.taskStateOrNull() == TaskState.BLOCKED ||
                 (
-                    it.taskStateOrNull() == TaskState.ACTIVE && it.isHardDeadline && (
-                        it.dueAt
-                            ?: Long.MAX_VALUE
-                    ) < now
+                    it.taskStateOrNull() == TaskState.ACTIVE &&
+                        it.isHardDeadline &&
+                        (
+                            it.dueAt
+                                ?: Long.MAX_VALUE
+                        ) < now
                 )
         }
     val nextActions = activeTasks.filterNot { task -> blockedTasks.any { it.id == task.id } }
@@ -260,7 +262,7 @@ fun ProjectDetailScreen(
             )
 
         BoxWithConstraints(
-            modifier = Modifier.fillMaxSize().background(TajsOSTheme.Background)
+            modifier = Modifier.fillMaxSize().background(TajsOSTheme.Background),
         ) {
             val surface =
                 if (isDesktop && maxWidth >= 1180.dp) {
@@ -276,7 +278,8 @@ fun ProjectDetailScreen(
                     Modifier
                         .fillMaxSize()
                         .verticalScroll(rememberScrollState())
-                        .padding(12.dp),
+                        .padding(12.dp)
+                        .padding(bottom = 80.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 if (surface == ProjectDetailSurface.DESKTOP) {

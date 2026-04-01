@@ -89,7 +89,7 @@ fun AppLayout(
                     title = "System Integrity Nominal",
                     body = "All local-first modules are operational.",
                     category = "SYSTEM",
-                    variant = NotificationVariant.INFO
+                    variant = NotificationVariant.INFO,
                 ),
                 NotificationUiModel(
                     id = "SYNC-042",
@@ -97,15 +97,15 @@ fun AppLayout(
                     body = "3 nodes awaiting finalization in background.",
                     category = "NETWORK",
                     variant = NotificationVariant.SYNC,
-                    isUnread = true
+                    isUnread = true,
                 ),
                 NotificationUiModel(
                     id = "ALRT-099",
                     title = "Low Focus Threshold",
                     body = "Productivity dip detected. Consider a recovery block.",
                     category = "INSIGHT",
-                    variant = NotificationVariant.WARNING
-                )
+                    variant = NotificationVariant.WARNING,
+                ),
             )
         }
 
@@ -148,7 +148,7 @@ fun AppLayout(
             drawerState = drawerState,
             drawerContent = {
                 ModalDrawerSheet(
-                    drawerContainerColor = TajsOSTheme.SidebarBackground
+                    drawerContainerColor = TajsOSTheme.SidebarBackground,
                 ) {
                     AppSidebar(
                         shellState = shellState,
@@ -185,6 +185,7 @@ fun AppLayout(
                     shellState = shellState,
                     isDesktop = false,
                     onModeSelect = onModeSelect,
+                    onMenuClick = { scope.launch { drawerState.open() } },
                 )
                 Box(modifier = Modifier.fillMaxSize()) {
                     content()
@@ -200,7 +201,7 @@ private fun rememberModeOptions(modes: List<ModeEntity>): List<ShellModeOption> 
             ShellModeOption(
                 id = mode.id,
                 name = mode.name,
-                color = mode.themeColor?.let(::Color) ?: TajsOSTheme.Primary
+                color = mode.themeColor?.let(::Color) ?: TajsOSTheme.Primary,
             )
         }
     }

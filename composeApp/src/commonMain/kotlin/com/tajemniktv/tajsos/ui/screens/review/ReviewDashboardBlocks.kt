@@ -14,10 +14,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.DateRange
@@ -114,13 +110,13 @@ private fun renderReviewFlow(context: ReviewDashboardContext) {
         LinearProgressIndicator(
             progress = { (currentStep + 1).toFloat() / steps.size },
             modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
-            color = TajsOSTheme.Primary
+            color = TajsOSTheme.Primary,
         )
 
         Text(
             stringResource(steps[currentStep]),
             style = MaterialTheme.typography.headlineSmall,
-            color = TajsOSTheme.Primary
+            color = TajsOSTheme.Primary,
         )
 
         Spacer(Modifier.height(16.dp))
@@ -151,7 +147,7 @@ private fun renderReviewFlow(context: ReviewDashboardContext) {
                 }
 
                 Res.string.review_step_stats -> {
-                    Column(Modifier.verticalScroll(rememberScrollState())) {
+                    Column {
                         Text("Capacity: ${insights.weeklyCompletions} tasks done.")
                         Text("Execution Ratio: ${(insights.captureToActionRatio * 100).toInt()}%")
                         Text("Focus: ${insights.weeklyFocusHours.toInt()} hours.")
@@ -169,8 +165,8 @@ private fun renderReviewFlow(context: ReviewDashboardContext) {
                     val archivedSuggestions = dashboardState.archivedThisWeek
                     Column {
                         Text("You archived ${archivedSuggestions.size} items this week. Anything else to let go of?")
-                        LazyColumn(Modifier.height(200.dp)) {
-                            items(dashboardState.neglectedThisWeek.take(5)) { item ->
+                        Column {
+                            dashboardState.neglectedThisWeek.take(5).forEach { item ->
                                 ListItem(
                                     headlineContent = { Text(item.node.title) },
                                     trailingContent = {
@@ -178,7 +174,7 @@ private fun renderReviewFlow(context: ReviewDashboardContext) {
                                             Icon(
                                                 Icons.Default.Delete,
                                                 contentDescription = "Archive",
-                                                tint = TajsOSTheme.Error
+                                                tint = TajsOSTheme.Error,
                                             )
                                         }
                                     },

@@ -19,10 +19,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
@@ -111,7 +108,7 @@ internal fun AreasMainBlock(
 
     Column(
         modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -121,7 +118,7 @@ internal fun AreasMainBlock(
             Text(
                 text = stringResource(Res.string.areas_title),
                 style = MaterialTheme.typography.displaySmall,
-                color = TajsOSTheme.Text
+                color = TajsOSTheme.Text,
             )
             Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                 OutlinedButton(onClick = { viewModel.addSuggestedAreas() }) {
@@ -193,7 +190,7 @@ private fun AreaTopSummary(
     Surface(color = TajsOSTheme.Surface, shape = RoundedCornerShape(TajsOSTheme.RadiusMd)) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
-            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
         ) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
@@ -223,7 +220,7 @@ private fun AreaTopSummary(
             Text(
                 stringResource(Res.string.areas_distribution),
                 style = MaterialTheme.typography.labelLarge,
-                color = TajsOSTheme.Text
+                color = TajsOSTheme.Text,
             )
             Row(
                 modifier = Modifier.fillMaxWidth().height(22.dp),
@@ -234,7 +231,8 @@ private fun AreaTopSummary(
                     val weight =
                         (metricsById[area.id]?.activeItems ?: 0)
                             .coerceAtLeast(1)
-                            .toFloat() / total.toFloat()
+                            .toFloat() /
+                            total.toFloat()
                     val color = areaStatusColor(metricsById[area.id]?.status ?: "stable")
                     Box(
                         modifier =
@@ -248,7 +246,7 @@ private fun AreaTopSummary(
                             area.title.take(12),
                             modifier = Modifier.padding(horizontal = 8.dp),
                             style = MaterialTheme.typography.labelSmall,
-                            color = TajsOSTheme.Text
+                            color = TajsOSTheme.Text,
                         )
                     }
                 }
@@ -283,6 +281,7 @@ private fun SummaryChip(
     }
 }
 
+@OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
 @Composable
 private fun AreasCards(
     areas: List<NodeEntity>,
@@ -302,27 +301,31 @@ private fun AreasCards(
             counts
         }
 
-    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+    BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
         val desktop = maxWidth > 900.dp
         if (desktop) {
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(minSize = 300.dp),
+            androidx.compose.foundation.layout.FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
                 verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
-                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
             ) {
-                items(count = areas.size, key = { index -> areas[index].id }) { index ->
-                    val area = areas[index]
-                    AreaCard(
-                        area = area,
-                        metrics = metricsById[area.id],
-                        activeProjects = activeProjectsByAreaId[area.id] ?: 0,
-                        onClick = { onOpen(area.id) },
-                    )
+                areas.forEach { area ->
+                    Box(modifier = Modifier.widthIn(min = 300.dp).weight(1f)) {
+                        AreaCard(
+                            area = area,
+                            metrics = metricsById[area.id],
+                            activeProjects = activeProjectsByAreaId[area.id] ?: 0,
+                            onClick = { onOpen(area.id) },
+                        )
+                    }
                 }
             }
         } else {
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
-                items(areas, key = { it.id }) { area ->
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+            ) {
+                areas.forEach { area ->
                     AreaCard(
                         area = area,
                         metrics = metricsById[area.id],

@@ -8,14 +8,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Surface
@@ -79,7 +76,7 @@ internal fun DecisionsMainBlock(
         modifier =
             Modifier
                 .fillMaxSize()
-                .background(TajsOSTheme.Background)
+                .background(TajsOSTheme.Background),
     ) {
         Text(
             stringResource(LensUiContract.decisionLens.title),
@@ -92,13 +89,13 @@ internal fun DecisionsMainBlock(
             stringResource(LensUiContract.decisionLens.subtitle),
             modifier = Modifier.padding(horizontal = TajsOSTheme.SpacingMd),
             style = MaterialTheme.typography.bodySmall,
-            color = TajsOSTheme.Muted
+            color = TajsOSTheme.Muted,
         )
         Spacer(Modifier.height(8.dp))
         SecondaryTabRow(
             selectedTabIndex = selectedTab,
             containerColor = TajsOSTheme.Surface,
-            contentColor = TajsOSTheme.Primary
+            contentColor = TajsOSTheme.Primary,
         ) {
             tabs.forEachIndexed { index, title ->
                 Tab(
@@ -122,11 +119,11 @@ internal fun DecisionsMainBlock(
                 border =
                     androidx.compose.foundation.BorderStroke(
                         1.dp,
-                        TajsOSTheme.Error.copy(alpha = 0.25f)
+                        TajsOSTheme.Error.copy(alpha = 0.25f),
                     ),
                 shape =
                     androidx.compose.foundation.shape
-                        .RoundedCornerShape(TajsOSTheme.RadiusMd)
+                        .RoundedCornerShape(TajsOSTheme.RadiusMd),
             ) {
                 Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
                     Text(
@@ -146,7 +143,7 @@ internal fun DecisionsMainBlock(
                                 )
                             }",
                             style = MaterialTheme.typography.bodySmall,
-                            color = TajsOSTheme.Text
+                            color = TajsOSTheme.Text,
                         )
                     }
                 }
@@ -171,22 +168,21 @@ fun DecisionList(
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text(
                 stringResource(Res.string.decision_no_decisions_category),
-                color = TajsOSTheme.Muted
+                color = TajsOSTheme.Muted,
             )
         }
     } else {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(TajsOSTheme.SpacingMd),
-            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
         ) {
-            items(nodes) { node ->
+            nodes.forEach { node ->
                 DashCard(onClick = { onEdit(node.node.id) }) {
                     Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
                         Text(
                             node.node.title,
                             style = MaterialTheme.typography.titleMedium,
-                            color = TajsOSTheme.Text
+                            color = TajsOSTheme.Text,
                         )
                         if (node.node.content.isNotEmpty()) {
                             Text(

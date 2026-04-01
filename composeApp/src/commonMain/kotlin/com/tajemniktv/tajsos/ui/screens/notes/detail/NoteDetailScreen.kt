@@ -133,7 +133,7 @@ fun NoteDetailScreen(
             } else {
                 Text(
                     stringResource(Res.string.detail_not_found, noteId),
-                    color = TajsOSTheme.Muted
+                    color = TajsOSTheme.Muted,
                 )
             }
         }
@@ -281,7 +281,7 @@ fun NoteDetailScreen(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .background(TajsOSTheme.Background)
+                    .background(TajsOSTheme.Background),
         ) {
             val surface = if (isDesktop) NoteDetailSurface.DESKTOP else NoteDetailSurface.MOBILE
             val plan =
@@ -294,8 +294,8 @@ fun NoteDetailScreen(
                         .background(TajsOSTheme.Background)
                         .verticalScroll(rememberScrollState())
                         .padding(horizontal = TajsOSTheme.SpacingMd)
-                        .padding(bottom = TajsOSTheme.SpacingMd),
-                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingLg)
+                        .padding(bottom = 80.dp),
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingLg),
             ) {
                 plan.primary.forEach { block ->
                     NoteDetailBlockRegistry.resolve(block.id)?.invoke(context)

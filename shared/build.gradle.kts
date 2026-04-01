@@ -15,8 +15,14 @@ kotlin {
     // Android target configured via androidLibrary block (replaces androidTarget + android{})
     android {
         namespace = "com.tajemniktv.tajsos.shared"
-        compileSdk = libs.versions.android.compileSdk.get().toInt()
-        minSdk = libs.versions.android.minSdk.get().toInt()
+        compileSdk =
+            libs.versions.android.compileSdk
+                .get()
+                .toInt()
+        minSdk =
+            libs.versions.android.minSdk
+                .get()
+                .toInt()
     }
 
     iosArm64()
@@ -38,6 +44,10 @@ kotlin {
             implementation(libs.androidx.datastore.preferences)
             implementation(libs.ktor.client.okhttp)
             implementation(libs.slf4j.android)
+            implementation(libs.firebase.auth.native)
+            implementation(libs.firebase.firestore.native)
+            implementation(libs.firebase.analytics.native)
+            implementation(libs.firebase.common.native)
         }
         jvmMain.dependencies {
             implementation(libs.ktor.client.okhttp)
@@ -59,6 +69,9 @@ kotlin {
             implementation(libs.compose.icons.core)
             implementation(libs.compose.icons.extended)
             implementation(libs.compose.runtime)
+            api(libs.firebase.auth)
+            api(libs.firebase.firestore)
+            api(libs.firebase.analytics)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

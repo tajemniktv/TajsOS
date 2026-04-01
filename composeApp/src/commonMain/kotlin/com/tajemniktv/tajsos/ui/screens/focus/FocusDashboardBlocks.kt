@@ -13,14 +13,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.History
@@ -106,7 +101,8 @@ internal fun FocusMainBlock(viewModel: MainViewModel) {
         remember(todayNodes, allNodes) {
             (todayNodes + allNodes.map { it.node })
                 .filter {
-                    it.isTaskItem() && it.status != "archived" &&
+                    it.isTaskItem() &&
+                        it.status != "archived" &&
                         it.taskStateOrNull() != TaskState.DONE
                 }.distinctBy { it.id }
         }
@@ -129,17 +125,19 @@ internal fun FocusMainBlock(viewModel: MainViewModel) {
         ) {
             tasks
                 .sortedByDescending {
-                    (if (it.id == activeSession?.nodeId) 20 else 0) + (if (it.dueAt != null) 8 else 0) + (
-                        if ((
-                                it.estimatedMinutes
-                                    ?: 999
-                            ) <= 45
-                        ) {
-                            4
-                        } else {
-                            0
-                        }
-                    )
+                    (if (it.id == activeSession?.nodeId) 20 else 0) +
+                        (if (it.dueAt != null) 8 else 0) +
+                        (
+                            if ((
+                                    it.estimatedMinutes
+                                        ?: 999
+                                ) <= 45
+                            ) {
+                                4
+                            } else {
+                                0
+                            }
+                        )
                 }.take(5)
         }
     val quickWins =
@@ -149,7 +147,9 @@ internal fun FocusMainBlock(viewModel: MainViewModel) {
                     (
                         it.estimatedMinutes
                             ?: Int.MAX_VALUE
-                    ) <= 15 || it.energyLevel == 1 || it.friction == "easy"
+                            ) <= 15 ||
+                            it.energyLevel == 1 ||
+                            it.friction == "easy"
                 }.take(4)
         }
     var seconds by remember { mutableIntStateOf(0) }
@@ -161,11 +161,13 @@ internal fun FocusMainBlock(viewModel: MainViewModel) {
                             (
                             kotlin.time.Clock.System
                                 .now()
-                                .toEpochMilliseconds() - (
-                                activeSession?.startedAt
-                                    ?: 0L
-                            )
-                        ) / 1000L
+                                .toEpochMilliseconds() -
+                                    (
+                                    activeSession?.startedAt
+                                                ?: 0L
+                                )
+                        ) /
+                            1000L
                     ).toInt()
                 delay(1000L)
             }
@@ -184,16 +186,15 @@ internal fun FocusMainBlock(viewModel: MainViewModel) {
     Column(
         modifier =
             Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
                 .background(TajsOSTheme.Background)
-                .verticalScroll(rememberScrollState())
                 .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Surface(
             color = TajsOSTheme.Surface,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            border = BorderStroke(1.dp, TajsOSTheme.GhostBorder)
+            border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -219,7 +220,7 @@ internal fun FocusMainBlock(viewModel: MainViewModel) {
                 Text(
                     timer,
                     style = MaterialTheme.typography.displayLarge.copy(letterSpacing = (-1).sp),
-                    color = TajsOSTheme.Text
+                    color = TajsOSTheme.Text,
                 )
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     AssistChip(
@@ -296,7 +297,7 @@ internal fun FocusMainBlock(viewModel: MainViewModel) {
         Surface(
             color = TajsOSTheme.Surface,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            border = BorderStroke(1.dp, TajsOSTheme.GhostBorder)
+            border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -315,8 +316,8 @@ internal fun FocusMainBlock(viewModel: MainViewModel) {
                     colors =
                         OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = TajsOSTheme.Primary,
-                            unfocusedBorderColor = TajsOSTheme.Border
-                        )
+                            unfocusedBorderColor = TajsOSTheme.Border,
+                        ),
                 )
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -372,7 +373,7 @@ internal fun FocusMainBlock(viewModel: MainViewModel) {
         Surface(
             color = TajsOSTheme.Surface,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            border = BorderStroke(1.dp, TajsOSTheme.GhostBorder)
+            border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -392,8 +393,8 @@ internal fun FocusMainBlock(viewModel: MainViewModel) {
                     colors =
                         OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = TajsOSTheme.Primary,
-                            unfocusedBorderColor = TajsOSTheme.Border
-                        )
+                            unfocusedBorderColor = TajsOSTheme.Border,
+                        ),
                 )
                 Button(onClick = {
                     if (capture.isNotBlank()) {
@@ -419,7 +420,7 @@ internal fun FocusMainBlock(viewModel: MainViewModel) {
         Surface(
             color = TajsOSTheme.Surface,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            border = BorderStroke(1.dp, TajsOSTheme.GhostBorder)
+            border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -431,11 +432,8 @@ internal fun FocusMainBlock(viewModel: MainViewModel) {
                     color = TajsOSTheme.Text,
                     fontWeight = FontWeight.SemiBold,
                 )
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.height(220.dp),
-                ) {
-                    items(allSessions.take(8)) { s ->
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    allSessions.take(8).forEach { s ->
                         val title =
                             allNodes.find { it.node.id == s.nodeId }?.node?.title ?: stringResource(
                                 Res.string.focus_unknown_task,
@@ -449,7 +447,7 @@ internal fun FocusMainBlock(viewModel: MainViewModel) {
                                 Text(
                                     title,
                                     style = MaterialTheme.typography.bodyMedium,
-                                    color = TajsOSTheme.Text
+                                    color = TajsOSTheme.Text,
                                 )
                                 Text(
                                     stringResource(
@@ -458,7 +456,7 @@ internal fun FocusMainBlock(viewModel: MainViewModel) {
                                         s.durationSec % 60,
                                     ),
                                     style = MaterialTheme.typography.bodySmall,
-                                    color = TajsOSTheme.Muted
+                                    color = TajsOSTheme.Muted,
                                 )
                             }
                             Icon(Icons.Default.History, null, tint = TajsOSTheme.Muted)
@@ -479,7 +477,7 @@ private fun FocusListCard(
     Surface(
         color = TajsOSTheme.Surface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.GhostBorder)
+        border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -495,14 +493,15 @@ private fun FocusListCard(
                 Text(
                     stringResource(Res.string.focus_no_active_task),
                     style = MaterialTheme.typography.bodySmall,
-                    color = TajsOSTheme.Muted
+                    color = TajsOSTheme.Muted,
                 )
             } else {
                 nodes.forEach { task ->
                     ElevatedCard(
-                        colors = CardDefaults.elevatedCardColors(
-                            containerColor = TajsOSTheme.SurfaceLow
-                        ),
+                        colors =
+                            CardDefaults.elevatedCardColors(
+                                containerColor = TajsOSTheme.SurfaceLow,
+                            ),
                         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 0.dp),
                     ) {
@@ -518,7 +517,7 @@ private fun FocusListCard(
                                 Text(
                                     task.title,
                                     style = MaterialTheme.typography.bodyLarge,
-                                    color = TajsOSTheme.Text
+                                    color = TajsOSTheme.Text,
                                 )
                                 val tiny =
                                     listOfNotNull(
@@ -529,7 +528,7 @@ private fun FocusListCard(
                                 Text(
                                     tiny,
                                     style = MaterialTheme.typography.bodySmall,
-                                    color = TajsOSTheme.Muted
+                                    color = TajsOSTheme.Muted,
                                 )
                             }
                             OutlinedButton(onClick = { onPick(task) }) {

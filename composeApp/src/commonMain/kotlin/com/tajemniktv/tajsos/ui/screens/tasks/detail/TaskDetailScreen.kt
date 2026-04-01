@@ -240,11 +240,9 @@ fun TaskDetailScreen(
                 Modifier
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
-                    .padding(
-                        horizontal = TajsOSTheme.SpacingLg,
-                        vertical = TajsOSTheme.SpacingMd
-                    ),
-            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingLg)
+                    .padding(horizontal = TajsOSTheme.SpacingLg)
+                    .padding(top = TajsOSTheme.SpacingMd, bottom = 80.dp),
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingLg),
         ) {
             if (surface == TaskDetailSurface.DESKTOP) {
                 // Header is first in primary, but we want it full width above the split
@@ -257,7 +255,7 @@ fun TaskDetailScreen(
                 ) {
                     Column(
                         modifier = Modifier.weight(2f),
-                        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+                        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
                     ) {
                         plan.primary.filterNot { it.id == "task_header" }.forEach { block ->
                             TaskDetailBlockRegistry.resolve(block.id)?.invoke(context)
@@ -266,7 +264,7 @@ fun TaskDetailScreen(
 
                     Column(
                         modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+                        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
                     ) {
                         plan.secondary.forEach { block ->
                             TaskDetailBlockRegistry.resolve(block.id)?.invoke(context)

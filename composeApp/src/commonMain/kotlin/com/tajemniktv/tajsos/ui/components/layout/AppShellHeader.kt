@@ -26,6 +26,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DropdownMenu
@@ -89,13 +90,14 @@ fun AppShellHeader(
     isDesktop: Boolean,
     onModeSelect: (Long) -> Unit,
     modifier: Modifier = Modifier,
+    onMenuClick: (() -> Unit)? = null,
 ) {
     Surface(
         modifier =
             modifier
                 .fillMaxWidth()
                 .then(if (!isDesktop) Modifier.statusBarsPadding() else Modifier),
-            color = TajsOSTheme.SurfaceLow,
+        color = TajsOSTheme.SurfaceLow,
         tonalElevation = 0.dp,
         shadowElevation = 0.dp,
     ) {
@@ -109,6 +111,17 @@ fun AppShellHeader(
                     ),
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            if (!isDesktop && onMenuClick != null) {
+                IconButton(onClick = onMenuClick) {
+                    Icon(
+                        imageVector = Icons.Default.Menu,
+                        contentDescription = "Menu",
+                        tint = TajsOSTheme.Text,
+                    )
+                }
+                Spacer(Modifier.width(8.dp))
+            }
+
             HeaderGreeting(
                 greeting = greeting,
                 protocolText = protocolText,
@@ -186,14 +199,14 @@ fun GlobalSearchBar(modifier: Modifier = Modifier) {
             Text(
                 text = "Search across TajsOS",
                 style = MaterialTheme.typography.bodyMedium,
-                color = TajsOSTheme.Muted
+                color = TajsOSTheme.Muted,
             )
         },
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Search,
                 contentDescription = null,
-                tint = TajsOSTheme.Muted
+                tint = TajsOSTheme.Muted,
             )
         },
         shape = RoundedCornerShape(12.dp),
@@ -249,7 +262,7 @@ fun HeaderModeSwitcher(
                         Modifier
                             .size(8.dp)
                             .alpha(pulseAlpha)
-                            .background(TajsOSTheme.Success, CircleShape)
+                            .background(TajsOSTheme.Success, CircleShape),
                 )
                 Text(
                     text = "SYSTEM: ${currentModeLabel.uppercase()}",
@@ -269,7 +282,7 @@ fun HeaderModeSwitcher(
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { onExpandedChange(false) },
-            containerColor = TajsOSTheme.SurfaceHigh
+            containerColor = TajsOSTheme.SurfaceHigh,
         ) {
             modeOptions.forEach { option ->
                 DropdownMenuItem(
@@ -313,7 +326,7 @@ fun NotificationsPopover(
     expanded: Boolean,
     notifications: List<NotificationUiModel>,
     onExpandedChange: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier) {
         Surface(
@@ -324,12 +337,12 @@ fun NotificationsPopover(
         ) {
             Box {
                 IconButton(
-                    onClick = { onExpandedChange(!expanded) }
+                    onClick = { onExpandedChange(!expanded) },
                 ) {
                     Icon(
                         imageVector = Icons.Default.Notifications,
                         contentDescription = "Notifications",
-                        tint = TajsOSTheme.Text
+                        tint = TajsOSTheme.Text,
                     )
                 }
 
@@ -340,7 +353,7 @@ fun NotificationsPopover(
                                 .align(Alignment.TopEnd)
                                 .padding(top = 8.dp, end = 8.dp)
                                 .size(6.dp)
-                                .background(TajsOSTheme.AccentCyan, CircleShape)
+                                .background(TajsOSTheme.AccentCyan, CircleShape),
                     )
                 }
             }
@@ -350,7 +363,7 @@ fun NotificationsPopover(
             Popup(
                 alignment = Alignment.TopEnd,
                 onDismissRequest = { onExpandedChange(false) },
-                properties = PopupProperties(focusable = true)
+                properties = PopupProperties(focusable = true),
             ) {
                 Surface(
                     modifier =
@@ -359,11 +372,11 @@ fun NotificationsPopover(
                     shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
                     color = TajsOSTheme.SurfaceHighest,
                     tonalElevation = 8.dp,
-                    shadowElevation = 8.dp
+                    shadowElevation = 8.dp,
                 ) {
                     TajsNotificationWidget(
                         notifications = notifications,
-                        title = "SYSTEM STATUS"
+                        title = "SYSTEM STATUS",
                     )
                 }
             }

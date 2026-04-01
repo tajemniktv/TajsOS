@@ -80,7 +80,7 @@ For now, the current targets are androidApp and composeApp (JVM), so test builds
 - Preferred core objects are `InboxEntry`, `Task`, `Note`, `Record`, `Project`, and `Area`.
 - Scheduling/reminders and relations are cross-cutting support structures, not competing top-level
   item types.
-- Treat “capture” as a workflow/state, not as permanent ontology.
+- Treat "capture" as a workflow/state, not as permanent ontology.
 - Domains such as Health, Education, Relationships, and Finances should act as lenses over shared
   objects, not hard containers.
 - `Record` exists for temporal/log-like material; do not force journal/reflection/history data into
@@ -117,7 +117,7 @@ For now, the current targets are androidApp and composeApp (JVM), so test builds
 
 ### Date/time boundaries
 
-- `YYYY-MM-DD` string matching for “today” is a temporary compromise, not a long-term pattern.
+- `YYYY-MM-DD` string matching for "today" is a temporary compromise, not a long-term pattern.
 - New date-sensitive behavior should use real date abstractions (`LocalDate`/`epochDay`) with
   explicit timezone semantics.
 

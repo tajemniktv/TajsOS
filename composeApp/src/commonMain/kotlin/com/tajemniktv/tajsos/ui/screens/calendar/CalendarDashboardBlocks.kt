@@ -103,8 +103,8 @@ internal fun CalendarMainBlock(
                             listOf(
                                 TajsOSTheme.CalendarGradientStart,
                                 TajsOSTheme.CalendarGradientMid,
-                                TajsOSTheme.CalendarGradientEnd
-                            )
+                                TajsOSTheme.CalendarGradientEnd,
+                            ),
                     ),
                 ),
     ) {
@@ -112,7 +112,7 @@ internal fun CalendarMainBlock(
             if (maxWidth > 1100.dp) {
                 Row(
                     modifier = Modifier.fillMaxSize(),
-                    horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+                    horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
                 ) {
                     Surface(
                         modifier = Modifier.weight(1.75f).fillMaxHeight(),
@@ -123,12 +123,12 @@ internal fun CalendarMainBlock(
                         border =
                             androidx.compose.foundation.BorderStroke(
                                 1.dp,
-                                TajsOSTheme.GhostBorder.copy(alpha = 0.15f)
-                            )
+                                TajsOSTheme.GhostBorder.copy(alpha = 0.15f),
+                            ),
                     ) {
                         Column(
                             modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd),
-                            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
+                            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
                         ) {
                             CalendarHeader(
                                 currentMonth = currentMonth,
@@ -167,18 +167,18 @@ internal fun CalendarMainBlock(
                         border =
                             androidx.compose.foundation.BorderStroke(
                                 1.dp,
-                                TajsOSTheme.GhostBorder.copy(alpha = 0.15f)
-                            )
+                                TajsOSTheme.GhostBorder.copy(alpha = 0.15f),
+                            ),
                     ) {
                         Column(
                             modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd),
-                            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+                            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
                         ) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Icon(
                                     Icons.Default.Schedule,
                                     contentDescription = null,
-                                    tint = TajsOSTheme.Primary
+                                    tint = TajsOSTheme.Primary,
                                 )
                                 Spacer(Modifier.width(8.dp))
                                 Text(
@@ -187,7 +187,7 @@ internal fun CalendarMainBlock(
                                         selectedDate.toString(),
                                     ),
                                     style = MaterialTheme.typography.labelSmall,
-                                    color = TajsOSTheme.Primary
+                                    color = TajsOSTheme.Primary,
                                 )
                             }
                             Box(modifier = Modifier.weight(1f)) {
@@ -207,20 +207,20 @@ internal fun CalendarMainBlock(
                                 Icon(
                                     Icons.Default.TaskAlt,
                                     contentDescription = null,
-                                    tint = TajsOSTheme.Accent
+                                    tint = TajsOSTheme.Accent,
                                 )
                                 Spacer(Modifier.width(8.dp))
                                 Text(
                                     "PENDING",
                                     style = MaterialTheme.typography.labelSmall,
-                                    color = TajsOSTheme.Accent
+                                    color = TajsOSTheme.Accent,
                                 )
                             }
                             if (pendingNodes.isEmpty()) {
                                 Text(
                                     "No pending nodes due soon.",
                                     style = MaterialTheme.typography.bodySmall,
-                                    color = TajsOSTheme.Muted
+                                    color = TajsOSTheme.Muted,
                                 )
                             } else {
                                 pendingNodes.forEach { node ->
@@ -234,8 +234,8 @@ internal fun CalendarMainBlock(
                                         border =
                                             androidx.compose.foundation.BorderStroke(
                                                 1.dp,
-                                                TajsOSTheme.GhostBorder.copy(alpha = 0.15f)
-                                            )
+                                                TajsOSTheme.GhostBorder.copy(alpha = 0.15f),
+                                            ),
                                     ) {
                                         Row(
                                             modifier =
@@ -263,7 +263,7 @@ internal fun CalendarMainBlock(
                                             Text(
                                                 dueText,
                                                 style = MaterialTheme.typography.labelSmall,
-                                                color = TajsOSTheme.Muted
+                                                color = TajsOSTheme.Muted,
                                             )
                                         }
                                     }
@@ -274,8 +274,8 @@ internal fun CalendarMainBlock(
                 }
             } else {
                 Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
                 ) {
                     Surface(
                         modifier = Modifier.fillMaxWidth(),
@@ -286,12 +286,12 @@ internal fun CalendarMainBlock(
                         border =
                             androidx.compose.foundation.BorderStroke(
                                 1.dp,
-                                TajsOSTheme.GhostBorder.copy(alpha = 0.15f)
-                            )
+                                TajsOSTheme.GhostBorder.copy(alpha = 0.15f),
+                            ),
                     ) {
                         Column(
                             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
-                            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
+                            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
                         ) {
                             CalendarHeader(
                                 currentMonth = currentMonth,
@@ -322,7 +322,7 @@ internal fun CalendarMainBlock(
                     }
 
                     Surface(
-                        modifier = Modifier.fillMaxWidth().weight(1f),
+                        modifier = Modifier.fillMaxWidth(),
                         shape =
                             androidx.compose.foundation.shape
                                 .RoundedCornerShape(20.dp),
@@ -330,12 +330,12 @@ internal fun CalendarMainBlock(
                         border =
                             androidx.compose.foundation.BorderStroke(
                                 1.dp,
-                                TajsOSTheme.GhostBorder.copy(alpha = 0.15f)
-                            )
+                                TajsOSTheme.GhostBorder.copy(alpha = 0.15f),
+                            ),
                     ) {
                         Column(
-                            modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd),
-                            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
+                            modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
+                            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
                         ) {
                             Text(
                                 stringResource(
@@ -343,7 +343,7 @@ internal fun CalendarMainBlock(
                                     selectedDate.toString(),
                                 ),
                                 style = MaterialTheme.typography.labelSmall,
-                                color = TajsOSTheme.Primary
+                                color = TajsOSTheme.Primary,
                             )
                             AgendaView(
                                 selectedDate = selectedDate,

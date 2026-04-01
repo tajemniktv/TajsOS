@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.MaterialTheme
@@ -64,11 +63,15 @@ fun PlacesScreen(
                     onEditNode,
                 )
             }
-        Column(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize().padding(bottom = 80.dp),
+        ) {
             plan.primary.forEach { block ->
-                PlacesDashboardBlockRegistry
-                    .resolve(block.id)
-                    ?.invoke(context)
+                item(key = block.id) {
+                    PlacesDashboardBlockRegistry
+                        .resolve(block.id)
+                        ?.invoke(context)
+                }
             }
         }
     }
@@ -90,7 +93,7 @@ internal fun PlacesLayer(
         modifier = Modifier.fillMaxWidth(),
         color = TajsOSTheme.Surface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.Border)
+        border = BorderStroke(1.dp, TajsOSTheme.Border),
     ) {
         Column(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -109,12 +112,12 @@ internal fun PlacesLayer(
                     }
                 }",
                 style = MaterialTheme.typography.bodySmall,
-                color = TajsOSTheme.Muted
+                color = TajsOSTheme.Muted,
             )
             Text(
                 "Travel pack template: ${if (snapshot.travelPackTemplateReady) "READY" else "MISSING"}",
                 style = MaterialTheme.typography.bodySmall,
-                color = if (snapshot.travelPackTemplateReady) TajsOSTheme.Success else TajsOSTheme.Accent
+                color = if (snapshot.travelPackTemplateReady) TajsOSTheme.Success else TajsOSTheme.Accent,
             )
         }
     }
@@ -123,7 +126,7 @@ internal fun PlacesLayer(
         modifier = Modifier.fillMaxWidth(),
         color = TajsOSTheme.Surface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.Border)
+        border = BorderStroke(1.dp, TajsOSTheme.Border),
     ) {
         Column(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -137,7 +140,7 @@ internal fun PlacesLayer(
             )
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
-                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
             ) {
                 AssistChip(
                     onClick = {
@@ -172,7 +175,7 @@ internal fun PlacesLayer(
         modifier = Modifier.fillMaxWidth(),
         color = TajsOSTheme.Surface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.Border)
+        border = BorderStroke(1.dp, TajsOSTheme.Border),
     ) {
         Column(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -193,7 +196,7 @@ internal fun PlacesLayer(
             )
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
-                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
             ) {
                 AssistChip(
                     onClick = { viewModel.createWhatToBringList(logisticsTitle) },
@@ -235,102 +238,80 @@ internal fun PlacesLayer(
         }
     }
 
-    LazyColumn(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
+    Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
         if (snapshot.campusLocations.isNotEmpty()) {
-            item {
-                GroupedOpenLoopSection(
-                    title = "CAMPUS LOCATIONS",
-                    items = snapshot.campusLocations.map { "${it.place.node.title} • ${it.relatedTasks.size} tasks" },
-                )
-            }
+            GroupedOpenLoopSection(
+                title = "CAMPUS LOCATIONS",
+                items = snapshot.campusLocations.map { "${it.place.node.title} • ${it.relatedTasks.size} tasks" },
+            )
         }
         if (snapshot.homeZones.isNotEmpty()) {
-            item {
-                GroupedOpenLoopSection(
-                    title = "HOME ZONES",
-                    items = snapshot.homeZones.map { "${it.place.node.title} • ${it.relatedTasks.size} tasks" },
-                )
-            }
+            GroupedOpenLoopSection(
+                title = "HOME ZONES",
+                items = snapshot.homeZones.map { "${it.place.node.title} • ${it.relatedTasks.size} tasks" },
+            )
         }
         if (snapshot.whatToBringLists.isNotEmpty()) {
-            item {
-                GroupedOpenLoopSection(
-                    title = "WHAT-TO-BRING LISTS",
-                    items = snapshot.whatToBringLists.map { it.node.title },
-                )
-            }
+            GroupedOpenLoopSection(
+                title = "WHAT-TO-BRING LISTS",
+                items = snapshot.whatToBringLists.map { it.node.title },
+            )
         }
         if (snapshot.packingLists.isNotEmpty()) {
-            item {
-                GroupedOpenLoopSection(
-                    title = "PACKING LISTS",
-                    items = snapshot.packingLists.map { it.node.title },
-                )
-            }
+            GroupedOpenLoopSection(
+                title = "PACKING LISTS",
+                items = snapshot.packingLists.map { it.node.title },
+            )
         }
         if (snapshot.leaveHomeChecklists.isNotEmpty()) {
-            item {
-                GroupedOpenLoopSection(
-                    title = "LEAVE-HOME CHECKLISTS",
-                    items = snapshot.leaveHomeChecklists.map { it.node.title },
-                )
-            }
+            GroupedOpenLoopSection(
+                title = "LEAVE-HOME CHECKLISTS",
+                items = snapshot.leaveHomeChecklists.map { it.node.title },
+            )
         }
         if (snapshot.dontForgetSets.isNotEmpty()) {
-            item {
-                GroupedOpenLoopSection(
-                    title = "DON'T FORGET ITEM SETS",
-                    items = snapshot.dontForgetSets.map { it.node.title },
-                )
-            }
+            GroupedOpenLoopSection(
+                title = "DON'T FORGET ITEM SETS",
+                items = snapshot.dontForgetSets.map { it.node.title },
+            )
         }
         if (snapshot.eventPreparationLists.isNotEmpty()) {
-            item {
-                GroupedOpenLoopSection(
-                    title = "EVENT PREPARATION LISTS",
-                    items = snapshot.eventPreparationLists.map { it.node.title },
-                )
-            }
+            GroupedOpenLoopSection(
+                title = "EVENT PREPARATION LISTS",
+                items = snapshot.eventPreparationLists.map { it.node.title },
+            )
         }
         if (snapshot.classSpecificBringLists.isNotEmpty()) {
-            item {
-                GroupedOpenLoopSection(
-                    title = "CLASS-SPECIFIC BRING LISTS",
-                    items = snapshot.classSpecificBringLists.map { it.node.title },
-                )
-            }
+            GroupedOpenLoopSection(
+                title = "CLASS-SPECIFIC BRING LISTS",
+                items = snapshot.classSpecificBringLists.map { it.node.title },
+            )
         }
         if (snapshot.outOfHomeTaskClusters.isNotEmpty()) {
-            item {
-                GroupedOpenLoopSection(
-                    title = "OUT-OF-HOME CLUSTERS",
-                    items = snapshot.outOfHomeTaskClusters.entries.map { "${it.key} • ${it.value.size}" },
-                )
-            }
+            GroupedOpenLoopSection(
+                title = "OUT-OF-HOME CLUSTERS",
+                items = snapshot.outOfHomeTaskClusters.entries.map { "${it.key} • ${it.value.size}" },
+            )
         }
         if (snapshot.errandClusters.isNotEmpty()) {
-            item {
-                GroupedOpenLoopSection(
-                    title = "ERRAND CLUSTERS",
-                    items = snapshot.errandClusters.entries.map { "${it.key} • ${it.value.size}" },
-                )
-            }
+            GroupedOpenLoopSection(
+                title = "ERRAND CLUSTERS",
+                items = snapshot.errandClusters.entries.map { "${it.key} • ${it.value.size}" },
+            )
         }
         if (snapshot.locationSpecificReminders.isNotEmpty()) {
-            item {
-                GroupedOpenLoopSection(
-                    title = "LOCATION-SPECIFIC REMINDERS",
-                    items = snapshot.locationSpecificReminders.map { it.node.title },
-                )
-            }
+            GroupedOpenLoopSection(
+                title = "LOCATION-SPECIFIC REMINDERS",
+                items = snapshot.locationSpecificReminders.map { it.node.title },
+            )
         }
 
-        items(snapshot.places, key = { it.place.node.id }) { place ->
+        snapshot.places.forEach { place ->
             Surface(
                 modifier = Modifier.fillMaxWidth(),
                 color = TajsOSTheme.Surface,
                 shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                border = BorderStroke(1.dp, TajsOSTheme.Border)
+                border = BorderStroke(1.dp, TajsOSTheme.Border),
             ) {
                 Column(
                     modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -345,7 +326,7 @@ internal fun PlacesLayer(
                     Text(
                         "Related tasks ${place.relatedTasks.size} • Reminders ${place.remindersCount}",
                         style = MaterialTheme.typography.bodySmall,
-                        color = TajsOSTheme.Muted
+                        color = TajsOSTheme.Muted,
                     )
                     if (place.relatedTasks.isNotEmpty()) {
                         GroupedOpenLoopSection(
@@ -361,7 +342,7 @@ internal fun PlacesLayer(
                     }
                     FlowRow(
                         horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
-                        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
+                        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
                     ) {
                         AssistChip(
                             onClick = { onEditNode(place.place.node.id) },
@@ -382,7 +363,7 @@ internal fun PlacesLayer(
         }
 
         if (snapshot.physicalLogisticsNotes.isNotEmpty()) {
-            items(snapshot.physicalLogisticsNotes, key = { it.node.id }) { note ->
+            snapshot.physicalLogisticsNotes.forEach { note ->
                 NodeCard(
                     nodeWithPin = note,
                     onToggleDone = { status -> viewModel.updateNodeStatus(note.node, status) },

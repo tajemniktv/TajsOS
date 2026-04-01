@@ -30,6 +30,13 @@ material = "1.13.0"
 material3 = "1.11.0-alpha05"
 slf4j-android = "2.0.17-0"
 ksp = "2.3.6"
+gitlive-firebase = "2.4.0"
+google-services = "4.4.4"
+firebase-auth-native = "24.0.1"
+firebase-firestore-native = "26.1.2"
+firebase-analytics-native = "23.2.0"
+firebase-common-native = "22.0.1"
+firebase-bom = "34.11.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -78,6 +85,14 @@ ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "kto
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
+firebase-auth = { module = "dev.gitlive:firebase-auth", version.ref = "gitlive-firebase" }
+firebase-firestore = { module = "dev.gitlive:firebase-firestore", version.ref = "gitlive-firebase" }
+firebase-analytics = { module = "dev.gitlive:firebase-analytics", version.ref = "gitlive-firebase" }
+firebase-auth-native = { module = "com.google.firebase:firebase-auth", version.ref = "firebase-auth-native" }
+firebase-firestore-native = { module = "com.google.firebase:firebase-firestore", version.ref = "firebase-firestore-native" }
+firebase-analytics-native = { module = "com.google.firebase:firebase-analytics", version.ref = "firebase-analytics-native" }
+firebase-common-native = { module = "com.google.firebase:firebase-common", version.ref = "firebase-common-native" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -92,3 +107,4 @@ kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref =
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 androidx-room = { id = "androidx.room", version.ref = "androidx-room" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }

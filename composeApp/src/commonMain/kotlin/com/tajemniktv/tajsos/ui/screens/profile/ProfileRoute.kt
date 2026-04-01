@@ -85,8 +85,8 @@ fun ProfileRoute(
                             listOf(
                                 TajsOSTheme.Background,
                                 TajsOSTheme.SurfaceLowest,
-                                TajsOSTheme.Background
-                            )
+                                TajsOSTheme.Background,
+                            ),
                     ),
                 ),
     ) {
@@ -120,11 +120,15 @@ fun ProfileRoute(
             )
 
         LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(TajsOSTheme.SpacingMd)
+                    .padding(bottom = 80.dp),
             verticalArrangement =
                 androidx.compose.foundation.layout.Arrangement.spacedBy(
-                    TajsOSTheme.SpacingMd
-                )
+                    TajsOSTheme.SpacingMd,
+                ),
         ) {
             items(blockSequence) { block ->
                 renderProfileBlock(block.id, context)
@@ -161,32 +165,32 @@ private fun AddMedicationDialog(
             androidx.compose.foundation.layout.Column(
                 verticalArrangement =
                     androidx.compose.foundation.layout.Arrangement.spacedBy(
-                        TajsOSTheme.SpacingSm
-                    )
+                        TajsOSTheme.SpacingSm,
+                    ),
             ) {
                 OutlinedTextField(
                     value = substance,
                     onValueChange = { substance = it },
                     label = { Text(stringResource(Res.string.med_substance)) },
-                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                 )
                 OutlinedTextField(
                     value = brands,
                     onValueChange = { brands = it },
                     label = { Text(stringResource(Res.string.med_brand_names)) },
-                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                 )
                 OutlinedTextField(
                     value = dosage,
                     onValueChange = { dosage = it },
                     label = { Text(stringResource(Res.string.med_dosage)) },
-                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                 )
                 OutlinedTextField(
                     value = hour,
                     onValueChange = { hour = it },
                     label = { Text(stringResource(Res.string.med_take_at)) },
-                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                 )
                 androidx.compose.foundation.layout.Row(verticalAlignment = Alignment.CenterVertically) {
                     Checkbox(checked = isOptional, onCheckedChange = { isOptional = it })

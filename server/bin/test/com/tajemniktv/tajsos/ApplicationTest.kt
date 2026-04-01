@@ -8,17 +8,25 @@ import com.tajemniktv.tajsos.dto.HealthResponse
 import com.tajemniktv.tajsos.dto.SyncItem
 import com.tajemniktv.tajsos.dto.SyncRequest
 import com.tajemniktv.tajsos.dto.SyncResponse
-import io.ktor.client.call.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
-import io.ktor.server.testing.*
+import io.ktor.client.call.body
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.request.get
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.client.statement.bodyAsText
+import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.contentType
+import io.ktor.serialization.kotlinx.json.json
+import io.ktor.server.testing.testApplication
 import kotlinx.coroutines.test.TestResult
 import kotlinx.serialization.json.Json
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
+@Suppress("unused")
 class ApplicationTest {
     @Test
     fun testRoot(): TestResult =

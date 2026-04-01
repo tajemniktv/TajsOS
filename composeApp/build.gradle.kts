@@ -79,6 +79,14 @@ kotlin {
             implementation(libs.kotlinx.coroutinesSwing)
             implementation(libs.logback)
         }
+        val androidMain by getting {
+            dependencies {
+                implementation(libs.firebase.auth.native)
+                implementation(libs.firebase.firestore.native)
+                implementation(libs.firebase.analytics.native)
+                implementation(libs.firebase.common.native)
+            }
+        }
     }
 }
 

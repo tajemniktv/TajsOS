@@ -7,6 +7,9 @@ package com.tajemniktv.tajsos.ui.screens.today
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -34,7 +37,13 @@ fun TodayScreen(
         val plan = remember(surface) { buildTodayDashboardPlan(surface) }
         val context =
             remember(viewModel, onEditNode) { TodayDashboardContext(viewModel, onEditNode) }
-        Column(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(bottom = 80.dp),
+        ) {
             plan.primary.forEach { block ->
                 TodayDashboardBlockRegistry.resolve(block.id)?.invoke(context)
             }

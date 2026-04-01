@@ -14,8 +14,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -67,23 +65,20 @@ internal fun TodayMainBlock(
         modifier =
             Modifier
                 .fillMaxSize()
-                .padding(TajsOSTheme.SpacingMd)
+                .padding(TajsOSTheme.SpacingMd),
     ) {
         Text(
             stringResource(Res.string.today_payload),
             style = MaterialTheme.typography.displayLarge,
-            color = TajsOSTheme.Text
+            color = TajsOSTheme.Text,
         )
         Spacer(Modifier.height(TajsOSTheme.SpacingLg))
 
         if (todayNodes.isEmpty()) {
             EmptyState(message = stringResource(Res.string.today_empty))
         } else {
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
-                itemsIndexed(
-                    items = todayNodes.take(3),
-                    key = { index, node -> "today_${node.id}_$index" },
-                ) { _, node ->
+            Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
+                todayNodes.take(3).forEachIndexed { index, node ->
                     val dismissState =
                         rememberSwipeToDismissBoxState(
                             initialValue = SwipeToDismissBoxValue.Settled,
@@ -131,7 +126,7 @@ internal fun TodayMainBlock(
                     }
                 }
                 if (todayNodes.size < 3) {
-                    items(3 - todayNodes.size) { index ->
+                    repeat(3 - todayNodes.size) { index ->
                         Box(
                             Modifier
                                 .fillMaxWidth()
@@ -140,7 +135,7 @@ internal fun TodayMainBlock(
                                 .border(
                                     1.dp,
                                     TajsOSTheme.Border,
-                                    RoundedCornerShape(TajsOSTheme.RadiusMd)
+                                    RoundedCornerShape(TajsOSTheme.RadiusMd),
                                 ),
                             contentAlignment = Alignment.Center,
                         ) {
@@ -150,7 +145,7 @@ internal fun TodayMainBlock(
                                     todayNodes.size + index + 1,
                                 ),
                                 style = MaterialTheme.typography.labelSmall.copy(letterSpacing = 1.sp),
-                                color = TajsOSTheme.Muted.copy(alpha = 0.5f)
+                                color = TajsOSTheme.Muted.copy(alpha = 0.5f),
                             )
                         }
                     }

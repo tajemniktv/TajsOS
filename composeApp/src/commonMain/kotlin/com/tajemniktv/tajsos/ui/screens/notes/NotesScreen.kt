@@ -5,9 +5,9 @@
 package com.tajemniktv.tajsos.ui.screens.notes
 
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -57,11 +57,15 @@ fun NotesScreen(
                     onNoteClick,
                 )
             }
-        Column(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize().padding(bottom = 80.dp),
+        ) {
             plan.primary.forEach { block ->
-                NotesDashboardBlockRegistry
-                    .resolve(block.id)
-                    ?.invoke(context)
+                item(key = block.id) {
+                    NotesDashboardBlockRegistry
+                        .resolve(block.id)
+                        ?.invoke(context)
+                }
             }
         }
     }
@@ -78,7 +82,7 @@ fun GroupHeader(title: String) {
         text = title,
         style = MaterialTheme.typography.labelSmall,
         color = TajsOSTheme.Primary,
-        modifier = Modifier.padding(top = TajsOSTheme.SpacingMd, bottom = TajsOSTheme.SpacingSm)
+        modifier = Modifier.padding(top = TajsOSTheme.SpacingMd, bottom = TajsOSTheme.SpacingSm),
     )
 }
 

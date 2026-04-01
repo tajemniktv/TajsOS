@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
@@ -75,12 +74,16 @@ fun OpenLoopsScreen(
                     onEditNode,
                 )
             }
-        Column(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize().padding(bottom = 80.dp),
+        ) {
             plan.primary.forEach { block ->
-                OpenLoopsDashboardBlockRegistry
-                    .resolve(
-                        block.id,
-                    )?.invoke(context)
+                item(key = block.id) {
+                    OpenLoopsDashboardBlockRegistry
+                        .resolve(
+                            block.id,
+                        )?.invoke(context)
+                }
             }
         }
     }
@@ -110,7 +113,7 @@ internal fun OpenLoopsLayer(
         modifier = Modifier.fillMaxWidth(),
         color = TajsOSTheme.Surface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.Border)
+        border = BorderStroke(1.dp, TajsOSTheme.Border),
     ) {
         Column(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -131,16 +134,19 @@ internal fun OpenLoopsLayer(
                     snapshot.resolved.size,
                 ),
                 style = MaterialTheme.typography.bodySmall,
-                color = TajsOSTheme.Muted
+                color = TajsOSTheme.Muted,
             )
             Text(
                 stringResource(Res.string.lens_unresolved_decay_index, snapshot.averageDecayScore),
                 style = MaterialTheme.typography.bodySmall,
-                color = if (snapshot.averageDecayScore >=
-                    60
-                ) {
-                    TajsOSTheme.Error
-                    } else TajsOSTheme.Text,
+                color =
+                    if (snapshot.averageDecayScore >=
+                        60
+                    ) {
+                        TajsOSTheme.Error
+                    } else {
+                        TajsOSTheme.Text
+                    },
             )
             snapshot.overloadWarning?.let { overloadWarning ->
                 Text(
@@ -180,30 +186,27 @@ internal fun OpenLoopsLayer(
             message =
                 stringResource(
                     Res.string.lens_unresolved_empty,
-                    stringResource(openLoopView.label).lowercase()
-                )
+                    stringResource(openLoopView.label).lowercase(),
+                ),
         )
-        return
-    }
+    } else {
+        Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
+            loops.forEach { loop ->
+                OpenLoopCard(
+                    item = loop,
+                    areaName = allAreas.find { it.id == loop.node.node.areaId }?.title,
+                    openLoopTypes = openLoopTypes,
+                    onEditNode = onEditNode,
+                    onSetType = { type -> viewModel.updateOpenLoopType(loop.node.node, type) },
+                    onConvertTask = { viewModel.convertOpenLoopToTask(loop.node.node.id) },
+                    onConvertDecision = { viewModel.convertOpenLoopToDecision(loop.node.node.id) },
+                    onConvertNote = { viewModel.convertOpenLoopToNote(loop.node.node.id) },
+                    onResolve = { viewModel.resolveOpenLoop(loop.node.node.id) },
+                    onArchive = { viewModel.archiveNode(loop.node.node) },
+                )
+            }
 
-    LazyColumn(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
-        items(loops, key = { it.node.node.id }) { loop ->
-            OpenLoopCard(
-                item = loop,
-                areaName = allAreas.find { it.id == loop.node.node.areaId }?.title,
-                openLoopTypes = openLoopTypes,
-                onEditNode = onEditNode,
-                onSetType = { type -> viewModel.updateOpenLoopType(loop.node.node, type) },
-                onConvertTask = { viewModel.convertOpenLoopToTask(loop.node.node.id) },
-                onConvertDecision = { viewModel.convertOpenLoopToDecision(loop.node.node.id) },
-                onConvertNote = { viewModel.convertOpenLoopToNote(loop.node.node.id) },
-                onResolve = { viewModel.resolveOpenLoop(loop.node.node.id) },
-                onArchive = { viewModel.archiveNode(loop.node.node) },
-            )
-        }
-
-        if (openLoopView == OpenLoopView.All) {
-            item {
+            if (openLoopView == OpenLoopView.All) {
                 GroupedOpenLoopSection(
                     title = stringResource(Res.string.lens_unresolved_group_area),
                     items =
@@ -217,8 +220,6 @@ internal fun OpenLoopsLayer(
                             "$areaName • ${entry.value.size}"
                         },
                 )
-            }
-            item {
                 GroupedOpenLoopSection(
                     title = stringResource(Res.string.lens_unresolved_group_person),
                     items =
@@ -228,8 +229,6 @@ internal fun OpenLoopsLayer(
                             "$personName • ${entry.value.size}"
                         },
                 )
-            }
-            item {
                 GroupedOpenLoopSection(
                     title = stringResource(Res.string.lens_unresolved_group_urgency),
                     items =

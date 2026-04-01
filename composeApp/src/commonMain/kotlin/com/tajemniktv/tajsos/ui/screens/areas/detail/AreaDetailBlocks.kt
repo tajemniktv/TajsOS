@@ -11,9 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.AccessTime
@@ -109,7 +107,7 @@ private fun renderAreaHeader(context: AreaDetailContext) {
 private fun renderAreaHero(context: AreaDetailContext) {
     Surface(
         color = TajsOSTheme.SurfaceHighest,
-        shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(14.dp),
@@ -124,7 +122,7 @@ private fun renderAreaHero(context: AreaDetailContext) {
             Text(
                 context.statement,
                 style = MaterialTheme.typography.bodyLarge,
-                color = TajsOSTheme.Text
+                color = TajsOSTheme.Text,
             )
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 AssistChip(onClick = {
@@ -152,7 +150,7 @@ private fun renderAreaHero(context: AreaDetailContext) {
                     } else {
                         TajsOSTheme.Primary
                     },
-                trackColor = TajsOSTheme.SurfaceLow
+                trackColor = TajsOSTheme.SurfaceLow,
             )
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 FilledTonalButton(onClick = {}) { Text(stringResource(Res.string.area_detail_tab_work)) }
@@ -181,7 +179,7 @@ private fun renderAreaTabs(context: AreaDetailContext) {
 private fun renderAreaContent(context: AreaDetailContext) {
     Surface(
         color = TajsOSTheme.SurfaceLow,
-        shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(14.dp),
@@ -350,13 +348,13 @@ private fun renderAreaContent(context: AreaDetailContext) {
                         "Load",
                         "${context.load}%",
                         Icons.Default.Speed,
-                        if (context.load >= 70) TajsOSTheme.Error else TajsOSTheme.Primary
+                        if (context.load >= 70) TajsOSTheme.Error else TajsOSTheme.Primary,
                     )
                     MetricRow(
                         stringResource(Res.string.area_detail_cadence),
                         context.cadence,
                         Icons.AutoMirrored.Filled.TrendingUp,
-                        TajsOSTheme.Primary
+                        TajsOSTheme.Primary,
                     )
                 }
             }
@@ -367,7 +365,6 @@ private fun renderAreaContent(context: AreaDetailContext) {
 @Composable
 private fun renderAreaSidebar(context: AreaDetailContext) {
     Column(
-        modifier = Modifier.verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         SidebarBlock(
@@ -407,7 +404,7 @@ private fun renderAreaSidebar(context: AreaDetailContext) {
             if (context.relationIds.isEmpty()) {
                 Text(
                     stringResource(Res.string.project_detail_empty_work),
-                    color = TajsOSTheme.Muted
+                    color = TajsOSTheme.Muted,
                 )
             }
             context.relationIds.take(8).forEach { id ->
@@ -426,7 +423,7 @@ private fun renderAreaSidebar(context: AreaDetailContext) {
             if (context.attachmentNames.isEmpty()) {
                 Text(
                     stringResource(Res.string.project_detail_empty_assets),
-                    color = TajsOSTheme.Muted
+                    color = TajsOSTheme.Muted,
                 )
             }
             context.attachmentNames.take(6).forEach { Text("• $it", color = TajsOSTheme.Text) }
@@ -438,7 +435,7 @@ private fun renderAreaSidebar(context: AreaDetailContext) {
             if (context.tags.isEmpty()) {
                 Text(
                     stringResource(Res.string.detail_unassign),
-                    color = TajsOSTheme.Muted
+                    color = TajsOSTheme.Muted,
                 )
             }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -480,7 +477,7 @@ private fun MetricRow(
     label: String,
     value: String,
     icon: ImageVector,
-    tone: Color = TajsOSTheme.Text
+    tone: Color = TajsOSTheme.Text,
 ) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),

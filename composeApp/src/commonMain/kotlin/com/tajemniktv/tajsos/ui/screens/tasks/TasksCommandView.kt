@@ -102,11 +102,11 @@ internal fun TasksCommandView(
         if (desktop) {
             Row(
                 modifier = Modifier.fillMaxSize(),
-                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
             ) {
                 Column(
                     modifier = Modifier.weight(2f),
-                    verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+                    verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
                 ) {
                     Text(
                         stringResource(Res.string.tasks_command_title),
@@ -116,7 +116,7 @@ internal fun TasksCommandView(
                     Text(
                         stringResource(Res.string.tasks_command_subtitle),
                         style = MaterialTheme.typography.bodySmall,
-                        color = TajsOSTheme.Muted
+                        color = TajsOSTheme.Muted,
                     )
                     if (current == null) {
                         EmptyState(message = stringResource(Res.string.tasks_empty))
@@ -133,48 +133,53 @@ internal fun TasksCommandView(
                         Text(
                             stringResource(Res.string.tasks_queue_title),
                             style = MaterialTheme.typography.titleMedium,
-                            color = TajsOSTheme.Text
+                            color = TajsOSTheme.Text,
                         )
                         QueueList(queue, projectById, areaById, onOpen, onStartFocus, onDone)
                     }
                 }
-                CommandSidebar(
+                Column(
                     modifier = Modifier.weight(1f),
-                    quickAdd = quickAdd,
-                    capture = capture,
-                    activeCount = tasks.count { it.taskStateOrNull() == TaskState.ACTIVE },
-                    blockedCount = tasks.count { it.taskStateOrNull() == TaskState.BLOCKED },
-                    dueSoonCount =
-                        tasks.count {
-                            it.dueAt != null && (
-                                it.dueAt
-                                    ?: Long.MAX_VALUE
-                            ) <= now + 24L * 60 * 60 * 1000
+                    verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
+                ) {
+                    CommandSidebar(
+                        quickAdd = quickAdd,
+                        capture = capture,
+                        activeCount = tasks.count { it.taskStateOrNull() == TaskState.ACTIVE },
+                        blockedCount = tasks.count { it.taskStateOrNull() == TaskState.BLOCKED },
+                        dueSoonCount =
+                            tasks.count {
+                                it.dueAt != null &&
+                                    (
+                                        it.dueAt
+                                            ?: Long.MAX_VALUE
+                                    ) <= now + 24L * 60 * 60 * 1000
+                            },
+                        staleTasksCount = staleTasksCount,
+                        onSweepStaleTasks = onSweepStaleTasks,
+                        onQuickAddChanged = { quickAdd = it },
+                        onCaptureChanged = { capture = it },
+                        onQuickAdd = {
+                            val value = quickAdd.trim()
+                            if (value.isNotBlank()) {
+                                onQuickAdd(value)
+                                quickAdd = ""
+                            }
                         },
-                    staleTasksCount = staleTasksCount,
-                    onSweepStaleTasks = onSweepStaleTasks,
-                    onQuickAddChanged = { quickAdd = it },
-                    onCaptureChanged = { capture = it },
-                    onQuickAdd = {
-                        val value = quickAdd.trim()
-                        if (value.isNotBlank()) {
-                            onQuickAdd(value)
-                            quickAdd = ""
-                        }
-                    },
-                    onCapture = {
-                        val value = capture.trim()
-                        if (value.isNotBlank()) {
-                            onQuickCapture(value)
-                            capture = ""
-                        }
-                    },
-                )
+                        onCapture = {
+                            val value = capture.trim()
+                            if (value.isNotBlank()) {
+                                onQuickCapture(value)
+                                capture = ""
+                            }
+                        },
+                    )
+                }
             }
         } else {
             Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
             ) {
                 Text(
                     stringResource(Res.string.tasks_command_title),
@@ -203,10 +208,11 @@ internal fun TasksCommandView(
                     blockedCount = tasks.count { it.taskStateOrNull() == TaskState.BLOCKED },
                     dueSoonCount =
                         tasks.count {
-                            it.dueAt != null && (
-                                it.dueAt
-                                    ?: Long.MAX_VALUE
-                            ) <= now + 24L * 60 * 60 * 1000
+                            it.dueAt != null &&
+                                    (
+                                            it.dueAt
+                                        ?: Long.MAX_VALUE
+                                ) <= now + 24L * 60 * 60 * 1000
                         },
                     staleTasksCount = staleTasksCount,
                     onSweepStaleTasks = onSweepStaleTasks,
@@ -245,22 +251,22 @@ private fun PriorityTaskCard(
     Surface(
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         color = TajsOSTheme.Surface,
-        border = BorderStroke(1.dp, TajsOSTheme.Border)
+        border = BorderStroke(1.dp, TajsOSTheme.Border),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
-            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
         ) {
             Text(
                 stringResource(Res.string.tasks_current_priority),
                 style = MaterialTheme.typography.labelMedium,
-                color = TajsOSTheme.Primary
+                color = TajsOSTheme.Primary,
             )
             Text(
                 task.title,
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
-                color = TajsOSTheme.Text
+                color = TajsOSTheme.Text,
             )
             if (task.content.isNotBlank()) {
                 Text(
@@ -318,7 +324,7 @@ private fun QueueList(
     Surface(
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         color = TajsOSTheme.Surface,
-        border = BorderStroke(1.dp, TajsOSTheme.Border)
+        border = BorderStroke(1.dp, TajsOSTheme.Border),
     ) {
         Column {
             tasks.forEach { task ->
@@ -331,7 +337,7 @@ private fun QueueList(
                         Text(
                             task.title,
                             style = MaterialTheme.typography.bodyLarge,
-                            color = TajsOSTheme.Text
+                            color = TajsOSTheme.Text,
                         )
                         val context =
                             listOfNotNull(
@@ -343,7 +349,7 @@ private fun QueueList(
                             Text(
                                 context,
                                 style = MaterialTheme.typography.bodySmall,
-                                color = TajsOSTheme.Muted
+                                color = TajsOSTheme.Muted,
                             )
                         }
                     }
@@ -380,11 +386,11 @@ private fun CommandSidebar(
         modifier = modifier,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         color = TajsOSTheme.Surface,
-        border = BorderStroke(1.dp, TajsOSTheme.Border)
+        border = BorderStroke(1.dp, TajsOSTheme.Border),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
-            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
         ) {
             Text(
                 stringResource(Res.string.tasks_quick_add_title),
@@ -436,7 +442,7 @@ private fun CommandSidebar(
                 OutlinedButton(
                     onClick = { showSweepDialog = true },
                     modifier = Modifier.fillMaxWidth(),
-                    border = BorderStroke(1.dp, TajsOSTheme.Primary.copy(alpha = 0.5f))
+                    border = BorderStroke(1.dp, TajsOSTheme.Primary.copy(alpha = 0.5f)),
                 ) {
                     Text("Sweep $staleTasksCount Stale Tasks", color = TajsOSTheme.Primary)
                 }
@@ -458,14 +464,14 @@ private fun CommandSidebar(
                     onClick = {
                         onSweepStaleTasks()
                         showSweepDialog = false
-                    }
+                    },
                 ) {
                     Text("Sweep to Someday")
                 }
             },
             dismissButton = {
                 OutlinedButton(
-                    onClick = { showSweepDialog = false }
+                    onClick = { showSweepDialog = false },
                 ) {
                     Text("Cancel")
                 }
