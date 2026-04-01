@@ -11,7 +11,7 @@ updates:
       - "dependabot"
 
   - package-ecosystem: "github-actions"
-    directory: "/"
+    directory: "/.github/workflows"
     target-branch: "dev"
     schedule:
       interval: "daily"
