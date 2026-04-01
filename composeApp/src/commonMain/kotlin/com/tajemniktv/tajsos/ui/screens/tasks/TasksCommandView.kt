@@ -438,7 +438,7 @@ private fun CommandSidebar(
             OutlinedButton(
                 onClick = onCapture,
                 modifier = Modifier.fillMaxWidth(),
-                enabled = capture.isNotBlank(),
+                enabled = capture.trim().isNotBlank(),
             ) {
                 Text(
                     stringResource(Res.string.tasks_quick_capture_action),
