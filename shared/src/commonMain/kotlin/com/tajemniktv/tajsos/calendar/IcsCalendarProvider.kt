@@ -40,9 +40,7 @@ class IcsCalendarProvider(
         to: Instant,
     ): List<CalendarEventEntity> {
         val url = provider.url ?: return emptyList()
-        if (!url.startsWith("http://") && !url.startsWith("https://")) {
-            return emptyList()
-        }
+        if (!isValidHttpUrl(url)) return emptyList()
         return try {
             val response = client.get(url)
             if (response.status.value in 200..299) {
@@ -55,6 +53,54 @@ class IcsCalendarProvider(
         } catch (e: Exception) {
             emptyList()
         }
+    }
+
+    /**
+     * Validates that a string is an HTTP/HTTPS URL and blocks internal or private network hosts
+     * to prevent Server-Side Request Forgery (SSRF).
+     *
+     * It parses the URL and explicitly rejects loopback addresses (e.g., 127.0.0.1, ::1),
+     * link-local addresses (169.254.x.x), private RFC1918 ranges (10.x.x.x, 172.16.x.x, 192.168.x.x),
+     * unique-local IPv6 addresses, and known metadata hosts (e.g., "localhost", "metadata.google.internal").
+     *
+     * @param url The raw URL string to validate.
+     * @return `true` if the URL has a valid scheme and an external routable host, `false` otherwise
+     *         (or if parsing throws an exception).
+     */
+    private fun isValidHttpUrl(url: String): Boolean {
+        return try {
+            val parsedUrl = io.ktor.http.Url(url)
+            if (!isValidScheme(parsedUrl.protocol.name.lowercase())) return false
+            isPublicRoutableHost(parsedUrl.host.lowercase())
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    private fun isValidScheme(scheme: String): Boolean =
+        scheme == "http" || scheme == "https"
+
+    private fun isPublicRoutableHost(host: String): Boolean {
+        val ipLiteral = parseIpAddress(host)
+        if (ipLiteral != null) {
+            // It's a parsed IPv4 or IPv6 literal. Verify it's not a private or local range.
+            return !ipLiteral.isPrivateOrLocal()
+        }
+
+        // For non-literal hostnames, we cannot perform synchronous blocking DNS resolution
+        // in commonMain without breaking KMP asynchronous patterns or introducing heavy dependencies.
+        // Therefore, we fall back to blocking known critical local infrastructure names.
+        // Deep DNS rebinding and IP-resolution validation should ideally be configured at the
+        // Ktor Engine or system network proxy level.
+        return host !in BLOCKED_METADATA_HOSTS
+    }
+
+    companion object {
+        private val BLOCKED_METADATA_HOSTS = setOf(
+            "localhost",
+            "metadata.google.internal",
+            "169.254.169.254"
+        )
     }
 
     /**
