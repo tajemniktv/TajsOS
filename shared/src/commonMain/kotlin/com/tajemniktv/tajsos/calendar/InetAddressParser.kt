@@ -81,22 +81,33 @@ private fun parseIpv6(host: String): IpAddress.Ipv6? {
 }
 
 private fun parseIpv6Abbreviated(rawParts: List<String>, values: LongArray, doubleColonIdx: Int): Boolean {
-    var leftIdx = 0
-    for (i in 0 until doubleColonIdx) {
-        if (rawParts[i].isEmpty()) continue
-        val v = rawParts[i].toLongOrNull(16) ?: return false
-        if (v !in 0..0xFFFF) return false
-        values[leftIdx++] = v
-    }
+    val leftParsed = populateIpv6Values(rawParts, 0 until doubleColonIdx, values, 0, 1)
+    if (leftParsed == -1) return false
 
-    var rightIdx = 7
-    for (i in rawParts.lastIndex downTo doubleColonIdx + 1) {
+    val rightParsed = populateIpv6Values(rawParts, rawParts.lastIndex downTo doubleColonIdx + 1, values, 7, -1)
+    if (rightParsed == -1) return false
+
+    return leftParsed <= (7 - rightParsed)
+}
+
+private fun populateIpv6Values(
+    rawParts: List<String>,
+    indices: IntProgression,
+    values: LongArray,
+    startOutputIndex: Int,
+    direction: Int
+): Int {
+    var outputIdx = startOutputIndex
+    var count = 0
+    for (i in indices) {
         if (rawParts[i].isEmpty()) continue
-        val v = rawParts[i].toLongOrNull(16) ?: return false
-        if (v !in 0..0xFFFF) return false
-        values[rightIdx--] = v
+        val v = rawParts[i].toLongOrNull(16) ?: return -1
+        if (v !in 0..0xFFFF) return -1
+        values[outputIdx] = v
+        outputIdx += direction
+        count++
     }
-    return leftIdx <= rightIdx
+    return count
 }
 
 private fun parseIpv6Full(rawParts: List<String>, values: LongArray): Boolean {

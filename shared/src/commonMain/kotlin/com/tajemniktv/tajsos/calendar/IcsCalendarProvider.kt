@@ -92,12 +92,8 @@ class IcsCalendarProvider(
         // Therefore, we fall back to blocking known critical local infrastructure names.
         // Deep DNS rebinding and IP-resolution validation should ideally be configured at the
         // Ktor Engine or system network proxy level.
-        if (isLocalOrMetadata(host)) return false
-        return true
+        return host !in BLOCKED_METADATA_HOSTS
     }
-
-    private fun isLocalOrMetadata(host: String): Boolean =
-        host in BLOCKED_METADATA_HOSTS
 
     companion object {
         private val BLOCKED_METADATA_HOSTS = setOf(
