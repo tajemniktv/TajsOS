@@ -68,41 +68,52 @@ private fun parseIpv6(host: String): IpAddress.Ipv6? {
     val rawParts = host.split(":")
 
     val values = LongArray(8) { 0L }
-    var leftIdx = 0
-
     val doubleColonIdx = rawParts.indexOf("")
-    if (doubleColonIdx != -1) {
-        // Left side of ::
-        for (i in 0 until doubleColonIdx) {
-            val p = rawParts[i]
-            if (p.isEmpty()) continue
-            val v = p.toLongOrNull(16) ?: return null
-            if (v !in 0..0xFFFF) return null
-            values[leftIdx++] = v
-        }
 
-        // Right side of ::
-        var rightIdx = 7
-        for (i in rawParts.lastIndex downTo doubleColonIdx + 1) {
-            val p = rawParts[i]
-            if (p.isEmpty()) continue
-            val v = p.toLongOrNull(16) ?: return null
-            if (v !in 0..0xFFFF) return null
-            values[rightIdx--] = v
-        }
+    val success = if (doubleColonIdx != -1) {
+        parseIpv6Abbreviated(rawParts, values, doubleColonIdx)
     } else {
-        if (rawParts.size != 8) return null
-        for (i in 0..7) {
-            val v = rawParts[i].toLongOrNull(16) ?: return null
-            if (v !in 0..0xFFFF) return null
-            values[i] = v
-        }
+        parseIpv6Full(rawParts, values)
     }
 
+    if (!success) return null
+    return IpAddress.Ipv6(packIpv6LongArray(values))
+}
+
+private fun parseIpv6Abbreviated(rawParts: List<String>, values: LongArray, doubleColonIdx: Int): Boolean {
+    var leftIdx = 0
+    for (i in 0 until doubleColonIdx) {
+        if (rawParts[i].isEmpty()) continue
+        val v = rawParts[i].toLongOrNull(16) ?: return false
+        if (v !in 0..0xFFFF) return false
+        values[leftIdx++] = v
+    }
+
+    var rightIdx = 7
+    for (i in rawParts.lastIndex downTo doubleColonIdx + 1) {
+        if (rawParts[i].isEmpty()) continue
+        val v = rawParts[i].toLongOrNull(16) ?: return false
+        if (v !in 0..0xFFFF) return false
+        values[rightIdx--] = v
+    }
+    return leftIdx <= rightIdx
+}
+
+private fun parseIpv6Full(rawParts: List<String>, values: LongArray): Boolean {
+    if (rawParts.size != 8) return false
+    for (i in 0..7) {
+        val v = rawParts[i].toLongOrNull(16) ?: return false
+        if (v !in 0..0xFFFF) return false
+        values[i] = v
+    }
+    return true
+}
+
+private fun packIpv6LongArray(values: LongArray): LongArray {
     val finalWords = LongArray(4)
     finalWords[0] = (values[0] shl 16) or values[1]
     finalWords[1] = (values[2] shl 16) or values[3]
     finalWords[2] = (values[4] shl 16) or values[5]
     finalWords[3] = (values[6] shl 16) or values[7]
-    return IpAddress.Ipv6(finalWords)
+    return finalWords
 }

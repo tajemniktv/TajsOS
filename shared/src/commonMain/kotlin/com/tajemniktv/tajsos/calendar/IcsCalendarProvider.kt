@@ -97,7 +97,15 @@ class IcsCalendarProvider(
     }
 
     private fun isLocalOrMetadata(host: String): Boolean =
-        host == "localhost" || host == "metadata.google.internal" || host == "169.254.169.254"
+        host in BLOCKED_METADATA_HOSTS
+
+    companion object {
+        private val BLOCKED_METADATA_HOSTS = setOf(
+            "localhost",
+            "metadata.google.internal",
+            "169.254.169.254"
+        )
+    }
 
     /**
      * Unfolds multiline entries in an ICS file into a single logical line per entry.
