@@ -412,7 +412,11 @@ private fun CommandSidebar(
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = { Text(stringResource(Res.string.tasks_quick_add_hint)) },
             )
-            Button(onClick = onQuickAdd, modifier = Modifier.fillMaxWidth()) {
+            Button(
+                onClick = onQuickAdd,
+                modifier = Modifier.fillMaxWidth(),
+                enabled = quickAdd.trim().isNotBlank(),
+            ) {
                 Text(
                     stringResource(
                         Res.string.tasks_quick_add_action,
@@ -431,7 +435,11 @@ private fun CommandSidebar(
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = { Text(stringResource(Res.string.tasks_quick_capture_hint)) },
             )
-            OutlinedButton(onClick = onCapture, modifier = Modifier.fillMaxWidth()) {
+            OutlinedButton(
+                onClick = onCapture,
+                modifier = Modifier.fillMaxWidth(),
+                enabled = capture.trim().isNotBlank(),
+            ) {
                 Text(
                     stringResource(Res.string.tasks_quick_capture_action),
                 )

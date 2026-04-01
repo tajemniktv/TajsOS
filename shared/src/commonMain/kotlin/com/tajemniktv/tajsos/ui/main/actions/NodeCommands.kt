@@ -407,7 +407,7 @@ class NodeCommands(
                 if (sections.size > 1) {
                     for (section in sections) {
                         val lines = section.lines()
-                        val title = lines.first().removePrefix("# ").trim()
+                        val title = lines.first().removePrefix("# ").trim().ifBlank { "Untitled Note" }
                         val content = lines.drop(1).joinToString("\n").trim()
 
                         repository.insertNode(

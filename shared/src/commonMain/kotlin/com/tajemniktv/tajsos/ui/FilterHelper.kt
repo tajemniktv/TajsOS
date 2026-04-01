@@ -16,15 +16,14 @@ import com.tajemniktv.tajsos.data.matchesItemFilter
 object FilterHelper {
     /**
      * Filters a list of nodes based on a wide array of optional parameters, returning
-     * only the nodes that match all specified criteria, and sorts the final list
-     * based on their modification date (newest first).
+     * only the nodes that match all specified criteria.
      *
      * Nodes must meet all non-null conditions (logical AND) to be included in the results.
-     * Context filters (location, energy, device, social, time-window) are only applied
-     * strictly if the node is task-shaped work in the collapsed LifeOS model.
+     * Non-task nodes are automatically excluded from results when any context filter
+     * (location context, energy context, device context, social context, or time-window context) is applied.
      *
      * @param nodes The initial list of nodes with associated pins and tags to filter.
-     * `@param` query A text query for partial-matching against titles, content, or tags (prefix with # to search tags only).
+     * @param query A text query for partial-matching against titles, content, or tags (prefix with # to search tags only).
      * @param type The specific type of node to include (e.g., "task", "project").
      * @param status A comma-separated string of statuses to include (e.g., "active,on_hold").
      * @param projectId The ID of the project the node must belong to.
@@ -38,9 +37,10 @@ object FilterHelper {
      * @param deviceContext The required device context (e.g., "laptop", "phone").
      * @param socialContext The required social context (e.g., "solo", "pair").
      * @param timeWindowContext The required time window context (e.g., "morning", "evening").
-     * @param timeHorizon A string determining the required temporal scope relative to the current time (e.g., "today", "week", "month", "semester", "short", "long").
+     * @param timeHorizon A string determining the required temporal scope relative to the current time. These are overlapping temporal windows rather than strictly mutually exclusive buckets (e.g., "semester" inherently includes all items due "today", "week", and "month" if they fall within the 120-day limit).
      * @param relations The complete list of relationship entities used to evaluate bidirectional links for the `linkedToId` filter.
-     * @return A list containing only the matching `NodeWithPin` elements, sorted by descending update time and descending ID.
+     * @param sortMode Determines the sorting strategy for the results (e.g., "relevance" or "updated"). Defaults to "relevance".
+     * @return A list containing only the matching `NodeWithPin` elements, sorted according to the specified [sortMode].
      */
     fun filterAndSortNodes(
         nodes: List<NodeWithPin>,
