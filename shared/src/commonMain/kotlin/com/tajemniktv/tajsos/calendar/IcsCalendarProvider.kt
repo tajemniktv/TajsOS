@@ -42,13 +42,13 @@ class IcsCalendarProvider(
         val url = provider.url ?: return emptyList()
         val parsedUrl = try {
             io.ktor.http.Url(url)
+        val parsedUrl = try {
+            io.ktor.http.Url(url)
         } catch (e: Exception) {
-            val sanitizedMessage = sanitizeErrorMessage(e.message ?: "Unknown error")
-            println("ICS calendar URL validation failed: $sanitizedMessage")
             return emptyList()
         }
-        val scheme = parsedUrl.protocol.name.lowercase()
-        if (scheme != "http" && scheme != "https") {
+        if (parsedUrl.protocol != io.ktor.http.URLProtocol.HTTP &&
+            parsedUrl.protocol != io.ktor.http.URLProtocol.HTTPS) {
             return emptyList()
         }
         if (!isPublicRoutableHost(parsedUrl.host)) {
