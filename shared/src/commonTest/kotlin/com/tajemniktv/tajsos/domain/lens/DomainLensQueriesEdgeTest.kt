@@ -95,4 +95,35 @@ class DomainLensQueriesEdgeTest {
         val result = DomainLensQueries.financeKnowledgeItems(listOf(oldNote, newNote, medNote))
         assertEquals(listOf(2L, 3L, 1L), result.map { it.node.id })
     }
+
+    @Test
+    fun financeDeadlineItems_includes_any_type_with_date_and_signal() {
+        val financeTaskWithDate = createNode(1, "Tax task", dueAt = 100L, type = "task")
+        val financeNoteWithDate = createNode(2, "Budget reference", dueAt = 200L, type = "note")
+        val nonFinanceWithDate = createNode(3, "Generic idea", dueAt = 300L, type = "note")
+        val financeNoDate = createNode(4, "Insurance file", type = "record")
+
+        val allNodes = listOf(financeTaskWithDate, financeNoteWithDate, nonFinanceWithDate, financeNoDate)
+        val result = DomainLensQueries.financeDeadlineItems(allNodes)
+
+        // Only items 1 and 2 have both a finance signal AND a due date
+        assertEquals(2, result.size)
+        assertEquals(listOf(1L, 2L), result.map { it.node.id })
+    }
+
+    @Test
+    fun financeKnowledgeItems_includes_reference_notes_with_signal_only() {
+        // "reference" alone is not enough, must have signal
+        val refNoteWithSignal = createNode(1, "Tax form 1040", type = "note", noteType = "reference")
+        val refNoteNoSignal = createNode(2, "CSS guide", type = "note", noteType = "reference")
+        val regNoteWithSignal = createNode(3, "My budget rules", type = "note")
+
+        val allNodes = listOf(refNoteWithSignal, refNoteNoSignal, regNoteWithSignal)
+        val result = DomainLensQueries.financeKnowledgeItems(allNodes)
+
+        // 1 matches because reference + title signal
+        // 3 matches because note (knowledge item) + title signal
+        assertEquals(2, result.size)
+        assertEquals(listOf(1L, 3L).sorted(), result.map { it.node.id }.sorted())
+    }
 }
