@@ -104,6 +104,28 @@ enum class NoteKind(
 }
 
 /**
+ * Typed note maturity states for longer-form knowledge work.
+ */
+@Serializable
+enum class NoteState(
+    val storageKey: String,
+) {
+    ACTIVE("active"),
+    RAW("raw"),
+    HIGHLIGHTED("highlighted"),
+    DISTILLED("distilled"),
+    TAKEAWAY("takeaway"),
+    ;
+
+    companion object {
+        /**
+         * Resolves a persisted storage key into a [NoteState].
+         */
+        fun fromStorageKey(value: String?): NoteState? = entries.firstOrNull { it.storageKey == value }
+    }
+}
+
+/**
  * Typed record flavors for chronological, lived experience data.
  */
 @Serializable
@@ -129,6 +151,28 @@ enum class RecordKind(
 }
 
 /**
+ * Typed stewardship status for areas of responsibility.
+ */
+@Serializable
+enum class AreaHealthStatus(
+    val storageKey: String,
+) {
+    ACTIVE("active"),
+    STABLE("stable"),
+    NEGLECTED("neglected"),
+    OVERLOADED("overloaded"),
+    ON_FIRE("on_fire"),
+    ;
+
+    companion object {
+        /**
+         * Resolves a persisted storage key into an [AreaHealthStatus].
+         */
+        fun fromStorageKey(value: String?): AreaHealthStatus? = entries.firstOrNull { it.storageKey == value }
+    }
+}
+
+/**
  * Typed schedule layers that can attach time to any life object.
  */
 @Serializable
@@ -146,6 +190,26 @@ enum class ScheduleEntryKind(
          * Resolves a persisted storage key into a [ScheduleEntryKind].
          */
         fun fromStorageKey(value: String?): ScheduleEntryKind? = entries.firstOrNull { it.storageKey == value }
+    }
+}
+
+/**
+ * Supported rich-content payload formats for life-object documents.
+ */
+@Serializable
+enum class RichContentFormat(
+    val storageKey: String,
+) {
+    MARKDOWN("markdown"),
+    PLAIN_TEXT("plain_text"),
+    BLOCKS_JSON("blocks_json"),
+    ;
+
+    companion object {
+        /**
+         * Resolves a persisted storage key into a [RichContentFormat].
+         */
+        fun fromStorageKey(value: String?): RichContentFormat? = entries.firstOrNull { it.storageKey == value }
     }
 }
 
@@ -174,6 +238,168 @@ enum class RelationKind(
          * Resolves a persisted storage key into a [RelationKind].
          */
         fun fromStorageKey(value: String?): RelationKind? = entries.firstOrNull { it.storageKey == value }
+    }
+}
+
+/**
+ * Product lenses supported by saved local projections.
+ */
+@Serializable
+enum class SavedViewLens(
+    val storageKey: String,
+) {
+    NOW("now"),
+    PLAN("plan"),
+    OPERATE("operate"),
+    KNOWLEDGE("knowledge"),
+    REVIEW("review"),
+    ;
+
+    companion object {
+        /**
+         * Resolves a persisted storage key into a [SavedViewLens].
+         */
+        fun fromStorageKey(value: String?): SavedViewLens? = entries.firstOrNull { it.storageKey == value }
+    }
+}
+
+/**
+ * Saved-view layouts supported by the current local model.
+ */
+@Serializable
+enum class SavedViewLayout(
+    val storageKey: String,
+) {
+    LIST("list"),
+    TABLE("table"),
+    BOARD("board"),
+    MATRIX("matrix"),
+    ;
+
+    companion object {
+        /**
+         * Resolves a persisted storage key into a [SavedViewLayout].
+         */
+        fun fromStorageKey(value: String?): SavedViewLayout? = entries.firstOrNull { it.storageKey == value }
+    }
+}
+
+/**
+ * Canonical field vocabulary for saved-view filters, grouping, and visible columns.
+ */
+@Serializable
+enum class SavedViewFieldKey(
+    val storageKey: String,
+) {
+    TITLE("title"),
+    STATUS("status"),
+    KIND("kind"),
+    AREA("area"),
+    PROJECT("project"),
+    DOMAIN("domain"),
+    DUE_DATE("due_date"),
+    START_DATE("start_date"),
+    OCCURRED_AT("occurred_at"),
+    CREATED_AT("created_at"),
+    UPDATED_AT("updated_at"),
+    TAG("tag"),
+    PINNED("pinned"),
+    ;
+
+    companion object {
+        /**
+         * Resolves a persisted storage key into a [SavedViewFieldKey].
+         */
+        fun fromStorageKey(value: String?): SavedViewFieldKey? = entries.firstOrNull { it.storageKey == value }
+    }
+}
+
+/**
+ * Aggregations supported by matrix/table projections.
+ */
+@Serializable
+enum class SavedViewMeasure(
+    val storageKey: String,
+) {
+    COUNT("count"),
+    ESTIMATED_MINUTES("estimated_minutes"),
+    COMPLETED_COUNT("completed_count"),
+    ;
+
+    companion object {
+        /**
+         * Resolves a persisted storage key into a [SavedViewMeasure].
+         */
+        fun fromStorageKey(value: String?): SavedViewMeasure? = entries.firstOrNull { it.storageKey == value }
+    }
+}
+
+/**
+ * Supported filter operators for saved local projections.
+ */
+@Serializable
+enum class SavedViewFilterOperator(
+    val storageKey: String,
+) {
+    EQUALS("equals"),
+    NOT_EQUALS("not_equals"),
+    IN_SET("in_set"),
+    CONTAINS("contains"),
+    BEFORE("before"),
+    AFTER("after"),
+    IS_TRUE("is_true"),
+    IS_FALSE("is_false"),
+    IS_NULL("is_null"),
+    IS_NOT_NULL("is_not_null"),
+    ;
+
+    companion object {
+        /**
+         * Resolves a persisted storage key into a [SavedViewFilterOperator].
+         */
+        fun fromStorageKey(value: String?): SavedViewFilterOperator? = entries.firstOrNull { it.storageKey == value }
+    }
+}
+
+/**
+ * Serialized value shapes for saved-view filters.
+ */
+@Serializable
+enum class SavedViewValueType(
+    val storageKey: String,
+) {
+    STRING("string"),
+    NUMBER("number"),
+    BOOLEAN("boolean"),
+    DATE("date"),
+    ENUM("enum"),
+    REFERENCE("reference"),
+    ;
+
+    companion object {
+        /**
+         * Resolves a persisted storage key into a [SavedViewValueType].
+         */
+        fun fromStorageKey(value: String?): SavedViewValueType? = entries.firstOrNull { it.storageKey == value }
+    }
+}
+
+/**
+ * Supported sort directions for saved-view ordering.
+ */
+@Serializable
+enum class SavedViewSortDirection(
+    val storageKey: String,
+) {
+    ASCENDING("asc"),
+    DESCENDING("desc"),
+    ;
+
+    companion object {
+        /**
+         * Resolves a persisted storage key into a [SavedViewSortDirection].
+         */
+        fun fromStorageKey(value: String?): SavedViewSortDirection? = entries.firstOrNull { it.storageKey == value }
     }
 }
 
@@ -397,6 +623,169 @@ data class ParsedCaptureText(
     val title: String,
     val content: String,
 )
+
+/**
+ * Typed task facet returned by repository read models.
+ */
+@Serializable
+data class TaskFacet(
+    val state: TaskState,
+    val energyLevel: Int? = null,
+    val friction: String? = null,
+    val nextStep: String? = null,
+    val estimatedMinutes: Int? = null,
+    val completionNote: String? = null,
+    val completedAt: Long? = null,
+    val isRecurring: Boolean = false,
+    val recurringInterval: String? = null,
+)
+
+/**
+ * Typed note facet returned by repository read models.
+ */
+@Serializable
+data class NoteFacet(
+    val kind: NoteKind,
+    val state: NoteState,
+    val sourceTitle: String? = null,
+    val sourceAuthor: String? = null,
+    val lastReviewedAt: Long? = null,
+)
+
+/**
+ * Typed project facet returned by repository read models.
+ */
+@Serializable
+data class ProjectFacet(
+    val state: ProjectState,
+    val purpose: String? = null,
+    val isFrozen: Boolean = false,
+)
+
+/**
+ * Typed record facet returned by repository read models.
+ */
+@Serializable
+data class RecordFacet(
+    val kind: RecordKind,
+    val occurredAt: Long,
+)
+
+/**
+ * Typed area facet returned by repository read models.
+ */
+@Serializable
+data class AreaFacet(
+    val healthStatus: AreaHealthStatus,
+    val standardOfCare: String? = null,
+    val vision: String? = null,
+)
+
+/**
+ * Typed schedule entry returned by repository read models.
+ */
+@Serializable
+data class ScheduleEntry(
+    val id: Long,
+    val itemId: Long,
+    val kind: ScheduleEntryKind,
+    val scheduledAt: Long,
+    val localDateEpochDay: Int? = null,
+    val timezoneId: String? = null,
+    val isAllDay: Boolean = false,
+    val endAt: Long? = null,
+    val recurrenceRule: String? = null,
+    val note: String? = null,
+    val completedAt: Long? = null,
+)
+
+/**
+ * Typed domain assignment returned by repository read models.
+ */
+@Serializable
+data class DomainAssignment(
+    val domain: com.tajemniktv.tajsos.domain.DomainKind,
+    val isPrimary: Boolean = false,
+    val assignedAt: Long,
+)
+
+/**
+ * Typed rich-content document returned by repository read models.
+ */
+@Serializable
+data class RichContentDocument(
+    val itemId: Long,
+    val format: RichContentFormat,
+    val body: String,
+    val structuredContentJson: String? = null,
+    val schemaVersion: Int = 1,
+    val updatedAt: Long,
+)
+
+/**
+ * Typed saved-view filter returned by repository read models.
+ */
+@Serializable
+data class SavedViewFilter(
+    val fieldKey: SavedViewFieldKey,
+    val operator: SavedViewFilterOperator,
+    val value: String? = null,
+    val valueType: SavedViewValueType = SavedViewValueType.STRING,
+)
+
+/**
+ * Typed saved-view sort returned by repository read models.
+ */
+@Serializable
+data class SavedViewSort(
+    val fieldKey: SavedViewFieldKey,
+    val direction: SavedViewSortDirection = SavedViewSortDirection.ASCENDING,
+)
+
+/**
+ * Typed saved-view definition returned by repository read models.
+ */
+@Serializable
+data class SavedViewDefinition(
+    val id: Long = 0,
+    val name: String,
+    val description: String? = null,
+    val lens: SavedViewLens = SavedViewLens.OPERATE,
+    val layout: SavedViewLayout = SavedViewLayout.LIST,
+    val sourceKinds: Set<ItemKind> = emptySet(),
+    val filters: List<SavedViewFilter> = emptyList(),
+    val sorts: List<SavedViewSort> = emptyList(),
+    val visibleFields: List<SavedViewFieldKey> = emptyList(),
+    val rowDimension: SavedViewFieldKey? = null,
+    val columnDimension: SavedViewFieldKey? = null,
+    val measure: SavedViewMeasure? = null,
+    val createdAt: Long = 0,
+    val updatedAt: Long = 0,
+)
+
+/**
+ * Aggregated local read model for a typed life object.
+ */
+@Serializable
+data class LifeObjectAggregate(
+    val node: NodeEntity,
+    val task: TaskFacet? = null,
+    val note: NoteFacet? = null,
+    val record: RecordFacet? = null,
+    val project: ProjectFacet? = null,
+    val area: AreaFacet? = null,
+    val schedule: List<ScheduleEntry> = emptyList(),
+    val document: RichContentDocument? = null,
+    val domains: List<DomainAssignment> = emptyList(),
+    val tags: List<TagEntity> = emptyList(),
+    val attachments: List<AttachmentEntity> = emptyList(),
+    val relations: List<RelationEntity> = emptyList(),
+) {
+    /**
+     * The canonical kind for the aggregate when the backing node maps cleanly into the spine.
+     */
+    val kind: ItemKind? get() = node.itemKindOrNull()
+}
 
 /**
  * Splits a raw capture into an item title plus optional body content.

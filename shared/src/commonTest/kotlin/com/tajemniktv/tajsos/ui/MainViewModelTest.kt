@@ -146,6 +146,9 @@ class MainViewModelTest {
         override suspend fun deleteRelation(relation: RelationEntity) {
         }
 
+        override suspend fun deleteRelationsForNode(nodeId: Long) {
+        }
+
         override suspend fun deleteBelongsToRelations(nodeId: Long): Unit = Unit
 
         override suspend fun deleteBelongsToRelations(nodeIds: List<Long>): Unit = Unit
@@ -155,6 +158,7 @@ class MainViewModelTest {
         override suspend fun anyRelationExists(
             from: Long,
             to: Long,
+            relationType: String,
         ): Boolean = false
 
         override fun getAllRelations(): Flow<List<RelationEntity>> = flowOf(emptyList())
@@ -175,6 +179,9 @@ class MainViewModelTest {
             tagId: Long,
         ) {
         }
+
+        override suspend fun detachAllTagsFromNode(nodeId: Long) {
+        }
     }
 
     class StubEventLogDao : EventLogDao {
@@ -189,12 +196,17 @@ class MainViewModelTest {
     }
 
     class StubAttachmentDao : AttachmentDao {
+        override fun getAllAttachments(): Flow<List<AttachmentEntity>> = flowOf(emptyList())
+
         override fun getAttachmentsForNode(nodeId: Long): Flow<List<AttachmentEntity>> = flowOf(emptyList())
 
         override suspend fun insertAttachment(attachment: AttachmentEntity) {
         }
 
         override suspend fun deleteAttachment(attachment: AttachmentEntity) {
+        }
+
+        override suspend fun deleteAttachmentsForNode(nodeId: Long) {
         }
     }
 

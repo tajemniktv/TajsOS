@@ -28,6 +28,11 @@ class FakeRelationDao : RelationDao {
         relationsFlow.value = relations.toList()
     }
 
+    override suspend fun deleteRelationsForNode(nodeId: Long) {
+        relations.removeAll { it.fromNodeId == nodeId || it.toNodeId == nodeId }
+        relationsFlow.value = relations.toList()
+    }
+
     override suspend fun deleteBelongsToRelations(nodeId: Long) {
         relations.removeAll { it.fromNodeId == nodeId && it.relationType == "BELONGS_TO" }
         relationsFlow.value = relations.toList()
@@ -42,8 +47,16 @@ class FakeRelationDao : RelationDao {
         return relations.filter { it.fromNodeId == nodeId && it.relationType == "BELONGS_TO" }
     }
 
-    override suspend fun anyRelationExists(from: Long, to: Long): Boolean {
-        return relations.any { it.fromNodeId == from && it.toNodeId == to }
+    override suspend fun anyRelationExists(
+        from: Long,
+        to: Long,
+        relationType: String,
+    ): Boolean {
+        return relations.any {
+            it.fromNodeId == from &&
+                it.toNodeId == to &&
+                it.relationType == relationType
+        }
     }
 
     override fun getAllRelations(): Flow<List<RelationEntity>> {

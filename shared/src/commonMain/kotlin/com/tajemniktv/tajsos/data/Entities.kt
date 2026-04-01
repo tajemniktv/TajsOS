@@ -17,7 +17,17 @@ import kotlinx.serialization.Serializable
  * NodeEntity is the central entity in TajsOS, representing everything from
  * tasks and notes to projects and areas.
  */
-@Entity(tableName = "nodes")
+@Entity(
+    tableName = "nodes",
+    indices = [
+        Index(value = ["type", "status"]),
+        Index(value = ["projectId", "status"]),
+        Index(value = ["areaId", "status"]),
+        Index(value = ["dueAt"]),
+        Index(value = ["startAt"]),
+        Index(value = ["updatedAt"]),
+    ],
+)
 @Serializable
 @Immutable
 data class NodeEntity(
@@ -479,7 +489,15 @@ data class TrackMedicationJoinEntity(
 /**
  * RelationEntity links items to other items or entities.
  */
-@Entity(tableName = "relations")
+@Entity(
+    tableName = "relations",
+    indices = [
+        Index(value = ["fromNodeId"]),
+        Index(value = ["toNodeId"]),
+        Index(value = ["relationType"]),
+        Index(value = ["fromNodeId", "toNodeId", "relationType"], unique = true),
+    ],
+)
 @Serializable
 data class RelationEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
@@ -547,7 +565,10 @@ data class EventLogEntity(
 /**
  * AttachmentEntity stores links or references to assets.
  */
-@Entity(tableName = "attachments")
+@Entity(
+    tableName = "attachments",
+    indices = [Index(value = ["nodeId"])],
+)
 @Serializable
 data class AttachmentEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
