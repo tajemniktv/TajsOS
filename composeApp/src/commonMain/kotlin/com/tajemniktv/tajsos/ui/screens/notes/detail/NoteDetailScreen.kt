@@ -100,7 +100,6 @@ import com.tajemniktv.tajsos.data.itemKindOrNull
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.common.SelectorDialog
 import com.tajemniktv.tajsos.ui.components.layout.LocalHeaderActions
-import com.tajemniktv.tajsos.ui.screens.notes.NotesWorkspaceDetail
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
@@ -141,17 +140,6 @@ fun NoteDetailScreen(
     }
 
     val node = nodeWithPin.node
-    if (isDesktop && node.isNoteItem()) {
-        NotesWorkspaceDetail(
-            viewModel = viewModel,
-            noteId = noteId,
-            onBack = onBack,
-            onNavigateToNode = onNavigateToNode,
-            onNavigateToSearch = onNavigateToSearch,
-        )
-        return
-    }
-
     val tags by viewModel.getTagsForNode(noteId).collectAsState(initial = emptyList())
     val allTags by viewModel.allTags.collectAsState()
     val relations by viewModel.getRelationsForNode(noteId).collectAsState(initial = emptyList())
@@ -185,6 +173,16 @@ fun NoteDetailScreen(
     var showEnergyDialog by remember { mutableStateOf(false) }
     var showFrictionDialog by remember { mutableStateOf(false) }
     var showRecurringDialog by remember { mutableStateOf(false) }
+    val areaOptions =
+        remember(areas) {
+            listOf(AssignmentOption(id = null, name = "Unassign")) +
+                areas.map { AssignmentOption(id = it.id, name = it.title) }
+        }
+    val projectOptions =
+        remember(projects) {
+            listOf(AssignmentOption(id = null, name = "Unassign")) +
+                projects.map { AssignmentOption(id = it.id, name = it.title) }
+        }
 
     val actions: @Composable RowScope.() -> Unit = {
         IconButton(onClick = { viewModel.togglePermanentPin(node) }) {
@@ -398,15 +396,15 @@ fun NoteDetailScreen(
             onDismiss = { showAreaDialog = false },
             title = "ASSIGN TO AREA",
             prefix = "DOMAIN_MAPPING // MOVE",
-            options = areas,
-            selectedOption = areas.find { it.id == node.areaId },
+            options = areaOptions,
+            selectedOption = areaOptions.find { it.id == node.areaId },
             onSelect = { area ->
                 viewModel.updateNode(node.copy(areaId = area.id))
                 showAreaDialog = false
             },
-            optionName = { it.title },
+            optionName = { it.name },
             optionIcon = { Icons.Default.Place },
-            optionSubtext = { "AREA_SYST_${it.id}" },
+            optionSubtext = { it.id?.let { id -> "AREA_SYST_$id" } ?: "UNASSIGNED" },
         )
     }
 
@@ -416,15 +414,15 @@ fun NoteDetailScreen(
             onDismiss = { showProjectDialog = false },
             title = "ASSIGN TO PROJECT",
             prefix = "WORK_STREAM // MOVE",
-            options = projects,
-            selectedOption = projects.find { it.id == node.projectId },
+            options = projectOptions,
+            selectedOption = projectOptions.find { it.id == node.projectId },
             onSelect = { project ->
                 viewModel.updateNode(node.copy(projectId = project.id))
                 showProjectDialog = false
             },
-            optionName = { it.title },
+            optionName = { it.name },
             optionIcon = { Icons.AutoMirrored.Filled.List },
-            optionSubtext = { "PROJ_SYST_${it.id}" },
+            optionSubtext = { it.id?.let { id -> "PROJ_SYST_$id" } ?: "UNASSIGNED" },
         )
     }
 
@@ -914,3 +912,8 @@ fun NoteDetailScreen(
         )
     }
 }
+
+private data class AssignmentOption(
+    val id: Long?,
+    val name: String,
+)

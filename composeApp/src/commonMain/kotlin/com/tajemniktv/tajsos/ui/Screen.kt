@@ -16,13 +16,11 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.Extension
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Gavel
-import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Inventory2
@@ -57,8 +55,6 @@ import tajsos.composeapp.generated.resources.nav_execution
 import tajsos.composeapp.generated.resources.nav_status
 import tajsos.composeapp.generated.resources.nav_system
 import tajsos.composeapp.generated.resources.nav_systems
-import tajsos.composeapp.generated.resources.notes_tab_recent
-import tajsos.composeapp.generated.resources.notes_tab_workspace
 import tajsos.composeapp.generated.resources.profile_title
 import tajsos.composeapp.generated.resources.screen_archive
 import tajsos.composeapp.generated.resources.screen_area
@@ -109,7 +105,7 @@ sealed class Screen(
     val route: String,
     val label: StringResource,
     val icon: ImageVector,
-    val isRoot: Boolean = true
+    val isRoot: Boolean = true,
 ) {
     /**
      * Returns the list of child screens for this root screen.
@@ -134,34 +130,27 @@ sealed class Screen(
             get() = TasksTab.entries.map { it.toScreen() }
     }
 
-    data object Notes : Screen("notes", Res.string.screen_notes, Icons.AutoMirrored.Filled.Notes) {
-        override val children: List<Screen>
-            get() =
-                listOf(
-                    Sub(Notes, "workspace", Res.string.notes_tab_workspace, Icons.Default.EditNote),
-                    Sub(Notes, "recent", Res.string.notes_tab_recent, Icons.Default.History)
-                )
-    }
+    data object Notes : Screen("notes", Res.string.screen_notes, Icons.AutoMirrored.Filled.Notes)
 
     data object NoteDetail : Screen(
         "note/{noteId}",
         Res.string.screen_note,
         Icons.Default.Edit,
-        isRoot = false
+        isRoot = false,
     )
 
     data object TaskDetail : Screen(
         "task/{taskId}",
         Res.string.type_task,
         Icons.AutoMirrored.Filled.List,
-        isRoot = false
+        isRoot = false,
     )
 
     data object RecordDetail : Screen(
         "record/{recordId}",
         Res.string.type_record,
         Icons.Default.Description,
-        isRoot = false
+        isRoot = false,
     )
 
     data object Insights : Screen("insights", Res.string.screen_stats, Icons.Default.Info)
@@ -175,7 +164,7 @@ sealed class Screen(
             "calendar_settings",
             Res.string.screen_cal_opts,
             Icons.Default.Settings,
-            isRoot = false
+            isRoot = false,
         )
 
     data object Graph : Screen("graph", Res.string.screen_graph, Icons.Default.Share)
@@ -189,7 +178,7 @@ sealed class Screen(
         "project/{projectId}",
         Res.string.screen_project,
         Icons.AutoMirrored.Filled.List,
-        isRoot = false
+        isRoot = false,
     )
 
     data object AreaDetail :
@@ -197,7 +186,7 @@ sealed class Screen(
             "area/{areaId}",
             Res.string.screen_area,
             Icons.Default.LocationOn,
-            isRoot = false
+            isRoot = false,
         )
 
     data object Settings : Screen("settings", Res.string.screen_opts, Icons.Default.Settings) {
@@ -208,7 +197,7 @@ sealed class Screen(
                         Settings,
                         "preferences",
                         Res.string.settings_tab_preferences,
-                        Icons.Default.Settings
+                        Icons.Default.Settings,
                     ),
                     Profile,
                     SettingsAppearance,
@@ -217,12 +206,12 @@ sealed class Screen(
                         "calendar",
                         Res.string.screen_cal_opts,
                         Icons.Default.Event,
-                        "view"
+                        "view",
                     ),
                     SettingsFeaturePacks,
                     SettingsHealth,
                     SettingsData,
-                    SettingsDebug
+                    SettingsDebug,
                 )
     }
 
@@ -230,140 +219,140 @@ sealed class Screen(
         "settings_health",
         Res.string.screen_settings_health,
         Icons.Default.Favorite,
-        isRoot = false
+        isRoot = false,
     )
 
     data object SettingsAppearance : Screen(
         "settings_appearance",
         Res.string.screen_settings_appearance,
         Icons.Default.Palette,
-        isRoot = false
+        isRoot = false,
     )
 
     data object SettingsFeaturePacks : Screen(
         "settings_feature_packs",
         Res.string.screen_settings_feature_packs,
         Icons.Default.Extension,
-        isRoot = false
+        isRoot = false,
     )
 
     data object SettingsData : Screen(
         "settings_data",
         Res.string.screen_settings_data,
         Icons.Default.Storage,
-        isRoot = false
+        isRoot = false,
     )
 
     data object SettingsDebug : Screen(
         "settings_debug",
         Res.string.screen_settings_debug,
         Icons.Default.BugReport,
-        isRoot = false
+        isRoot = false,
     )
 
     data object Templates : Screen(
         "templates",
         Res.string.screen_templates,
         Icons.AutoMirrored.Filled.List,
-        isRoot = false
+        isRoot = false,
     )
 
     data object Review : Screen(
         "review",
         Res.string.screen_review,
         Icons.Default.RateReview,
-        isRoot = false
+        isRoot = false,
     )
 
     data object Profile : Screen(
         "profile",
         Res.string.profile_title,
         Icons.Default.Person,
-        isRoot = false
+        isRoot = false,
     )
 
     data object Decisions : Screen(
         "decisions",
         Res.string.dash_decisions,
-        Icons.Default.QuestionMark
+        Icons.Default.QuestionMark,
     )
 
     data object OpenLoops : Screen(
         "open_loops",
         Res.string.screen_open_loops,
-        Icons.Default.AllInclusive
+        Icons.Default.AllInclusive,
     )
 
     data object Protocols : Screen(
         "protocols",
         Res.string.screen_protocols,
-        Icons.Default.RocketLaunch
+        Icons.Default.RocketLaunch,
     )
 
     data object TimeArchitecture : Screen(
         "time_architecture",
         Res.string.screen_time_architecture,
-        Icons.Default.Schedule
+        Icons.Default.Schedule,
     )
 
     data object Places : Screen(
         "places",
         Res.string.screen_places,
-        Icons.Default.Place
+        Icons.Default.Place,
     )
 
     data object Finances : Screen(
         "finances",
         Res.string.screen_finances,
-        Icons.Default.AttachMoney
+        Icons.Default.AttachMoney,
     )
 
     data object Health : Screen(
         "health",
         Res.string.screen_health,
-        Icons.Default.Favorite
+        Icons.Default.Favorite,
     )
 
     data object Relationships : Screen(
         "relationships",
         Res.string.screen_relationships,
-        Icons.Default.People
+        Icons.Default.People,
     )
 
     data object Education : Screen(
         "education",
         Res.string.screen_education,
-        Icons.Default.School
+        Icons.Default.School,
     )
 
     data object StudyLegacy : Screen(
         "study",
         Res.string.screen_study,
-        Icons.Default.School
+        Icons.Default.School,
     )
 
     data object Rules : Screen(
         "rules",
         Res.string.screen_rules,
-        Icons.Default.Gavel
+        Icons.Default.Gavel,
     )
 
     data object Vaults : Screen(
         "vaults",
         Res.string.screen_vaults,
-        Icons.Default.Inventory2
+        Icons.Default.Inventory2,
     )
 
     data object Capacity : Screen(
         "capacity",
         Res.string.screen_capacity,
-        Icons.Default.Speed
+        Icons.Default.Speed,
     )
 
     data object Identity : Screen(
         "identity",
         Res.string.screen_identity,
-        Icons.Default.Psychology
+        Icons.Default.Psychology,
     )
 
     /**
@@ -380,7 +369,7 @@ sealed class Screen(
         subRoute: String,
         label: StringResource,
         icon: ImageVector,
-        val paramName: String = "tab"
+        val paramName: String = "tab",
     ) : Screen("${parent.route}?$paramName=$subRoute", label, icon, isRoot = false)
 
     companion object {
@@ -443,7 +432,7 @@ sealed class Screen(
                     Rules,
                     Vaults,
                     Capacity,
-                    Identity
+                    Identity,
                 )
 
             val allScreens = rootScreens + rootScreens.flatMap { it.children }
@@ -478,7 +467,7 @@ sealed class Screen(
                         Focus,
                         Decisions,
                         OpenLoops,
-                        Calendar
+                        Calendar,
                     ),
                 Res.string.nav_systems to
                     listOf(
@@ -486,7 +475,7 @@ sealed class Screen(
                         Areas,
                         Protocols,
                         TimeArchitecture,
-                        Places
+                        Places,
                     ),
                 Res.string.nav_brain to listOf(Notes, Vaults, Rules),
                 Res.string.nav_status to listOf(Track, Insights, Capacity, Identity, Graph, Review),
@@ -494,14 +483,12 @@ sealed class Screen(
                     listOf(
                         *DomainRegistry.screens.toTypedArray(),
                         Archive,
-                        Settings
-                    )
+                        Settings,
+                    ),
             )
         }
 
-        fun groupedItemsForPacks(
-            packRegistry: PackRegistry
-        ): List<Pair<StringResource, List<Screen>>> {
+        fun groupedItemsForPacks(packRegistry: PackRegistry): List<Pair<StringResource, List<Screen>>> {
             val visible =
                 groupedItems.map { (group, screens) ->
                     group to
@@ -511,7 +498,7 @@ sealed class Screen(
                                 Graph -> {
                                     packRegistry.isEnabled(AppPack.CREATOR) ||
                                         packRegistry.isEnabled(
-                                            AppPack.STUDENT
+                                            AppPack.STUDENT,
                                         )
                                 }
 
@@ -530,7 +517,7 @@ sealed class Screen(
                                 Vaults,
                                 Capacity,
                                 Identity,
-                                Calendar
+                                Calendar,
                                 -> {
                                     true
                                 }
@@ -544,7 +531,8 @@ sealed class Screen(
             return visible.filter { (_, screens) -> screens.isNotEmpty() }
         }
 
-        fun sidebarContextRoot(screen: Screen): Screen = when (screen)
+        fun sidebarContextRoot(screen: Screen): Screen =
+            when (screen)
             {
                 NoteDetail -> Notes
                 TaskDetail -> Tasks

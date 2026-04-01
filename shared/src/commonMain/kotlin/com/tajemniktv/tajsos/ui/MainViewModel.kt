@@ -1306,6 +1306,23 @@ class MainViewModel(
     }
 
     /**
+     * Sets whether the task should be part of today's execution payload.
+     */
+    fun setTodayPayload(
+        node: NodeEntity,
+        included: Boolean,
+    ) {
+        nodeCommands.togglePin(node, included)
+    }
+
+    /**
+     * Toggles today payload inclusion for a task.
+     */
+    fun toggleTodayPayload(node: NodeEntity) {
+        nodeCommands.togglePin(node, !todayNodes.value.any { it.id == node.id })
+    }
+
+    /**
      * Toggles the permanent pin status of a node. Permanently pinned nodes
      * typically bypass normal unpinning logic (e.g., daily resets).
      *
@@ -1536,9 +1553,8 @@ class MainViewModel(
     fun createAskAboutNextTimeNote(
         personId: Long,
         prompt: String,
-    )
-    {
-            relationshipCommands.createAskAboutNextTimeNote(personId, prompt)
+    ) {
+        relationshipCommands.createAskAboutNextTimeNote(personId, prompt)
     }
 
     fun addPlace(
@@ -1562,7 +1578,7 @@ class MainViewModel(
     )
     {
             relationshipCommands.unlinkNodeFromPlace(nodeId, placeId)
-    }
+        }
 
     fun createWhatToBringList(
         title: String,
@@ -1652,9 +1668,8 @@ class MainViewModel(
     fun markMustFindLater(
         node: NodeEntity,
         enabled: Boolean,
-    )
-    {
-            relationshipCommands.markMustFindLater(node, enabled)
+    ) {
+        relationshipCommands.markMustFindLater(node, enabled)
     }
 
     fun runMonthlyReset() {
@@ -1854,11 +1869,10 @@ class MainViewModel(
     fun setLastActiveContext(
         projectId: Long?,
         areaId: Long?,
-    )
-    {
+    ) {
         if (projectId != null) _lastActiveProjectId.value = projectId
         if (areaId != null) _lastActiveAreaId.value = areaId
-        }
+    }
 
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
@@ -1905,6 +1919,12 @@ class MainViewModel(
 
     private val _searchTimeHorizonFilter = MutableStateFlow<String?>(null)
     val searchTimeHorizonFilter: StateFlow<String?> = _searchTimeHorizonFilter.asStateFlow()
+
+    private val _searchSortMode = MutableStateFlow("relevance")
+    val searchSortMode: StateFlow<String> = _searchSortMode.asStateFlow()
+
+    private val _recentSearchQueries = MutableStateFlow<List<String>>(emptyList())
+    val recentSearchQueries: StateFlow<List<String>> = _recentSearchQueries.asStateFlow()
 
     private val searchPrimaryFilters: StateFlow<SearchPrimaryFilters> =
         combine(
@@ -2017,7 +2037,8 @@ class MainViewModel(
             allNodes,
             searchFiltersState,
             allRelations,
-        ) { nodes, filters, relations ->
+            _searchSortMode,
+        ) { nodes, filters, relations, sortMode ->
             FilterHelper.filterAndSortNodes(
                 nodes = nodes,
                 query = filters.query,
@@ -2036,12 +2057,27 @@ class MainViewModel(
                 timeWindowContext = filters.timeWindowContext,
                 timeHorizon = filters.timeHorizon,
                 relations = relations,
+                sortMode = sortMode,
             )
         }.flowOn(Dispatchers.Default)
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     fun updateSearchQuery(query: String) {
+        val normalized = query.trim()
         _searchQuery.value = query
+        if (normalized.length >= 2) {
+            _recentSearchQueries.value =
+                (
+                    _recentSearchQueries.value.filterNot {
+                        it.equals(
+                            normalized,
+                            ignoreCase = true,
+                        )
+                    } +
+                        normalized
+                ).takeLast(8)
+                    .reversed()
+        }
     }
 
     fun updateSearchTypeFilter(type: String?) {
@@ -2099,6 +2135,11 @@ class MainViewModel(
     fun updateSearchTimeHorizonFilter(horizon: String?) {
         _searchTimeHorizonFilter.value = horizon
     }
+
+    fun updateSearchSortMode(sortMode: String)
+    {
+        _searchSortMode.value = sortMode
+        }
 
     fun clearSearchFilters() {
         _searchQuery.value = ""
@@ -2225,15 +2266,15 @@ class MainViewModel(
     )
     {
         viewModelScope.launch {
-                repository.insertTag(
+            repository.insertTag(
                 TagEntity(
-                    name = name,
-                    normalizedName = name.lowercase().trim(),
+                        name = name,
+                        normalizedName = name.lowercase().trim(),
                     color = color,
-                    ),
-                )
-            }
+                ),
+            )
         }
+    }
 
     fun attachTagToNode(
         nodeId: Long,
@@ -2388,18 +2429,18 @@ class MainViewModel(
     )
     {
         val normalizedType =
-                when (type.trim().lowercase())
+            when (type.trim().lowercase())
             {
-                "record" -> "record"
-                "project" -> "project"
-                    "area" -> "area"
+                    "record" -> "record"
+                    "project" -> "project"
+                "area"                                             -> "area"
                     "idea", "resource", "vault", "document" -> "note"
                     "maintenance", "open_loop", "decision", "protocol" -> "task"
                     else -> "task"
-            }
-        viewModelScope.launch {
-            repository.insertTemplate(
-                TemplateEntity(
+                }
+            viewModelScope.launch {
+                repository.insertTemplate(
+                    TemplateEntity(
                     name = name,
                     nodeType = normalizedType,
                     defaultTitle = title,
@@ -2443,13 +2484,13 @@ class MainViewModel(
             val now = Clock.System.now()
                 val dateStr = now.toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
 
-            val nodeId =
-                repository.insertLifeItem(
+                val nodeId =
+                    repository.insertLifeItem(
                         kind = ItemKind.RECORD,
-                        title = "${type.uppercase()} REVIEW - $dateStr",
+                    title = "${type.uppercase()} REVIEW - $dateStr",
                         content = content,
-                    inboxState = false,
-                    source = "review",
+                        inboxState = false,
+                        source = "review",
                     recordKind = RecordKind.REFLECTION,
                 )
 
@@ -2460,11 +2501,11 @@ class MainViewModel(
                     resultNodeId = nodeId,
                     moodScore = mood,
                     energyScore = energy,
-                    ),
-                )
+                ),
+            )
 
-                if (mood != null || energy != null) {
-                addTrackEntry(mood = mood, energy = energy, note = "Linked to $type review")
+            if (mood != null || energy != null) {
+                    addTrackEntry(mood = mood, energy = energy, note = "Linked to $type review")
             }
         }
     }

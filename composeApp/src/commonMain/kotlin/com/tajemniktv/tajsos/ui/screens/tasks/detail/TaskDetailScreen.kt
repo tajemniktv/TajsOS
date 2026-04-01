@@ -93,10 +93,15 @@ fun TaskDetailScreen(
     val attachments by viewModel.getAttachmentsForNode(taskId).collectAsState(initial = emptyList())
 
     val allNodeById = remember(nodes) { nodes.associateBy { it.node.id } }
+    val areaOptions =
+        remember(areas) { areas.map { it.id to it.title }.sortedBy { it.second.lowercase() } }
+    val projectOptions =
+        remember(projects) { projects.map { it.id to it.title }.sortedBy { it.second.lowercase() } }
     val areaById = remember(areas) { areas.associate { it.id to it.title } }
     val projectById = remember(projects) { projects.associate { it.id to it.title } }
 
-    val subtasks =
+    val inlineChecklistLines = remember(task.content) { parseInlineChecklistLines(task.content) }
+    val nodeSubtasks =
         remember(task.content, nodes, relations) {
             val linkedSubtasks =
                 relations
@@ -121,12 +126,21 @@ fun TaskDetailScreen(
                     .distinctBy { it.id }
                     .sortedBy { it.createdAt }
 
-            if (subtaskNodes.isNotEmpty()) {
-                subtaskNodes.map { it.toSubtaskUi() }
-            } else {
-                parseInlineChecklist(task.content)
+            subtaskNodes.map { it.toSubtaskUi() }
+        }
+    val inlineSubtasks =
+        remember(inlineChecklistLines) {
+            inlineChecklistLines.mapIndexed { index, line ->
+                TaskSubtaskUi(
+                    id = ("inline-$index-${line.title}").hashCode().toLong(),
+                    title = line.title,
+                    state = if (line.checked) TaskSubtaskState.COMPLETE else TaskSubtaskState.QUEUED,
+                    source = TaskSubtaskSource.InlineChecklist,
+                    inlineIndex = index,
+                )
             }
         }
+    val subtasks = remember(nodeSubtasks, inlineSubtasks) { nodeSubtasks + inlineSubtasks }
 
     val historyItems = remember(logs) { logs.take(12).map { it.toHistoryUi() } }
     val attachmentItems = remember(attachments) { attachments.map { it.toAttachmentUi() } }
@@ -165,6 +179,8 @@ fun TaskDetailScreen(
             relations = relations,
             attachments = attachments,
             allNodeById = allNodeById,
+            areas = areaOptions,
+            projects = projectOptions,
             areaById = areaById,
             projectById = projectById,
             subtasks = subtasks,
@@ -207,19 +223,111 @@ fun TaskDetailScreen(
                     }
                 viewModel.updateNodeStatus(task, newStatus)
             },
+            onStatusChange = { status -> viewModel.updateNodeStatus(task, status) },
+            onAreaChange = { areaId -> viewModel.updateNode(task.copy(areaId = areaId)) },
+            onProjectChange = { projectId -> viewModel.updateNode(task.copy(projectId = projectId)) },
+            onDuePresetChange = { duePreset ->
+                val now = Clock.System.now().toEpochMilliseconds()
+                val dueAt =
+                    when (duePreset)
+                    {
+                        TaskDuePreset.None -> null
+                        TaskDuePreset.Today -> now
+                        TaskDuePreset.Tomorrow -> now + OneDayMillis
+                        TaskDuePreset.InSevenDays -> now + (7L * OneDayMillis)
+                    }
+                viewModel.updateNode(task.copy(dueAt = dueAt))
+            },
+            onRecurrenceChange = { recurringInterval ->
+                viewModel.updateNode(
+                    task.copy(
+                        isRecurring = recurringInterval != null,
+                        recurringInterval = recurringInterval,
+                    ),
+                )
+            },
+            onEstimateChange = { estimatedMinutes ->
+                viewModel.updateNode(task.copy(estimatedMinutes = estimatedMinutes))
+            },
+            onCriticalityChange = { isCritical ->
+                viewModel.updateNode(task.copy(isHardDeadline = isCritical))
+            },
             onToggleSubtask = { subtask ->
-                if (subtask.source == TaskSubtaskSource.Node) {
-                    subtask.node?.let { child ->
-                        val newState =
-                            if (child.taskStateOrNull() == TaskState.DONE) {
-                                TaskState.ACTIVE.storageKey
-                            } else {
-                                TaskState.DONE.storageKey
-                            }
-                        viewModel.updateNodeStatus(child, newState)
+                when (subtask.source)
+                {
+                    TaskSubtaskSource.Node -> {
+                        subtask.node?.let { child ->
+                            val newState =
+                                if (child.taskStateOrNull() == TaskState.DONE) {
+                                    TaskState.ACTIVE.storageKey
+                                } else {
+                                    TaskState.DONE.storageKey
+                                }
+                            viewModel.updateNodeStatus(child, newState)
+                        }
+                    }
+
+                    TaskSubtaskSource.InlineChecklist -> {
+                        val inlineIndex = subtask.inlineIndex
+                        if (inlineIndex != null) {
+                            val updated =
+                                inlineChecklistLines.mapIndexed { index, line ->
+                                    if (index == inlineIndex) {
+                                        line.copy(checked = !line.checked)
+                                    } else {
+                                        line
+                                    }
+                                }
+                            viewModel.updateNode(
+                                task.copy(
+                                    content =
+                                        replaceInlineChecklist(
+                                            task.content,
+                                            updated,
+                                        ),
+                                ),
+                            )
+                        }
                     }
                 }
             },
+            onAddInlineSubtask = { title ->
+                val cleanTitle = title.trim()
+                if (cleanTitle.isNotBlank()) {
+                    val updated =
+                        inlineChecklistLines +
+                            InlineChecklistLine(
+                                title = cleanTitle,
+                                checked = false,
+                            )
+                    viewModel.updateNode(
+                        task.copy(
+                            content =
+                                replaceInlineChecklist(
+                                    task.content,
+                                    updated,
+                                ),
+                        ),
+                    )
+                }
+            },
+            onRemoveInlineSubtask = { subtask ->
+                val inlineIndex = subtask.inlineIndex
+                if (inlineIndex != null) {
+                    val updated =
+                        inlineChecklistLines.filterIndexed { index, _ -> index != inlineIndex }
+                    viewModel.updateNode(
+                        task.copy(
+                            content =
+                                replaceInlineChecklist(
+                                    task.content,
+                                    updated,
+                                ),
+                        ),
+                    )
+                }
+            },
+            onSplitIntoSubtasks = { viewModel.splitIntoSubtasks(task.id) },
             onRemoveAttachment = { attachmentId ->
                 attachments.firstOrNull { it.id == attachmentId }?.let(viewModel::deleteAttachment)
             },
@@ -298,48 +406,60 @@ private fun NodeEntity.toSubtaskUi(): TaskSubtaskUi {
     )
 }
 
-private fun parseInlineChecklist(content: String): List<TaskSubtaskUi> {
-    val checklistLines =
-        content.lines().mapNotNull { line ->
-            val value = line.trim()
-            when
-                {
-                    value.startsWith("- [x] ", ignoreCase = true) -> {
-                        TaskSubtaskUi(
-                            id = value.hashCode().toLong(),
-                            title = value.removePrefix("- [x] ").trim(),
-                            state = TaskSubtaskState.COMPLETE,
-                            source = TaskSubtaskSource.InlineChecklist,
-                        )
-                    }
+private data class InlineChecklistLine(
+    val title: String,
+    val checked: Boolean,
+)
 
-                    value.startsWith("- [ ] ") -> {
-                        TaskSubtaskUi(
-                            id = value.hashCode().toLong(),
-                            title = value.removePrefix("- [ ] ").trim(),
-                            state = TaskSubtaskState.QUEUED,
-                            source = TaskSubtaskSource.InlineChecklist,
-                        )
-                    }
-
-                    else -> {
-                        null
-                    }
+private fun parseInlineChecklistLines(content: String): List<InlineChecklistLine> =
+    content.lines().mapNotNull { line ->
+        val value = line.trim()
+        when
+        {
+            value.startsWith("- [x] ", ignoreCase = true) -> {
+                    InlineChecklistLine(
+                        title = value.removePrefix("- [x] ").trim(),
+                        checked = true,
+                    )
                 }
-        }
 
-    if (checklistLines.isEmpty()) return emptyList()
+                value.startsWith("- [ ] ") -> {
+                    InlineChecklistLine(
+                        title = value.removePrefix("- [ ] ").trim(),
+                        checked = false,
+                    )
+                }
 
-    val firstQueuedIndex = checklistLines.indexOfFirst { it.state == TaskSubtaskState.QUEUED }
-    if (firstQueuedIndex < 0) return checklistLines
-
-    return checklistLines.mapIndexed { index, item ->
-        if (index == firstQueuedIndex) {
-            item.copy(state = TaskSubtaskState.ACTIVE)
-        } else {
-            item
-        }
+                else -> {
+                    null
+                }
+            }
     }
+
+private fun replaceInlineChecklist(
+    content: String,
+    updatedChecklist: List<InlineChecklistLine>,
+): String {
+    val baseLines =
+        content
+            .lines()
+            .filterNot { line ->
+                val value = line.trim()
+                value.startsWith("- [ ] ") || value.startsWith("- [x] ", ignoreCase = true)
+            }.toMutableList()
+
+    if (updatedChecklist.isNotEmpty()) {
+        if (baseLines.isNotEmpty() && baseLines.last().isNotBlank()) {
+            baseLines.add("")
+        }
+        baseLines.addAll(
+            updatedChecklist.map { line ->
+                if (line.checked) "- [x] ${line.title}" else "- [ ] ${line.title}"
+            },
+        )
+    }
+
+    return baseLines.joinToString("\n")
 }
 
 private fun AttachmentEntity.toAttachmentUi(): TaskAttachmentUi {

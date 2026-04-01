@@ -45,7 +45,6 @@ import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
-import tajsos.composeapp.generated.resources.dash_overwhelmed
 import tajsos.composeapp.generated.resources.detail_archive
 import tajsos.composeapp.generated.resources.detail_favorite
 import tajsos.composeapp.generated.resources.node_pin_today_desc
@@ -91,8 +90,8 @@ fun NodeCard(
         border =
             BorderStroke(
                 1.dp,
-                if (isPinnedToToday) TajsOSTheme.Primary else TajsOSTheme.Border
-            )
+                if (isPinnedToToday) TajsOSTheme.Primary else TajsOSTheme.Border,
+            ),
     ) {
         Row(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd).fillMaxWidth(),
@@ -101,7 +100,7 @@ fun NodeCard(
             Checkbox(
                 checked = isDone,
                 onCheckedChange = { onToggleDone(if (it) "done" else "active") },
-                colors = CheckboxDefaults.colors(checkedColor = TajsOSTheme.Primary)
+                colors = CheckboxDefaults.colors(checkedColor = TajsOSTheme.Primary),
             )
             Column(modifier = Modifier.weight(1f)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -147,7 +146,7 @@ fun NodeCard(
                                 } else {
                                     ""
                                 },
-                        color = TajsOSTheme.Primary
+                        color = TajsOSTheme.Primary,
                     )
                     val dueAt = node.dueAt
                     if (dueAt != null) {
@@ -166,7 +165,7 @@ fun NodeCard(
                         Text(
                             text = "${due.day}/${due.month.number}${if (node.isHardDeadline) "!" else ""}",
                             style = MaterialTheme.typography.labelSmall,
-                            color = if (node.isHardDeadline) TajsOSTheme.Error else TajsOSTheme.Accent
+                            color = if (node.isHardDeadline) TajsOSTheme.Error else TajsOSTheme.Accent,
                         )
                     }
                     val staleTime =
@@ -176,7 +175,7 @@ fun NodeCard(
                         Text(
                             text = stringResource(Res.string.node_stale),
                             style = MaterialTheme.typography.labelSmall,
-                            color = TajsOSTheme.Error.copy(alpha = 0.5f)
+                            color = TajsOSTheme.Error.copy(alpha = 0.5f),
                         )
                     }
                     val energyLevel = node.energyLevel
@@ -191,7 +190,7 @@ fun NodeCard(
                                     2 -> TajsOSTheme.Primary
                                     3 -> TajsOSTheme.Error
                                     else -> TajsOSTheme.Muted
-                                }
+                                },
                         )
                     }
                     val friction = node.friction
@@ -200,7 +199,7 @@ fun NodeCard(
                         val frictionLabel =
                             when (friction)
                             {
-                                "easy" -> stringResource(Res.string.dash_overwhelmed)
+                                "easy" -> "EASY"
                                 "annoying" -> "ANNOYING"
                                 "mentally_heavy" -> "HEAVY"
                                 "unclear" -> "UNCLEAR"
@@ -239,7 +238,7 @@ fun NodeCard(
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = stringResource(Res.string.detail_archive),
-                        tint = TajsOSTheme.Muted
+                        tint = TajsOSTheme.Muted,
                     )
                 }
             }
@@ -252,7 +251,7 @@ fun NodeCard(
                             TajsOSTheme.Primary
                         } else {
                             TajsOSTheme.Muted.copy(
-                                alpha = 0.5f
+                                alpha = 0.5f,
                             )
                         },
                 )

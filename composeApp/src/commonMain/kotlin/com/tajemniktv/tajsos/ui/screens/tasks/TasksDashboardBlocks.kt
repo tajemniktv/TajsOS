@@ -43,7 +43,7 @@ private fun renderTasksHeader(context: TasksDashboardContext) {
         Text(
             stringResource(Res.string.tasks_workspace_subtitle),
             style = MaterialTheme.typography.bodySmall,
-            color = TajsOSTheme.Muted
+            color = TajsOSTheme.Muted,
         )
     }
 }
@@ -76,7 +76,7 @@ private fun renderTasksViewCommand(context: TasksDashboardContext) {
         onOpen = context.onEditNode,
         onStartFocus = { viewModel.startFocusSession(it.id) },
         onDone = { viewModel.updateNodeStatus(it, TaskState.DONE.storageKey) },
-        onPinToday = { viewModel.togglePin(it, true) },
+        onSetTodayPayload = { node, included -> viewModel.setTodayPayload(node, included) },
         onQuickAdd = {
             viewModel.addNode(
                 title = it,
@@ -120,7 +120,8 @@ private fun renderTasksViewToday(context: TasksDashboardContext) {
         areaById = context.areaById,
         onOpen = context.onEditNode,
         onDone = { viewModel.updateNodeStatus(it, TaskState.DONE.storageKey) },
-        onDoNow = { viewModel.startFocusSession(it.id) },
+        onStartFocus = { viewModel.startFocusSession(it.id) },
+        onSetTodayPayload = { node, included -> viewModel.setTodayPayload(node, included) },
     )
 }
 

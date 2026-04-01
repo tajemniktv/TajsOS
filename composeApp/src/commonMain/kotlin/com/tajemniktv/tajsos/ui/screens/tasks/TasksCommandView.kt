@@ -51,11 +51,9 @@ import tajsos.composeapp.generated.resources.tasks_context_blocked
 import tajsos.composeapp.generated.resources.tasks_context_due_soon
 import tajsos.composeapp.generated.resources.tasks_context_title
 import tajsos.composeapp.generated.resources.tasks_current_priority
-import tajsos.composeapp.generated.resources.tasks_do_now_action
 import tajsos.composeapp.generated.resources.tasks_done_action
 import tajsos.composeapp.generated.resources.tasks_empty
 import tajsos.composeapp.generated.resources.tasks_open_action
-import tajsos.composeapp.generated.resources.tasks_pin_today_action
 import tajsos.composeapp.generated.resources.tasks_queue_title
 import tajsos.composeapp.generated.resources.tasks_quick_add_action
 import tajsos.composeapp.generated.resources.tasks_quick_add_hint
@@ -77,7 +75,7 @@ internal fun TasksCommandView(
     onOpen: (Long) -> Unit,
     onStartFocus: (NodeEntity) -> Unit,
     onDone: (NodeEntity) -> Unit,
-    onPinToday: (NodeEntity) -> Unit,
+    onSetTodayPayload: (NodeEntity, Boolean) -> Unit,
     onQuickAdd: (String) -> Unit,
     onQuickCapture: (String) -> Unit,
 ) {
@@ -125,10 +123,11 @@ internal fun TasksCommandView(
                             current,
                             projectById,
                             areaById,
+                            todayTaskIds,
                             onOpen,
                             onStartFocus,
                             onDone,
-                            onPinToday,
+                            onSetTodayPayload,
                         )
                         Text(
                             stringResource(Res.string.tasks_queue_title),
@@ -193,10 +192,11 @@ internal fun TasksCommandView(
                         current,
                         projectById,
                         areaById,
+                        todayTaskIds,
                         onOpen,
                         onStartFocus,
                         onDone,
-                        onPinToday,
+                        onSetTodayPayload,
                     )
                     QueueList(queue, projectById, areaById, onOpen, onStartFocus, onDone)
                 }
@@ -209,8 +209,8 @@ internal fun TasksCommandView(
                     dueSoonCount =
                         tasks.count {
                             it.dueAt != null &&
-                                    (
-                                            it.dueAt
+                                (
+                                    it.dueAt
                                         ?: Long.MAX_VALUE
                                 ) <= now + 24L * 60 * 60 * 1000
                         },
@@ -243,10 +243,11 @@ private fun PriorityTaskCard(
     task: NodeEntity,
     projectById: Map<Long, String>,
     areaById: Map<Long, String>,
+    todayTaskIds: Set<Long>,
     onOpen: (Long) -> Unit,
     onStartFocus: (NodeEntity) -> Unit,
     onDone: (NodeEntity) -> Unit,
-    onPinToday: (NodeEntity) -> Unit,
+    onSetTodayPayload: (NodeEntity, Boolean) -> Unit,
 ) {
     Surface(
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
@@ -299,9 +300,17 @@ private fun PriorityTaskCard(
                     modifier = Modifier.weight(1f),
                 ) { Text(stringResource(Res.string.tasks_open_action)) }
                 OutlinedButton(
-                    onClick = { onPinToday(task) },
+                    onClick = { onSetTodayPayload(task, task.id !in todayTaskIds) },
                     modifier = Modifier.weight(1f),
-                ) { Text(stringResource(Res.string.tasks_pin_today_action)) }
+                ) {
+                    Text(
+                        if (task.id in todayTaskIds) {
+                            "Remove Today payload"
+                        } else {
+                            "Add to Today payload"
+                        },
+                    )
+                }
                 OutlinedButton(onClick = { onDone(task) }, modifier = Modifier.weight(1f)) {
                     Icon(Icons.Default.Check, null)
                     Spacer(Modifier.width(4.dp))
@@ -354,7 +363,7 @@ private fun QueueList(
                         }
                     }
                     Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
-                        OutlinedButton(onClick = { onDoNow(task) }) { Text(stringResource(Res.string.tasks_do_now_action)) }
+                        OutlinedButton(onClick = { onDoNow(task) }) { Text(stringResource(Res.string.tasks_start_focus_action)) }
                         OutlinedButton(onClick = { onOpen(task.id) }) { Text(stringResource(Res.string.tasks_open_action)) }
                         IconButton(onClick = { onDone(task) }) { Icon(Icons.Default.Check, null) }
                     }

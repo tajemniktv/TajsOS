@@ -15,7 +15,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
@@ -40,6 +42,8 @@ fun SearchScreen(
     val searchSocialContextFilter by viewModel.searchSocialContextFilter.collectAsState()
     val searchTimeWindowContextFilter by viewModel.searchTimeWindowContextFilter.collectAsState()
     val searchTimeHorizonFilter by viewModel.searchTimeHorizonFilter.collectAsState()
+    val searchSortMode by viewModel.searchSortMode.collectAsState()
+    val recentQueries by viewModel.recentSearchQueries.collectAsState()
 
     val projects by viewModel.allProjects.collectAsState()
     val areas by viewModel.allAreas.collectAsState()
@@ -48,15 +52,7 @@ fun SearchScreen(
     val projectsById = remember(projects) { projects.associateBy { it.id } }
     val areasById = remember(areas) { areas.associateBy { it.id } }
 
-    val recentQueries =
-        remember(searchQuery) {
-            buildList {
-                add("Weekly review")
-                add("Overdue tasks")
-                add("Project notes")
-                if (searchQuery.isNotBlank()) add(searchQuery)
-            }.distinct().take(4)
-        }
+    var showFilters by remember { mutableStateOf(true) }
     val nowMs = Clock.System.now().toEpochMilliseconds()
 
     val context =
@@ -75,12 +71,15 @@ fun SearchScreen(
             searchSocialContextFilter = searchSocialContextFilter,
             searchTimeWindowContextFilter = searchTimeWindowContextFilter,
             searchTimeHorizonFilter = searchTimeHorizonFilter,
+            searchSortMode = searchSortMode,
+            showFilters = showFilters,
             projectsById = projectsById,
             areasById = areasById,
             allNodes = allNodes,
             recentQueries = recentQueries,
             nowMs = nowMs,
             onItemClick = onItemClick,
+            onToggleFilters = { showFilters = !showFilters },
         )
 
     BoxWithConstraints(

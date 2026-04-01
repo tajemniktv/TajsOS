@@ -7,7 +7,7 @@ package com.tajemniktv.tajsos.ui.screens.vaults
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -39,25 +39,25 @@ internal fun VaultsMainBlock(
     val vaultsSnapshot by viewModel.vaultsSnapshot.collectAsState()
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+        modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
+        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
     ) {
         Text(
             text = "REFERENCE & RETRIEVE",
             style = MaterialTheme.typography.displaySmall,
-            color = TajsOSTheme.Text
+            color = TajsOSTheme.Text,
         )
         Text(
             text = "Keep durable reference, official deadlines, and find-later items easy to retrieve without turning storage into a separate product world.",
             style = MaterialTheme.typography.bodySmall,
-            color = TajsOSTheme.Muted
+            color = TajsOSTheme.Muted,
         )
 
         VaultsLayer(
             viewModel = viewModel,
             snapshot = vaultsSnapshot,
             onEditNode = onEditNode,
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }

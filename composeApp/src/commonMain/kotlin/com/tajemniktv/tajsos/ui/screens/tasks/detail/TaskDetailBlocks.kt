@@ -7,6 +7,7 @@ package com.tajemniktv.tajsos.ui.screens.tasks.detail
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -39,15 +40,23 @@ import androidx.compose.material.icons.outlined.Circle
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
@@ -115,7 +124,7 @@ private fun renderTaskHeader(context: TaskDetailContext) {
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
-            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -138,7 +147,7 @@ private fun renderTaskHeader(context: TaskDetailContext) {
                         Text(
                             text = "TASK-${task.id}",
                             style = MaterialTheme.typography.labelSmall,
-                            color = TajsOSTheme.Muted
+                            color = TajsOSTheme.Muted,
                         )
                     }
                     if (context.isEditing) {
@@ -183,7 +192,7 @@ private fun renderTaskHeader(context: TaskDetailContext) {
                                     Icons.Default.Tag,
                                     contentDescription = null,
                                     modifier = Modifier.size(14.dp),
-                                    tint = TajsOSTheme.Primary
+                                    tint = TajsOSTheme.Primary,
                                 )
                             },
                             label = { Text(tag.name) },
@@ -207,7 +216,7 @@ private fun TaskPathRow(
         Text(
             text = "TASKS",
             style = MaterialTheme.typography.labelSmall,
-            color = TajsOSTheme.Muted
+            color = TajsOSTheme.Muted,
         )
         Icon(
             imageVector = Icons.AutoMirrored.Filled.ArrowForward,
@@ -218,7 +227,7 @@ private fun TaskPathRow(
         Text(
             text = areaName ?: "UNSCOPED",
             style = MaterialTheme.typography.labelSmall,
-            color = TajsOSTheme.Primary
+            color = TajsOSTheme.Primary,
         )
         projectName?.let {
             Icon(
@@ -246,7 +255,7 @@ private fun HeaderTitleEditor(
     Surface(
         shape = RoundedCornerShape(10.dp),
         color = TajsOSTheme.SurfaceHighest,
-        border = BorderStroke(1.dp, TajsOSTheme.GhostBorder.copy(alpha = 0.25f))
+        border = BorderStroke(1.dp, TajsOSTheme.GhostBorder.copy(alpha = 0.25f)),
     ) {
         BasicTextField(
             value = value,
@@ -301,7 +310,7 @@ private fun TaskActionBar(
                             containerColor = TajsOSTheme.Primary,
                             contentColor = TajsOSTheme.Background,
                             disabledContainerColor = TajsOSTheme.SurfaceHighest,
-                            disabledContentColor = TajsOSTheme.Muted
+                            disabledContentColor = TajsOSTheme.Muted,
                         ),
                     enabled = canComplete,
                 ) {
@@ -330,15 +339,16 @@ private fun renderTaskDescription(context: TaskDetailContext) {
                 Surface(
                     shape = RoundedCornerShape(10.dp),
                     color = TajsOSTheme.SurfaceHighest,
-                    border = BorderStroke(1.dp, TajsOSTheme.GhostBorder.copy(alpha = 0.22f))
+                    border = BorderStroke(1.dp, TajsOSTheme.GhostBorder.copy(alpha = 0.22f)),
                 ) {
                     BasicTextField(
                         value = context.draftDescription,
                         onValueChange = context.onDraftDescriptionChange,
                         modifier = Modifier.fillMaxWidth().height(160.dp).padding(12.dp),
-                        textStyle = MaterialTheme.typography.bodyLarge.copy(
-                            color = TajsOSTheme.Text
-                        ),
+                        textStyle =
+                            MaterialTheme.typography.bodyLarge.copy(
+                                color = TajsOSTheme.Text,
+                            ),
                         cursorBrush = SolidColor(TajsOSTheme.Primary),
                     )
                 }
@@ -390,10 +400,11 @@ private fun renderTaskDescription(context: TaskDetailContext) {
 
 @Composable
 private fun renderTaskSubtasks(context: TaskDetailContext) {
+    var newChecklistItem by remember(context.task.id) { mutableStateOf("") }
     Surface(
         color = TajsOSTheme.SurfaceLow,
         shape = detailPanelShape,
-        border = BorderStroke(1.dp, detailPanelBorder)
+        border = BorderStroke(1.dp, detailPanelBorder),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
@@ -411,6 +422,32 @@ private fun renderTaskSubtasks(context: TaskDetailContext) {
                         style = MaterialTheme.typography.labelSmall,
                         color = TajsOSTheme.Muted,
                     )
+                }
+            }
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedButton(onClick = context.onSplitIntoSubtasks) {
+                    Text("Split into child tasks")
+                }
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                OutlinedTextField(
+                    value = newChecklistItem,
+                    onValueChange = { newChecklistItem = it },
+                    modifier = Modifier.weight(1f),
+                    singleLine = true,
+                    label = { Text("Add checklist row") },
+                )
+                Button(
+                    onClick = {
+                        context.onAddInlineSubtask(newChecklistItem)
+                        newChecklistItem = ""
+                    },
+                ) {
+                    Text("Add")
                 }
             }
 
@@ -431,7 +468,15 @@ private fun renderTaskSubtasks(context: TaskDetailContext) {
                 )
             } else {
                 context.subtasks.forEach { subtask ->
-                    SubtaskRow(subtask = subtask, onToggle = { context.onToggleSubtask(subtask) })
+                    SubtaskRow(
+                        subtask = subtask,
+                        onToggle = { context.onToggleSubtask(subtask) },
+                        onRemove = {
+                            if (subtask.source == TaskSubtaskSource.InlineChecklist) {
+                                context.onRemoveInlineSubtask(subtask)
+                            }
+                        },
+                    )
                 }
             }
         }
@@ -442,6 +487,7 @@ private fun renderTaskSubtasks(context: TaskDetailContext) {
 private fun SubtaskRow(
     subtask: TaskSubtaskUi,
     onToggle: () -> Unit,
+    onRemove: (() -> Unit)? = null,
 ) {
     val (icon, tint, background) =
         when (subtask.state)
@@ -494,8 +540,14 @@ private fun SubtaskRow(
                 Text(
                     text = subtask.title,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = if (subtask.state ==
-                        TaskSubtaskState.COMPLETE) TajsOSTheme.Muted else TajsOSTheme.Text,
+                    color =
+                        if (subtask.state ==
+                            TaskSubtaskState.COMPLETE
+                        ) {
+                            TajsOSTheme.Muted
+                        } else {
+                            TajsOSTheme.Text
+                        },
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -511,6 +563,15 @@ private fun SubtaskRow(
                 style = MaterialTheme.typography.labelSmall,
                 color = tint,
             )
+            if (subtask.source == TaskSubtaskSource.InlineChecklist && onRemove != null) {
+                IconButton(onClick = onRemove) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = null,
+                        tint = TajsOSTheme.Muted,
+                    )
+                }
+            }
         }
     }
 }
@@ -520,7 +581,7 @@ private fun renderTaskAttachments(context: TaskDetailContext) {
     Surface(
         color = TajsOSTheme.SurfaceLow,
         shape = detailPanelShape,
-        border = BorderStroke(1.dp, detailPanelBorder)
+        border = BorderStroke(1.dp, detailPanelBorder),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
@@ -598,7 +659,7 @@ private fun renderTaskHistory(context: TaskDetailContext) {
     Surface(
         color = TajsOSTheme.SurfaceLow,
         shape = detailPanelShape,
-        border = BorderStroke(1.dp, detailPanelBorder)
+        border = BorderStroke(1.dp, detailPanelBorder),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
@@ -672,7 +733,7 @@ private fun renderTaskMetadata(context: TaskDetailContext) {
     Surface(
         color = TajsOSTheme.SurfaceLow,
         shape = detailPanelShape,
-        border = BorderStroke(1.dp, detailPanelBorder)
+        border = BorderStroke(1.dp, detailPanelBorder),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
@@ -693,45 +754,116 @@ private fun renderTaskMetadata(context: TaskDetailContext) {
 
             HorizontalDivider(color = TajsOSTheme.GhostBorder.copy(alpha = 0.15f))
 
-            TaskPropertyRow(
+            TaskEditablePropertyRow(
+                icon = Icons.Default.Info,
+                label = "Status",
+                selected = state.storageKey.replace("_", " ").uppercase(),
+                options =
+                    listOf(
+                        TaskPropertyOption(TaskState.ACTIVE.storageKey, "ACTIVE"),
+                        TaskPropertyOption(TaskState.BLOCKED.storageKey, "BLOCKED"),
+                        TaskPropertyOption(TaskState.ON_HOLD.storageKey, "ON HOLD"),
+                        TaskPropertyOption(TaskState.SOMEDAY.storageKey, "QUEUED"),
+                        TaskPropertyOption(TaskState.DONE.storageKey, "DONE"),
+                    ),
+                onSelect = context.onStatusChange,
+            )
+            TaskEditablePropertyRow(
                 icon = Icons.Default.Info,
                 label = "Domain",
-                value = areaName ?: "Not set",
+                selected = areaName ?: "Not set",
+                options =
+                    listOf(TaskPropertyOption("__none__", "Not set")) +
+                        context.areas.map {
+                            TaskPropertyOption(
+                                it.first.toString(),
+                                it.second,
+                            )
+                        },
+                onSelect = { value ->
+                    context.onAreaChange(value.toLongOrNull())
+                },
             )
-            TaskPropertyRow(
+            TaskEditablePropertyRow(
                 icon = Icons.Default.Tag,
                 label = "Project",
-                value = projectName ?: "Not set",
+                selected = projectName ?: "Not set",
+                options =
+                    listOf(TaskPropertyOption("__none__", "Not set")) +
+                        context.projects.map {
+                            TaskPropertyOption(
+                                it.first.toString(),
+                                it.second,
+                            )
+                        },
+                onSelect = { value ->
+                    context.onProjectChange(value.toLongOrNull())
+                },
             )
-            TaskPropertyRow(
+            TaskEditablePropertyRow(
                 icon = Icons.Default.CalendarMonth,
                 label = "Deadline",
-                value = task.dueAt?.let(::formatDateTime) ?: "No due date",
+                selected = task.dueAt?.let(::formatDateTime) ?: "No due date",
+                options =
+                    listOf(
+                        TaskPropertyOption(TaskDuePreset.None.name, "No due date"),
+                        TaskPropertyOption(TaskDuePreset.Today.name, "Today"),
+                        TaskPropertyOption(TaskDuePreset.Tomorrow.name, "Tomorrow"),
+                        TaskPropertyOption(TaskDuePreset.InSevenDays.name, "In 7 days"),
+                    ),
+                onSelect = { value -> context.onDuePresetChange(TaskDuePreset.valueOf(value)) },
             )
-            TaskPropertyRow(
+            TaskEditablePropertyRow(
                 icon = Icons.Default.Schedule,
                 label = "Frequency",
-                value =
+                selected =
                     if (task.isRecurring) {
                         task.recurringInterval?.replace("_", " ")?.uppercase() ?: "Recurring"
                     } else {
                         "One-off"
                     },
+                options =
+                    listOf(
+                        TaskPropertyOption("__none__", "One-off"),
+                        TaskPropertyOption("daily", "DAILY"),
+                        TaskPropertyOption("weekly", "WEEKLY"),
+                        TaskPropertyOption("monthly", "MONTHLY"),
+                    ),
+                onSelect = { value ->
+                    context.onRecurrenceChange(if (value == "__none__") null else value)
+                },
             )
-            TaskPropertyRow(
+            TaskEditablePropertyRow(
                 icon = Icons.Default.HourglassBottom,
                 label = "Effort",
-                value = task.estimatedMinutes?.let { "$it min" } ?: "Unestimated",
+                selected = task.estimatedMinutes?.let { "$it min" } ?: "Unestimated",
+                options =
+                    listOf(
+                        TaskPropertyOption("__none__", "Unestimated"),
+                        TaskPropertyOption("15", "15 min"),
+                        TaskPropertyOption("30", "30 min"),
+                        TaskPropertyOption("60", "60 min"),
+                        TaskPropertyOption("120", "120 min"),
+                    ),
+                onSelect = { value ->
+                    context.onEstimateChange(value.toIntOrNull())
+                },
             )
             TaskPropertyRow(
                 icon = Icons.Default.AlarmOn,
                 label = "Automation",
                 value = if (task.isRecurring) "Active" else "Off",
             )
-            TaskPropertyRow(
+            TaskEditablePropertyRow(
                 icon = Icons.Default.RadioButtonChecked,
                 label = "Priority",
-                value = if (task.isHardDeadline) "Critical" else derivePriorityLabel(task),
+                selected = if (task.isHardDeadline) "Critical" else derivePriorityLabel(task),
+                options =
+                    listOf(
+                        TaskPropertyOption("false", "Standard"),
+                        TaskPropertyOption("true", "Critical"),
+                    ),
+                onSelect = { value -> context.onCriticalityChange(value == "true") },
             )
 
             if (context.subtaskProgress != null) {
@@ -756,6 +888,11 @@ private fun renderTaskMetadata(context: TaskDetailContext) {
         }
     }
 }
+
+private data class TaskPropertyOption(
+    val key: String,
+    val label: String,
+)
 
 @Composable
 private fun StatusPill(state: TaskState) {
@@ -823,6 +960,56 @@ private fun TaskPropertyRow(
 }
 
 @Composable
+private fun TaskEditablePropertyRow(
+    icon: ImageVector,
+    label: String,
+    selected: String,
+    options: List<TaskPropertyOption>,
+    onSelect: (String) -> Unit,
+) {
+    var expanded by remember { mutableStateOf(false) }
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.Top,
+    ) {
+        Row(
+            modifier = Modifier.weight(1f),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                icon,
+                contentDescription = null,
+                tint = TajsOSTheme.Muted,
+                modifier = Modifier.size(14.dp),
+            )
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelSmall,
+                color = TajsOSTheme.Muted,
+            )
+        }
+        Box {
+            TextButton(onClick = { expanded = true }) {
+                Text(selected)
+            }
+            DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                options.forEach { option ->
+                    DropdownMenuItem(
+                        text = { Text(option.label) },
+                        onClick = {
+                            onSelect(option.key)
+                            expanded = false
+                        },
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
 private fun SectionTitle(title: String) {
     Text(
         text = title.uppercase(),
@@ -842,7 +1029,8 @@ private fun derivePriorityLabel(task: com.tajemniktv.tajsos.data.NodeEntity): St
     if (task.energyLevel == 3) return "High intensity"
     if (task.friction == "mentally_heavy") return "High friction"
     val dueAt = task.dueAt
-    if (dueAt != null && dueAt <
+    if (dueAt != null &&
+        dueAt <
         kotlin.time.Clock.System
             .now()
             .toEpochMilliseconds()
@@ -872,19 +1060,21 @@ private fun formatDateTime(epochMillis: Long): String {
 @Composable
 private fun TaskStateBadge(
     label: String,
-    tone: HeaderBadgeTone) {
+    tone: HeaderBadgeTone,
+)
+{
     val tint =
         when (tone)
         {
             HeaderBadgeTone.Critical -> TajsOSTheme.Error
             HeaderBadgeTone.Stable -> TajsOSTheme.AccentGreen
-            HeaderBadgeTone.Neutral  -> TajsOSTheme.Primary
+            HeaderBadgeTone.Neutral -> TajsOSTheme.Primary
         }
 
     Surface(
         shape = RoundedCornerShape(999.dp),
         color = tint.copy(alpha = 0.16f),
-        border = BorderStroke(1.dp, tint.copy(alpha = 0.35f)),
+            border = BorderStroke(1.dp, tint.copy(alpha = 0.35f)),
     ) {
         Text(
             text = label,

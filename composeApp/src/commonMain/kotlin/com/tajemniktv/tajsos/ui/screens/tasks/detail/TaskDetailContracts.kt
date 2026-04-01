@@ -45,6 +45,8 @@ data class TaskDetailContext(
     val relations: List<RelationEntity>,
     val attachments: List<AttachmentEntity>,
     val allNodeById: Map<Long, NodeWithPin>,
+    val areas: List<Pair<Long, String>>,
+    val projects: List<Pair<Long, String>>,
     val areaById: Map<Long, String>,
     val projectById: Map<Long, String>,
     val subtasks: List<TaskSubtaskUi>,
@@ -63,7 +65,17 @@ data class TaskDetailContext(
     val onCancelEdits: () -> Unit,
     val onSnooze: () -> Unit,
     val onComplete: () -> Unit,
+    val onStatusChange: (String) -> Unit,
+    val onAreaChange: (Long?) -> Unit,
+    val onProjectChange: (Long?) -> Unit,
+    val onDuePresetChange: (TaskDuePreset) -> Unit,
+    val onRecurrenceChange: (String?) -> Unit,
+    val onEstimateChange: (Int?) -> Unit,
+    val onCriticalityChange: (Boolean) -> Unit,
     val onToggleSubtask: (TaskSubtaskUi) -> Unit,
+    val onAddInlineSubtask: (String) -> Unit,
+    val onRemoveInlineSubtask: (TaskSubtaskUi) -> Unit,
+    val onSplitIntoSubtasks: () -> Unit,
     val onRemoveAttachment: (Long) -> Unit,
 )
 
@@ -88,8 +100,16 @@ data class TaskSubtaskUi(
     val title: String,
     val state: TaskSubtaskState,
     val source: TaskSubtaskSource,
+    val inlineIndex: Int? = null,
     val node: NodeEntity? = null,
 )
+
+enum class TaskDuePreset {
+    None,
+    Today,
+    Tomorrow,
+    InSevenDays,
+}
 
 data class TaskAttachmentUi(
     val id: Long,
