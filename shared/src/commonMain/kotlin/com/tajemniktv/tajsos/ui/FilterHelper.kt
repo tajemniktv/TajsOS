@@ -20,7 +20,7 @@ object FilterHelper {
      *
      * Nodes must meet all non-null conditions (logical AND) to be included in the results.
      * Non-task nodes are automatically excluded from results when any context filter
-     * (location, energy, device, social, or time-window) is applied.
+     * (location context, energy context, device context, social context, or time-window context) is applied.
      *
      * @param nodes The initial list of nodes with associated pins and tags to filter.
      * @param query A text query for partial-matching against titles, content, or tags (prefix with # to search tags only).
