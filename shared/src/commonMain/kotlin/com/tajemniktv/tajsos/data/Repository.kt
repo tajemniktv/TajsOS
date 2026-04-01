@@ -14,6 +14,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.daysUntil
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Instant
 
 /**
  * AppRepository is the single source of truth for TajsOS's Room database.
@@ -548,7 +549,7 @@ class AppRepository(
                     )
                 }
 
-                ItemKind.AREA    -> {
+                ItemKind.AREA -> {
                     NodeEntity(
                         type = kind.storageKey,
                         title = title,
@@ -609,8 +610,7 @@ class AppRepository(
     /**
      * Observes schedule entries attached to a specific life object.
      */
-    fun getScheduleEntriesForItem(itemId: Long): Flow<List<ScheduleEntryEntity>> =
-        scheduleEntryDao.getScheduleEntriesForItem(itemId)
+    fun getScheduleEntriesForItem(itemId: Long): Flow<List<ScheduleEntryEntity>> = scheduleEntryDao.getScheduleEntriesForItem(itemId)
 
     /**
      * Observes open schedule entries in a local day range for a specific schedule layer.
@@ -945,7 +945,7 @@ class AppRepository(
         timezone: TimeZone,
     ): Int =
         LocalDate(1970, 1, 1).daysUntil(
-            kotlinx.datetime.Instant
+            Instant
                 .fromEpochMilliseconds(timestamp)
                 .toLocalDateTime(timezone)
                 .date,
@@ -1094,7 +1094,12 @@ class AppRepository(
     fun getRelationsForNode(nodeId: Long) = relationDao.getRelationsForNode(nodeId)
 
     suspend fun insertRelation(relation: RelationEntity) {
-        if (!relationDao.anyRelationExists(relation.fromNodeId, relation.toNodeId, relation.relationType)) {
+        if (!relationDao.anyRelationExists(
+                relation.fromNodeId,
+                relation.toNodeId,
+                relation.relationType,
+            )
+        ) {
             relationDao.insertRelation(relation)
             logEvent("NODE_LINKED", relation.fromNodeId, relation.toNodeId)
         }

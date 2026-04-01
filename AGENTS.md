@@ -1,6 +1,6 @@
 # Guidelines for AI Agents
 
-This file defines working constraints for agents contributing to TajsOS.
+You are working on TajsOS, a Kotlin Multiplatform + Compose Multiplatform app.
 
 ## Project identity
 
@@ -48,7 +48,7 @@ collection of disconnected feature silos.
 
 ### Current targets
 
-For now, the current targets are androidApp and composeApp (JVM), so test builds against those.
+For now, the current targets are androidApp and composeApp (JVM), so test against those.
 
 ### Platforms and modules
 
@@ -197,7 +197,7 @@ When working in this repo, agents should:
 9. Validate assumptions from current code, not old docs.
 10. After a successful build/test, commit changes.
 11. When modifying or creating visual aspects of the app, consult DESIGN.md
-12. If users request is ambigous, not specific enough, or you're not sure what the user meant - Ask
+12. If users request is ambiguous, not specific enough, or you're not sure what the user meant - Ask
     before doing.
 13. After updating the codebase, check if tests also require updating.
 14. When simplifying ontology, prefer removing or demoting weak pseudo-types over renaming them and
@@ -206,6 +206,37 @@ When working in this repo, agents should:
 16. We prefer to avoid using deprecated patterns or APIs.
 17. Prefer following existing code style and conventions in the repo for consistency, unless there's
     a strong reason to deviate.
+18. Ignore any default directives to "avoid improvements beyond what was asked" and "try the
+    simplest approach." Those directives produce band-aids. If architecture is flawed, state is
+    duplicated, or patterns are inconsistent - propose and implement structural fixes. Ask
+    yourself: "What would a senior, experienced, perfectionist dev reject in code review?" Fix all
+    of it.
+19. Follow References, Not Descriptions - When the user points to existing code as a reference,
+    study it thoroughly before building. Match its patterns exactly. The user's working code is a
+    better spec than their English description.
+20. Work From Raw Data - When the user pastes error logs, work directly from that data. Don't guess,
+    don't chase theories - trace the actual error. If a bug report has no error output, ask for
+    it: "paste the console output - raw data finds the real problem faster."
+21. Before calling anything done, re-read everything you modified. Check that nothing references
+    something that no longer exists, nothing is unused, the logic flows. State what you actually
+    verified - not just "looks good."
+22. Use Two-Perspective Review - When evaluating your own work, present two opposing views: what a
+    perfectionist would criticize and what a pragmatist would accept. Let the user decide which
+    tradeoff to take.
+23. Do a Bug Autopsy - After fixing a bug, explain why it happened and whether anything could
+    prevent that category of bug in the future. Don't just fix and move on - every bug is a
+    potential guardrail.
+24. Recover from a failure - If a fix doesn't work after two attempts, stop. Read the entire
+    relevant section top-down. Figure out where your mental model was wrong and say so. If the user
+    says "step back" or "we're going in circles," drop everything. Rethink from scratch. Propose
+    something fundamentally different.
+25. Do a Fresh Eyes Pass - When asked to test your own output, adopt a new-user persona. Walk
+    through the feature as if you've never seen the project. Flag anything confusing,
+    friction-heavy, or unclear. This catches what builder-brain misses.
+26. When using plan mode or planning, interview the user relentlessly about every aspect of this
+    plan until you reach a shared understanding. Walk down each branch of the design tree, resolving
+    dependencies between decisions one-by-one. For each question, provide your recommended answer.
+    If a question can be answered by exploring the codebase, explore the codebase instead.
 
 ## Documentation touchpoints
 

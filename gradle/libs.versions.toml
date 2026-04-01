@@ -30,7 +30,6 @@ material = "1.13.0"
 material3 = "1.11.0-alpha05"
 slf4j-android = "2.0.17-0"
 ksp = "2.3.6"
-gitlive-firebase = "2.4.0"
 google-services = "4.4.4"
 firebase-auth-native = "24.0.1"
 firebase-firestore-native = "26.1.2"
@@ -85,9 +84,6 @@ ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "kto
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
-firebase-auth = { module = "dev.gitlive:firebase-auth", version.ref = "gitlive-firebase" }
-firebase-firestore = { module = "dev.gitlive:firebase-firestore", version.ref = "gitlive-firebase" }
-firebase-analytics = { module = "dev.gitlive:firebase-analytics", version.ref = "gitlive-firebase" }
 firebase-auth-native = { module = "com.google.firebase:firebase-auth", version.ref = "firebase-auth-native" }
 firebase-firestore-native = { module = "com.google.firebase:firebase-firestore", version.ref = "firebase-firestore-native" }
 firebase-analytics-native = { module = "com.google.firebase:firebase-analytics", version.ref = "firebase-analytics-native" }

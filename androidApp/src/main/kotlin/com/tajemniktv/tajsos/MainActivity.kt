@@ -37,12 +37,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
+import com.google.firebase.FirebaseApp
 import com.tajemniktv.tajsos.data.createDataStore
 import com.tajemniktv.tajsos.data.createDatabase
 import com.tajemniktv.tajsos.di.SharedModule
 import com.tajemniktv.tajsos.ui.MainViewModel
-import dev.gitlive.firebase.Firebase
-import dev.gitlive.firebase.initialize
 
 /**
  * Main entry point for the Android application.
@@ -101,7 +100,7 @@ class MainActivity : FragmentActivity() {
             statusBarStyle = SystemBarStyle.dark(android.graphics.Color.TRANSPARENT),
             navigationBarStyle = SystemBarStyle.dark(android.graphics.Color.TRANSPARENT),
         )
-        Firebase.initialize(this)
+        FirebaseApp.initializeApp(this)
 
         val database = createDatabase(applicationContext)
         val dataStore = createDataStore(applicationContext)

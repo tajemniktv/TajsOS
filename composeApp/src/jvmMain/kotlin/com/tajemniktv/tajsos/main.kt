@@ -11,9 +11,6 @@ import androidx.compose.ui.window.application
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import com.tajemniktv.tajsos.data.createDatabase
 import com.tajemniktv.tajsos.di.SharedModule
-import dev.gitlive.firebase.Firebase
-import dev.gitlive.firebase.FirebaseOptions
-import dev.gitlive.firebase.initialize
 import org.jetbrains.compose.resources.painterResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.app_icon
@@ -23,17 +20,6 @@ import java.io.File
 
 fun main() =
     application {
-        // Initialize Firebase for Desktop
-        Firebase.initialize(
-            context = null,
-            options =
-                FirebaseOptions(
-                    applicationId = "YOUR_APP_ID",
-                    apiKey = "YOUR_API_KEY",
-                    projectId = "YOUR_PROJECT_ID",
-                ),
-        )
-
         // Basic setup for Desktop
         val database = createDatabase()
 
