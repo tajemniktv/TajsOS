@@ -43,10 +43,7 @@ object DetailNavigationContract {
             }
 
             ItemKind.NOTE -> {
-                Screen.NoteDetail.route.replace(
-                    "{noteId}",
-                    fallbackNodeId.toString(),
-                )
+                "${Screen.Notes.route}?noteId=$fallbackNodeId"
             }
 
             ItemKind.RECORD -> {
@@ -71,10 +68,7 @@ object DetailNavigationContract {
             }
 
             null -> {
-                Screen.NoteDetail.route.replace(
-                    "{noteId}",
-                    fallbackNodeId.toString(),
-                )
+                "${Screen.Notes.route}?noteId=$fallbackNodeId"
             }
         }
 }

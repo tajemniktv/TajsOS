@@ -411,6 +411,18 @@ private fun AppScaffold(
                 )
             }
             composable(Screen.Notes.route) { NotesScreen(viewModel, onEditNode) }
+            composable(Screen.Notes.route + "?noteId={noteId}") {
+                val noteId =
+                    it.savedStateHandle
+                        .get<Any>("noteId")
+                        ?.toString()
+                        ?.toLongOrNull()
+                NotesScreen(
+                    viewModel = viewModel,
+                    onNoteClick = onEditNode,
+                    initialSelectedNoteId = noteId,
+                )
+            }
             composable(Screen.Calendar.route) { CalendarScreen(viewModel, onEditNode) }
             composable(Screen.Decisions.route) { DecisionsScreen(viewModel, onEditNode) }
             composable(Screen.OpenLoops.route) { OpenLoopsScreen(viewModel, onEditNode) }

@@ -50,6 +50,7 @@ import kotlinx.coroutines.launch
 fun NotesRoute(
     viewModel: MainViewModel,
     onNavigateToNode: (Long) -> Unit,
+    initialSelectedNoteId: Long? = null,
 ) {
     val allNodes by viewModel.allNodes.collectAsState()
     val allRelations by viewModel.allRelations.collectAsState()
@@ -84,6 +85,13 @@ fun NotesRoute(
             selectedNoteId = allNotes.firstOrNull { !it.isArchived }?.id ?: -1L
         } else if (allNotes.none { it.id == selectedNoteId }) {
             selectedNoteId = allNotes.firstOrNull { !it.isArchived }?.id ?: -1L
+        }
+    }
+    LaunchedEffect(initialSelectedNoteId, allNotes) {
+        val requestedId = initialSelectedNoteId ?: return@LaunchedEffect
+        if (allNotes.any { it.id == requestedId }) {
+            selectedNoteId = requestedId
+            mobileInDetail = true
         }
     }
 
