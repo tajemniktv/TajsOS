@@ -70,28 +70,34 @@ class IcsCalendarProvider(
     private fun isValidHttpUrl(url: String): Boolean {
         return try {
             val parsedUrl = io.ktor.http.Url(url)
-            val scheme = parsedUrl.protocol.name.lowercase()
-            if (scheme != "http" && scheme != "https") return false
-
-            val host = parsedUrl.host.lowercase()
-            if (host == "localhost" || host == "metadata.google.internal" || host == "169.254.169.254") return false
-            if (host.startsWith("127.") || host.startsWith("10.") || host.startsWith("192.168.")) return false
-
-            val hostParts = host.split(".")
-            if (hostParts.size == 4) {
-                val first = hostParts[0].toIntOrNull()
-                val second = hostParts[1].toIntOrNull()
-                if (first == 172 && second != null && second in 16..31) return false
-                if (first == 169 && second == 254) return false
-            }
-
-            if (host.contains("::1") || host.startsWith("fc00:") || host.startsWith("fd00:") || host.startsWith("fe80:")) return false
-
-            true
+            if (!isValidScheme(parsedUrl.protocol.name.lowercase())) return false
+            isPublicRoutableHost(parsedUrl.host.lowercase())
         } catch (e: Exception) {
             false
         }
     }
+
+    private fun isValidScheme(scheme: String): Boolean =
+        scheme == "http" || scheme == "https"
+
+    private fun isPublicRoutableHost(host: String): Boolean {
+        val ipLiteral = parseIpAddress(host)
+        if (ipLiteral != null) {
+            // It's a parsed IPv4 or IPv6 literal. Verify it's not a private or local range.
+            return !ipLiteral.isPrivateOrLocal()
+        }
+
+        // For non-literal hostnames, we cannot perform synchronous blocking DNS resolution
+        // in commonMain without breaking KMP asynchronous patterns or introducing heavy dependencies.
+        // Therefore, we fall back to blocking known critical local infrastructure names.
+        // Deep DNS rebinding and IP-resolution validation should ideally be configured at the
+        // Ktor Engine or system network proxy level.
+        if (isLocalOrMetadata(host)) return false
+        return true
+    }
+
+    private fun isLocalOrMetadata(host: String): Boolean =
+        host == "localhost" || host == "metadata.google.internal" || host == "169.254.169.254"
 
     /**
      * Unfolds multiline entries in an ICS file into a single logical line per entry.
