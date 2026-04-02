@@ -103,3 +103,23 @@ shared/       Core data models, entities, repository, business logic
 server/       Ktor backend for sync / remote features
 website/      Website / documentation
 iosApp/       iOS scaffold
+```
+
+---
+
+## Project stats
+
+[![CI](https://img.shields.io/github/actions/workflow/status/tajemniktv/TajsOS/ci.yml?branch=main&label=CI)](https://github.com/tajemniktv/TajsOS/actions/workflows/ci.yml)
+[![CodeQL](https://img.shields.io/github/actions/workflow/status/tajemniktv/TajsOS/codeql.yml?branch=main&label=CodeQL)](https://github.com/tajemniktv/TajsOS/actions/workflows/codeql.yml)
+[![Latest release](https://img.shields.io/github/v/release/tajemniktv/TajsOS?display_name=release)](https://github.com/tajemniktv/TajsOS/releases)
+[![Last commit](https://img.shields.io/github/last-commit/tajemniktv/TajsOS)](https://github.com/tajemniktv/TajsOS/commits/main)
+[![Open issues](https://img.shields.io/github/issues/tajemniktv/TajsOS)](https://github.com/tajemniktv/TajsOS/issues)
+[![Open PRs](https://img.shields.io/github/issues-pr/tajemniktv/TajsOS)](https://github.com/tajemniktv/TajsOS/pulls)
+
+<p align="center">
+  <img src="https://github-readme-stats.vercel.app/api?username=tajemniktv&repo=TajsOS&show_icons=true&hide_border=true&rank_icon=github" alt="TajsOS repository stats" />
+</p>
+
+<p align="center">
+  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=tajemniktv&repo=TajsOS&layout=compact&hide_border=true" alt="TajsOS top languages" />
+</p>
