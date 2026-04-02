@@ -1,7 +1,7 @@
 name: PR Size Label
 
 on:
-  pull_request:
+  pull_request_target:
     types: [opened, reopened, synchronize]
 
 permissions:
@@ -26,6 +26,7 @@ jobs:
           {
             echo "json<<EOF"
             cat .github/pr-size-labeler.yml
+            echo ""
             echo "EOF"
           } >> "${GITHUB_OUTPUT}"
       - name: Apply PR size label
