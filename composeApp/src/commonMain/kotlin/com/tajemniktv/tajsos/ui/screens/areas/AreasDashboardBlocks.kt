@@ -62,7 +62,6 @@ import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
-import tajsos.composeapp.generated.resources.add_suggested_areas
 import tajsos.composeapp.generated.resources.areas_balance
 import tajsos.composeapp.generated.resources.areas_create_first
 import tajsos.composeapp.generated.resources.areas_dialog_cancel
@@ -81,7 +80,6 @@ import tajsos.composeapp.generated.resources.areas_projects_active
 import tajsos.composeapp.generated.resources.areas_recent_activity
 import tajsos.composeapp.generated.resources.areas_title
 import tajsos.composeapp.generated.resources.areas_upcoming_deadlines
-import tajsos.composeapp.generated.resources.use_suggested_areas
 
 object AreasDashboardBlocks {
     private val renderers: Map<String, AreasDashboardBlockRenderer> =
@@ -121,9 +119,6 @@ internal fun AreasMainBlock(
                 color = TajsOSTheme.Text,
             )
             Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
-                OutlinedButton(onClick = { viewModel.addSuggestedAreas() }) {
-                    Text(stringResource(Res.string.add_suggested_areas))
-                }
                 OutlinedButton(onClick = { showAddDialog = true }) {
                     Text(stringResource(Res.string.areas_new))
                 }
@@ -135,10 +130,6 @@ internal fun AreasMainBlock(
                 Spacer(modifier = Modifier.height(TajsOSTheme.SpacingMd))
                 Button(onClick = { showAddDialog = true }) {
                     Text(stringResource(Res.string.areas_create_first))
-                }
-                Spacer(modifier = Modifier.height(TajsOSTheme.SpacingSm))
-                OutlinedButton(onClick = { viewModel.addSuggestedAreas() }) {
-                    Text(stringResource(Res.string.use_suggested_areas))
                 }
             }
         } else {

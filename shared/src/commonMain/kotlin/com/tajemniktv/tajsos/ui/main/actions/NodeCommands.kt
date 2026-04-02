@@ -13,7 +13,6 @@ import com.tajemniktv.tajsos.data.TaskState
 import com.tajemniktv.tajsos.data.defaultInboxState
 import com.tajemniktv.tajsos.ui.main.calculators.calculateNextRecurringDate
 import com.tajemniktv.tajsos.ui.main.calculators.calculateStaleTasks
-import com.tajemniktv.tajsos.ui.main.state.suggestedAreaTitles
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -28,7 +27,6 @@ import kotlin.time.Clock
 class NodeCommands(
     private val repository: AppRepository,
     private val scope: CoroutineScope,
-    private val currentAreas: () -> List<NodeEntity>,
     private val currentTodayNodes: () -> List<NodeEntity>,
     private val currentAllNodes: () -> List<NodeEntity>,
     private val parseInternalLinks: (Long) -> Unit,
@@ -537,15 +535,6 @@ class NodeCommands(
 
     fun addArea(name: String) {
         addNode(title = name, type = "area") // NON-NLS
-    }
-
-    fun addSuggestedAreas() {
-        scope.launch {
-            val existing = currentAreas().map { it.title.trim().lowercase() }.toSet()
-            suggestedAreaTitles
-                .filterNot { existing.contains(it.trim().lowercase()) }
-                .forEach { addArea(it) }
-        }
     }
 
     fun updateOpenLoopType(

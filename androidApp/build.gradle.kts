@@ -7,6 +7,9 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.google.services)
+    alias(libs.plugins.firebase.crashlytics)
+    alias(libs.plugins.firebase.app.distribution)
+    alias(libs.plugins.firebase.perf)
 }
 
 composeCompiler {
@@ -45,6 +48,12 @@ android {
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
+            // Firebase App Distribution configuration for release builds
+            configure<com.google.firebase.appdistribution.gradle.AppDistributionExtension> {
+                artifactType = "APK"
+                // You can add 'testers' or 'groups' here if you have them in the Firebase console
+                // groups = "qa-team"
+            }
         }
     }
     compileOptions {
@@ -65,6 +74,9 @@ dependencies {
     implementation(libs.firebase.firestore.native)
     implementation(libs.firebase.analytics.native)
     implementation(libs.firebase.common.native)
+    implementation(libs.firebase.crashlytics.native)
+    implementation(libs.firebase.perf.native)
+    implementation(libs.firebase.config.native)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

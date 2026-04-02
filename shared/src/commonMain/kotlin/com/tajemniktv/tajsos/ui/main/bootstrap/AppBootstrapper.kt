@@ -5,15 +5,20 @@
 package com.tajemniktv.tajsos.ui.main.bootstrap
 
 import com.tajemniktv.tajsos.data.AppRepository
+import com.tajemniktv.tajsos.data.AreaHealthStatus
+import com.tajemniktv.tajsos.data.ItemKind
 import com.tajemniktv.tajsos.data.ModeEntity
 import com.tajemniktv.tajsos.data.ModePreferenceEntity
 import com.tajemniktv.tajsos.data.NodeEntity
-import com.tajemniktv.tajsos.data.NodeWithPin
+import com.tajemniktv.tajsos.data.NoteKind
+import com.tajemniktv.tajsos.data.NoteState
 import com.tajemniktv.tajsos.data.PreferencesRepository
-import com.tajemniktv.tajsos.data.RelationEntity
+import com.tajemniktv.tajsos.data.ProjectState
+import com.tajemniktv.tajsos.data.TaskState
 import com.tajemniktv.tajsos.data.TemplateEntity
 import com.tajemniktv.tajsos.data.UserEntity
-import kotlinx.coroutines.flow.StateFlow
+import com.tajemniktv.tajsos.data.toNodeStatus
+import com.tajemniktv.tajsos.domain.DomainKind
 import kotlinx.coroutines.flow.first
 
 /**
@@ -25,14 +30,10 @@ import kotlinx.coroutines.flow.first
  *
  * @property repository The [AppRepository] used for direct database inserts.
  * @property preferencesRepository The [PreferencesRepository] used to handle default tier access checks.
- * @property allNodes A reactive [StateFlow] representing the current list of all nodes, used to determine if the DB is empty.
- * @property user A reactive [StateFlow] representing the current user entity state.
  */
 class AppBootstrapper(
     private val repository: AppRepository,
     private val preferencesRepository: PreferencesRepository,
-    private val allNodes: StateFlow<List<NodeWithPin>>,
-    private val user: StateFlow<UserEntity?>,
 ) {
     /**
      * Executes the comprehensive bootstrap sequence.
@@ -46,7 +47,7 @@ class AppBootstrapper(
         seedStudentTemplates()
         seedLifeLogisticsTemplates()
         seedUserData()
-        if (allNodes.value.isEmpty()) {
+        if (repository.getAllNodes().first().isEmpty()) {
             seedOnboardingData()
         }
     }
@@ -55,79 +56,126 @@ class AppBootstrapper(
      * Creates the baseline [UserEntity] if it doesn't already exist.
      */
     private suspend fun seedUserData() {
-        if (user.first() == null) {
+        if (repository.getUser().first() == null) {
             repository.insertUser(UserEntity())
         }
     }
 
     private suspend fun seedOnboardingData() {
-        if (allNodes.value.isNotEmpty()) return
+        if (repository.getAllNodes().first().isNotEmpty()) return
 
         seedDefaultModes()
 
-        val welcomeId =
+        // 1. Create a primary Area: TajsOS Development
+        val devAreaId =
             repository.insertNode(
                 NodeEntity(
-                    title = "Welcome to TajsOS",
-                    content = "This is your new Second Brain. Capture everything, organize later.",
-                    type = "note",
+                    title = "TajsOS Development",
+                    content = "The core engineering and design space for TajsOS.",
+                    type = ItemKind.AREA.storageKey,
+                    icon = "terminal",
+                    color = 0xFF2196F3.toInt(),
                     inboxState = false,
-                    isPinned = true,
+                    areaHealthStatus = AreaHealthStatus.STABLE.storageKey,
                 ),
             )
 
-        val taskId =
+        // 2. Create a Project: TajsOS Core
+        val coreProjectId =
             repository.insertNode(
                 NodeEntity(
-                    title = "Explore the Dashboard",
-                    type = "task",
-                ),
-            )
-
-        val areaId =
-            repository.insertNode(
-                NodeEntity(
-                    title = "Personal",
-                    type = "area",
+                    title = "TajsOS Core",
+                    content = "Developing the foundation and life-object model.",
+                    type = ItemKind.PROJECT.storageKey,
+                    areaId = devAreaId,
                     inboxState = false,
+                    projectStatus = ProjectState.ACTIVE.storageKey,
+                    projectWhy = "Build a robust and extensible personal OS foundation.",
                 ),
             )
+        // Assign EDUCATION domain as a proxy for Development/Learning
+        repository.assignDomainToItem(coreProjectId, DomainKind.EDUCATION, true)
 
+        // 3. Create a Task: Refactor AppBootstrapper
         repository.insertNode(
             NodeEntity(
-                title = "Reply to research email",
-                type = "open_loop",
-                openLoopType = "reply_needed",
-                areaId = areaId,
+                title = "Refactor AppBootstrapper",
+                content = "Clean up the initial seeding logic and add real-life examples.",
+                type = ItemKind.TASK.storageKey,
+                projectId = coreProjectId,
+                areaId = devAreaId,
+                status = TaskState.ACTIVE.toNodeStatus(),
+                energyLevel = 2, // Medium
+                inboxState = false,
+                nextSmallestStep = "Define TajsOS development example data",
+            ),
+        )
+
+        // 4. Create a Note: TajsOS Architecture
+        repository.insertNode(
+            NodeEntity(
+                title = "TajsOS Architecture",
+                content = "KMP + Compose Multiplatform with shared business logic and Room/DataStore persistence.",
+                type = ItemKind.NOTE.storageKey,
+                projectId = coreProjectId,
+                areaId = devAreaId,
+                inboxState = false,
+                isPinned = true,
+                noteType = NoteKind.REFERENCE.storageKey,
+                noteState = NoteState.ACTIVE.storageKey,
+            ),
+        )
+
+        // 5. Create a Record: Build 1.2.0 Released
+        repository.insertNode(
+            NodeEntity(
+                title = "Build 1.2.0 Released",
+                content = "Successfully deployed the latest version with enhanced onboarding.",
+                type = ItemKind.RECORD.storageKey,
+                projectId = coreProjectId,
+                areaId = devAreaId,
                 inboxState = false,
             ),
         )
 
-        repository.insertNode(
-            NodeEntity(
-                title = "Choose between Hilt and Koin",
-                type = "decision",
-                decisionStatus = "pending",
-                areaId = areaId,
-                inboxState = false,
-            ),
+        // 6. Create an Inbox Entry
+        repository.captureInboxEntry(
+            rawText = "Explore TajsOS features and suggest improvements",
+            suggestedKind = ItemKind.TASK,
+            homeAreaId = devAreaId,
+            activeProjectId = coreProjectId,
         )
 
+        // 7. Add a maintenance item
         repository.insertNode(
             NodeEntity(
                 title = "Monthly server backup",
                 type = "maintenance",
                 maintenanceType = "backup",
-                areaId = areaId,
+                areaId = devAreaId,
                 inboxState = false,
             ),
         )
 
-        repository.insertRelation(
-            RelationEntity(
-                fromNodeId = welcomeId,
-                toNodeId = taskId,
-                relationType = "RELATED",
+        // 8. Add a decision item
+        repository.insertNode(
+            NodeEntity(
+                title = "Choose between Hilt and Koin",
+                type = "decision",
+                decisionStatus = "pending",
+                areaId = devAreaId,
+                inboxState = false,
+            ),
+        )
+
+        // 9. Add an open loop item
+        repository.insertNode(
+            NodeEntity(
+                title = "Reply to research email",
+                type = "open_loop",
+                openLoopType = "reply_needed",
+                areaId = devAreaId,
+                inboxState = false,
             ),
         )
     }

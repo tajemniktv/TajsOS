@@ -134,8 +134,6 @@ class MainViewModel(
         AppBootstrapper(
             repository = repository,
             preferencesRepository = preferencesRepository,
-            allNodes = allNodes,
-            user = user,
         )
     }
     private val mainNodeSupport by lazy {
@@ -150,7 +148,6 @@ class MainViewModel(
         NodeCommands(
             repository = repository,
             scope = viewModelScope,
-            currentAreas = { allAreas.value },
             currentTodayNodes = { todayNodes.value },
             currentAllNodes = { allNodes.value.map { it.node } },
             parseInternalLinks = mainNodeSupport::parseInternalLinks,
@@ -200,7 +197,7 @@ class MainViewModel(
     val allNodes: StateFlow<List<NodeWithPin>> =
         repository
             .getAllNodes()
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+            .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     private val allModesRaw: StateFlow<List<ModeEntity>> =
         repository
@@ -1381,9 +1378,6 @@ class MainViewModel(
         nodeCommands.addArea(name)
     }
 
-    fun addSuggestedAreas() {
-        nodeCommands.addSuggestedAreas()
-    }
 
     fun updateOpenLoopType(
         node: NodeEntity,

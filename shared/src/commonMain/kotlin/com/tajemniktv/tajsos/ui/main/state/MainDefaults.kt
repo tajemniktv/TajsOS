@@ -5,15 +5,6 @@
 package com.tajemniktv.tajsos.ui.main.state
 
 /**
- * A default list of suggested Area titles provided during the initial onboarding or area creation flow.
- */
-val suggestedAreaTitles =
-    listOf(
-        "Career",
-        "Hobbies",
-    )
-
-/**
  * A predefined list of standard [TransitionProtocolTemplate] objects used to bootstrap new routines.
  */
 val defaultTransitionProtocolTemplates =
