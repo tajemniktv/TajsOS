@@ -1,0 +1,525 @@
+ (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
+diff --git a/README.md b/README.md
+index e6287e4..e0a86fb 100644
+--- a/README.md
++++ b/README.md
+@@ -107,6 +107,16 @@ iosApp/       iOS scaffold
+ 
+ ---
+ 
++## Build configuration
++
++- Dependency and plugin versions are centralized in [`gradle/libs.versions.toml`](./gradle/libs.versions.toml).
++- Shared build defaults (SDKs, toolchain/JVM targets, app/server/package version values) are centralized in [`gradle/project-config.properties`](./gradle/project-config.properties).
++- Android `namespace` / `applicationId` and Compose desktop `packageName` can also be configured there (globally or per module).
++- Shared Gradle behavior is implemented via convention plugins in `build-logic/`.
++- Module-specific build overrides can be set with `module.<moduleName>.<domain>.<name>` keys in `gradle/project-config.properties`.
++
++---
++
+ ## Project stats
+ 
+ [![CI](https://img.shields.io/github/actions/workflow/status/tajemniktv/TajsOS/ci.yml?branch=main&label=CI)](https://github.com/tajemniktv/TajsOS/actions/workflows/ci.yml)
+diff --git a/androidApp/build.gradle.kts b/androidApp/build.gradle.kts
+index 68efa7b..5b08309 100644
+--- a/androidApp/build.gradle.kts
++++ b/androidApp/build.gradle.kts
+@@ -3,49 +3,21 @@
+  */
+ 
+ plugins {
+-    alias(libs.plugins.androidApplication)
+-    alias(libs.plugins.composeMultiplatform)
+-    alias(libs.plugins.composeCompiler)
++    id("tajsos.android.application")
+     alias(libs.plugins.google.services)
+     alias(libs.plugins.firebase.crashlytics)
+     alias(libs.plugins.firebase.app.distribution)
+     alias(libs.plugins.firebase.perf)
+ }
+ 
+-composeCompiler {
+-    stabilityConfigurationFiles.add(layout.projectDirectory.file("../compose_compiler_config.conf"))
+-}
+-
+ android {
+     signingConfigs {
+         create("release") {
+         }
+     }
+-    namespace = "com.tajemniktv.tajsos"
+-    compileSdk =
+-        libs.versions.android.compileSdk
+-            .get()
+-            .toInt()
+-
+     defaultConfig {
+-        applicationId = "com.tajemniktv.tajsos"
+-        minSdk =
+-            libs.versions.android.minSdk
+-                .get()
+-                .toInt()
+-        targetSdk =
+-            libs.versions.android.targetSdk
+-                .get()
+-                .toInt()
+-        versionCode = 1
+-        versionName = "1.0.0"
+         signingConfig = signingConfigs.getByName("debug")
+     }
+-    packaging {
+-        resources {
+-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+-        }
+-    }
+     buildTypes {
+         getByName("release") {
+             isMinifyEnabled = false
+@@ -56,16 +28,10 @@ android {
+                 // groups = "qa-team"
+             }
+         }
++        getByName("debug") {
++            isJniDebuggable = true
++        }
+     }
+-    compileOptions {
+-        sourceCompatibility = JavaVersion.VERSION_17
+-        targetCompatibility = JavaVersion.VERSION_17
+-    }
+-    buildToolsVersion = "36.1.0"
+-}
+-
+-kotlin {
+-    jvmToolchain(17)
+ }
+ 
+ dependencies {
+diff --git a/build-logic/src/main/kotlin/tajsos.android.application.gradle.kts b/build-logic/src/main/kotlin/tajsos.android.application.gradle.kts
+index 3783bef..e5a039e 100644
+--- a/build-logic/src/main/kotlin/tajsos.android.application.gradle.kts
++++ b/build-logic/src/main/kotlin/tajsos.android.application.gradle.kts
+@@ -18,10 +18,12 @@ plugins {
+ val tajsos = tajsosBuild()
+ 
+ android {
++    namespace = stringConfig("android.namespace", tajsos.androidNamespace)
+     compileSdk = intConfig("android.compileSdk", tajsos.compileSdk)
+     buildToolsVersion = stringConfig("android.buildTools", tajsos.buildToolsVersion)
+ 
+     defaultConfig {
++        applicationId = stringConfig("android.applicationId", tajsos.androidApplicationId)
+         minSdk = intConfig("android.minSdk", tajsos.minSdk)
+         targetSdk = intConfig("android.targetSdk", tajsos.targetSdk)
+         versionCode = intConfig("android.versionCode", tajsos.versionCode)
+diff --git a/build-logic/src/main/kotlin/tajsos.compose.mpp.gradle.kts b/build-logic/src/main/kotlin/tajsos.compose.mpp.gradle.kts
+index c7e7b85..29a9c78 100644
+--- a/build-logic/src/main/kotlin/tajsos.compose.mpp.gradle.kts
++++ b/build-logic/src/main/kotlin/tajsos.compose.mpp.gradle.kts
+@@ -19,6 +19,11 @@ composeCompiler {
+ compose.desktop {
+     application {
+         nativeDistributions {
++            packageName =
++                stringConfig(
++                    "compose.desktop.packageName",
++                    tajsos.composeDesktopPackageName,
++                )
+             packageVersion = stringConfig("compose.packageVersion", tajsos.composePackageVersion)
+         }
+     }
+diff --git a/build-logic/src/main/kotlin/tajsos.kmp.android.library.gradle.kts b/build-logic/src/main/kotlin/tajsos.kmp.android.library.gradle.kts
+index ed68a30..72a91ea 100644
+--- a/build-logic/src/main/kotlin/tajsos.kmp.android.library.gradle.kts
++++ b/build-logic/src/main/kotlin/tajsos.kmp.android.library.gradle.kts
+@@ -17,6 +17,7 @@ val tajsos = tajsosBuild()
+ 
+ kotlin {
+     android {
++        namespace = stringConfig("android.namespace", tajsos.androidNamespace)
+         compileSdk = intConfig("android.compileSdk", tajsos.compileSdk)
+         minSdk = intConfig("android.minSdk", tajsos.minSdk)
+ 
+diff --git a/composeApp/build.gradle.kts b/composeApp/build.gradle.kts
+index 8f2c0dd..6a51765 100644
+--- a/composeApp/build.gradle.kts
++++ b/composeApp/build.gradle.kts
+@@ -3,38 +3,16 @@
+  */
+ 
+ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+ 
+ plugins {
+-    alias(libs.plugins.kotlinMultiplatform)
+-    alias(libs.plugins.androidKotlinMultiplatformLibrary)
+-    alias(libs.plugins.composeMultiplatform)
+-    alias(libs.plugins.composeCompiler)
++    id("tajsos.kmp.android.library")
++    id("tajsos.compose.mpp")
+     alias(libs.plugins.composeHotReload)
+     alias(libs.plugins.composeStabilityAnalyzer)
+ }
+ 
+-composeCompiler {
+-    stabilityConfigurationFiles.add(layout.projectDirectory.file("../compose_compiler_config.conf"))
+-}
+-
+ kotlin {
+-    // Android target configured via android block (replaces androidTarget + android{}) (Earlier: androidLibrary)
+     android {
+-        namespace = "com.tajemniktv.tajsos.composeapp"
+-        compileSdk =
+-            libs.versions.android.compileSdk
+-                .get()
+-                .toInt()
+-        minSdk =
+-            libs.versions.android.minSdk
+-                .get()
+-                .toInt()
+-
+-        compilerOptions {
+-            jvmTarget.set(JvmTarget.JVM_25)
+-        }
+-
+         // Required for Compose Multiplatform resources to be bundled into the AAR
+         androidResources {
+             enable = true
+@@ -100,8 +78,6 @@ compose.desktop {
+ 
+         nativeDistributions {
+             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+-            packageName = "com.tajemniktv.tajsos"
+-            packageVersion = "1.0.0"
+             windows {
+                 iconFile.set(project.file("desktop-icons/tajsos-icon.ico"))
+             }
+diff --git a/gradle/project-config.properties b/gradle/project-config.properties
+index 50f24f4..3c15274 100644
+--- a/gradle/project-config.properties
++++ b/gradle/project-config.properties
+@@ -1,7 +1,6 @@
+ #
+ # Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ #
+-# Global shared defaults
+ project.group=com.tajemniktv.tajsos
+ project.versionName=1.0.0
+ android.versionCode=1
+@@ -9,14 +8,21 @@ android.compileSdk=36
+ android.minSdk=24
+ android.targetSdk=36
+ android.buildTools=36.1.0
++android.namespace=com.tajemniktv.tajsos
++android.applicationId=com.tajemniktv.tajsos
+ java.toolchain=17
+ kotlin.jvmTarget=17
++compose.desktop.packageName=com.tajemniktv.tajsos
+ compose.packageVersion=1.0.0
+ server.version=1.0.0
+-
+-# Optional module-specific overrides (examples)
++# Optional module-specific overrides
+ # module.androidApp.android.minSdk=26
+ # module.androidApp.android.versionCode=2
++# module.androidApp.android.applicationId=com.tajemniktv.tajsos.dev
++# module.androidApp.android.namespace=com.tajemniktv.tajsos
++module.composeApp.android.namespace=com.tajemniktv.tajsos.composeapp
++module.shared.android.namespace=com.tajemniktv.tajsos.shared
++# module.composeApp.compose.desktop.packageName=com.tajemniktv.tajsos
+ # module.composeApp.compose.packageVersion=1.0.1
+ # module.shared.kotlin.jvmTarget=17
+ # module.server.server.version=1.0.1
+diff --git a/server/build.gradle.kts b/server/build.gradle.kts
+index b68a1ac..b9afd22 100644
+--- a/server/build.gradle.kts
++++ b/server/build.gradle.kts
+@@ -1,12 +1,10 @@
+ plugins {
+-    alias(libs.plugins.kotlinJvm)
++    id("tajsos.jvm.server")
+     alias(libs.plugins.ktor)
+     alias(libs.plugins.kotlinx.serialization)
+     application
+ }
+ 
+-group = "com.tajemniktv.tajsos"
+-version = "1.0.0"
+ application {
+     mainClass.set("com.tajemniktv.tajsos.ApplicationKt")
+     
+diff --git a/settings.gradle.kts b/settings.gradle.kts
+index 7f00f45..cc7f8de 100644
+--- a/settings.gradle.kts
++++ b/settings.gradle.kts
+@@ -6,6 +6,7 @@ rootProject.name = "TajsOS"
+ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+ 
+ pluginManagement {
++    includeBuild("build-logic")
+     repositories {
+         gradlePluginPortal()
+         mavenCentral()
+diff --git a/shared/build.gradle.kts b/shared/build.gradle.kts
+index cda1d54..956348f 100644
+--- a/shared/build.gradle.kts
++++ b/shared/build.gradle.kts
+@@ -3,8 +3,7 @@
+  */
+ 
+ plugins {
+-    alias(libs.plugins.kotlinMultiplatform)
+-    alias(libs.plugins.androidKotlinMultiplatformLibrary)
++    id("tajsos.kmp.android.library")
+     alias(libs.plugins.kotlinx.serialization)
+     alias(libs.plugins.androidx.room)
+     alias(libs.plugins.ksp)
+@@ -13,17 +12,7 @@ plugins {
+ }
+ 
+ kotlin {
+-    // Android target configured via androidLibrary block (replaces androidTarget + android{})
+     android {
+-        namespace = "com.tajemniktv.tajsos.shared"
+-        compileSdk =
+-            libs.versions.android.compileSdk
+-                .get()
+-                .toInt()
+-        minSdk =
+-            libs.versions.android.minSdk
+-                .get()
+-                .toInt()
+     }
+ 
+     iosArm64()
+@@ -31,15 +20,6 @@ kotlin {
+ 
+     jvm()
+ 
+-    // js {
+-    //     browser()
+-    // }
+-    //
+-    // @OptIn(ExperimentalWasmDsl::class)
+-    // wasmJs {
+-    //     browser()
+-    // }
+-
+     sourceSets {
+         androidMain.dependencies {
+             implementation(libs.androidx.datastore.preferences)
+@@ -72,6 +52,7 @@ kotlin {
+             implementation(libs.kotlin.test)
+             implementation(libs.kotlinx.coroutines.test)
+             implementation(libs.turbine)
++            implementation(libs.ktor.client.mock)
+         }
+         jvmTest.dependencies {
+             implementation(libs.mockk)
+@@ -89,12 +70,3 @@ dependencies {
+     add("kspIosSimulatorArm64", libs.androidx.room.compiler)
+     add("kspJvm", libs.androidx.room.compiler)
+ }
+-kotlin {
+-    sourceSets {
+-        val commonTest by getting {
+-            dependencies {
+-                implementation(libs.ktor.client.mock)
+-            }
+-        }
+-    }
+-}
+diff --git a/build-logic/build.gradle.kts b/build-logic/build.gradle.kts
+new file mode 100644
+index 0000000..4602370
+--- /dev/null
++++ b/build-logic/build.gradle.kts
+@@ -0,0 +1,39 @@
++/*
++ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
++ */
++
++plugins {
++    `kotlin-dsl`
++}
++
++group = "com.tajemniktv.tajsos.buildlogic"
++version = "1.0.0"
++
++java {
++    toolchain {
++        languageVersion.set(JavaLanguageVersion.of(17))
++    }
++}
++
++repositories {
++    gradlePluginPortal()
++    google()
++    mavenCentral()
++}
++
++dependencies {
++    val agp = libs.versions.agp.get()
++    val kotlin = libs.versions.kotlin.get()
++    val compose = libs.versions.composeMultiplatform.get()
++
++    implementation("com.android.application:com.android.application.gradle.plugin:$agp")
++    implementation("com.android.kotlin.multiplatform.library:com.android.kotlin.multiplatform.library.gradle.plugin:$agp")
++    implementation("org.jetbrains.kotlin.jvm:org.jetbrains.kotlin.jvm.gradle.plugin:$kotlin")
++    implementation("org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin:$kotlin")
++    implementation("org.jetbrains.kotlin.plugin.compose:org.jetbrains.kotlin.plugin.compose.gradle.plugin:$kotlin")
++    implementation("org.jetbrains.compose:org.jetbrains.compose.gradle.plugin:$compose")
++
++    compileOnly("com.android.tools.build:gradle:$agp")
++    compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin")
++    compileOnly("org.jetbrains.compose:compose-gradle-plugin:$compose")
++}
+diff --git a/build-logic/settings.gradle.kts b/build-logic/settings.gradle.kts
+new file mode 100644
+index 0000000..8505b4a
+--- /dev/null
++++ b/build-logic/settings.gradle.kts
+@@ -0,0 +1,22 @@
++/*
++ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
++ */
++
++rootProject.name = "build-logic"
++
++plugins {
++    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
++}
++
++dependencyResolutionManagement {
++    repositories {
++        gradlePluginPortal()
++        google()
++        mavenCentral()
++    }
++    versionCatalogs {
++        create("libs") {
++            from(files("../gradle/libs.versions.toml"))
++        }
++    }
++}
+diff --git a/build-logic/src/main/kotlin/com/tajemniktv/tajsos/buildlogic/ProjectConfig.kt b/build-logic/src/main/kotlin/com/tajemniktv/tajsos/buildlogic/ProjectConfig.kt
+new file mode 100644
+index 0000000..63a8c14
+--- /dev/null
++++ b/build-logic/src/main/kotlin/com/tajemniktv/tajsos/buildlogic/ProjectConfig.kt
+@@ -0,0 +1,74 @@
++/*
++ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
++ */
++
++package com.tajemniktv.tajsos.buildlogic
++
++import org.gradle.api.Project
++import org.gradle.api.provider.Property
++import java.util.Properties
++
++private const val EXTENSION_NAME = "tajsosBuild"
++
++private val FALLBACKS: Map<String, String> =
++    mapOf(
++        "project.group" to "com.tajemniktv.tajsos",
++        "project.versionName" to "1.0.0",
++        "android.versionCode" to "1",
++        "android.compileSdk" to "36",
++        "android.minSdk" to "24",
++        "android.targetSdk" to "36",
++        "android.buildTools" to "36.1.0",
++        "android.namespace" to "com.tajemniktv.tajsos",
++        "android.applicationId" to "com.tajemniktv.tajsos",
++        "java.toolchain" to "17",
++        "kotlin.jvmTarget" to "17",
++        "compose.desktop.packageName" to "com.tajemniktv.tajsos",
++        "compose.packageVersion" to "1.0.0",
++        "server.version" to "1.0.0",
++    )
++
++private class TajsosProjectConfig(
++    private val values: Properties,
++) {
++    fun string(
++        key: String,
++        moduleName: String,
++        explicit: String?,
++    ): String =
++        explicit
++            ?: find("module.$moduleName.$key")
++            ?: find(key)
++            ?: FALLBACKS.getValue(key)
++
++    fun int(
++        key: String,
++        moduleName: String,
++        explicit: Int?,
++    ): Int = string(key = key, moduleName = moduleName, explicit = explicit?.toString()).toInt()
++
++    private fun find(key: String): String? = values.getProperty(key)?.trim()?.takeIf { it.isNotEmpty() }
++}
++
++private fun Project.loadProjectConfig(): TajsosProjectConfig {
++    val props = Properties()
++    val configFile = rootProject.file("gradle/project-config.properties")
++    if (configFile.exists()) {
++        configFile.inputStream().use(props::load)
++    }
++    return TajsosProjectConfig(props)
++}
++
++internal fun Project.tajsosBuild(): TajsosBuildExtension =
++    extensions.findByType(TajsosBuildExtension::class.java)
++        ?: extensions.create(EXTENSION_NAME, TajsosBuildExtension::class.java)
++
++internal fun Project.stringConfig(
++    key: String,
++    override: Property<String>? = null,
++): String = loadProjectConfig().string(key, name, override?.orNull)
++
++internal fun Project.intConfig(
++    key: String,
++    override: Property<Int>? = null,
++): Int = loadProjectConfig().int(key, name, override?.orNull)
+diff --git a/build-logic/src/main/kotlin/com/tajemniktv/tajsos/buildlogic/TajsosBuildExtension.kt b/build-logic/src/main/kotlin/com/tajemniktv/tajsos/buildlogic/TajsosBuildExtension.kt
+new file mode 100644
+index 0000000..c7355b0
+--- /dev/null
++++ b/build-logic/src/main/kotlin/com/tajemniktv/tajsos/buildlogic/TajsosBuildExtension.kt
+@@ -0,0 +1,33 @@
++/*
++ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
++ */
++
++package com.tajemniktv.tajsos.buildlogic
++
++import org.gradle.api.model.ObjectFactory
++import org.gradle.api.provider.Property
++import javax.inject.Inject
++
++/**
++ * Optional per-module override hook with highest precedence over properties-based config.
++ */
++abstract class TajsosBuildExtension
++    @Inject
++    constructor(
++        objects: ObjectFactory,
++    ) {
++        val groupId: Property<String> = objects.property(String::class.java)
++        val versionName: Property<String> = objects.property(String::class.java)
++        val versionCode: Property<Int> = objects.property(Int::class.java)
++        val compileSdk: Property<Int> = objects.property(Int::class.java)
++        val minSdk: Property<Int> = objects.property(Int::class.java)
++        val targetSdk: Property<Int> = objects.property(Int::class.java)
++        val buildToolsVersion: Property<String> = objects.property(String::class.java)
++        val androidNamespace: Property<String> = objects.property(String::class.java)
++        val androidApplicationId: Property<String> = objects.property(String::class.java)
++        val javaToolchain: Property<Int> = objects.property(Int::class.java)
++        val jvmTarget: Property<String> = objects.property(String::class.java)
++        val composeDesktopPackageName: Property<String> = objects.property(String::class.java)
++        val composePackageVersion: Property<String> = objects.property(String::class.java)
++        val serverVersion: Property<String> = objects.property(String::class.java)
++    } 
+EOF
+)
