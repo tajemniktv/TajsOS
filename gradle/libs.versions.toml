@@ -43,6 +43,7 @@ firebase-crashlytics-gradle = "3.0.6"
 firebase-app-distribution-gradle = "5.2.1"
 firebase-perf-gradle = "2.0.2"
 haze = "1.7.2"
+compose-stability = "0.7.2"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -101,6 +102,7 @@ firebase-config-native = { module = "com.google.firebase:firebase-config", versi
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
 haze-core = { module = "dev.chrisbanes.haze:haze", version.ref = "haze" }
 haze-materials = { module = "dev.chrisbanes.haze:haze-materials", version.ref = "haze" }
+composeStabilityRuntime = { module = "com.github.skydoves:compose-stability-runtime", version.ref = "compose-stability" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -119,3 +121,4 @@ google-services = { id = "com.google.gms.google-services", version.ref = "google
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics-gradle" }
 firebase-app-distribution = { id = "com.google.firebase.appdistribution", version.ref = "firebase-app-distribution-gradle" }
 firebase-perf = { id = "com.google.firebase.firebase-perf", version.ref = "firebase-perf-gradle" }
+composeStabilityAnalyzer = { id = "com.github.skydoves.compose.stability.analyzer", version.ref = "compose-stability" }

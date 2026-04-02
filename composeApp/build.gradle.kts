@@ -11,6 +11,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
+    alias(libs.plugins.composeStabilityAnalyzer)
 }
 
 composeCompiler {
@@ -70,6 +71,7 @@ kotlin {
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.haze.core)
             implementation(libs.haze.materials)
+            implementation(libs.composeStabilityRuntime)
             implementation(projects.shared)
         }
         commonTest.dependencies {

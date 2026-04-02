@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.androidx.room)
     alias(libs.plugins.ksp)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.composeStabilityAnalyzer)
 }
 
 kotlin {
@@ -65,6 +66,7 @@ kotlin {
             implementation(libs.compose.icons.core)
             implementation(libs.compose.icons.extended)
             implementation(libs.compose.runtime)
+            implementation(libs.composeStabilityRuntime)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
