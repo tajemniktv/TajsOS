@@ -72,7 +72,7 @@ import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.common_no_active_mode
 import tajsos.composeapp.generated.resources.sidebar_brand
 
-private val ExpandedSidebarWidth = 304.dp
+private val ExpandedSidebarWidth = 190.dp
 private val CollapsedSidebarWidth = 86.dp
 
 /**
@@ -126,8 +126,7 @@ fun AppSidebar(
                 .glassChrome(
                     hazeState = hazeState,
                     shape = RoundedCornerShape(0.dp),
-                )
-                .hoverable(
+                ).hoverable(
                     interactionSource = hoverInteraction,
                     enabled = shellState.sidebarMode == SidebarMode.HOVER_EXPAND,
                 ),

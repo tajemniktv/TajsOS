@@ -39,6 +39,7 @@ android {
                 .toInt()
         versionCode = 1
         versionName = "1.0.0"
+        signingConfig = signingConfigs.getByName("debug")
     }
     packaging {
         resources {
@@ -60,6 +61,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+    buildToolsVersion = "36.1.0"
 }
 
 kotlin {

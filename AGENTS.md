@@ -232,6 +232,11 @@ When working in this repo, agents should:
 25. Do not hardcode colors, add new ones to the theme.
 26. When writing docs or KDoc, avoid hardcoded counts. Verify claims in code before writing them.
     Remove outdated guidance instead of preserving stale history.
+27. Prefer using tools/MCPs integrated with IDE instead of shell commands, unless needed.
+28. When the app is deployed and you try to swipe, don't do that too close to the edge, as it might
+    trigger "back" gesture.
+29. Always use Context7 when user needs library/API documentation, code generation, setup or
+    configuration steps without them having to explicitly ask.
 
 ## Documentation touchpoints
 
