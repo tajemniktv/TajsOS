@@ -34,7 +34,7 @@ object TajsOSTheme {
             ghostBorder = OutlineVariant,
             success = AccentSuccess,
             error = AccentError,
-            sidebarBackground = SidebarBackground,
+            sidebarBackground = DarkSidebarBackground,
         ),
     )
 
@@ -96,11 +96,6 @@ object TajsOSTheme {
 }
 
 /**
- * Short alias for TajsOSTheme.
- */
-val TajsTheme = TajsOSTheme
-
-/**
  * Design token palette definition.
  */
 data class TajsOSColors(
@@ -144,7 +139,7 @@ fun buildTajsOSColors(
             ghostBorder = OutlineVariant,
             success = AccentSuccess,
             error = AccentError,
-            sidebarBackground = SidebarBackground,
+            sidebarBackground = DarkSidebarBackground,
         )
     } else {
         TajsOSColors(

@@ -13,7 +13,7 @@ import androidx.compose.ui.graphics.Color
 val PrimaryPurple = Color(0xFFBA9EFF)
 val PrimaryPurpleDim = Color(0xFF8455EF)
 val DeepBackground = Color(0xFF0E0E12)
-val SidebarBackground = Color(0xFF000000)
+val DarkSidebarBackground = Color(0xFF000000)
 val SurfaceDark = Color(0xFF0E0E12)
 val SurfaceContainerLowest = Color(0xFF000000)
 val SurfaceContainerLow = Color(0xFF131317)
