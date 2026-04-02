@@ -58,7 +58,7 @@ fun ModeSwitcherHeader(
             horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            items(allModes) { mode ->
+            items(allModes, key = { it.id }) { mode ->
                 val isSelected = mode.id == currentMode?.id
                 val color = mode.themeColor?.let { Color(it) } ?: TajsOSTheme.Primary
                 Surface(

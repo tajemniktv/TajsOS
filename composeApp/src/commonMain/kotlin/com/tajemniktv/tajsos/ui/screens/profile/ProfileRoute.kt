@@ -130,7 +130,7 @@ fun ProfileRoute(
                     TajsOSTheme.SpacingMd,
                 ),
         ) {
-            items(blockSequence) { block ->
+            items(blockSequence, key = { it.id }) { block ->
                 renderProfileBlock(block.id, context)
             }
         }

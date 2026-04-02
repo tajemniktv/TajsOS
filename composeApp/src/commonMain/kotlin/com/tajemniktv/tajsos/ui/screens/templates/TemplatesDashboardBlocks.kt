@@ -48,7 +48,7 @@ private fun renderTemplatesList(context: TemplatesDashboardContext) {
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
         ) {
-            items(templates) { template ->
+            items(templates, key = { it.id }) { template ->
                 ListItem(
                     headlineContent = { Text(template.name) },
                     supportingContent = {
