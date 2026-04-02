@@ -16,11 +16,6 @@ jobs:
   size:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          sparse-checkout: .github
-
       - name: Read size thresholds
         id: sizes
         shell: bash
@@ -29,7 +24,7 @@ jobs:
             echo "json<<EOF"
             cat .github/pr-size-labeler.yml
             echo "EOF"
-          } >> "$GITHUB_OUTPUT"
+          } >> "${GITHUB_OUTPUT}"
       - name: Apply PR size label
         uses: pascalgn/size-label-action@v0.5.7
         env:
