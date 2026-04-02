@@ -34,7 +34,7 @@ object TajsOSTheme {
             ghostBorder = OutlineVariant,
             success = AccentSuccess,
             error = AccentError,
-            sidebarBackground = com.tajemniktv.tajsos.ui.theme.SidebarBackground,
+            sidebarBackground = SidebarBackground,
         ),
     )
 
