@@ -179,7 +179,7 @@ internal fun InsightsMainBlock(
                     disappearingCount = areaSnapshot.disappearingAreaIds.size,
                 )
             }
-            items(areaSnapshot.areas.take(4), key = { it.areaId }) { area ->
+            items(areaSnapshot.areas.take(4), key = { "area_${it.areaId}" }) { area ->
                 AreaHealthInsightCard(area)
             }
         }
@@ -253,7 +253,7 @@ internal fun InsightsMainBlock(
                     color = TajsOSTheme.Primary,
                 )
             }
-            items(insights.neglectedProjects, key = { it.id }) { project ->
+            items(insights.neglectedProjects, key = { "neglected_${it.id}" }) { project ->
                 NeglectedProjectItem(project) {
                     onNavigateToProject(
                         project.id,
@@ -271,7 +271,7 @@ internal fun InsightsMainBlock(
                     color = TajsOSTheme.Error,
                 )
             }
-            items(highEntropyProjects.keys.toList(), key = { it }) { projectId ->
+            items(highEntropyProjects.keys.toList(), key = { "entropy_$it" }) { projectId ->
                 val project =
                     viewModel.allProjects
                         .collectAsState()
@@ -293,7 +293,7 @@ internal fun InsightsMainBlock(
                     color = TajsOSTheme.Primary,
                 )
             }
-            items(recentLogs, key = { it.id }) { log ->
+            items(recentLogs, key = { "log_${it.id}" }) { log ->
                 ActivityLogItem(log)
             }
         }
