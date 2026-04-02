@@ -4,7 +4,7 @@ updates:
     directory: "/"
     target-branch: "dev"
     schedule:
-      interval: "weekly"
+      interval: "daily"
       day: "monday"
       time: "06:00"
       timezone: "Europe/Warsaw"
@@ -22,7 +22,7 @@ updates:
     directory: "/"
     target-branch: "dev"
     schedule:
-      interval: "weekly"
+      interval: "daily"
       day: "monday"
       time: "06:15"
       timezone: "Europe/Warsaw"
@@ -40,7 +40,7 @@ updates:
     directory: "/website"
     target-branch: "dev"
     schedule:
-      interval: "weekly"
+      interval: "daily"
       day: "monday"
       time: "06:30"
       timezone: "Europe/Warsaw"
