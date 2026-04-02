@@ -12,22 +12,23 @@ collection of disconnected feature silos.
 ## Commit message convention
 
 ```text
-type: shortdescription
+<type>(OptionalType): <ShortDescription>
 
 [optional body]
 ```
 
 ### Types
 
-| Type       | Description                           |
-|------------|---------------------------------------|
-| `feat`     | New feature                           |
-| `fix`      | Bug fix                               |
-| `refactor` | Code refactoring (no behavior change) |
-| `docs`     | Documentation only                    |
-| `test`     | Adding or updating tests              |
-| `chore`    | Maintenance tasks                     |
-| `perf`     | Performance improvements              |
+feat - new user-facing or developer-facing capability
+fix - bug fix
+refactor - structural/code cleanup without behavior change
+perf - measurable performance improvement
+docs - README, architecture docs, agent docs, comments if docs-only
+test - add/update tests
+build - Gradle, dependencies, build config, version catalogs, packaging
+ci - GitHub Actions, CodeQL, lint workflows, release pipelines
+chore - repo maintenance that is not feature/fix/refactor/build/ci
+revert - explicit revert commit
 
 ### Versioning conventions
 
