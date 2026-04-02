@@ -57,9 +57,9 @@ jobs:
         id: check_website
         run: |
           if [ -f website/package.json ]; then
-            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "exists=true" >> "${GITHUB_OUTPUT}"
           else
-            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "exists=false" >> "${GITHUB_OUTPUT}"
           fi
 
       - name: Detect Android module / compileSdk
@@ -77,8 +77,8 @@ jobs:
           if [ -z "$compile_sdk" ]; then
             compile_sdk=33
           fi
-          echo "android_needed=${android_needed}" >> $GITHUB_OUTPUT
-          echo "compile_sdk=${compile_sdk}" >> $GITHUB_OUTPUT
+          echo "android_needed=${android_needed}" >> "${GITHUB_OUTPUT}"
+          echo "compile_sdk=${compile_sdk}" >> "${GITHUB_OUTPUT}"
 
       - name: Configure Android SDK (use runner preinstalled SDK)
         if: ${{ steps.check_android.outputs.android_needed == 'true' }}
@@ -97,17 +97,17 @@ jobs:
           fi
 
           # Export consistent env vars for Gradle and other tools
-          echo "ANDROID_HOME=${SDK_DIR}" >> $GITHUB_ENV
-          echo "ANDROID_SDK_ROOT=${SDK_DIR}" >> $GITHUB_ENV
+          echo "ANDROID_HOME=${SDK_DIR}" >> "${GITHUB_ENV}"
+          echo "ANDROID_SDK_ROOT=${SDK_DIR}" >> "${GITHUB_ENV}"
 
           # Add platform-tools and common cmdline-tools locations to PATH for subsequent steps
           if [ -d "${SDK_DIR}/platform-tools" ]; then
-            echo "PATH=${SDK_DIR}/platform-tools:${PATH}" >> $GITHUB_ENV
+            echo "PATH=${SDK_DIR}/platform-tools:${PATH}" >> "${GITHUB_ENV}"
           fi
           if [ -d "${SDK_DIR}/cmdline-tools/latest/bin" ]; then
-            echo "PATH=${SDK_DIR}/cmdline-tools/latest/bin:${PATH}" >> $GITHUB_ENV
+            echo "PATH=${SDK_DIR}/cmdline-tools/latest/bin:${PATH}" >> "${GITHUB_ENV}"
           elif [ -d "${SDK_DIR}/tools/bin" ]; then
-            echo "PATH=${SDK_DIR}/tools/bin:${PATH}" >> $GITHUB_ENV
+            echo "PATH=${SDK_DIR}/tools/bin:${PATH}" >> "${GITHUB_ENV}"
           fi
 
           # Print SDK layout for debugging purposes
@@ -117,9 +117,16 @@ jobs:
       - name: Prepare and run Gradle build (manual)
         run: |
           chmod +x ./gradlew || true
-          # ensure no stale daemons and run an explicit build (skip tests to speed up)
+          # Linux-safe build scope for CodeQL (skip iOS-native targets for now)
           ./gradlew --stop || true
-          ./gradlew clean assemble -x test --no-daemon --no-parallel
+          ./gradlew \
+            :shared:compileKotlinJvm \
+            :composeApp:compileKotlinJvm \
+            :server:classes \
+            :androidApp:assembleDebug \
+            -x test \
+            --no-daemon \
+            --no-parallel
 
       - name: Set up Node 22 (for website build)
         uses: actions/setup-node@v6
