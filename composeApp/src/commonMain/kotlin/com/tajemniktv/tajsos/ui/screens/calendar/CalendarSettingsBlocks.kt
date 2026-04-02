@@ -71,7 +71,7 @@ private fun renderCalendarSettingsList(context: CalendarSettingsContext) {
         EmptyState(message = stringResource(Res.string.cal_settings_empty))
     } else {
         LazyColumn(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
-            items(context.providers) { provider ->
+            items(context.providers, key = { it.id }) { provider ->
                 ProviderRow(
                     provider = provider,
                     onDelete = { context.onDeleteProvider(provider) },
