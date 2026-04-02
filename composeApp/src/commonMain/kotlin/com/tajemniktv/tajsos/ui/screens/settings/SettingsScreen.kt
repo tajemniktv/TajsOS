@@ -81,7 +81,6 @@ fun SettingsScreen(
             onSetGlassmorphismEnabled = { viewModel.setGlassmorphismEnabled(it) },
             onSetReduceMotion = { viewModel.setReduceMotion(it) },
             onSetSidebarMode = { viewModel.setSidebarMode(it) },
-            onForceCrash = { throw RuntimeException("Test Crash") },
         )
 
     val plan = remember(screenId) { buildSettingsPlan(screenId) }

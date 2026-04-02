@@ -62,7 +62,6 @@ data class SettingsDashboardContext(
     val onSetGlassmorphismEnabled: (Boolean) -> Unit,
     val onSetReduceMotion: (Boolean) -> Unit,
     val onSetSidebarMode: (SidebarMode) -> Unit,
-    val onForceCrash: () -> Unit,
 )
 
 /**
