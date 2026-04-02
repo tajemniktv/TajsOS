@@ -66,7 +66,7 @@ fun OptionCard(
                 Text(
                     it,
                     style = MaterialTheme.typography.bodySmall,
-                    color = TajsOSTheme.Muted
+                    color = TajsOSTheme.Muted,
                 )
             }
         }

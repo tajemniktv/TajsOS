@@ -13,8 +13,6 @@ import com.tajemniktv.tajsos.data.TaskState
 import com.tajemniktv.tajsos.data.defaultInboxState
 import com.tajemniktv.tajsos.ui.main.calculators.calculateNextRecurringDate
 import com.tajemniktv.tajsos.ui.main.calculators.calculateStaleTasks
-import com.tajemniktv.tajsos.ui.main.state.suggestedAreaTitles
-import kotlin.time.Clock
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -24,17 +22,16 @@ import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
 
 class NodeCommands(
     private val repository: AppRepository,
     private val scope: CoroutineScope,
-    private val currentAreas: () -> List<NodeEntity>,
     private val currentTodayNodes: () -> List<NodeEntity>,
     private val currentAllNodes: () -> List<NodeEntity>,
     private val parseInternalLinks: (Long) -> Unit,
-    private val setTagOnNode: suspend (Long, String, Boolean) -> Unit
+    private val setTagOnNode: suspend (Long, String, Boolean) -> Unit,
 ) {
-
     fun sweepStaleTasks(cutoffDays: Int = 3) {
         scope.launch {
             val now = Clock.System.now()
@@ -46,8 +43,8 @@ class NodeCommands(
                     node.copy(
                         status = TaskState.SOMEDAY.storageKey,
                         postponeCount = node.postponeCount + 1,
-                        updatedAt = Clock.System.now().toEpochMilliseconds()
-                    )
+                        updatedAt = Clock.System.now().toEpochMilliseconds(),
+                    ),
                 )
             }
         }
@@ -56,7 +53,7 @@ class NodeCommands(
     fun addNode(
         title: String,
         content: String = "",
-        type: String = "task",
+        type: String = "task", // NON-NLS
         projectId: Long? = null,
         areaId: Long? = null,
         isRecurring: Boolean = false,
@@ -67,19 +64,19 @@ class NodeCommands(
         inboxState: Boolean? = null,
         contextScreen: String? = null,
         isSticky: Boolean = false,
-        decisionCategory: String? = null
+        decisionCategory: String? = null,
     ) {
         scope.launch {
             val autoType =
-                if (type == "task" &&
+                if (type == "task" && // NON-NLS
                     (
                         title.startsWith(
-                            "http://"
+                            "http://", // NON-NLS
                         ) ||
-                            title.startsWith("https://")
-                        )
+                            title.startsWith("https://") // NON-NLS
+                    )
                 ) {
-                    "resource"
+                    "resource" // NON-NLS
                 } else {
                     type
                 }
@@ -88,10 +85,20 @@ class NodeCommands(
                 when (autoType)
                 {
                     "task" -> ItemKind.TASK
+
+                    // NON-NLS
                     "note" -> ItemKind.NOTE
+
+                    // NON-NLS
                     "record" -> ItemKind.RECORD
+
+                    // NON-NLS
                     "project" -> ItemKind.PROJECT
+
+                    // NON-NLS
                     "area" -> ItemKind.AREA
+
+                    // NON-NLS
                     else -> null
                 }
 
@@ -109,7 +116,7 @@ class NodeCommands(
                     icon = icon,
                     inboxState = inboxState ?: itemKind.defaultInboxState(),
                     contextScreen = contextScreen,
-                    isSticky = isSticky
+                    isSticky = isSticky,
                 )
             } else {
                 repository.insertNode(
@@ -124,20 +131,23 @@ class NodeCommands(
                         reminderAt = reminderAt,
                         color = color,
                         icon = icon,
-                        inboxState = inboxState ?: (autoType != "project" && autoType != "area"),
+                        inboxState =
+                            inboxState
+                                ?: (autoType != "project" && autoType != "area"),
+                        // NON-NLS
                         contextScreen = contextScreen,
                         isSticky = isSticky,
-                        decisionStatus = if (autoType == "decision") "pending" else null,
+                        decisionStatus = if (autoType == "decision") "pending" else null, // NON-NLS
                         decisionCategory =
-                            if (autoType == "decision") {
+                            if (autoType == "decision") { // NON-NLS
                                 decisionCategory
-                                    ?: "major"
+                                    ?: "major" // NON-NLS
                             } else {
                                 null
                             },
-                        openLoopType = if (autoType == "open_loop") "unresolved_problem" else null,
+                        openLoopType = if (autoType == "open_loop") "unresolved_problem" else null, // NON-NLS
                         openLoopStalenessAt =
-                            if (autoType == "open_loop") {
+                            if (autoType == "open_loop") { // NON-NLS
                                 Clock.System
                                     .now()
                                     .plus(3, DateTimeUnit.DAY, TimeZone.currentSystemDefault())
@@ -145,8 +155,8 @@ class NodeCommands(
                             } else {
                                 null
                             },
-                        maintenanceType = if (autoType == "maintenance") "form" else null
-                    )
+                        maintenanceType = if (autoType == "maintenance") "form" else null, // NON-NLS
+                    ),
                 )
             }
         }
@@ -155,90 +165,94 @@ class NodeCommands(
     suspend fun addNodeForResult(
         title: String,
         content: String = "",
-        type: String = "task",
+        type: String = "task", // NON-NLS
         projectId: Long? = null,
         areaId: Long? = null,
-        inboxState: Boolean? = null
-    ): Long = withContext(Dispatchers.Default) {
-        when (type)
-        {
-            "task" -> {
-                repository.insertLifeItem(
-                    kind = ItemKind.TASK,
-                    title = title,
-                    content = content,
-                    activeProjectId = projectId,
-                    homeAreaId = areaId,
-                    inboxState = inboxState ?: ItemKind.TASK.defaultInboxState()
-                )
-            }
-
-            "note" -> {
-                repository.insertLifeItem(
-                    kind = ItemKind.NOTE,
-                    title = title,
-                    content = content,
-                    activeProjectId = projectId,
-                    homeAreaId = areaId,
-                    inboxState = inboxState ?: ItemKind.NOTE.defaultInboxState()
-                )
-            }
-
-            "record" -> {
-                repository.insertLifeItem(
-                    kind = ItemKind.RECORD,
-                    title = title,
-                    content = content,
-                    activeProjectId = projectId,
-                    homeAreaId = areaId,
-                    inboxState = inboxState ?: ItemKind.RECORD.defaultInboxState()
-                )
-            }
-
-            "project" -> {
-                repository.insertLifeItem(
-                    kind = ItemKind.PROJECT,
-                    title = title,
-                    content = content,
-                    homeAreaId = areaId,
-                    inboxState = inboxState ?: ItemKind.PROJECT.defaultInboxState()
-                )
-            }
-
-            "area" -> {
-                repository.insertLifeItem(
-                    kind = ItemKind.AREA,
-                    title = title,
-                    content = content,
-                    inboxState = inboxState ?: ItemKind.AREA.defaultInboxState()
-                )
-            }
-
-            else -> {
-                repository.insertNode(
-                    NodeEntity(
+        inboxState: Boolean? = null,
+    ): Long =
+        withContext(Dispatchers.Default) {
+            when (type)
+            {
+                "task" -> { // NON-NLS
+                    repository.insertLifeItem(
+                        kind = ItemKind.TASK,
                         title = title,
                         content = content,
-                        type = type,
-                        projectId = projectId,
-                        areaId = areaId,
-                        inboxState = inboxState ?: (type != "project" && type != "area"),
-                        openLoopType = if (type == "open_loop") "unresolved_problem" else null,
-                        openLoopStalenessAt =
-                            if (type == "open_loop") {
-                                Clock.System
-                                    .now()
-                                    .plus(3, DateTimeUnit.DAY, TimeZone.currentSystemDefault())
-                                    .toEpochMilliseconds()
-                            } else {
-                                null
-                            },
-                        maintenanceType = if (type == "maintenance") "form" else null
+                        activeProjectId = projectId,
+                        homeAreaId = areaId,
+                        inboxState = inboxState ?: ItemKind.TASK.defaultInboxState(),
                     )
-                )
+                }
+
+                "note" -> { // NON-NLS
+                    repository.insertLifeItem(
+                        kind = ItemKind.NOTE,
+                        title = title,
+                        content = content,
+                        activeProjectId = projectId,
+                        homeAreaId = areaId,
+                        inboxState = inboxState ?: ItemKind.NOTE.defaultInboxState(),
+                    )
+                }
+
+                "record" -> { // NON-NLS
+                    repository.insertLifeItem(
+                        kind = ItemKind.RECORD,
+                        title = title,
+                        content = content,
+                        activeProjectId = projectId,
+                        homeAreaId = areaId,
+                        inboxState = inboxState ?: ItemKind.RECORD.defaultInboxState(),
+                    )
+                }
+
+                "project" -> { // NON-NLS
+                    repository.insertLifeItem(
+                        kind = ItemKind.PROJECT,
+                        title = title,
+                        content = content,
+                        homeAreaId = areaId,
+                        inboxState = inboxState ?: ItemKind.PROJECT.defaultInboxState(),
+                    )
+                }
+
+                "area" -> { // NON-NLS
+                    repository.insertLifeItem(
+                        kind = ItemKind.AREA,
+                        title = title,
+                        content = content,
+                        inboxState = inboxState ?: ItemKind.AREA.defaultInboxState(),
+                    )
+                }
+
+                else -> {
+                    repository.insertNode(
+                        NodeEntity(
+                            title = title,
+                            content = content,
+                            type = type,
+                            projectId = projectId,
+                            areaId = areaId,
+                            inboxState =
+                                inboxState
+                                    ?: (type != "project" && type != "area"),
+                            // NON-NLS
+                            openLoopType = if (type == "open_loop") "unresolved_problem" else null, // NON-NLS
+                            openLoopStalenessAt =
+                                if (type == "open_loop") { // NON-NLS
+                                    Clock.System
+                                        .now()
+                                        .plus(3, DateTimeUnit.DAY, TimeZone.currentSystemDefault())
+                                        .toEpochMilliseconds()
+                                } else {
+                                    null
+                                },
+                            maintenanceType = if (type == "maintenance") "form" else null, // NON-NLS
+                        ),
+                    )
+                }
             }
         }
-    }
 
     fun updateNode(node: NodeEntity) {
         scope.launch {
@@ -277,8 +291,8 @@ class NodeCommands(
                         repository.updateNode(
                             node.copy(
                                 nextSmallestStep = firstLine,
-                                updatedAt = Clock.System.now().toEpochMilliseconds()
-                            )
+                                updatedAt = Clock.System.now().toEpochMilliseconds(),
+                            ),
                         )
                     }
                 }
@@ -302,25 +316,25 @@ class NodeCommands(
                             repository.insertNode(
                                 NodeEntity(
                                     title = subtaskTitle,
-                                    type = "task",
+                                    type = "task", // NON-NLS
                                     projectId = node.projectId,
                                     areaId = node.areaId,
-                                    parentNodeId = node.id
-                                )
+                                    parentNodeId = node.id,
+                                ),
                             )
                         repository.insertRelation(
                             RelationEntity(
                                 fromNodeId = node.id,
                                 toNodeId = subtaskId,
-                                relationType = "DEPENDS_ON"
-                            )
+                                relationType = "DEPENDS_ON", // NON-NLS
+                            ),
                         )
                     }
                     repository.updateNode(
                         node.copy(
-                            content = "// SPLIT INTO SUBTASKS\n" + node.content,
-                            updatedAt = Clock.System.now().toEpochMilliseconds()
-                        )
+                            content = "// SPLIT INTO SUBTASKS\n" + node.content, // NON-NLS
+                            updatedAt = Clock.System.now().toEpochMilliseconds(),
+                        ),
                     )
                 }
             }
@@ -334,8 +348,8 @@ class NodeCommands(
                     NodeSnapshotEntity(
                         nodeId = node.id,
                         title = node.title,
-                        content = node.content
-                    )
+                        content = node.content,
+                    ),
                 )
             }
         }
@@ -348,14 +362,17 @@ class NodeCommands(
                     node.copy(
                         title = snapshot.title,
                         content = snapshot.content,
-                        updatedAt = Clock.System.now().toEpochMilliseconds()
-                    )
+                        updatedAt = Clock.System.now().toEpochMilliseconds(),
+                    ),
                 )
             }
         }
     }
 
-    fun mergeNodes(primaryNodeId: Long, otherNodeIds: List<Long>) {
+    fun mergeNodes(
+        primaryNodeId: Long,
+        otherNodeIds: List<Long>,
+    ) {
         scope.launch {
             val primary = repository.getNodeById(primaryNodeId) ?: return@launch
             var mergedContent = primary.content
@@ -371,16 +388,16 @@ class NodeCommands(
                                 RelationEntity(
                                     fromNodeId = primaryNodeId,
                                     toNodeId = rel.toNodeId,
-                                    relationType = rel.relationType
-                                )
+                                    relationType = rel.relationType,
+                                ),
                             )
                         } else if (rel.toNodeId == otherId) {
                             repository.insertRelation(
                                 RelationEntity(
                                     fromNodeId = rel.fromNodeId,
                                     toNodeId = primaryNodeId,
-                                    relationType = rel.relationType
-                                )
+                                    relationType = rel.relationType,
+                                ),
                             )
                         }
                     }
@@ -390,8 +407,8 @@ class NodeCommands(
             repository.updateNode(
                 primary.copy(
                     content = mergedContent,
-                    updatedAt = Clock.System.now().toEpochMilliseconds()
-                )
+                    updatedAt = Clock.System.now().toEpochMilliseconds(),
+                ),
             )
         }
     }
@@ -414,10 +431,10 @@ class NodeCommands(
                             NodeEntity(
                                 title = title,
                                 content = content,
-                                type = "note",
+                                type = "note", // NON-NLS
                                 projectId = node.projectId,
-                                areaId = node.areaId
-                            )
+                                areaId = node.areaId,
+                            ),
                         )
                     }
                     archiveNodeInternal(node)
@@ -426,30 +443,34 @@ class NodeCommands(
         }
     }
 
-    fun updateNodeStatus(node: NodeEntity, status: String) {
+    fun updateNodeStatus(
+        node: NodeEntity,
+        status: String,
+    )
+    {
         scope.launch {
             val now = Clock.System.now().toEpochMilliseconds()
             repository.updateNode(
-                node.copy(
-                    status = status,
-                    updatedAt = now,
-                    completedAt = if (status == "done") now else node.completedAt,
-                    archivedAt = if (status == "archived") now else node.archivedAt
-                )
-            )
-
-            if (status == "done" && node.isRecurring && node.recurringInterval != null) {
-                val nextDue = calculateNextRecurringDate(node.dueAt ?: now, node.recurringInterval)
-                repository.insertNode(
                     node.copy(
-                        id = 0,
-                        status = "active",
+                        status = status,
+                    updatedAt = now,
+                    completedAt = if (status == "done") now else node.completedAt, // NON-NLS
+                    archivedAt = if (status == "archived") now else node.archivedAt, // NON-NLS
+                    ),
+                )
+
+                if (status == "done" && node.isRecurring && node.recurringInterval != null) { // NON-NLS
+                    val nextDue = calculateNextRecurringDate(node.dueAt ?: now, node.recurringInterval)
+                    repository.insertNode(
+                        node.copy(
+                            id = 0,
+                        status = "active", // NON-NLS
                         createdAt = now,
                         updatedAt = now,
                         completedAt = null,
-                        dueAt = nextDue,
-                        inboxState = false
-                    )
+                            dueAt = nextDue,
+                            inboxState = false,
+                    ),
                 )
             }
         }
@@ -465,12 +486,16 @@ class NodeCommands(
         }
     }
 
-    fun togglePin(node: NodeEntity, isPinned: Boolean) {
+    fun togglePin(
+        node: NodeEntity,
+        isPinned: Boolean,
+    )
+    {
         scope.launch {
             if (isPinned) {
                 repository.pinToToday(node.id)
-            } else {
-                repository.unpinFromToday(node.id)
+                } else {
+                    repository.unpinFromToday(node.id)
             }
         }
     }
@@ -480,8 +505,8 @@ class NodeCommands(
             repository.updateNode(
                 node.copy(
                     isPinned = !node.isPinned,
-                    updatedAt = Clock.System.now().toEpochMilliseconds()
-                )
+                    updatedAt = Clock.System.now().toEpochMilliseconds(),
+                ),
             )
         }
     }
@@ -492,72 +517,75 @@ class NodeCommands(
                 repository.updateNode(
                     node.copy(
                         inboxState = false,
-                        updatedAt = Clock.System.now().toEpochMilliseconds()
-                    )
+                        updatedAt = Clock.System.now().toEpochMilliseconds(),
+                    ),
                 )
             }
         }
     }
 
-    fun addProject(name: String, description: String = "", areaId: Long? = null) {
-        addNode(title = name, content = description, type = "project", areaId = areaId)
-    }
+    fun addProject(
+        name: String,
+        description: String = "",
+        areaId: Long? = null,
+    )
+    {
+        addNode(title = name, content = description, type = "project", areaId = areaId) // NON-NLS
+        }
 
     fun addArea(name: String) {
-        addNode(title = name, type = "area")
+        addNode(title = name, type = "area") // NON-NLS
     }
 
-    fun addSuggestedAreas() {
-        scope.launch {
-            val existing = currentAreas().map { it.title.trim().lowercase() }.toSet()
-            suggestedAreaTitles
-                .filterNot { existing.contains(it.trim().lowercase()) }
-                .forEach { addArea(it) }
-        }
-    }
-
-    fun updateOpenLoopType(node: NodeEntity, openLoopType: String) {
-        if (node.type != "open_loop") return
-        updateNode(
-            node.copy(
-                openLoopType = openLoopType,
-                openLoopStalenessAt =
-                    node.openLoopStalenessAt
+    fun updateOpenLoopType(
+        node: NodeEntity,
+        openLoopType: String,
+    )
+    {
+        if (node.type != "open_loop") return // NON-NLS
+            updateNode(
+                node.copy(
+                    openLoopType = openLoopType,
+                    openLoopStalenessAt =
+                        node.openLoopStalenessAt
                         ?: Clock.System
                             .now()
                             .plus(3, DateTimeUnit.DAY, TimeZone.currentSystemDefault())
-                            .toEpochMilliseconds()
-            )
+                            .toEpochMilliseconds(),
+            ),
         )
     }
 
     fun convertOpenLoopToTask(nodeId: Long) {
-        convertOpenLoop(nodeId, "task")
+        convertOpenLoop(nodeId, "task") // NON-NLS
     }
 
     fun convertOpenLoopToDecision(nodeId: Long) {
-        convertOpenLoop(nodeId, "decision")
+        convertOpenLoop(nodeId, "decision") // NON-NLS
     }
 
     fun convertOpenLoopToNote(nodeId: Long) {
-        convertOpenLoop(nodeId, "note")
+        convertOpenLoop(nodeId, "note") // NON-NLS
     }
 
-    fun resolveOpenLoop(nodeId: Long, resolutionNote: String? = null) {
+    fun resolveOpenLoop(
+        nodeId: Long,
+        resolutionNote: String? = null,
+    ) {
         scope.launch {
             val node = repository.getNodeById(nodeId) ?: return@launch
-            if (node.type != "open_loop") return@launch
+            if (node.type != "open_loop") return@launch // NON-NLS
             val now = Clock.System.now().toEpochMilliseconds()
             repository.updateNode(
                 node.copy(
-                    status = "done",
+                    status = "done", // NON-NLS
                     inboxState = false,
                     completedAt = now,
                     updatedAt = now,
                     completionNote =
                         resolutionNote?.trim()?.ifBlank { null }
-                            ?: node.completionNote
-                )
+                            ?: node.completionNote,
+                ),
             )
         }
     }
@@ -566,46 +594,64 @@ class NodeCommands(
         scope.launch {
             val now = Clock.System.now().toEpochMilliseconds()
             currentAllNodes()
-                .filter { it.type == "open_loop" && it.status == "done" }
+                .filter { it.type == "open_loop" && it.status == "done" } // NON-NLS
                 .forEach { loop ->
                     repository.updateNode(
                         loop.copy(
-                            status = "archived",
+                            status = "archived", // NON-NLS
                             archivedAt = now,
-                            updatedAt = now
-                        )
+                            updatedAt = now,
+                        ),
                     )
                 }
         }
     }
 
-    fun updateMaintenanceType(node: NodeEntity, maintenanceType: String) {
-        if (node.type != "maintenance") return
-        updateNode(node.copy(maintenanceType = maintenanceType))
-    }
+    fun updateMaintenanceType(
+        node: NodeEntity,
+        maintenanceType: String,
+    )
+    {
+        if (node.type != "maintenance") return // NON-NLS
+            updateNode(node.copy(maintenanceType = maintenanceType))
+        }
 
-    fun setMaintenanceOverdueAt(node: NodeEntity, timestamp: Long?) {
-        if (node.type != "maintenance") return
-        updateNode(node.copy(maintenanceOverdueAt = timestamp))
-    }
+    fun setMaintenanceOverdueAt(
+        node: NodeEntity,
+        timestamp: Long?,
+    )
+    {
+        if (node.type != "maintenance") return // NON-NLS
+            updateNode(node.copy(maintenanceOverdueAt = timestamp))
+        }
 
-    fun setMaintenanceRecurring(node: NodeEntity, interval: String?) {
-        if (node.type != "maintenance") return
-        updateNode(
-            node.copy(
-                isRecurring = interval != null,
-                recurringInterval = interval,
-                maintenanceInterval = interval
-            )
+    fun setMaintenanceRecurring(
+        node: NodeEntity,
+        interval: String?,
+    )
+    {
+        if (node.type != "maintenance") return // NON-NLS
+            updateNode(
+                node.copy(
+                    isRecurring = interval != null,
+                    recurringInterval = interval,
+                maintenanceInterval = interval,
+            ),
         )
     }
 
-    fun setProjectActivePhase(project: NodeEntity, active: Boolean) {
-        if (project.type != "project") return
-        updateNode(project.copy(projectStatus = if (active) "active" else "on_hold"))
+    fun setProjectActivePhase(
+        project: NodeEntity,
+        active: Boolean,
+    ) {
+        if (project.type != "project") return // NON-NLS
+        updateNode(project.copy(projectStatus = if (active) "active" else "on_hold")) // NON-NLS
     }
 
-    fun setTemporaryFocusPeriod(node: NodeEntity, days: Int) {
+    fun setTemporaryFocusPeriod(
+        node: NodeEntity,
+        days: Int,
+    ) {
         val safeDays = days.coerceIn(1, 30)
         val zone = TimeZone.currentSystemDefault()
         val now = Clock.System.now()
@@ -613,8 +659,8 @@ class NodeCommands(
             node.copy(
                 startAt = now.toEpochMilliseconds(),
                 dueAt = now.plus(safeDays, DateTimeUnit.DAY, zone).toEpochMilliseconds(),
-                status = "active"
-            )
+                status = "active", // NON-NLS
+            ),
         )
     }
 
@@ -622,29 +668,41 @@ class NodeCommands(
         updateNode(node.copy(startAt = null))
     }
 
-    fun setWorkDate(node: NodeEntity, workAt: Long?) {
-        if (node.type != "task") return
-        updateNode(node.copy(startAt = workAt))
-    }
+    fun setWorkDate(
+        node: NodeEntity,
+        workAt: Long?,
+    )
+    {
+        if (node.type != "task") return // NON-NLS
+            updateNode(node.copy(startAt = workAt))
+        }
 
-    fun toggleSeasonalGoal(node: NodeEntity, enabled: Boolean) {
+    fun toggleSeasonalGoal(
+        node: NodeEntity,
+        enabled: Boolean,
+    )
+    {
         scope.launch {
-            setTagOnNode(node.id, "seasonal_goal", enabled)
-            updateNode(node.copy(noteType = if (enabled) "goal_seasonal" else node.noteType))
+            setTagOnNode(node.id, "seasonal_goal", enabled) // NON-NLS
+            updateNode(node.copy(noteType = if (enabled) "goal_seasonal" else node.noteType)) // NON-NLS
         }
     }
 
-    fun addLifePeriodMarker(title: String, content: String = "") {
+    fun addLifePeriodMarker(
+        title: String,
+        content: String = "",
+    )
+    {
         scope.launch {
-            val markerId = addNodeForResult(title, content, "note", inboxState = false)
+            val markerId = addNodeForResult(title, content, "note", inboxState = false) // NON-NLS
             val markerNode = repository.getNodeById(markerId) ?: return@launch
             repository.updateNode(
                 markerNode.copy(
-                    noteType = "period_marker",
-                    updatedAt = Clock.System.now().toEpochMilliseconds()
-                )
+                    noteType = "period_marker", // NON-NLS
+                    updatedAt = Clock.System.now().toEpochMilliseconds(),
+                ),
             )
-            setTagOnNode(markerId, "life_period_marker", true)
+            setTagOnNode(markerId, "life_period_marker", true) // NON-NLS
         }
     }
 
@@ -657,34 +715,43 @@ class NodeCommands(
             }
             currentAllNodes()
                 .filter {
-                    it.status == "done" && (it.completedAt ?: 0L) < monthAgo && it.type == "task"
+                    it.status == "done" &&
+                            (
+                                    it.completedAt
+                                        ?: 0L
+                                    ) < monthAgo &&
+                            it.type == "task" // NON-NLS
                 }.forEach { doneTask ->
                     repository.updateNode(
                         doneTask.copy(
-                            status = "archived",
+                            status = "archived", // NON-NLS
                             archivedAt = now,
-                            updatedAt = now
-                        )
+                            updatedAt = now,
+                        ),
                     )
                 }
             repository.insertNode(
                 NodeEntity(
-                    type = "note",
+                    type = "note", // NON-NLS
                     title = "Monthly reset ${
                         Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
                     }",
                     content = "Auto-generated monthly reset summary and cleanup marker.",
-                    noteType = "reflection",
-                    inboxState = false
-                )
+                    noteType = "reflection", // NON-NLS
+                    inboxState = false,
+                ),
             )
         }
     }
 
-    private fun convertOpenLoop(nodeId: Long, targetType: String) {
+    private fun convertOpenLoop(
+        nodeId: Long,
+        targetType: String,
+    )
+    {
         scope.launch {
             val source = repository.getNodeById(nodeId) ?: return@launch
-            if (source.type != "open_loop") return@launch
+            if (source.type != "open_loop") return@launch // NON-NLS
             val now = Clock.System.now().toEpochMilliseconds()
 
             val createdId =
@@ -694,8 +761,14 @@ class NodeCommands(
                             when (targetType)
                             {
                                 "task" -> "Follow-up: ${source.title}"
+
+                                // NON-NLS
                                 "decision" -> "Decision: ${source.title}"
+
+                                // NON-NLS
                                 "note" -> "Open loop note: ${source.title}"
+
+                                // NON-NLS
                                 else -> source.title
                             },
                         content =
@@ -703,33 +776,33 @@ class NodeCommands(
                                 append(source.content)
                                 if (source.content.isNotBlank()) append("\n\n")
                                 append(
-                                    "Converted from open loop (${source.openLoopType ?: "untyped"})."
+                                    "Converted from open loop (${source.openLoopType ?: "untyped"}).", // NON-NLS
                                 )
                             },
                         type = targetType,
                         projectId = source.projectId,
                         areaId = source.areaId,
-                        decisionStatus = if (targetType == "decision") "pending" else null,
-                        decisionCategory = if (targetType == "decision") "major" else null
-                    )
+                        decisionStatus = if (targetType == "decision") "pending" else null, // NON-NLS
+                        decisionCategory = if (targetType == "decision") "major" else null, // NON-NLS
+                    ),
                 )
 
             repository.insertRelation(
                 RelationEntity(
                     fromNodeId = source.id,
                     toNodeId = createdId,
-                    relationType = "DERIVED_FROM"
-                )
+                    relationType = "DERIVED_FROM", // NON-NLS
+                ),
             )
 
             repository.updateNode(
                 source.copy(
-                    status = "done",
+                    status = "done", // NON-NLS
                     inboxState = false,
                     completedAt = now,
                     updatedAt = now,
-                    completionNote = "Converted to ${targetType.uppercase()}"
-                )
+                    completionNote = "Converted to ${targetType.uppercase()}", // NON-NLS
+                ),
             )
         }
     }
@@ -737,9 +810,9 @@ class NodeCommands(
     private suspend fun archiveNodeInternal(node: NodeEntity) {
         repository.updateNode(
             node.copy(
-                status = "archived",
-                updatedAt = Clock.System.now().toEpochMilliseconds()
-            )
+                status = "archived", // NON-NLS
+                updatedAt = Clock.System.now().toEpochMilliseconds(),
+            ),
         )
     }
 }

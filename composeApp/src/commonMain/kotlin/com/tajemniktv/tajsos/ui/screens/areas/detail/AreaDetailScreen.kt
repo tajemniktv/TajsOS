@@ -98,7 +98,8 @@ fun AreaDetailScreen(
         tasks.filter {
             it.taskStateOrNull() == TaskState.BLOCKED ||
                 (
-                    it.isHardDeadline && (it.dueAt ?: Long.MAX_VALUE) <
+                    it.isHardDeadline &&
+                        (it.dueAt ?: Long.MAX_VALUE) <
                         Clock.System
                             .now()
                             .toEpochMilliseconds()
@@ -197,7 +198,7 @@ fun AreaDetailScreen(
                         verticalArrangement = Arrangement.spacedBy(12.dp),
                     ) {
                         plan.primary.filterNot { it.id == "area_sidebar" }.forEach { block ->
-                            AreaDetailBlockRegistry.resolve(block.id)?.invoke(context)
+                            AreaDetailBlocks.resolve(block.id)?.invoke(context)
                         }
                     }
                     Column(
@@ -205,7 +206,7 @@ fun AreaDetailScreen(
                         verticalArrangement = Arrangement.spacedBy(12.dp),
                     ) {
                         plan.secondary.forEach { block ->
-                            AreaDetailBlockRegistry.resolve(block.id)?.invoke(context)
+                            AreaDetailBlocks.resolve(block.id)?.invoke(context)
                         }
                     }
                 }
@@ -219,7 +220,7 @@ fun AreaDetailScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     plan.primary.forEach { block ->
-                        AreaDetailBlockRegistry.resolve(block.id)?.invoke(context)
+                        AreaDetailBlocks.resolve(block.id)?.invoke(context)
                     }
                 }
             }

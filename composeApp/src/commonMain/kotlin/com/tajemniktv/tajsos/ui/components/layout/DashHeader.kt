@@ -33,6 +33,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.common_system_online
 
 /**
  * Renders the dashboard header with a left menu badge and status block and a right-side system indicator with a settings button.
@@ -47,7 +50,7 @@ fun DashHeader(
     vibe: String,
     onMenuClick: () -> Unit,
     onSettingsClick: () -> Unit,
-    tintColor: Color = TajsOSTheme.Primary
+    tintColor: Color = TajsOSTheme.Primary,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -85,7 +88,7 @@ fun DashHeader(
             Surface(
                 color = Color.Black.copy(alpha = 0.5f),
                 shape = CircleShape,
-                border = BorderStroke(1.dp, TajsOSTheme.Border)
+                border = BorderStroke(1.dp, TajsOSTheme.Border),
             ) {
                 Row(
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
@@ -98,16 +101,20 @@ fun DashHeader(
                                 .clip(CircleShape)
                                 .background(
                                     if (tintColor ==
-                                        TajsOSTheme.Primary) {
+                                        TajsOSTheme.Primary
+                                    ) {
                                         TajsOSTheme.Success
-                                    } else tintColor),
+                                    } else {
+                                        tintColor
+                                    },
+                                ),
                     )
                     Spacer(Modifier.width(8.dp))
                     Text(
-                        "SYSTEM: ONLINE",
+                        stringResource(Res.string.common_system_online),
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold,
-                        color = TajsOSTheme.Text
+                        color = TajsOSTheme.Text,
                     )
                 }
             }

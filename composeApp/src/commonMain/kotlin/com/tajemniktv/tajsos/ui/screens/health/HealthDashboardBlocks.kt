@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -59,13 +57,13 @@ internal fun HealthMainBlock(
 
     Column(
         modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
     ) {
         Surface(
             modifier = Modifier.fillMaxWidth(),
             color = TajsOSTheme.Surface,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            border = BorderStroke(1.dp, TajsOSTheme.Border)
+            border = BorderStroke(1.dp, TajsOSTheme.Border),
         ) {
             Column(
                 modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -74,17 +72,17 @@ internal fun HealthMainBlock(
                 Text(
                     "HEALTH LENS",
                     style = MaterialTheme.typography.labelSmall,
-                    color = TajsOSTheme.Primary
+                    color = TajsOSTheme.Primary,
                 )
                 Text(
                     "Actions ${healthActions.size} • Maintenance ${healthQueue.size} • Knowledge ${healthKnowledge.size}",
                     style = MaterialTheme.typography.bodySmall,
-                    color = TajsOSTheme.Muted
+                    color = TajsOSTheme.Muted,
                 )
                 Text(
                     "Latest track: mood ${latestTrack?.moodScore ?: "-"} • energy ${latestTrack?.energyScore ?: "-"} • focus ${latestTrack?.focusScore ?: "-"}",
                     style = MaterialTheme.typography.bodySmall,
-                    color = TajsOSTheme.Muted
+                    color = TajsOSTheme.Muted,
                 )
             }
         }
@@ -115,8 +113,8 @@ internal fun HealthMainBlock(
             )
         }
 
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
-            items(healthQueue, key = { it.node.node.id }) { item ->
+        Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
+            healthQueue.forEach { item ->
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
                     color = TajsOSTheme.Surface,
@@ -131,7 +129,7 @@ internal fun HealthMainBlock(
                         Text(
                             item.node.node.title,
                             style = MaterialTheme.typography.titleSmall,
-                            color = TajsOSTheme.Text
+                            color = TajsOSTheme.Text,
                         )
                         Text(
                             "Type ${
@@ -141,7 +139,7 @@ internal fun HealthMainBlock(
                                 )
                             } • Urgency ${item.urgency}",
                             style = MaterialTheme.typography.bodySmall,
-                            color = TajsOSTheme.Muted
+                            color = TajsOSTheme.Muted,
                         )
                     }
                 }

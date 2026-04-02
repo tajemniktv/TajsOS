@@ -57,13 +57,13 @@ fun CurrentTaskBlock(
                     Text(
                         activeTask.node.title,
                         style = MaterialTheme.typography.titleLarge,
-                        color = TajsOSTheme.Primary
+                        color = TajsOSTheme.Primary,
                     )
                     if (activeTask.node.nextSmallestStep != null) {
                         Text(
                             "NEXT: ${activeTask.node.nextSmallestStep}",
                             style = MaterialTheme.typography.bodySmall,
-                            color = TajsOSTheme.Accent
+                            color = TajsOSTheme.Accent,
                         )
                     }
                 }

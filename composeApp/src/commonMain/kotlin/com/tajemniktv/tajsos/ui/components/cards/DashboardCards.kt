@@ -57,14 +57,14 @@ fun StickyNoteCard(
     title: String,
     content: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Surface(
         onClick = onClick,
         modifier = modifier.width(200.dp),
         color = TajsOSTheme.Accent.copy(alpha = 0.1f),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.Accent.copy(alpha = 0.3f))
+        border = BorderStroke(1.dp, TajsOSTheme.Accent.copy(alpha = 0.3f)),
     ) {
         Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
             Text(
@@ -79,7 +79,7 @@ fun StickyNoteCard(
                 content,
                 style = MaterialTheme.typography.bodySmall,
                 maxLines = 3,
-                color = TajsOSTheme.Text
+                color = TajsOSTheme.Text,
             )
         }
     }
@@ -102,7 +102,7 @@ fun TodayPulseCard(
     onToggleTask: (NodeWithPin) -> Unit,
     onTaskClick: (Long) -> Unit,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     DashCard(modifier = modifier, onClick = onClick) {
         Column(modifier = Modifier.padding(TajsOSTheme.SpacingLg)) {
@@ -123,7 +123,7 @@ fun TodayPulseCard(
                         "Daily Pulse",
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold,
-                        color = TajsOSTheme.Text
+                        color = TajsOSTheme.Text,
                     )
                 }
                 ProgressRing(progress = progress)
@@ -138,7 +138,7 @@ fun TodayPulseCard(
                         TaskBrief(
                             title = nodeWithPin.node.title,
                             isDone = false,
-                            onToggle = { onToggleTask(nodeWithPin) }
+                            onToggle = { onToggleTask(nodeWithPin) },
                         ) { onTaskClick(nodeWithPin.node.id) }
                     }
                 if (tasks.none { it.node.status == "active" }) {
@@ -169,7 +169,7 @@ fun FocusCard(
     activeSession: FocusSessionEntity?,
     onToggleFocus: () -> Unit,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val allNodes by viewModel.allNodes.collectAsState()
     val activeTask =
@@ -194,7 +194,7 @@ fun FocusCard(
                         if (activeSession != null) "Deep Work Phase" else "System Standby",
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
-                        color = TajsOSTheme.Text
+                        color = TajsOSTheme.Text,
                     )
                 }
                 if (activeSession != null) {
@@ -234,8 +234,8 @@ fun FocusCard(
                             checkedThumbColor = Color.White,
                             checkedTrackColor = TajsOSTheme.Primary,
                             uncheckedThumbColor = TajsOSTheme.Muted,
-                            uncheckedTrackColor = TajsOSTheme.Surface
-                        )
+                            uncheckedTrackColor = TajsOSTheme.Surface,
+                        ),
                 )
             }
         }
@@ -255,7 +255,7 @@ fun LifeSummaryCard(
     captures: Int,
     completions: Int,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     DashCard(modifier = modifier, onClick = onClick) {
         Column(modifier = Modifier.padding(TajsOSTheme.SpacingLg)) {
@@ -275,24 +275,24 @@ fun LifeSummaryCard(
                     Text(
                         captures.toString(),
                         style = MaterialTheme.typography.headlineLarge,
-                        color = TajsOSTheme.Text
+                        color = TajsOSTheme.Text,
                     )
                     Text(
                         "CAPTURES / WEEK",
                         style = MaterialTheme.typography.labelSmall,
-                        color = TajsOSTheme.Muted
+                        color = TajsOSTheme.Muted,
                     )
                 }
                 Column(horizontalAlignment = Alignment.End) {
                     Text(
                         completions.toString(),
                         style = MaterialTheme.typography.headlineLarge,
-                        color = TajsOSTheme.Success
+                        color = TajsOSTheme.Success,
                     )
                     Text(
                         "DONE / WEEK",
                         style = MaterialTheme.typography.labelSmall,
-                        color = TajsOSTheme.Muted
+                        color = TajsOSTheme.Muted,
                     )
                 }
             }
@@ -371,7 +371,7 @@ fun MetricCard(
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = TajsOSTheme.Text,
-                    maxLines = 1
+                    maxLines = 1,
                 )
             }
         }
@@ -400,7 +400,7 @@ fun VaultCard(
         modifier = modifier,
         color = TajsOSTheme.Surface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.Border)
+        border = BorderStroke(1.dp, TajsOSTheme.Border),
     ) {
         Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
             Icon(
@@ -419,7 +419,7 @@ fun VaultCard(
                 "$count ITEMS",
                 style = MaterialTheme.typography.bodySmall,
                 color = TajsOSTheme.Muted,
-                fontSize = 8.sp
+                fontSize = 8.sp,
             )
         }
     }
@@ -432,7 +432,10 @@ fun VaultCard(
  * @param modifier The modifier to be applied to the layout.
  */
 @Composable
-fun ProgressRing(progress: Float, modifier: Modifier = Modifier) {
+fun ProgressRing(
+    progress: Float,
+    modifier: Modifier = Modifier,
+) {
     val anim by animateFloatAsState(targetValue = progress)
     Box(contentAlignment = Alignment.Center, modifier = modifier.size(60.dp)) {
         Canvas(modifier = Modifier.size(60.dp)) {
@@ -449,7 +452,7 @@ fun ProgressRing(progress: Float, modifier: Modifier = Modifier) {
             "${(progress * 100).toInt()}%",
             style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.Bold,
-            color = TajsOSTheme.Text
+            color = TajsOSTheme.Text,
         )
     }
 }

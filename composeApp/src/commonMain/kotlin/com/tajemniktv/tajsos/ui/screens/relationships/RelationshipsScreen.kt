@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -42,9 +41,13 @@ fun RelationshipsScreen(
         val plan = remember(surface) { buildRelationshipsDashboardPlan(surface) }
         val context =
             remember(viewModel, onEditNode) { RelationshipsDashboardContext(viewModel, onEditNode) }
-        Column(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize().padding(bottom = 80.dp),
+        ) {
             plan.primary.forEach { block ->
-                RelationshipsDashboardBlockRegistry.resolve(block.id)?.invoke(context)
+                item(key = block.id) {
+                    RelationshipsDashboardBlocks.resolve(block.id)?.invoke(context)
+                }
             }
         }
     }
@@ -61,7 +64,7 @@ internal fun PeopleLayer(
         modifier = Modifier.fillMaxWidth(),
         color = TajsOSTheme.Surface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.Border)
+        border = BorderStroke(1.dp, TajsOSTheme.Border),
     ) {
         Column(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -76,13 +79,13 @@ internal fun PeopleLayer(
             Text(
                 "People ${snapshot.people.size} • Follow-up ${snapshot.followUpNeeded.size} • Reply queue ${snapshot.replyQueue.size}",
                 style = MaterialTheme.typography.bodySmall,
-                color = TajsOSTheme.Muted
+                color = TajsOSTheme.Muted,
             )
             snapshot.gentlePrompt?.let { prompt ->
                 Text(
                     prompt,
                     style = MaterialTheme.typography.bodySmall,
-                    color = TajsOSTheme.Accent
+                    color = TajsOSTheme.Accent,
                 )
             }
         }
@@ -93,65 +96,53 @@ internal fun PeopleLayer(
         return
     }
 
-    LazyColumn(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
+    Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
         if (snapshot.importantRelationships.isNotEmpty()) {
-            item {
-                GroupedOpenLoopSection(
-                    title = "IMPORTANT RELATIONSHIPS",
-                    items = snapshot.importantRelationships.map { it.person.node.title },
-                )
-            }
+            GroupedOpenLoopSection(
+                title = "IMPORTANT RELATIONSHIPS",
+                items = snapshot.importantRelationships.map { it.person.node.title },
+            )
         }
 
         if (snapshot.upcomingImportantDates.isNotEmpty()) {
-            item {
-                GroupedOpenLoopSection(
-                    title = "IMPORTANT DATES",
-                    items =
-                        snapshot.upcomingImportantDates.map { item ->
-                            "${item.person.node.title} • ${item.followUpDueInDays ?: 0}d"
-                        },
-                )
-            }
+            GroupedOpenLoopSection(
+                title = "IMPORTANT DATES",
+                items =
+                    snapshot.upcomingImportantDates.map { item ->
+                        "${item.person.node.title} • ${item.followUpDueInDays ?: 0}d"
+                    },
+            )
         }
 
         if (snapshot.replyQueue.isNotEmpty()) {
-            item {
-                GroupedOpenLoopSection(
-                    title = "REPLY QUEUE",
-                    items = snapshot.replyQueue.map { it.node.title },
-                )
-            }
+            GroupedOpenLoopSection(
+                title = "REPLY QUEUE",
+                items = snapshot.replyQueue.map { it.node.title },
+            )
         }
 
         if (snapshot.sharedPlans.isNotEmpty()) {
-            item {
-                GroupedOpenLoopSection(
-                    title = "SHARED PLANS",
-                    items = snapshot.sharedPlans.map { it.node.title },
-                )
-            }
+            GroupedOpenLoopSection(
+                title = "SHARED PLANS",
+                items = snapshot.sharedPlans.map { it.node.title },
+            )
         }
 
         if (snapshot.professors.isNotEmpty()) {
-            item {
-                GroupedOpenLoopSection(
-                    title = "PROFESSOR / ACADEMIC CONTACTS",
-                    items = snapshot.professors.map { it.person.node.title },
-                )
-            }
+            GroupedOpenLoopSection(
+                title = "PROFESSOR / ACADEMIC CONTACTS",
+                items = snapshot.professors.map { it.person.node.title },
+            )
         }
 
         if (snapshot.friendsAndFamily.isNotEmpty()) {
-            item {
-                GroupedOpenLoopSection(
-                    title = "FRIEND / FAMILY FOLLOW-UPS",
-                    items = snapshot.friendsAndFamily.map { it.person.node.title },
-                )
-            }
+            GroupedOpenLoopSection(
+                title = "FRIEND / FAMILY FOLLOW-UPS",
+                items = snapshot.friendsAndFamily.map { it.person.node.title },
+            )
         }
 
-        items(snapshot.people, key = { it.person.node.id }) { person ->
+        snapshot.people.forEach { person ->
             PersonRelationshipCard(
                 item = person,
                 viewModel = viewModel,

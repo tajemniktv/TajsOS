@@ -105,17 +105,17 @@ private fun renderIdentityHeaderBlock(context: ProfileScreenContext) {
                 Text(
                     "SYSTEM AUTH: SECURE",
                     style = MaterialTheme.typography.labelSmall,
-                    color = TajsOSTheme.AccentGreen
+                    color = TajsOSTheme.AccentGreen,
                 )
                 Text(
                     "IDENTITY MANAGEMENT",
                     style = MaterialTheme.typography.headlineMedium,
-                    color = TajsOSTheme.Text
+                    color = TajsOSTheme.Text,
                 )
                 Text(
                     displayName.uppercase(),
                     style = MaterialTheme.typography.labelSmall,
-                    color = TajsOSTheme.Muted
+                    color = TajsOSTheme.Muted,
                 )
                 val avatarRef = context.editor.avatarRef
                 if (!avatarRef.isNullOrBlank()) {
@@ -124,7 +124,7 @@ private fun renderIdentityHeaderBlock(context: ProfileScreenContext) {
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.bodySmall,
-                        color = TajsOSTheme.Muted
+                        color = TajsOSTheme.Muted,
                     )
                 }
             }
@@ -155,8 +155,8 @@ private fun renderSignaturePanelBlock(context: ProfileScreenContext) {
                                 colors =
                                     listOf(
                                         TajsOSTheme.SurfaceLowest,
-                                        TajsOSTheme.SurfaceHigh
-                                    )
+                                        TajsOSTheme.SurfaceHigh,
+                                    ),
                             ),
                         ),
                 contentAlignment = Alignment.Center,
@@ -173,19 +173,19 @@ private fun renderSignaturePanelBlock(context: ProfileScreenContext) {
                     Text(
                         initials,
                         style = MaterialTheme.typography.headlineMedium,
-                        color = TajsOSTheme.Primary
+                        color = TajsOSTheme.Primary,
                     )
                 }
             }
 
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
             ) {
                 Text(
                     "NEURAL SIGNATURE",
                     style = MaterialTheme.typography.titleMedium,
-                    color = TajsOSTheme.Text
+                    color = TajsOSTheme.Text,
                 )
                 Text(
                     context.editor.avatarRef ?: stringResource(Res.string.profile_empty_hint),
@@ -198,7 +198,7 @@ private fun renderSignaturePanelBlock(context: ProfileScreenContext) {
                     Button(
                         onClick = { context.onPickAvatar?.invoke() },
                         enabled = context.onPickAvatar != null,
-                        shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
+                        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                     ) {
                         Icon(
                             Icons.Default.Edit,
@@ -352,7 +352,7 @@ private fun renderAboutModuleBlock(context: ProfileScreenContext) {
                             }
                         },
                 style = MaterialTheme.typography.labelSmall,
-                color = if (context.justSaved) TajsOSTheme.Primary else TajsOSTheme.Muted
+                color = if (context.justSaved) TajsOSTheme.Primary else TajsOSTheme.Muted,
             )
             Button(
                 onClick = {
@@ -367,8 +367,8 @@ private fun renderAboutModuleBlock(context: ProfileScreenContext) {
                 colors =
                     ButtonDefaults.buttonColors(
                         containerColor = TajsOSTheme.Primary,
-                        contentColor = TajsOSTheme.Background
-                    )
+                        contentColor = TajsOSTheme.Background,
+                    ),
             ) {
                 Text(
                     stringResource(Res.string.profile_save),
@@ -392,7 +392,7 @@ private fun renderMedicationsModuleBlock(context: ProfileScreenContext) {
                 Icon(
                     Icons.Default.Add,
                     contentDescription = null,
-                    tint = TajsOSTheme.Primary
+                    tint = TajsOSTheme.Primary,
                 )
             }
         }
@@ -400,7 +400,7 @@ private fun renderMedicationsModuleBlock(context: ProfileScreenContext) {
             Text(
                 "No medication entries configured.",
                 style = MaterialTheme.typography.bodySmall,
-                color = TajsOSTheme.Muted
+                color = TajsOSTheme.Muted,
             )
         } else {
             context.medications.forEach { med ->
@@ -420,7 +420,7 @@ private fun TinyStatCard(
 ) {
     Surface(
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        color = TajsOSTheme.SurfaceHighest.copy(alpha = 0.88f)
+        color = TajsOSTheme.SurfaceHighest.copy(alpha = 0.88f),
     ) {
         Column(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
@@ -445,7 +445,7 @@ private fun ModulePanel(
         Column(
             modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
             verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
-            content = content
+            content = content,
         )
     }
 }
@@ -455,7 +455,7 @@ private fun ModuleTitle(title: String) {
     Text(
         title.uppercase(),
         style = MaterialTheme.typography.labelSmall,
-        color = TajsOSTheme.Primary
+        color = TajsOSTheme.Primary,
     )
 }
 
@@ -494,7 +494,7 @@ private fun profileFieldColors() =
         unfocusedBorderColor = TajsOSTheme.GhostBorder.copy(alpha = 0.25f),
         cursorColor = TajsOSTheme.Primary,
         focusedLabelColor = TajsOSTheme.Primary,
-        unfocusedLabelColor = TajsOSTheme.Muted
+        unfocusedLabelColor = TajsOSTheme.Muted,
     )
 
 @Composable
@@ -506,7 +506,7 @@ private fun ProfileDisplayNameFormatSelector(
         Text(
             stringResource(Res.string.profile_display_format),
             style = MaterialTheme.typography.labelSmall,
-            color = TajsOSTheme.Primary
+            color = TajsOSTheme.Primary,
         )
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             ProfileFormatChip(
@@ -545,8 +545,8 @@ private fun ProfileFormatChip(
         onClick = onClick,
         colors =
             ButtonDefaults.textButtonColors(
-                contentColor = if (selected) TajsOSTheme.Primary else TajsOSTheme.Muted
-            )
+                contentColor = if (selected) TajsOSTheme.Primary else TajsOSTheme.Muted,
+            ),
     ) {
         Text(label)
     }
@@ -560,7 +560,7 @@ private fun MedicationItem(
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = TajsOSTheme.Surface.copy(alpha = 0.7f),
-        shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
     ) {
         Row(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -571,19 +571,19 @@ private fun MedicationItem(
                 Text(
                     medication.substance,
                     style = MaterialTheme.typography.bodyLarge,
-                    color = TajsOSTheme.Text
+                    color = TajsOSTheme.Text,
                 )
                 if (medication.brandNames.isNotEmpty()) {
                     Text(
                         medication.brandNames,
                         style = MaterialTheme.typography.labelSmall,
-                        color = TajsOSTheme.Muted
+                        color = TajsOSTheme.Muted,
                     )
                 }
                 Text(
                     "${medication.dosage ?: ""} ${if (medication.takeAtHour != null) "@ ${medication.takeAtHour}:00" else ""}",
                     style = MaterialTheme.typography.labelSmall,
-                    color = TajsOSTheme.Primary
+                    color = TajsOSTheme.Primary,
                 )
             }
             IconButton(onClick = onDelete) {

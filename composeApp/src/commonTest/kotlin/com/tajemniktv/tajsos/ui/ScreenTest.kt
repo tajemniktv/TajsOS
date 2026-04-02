@@ -47,7 +47,7 @@ class ScreenTest {
             Screen.Rules,
             Screen.Vaults,
             Screen.Capacity,
-            Screen.Identity
+            Screen.Identity,
         )
 
     @Test
@@ -104,6 +104,14 @@ class ScreenTest {
     @Test
     fun tasks_hasCorrectRoute() {
         assertEquals("tasks", Screen.Tasks.route)
+    }
+
+    @Test
+    fun notes_hasSinglePathAndNoChildTabs() {
+        assertEquals("notes", Screen.Notes.route)
+        assertTrue(Screen.Notes.children.isEmpty())
+        assertEquals(Screen.Notes, Screen.fromRoute("notes?tab=workspace"))
+        assertEquals(Screen.Notes, Screen.fromRoute("notes?tab=recent"))
     }
 
     @Test

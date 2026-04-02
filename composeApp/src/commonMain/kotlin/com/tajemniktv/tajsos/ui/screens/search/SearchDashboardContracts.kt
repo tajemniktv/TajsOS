@@ -50,12 +50,15 @@ data class SearchDashboardContext(
     val searchSocialContextFilter: String?,
     val searchTimeWindowContextFilter: String?,
     val searchTimeHorizonFilter: String?,
+    val searchSortMode: String,
+    val showFilters: Boolean,
     val projectsById: Map<Long, NodeEntity>,
     val areasById: Map<Long, NodeEntity>,
     val allNodes: List<NodeWithPin>,
     val recentQueries: List<String>,
     val nowMs: Long,
     val onItemClick: (Long) -> Unit,
+    val onToggleFilters: () -> Unit,
 )
 
 /**

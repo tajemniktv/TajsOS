@@ -75,6 +75,17 @@
     <string name="review_step_archive">SUGESTIE ARCHIWIZACJI</string>
     <string name="review_step_goals">CELE NA KOLEJNY TYDZIEŃ</string>
     <string name="common_back">Wróć</string>
+    <string name="common_edit">Edytuj</string>
+    <string name="common_save">Zapisz</string>
+    <string name="common_cancel">Anuluj</string>
+    <string name="common_add">Dodaj</string>
+    <string name="common_system_online">SYSTEM: ONLINE</string>
+    <string name="common_unknown_protocol">Nieznany protokół</string>
+
+    <!-- Calendar -->
+    <string name="calendar_label_due">Termin</string>
+    <string name="calendar_label_reminder">Przypomnienie</string>
+    <string name="calendar_label_start">Początek</string>
 
     <!-- Dashboard -->
     <string name="dash_command">DOWODZENIE</string>
@@ -134,6 +145,10 @@
     <string name="dash_module_empty">PUSTO</string>
     <string name="dash_module_none">BRAK</string>
     <string name="dash_history_last">OSTATNIO: %1$s</string>
+    <string name="dash_warning_open_loops_overload">PRZEPEŁNIENIE OTWARTYCH PĘTLI // DOMKNIJ JE PRZED NOWYMI ELEMENTAMI</string>
+    <string name="dash_warning_open_loops_decay">OTWARTE PĘTLE ROZKŁADAJĄ SIĘ // WYKONAJ PRZEGLĄD</string>
+    <string name="dash_warning_system_overloaded">SYSTEM PRZECIĄŻONY // OGRANICZ DOPŁYW</string>
+    <string name="dash_warning_attention_fragmented">UWAGA ROZPROSZONA // SKUPI SIĘ NA JEDNYM OBSZARZE</string>
 
     <!-- Settings -->
     <string name="settings_title">USTAWIENIA</string>
@@ -744,4 +759,261 @@
     <string name="capture_sticky">PRZYPIĘTE</string>
     <string name="capture_label_capture">Przechwyć</string>
 
+    <!-- Task Detail -->
+    <string name="task_detail_critical">KRYTYCZNE</string>
+    <string name="task_detail_complete">UKOŃCZONE</string>
+    <string name="task_detail_blocked">ZABLOKOWANE</string>
+    <string name="task_detail_on_hold">WSTRZYMANE</string>
+    <string name="task_detail_queued">W KOLEJCE</string>
+    <string name="task_detail_active">AKTYWNE</string>
+    <string name="task_detail_id_label">ZADANIE-%1$s</string>
+    <string name="task_detail_snooze">Odłóż</string>
+    <string name="task_detail_complete_action">Ukończ zadanie</string>
+    <string name="task_detail_completed_status">Ukończono</string>
+    <string name="task_detail_directives_section">Dyrektywy techniczne</string>
+    <string name="task_detail_no_notes">Brak notatek wykonawczych. Dodaj ograniczenia, zależności lub notatki operatora.</string>
+    <string name="task_detail_no_attachments">Brak załączników powiązanych z tym zadaniem.</string>
+
+    <!-- Note Detail -->
+    <string name="note_detail_new_node">NOWY WĘZEŁ</string>
+    <string name="note_detail_connect_node">POŁĄCZ WĘZEŁ</string>
+    <string name="note_detail_linked_context">Powiązany kontekst</string>
+
+    <!-- Capacity -->
+    <string name="capacity_title">PRZEPUSTOWOŚĆ</string>
+    <string name="capacity_desc">Mierz bieżące obciążenie, fragmentację i to, czy system nie wymaga więcej, niż możesz udźwignąć.</string>
+
+    <!-- Identity -->
+    <string name="identity_title">TOŻSAMOŚĆ I MODEL OPERACYJNY</string>
+    <string name="identity_desc">Przeglądaj sygnaturę, rozróżnienie drugiego mózgu, zobowiązania kierunkowe i postępy w zmianie rdzenia.</string>
+
+    <!-- Relationships -->
+    <string name="relationships_title">SOCZEWKA RELACJI</string>
+    <string name="relationships_desc">Śledź ludzi, wspólne plany, kontynuacje i ciągłość relacji w danych życiowych.</string>
+
+    <!-- Education -->
+    <string name="education_title">SOCZEWKA EDUKACJI</string>
+    <string name="education_desc">Praca kursowa, notatki z nauki, postępy w czytaniu, łączenie koncepcji i refleksja akademicka.</string>
+
+    <!-- Time Architecture -->
+    <string name="time_architecture_title">ARCHITEKTURA CZASU</string>
+    <string name="time_architecture_desc">Struktura czasowa dla horyzontów, kadencja resetu i znaczniki zakotwiczenia.</string>
+    <string name="time_architecture_all_horizons">Wszystkie horyzonty</string>
+    <string name="time_architecture_map_title">Strukturalna mapa czasu</string>
+    <string name="time_architecture_current_horizon">Bieżący horyzont: %1$s</string>
+    <string name="time_architecture_status_summary">Dziś %1$d • Tydzień %2$d • Miesiąc %3$d • Semestr %4$d</string>
+    <string name="time_architecture_active_window">Aktywne okno</string>
+    <string name="time_architecture_active_label">%1$d elementów w %2$s</string>
+    <string name="time_architecture_no_items">Brak elementów w tym horyzoncie.</string>
+    <string name="time_architecture_reserve_window">Okno rezerwowe</string>
+    <string name="time_architecture_reserve_label">Obciążenie długoterminowe i presja semestralna</string>
+    <string name="time_architecture_reserve_tracked">%1$d zobowiązań długoterminowych</string>
+    <string name="time_architecture_exam_pressure">Wykryto presję okresu egzaminacyjnego</string>
+
+    <!-- Protocols -->
+    <string name="protocol_session_paused">Sesja wstrzymana</string>
+    <string name="protocol_session_running">Sesja aktywna</string>
+    <string name="protocol_steps_complete">%1$d / %2$d kroków ukończonych</string>
+    <string name="protocol_current_step">Bieżący krok</string>
+    <string name="protocol_up_next">Następny: %1$s</string>
+    <string name="protocol_no_steps">Ten protokół nie ma jeszcze kroków listy kontrolnej.</string>
+    <string name="protocol_complete_step">Ukończ krok</string>
+    <string name="protocols_title">PROTOKOŁY</string>
+    <string name="protocols_desc">Przeglądaj rutyny wielokrotnego użytku w Bibliotece i uruchamiaj je krok po kroku w trybie Aktywnym.</string>
+
+    <!-- Rules -->
+    <string name="rules_title">ZASADY</string>
+    <string name="rules_desc">Przechowuj antycele, zasady, ograniczenia i przypomnienia o regeneracji w jednym systemie.</string>
+
+    <!-- Vaults -->
+    <string name="vaults_title">REFERENCJE I ODZYSKIWANIE</string>
+    <string name="vaults_desc">Przechowuj trwałe referencje, oficjalne terminy i elementy do znalezienia później w łatwy do odzyskania sposób.</string>
+
+    <!-- Sidebar & Header -->
+    <string name="sidebar_brand">TAJSOS</string>
+    <string name="header_search_placeholder">Szukaj w TajsOS</string>
+    <string name="header_status_label">TAJSOS // STATUS: %1$s</string>
+
+    <!-- Places -->
+    <string name="places_title">KONTEKST I LOGISTYKA</string>
+    <string name="places_desc">Koordynuj sprawunki, pakowanie, przygotowania do podróży i przypomnienia powiązane z fizycznymi punktami zakotwiczenia.</string>
+
+    <!-- Graph -->
+    <string name="graph_no_data">Brak danych grafu. Twórz elementy i relacje, aby zapełnić graf.</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard_open_loops_action">OTWÓRZ OTWARTE PĘTLE</string>
+
+    <!-- Settings -->
+    <string name="settings_appearance_title">Wygląd</string>
+    <string name="settings_appearance_desc">Dostosuj tożsamość wizualną i zachowanie interfejsu swojego systemu operacyjnego.</string>
+    <string name="settings_theme_settings">Ustawienia motywu</string>
+    <string name="settings_theme_mode">Tryb motywu</string>
+    <string name="settings_theme_mode_desc">Przełączaj między ciemnym a jasnym motywem.</string>
+
+    <string name="dash_placeholder_capture_shortcut">CMD + K, aby coś przechwycić...</string>
+    <string name="dash_action_open_study">OTWÓRZ PRZESTRZEŃ NAUKI</string>
+    <string name="dash_label_study_module">MODUŁ NAUKI // %1$s</string>
+    <string name="dash_label_admin_paperwork">ADMIN // DOKUMENTY</string>
+
+    <string name="time_architecture_add_anchor">Dodaj punkt zakotwiczenia</string>
+    <string name="time_architecture_run_monthly_reset">Uruchom miesięczny reset</string>
+    <string name="time_architecture_active">Aktywne</string>
+    <string name="time_architecture_buffer">Bufor</string>
+
+    <string name="identity_work_today">DZISIEJSZA PRACA</string>
+    <string name="identity_work_due_1d">PRACA NA JUTRO</string>
+    <string name="identity_clear">WYCZYŚĆ</string>
+    <string name="identity_open">OTWÓRZ</string>
+
+    <string name="places_ensure_travel_pack_template">ZAPEWNIJ SZABLON PAKIETU PODRÓŻNEGO</string>
+    <string name="places_class_bring_list">LISTA RZECZY NA ZAJĘCIA</string>
+    <string name="places_leave_home_checklist">LISTA PRZED WYJŚCIEM</string>
+    <string name="places_event_prep_list">LISTA PRZYGOTOWAŃ DO WYDARZENIA</string>
+    <string name="places_dont_forget_set">ZESTAW „NIE ZAPOMNIJ”</string>
+    <string name="places_add_place">DODAJ MIEJSCE</string>
+    <string name="places_add_campus_location">DODAJ LOKALIZACJĘ NA KAMPUSIE</string>
+    <string name="places_add_home_zone">DODAJ STREFĘ DOMOWĄ</string>
+    <string name="places_what_to_bring">CO ZABRAĆ</string>
+    <string name="places_packing_list">LISTA PAKOWANIA</string>
+    <string name="places_physical_logistics_note">NOTATKA O LOGISTYCE FIZYCZNEJ</string>
+    <string name="places_placeholder_place_name">Nazwa miejsca</string>
+    <string name="places_placeholder_list_title">Tytuł listy / notatki</string>
+    <string name="places_placeholder_logistics_notes">Opcjonalne notatki logistyczne</string>
+
+    <string name="settings_placeholder_import_json">Wklej tutaj JSON ExportData/ExportBundle...</string>
+    <string name="settings_action_import_json">Importuj ładunek JSON</string>
+    <string name="settings_action_export_bundle">Eksportuj pełny pakiet</string>
+    <string name="settings_action_import_json_simple">Importuj JSON</string>
+    <string name="settings_theme_light">Jasny</string>
+    <string name="settings_theme_dark">Ciemny</string>
+    <string name="settings_unlock">Odblokuj</string>
+
+    <string name="protocols_action_run">Uruchom</string>
+    <string name="protocols_placeholder_search">Poranny reset, start nauki, rutyna zamknięcia...</string>
+    <string name="protocols_label_search">Szukaj rutyn</string>
+
+    <string name="notes_action_view">WIDOK</string>
+    <string name="notes_placeholder_search">Szukaj notatek</string>
+    <string name="notes_action_find_links">Znajdź więcej powiązań</string>
+    <string name="notes_workspace_title">Przestrzeń notatek</string>
+
+    <string name="common_area">Obszar</string>
+    <string name="common_project">Projekt</string>
+    <string name="common_updated">Zaktualizowano</string>
+
+    <string name="detail_relations">Powiązania</string>
+    <string name="detail_no_linked_items">Brak powiązanych elementów</string>
+    <string name="detail_no_attachments_simple">Brak załączników</string>
+    <string name="detail_no_snapshots">Brak migawek</string>
+
+    <string name="review_execution_ratio">Wskaźnik realizacji: %1$d%%</string>
+    <string name="review_capacity_summary">Wydajność: %1$d wykonanych zadań.</string>
+    <string name="review_focus_summary">Skupienie: %1$d godzin.</string>
+    <string name="review_energy_level">Energia: %1$d/5</string>
+    <string name="review_mood_level">Nastrój: %1$d/5</string>
+    <string name="review_prompt_how_feeling">Jak się teraz czujesz?</string>
+    <string name="review_prompt_energy_level">Jaki jest Twój poziom energii?</string>
+    <string name="review_prompt_numbers_feedback">Co sądzisz o tych liczbach?</string>
+    <string name="review_archived_summary">Zarchiwizowałeś %1$d elementów w tym tygodniu. Czy jest coś jeszcze, co warto odpuścić?</string>
+    <string name="review_placeholder_thoughts">Zapisz tutaj swoje przemyślenia...</string>
+
+    <string name="tasks_action_sweep">Przenieś do „Kiedyś”</string>
+    <string name="tasks_prompt_clear_overdue">Wyczyścić zaległości?</string>
+    <string name="tasks_msg_stale_overdue">Masz %1$d przestarzałych, zaległych zadań. Czy mam je przenieść do „Kiedyś”?</string>
+
+    <string name="study_action_create_paper_link">Utwórz powiązanie z pracą</string>
+    <string name="study_action_create_topic_link">Utwórz powiązanie z tematem</string>
+    <string name="study_action_remove">Usuń</string>
+    <string name="study_label_study_time">Nauka %1$dm</string>
+    <string name="study_label_assignments">Zadania %1$d</string>
+    <string name="study_label_flashcards">Fiszki %1$d</string>
+
+    <string name="rules_placeholder_title">Tytuł zasady</string>
+    <string name="rules_placeholder_details">Szczegóły zasady</string>
+    <string name="rules_action_save_vault">ZAPISZ W SKARBCU ZASAD</string>
+
+    <string name="protocols_action_open">Otwórz protokół</string>
+    <string name="protocols_action_run_item">Uruchom %1$s</string>
+    <string name="protocols_action_previous">Poprzedni</string>
+    <string name="protocols_action_skip">Pomiń</string>
+    <string name="protocols_action_end_session">Zakończ sesję</string>
+    <string name="protocols_action_mark_not_done">Oznacz jako niewykonane: %1$d</string>
+    <string name="protocols_placeholder_notes">Zapisz obserwacje lub poprawki na kolejny raz...</string>
+    <string name="protocols_library">Biblioteka</string>
+    <string name="protocols_active">Aktywne</string>
+    <string name="protocols_category_all">Wszystkie</string>
+    <string name="protocols_category_health">Zdrowie</string>
+    <string name="protocols_category_work">Praca</string>
+    <string name="protocols_category_study">Nauka</string>
+    <string name="protocols_category_home">Dom</string>
+    <string name="protocols_category_emotional">Regulacja emocjonalna</string>
+    <string name="protocols_category_admin">Administracja</string>
+    <string name="protocols_category_relationships">Relacje</string>
+    <string name="protocols_desc_full">Wielorazowe procedury dla powtarzalnych sytuacji. Przeglądaj w Bibliotece i uruchamiaj krok po kroku w trybie Aktywnym.</string>
+    <string name="protocols_label_last_run">Ostatnie uruchomienie</string>
+    <string name="protocols_label_suggested">Sugerowane</string>
+    <string name="protocols_no_runs">Brak uruchomień</string>
+    <string name="protocols_no_matches">Brak protokołów pasujących do filtra. Wyczyść wyszukiwanie lub wybierz inną kategorię.</string>
+    <string name="protocols_label_estimated_time">Szacowany czas %1$dm • Kroki %2$d • Uruchomienia %3$d</string>
+    <string name="protocols_label_last_run_item">Ostatnio: %1$s</string>
+    <string name="protocols_not_yet">Jeszcze nie</string>
+    <string name="protocols_no_active">Nie wybrano aktywnego protokołu</string>
+    <string name="protocols_pick_to_start">Wybierz protokół, aby rozpocząć sesję.</string>
+    <string name="protocols_session_notes">Notatki z sesji</string>
+    <string name="protocols_label_adjustments">Poprawki</string>
+    <string name="protocols_label_use_when">Używaj gdy</string>
+
+    <string name="common_resume">Wznów</string>
+    <string name="common_pause">Pauza</string>
+
+    <string name="student_action_details">Szczegóły</string>
+    <string name="student_id_label">ID %1$s</string>
+    <string name="student_lecture">Wykład</string>
+    <string name="student_reading">Czytanie</string>
+    <string name="student_paper">Praca</string>
+    <string name="student_semester">Semestr</string>
+    <string name="student_course_id">ID kursu</string>
+    <string name="student_course_name">Nazwa kursu</string>
+    <string name="student_semester_dashboard">PULPIT SEMESTRU</string>
+    <string name="student_next_exam">Następny egzamin za %1$dd</string>
+    <string name="student_no_exams">Brak terminów egzaminów</string>
+    <string name="student_lecture_ready">Wykład gotowy</string>
+    <string name="student_lecture_missing">Brak wykładu</string>
+    <string name="student_reading_ready">Czytanie gotowe</string>
+    <string name="student_reading_missing">Brak czytania</string>
+    <string name="student_paper_ready">Praca gotowa</string>
+    <string name="student_paper_missing">Brak pracy</string>
+    <string name="student_templates_desc">Szablony wykładów, czytania i streszczeń prac są przygotowane i mogą być wstawione bezpośrednio.</string>
+
+    <string name="common_flashcard">Fiszka</string>
+    <string name="common_revisit">Odśwież</string>
+    <string name="common_open">Otwórz</string>
+    <string name="common_no_active_mode">Brak aktywnego trybu</string>
+
+    <string name="places_action_open_page">OTWÓRZ STRONĘ MIEJSCA</string>
+
+    <string name="decision_revisit_date_label">DATA REWIZJI DECYZJI</string>
+    <string name="decision_related_people_label">POWIĄZANE OSOBY</string>
+    <string name="decision_no_people_linked">Brak powiązanych osób.</string>
+    <string name="decision_people_linked_count">%1$s powiązanych</string>
+    <string name="decision_action_link_person">POWIĄŻ OSOBĘ</string>
+    <string name="decision_action_unlink">ODWIĄŻ</string>
+    <string name="decision_current_revisit">Bieżąca: %1$s</string>
+    <string name="decision_1_week">1 TYDZIEŃ</string>
+    <string name="decision_1_month">1 MIESIĄC</string>
+    <string name="decision_link_person_title">POWIĄŻ OSOBĘ Z DECYZJĄ</string>
+    <string name="decision_no_people_available">Brak dostępnych osób.</string>
+    <string name="common_close">ZAMKNIJ</string>
+
+    <string name="auth_app_locked">Aplikacja zablokowana</string>
+    <string name="auth_unlock">Odblokuj</string>
+    <string name="auth_biometric_title">Logowanie biometryczne</string>
+    <string name="voice_speak_now">Mów teraz...</string>
+    <string name="intent_shared_image">Udostępniony obraz</string>
+    <string name="intent_shared_images">Udostępnione obrazy</string>
 </resources>
+
+
+
+

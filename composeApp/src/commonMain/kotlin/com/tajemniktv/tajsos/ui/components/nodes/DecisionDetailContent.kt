@@ -60,6 +60,11 @@ import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.cd_add_option
 import tajsos.composeapp.generated.resources.cd_decision_decided
+import tajsos.composeapp.generated.resources.common_close
+import tajsos.composeapp.generated.resources.decision_1_month
+import tajsos.composeapp.generated.resources.decision_1_week
+import tajsos.composeapp.generated.resources.decision_action_link_person
+import tajsos.composeapp.generated.resources.decision_action_unlink
 import tajsos.composeapp.generated.resources.decision_add
 import tajsos.composeapp.generated.resources.decision_add_option_field
 import tajsos.composeapp.generated.resources.decision_add_option_title
@@ -67,19 +72,28 @@ import tajsos.composeapp.generated.resources.decision_cancel
 import tajsos.composeapp.generated.resources.decision_category_label
 import tajsos.composeapp.generated.resources.decision_convert_project
 import tajsos.composeapp.generated.resources.decision_convert_task
+import tajsos.composeapp.generated.resources.decision_current_revisit
 import tajsos.composeapp.generated.resources.decision_decide
 import tajsos.composeapp.generated.resources.decision_difficult_because_label
 import tajsos.composeapp.generated.resources.decision_easier_if_label
 import tajsos.composeapp.generated.resources.decision_finalize
 import tajsos.composeapp.generated.resources.decision_info_missing_label
+import tajsos.composeapp.generated.resources.decision_link_person_title
 import tajsos.composeapp.generated.resources.decision_no_options
 import tajsos.composeapp.generated.resources.decision_no_outcome
+import tajsos.composeapp.generated.resources.decision_no_people_available
+import tajsos.composeapp.generated.resources.decision_no_people_linked
 import tajsos.composeapp.generated.resources.decision_options_label
 import tajsos.composeapp.generated.resources.decision_outcome_label
 import tajsos.composeapp.generated.resources.decision_outcome_reason
+import tajsos.composeapp.generated.resources.decision_people_linked_count
+import tajsos.composeapp.generated.resources.decision_related_people_label
+import tajsos.composeapp.generated.resources.decision_revisit_date_label
 import tajsos.composeapp.generated.resources.decision_selected_option
 import tajsos.composeapp.generated.resources.decision_status_label
 import tajsos.composeapp.generated.resources.decision_tap_to_add
+import tajsos.composeapp.generated.resources.detail_none
+import tajsos.composeapp.generated.resources.identity_clear
 import kotlin.time.Clock
 
 /**
@@ -141,7 +155,7 @@ fun DecisionDetailContent(
             }
         }
 
-        SectionTitle("DECISION REVISIT DATE")
+        SectionTitle(stringResource(Res.string.decision_revisit_date_label))
         Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
             val now = Clock.System.now()
             val tz = TimeZone.currentSystemDefault()
@@ -152,10 +166,17 @@ fun DecisionDetailContent(
                         .toLocalDateTime(tz)
                         .date
                         .toString()
-                } ?: "NONE"
+                } ?: stringResource(Res.string.detail_none).uppercase()
             AssistChip(
                 onClick = {},
-                label = { Text("Current: $revisitDateLabel") },
+                label = {
+                    Text(
+                        stringResource(
+                            Res.string.decision_current_revisit,
+                            revisitDateLabel,
+                        ),
+                    )
+                },
             )
             FilterChip(
                 selected = false,
@@ -165,7 +186,7 @@ fun DecisionDetailContent(
                         now.plus(1, DateTimeUnit.WEEK, tz).toEpochMilliseconds(),
                     )
                 },
-                label = { Text("1 WEEK") },
+                label = { Text(stringResource(Res.string.decision_1_week)) },
             )
             FilterChip(
                 selected = false,
@@ -175,28 +196,35 @@ fun DecisionDetailContent(
                         now.plus(1, DateTimeUnit.MONTH, tz).toEpochMilliseconds(),
                     )
                 },
-                label = { Text("1 MONTH") },
+                label = { Text(stringResource(Res.string.decision_1_month)) },
             )
             FilterChip(
                 selected = node.decisionRevisitAt == null,
                 onClick = { viewModel.setDecisionRevisit(node, null) },
-                label = { Text("CLEAR") },
+                label = { Text(stringResource(Res.string.identity_clear)) },
             )
         }
 
-        SectionTitle("RELATED PEOPLE")
+        SectionTitle(stringResource(Res.string.decision_related_people_label))
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                if (relatedPeople.isEmpty()) "No related people linked." else "${relatedPeople.size} linked",
+                if (relatedPeople.isEmpty()) {
+                    stringResource(Res.string.decision_no_people_linked)
+                } else {
+                    stringResource(
+                        Res.string.decision_people_linked_count,
+                        relatedPeople.size.toString(),
+                    )
+                },
                 style = MaterialTheme.typography.bodySmall,
-                color = TajsOSTheme.Muted
+                color = TajsOSTheme.Muted,
             )
             TextButton(onClick = { showPeopleDialog = true }) {
-                Text("LINK PERSON")
+                Text(stringResource(Res.string.decision_action_link_person))
             }
         }
         if (relatedPeople.isNotEmpty()) {
@@ -215,7 +243,7 @@ fun DecisionDetailContent(
                         Text(
                             person.node.title,
                             style = MaterialTheme.typography.bodyMedium,
-                            color = TajsOSTheme.Text
+                            color = TajsOSTheme.Text,
                         )
                         TextButton(onClick = {
                             viewModel.unlinkDecisionFromPerson(
@@ -223,7 +251,7 @@ fun DecisionDetailContent(
                                 person.node.id,
                             )
                         }) {
-                            Text("UNLINK")
+                            Text(stringResource(Res.string.decision_action_unlink))
                         }
                     }
                 }
@@ -250,7 +278,7 @@ fun DecisionDetailContent(
 
         HorizontalDivider(
             color = TajsOSTheme.Border,
-            modifier = Modifier.padding(vertical = TajsOSTheme.SpacingSm)
+            modifier = Modifier.padding(vertical = TajsOSTheme.SpacingSm),
         )
 
         Row(
@@ -263,7 +291,7 @@ fun DecisionDetailContent(
                 Icon(
                     Icons.Default.Add,
                     contentDescription = stringResource(Res.string.cd_add_option),
-                    tint = TajsOSTheme.Primary
+                    tint = TajsOSTheme.Primary,
                 )
             }
         }
@@ -273,7 +301,7 @@ fun DecisionDetailContent(
                 stringResource(Res.string.decision_no_options),
                 style = MaterialTheme.typography.labelSmall,
                 color = TajsOSTheme.Muted,
-                modifier = Modifier.padding(vertical = TajsOSTheme.SpacingSm)
+                modifier = Modifier.padding(vertical = TajsOSTheme.SpacingSm),
             )
         } else {
             options.forEach { option ->
@@ -287,7 +315,7 @@ fun DecisionDetailContent(
 
         HorizontalDivider(
             color = TajsOSTheme.Border,
-            modifier = Modifier.padding(vertical = TajsOSTheme.SpacingSm)
+            modifier = Modifier.padding(vertical = TajsOSTheme.SpacingSm),
         )
 
         if (node.decisionStatus == "decided") {
@@ -295,19 +323,19 @@ fun DecisionDetailContent(
                 Icon(
                     Icons.Default.CheckCircle,
                     contentDescription = stringResource(Res.string.cd_decision_decided),
-                    tint = TajsOSTheme.Success
+                    tint = TajsOSTheme.Success,
                 )
                 Spacer(modifier = Modifier.width(TajsOSTheme.SpacingSm))
                 Column {
                     Text(
                         stringResource(Res.string.decision_outcome_label),
                         style = MaterialTheme.typography.labelSmall,
-                        color = TajsOSTheme.Success
+                        color = TajsOSTheme.Success,
                     )
                     Text(
                         node.decisionOutcome ?: stringResource(Res.string.decision_no_outcome),
                         style = MaterialTheme.typography.bodyLarge,
-                        color = TajsOSTheme.Text
+                        color = TajsOSTheme.Text,
                     )
                 }
             }
@@ -327,7 +355,7 @@ fun DecisionDetailContent(
                 onClick = { viewModel.convertDecisionToTask(node.id) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(2.dp),
-                border = BorderStroke(1.dp, TajsOSTheme.Border)
+                border = BorderStroke(1.dp, TajsOSTheme.Border),
             ) {
                 Text(stringResource(Res.string.decision_convert_task), color = TajsOSTheme.Text)
             }
@@ -374,7 +402,7 @@ fun DecisionDetailContent(
             },
             containerColor = TajsOSTheme.Background,
             titleContentColor = TajsOSTheme.Text,
-            textContentColor = TajsOSTheme.Text
+            textContentColor = TajsOSTheme.Text,
         )
     }
 
@@ -432,17 +460,17 @@ fun DecisionDetailContent(
             },
             containerColor = TajsOSTheme.Background,
             titleContentColor = TajsOSTheme.Text,
-            textContentColor = TajsOSTheme.Text
+            textContentColor = TajsOSTheme.Text,
         )
     }
 
     if (showPeopleDialog) {
         AlertDialog(
             onDismissRequest = { showPeopleDialog = false },
-            title = { Text("LINK PERSON TO DECISION") },
+            title = { Text(stringResource(Res.string.decision_link_person_title)) },
             text = {
                 if (peopleNodes.isEmpty()) {
-                    Text("No person nodes available.")
+                    Text(stringResource(Res.string.decision_no_people_available))
                 } else {
                     Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                         peopleNodes.forEach { person ->
@@ -461,13 +489,13 @@ fun DecisionDetailContent(
             },
             confirmButton = {
                 TextButton(onClick = { showPeopleDialog = false }) {
-                    Text("CLOSE")
+                    Text(stringResource(Res.string.common_close))
                 }
             },
             dismissButton = {},
             containerColor = TajsOSTheme.Background,
             titleContentColor = TajsOSTheme.Text,
-            textContentColor = TajsOSTheme.Text
+            textContentColor = TajsOSTheme.Text,
         )
     }
 }
@@ -517,7 +545,7 @@ fun DecisionField(
                         Text(
                             stringResource(Res.string.decision_tap_to_add),
                             style = MaterialTheme.typography.bodyMedium,
-                            color = TajsOSTheme.Muted
+                            color = TajsOSTheme.Muted,
                         )
                     }
                     innerTextField()

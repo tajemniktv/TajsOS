@@ -9,11 +9,19 @@ import kotlin.time.measureTime
 
 @Suppress("ReplacePrintlnWithLogging")
 class PerformanceTest {
-    data class Node(val id: Long, val title: String)
+    data class Node(
+        val id: Long,
+        val title: String,
+    )
 
-    data class NodeWithPin(val node: Node)
+    data class NodeWithPin(
+        val node: Node,
+    )
 
-    data class Relation(val fromNodeId: Long, val toNodeId: Long)
+    data class Relation(
+        val fromNodeId: Long,
+        val toNodeId: Long,
+    )
 
     @Test
     fun benchmarkNodesFind() {

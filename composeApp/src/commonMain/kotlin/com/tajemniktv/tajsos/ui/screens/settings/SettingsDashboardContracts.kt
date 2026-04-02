@@ -9,6 +9,7 @@ import com.tajemniktv.tajsos.data.AppPack
 import com.tajemniktv.tajsos.data.MedicationEntity
 import com.tajemniktv.tajsos.data.PackRegistry
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.SidebarMode
 
 /**
  * Defines the supported surfaces for settings dashboard layout planning.
@@ -45,6 +46,7 @@ data class SettingsDashboardContext(
     val accentColorHex: String,
     val isGlassmorphismEnabled: Boolean,
     val reduceMotion: Boolean,
+    val sidebarMode: SidebarMode,
     val importPayload: String,
     val onImportPayloadChange: (String) -> Unit,
     val onSaveMedication: (String, String, String?, Int?, Boolean) -> Unit,
@@ -59,6 +61,7 @@ data class SettingsDashboardContext(
     val onSetAccentColor: (String) -> Unit,
     val onSetGlassmorphismEnabled: (Boolean) -> Unit,
     val onSetReduceMotion: (Boolean) -> Unit,
+    val onSetSidebarMode: (SidebarMode) -> Unit,
     val onForceCrash: () -> Unit,
 )
 

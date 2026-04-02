@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -88,13 +87,13 @@ internal fun ProjectsMainBlock(
     Column(
         modifier =
             Modifier
-                .fillMaxSize()
-                .padding(TajsOSTheme.SpacingMd)
+                .fillMaxWidth()
+                .padding(TajsOSTheme.SpacingMd),
     ) {
         Text(
             text = stringResource(Res.string.projects_title),
             style = MaterialTheme.typography.displaySmall,
-            color = TajsOSTheme.Text
+            color = TajsOSTheme.Text,
         )
         Spacer(modifier = Modifier.height(TajsOSTheme.SpacingMd))
 

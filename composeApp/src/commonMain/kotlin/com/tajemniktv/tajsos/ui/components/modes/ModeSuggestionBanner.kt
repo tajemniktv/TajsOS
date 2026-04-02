@@ -52,8 +52,8 @@ fun ModeSuggestionBanner(
         border =
             androidx.compose.foundation.BorderStroke(
                 1.dp,
-                TajsOSTheme.Primary.copy(alpha = 0.3f)
-            )
+                TajsOSTheme.Primary.copy(alpha = 0.3f),
+            ),
     ) {
         Row(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -78,7 +78,7 @@ fun ModeSuggestionBanner(
                     Text(
                         "Switch to $suggestion mode based on current activity?",
                         style = MaterialTheme.typography.bodySmall,
-                        color = TajsOSTheme.Text
+                        color = TajsOSTheme.Text,
                     )
                 }
             }
@@ -87,7 +87,7 @@ fun ModeSuggestionBanner(
                     Text(
                         "IGNORE",
                         style = MaterialTheme.typography.labelSmall,
-                        color = TajsOSTheme.Muted
+                        color = TajsOSTheme.Muted,
                     )
                 }
                 Button(

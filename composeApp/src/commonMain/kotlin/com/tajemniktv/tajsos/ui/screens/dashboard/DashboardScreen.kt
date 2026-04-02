@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -70,6 +71,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.dash_placeholder_capture_shortcut
 import tajsos.composeapp.generated.resources.screen_focus
 import tajsos.composeapp.generated.resources.screen_inbox
 import tajsos.composeapp.generated.resources.screen_project
@@ -134,8 +136,9 @@ private fun DashboardUnifiedContent(
     val allModes by viewModel.allModes.collectAsState()
     val enabledPacks by viewModel.enabledPacks.collectAsState()
 
-    val pinnedNodes = allNodes.filter { it.pin != null }
-    val completedTodayCount = pinnedNodes.count { it.node.status == "done" }
+    val pinnedNodes = remember(allNodes) { allNodes.filter { it.pin != null } }
+    val completedTodayCount =
+        remember(pinnedNodes) { pinnedNodes.count { it.node.status == "done" } }
     val totalTodayCount = pinnedNodes.size
     val dailyProgress =
         if (totalTodayCount > 0) completedTodayCount.toFloat() / totalTodayCount else 0f
@@ -218,22 +221,27 @@ private fun DashboardUnifiedContent(
         }
 
     if (surface == DashboardSurface.MOBILE) {
-        Column(
+        LazyColumn(
             modifier =
                 Modifier
                     .fillMaxSize()
                     .background(TajsOSTheme.Background)
-                    .verticalScroll(rememberScrollState())
                     .padding(TajsOSTheme.SpacingMd),
-            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingLg)
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingLg),
         ) {
             layoutPlan.primary.forEach { block ->
-                RenderDashboardBlock(block = block, context = context)
+                item(key = block.id) {
+                    RenderDashboardBlock(block = block, context = context)
+                }
             }
             layoutPlan.footer.forEach { block ->
-                RenderDashboardBlock(block = block, context = context)
+                item(key = block.id + "_footer") {
+                    RenderDashboardBlock(block = block, context = context)
+                }
             }
-            Spacer(Modifier.height(80.dp))
+            item {
+                Spacer(Modifier.height(80.dp))
+            }
         }
         return
     }
@@ -244,7 +252,7 @@ private fun DashboardUnifiedContent(
                 .fillMaxSize()
                 .background(TajsOSTheme.Background)
                 .padding(TajsOSTheme.SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingLg)
+        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingLg),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth().weight(1f),
@@ -335,9 +343,15 @@ private fun RenderDashboardBlock(
                 value = "",
                 onValueChange = {},
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("CMD + K to capture anything...") },
+                placeholder = {
+                    Text(
+                        stringResource(Res.string.dash_placeholder_capture_shortcut),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = TajsOSTheme.Muted,
+                    )
+                },
                 leadingIcon = { Icon(Icons.Default.Terminal, contentDescription = null) },
-                shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
+                shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
             )
         }
 
@@ -378,13 +392,13 @@ private fun RenderDashboardBlock(
                 modifier = Modifier.fillMaxWidth(),
                 color = TajsOSTheme.Surface,
                 shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                border = BorderStroke(1.dp, TajsOSTheme.Border)
+                border = BorderStroke(1.dp, TajsOSTheme.Border),
             ) {
                 Column(Modifier.padding(20.dp)) {
                     Text(
                         "SYSTEM CLOCK",
                         style = MaterialTheme.typography.labelSmall,
-                        color = TajsOSTheme.Muted
+                        color = TajsOSTheme.Muted,
                     )
                     Text(
                         context.localNow.time
@@ -414,7 +428,7 @@ private fun RenderDashboardBlock(
                 modifier = Modifier.fillMaxWidth(),
                 color = TajsOSTheme.Surface.copy(alpha = 0.5f),
                 shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                border = BorderStroke(1.dp, TajsOSTheme.Border)
+                border = BorderStroke(1.dp, TajsOSTheme.Border),
             ) {
                 Row(
                     modifier = Modifier.padding(12.dp).fillMaxWidth(),
@@ -499,7 +513,7 @@ fun DashboardModules(
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
-            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
         ) {
             val itemModifier = Modifier.weight(1f).widthIn(min = 160.dp)
 
@@ -517,7 +531,7 @@ fun DashboardModules(
                 icon = Icons.Default.Inbox,
                 status = "$inboxCount",
                 onClick = { onNavigateTo(Screen.Inbox) },
-                color = TajsOSTheme.Accent
+                color = TajsOSTheme.Accent,
             )
 
             ModuleCard(
@@ -526,7 +540,7 @@ fun DashboardModules(
                 icon = Icons.Default.AccountTree,
                 status = "${allProjects.size}",
                 onClick = { onNavigateTo(Screen.Projects) },
-                color = TajsOSTheme.Success
+                color = TajsOSTheme.Success,
             )
 
             ModuleCard(
@@ -535,7 +549,7 @@ fun DashboardModules(
                 icon = Icons.Default.Timer,
                 status = if (activeSession != null) "ACTIVE" else "READY",
                 onClick = { onNavigateTo(Screen.Focus) },
-                color = if (activeSession != null) TajsOSTheme.Primary else TajsOSTheme.Muted
+                color = if (activeSession != null) TajsOSTheme.Primary else TajsOSTheme.Muted,
             )
         }
     }
@@ -578,7 +592,7 @@ private fun DashboardOperationsOverview(
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
-            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
         ) {
             dashboardSystemsModules().forEach { module ->
                 Column(
@@ -588,11 +602,11 @@ private fun DashboardOperationsOverview(
                             .widthIn(min = 180.dp)
                             .background(
                                 TajsOSTheme.Surface,
-                                RoundedCornerShape(TajsOSTheme.RadiusMd)
+                                RoundedCornerShape(TajsOSTheme.RadiusMd),
                             ).border(
                                 1.dp,
                                 TajsOSTheme.Border,
-                                RoundedCornerShape(TajsOSTheme.RadiusMd)
+                                RoundedCornerShape(TajsOSTheme.RadiusMd),
                             ).clickable { onNavigateTo(module.screen) }
                             .padding(TajsOSTheme.SpacingMd),
                     verticalArrangement = Arrangement.spacedBy(6.dp),
@@ -606,7 +620,7 @@ private fun DashboardOperationsOverview(
                     Text(
                         text = stringResource(module.summary),
                         style = MaterialTheme.typography.bodySmall,
-                        color = TajsOSTheme.Muted
+                        color = TajsOSTheme.Muted,
                     )
                 }
             }

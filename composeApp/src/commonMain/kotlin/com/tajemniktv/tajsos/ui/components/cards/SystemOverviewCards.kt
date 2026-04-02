@@ -55,8 +55,8 @@ fun SystemStatusCard(
         border =
             BorderStroke(
                 1.dp,
-                if (warning != null) TajsOSTheme.Error.copy(alpha = 0.3f) else TajsOSTheme.Border
-            )
+                if (warning != null) TajsOSTheme.Error.copy(alpha = 0.3f) else TajsOSTheme.Border,
+            ),
     ) {
         Column(modifier = Modifier.padding(TajsOSTheme.SpacingLg)) {
             Row(
@@ -138,7 +138,7 @@ private fun getLoadColor(
     val v = if (inverse) 100 - value else value
     return when
         {
-        v > 80 -> TajsOSTheme.Error
+            v > 80 -> TajsOSTheme.Error
             v > 50 -> TajsOSTheme.Accent
             else -> TajsOSTheme.Success
         }
@@ -198,7 +198,7 @@ fun AreaHealthCard(
                 Text(
                     "O ${metrics?.openLoops ?: 0} • D ${metrics?.deadlines ?: 0}",
                     style = MaterialTheme.typography.labelSmall,
-                    color = TajsOSTheme.Muted
+                    color = TajsOSTheme.Muted,
                 )
             }
             Spacer(Modifier.height(4.dp))
@@ -213,7 +213,7 @@ fun AreaHealthCard(
                 Text(
                     "DISAPPEARING FROM RADAR",
                     style = MaterialTheme.typography.labelSmall,
-                    color = TajsOSTheme.Error
+                    color = TajsOSTheme.Error,
                 )
             }
         }

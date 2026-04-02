@@ -1,0 +1,86 @@
+name: Weekly Sweep Issue
+
+on:
+  schedule:
+    - cron: "0 8 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: weekly-sweep
+  cancel-in-progress: false
+
+jobs:
+  refresh-weekly-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Refresh rolling weekly maintenance issue
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const labelName = "weekly-sweep";
+            const issueTitle = "TajsOS weekly sweep";
+
+            const body = [
+              "## Weekly maintenance sweep",
+              "",
+              `Refreshed: ${new Date().toISOString()}`,
+              "",
+              "Use this issue to track:",
+              "- flaky CI findings",
+              "- docs debt",
+              "- cleanup and refactor opportunities",
+              "- dependency/security follow-ups",
+              "",
+              "### Checklist",
+              "- [ ] CI health reviewed",
+              "- [ ] stale automations/noisy workflows reviewed",
+              "- [ ] docs and templates sanity-checked",
+              "- [ ] next week's maintenance priorities listed"
+            ].join("\n");
+
+            const labels = await github.paginate(github.rest.issues.listLabelsForRepo, { owner, repo, per_page: 100 });
+            if (!labels.find((l) => l.name === labelName)) {
+              await github.rest.issues.createLabel({
+                owner,
+                repo,
+                name: labelName,
+                color: "C5DEF5",
+                description: "Rolling weekly maintenance planning issue"
+              });
+            }
+
+            const issues = await github.paginate(github.rest.issues.listForRepo, {
+              owner,
+              repo,
+              state: "all",
+              labels: labelName,
+              per_page: 100
+            });
+
+            const weekly = issues.find((i) => i.title.toLowerCase() === issueTitle.toLowerCase()) || issues[0];
+            if (!weekly) {
+              await github.rest.issues.create({
+                owner,
+                repo,
+                title: issueTitle,
+                body,
+                labels: [labelName, "ci", "needs-review"]
+              });
+              return;
+            }
+
+            await github.rest.issues.update({
+              owner,
+              repo,
+              issue_number: weekly.number,
+              title: issueTitle,
+              body,
+              state: "open"
+            });

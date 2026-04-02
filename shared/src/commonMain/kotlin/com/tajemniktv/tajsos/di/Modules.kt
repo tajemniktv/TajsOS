@@ -60,9 +60,14 @@ class SharedModule(
             database.medicationDao(),
             database.inboxEntryDao(),
             database.taskFacetDao(),
+            database.noteFacetDao(),
             database.projectFacetDao(),
+            database.areaFacetDao(),
             database.recordFacetDao(),
+            database.itemDomainDao(),
+            database.richContentDocumentDao(),
             database.scheduleEntryDao(),
+            database.savedViewDao(),
         )
     }
 

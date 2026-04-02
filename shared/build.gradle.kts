@@ -15,8 +15,14 @@ kotlin {
     // Android target configured via androidLibrary block (replaces androidTarget + android{})
     android {
         namespace = "com.tajemniktv.tajsos.shared"
-        compileSdk = libs.versions.android.compileSdk.get().toInt()
-        minSdk = libs.versions.android.minSdk.get().toInt()
+        compileSdk =
+            libs.versions.android.compileSdk
+                .get()
+                .toInt()
+        minSdk =
+            libs.versions.android.minSdk
+                .get()
+                .toInt()
     }
 
     iosArm64()

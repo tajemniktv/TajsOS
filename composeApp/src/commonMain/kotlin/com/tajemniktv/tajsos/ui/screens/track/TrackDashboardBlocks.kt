@@ -58,7 +58,7 @@ import tajsos.composeapp.generated.resources.track_subtitle
 import tajsos.composeapp.generated.resources.track_sync_in_progress
 import tajsos.composeapp.generated.resources.track_title
 
-object TrackDashboardBlockRegistry {
+object TrackDashboardBlocks {
     private val renderers: Map<String, TrackDashboardBlockRenderer> =
         mapOf(
             "track_header" to ::renderTrackHeader,
@@ -87,7 +87,7 @@ private fun renderTrackHeader(context: TrackDashboardContext) {
             Text(
                 "TAJS OS",
                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                color = TajsOSTheme.Text
+                color = TajsOSTheme.Text,
             )
             Spacer(Modifier.weight(1f))
             Icon(Icons.Default.AccountCircle, contentDescription = null, tint = TajsOSTheme.Muted)
@@ -100,7 +100,7 @@ private fun renderTrackHeader(context: TrackDashboardContext) {
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 2.sp,
                 ),
-            color = TajsOSTheme.Text
+            color = TajsOSTheme.Text,
         )
         Text(
             stringResource(Res.string.track_subtitle),
@@ -209,12 +209,12 @@ private fun renderTrackBio(context: TrackDashboardContext) {
                             fontWeight = FontWeight.Bold,
                             letterSpacing = 1.sp,
                         ),
-                    color = TajsOSTheme.Text
+                    color = TajsOSTheme.Text,
                 )
                 Text(
                     stringResource(Res.string.track_sync_in_progress),
                     style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
-                    color = TajsOSTheme.Muted
+                    color = TajsOSTheme.Muted,
                 )
             }
             Spacer(Modifier.weight(1f))
@@ -242,7 +242,7 @@ private fun renderTrackSaveButton(context: TrackDashboardContext) {
         onClick = context.onSave,
         modifier = Modifier.fillMaxWidth().height(56.dp),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        colors = ButtonDefaults.buttonColors(containerColor = TajsOSTheme.Primary)
+        colors = ButtonDefaults.buttonColors(containerColor = TajsOSTheme.Primary),
     ) {
         Text(
             stringResource(Res.string.track_save),
@@ -262,7 +262,7 @@ private fun renderTrackHistoryHeader(context: TrackDashboardContext) {
         Text(
             stringResource(Res.string.track_history),
             style = MaterialTheme.typography.labelSmall,
-            color = TajsOSTheme.Primary
+            color = TajsOSTheme.Primary,
         )
     }
 }
@@ -289,8 +289,8 @@ private fun TrackHistoryItem(entry: TrackEntryEntity) {
         border =
             androidx.compose.foundation.BorderStroke(
                 1.dp,
-                TajsOSTheme.Muted.copy(alpha = 0.2f)
-            )
+                TajsOSTheme.Muted.copy(alpha = 0.2f),
+            ),
     ) {
         Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
             Row(
@@ -300,13 +300,13 @@ private fun TrackHistoryItem(entry: TrackEntryEntity) {
                 Text(
                     entry.date,
                     style = MaterialTheme.typography.labelSmall,
-                    color = TajsOSTheme.Primary
+                    color = TajsOSTheme.Primary,
                 )
                 if (entry.tookMeds) {
                     Text(
                         stringResource(Res.string.track_history_meds_ok),
                         style = MaterialTheme.typography.labelSmall,
-                        color = TajsOSTheme.Success
+                        color = TajsOSTheme.Success,
                     )
                 }
             }
@@ -321,7 +321,7 @@ private fun TrackHistoryItem(entry: TrackEntryEntity) {
                     Text(
                         stringResource(Res.string.track_history_sleep, sleep),
                         style = MaterialTheme.typography.labelSmall,
-                        color = TajsOSTheme.Text
+                        color = TajsOSTheme.Text,
                     )
                 }
             }
@@ -330,7 +330,7 @@ private fun TrackHistoryItem(entry: TrackEntryEntity) {
                 Text(
                     entry.symptomNote,
                     style = MaterialTheme.typography.bodySmall,
-                    color = TajsOSTheme.Muted
+                    color = TajsOSTheme.Muted,
                 )
             }
         }
@@ -346,6 +346,6 @@ private fun StatusChip(
     Text(
         text = "$label: $value",
         style = MaterialTheme.typography.labelSmall,
-        color = TajsOSTheme.Text
+        color = TajsOSTheme.Text,
     )
 }

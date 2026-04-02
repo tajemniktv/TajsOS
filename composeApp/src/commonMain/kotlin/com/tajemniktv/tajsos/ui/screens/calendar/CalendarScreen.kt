@@ -19,13 +19,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.ChevronRight
@@ -105,9 +102,15 @@ fun CalendarScreen(
                     onEditNode,
                 )
             }
-        Column(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(bottom = 80.dp),
+        ) {
             plan.primary.forEach { block ->
-                CalendarDashboardBlockRegistry
+                CalendarDashboardBlocks
                     .resolve(
                         block.id,
                     )?.invoke(context)
@@ -142,7 +145,7 @@ fun CalendarHeader(
             Text(
                 "${currentMonth.month.name} ${currentMonth.year}",
                 style = MaterialTheme.typography.headlineMedium,
-                color = TajsOSTheme.CalendarHeaderText
+                color = TajsOSTheme.CalendarHeaderText,
             )
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -150,7 +153,7 @@ fun CalendarHeader(
                 Text(
                     stringResource(Res.string.cal_today),
                     style = MaterialTheme.typography.labelSmall,
-                    color = TajsOSTheme.Primary
+                    color = TajsOSTheme.Primary,
                 )
             }
             IconButton(onClick = onSyncClick) {
@@ -209,93 +212,99 @@ fun MonthView(
             }
         }
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(7),
+    Column(
         modifier = Modifier.fillMaxWidth(),
     ) {
         val weekDays = listOf("M", "T", "W", "T", "F", "S", "S")
-        items(weekDays) { day ->
-            Text(
-                day,
-                modifier = Modifier.padding(vertical = 8.dp),
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.labelSmall,
-                color = TajsOSTheme.Muted
-            )
+        Row(modifier = Modifier.fillMaxWidth()) {
+            weekDays.forEach { day ->
+                Text(
+                    day,
+                    modifier = Modifier.weight(1f).padding(vertical = 8.dp),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TajsOSTheme.Muted,
+                )
+            }
         }
 
-        items(days) { date ->
-            if (date != null) {
-                val isSelected = date == selectedDate
-                val isToday =
-                    date ==
-                        Clock.System
-                            .now()
-                            .toLocalDateTime(TimeZone.currentSystemDefault())
-                            .date
-                val dayEntries =
-                    entries.filter {
-                        Instant
-                            .fromEpochMilliseconds(it.startAt)
-                            .toLocalDateTime(TimeZone.currentSystemDefault())
-                            .date == date
-                    }
+        days.chunked(7).forEach { week ->
+            Row(modifier = Modifier.fillMaxWidth()) {
+                week.forEach { date ->
+                    if (date != null) {
+                        val isSelected = date == selectedDate
+                        val isToday =
+                            date ==
+                                Clock.System
+                                    .now()
+                                    .toLocalDateTime(TimeZone.currentSystemDefault())
+                                    .date
+                        val dayEntries =
+                            entries.filter {
+                                Instant
+                                    .fromEpochMilliseconds(it.startAt)
+                                    .toLocalDateTime(TimeZone.currentSystemDefault())
+                                    .date == date
+                            }
 
-                Box(
-                    modifier =
-                        Modifier
-                            .aspectRatio(1f)
-                            .padding(3.dp)
-                            .clip(RoundedCornerShape(10.dp))
-                            .background(
-                                if (isSelected) {
-                                    TajsOSTheme.CalendarSelectedDay
-                                } else if (isToday) {
-                                    TajsOSTheme.CalendarTodayDay
-                                } else {
-                                    TajsOSTheme.CalendarIdleDay
-                                }
-                            ).clickable { onDateSelected(date) },
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            date.day.toString(),
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = if (isSelected || isToday) FontWeight.Bold else FontWeight.Normal,
-                            color =
-                                if (isSelected) {
-                                    TajsOSTheme.CalendarSelectedText
-                                } else if (isToday) {
-                                    TajsOSTheme.Accent
-                                } else {
-                                    TajsOSTheme.Text
-                                }
-                        )
-                        if (dayEntries.isNotEmpty()) {
-                            Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-                                repeat(dayEntries.size.coerceAtMost(3)) {
-                                    Box(
-                                        Modifier
-                                            .size(4.dp)
-                                            .clip(CircleShape)
-                                            .background(TajsOSTheme.Accent)
-                                    )
-                                }
-                                if (dayEntries.size > 3) {
-                                    Box(
-                                        Modifier
-                                            .size(2.dp)
-                                            .clip(CircleShape)
-                                            .background(TajsOSTheme.Accent)
-                                    )
+                        Box(
+                            modifier =
+                                Modifier
+                                    .weight(1f)
+                                    .aspectRatio(1f)
+                                    .padding(3.dp)
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .background(
+                                        if (isSelected) {
+                                            TajsOSTheme.CalendarSelectedDay
+                                        } else if (isToday) {
+                                            TajsOSTheme.CalendarTodayDay
+                                        } else {
+                                            TajsOSTheme.CalendarIdleDay
+                                        },
+                                    ).clickable { onDateSelected(date) },
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(
+                                    date.day.toString(),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = if (isSelected || isToday) FontWeight.Bold else FontWeight.Normal,
+                                    color =
+                                        if (isSelected) {
+                                            TajsOSTheme.CalendarSelectedText
+                                        } else if (isToday) {
+                                            TajsOSTheme.Accent
+                                        } else {
+                                            TajsOSTheme.Text
+                                        },
+                                )
+                                if (dayEntries.isNotEmpty()) {
+                                    Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+                                        repeat(dayEntries.size.coerceAtMost(3)) {
+                                            Box(
+                                                Modifier
+                                                    .size(4.dp)
+                                                    .clip(CircleShape)
+                                                    .background(TajsOSTheme.Accent),
+                                            )
+                                        }
+                                        if (dayEntries.size > 3) {
+                                            Box(
+                                                Modifier
+                                                    .size(2.dp)
+                                                    .clip(CircleShape)
+                                                    .background(TajsOSTheme.Accent),
+                                            )
+                                        }
+                                    }
                                 }
                             }
                         }
+                    } else {
+                        Box(Modifier.weight(1f).aspectRatio(1f))
                     }
                 }
-            } else {
-                Box(Modifier.aspectRatio(1f))
             }
         }
     }
@@ -327,7 +336,10 @@ fun AgendaView(
         }
 
     if (dayEntries.isEmpty()) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Box(
+            modifier = Modifier.fillMaxWidth().height(200.dp),
+            contentAlignment = Alignment.Center,
+        ) {
             Text(
                 stringResource(Res.string.cal_no_events),
                 color = TajsOSTheme.Muted,
@@ -335,8 +347,8 @@ fun AgendaView(
             )
         }
     } else {
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
-            items(dayEntries) { entry ->
+        Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
+            dayEntries.forEach { entry ->
                 AgendaRow(entry, onClick = { onEntryClick(entry) })
             }
         }
@@ -375,7 +387,7 @@ fun AgendaRow(
         border =
             androidx.compose.foundation.BorderStroke(
                 1.dp,
-                TajsOSTheme.GhostBorder.copy(alpha = 0.15f)
+                TajsOSTheme.GhostBorder.copy(alpha = 0.15f),
             ),
         modifier = Modifier.fillMaxWidth(),
     ) {
@@ -391,14 +403,14 @@ fun AgendaRow(
             )
             VerticalDivider(
                 modifier = Modifier.height(24.dp).padding(horizontal = 8.dp),
-                color = TajsOSTheme.Muted
+                color = TajsOSTheme.Muted,
             )
             Column {
                 Text(
                     entry.title,
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
-                    color = TajsOSTheme.Text
+                    color = TajsOSTheme.Text,
                 )
                 val description = entry.description
                 if (!description.isNullOrBlank()) {
@@ -416,7 +428,7 @@ fun AgendaRow(
                     Modifier
                         .size(8.dp)
                         .clip(CircleShape)
-                        .background(TajsOSTheme.Primary)
+                        .background(TajsOSTheme.Primary),
                 )
             }
         }

@@ -44,6 +44,8 @@ import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.common_cancel
+import tajsos.composeapp.generated.resources.tasks_action_sweep
 import tajsos.composeapp.generated.resources.tasks_command_subtitle
 import tajsos.composeapp.generated.resources.tasks_command_title
 import tajsos.composeapp.generated.resources.tasks_context_active
@@ -51,11 +53,11 @@ import tajsos.composeapp.generated.resources.tasks_context_blocked
 import tajsos.composeapp.generated.resources.tasks_context_due_soon
 import tajsos.composeapp.generated.resources.tasks_context_title
 import tajsos.composeapp.generated.resources.tasks_current_priority
-import tajsos.composeapp.generated.resources.tasks_do_now_action
 import tajsos.composeapp.generated.resources.tasks_done_action
 import tajsos.composeapp.generated.resources.tasks_empty
+import tajsos.composeapp.generated.resources.tasks_msg_stale_overdue
 import tajsos.composeapp.generated.resources.tasks_open_action
-import tajsos.composeapp.generated.resources.tasks_pin_today_action
+import tajsos.composeapp.generated.resources.tasks_prompt_clear_overdue
 import tajsos.composeapp.generated.resources.tasks_queue_title
 import tajsos.composeapp.generated.resources.tasks_quick_add_action
 import tajsos.composeapp.generated.resources.tasks_quick_add_hint
@@ -77,7 +79,7 @@ internal fun TasksCommandView(
     onOpen: (Long) -> Unit,
     onStartFocus: (NodeEntity) -> Unit,
     onDone: (NodeEntity) -> Unit,
-    onPinToday: (NodeEntity) -> Unit,
+    onSetTodayPayload: (NodeEntity, Boolean) -> Unit,
     onQuickAdd: (String) -> Unit,
     onQuickCapture: (String) -> Unit,
 ) {
@@ -102,11 +104,11 @@ internal fun TasksCommandView(
         if (desktop) {
             Row(
                 modifier = Modifier.fillMaxSize(),
-                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
             ) {
                 Column(
                     modifier = Modifier.weight(2f),
-                    verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+                    verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
                 ) {
                     Text(
                         stringResource(Res.string.tasks_command_title),
@@ -116,7 +118,7 @@ internal fun TasksCommandView(
                     Text(
                         stringResource(Res.string.tasks_command_subtitle),
                         style = MaterialTheme.typography.bodySmall,
-                        color = TajsOSTheme.Muted
+                        color = TajsOSTheme.Muted,
                     )
                     if (current == null) {
                         EmptyState(message = stringResource(Res.string.tasks_empty))
@@ -125,56 +127,62 @@ internal fun TasksCommandView(
                             current,
                             projectById,
                             areaById,
+                            todayTaskIds,
                             onOpen,
                             onStartFocus,
                             onDone,
-                            onPinToday,
+                            onSetTodayPayload,
                         )
                         Text(
                             stringResource(Res.string.tasks_queue_title),
                             style = MaterialTheme.typography.titleMedium,
-                            color = TajsOSTheme.Text
+                            color = TajsOSTheme.Text,
                         )
                         QueueList(queue, projectById, areaById, onOpen, onStartFocus, onDone)
                     }
                 }
-                CommandSidebar(
+                Column(
                     modifier = Modifier.weight(1f),
-                    quickAdd = quickAdd,
-                    capture = capture,
-                    activeCount = tasks.count { it.taskStateOrNull() == TaskState.ACTIVE },
-                    blockedCount = tasks.count { it.taskStateOrNull() == TaskState.BLOCKED },
-                    dueSoonCount =
-                        tasks.count {
-                            it.dueAt != null && (
-                                it.dueAt
-                                    ?: Long.MAX_VALUE
-                            ) <= now + 24L * 60 * 60 * 1000
+                    verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
+                ) {
+                    CommandSidebar(
+                        quickAdd = quickAdd,
+                        capture = capture,
+                        activeCount = tasks.count { it.taskStateOrNull() == TaskState.ACTIVE },
+                        blockedCount = tasks.count { it.taskStateOrNull() == TaskState.BLOCKED },
+                        dueSoonCount =
+                            tasks.count {
+                                it.dueAt != null &&
+                                    (
+                                        it.dueAt
+                                            ?: Long.MAX_VALUE
+                                    ) <= now + 24L * 60 * 60 * 1000
+                            },
+                        staleTasksCount = staleTasksCount,
+                        onSweepStaleTasks = onSweepStaleTasks,
+                        onQuickAddChanged = { quickAdd = it },
+                        onCaptureChanged = { capture = it },
+                        onQuickAdd = {
+                            val value = quickAdd.trim()
+                            if (value.isNotBlank()) {
+                                onQuickAdd(value)
+                                quickAdd = ""
+                            }
                         },
-                    staleTasksCount = staleTasksCount,
-                    onSweepStaleTasks = onSweepStaleTasks,
-                    onQuickAddChanged = { quickAdd = it },
-                    onCaptureChanged = { capture = it },
-                    onQuickAdd = {
-                        val value = quickAdd.trim()
-                        if (value.isNotBlank()) {
-                            onQuickAdd(value)
-                            quickAdd = ""
-                        }
-                    },
-                    onCapture = {
-                        val value = capture.trim()
-                        if (value.isNotBlank()) {
-                            onQuickCapture(value)
-                            capture = ""
-                        }
-                    },
-                )
+                        onCapture = {
+                            val value = capture.trim()
+                            if (value.isNotBlank()) {
+                                onQuickCapture(value)
+                                capture = ""
+                            }
+                        },
+                    )
+                }
             }
         } else {
             Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
             ) {
                 Text(
                     stringResource(Res.string.tasks_command_title),
@@ -188,10 +196,11 @@ internal fun TasksCommandView(
                         current,
                         projectById,
                         areaById,
+                        todayTaskIds,
                         onOpen,
                         onStartFocus,
                         onDone,
-                        onPinToday,
+                        onSetTodayPayload,
                     )
                     QueueList(queue, projectById, areaById, onOpen, onStartFocus, onDone)
                 }
@@ -203,10 +212,11 @@ internal fun TasksCommandView(
                     blockedCount = tasks.count { it.taskStateOrNull() == TaskState.BLOCKED },
                     dueSoonCount =
                         tasks.count {
-                            it.dueAt != null && (
-                                it.dueAt
-                                    ?: Long.MAX_VALUE
-                            ) <= now + 24L * 60 * 60 * 1000
+                            it.dueAt != null &&
+                                (
+                                    it.dueAt
+                                        ?: Long.MAX_VALUE
+                                ) <= now + 24L * 60 * 60 * 1000
                         },
                     staleTasksCount = staleTasksCount,
                     onSweepStaleTasks = onSweepStaleTasks,
@@ -237,30 +247,31 @@ private fun PriorityTaskCard(
     task: NodeEntity,
     projectById: Map<Long, String>,
     areaById: Map<Long, String>,
+    todayTaskIds: Set<Long>,
     onOpen: (Long) -> Unit,
     onStartFocus: (NodeEntity) -> Unit,
     onDone: (NodeEntity) -> Unit,
-    onPinToday: (NodeEntity) -> Unit,
+    onSetTodayPayload: (NodeEntity, Boolean) -> Unit,
 ) {
     Surface(
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         color = TajsOSTheme.Surface,
-        border = BorderStroke(1.dp, TajsOSTheme.Border)
+        border = BorderStroke(1.dp, TajsOSTheme.Border),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
-            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
         ) {
             Text(
                 stringResource(Res.string.tasks_current_priority),
                 style = MaterialTheme.typography.labelMedium,
-                color = TajsOSTheme.Primary
+                color = TajsOSTheme.Primary,
             )
             Text(
                 task.title,
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
-                color = TajsOSTheme.Text
+                color = TajsOSTheme.Text,
             )
             if (task.content.isNotBlank()) {
                 Text(
@@ -293,9 +304,17 @@ private fun PriorityTaskCard(
                     modifier = Modifier.weight(1f),
                 ) { Text(stringResource(Res.string.tasks_open_action)) }
                 OutlinedButton(
-                    onClick = { onPinToday(task) },
+                    onClick = { onSetTodayPayload(task, task.id !in todayTaskIds) },
                     modifier = Modifier.weight(1f),
-                ) { Text(stringResource(Res.string.tasks_pin_today_action)) }
+                ) {
+                    Text(
+                        if (task.id in todayTaskIds) {
+                            "Remove Today payload"
+                        } else {
+                            "Add to Today payload"
+                        },
+                    )
+                }
                 OutlinedButton(onClick = { onDone(task) }, modifier = Modifier.weight(1f)) {
                     Icon(Icons.Default.Check, null)
                     Spacer(Modifier.width(4.dp))
@@ -318,7 +337,7 @@ private fun QueueList(
     Surface(
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         color = TajsOSTheme.Surface,
-        border = BorderStroke(1.dp, TajsOSTheme.Border)
+        border = BorderStroke(1.dp, TajsOSTheme.Border),
     ) {
         Column {
             tasks.forEach { task ->
@@ -331,7 +350,7 @@ private fun QueueList(
                         Text(
                             task.title,
                             style = MaterialTheme.typography.bodyLarge,
-                            color = TajsOSTheme.Text
+                            color = TajsOSTheme.Text,
                         )
                         val context =
                             listOfNotNull(
@@ -343,12 +362,12 @@ private fun QueueList(
                             Text(
                                 context,
                                 style = MaterialTheme.typography.bodySmall,
-                                color = TajsOSTheme.Muted
+                                color = TajsOSTheme.Muted,
                             )
                         }
                     }
                     Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
-                        OutlinedButton(onClick = { onDoNow(task) }) { Text(stringResource(Res.string.tasks_do_now_action)) }
+                        OutlinedButton(onClick = { onDoNow(task) }) { Text(stringResource(Res.string.tasks_start_focus_action)) }
                         OutlinedButton(onClick = { onOpen(task.id) }) { Text(stringResource(Res.string.tasks_open_action)) }
                         IconButton(onClick = { onDone(task) }) { Icon(Icons.Default.Check, null) }
                     }
@@ -380,11 +399,11 @@ private fun CommandSidebar(
         modifier = modifier,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         color = TajsOSTheme.Surface,
-        border = BorderStroke(1.dp, TajsOSTheme.Border)
+        border = BorderStroke(1.dp, TajsOSTheme.Border),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
-            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
         ) {
             Text(
                 stringResource(Res.string.tasks_quick_add_title),
@@ -436,7 +455,7 @@ private fun CommandSidebar(
                 OutlinedButton(
                     onClick = { showSweepDialog = true },
                     modifier = Modifier.fillMaxWidth(),
-                    border = BorderStroke(1.dp, TajsOSTheme.Primary.copy(alpha = 0.5f))
+                    border = BorderStroke(1.dp, TajsOSTheme.Primary.copy(alpha = 0.5f)),
                 ) {
                     Text("Sweep $staleTasksCount Stale Tasks", color = TajsOSTheme.Primary)
                 }
@@ -448,26 +467,26 @@ private fun CommandSidebar(
         androidx.compose.material3.AlertDialog(
             onDismissRequest = { showSweepDialog = false },
             title = {
-                Text("Clear overdue backlog?")
+                Text(stringResource(Res.string.tasks_prompt_clear_overdue))
             },
             text = {
-                Text("You have $staleTasksCount stale overdue tasks. Want me to sweep them into Someday?")
+                Text(stringResource(Res.string.tasks_msg_stale_overdue, staleTasksCount.toString()))
             },
             confirmButton = {
                 Button(
                     onClick = {
                         onSweepStaleTasks()
                         showSweepDialog = false
-                    }
+                    },
                 ) {
-                    Text("Sweep to Someday")
+                    Text(stringResource(Res.string.tasks_action_sweep))
                 }
             },
             dismissButton = {
                 OutlinedButton(
-                    onClick = { showSweepDialog = false }
+                    onClick = { showSweepDialog = false },
                 ) {
-                    Text("Cancel")
+                    Text(stringResource(Res.string.common_cancel))
                 }
             },
         )

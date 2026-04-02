@@ -30,6 +30,26 @@ The app is built around a small set of shared life objects that can still stay c
 
 Instead of splitting everything into isolated tools, TajsOS tries to make them work as one system.
 
+### Local persistence shape
+
+The local model now keeps a compatibility `NodeEntity` spine for the current app shell, while moving
+deeper behavior into typed companion tables instead of growing one giant nullable row.
+
+- `InboxEntryEntity` stores raw capture before triage.
+- `NodeEntity` remains the shared local identity row for task/note/record/project/area items.
+- Typed companion tables (`TaskFacet`, `NoteFacet`, `RecordFacet`, `ProjectFacet`, `AreaFacet`)
+  hold object-specific state.
+- `RelationEntity`, tags, attachments, and domain assignments stay cross-cutting and first-class.
+- `ScheduleEntryEntity` stores time-supporting structure with epoch-based local date support instead
+  of expanding string-matched date logic.
+- `RichContentDocumentEntity` provides optional long-form/structured bodies without turning the whole
+  ontology into generic blocks.
+- Saved views are persisted as projections over typed shared objects, not as a spreadsheet engine or
+  competing item type.
+
+This keeps the ontology small, typed, and local-first while still leaving room for richer
+knowledge, review, and planning surfaces.
+
 ---
 
 ## Current status

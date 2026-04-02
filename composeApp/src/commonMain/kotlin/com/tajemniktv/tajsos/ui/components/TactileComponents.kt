@@ -76,7 +76,7 @@ fun TactileSlider(
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 2.sp,
                     ),
-                color = TajsOSTheme.Muted
+                color = TajsOSTheme.Muted,
             )
             Row(verticalAlignment = Alignment.Bottom) {
                 Text(
@@ -94,7 +94,7 @@ fun TactileSlider(
                             fontWeight = FontWeight.Bold,
                             fontSize = 24.sp,
                         ),
-                    color = TajsOSTheme.Primary
+                    color = TajsOSTheme.Primary,
                 )
                 Text(
                     text = " $valueSuffix",
@@ -133,7 +133,7 @@ fun TactileSlider(
                                 .blur(8.dp)
                                 .background(
                                     TajsOSTheme.Primary.copy(alpha = 0.5f),
-                                    RoundedCornerShape(4.dp)
+                                    RoundedCornerShape(4.dp),
                                 ),
                     )
                     // Core thumb
@@ -141,7 +141,7 @@ fun TactileSlider(
                         modifier =
                             Modifier
                                 .size(16.dp)
-                                .background(TajsOSTheme.Primary, RoundedCornerShape(4.dp))
+                                .background(TajsOSTheme.Primary, RoundedCornerShape(4.dp)),
                     )
                 }
             },
@@ -155,12 +155,12 @@ fun TactileSlider(
             Text(
                 minLabel,
                 style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
-                color = TajsOSTheme.Muted
+                color = TajsOSTheme.Muted,
             )
             Text(
                 maxLabel,
                 style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
-                color = TajsOSTheme.Muted
+                color = TajsOSTheme.Muted,
             )
         }
     }
@@ -191,7 +191,7 @@ fun TactileTextField(
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 1.sp,
                 ),
-            color = TajsOSTheme.Primary
+            color = TajsOSTheme.Primary,
         )
         Spacer(Modifier.height(TajsOSTheme.SpacingMd))
         Box(
@@ -201,13 +201,13 @@ fun TactileTextField(
                     .heightIn(min = 120.dp)
                     .background(Color.Black, RoundedCornerShape(TajsOSTheme.RadiusMd))
                     .border(1.dp, Color(0xFF1C1C21), RoundedCornerShape(TajsOSTheme.RadiusMd))
-                    .padding(TajsOSTheme.SpacingMd)
+                    .padding(TajsOSTheme.SpacingMd),
         ) {
             if (value.isEmpty()) {
                 Text(
                     text = placeholder,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = TajsOSTheme.Muted
+                    color = TajsOSTheme.Muted,
                 )
             }
             BasicTextField(
@@ -215,7 +215,7 @@ fun TactileTextField(
                 onValueChange = onValueChange,
                 modifier = Modifier.fillMaxWidth(),
                 textStyle = MaterialTheme.typography.bodyMedium.copy(color = TajsOSTheme.Text),
-                cursorBrush = SolidColor(TajsOSTheme.Primary)
+                cursorBrush = SolidColor(TajsOSTheme.Primary),
             )
         }
     }

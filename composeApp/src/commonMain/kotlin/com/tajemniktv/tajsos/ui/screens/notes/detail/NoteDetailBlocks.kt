@@ -93,8 +93,11 @@ import tajsos.composeapp.generated.resources.context_waiting
 import tajsos.composeapp.generated.resources.detail_backlinks
 import tajsos.composeapp.generated.resources.detail_relationship_inspector
 import tajsos.composeapp.generated.resources.detail_start_writing
+import tajsos.composeapp.generated.resources.note_detail_connect_node
+import tajsos.composeapp.generated.resources.note_detail_linked_context
+import tajsos.composeapp.generated.resources.note_detail_new_node
 
-object NoteDetailBlockRegistry {
+object NoteDetailBlocks {
     private val renderers: Map<String, NoteDetailBlockRenderer> =
         mapOf(
             "note_header" to ::renderNoteHeader,
@@ -131,7 +134,7 @@ private fun renderNoteActionButton(context: NoteDetailContext) {
     val node = context.node
     val viewModel = context.viewModel
     ActionButton(
-        text = "NEW NODE",
+        text = stringResource(Res.string.note_detail_new_node),
         onClick = {
             scope.launch {
                 viewModel.addNode(
@@ -164,7 +167,7 @@ private fun renderNoteRelationshipInspector(context: NoteDetailContext) {
 
         if (relations.isEmpty() && context.suggestions.isEmpty()) {
             ConnectionCard(
-                text = "CONNECT NODE",
+                text = stringResource(Res.string.note_detail_connect_node),
                 onClick = context.onShowRelationDialog,
             )
         } else {
@@ -180,7 +183,7 @@ private fun renderNoteRelationshipInspector(context: NoteDetailContext) {
                     nodesMap[relation.fromNodeId]?.node?.let { relatedNode ->
                         LinkedNodeItem(
                             title = relatedNode.title,
-                            subtitle = "Linked context",
+                            subtitle = stringResource(Res.string.note_detail_linked_context),
                             icon =
                                 when (relatedNode.type)
                                 {
@@ -246,7 +249,7 @@ private fun renderNoteDecisionContent(context: NoteDetailContext) {
 private fun renderNoteInfoGrid(context: NoteDetailContext) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+        horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
     ) {
         InfoCard(
             title = "DUE AT",
@@ -286,7 +289,7 @@ private fun renderNoteTaskMetadata(context: NoteDetailContext) {
             modifier = Modifier.fillMaxWidth(),
             color = TajsOSTheme.Surface,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            border = BorderStroke(1.dp, TajsOSTheme.Border)
+            border = BorderStroke(1.dp, TajsOSTheme.Border),
         ) {
             Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
                 Row(
@@ -303,7 +306,7 @@ private fun renderNoteTaskMetadata(context: NoteDetailContext) {
                             "ENERGY",
                             style = MaterialTheme.typography.labelSmall,
                             color = TajsOSTheme.Muted,
-                            fontSize = 8.sp
+                            fontSize = 8.sp,
                         )
                         Text(
                             when (node.energyLevel)
@@ -322,7 +325,7 @@ private fun renderNoteTaskMetadata(context: NoteDetailContext) {
                                     2 -> TajsOSTheme.Primary
                                     3 -> TajsOSTheme.Error
                                     else -> TajsOSTheme.Text
-                                }
+                                },
                         )
                     }
                     Column(
@@ -335,7 +338,7 @@ private fun renderNoteTaskMetadata(context: NoteDetailContext) {
                             "FRICTION",
                             style = MaterialTheme.typography.labelSmall,
                             color = TajsOSTheme.Muted,
-                            fontSize = 8.sp
+                            fontSize = 8.sp,
                         )
                         Text(
                             (node.friction ?: "STANDARD")
@@ -363,7 +366,7 @@ private fun renderNoteTaskMetadata(context: NoteDetailContext) {
                             "ESTIMATE",
                             style = MaterialTheme.typography.labelSmall,
                             color = TajsOSTheme.Muted,
-                            fontSize = 8.sp
+                            fontSize = 8.sp,
                         )
                         Text(
                             node.estimatedMinutes?.let { "$it min" } ?: "NOT SET",
@@ -377,7 +380,7 @@ private fun renderNoteTaskMetadata(context: NoteDetailContext) {
                                 "CRITICAL",
                                 style = MaterialTheme.typography.labelSmall,
                                 color = TajsOSTheme.Muted,
-                                fontSize = 8.sp
+                                fontSize = 8.sp,
                             )
                             Spacer(Modifier.width(8.dp))
                             Switch(
@@ -403,7 +406,7 @@ private fun renderNoteTaskMetadata(context: NoteDetailContext) {
                 modifier = Modifier.fillMaxWidth(),
                 color = TajsOSTheme.Accent.copy(alpha = 0.1f),
                 shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                border = BorderStroke(1.dp, TajsOSTheme.Accent.copy(alpha = 0.3f))
+                border = BorderStroke(1.dp, TajsOSTheme.Accent.copy(alpha = 0.3f)),
             ) {
                 Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
                     Text(
@@ -425,7 +428,7 @@ private fun renderNoteTaskMetadata(context: NoteDetailContext) {
                         textStyle =
                             MaterialTheme.typography.bodyMedium.copy(
                                 color = TajsOSTheme.Text,
-                                fontWeight = FontWeight.Medium
+                                fontWeight = FontWeight.Medium,
                             ),
                         cursorBrush = SolidColor(TajsOSTheme.Accent),
                         modifier = Modifier.fillMaxWidth(),
@@ -450,7 +453,7 @@ private fun renderNoteResourceMetadata(context: NoteDetailContext) {
             modifier = Modifier.fillMaxWidth(),
             color = TajsOSTheme.Surface,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            border = BorderStroke(1.dp, TajsOSTheme.Border)
+            border = BorderStroke(1.dp, TajsOSTheme.Border),
         ) {
             Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
                 Row(
@@ -467,7 +470,7 @@ private fun renderNoteResourceMetadata(context: NoteDetailContext) {
                             "MEDIA TYPE",
                             style = MaterialTheme.typography.labelSmall,
                             color = TajsOSTheme.Muted,
-                            fontSize = 8.sp
+                            fontSize = 8.sp,
                         )
                         Text(
                             (node.mediaType ?: "Link").uppercase(),
@@ -485,7 +488,7 @@ private fun renderNoteResourceMetadata(context: NoteDetailContext) {
                             "RATING",
                             style = MaterialTheme.typography.labelSmall,
                             color = TajsOSTheme.Muted,
-                            fontSize = 8.sp
+                            fontSize = 8.sp,
                         )
                         val rating = node.rating
                         Text(
@@ -501,7 +504,7 @@ private fun renderNoteResourceMetadata(context: NoteDetailContext) {
                         "AUTHOR / SOURCE",
                         style = MaterialTheme.typography.labelSmall,
                         color = TajsOSTheme.Muted,
-                        fontSize = 8.sp
+                        fontSize = 8.sp,
                     )
                     BasicTextField(
                         value = node.author ?: "",
@@ -509,7 +512,7 @@ private fun renderNoteResourceMetadata(context: NoteDetailContext) {
                         textStyle =
                             MaterialTheme.typography.bodyMedium.copy(
                                 color = TajsOSTheme.Text,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Bold,
                             ),
                         modifier = Modifier.fillMaxWidth(),
                     )
@@ -530,7 +533,7 @@ private fun renderNoteContextGraph(context: NoteDetailContext) {
         modifier = Modifier.fillMaxWidth(),
         color = Color.Black.copy(alpha = 0.3f),
         shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
-        border = BorderStroke(1.dp, TajsOSTheme.Border.copy(alpha = 0.5f))
+        border = BorderStroke(1.dp, TajsOSTheme.Border.copy(alpha = 0.5f)),
     ) {
         Column(modifier = Modifier.padding(TajsOSTheme.SpacingLg)) {
             Row(
@@ -545,7 +548,7 @@ private fun renderNoteContextGraph(context: NoteDetailContext) {
                                 .size(32.dp)
                                 .background(
                                     TajsOSTheme.Surface,
-                                    RoundedCornerShape(8.dp)
+                                    RoundedCornerShape(8.dp),
                                 ),
                         contentAlignment = Alignment.Center,
                     ) {
@@ -553,7 +556,7 @@ private fun renderNoteContextGraph(context: NoteDetailContext) {
                             Icons.Default.Psychology,
                             null,
                             tint = TajsOSTheme.Primary,
-                            modifier = Modifier.size(18.dp)
+                            modifier = Modifier.size(18.dp),
                         )
                     }
                     Spacer(Modifier.width(12.dp))
@@ -566,7 +569,7 @@ private fun renderNoteContextGraph(context: NoteDetailContext) {
                 Surface(
                     color = TajsOSTheme.Surface,
                     shape = CircleShape,
-                    border = BorderStroke(1.dp, TajsOSTheme.Border)
+                    border = BorderStroke(1.dp, TajsOSTheme.Border),
                 ) {
                     Text(
                         "${tags.size} Tags",
@@ -576,7 +579,7 @@ private fun renderNoteContextGraph(context: NoteDetailContext) {
                                 horizontal = 8.dp,
                                 vertical = 2.dp,
                             ),
-                        color = TajsOSTheme.Muted
+                        color = TajsOSTheme.Muted,
                     )
                 }
             }
@@ -611,9 +614,9 @@ private fun renderNoteContextGraph(context: NoteDetailContext) {
                         colors =
                             AssistChipDefaults.assistChipColors(
                                 containerColor = TajsOSTheme.Surface,
-                                labelColor = TajsOSTheme.Text
+                                labelColor = TajsOSTheme.Text,
                             ),
-                        shape = RoundedCornerShape(TajsOSTheme.RadiusSm)
+                        shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
                     )
                 }
                 IconButton(
@@ -635,7 +638,7 @@ private fun renderNoteCadence(context: NoteDetailContext) {
             modifier = Modifier.fillMaxWidth(),
             color = TajsOSTheme.Surface,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            border = BorderStroke(1.dp, TajsOSTheme.Border)
+            border = BorderStroke(1.dp, TajsOSTheme.Border),
         ) {
             Row(
                 modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -645,7 +648,7 @@ private fun renderNoteCadence(context: NoteDetailContext) {
                     Icons.Default.Repeat,
                     null,
                     tint = TajsOSTheme.Muted,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(20.dp),
                 )
                 Spacer(Modifier.width(TajsOSTheme.SpacingMd))
                 Column(modifier = Modifier.weight(1f)) {
@@ -673,7 +676,7 @@ private fun renderNoteCadence(context: NoteDetailContext) {
                     Text(
                         "MODIFY",
                         style = MaterialTheme.typography.labelSmall,
-                        color = TajsOSTheme.Muted
+                        color = TajsOSTheme.Muted,
                     )
                 }
             }
@@ -690,11 +693,11 @@ private fun renderNoteAwarePlanning(context: NoteDetailContext) {
         modifier = Modifier.fillMaxWidth(),
         color = TajsOSTheme.Surface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.Border)
+        border = BorderStroke(1.dp, TajsOSTheme.Border),
     ) {
         Column(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
                 "CONTEXT-AWARE PLANNING",
@@ -745,7 +748,7 @@ private fun renderNoteAwarePlanning(context: NoteDetailContext) {
                     title,
                     style = MaterialTheme.typography.labelSmall,
                     color = TajsOSTheme.Primary,
-                    fontSize = 9.sp
+                    fontSize = 9.sp,
                 )
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -805,7 +808,7 @@ private fun renderNoteOrganization(context: NoteDetailContext) {
         modifier = Modifier.fillMaxWidth(),
         color = TajsOSTheme.Surface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.Border)
+        border = BorderStroke(1.dp, TajsOSTheme.Border),
     ) {
         Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
             Text(
@@ -831,7 +834,7 @@ private fun renderNoteOrganization(context: NoteDetailContext) {
                         "AREA",
                         style = MaterialTheme.typography.labelSmall,
                         color = TajsOSTheme.Primary,
-                        fontSize = 8.sp
+                        fontSize = 8.sp,
                     )
                     Text(
                         area?.title ?: "Unassigned",
@@ -849,7 +852,7 @@ private fun renderNoteOrganization(context: NoteDetailContext) {
                         "PROJECT",
                         style = MaterialTheme.typography.labelSmall,
                         color = TajsOSTheme.Primary,
-                        fontSize = 8.sp
+                        fontSize = 8.sp,
                     )
                     Text(
                         project?.title ?: "None",
@@ -903,7 +906,7 @@ private fun renderNoteKnowledgeConfig(context: NoteDetailContext) {
             modifier = Modifier.fillMaxWidth(),
             color = TajsOSTheme.Surface,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            border = BorderStroke(1.dp, TajsOSTheme.Border)
+            border = BorderStroke(1.dp, TajsOSTheme.Border),
         ) {
             Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
                 Row(
@@ -920,7 +923,7 @@ private fun renderNoteKnowledgeConfig(context: NoteDetailContext) {
                             "NOTE TYPE",
                             style = MaterialTheme.typography.labelSmall,
                             color = TajsOSTheme.Muted,
-                            fontSize = 8.sp
+                            fontSize = 8.sp,
                         )
                         Text(
                             (node.noteType ?: "Standard").uppercase(),
@@ -938,7 +941,7 @@ private fun renderNoteKnowledgeConfig(context: NoteDetailContext) {
                             "STATE",
                             style = MaterialTheme.typography.labelSmall,
                             color = TajsOSTheme.Muted,
-                            fontSize = 8.sp
+                            fontSize = 8.sp,
                         )
                         Text(
                             (node.noteState ?: "Raw").uppercase(),
@@ -971,11 +974,11 @@ private fun renderNoteContentEditor(context: NoteDetailContext) {
                     .heightIn(min = 200.dp)
                     .background(
                         TajsOSTheme.Surface,
-                        RoundedCornerShape(TajsOSTheme.RadiusMd)
+                        RoundedCornerShape(TajsOSTheme.RadiusMd),
                     ).border(
                         1.dp,
                         TajsOSTheme.Border,
-                        RoundedCornerShape(TajsOSTheme.RadiusMd)
+                        RoundedCornerShape(TajsOSTheme.RadiusMd),
                     ).padding(TajsOSTheme.SpacingMd),
             decorationBox = { innerTextField ->
                 Box {

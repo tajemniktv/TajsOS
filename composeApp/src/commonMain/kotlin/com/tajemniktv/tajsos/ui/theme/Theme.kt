@@ -34,8 +34,8 @@ object TajsOSTheme {
             ghostBorder = OutlineVariant,
             success = AccentSuccess,
             error = AccentError,
-            sidebarBackground = com.tajemniktv.tajsos.ui.theme.SidebarBackground
-        )
+            sidebarBackground = com.tajemniktv.tajsos.ui.theme.SidebarBackground,
+        ),
     )
 
     val Primary: Color get() = currentColors.primary
@@ -96,13 +96,7 @@ object TajsOSTheme {
 }
 
 /**
- * Compatibility alias for TactileTheme.
- */
-@Deprecated("Use TajsOSTheme instead", ReplaceWith("TajsOSTheme"))
-val TactileTheme = TajsOSTheme
-
-/**
- * Short alias for TajsOSTheme as per user preference.
+ * Short alias for TajsOSTheme.
  */
 val TajsTheme = TajsOSTheme
 
@@ -124,55 +118,59 @@ data class TajsOSColors(
     val ghostBorder: Color,
     val success: Color,
     val error: Color,
-    val sidebarBackground: Color
+    val sidebarBackground: Color,
 )
 
 /**
  * Builds a [TajsOSColors] instance based on theme and accent preferences.
  */
-fun buildTajsOSColors(isDark: Boolean, accentColor: Color): TajsOSColors = if (isDark) {
-    TajsOSColors(
-        primary = accentColor,
-        primaryDim = accentColor.copy(alpha = 0.6f),
-        background = DeepBackground,
-        surface = SurfaceDark,
-        surfaceLowest = SurfaceContainerLowest,
-        surfaceLow = SurfaceContainerLow,
-        surfaceHigh = SurfaceContainerHigh,
-        surfaceHighest = SurfaceContainerHighest,
-        text = TextPrimary,
-        muted = TextMuted,
-        border = SubtleBorder,
-        ghostBorder = OutlineVariant,
-        success = AccentSuccess,
-        error = AccentError,
-        sidebarBackground = SidebarBackground
-    )
-} else {
-    TajsOSColors(
-        primary = accentColor,
-        primaryDim = accentColor.copy(alpha = 0.7f),
-        background = LightBackground,
-        surface = LightSurface,
-        surfaceLowest = LightSurfaceLowest,
-        surfaceLow = LightSurfaceLow,
-        surfaceHigh = LightSurfaceHigh,
-        surfaceHighest = LightSurfaceHighest,
-        text = LightTextPrimary,
-        muted = LightTextMuted,
-        border = LightBorder,
-        ghostBorder = LightOutlineVariant,
-        success = AccentSuccess,
-        error = AccentError,
-        sidebarBackground = LightSurfaceLow
-    )
-}
+fun buildTajsOSColors(
+    isDark: Boolean,
+    accentColor: Color,
+): TajsOSColors =
+    if (isDark) {
+        TajsOSColors(
+            primary = accentColor,
+            primaryDim = accentColor.copy(alpha = 0.6f),
+            background = DeepBackground,
+            surface = SurfaceDark,
+            surfaceLowest = SurfaceContainerLowest,
+            surfaceLow = SurfaceContainerLow,
+            surfaceHigh = SurfaceContainerHigh,
+            surfaceHighest = SurfaceContainerHighest,
+            text = TextPrimary,
+            muted = TextMuted,
+            border = SubtleBorder,
+            ghostBorder = OutlineVariant,
+            success = AccentSuccess,
+            error = AccentError,
+            sidebarBackground = SidebarBackground,
+        )
+    } else {
+        TajsOSColors(
+            primary = accentColor,
+            primaryDim = accentColor.copy(alpha = 0.7f),
+            background = LightBackground,
+            surface = LightSurface,
+            surfaceLowest = LightSurfaceLowest,
+            surfaceLow = LightSurfaceLow,
+            surfaceHigh = LightSurfaceHigh,
+            surfaceHighest = LightSurfaceHighest,
+            text = LightTextPrimary,
+            muted = LightTextMuted,
+            border = LightBorder,
+            ghostBorder = LightOutlineVariant,
+            success = AccentSuccess,
+            error = AccentError,
+            sidebarBackground = LightSurfaceLow,
+        )
+    }
 
 @Composable
 internal fun TajsOSTheme(
     darkTheme: Boolean = true,
     accentColor: Color = PrimaryPurple,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val tajsOSColors = buildTajsOSColors(darkTheme, accentColor)
 
@@ -202,7 +200,7 @@ internal fun TajsOSTheme(
                 onSurfaceVariant = tajsOSColors.text,
                 outlineVariant = tajsOSColors.ghostBorder,
                 outline = tajsOSColors.border,
-                error = tajsOSColors.error
+                error = tajsOSColors.error,
             )
         } else {
             lightColorScheme(
@@ -225,7 +223,7 @@ internal fun TajsOSTheme(
                 onSurfaceVariant = tajsOSColors.text,
                 outlineVariant = tajsOSColors.ghostBorder,
                 outline = tajsOSColors.border,
-                error = tajsOSColors.error
+                error = tajsOSColors.error,
             )
         }
     val typography = tajsOSTypography()
@@ -233,6 +231,6 @@ internal fun TajsOSTheme(
     MaterialTheme(
         colorScheme = colorScheme,
         typography = typography,
-        content = content
+        content = content,
     )
 }

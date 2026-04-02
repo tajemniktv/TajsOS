@@ -27,6 +27,10 @@ import com.tajemniktv.tajsos.ui.components.cards.DistinctionQuestionCard
 import com.tajemniktv.tajsos.ui.screens.GroupedOpenLoopSection
 import com.tajemniktv.tajsos.ui.screens.formatProtocolTimestamp
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.identity_desc
+import tajsos.composeapp.generated.resources.identity_title
 
 object IdentityDashboardBlockRegistry {
     private val renderers: Map<String, IdentityDashboardBlockRenderer> =
@@ -45,14 +49,14 @@ object IdentityDashboardBlockRegistry {
 private fun renderIdentityHeader(context: IdentityDashboardContext) {
     Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)) {
         Text(
-            text = "IDENTITY & OPERATING MODEL",
+            text = stringResource(Res.string.identity_title),
             style = MaterialTheme.typography.displaySmall,
-            color = TajsOSTheme.Text
+            color = TajsOSTheme.Text,
         )
         Text(
-            text = "Review signature, second-brain distinction, direction commitments, and core-shift progress together.",
+            text = stringResource(Res.string.identity_desc),
             style = MaterialTheme.typography.bodySmall,
-            color = TajsOSTheme.Muted
+            color = TajsOSTheme.Muted,
         )
     }
 }
@@ -88,7 +92,7 @@ private fun renderIdentitySignature(context: IdentityDashboardContext) {
             modifier = Modifier.fillMaxWidth(),
             color = TajsOSTheme.Surface,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            border = BorderStroke(1.dp, TajsOSTheme.Border)
+            border = BorderStroke(1.dp, TajsOSTheme.Border),
         ) {
             Column(
                 modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -103,7 +107,7 @@ private fun renderIdentitySignature(context: IdentityDashboardContext) {
                 Text(
                     "Capabilities $enabledCount/${capabilities.size} • Work-date coverage ${snapshot.workDateDueCoveragePercent}%",
                     style = MaterialTheme.typography.bodySmall,
-                    color = TajsOSTheme.Muted
+                    color = TajsOSTheme.Muted,
                 )
                 Text(
                     "Mode of life: ${snapshot.modeOfLifeLabel.replace('_', ' ').uppercase()}",
@@ -115,7 +119,7 @@ private fun renderIdentitySignature(context: IdentityDashboardContext) {
                     Text(
                         snapshot.modeOfLifeReason,
                         style = MaterialTheme.typography.bodySmall,
-                        color = TajsOSTheme.Muted
+                        color = TajsOSTheme.Muted,
                     )
                 }
             }
@@ -124,7 +128,7 @@ private fun renderIdentitySignature(context: IdentityDashboardContext) {
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
-            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
         ) {
             capabilities.forEach { (label, enabled) ->
                 FilterChip(
@@ -148,7 +152,7 @@ private fun renderIdentitySignature(context: IdentityDashboardContext) {
                 modifier = Modifier.fillMaxWidth(),
                 color = TajsOSTheme.Surface,
                 shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                border = BorderStroke(1.dp, TajsOSTheme.Border)
+                border = BorderStroke(1.dp, TajsOSTheme.Border),
             ) {
                 Column(
                     modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -163,7 +167,7 @@ private fun renderIdentitySignature(context: IdentityDashboardContext) {
                     Text(
                         "Coverage ${snapshot.workDateDueCoveragePercent}% • Missing work date ${snapshot.workDateDueItems.size}",
                         style = MaterialTheme.typography.bodySmall,
-                        color = TajsOSTheme.Muted
+                        color = TajsOSTheme.Muted,
                     )
                     if (snapshot.workDateDueItems.isEmpty()) {
                         Text(
@@ -188,7 +192,7 @@ private fun renderIdentitySignature(context: IdentityDashboardContext) {
                     modifier = Modifier.fillMaxWidth(),
                     color = TajsOSTheme.Surface,
                     shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                    border = BorderStroke(1.dp, TajsOSTheme.Border)
+                    border = BorderStroke(1.dp, TajsOSTheme.Border),
                 ) {
                     Column(
                         modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -203,11 +207,11 @@ private fun renderIdentitySignature(context: IdentityDashboardContext) {
                         Text(
                             "Due ${dueAt?.let { formatProtocolTimestamp(it) } ?: "No due date"} • Work date missing",
                             style = MaterialTheme.typography.bodySmall,
-                            color = TajsOSTheme.Muted
+                            color = TajsOSTheme.Muted,
                         )
                         FlowRow(
                             horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
-                            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
+                            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
                         ) {
                             AssistChip(onClick = { onEditNode(node.id) }, label = { Text("OPEN") })
                             AssistChip(
@@ -240,7 +244,7 @@ private fun renderIdentityDistinction(context: IdentityDashboardContext) {
             modifier = Modifier.fillMaxWidth(),
             color = TajsOSTheme.Surface,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            border = BorderStroke(1.dp, TajsOSTheme.Border)
+            border = BorderStroke(1.dp, TajsOSTheme.Border),
         ) {
             Column(
                 modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -255,7 +259,7 @@ private fun renderIdentityDistinction(context: IdentityDashboardContext) {
                 Text(
                     "Second Brain coverage ${snapshot.secondBrainCoveragePercent}% • LifeOS coverage ${snapshot.lifeOSCoveragePercent}%",
                     style = MaterialTheme.typography.bodySmall,
-                    color = TajsOSTheme.Muted
+                    color = TajsOSTheme.Muted,
                 )
                 Text(
                     "System posture: ${snapshot.postureLabel.replace('_', ' ').uppercase()}",
@@ -296,7 +300,7 @@ private fun renderIdentityDirection(context: IdentityDashboardContext) {
             modifier = Modifier.fillMaxWidth(),
             color = TajsOSTheme.Surface,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            border = BorderStroke(1.dp, TajsOSTheme.Border)
+            border = BorderStroke(1.dp, TajsOSTheme.Border),
         ) {
             Column(
                 modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -316,7 +320,7 @@ private fun renderIdentityDirection(context: IdentityDashboardContext) {
                         ).uppercase()
                     }",
                     style = MaterialTheme.typography.bodySmall,
-                    color = TajsOSTheme.Muted
+                    color = TajsOSTheme.Muted,
                 )
             }
         }
@@ -341,7 +345,7 @@ private fun renderIdentityCoreShift(context: IdentityDashboardContext) {
             modifier = Modifier.fillMaxWidth(),
             color = TajsOSTheme.Surface,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            border = BorderStroke(1.dp, TajsOSTheme.Border)
+            border = BorderStroke(1.dp, TajsOSTheme.Border),
         ) {
             Column(
                 modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -356,7 +360,7 @@ private fun renderIdentityCoreShift(context: IdentityDashboardContext) {
                 Text(
                     "Section 1 completion ${snapshot.completionPercent}% • Connected ${if (snapshot.connectedProperly) "YES" else "NO"}",
                     style = MaterialTheme.typography.bodySmall,
-                    color = TajsOSTheme.Muted
+                    color = TajsOSTheme.Muted,
                 )
                 snapshot.integrationWarning?.let { warning ->
                     Text(

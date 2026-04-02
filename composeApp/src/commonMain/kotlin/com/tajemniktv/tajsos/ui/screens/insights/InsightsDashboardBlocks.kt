@@ -82,18 +82,18 @@ internal fun InsightsMainBlock(
             Modifier
                 .fillMaxSize()
                 .padding(TajsOSTheme.SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
     ) {
         item {
             Text(
                 stringResource(Res.string.insights_title),
                 style = MaterialTheme.typography.displayMedium,
-                color = TajsOSTheme.Text
+                color = TajsOSTheme.Text,
             )
             Text(
                 stringResource(Res.string.insights_subtitle),
                 style = MaterialTheme.typography.labelSmall,
-                color = TajsOSTheme.Primary
+                color = TajsOSTheme.Primary,
             )
             Spacer(Modifier.height(TajsOSTheme.SpacingLg))
         }
@@ -166,7 +166,7 @@ internal fun InsightsMainBlock(
             Text(
                 stringResource(Res.string.insights_cards_title),
                 style = MaterialTheme.typography.labelSmall,
-                color = TajsOSTheme.Primary
+                color = TajsOSTheme.Primary,
             )
         }
 
@@ -196,7 +196,7 @@ internal fun InsightsMainBlock(
                                 area.title,
                             ),
                         icon = Icons.Default.History,
-                        color = TajsOSTheme.Error
+                        color = TajsOSTheme.Error,
                     )
                 }
             }
@@ -213,7 +213,7 @@ internal fun InsightsMainBlock(
                             captureTimePattern,
                         ),
                     icon = Icons.Default.Lightbulb,
-                    color = TajsOSTheme.Success
+                    color = TajsOSTheme.Success,
                 )
             }
         }
@@ -228,7 +228,7 @@ internal fun InsightsMainBlock(
                             insights.projectsWithoutTasks.first().title,
                         ),
                     icon = Icons.Default.Warning,
-                    color = TajsOSTheme.Accent
+                    color = TajsOSTheme.Accent,
                 )
             }
         }
@@ -240,7 +240,7 @@ internal fun InsightsMainBlock(
                     title = stringResource(Res.string.insights_radar_drop_title),
                     message = stringResource(Res.string.insights_radar_drop_msg, area.title),
                     icon = Icons.Default.LocationOff,
-                    color = TajsOSTheme.Error
+                    color = TajsOSTheme.Error,
                 )
             }
         }
@@ -250,7 +250,7 @@ internal fun InsightsMainBlock(
                 Text(
                     stringResource(Res.string.insights_neglected_projects),
                     style = MaterialTheme.typography.labelSmall,
-                    color = TajsOSTheme.Primary
+                    color = TajsOSTheme.Primary,
                 )
             }
             items(insights.neglectedProjects) { project ->
@@ -268,7 +268,7 @@ internal fun InsightsMainBlock(
                 Text(
                     stringResource(Res.string.insights_high_entropy_projects),
                     style = MaterialTheme.typography.labelSmall,
-                    color = TajsOSTheme.Error
+                    color = TajsOSTheme.Error,
                 )
             }
             items(highEntropyProjects.keys.toList()) { projectId ->
@@ -290,7 +290,7 @@ internal fun InsightsMainBlock(
                 Text(
                     stringResource(Res.string.insights_recent_activity),
                     style = MaterialTheme.typography.labelSmall,
-                    color = TajsOSTheme.Primary
+                    color = TajsOSTheme.Primary,
                 )
             }
             items(recentLogs) { log ->

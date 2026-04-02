@@ -4,110 +4,24 @@
 
 package com.tajemniktv.tajsos.ui.screens.notes
 
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.components.cards.NodeCard
-import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 /**
- * Renders the Notes screen: a searchable, groupable list of knowledge nodes with actions and navigation.
+ * Entry screen for the Notes workspace.
  *
- * The UI collects active nodes, areas, and projects from the provided view model, derives knowledge nodes
- * (note/record-facing items), and filters them by the current search query (matching title or content,
- * case-insensitively). Results can be grouped by "TYPE", "AREA", "PROJECT", "DATE", or "MEDIA" using the top
- * filter chips. Each non-empty group shows a header and its items; when no results exist an appropriate
- * empty-state message is shown (different message for empty dataset vs. no search results).
- *
- * @param onNoteClick Callback invoked with the note id when a list item is clicked.
+ * Delegates to [NotesRoute], which renders a responsive notes-specific workspace:
+ * desktop/tablet uses a master-detail layout and narrow widths use list-to-detail navigation.
  */
 @Composable
 fun NotesScreen(
     viewModel: MainViewModel,
     onNoteClick: (Long) -> Unit,
+    initialSelectedNoteId: Long? = null,
 ) {
-    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val surface =
-            if (maxWidth >
-                900.dp
-            ) {
-                NotesDashboardSurface.DESKTOP
-            } else {
-                NotesDashboardSurface.MOBILE
-            }
-        val plan =
-            remember(surface) {
-                buildNotesDashboardPlan(
-                    surface,
-                )
-            }
-        val context =
-            remember(viewModel, onNoteClick) {
-                NotesDashboardContext(
-                    viewModel,
-                    onNoteClick,
-                )
-            }
-        Column(modifier = Modifier.fillMaxSize()) {
-            plan.primary.forEach { block ->
-                NotesDashboardBlockRegistry
-                    .resolve(block.id)
-                    ?.invoke(context)
-            }
-        }
-    }
-}
-
-/**
- * Displays a section header for grouped lists using the screen's typography, color, and vertical spacing.
- *
- * @param title The text to display as the header.
- */
-@Composable
-fun GroupHeader(title: String) {
-    Text(
-        text = title,
-        style = MaterialTheme.typography.labelSmall,
-        color = TajsOSTheme.Primary,
-        modifier = Modifier.padding(top = TajsOSTheme.SpacingMd, bottom = TajsOSTheme.SpacingSm)
-    )
-}
-
-/**
- * Displays a card for a knowledge node and connects its UI actions to the provided handlers.
- *
- * The card presents the node state and forwards user interactions: clicking opens the note via
- * `onNoteClick`, toggling done/pin updates the node through the provided view model, and archiving
- * requests the view model to archive the node.
- *
- * @param node The knowledge node together with its pinned state.
- * @param onNoteClick Callback invoked with the node's id when the card is clicked.
- */
-@Composable
-fun KnowledgeItem(
-    node: NodeWithPin,
-    viewModel: MainViewModel,
-    onNoteClick: (Long) -> Unit,
-) {
-    NodeCard(
-        nodeWithPin = node,
-        onClick = { onNoteClick(node.node.id) },
-        onToggleDone = { status ->
-            viewModel.updateNodeStatus(
-                node.node,
-                status,
-            )
-        },
-        onTogglePin = { isPinned -> viewModel.togglePin(node.node, isPinned) },
-        onArchive = { viewModel.archiveNode(node.node) },
+    NotesRoute(
+        viewModel = viewModel,
+        onNavigateToNode = onNoteClick,
+        initialSelectedNoteId = initialSelectedNoteId,
     )
 }

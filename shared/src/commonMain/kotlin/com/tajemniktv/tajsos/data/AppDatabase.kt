@@ -20,9 +20,18 @@ import androidx.room.RoomDatabaseConstructor
         NodeEntity::class,
         InboxEntryEntity::class,
         TaskFacetEntity::class,
+        NoteFacetEntity::class,
         ProjectFacetEntity::class,
+        AreaFacetEntity::class,
         RecordFacetEntity::class,
+        ItemDomainEntity::class,
+        RichContentDocumentEntity::class,
         ScheduleEntryEntity::class,
+        SavedViewEntity::class,
+        SavedViewSourceKindEntity::class,
+        SavedViewFilterEntity::class,
+        SavedViewSortEntity::class,
+        SavedViewVisibleFieldEntity::class,
         TodayPinEntity::class,
         FocusSessionEntity::class,
         TrackEntryEntity::class,
@@ -47,7 +56,7 @@ import androidx.room.RoomDatabaseConstructor
         MedicationEntity::class,
         TrackMedicationJoinEntity::class,
     ],
-    version = 30,
+    version = 32,
     exportSchema = false,
 )
 @ConstructedBy(AppDatabaseConstructor::class)
@@ -68,9 +77,19 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun taskFacetDao(): TaskFacetDao
 
     /**
+     * Stores note-specific knowledge-state data.
+     */
+    abstract fun noteFacetDao(): NoteFacetDao
+
+    /**
      * Stores project-specific coordination data.
      */
     abstract fun projectFacetDao(): ProjectFacetDao
+
+    /**
+     * Stores area-specific stewardship data.
+     */
+    abstract fun areaFacetDao(): AreaFacetDao
 
     /**
      * Stores record-specific chronology data.
@@ -78,9 +97,24 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun recordFacetDao(): RecordFacetDao
 
     /**
+     * Stores lens-style domain assignments across life objects.
+     */
+    abstract fun itemDomainDao(): ItemDomainDao
+
+    /**
+     * Stores optional rich-content documents attached to life objects.
+     */
+    abstract fun richContentDocumentDao(): RichContentDocumentDao
+
+    /**
      * Stores attachable schedule and reminder data.
      */
     abstract fun scheduleEntryDao(): ScheduleEntryDao
+
+    /**
+     * Stores persisted list/table/board/matrix projections over shared life objects.
+     */
+    abstract fun savedViewDao(): SavedViewDao
 
     /**
      * Manages focus session persistence and statistics.

@@ -14,7 +14,7 @@ enum class NotificationVariant {
     WARNING,
     SYNC,
     INFO,
-    LOW_PRIORITY
+    LOW_PRIORITY,
 }
 
 /**
@@ -29,5 +29,5 @@ data class NotificationUiModel(
     val isUnread: Boolean = false,
     val icon: ImageVector? = null,
     val progress: Float? = null,
-    val onClick: () -> Unit = {}
+    val onClick: () -> Unit = {},
 )

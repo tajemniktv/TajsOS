@@ -11,6 +11,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
+import com.tajemniktv.tajsos.ui.SidebarMode
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -27,6 +28,7 @@ class PreferencesRepository(
         val GLASSMORPHISM_ENABLED = booleanPreferencesKey("glassmorphism_enabled")
         val REDUCE_MOTION = booleanPreferencesKey("reduce_motion")
         val ACTIVE_MODE_ID = longPreferencesKey("active_mode_id")
+        val SIDEBAR_MODE = stringPreferencesKey("sidebar_mode")
         val OWNED_PACKS = stringSetPreferencesKey("owned_packs")
         val ENABLED_PACKS = stringSetPreferencesKey("enabled_packs")
     }
@@ -76,6 +78,19 @@ class PreferencesRepository(
                 preferences[PreferencesKeys.REDUCE_MOTION] ?: false
             }
 
+    /**
+     * Persisted sidebar behavior mode.
+     */
+    val sidebarMode: Flow<SidebarMode> =
+        dataStore.data.map { preferences ->
+            val modeStr = preferences[PreferencesKeys.SIDEBAR_MODE]
+            try {
+                if (modeStr != null) SidebarMode.valueOf(modeStr) else SidebarMode.EXPANDED
+            } catch (e: Exception) {
+                SidebarMode.EXPANDED
+            }
+        }
+
     val enabledPacks: Flow<PackRegistry> =
         dataStore.data.map { preferences ->
             val owned = preferences[PreferencesKeys.OWNED_PACKS] ?: AppPack.defaultFreePackKeys
@@ -97,6 +112,9 @@ class PreferencesRepository(
         }
     }
 
+    /**
+     * Updates the active operating mode.
+     */
     suspend fun updateActiveModeId(modeId: Long?) {
         dataStore.edit { preferences ->
             if (modeId != null) {
@@ -104,6 +122,15 @@ class PreferencesRepository(
             } else {
                 preferences.remove(PreferencesKeys.ACTIVE_MODE_ID)
             }
+        }
+    }
+
+    /**
+     * Updates the sidebar behavior mode.
+     */
+    suspend fun updateSidebarMode(mode: SidebarMode) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.SIDEBAR_MODE] = mode.name
         }
     }
 

@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalance
@@ -101,9 +100,13 @@ fun VaultsScreen(
         val plan = remember(surface) { buildVaultsDashboardPlan(surface) }
         val context =
             remember(viewModel, onEditNode) { VaultsDashboardContext(viewModel, onEditNode) }
-        Column(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize().padding(bottom = 80.dp),
+        ) {
             plan.primary.forEach { block ->
-                VaultsDashboardBlockRegistry.resolve(block.id)?.invoke(context)
+                item(key = block.id) {
+                    VaultsDashboardBlocks.resolve(block.id)?.invoke(context)
+                }
             }
         }
     }
@@ -228,123 +231,122 @@ internal fun VaultsLayer(
             }
         }
 
-    LazyColumn(
+    Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
+        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
     ) {
-        item("vault_hero") {
-            Surface(
-                modifier = Modifier.fillMaxWidth(),
-                color = TajsOSTheme.VaultShell,
-                shape = RoundedCornerShape(22.dp),
-                border = BorderStroke(1.dp, TajsOSTheme.VaultBorder)
-            ) {
-                BoxWithConstraints {
-                    val compact = maxWidth < 860.dp
-                    Column(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .background(
-                                    brush =
-                                        Brush.linearGradient(
-                                            colors =
-                                                listOf(
-                                                    TajsOSTheme.VaultGradientStart,
-                                                    TajsOSTheme.VaultGradientMid,
-                                                    TajsOSTheme.VaultGradientEnd
-                                                )
-                                        ),
-                                ).padding(22.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                    ) {
-                        OutlinedTextField(
-                            value = searchQuery,
-                            onValueChange = { searchQuery = it },
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(14.dp),
-                            singleLine = true,
-                            leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-                            label = { Text(stringResource(Res.string.lens_reference_search)) },
-                        )
-                        if (compact) {
-                            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                                VaultHeroPrimary()
-                                VaultHeroStats(
-                                    totalVaultItems = totalVaultItems,
-                                    latestUpdatedAt = latestUpdatedAt,
-                                )
-                            }
-                        } else {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.Bottom,
-                            ) {
-                                VaultHeroPrimary(modifier = Modifier.weight(1f))
-                                Spacer(Modifier.width(12.dp))
-                                VaultHeroStats(
-                                    totalVaultItems = totalVaultItems,
-                                    latestUpdatedAt = latestUpdatedAt,
-                                )
-                            }
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            color = TajsOSTheme.VaultShell,
+            shape = RoundedCornerShape(22.dp),
+            border = BorderStroke(1.dp, TajsOSTheme.VaultBorder),
+        ) {
+            BoxWithConstraints {
+                val compact = maxWidth < 860.dp
+                Column(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .background(
+                                brush =
+                                    Brush.linearGradient(
+                                        colors =
+                                            listOf(
+                                                TajsOSTheme.VaultGradientStart,
+                                                TajsOSTheme.VaultGradientMid,
+                                                TajsOSTheme.VaultGradientEnd,
+                                            ),
+                                    ),
+                            ).padding(22.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    OutlinedTextField(
+                        value = searchQuery,
+                        onValueChange = { searchQuery = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(14.dp),
+                        singleLine = true,
+                        leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                        label = { Text(stringResource(Res.string.lens_reference_search)) },
+                    )
+                    if (compact) {
+                        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                            VaultHeroPrimary()
+                            VaultHeroStats(
+                                totalVaultItems = totalVaultItems,
+                                latestUpdatedAt = latestUpdatedAt,
+                            )
                         }
-                        VaultDashboardCards(
-                            cards = categoryCards,
-                            applicationProgress = snapshot.processTracking.size,
-                            totalTracked = snapshot.processTracking.size + snapshot.officialDeadlines.size,
-                        )
-                        VaultEntryComposer(
-                            entryTitle = entryTitle,
-                            onEntryTitleChange = { entryTitle = it },
-                            entryContent = entryContent,
-                            onEntryContentChange = { entryContent = it },
-                            selectedCategory = selectedCategory,
-                            onSelectedCategoryChange = { selectedCategory = it },
-                            categories = categories,
-                            entryType = entryType,
-                            onEntryTypeChange = { entryType = it },
-                            onSave = {
-                                viewModel.addVaultEntry(
-                                    categoryTag = selectedCategory,
-                                    title = entryTitle,
-                                    content = entryContent,
-                                    asType = entryType,
-                                )
-                                entryTitle = ""
-                                entryContent = ""
-                            },
-                            onSaveApplicationStatus = {
-                                viewModel.createApplicationStatusEntry(
-                                    title = if (entryTitle.isBlank()) "Application status" else entryTitle,
-                                    status = if (entryContent.isBlank()) "pending" else entryContent,
-                                    dueAt =
-                                        Clock.System
-                                            .now()
-                                            .toEpochMilliseconds() + (14L * 24 * 60 * 60 * 1000),
-                                )
-                                entryTitle = ""
-                                entryContent = ""
-                            },
-                        )
+                    } else {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.Bottom,
+                        ) {
+                            VaultHeroPrimary(modifier = Modifier.weight(1f))
+                            Spacer(Modifier.width(12.dp))
+                            VaultHeroStats(
+                                totalVaultItems = totalVaultItems,
+                                latestUpdatedAt = latestUpdatedAt,
+                            )
+                        }
                     }
+                    VaultDashboardCards(
+                        cards = categoryCards,
+                        applicationProgress = snapshot.processTracking.size,
+                        totalTracked = snapshot.processTracking.size + snapshot.officialDeadlines.size,
+                    )
+                    VaultEntryComposer(
+                        entryTitle = entryTitle,
+                        onEntryTitleChange = { entryTitle = it },
+                        entryContent = entryContent,
+                        onEntryContentChange = { entryContent = it },
+                        selectedCategory = selectedCategory,
+                        onSelectedCategoryChange = { selectedCategory = it },
+                        categories = categories,
+                        entryType = entryType,
+                        onEntryTypeChange = { entryType = it },
+                        onSave = {
+                            viewModel.addVaultEntry(
+                                categoryTag = selectedCategory,
+                                title = entryTitle,
+                                content = entryContent,
+                                asType = entryType,
+                            )
+                            entryTitle = ""
+                            entryContent = ""
+                        },
+                        onSaveApplicationStatus = {
+                            viewModel.createApplicationStatusEntry(
+                                title = if (entryTitle.isBlank()) "Application status" else entryTitle,
+                                status = if (entryContent.isBlank()) "pending" else entryContent,
+                                dueAt =
+                                    Clock.System
+                                        .now()
+                                        .toEpochMilliseconds() +
+                                        (14L * 24 * 60 * 60 * 1000),
+                            )
+                            entryTitle = ""
+                            entryContent = ""
+                        },
+                    )
                 }
             }
         }
 
-        items(filteredSections, key = { it.title }) { section ->
+        filteredSections.forEach { section ->
             GroupedOpenLoopSection(
                 section.title,
                 section.items,
             )
         }
 
-        items(snapshot.retrievalQueue, key = { it.node.id }) { item ->
+        snapshot.retrievalQueue.forEach { item ->
             Surface(
                 modifier = Modifier.fillMaxWidth(),
                 color = TajsOSTheme.Surface,
                 shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                border = BorderStroke(1.dp, TajsOSTheme.Primary)
+                border = BorderStroke(1.dp, TajsOSTheme.Primary),
             ) {
                 Column(
                     modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -359,11 +361,11 @@ internal fun VaultsLayer(
                     Text(
                         "Type ${item.node.type.uppercase()}",
                         style = MaterialTheme.typography.bodySmall,
-                        color = TajsOSTheme.Muted
+                        color = TajsOSTheme.Muted,
                     )
                     FlowRow(
                         horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
-                        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
+                        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
                     ) {
                         AssistChip(
                             onClick = { viewModel.markMustFindLater(item.node, false) },
@@ -389,13 +391,13 @@ private fun VaultHeroPrimary(modifier: Modifier = Modifier) {
         Surface(
             color = TajsOSTheme.Primary.copy(alpha = 0.14f),
             shape = RoundedCornerShape(999.dp),
-            border = BorderStroke(1.dp, TajsOSTheme.Primary.copy(alpha = 0.35f))
+            border = BorderStroke(1.dp, TajsOSTheme.Primary.copy(alpha = 0.35f)),
         ) {
             Text(
                 stringResource(Res.string.dash_module_ready),
                 modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
                 style = MaterialTheme.typography.labelSmall,
-                color = TajsOSTheme.Primary
+                color = TajsOSTheme.Primary,
             )
         }
         Text(
@@ -425,7 +427,7 @@ private fun VaultHeroStats(
         Text(
             "TOTAL CAPACITY",
             style = MaterialTheme.typography.labelSmall,
-            color = TajsOSTheme.VaultTextSubtle
+            color = TajsOSTheme.VaultTextSubtle,
         )
         Text(
             "$totalVaultItems ITEMS",
@@ -436,7 +438,7 @@ private fun VaultHeroStats(
         Text(
             "LAST SYNC ${latestUpdatedAt?.let(::formatLocalTime) ?: "NO DATA"}",
             style = MaterialTheme.typography.labelSmall,
-            color = TajsOSTheme.VaultTextAccent
+            color = TajsOSTheme.VaultTextAccent,
         )
     }
 }
@@ -528,10 +530,10 @@ private fun VaultCard(
         colors =
             CardDefaults.cardColors(
                 containerColor =
-                    if (prominent) TajsOSTheme.VaultSoft else TajsOSTheme.VaultShell
+                    if (prominent) TajsOSTheme.VaultSoft else TajsOSTheme.VaultShell,
             ),
         shape = RoundedCornerShape(if (prominent) 18.dp else 14.dp),
-        border = BorderStroke(1.dp, TajsOSTheme.VaultBorder)
+        border = BorderStroke(1.dp, TajsOSTheme.VaultBorder),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(14.dp),
@@ -556,13 +558,13 @@ private fun VaultCard(
                     Surface(
                         color = TajsOSTheme.Surface.copy(alpha = 0.45f),
                         shape = RoundedCornerShape(999.dp),
-                        border = BorderStroke(1.dp, TajsOSTheme.VaultBorder)
+                        border = BorderStroke(1.dp, TajsOSTheme.VaultBorder),
                     ) {
                         Text(
                             data.badge,
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                             style = MaterialTheme.typography.labelSmall,
-                            color = TajsOSTheme.VaultTextSubtle
+                            color = TajsOSTheme.VaultTextSubtle,
                         )
                     }
                 }
@@ -576,7 +578,7 @@ private fun VaultCard(
             Text(
                 data.subtitle,
                 style = MaterialTheme.typography.bodySmall,
-                color = TajsOSTheme.VaultTextSubtle
+                color = TajsOSTheme.VaultTextSubtle,
             )
             Spacer(Modifier.height(4.dp))
             Row(
@@ -592,7 +594,7 @@ private fun VaultCard(
                 Text(
                     data.stamp,
                     style = MaterialTheme.typography.labelSmall,
-                    color = TajsOSTheme.VaultTextAccent
+                    color = TajsOSTheme.VaultTextAccent,
                 )
             }
         }
@@ -611,7 +613,7 @@ private fun ApplicationStatusCard(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = TajsOSTheme.VaultSoft),
         shape = RoundedCornerShape(16.dp),
-        border = BorderStroke(1.dp, TajsOSTheme.VaultBorder)
+        border = BorderStroke(1.dp, TajsOSTheme.VaultBorder),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(14.dp),
@@ -620,12 +622,12 @@ private fun ApplicationStatusCard(
             Text(
                 stringResource(Res.string.lens_reference_app_status),
                 style = MaterialTheme.typography.titleMedium,
-                color = TajsOSTheme.VaultTextStrong
+                color = TajsOSTheme.VaultTextStrong,
             )
             Text(
                 stringResource(Res.string.lens_reference_app_status_desc),
                 style = MaterialTheme.typography.bodySmall,
-                color = TajsOSTheme.VaultTextSubtle
+                color = TajsOSTheme.VaultTextSubtle,
             )
             Box(
                 modifier =
@@ -633,7 +635,7 @@ private fun ApplicationStatusCard(
                         .fillMaxWidth()
                         .height(6.dp)
                         .clip(RoundedCornerShape(999.dp))
-                        .background(TajsOSTheme.Background.copy(alpha = 0.65f))
+                        .background(TajsOSTheme.Background.copy(alpha = 0.65f)),
             ) {
                 Box(
                     modifier =
@@ -641,13 +643,13 @@ private fun ApplicationStatusCard(
                             .fillMaxWidth(progressRatio.coerceIn(0f, 1f))
                             .height(6.dp)
                             .clip(RoundedCornerShape(999.dp))
-                            .background(TajsOSTheme.Primary)
+                            .background(TajsOSTheme.Primary),
                 )
             }
             Text(
                 stringResource(Res.string.lens_reference_app_status_count, progress),
                 style = MaterialTheme.typography.labelSmall,
-                color = TajsOSTheme.VaultTextSubtle
+                color = TajsOSTheme.VaultTextSubtle,
             )
         }
     }
@@ -671,7 +673,7 @@ private fun VaultEntryComposer(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = TajsOSTheme.VaultShell),
         shape = RoundedCornerShape(16.dp),
-        border = BorderStroke(1.dp, TajsOSTheme.VaultBorder)
+        border = BorderStroke(1.dp, TajsOSTheme.VaultBorder),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(14.dp),
@@ -680,7 +682,7 @@ private fun VaultEntryComposer(
             Text(
                 stringResource(Res.string.lens_reference_quick_capture),
                 style = MaterialTheme.typography.titleSmall,
-                color = TajsOSTheme.VaultTextStrong
+                color = TajsOSTheme.VaultTextStrong,
             )
             OutlinedTextField(
                 value = entryTitle,
@@ -698,7 +700,7 @@ private fun VaultEntryComposer(
             )
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
-                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
             ) {
                 categories.forEach { (key, label) ->
                     FilterChip(
@@ -710,7 +712,7 @@ private fun VaultEntryComposer(
             }
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
-                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
             ) {
                 listOf("note", "record", "task").forEach { type ->
                     val typeLabel =
@@ -730,7 +732,7 @@ private fun VaultEntryComposer(
             }
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
-                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
             ) {
                 AssistChip(
                     onClick = onSave,

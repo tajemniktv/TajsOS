@@ -60,6 +60,7 @@ object FilterHelper {
         timeWindowContext: String?,
         timeHorizon: String?,
         relations: List<RelationEntity>,
+        sortMode: String = "relevance",
     ): List<NodeWithPin> {
         val cleanQuery = query.trim()
         val isQueryEmpty = cleanQuery.isBlank()
@@ -69,80 +70,97 @@ object FilterHelper {
                 .toEpochMilliseconds()
         val dayMs = 24 * 60 * 60 * 1000L
 
-        return nodes
-            .filter { nodeWithPin ->
-                val node = nodeWithPin.node
-                val matchesQuery = if (isQueryEmpty) true else matchesQuery(nodeWithPin, cleanQuery)
-                val matchesType = node.matchesItemFilter(type)
+        val filtered =
+            nodes
+                .filter { nodeWithPin ->
+                    val node = nodeWithPin.node
+                    val matchesQuery =
+                        if (isQueryEmpty) true else matchesQuery(nodeWithPin, cleanQuery)
+                    val matchesType = node.matchesItemFilter(type)
 
-                // Allow mode/status filtering logic (comma separated status like "active,on_hold")
-                val matchesStatus =
-                    status == null || status.split(",").map { it.trim() }.contains(node.status)
+                    // Allow mode/status filtering logic (comma separated status like "active,on_hold")
+                    val matchesStatus =
+                        status == null || status.split(",").map { it.trim() }.contains(node.status)
 
-                val matchesProject = projectId == null || node.projectId == projectId
-                val matchesArea = areaId == null || node.areaId == areaId
-                val matchesMins = maxMins == null || (node.estimatedMinutes ?: 0) <= maxMins
-                val matchesEnergy = energy == null || node.energyLevel == energy
-                val matchesFriction = friction == null || node.friction == friction
-                val anyContextFilter =
-                    locationContext != null ||
-                        energyContext != null ||
-                        deviceContext != null ||
-                        socialContext != null ||
-                        timeWindowContext != null
-                val matchesContextScope = !anyContextFilter || node.isTaskItem()
-                val matchesLocationContext =
-                    locationContext == null || node.locationContext == locationContext
-                val matchesEnergyContext =
-                    energyContext == null || node.energyContext == energyContext
-                val matchesDeviceContext =
-                    deviceContext == null || node.deviceContext == deviceContext
-                val matchesSocialContext =
-                    socialContext == null || node.socialContext == socialContext
-                val matchesTimeWindowContext =
-                    timeWindowContext == null || node.timeWindowContext == timeWindowContext
-                val matchesTimeHorizon =
-                    if (timeHorizon == null) {
-                        true
-                    } else {
-                        val due = node.dueAt
-                        when (timeHorizon)
-                        {
-                            "today" -> due != null && due in now..(now + dayMs)
-                            "week" -> due != null && due in now..(now + 7 * dayMs)
-                            "month" -> due != null && due in now..(now + 30 * dayMs)
-                            "semester" -> due != null && due in now..(now + 120 * dayMs)
-                            "short" -> due != null && due in now..(now + 7 * dayMs)
-                            "long" -> due != null && due > (now + 30 * dayMs)
-                            else -> true
+                    val matchesProject = projectId == null || node.projectId == projectId
+                    val matchesArea = areaId == null || node.areaId == areaId
+                    val matchesMins = maxMins == null || (node.estimatedMinutes ?: 0) <= maxMins
+                    val matchesEnergy = energy == null || node.energyLevel == energy
+                    val matchesFriction = friction == null || node.friction == friction
+                    val anyContextFilter =
+                        locationContext != null ||
+                            energyContext != null ||
+                            deviceContext != null ||
+                            socialContext != null ||
+                            timeWindowContext != null
+                    val matchesContextScope = !anyContextFilter || node.isTaskItem()
+                    val matchesLocationContext =
+                        locationContext == null || node.locationContext == locationContext
+                    val matchesEnergyContext =
+                        energyContext == null || node.energyContext == energyContext
+                    val matchesDeviceContext =
+                        deviceContext == null || node.deviceContext == deviceContext
+                    val matchesSocialContext =
+                        socialContext == null || node.socialContext == socialContext
+                    val matchesTimeWindowContext =
+                        timeWindowContext == null || node.timeWindowContext == timeWindowContext
+                    val matchesTimeHorizon =
+                        if (timeHorizon == null) {
+                            true
+                        } else {
+                            val due = node.dueAt
+                            when (timeHorizon)
+                            {
+                                "today" -> due != null && due in now..(now + dayMs)
+                                "week" -> due != null && due in now..(now + 7 * dayMs)
+                                "month" -> due != null && due in now..(now + 30 * dayMs)
+                                "semester" -> due != null && due in now..(now + 120 * dayMs)
+                                "short" -> due != null && due in now..(now + 7 * dayMs)
+                                "long" -> due != null && due > (now + 30 * dayMs)
+                                else -> true
+                            }
                         }
-                    }
-                val matchesLinkedTo =
-                    linkedToId == null ||
-                        relations.any {
-                            (it.fromNodeId == node.id && it.toNodeId == linkedToId) ||
-                                (it.fromNodeId == linkedToId && it.toNodeId == node.id)
-                        }
-                matchesQuery &&
-                    matchesType &&
-                    matchesStatus &&
-                    matchesProject &&
-                    matchesArea &&
-                    matchesLinkedTo &&
-                    matchesMins &&
-                    matchesEnergy &&
-                    matchesFriction &&
-                    matchesContextScope &&
-                    matchesLocationContext &&
-                    matchesEnergyContext &&
-                    matchesDeviceContext &&
-                    matchesSocialContext &&
-                    matchesTimeWindowContext &&
-                    matchesTimeHorizon
-            }.sortedWith(
-                compareByDescending<NodeWithPin> { it.node.updatedAt }
-                    .thenByDescending { it.node.id },
-            )
+                    val matchesLinkedTo =
+                        linkedToId == null ||
+                            relations.any {
+                                (it.fromNodeId == node.id && it.toNodeId == linkedToId) ||
+                                    (it.fromNodeId == linkedToId && it.toNodeId == node.id)
+                            }
+                    matchesQuery &&
+                        matchesType &&
+                        matchesStatus &&
+                        matchesProject &&
+                        matchesArea &&
+                        matchesLinkedTo &&
+                        matchesMins &&
+                        matchesEnergy &&
+                        matchesFriction &&
+                        matchesContextScope &&
+                        matchesLocationContext &&
+                        matchesEnergyContext &&
+                        matchesDeviceContext &&
+                        matchesSocialContext &&
+                        matchesTimeWindowContext &&
+                        matchesTimeHorizon
+                }
+
+        return when (sortMode)
+        {
+            "updated" -> {
+                filtered.sortedWith(
+                    compareByDescending<NodeWithPin> { it.node.updatedAt }
+                        .thenByDescending { it.node.id },
+                )
+            }
+
+            else -> {
+                filtered.sortedWith(
+                    compareByDescending<NodeWithPin> { relevanceScore(it, cleanQuery) }
+                        .thenByDescending { it.node.updatedAt }
+                        .thenByDescending { it.node.id },
+                )
+            }
+        }
     }
 
     /**
@@ -178,5 +196,29 @@ object FilterHelper {
                 nodeWithPin.tags.any { tag -> tag.name.contains(cleanQuery, ignoreCase = true) }
             titleMatches || contentMatches || tagMatches
         }
+    }
+
+    private fun relevanceScore(
+        nodeWithPin: NodeWithPin,
+        query: String,
+    ): Int
+    {
+        if (query.isBlank()) return 0
+        val cleanQuery = query.trim().lowercase()
+            val node = nodeWithPin.node
+            val title = node.title.lowercase()
+            val content = node.content.lowercase()
+            val tags = nodeWithPin.tags.map { it.name.lowercase() }
+
+            var score = 0
+            if (title == cleanQuery) score += 100
+            if (title.startsWith(cleanQuery)) score += 60
+            if (title.contains(cleanQuery)) score += 30
+            if (content.contains(cleanQuery)) score += 15
+            if (tags.any { it == cleanQuery }) score += 20
+            if (tags.any { it.contains(cleanQuery) }) score += 10
+            if (nodeWithPin.isPinnedToToday) score += 8
+            if (node.status == "active") score += 5
+        return score
     }
 }

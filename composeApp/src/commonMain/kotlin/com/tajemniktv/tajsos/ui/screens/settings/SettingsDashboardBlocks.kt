@@ -13,15 +13,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -46,6 +43,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.AppPack
 import com.tajemniktv.tajsos.data.MedicationEntity
+import com.tajemniktv.tajsos.ui.SidebarMode
 import com.tajemniktv.tajsos.ui.theme.PaletteAccentAmber
 import com.tajemniktv.tajsos.ui.theme.PaletteAccentBlue
 import com.tajemniktv.tajsos.ui.theme.PaletteAccentGreen
@@ -64,13 +62,18 @@ import tajsos.composeapp.generated.resources.med_substance
 import tajsos.composeapp.generated.resources.med_take_at
 import tajsos.composeapp.generated.resources.profile_add_med
 import tajsos.composeapp.generated.resources.profile_medications
+import tajsos.composeapp.generated.resources.settings_appearance_desc
+import tajsos.composeapp.generated.resources.settings_appearance_title
 import tajsos.composeapp.generated.resources.settings_biometric_desc
 import tajsos.composeapp.generated.resources.settings_biometric_lock
 import tajsos.composeapp.generated.resources.settings_biometric_unavailable
 import tajsos.composeapp.generated.resources.settings_export_data
 import tajsos.composeapp.generated.resources.settings_force_crash
+import tajsos.composeapp.generated.resources.settings_theme_mode
+import tajsos.composeapp.generated.resources.settings_theme_mode_desc
+import tajsos.composeapp.generated.resources.settings_theme_settings
 
-object SettingsDashboardBlockRegistry {
+object SettingsDashboardBlocks {
     private val renderers: Map<String, SettingsDashboardBlockRenderer> =
         mapOf(
             "settings_health" to ::renderSettingsHealth,
@@ -100,11 +103,11 @@ private fun renderSettingsHealth(context: SettingsDashboardContext) {
             Text(
                 stringResource(Res.string.profile_medications),
                 style = MaterialTheme.typography.titleMedium,
-                color = TajsOSTheme.Text
+                color = TajsOSTheme.Text,
             )
             OutlinedButton(
                 onClick = { showAddMedicationDialog = true },
-                shape = RoundedCornerShape(TajsOSTheme.RadiusSm)
+                shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
             ) {
                 Text(stringResource(Res.string.profile_add_med))
             }
@@ -116,7 +119,7 @@ private fun renderSettingsHealth(context: SettingsDashboardContext) {
             Text(
                 "No medication entries configured yet.",
                 style = MaterialTheme.typography.bodyMedium,
-                color = TajsOSTheme.Muted
+                color = TajsOSTheme.Muted,
             )
         } else {
             context.medications.forEach { medication ->
@@ -166,7 +169,7 @@ private fun renderSettingsFeaturePacks(context: SettingsDashboardContext) {
                                 append(if (pack.isFree) " (Free)" else " (Premium)")
                             },
                         style = MaterialTheme.typography.bodyLarge,
-                        color = TajsOSTheme.Text
+                        color = TajsOSTheme.Text,
                     )
                     Text(
                         text =
@@ -176,14 +179,14 @@ private fun renderSettingsFeaturePacks(context: SettingsDashboardContext) {
                                 "Unlock this premium pack to enable its modes and modules"
                             },
                         style = MaterialTheme.typography.labelSmall,
-                        color = TajsOSTheme.Muted
+                        color = TajsOSTheme.Muted,
                     )
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     if (!isOwned && !pack.isFree) {
                         OutlinedButton(
                             onClick = { context.onSetPackOwned(pack, true) },
-                            shape = RoundedCornerShape(TajsOSTheme.RadiusSm)
+                            shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
                         ) {
                             Text("Unlock")
                         }
@@ -192,7 +195,7 @@ private fun renderSettingsFeaturePacks(context: SettingsDashboardContext) {
                         Switch(
                             checked = isEnabled,
                             onCheckedChange = { context.onSetPackEnabled(pack, it) },
-                            colors = SwitchDefaults.colors(checkedThumbColor = TajsOSTheme.Primary)
+                            colors = SwitchDefaults.colors(checkedThumbColor = TajsOSTheme.Primary),
                         )
                     }
                 }
@@ -214,8 +217,8 @@ private fun renderSettingsData(context: SettingsDashboardContext) {
             colors =
                 ButtonDefaults.buttonColors(
                     containerColor = TajsOSTheme.Surface,
-                    contentColor = TajsOSTheme.Primary
-                )
+                    contentColor = TajsOSTheme.Primary,
+                ),
         ) {
             Text(stringResource(Res.string.settings_export_data))
         }
@@ -229,8 +232,8 @@ private fun renderSettingsData(context: SettingsDashboardContext) {
             colors =
                 ButtonDefaults.buttonColors(
                     containerColor = TajsOSTheme.Surface,
-                    contentColor = TajsOSTheme.Primary
-                )
+                    contentColor = TajsOSTheme.Primary,
+                ),
         ) {
             Text("Export Full Bundle")
         }
@@ -247,8 +250,8 @@ private fun renderSettingsData(context: SettingsDashboardContext) {
             colors =
                 OutlinedTextFieldDefaults.colors(
                     unfocusedBorderColor = TajsOSTheme.Border,
-                    focusedBorderColor = TajsOSTheme.Primary
-                )
+                    focusedBorderColor = TajsOSTheme.Primary,
+                ),
         )
 
         Spacer(Modifier.height(TajsOSTheme.SpacingSm))
@@ -260,8 +263,8 @@ private fun renderSettingsData(context: SettingsDashboardContext) {
             colors =
                 ButtonDefaults.buttonColors(
                     containerColor = TajsOSTheme.Surface,
-                    contentColor = TajsOSTheme.Primary
-                )
+                    contentColor = TajsOSTheme.Primary,
+                ),
         ) {
             Text("Import JSON")
         }
@@ -278,7 +281,7 @@ private fun renderSettingsDebug(context: SettingsDashboardContext) {
             onClick = context.onForceCrash,
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            colors = ButtonDefaults.buttonColors(containerColor = TajsOSTheme.Error)
+            colors = ButtonDefaults.buttonColors(containerColor = TajsOSTheme.Error),
         ) {
             Text(stringResource(Res.string.settings_force_crash))
         }
@@ -295,7 +298,7 @@ private fun renderSettingsAppearance(context: SettingsDashboardContext) {
             PaletteAccentBlue,
             PaletteAccentRose,
             PaletteAccentAmber,
-            PaletteAccentGreen
+            PaletteAccentGreen,
         )
 
     fun Color.toHex(): String {
@@ -308,26 +311,25 @@ private fun renderSettingsAppearance(context: SettingsDashboardContext) {
     Column(
         modifier =
             Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
+                .fillMaxWidth()
                 .padding(horizontal = TajsOSTheme.SpacingLg, vertical = TajsOSTheme.SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingLg)
+        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingLg),
     ) {
         Text(
-            text = "Appearance",
+            text = stringResource(Res.string.settings_appearance_title),
             style = MaterialTheme.typography.headlineMedium,
-            color = TajsOSTheme.Text
+            color = TajsOSTheme.Text,
         )
         Text(
-            text = "Customize the visual identity and interface behavior of your operating system.",
+            text = stringResource(Res.string.settings_appearance_desc),
             style = MaterialTheme.typography.bodyMedium,
-            color = TajsOSTheme.Muted
+            color = TajsOSTheme.Muted,
         )
 
-        AppearanceSectionCard(title = "Theme Settings") {
+        AppearanceSectionCard(title = stringResource(Res.string.settings_theme_settings)) {
             AppearanceSettingRow(
-                title = "Theme Mode",
-                description = "Switch between dark and light theme.",
+                title = stringResource(Res.string.settings_theme_mode),
+                description = stringResource(Res.string.settings_theme_mode_desc),
             ) {
                 Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                     OutlinedButton(
@@ -376,7 +378,7 @@ private fun renderSettingsAppearance(context: SettingsDashboardContext) {
                                     color
                                         .toHex()
                                         .uppercase(),
-                            onClick = { context.onSetAccentColor(color.toHex()) }
+                            onClick = { context.onSetAccentColor(color.toHex()) },
                         )
                     }
                 }
@@ -389,21 +391,41 @@ private fun renderSettingsAppearance(context: SettingsDashboardContext) {
                 Switch(
                     checked = context.isGlassmorphismEnabled,
                     onCheckedChange = { context.onSetGlassmorphismEnabled(it) },
-                    colors = SwitchDefaults.colors(checkedThumbColor = TajsOSTheme.Primary)
+                    colors = SwitchDefaults.colors(checkedThumbColor = TajsOSTheme.Primary),
                 )
             }
         }
 
         AppearanceSectionCard(title = "Sidebar Behavior") {
             AppearanceSettingRow(
-                title = "Default Sidebar State",
-                description = "How the sidebar appears when the app starts.",
+                title = "Sidebar Mode",
+                description = "Choose how the sidebar should behave.",
             ) {
-                OutlinedButton(
-                    onClick = {},
-                    shape = RoundedCornerShape(TajsOSTheme.RadiusSm)
-                ) {
-                    Text("Expanded")
+                Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
+                    SidebarMode.entries.forEach { mode ->
+                        val label =
+                            when (mode)
+                            {
+                                SidebarMode.EXPANDED -> "Expanded"
+                                SidebarMode.COLLAPSED -> "Collapsed"
+                                SidebarMode.HOVER_EXPAND -> "Hover"
+                            }
+                        OutlinedButton(
+                            onClick = { context.onSetSidebarMode(mode) },
+                            shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
+                            colors =
+                                ButtonDefaults.outlinedButtonColors(
+                                    containerColor =
+                                        if (context.sidebarMode == mode) {
+                                            TajsOSTheme.Primary.copy(alpha = 0.2f)
+                                        } else {
+                                            Color.Transparent
+                                        },
+                                ),
+                        ) {
+                            Text(label)
+                        }
+                    }
                 }
             }
 
@@ -414,7 +436,7 @@ private fun renderSettingsAppearance(context: SettingsDashboardContext) {
                 Switch(
                     checked = hideLabelsOnCollapse,
                     onCheckedChange = { hideLabelsOnCollapse = it },
-                    colors = SwitchDefaults.colors(checkedThumbColor = TajsOSTheme.Primary)
+                    colors = SwitchDefaults.colors(checkedThumbColor = TajsOSTheme.Primary),
                 )
             }
         }
@@ -427,7 +449,7 @@ private fun renderSettingsAppearance(context: SettingsDashboardContext) {
                 Switch(
                     checked = context.reduceMotion,
                     onCheckedChange = { context.onSetReduceMotion(it) },
-                    colors = SwitchDefaults.colors(checkedThumbColor = TajsOSTheme.Primary)
+                    colors = SwitchDefaults.colors(checkedThumbColor = TajsOSTheme.Primary),
                 )
             }
         }
@@ -452,7 +474,7 @@ private fun renderSettingsPreferences(context: SettingsDashboardContext) {
                 Text(
                     stringResource(Res.string.settings_biometric_lock),
                     style = MaterialTheme.typography.bodyLarge,
-                    color = TajsOSTheme.Text
+                    color = TajsOSTheme.Text,
                 )
                 Text(
                     if (context.isBiometricHardwareAvailable) {
@@ -461,14 +483,14 @@ private fun renderSettingsPreferences(context: SettingsDashboardContext) {
                         stringResource(Res.string.settings_biometric_unavailable)
                     },
                     style = MaterialTheme.typography.labelSmall,
-                    color = TajsOSTheme.Muted
+                    color = TajsOSTheme.Muted,
                 )
             }
             Switch(
                 enabled = context.isBiometricHardwareAvailable,
                 checked = context.isBiometricEnabled == true,
                 onCheckedChange = { context.onSetBiometricEnabled(it) },
-                colors = SwitchDefaults.colors(checkedThumbColor = TajsOSTheme.Primary)
+                colors = SwitchDefaults.colors(checkedThumbColor = TajsOSTheme.Primary),
             )
         }
     }
@@ -483,9 +505,8 @@ private fun SettingsSimpleScaffold(
     Column(
         modifier =
             Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(TajsOSTheme.SpacingMd)
+                .fillMaxWidth()
+                .padding(TajsOSTheme.SpacingMd),
     ) {
         Text(
             title,
@@ -514,13 +535,13 @@ private fun AppearanceSectionCard(
                 .fillMaxWidth()
                 .background(
                     color = TajsOSTheme.SurfaceLow.copy(alpha = 0.55f),
-                    shape = RoundedCornerShape(14.dp)
+                    shape = RoundedCornerShape(14.dp),
                 ).border(
                     width = 1.dp,
                     color = TajsOSTheme.Border.copy(alpha = 0.35f),
-                    shape = RoundedCornerShape(14.dp)
+                    shape = RoundedCornerShape(14.dp),
                 ).padding(TajsOSTheme.SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
     ) {
         Text(
             text = title,
@@ -545,7 +566,7 @@ private fun AppearanceSettingRow(
     ) {
         Column(
             modifier = Modifier.weight(1f).padding(end = TajsOSTheme.SpacingMd),
-            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingXs)
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingXs),
         ) {
             Text(
                 text = title,
@@ -578,7 +599,7 @@ private fun AppearanceAccentDot(
                 .border(
                     width = if (selected) 2.dp else 0.dp,
                     color = if (selected) TajsOSTheme.Text else Color.Transparent,
-                    shape = CircleShape
+                    shape = CircleShape,
                 ).clickable(onClick = onClick),
     )
 }
@@ -594,8 +615,8 @@ private fun SettingsMedicationItem(
                 .fillMaxWidth()
                 .background(
                     color = TajsOSTheme.Surface,
-                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
-                ).padding(TajsOSTheme.SpacingMd)
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+                ).padding(TajsOSTheme.SpacingMd),
     ) {
         Text(
             medication.substance,
@@ -649,31 +670,31 @@ private fun SettingsAddMedicationDialog(
         title = { Text(stringResource(Res.string.profile_add_med)) },
         text = {
             Column(
-                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
             ) {
                 OutlinedTextField(
                     value = substance,
                     onValueChange = { substance = it },
                     label = { Text(stringResource(Res.string.med_substance)) },
-                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                 )
                 OutlinedTextField(
                     value = brands,
                     onValueChange = { brands = it },
                     label = { Text(stringResource(Res.string.med_brand_names)) },
-                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                 )
                 OutlinedTextField(
                     value = dosage,
                     onValueChange = { dosage = it },
                     label = { Text(stringResource(Res.string.med_dosage)) },
-                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                 )
                 OutlinedTextField(
                     value = hour,
                     onValueChange = { hour = it },
                     label = { Text(stringResource(Res.string.med_take_at)) },
-                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                 )
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Checkbox(checked = isOptional, onCheckedChange = { isOptional = it })

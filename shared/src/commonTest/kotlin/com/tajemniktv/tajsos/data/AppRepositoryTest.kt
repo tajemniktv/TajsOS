@@ -28,6 +28,16 @@ class AppRepositoryTest {
     private val fakeReviewDao = FakeReviewDao()
     private val fakeCalendarProviderDao = FakeCalendarProviderDao()
     private val fakeCalendarEventDao = FakeCalendarEventDao()
+    private val fakeInboxEntryDao = FakeInboxEntryDao()
+    private val fakeTaskFacetDao = FakeTaskFacetDao()
+    private val fakeNoteFacetDao = FakeNoteFacetDao()
+    private val fakeProjectFacetDao = FakeProjectFacetDao()
+    private val fakeAreaFacetDao = FakeAreaFacetDao()
+    private val fakeRecordFacetDao = FakeRecordFacetDao()
+    private val fakeItemDomainDao = FakeItemDomainDao()
+    private val fakeRichContentDocumentDao = FakeRichContentDocumentDao()
+    private val fakeScheduleEntryDao = FakeScheduleEntryDao()
+    private val fakeSavedViewDao = FakeSavedViewDao()
 
     private val repository =
         AppRepository(
@@ -48,6 +58,16 @@ class AppRepositoryTest {
             decisionDao = FakeDecisionDao(),
             userDao = FakeUserDao(),
             medicationDao = FakeMedicationDao(),
+            inboxEntryDao = fakeInboxEntryDao,
+            taskFacetDao = fakeTaskFacetDao,
+            noteFacetDao = fakeNoteFacetDao,
+            projectFacetDao = fakeProjectFacetDao,
+            areaFacetDao = fakeAreaFacetDao,
+            recordFacetDao = fakeRecordFacetDao,
+            itemDomainDao = fakeItemDomainDao,
+            richContentDocumentDao = fakeRichContentDocumentDao,
+            scheduleEntryDao = fakeScheduleEntryDao,
+            savedViewDao = fakeSavedViewDao,
         )
 
     // ---- insertNodes tests ----
@@ -189,6 +209,112 @@ class AppRepositoryTest {
             assertEquals(1, logs.size)
             assertEquals("NODE_CREATED", logs[0].eventType)
             assertEquals(id, logs[0].nodeId)
+        }
+
+    @Test
+    fun insertLifeItem_createsTypedAggregateWithDomainsAndDocument(): TestResult =
+        runTest {
+            val id =
+                repository.insertLifeItem(
+                    kind = ItemKind.NOTE,
+                    title = "Therapy notes",
+                    content = "Patterns from this week",
+                    noteKind = NoteKind.REFLECTION,
+                    domains = setOf(com.tajemniktv.tajsos.domain.DomainKind.HEALTH),
+                )
+
+            val aggregate = repository.getLifeObject(id)
+
+            assertNotNull(aggregate)
+            assertEquals(ItemKind.NOTE, aggregate.kind)
+            assertEquals(NoteKind.REFLECTION, aggregate.note?.kind)
+            assertEquals("Patterns from this week", aggregate.document?.body)
+            assertEquals(1, aggregate.domains.size)
+            assertEquals(com.tajemniktv.tajsos.domain.DomainKind.HEALTH, aggregate.domains.first().domain)
+        }
+
+    @Test
+    fun insertNode_mirrorsTaskSchedulingIntoTypedScheduleEntries(): TestResult =
+        runTest {
+            val node =
+                NodeEntity(
+                    type = "task",
+                    title = "Submit taxes",
+                    startAt = 1_700_000_000_000,
+                    dueAt = 1_700_086_400_000,
+                    reminderAt = 1_699_950_000_000,
+                    recurringInterval = "weekly",
+                )
+
+            val id = repository.insertNode(node)
+            val entries = repository.getScheduleEntriesForItem(id).first()
+
+            assertEquals(3, entries.size)
+            assertTrue(entries.all { it.localDateEpochDay != null })
+            assertTrue(entries.all { !it.timezoneId.isNullOrBlank() })
+            assertTrue(entries.any { it.kind == ScheduleEntryKind.DUE.storageKey })
+        }
+
+    @Test
+    fun saveSavedView_roundTripsProjectionDefinition(): TestResult =
+        runTest {
+            val viewId =
+                repository.saveSavedView(
+                    SavedViewDefinition(
+                        name = "Tasks by Area",
+                        lens = SavedViewLens.OPERATE,
+                        layout = SavedViewLayout.MATRIX,
+                        sourceKinds = setOf(ItemKind.TASK),
+                        filters =
+                            listOf(
+                                SavedViewFilter(
+                                    fieldKey = SavedViewFieldKey.STATUS,
+                                    operator = SavedViewFilterOperator.NOT_EQUALS,
+                                    value = "archived",
+                                ),
+                            ),
+                        sorts =
+                            listOf(
+                                SavedViewSort(
+                                    fieldKey = SavedViewFieldKey.DUE_DATE,
+                                    direction = SavedViewSortDirection.ASCENDING,
+                                ),
+                            ),
+                        visibleFields = listOf(SavedViewFieldKey.TITLE, SavedViewFieldKey.AREA),
+                        rowDimension = SavedViewFieldKey.AREA,
+                        columnDimension = SavedViewFieldKey.STATUS,
+                        measure = SavedViewMeasure.COUNT,
+                    ),
+                )
+
+            val saved = repository.getSavedView(viewId)
+
+            assertNotNull(saved)
+            assertEquals(SavedViewLayout.MATRIX, saved.layout)
+            assertEquals(setOf(ItemKind.TASK), saved.sourceKinds)
+            assertEquals(SavedViewFieldKey.AREA, saved.rowDimension)
+            assertEquals(SavedViewFieldKey.STATUS, saved.columnDimension)
+            assertEquals(SavedViewMeasure.COUNT, saved.measure)
+            assertEquals(1, saved.filters.size)
+        }
+
+    @Test
+    fun deleteNode_cleansCompanionPersistenceRows(): TestResult =
+        runTest {
+            val id =
+                repository.insertLifeItem(
+                    kind = ItemKind.TASK,
+                    title = "Call clinic",
+                    content = "Ask for bloodwork referral",
+                    domains = setOf(com.tajemniktv.tajsos.domain.DomainKind.HEALTH),
+                )
+
+            repository.deleteNode(NodeEntity(id = id, type = "task", title = "Call clinic"))
+
+            assertEquals(null, fakeTaskFacetDao.getTaskFacetByItemId(id))
+            assertEquals(null, fakeRichContentDocumentDao.getDocumentForItem(id))
+            assertTrue(fakeItemDomainDao.getDomainsForItem(id).first().isEmpty())
+            assertTrue(fakeScheduleEntryDao.getScheduleEntriesForItem(id).first().isEmpty())
         }
 
     @Test

@@ -116,8 +116,8 @@ fun FinancesScreen(
                 .fillMaxSize()
                 .background(
                     Brush.verticalGradient(
-                        listOf(TajsOSTheme.Background, TajsOSTheme.Surface.copy(alpha = 0.45f))
-                    )
+                        listOf(TajsOSTheme.Background, TajsOSTheme.Surface.copy(alpha = 0.45f)),
+                    ),
                 ),
     ) {
         val surface =
@@ -137,8 +137,12 @@ fun FinancesScreen(
 
         if (surface == FinanceDashboardSurface.MOBILE) {
             LazyColumn(
-                modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd),
-                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(TajsOSTheme.SpacingMd)
+                        .padding(bottom = 80.dp),
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
             ) {
                 items(plan.primary, key = { it.id }) { block ->
                     FinanceDashboardBlockRegistry
@@ -150,11 +154,11 @@ fun FinancesScreen(
         } else {
             Row(
                 modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd),
-                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
             ) {
                 LazyColumn(
-                    modifier = Modifier.weight(1.3f),
-                    verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+                    modifier = Modifier.weight(1.3f).padding(bottom = 80.dp),
+                    verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
                 ) {
                     items(plan.primary, key = { it.id }) { block ->
                         FinanceDashboardBlockRegistry
@@ -164,8 +168,8 @@ fun FinancesScreen(
                     }
                 }
                 LazyColumn(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+                    modifier = Modifier.weight(1f).padding(bottom = 80.dp),
+                    verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
                 ) {
                     items(plan.secondary, key = { it.id }) { block ->
                         FinanceDashboardBlockRegistry

@@ -43,7 +43,7 @@ fun ModuleCard(
     icon: ImageVector,
     status: String,
     onClick: () -> Unit,
-    color: Color = TajsOSTheme.Primary
+    color: Color = TajsOSTheme.Primary,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -69,7 +69,7 @@ fun ModuleCard(
     ) {
         Column(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
-            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingXs)
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingXs),
         ) {
             Box(
                 modifier =
@@ -77,7 +77,7 @@ fun ModuleCard(
                         .size(40.dp)
                         .background(
                             color.copy(alpha = 0.1f),
-                            RoundedCornerShape(TajsOSTheme.RadiusSm)
+                            RoundedCornerShape(TajsOSTheme.RadiusSm),
                         ),
                 contentAlignment = Alignment.Center,
             ) {

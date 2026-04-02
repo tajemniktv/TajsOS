@@ -82,7 +82,7 @@ internal fun GroupedOpenLoopSection(
         shape =
             androidx.compose.foundation.shape
                 .RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.Border)
+        border = BorderStroke(1.dp, TajsOSTheme.Border),
     ) {
         Column(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),

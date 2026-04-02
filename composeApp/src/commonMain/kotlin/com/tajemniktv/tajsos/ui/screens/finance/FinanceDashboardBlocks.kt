@@ -73,7 +73,7 @@ internal fun renderFinanceHeaderBlock(context: FinanceDashboardContext) {
         modifier = Modifier.fillMaxWidth(),
         color = TajsOSTheme.Surface.copy(alpha = 0.6f),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.Border)
+        border = BorderStroke(1.dp, TajsOSTheme.Border),
     ) {
         Column(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -82,12 +82,12 @@ internal fun renderFinanceHeaderBlock(context: FinanceDashboardContext) {
             Text(
                 stringResource(LensUiContract.financeLens.title),
                 style = MaterialTheme.typography.displaySmall,
-                color = TajsOSTheme.Text
+                color = TajsOSTheme.Text,
             )
             Text(
                 stringResource(LensUiContract.financeLens.subtitle),
                 style = MaterialTheme.typography.bodySmall,
-                color = TajsOSTheme.Muted
+                color = TajsOSTheme.Muted,
             )
             Text(
                 stringResource(
@@ -97,7 +97,7 @@ internal fun renderFinanceHeaderBlock(context: FinanceDashboardContext) {
                     context.deadlineItems.size,
                 ),
                 style = MaterialTheme.typography.labelSmall,
-                color = TajsOSTheme.Muted
+                color = TajsOSTheme.Muted,
             )
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 AssistChip(
@@ -128,13 +128,13 @@ internal fun renderFinanceHeaderBlock(context: FinanceDashboardContext) {
 internal fun renderFinanceMetricsBlock(context: FinanceDashboardContext) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+        horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
     ) {
         Surface(
             modifier = Modifier.weight(1f),
             color = TajsOSTheme.Surface.copy(alpha = 0.65f),
             border = BorderStroke(1.dp, TajsOSTheme.Border),
-            shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
+            shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         ) {
             Column(
                 modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -158,7 +158,7 @@ internal fun renderFinanceMetricsBlock(context: FinanceDashboardContext) {
                         context.knowledgeItems.size,
                     ),
                     style = MaterialTheme.typography.bodySmall,
-                    color = TajsOSTheme.Muted
+                    color = TajsOSTheme.Muted,
                 )
                 FinanceMiniBars(
                     values = context.bars,
@@ -170,7 +170,7 @@ internal fun renderFinanceMetricsBlock(context: FinanceDashboardContext) {
             modifier = Modifier.weight(1f),
             color = TajsOSTheme.Surface.copy(alpha = 0.65f),
             border = BorderStroke(1.dp, TajsOSTheme.Border),
-            shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
+            shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         ) {
             Column(
                 modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -185,7 +185,7 @@ internal fun renderFinanceMetricsBlock(context: FinanceDashboardContext) {
                 Text(
                     "${context.deadlineItems.size} dated items • ${context.overdue.size} overdue • ${context.queue.size + context.recurring.size} recurring/admin",
                     style = MaterialTheme.typography.bodySmall,
-                    color = TajsOSTheme.Muted
+                    color = TajsOSTheme.Muted,
                 )
                 FinanceMiniBars(
                     values = context.bars,
@@ -202,7 +202,7 @@ internal fun renderFinanceActivityBlock(context: FinanceDashboardContext) {
         modifier = Modifier.fillMaxWidth(),
         color = TajsOSTheme.Surface.copy(alpha = 0.7f),
         border = BorderStroke(1.dp, TajsOSTheme.Border),
-        shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
     ) {
         Column(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -236,7 +236,7 @@ internal fun renderFinanceActivityBlock(context: FinanceDashboardContext) {
                         Text(
                             financeItemLabel(item.node),
                             style = MaterialTheme.typography.labelSmall,
-                            color = TajsOSTheme.Muted
+                            color = TajsOSTheme.Muted,
                         )
                     }
                     Text(
@@ -265,7 +265,7 @@ internal fun renderFinanceInsightsBlock(context: FinanceDashboardContext) {
         modifier = Modifier.fillMaxWidth(),
         color = TajsOSTheme.Surface.copy(alpha = 0.7f),
         border = BorderStroke(1.dp, TajsOSTheme.Border),
-        shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
     ) {
         Column(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -289,13 +289,13 @@ internal fun renderFinanceInsightsBlock(context: FinanceDashboardContext) {
                     modifier = Modifier.fillMaxWidth(),
                     color = TajsOSTheme.Background.copy(alpha = 0.35f),
                     shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
-                    border = BorderStroke(1.dp, TajsOSTheme.Border.copy(alpha = 0.7f))
+                    border = BorderStroke(1.dp, TajsOSTheme.Border.copy(alpha = 0.7f)),
                 ) {
                     Text(
                         item,
                         modifier = Modifier.padding(10.dp),
                         style = MaterialTheme.typography.bodySmall,
-                        color = TajsOSTheme.Muted
+                        color = TajsOSTheme.Muted,
                     )
                 }
             }
@@ -309,7 +309,7 @@ internal fun renderFinanceInsightsBlock(context: FinanceDashboardContext) {
                 progress = { context.confidence / 100f },
                 modifier = Modifier.fillMaxWidth().height(6.dp),
                 color = TajsOSTheme.Primary,
-                trackColor = TajsOSTheme.Border.copy(alpha = 0.3f)
+                trackColor = TajsOSTheme.Border.copy(alpha = 0.3f),
             )
         }
     }
@@ -321,7 +321,7 @@ internal fun renderFinanceVaultBlock(context: FinanceDashboardContext) {
         modifier = Modifier.fillMaxWidth(),
         color = TajsOSTheme.Surface.copy(alpha = 0.7f),
         border = BorderStroke(1.dp, TajsOSTheme.Border),
-        shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
     ) {
         Column(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -367,7 +367,7 @@ internal fun renderFinanceQueueControlsBlock(context: FinanceDashboardContext) {
         modifier = Modifier.fillMaxWidth(),
         color = TajsOSTheme.Surface.copy(alpha = 0.7f),
         border = BorderStroke(1.dp, TajsOSTheme.Border),
-        shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
     ) {
         Column(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -381,7 +381,7 @@ internal fun renderFinanceQueueControlsBlock(context: FinanceDashboardContext) {
             )
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
-                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
             ) {
                 FinanceMaintenanceView.entries.forEach { view ->
                     FilterChip(
@@ -478,7 +478,7 @@ private fun FinanceMiniBars(
                                     TajsOSTheme.Primary
                                 } else {
                                     TajsOSTheme.Primary.copy(
-                                        alpha = 0.55f
+                                        alpha = 0.55f,
                                     )
                                 },
                             shape = RoundedCornerShape(6.dp),

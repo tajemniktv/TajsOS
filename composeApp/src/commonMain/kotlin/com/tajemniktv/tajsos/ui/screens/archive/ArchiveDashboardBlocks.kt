@@ -9,11 +9,9 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Refresh
@@ -44,9 +42,9 @@ import tajsos.composeapp.generated.resources.type_note
 import tajsos.composeapp.generated.resources.type_project
 import tajsos.composeapp.generated.resources.type_task
 
-object ArchiveDashboardBlockRegistry {
+object ArchiveDashboardBlocks {
     private val renderers: Map<String, ArchiveDashboardBlockRenderer> =
-        mapOf("archive_main" to ::renderArchiveMainBlock)
+        mapOf("archive_main" to ::renderArchiveMainBlock) // NON-NLS
 
     fun resolve(id: String): ArchiveDashboardBlockRenderer? = renderers[id]
 }
@@ -65,7 +63,7 @@ internal fun ArchiveMainBlock(
     val archivedNodes by viewModel.archivedNodes.collectAsState()
     val isInitialLoadComplete by viewModel.isInitialLoadComplete.collectAsState()
 
-    Column(modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd)) {
+    Column(modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd)) {
         Text(
             stringResource(Res.string.archive_title),
             style = MaterialTheme.typography.displaySmall,
@@ -73,15 +71,15 @@ internal fun ArchiveMainBlock(
         Text(
             stringResource(Res.string.archive_subtitle),
             style = MaterialTheme.typography.labelSmall,
-            color = TajsOSTheme.Muted
+            color = TajsOSTheme.Muted,
         )
         Spacer(modifier = Modifier.height(TajsOSTheme.SpacingMd))
 
         if (archivedNodes.isEmpty() && isInitialLoadComplete) {
             EmptyState(message = stringResource(Res.string.archive_empty))
         } else {
-            LazyColumn(modifier = Modifier.weight(1f)) {
-                items(archivedNodes) { nodeWithPin ->
+            Column {
+                archivedNodes.forEach { nodeWithPin ->
                     ListItem(
                         headlineContent = { Text(nodeWithPin.node.title) },
                         supportingContent = {
@@ -110,14 +108,14 @@ internal fun ArchiveMainBlock(
                                     Icon(
                                         Icons.Default.Refresh,
                                         contentDescription = stringResource(Res.string.archive_restore),
-                                        tint = TajsOSTheme.Primary
+                                        tint = TajsOSTheme.Primary,
                                     )
                                 }
                                 IconButton(onClick = { viewModel.deleteNodePermanently(nodeWithPin.node) }) {
                                     Icon(
                                         Icons.Default.Delete,
                                         contentDescription = stringResource(Res.string.archive_delete),
-                                        tint = TajsOSTheme.Error
+                                        tint = TajsOSTheme.Error,
                                     )
                                 }
                             }
@@ -127,7 +125,7 @@ internal fun ArchiveMainBlock(
                                 onClick = { onEditNode(nodeWithPin.node.id) },
                                 onLongClick = { onEditNode(nodeWithPin.node.id) },
                             ),
-                        colors = ListItemDefaults.colors(containerColor = TajsOSTheme.Surface)
+                        colors = ListItemDefaults.colors(containerColor = TajsOSTheme.Surface),
                     )
                     HorizontalDivider(color = TajsOSTheme.Muted.copy(alpha = 0.5f))
                 }

@@ -124,7 +124,7 @@ private fun renderProjectHero(context: ProjectDetailContext) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = TajsOSTheme.SurfaceHighest,
-        shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -140,7 +140,7 @@ private fun renderProjectHero(context: ProjectDetailContext) {
             Text(
                 text = context.outcomeText,
                 style = MaterialTheme.typography.bodyLarge,
-                color = TajsOSTheme.Text
+                color = TajsOSTheme.Text,
             )
 
             Row(
@@ -183,7 +183,7 @@ private fun renderProjectHero(context: ProjectDetailContext) {
                         text = "${(context.progress * 100f).roundToInt()}%",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = TajsOSTheme.Text
+                        color = TajsOSTheme.Text,
                     )
                     Text(
                         text =
@@ -194,7 +194,7 @@ private fun renderProjectHero(context: ProjectDetailContext) {
                                 context.totalTasksCount,
                             ),
                         style = MaterialTheme.typography.bodySmall,
-                        color = TajsOSTheme.Muted
+                        color = TajsOSTheme.Muted,
                     )
                 }
             }
@@ -203,7 +203,7 @@ private fun renderProjectHero(context: ProjectDetailContext) {
                 progress = { context.progress.coerceIn(0f, 1f) },
                 modifier = Modifier.fillMaxWidth().height(7.dp),
                 color = if (project.isFrozen) TajsOSTheme.Muted else TajsOSTheme.Primary,
-                trackColor = TajsOSTheme.SurfaceLow
+                trackColor = TajsOSTheme.SurfaceLow,
             )
 
             Row(
@@ -258,7 +258,7 @@ private fun renderProjectContent(context: ProjectDetailContext) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = TajsOSTheme.SurfaceLow,
-        shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(14.dp),
@@ -482,7 +482,7 @@ private fun renderProjectSidebar(context: ProjectDetailContext) {
             if (context.relatedNodeIds.isEmpty()) {
                 Text(
                     stringResource(Res.string.project_detail_empty_work),
-                    color = TajsOSTheme.Muted
+                    color = TajsOSTheme.Muted,
                 )
             } else {
                 context.relatedNodeIds.take(8).forEach { id ->
@@ -510,7 +510,7 @@ private fun renderProjectSidebar(context: ProjectDetailContext) {
                 Icon(
                     Icons.Default.AccessTime,
                     contentDescription = null,
-                    tint = TajsOSTheme.Primary
+                    tint = TajsOSTheme.Primary,
                 )
                 Text(formatTimestamp(context.targetDate), color = TajsOSTheme.Text)
             }
@@ -523,7 +523,7 @@ private fun renderProjectSidebar(context: ProjectDetailContext) {
             if (context.attachmentNames.isEmpty()) {
                 Text(
                     stringResource(Res.string.project_detail_empty_assets),
-                    color = TajsOSTheme.Muted
+                    color = TajsOSTheme.Muted,
                 )
             } else {
                 context.attachmentNames.take(6).forEach {
@@ -539,7 +539,7 @@ private fun renderProjectSidebar(context: ProjectDetailContext) {
             if (context.tags.isEmpty()) {
                 Text(
                     stringResource(Res.string.project_detail_empty_timeline),
-                    color = TajsOSTheme.Muted
+                    color = TajsOSTheme.Muted,
                 )
             } else {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -561,7 +561,7 @@ private fun SidebarCard(
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = TajsOSTheme.Surface,
-        shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(12.dp),
@@ -587,7 +587,8 @@ private fun SidebarCard(
 private fun SidebarValueRow(
     label: String,
     value: String,
-    valueColor: Color = TajsOSTheme.Text) {
+    valueColor: Color = TajsOSTheme.Text,
+) {
     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
         Text(label, style = MaterialTheme.typography.labelSmall, color = TajsOSTheme.Muted)
         Text(value, style = MaterialTheme.typography.bodyMedium, color = valueColor)
@@ -609,7 +610,7 @@ private fun ProjectSectionTitle(
             text = stringResource(title),
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.Bold,
-            color = TajsOSTheme.Text
+            color = TajsOSTheme.Text,
         )
     }
     HorizontalDivider(color = TajsOSTheme.GhostBorder)
@@ -620,7 +621,7 @@ private fun ProjectEmptyState(text: StringResource) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = TajsOSTheme.Surface,
-        shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
     ) {
         Text(
             text = stringResource(text),
@@ -635,12 +636,12 @@ private fun MissionMetric(
     label: String,
     value: String,
     icon: ImageVector,
-    tone: Color = TajsOSTheme.Primary
+    tone: Color = TajsOSTheme.Primary,
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = TajsOSTheme.Surface,
-        shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(12.dp),
@@ -656,12 +657,12 @@ private fun MissionMetric(
                     Text(
                         label,
                         style = MaterialTheme.typography.labelSmall,
-                        color = TajsOSTheme.Muted
+                        color = TajsOSTheme.Muted,
                     )
                     Text(
                         value,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = TajsOSTheme.Text
+                        color = TajsOSTheme.Text,
                     )
                 }
             }
@@ -683,7 +684,7 @@ fun ProjectTimelineItem(log: EventLogEntity) {
                 Modifier
                     .width(8.dp)
                     .height(8.dp)
-                    .background(TajsOSTheme.Muted, RoundedCornerShape(99.dp))
+                    .background(TajsOSTheme.Muted, RoundedCornerShape(99.dp)),
         )
         Spacer(Modifier.width(12.dp))
         Column {
@@ -702,7 +703,7 @@ fun ProjectTimelineItem(log: EventLogEntity) {
                     date.minute.toString().padStart(2, '0')
                 } // ${date.day}/${date.month.number}",
                 style = MaterialTheme.typography.labelSmall,
-                color = TajsOSTheme.Muted
+                color = TajsOSTheme.Muted,
             )
         }
     }

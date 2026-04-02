@@ -83,6 +83,7 @@ import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.dash_area_health
 import tajsos.composeapp.generated.resources.dash_decisions
+import tajsos.composeapp.generated.resources.dash_forgotten_wisdom
 import tajsos.composeapp.generated.resources.dash_inbox_new
 import tajsos.composeapp.generated.resources.dash_inbox_overflow
 import tajsos.composeapp.generated.resources.dash_maintenance
@@ -94,6 +95,7 @@ import tajsos.composeapp.generated.resources.dash_search_placeholder
 import tajsos.composeapp.generated.resources.dash_suggestion_low_focus
 import tajsos.composeapp.generated.resources.dash_suggestion_meds
 import tajsos.composeapp.generated.resources.dash_suggestion_stress
+import tajsos.composeapp.generated.resources.dashboard_open_loops_action
 
 @Composable
 internal fun renderTodayPulseBlock(context: DashboardBlockContext) {
@@ -101,7 +103,7 @@ internal fun renderTodayPulseBlock(context: DashboardBlockContext) {
         progress = context.dailyProgress,
         tasks = context.pinnedNodes,
         onToggleTask = { nodeWithPin ->
-            val newStatus = if (nodeWithPin.node.status == "done") "active" else "done"
+            val newStatus = if (nodeWithPin.node.status == "done") "active" else "done" // NON-NLS
             context.viewModel.updateNodeStatus(nodeWithPin.node, newStatus)
         },
         onTaskClick = { context.onEditNode(it) },
@@ -121,7 +123,7 @@ private fun renderForgottenWisdom(context: DashboardBlockContext) {
         }) {
             Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
                 Text(
-                    "FORGOTTEN WISDOM",
+                    stringResource(Res.string.dash_forgotten_wisdom),
                     style = MaterialTheme.typography.labelSmall,
                     color = TajsOSTheme.Muted,
                     fontWeight = FontWeight.Bold,
@@ -130,15 +132,16 @@ private fun renderForgottenWisdom(context: DashboardBlockContext) {
                     forgottenWisdom
                         .node.title,
                     style = MaterialTheme.typography.titleSmall,
-                    color = TajsOSTheme.Text
+                    color = TajsOSTheme.Text,
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
                     forgottenWisdom
                         .node.content
-                        .take(100) + "...",
+                        .take(100) +
+                        "...",
                     style = MaterialTheme.typography.bodySmall,
-                    color = TajsOSTheme.Muted
+                    color = TajsOSTheme.Muted,
                 )
             }
         }
@@ -170,11 +173,14 @@ internal fun renderAreaHealthBlock(context: DashboardBlockContext) {
                 Text(
                     "IMBALANCE ${context.dashboardState.areaImbalanceScore}% // ${context.dashboardState.areaImbalanceLabel.uppercase()}",
                     style = MaterialTheme.typography.labelSmall,
-                    color = if (context.dashboardState.areaImbalanceScore >=
-                        60
-                    ) {
-                        TajsOSTheme.Error
-                        } else TajsOSTheme.Accent,
+                    color =
+                        if (context.dashboardState.areaImbalanceScore >=
+                            60
+                        ) {
+                            TajsOSTheme.Error
+                        } else {
+                            TajsOSTheme.Accent
+                        },
                 )
             }
             Row(
@@ -214,7 +220,7 @@ internal fun renderOperationalBlock(context: DashboardBlockContext) {
 
             TextButton(onClick = { context.onNavigateTo(Screen.OpenLoops) }) {
                 Text(
-                    text = "OPEN OPEN LOOPS",
+                    text = stringResource(Res.string.dashboard_open_loops_action),
                     style = MaterialTheme.typography.labelSmall,
                     color = TajsOSTheme.Primary,
                 )
@@ -346,7 +352,7 @@ internal fun renderSearchBlock(context: DashboardBlockContext) {
                 focusedBorderColor = TajsOSTheme.Primary,
                 unfocusedContainerColor = TajsOSTheme.Surface,
                 focusedContainerColor = TajsOSTheme.Surface,
-            )
+            ),
     )
 }
 
@@ -363,8 +369,8 @@ internal fun renderAlertsBlock(context: DashboardBlockContext) {
                         category = "REMINDER",
                         variant = NotificationVariant.ALERT,
                         icon = Icons.Default.NotificationsActive,
-                        onClick = { context.onEditNode(node.id) }
-                    )
+                        onClick = { context.onEditNode(node.id) },
+                    ),
             )
         }
 
@@ -379,7 +385,7 @@ internal fun renderAlertsBlock(context: DashboardBlockContext) {
                         variant = NotificationVariant.INFO,
                         icon = Icons.Default.EventRepeat,
                         onClick = { context.onNavigateTo(Screen.Review) },
-                    )
+                    ),
             )
         }
 
@@ -392,26 +398,31 @@ internal fun renderAlertsBlock(context: DashboardBlockContext) {
                             if (context.inboxNodes.size > 10) {
                                 stringResource(
                                     Res.string.dash_inbox_overflow,
-                                    context.inboxNodes.size
+                                    context.inboxNodes.size,
                                 )
                             } else {
                                 stringResource(Res.string.dash_inbox_new, context.inboxNodes.size)
                             },
                         body = "Process items to clear your mental buffer.",
                         category = "INBOX",
-                        variant = if (context.inboxNodes.size >
-                            10
-                        ) {
-                            NotificationVariant.ALERT
-                        } else {
-                            NotificationVariant.SYNC
-                        },
-                        icon = if (context.inboxNodes.size >
-                            10) Icons.Default.Warning else {
-                            Icons.Default.MailOutline
-                        },
-                        onClick = { context.onNavigateTo(Screen.Inbox) }
-                    )
+                        variant =
+                            if (context.inboxNodes.size >
+                                10
+                            ) {
+                                NotificationVariant.ALERT
+                            } else {
+                                NotificationVariant.SYNC
+                            },
+                        icon =
+                            if (context.inboxNodes.size >
+                                10
+                            ) {
+                                Icons.Default.Warning
+                            } else {
+                                Icons.Default.MailOutline
+                            },
+                        onClick = { context.onNavigateTo(Screen.Inbox) },
+                    ),
             )
         }
 
@@ -429,8 +440,8 @@ internal fun renderAlertsBlock(context: DashboardBlockContext) {
                             context.viewModel.clearSearchFilters()
                             context.viewModel.updateSearchStatusFilter("active")
                             context.onNavigateTo(Screen.Search)
-                        }
-                    )
+                        },
+                    ),
             )
         }
 
@@ -445,8 +456,8 @@ internal fun renderAlertsBlock(context: DashboardBlockContext) {
                             category = "WELLNESS",
                             variant = NotificationVariant.WARNING,
                             icon = Icons.Default.Psychology,
-                            onClick = { context.onNavigateTo(Screen.Review) }
-                        )
+                            onClick = { context.onNavigateTo(Screen.Review) },
+                        ),
                 )
             }
             if ((mood.focusScore ?: 5) <= 2) {
@@ -463,8 +474,8 @@ internal fun renderAlertsBlock(context: DashboardBlockContext) {
                                 context.viewModel.clearSearchFilters()
                                 context.viewModel.updateSearchMaxMinutesFilter(5)
                                 context.onNavigateTo(Screen.Search)
-                            }
-                        )
+                            },
+                        ),
                 )
             }
             if (!mood.tookMeds && context.localNow.hour >= 10) {
@@ -526,7 +537,7 @@ internal fun renderInsightsBlock(context: DashboardBlockContext) {
     LifeSummaryCard(
         captures = context.insights.weeklyCaptures,
         completions = context.insights.weeklyCompletions,
-        onClick = { context.onNavigateTo(Screen.Insights) }
+        onClick = { context.onNavigateTo(Screen.Insights) },
     )
 }
 
@@ -597,7 +608,7 @@ internal fun renderSuggestionsBlock(context: DashboardBlockContext) {
                 icon = Icons.Default.Psychology,
                 color = TajsOSTheme.Primary,
                 nodes = context.dashboardState.deepWork,
-                onEditNode = context.onEditNode
+                onEditNode = context.onEditNode,
             )
         }
 
@@ -607,7 +618,7 @@ internal fun renderSuggestionsBlock(context: DashboardBlockContext) {
                 icon = Icons.Default.AccountTree,
                 color = TajsOSTheme.Error,
                 nodes = context.dashboardState.criticalProjects.map { NodeWithPin(it, null) },
-                onEditNode = { context.onNavigateToProject(it) }
+                onEditNode = { context.onNavigateToProject(it) },
             )
         }
 
@@ -682,7 +693,7 @@ internal fun renderKnowledgeBlock(context: DashboardBlockContext) {
                 icon = Icons.Default.Favorite,
                 color = TajsOSTheme.Primary,
                 nodes = context.dashboardState.pinnedKnowledge,
-                onEditNode = context.onEditNode
+                onEditNode = context.onEditNode,
             )
         }
 
@@ -692,7 +703,7 @@ internal fun renderKnowledgeBlock(context: DashboardBlockContext) {
                 icon = Icons.Default.AutoAwesome,
                 color = TajsOSTheme.Accent,
                 nodes = context.dashboardState.foundationalNotes,
-                onEditNode = context.onEditNode
+                onEditNode = context.onEditNode,
             )
         }
 
@@ -726,7 +737,7 @@ internal fun renderKnowledgeBlock(context: DashboardBlockContext) {
                 secondaryLabel = "RECENT ACTIVITY",
                 icon = Icons.Default.Edit,
                 iconColor = TajsOSTheme.Primary,
-                onClick = { context.onEditNode(nodeWithPin.node.id) }
+                onClick = { context.onEditNode(nodeWithPin.node.id) },
             )
         }
     }
@@ -762,7 +773,7 @@ internal fun renderProtocolsBlock(context: DashboardBlockContext) {
                             Triple(
                                 Icons.Default.WbSunny,
                                 TajsOSTheme.Primary,
-                                Screen.Review
+                                Screen.Review,
                             )
                         }
 
@@ -770,7 +781,7 @@ internal fun renderProtocolsBlock(context: DashboardBlockContext) {
                             Triple(
                                 Icons.Default.Psychology,
                                 TajsOSTheme.Accent,
-                                Screen.Focus
+                                Screen.Focus,
                             )
                         }
 
@@ -778,7 +789,7 @@ internal fun renderProtocolsBlock(context: DashboardBlockContext) {
                             Triple(
                                 Icons.Default.Brightness3,
                                 TajsOSTheme.Success,
-                                Screen.Review
+                                Screen.Review,
                             )
                         }
 
@@ -821,7 +832,7 @@ internal fun renderProtocolsBlock(context: DashboardBlockContext) {
                     onClick = {
                         context.viewModel.triggerProtocol(template.label)
                         context.onNavigateTo(destination)
-                    }
+                    },
                 )
             }
         }

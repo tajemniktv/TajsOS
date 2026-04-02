@@ -1,0 +1,57 @@
+name-template: "v$RESOLVED_VERSION"
+tag-template: "v$RESOLVED_VERSION"
+change-template: "- $TITLE (#$NUMBER) @$AUTHOR"
+no-changes-template: "- No significant user-facing changes."
+
+categories:
+  - title: "Features"
+    labels:
+      - enhancement
+      - ui
+      - compose
+  - title: "Fixes"
+    labels:
+      - bug
+  - title: "Platform"
+    labels:
+      - android
+      - desktop
+      - ios
+      - kmp
+      - backend
+      - website
+      - sync
+  - title: "Tooling and CI"
+    labels:
+      - ci
+      - deps
+      - tests
+      - tooling
+  - title: "Documentation"
+    labels:
+      - docs
+
+exclude-labels:
+  - skip-changelog
+
+version-resolver:
+  major:
+    labels:
+      - semver:major
+  minor:
+    labels:
+      - enhancement
+      - semver:minor
+  patch:
+    labels:
+      - bug
+      - deps
+      - docs
+      - ci
+      - semver:patch
+  default: patch
+
+template: |
+  ## Changes
+
+  $CHANGES

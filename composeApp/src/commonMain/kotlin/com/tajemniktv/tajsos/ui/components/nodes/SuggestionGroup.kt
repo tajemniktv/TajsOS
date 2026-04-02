@@ -60,7 +60,7 @@ fun SuggestionGroup(
             Text(
                 description,
                 style = MaterialTheme.typography.bodySmall,
-                color = TajsOSTheme.Muted
+                color = TajsOSTheme.Muted,
             )
         }
         nodes.take(2).forEach { nodeWithPin ->

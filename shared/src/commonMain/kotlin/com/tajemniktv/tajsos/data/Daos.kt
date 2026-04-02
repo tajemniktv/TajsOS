@@ -202,6 +202,9 @@ interface RelationDao {
     @Delete
     suspend fun deleteRelation(relation: RelationEntity)
 
+    @Query("DELETE FROM relations WHERE fromNodeId = :nodeId OR toNodeId = :nodeId")
+    suspend fun deleteRelationsForNode(nodeId: Long)
+
     @Query("DELETE FROM relations WHERE fromNodeId = :nodeId AND relationType = 'BELONGS_TO'")
     suspend fun deleteBelongsToRelations(nodeId: Long)
 
@@ -212,11 +215,19 @@ interface RelationDao {
     suspend fun getBelongsToRelations(nodeId: Long): List<RelationEntity>
 
     @Query(
-        "SELECT EXISTS(SELECT 1 FROM relations WHERE ((fromNodeId = :from AND toNodeId = :to) OR (fromNodeId = :to AND toNodeId = :from)))",
+        """
+        SELECT EXISTS(
+            SELECT 1 FROM relations
+            WHERE fromNodeId = :from
+              AND toNodeId = :to
+              AND relationType = :relationType
+        )
+    """,
     )
     suspend fun anyRelationExists(
         from: Long,
         to: Long,
+        relationType: String,
     ): Boolean
 
     @Query("SELECT * FROM relations")
@@ -249,6 +260,9 @@ interface TagDao {
         nodeId: Long,
         tagId: Long,
     )
+
+    @Query("DELETE FROM node_tags WHERE nodeId = :nodeId")
+    suspend fun detachAllTagsFromNode(nodeId: Long)
 }
 
 @Dao
@@ -268,6 +282,9 @@ interface EventLogDao {
 
 @Dao
 interface AttachmentDao {
+    @Query("SELECT * FROM attachments")
+    fun getAllAttachments(): Flow<List<AttachmentEntity>>
+
     @Query("SELECT * FROM attachments WHERE nodeId = :nodeId")
     fun getAttachmentsForNode(nodeId: Long): Flow<List<AttachmentEntity>>
 
@@ -276,6 +293,9 @@ interface AttachmentDao {
 
     @Delete
     suspend fun deleteAttachment(attachment: AttachmentEntity)
+
+    @Query("DELETE FROM attachments WHERE nodeId = :nodeId")
+    suspend fun deleteAttachmentsForNode(nodeId: Long)
 }
 
 /**
@@ -283,6 +303,9 @@ interface AttachmentDao {
  */
 @Dao
 interface InboxEntryDao {
+    @Query("SELECT * FROM inbox_entries ORDER BY capturedAt DESC")
+    fun getAllInboxEntries(): Flow<List<InboxEntryEntity>>
+
     @Query(
         """
         SELECT * FROM inbox_entries
@@ -307,6 +330,9 @@ interface InboxEntryDao {
  */
 @Dao
 interface TaskFacetDao {
+    @Query("SELECT * FROM task_facets")
+    fun getAllTaskFacets(): Flow<List<TaskFacetEntity>>
+
     @Query("SELECT * FROM task_facets WHERE itemId = :itemId")
     suspend fun getTaskFacetByItemId(itemId: Long): TaskFacetEntity?
 
@@ -315,6 +341,30 @@ interface TaskFacetDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertTaskFacet(facet: TaskFacetEntity)
+
+    @Query("DELETE FROM task_facets WHERE itemId = :itemId")
+    suspend fun deleteTaskFacetForItem(itemId: Long)
+}
+
+/**
+ * Accesses note-specific semantics that sit beside the shared item row.
+ */
+@Dao
+interface NoteFacetDao {
+    @Query("SELECT * FROM note_facets")
+    fun getAllNoteFacets(): Flow<List<NoteFacetEntity>>
+
+    @Query("SELECT * FROM note_facets WHERE itemId = :itemId")
+    suspend fun getNoteFacetByItemId(itemId: Long): NoteFacetEntity?
+
+    @Query("SELECT * FROM note_facets WHERE itemId = :itemId")
+    fun observeNoteFacet(itemId: Long): Flow<NoteFacetEntity?>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertNoteFacet(facet: NoteFacetEntity)
+
+    @Query("DELETE FROM note_facets WHERE itemId = :itemId")
+    suspend fun deleteNoteFacetForItem(itemId: Long)
 }
 
 /**
@@ -322,6 +372,9 @@ interface TaskFacetDao {
  */
 @Dao
 interface ProjectFacetDao {
+    @Query("SELECT * FROM project_facets")
+    fun getAllProjectFacets(): Flow<List<ProjectFacetEntity>>
+
     @Query("SELECT * FROM project_facets WHERE itemId = :itemId")
     suspend fun getProjectFacetByItemId(itemId: Long): ProjectFacetEntity?
 
@@ -330,6 +383,30 @@ interface ProjectFacetDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertProjectFacet(facet: ProjectFacetEntity)
+
+    @Query("DELETE FROM project_facets WHERE itemId = :itemId")
+    suspend fun deleteProjectFacetForItem(itemId: Long)
+}
+
+/**
+ * Accesses area-specific stewardship data that sits beside the shared item row.
+ */
+@Dao
+interface AreaFacetDao {
+    @Query("SELECT * FROM area_facets")
+    fun getAllAreaFacets(): Flow<List<AreaFacetEntity>>
+
+    @Query("SELECT * FROM area_facets WHERE itemId = :itemId")
+    suspend fun getAreaFacetByItemId(itemId: Long): AreaFacetEntity?
+
+    @Query("SELECT * FROM area_facets WHERE itemId = :itemId")
+    fun observeAreaFacet(itemId: Long): Flow<AreaFacetEntity?>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertAreaFacet(facet: AreaFacetEntity)
+
+    @Query("DELETE FROM area_facets WHERE itemId = :itemId")
+    suspend fun deleteAreaFacetForItem(itemId: Long)
 }
 
 /**
@@ -337,6 +414,9 @@ interface ProjectFacetDao {
  */
 @Dao
 interface RecordFacetDao {
+    @Query("SELECT * FROM record_facets")
+    fun getAllRecordFacets(): Flow<List<RecordFacetEntity>>
+
     @Query("SELECT * FROM record_facets WHERE itemId = :itemId")
     suspend fun getRecordFacetByItemId(itemId: Long): RecordFacetEntity?
 
@@ -345,6 +425,57 @@ interface RecordFacetDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertRecordFacet(facet: RecordFacetEntity)
+
+    @Query("DELETE FROM record_facets WHERE itemId = :itemId")
+    suspend fun deleteRecordFacetForItem(itemId: Long)
+}
+
+/**
+ * Accesses lens-oriented domain classifications over shared life objects.
+ */
+@Dao
+interface ItemDomainDao {
+    @Query("SELECT * FROM item_domains")
+    fun getAllItemDomains(): Flow<List<ItemDomainEntity>>
+
+    @Query("SELECT * FROM item_domains WHERE itemId = :itemId ORDER BY isPrimary DESC, assignedAt ASC")
+    fun getDomainsForItem(itemId: Long): Flow<List<ItemDomainEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertDomain(domain: ItemDomainEntity)
+
+    @Query("DELETE FROM item_domains WHERE itemId = :itemId AND domainKey = :domainKey")
+    suspend fun deleteDomain(
+        itemId: Long,
+        domainKey: String,
+    )
+
+    @Query("DELETE FROM item_domains WHERE itemId = :itemId")
+    suspend fun deleteDomainsForItem(itemId: Long)
+
+    @Query("UPDATE item_domains SET isPrimary = 0 WHERE itemId = :itemId")
+    suspend fun clearPrimaryFlag(itemId: Long)
+}
+
+/**
+ * Accesses optional rich-content documents attached to life objects.
+ */
+@Dao
+interface RichContentDocumentDao {
+    @Query("SELECT * FROM rich_content_documents ORDER BY updatedAt DESC")
+    fun getAllDocuments(): Flow<List<RichContentDocumentEntity>>
+
+    @Query("SELECT * FROM rich_content_documents WHERE itemId = :itemId")
+    fun observeDocumentForItem(itemId: Long): Flow<RichContentDocumentEntity?>
+
+    @Query("SELECT * FROM rich_content_documents WHERE itemId = :itemId")
+    suspend fun getDocumentForItem(itemId: Long): RichContentDocumentEntity?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertDocument(document: RichContentDocumentEntity)
+
+    @Query("DELETE FROM rich_content_documents WHERE itemId = :itemId")
+    suspend fun deleteDocumentForItem(itemId: Long)
 }
 
 /**
@@ -358,6 +489,22 @@ interface ScheduleEntryDao {
     @Query("SELECT * FROM schedule_entries WHERE itemId = :itemId ORDER BY scheduledAt ASC")
     fun getScheduleEntriesForItem(itemId: Long): Flow<List<ScheduleEntryEntity>>
 
+    @Query(
+        """
+        SELECT * FROM schedule_entries
+        WHERE kind = :kind
+          AND localDateEpochDay IS NOT NULL
+          AND localDateEpochDay BETWEEN :fromEpochDay AND :toEpochDay
+          AND completedAt IS NULL
+        ORDER BY localDateEpochDay ASC, scheduledAt ASC
+    """,
+    )
+    fun getOpenScheduleEntriesByKindAndDayRange(
+        kind: String,
+        fromEpochDay: Int,
+        toEpochDay: Int,
+    ): Flow<List<ScheduleEntryEntity>>
+
     @Query("SELECT * FROM schedule_entries WHERE itemId = :itemId AND kind = :kind ORDER BY scheduledAt ASC")
     suspend fun getScheduleEntriesByKind(
         itemId: Long,
@@ -370,11 +517,83 @@ interface ScheduleEntryDao {
         kind: String,
     )
 
+    @Query("DELETE FROM schedule_entries WHERE itemId = :itemId")
+    suspend fun deleteScheduleEntriesForItem(itemId: Long)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertScheduleEntry(entry: ScheduleEntryEntity): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertScheduleEntries(entries: List<ScheduleEntryEntity>)
+}
+
+/**
+ * Accesses saved local projections over typed shared life objects.
+ */
+@Dao
+interface SavedViewDao {
+    @Query("SELECT * FROM saved_views ORDER BY updatedAt DESC")
+    fun getAllSavedViews(): Flow<List<SavedViewEntity>>
+
+    @Query("SELECT * FROM saved_views WHERE id = :id")
+    suspend fun getSavedViewById(id: Long): SavedViewEntity?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertSavedView(view: SavedViewEntity): Long
+
+    @Update
+    suspend fun updateSavedView(view: SavedViewEntity)
+
+    @Delete
+    suspend fun deleteSavedView(view: SavedViewEntity)
+
+    @Query("SELECT * FROM saved_view_source_kinds")
+    fun getAllSavedViewSourceKinds(): Flow<List<SavedViewSourceKindEntity>>
+
+    @Query("SELECT * FROM saved_view_source_kinds WHERE viewId = :viewId")
+    suspend fun getSourceKindsForView(viewId: Long): List<SavedViewSourceKindEntity>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertSavedViewSourceKinds(sourceKinds: List<SavedViewSourceKindEntity>)
+
+    @Query("DELETE FROM saved_view_source_kinds WHERE viewId = :viewId")
+    suspend fun deleteSourceKindsForView(viewId: Long)
+
+    @Query("SELECT * FROM saved_view_filters")
+    fun getAllSavedViewFilters(): Flow<List<SavedViewFilterEntity>>
+
+    @Query("SELECT * FROM saved_view_filters WHERE viewId = :viewId ORDER BY position ASC")
+    suspend fun getFiltersForView(viewId: Long): List<SavedViewFilterEntity>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertSavedViewFilters(filters: List<SavedViewFilterEntity>)
+
+    @Query("DELETE FROM saved_view_filters WHERE viewId = :viewId")
+    suspend fun deleteFiltersForView(viewId: Long)
+
+    @Query("SELECT * FROM saved_view_sorts")
+    fun getAllSavedViewSorts(): Flow<List<SavedViewSortEntity>>
+
+    @Query("SELECT * FROM saved_view_sorts WHERE viewId = :viewId ORDER BY position ASC")
+    suspend fun getSortsForView(viewId: Long): List<SavedViewSortEntity>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertSavedViewSorts(sorts: List<SavedViewSortEntity>)
+
+    @Query("DELETE FROM saved_view_sorts WHERE viewId = :viewId")
+    suspend fun deleteSortsForView(viewId: Long)
+
+    @Query("SELECT * FROM saved_view_visible_fields")
+    fun getAllSavedViewVisibleFields(): Flow<List<SavedViewVisibleFieldEntity>>
+
+    @Query("SELECT * FROM saved_view_visible_fields WHERE viewId = :viewId ORDER BY position ASC")
+    suspend fun getVisibleFieldsForView(viewId: Long): List<SavedViewVisibleFieldEntity>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertSavedViewVisibleFields(fields: List<SavedViewVisibleFieldEntity>)
+
+    @Query("DELETE FROM saved_view_visible_fields WHERE viewId = :viewId")
+    suspend fun deleteVisibleFieldsForView(viewId: Long)
 }
 
 @Dao

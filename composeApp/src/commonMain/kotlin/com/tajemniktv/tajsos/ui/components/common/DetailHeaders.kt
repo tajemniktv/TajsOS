@@ -67,7 +67,7 @@ fun DetailSectionHeader(
     title: String,
     modifier: Modifier = Modifier,
     icon: ImageVector? = null,
-    color: Color = TajsOSTheme.Muted
+    color: Color = TajsOSTheme.Muted,
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),

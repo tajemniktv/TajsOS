@@ -24,8 +24,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.screens.GroupedOpenLoopSection
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.rules_desc
+import tajsos.composeapp.generated.resources.rules_title
 
-object RulesDashboardBlockRegistry {
+object RulesDashboardBlocks {
     private val renderers: Map<String, RulesDashboardBlockRenderer> =
         mapOf(
             "rules_header" to ::renderRulesHeader,
@@ -42,14 +46,14 @@ object RulesDashboardBlockRegistry {
 private fun renderRulesHeader(context: RulesDashboardContext) {
     Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)) {
         Text(
-            text = "RULES",
+            text = stringResource(Res.string.rules_title),
             style = MaterialTheme.typography.displaySmall,
-            color = TajsOSTheme.Text
+            color = TajsOSTheme.Text,
         )
         Text(
-            text = "Keep anti-goals, principles, constraints, and recovery reminders in one retrievable system.",
+            text = stringResource(Res.string.rules_desc),
             style = MaterialTheme.typography.bodySmall,
-            color = TajsOSTheme.Muted
+            color = TajsOSTheme.Muted,
         )
     }
 }
@@ -61,7 +65,7 @@ private fun renderRulesStats(context: RulesDashboardContext) {
         modifier = Modifier.fillMaxWidth(),
         color = TajsOSTheme.Surface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.Border)
+        border = BorderStroke(1.dp, TajsOSTheme.Border),
     ) {
         Column(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -76,7 +80,7 @@ private fun renderRulesStats(context: RulesDashboardContext) {
             Text(
                 "Rules ${snapshot.vault.size} • Pinned ${snapshot.pinnedPrinciples.size} • Playbook links ${snapshot.playbookLinksCount}",
                 style = MaterialTheme.typography.bodySmall,
-                color = TajsOSTheme.Muted
+                color = TajsOSTheme.Muted,
             )
         }
     }
@@ -107,7 +111,7 @@ private fun renderRulesInput(context: RulesDashboardContext) {
         modifier = Modifier.fillMaxWidth(),
         color = TajsOSTheme.Surface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.Border)
+        border = BorderStroke(1.dp, TajsOSTheme.Border),
     ) {
         Column(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -128,7 +132,7 @@ private fun renderRulesInput(context: RulesDashboardContext) {
             )
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
-                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
             ) {
                 ruleCategories.forEach { (tag, label) ->
                     FilterChip(
@@ -247,8 +251,8 @@ private fun renderRulesList(context: RulesDashboardContext) {
                 border =
                     BorderStroke(
                         1.dp,
-                        if (isPinned) TajsOSTheme.Primary else TajsOSTheme.Border
-                    )
+                        if (isPinned) TajsOSTheme.Primary else TajsOSTheme.Border,
+                    ),
             ) {
                 Column(
                     modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -264,13 +268,13 @@ private fun renderRulesList(context: RulesDashboardContext) {
                         Text(
                             rule.node.content,
                             style = MaterialTheme.typography.bodySmall,
-                            color = TajsOSTheme.Muted
+                            color = TajsOSTheme.Muted,
                         )
                     }
                     @OptIn(ExperimentalLayoutApi::class)
                     FlowRow(
                         horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
-                        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
+                        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
                     ) {
                         AssistChip(
                             onClick = { viewModel.pinOperatingPrinciple(rule.node, !isPinned) },
@@ -285,12 +289,12 @@ private fun renderRulesList(context: RulesDashboardContext) {
                         Text(
                             "LINK TO PLAYBOOK",
                             style = MaterialTheme.typography.labelSmall,
-                            color = TajsOSTheme.Muted
+                            color = TajsOSTheme.Muted,
                         )
                         @OptIn(ExperimentalLayoutApi::class)
                         FlowRow(
                             horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
-                            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
+                            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
                         ) {
                             playbookSnapshot.playbooks.take(8).forEach { playbook ->
                                 AssistChip(

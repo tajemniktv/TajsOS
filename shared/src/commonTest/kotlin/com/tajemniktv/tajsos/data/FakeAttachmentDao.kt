@@ -8,6 +8,8 @@ class FakeAttachmentDao : AttachmentDao {
     private val attachments = mutableListOf<AttachmentEntity>()
     private val attachmentsFlow = MutableStateFlow<List<AttachmentEntity>>(emptyList())
 
+    override fun getAllAttachments(): Flow<List<AttachmentEntity>> = attachmentsFlow
+
     override fun getAttachmentsForNode(nodeId: Long): Flow<List<AttachmentEntity>> {
         return attachmentsFlow.map { it.filter { attachment -> attachment.nodeId == nodeId } }
     }
@@ -21,6 +23,11 @@ class FakeAttachmentDao : AttachmentDao {
 
     override suspend fun deleteAttachment(attachment: AttachmentEntity) {
         attachments.removeAll { it.id == attachment.id }
+        attachmentsFlow.value = attachments.toList()
+    }
+
+    override suspend fun deleteAttachmentsForNode(nodeId: Long) {
+        attachments.removeAll { it.nodeId == nodeId }
         attachmentsFlow.value = attachments.toList()
     }
 }

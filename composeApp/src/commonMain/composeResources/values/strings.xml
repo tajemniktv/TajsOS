@@ -80,6 +80,17 @@
     <string name="review_step_archive">ARCHIVE SUGGESTIONS</string>
     <string name="review_step_goals">GOALS FOR NEXT WEEK</string>
     <string name="common_back">Back</string>
+    <string name="common_edit">Edit</string>
+    <string name="common_save">Save</string>
+    <string name="common_cancel">Cancel</string>
+    <string name="common_add">Add</string>
+    <string name="common_system_online">SYSTEM: ONLINE</string>
+    <string name="common_unknown_protocol">Unknown protocol</string>
+
+    <!-- Calendar -->
+    <string name="calendar_label_due">Due</string>
+    <string name="calendar_label_reminder">Reminder</string>
+    <string name="calendar_label_start">Start</string>
 
     <!-- Dashboard -->
     <string name="dash_command">COMMAND</string>
@@ -140,6 +151,10 @@
     <string name="dash_module_none">NONE</string>
     <string name="dash_history_last">LAST: %1$s</string>
     <string name="dash_all_mode">ALL</string>
+    <string name="dash_warning_open_loops_overload">OPEN LOOPS OVERLOAD // CLOSE LOOPS BEFORE NEW INTAKE</string>
+    <string name="dash_warning_open_loops_decay">OPEN LOOPS DECAYING // RUN OPEN LOOP REVIEW</string>
+    <string name="dash_warning_system_overloaded">SYSTEM OVERLOADED // REDUCE INTAKE</string>
+    <string name="dash_warning_attention_fragmented">ATTENTION FRAGMENTED // FOCUS ON ONE AREA</string>
     <string name="dash_modules">MODULES</string>
     <string name="dash_module_active">ACTIVE</string>
     <string name="dash_module_view">VIEW</string>
@@ -534,8 +549,6 @@
     <string name="areas_upcoming_deadlines">Deadlines due soon</string>
     <string name="areas_recent_activity">Recent activity</string>
     <string name="areas_enter">Open Area</string>
-    <string name="use_suggested_areas">USE SUGGESTED AREAS</string>
-    <string name="add_suggested_areas">ADD SUGGESTED AREAS</string>
 
     <!-- Calendar Screen -->
     <string name="cal_agenda_title">AGENDA // %1$s</string>
@@ -897,4 +910,262 @@
     <!-- Capture -->
     <string name="capture_sticky">STICKY</string>
     <string name="capture_label_capture">Capture</string>
+
+    <!-- Task Detail -->
+    <string name="task_detail_critical">CRITICAL</string>
+    <string name="task_detail_complete">COMPLETE</string>
+    <string name="task_detail_blocked">BLOCKED</string>
+    <string name="task_detail_on_hold">ON HOLD</string>
+    <string name="task_detail_queued">QUEUED</string>
+    <string name="task_detail_active">ACTIVE</string>
+    <string name="task_detail_id_label">TASK-%1$s</string>
+    <string name="task_detail_snooze">Snooze</string>
+    <string name="task_detail_complete_action">Complete Task</string>
+    <string name="task_detail_completed_status">Completed</string>
+    <string name="task_detail_directives_section">Technical Directives</string>
+    <string name="task_detail_no_notes">No execution notes yet. Add constraints, dependencies, or operator notes.</string>
+    <string name="task_detail_no_attachments">No attachments linked to this task.</string>
+
+    <!-- Note Detail -->
+    <string name="note_detail_new_node">NEW NODE</string>
+    <string name="note_detail_connect_node">CONNECT NODE</string>
+    <string name="note_detail_linked_context">Linked context</string>
+
+    <!-- Capacity -->
+    <string name="capacity_title">CAPACITY</string>
+    <string name="capacity_desc">Measure current load, fragmentation, and whether the system is asking for more than you can carry.</string>
+
+    <!-- Identity -->
+    <string name="identity_title">IDENTITY &amp; OPERATING MODEL</string>
+    <string name="identity_desc">Review signature, second-brain distinction, direction commitments, and core-shift progress together.</string>
+
+    <!-- Relationships -->
+    <string name="relationships_title">RELATIONSHIPS LENS</string>
+    <string name="relationships_desc">Track people, shared plans, follow-ups, and relationship continuity across life data.</string>
+
+    <!-- Education -->
+    <string name="education_title">EDUCATION LENS</string>
+    <string name="education_desc">Course work, study notes, reading progress, concept linking, and academic reflection.</string>
+
+    <!-- Time Architecture -->
+    <string name="time_architecture_title">TIME ARCHITECTURE</string>
+    <string name="time_architecture_desc">Temporal structure for horizons, reset cadence, and anchor markers.</string>
+    <string name="time_architecture_all_horizons">All Horizons</string>
+    <string name="time_architecture_map_title">Structural Time Map</string>
+    <string name="time_architecture_current_horizon">Current horizon: %1$s</string>
+    <string name="time_architecture_status_summary">Today %1$d • Week %2$d • Month %3$d • Semester %4$d</string>
+    <string name="time_architecture_active_window">Active Window</string>
+    <string name="time_architecture_active_label">%1$d items in %2$s</string>
+    <string name="time_architecture_no_items">No items in this horizon.</string>
+    <string name="time_architecture_reserve_window">Reserve Window</string>
+    <string name="time_architecture_reserve_label">Long-range load and semester pressure</string>
+    <string name="time_architecture_reserve_tracked">%1$d long-horizon commitments tracked</string>
+    <string name="time_architecture_exam_pressure">Exam-period pressure detected</string>
+
+    <!-- Protocols -->
+    <string name="protocol_session_paused">Session paused</string>
+    <string name="protocol_session_running">Session running</string>
+    <string name="protocol_steps_complete">%1$d / %2$d steps complete</string>
+    <string name="protocol_current_step">Current step</string>
+    <string name="protocol_up_next">Up next: %1$s</string>
+    <string name="protocol_no_steps">This protocol has no checklist steps yet.</string>
+    <string name="protocol_complete_step">Complete Step</string>
+    <string name="protocols_title">PROTOCOLS</string>
+    <string name="protocols_desc">Browse reusable routines in Library and run them step-by-step in Active mode.</string>
+
+    <!-- Rules -->
+    <string name="rules_title">RULES</string>
+    <string name="rules_desc">Keep anti-goals, principles, constraints, and recovery reminders in one retrievable system.</string>
+
+    <!-- Vaults -->
+    <string name="vaults_title">REFERENCE &amp; RETRIEVE</string>
+    <string name="vaults_desc">Keep durable reference, official deadlines, and find-later items easy to retrieve without turning storage into a separate product world.</string>
+
+    <!-- Sidebar & Header -->
+    <string name="sidebar_brand">TAJSOS</string>
+    <string name="header_search_placeholder">Search across TajsOS</string>
+    <string name="header_status_label">TAJSOS // STATUS: %1$s</string>
+
+    <!-- Places -->
+    <string name="places_title">CONTEXT &amp; LOGISTICS</string>
+    <string name="places_desc">Coordinate errands, packing, travel prep, and reminders tied to physical context anchors.</string>
+
+    <!-- Graph -->
+    <string name="graph_no_data">No graph data yet. Create items and relations to populate the graph.</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard_open_loops_action">OPEN OPEN LOOPS</string>
+
+    <!-- Settings -->
+    <string name="settings_appearance_title">Appearance</string>
+    <string name="settings_appearance_desc">Customize the visual identity and interface behavior of your operating system.</string>
+    <string name="settings_theme_settings">Theme Settings</string>
+    <string name="settings_theme_mode">Theme Mode</string>
+    <string name="settings_theme_mode_desc">Switch between dark and light theme.</string>
+
+    <string name="dash_placeholder_capture_shortcut">CMD + K to capture anything...</string>
+    <string name="dash_action_open_study">OPEN STUDY WORKSPACE</string>
+    <string name="dash_label_study_module">STUDY MODULE // %1$s</string>
+    <string name="dash_label_admin_paperwork">ADMIN // PAPERWORK</string>
+
+    <string name="time_architecture_add_anchor">Add Anchor</string>
+    <string name="time_architecture_run_monthly_reset">Run Monthly Reset</string>
+    <string name="time_architecture_active">Active</string>
+    <string name="time_architecture_buffer">Buffer</string>
+
+    <string name="identity_work_today">WORK TODAY</string>
+    <string name="identity_work_due_1d">WORK DUE-1D</string>
+    <string name="identity_clear">CLEAR</string>
+    <string name="identity_open">OPEN</string>
+
+    <string name="places_ensure_travel_pack_template">ENSURE TRAVEL PACK TEMPLATE</string>
+    <string name="places_class_bring_list">CLASS BRING LIST</string>
+    <string name="places_leave_home_checklist">LEAVE HOME CHECKLIST</string>
+    <string name="places_event_prep_list">EVENT PREP LIST</string>
+    <string name="places_dont_forget_set">DON\'T FORGET SET</string>
+    <string name="places_add_place">ADD PLACE</string>
+    <string name="places_add_campus_location">ADD CAMPUS LOCATION</string>
+    <string name="places_add_home_zone">ADD HOME ZONE</string>
+    <string name="places_what_to_bring">WHAT TO BRING</string>
+    <string name="places_packing_list">PACKING LIST</string>
+    <string name="places_physical_logistics_note">PHYSICAL LOGISTICS NOTE</string>
+    <string name="places_placeholder_place_name">Place name</string>
+    <string name="places_placeholder_list_title">List / note title</string>
+    <string name="places_placeholder_logistics_notes">Optional logistics notes</string>
+
+    <string name="settings_placeholder_import_json">Paste ExportData/ExportBundle JSON here...</string>
+    <string name="settings_action_import_json">Import JSON Payload</string>
+    <string name="settings_action_export_bundle">Export Full Bundle</string>
+    <string name="settings_action_import_json_simple">Import JSON</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_unlock">Unlock</string>
+
+    <string name="protocols_action_run">Run</string>
+    <string name="protocols_placeholder_search">Morning reset, study startup, shutdown routine...</string>
+    <string name="protocols_label_search">Search protocols</string>
+
+    <string name="notes_action_view">VIEW</string>
+    <string name="notes_placeholder_search">Search notes</string>
+    <string name="notes_action_find_links">Find more links</string>
+    <string name="notes_workspace_title">Notes Workspace</string>
+
+    <string name="common_area">Area</string>
+    <string name="common_project">Project</string>
+    <string name="common_updated">Updated</string>
+
+    <string name="detail_relations">Relations</string>
+    <string name="detail_no_linked_items">No linked items</string>
+    <string name="detail_no_attachments_simple">No attachments</string>
+    <string name="detail_no_snapshots">No snapshots</string>
+
+    <string name="review_execution_ratio">Execution Ratio: %1$d%%</string>
+    <string name="review_capacity_summary">Capacity: %1$d tasks done.</string>
+    <string name="review_focus_summary">Focus: %1$d hours.</string>
+    <string name="review_energy_level">Energy: %1$d/5</string>
+    <string name="review_mood_level">Mood: %1$d/5</string>
+    <string name="review_prompt_how_feeling">How are you feeling right now?</string>
+    <string name="review_prompt_energy_level">What is your energy level?</string>
+    <string name="review_prompt_numbers_feedback">How do you feel about these numbers?</string>
+    <string name="review_archived_summary">You archived %1$d items this week. Anything else to let go of?</string>
+    <string name="review_placeholder_thoughts">Write your thoughts here...</string>
+
+    <string name="tasks_action_sweep">Sweep to Someday</string>
+    <string name="tasks_prompt_clear_overdue">Clear overdue backlog?</string>
+    <string name="tasks_msg_stale_overdue">You have %1$d stale overdue tasks. Want me to sweep them into Someday?</string>
+
+    <string name="study_action_create_paper_link">Create Paper Link</string>
+    <string name="study_action_create_topic_link">Create Topic Link</string>
+    <string name="study_action_remove">Remove</string>
+    <string name="study_label_study_time">Study %1$dm</string>
+    <string name="study_label_assignments">Assignments %1$d</string>
+    <string name="study_label_flashcards">Flashcards %1$d</string>
+
+    <string name="rules_placeholder_title">Rule title</string>
+    <string name="rules_placeholder_details">Rule details</string>
+    <string name="rules_action_save_vault">SAVE TO RULES VAULT</string>
+
+    <string name="protocols_action_open">Open Protocol</string>
+    <string name="protocols_action_run_item">Run %1$s</string>
+    <string name="protocols_action_previous">Previous</string>
+    <string name="protocols_action_skip">Skip</string>
+    <string name="protocols_action_end_session">End Session</string>
+    <string name="protocols_action_mark_not_done">Mark not done: %1$d</string>
+    <string name="protocols_placeholder_notes">Capture observations or adjustments for next run...</string>
+    <string name="protocols_library">Library</string>
+    <string name="protocols_active">Active</string>
+    <string name="protocols_category_all">All</string>
+    <string name="protocols_category_health">Health</string>
+    <string name="protocols_category_work">Work</string>
+    <string name="protocols_category_study">Study</string>
+    <string name="protocols_category_home">Home</string>
+    <string name="protocols_category_emotional">Emotional regulation</string>
+    <string name="protocols_category_admin">Admin</string>
+    <string name="protocols_category_relationships">Relationships</string>
+    <string name="protocols_desc_full">Reusable guided procedures for repeatable situations. Browse in Library and run them step-by-step in Active mode.</string>
+    <string name="protocols_label_last_run">Last run</string>
+    <string name="protocols_label_suggested">Suggested</string>
+    <string name="protocols_no_runs">No runs yet</string>
+    <string name="protocols_no_matches">No protocols match this filter. Clear search or choose another category.</string>
+    <string name="protocols_label_estimated_time">Estimated time %1$dm • Steps %2$d • Runs %3$d</string>
+    <string name="protocols_label_last_run_item">Last run: %1$s</string>
+    <string name="protocols_not_yet">Not yet</string>
+    <string name="protocols_no_active">No active protocol selected</string>
+    <string name="protocols_pick_to_start">Pick a protocol to start a guided run session.</string>
+    <string name="protocols_session_notes">Session Notes</string>
+    <string name="protocols_label_adjustments">Adjustments</string>
+    <string name="protocols_label_use_when">Use when</string>
+
+    <string name="common_resume">Resume</string>
+    <string name="common_pause">Pause</string>
+
+    <string name="student_action_details">Details</string>
+    <string name="student_id_label">ID %1$s</string>
+    <string name="student_lecture">Lecture</string>
+    <string name="student_reading">Reading</string>
+    <string name="student_paper">Paper</string>
+    <string name="student_semester">Semester</string>
+    <string name="student_course_id">Course ID</string>
+    <string name="student_course_name">Course Name</string>
+    <string name="student_semester_dashboard">SEMESTER DASHBOARD</string>
+    <string name="student_next_exam">Next exam in %1$dd</string>
+    <string name="student_no_exams">No exam deadlines yet</string>
+    <string name="student_lecture_ready">Lecture Ready</string>
+    <string name="student_lecture_missing">Lecture Missing</string>
+    <string name="student_reading_ready">Reading Ready</string>
+    <string name="student_reading_missing">Reading Missing</string>
+    <string name="student_paper_ready">Paper Ready</string>
+    <string name="student_paper_missing">Paper Missing</string>
+    <string name="student_templates_desc">Lecture, reading, and paper summary templates are seeded and can be inserted directly.</string>
+
+    <string name="common_flashcard">Flashcard</string>
+    <string name="common_revisit">Revisit</string>
+    <string name="common_open">Open</string>
+    <string name="common_no_active_mode">No active mode</string>
+
+    <string name="places_action_open_page">OPEN PLACE PAGE</string>
+
+    <string name="decision_revisit_date_label">DECISION REVISIT DATE</string>
+    <string name="decision_related_people_label">RELATED PEOPLE</string>
+    <string name="decision_no_people_linked">No related people linked.</string>
+    <string name="decision_people_linked_count">%1$s linked</string>
+    <string name="decision_action_link_person">LINK PERSON</string>
+    <string name="decision_action_unlink">UNLINK</string>
+    <string name="decision_current_revisit">Current: %1$s</string>
+    <string name="decision_1_week">1 WEEK</string>
+    <string name="decision_1_month">1 MONTH</string>
+    <string name="decision_link_person_title">LINK PERSON TO DECISION</string>
+    <string name="decision_no_people_available">No person nodes available.</string>
+    <string name="common_close">CLOSE</string>
+
+    <string name="auth_app_locked">App Locked</string>
+    <string name="auth_unlock">Unlock</string>
+    <string name="auth_biometric_title">Biometric login</string>
+    <string name="voice_speak_now">Speak now...</string>
+    <string name="intent_shared_image">Shared Image</string>
+    <string name="intent_shared_images">Shared Images</string>
 </resources>
+
+
+
+

@@ -53,8 +53,14 @@ fun buildCalendarEntries(
             when (ScheduleEntryKind.fromStorageKey(entry.kind))
             {
                 ScheduleEntryKind.DUE -> "Due"
+
+                // NON-NLS
                 ScheduleEntryKind.REMINDER -> "Reminder"
+
+                // NON-NLS
                 ScheduleEntryKind.START -> "Start"
+
+                // NON-NLS
                 else -> null
             }
 
@@ -131,14 +137,14 @@ fun categorizeNodes(list: List<NodeWithPin>): NodeCategorization {
     for (item in list) {
         val node = item.node
 
-        if (node.status == "archived") {
+        if (node.status == "archived") { // NON-NLS
             archived.add(item)
         } else {
-            if (node.inboxState && node.type != "project" && node.type != "area") {
+            if (node.inboxState && node.type != "project" && node.type != "area") { // NON-NLS
                 inbox.add(item)
             }
 
-            if (node.status == "active" && node.reminderAt != null && node.reminderAt <= now) {
+            if (node.status == "active" && node.reminderAt != null && node.reminderAt <= now) { // NON-NLS
                 reminders.add(node)
             }
         }
@@ -207,8 +213,11 @@ fun buildPlaybookSnapshot(
         protocolNodes.filter { node ->
             val normalized = normalizeProtocolLabel(node.node.title)
             templates.any { normalizeProtocolLabel(it.label) == normalized } ||
-                node.tags.any { it.normalizedName == "playbook" } ||
-                node.node.relationshipContext?.contains("playbook", ignoreCase = true) == true
+                    node.tags.any { it.normalizedName == "playbook" } || // NON-NLS
+                node.node.relationshipContext?.contains(
+                    "playbook",
+                    ignoreCase = true,
+                ) == true // NON-NLS
         }
     val usageByLabel = historyItems.groupBy { normalizeProtocolLabel(it.protocolLabel) }
     val playbooks =
@@ -260,7 +269,7 @@ suspend fun buildDashboardUIState(
 
     val prefs = if (mode != null) repository.getPreferencesForMode(mode.id).first() else null
     val areaFilters =
-        if (mode != null && mode.key != "ALL") {
+        if (mode != null && mode.key != "ALL") { // NON-NLS
             repository.getAreaFiltersForMode(mode.id).first()
         } else {
             emptyList()
@@ -269,9 +278,10 @@ suspend fun buildDashboardUIState(
     val excludedAreaIds = areaFilters.filter { !it.include }.map { it.areaId }
 
     var filteredNodes = nodes
-    if (mode?.key != "ALL") {
+    if (mode?.key != "ALL")
+    { // NON-NLS
         if (includedAreaIds.isNotEmpty()) {
-            filteredNodes =
+                filteredNodes =
                 filteredNodes.filter { it.node.areaId in includedAreaIds || it.node.isAreaItem() }
         }
         if (excludedAreaIds.isNotEmpty()) {
@@ -280,7 +290,7 @@ suspend fun buildDashboardUIState(
     }
 
     val typeFilters =
-        if (mode != null && mode.key != "ALL") {
+        if (mode != null && mode.key != "ALL") { // NON-NLS
             repository.getTypeFiltersForMode(mode.id).first()
         } else {
             emptyList()
@@ -288,19 +298,20 @@ suspend fun buildDashboardUIState(
     val includedTypes = typeFilters.filter { it.include }.map { it.nodeType }
     val excludedTypes = typeFilters.filter { !it.include }.map { it.nodeType }
 
-    if (mode?.key != "ALL") {
+    if (mode?.key != "ALL")
+    { // NON-NLS
         if (includedTypes.isNotEmpty()) {
-            filteredNodes = filteredNodes.filter { it.node.type in includedTypes }
+                filteredNodes = filteredNodes.filter { it.node.type in includedTypes }
         }
         if (excludedTypes.isNotEmpty()) {
             filteredNodes = filteredNodes.filter { it.node.type !in excludedTypes }
         }
     }
 
-    if (mode?.key == "RECOVERY" || mode?.key == "LOW_BATTERY" || mode?.key == "CANT_THINK") {
+    if (mode?.key == "RECOVERY" || mode?.key == "LOW_BATTERY" || mode?.key == "CANT_THINK") { // NON-NLS
         filteredNodes =
             filteredNodes.filter {
-                it.node.type != "task" || (it.node.energyLevel == 1 && it.node.friction == "easy")
+                it.node.type != "task" || (it.node.energyLevel == 1 && it.node.friction == "easy") // NON-NLS
             }
     }
 
@@ -314,18 +325,19 @@ suspend fun buildDashboardUIState(
         }
 
     val openLoops =
-        filteredNodes.filter { it.node.type == "open_loop" && it.node.status == "active" }
+        filteredNodes.filter { it.node.type == "open_loop" && it.node.status == "active" } // NON-NLS
     val decisions =
-        filteredNodes.filter { it.node.type == "decision" && it.node.status == "active" }
+        filteredNodes.filter { it.node.type == "decision" && it.node.status == "active" } // NON-NLS
     val maintenance =
-        filteredNodes.filter { it.node.type == "maintenance" && it.node.status == "active" }
+        filteredNodes.filter { it.node.type == "maintenance" && it.node.status == "active" } // NON-NLS
     val maintenanceSnapshot =
         calculateMaintenanceSnapshot(
             nodes,
         )
     val protocols =
-        filteredNodes.filter { it.node.type == "protocol" && it.node.status == "active" }
-    val people = filteredNodes.filter { it.node.type == "person" && it.node.status == "active" }
+        filteredNodes.filter { it.node.type == "protocol" && it.node.status == "active" } // NON-NLS
+    val people =
+        filteredNodes.filter { it.node.type == "person" && it.node.status == "active" } // NON-NLS
     val openLoopDecayScores =
         openLoops.map {
             openLoopDecayScore(
@@ -363,23 +375,42 @@ suspend fun buildDashboardUIState(
 
     val contexts =
         filteredNodes
-            .filter { it.node.status == "active" && it.node.type == "task" }
-            .groupBy { it.node.locationContext ?: "general" }
+            .filter { it.node.status == "active" && it.node.type == "task" } // NON-NLS
+            .groupBy { it.node.locationContext ?: "general" } // NON-NLS
 
     val localNow = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
     val suggestion =
         when
             {
                 localNow.hour >= 22 && mode?.key != "SHUTDOWN" && packs.canUseMode("SHUTDOWN") -> "SHUTDOWN"
+
+            // NON-NLS
                 loadScore > 80 && mode?.key != "RECOVERY" && mode?.key != "LOW_BATTERY" -> "RECOVERY"
+
+            // NON-NLS
                 else -> null
             }
     val contextPriorityKeys =
         when (localNow.hour)
         {
-            in 22..23, in 0..5 -> listOf("at_home", "low_energy", "10_minute")
-            in 6..9, in 16..18 -> listOf("commute_friendly", "waiting_room", "phone_okay")
-            else -> listOf("on_campus", "laptop_required", "high_focus")
+            in 22..23, in 0..5 ->
+            {
+                listOf("at_home", "low_energy", "10_minute")
+                }
+
+            // NON-NLS
+            in 6..9, in 16..18 -> {
+                listOf(
+                    "commute_friendly",
+                    "waiting_room",
+                    "phone_okay",
+                )
+            }
+
+            // NON-NLS
+            else -> {
+                listOf("on_campus", "laptop_required", "high_focus")
+            } // NON-NLS
         }
 
     fun matchesContextKey(
@@ -411,7 +442,7 @@ suspend fun buildDashboardUIState(
     return DashboardUIState(
         tasksCount = activeTasks.size,
         notesCount = filteredNodes.count { it.node.isKnowledgeItem() },
-        staleTasksCount = calculateStaleTasks(nodes.map { it.node }, Clock.System.now(), 3).size,
+        staleTasksCount = calculateStaleTasks(nodes.map { it.node }, Clock.System.now()).size,
         pinnedKnowledge = pinnedK,
         upcomingDeadlines =
             filteredNodes
@@ -421,30 +452,32 @@ suspend fun buildDashboardUIState(
         overdueNodes = overdue,
         relevantNote =
             filteredNodes
-                .filter { it.node.isNoteItem() && it.node.status == "active" }
+                .filter { it.node.isNoteItem() && it.node.status == "active" } // NON-NLS
                 .sortedByDescending { it.node.updatedAt }
                 .firstOrNull(),
         lowEnergyTasks =
             filteredNodes.filter {
                 it.node.isTaskItem() && it.node.taskStateOrNull() == TaskState.ACTIVE && it.node.energyLevel == 1
             },
-        batchableTasks = activeTasks.groupBy { it.node.areaId }.filter { it.value.size >= 3 },
+        batchableTasks = activeTasks.groupBy { it.node.areaId },
         quickWins =
             filteredNodes.filter {
-                it.node.isTaskItem() && it.node.taskStateOrNull() == TaskState.ACTIVE && it.node.energyLevel == 1 &&
-                    it.node.friction == "easy"
+                it.node.isTaskItem() &&
+                    it.node.taskStateOrNull() == TaskState.ACTIVE &&
+                    it.node.energyLevel == 1 &&
+                    it.node.friction == "easy" // NON-NLS
             },
         deepWork =
             filteredNodes.filter {
                 it.node.isTaskItem() && it.node.taskStateOrNull() == TaskState.ACTIVE && it.node.energyLevel == 3
             },
-        topTakeaways = filteredNodes.filter { it.node.isNoteItem() && it.node.noteState == "takeaway" },
-        readLaterVault = filteredNodes.filter { it.node.noteType == "read_later" && it.node.status == "active" },
-        quoteVault = filteredNodes.filter { it.node.noteType == "quote" && it.node.status == "active" },
-        ideaIncubator = filteredNodes.filter { it.node.type == "idea" && it.node.status == "active" && it.node.projectId == null },
+        topTakeaways = filteredNodes.filter { it.node.isNoteItem() && it.node.noteState == "takeaway" }, // NON-NLS
+        readLaterVault = filteredNodes.filter { it.node.noteType == "read_later" && it.node.status == "active" }, // NON-NLS
+        quoteVault = filteredNodes.filter { it.node.noteType == "quote" && it.node.status == "active" }, // NON-NLS
+        ideaIncubator = filteredNodes.filter { it.node.type == "idea" && it.node.status == "active" && it.node.projectId == null }, // NON-NLS
         archivedThisWeek =
             nodes.filter {
-                it.node.status == "archived" && (it.node.archivedAt ?: 0) >= sevenDaysAgo
+                it.node.status == "archived" && (it.node.archivedAt ?: 0) >= sevenDaysAgo // NON-NLS
             },
         neglectedThisWeek =
             filteredNodes.filter {
@@ -453,47 +486,49 @@ suspend fun buildDashboardUIState(
         foundationalNotes =
             filteredNodes
                 .filter {
-                    (it.node.type == "note" || it.node.type == "idea") &&
+                    (it.node.type == "note" || it.node.type == "idea") && // NON-NLS
                         it.tags.any { tag ->
                             tag.name.equals(
-                                "foundational",
+                                "foundational", // NON-NLS
                                 ignoreCase = true,
                             )
                         }
                 }.take(1),
         resourceHighlights =
             filteredNodes
-                .filter { it.node.type == "resource" && it.node.status == "active" }
+                .filter { it.node.type == "resource" && it.node.status == "active" } // NON-NLS
                 .shuffled()
                 .take(2),
-        stickyNotes = filteredNodes.filter { it.node.isSticky && it.node.status == "active" },
+        stickyNotes = filteredNodes.filter { it.node.isSticky && it.node.status == "active" }, // NON-NLS
         criticalProjects =
             filteredNodes
-                .filter { it.node.type == "project" && it.node.status == "active" }
+                .filter { it.node.type == "project" && it.node.status == "active" } // NON-NLS
                 .map { it.node }
                 .filter { proj ->
                     val projectNodes = nodes.filter { it.node.projectId == proj.id }
                     val hasCritical =
                         projectNodes.any {
-                            it.node.status == "active" && it.node.isHardDeadline && it.node.dueAt != null && it.node.dueAt < now
+                            it.node.status == "active" && it.node.isHardDeadline && it.node.dueAt != null && it.node.dueAt < now // NON-NLS
                         }
                     val isNeglected =
-                        proj.status == "active" && !proj.isFrozen && projectNodes.none { it.node.updatedAt >= fourteenDaysAgo }
+                        proj.status == "active" && !proj.isFrozen && projectNodes.none { it.node.updatedAt >= fourteenDaysAgo } // NON-NLS
                     hasCritical || isNeglected
                 },
         forgottenWisdom =
             filteredNodes
                 .filter {
-                    (it.node.type == "note" || it.node.type == "idea") &&
-                        it.node.status == "active" &&
-                        (it.node.noteType == "evergreen" || it.node.updatedAt < (now - 30 * 24 * 60 * 60 * 1000L))
+                    (it.node.type == "note" || it.node.type == "idea") && // NON-NLS
+                            it.node.status == "active" && // NON-NLS
+                        (it.node.noteType == "evergreen" || it.node.updatedAt < (now - 30 * 24 * 60 * 60 * 1000L)) // NON-NLS
                 }.shuffled()
                 .firstOrNull(),
         deservesAttention =
             filteredNodes
                 .filter {
-                    it.node.status == "active" && it.node.type == "task" &&
-                        !it.node.isPinned && it.node.dueAt == null &&
+                    it.node.status == "active" &&
+                            it.node.type == "task" && // NON-NLS
+                        !it.node.isPinned &&
+                        it.node.dueAt == null &&
                         it.node.updatedAt < sevenDaysAgo
                 }.take(2),
         areaHealth = areaHealthMap,
@@ -529,12 +564,13 @@ suspend fun buildDashboardUIState(
             },
         tinyVictories =
             nodes
-                .filter { it.node.status == "done" && it.node.completedAt != null && it.node.completedAt >= sevenDaysAgo }
+                .filter { it.node.status == "done" && it.node.completedAt != null && it.node.completedAt >= sevenDaysAgo } // NON-NLS
                 .take(5),
-        shoppingList = nodes.filter { it.node.status == "active" && it.tags.any { t -> t.name.lowercase() == "shopping" } },
+        shoppingList = nodes.filter { it.node.status == "active" && it.tags.any { t -> t.name.lowercase() == "shopping" } }, // NON-NLS
         unresolvedBureaucracy =
             nodes.filter {
-                it.node.type == "maintenance" && it.node.status == "active" &&
+                it.node.type == "maintenance" &&
+                    it.node.status == "active" && // NON-NLS
                     it.node.createdAt < sevenDaysAgo
             },
         modeSuggestion = suggestion,

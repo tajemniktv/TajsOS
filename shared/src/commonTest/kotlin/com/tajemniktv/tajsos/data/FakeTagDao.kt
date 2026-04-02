@@ -38,4 +38,9 @@ class FakeTagDao : TagDao {
         nodeTags.removeAll { it.nodeId == nodeId && it.tagId == tagId }
         nodeTagsFlow.value = nodeTags.toList()
     }
+
+    override suspend fun detachAllTagsFromNode(nodeId: Long) {
+        nodeTags.removeAll { it.nodeId == nodeId }
+        nodeTagsFlow.value = nodeTags.toList()
+    }
 }

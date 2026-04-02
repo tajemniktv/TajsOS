@@ -29,7 +29,7 @@ import tajsos.composeapp.generated.resources.type_project
 import tajsos.composeapp.generated.resources.type_record
 import tajsos.composeapp.generated.resources.type_task
 
-object TemplatesDashboardBlockRegistry {
+object TemplatesDashboardBlocks {
     private val renderers: Map<String, TemplatesDashboardBlockRenderer> =
         mapOf(
             "templates_list" to ::renderTemplatesList,
@@ -46,7 +46,7 @@ private fun renderTemplatesList(context: TemplatesDashboardContext) {
     } else {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
         ) {
             items(templates) { template ->
                 ListItem(
@@ -69,11 +69,11 @@ private fun renderTemplatesList(context: TemplatesDashboardContext) {
                             Icon(
                                 Icons.Default.Delete,
                                 contentDescription = stringResource(Res.string.archive_delete),
-                                tint = TajsOSTheme.Error
+                                tint = TajsOSTheme.Error,
                             )
                         }
                     },
-                    colors = ListItemDefaults.colors(containerColor = TajsOSTheme.Surface)
+                    colors = ListItemDefaults.colors(containerColor = TajsOSTheme.Surface),
                 )
             }
         }

@@ -4,17 +4,24 @@
 
 package com.tajemniktv.tajsos.data
 
+import com.tajemniktv.tajsos.domain.DomainKind
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.daysUntil
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Instant
 
 /**
  * AppRepository is the single source of truth for TajsOS's Room database.
  */
 private object NoOpInboxEntryDao : InboxEntryDao {
+    override fun getAllInboxEntries(): Flow<List<InboxEntryEntity>> = flowOf(emptyList())
+
     override fun getActiveInboxEntries(): Flow<List<InboxEntryEntity>> = flowOf(emptyList())
 
     override suspend fun getInboxEntryById(id: Long): InboxEntryEntity? = null
@@ -25,33 +32,104 @@ private object NoOpInboxEntryDao : InboxEntryDao {
 }
 
 private object NoOpTaskFacetDao : TaskFacetDao {
+    override fun getAllTaskFacets(): Flow<List<TaskFacetEntity>> = flowOf(emptyList())
+
     override suspend fun getTaskFacetByItemId(itemId: Long): TaskFacetEntity? = null
 
     override fun observeTaskFacet(itemId: Long): Flow<TaskFacetEntity?> = flowOf(null)
 
     override suspend fun upsertTaskFacet(facet: TaskFacetEntity) = Unit
+
+    override suspend fun deleteTaskFacetForItem(itemId: Long) = Unit
+}
+
+private object NoOpNoteFacetDao : NoteFacetDao {
+    override fun getAllNoteFacets(): Flow<List<NoteFacetEntity>> = flowOf(emptyList())
+
+    override suspend fun getNoteFacetByItemId(itemId: Long): NoteFacetEntity? = null
+
+    override fun observeNoteFacet(itemId: Long): Flow<NoteFacetEntity?> = flowOf(null)
+
+    override suspend fun upsertNoteFacet(facet: NoteFacetEntity) = Unit
+
+    override suspend fun deleteNoteFacetForItem(itemId: Long) = Unit
 }
 
 private object NoOpProjectFacetDao : ProjectFacetDao {
+    override fun getAllProjectFacets(): Flow<List<ProjectFacetEntity>> = flowOf(emptyList())
+
     override suspend fun getProjectFacetByItemId(itemId: Long): ProjectFacetEntity? = null
 
     override fun observeProjectFacet(itemId: Long): Flow<ProjectFacetEntity?> = flowOf(null)
 
     override suspend fun upsertProjectFacet(facet: ProjectFacetEntity) = Unit
+
+    override suspend fun deleteProjectFacetForItem(itemId: Long) = Unit
+}
+
+private object NoOpAreaFacetDao : AreaFacetDao {
+    override fun getAllAreaFacets(): Flow<List<AreaFacetEntity>> = flowOf(emptyList())
+
+    override suspend fun getAreaFacetByItemId(itemId: Long): AreaFacetEntity? = null
+
+    override fun observeAreaFacet(itemId: Long): Flow<AreaFacetEntity?> = flowOf(null)
+
+    override suspend fun upsertAreaFacet(facet: AreaFacetEntity) = Unit
+
+    override suspend fun deleteAreaFacetForItem(itemId: Long) = Unit
 }
 
 private object NoOpRecordFacetDao : RecordFacetDao {
+    override fun getAllRecordFacets(): Flow<List<RecordFacetEntity>> = flowOf(emptyList())
+
     override suspend fun getRecordFacetByItemId(itemId: Long): RecordFacetEntity? = null
 
     override fun observeRecordFacet(itemId: Long): Flow<RecordFacetEntity?> = flowOf(null)
 
     override suspend fun upsertRecordFacet(facet: RecordFacetEntity) = Unit
+
+    override suspend fun deleteRecordFacetForItem(itemId: Long) = Unit
+}
+
+private object NoOpItemDomainDao : ItemDomainDao {
+    override fun getAllItemDomains(): Flow<List<ItemDomainEntity>> = flowOf(emptyList())
+
+    override fun getDomainsForItem(itemId: Long): Flow<List<ItemDomainEntity>> = flowOf(emptyList())
+
+    override suspend fun upsertDomain(domain: ItemDomainEntity) = Unit
+
+    override suspend fun deleteDomain(
+        itemId: Long,
+        domainKey: String,
+    ) = Unit
+
+    override suspend fun deleteDomainsForItem(itemId: Long) = Unit
+
+    override suspend fun clearPrimaryFlag(itemId: Long) = Unit
+}
+
+private object NoOpRichContentDocumentDao : RichContentDocumentDao {
+    override fun getAllDocuments(): Flow<List<RichContentDocumentEntity>> = flowOf(emptyList())
+
+    override fun observeDocumentForItem(itemId: Long): Flow<RichContentDocumentEntity?> = flowOf(null)
+
+    override suspend fun getDocumentForItem(itemId: Long): RichContentDocumentEntity? = null
+
+    override suspend fun upsertDocument(document: RichContentDocumentEntity) = Unit
+
+    override suspend fun deleteDocumentForItem(itemId: Long) = Unit
 }
 
 private object NoOpScheduleEntryDao : ScheduleEntryDao {
     override fun getAllScheduleEntries(): Flow<List<ScheduleEntryEntity>> = flowOf(emptyList())
 
     override fun getScheduleEntriesForItem(itemId: Long): Flow<List<ScheduleEntryEntity>> = flowOf(emptyList())
+
+    override fun getOpenScheduleEntriesByKindAndDayRange(
+        kind: String,
+        fromEpochDay: Int,
+        toEpochDay: Int,
+    ): Flow<List<ScheduleEntryEntity>> = flowOf(emptyList())
 
     override suspend fun getScheduleEntriesByKind(
         itemId: Long,
@@ -63,10 +141,64 @@ private object NoOpScheduleEntryDao : ScheduleEntryDao {
         kind: String,
     ) = Unit
 
+    override suspend fun deleteScheduleEntriesForItem(itemId: Long) = Unit
+
     override suspend fun insertScheduleEntry(entry: ScheduleEntryEntity): Long = 0L
 
     override suspend fun insertScheduleEntries(entries: List<ScheduleEntryEntity>) = Unit
 }
+
+private object NoOpSavedViewDao : SavedViewDao {
+    override fun getAllSavedViews(): Flow<List<SavedViewEntity>> = flowOf(emptyList())
+
+    override suspend fun getSavedViewById(id: Long): SavedViewEntity? = null
+
+    override suspend fun insertSavedView(view: SavedViewEntity): Long = 0L
+
+    override suspend fun updateSavedView(view: SavedViewEntity) = Unit
+
+    override suspend fun deleteSavedView(view: SavedViewEntity) = Unit
+
+    override fun getAllSavedViewSourceKinds(): Flow<List<SavedViewSourceKindEntity>> = flowOf(emptyList())
+
+    override suspend fun getSourceKindsForView(viewId: Long): List<SavedViewSourceKindEntity> = emptyList()
+
+    override suspend fun insertSavedViewSourceKinds(sourceKinds: List<SavedViewSourceKindEntity>) = Unit
+
+    override suspend fun deleteSourceKindsForView(viewId: Long) = Unit
+
+    override fun getAllSavedViewFilters(): Flow<List<SavedViewFilterEntity>> = flowOf(emptyList())
+
+    override suspend fun getFiltersForView(viewId: Long): List<SavedViewFilterEntity> = emptyList()
+
+    override suspend fun insertSavedViewFilters(filters: List<SavedViewFilterEntity>) = Unit
+
+    override suspend fun deleteFiltersForView(viewId: Long) = Unit
+
+    override fun getAllSavedViewSorts(): Flow<List<SavedViewSortEntity>> = flowOf(emptyList())
+
+    override suspend fun getSortsForView(viewId: Long): List<SavedViewSortEntity> = emptyList()
+
+    override suspend fun insertSavedViewSorts(sorts: List<SavedViewSortEntity>) = Unit
+
+    override suspend fun deleteSortsForView(viewId: Long) = Unit
+
+    override fun getAllSavedViewVisibleFields(): Flow<List<SavedViewVisibleFieldEntity>> = flowOf(emptyList())
+
+    override suspend fun getVisibleFieldsForView(viewId: Long): List<SavedViewVisibleFieldEntity> = emptyList()
+
+    override suspend fun insertSavedViewVisibleFields(fields: List<SavedViewVisibleFieldEntity>) = Unit
+
+    override suspend fun deleteVisibleFieldsForView(viewId: Long) = Unit
+}
+
+private data class LifeObjectFacetSnapshot(
+    val task: TaskFacetEntity?,
+    val note: NoteFacetEntity?,
+    val record: RecordFacetEntity?,
+    val project: ProjectFacetEntity?,
+    val area: AreaFacetEntity?,
+)
 
 class AppRepository(
     private val nodeDao: NodeDao,
@@ -88,9 +220,14 @@ class AppRepository(
     private val medicationDao: MedicationDao,
     private val inboxEntryDao: InboxEntryDao = NoOpInboxEntryDao,
     private val taskFacetDao: TaskFacetDao = NoOpTaskFacetDao,
+    private val noteFacetDao: NoteFacetDao = NoOpNoteFacetDao,
     private val projectFacetDao: ProjectFacetDao = NoOpProjectFacetDao,
+    private val areaFacetDao: AreaFacetDao = NoOpAreaFacetDao,
     private val recordFacetDao: RecordFacetDao = NoOpRecordFacetDao,
+    private val itemDomainDao: ItemDomainDao = NoOpItemDomainDao,
+    private val richContentDocumentDao: RichContentDocumentDao = NoOpRichContentDocumentDao,
     private val scheduleEntryDao: ScheduleEntryDao = NoOpScheduleEntryDao,
+    private val savedViewDao: SavedViewDao = NoOpSavedViewDao,
 ) {
     /**
      * Retrieves a stream of all nodes stored in the database, including their today-pin status.
@@ -121,6 +258,82 @@ class AppRepository(
      * @return The [NodeEntity] if found, or `null` otherwise.
      */
     suspend fun getNodeById(id: Long): NodeEntity? = nodeDao.getNodeById(id)
+
+    /**
+     * Observes a typed local aggregate for a specific life object.
+     *
+     * This read model keeps the core node spine intact while joining typed facets,
+     * schedules, relations, documents, and domain assignments beside it.
+     */
+    fun observeLifeObject(id: Long): Flow<LifeObjectAggregate?> {
+        val facetsFlow =
+            combine(
+                taskFacetDao.observeTaskFacet(id),
+                noteFacetDao.observeNoteFacet(id),
+                recordFacetDao.observeRecordFacet(id),
+                projectFacetDao.observeProjectFacet(id),
+                areaFacetDao.observeAreaFacet(id),
+            ) { task, note, record, project, area ->
+                LifeObjectFacetSnapshot(
+                    task = task,
+                    note = note,
+                    record = record,
+                    project = project,
+                    area = area,
+                )
+            }
+
+        val schedulingAndDocumentsFlow =
+            combine(
+                scheduleEntryDao.getScheduleEntriesForItem(id),
+                richContentDocumentDao.observeDocumentForItem(id),
+                itemDomainDao.getDomainsForItem(id),
+            ) { schedule, document, domains ->
+                Triple(schedule, document, domains)
+            }
+
+        val linksFlow =
+            combine(
+                tagDao.getTagsForNode(id),
+                attachmentDao.getAttachmentsForNode(id),
+                relationDao.getRelationsForNode(id),
+            ) { tags, attachments, relations ->
+                Triple(tags, attachments, relations)
+            }
+
+        return combine(
+            getAllNodes(),
+            facetsFlow,
+            schedulingAndDocumentsFlow,
+            linksFlow,
+        ) { nodes, facets, schedulingAndDocuments, links ->
+            val nodeEntity = nodes.firstOrNull { it.node.id == id }?.node ?: return@combine null
+            LifeObjectAggregate(
+                node = nodeEntity,
+                task = facets.task?.toModel(),
+                note = facets.note?.toModel(),
+                record = facets.record?.toModel(),
+                project = facets.project?.toModel(),
+                area = facets.area?.toModel(),
+                schedule = schedulingAndDocuments.first.map { it.toModel() },
+                document = schedulingAndDocuments.second?.toModel(),
+                domains = schedulingAndDocuments.third.mapNotNull { it.toModel() },
+                tags = links.first,
+                attachments = links.second,
+                relations = links.third,
+            )
+        }
+    }
+
+    /**
+     * Loads the current typed local aggregate for a single life object.
+     */
+    suspend fun getLifeObject(id: Long): LifeObjectAggregate? = observeLifeObject(id).first()
+
+    /**
+     * Observes raw inbox captures that still need semantic triage.
+     */
+    fun getAllInboxEntries(): Flow<List<InboxEntryEntity>> = inboxEntryDao.getAllInboxEntries()
 
     /**
      * Observes raw inbox captures that still need semantic triage.
@@ -218,6 +431,30 @@ class AppRepository(
 
     /**
      * Creates a typed LifeOS item while mirroring the minimum legacy node fields still needed by current UI.
+     *
+     * @param kind The primary item kind (e.g., TASK, NOTE, PROJECT).
+     * @param title The display title for the new item.
+     * @param content Optional body content or description.
+     * @param homeAreaId The optional ID of the area this item belongs to.
+     * @param activeProjectId The optional ID of the project this item belongs to.
+     * @param inboxState Whether this item sits in the triage inbox. Defaults based on [ItemKind].
+     * @param source How the item was created (e.g., "manual", "capture").
+     * @param noteKind For note items, the specific semantic subtype (e.g., JOURNAL, CONCEPT).
+     * @param recordKind For record items, the specific subtype (e.g., HEALTH_LOG). Defaults to GENERAL.
+     * @param taskState For task items, the execution state. Defaults to ACTIVE.
+     * @param projectState For project items, the lifecycle state. Defaults to ACTIVE.
+     * @param isRecurring Whether the item should spawn a new instance when completed.
+     * @param recurringInterval The recurrence interval (e.g., "daily", "weekly", "monthly") if [isRecurring] is true.
+     * @param reminderAt Epoch milliseconds for when the user should be reminded.
+     * @param startAt Epoch milliseconds for when work on this item is scheduled to start.
+     * @param dueAt Epoch milliseconds for the item's deadline or target completion.
+     * @param color Optional ARGB color integer used for visual representation, mostly for projects and areas.
+     * @param icon Optional icon identifier used for visual representation.
+     * @param contextScreen The screen context where this item was originally created.
+     * @param isSticky Whether the item should be pinned prominently in dashboards.
+     * @param domains Optional product-lens classifications attached to the item.
+     * @param purpose For project items, an explicit "why" or goal statement.
+     * @return The auto-generated database ID of the newly inserted item.
      */
     suspend fun insertLifeItem(
         kind: ItemKind,
@@ -240,6 +477,7 @@ class AppRepository(
         icon: String? = null,
         contextScreen: String? = null,
         isSticky: Boolean = false,
+        domains: Set<DomainKind> = emptySet(),
         purpose: String? = null,
     ): Long {
         val node =
@@ -311,7 +549,7 @@ class AppRepository(
                     )
                 }
 
-                ItemKind.AREA    -> {
+                ItemKind.AREA -> {
                     NodeEntity(
                         type = kind.storageKey,
                         title = title,
@@ -326,6 +564,13 @@ class AppRepository(
             }
 
         val id = insertNode(node)
+        domains.forEachIndexed { index, domain ->
+            assignDomainToItem(
+                itemId = id,
+                domain = domain,
+                isPrimary = index == 0,
+            )
+        }
         if (kind == ItemKind.RECORD) {
             recordFacetDao.upsertRecordFacet(
                 RecordFacetEntity(
@@ -363,6 +608,26 @@ class AppRepository(
     fun getAllScheduleEntries(): Flow<List<ScheduleEntryEntity>> = scheduleEntryDao.getAllScheduleEntries()
 
     /**
+     * Observes schedule entries attached to a specific life object.
+     */
+    fun getScheduleEntriesForItem(itemId: Long): Flow<List<ScheduleEntryEntity>> = scheduleEntryDao.getScheduleEntriesForItem(itemId)
+
+    /**
+     * Observes open schedule entries in a local day range for a specific schedule layer.
+     */
+    fun getOpenScheduleEntriesByKindAndDayRange(
+        kind: ScheduleEntryKind,
+        fromEpochDay: Int,
+        toEpochDay: Int,
+    ): Flow<List<ScheduleEntry>> =
+        scheduleEntryDao
+            .getOpenScheduleEntriesByKindAndDayRange(
+                kind = kind.storageKey,
+                fromEpochDay = fromEpochDay,
+                toEpochDay = toEpochDay,
+            ).map { entries -> entries.map { it.toModel() } }
+
+    /**
      * Inserts a new node into the database.
      *
      * **Side effects:**
@@ -377,6 +642,8 @@ class AppRepository(
         logEvent("NODE_CREATED", id)
         syncBelongsToRelations(id, node.projectId, node.areaId)
         syncTypedFacetsFromNode(node.copy(id = id))
+        syncDomainsFromNodeMetadata(node.copy(id = id))
+        syncDocumentFromNode(node.copy(id = id))
         syncScheduleEntriesForNode(
             nodeId = id,
             reminderAt = node.reminderAt,
@@ -424,6 +691,8 @@ class AppRepository(
         }
 
         syncTypedFacetsFromNode(node)
+        syncDomainsFromNodeMetadata(node)
+        syncDocumentFromNode(node)
         syncScheduleEntriesForNode(
             nodeId = node.id,
             reminderAt = node.reminderAt,
@@ -485,6 +754,26 @@ class AppRepository(
                 )
             }
 
+            ItemKind.NOTE -> {
+                val existing = noteFacetDao.getNoteFacetByItemId(node.id)
+                noteFacetDao.upsertNoteFacet(
+                    NoteFacetEntity(
+                        itemId = node.id,
+                        kind =
+                            NoteKind.fromStorageKey(node.noteType)?.storageKey
+                                ?: existing?.kind
+                                ?: NoteKind.GENERAL.storageKey,
+                        state =
+                            NoteState.fromStorageKey(node.noteState)?.storageKey
+                                ?: existing?.state
+                                ?: NoteState.ACTIVE.storageKey,
+                        sourceTitle = existing?.sourceTitle,
+                        sourceAuthor = existing?.sourceAuthor,
+                        lastReviewedAt = existing?.lastReviewedAt,
+                    ),
+                )
+            }
+
             ItemKind.PROJECT -> {
                 val existing = projectFacetDao.getProjectFacetByItemId(node.id)
                 projectFacetDao.upsertProjectFacet(
@@ -501,6 +790,21 @@ class AppRepository(
                 )
             }
 
+            ItemKind.AREA -> {
+                val existing = areaFacetDao.getAreaFacetByItemId(node.id)
+                areaFacetDao.upsertAreaFacet(
+                    AreaFacetEntity(
+                        itemId = node.id,
+                        healthStatus =
+                            AreaHealthStatus.fromStorageKey(node.areaHealthStatus)?.storageKey
+                                ?: existing?.healthStatus
+                                ?: AreaHealthStatus.STABLE.storageKey,
+                        standardOfCare = existing?.standardOfCare,
+                        vision = existing?.vision,
+                    ),
+                )
+            }
+
             ItemKind.RECORD -> {
                 val existing = recordFacetDao.getRecordFacetByItemId(node.id)
                 recordFacetDao.upsertRecordFacet(
@@ -512,11 +816,53 @@ class AppRepository(
                 )
             }
 
-            else ->
-            {
+            else -> {
                 Unit
             }
         }
+    }
+
+    /**
+     * Mirrors optional area/domain metadata into the dedicated domain-assignment table.
+     *
+     * The metadata envelope remains available for pack-specific extensions, but domain lenses
+     * now have a first-class SQL surface.
+     */
+    private suspend fun syncDomainsFromNodeMetadata(node: NodeEntity) {
+        val associatedDomains = node.areaMetadataOrNull()?.associatedDomains ?: return
+        itemDomainDao.deleteDomainsForItem(node.id)
+        associatedDomains.forEachIndexed { index, domain ->
+            itemDomainDao.upsertDomain(
+                ItemDomainEntity(
+                    itemId = node.id,
+                    domainKey = domain.name,
+                    isPrimary = index == 0,
+                ),
+            )
+        }
+    }
+
+    /**
+     * Mirrors the current node body into the optional document layer for document-friendly kinds.
+     */
+    private suspend fun syncDocumentFromNode(node: NodeEntity) {
+        if (node.itemKindOrNull() == null) return
+        val existing = richContentDocumentDao.getDocumentForItem(node.id)
+        if (node.content.isBlank() && existing == null) return
+
+        richContentDocumentDao.upsertDocument(
+            RichContentDocumentEntity(
+                itemId = node.id,
+                format = existing?.format ?: RichContentFormat.MARKDOWN.storageKey,
+                body = node.content,
+                structuredContentJson = existing?.structuredContentJson,
+                schemaVersion = existing?.schemaVersion ?: 1,
+                updatedAt =
+                    kotlin.time.Clock.System
+                        .now()
+                        .toEpochMilliseconds(),
+            ),
+        )
     }
 
     /**
@@ -530,6 +876,8 @@ class AppRepository(
         recurrenceRule: String?,
     ) {
         val entries = mutableListOf<ScheduleEntryEntity>()
+        val timezone = TimeZone.currentSystemDefault()
+        val timezoneId = timezone.id
         if (startAt != null) {
             scheduleEntryDao.deleteScheduleEntriesByKind(nodeId, ScheduleEntryKind.START.storageKey)
             entries +=
@@ -537,6 +885,8 @@ class AppRepository(
                     itemId = nodeId,
                     kind = ScheduleEntryKind.START.storageKey,
                     scheduledAt = startAt,
+                    localDateEpochDay = epochDayFromInstant(startAt, timezone),
+                    timezoneId = timezoneId,
                     recurrenceRule = recurrenceRule,
                 )
         }
@@ -547,6 +897,8 @@ class AppRepository(
                     itemId = nodeId,
                     kind = ScheduleEntryKind.DUE.storageKey,
                     scheduledAt = dueAt,
+                    localDateEpochDay = epochDayFromInstant(dueAt, timezone),
+                    timezoneId = timezoneId,
                     recurrenceRule = recurrenceRule,
                 )
         }
@@ -560,16 +912,17 @@ class AppRepository(
                     itemId = nodeId,
                     kind = ScheduleEntryKind.REMINDER.storageKey,
                     scheduledAt = reminderAt,
+                    localDateEpochDay = epochDayFromInstant(reminderAt, timezone),
+                    timezoneId = timezoneId,
                     recurrenceRule = recurrenceRule,
                 )
         }
-        if (startAt == null)
-        {
+        if (startAt == null) {
             scheduleEntryDao.deleteScheduleEntriesByKind(
-                    nodeId,
-                    ScheduleEntryKind.START.storageKey,
-                )
-            }
+                nodeId,
+                ScheduleEntryKind.START.storageKey,
+            )
+        }
         if (dueAt == null) {
             scheduleEntryDao.deleteScheduleEntriesByKind(
                 nodeId,
@@ -587,12 +940,36 @@ class AppRepository(
         }
     }
 
+    private fun epochDayFromInstant(
+        timestamp: Long,
+        timezone: TimeZone,
+    ): Int =
+        LocalDate(1970, 1, 1).daysUntil(
+            Instant
+                .fromEpochMilliseconds(timestamp)
+                .toLocalDateTime(timezone)
+                .date,
+        )
+
     /**
      * Permanently deletes a node from the database.
      *
      * @param node The node to delete.
      */
-    suspend fun deleteNode(node: NodeEntity) = nodeDao.deleteNode(node)
+    suspend fun deleteNode(node: NodeEntity) {
+        relationDao.deleteRelationsForNode(node.id)
+        tagDao.detachAllTagsFromNode(node.id)
+        attachmentDao.deleteAttachmentsForNode(node.id)
+        taskFacetDao.deleteTaskFacetForItem(node.id)
+        noteFacetDao.deleteNoteFacetForItem(node.id)
+        projectFacetDao.deleteProjectFacetForItem(node.id)
+        areaFacetDao.deleteAreaFacetForItem(node.id)
+        recordFacetDao.deleteRecordFacetForItem(node.id)
+        itemDomainDao.deleteDomainsForItem(node.id)
+        richContentDocumentDao.deleteDocumentForItem(node.id)
+        scheduleEntryDao.deleteScheduleEntriesForItem(node.id)
+        nodeDao.deleteNode(node)
+    }
 
     /**
      * Pins a node to the current day ("Today" view) by creating a [TodayPinEntity].
@@ -717,7 +1094,12 @@ class AppRepository(
     fun getRelationsForNode(nodeId: Long) = relationDao.getRelationsForNode(nodeId)
 
     suspend fun insertRelation(relation: RelationEntity) {
-        if (!relationDao.anyRelationExists(relation.fromNodeId, relation.toNodeId)) {
+        if (!relationDao.anyRelationExists(
+                relation.fromNodeId,
+                relation.toNodeId,
+                relation.relationType,
+            )
+        ) {
             relationDao.insertRelation(relation)
             logEvent("NODE_LINKED", relation.fromNodeId, relation.toNodeId)
         }
@@ -767,6 +1149,197 @@ class AppRepository(
     suspend fun insertAttachment(attachment: AttachmentEntity) = attachmentDao.insertAttachment(attachment)
 
     suspend fun deleteAttachment(attachment: AttachmentEntity) = attachmentDao.deleteAttachment(attachment)
+
+    // Domains
+    fun getDomainsForItem(itemId: Long): Flow<List<DomainAssignment>> =
+        itemDomainDao.getDomainsForItem(itemId).map { domains ->
+            domains.mapNotNull { it.toModel() }
+        }
+
+    suspend fun assignDomainToItem(
+        itemId: Long,
+        domain: DomainKind,
+        isPrimary: Boolean = false,
+    ) {
+        if (isPrimary) {
+            itemDomainDao.clearPrimaryFlag(itemId)
+        }
+        itemDomainDao.upsertDomain(
+            ItemDomainEntity(
+                itemId = itemId,
+                domainKey = domain.name,
+                isPrimary = isPrimary,
+            ),
+        )
+    }
+
+    suspend fun removeDomainFromItem(
+        itemId: Long,
+        domain: DomainKind,
+    ) = itemDomainDao.deleteDomain(itemId, domain.name)
+
+    // Documents
+    fun getDocumentForItem(itemId: Long): Flow<RichContentDocument?> =
+        richContentDocumentDao.observeDocumentForItem(itemId).map { document ->
+            document?.toModel()
+        }
+
+    suspend fun upsertDocument(
+        itemId: Long,
+        body: String,
+        format: RichContentFormat = RichContentFormat.MARKDOWN,
+        structuredContentJson: String? = null,
+    ) {
+        val existing = richContentDocumentDao.getDocumentForItem(itemId)
+        richContentDocumentDao.upsertDocument(
+            RichContentDocumentEntity(
+                itemId = itemId,
+                format = format.storageKey,
+                body = body,
+                structuredContentJson = structuredContentJson ?: existing?.structuredContentJson,
+                schemaVersion = existing?.schemaVersion ?: 1,
+                updatedAt =
+                    kotlin.time.Clock.System
+                        .now()
+                        .toEpochMilliseconds(),
+            ),
+        )
+        nodeDao.getNodeById(itemId)?.let { node ->
+            if (node.content != body) {
+                nodeDao.updateNode(
+                    node.copy(
+                        content = body,
+                        updatedAt =
+                            kotlin.time.Clock.System
+                                .now()
+                                .toEpochMilliseconds(),
+                    ),
+                )
+            }
+        }
+    }
+
+    suspend fun deleteDocumentForItem(itemId: Long) = richContentDocumentDao.deleteDocumentForItem(itemId)
+
+    // Saved views
+    fun getSavedViews(): Flow<List<SavedViewDefinition>> =
+        combine(
+            savedViewDao.getAllSavedViews(),
+            savedViewDao.getAllSavedViewSourceKinds(),
+            savedViewDao.getAllSavedViewFilters(),
+            savedViewDao.getAllSavedViewSorts(),
+            savedViewDao.getAllSavedViewVisibleFields(),
+        ) { views, sourceKinds, filters, sorts, visibleFields ->
+            views.map { view ->
+                view.toDefinition(
+                    sourceKinds = sourceKinds.filter { it.viewId == view.id },
+                    filters = filters.filter { it.viewId == view.id },
+                    sorts = sorts.filter { it.viewId == view.id },
+                    visibleFields = visibleFields.filter { it.viewId == view.id },
+                )
+            }
+        }
+
+    suspend fun getSavedView(id: Long): SavedViewDefinition? {
+        val view = savedViewDao.getSavedViewById(id) ?: return null
+        return view.toDefinition(
+            sourceKinds = savedViewDao.getSourceKindsForView(id),
+            filters = savedViewDao.getFiltersForView(id),
+            sorts = savedViewDao.getSortsForView(id),
+            visibleFields = savedViewDao.getVisibleFieldsForView(id),
+        )
+    }
+
+    suspend fun saveSavedView(definition: SavedViewDefinition): Long {
+        val now =
+            kotlin.time.Clock.System
+                .now()
+                .toEpochMilliseconds()
+        val existing = definition.id.takeIf { it > 0 }?.let { savedViewDao.getSavedViewById(it) }
+        val entity =
+            SavedViewEntity(
+                id = existing?.id ?: definition.id,
+                name = definition.name,
+                description = definition.description,
+                lens = definition.lens.storageKey,
+                layout = definition.layout.storageKey,
+                rowDimension = definition.rowDimension?.storageKey,
+                columnDimension = definition.columnDimension?.storageKey,
+                measure = definition.measure?.storageKey,
+                createdAt = existing?.createdAt ?: now,
+                updatedAt = now,
+            )
+        val viewId =
+            if (existing == null) {
+                savedViewDao.insertSavedView(entity)
+            } else {
+                savedViewDao.updateSavedView(entity)
+                entity.id
+            }
+
+        savedViewDao.deleteSourceKindsForView(viewId)
+        savedViewDao.deleteFiltersForView(viewId)
+        savedViewDao.deleteSortsForView(viewId)
+        savedViewDao.deleteVisibleFieldsForView(viewId)
+
+        if (definition.sourceKinds.isNotEmpty()) {
+            savedViewDao.insertSavedViewSourceKinds(
+                definition.sourceKinds.map { kind ->
+                    SavedViewSourceKindEntity(
+                        viewId = viewId,
+                        itemKind = kind.storageKey,
+                    )
+                },
+            )
+        }
+        if (definition.filters.isNotEmpty()) {
+            savedViewDao.insertSavedViewFilters(
+                definition.filters.mapIndexed { index, filter ->
+                    SavedViewFilterEntity(
+                        viewId = viewId,
+                        position = index,
+                        fieldKey = filter.fieldKey.storageKey,
+                        operatorKey = filter.operator.storageKey,
+                        value = filter.value,
+                        valueType = filter.valueType.storageKey,
+                    )
+                },
+            )
+        }
+        if (definition.sorts.isNotEmpty()) {
+            savedViewDao.insertSavedViewSorts(
+                definition.sorts.mapIndexed { index, sort ->
+                    SavedViewSortEntity(
+                        viewId = viewId,
+                        position = index,
+                        fieldKey = sort.fieldKey.storageKey,
+                        direction = sort.direction.storageKey,
+                    )
+                },
+            )
+        }
+        if (definition.visibleFields.isNotEmpty()) {
+            savedViewDao.insertSavedViewVisibleFields(
+                definition.visibleFields.mapIndexed { index, field ->
+                    SavedViewVisibleFieldEntity(
+                        viewId = viewId,
+                        position = index,
+                        fieldKey = field.storageKey,
+                    )
+                },
+            )
+        }
+        return viewId
+    }
+
+    suspend fun deleteSavedView(id: Long) {
+        val existing = savedViewDao.getSavedViewById(id) ?: return
+        savedViewDao.deleteSourceKindsForView(id)
+        savedViewDao.deleteFiltersForView(id)
+        savedViewDao.deleteSortsForView(id)
+        savedViewDao.deleteVisibleFieldsForView(id)
+        savedViewDao.deleteSavedView(existing)
+    }
 
     // Templates
     fun getAllTemplates() = templateDao.getAllTemplates()

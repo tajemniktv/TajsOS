@@ -124,6 +124,9 @@ class RepositoryDelegationTest {
         override suspend fun deleteRelation(relation: RelationEntity) {
         }
 
+        override suspend fun deleteRelationsForNode(nodeId: Long) {
+        }
+
         override suspend fun deleteBelongsToRelations(nodeId: Long) {
         }
 
@@ -132,7 +135,11 @@ class RepositoryDelegationTest {
 
         override suspend fun getBelongsToRelations(nodeId: Long): List<RelationEntity> = emptyList()
 
-        override suspend fun anyRelationExists(from: Long, to: Long): Boolean = false
+        override suspend fun anyRelationExists(
+            from: Long,
+            to: Long,
+            relationType: String,
+        ): Boolean = false
 
         override fun getAllRelations(): Flow<List<RelationEntity>> = flowOf(emptyList())
     }
@@ -149,6 +156,9 @@ class RepositoryDelegationTest {
 
         override suspend fun detachTagFromNode(nodeId: Long, tagId: Long) {
         }
+
+        override suspend fun detachAllTagsFromNode(nodeId: Long) {
+        }
     }
 
     private class FakeEventLogDao : EventLogDao {
@@ -164,6 +174,8 @@ class RepositoryDelegationTest {
     }
 
     private class FakeAttachmentDao : AttachmentDao {
+        override fun getAllAttachments(): Flow<List<AttachmentEntity>> = flowOf(emptyList())
+
         override fun getAttachmentsForNode(nodeId: Long): Flow<List<AttachmentEntity>> =
             flowOf(emptyList())
 
@@ -171,6 +183,9 @@ class RepositoryDelegationTest {
         }
 
         override suspend fun deleteAttachment(attachment: AttachmentEntity) {
+        }
+
+        override suspend fun deleteAttachmentsForNode(nodeId: Long) {
         }
     }
 

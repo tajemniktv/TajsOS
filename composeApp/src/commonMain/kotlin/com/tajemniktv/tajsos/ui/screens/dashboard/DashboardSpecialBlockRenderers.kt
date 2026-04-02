@@ -16,6 +16,11 @@ import androidx.compose.ui.graphics.Color
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.modes.RecoveryBasicsBlock
 import com.tajemniktv.tajsos.ui.components.nodes.SuggestionGroup
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.dash_action_open_study
+import tajsos.composeapp.generated.resources.dash_label_admin_paperwork
+import tajsos.composeapp.generated.resources.dash_label_study_module
 
 @Composable
 internal fun renderBasicsBlock(context: DashboardBlockContext) {
@@ -75,7 +80,7 @@ internal fun renderRevisionTargetsBlock(context: DashboardBlockContext) {
 }
 
 @Composable
-private fun renderStudyModuleBlock(
+internal fun renderStudyModuleBlock(
     context: DashboardBlockContext,
     key: String,
 ) {
@@ -88,21 +93,21 @@ private fun renderStudyModuleBlock(
             else -> studentBoard.revisitBeforeExam
         }
     SuggestionGroup(
-        title = "STUDY MODULE // ${key.uppercase()}",
+        title = stringResource(Res.string.dash_label_study_module, key.uppercase()),
         icon = Icons.Default.School,
         color = Color(0xFFFF9800),
         nodes = studyNodes.take(5),
         onEditNode = context.onEditNode,
     )
     TextButton(onClick = { context.onNavigateTo(Screen.Education) }) {
-        Text("OPEN STUDY WORKSPACE")
+        Text(stringResource(Res.string.dash_action_open_study))
     }
 }
 
 @Composable
 internal fun renderPaperworkBlock(context: DashboardBlockContext) {
     SuggestionGroup(
-        title = "ADMIN // PAPERWORK",
+        title = stringResource(Res.string.dash_label_admin_paperwork),
         icon = Icons.Default.Gavel,
         color = Color(0xFF607D8B),
         nodes = context.dashboardState.unresolvedBureaucracy,

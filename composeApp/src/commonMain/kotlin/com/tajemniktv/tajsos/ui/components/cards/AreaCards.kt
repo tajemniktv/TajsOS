@@ -33,7 +33,7 @@ fun AreaHealthOverviewCard(
         shape =
             androidx.compose.foundation.shape
                 .RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.Border)
+        border = BorderStroke(1.dp, TajsOSTheme.Border),
     ) {
         Column(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -48,24 +48,24 @@ fun AreaHealthOverviewCard(
             Text(
                 "Dominant this week: ${dominantArea ?: "N/A"}",
                 style = MaterialTheme.typography.bodyMedium,
-                color = TajsOSTheme.Text
+                color = TajsOSTheme.Text,
             )
             Text(
                 "Imbalance: $imbalanceScore% (${imbalanceLabel.uppercase()})",
                 style = MaterialTheme.typography.bodySmall,
-                color = if (imbalanceScore >= 60) TajsOSTheme.Error else TajsOSTheme.Muted
+                color = if (imbalanceScore >= 60) TajsOSTheme.Error else TajsOSTheme.Muted,
             )
             LinearProgressIndicator(
                 progress = { (imbalanceScore / 100f).coerceIn(0f, 1f) },
                 modifier = Modifier.fillMaxWidth().height(6.dp),
                 color = if (imbalanceScore >= 60) TajsOSTheme.Error else TajsOSTheme.Primary,
-                trackColor = TajsOSTheme.Border
+                trackColor = TajsOSTheme.Border,
             )
             if (disappearingCount > 0) {
                 Text(
                     "Radar drop detected in $disappearingCount area(s).",
                     style = MaterialTheme.typography.bodySmall,
-                    color = TajsOSTheme.Error
+                    color = TajsOSTheme.Error,
                 )
             }
         }

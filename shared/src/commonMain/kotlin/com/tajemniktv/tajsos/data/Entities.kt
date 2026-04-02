@@ -4,6 +4,7 @@
 
 package com.tajemniktv.tajsos.data
 
+import androidx.compose.runtime.Immutable
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.Index
@@ -16,8 +17,19 @@ import kotlinx.serialization.Serializable
  * NodeEntity is the central entity in TajsOS, representing everything from
  * tasks and notes to projects and areas.
  */
-@Entity(tableName = "nodes")
+@Entity(
+    tableName = "nodes",
+    indices = [
+        Index(value = ["type", "status"]),
+        Index(value = ["projectId", "status"]),
+        Index(value = ["areaId", "status"]),
+        Index(value = ["dueAt"]),
+        Index(value = ["startAt"]),
+        Index(value = ["updatedAt"]),
+    ],
+)
 @Serializable
+@Immutable
 data class NodeEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     /**
@@ -182,6 +194,7 @@ data class NodeEntity(
  */
 @Entity(tableName = "modes")
 @Serializable
+@Immutable
 data class ModeEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     /**
@@ -476,7 +489,15 @@ data class TrackMedicationJoinEntity(
 /**
  * RelationEntity links items to other items or entities.
  */
-@Entity(tableName = "relations")
+@Entity(
+    tableName = "relations",
+    indices = [
+        Index(value = ["fromNodeId"]),
+        Index(value = ["toNodeId"]),
+        Index(value = ["relationType"]),
+        Index(value = ["fromNodeId", "toNodeId", "relationType"], unique = true),
+    ],
+)
 @Serializable
 data class RelationEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
@@ -498,6 +519,7 @@ data class RelationEntity(
  */
 @Entity(tableName = "tags")
 @Serializable
+@Immutable
 data class TagEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val name: String,
@@ -543,7 +565,10 @@ data class EventLogEntity(
 /**
  * AttachmentEntity stores links or references to assets.
  */
-@Entity(tableName = "attachments")
+@Entity(
+    tableName = "attachments",
+    indices = [Index(value = ["nodeId"])],
+)
 @Serializable
 data class AttachmentEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
@@ -563,6 +588,7 @@ data class AttachmentEntity(
  */
 @Entity(tableName = "templates")
 @Serializable
+@Immutable
 data class TemplateEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val name: String,
@@ -661,6 +687,7 @@ data class CalendarEventEntity(
     indices = [Index(value = ["nodeId"])],
 )
 @Serializable
+@Immutable
 data class NodeSnapshotEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val nodeId: Long,
@@ -675,6 +702,7 @@ data class NodeSnapshotEntity(
 /**
  * NodeWithPin is a "POJO" used by Room to perform a JOIN.
  */
+@Immutable
 data class NodeWithPin(
     @Embedded val node: NodeEntity,
     @Relation(

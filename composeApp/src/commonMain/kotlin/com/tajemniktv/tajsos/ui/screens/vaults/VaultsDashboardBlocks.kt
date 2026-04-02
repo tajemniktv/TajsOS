@@ -7,7 +7,7 @@ package com.tajemniktv.tajsos.ui.screens.vaults
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -17,8 +17,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.vaults_desc
+import tajsos.composeapp.generated.resources.vaults_title
 
-object VaultsDashboardBlockRegistry {
+object VaultsDashboardBlocks {
     private val renderers: Map<String, VaultsDashboardBlockRenderer> =
         mapOf("vaults_main" to ::renderVaultsMainBlock)
 
@@ -39,25 +43,25 @@ internal fun VaultsMainBlock(
     val vaultsSnapshot by viewModel.vaultsSnapshot.collectAsState()
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+        modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
+        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
     ) {
         Text(
-            text = "REFERENCE & RETRIEVE",
+            text = stringResource(Res.string.vaults_title),
             style = MaterialTheme.typography.displaySmall,
-            color = TajsOSTheme.Text
+            color = TajsOSTheme.Text,
         )
         Text(
-            text = "Keep durable reference, official deadlines, and find-later items easy to retrieve without turning storage into a separate product world.",
+            text = stringResource(Res.string.vaults_desc),
             style = MaterialTheme.typography.bodySmall,
-            color = TajsOSTheme.Muted
+            color = TajsOSTheme.Muted,
         )
 
         VaultsLayer(
             viewModel = viewModel,
             snapshot = vaultsSnapshot,
             onEditNode = onEditNode,
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }

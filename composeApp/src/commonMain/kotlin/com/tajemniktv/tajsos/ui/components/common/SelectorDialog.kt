@@ -81,13 +81,13 @@ fun <T> SelectorDialog(
                 Modifier
                     .fillMaxSize()
                     .background(TajsOSTheme.Background.copy(alpha = 0.95f)),
-            color = TajsOSTheme.Background.copy(alpha = 0.95f)
+            color = TajsOSTheme.Background.copy(alpha = 0.95f),
         ) {
             Column(
                 modifier =
                     Modifier
                         .fillMaxSize()
-                        .padding(TajsOSTheme.SpacingMd)
+                        .padding(TajsOSTheme.SpacingMd),
             ) {
                 // Header
                 Row(
@@ -113,7 +113,7 @@ fun <T> SelectorDialog(
                     Surface(
                         color = Color.Black.copy(alpha = 0.5f),
                         shape = RoundedCornerShape(4.dp),
-                        border = BorderStroke(1.dp, TajsOSTheme.Border)
+                        border = BorderStroke(1.dp, TajsOSTheme.Border),
                     ) {
                         Text(
                             "STATUS: READY",
@@ -147,7 +147,7 @@ fun <T> SelectorDialog(
                                 } else {
                                     BorderStroke(
                                         1.dp,
-                                        TajsOSTheme.Border
+                                        TajsOSTheme.Border,
                                     )
                                 },
                         ) {
@@ -167,18 +167,21 @@ fun <T> SelectorDialog(
                                     optionName(option).uppercase(),
                                     style = MaterialTheme.typography.labelLarge,
                                     fontWeight = FontWeight.ExtraBold,
-                                    color = if (isSelected) TajsOSTheme.Background else TajsOSTheme.Text
+                                    color = if (isSelected) TajsOSTheme.Background else TajsOSTheme.Text,
                                 )
                                 val sub = optionSubtext(option)
                                 if (sub.isNotEmpty()) {
                                     Text(
                                         sub.uppercase(),
                                         style = MaterialTheme.typography.labelSmall,
-                                        color = if (isSelected) {
-                                            TajsOSTheme.Background.copy(
-                                                alpha = 0.7f
-                                        )
-                                        } else TajsOSTheme.Muted,
+                                        color =
+                                            if (isSelected) {
+                                                TajsOSTheme.Background.copy(
+                                                    alpha = 0.7f,
+                                                )
+                                            } else {
+                                                TajsOSTheme.Muted
+                                            },
                                         fontSize = 8.sp,
                                         fontWeight = FontWeight.Bold,
                                     )
@@ -200,7 +203,7 @@ fun <T> SelectorDialog(
                             style = MaterialTheme.typography.labelSmall,
                             color = TajsOSTheme.Muted,
                             fontSize = 8.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
                         )
                         Text(
                             "ACTIVE",

@@ -16,8 +16,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Archive
@@ -114,7 +112,8 @@ internal fun TasksAllView(
                     it.title.contains(
                         query,
                         true,
-                    ) || it.content.contains(query, true)
+                    ) ||
+                    it.content.contains(query, true)
             }
         }
     val sorted =
@@ -149,7 +148,7 @@ internal fun TasksAllView(
 
     Column(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
     ) {
         Text(
             stringResource(Res.string.tasks_all_title),
@@ -197,17 +196,17 @@ internal fun TasksAllView(
                 stringResource(Res.string.tasks_sort_title),
             ) { sort = TaskSort.TITLE }
         }
-        BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
             if (maxWidth > 1080.dp) {
                 Row(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
                 ) {
                     Surface(
                         modifier = Modifier.weight(2f),
                         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                         color = TajsOSTheme.Surface,
-                        border = BorderStroke(1.dp, TajsOSTheme.Border)
+                        border = BorderStroke(1.dp, TajsOSTheme.Border),
                     ) {
                         TaskTable(
                             sorted,
@@ -221,7 +220,7 @@ internal fun TasksAllView(
                         modifier = Modifier.weight(1f),
                         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                         color = TajsOSTheme.Surface,
-                        border = BorderStroke(1.dp, TajsOSTheme.Border)
+                        border = BorderStroke(1.dp, TajsOSTheme.Border),
                     ) {
                         TaskDetails(
                             selected,
@@ -239,9 +238,9 @@ internal fun TasksAllView(
                 Surface(
                     shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                     color = TajsOSTheme.Surface,
-                    border = BorderStroke(1.dp, TajsOSTheme.Border)
+                    border = BorderStroke(1.dp, TajsOSTheme.Border),
                 ) {
-                    Column(modifier = Modifier.fillMaxSize()) {
+                    Column(modifier = Modifier.fillMaxWidth()) {
                         TaskTable(
                             sorted,
                             selected?.id,
@@ -279,7 +278,7 @@ private fun TaskTable(
         EmptyState(message = stringResource(Res.string.tasks_no_results))
         return
     }
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -287,27 +286,27 @@ private fun TaskTable(
             Text(
                 stringResource(Res.string.tasks_column_task),
                 style = MaterialTheme.typography.labelMedium,
-                color = TajsOSTheme.Muted
+                color = TajsOSTheme.Muted,
             )
             Text(
                 stringResource(Res.string.tasks_column_context),
                 style = MaterialTheme.typography.labelMedium,
-                color = TajsOSTheme.Muted
+                color = TajsOSTheme.Muted,
             )
             Text(
                 stringResource(Res.string.tasks_column_due),
                 style = MaterialTheme.typography.labelMedium,
-                color = TajsOSTheme.Muted
+                color = TajsOSTheme.Muted,
             )
             Text(
                 stringResource(Res.string.tasks_column_status),
                 style = MaterialTheme.typography.labelMedium,
-                color = TajsOSTheme.Muted
+                color = TajsOSTheme.Muted,
             )
         }
         HorizontalDivider(color = TajsOSTheme.Border)
-        LazyColumn {
-            items(tasks, key = { it.id }) { task ->
+        Column {
+            tasks.forEach { task ->
                 val selected = task.id == selectedId
                 Row(
                     modifier =
@@ -316,11 +315,12 @@ private fun TaskTable(
                             .background(
                                 if (selected) {
                                     TajsOSTheme.Primary.copy(
-                                        alpha = 0.1f
+                                        alpha = 0.1f,
                                     )
-                                } else Color.Transparent
-                            )
-                            .padding(TajsOSTheme.SpacingMd),
+                                } else {
+                                    Color.Transparent
+                                },
+                            ).padding(TajsOSTheme.SpacingMd),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -342,7 +342,7 @@ private fun TaskTable(
                     Text(
                         listOfNotNull(
                             task.projectId?.let { projectById[it] },
-                            task.areaId?.let { areaById[it] }
+                            task.areaId?.let { areaById[it] },
                         ).joinToString(" • ").ifBlank { "-" },
                         modifier = Modifier.weight(1f),
                         style = MaterialTheme.typography.bodySmall,
@@ -352,7 +352,7 @@ private fun TaskTable(
                         task.dueAt?.let(::shortDate) ?: "-",
                         modifier = Modifier.weight(0.8f),
                         style = MaterialTheme.typography.bodySmall,
-                        color = TajsOSTheme.Muted
+                        color = TajsOSTheme.Muted,
                     )
                     StatusPill(task.taskStateOrNull() ?: TaskState.ACTIVE)
                 }
@@ -375,12 +375,12 @@ private fun TaskDetails(
     onDone: (NodeEntity) -> Unit,
     onArchive: (NodeEntity) -> Unit,
     onRestore: (NodeEntity) -> Unit,
-    onDelete: (NodeEntity) -> Unit
+    onDelete: (NodeEntity) -> Unit,
 ) {
     if (task == null) {
         Box(
             modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             Text(stringResource(Res.string.tasks_no_results), color = TajsOSTheme.Muted)
         }
@@ -399,7 +399,7 @@ private fun TaskDetails(
             task.title,
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
-            color = TajsOSTheme.Text
+            color = TajsOSTheme.Text,
         )
         task.content.takeIf { it.isNotBlank() }?.let {
             Text(
@@ -425,7 +425,7 @@ private fun TaskDetails(
         DetailRow(stringResource(Res.string.tasks_detail_next_step), task.nextSmallestStep ?: "-")
         DetailRow(
             stringResource(Res.string.tasks_detail_estimate),
-            task.estimatedMinutes?.let { "${it}m" } ?: "-"
+            task.estimatedMinutes?.let { "${it}m" } ?: "-",
         )
         DetailRow(stringResource(Res.string.tasks_detail_updated), shortDate(task.updatedAt))
 

@@ -36,7 +36,6 @@ import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.dash_annoying
 import tajsos.composeapp.generated.resources.dash_heavy
-import tajsos.composeapp.generated.resources.dash_overwhelmed
 import tajsos.composeapp.generated.resources.dash_unclear
 import tajsos.composeapp.generated.resources.detail_archive
 import tajsos.composeapp.generated.resources.task_row_unpin_desc
@@ -86,7 +85,7 @@ fun TaskRow(
                     onClick = onClick,
                     onLongClick = onLongClick,
                 ),
-        color = TajsOSTheme.Surface
+        color = TajsOSTheme.Surface,
     ) {
         Row(
             modifier = Modifier.padding(horizontal = TajsOSTheme.SpacingMd),
@@ -95,7 +94,7 @@ fun TaskRow(
             Checkbox(
                 checked = isDone,
                 onCheckedChange = { onToggleDone(if (it) "done" else "active") },
-                colors = CheckboxDefaults.colors(checkedColor = TajsOSTheme.Primary)
+                colors = CheckboxDefaults.colors(checkedColor = TajsOSTheme.Primary),
             )
             Column(modifier = Modifier.weight(1f)) {
                 Text(
@@ -104,7 +103,7 @@ fun TaskRow(
                         MaterialTheme.typography.bodyLarge.copy(
                             textDecoration = if (isDone) TextDecoration.LineThrough else null,
                         ),
-                    color = if (isDone) TajsOSTheme.Muted else TajsOSTheme.Text
+                    color = if (isDone) TajsOSTheme.Muted else TajsOSTheme.Text,
                 )
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     val energyLevel = node.energyLevel
@@ -119,7 +118,7 @@ fun TaskRow(
                                     2 -> TajsOSTheme.Primary
                                     3 -> TajsOSTheme.Error
                                     else -> TajsOSTheme.Muted
-                                }
+                                },
                         )
                         Spacer(Modifier.width(8.dp))
                     }
@@ -128,7 +127,7 @@ fun TaskRow(
                         val frictionLabel =
                             when (friction)
                             {
-                                "easy" -> stringResource(Res.string.dash_overwhelmed)
+                                "easy" -> "EASY"
                                 "annoying" -> stringResource(Res.string.dash_annoying)
                                 "mentally_heavy" -> stringResource(Res.string.dash_heavy)
                                 "unclear" -> stringResource(Res.string.dash_unclear)
@@ -137,7 +136,7 @@ fun TaskRow(
                         Text(
                             text = frictionLabel.uppercase(),
                             style = MaterialTheme.typography.labelSmall,
-                            color = TajsOSTheme.Primary
+                            color = TajsOSTheme.Primary,
                         )
                         Spacer(Modifier.width(8.dp))
                     }
@@ -168,21 +167,20 @@ fun TaskRow(
                     }
                 }
             }
-            if (isDone)
-            {
+            if (isDone) {
                 IconButton(onClick = onArchive) {
-                        Icon(
+                    Icon(
                         imageVector = Icons.Default.Delete,
-                            contentDescription = stringResource(Res.string.detail_archive),
+                        contentDescription = stringResource(Res.string.detail_archive),
                         tint = TajsOSTheme.Muted,
-                        )
-                    }
+                    )
                 }
+            }
             IconButton(onClick = onUnpin) {
                 Icon(
                     Icons.Default.Close,
                     contentDescription = stringResource(Res.string.task_row_unpin_desc),
-                    tint = TajsOSTheme.Muted
+                    tint = TajsOSTheme.Muted,
                 )
             }
         }

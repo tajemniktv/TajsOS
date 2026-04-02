@@ -17,6 +17,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.places_desc
+import tajsos.composeapp.generated.resources.places_title
 
 object PlacesDashboardBlockRegistry {
     private val renderers: Map<String, PlacesDashboardBlockRenderer> =
@@ -41,17 +45,17 @@ internal fun PlacesMainBlock(
 
     Column(
         modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
+        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
     ) {
         Text(
-            text = "CONTEXT & LOGISTICS",
+            text = stringResource(Res.string.places_title),
             style = MaterialTheme.typography.displaySmall,
-            color = TajsOSTheme.Text
+            color = TajsOSTheme.Text,
         )
         Text(
-            text = "Coordinate errands, packing, travel prep, and reminders tied to physical context anchors.",
+            text = stringResource(Res.string.places_desc),
             style = MaterialTheme.typography.bodySmall,
-            color = TajsOSTheme.Muted
+            color = TajsOSTheme.Muted,
         )
 
         PlacesLayer(

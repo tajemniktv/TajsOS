@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+  -->
+
+<resources>
+    <string name="auth_app_locked">Aplikacja zablokowana</string>
+    <string name="auth_unlock">Odblokuj</string>
+    <string name="auth_biometric_title">Logowanie biometryczne</string>
+    <string name="voice_speak_now">Mów teraz...</string>
+    <string name="intent_shared_image">Udostępniony obraz</string>
+    <string name="intent_shared_images">Udostępnione obrazy</string>
+</resources>

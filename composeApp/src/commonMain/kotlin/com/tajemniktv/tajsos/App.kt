@@ -34,7 +34,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.tajemniktv.tajsos.data.NodeEntity
+import com.tajemniktv.tajsos.data.StableList
 import com.tajemniktv.tajsos.data.TemplateEntity
+import com.tajemniktv.tajsos.data.toStableList
 import com.tajemniktv.tajsos.ui.DetailNavigationContract
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
@@ -128,10 +130,11 @@ fun App(
     val isDarkTheme by viewModel.isDarkTheme.collectAsState()
     val accentColorHex by viewModel.accentColorHex.collectAsState()
     val userProfile by viewModel.userProfile.collectAsState()
+    val sidebarMode by viewModel.sidebarMode.collectAsState()
 
     var showCaptureSheetState by remember { mutableStateOf(value = false) }
     var selectedTasksTab by rememberSaveable { mutableStateOf(TasksTab.COMMAND) }
-    val shellState = rememberAppShellState()
+    val shellState = rememberAppShellState(sidebarMode = sidebarMode)
 
     val accentColor =
         remember(accentColorHex) {
@@ -159,12 +162,13 @@ fun App(
         BoxWithConstraints {
             val isDesktop = maxWidth > 800.dp
 
-            val navigate: (String) -> Unit = { route ->
+            // The primary navigation callback for the main content area.
+            val navigate: (String) -> Unit = {
                 val resolvedRoute =
-                    if (route == Screen.Tasks.route) {
+                    if (it == Screen.Tasks.route) {
                         Screen.Tasks.route + "?tab=" + selectedTasksTab.routeSegment
                     } else {
-                        route
+                        it
                     }
 
                 if (resolvedRoute.startsWith(Screen.Tasks.route + "?tab=")) {
@@ -219,10 +223,10 @@ fun App(
                     onPickAvatar = onPickAvatar,
                     avatarPickResult = avatarPickResult,
                     onAvatarPickConsume = onAvatarPickConsume,
-                    allProjects = allProjects,
-                    allAreas = allAreas,
-                    allNodes = allNodes,
-                    allTemplates = allTemplates,
+                    allProjects = allProjects.toStableList(),
+                    allAreas = allAreas.toStableList(),
+                    allNodes = allNodes.toStableList(),
+                    allTemplates = allTemplates.toStableList(),
                     lastActiveProjectId = lastActiveProjectId,
                     lastActiveAreaId = lastActiveAreaId,
                     currentDestination = currentDestination,
@@ -236,6 +240,71 @@ fun App(
                 )
             }
         }
+    }
+}
+
+/**
+ * Renders the capture sheet overlay.
+ *
+ * @param show Whether to show the sheet.
+ * @param onDismiss Callback to close.
+ * @param viewModel Main ViewModel.
+ * @param voiceResult Voice text result.
+ * @param onVoiceConsume Callback to clear voice result.
+ * @param projects Projects list.
+ * @param areas Areas list.
+ * @param templates Templates list.
+ * @param defaultProjectId Default project.
+ * @param defaultAreaId Default area.
+ * @param onVoiceClick Voice click handler.
+ * @param contextScreen Originating screen.
+ */
+@Suppress("KDocMissingDocumentation")
+@Composable
+private fun AppCaptureSheet(
+    show: Boolean,
+    onDismiss: () -> Unit,
+    viewModel: MainViewModel,
+    voiceResult: String?,
+    onVoiceConsume: () -> Unit,
+    projects: StableList<NodeEntity>,
+    areas: StableList<NodeEntity>,
+    templates: StableList<TemplateEntity>,
+    defaultProjectId: Long?,
+    defaultAreaId: Long?,
+    onVoiceClick: (() -> Unit)?,
+    contextScreen: String?,
+) {
+    if (show) {
+        CaptureSheet(
+            onDismiss = {
+                onDismiss()
+                onVoiceConsume()
+            },
+            onCapture = { text, type, projectId, areaId, isRec, recInt, remAt, ctx, sticky, decisionCat ->
+                handleOnCapture(
+                    viewModel = viewModel,
+                    text = text,
+                    type = type,
+                    projectId = projectId,
+                    areaId = areaId,
+                    isRec = isRec,
+                    recInt = recInt,
+                    remAt = remAt,
+                    ctx = ctx,
+                    sticky = sticky,
+                    decisionCat = decisionCat,
+                )
+            },
+            projects = projects.items,
+            areas = areas.items,
+            templates = templates.items,
+            defaultProjectId = defaultProjectId,
+            defaultAreaId = defaultAreaId,
+            initialText = voiceResult ?: "",
+            onVoiceCaptureClick = onVoiceClick,
+            contextScreen = contextScreen,
+        )
     }
 }
 
@@ -267,6 +336,7 @@ fun App(
  * @param onTasksTabChange Callback to change the active Tasks tab.
  * @param onNavigate The primary navigation callback for the main content area.
  */
+@Suppress("KDocMissingDocumentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AppScaffold(
@@ -280,10 +350,10 @@ private fun AppScaffold(
     onPickAvatar: (() -> Unit)?,
     avatarPickResult: String?,
     onAvatarPickConsume: () -> Unit,
-    allProjects: List<NodeEntity>,
-    allAreas: List<NodeEntity>,
-    allNodes: List<com.tajemniktv.tajsos.data.NodeWithPin>,
-    allTemplates: List<TemplateEntity>,
+    allProjects: StableList<NodeEntity>,
+    allAreas: StableList<NodeEntity>,
+    allNodes: StableList<com.tajemniktv.tajsos.data.NodeWithPin>,
+    allTemplates: StableList<TemplateEntity>,
     lastActiveProjectId: Long?,
     lastActiveAreaId: Long?,
     currentDestination: NavDestination?,
@@ -293,7 +363,7 @@ private fun AppScaffold(
     onNavigate: (String) -> Unit,
 ) {
     val onEditNode: (Long) -> Unit = {
-        onNavigate(DetailNavigationContract.routeForNodeId(it, allNodes))
+        onNavigate(DetailNavigationContract.routeForNodeId(it, allNodes.items))
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -307,11 +377,11 @@ private fun AppScaffold(
                     viewModel,
                     onNavigateTo = { onNavigate(it.route) },
                     onEditNode = onEditNode,
-                    onNavigateToProject = { id ->
+                    onNavigateToProject = {
                         onNavigate(
                             Screen.ProjectDetail.route.replace(
                                 "{projectId}",
-                                id.toString(),
+                                it.toString(),
                             ),
                         )
                     },
@@ -341,6 +411,18 @@ private fun AppScaffold(
                 )
             }
             composable(Screen.Notes.route) { NotesScreen(viewModel, onEditNode) }
+            composable(Screen.Notes.route + "?noteId={noteId}") {
+                val noteId =
+                    it.savedStateHandle
+                        .get<Any>("noteId")
+                        ?.toString()
+                        ?.toLongOrNull()
+                NotesScreen(
+                    viewModel = viewModel,
+                    onNoteClick = onEditNode,
+                    initialSelectedNoteId = noteId,
+                )
+            }
             composable(Screen.Calendar.route) { CalendarScreen(viewModel, onEditNode) }
             composable(Screen.Decisions.route) { DecisionsScreen(viewModel, onEditNode) }
             composable(Screen.OpenLoops.route) { OpenLoopsScreen(viewModel, onEditNode) }
@@ -404,9 +486,12 @@ private fun AppScaffold(
             composable(Screen.Areas.route) {
                 AreasScreen(viewModel) { onNavigate(it) }
             }
-            composable(Screen.ProjectDetail.route) { backStackEntry ->
+            composable(Screen.ProjectDetail.route) {
+                /**
+                 * The back stack entry for the project detail screen.
+                 */
                 val projectId =
-                    backStackEntry.savedStateHandle
+                    it.savedStateHandle
                         .get<Any>("projectId")
                         ?.toString()
                         ?.toLongOrNull() ?: -1L
@@ -418,9 +503,12 @@ private fun AppScaffold(
                     isDesktop = isDesktop,
                 )
             }
-            composable(Screen.AreaDetail.route) { backStackEntry ->
+            composable(Screen.AreaDetail.route) {
+                /**
+                 * The back stack entry for the area detail screen.
+                 */
                 val areaId =
-                    backStackEntry.savedStateHandle
+                    it.savedStateHandle
                         .get<Any>("areaId")
                         ?.toString()
                         ?.toLongOrNull() ?: -1L
@@ -440,9 +528,12 @@ private fun AppScaffold(
                     isDesktop = isDesktop,
                 )
             }
-            composable(Screen.NoteDetail.route) { backStackEntry ->
+            composable(Screen.NoteDetail.route) {
+                /**
+                 * The back stack entry for the note detail screen.
+                 */
                 val noteId =
-                    backStackEntry.savedStateHandle
+                    it.savedStateHandle
                         .get<Any>("noteId")
                         ?.toString()
                         ?.toLongOrNull() ?: -1L
@@ -455,9 +546,12 @@ private fun AppScaffold(
                     isDesktop = isDesktop,
                 )
             }
-            composable(Screen.TaskDetail.route) { backStackEntry ->
+            composable(Screen.TaskDetail.route) {
+                /**
+                 * The back stack entry for the task detail screen.
+                 */
                 val taskId =
-                    backStackEntry.savedStateHandle
+                    it.savedStateHandle
                         .get<Any>("taskId")
                         ?.toString()
                         ?.toLongOrNull() ?: -1L
@@ -470,9 +564,12 @@ private fun AppScaffold(
                     isDesktop = isDesktop,
                 )
             }
-            composable(Screen.RecordDetail.route) { backStackEntry ->
+            composable(Screen.RecordDetail.route) {
+                /**
+                 * The back stack entry for the record detail screen.
+                 */
                 val recordId =
-                    backStackEntry.savedStateHandle
+                    it.savedStateHandle
                         .get<Any>("recordId")
                         ?.toString()
                         ?.toLongOrNull() ?: -1L
@@ -486,24 +583,23 @@ private fun AppScaffold(
                 )
             }
             composable(Screen.Insights.route) {
-                InsightsScreen(
-                    viewModel,
-                    onNavigateToProject = { id ->
-                        onNavigate(
-                            Screen.ProjectDetail.route.replace(
-                                "{projectId}",
-                                id.toString(),
-                            ),
-                        )
-                    },
-                )
+                InsightsScreen(viewModel) {
+                    onNavigate(
+                        Screen.ProjectDetail.route.replace(
+                            "{projectId}",
+                            it.toString(),
+                        ),
+                    )
+                }
             }
             composable(Screen.Graph.route) {
                 GraphScreen(viewModel, onNodeClick = onEditNode)
             }
             composable(Screen.Archive.route) { ArchiveScreen(viewModel, onEditNode) }
             composable(Screen.Review.route) {
-                ReviewScreen(viewModel) { navController.popBackStack() }
+                ReviewScreen(viewModel) {
+                    navController.popBackStack()
+                }
             }
             composable(Screen.Profile.route) {
                 ProfileScreen(
@@ -529,49 +625,20 @@ private fun AppScaffold(
             }
         }
 
-        if (showCaptureSheet) {
-            CaptureSheet(
-                onDismiss = {
-                    onShowCaptureSheet(false)
-                    onVoiceCaptureConsume()
-                },
-                onCapture = {
-                    text,
-                    type,
-                    projectId,
-                    areaId,
-                    isRec,
-                    recInt,
-                    remAt,
-                    ctx,
-                    sticky,
-                    decisionCat,
-                    ->
-                    handleOnCapture(
-                        viewModel = viewModel,
-                        text = text,
-                        type = type,
-                        projectId = projectId,
-                        areaId = areaId,
-                        isRec = isRec,
-                        recInt = recInt,
-                        remAt = remAt,
-                        ctx = ctx,
-                        sticky = sticky,
-                        decisionCat = decisionCat,
-                    )
-                    // Note: if multi-capture is on, CaptureSheet handles not closing itself
-                },
-                projects = allProjects,
-                areas = allAreas,
-                templates = allTemplates,
-                defaultProjectId = lastActiveProjectId,
-                defaultAreaId = lastActiveAreaId,
-                initialText = voiceCaptureResult ?: "",
-                onVoiceCaptureClick = onVoiceCapture,
-                contextScreen = currentDestination?.route,
-            )
-        }
+        AppCaptureSheet(
+            show = showCaptureSheet,
+            onDismiss = { onShowCaptureSheet(false) },
+            viewModel = viewModel,
+            voiceResult = voiceCaptureResult,
+            onVoiceConsume = onVoiceCaptureConsume,
+            projects = allProjects,
+            areas = allAreas,
+            templates = allTemplates,
+            defaultProjectId = lastActiveProjectId,
+            defaultAreaId = lastActiveAreaId,
+            onVoiceClick = onVoiceCapture,
+            contextScreen = currentDestination?.route,
+        )
     }
 }
 

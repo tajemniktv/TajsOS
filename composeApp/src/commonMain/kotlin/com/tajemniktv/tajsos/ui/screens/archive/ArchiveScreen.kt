@@ -5,8 +5,9 @@
 package com.tajemniktv.tajsos.ui.screens.archive
 
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -34,9 +35,13 @@ fun ArchiveScreen(
         val plan = remember(surface) { buildArchiveDashboardPlan(surface) }
         val context =
             remember(viewModel, onEditNode) { ArchiveDashboardContext(viewModel, onEditNode) }
-        Column(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize().padding(bottom = 80.dp),
+        ) {
             plan.primary.forEach { block ->
-                ArchiveDashboardBlockRegistry.resolve(block.id)?.invoke(context)
+                item(key = block.id) {
+                    ArchiveDashboardBlocks.resolve(block.id)?.invoke(context)
+                }
             }
         }
     }

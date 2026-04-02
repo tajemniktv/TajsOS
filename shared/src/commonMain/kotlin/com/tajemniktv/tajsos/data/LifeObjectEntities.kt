@@ -9,6 +9,11 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import kotlinx.serialization.Serializable
 
+private fun currentEpochMillis(): Long =
+    kotlin.time.Clock.System
+        .now()
+        .toEpochMilliseconds()
+
 /**
  * Raw capture inbox entry stored before the system commits to a semantic item type.
  *
@@ -59,6 +64,20 @@ data class TaskFacetEntity(
 )
 
 /**
+ * Note-specific semantics stored beside the shared item row.
+ */
+@Entity(tableName = "note_facets")
+@Serializable
+data class NoteFacetEntity(
+    @PrimaryKey val itemId: Long,
+    val kind: String = NoteKind.GENERAL.storageKey,
+    val state: String = NoteState.ACTIVE.storageKey,
+    val sourceTitle: String? = null,
+    val sourceAuthor: String? = null,
+    val lastReviewedAt: Long? = null,
+)
+
+/**
  * Project-specific coordination state stored separately from the shared item row.
  */
 @Entity(tableName = "project_facets")
@@ -71,6 +90,18 @@ data class ProjectFacetEntity(
 )
 
 /**
+ * Area-specific stewardship data kept out of the shared node table.
+ */
+@Entity(tableName = "area_facets")
+@Serializable
+data class AreaFacetEntity(
+    @PrimaryKey val itemId: Long,
+    val healthStatus: String = AreaHealthStatus.STABLE.storageKey,
+    val standardOfCare: String? = null,
+    val vision: String? = null,
+)
+
+/**
  * Record-specific chronological data attached to an item row.
  */
 @Entity(tableName = "record_facets")
@@ -79,9 +110,47 @@ data class RecordFacetEntity(
     @PrimaryKey val itemId: Long,
     val kind: String = RecordKind.GENERAL.storageKey,
     val occurredAt: Long =
-        kotlin.time.Clock.System
-            .now()
-            .toEpochMilliseconds(),
+        currentEpochMillis(),
+)
+
+/**
+ * Lens-oriented domain associations for any life object.
+ *
+ * Domains remain read-model classifications over shared objects rather than hard containers.
+ */
+@Entity(
+    tableName = "item_domains",
+    primaryKeys = ["itemId", "domainKey"],
+    indices = [
+        Index(value = ["itemId"]),
+        Index(value = ["domainKey"]),
+    ],
+)
+@Serializable
+data class ItemDomainEntity(
+    val itemId: Long,
+    val domainKey: String,
+    val isPrimary: Boolean = false,
+    val assignedAt: Long = currentEpochMillis(),
+)
+
+/**
+ * Optional rich-content document attached to a typed life object.
+ *
+ * The life object remains primary; this document provides extensible long-form body support.
+ */
+@Entity(
+    tableName = "rich_content_documents",
+    indices = [Index(value = ["updatedAt"])],
+)
+@Serializable
+data class RichContentDocumentEntity(
+    @PrimaryKey val itemId: Long,
+    val format: String = RichContentFormat.MARKDOWN.storageKey,
+    val body: String = "",
+    val structuredContentJson: String? = null,
+    val schemaVersion: Int = 1,
+    val updatedAt: Long = currentEpochMillis(),
 )
 
 /**
@@ -100,8 +169,97 @@ data class ScheduleEntryEntity(
     val itemId: Long,
     val kind: String,
     val scheduledAt: Long,
+    val localDateEpochDay: Int? = null,
+    val timezoneId: String? = null,
+    val isAllDay: Boolean = false,
     val endAt: Long? = null,
     val recurrenceRule: String? = null,
     val note: String? = null,
     val completedAt: Long? = null,
+)
+
+/**
+ * Saved projection over shared life objects.
+ *
+ * The view describes how to slice typed data without inventing a competing ontology.
+ */
+@Entity(
+    tableName = "saved_views",
+    indices = [Index(value = ["lens"]), Index(value = ["updatedAt"])],
+)
+@Serializable
+data class SavedViewEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val name: String,
+    val description: String? = null,
+    val lens: String = SavedViewLens.OPERATE.storageKey,
+    val layout: String = SavedViewLayout.LIST.storageKey,
+    val rowDimension: String? = null,
+    val columnDimension: String? = null,
+    val measure: String? = null,
+    val createdAt: Long = currentEpochMillis(),
+    val updatedAt: Long = currentEpochMillis(),
+)
+
+/**
+ * Source object kinds targeted by a saved view.
+ */
+@Entity(
+    tableName = "saved_view_source_kinds",
+    primaryKeys = ["viewId", "itemKind"],
+    indices = [Index(value = ["viewId"])],
+)
+@Serializable
+data class SavedViewSourceKindEntity(
+    val viewId: Long,
+    val itemKind: String,
+)
+
+/**
+ * Persisted filters for a saved view.
+ */
+@Entity(
+    tableName = "saved_view_filters",
+    primaryKeys = ["viewId", "position"],
+    indices = [Index(value = ["viewId"])],
+)
+@Serializable
+data class SavedViewFilterEntity(
+    val viewId: Long,
+    val position: Int,
+    val fieldKey: String,
+    val operatorKey: String,
+    val value: String? = null,
+    val valueType: String = SavedViewValueType.STRING.storageKey,
+)
+
+/**
+ * Persisted sort instructions for a saved view.
+ */
+@Entity(
+    tableName = "saved_view_sorts",
+    primaryKeys = ["viewId", "position"],
+    indices = [Index(value = ["viewId"])],
+)
+@Serializable
+data class SavedViewSortEntity(
+    val viewId: Long,
+    val position: Int,
+    val fieldKey: String,
+    val direction: String = SavedViewSortDirection.ASCENDING.storageKey,
+)
+
+/**
+ * Persisted visible-column configuration for a saved view.
+ */
+@Entity(
+    tableName = "saved_view_visible_fields",
+    primaryKeys = ["viewId", "position"],
+    indices = [Index(value = ["viewId"])],
+)
+@Serializable
+data class SavedViewVisibleFieldEntity(
+    val viewId: Long,
+    val position: Int,
+    val fieldKey: String,
 )

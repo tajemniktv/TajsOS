@@ -68,8 +68,8 @@ fun ModeSwitcherHeader(
                     border =
                         BorderStroke(
                             1.dp,
-                            if (isSelected) color else TajsOSTheme.Border.copy(alpha = 0.3f)
-                        )
+                            if (isSelected) color else TajsOSTheme.Border.copy(alpha = 0.3f),
+                        ),
                 ) {
                     Text(
                         mode.name.uppercase(),

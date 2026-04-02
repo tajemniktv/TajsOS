@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
@@ -56,7 +57,10 @@ import tajsos.composeapp.generated.resources.projects_filter_someday
  * @param onNavigateTo Callback invoked with a navigation route when navigating from a project item.
  */
 @Composable
-fun ProjectsScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit) {
+fun ProjectsScreen(
+    viewModel: MainViewModel,
+    onNavigateTo: (String) -> Unit,
+) {
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val surface =
             if (maxWidth >
@@ -69,22 +73,26 @@ fun ProjectsScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit) {
         val plan =
             remember(surface) {
                 buildProjectsDashboardPlan(
-                    surface
+                    surface,
                 )
             }
         val context =
             remember(viewModel, onNavigateTo) {
                 ProjectsDashboardContext(
                     viewModel,
-                    onNavigateTo
+                    onNavigateTo,
                 )
             }
-        Column(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize().padding(bottom = 80.dp),
+        ) {
             plan.primary.forEach { block ->
-                ProjectsDashboardBlockRegistry
-                    .resolve(
-                        block.id
-                    )?.invoke(context)
+                item(key = block.id) {
+                    ProjectsDashboardBlockRegistry
+                        .resolve(
+                            block.id,
+                        )?.invoke(context)
+                }
             }
         }
     }
@@ -99,7 +107,10 @@ fun ProjectsScreen(viewModel: MainViewModel, onNavigateTo: (String) -> Unit) {
  * @param onConfirm Called with the entered project `name`, `description`, and `status` (`"active"` or `"someday"`) when the user confirms creation.
  */
 @Composable
-fun AddProjectDialog(onDismiss: () -> Unit, onConfirm: (String, String, String) -> Unit) {
+fun AddProjectDialog(
+    onDismiss: () -> Unit,
+    onConfirm: (String, String, String) -> Unit,
+) {
     var name by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var status by remember { mutableStateOf("active") }
@@ -112,12 +123,12 @@ fun AddProjectDialog(onDismiss: () -> Unit, onConfirm: (String, String, String) 
                 TextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text(stringResource(Res.string.projects_dialog_name)) }
+                    label = { Text(stringResource(Res.string.projects_dialog_name)) },
                 )
                 TextField(
                     value = description,
                     onValueChange = { description = it },
-                    label = { Text(stringResource(Res.string.projects_dialog_description)) }
+                    label = { Text(stringResource(Res.string.projects_dialog_description)) },
                 )
                 Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                     listOf("active", "someday").forEach { s ->
@@ -126,13 +137,13 @@ fun AddProjectDialog(onDismiss: () -> Unit, onConfirm: (String, String, String) 
                                 stringResource(Res.string.projects_filter_active)
                             } else {
                                 stringResource(
-                                    Res.string.projects_filter_someday
+                                    Res.string.projects_filter_someday,
                                 )
                             }
                         FilterChip(
                             selected = status == s,
                             onClick = { status = s },
-                            label = { Text(label.uppercase()) }
+                            label = { Text(label.uppercase()) },
                         )
                     }
                 }
@@ -141,7 +152,7 @@ fun AddProjectDialog(onDismiss: () -> Unit, onConfirm: (String, String, String) 
         confirmButton = {
             Button(
                 onClick = { onConfirm(name, description, status) },
-                enabled = name.isNotBlank()
+                enabled = name.isNotBlank(),
             ) {
                 Text(stringResource(Res.string.projects_dialog_create))
             }
@@ -150,14 +161,14 @@ fun AddProjectDialog(onDismiss: () -> Unit, onConfirm: (String, String, String) 
             TextButton(onClick = onDismiss) {
                 Text(stringResource(Res.string.projects_dialog_cancel))
             }
-        }
+        },
     )
 }
 
 data class ProjectListState(
     val filteredProjects: List<NodeEntity>,
     val searchQuery: String,
-    val nodesByProjectId: Map<Long?, List<NodeWithPin>>
+    val nodesByProjectId: Map<Long?, List<NodeWithPin>>,
 )
 
 /**
@@ -174,11 +185,11 @@ data class ProjectListState(
 fun ProjectListContent(
     state: ProjectListState,
     onNavigateTo: (String) -> Unit,
-    onShowAddDialog: () -> Unit
+    onShowAddDialog: () -> Unit,
 ) {
     if (state.filteredProjects.isEmpty() && state.searchQuery.isEmpty()) {
         EmptyState(
-            message = stringResource(Res.string.projects_empty)
+            message = stringResource(Res.string.projects_empty),
         ) {
             Spacer(modifier = Modifier.height(TajsOSTheme.SpacingMd))
             Button(onClick = onShowAddDialog) {
@@ -201,16 +212,16 @@ fun ProjectListContent(
                         onNavigateTo(
                             Screen.ProjectDetail.route.replace(
                                 "{projectId}",
-                                project.id.toString()
-                            )
+                                project.id.toString(),
+                            ),
                         )
-                    }
+                    },
                 ) {
                     onNavigateTo(
                         Screen.ProjectDetail.route.replace(
                             "{projectId}",
-                            project.id.toString()
-                        )
+                            project.id.toString(),
+                        ),
                     )
                 }
             }
