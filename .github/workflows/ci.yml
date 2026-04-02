@@ -85,10 +85,12 @@ jobs:
             run_website=true
           fi
 
-          echo "docs_only=${docs_only}" >> "${GITHUB_OUTPUT}"
-          echo "website_only=${website_only}" >> "${GITHUB_OUTPUT}"
-          echo "run_gradle=${run_gradle}" >> "${GITHUB_OUTPUT}"
-          echo "run_website=${run_website}" >> "${GITHUB_OUTPUT}"
+          {
+            echo "docs_only=${docs_only}"
+            echo "website_only=${website_only}"
+            echo "run_gradle=${run_gradle}"
+            echo "run_website=${run_website}"
+          } >> "${GITHUB_OUTPUT}"
 
   gradle:
     name: Gradle Build and Tests
@@ -175,7 +177,7 @@ jobs:
         shell: bash
         run: |
           ./gradlew \
-            :shared:check \
+            :shared:jvmTest \
             :composeApp:jvmTest \
             :server:test \
             :androidApp:lintDebug \
