@@ -507,9 +507,10 @@ private fun renderTaskSubtasks(context: TaskDetailContext) {
                 }
             }
 
-            if (context.subtaskProgress != null) {
+            val progressVal = context.subtaskProgress
+            if (progressVal != null) {
                 LinearProgressIndicator(
-                    progress = { context.subtaskProgress!! },
+                    progress = { progressVal },
                     modifier = Modifier.fillMaxWidth(),
                     color = TajsOSTheme.Primary,
                     trackColor = TajsOSTheme.SurfaceHighest,
@@ -982,7 +983,8 @@ private fun renderTaskMetadata(context: TaskDetailContext) {
                 onSelect = { value -> context.onCriticalityChange(value == "true") },
             )
 
-            if (context.subtaskProgress != null) {
+            val progressVal = context.subtaskProgress
+            if (progressVal != null) {
                 HorizontalDivider(color = TajsOSTheme.GhostBorder.copy(alpha = 0.15f))
                 Text(
                     text = stringResource(Res.string.tasks_detail_updated),
@@ -990,7 +992,7 @@ private fun renderTaskMetadata(context: TaskDetailContext) {
                     color = TajsOSTheme.Muted,
                 )
                 LinearProgressIndicator(
-                    progress = { context.subtaskProgress!! },
+                    progress = { progressVal },
                     modifier = Modifier.fillMaxWidth(),
                     color = TajsOSTheme.Primary,
                     trackColor = TajsOSTheme.SurfaceHighest,
