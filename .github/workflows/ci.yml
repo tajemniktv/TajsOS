@@ -22,7 +22,6 @@ jobs:
       kmp: ${{ steps.filter.outputs.kmp }}
       website: ${{ steps.filter.outputs.website }}
       docs: ${{ steps.filter.outputs.docs }}
-      core: ${{ steps.filter.outputs.core }}
       docs_only: ${{ steps.classify.outputs.docs_only }}
       website_only: ${{ steps.classify.outputs.website_only }}
       run_gradle: ${{ steps.classify.outputs.run_gradle }}
@@ -53,12 +52,6 @@ jobs:
               - 'gradle.properties'
               - 'gradlew'
               - 'gradlew.bat'
-            core:
-              - '**'
-              - '!website/**'
-              - '!**/*.md'
-              - '!.github/ISSUE_TEMPLATE/**'
-              - '!LICENSE*'
 
       - name: Classify run scope
         id: classify
@@ -69,15 +62,15 @@ jobs:
           run_gradle=false
           run_website=false
 
-          if [[ "${{ steps.filter.outputs.docs }}" == "true" && "${{ steps.filter.outputs.website }}" != "true" && "${{ steps.filter.outputs.core }}" != "true" ]]; then
+          if [[ "${{ steps.filter.outputs.docs }}" == "true" && "${{ steps.filter.outputs.website }}" != "true" && "${{ steps.filter.outputs.kmp }}" != "true" ]]; then
             docs_only=true
           fi
 
-          if [[ "${{ steps.filter.outputs.website }}" == "true" && "${{ steps.filter.outputs.core }}" != "true" ]]; then
+          if [[ "${{ steps.filter.outputs.website }}" == "true" && "${{ steps.filter.outputs.kmp }}" != "true" ]]; then
             website_only=true
           fi
 
-          if [[ "${{ steps.filter.outputs.core }}" == "true" ]]; then
+          if [[ "${{ steps.filter.outputs.kmp }}" == "true" ]]; then
             run_gradle=true
           fi
 

@@ -16,11 +16,15 @@ jobs:
   size:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
       - name: Read size thresholds
         id: sizes
-        run: echo "json=$(jq -c . .github/pr-size-labeler.yml)" >> "${GITHUB_OUTPUT}"
+        shell: bash
+        run: |
+          {
+            echo "json<<EOF"
+            cat .github/pr-size-labeler.yml
+            echo "EOF"
+          } >> "${GITHUB_OUTPUT}"
       - name: Apply PR size label
         uses: pascalgn/size-label-action@v0.5.5
         env:
