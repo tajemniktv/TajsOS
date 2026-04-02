@@ -1,7 +1,7 @@
 name: PR Size Label
 
 on:
-  pull_request:
+  pull_request_target:
     types: [opened, reopened, synchronize]
 
 permissions:
@@ -16,9 +16,6 @@ jobs:
   size:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
       - name: Read size thresholds
         id: sizes
         shell: bash
