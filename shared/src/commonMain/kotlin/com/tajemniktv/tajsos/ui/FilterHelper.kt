@@ -40,7 +40,7 @@ object FilterHelper {
      * @param timeWindowContext The required time window context (e.g., "morning", "evening").
      * @param timeHorizon A string determining the required temporal scope relative to the current time (e.g., "today", "week", "month", "semester", "short", "long").
      * @param relations The complete list of relationship entities used to evaluate bidirectional links for the `linkedToId` filter.
-     * @param sortMode The sorting mode to apply, either "updated" or "relevance". Defaults to "relevance".
+     * @param sortMode The sorting mode to apply: "updated" (descending update time and ID) or "relevance" (relevance score, then update time and ID). Defaults to "relevance".
      * @return A list containing only the matching `NodeWithPin` elements, sorted according to the specified `sortMode`.
      */
     fun filterAndSortNodes(
