@@ -22,7 +22,7 @@ jobs:
         id: sizes
         run: echo "json=$(jq -c . .github/pr-size-labeler.yml)" >> "${GITHUB_OUTPUT}"
       - name: Apply PR size label
-        uses: pascalgn/size-label-action@v0.5.5
+        uses: pascalgn/size-label-action@v0.5.7
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
