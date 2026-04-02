@@ -28,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.InboxEntryEntity
 import com.tajemniktv.tajsos.data.NodeEntity
+import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
@@ -83,9 +84,10 @@ internal fun TasksInboxView(
                     fontWeight = FontWeight.SemiBold,
                 )
                 if (inboxEntries.isEmpty()) {
-                    Text(
-                        stringResource(Res.string.tasks_inbox_empty_entries),
-                        color = TajsOSTheme.Muted,
+                    EmptyState(
+                        message = stringResource(Res.string.tasks_inbox_empty_entries),
+                        description = null,
+                        modifier = Modifier.padding(vertical = TajsOSTheme.SpacingLg),
                     )
                 } else {
                     inboxEntries.take(20).forEach { entry ->
@@ -143,9 +145,10 @@ internal fun TasksInboxView(
                     fontWeight = FontWeight.SemiBold,
                 )
                 if (inboxTasks.isEmpty()) {
-                    Text(
-                        stringResource(Res.string.tasks_inbox_empty_tasks),
-                        color = TajsOSTheme.Muted,
+                    EmptyState(
+                        message = stringResource(Res.string.tasks_inbox_empty_tasks),
+                        description = null,
+                        modifier = Modifier.padding(vertical = TajsOSTheme.SpacingLg),
                     )
                 } else {
                     inboxTasks.forEach { task ->
