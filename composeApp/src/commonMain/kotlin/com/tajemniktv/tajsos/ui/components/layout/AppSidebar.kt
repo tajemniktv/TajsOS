@@ -61,8 +61,10 @@ import com.tajemniktv.tajsos.data.UserProfile
 import com.tajemniktv.tajsos.data.resolveDisplayName
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.SidebarMode
+import com.tajemniktv.tajsos.ui.components.common.glassChrome
 import com.tajemniktv.tajsos.ui.screens.tasks.TasksTab
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
+import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -89,6 +91,7 @@ fun AppSidebar(
     onNavigateToTasksTab: (TasksTab) -> Unit,
     onNewEntry: () -> Unit,
     onNavigateToProfile: () -> Unit,
+    hazeState: HazeState,
     modifier: Modifier = Modifier,
 ) {
     val hoverInteraction = remember { MutableInteractionSource() }
@@ -120,11 +123,15 @@ fun AppSidebar(
             modifier
                 .width(sidebarWidth)
                 .fillMaxHeight()
+                .glassChrome(
+                    hazeState = hazeState,
+                    shape = RoundedCornerShape(0.dp),
+                )
                 .hoverable(
                     interactionSource = hoverInteraction,
                     enabled = shellState.sidebarMode == SidebarMode.HOVER_EXPAND,
                 ),
-        color = TajsOSTheme.SurfaceLowest,
+        color = Color.Transparent,
         shape = RoundedCornerShape(0.dp),
         tonalElevation = 0.dp,
         shadowElevation = 0.dp,

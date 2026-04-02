@@ -16,10 +16,19 @@ jobs:
   size:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+
       - name: Read size thresholds
         id: sizes
         shell: bash
         run: |
+          if [ ! -f .github/pr-size-labeler.yml ]; then
+            echo "Missing .github/pr-size-labeler.yml"
+            exit 1
+          fi
           {
             echo "json<<EOF"
             cat .github/pr-size-labeler.yml

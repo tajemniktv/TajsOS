@@ -87,6 +87,8 @@ internal fun TasksInboxView(
                     EmptyState(
                         message = stringResource(Res.string.tasks_inbox_empty_entries),
                         description = null,
+                        fillParent = false,
+                        showContainer = false,
                         modifier = Modifier.padding(vertical = TajsOSTheme.SpacingLg),
                     )
                 } else {
@@ -148,6 +150,8 @@ internal fun TasksInboxView(
                     EmptyState(
                         message = stringResource(Res.string.tasks_inbox_empty_tasks),
                         description = null,
+                        fillParent = false,
+                        showContainer = false,
                         modifier = Modifier.padding(vertical = TajsOSTheme.SpacingLg),
                     )
                 } else {

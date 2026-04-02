@@ -47,9 +47,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
+import com.tajemniktv.tajsos.ui.components.common.glassChrome
 import com.tajemniktv.tajsos.ui.components.notifications.NotificationUiModel
 import com.tajemniktv.tajsos.ui.components.notifications.TajsNotificationWidget
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
+import dev.chrisbanes.haze.HazeState
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.header_search_placeholder
@@ -79,6 +81,7 @@ data class ShellModeOption(
  * @param notifications List of current notifications.
  * @param shellState The current UI state of the app shell components.
  * @param isDesktop Whether the current environment is a desktop layout.
+ * @param hazeState Shared haze state used for shell glass surfaces.
  * @param onModeSelect Callback when a mode is selected from the switcher.
  * @param modifier The modifier to be applied to the layout.
  */
@@ -91,6 +94,7 @@ fun AppShellHeader(
     notifications: List<NotificationUiModel>,
     shellState: AppShellState,
     isDesktop: Boolean,
+    hazeState: HazeState,
     onModeSelect: (Long) -> Unit,
     modifier: Modifier = Modifier,
     onMenuClick: (() -> Unit)? = null,
@@ -99,8 +103,12 @@ fun AppShellHeader(
         modifier =
             modifier
                 .fillMaxWidth()
+                .glassChrome(
+                    hazeState = hazeState,
+                    shape = RoundedCornerShape(0.dp),
+                )
                 .then(if (!isDesktop) Modifier.statusBarsPadding() else Modifier),
-        color = TajsOSTheme.SurfaceLow,
+        color = Color.Transparent,
         tonalElevation = 0.dp,
         shadowElevation = 0.dp,
     ) {
@@ -144,6 +152,7 @@ fun AppShellHeader(
                 modeOptions = modeOptions,
                 expanded = shellState.modeDropdownExpanded,
                 onExpandedChange = { shellState.modeDropdownExpanded = it },
+                hazeState = hazeState,
             ) {
                 onModeSelect(it)
                 shellState.modeDropdownExpanded = false
@@ -153,6 +162,7 @@ fun AppShellHeader(
                 expanded = shellState.notificationsExpanded,
                 notifications = notifications,
                 onExpandedChange = { shellState.notificationsExpanded = it },
+                hazeState = hazeState,
             )
         }
     }
@@ -223,6 +233,7 @@ fun GlobalSearchBar(modifier: Modifier = Modifier) {
  * @param modeOptions Available modes to switch to.
  * @param expanded Whether the mode dropdown is currently expanded.
  * @param onExpandedChange Callback to update the expanded state.
+ * @param hazeState Shared haze state used for shell glass surfaces.
  * @param modifier The modifier to be applied to the layout.
  * @param onModeSelect Callback when a mode is selected.
  */
@@ -232,6 +243,7 @@ fun HeaderModeSwitcher(
     modeOptions: List<ShellModeOption>,
     expanded: Boolean,
     onExpandedChange: (Boolean) -> Unit,
+    hazeState: HazeState,
     modifier: Modifier = Modifier,
     onModeSelect: (Long) -> Unit,
 ) {
@@ -250,8 +262,9 @@ fun HeaderModeSwitcher(
     Box(modifier = modifier) {
         Surface(
             onClick = { onExpandedChange(!expanded) },
+            modifier = Modifier.glassChrome(hazeState = hazeState, shape = RoundedCornerShape(12.dp)),
             shape = RoundedCornerShape(12.dp),
-            color = TajsOSTheme.SurfaceHigh,
+            color = Color.Transparent,
             tonalElevation = 0.dp,
             shadowElevation = 0.dp,
         ) {
@@ -322,6 +335,7 @@ fun HeaderModeSwitcher(
  * @param expanded Whether the notification popover is expanded.
  * @param notifications List of current notifications.
  * @param onExpandedChange Callback to update the expanded state.
+ * @param hazeState Shared haze state used for shell glass surfaces.
  * @param modifier The modifier to be applied to the layout.
  */
 @Composable
@@ -329,12 +343,14 @@ fun NotificationsPopover(
     expanded: Boolean,
     notifications: List<NotificationUiModel>,
     onExpandedChange: (Boolean) -> Unit,
+    hazeState: HazeState,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier) {
         Surface(
+            modifier = Modifier.glassChrome(hazeState = hazeState, shape = RoundedCornerShape(12.dp)),
             shape = RoundedCornerShape(12.dp),
-            color = TajsOSTheme.SurfaceHigh,
+            color = Color.Transparent,
             tonalElevation = 0.dp,
             shadowElevation = 0.dp,
         ) {
@@ -371,9 +387,10 @@ fun NotificationsPopover(
                 Surface(
                     modifier =
                         Modifier
-                            .padding(top = 48.dp, end = 16.dp),
+                            .padding(top = 48.dp, end = 16.dp)
+                            .glassChrome(hazeState = hazeState, shape = RoundedCornerShape(TajsOSTheme.RadiusLg)),
                     shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
-                    color = TajsOSTheme.SurfaceHighest,
+                    color = Color.Transparent,
                     tonalElevation = 8.dp,
                     shadowElevation = 8.dp,
                 ) {

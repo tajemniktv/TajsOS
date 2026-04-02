@@ -68,6 +68,8 @@ kotlin {
             implementation(libs.androidx.datastore.preferences.core)
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.serialization.json)
+            implementation(libs.haze.core)
+            implementation(libs.haze.materials)
             implementation(projects.shared)
         }
         commonTest.dependencies {

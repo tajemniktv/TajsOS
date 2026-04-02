@@ -14,7 +14,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -48,6 +50,8 @@ import tajsos.composeapp.generated.resources.empty_state_default_desc
  * @param modifier Modifier applied to the root container.
  * @param icon Icon shown above the text.
  * @param description Optional secondary text shown under the primary message; pass `null` to hide it.
+ * @param fillParent When `true`, the component expands to available size; set `false` for inline/card usage.
+ * @param showContainer When `true`, wraps content in a bordered container. Disable when parent already provides chrome.
  * @param content Optional content (e.g., buttons) rendered below the primary text.
  */
 @Composable
@@ -56,6 +60,8 @@ fun EmptyState(
     modifier: Modifier = Modifier,
     icon: ImageVector = Icons.Default.Info,
     description: String? = stringResource(Res.string.empty_state_default_desc),
+    fillParent: Boolean = true,
+    showContainer: Boolean = true,
     content: @Composable ColumnScope.() -> Unit = {},
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "EmptyStatePulse")
@@ -71,21 +77,16 @@ fun EmptyState(
     )
 
     Box(
-        modifier = modifier.fillMaxSize(),
+        modifier = if (fillParent) modifier.fillMaxSize() else modifier.fillMaxWidth(),
         contentAlignment = Alignment.Center,
     ) {
-        Surface(
-            color = Color.Transparent,
-            shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            border =
-                androidx.compose.foundation.BorderStroke(
-                    1.dp,
-                    TajsOSTheme.Primary.copy(alpha = 0.2f),
-                ),
-        ) {
+        val contentComposable: @Composable () -> Unit = {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(TajsOSTheme.SpacingLg),
+                modifier =
+                    Modifier
+                        .defaultMinSize(minHeight = 120.dp)
+                        .padding(TajsOSTheme.SpacingLg),
             ) {
                 Icon(
                     imageVector = icon,
@@ -96,7 +97,7 @@ fun EmptyState(
                 Spacer(modifier = Modifier.height(TajsOSTheme.SpacingMd))
                 Text(
                     text = message,
-                    style = MaterialTheme.typography.labelSmall,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = TajsOSTheme.Muted,
                     textAlign = TextAlign.Center,
                 )
@@ -111,6 +112,22 @@ fun EmptyState(
 
                 content()
             }
+        }
+
+        if (showContainer) {
+            Surface(
+                color = Color.Transparent,
+                shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+                border =
+                    androidx.compose.foundation.BorderStroke(
+                        1.dp,
+                        TajsOSTheme.Primary.copy(alpha = 0.2f),
+                    ),
+            ) {
+                contentComposable()
+            }
+        } else {
+            contentComposable()
         }
     }
 }

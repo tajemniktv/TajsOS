@@ -42,6 +42,7 @@ firebase-bom = "34.11.0"
 firebase-crashlytics-gradle = "3.0.6"
 firebase-app-distribution-gradle = "5.2.1"
 firebase-perf-gradle = "2.0.2"
+haze = "1.7.2"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -98,6 +99,8 @@ firebase-crashlytics-native = { module = "com.google.firebase:firebase-crashlyti
 firebase-perf-native = { module = "com.google.firebase:firebase-perf", version.ref = "firebase-perf-native" }
 firebase-config-native = { module = "com.google.firebase:firebase-config", version.ref = "firebase-config-native" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
+haze-core = { module = "dev.chrisbanes.haze:haze", version.ref = "haze" }
+haze-materials = { module = "dev.chrisbanes.haze:haze-materials", version.ref = "haze" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
