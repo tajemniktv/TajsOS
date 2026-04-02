@@ -32,7 +32,7 @@ jobs:
 
       - name: Filter paths
         id: filter
-        uses: dorny/paths-filter@v3
+        uses: dorny/paths-filter@v4
         with:
           filters: |
             docs:
@@ -104,10 +104,10 @@ jobs:
           java-version: "25"
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
 
       - name: Install Android compile SDK
         shell: bash
@@ -180,7 +180,7 @@ jobs:
 
       - name: Upload reports on failure
         if: ${{ failure() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: gradle-failure-reports-${{ github.run_id }}
           if-no-files-found: ignore
@@ -193,7 +193,7 @@ jobs:
 
       - name: Upload build artifacts on main
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: main-build-artifacts-${{ github.run_id }}
           if-no-files-found: ignore
@@ -230,7 +230,7 @@ jobs:
 
       - name: Upload website dist on main
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: website-dist-${{ github.run_id }}
           if-no-files-found: ignore

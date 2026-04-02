@@ -32,7 +32,7 @@ jobs:
           filename: metrics/tajsos-repo.svg
 
       - name: Upload metrics artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: metrics-${{ github.run_id }}
           path: metrics/tajsos-repo.svg
