@@ -811,177 +811,7 @@ private fun renderTaskMetadata(context: TaskDetailContext) {
 
             HorizontalDivider(color = TajsOSTheme.GhostBorder.copy(alpha = 0.15f))
 
-            TaskEditablePropertyRow(
-                icon = Icons.Default.Info,
-                label = stringResource(Res.string.detail_status),
-                selected = state.storageKey.replace("_", " ").uppercase(),
-                options =
-                    listOf(
-                        TaskPropertyOption(
-                            TaskState.ACTIVE.storageKey,
-                            stringResource(Res.string.task_detail_active),
-                        ),
-                        TaskPropertyOption(
-                            TaskState.BLOCKED.storageKey,
-                            stringResource(Res.string.task_detail_blocked),
-                        ),
-                        TaskPropertyOption(
-                            TaskState.ON_HOLD.storageKey,
-                            stringResource(Res.string.task_detail_on_hold),
-                        ),
-                        TaskPropertyOption(
-                            TaskState.SOMEDAY.storageKey,
-                            stringResource(Res.string.task_detail_queued),
-                        ),
-                        TaskPropertyOption(
-                            TaskState.DONE.storageKey,
-                            stringResource(Res.string.task_detail_complete),
-                        ),
-                    ),
-                onSelect = context.onStatusChange,
-            )
-            TaskEditablePropertyRow(
-                icon = Icons.Default.Info,
-                label = stringResource(Res.string.detail_area),
-                selected = areaName ?: stringResource(Res.string.detail_not_set),
-                options =
-                    listOf(
-                        TaskPropertyOption(
-                            "__none__",
-                            stringResource(Res.string.detail_not_set),
-                        ),
-                    ) +
-                        context.areas.map {
-                            TaskPropertyOption(
-                                it.first.toString(),
-                                it.second,
-                            )
-                        },
-                onSelect = { value ->
-                    context.onAreaChange(value.toLongOrNull())
-                },
-            )
-            TaskEditablePropertyRow(
-                icon = Icons.Default.Tag,
-                label = stringResource(Res.string.detail_project),
-                selected = projectName ?: stringResource(Res.string.detail_not_set),
-                options =
-                    listOf(
-                        TaskPropertyOption(
-                            "__none__",
-                            stringResource(Res.string.detail_not_set),
-                        ),
-                    ) +
-                        context.projects.map {
-                            TaskPropertyOption(
-                                it.first.toString(),
-                                it.second,
-                            )
-                        },
-                onSelect = { value ->
-                    context.onProjectChange(value.toLongOrNull())
-                },
-            )
-            TaskEditablePropertyRow(
-                icon = Icons.Default.CalendarMonth,
-                label = stringResource(Res.string.detail_due_at),
-                selected =
-                    task.dueAt?.let(::formatDateTime)
-                        ?: stringResource(Res.string.detail_no_due_date),
-                options =
-                    listOf(
-                        TaskPropertyOption(
-                            TaskDuePreset.None.name,
-                            stringResource(Res.string.detail_no_due_date),
-                        ),
-                        TaskPropertyOption(
-                            TaskDuePreset.Today.name,
-                            stringResource(Res.string.screen_today),
-                        ),
-                        TaskPropertyOption(TaskDuePreset.Tomorrow.name, "Tomorrow"),
-                        TaskPropertyOption(TaskDuePreset.InSevenDays.name, "In 7 days"),
-                    ),
-                onSelect = { value -> context.onDuePresetChange(TaskDuePreset.valueOf(value)) },
-            )
-            TaskEditablePropertyRow(
-                icon = Icons.Default.Schedule,
-                label = "Frequency",
-                selected =
-                    if (task.isRecurring) {
-                        task.recurringInterval?.replace("_", " ")?.uppercase() ?: "Recurring"
-                    } else {
-                        stringResource(Res.string.detail_one_time)
-                    },
-                options =
-                    listOf(
-                        TaskPropertyOption("__none__", stringResource(Res.string.detail_one_time)),
-                        TaskPropertyOption(
-                            "daily",
-                            stringResource(Res.string.capture_interval_daily),
-                        ),
-                        TaskPropertyOption(
-                            "weekly",
-                            stringResource(Res.string.capture_interval_weekly),
-                        ),
-                        TaskPropertyOption(
-                            "monthly",
-                            stringResource(Res.string.capture_interval_monthly),
-                        ),
-                    ),
-                onSelect = { value ->
-                    context.onRecurrenceChange(if (value == "__none__") null else value)
-                },
-            )
-            TaskEditablePropertyRow(
-                icon = Icons.Default.HourglassBottom,
-                label = "Effort",
-                selected =
-                    task.estimatedMinutes?.let {
-                        stringResource(
-                            Res.string.detail_estimate_mins,
-                            it.toString(),
-                        )
-                    } ?: stringResource(Res.string.detail_not_set),
-                options =
-                    listOf(
-                        TaskPropertyOption("__none__", stringResource(Res.string.detail_not_set)),
-                        TaskPropertyOption(
-                            "15",
-                            stringResource(Res.string.detail_estimate_mins, "15"),
-                        ),
-                        TaskPropertyOption(
-                            "30",
-                            stringResource(Res.string.detail_estimate_mins, "30"),
-                        ),
-                        TaskPropertyOption(
-                            "60",
-                            stringResource(Res.string.detail_estimate_mins, "60"),
-                        ),
-                        TaskPropertyOption(
-                            "120",
-                            stringResource(Res.string.detail_estimate_mins, "120"),
-                        ),
-                    ),
-                onSelect = { value ->
-                    context.onEstimateChange(value.toIntOrNull())
-                },
-            )
-            TaskPropertyRow(
-                icon = Icons.Default.AlarmOn,
-                label = "Automation",
-                value = if (task.isRecurring) "Active" else "Off",
-            )
-            TaskEditablePropertyRow(
-                icon = Icons.Default.RadioButtonChecked,
-                label = "Priority",
-                selected = if (task.isHardDeadline) "Critical" else derivePriorityLabel(task),
-                options =
-                    listOf(
-                        TaskPropertyOption("false", "Standard"),
-                        TaskPropertyOption("true", "Critical"),
-                    ),
-                onSelect = { value -> context.onCriticalityChange(value == "true") },
-            )
+            RenderTaskMetadataProperties(context, state, areaName, projectName)
 
             val progressVal = context.subtaskProgress
             if (progressVal != null) {
@@ -1010,6 +840,188 @@ private fun renderTaskMetadata(context: TaskDetailContext) {
             }
         }
     }
+}
+
+@Composable
+private fun RenderTaskMetadataProperties(
+    context: TaskDetailContext,
+    state: TaskState,
+    areaName: String?,
+    projectName: String?,
+) {
+    val task = context.task
+
+    TaskEditablePropertyRow(
+        icon = Icons.Default.Info,
+        label = stringResource(Res.string.detail_status),
+        selected = state.storageKey.replace("_", " ").uppercase(),
+        options =
+            listOf(
+                TaskPropertyOption(
+                    TaskState.ACTIVE.storageKey,
+                    stringResource(Res.string.task_detail_active),
+                ),
+                TaskPropertyOption(
+                    TaskState.BLOCKED.storageKey,
+                    stringResource(Res.string.task_detail_blocked),
+                ),
+                TaskPropertyOption(
+                    TaskState.ON_HOLD.storageKey,
+                    stringResource(Res.string.task_detail_on_hold),
+                ),
+                TaskPropertyOption(
+                    TaskState.SOMEDAY.storageKey,
+                    stringResource(Res.string.task_detail_queued),
+                ),
+                TaskPropertyOption(
+                    TaskState.DONE.storageKey,
+                    stringResource(Res.string.task_detail_complete),
+                ),
+            ),
+        onSelect = context.onStatusChange,
+    )
+    TaskEditablePropertyRow(
+        icon = Icons.Default.Info,
+        label = stringResource(Res.string.detail_area),
+        selected = areaName ?: stringResource(Res.string.detail_not_set),
+        options =
+            listOf(
+                TaskPropertyOption(
+                    "__none__",
+                    stringResource(Res.string.detail_not_set),
+                ),
+            ) +
+                context.areas.map {
+                    TaskPropertyOption(
+                        it.first.toString(),
+                        it.second,
+                    )
+                },
+        onSelect = { value ->
+            context.onAreaChange(value.toLongOrNull())
+        },
+    )
+    TaskEditablePropertyRow(
+        icon = Icons.Default.Tag,
+        label = stringResource(Res.string.detail_project),
+        selected = projectName ?: stringResource(Res.string.detail_not_set),
+        options =
+            listOf(
+                TaskPropertyOption(
+                    "__none__",
+                    stringResource(Res.string.detail_not_set),
+                ),
+            ) +
+                context.projects.map {
+                    TaskPropertyOption(
+                        it.first.toString(),
+                        it.second,
+                    )
+                },
+        onSelect = { value ->
+            context.onProjectChange(value.toLongOrNull())
+        },
+    )
+    TaskEditablePropertyRow(
+        icon = Icons.Default.CalendarMonth,
+        label = stringResource(Res.string.detail_due_at),
+        selected =
+            task.dueAt?.let(::formatDateTime)
+                ?: stringResource(Res.string.detail_no_due_date),
+        options =
+            listOf(
+                TaskPropertyOption(
+                    TaskDuePreset.None.name,
+                    stringResource(Res.string.detail_no_due_date),
+                ),
+                TaskPropertyOption(
+                    TaskDuePreset.Today.name,
+                    stringResource(Res.string.screen_today),
+                ),
+                TaskPropertyOption(TaskDuePreset.Tomorrow.name, "Tomorrow"),
+                TaskPropertyOption(TaskDuePreset.InSevenDays.name, "In 7 days"),
+            ),
+        onSelect = { value -> context.onDuePresetChange(TaskDuePreset.valueOf(value)) },
+    )
+    TaskEditablePropertyRow(
+        icon = Icons.Default.Schedule,
+        label = "Frequency",
+        selected =
+            if (task.isRecurring) {
+                task.recurringInterval?.replace("_", " ")?.uppercase() ?: "Recurring"
+            } else {
+                stringResource(Res.string.detail_one_time)
+            },
+        options =
+            listOf(
+                TaskPropertyOption("__none__", stringResource(Res.string.detail_one_time)),
+                TaskPropertyOption(
+                    "daily",
+                    stringResource(Res.string.capture_interval_daily),
+                ),
+                TaskPropertyOption(
+                    "weekly",
+                    stringResource(Res.string.capture_interval_weekly),
+                ),
+                TaskPropertyOption(
+                    "monthly",
+                    stringResource(Res.string.capture_interval_monthly),
+                ),
+            ),
+        onSelect = { value ->
+            context.onRecurrenceChange(if (value == "__none__") null else value)
+        },
+    )
+    TaskEditablePropertyRow(
+        icon = Icons.Default.HourglassBottom,
+        label = "Effort",
+        selected =
+            task.estimatedMinutes?.let {
+                stringResource(
+                    Res.string.detail_estimate_mins,
+                    it.toString(),
+                )
+            } ?: stringResource(Res.string.detail_not_set),
+        options =
+            listOf(
+                TaskPropertyOption("__none__", stringResource(Res.string.detail_not_set)),
+                TaskPropertyOption(
+                    "15",
+                    stringResource(Res.string.detail_estimate_mins, "15"),
+                ),
+                TaskPropertyOption(
+                    "30",
+                    stringResource(Res.string.detail_estimate_mins, "30"),
+                ),
+                TaskPropertyOption(
+                    "60",
+                    stringResource(Res.string.detail_estimate_mins, "60"),
+                ),
+                TaskPropertyOption(
+                    "120",
+                    stringResource(Res.string.detail_estimate_mins, "120"),
+                ),
+            ),
+        onSelect = { value ->
+            context.onEstimateChange(value.toIntOrNull())
+        },
+    )
+    TaskPropertyRow(
+        icon = Icons.Default.AlarmOn,
+        label = "Automation",
+        value = if (task.isRecurring) "Active" else "Off",
+    )
+    TaskEditablePropertyRow(
+        icon = Icons.Default.RadioButtonChecked,
+        label = "Priority",
+        selected = if (task.isHardDeadline) "Critical" else derivePriorityLabel(task),
+        options =
+            listOf(
+                TaskPropertyOption("false", "Standard"),
+                TaskPropertyOption("true", "Critical"),
+            ),
+        onSelect = { value -> context.onCriticalityChange(value == "true") },
+    )
 }
 
 private data class TaskPropertyOption(

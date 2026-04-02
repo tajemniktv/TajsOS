@@ -25,9 +25,11 @@ jobs:
         id: sizes
         shell: bash
         run: |
-          echo "json<<EOF" >> "$GITHUB_OUTPUT"
-          cat .github/pr-size-labeler.yml >> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"
+          {
+            echo "json<<EOF"
+            cat .github/pr-size-labeler.yml
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
       - name: Apply PR size label
         uses: pascalgn/size-label-action@v0.5.7
         env:
