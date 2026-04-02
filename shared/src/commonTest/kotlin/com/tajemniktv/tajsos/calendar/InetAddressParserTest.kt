@@ -4,6 +4,7 @@ import kotlin.test.Test
 import kotlin.test.assertTrue
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 
 class InetAddressParserTest {
     @Test
@@ -50,5 +51,21 @@ class InetAddressParserTest {
         val publicIpv6 = parseIpAddress("2606:4700:4700::1111")
         assertNotNull(publicIpv6)
         assertFalse(publicIpv6.isPrivateOrLocal())
+    }
+
+    @Test
+    fun testInvalidIpv4() {
+        assertNull(parseIpAddress("256.0.0.1"))
+        assertNull(parseIpAddress("1.2.3"))
+        assertNull(parseIpAddress("1.2.3.4.5"))
+        assertNull(parseIpAddress("not.an.ip"))
+        assertNull(parseIpAddress(""))
+    }
+
+    @Test
+    fun testInvalidIpv6() {
+        assertNull(parseIpAddress("g::1"))
+        assertNull(parseIpAddress("1ffff::1"))
+        assertNull(parseIpAddress("not:an:ipv6:at:all"))
     }
 }
