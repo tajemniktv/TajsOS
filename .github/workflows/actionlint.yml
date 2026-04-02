@@ -20,5 +20,5 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Lint workflows
-        uses: rhysd/actionlint@v1
+        uses: raven-actions/actionlint@v2.1.2
 

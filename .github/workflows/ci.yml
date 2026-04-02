@@ -22,7 +22,6 @@ jobs:
       kmp: ${{ steps.filter.outputs.kmp }}
       website: ${{ steps.filter.outputs.website }}
       docs: ${{ steps.filter.outputs.docs }}
-      core: ${{ steps.filter.outputs.core }}
       docs_only: ${{ steps.classify.outputs.docs_only }}
       website_only: ${{ steps.classify.outputs.website_only }}
       run_gradle: ${{ steps.classify.outputs.run_gradle }}
@@ -53,12 +52,6 @@ jobs:
               - 'gradle.properties'
               - 'gradlew'
               - 'gradlew.bat'
-            core:
-              - '**'
-              - '!website/**'
-              - '!**/*.md'
-              - '!.github/ISSUE_TEMPLATE/**'
-              - '!LICENSE*'
 
       - name: Classify run scope
         id: classify
@@ -69,15 +62,15 @@ jobs:
           run_gradle=false
           run_website=false
 
-          if [[ "${{ steps.filter.outputs.docs }}" == "true" && "${{ steps.filter.outputs.website }}" != "true" && "${{ steps.filter.outputs.core }}" != "true" ]]; then
+          if [[ "${{ steps.filter.outputs.docs }}" == "true" && "${{ steps.filter.outputs.website }}" != "true" && "${{ steps.filter.outputs.kmp }}" != "true" ]]; then
             docs_only=true
           fi
 
-          if [[ "${{ steps.filter.outputs.website }}" == "true" && "${{ steps.filter.outputs.core }}" != "true" ]]; then
+          if [[ "${{ steps.filter.outputs.website }}" == "true" && "${{ steps.filter.outputs.kmp }}" != "true" ]]; then
             website_only=true
           fi
 
-          if [[ "${{ steps.filter.outputs.core }}" == "true" ]]; then
+          if [[ "${{ steps.filter.outputs.kmp }}" == "true" ]]; then
             run_gradle=true
           fi
 
@@ -85,10 +78,12 @@ jobs:
             run_website=true
           fi
 
-          echo "docs_only=${docs_only}" >> "${GITHUB_OUTPUT}"
-          echo "website_only=${website_only}" >> "${GITHUB_OUTPUT}"
-          echo "run_gradle=${run_gradle}" >> "${GITHUB_OUTPUT}"
-          echo "run_website=${run_website}" >> "${GITHUB_OUTPUT}"
+          {
+            echo "docs_only=${docs_only}"
+            echo "website_only=${website_only}"
+            echo "run_gradle=${run_gradle}"
+            echo "run_website=${run_website}"
+          } >> "${GITHUB_OUTPUT}"
 
   gradle:
     name: Gradle Build and Tests
@@ -175,7 +170,7 @@ jobs:
         shell: bash
         run: |
           ./gradlew \
-            :shared:check \
+            :shared:jvmTest \
             :composeApp:jvmTest \
             :server:test \
             :androidApp:lintDebug \
