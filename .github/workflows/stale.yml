@@ -1,0 +1,42 @@
+name: Stale Management
+
+on:
+  schedule:
+    - cron: "0 4 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: stale-management
+  cancel-in-progress: false
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Mark and close stale issues and PRs
+        uses: actions/stale@v10
+        with:
+          days-before-issue-stale: 120
+          days-before-pr-stale: 150
+          days-before-issue-close: 30
+          days-before-pr-close: 30
+          stale-issue-message: >
+            This issue has been inactive for a long period. It is now marked stale.
+            Comment or remove the stale label if this is still relevant.
+          stale-pr-message: >
+            This pull request has been inactive for a long period. It is now marked stale.
+            Comment or remove the stale label if work is still ongoing.
+          close-issue-message: >
+            Closing due to prolonged inactivity. Reopen if this still needs attention.
+          close-pr-message: >
+            Closing due to prolonged inactivity. Reopen if this is still active.
+          exempt-issue-labels: blocked,needs-review,pinned,security
+          exempt-pr-labels: blocked,needs-review,pinned,security
+          remove-stale-when-updated: true
+          operations-per-run: 100
+

@@ -1,0 +1,99 @@
+ui:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "shared/src/**/ui/**"
+          - "composeApp/src/**"
+          - "**/*Screen.kt"
+          - "**/*Composable*.kt"
+
+android:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "androidApp/**"
+          - "**/*android*/**"
+
+desktop:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "composeApp/**"
+          - "**/*desktop*/**"
+
+kmp:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "shared/**"
+          - "composeApp/**"
+          - "androidApp/**"
+          - "server/**"
+          - "gradle/**"
+          - "*.gradle.kts"
+          - "settings.gradle.kts"
+          - "build.gradle.kts"
+
+compose:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "composeApp/**"
+          - "**/*Composable*.kt"
+          - "**/ui/**"
+
+docs:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.md"
+          - ".github/ISSUE_TEMPLATE/**"
+          - "LICENSE*"
+  - head-branch:
+      - "^docs/"
+      - "^documentation/"
+
+ci:
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".github/workflows/**"
+          - ".github/dependabot.yml"
+          - ".github/labeler.yml"
+          - ".github/labels.yml"
+  - head-branch:
+      - "^ci/"
+      - "^build/ci-"
+
+deps:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/libs.versions.toml"
+          - "**/package.json"
+          - "**/package-lock.json"
+          - "**/*.gradle.kts"
+          - ".github/dependabot.yml"
+  - head-branch:
+      - "^deps/"
+      - "^dependabot/"
+
+tests:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*Test.kt"
+          - "**/test/**"
+          - "**/androidTest/**"
+          - "**/src/commonTest/**"
+          - "**/src/jvmTest/**"
+
+website:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "website/**"
+
+backend:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "server/**"
+
+sync:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "shared/**/*sync*"
+          - "server/**/*sync*"
+          - "**/sync/**"
+  - head-branch:
+      - "^sync/"

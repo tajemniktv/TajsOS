@@ -1,0 +1,30 @@
+name: PR Size Label
+
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: pr-size-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  size:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Read size thresholds
+        id: sizes
+        run: echo "json=$(jq -c . .github/pr-size-labeler.yml)" >> "${GITHUB_OUTPUT}"
+      - name: Apply PR size label
+        uses: pascalgn/size-label-action@v0.5.5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          sizes: ${{ steps.sizes.outputs.json }}
+

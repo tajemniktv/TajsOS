@@ -4,30 +4,53 @@ updates:
     directory: "/"
     target-branch: "dev"
     schedule:
-      interval: "daily"
-    open-pull-requests-limit: 10
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Europe/Warsaw"
+    open-pull-requests-limit: 5
     labels:
-      - "dependencies"
+      - "deps"
       - "dependabot"
+    groups:
+      gradle-minor-patch:
+        update-types:
+          - "minor"
+          - "patch"
 
   - package-ecosystem: "github-actions"
     directory: "/"
     target-branch: "dev"
     schedule:
-      interval: "daily"
-    open-pull-requests-limit: 10
+      interval: "weekly"
+      day: "monday"
+      time: "06:15"
+      timezone: "Europe/Warsaw"
+    open-pull-requests-limit: 5
     labels:
-      - "dependencies"
+      - "deps"
       - "ci"
       - "dependabot"
+    groups:
+      github-actions-updates:
+        patterns:
+          - "*"
 
   - package-ecosystem: "npm"
     directory: "/website"
     target-branch: "dev"
     schedule:
-      interval: "daily"
-    open-pull-requests-limit: 10
+      interval: "weekly"
+      day: "monday"
+      time: "06:30"
+      timezone: "Europe/Warsaw"
+    open-pull-requests-limit: 5
     labels:
-      - "dependencies"
+      - "deps"
       - "website"
       - "dependabot"
+    groups:
+      website-minor-patch:
+        update-types:
+          - "minor"
+          - "patch"
