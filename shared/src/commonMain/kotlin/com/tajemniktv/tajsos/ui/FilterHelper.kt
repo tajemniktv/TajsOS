@@ -24,7 +24,7 @@ object FilterHelper {
      * strictly if the node is task-shaped work in the collapsed LifeOS model.
      *
      * @param nodes The initial list of nodes with associated pins and tags to filter.
-     * `@param` query A text query for partial-matching against titles, content, or tags (prefix with # to search tags only).
+     * @param query A text query for partial-matching against titles, content, or tags (prefix with # to search tags only).
      * @param type The specific type of node to include (e.g., "task", "project").
      * @param status A comma-separated string of statuses to include (e.g., "active,on_hold").
      * @param projectId The ID of the project the node must belong to.
@@ -40,7 +40,8 @@ object FilterHelper {
      * @param timeWindowContext The required time window context (e.g., "morning", "evening").
      * @param timeHorizon A string determining the required temporal scope relative to the current time (e.g., "today", "week", "month", "semester", "short", "long").
      * @param relations The complete list of relationship entities used to evaluate bidirectional links for the `linkedToId` filter.
-     * @return A list containing only the matching `NodeWithPin` elements, sorted by descending update time and descending ID.
+     * @param sortMode The sorting mode to apply: "updated" (descending update time and ID) or "relevance" (relevance score, then update time and ID). Defaults to "relevance".
+     * @return A list containing only the matching `NodeWithPin` elements, sorted according to the specified `sortMode`.
      */
     fun filterAndSortNodes(
         nodes: List<NodeWithPin>,
