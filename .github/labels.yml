@@ -1,185 +1,185 @@
 - name: bug
-  color: D73A4A
+  color: "D73A4A"
   description: Something is not working as expected
 - name: enhancement
-  color: A2EEEF
+  color: "A2EEEF"
   description: New feature or capability request
 - name: question
-  color: D876E3
+  color: "D876E3"
   description: Question or support request
 - name: docs
-  color: 0E8A16
+  color: "0E8A16"
   description: Documentation updates
 - name: ci
-  color: 1D76DB
+  color: "1D76DB"
   description: Continuous integration and automation
 - name: deps
-  color: 0366D6
+  color: "0366D6"
   description: Dependency updates or dependency-related work
 - name: needs-review
-  color: FBCA04
+  color: "FBCA04"
   description: Ready for review
 - name: blocked
-  color: B60205
+  color: "B60205"
   description: Blocked by external dependency or decision
 - name: good first issue
-  color: 7057FF
+  color: "7057FF"
   description: Good starter task for new contributors
 - name: pinned
-  color: C5DEF5
+  color: "C5DEF5"
   description: Important issue that should remain visible
 - name: security
-  color: B60205
+  color: "B60205"
   description: Security-related issue
 
 - name: ui
-  color: F9D0C4
+  color: "F9D0C4"
   description: User interface and interaction changes
 - name: android
-  color: 3DDC84
+  color: "3DDC84"
   description: Android target related
 - name: desktop
-  color: 5319E7
+  color: "5319E7"
   description: Desktop JVM target related
 - name: ios
-  color: 0052CC
+  color: "0052CC"
   description: iOS target related
 - name: kmp
-  color: C2E0C6
+  color: "C2E0C6"
   description: Kotlin Multiplatform related
 - name: compose
-  color: BFDADC
+  color: "BFDADC"
   description: Compose Multiplatform related
 - name: sync
-  color: FBCA04
+  color: "FBCA04"
   description: Sync or local-first consistency related
 - name: tests
-  color: E4E669
+  color: "E4E669"
   description: Test additions or updates
 - name: website
-  color: FEF2C0
+  color: "FEF2C0"
   description: Website changes
 - name: backend
-  color: D4C5F9
+  color: "D4C5F9"
   description: Server or backend changes
 - name: server
-  color: D4C5F9
+  color: "D4C5F9"
   description: Server target related
 
 - name: needs-triage
-  color: FBCA04
+  color: "FBCA04"
   description: Issue needs triage
 - name: domain
-  color: C2E0C6
+  color: "C2E0C6"
   description: Domain logic and data model
 - name: local-first
-  color: BFD4F2
+  color: "BFD4F2"
   description: Local-first behavior
 - name: workflow
-  color: F9D0C4
+  color: "F9D0C4"
   description: Workflow and productivity behavior
 - name: performance
-  color: F9D0C4
+  color: "F9D0C4"
   description: Performance-related concern
 - name: accessibility
-  color: 5319E7
+  color: "5319E7"
   description: Accessibility concern
 - name: integration
-  color: 1D76DB
+  color: "1D76DB"
   description: Integration work (share, biometric, voice)
 - name: tooling
-  color: C5DEF5
+  color: "C5DEF5"
   description: Build tooling and developer experience
 - name: i18n
-  color: 1D76DB
+  color: "1D76DB"
   description: Localization and translations
 - name: crash
-  color: B60205
+  color: "B60205"
   description: Crash or fatal failure
 - name: regression
-  color: C2E0C6
+  color: "C2E0C6"
   description: Previously worked behavior regressed
 
 - name: scope:small
-  color: C2E0C6
+  color: "C2E0C6"
   description: Small scoped change
 - name: scope:medium
-  color: FBCA04
+  color: "FBCA04"
   description: Medium scoped change
 - name: scope:large
-  color: B60205
+  color: "B60205"
   description: Large scoped change
 
 - name: impact:performance
-  color: F9D0C4
+  color: "F9D0C4"
   description: Potential performance impact
 - name: impact:local-first
-  color: BFD4F2
+  color: "BFD4F2"
   description: Potential local-first correctness impact
 - name: impact:persistence
-  color: D4C5F9
+  color: "D4C5F9"
   description: Potential persistence or schema impact
 - name: impact:orchestration
-  color: C5DEF5
+  color: "C5DEF5"
   description: Potential root orchestration impact
 - name: impact:sync-api
-  color: BFDADC
+  color: "BFDADC"
   description: Potential sync interface impact
 
 - name: module:androidApp
-  color: 3DDC84
+  color: "3DDC84"
   description: Module androidApp
 - name: module:composeApp
-  color: BFDADC
+  color: "BFDADC"
   description: Module composeApp
 - name: module:shared
-  color: C2E0C6
+  color: "C2E0C6"
   description: Module shared
 - name: module:server
-  color: D4C5F9
+  color: "D4C5F9"
   description: Module server
 - name: module:website
-  color: FEF2C0
+  color: "FEF2C0"
   description: Module website
 
 - name: lens:now
-  color: 1D76DB
+  color: "1D76DB"
   description: Product lens Now
 - name: lens:plan
-  color: 0366D6
+  color: "0366D6"
   description: Product lens Plan
 - name: lens:operate
-  color: 0E8A16
+  color: "0E8A16"
   description: Product lens Operate
 - name: lens:knowledge
-  color: 5319E7
+  color: "5319E7"
   description: Product lens Knowledge
 - name: lens:review
-  color: FBCA04
+  color: "FBCA04"
   description: Product lens Review
 - name: lens:shell
-  color: C5DEF5
+  color: "C5DEF5"
   description: Cross-lens shell concerns
 
 - name: repro:always
-  color: B60205
+  color: "B60205"
   description: Reproduces every time
 - name: repro:intermittent
-  color: FBCA04
+  color: "FBCA04"
   description: Reproduces intermittently
 
 - name: size:xs
-  color: C2E0C6
+  color: "C2E0C6"
   description: Tiny pull request
 - name: size:s
-  color: E4E669
+  color: "E4E669"
   description: Small pull request
 - name: size:m
-  color: FBCA04
+  color: "FBCA04"
   description: Medium pull request
 - name: size:l
-  color: F9D0C4
+  color: "F9D0C4"
   description: Large pull request
 - name: size:xl
-  color: B60205
+  color: "B60205"
   description: Very large pull request
