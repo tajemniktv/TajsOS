@@ -9,201 +9,184 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
- * Unit tests for the pure utility logic defined in BriefingScreen.kt.
+ * Unit tests for the pure utility functions extracted from BriefingScreen.kt.
  *
- * Because [briefingGreeting], [relativeUpdatedText], and [formatClockTime] are declared as
- * private functions inside BriefingScreen.kt they cannot be called directly from tests.
- * These tests instead verify the same behavioural contract as independent pure-logic
- * specifications, which serve as regression anchors if the functions are ever refactored
- * or made more accessible.
+ * These tests cover [briefingPeriodForHour], [relativeHourDiff], and [formatClockTime]
+ * without requiring a Compose runtime.
  */
 class BriefingScreenTest {
 
-    // ------------------------------------------------------------------
-    // briefingGreeting logic specification
-    // Mirror of the when-expression in BriefingScreen.briefingGreeting().
-    // ------------------------------------------------------------------
-
-    private fun greetingCategory(hour: Int): String =
-        when (hour) {
-            in 5..11 -> "morning"
-            in 12..17 -> "afternoon"
-            in 18..22 -> "evening"
-            else -> "night"
-        }
+    // ── briefingPeriodForHour ─────────────────────────────────────────────────
 
     @Test
-    fun briefingGreeting_earlyMorningBoundary_returnsMorning() {
-        assertEquals("morning", greetingCategory(5))
+    fun briefingPeriodForHour_hour5_returnsMorning() {
+        assertEquals("morning", briefingPeriodForHour(5))
     }
 
     @Test
-    fun briefingGreeting_lateMorningBoundary_returnsMorning() {
-        assertEquals("morning", greetingCategory(11))
+    fun briefingPeriodForHour_hour11_returnsMorning() {
+        assertEquals("morning", briefingPeriodForHour(11))
     }
 
     @Test
-    fun briefingGreeting_midMorning_returnsMorning() {
-        assertEquals("morning", greetingCategory(8))
+    fun briefingPeriodForHour_hour12_returnsAfternoon() {
+        assertEquals("afternoon", briefingPeriodForHour(12))
     }
 
     @Test
-    fun briefingGreeting_earlyAfternoonBoundary_returnsAfternoon() {
-        assertEquals("afternoon", greetingCategory(12))
+    fun briefingPeriodForHour_hour17_returnsAfternoon() {
+        assertEquals("afternoon", briefingPeriodForHour(17))
     }
 
     @Test
-    fun briefingGreeting_lateAfternoonBoundary_returnsAfternoon() {
-        assertEquals("afternoon", greetingCategory(17))
+    fun briefingPeriodForHour_hour18_returnsEvening() {
+        assertEquals("evening", briefingPeriodForHour(18))
     }
 
     @Test
-    fun briefingGreeting_midAfternoon_returnsAfternoon() {
-        assertEquals("afternoon", greetingCategory(14))
+    fun briefingPeriodForHour_hour22_returnsEvening() {
+        assertEquals("evening", briefingPeriodForHour(22))
     }
 
     @Test
-    fun briefingGreeting_earlyEveningBoundary_returnsEvening() {
-        assertEquals("evening", greetingCategory(18))
+    fun briefingPeriodForHour_hour23_returnsNight() {
+        assertEquals("night", briefingPeriodForHour(23))
     }
 
     @Test
-    fun briefingGreeting_lateEveningBoundary_returnsEvening() {
-        assertEquals("evening", greetingCategory(22))
+    fun briefingPeriodForHour_hour0_returnsNight() {
+        assertEquals("night", briefingPeriodForHour(0))
     }
 
     @Test
-    fun briefingGreeting_midEvening_returnsEvening() {
-        assertEquals("evening", greetingCategory(20))
+    fun briefingPeriodForHour_hour4_returnsNight() {
+        assertEquals("night", briefingPeriodForHour(4))
     }
 
     @Test
-    fun briefingGreeting_midnight_returnsNight() {
-        assertEquals("night", greetingCategory(0))
-    }
-
-    @Test
-    fun briefingGreeting_lateNight_returnsNight() {
-        assertEquals("night", greetingCategory(3))
-    }
-
-    @Test
-    fun briefingGreeting_hourBeforeMorning_returnsNight() {
-        assertEquals("night", greetingCategory(4))
-    }
-
-    @Test
-    fun briefingGreeting_hourAfterEvening_returnsNight() {
-        assertEquals("night", greetingCategory(23))
-    }
-
-    @Test
-    fun briefingGreeting_allHoursMapToKnownCategory() {
-        val validCategories = setOf("morning", "afternoon", "evening", "night")
-        for (hour in 0..23) {
-            assertTrue(
-                greetingCategory(hour) in validCategories,
-                "Hour $hour should map to a valid category",
-            )
-        }
-    }
-
-    // ------------------------------------------------------------------
-    // relativeUpdatedText logic specification
-    // Mirror of the when-logic in BriefingScreen.relativeUpdatedText().
-    // ------------------------------------------------------------------
-
-    private fun relativeUpdatedCategory(diffMillis: Long): String {
-        val diffHours = (diffMillis / 3_600_000L).coerceAtLeast(0L)
-        return when {
-            diffHours == 0L -> "now"
-            diffHours < 24L -> "hours:$diffHours"
-            else -> "days:${diffHours / 24L}"
+    fun briefingPeriodForHour_allMorningHoursReturnMorning() {
+        (5..11).forEach { hour ->
+            assertEquals("morning", briefingPeriodForHour(hour), "Expected morning for hour=$hour")
         }
     }
 
     @Test
-    fun relativeUpdatedText_zeroMillis_returnsNow() {
-        assertEquals("now", relativeUpdatedCategory(0L))
+    fun briefingPeriodForHour_allAfternoonHoursReturnAfternoon() {
+        (12..17).forEach { hour ->
+            assertEquals("afternoon", briefingPeriodForHour(hour), "Expected afternoon for hour=$hour")
+        }
     }
 
     @Test
-    fun relativeUpdatedText_justUnderOneHour_returnsNow() {
-        val almostOneHour = 3_599_999L
-        assertEquals("now", relativeUpdatedCategory(almostOneHour))
+    fun briefingPeriodForHour_allEveningHoursReturnEvening() {
+        (18..22).forEach { hour ->
+            assertEquals("evening", briefingPeriodForHour(hour), "Expected evening for hour=$hour")
+        }
     }
 
     @Test
-    fun relativeUpdatedText_exactlyOneHour_returnsOneHour() {
-        val oneHour = 3_600_000L
-        assertEquals("hours:1", relativeUpdatedCategory(oneHour))
+    fun briefingPeriodForHour_nightHoursReturnNight() {
+        val nightHours = (0..4) + listOf(23)
+        nightHours.forEach { hour ->
+            assertEquals("night", briefingPeriodForHour(hour), "Expected night for hour=$hour")
+        }
+    }
+
+    // ── relativeHourDiff ──────────────────────────────────────────────────────
+
+    @Test
+    fun relativeHourDiff_sameTimestamp_returnsZero() {
+        val now = 1_000_000_000L
+        assertEquals(0L, relativeHourDiff(now, now))
     }
 
     @Test
-    fun relativeUpdatedText_severalHours_returnsHours() {
-        val fiveHours = 5 * 3_600_000L
-        assertEquals("hours:5", relativeUpdatedCategory(fiveHours))
+    fun relativeHourDiff_updatedAtInFuture_returnsZero() {
+        val now = 1_000_000_000L
+        val future = now + 3_600_001L
+        assertEquals(0L, relativeHourDiff(now, future))
     }
 
     @Test
-    fun relativeUpdatedText_justUnder24Hours_returnsHours() {
-        val almostOneDay = 23 * 3_600_000L
-        assertEquals("hours:23", relativeUpdatedCategory(almostOneDay))
+    fun relativeHourDiff_exactly1HourAgo_returns1() {
+        val now = 3_600_000L
+        val updatedAt = 0L
+        assertEquals(1L, relativeHourDiff(now, updatedAt))
     }
 
     @Test
-    fun relativeUpdatedText_exactly24Hours_returnsDays() {
-        val exactlyOneDay = 24 * 3_600_000L
-        assertEquals("days:1", relativeUpdatedCategory(exactlyOneDay))
+    fun relativeHourDiff_almostOneHour_returnsZero() {
+        val now = 3_599_999L
+        val updatedAt = 0L
+        assertEquals(0L, relativeHourDiff(now, updatedAt))
     }
 
     @Test
-    fun relativeUpdatedText_twoDays_returnsTwoDays() {
-        val twoDays = 48 * 3_600_000L
-        assertEquals("days:2", relativeUpdatedCategory(twoDays))
+    fun relativeHourDiff_23hoursAgo_returns23() {
+        val hourMs = 3_600_000L
+        val now = 23 * hourMs
+        val updatedAt = 0L
+        assertEquals(23L, relativeHourDiff(now, updatedAt))
     }
 
     @Test
-    fun relativeUpdatedText_negativeMillis_clampsToNow() {
-        // coerceAtLeast(0L) ensures negative differences don't produce "hours:-1"
-        assertEquals("now", relativeUpdatedCategory(-3_600_000L))
-    }
-
-    // ------------------------------------------------------------------
-    // formatClockTime logic specification
-    // Mirror of the logic in BriefingScreen.formatClockTime().
-    // The function formats LocalTime.toString() and takes first 5 chars ("HH:MM").
-    // ------------------------------------------------------------------
-
-    private fun formatTimeString(localTimeString: String): String = localTimeString.take(5)
-
-    @Test
-    fun formatClockTime_fullTimeString_returnsHHMM() {
-        assertEquals("14:30", formatTimeString("14:30:00"))
+    fun relativeHourDiff_24hoursAgo_returns24() {
+        val hourMs = 3_600_000L
+        val now = 24 * hourMs
+        val updatedAt = 0L
+        assertEquals(24L, relativeHourDiff(now, updatedAt))
     }
 
     @Test
-    fun formatClockTime_midnight_returnsCorrectFormat() {
-        assertEquals("00:00", formatTimeString("00:00:00"))
+    fun relativeHourDiff_48hoursAgo_returns48() {
+        val hourMs = 3_600_000L
+        val now = 48 * hourMs
+        val updatedAt = 0L
+        assertEquals(48L, relativeHourDiff(now, updatedAt))
     }
 
     @Test
-    fun formatClockTime_noon_returnsCorrectFormat() {
-        assertEquals("12:00", formatTimeString("12:00:00"))
+    fun relativeHourDiff_oneMinuteAgo_returnsZero() {
+        val now = 60_000L
+        val updatedAt = 0L
+        assertEquals(0L, relativeHourDiff(now, updatedAt))
+    }
+
+    // ── formatClockTime ───────────────────────────────────────────────────────
+
+    @Test
+    fun formatClockTime_outputHasCorrectLength() {
+        // Any epoch ms should produce exactly "HH:MM" = 5 chars
+        val result = formatClockTime(0L)
+        assertEquals(5, result.length, "formatClockTime output should be exactly 5 characters")
     }
 
     @Test
-    fun formatClockTime_singleDigitHour_preservesLeadingZero() {
-        assertEquals("09:05", formatTimeString("09:05:30"))
+    fun formatClockTime_outputMatchesHHMMPattern() {
+        // Verify that the output matches HH:MM format (two digits, colon, two digits)
+        val result = formatClockTime(0L)
+        val pattern = Regex("""\d{2}:\d{2}""")
+        assertTrue(pattern.matches(result), "formatClockTime should return HH:MM format, got: $result")
     }
 
     @Test
-    fun formatClockTime_exactlyFiveChars_returnsAllFive() {
-        assertEquals("23:59", formatTimeString("23:59:59.999"))
+    fun formatClockTime_hourAndMinuteAreValid() {
+        val result = formatClockTime(0L)
+        val parts = result.split(":")
+        assertEquals(2, parts.size)
+        val hours = parts[0].toInt()
+        val minutes = parts[1].toInt()
+        assertTrue(hours in 0..23, "Hour should be 0-23, got $hours")
+        assertTrue(minutes in 0..59, "Minute should be 0-59, got $minutes")
     }
 
     @Test
-    fun formatClockTime_timeStringWithNanoseconds_stripsSeconds() {
-        assertEquals("08:15", formatTimeString("08:15:42.123456789"))
+    fun formatClockTime_largeTimestampProducesValidOutput() {
+        // Use a known large timestamp and verify format consistency
+        val epochMs = 1_700_000_000_000L // ~Nov 2023
+        val result = formatClockTime(epochMs)
+        assertEquals(5, result.length)
+        val pattern = Regex("""\d{2}:\d{2}""")
+        assertTrue(pattern.matches(result), "formatClockTime should return HH:MM format for large timestamps")
     }
 }

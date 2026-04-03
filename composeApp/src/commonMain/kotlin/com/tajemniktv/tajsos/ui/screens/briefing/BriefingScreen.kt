@@ -655,11 +655,11 @@ private fun BriefingAtmosphere(modifier: Modifier = Modifier) {
      */
     @Composable
 private fun briefingGreeting(hour: Int): String =
-    when (hour)
+    when (briefingPeriodForHour(hour))
     {
-        in 5..11 -> stringResource(Res.string.briefing_greeting_morning)
-        in 12..17 -> stringResource(Res.string.briefing_greeting_afternoon)
-        in 18..22 -> stringResource(Res.string.briefing_greeting_evening)
+        "morning" -> stringResource(Res.string.briefing_greeting_morning)
+        "afternoon" -> stringResource(Res.string.briefing_greeting_afternoon)
+        "evening" -> stringResource(Res.string.briefing_greeting_evening)
         else -> stringResource(Res.string.briefing_greeting_night)
     }
 
@@ -671,14 +671,14 @@ private fun briefingGreeting(hour: Int): String =
  */
 @Composable
 private fun relativeUpdatedText(updatedAt: Long): String {
-    val diffHours = ((Clock.System.now().toEpochMilliseconds() - updatedAt) / 3_600_000L).coerceAtLeast(0L)
+    val diffHours = relativeHourDiff(Clock.System.now().toEpochMilliseconds(), updatedAt)
     if (diffHours == 0L) {
         return stringResource(Res.string.briefing_recent_updated_now)
     }
     if (diffHours < 24L) {
-        return pluralStringResource(Res.plurals.briefing_recent_updated_hours, diffHours.toInt(), diffHours)
+        return stringResource(Res.string.briefing_recent_updated_hours, diffHours)
     }
-    return pluralStringResource(Res.plurals.briefing_recent_updated_days, (diffHours / 24L).toInt(), diffHours / 24L)
+    return stringResource(Res.string.briefing_recent_updated_days, diffHours / 24L)
 }
 
 /**
@@ -687,12 +687,36 @@ private fun relativeUpdatedText(updatedAt: Long): String {
  * @param timestamp Epoch milliseconds since Unix epoch.
  * @return The local time portion formatted as `HH:MM`.
  */
-private fun formatClockTime(timestamp: Long): String {
+internal fun formatClockTime(timestamp: Long): String {
     val local = Instant.fromEpochMilliseconds(timestamp).toLocalDateTime(TimeZone.currentSystemDefault())
     return local.time
         .toString()
         .take(5)
 }
+
+/**
+ * Returns the period-of-day bucket for the given hour, used to select a greeting.
+ *
+ * @param hour Hour of day in 24-hour format (0–23).
+ * @return One of `"morning"`, `"afternoon"`, `"evening"`, or `"night"`.
+ */
+internal fun briefingPeriodForHour(hour: Int): String =
+    when (hour) {
+        in 5..11 -> "morning"
+        in 12..17 -> "afternoon"
+        in 18..22 -> "evening"
+        else -> "night"
+    }
+
+/**
+ * Calculates the number of whole hours between [nowMs] and [updatedAt].
+ *
+ * @param nowMs Current time in epoch milliseconds.
+ * @param updatedAt Past time in epoch milliseconds.
+ * @return Non-negative number of whole hours elapsed since [updatedAt].
+ */
+internal fun relativeHourDiff(nowMs: Long, updatedAt: Long): Long =
+    ((nowMs - updatedAt) / 3_600_000L).coerceAtLeast(0L)
 
 private data class BriefingAction(
     val titleRes: StringResource,

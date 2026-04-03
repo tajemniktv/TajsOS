@@ -52,32 +52,6 @@ class ScreenTest {
         )
 
     @Test
-    fun briefing_hasCorrectRoute() {
-        assertEquals("briefing", Screen.Briefing.route)
-    }
-
-    @Test
-    fun briefing_fromRouteReturnsBriefingScreen() {
-        assertEquals(Screen.Briefing, Screen.fromRoute("briefing"))
-    }
-
-    @Test
-    fun briefing_fromRouteWithQueryParamReturnsBriefingScreen() {
-        assertEquals(Screen.Briefing, Screen.fromRoute("briefing?someParam=x"))
-    }
-
-    @Test
-    fun briefing_hasNoChildren() {
-        assertTrue(Screen.Briefing.children.isEmpty())
-    }
-
-    @Test
-    fun briefing_isIncludedInAllScreensList() {
-        val routes = allScreens.map { it.route }
-        assertTrue(routes.contains("briefing"), "Briefing route should exist in screen list")
-    }
-
-    @Test
     fun graphScreen_doesExistInScreenList() {
         val routes = allScreens.map { it.route }
         assertTrue(routes.contains("graph"), "Graph route should exist")
@@ -206,5 +180,72 @@ class ScreenTest {
         val routes = allScreens.map { it.route }
         val uniqueRoutes = routes.toSet()
         assertEquals(routes.size, uniqueRoutes.size, "All screen routes must be unique")
+    }
+
+    // --- Screen.Briefing tests ---
+
+    @Test
+    fun briefing_hasCorrectRoute() {
+        assertEquals("briefing", Screen.Briefing.route)
+    }
+
+    @Test
+    fun briefing_isRootScreen() {
+        assertTrue(Screen.Briefing.isRoot, "Briefing should be a root screen")
+    }
+
+    @Test
+    fun briefing_hasNoChildren() {
+        assertTrue(Screen.Briefing.children.isEmpty(), "Briefing should have no child screens")
+    }
+
+    @Test
+    fun briefing_isResolvedFromExactRoute() {
+        assertEquals(Screen.Briefing, Screen.fromRoute("briefing"))
+    }
+
+    @Test
+    fun briefing_isResolvedFromRouteWithQueryParams() {
+        // fromRoute should still resolve to Briefing when query params are appended
+        assertEquals(Screen.Briefing, Screen.fromRoute("briefing?tab=overview"))
+    }
+
+    @Test
+    fun briefing_isInCoreNavigationGroup() {
+        val coreGroup = Screen.groupedItems.firstOrNull { (_, screens) ->
+            screens.contains(Screen.Briefing)
+        }
+        assertTrue(coreGroup != null, "Briefing should appear in one of the navigation groups")
+        assertTrue(
+            coreGroup!!.second.contains(Screen.Dashboard),
+            "Briefing's navigation group should also contain Dashboard (nav_core)",
+        )
+    }
+
+    @Test
+    fun briefing_isFirstInCoreNavigationGroup() {
+        val coreScreens = Screen.groupedItems
+            .map { it.second }
+            .firstOrNull { it.contains(Screen.Briefing) }
+        assertEquals(Screen.Briefing, coreScreens?.firstOrNull(), "Briefing should be the first item in the core nav group")
+    }
+
+    @Test
+    fun briefing_doesNotConflictWithAnyOtherRoute() {
+        val otherScreenRoutes = allScreens.filter { it != Screen.Briefing }.map { it.route }
+        assertTrue(
+            !otherScreenRoutes.contains("briefing"),
+            "No other screen should use the 'briefing' route",
+        )
+    }
+
+    @Test
+    fun fromRoute_returnsNull_forNullInput() {
+        assertEquals(null, Screen.fromRoute(null))
+    }
+
+    @Test
+    fun fromRoute_returnsNull_forUnknownRoute() {
+        assertEquals(null, Screen.fromRoute("totally_unknown_route_xyz"))
     }
 }
