@@ -382,7 +382,11 @@ private fun TaskDetails(
             modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
             contentAlignment = Alignment.Center,
         ) {
-            Text(stringResource(Res.string.tasks_no_results), color = TajsOSTheme.Muted)
+            EmptyState(
+                message = stringResource(Res.string.tasks_no_results),
+                fillParent = false,
+                showContainer = false,
+            )
         }
         return
     }
