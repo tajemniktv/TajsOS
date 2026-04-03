@@ -39,6 +39,9 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeWithPin
+import com.tajemniktv.tajsos.ui.components.common.GlassMaterial
+import com.tajemniktv.tajsos.ui.components.common.glassContainerColor
+import com.tajemniktv.tajsos.ui.components.common.glassChrome
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.number
@@ -84,8 +87,9 @@ fun NodeCard(
             modifier
                 .fillMaxWidth()
                 .graphicsLayer(scaleX = animatedScale, scaleY = animatedScale)
+                .glassChrome(shape = RoundedCornerShape(TajsOSTheme.RadiusMd), material = GlassMaterial.REGULAR)
                 .combinedClickable(onClick = onClick, onLongClick = onLongClick),
-        color = TajsOSTheme.Surface,
+        color = glassContainerColor(TajsOSTheme.Surface),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         border =
             BorderStroke(

@@ -61,10 +61,11 @@ import com.tajemniktv.tajsos.data.UserProfile
 import com.tajemniktv.tajsos.data.resolveDisplayName
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.SidebarMode
+import com.tajemniktv.tajsos.ui.components.common.GlassMaterial
+import com.tajemniktv.tajsos.ui.components.common.glassContainerColor
 import com.tajemniktv.tajsos.ui.components.common.glassChrome
 import com.tajemniktv.tajsos.ui.screens.tasks.TasksTab
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
-import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -91,7 +92,8 @@ fun AppSidebar(
     onNavigateToTasksTab: (TasksTab) -> Unit,
     onNewEntry: () -> Unit,
     onNavigateToProfile: () -> Unit,
-    hazeState: HazeState,
+    useFixedWidth: Boolean = true,
+    applyGlass: Boolean = true,
     modifier: Modifier = Modifier,
 ) {
     val hoverInteraction = remember { MutableInteractionSource() }
@@ -121,16 +123,29 @@ fun AppSidebar(
     Surface(
         modifier =
             modifier
-                .width(sidebarWidth)
+                .then(
+                    if (useFixedWidth) {
+                        Modifier.width(sidebarWidth)
+                    } else {
+                        Modifier.fillMaxWidth()
+                    },
+                )
                 .fillMaxHeight()
-                .glassChrome(
-                    hazeState = hazeState,
-                    shape = RoundedCornerShape(0.dp),
-                ).hoverable(
+                .then(
+                    if (applyGlass) {
+                        Modifier.glassChrome(
+                            shape = RoundedCornerShape(0.dp),
+                            material = GlassMaterial.THICK,
+                        )
+                    } else {
+                        Modifier
+                    },
+                )
+                .hoverable(
                     interactionSource = hoverInteraction,
                     enabled = shellState.sidebarMode == SidebarMode.HOVER_EXPAND,
                 ),
-        color = Color.Transparent,
+        color = glassContainerColor(TajsOSTheme.SurfaceLowest),
         shape = RoundedCornerShape(0.dp),
         tonalElevation = 0.dp,
         shadowElevation = 0.dp,

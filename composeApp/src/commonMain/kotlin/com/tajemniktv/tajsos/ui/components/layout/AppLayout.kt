@@ -25,6 +25,9 @@ import com.tajemniktv.tajsos.data.PackRegistry
 import com.tajemniktv.tajsos.data.UserProfile
 import com.tajemniktv.tajsos.data.resolveDisplayName
 import com.tajemniktv.tajsos.ui.Screen
+import com.tajemniktv.tajsos.ui.components.common.GlassMaterial
+import com.tajemniktv.tajsos.ui.components.common.ProvideGlassSystem
+import com.tajemniktv.tajsos.ui.components.common.glassContainerColor
 import com.tajemniktv.tajsos.ui.components.common.glassChrome
 import com.tajemniktv.tajsos.ui.components.notifications.NotificationUiModel
 import com.tajemniktv.tajsos.ui.components.notifications.NotificationVariant
@@ -54,6 +57,7 @@ import kotlin.time.Clock
  * @param allModes The list of all available system modes.
  * @param packRegistry The registry of available packs.
  * @param userProfile The current user profile.
+ * @param isGlassmorphismEnabled Whether glass effects should be rendered.
  * @param onModeSelect Callback when a different mode is selected.
  * @param drawerState State of the navigation drawer (used in mobile).
  * @param scope Coroutine scope for launching drawer actions.
@@ -73,6 +77,7 @@ fun AppLayout(
     allModes: List<ModeEntity>,
     packRegistry: PackRegistry,
     userProfile: UserProfile,
+    isGlassmorphismEnabled: Boolean,
     onModeSelect: (Long) -> Unit,
     drawerState: DrawerState,
     scope: CoroutineScope,
@@ -85,7 +90,7 @@ fun AppLayout(
     val greeting = remember(userName) { timeGreeting(userName) }
     val protocolText = currentMode?.name?.let { "Protocol state: $it" } ?: "Protocol state: standby"
     val modeOptions = rememberModeOptions(allModes)
-    val hazeState = rememberHazeState()
+    val hazeState = rememberHazeState(blurEnabled = isGlassmorphismEnabled)
     val notifications =
         remember {
             listOf(
@@ -114,109 +119,119 @@ fun AppLayout(
             )
         }
 
-    Box(modifier = modifier.fillMaxSize()) {
-        Box(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .background(
-                        brush =
-                            Brush.linearGradient(
-                                colors =
-                                    listOf(
-                                        TajsOSTheme.Background,
-                                        TajsOSTheme.SurfaceLow,
-                                        TajsOSTheme.Background,
-                                    ),
-                            ),
-                    )
-                    .hazeSource(hazeState),
-        )
-        if (isDesktop) {
-            Row(modifier = Modifier.fillMaxSize().background(TajsOSTheme.Background.copy(alpha = 0.74f))) {
-                AppSidebar(
-                    shellState = shellState,
-                    menuGroups = Screen.groupedItemsForPacks(packRegistry),
-                    currentRootScreen = currentRoot,
-                    currentScreen = currentScreen,
-                    activeTasksTab = activeTasksTab,
-                    currentMode = currentMode,
-                    userProfile = userProfile,
-                    onNavigate = onNavigate,
-                    onNavigateToTasksTab = onNavigateToTasksTab,
-                    onNewEntry = onNewEntry,
-                    onNavigateToProfile = { onNavigate(Screen.Profile) },
-                    hazeState = hazeState,
-                )
-
-                Column(modifier = Modifier.fillMaxSize()) {
-                    AppShellHeader(
-                        greeting = greeting,
-                        protocolText = protocolText,
-                        currentModeLabel = currentMode?.name ?: "STANDBY",
-                        modeOptions = modeOptions,
-                        notifications = notifications,
+    ProvideGlassSystem(
+        enabled = isGlassmorphismEnabled,
+        hazeState = hazeState,
+    ) {
+        Box(modifier = modifier.fillMaxSize()) {
+            Box(
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .background(
+                            brush =
+                                Brush.linearGradient(
+                                    colors =
+                                        listOf(
+                                            TajsOSTheme.Background,
+                                            TajsOSTheme.SurfaceLow,
+                                            TajsOSTheme.Background,
+                                        ),
+                                ),
+                        )
+                        .then(
+                            if (isGlassmorphismEnabled) {
+                                Modifier.hazeSource(hazeState)
+                            } else {
+                                Modifier
+                            },
+                        ),
+            )
+            if (isDesktop) {
+                Row(modifier = Modifier.fillMaxSize().background(TajsOSTheme.Background.copy(alpha = 0.74f))) {
+                    AppSidebar(
                         shellState = shellState,
-                        isDesktop = true,
-                        onModeSelect = onModeSelect,
-                        modifier = Modifier.padding(bottom = 2.dp),
-                        hazeState = hazeState,
+                        menuGroups = Screen.groupedItemsForPacks(packRegistry),
+                        currentRootScreen = currentRoot,
+                        currentScreen = currentScreen,
+                        activeTasksTab = activeTasksTab,
+                        currentMode = currentMode,
+                        userProfile = userProfile,
+                        onNavigate = onNavigate,
+                        onNavigateToTasksTab = onNavigateToTasksTab,
+                        onNewEntry = onNewEntry,
+                        onNavigateToProfile = { onNavigate(Screen.Profile) },
                     )
 
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        content()
+                    Column(modifier = Modifier.fillMaxSize()) {
+                        AppShellHeader(
+                            greeting = greeting,
+                            protocolText = protocolText,
+                            currentModeLabel = currentMode?.name ?: "STANDBY",
+                            modeOptions = modeOptions,
+                            notifications = notifications,
+                            shellState = shellState,
+                            isDesktop = true,
+                            onModeSelect = onModeSelect,
+                            modifier = Modifier.padding(bottom = 2.dp),
+                        )
+
+                        Box(modifier = Modifier.fillMaxSize()) {
+                            content()
+                        }
                     }
                 }
-            }
-        } else {
-            ModalNavigationDrawer(
-                drawerState = drawerState,
-                drawerContent = {
-                    ModalDrawerSheet(
-                        modifier = Modifier.glassChrome(hazeState = hazeState),
-                        drawerContainerColor = Color.Transparent,
-                    ) {
-                        AppSidebar(
+            } else {
+                ModalNavigationDrawer(
+                    drawerState = drawerState,
+                    drawerContent = {
+                        ModalDrawerSheet(
+                            modifier = Modifier.glassChrome(material = GlassMaterial.THICK),
+                            drawerContainerColor = glassContainerColor(TajsOSTheme.SidebarBackground),
+                        ) {
+                            AppSidebar(
+                                shellState = shellState,
+                                menuGroups = Screen.groupedItemsForPacks(packRegistry),
+                                currentRootScreen = currentRoot,
+                                currentScreen = currentScreen,
+                                activeTasksTab = activeTasksTab,
+                                currentMode = currentMode,
+                                userProfile = userProfile,
+                                onNavigate = { screen ->
+                                    onNavigate(screen)
+                                    scope.launch { drawerState.close() }
+                                },
+                                onNavigateToTasksTab = { tab ->
+                                    onNavigateToTasksTab(tab)
+                                    scope.launch { drawerState.close() }
+                                },
+                                onNewEntry = onNewEntry,
+                                onNavigateToProfile = {
+                                    onNavigate(Screen.Profile)
+                                    scope.launch { drawerState.close() }
+                                },
+                                useFixedWidth = false,
+                                applyGlass = false,
+                                modifier = Modifier.fillMaxSize(),
+                            )
+                        }
+                    },
+                ) {
+                    Column(modifier = Modifier.fillMaxSize().background(TajsOSTheme.Background.copy(alpha = 0.74f))) {
+                        AppShellHeader(
+                            greeting = greeting,
+                            protocolText = protocolText,
+                            currentModeLabel = currentMode?.name ?: "STANDBY",
+                            modeOptions = modeOptions,
+                            notifications = notifications,
                             shellState = shellState,
-                            menuGroups = Screen.groupedItemsForPacks(packRegistry),
-                            currentRootScreen = currentRoot,
-                            currentScreen = currentScreen,
-                            activeTasksTab = activeTasksTab,
-                            currentMode = currentMode,
-                            userProfile = userProfile,
-                            onNavigate = { screen ->
-                                onNavigate(screen)
-                                scope.launch { drawerState.close() }
-                            },
-                            onNavigateToTasksTab = { tab ->
-                                onNavigateToTasksTab(tab)
-                                scope.launch { drawerState.close() }
-                            },
-                            onNewEntry = onNewEntry,
-                            onNavigateToProfile = {
-                                onNavigate(Screen.Profile)
-                                scope.launch { drawerState.close() }
-                            },
-                            hazeState = hazeState,
+                            isDesktop = false,
+                            onModeSelect = onModeSelect,
+                            onMenuClick = { scope.launch { drawerState.open() } },
                         )
-                    }
-                },
-            ) {
-                Column(modifier = Modifier.fillMaxSize().background(TajsOSTheme.Background.copy(alpha = 0.74f))) {
-                    AppShellHeader(
-                        greeting = greeting,
-                        protocolText = protocolText,
-                        currentModeLabel = currentMode?.name ?: "STANDBY",
-                        modeOptions = modeOptions,
-                        notifications = notifications,
-                        shellState = shellState,
-                        isDesktop = false,
-                        onModeSelect = onModeSelect,
-                        onMenuClick = { scope.launch { drawerState.open() } },
-                        hazeState = hazeState,
-                    )
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        content()
+                        Box(modifier = Modifier.fillMaxSize()) {
+                            content()
+                        }
                     }
                 }
             }

@@ -130,6 +130,7 @@ fun App(
     val enabledPacks by viewModel.enabledPacks.collectAsState()
     val isDarkTheme by viewModel.isDarkTheme.collectAsState()
     val accentColorHex by viewModel.accentColorHex.collectAsState()
+    val isGlassmorphismEnabled by viewModel.isGlassmorphismEnabled.collectAsState()
     val userProfile by viewModel.userProfile.collectAsState()
     val sidebarMode by viewModel.sidebarMode.collectAsState()
 
@@ -209,6 +210,7 @@ fun App(
                 allModes = allModes,
                 packRegistry = enabledPacks,
                 userProfile = userProfile,
+                isGlassmorphismEnabled = isGlassmorphismEnabled,
                 onModeSelect = { viewModel.switchMode(it) },
                 drawerState = drawerState,
                 scope = scope,

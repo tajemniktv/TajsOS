@@ -44,6 +44,9 @@ import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.AppPack
 import com.tajemniktv.tajsos.data.MedicationEntity
 import com.tajemniktv.tajsos.ui.SidebarMode
+import com.tajemniktv.tajsos.ui.components.common.GlassMaterial
+import com.tajemniktv.tajsos.ui.components.common.glassContainerColor
+import com.tajemniktv.tajsos.ui.components.common.glassChrome
 import com.tajemniktv.tajsos.ui.theme.PaletteAccentAmber
 import com.tajemniktv.tajsos.ui.theme.PaletteAccentBlue
 import com.tajemniktv.tajsos.ui.theme.PaletteAccentGreen
@@ -533,8 +536,9 @@ private fun AppearanceSectionCard(
         modifier =
             Modifier
                 .fillMaxWidth()
+                .glassChrome(shape = RoundedCornerShape(14.dp), material = GlassMaterial.REGULAR)
                 .background(
-                    color = TajsOSTheme.SurfaceLow.copy(alpha = 0.55f),
+                    color = glassContainerColor(TajsOSTheme.SurfaceLow.copy(alpha = 0.55f)),
                     shape = RoundedCornerShape(14.dp),
                 ).border(
                     width = 1.dp,
@@ -613,8 +617,9 @@ private fun SettingsMedicationItem(
         modifier =
             Modifier
                 .fillMaxWidth()
+                .glassChrome(shape = RoundedCornerShape(TajsOSTheme.RadiusMd), material = GlassMaterial.REGULAR)
                 .background(
-                    color = TajsOSTheme.Surface,
+                    color = glassContainerColor(TajsOSTheme.Surface),
                     shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                 ).padding(TajsOSTheme.SpacingMd),
     ) {
