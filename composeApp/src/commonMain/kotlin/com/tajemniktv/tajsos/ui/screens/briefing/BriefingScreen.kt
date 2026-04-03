@@ -95,6 +95,19 @@ import kotlin.time.Instant
 /**
  * Calm, desktop-first orientation screen showing a lightweight daily briefing.
  */
+/**
+ * Displays the daily briefing screen built from ViewModel state and supplied navigation/capture callbacks.
+ *
+ * Collects dashboard, today's/all nodes, calendar entries, current mode, and user profile from the provided
+ * MainViewModel and renders a greeting, summary lines (priorities, events, notes), a set of quick-action cards,
+ * and signal cards for the next upcoming event, recent nodes, and a resume node. User interactions invoke the
+ * provided navigation and entry-creation callbacks.
+ *
+ * @param viewModel Source of UI state (dashboard, nodes, calendar entries, mode, profile) used to derive the view.
+ * @param onNavigateTo Callback invoked with a destination Screen when an action requests navigation.
+ * @param onNavigateToTasks Callback invoked to navigate specifically to the tasks screen.
+ * @param onNewEntry Callback invoked to start creating a new entry/capture from the briefing UI.
+ */
 @Composable
 fun BriefingScreen(
     viewModel: MainViewModel,
@@ -211,6 +224,24 @@ fun BriefingScreen(
     }
 }
 
+/**
+ * Renders the main briefing layout: header (greeting, mode, summary lines), a row of quick-action cards,
+ * three signal cards (upcoming, recent, resume), and a bottom capture field.
+ *
+ * @param modifier Modifier applied to the root container.
+ * @param greetingText Localized greeting (e.g., "Good morning").
+ * @param userName Display name shown alongside the greeting.
+ * @param modeLine Single-line status or mode label shown under the greeting.
+ * @param prioritiesLine Summary text for today's priority tasks.
+ * @param eventsLine Summary text for today's events.
+ * @param notesLine Summary text for recent notes.
+ * @param quickActions List of action descriptors used to render the quick-action cards.
+ * @param upcomingTitle Title of the next calendar entry, or `null` if none.
+ * @param upcomingTime Formatted time string for the upcoming entry, or `null` if none.
+ * @param recentNodes Two most recently updated nodes to display in the Recent card.
+ * @param resumeNode Node suggested for resuming work, or `null` if none.
+ * @param onCapture Callback invoked when the capture field is clicked.
+ */
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
 private fun BriefingMainPane(
@@ -314,6 +345,18 @@ private fun BriefingMainPane(
     }
 }
 
+/**
+ * Renders three briefing signal cards: Upcoming, Recent, and Resume.
+ *
+ * Each card displays localized labels and either a placeholder message when its data is absent
+ * or the corresponding content: the next event time and title, a list of recent nodes with
+ * relative update times, and a resumable node with title and content snippet.
+ *
+ * @param upcomingTitle The title of the next upcoming event, or `null` when none is available.
+ * @param upcomingTime A formatted time string for the upcoming event, or `null`.
+ * @param recentNodes A list of recent nodes to display; each item shows its title and relative updated text.
+ * @param resumeNode The node suggested for resuming work, or `null` when there is no resume candidate.
+ */
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
 private fun BriefingSignalSections(
@@ -440,6 +483,12 @@ private fun BriefingSignalSections(
     }
 }
 
+/**
+ * Displays content inside a padded column on a rounded, semi-transparent surface matching the briefing theme.
+ *
+ * @param modifier Modifier applied to the outer surface.
+ * @param content Slot for the card's vertical content; invoked with a ColumnScope.
+ */
 @Composable
 private fun BriefingSignalCard(
     modifier: Modifier = Modifier,
@@ -459,6 +508,11 @@ private fun BriefingSignalCard(
     }
 }
 
+/**
+ * Renders a section label in uppercase using the theme's small label typography and primary color.
+ *
+ * @param text The label text to display.
+ */
 @Composable
 private fun BriefingSectionLabel(text: String) {
     Text(
@@ -468,6 +522,13 @@ private fun BriefingSectionLabel(text: String) {
     )
 }
 
+/**
+ * Displays a clickable briefing action card showing an icon, a title, and a subtitle.
+ *
+ * The card invokes `action.onClick` when pressed and presents the visual elements defined by the provided `BriefingAction`.
+ *
+ * @param action The action model containing the title resource, subtitle text, icon, and click handler to render and execute.
+ */
 @Composable
 private fun BriefingActionCard(action: BriefingAction) {
     Surface(
@@ -514,6 +575,13 @@ private fun BriefingActionCard(action: BriefingAction) {
     }
 }
 
+/**
+ * Renders a clickable capture field used to start creating a new entry.
+ *
+ * Displays an edit icon and placeholder text on the left and a schedule icon on the right.
+ *
+ * @param onClick Callback invoked when the field is clicked.
+ */
 @Composable
 private fun BriefingCaptureField(onClick: () -> Unit) {
     Surface(
@@ -555,6 +623,11 @@ private fun BriefingCaptureField(onClick: () -> Unit) {
     }
 }
 
+/**
+ * Draws a rounded container with a subtle radial gradient used as the briefing background.
+ *
+ * @param modifier Modifier applied to the container (e.g., sizing, padding, or layout adjustments).
+ */
 @Composable
 private fun BriefingAtmosphere(modifier: Modifier = Modifier) {
     Box(
@@ -574,7 +647,13 @@ private fun BriefingAtmosphere(modifier: Modifier = Modifier) {
     )
 }
 
-@Composable
+/**
+     * Selects a localized greeting string appropriate for the given hour of day.
+     *
+     * @param hour The hour of day in 24-hour format (typically 0–23).
+     * @return The localized greeting string for the provided hour.
+     */
+    @Composable
 private fun briefingGreeting(hour: Int): String =
     when (hour)
     {
@@ -584,6 +663,12 @@ private fun briefingGreeting(hour: Int): String =
         else -> stringResource(Res.string.briefing_greeting_night)
     }
 
+/**
+ * Produces a localized human-readable label describing how long ago a timestamp occurred.
+ *
+ * @param updatedAt Time of the event in milliseconds since the Unix epoch.
+ * @return A localized string: `"updated now"` if less than one hour, `"updated X hours"` if less than 24 hours, or `"updated Y days"` otherwise.
+ */
 @Composable
 private fun relativeUpdatedText(updatedAt: Long): String {
     val diffHours = ((Clock.System.now().toEpochMilliseconds() - updatedAt) / 3_600_000L).coerceAtLeast(0L)
@@ -596,6 +681,12 @@ private fun relativeUpdatedText(updatedAt: Long): String {
     return stringResource(Res.string.briefing_recent_updated_days, diffHours / 24L)
 }
 
+/**
+ * Formats an epoch-millisecond timestamp into the local time string "HH:MM".
+ *
+ * @param timestamp Epoch milliseconds since Unix epoch.
+ * @return The local time portion formatted as `HH:MM`.
+ */
 private fun formatClockTime(timestamp: Long): String {
     val local = Instant.fromEpochMilliseconds(timestamp).toLocalDateTime(TimeZone.currentSystemDefault())
     return local.time

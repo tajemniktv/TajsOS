@@ -378,10 +378,15 @@ sealed class Screen(
 
     companion object {
         /**
-         * Finds the Screen corresponding to the base segment of a navigation route.
+         * Resolve a navigation route string to its corresponding Screen.
+         *
+         * The function first checks for an exact screen route match (including query parameters), then attempts to match
+         * tab-style `Sub` routes derived from query parameters, applies a special-case mapping of the legacy study route
+         * to `Education`, and finally falls back to matching the first root screen whose base path segment equals the
+         * route's base segment.
          *
          * @param route The navigation route string, which may include path segments and query parameters (for example, "note/123?edit=true"); may be null.
-         * @return The matching `Screen` whose route's base segment equals the provided route's base segment, or `null` if `route` is null or no match exists.
+         * @return The matching `Screen`, or `null` if `route` is null or no match exists.
          */
         fun fromRoute(route: String?): Screen? {
             if (route == null) return null

@@ -546,6 +546,18 @@ internal fun renderActionsBlock(context: DashboardBlockContext) {
     StateAwareActionsGrid(viewModel = context.viewModel, onNavigateTo = context.onNavigateTo)
 }
 
+/**
+ * Renders the dashboard's Suggestions column, showing zero or more suggestion groups
+ * (context match, recovery/low-energy, batch suggestion, quick wins, deep work,
+ * critical projects, deserves attention, upcoming deadlines) based on the provided state.
+ *
+ * Each visible group is populated from `context.dashboardState` and wires edits/navigation
+ * through callbacks on the provided `context`. The batch suggestion is shown only when
+ * a non-empty batch exists; its area name falls back to `"GENERAL"` when no matching
+ * area title is available.
+ *
+ * @param context The dashboard block context containing state, area list, callbacks, and view model used to determine and handle suggestion groups.
+ */
 @Composable
 internal fun renderSuggestionsBlock(context: DashboardBlockContext) {
     Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingLg)) {
