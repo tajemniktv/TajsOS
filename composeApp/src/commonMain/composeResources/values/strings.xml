@@ -205,8 +205,14 @@
     <string name="briefing_recent">Recent</string>
     <string name="briefing_no_recent">No recent items.</string>
     <string name="briefing_recent_updated_now">Updated just now</string>
-    <string name="briefing_recent_updated_hours">Updated %1$dh ago</string>
-    <string name="briefing_recent_updated_days">Updated %1$dd ago</string>
+    <plurals name="briefing_recent_updated_hours">
+        <item quantity="one">Updated %1$dh ago</item>
+        <item quantity="other">Updated %1$dh ago</item>
+    </plurals>
+    <plurals name="briefing_recent_updated_days">
+        <item quantity="one">Updated %1$dd ago</item>
+        <item quantity="other">Updated %1$dd ago</item>
+    </plurals>
     <string name="briefing_resume">Resume</string>
     <string name="briefing_no_resume">No item to resume.</string>
     <string name="briefing_resume_hint">Pick up where you left off.</string>
@@ -1218,7 +1224,6 @@
     <string name="intent_shared_image">Shared Image</string>
     <string name="intent_shared_images">Shared Images</string>
 </resources>
-
 
 
 

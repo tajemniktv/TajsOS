@@ -676,9 +676,9 @@ private fun relativeUpdatedText(updatedAt: Long): String {
         return stringResource(Res.string.briefing_recent_updated_now)
     }
     if (diffHours < 24L) {
-        return stringResource(Res.string.briefing_recent_updated_hours, diffHours)
+        return pluralStringResource(Res.plurals.briefing_recent_updated_hours, diffHours.toInt(), diffHours)
     }
-    return stringResource(Res.string.briefing_recent_updated_days, diffHours / 24L)
+    return pluralStringResource(Res.plurals.briefing_recent_updated_days, (diffHours / 24L).toInt(), diffHours / 24L)
 }
 
 /**

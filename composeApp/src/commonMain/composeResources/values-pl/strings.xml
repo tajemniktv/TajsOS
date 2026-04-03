@@ -201,8 +201,18 @@
     <string name="briefing_recent">Ostatnie</string>
     <string name="briefing_no_recent">Brak ostatnich elementów.</string>
     <string name="briefing_recent_updated_now">Zaktualizowano przed chwilą</string>
-    <string name="briefing_recent_updated_hours">Zaktualizowano %1$dh temu</string>
-    <string name="briefing_recent_updated_days">Zaktualizowano %1$dd temu</string>
+    <plurals name="briefing_recent_updated_hours">
+        <item quantity="one">Zaktualizowano %1$dh temu</item>
+        <item quantity="few">Zaktualizowano %1$dh temu</item>
+        <item quantity="many">Zaktualizowano %1$dh temu</item>
+        <item quantity="other">Zaktualizowano %1$dh temu</item>
+    </plurals>
+    <plurals name="briefing_recent_updated_days">
+        <item quantity="one">Zaktualizowano %1$dd temu</item>
+        <item quantity="few">Zaktualizowano %1$dd temu</item>
+        <item quantity="many">Zaktualizowano %1$dd temu</item>
+        <item quantity="other">Zaktualizowano %1$dd temu</item>
+    </plurals>
     <string name="briefing_resume">Wznów</string>
     <string name="briefing_no_resume">Brak elementu do wznowienia.</string>
     <string name="briefing_resume_hint">Wróć do miejsca, w którym skończyłeś.</string>
@@ -1071,7 +1081,6 @@
     <string name="intent_shared_image">Udostępniony obraz</string>
     <string name="intent_shared_images">Udostępnione obrazy</string>
 </resources>
-
 
 
 

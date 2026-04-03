@@ -588,21 +588,21 @@ internal fun renderSuggestionsBlock(context: DashboardBlockContext) {
         }
 
         if (context.dashboardState.batchableTasks.isNotEmpty()) {
-            val firstBatch =
-                context.dashboardState.batchableTasks.values
-                    .firstOrNull { it.isNotEmpty() }
-                    ?: return@Column
-            val areaName =
-                context.allAreas.find { it.id == firstBatch.firstOrNull()?.node?.areaId }?.title
-                    ?: "GENERAL"
-            SuggestionGroup(
-                title = "BATCH SUGGESTION // $areaName",
-                icon = Icons.Default.Layers,
-                color = TajsOSTheme.Accent,
-                nodes = firstBatch,
-                onEditNode = context.onEditNode,
-                description = "You have ${firstBatch.size} tasks in $areaName. Batch them?",
-            )
+            context.dashboardState.batchableTasks.values
+                .firstOrNull { it.isNotEmpty() }
+                ?.let { firstBatch ->
+                    val areaName =
+                        context.allAreas.find { it.id == firstBatch.firstOrNull()?.node?.areaId }?.title
+                            ?: "GENERAL"
+                    SuggestionGroup(
+                        title = "BATCH SUGGESTION // $areaName",
+                        icon = Icons.Default.Layers,
+                        color = TajsOSTheme.Accent,
+                        nodes = firstBatch,
+                        onEditNode = context.onEditNode,
+                        description = "You have ${firstBatch.size} tasks in $areaName. Batch them?",
+                    )
+                }
         }
 
         if (context.dashboardState.quickWins.isNotEmpty()) {
