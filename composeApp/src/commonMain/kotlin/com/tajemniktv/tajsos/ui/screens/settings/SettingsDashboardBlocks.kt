@@ -79,7 +79,6 @@ object SettingsDashboardBlocks {
             "settings_health" to ::renderSettingsHealth,
             "settings_feature_packs" to ::renderSettingsFeaturePacks,
             "settings_data" to ::renderSettingsData,
-            "settings_debug" to ::renderSettingsDebug,
             "settings_appearance" to ::renderSettingsAppearance,
             "settings_preferences" to ::renderSettingsPreferences,
         )
@@ -267,23 +266,6 @@ private fun renderSettingsData(context: SettingsDashboardContext) {
                 ),
         ) {
             Text("Import JSON")
-        }
-    }
-}
-
-@Composable
-private fun renderSettingsDebug(context: SettingsDashboardContext) {
-    SettingsSimpleScaffold(
-        title = "DEBUG",
-        description = "Internal diagnostics and crash testing controls.",
-    ) {
-        Button(
-            onClick = context.onForceCrash,
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            colors = ButtonDefaults.buttonColors(containerColor = TajsOSTheme.Error),
-        ) {
-            Text(stringResource(Res.string.settings_force_crash))
         }
     }
 }
