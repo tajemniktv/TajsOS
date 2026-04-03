@@ -146,7 +146,11 @@ private fun TodaySection(
                 fontWeight = FontWeight.SemiBold,
             )
             if (tasks.isEmpty()) {
-                Text(stringResource(Res.string.tasks_no_results), color = TajsOSTheme.Muted)
+                EmptyState(
+                    message = stringResource(Res.string.tasks_no_results),
+                    fillParent = false,
+                    showContainer = false,
+                )
             } else {
                 tasks.take(8).forEach { task ->
                     Row(
