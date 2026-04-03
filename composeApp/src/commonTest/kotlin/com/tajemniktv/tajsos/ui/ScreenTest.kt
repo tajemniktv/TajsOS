@@ -12,6 +12,7 @@ import kotlin.test.assertTrue
 class ScreenTest {
     private val allScreens: List<Screen> =
         listOf(
+            Screen.Briefing,
             Screen.Dashboard,
             Screen.Search,
             Screen.Today,
@@ -49,6 +50,32 @@ class ScreenTest {
             Screen.Capacity,
             Screen.Identity,
         )
+
+    @Test
+    fun briefing_hasCorrectRoute() {
+        assertEquals("briefing", Screen.Briefing.route)
+    }
+
+    @Test
+    fun briefing_fromRouteReturnsBriefingScreen() {
+        assertEquals(Screen.Briefing, Screen.fromRoute("briefing"))
+    }
+
+    @Test
+    fun briefing_fromRouteWithQueryParamReturnsBriefingScreen() {
+        assertEquals(Screen.Briefing, Screen.fromRoute("briefing?someParam=x"))
+    }
+
+    @Test
+    fun briefing_hasNoChildren() {
+        assertTrue(Screen.Briefing.children.isEmpty())
+    }
+
+    @Test
+    fun briefing_isIncludedInAllScreensList() {
+        val routes = allScreens.map { it.route }
+        assertTrue(routes.contains("briefing"), "Briefing route should exist in screen list")
+    }
 
     @Test
     fun graphScreen_doesExistInScreenList() {
