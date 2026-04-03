@@ -152,22 +152,49 @@
     <string name="dash_warning_attention_fragmented">UWAGA ROZPROSZONA // SKUPI SIĘ NA JEDNYM OBSZARZE</string>
 
     <!-- Briefing -->
+    <string name="briefing_greeting">%1$s, %2$s.</string>
     <string name="briefing_greeting_morning">Dzień dobry</string>
     <string name="briefing_greeting_afternoon">Dobre popołudnie</string>
     <string name="briefing_greeting_evening">Dobry wieczór</string>
     <string name="briefing_greeting_night">Dobranoc</string>
     <string name="briefing_mode_line">Aktywny jest tryb: %1$s.</string>
-    <string name="briefing_priorities_count">%1$d priorytety</string>
-    <string name="briefing_event_count">%1$d wydarzenie dzisiaj</string>
-    <string name="briefing_note_count">%1$d notatek czeka</string>
+    <string name="briefing_mode_inactive">Brak aktywnego trybu.</string>
+    <plurals name="briefing_priorities_count">
+        <item quantity="one">%1$d priorytet</item>
+        <item quantity="few">%1$d priorytety</item>
+        <item quantity="many">%1$d priorytetów</item>
+        <item quantity="other">%1$d priorytetu</item>
+    </plurals>
+    <plurals name="briefing_event_count">
+        <item quantity="one">%1$d wydarzenie dzisiaj</item>
+        <item quantity="few">%1$d wydarzenia dzisiaj</item>
+        <item quantity="many">%1$d wydarzeń dzisiaj</item>
+        <item quantity="other">%1$d wydarzenia dzisiaj</item>
+    </plurals>
+    <plurals name="briefing_note_count">
+        <item quantity="one">%1$d notatka czeka</item>
+        <item quantity="few">%1$d notatki czekają</item>
+        <item quantity="many">%1$d notatek czeka</item>
+        <item quantity="other">%1$d notatki czekają</item>
+    </plurals>
     <string name="briefing_action_continue">Kontynuuj dzień</string>
     <string name="briefing_action_continue_subtitle">Wróć do najważniejszego elementu.</string>
     <string name="briefing_action_notes">Otwórz notatki</string>
-    <string name="briefing_action_notes_subtitle">Dostępne notatki: %1$d</string>
+    <plurals name="briefing_action_notes_subtitle">
+        <item quantity="one">%1$d notatka dostępna</item>
+        <item quantity="few">%1$d notatki dostępne</item>
+        <item quantity="many">%1$d notatek dostępnych</item>
+        <item quantity="other">%1$d notatki dostępne</item>
+    </plurals>
     <string name="briefing_action_capture">Przechwyć</string>
     <string name="briefing_action_capture_subtitle">Zapisz nową myśl</string>
     <string name="briefing_action_tasks">Przejrzyj zadania</string>
-    <string name="briefing_action_tasks_subtitle">Aktywne zadania: %1$d</string>
+    <plurals name="briefing_action_tasks_subtitle">
+        <item quantity="one">%1$d aktywne zadanie</item>
+        <item quantity="few">%1$d aktywne zadania</item>
+        <item quantity="many">%1$d aktywnych zadań</item>
+        <item quantity="other">%1$d aktywnego zadania</item>
+    </plurals>
     <string name="briefing_upcoming">Nadchodzące</string>
     <string name="briefing_next_event">Następne wydarzenie · %1$s</string>
     <string name="briefing_no_upcoming">Brak nadchodzących wydarzeń.</string>

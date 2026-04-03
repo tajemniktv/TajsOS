@@ -578,9 +578,10 @@ internal fun renderSuggestionsBlock(context: DashboardBlockContext) {
         if (context.dashboardState.batchableTasks.isNotEmpty()) {
             val firstBatch =
                 context.dashboardState.batchableTasks.values
-                    .first()
+                    .firstOrNull { it.isNotEmpty() }
+                    ?: return@Column
             val areaName =
-                context.allAreas.find { it.id == firstBatch.first().node.areaId }?.title
+                context.allAreas.find { it.id == firstBatch.firstOrNull()?.node?.areaId }?.title
                     ?: "GENERAL"
             SuggestionGroup(
                 title = "BATCH SUGGESTION // $areaName",

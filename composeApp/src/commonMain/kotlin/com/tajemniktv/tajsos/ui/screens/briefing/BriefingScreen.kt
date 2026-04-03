@@ -9,11 +9,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,8 +21,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
@@ -49,13 +47,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeWithPin
+import com.tajemniktv.tajsos.data.TaskState
 import com.tajemniktv.tajsos.data.resolveDisplayName
+import com.tajemniktv.tajsos.data.taskStateOrNull
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.briefing_action_capture
@@ -68,10 +69,12 @@ import tajsos.composeapp.generated.resources.briefing_action_tasks
 import tajsos.composeapp.generated.resources.briefing_action_tasks_subtitle
 import tajsos.composeapp.generated.resources.briefing_capture_placeholder
 import tajsos.composeapp.generated.resources.briefing_event_count
+import tajsos.composeapp.generated.resources.briefing_greeting
 import tajsos.composeapp.generated.resources.briefing_greeting_afternoon
 import tajsos.composeapp.generated.resources.briefing_greeting_evening
 import tajsos.composeapp.generated.resources.briefing_greeting_morning
 import tajsos.composeapp.generated.resources.briefing_greeting_night
+import tajsos.composeapp.generated.resources.briefing_mode_inactive
 import tajsos.composeapp.generated.resources.briefing_mode_line
 import tajsos.composeapp.generated.resources.briefing_next_event
 import tajsos.composeapp.generated.resources.briefing_no_recent
@@ -86,7 +89,6 @@ import tajsos.composeapp.generated.resources.briefing_recent_updated_now
 import tajsos.composeapp.generated.resources.briefing_resume
 import tajsos.composeapp.generated.resources.briefing_resume_hint
 import tajsos.composeapp.generated.resources.briefing_upcoming
-import tajsos.composeapp.generated.resources.common_no_active_mode
 import kotlin.time.Clock
 import kotlin.time.Instant
 
@@ -107,12 +109,24 @@ fun BriefingScreen(
     val currentMode by viewModel.currentMode.collectAsState()
     val userProfile by viewModel.userProfile.collectAsState()
 
-    val now = Clock.System.now().toEpochMilliseconds()
+    val timeZone = TimeZone.currentSystemDefault()
+    val nowInstant = Clock.System.now()
+    val nowEpochMillis = nowInstant.toEpochMilliseconds()
+    val todayDate = nowInstant.toLocalDateTime(timeZone).date
+    val todayEventCount =
+        remember(calendarEntries, todayDate, timeZone) {
+            calendarEntries.count { entry ->
+                Instant
+                    .fromEpochMilliseconds(entry.startAt)
+                    .toLocalDateTime(timeZone)
+                    .date == todayDate
+            }
+        }
     val upcomingEvent =
-        remember(calendarEntries, now) {
+        remember(calendarEntries, nowEpochMillis) {
             calendarEntries
                 .asSequence()
-                .filter { it.startAt >= now }
+                .filter { it.startAt >= nowEpochMillis }
                 .sortedBy { it.startAt }
                 .firstOrNull()
         }
@@ -130,13 +144,25 @@ fun BriefingScreen(
         }
     val priorityCount =
         remember(todayNodes, dashboardState) {
-            val activeToday = todayNodes.count { it.status != "done" && it.status != "archived" }
+            val activeToday =
+                todayNodes.count { node ->
+                    when (node.taskStateOrNull())
+                    {
+                        TaskState.DONE,
+                        TaskState.ARCHIVED,
+                        -> false
+
+                        else -> true
+                    }
+                }
             if (activeToday > 0) activeToday else dashboardState.quickWins.size
         }
-    val nowLocal = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+    val nowLocal = nowInstant.toLocalDateTime(timeZone)
     val greetingText = briefingGreeting(nowLocal.hour)
     val userName = userProfile.resolveDisplayName()
-    val modeName = currentMode?.name ?: stringResource(Res.string.common_no_active_mode)
+    val modeLine =
+        currentMode?.name?.let { stringResource(Res.string.briefing_mode_line, it) }
+            ?: stringResource(Res.string.briefing_mode_inactive)
 
     val quickActions =
         listOf(
@@ -148,7 +174,7 @@ fun BriefingScreen(
             ),
             BriefingAction(
                 titleRes = Res.string.briefing_action_notes,
-                subtitle = stringResource(Res.string.briefing_action_notes_subtitle, dashboardState.notesCount),
+                subtitle = pluralStringResource(Res.plurals.briefing_action_notes_subtitle, dashboardState.notesCount, dashboardState.notesCount),
                 icon = Icons.Default.Description,
                 onClick = { onNavigateTo(Screen.Notes) },
             ),
@@ -160,40 +186,28 @@ fun BriefingScreen(
             ),
             BriefingAction(
                 titleRes = Res.string.briefing_action_tasks,
-                subtitle = stringResource(Res.string.briefing_action_tasks_subtitle, dashboardState.tasksCount),
+                subtitle = pluralStringResource(Res.plurals.briefing_action_tasks_subtitle, dashboardState.tasksCount, dashboardState.tasksCount),
                 icon = Icons.Default.Checklist,
                 onClick = onNavigateToTasks,
             ),
         )
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val showSignalRail = maxWidth >= 1160.dp
-
-        Row(
+        BriefingMainPane(
             modifier = Modifier.fillMaxSize(),
-        ) {
-            BriefingMainPane(
-                modifier = Modifier.weight(1f),
-                greetingText = greetingText,
-                userName = userName,
-                modeLine = stringResource(Res.string.briefing_mode_line, modeName),
-                prioritiesLine = stringResource(Res.string.briefing_priorities_count, priorityCount),
-                eventsLine = stringResource(Res.string.briefing_event_count, if (upcomingEvent == null) 0 else 1),
-                notesLine = stringResource(Res.string.briefing_note_count, dashboardState.notesCount),
-                quickActions = quickActions,
-                onCapture = onNewEntry,
-            )
-
-            if (showSignalRail) {
-                BriefingSignalRail(
-                    modifier = Modifier.width(300.dp).fillMaxHeight(),
-                    upcomingTitle = upcomingEvent?.title,
-                    upcomingTime = upcomingEvent?.startAt?.let(::formatClockTime),
-                    recentNodes = recentNodes,
-                    resumeNode = resumeNode,
-                )
-            }
-        }
+            greetingText = greetingText,
+            userName = userName,
+            modeLine = modeLine,
+            prioritiesLine = pluralStringResource(Res.plurals.briefing_priorities_count, priorityCount, priorityCount),
+            eventsLine = pluralStringResource(Res.plurals.briefing_event_count, todayEventCount, todayEventCount),
+            notesLine = pluralStringResource(Res.plurals.briefing_note_count, dashboardState.notesCount, dashboardState.notesCount),
+            quickActions = quickActions,
+            upcomingTitle = upcomingEvent?.title,
+            upcomingTime = upcomingEvent?.startAt?.let(::formatClockTime),
+            recentNodes = recentNodes,
+            resumeNode = resumeNode,
+            onCapture = onNewEntry,
+        )
     }
 }
 
@@ -208,12 +222,15 @@ private fun BriefingMainPane(
     eventsLine: String,
     notesLine: String,
     quickActions: List<BriefingAction>,
+    upcomingTitle: String?,
+    upcomingTime: String?,
+    recentNodes: List<NodeWithPin>,
+    resumeNode: NodeWithPin?,
     onCapture: () -> Unit,
 ) {
     Box(
         modifier =
             modifier
-                .fillMaxHeight()
                 .background(TajsOSTheme.Background)
                 .padding(horizontal = 40.dp, vertical = 28.dp),
     ) {
@@ -232,7 +249,7 @@ private fun BriefingMainPane(
                 modifier = Modifier.widthIn(max = 680.dp),
             ) {
                 Text(
-                    text = "$greetingText, $userName.",
+                    text = stringResource(Res.string.briefing_greeting, greetingText, userName),
                     style = MaterialTheme.typography.headlineSmall,
                     color = TajsOSTheme.Text,
                     fontWeight = FontWeight.SemiBold,
@@ -283,6 +300,14 @@ private fun BriefingMainPane(
                 }
             }
 
+            Spacer(Modifier.height(30.dp))
+            BriefingSignalSections(
+                upcomingTitle = upcomingTitle,
+                upcomingTime = upcomingTime,
+                recentNodes = recentNodes,
+                resumeNode = resumeNode,
+            )
+
             Spacer(Modifier.weight(1f))
             BriefingCaptureField(onClick = onCapture)
         }
@@ -290,24 +315,23 @@ private fun BriefingMainPane(
 }
 
 @Composable
-private fun BriefingSignalRail(
-    modifier: Modifier,
+@OptIn(ExperimentalLayoutApi::class)
+private fun BriefingSignalSections(
     upcomingTitle: String?,
     upcomingTime: String?,
     recentNodes: List<NodeWithPin>,
     resumeNode: NodeWithPin?,
 ) {
-    Surface(
-        modifier = modifier.padding(start = 2.dp),
-        color = TajsOSTheme.SurfaceLow.copy(alpha = 0.55f),
-        tonalElevation = 0.dp,
-        shadowElevation = 0.dp,
+    FlowRow(
+        modifier = Modifier.fillMaxWidth().widthIn(max = 980.dp),
+        horizontalArrangement = Arrangement.spacedBy(14.dp),
+        verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
-        Column(
-            modifier = Modifier.fillMaxSize().padding(horizontal = 24.dp, vertical = 36.dp),
-            verticalArrangement = Arrangement.spacedBy(28.dp),
+        BriefingSignalCard(
+            modifier = Modifier.widthIn(min = 220.dp, max = 310.dp),
         ) {
             BriefingSectionLabel(text = stringResource(Res.string.briefing_upcoming))
+            Spacer(Modifier.height(10.dp))
             if (upcomingTitle == null) {
                 Text(
                     text = stringResource(Res.string.briefing_no_upcoming),
@@ -320,6 +344,7 @@ private fun BriefingSignalRail(
                     style = MaterialTheme.typography.labelSmall,
                     color = TajsOSTheme.Muted,
                 )
+                Spacer(Modifier.height(6.dp))
                 Text(
                     text = upcomingTitle,
                     style = MaterialTheme.typography.titleMedium,
@@ -328,8 +353,13 @@ private fun BriefingSignalRail(
                     overflow = TextOverflow.Ellipsis,
                 )
             }
+        }
 
+        BriefingSignalCard(
+            modifier = Modifier.widthIn(min = 220.dp, max = 310.dp),
+        ) {
             BriefingSectionLabel(text = stringResource(Res.string.briefing_recent))
+            Spacer(Modifier.height(10.dp))
             if (recentNodes.isEmpty()) {
                 Text(
                     text = stringResource(Res.string.briefing_no_recent),
@@ -337,11 +367,8 @@ private fun BriefingSignalRail(
                     color = TajsOSTheme.Muted,
                 )
             } else {
-                LazyColumn(
-                    modifier = Modifier.height(150.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp),
-                ) {
-                    items(recentNodes, key = { it.node.id }) { node ->
+                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    recentNodes.forEach { node ->
                         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                             Icon(
                                 imageVector = Icons.Default.CheckCircle,
@@ -367,8 +394,13 @@ private fun BriefingSignalRail(
                     }
                 }
             }
+        }
 
+        BriefingSignalCard(
+            modifier = Modifier.widthIn(min = 220.dp, max = 310.dp),
+        ) {
             BriefingSectionLabel(text = stringResource(Res.string.briefing_resume))
+            Spacer(Modifier.height(10.dp))
             if (resumeNode == null) {
                 Text(
                     text = stringResource(Res.string.briefing_no_resume),
@@ -405,6 +437,25 @@ private fun BriefingSignalRail(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun BriefingSignalCard(
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(14.dp),
+        color = TajsOSTheme.SurfaceLow.copy(alpha = 0.55f),
+        tonalElevation = 0.dp,
+        shadowElevation = 0.dp,
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            content = content,
+        )
     }
 }
 

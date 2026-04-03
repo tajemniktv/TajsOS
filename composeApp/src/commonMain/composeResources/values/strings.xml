@@ -161,22 +161,44 @@
     <string name="dash_module_view">VIEW</string>
 
     <!-- Briefing -->
+    <string name="briefing_greeting">%1$s, %2$s.</string>
     <string name="briefing_greeting_morning">Good morning</string>
     <string name="briefing_greeting_afternoon">Good afternoon</string>
     <string name="briefing_greeting_evening">Good evening</string>
     <string name="briefing_greeting_night">Good night</string>
     <string name="briefing_mode_line">%1$s mode is active.</string>
-    <string name="briefing_priorities_count">%1$d priorities</string>
-    <string name="briefing_event_count">%1$d event today</string>
-    <string name="briefing_note_count">%1$d notes waiting</string>
+    <string name="briefing_mode_inactive">No active mode.</string>
+    <plurals name="briefing_priorities_count">
+        <item quantity="zero">%1$d priorities</item>
+        <item quantity="one">%1$d priority</item>
+        <item quantity="other">%1$d priorities</item>
+    </plurals>
+    <plurals name="briefing_event_count">
+        <item quantity="zero">no events today</item>
+        <item quantity="one">%1$d event today</item>
+        <item quantity="other">%1$d events today</item>
+    </plurals>
+    <plurals name="briefing_note_count">
+        <item quantity="zero">no notes waiting</item>
+        <item quantity="one">%1$d note waiting</item>
+        <item quantity="other">%1$d notes waiting</item>
+    </plurals>
     <string name="briefing_action_continue">Continue today</string>
     <string name="briefing_action_continue_subtitle">Pick up your most relevant item.</string>
     <string name="briefing_action_notes">Open notes</string>
-    <string name="briefing_action_notes_subtitle">%1$d notes available</string>
+    <plurals name="briefing_action_notes_subtitle">
+        <item quantity="zero">No notes available</item>
+        <item quantity="one">%1$d note available</item>
+        <item quantity="other">%1$d notes available</item>
+    </plurals>
     <string name="briefing_action_capture">Capture</string>
     <string name="briefing_action_capture_subtitle">Save a thought</string>
     <string name="briefing_action_tasks">Review tasks</string>
-    <string name="briefing_action_tasks_subtitle">%1$d active tasks</string>
+    <plurals name="briefing_action_tasks_subtitle">
+        <item quantity="zero">No active tasks</item>
+        <item quantity="one">%1$d active task</item>
+        <item quantity="other">%1$d active tasks</item>
+    </plurals>
     <string name="briefing_upcoming">Upcoming</string>
     <string name="briefing_next_event">Next event · %1$s</string>
     <string name="briefing_no_upcoming">No upcoming event.</string>
