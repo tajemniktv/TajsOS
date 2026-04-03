@@ -94,8 +94,7 @@ import kotlin.time.Instant
 
 /**
  * Calm, desktop-first orientation screen showing a lightweight daily briefing.
- */
-/**
+ *
  * Displays the daily briefing screen built from ViewModel state and supplied navigation/capture callbacks.
  *
  * Collects dashboard, today's/all nodes, calendar entries, current mode, and user profile from the provided
@@ -153,7 +152,8 @@ fun BriefingScreen(
         }
     val resumeNode =
         remember(dashboardState, recentNodes) {
-            dashboardState.relevantNote ?: dashboardState.forgottenWisdom ?: recentNodes.firstOrNull()
+            dashboardState.relevantNote ?: dashboardState.forgottenWisdom
+                ?: recentNodes.firstOrNull()
         }
     val priorityCount =
         remember(todayNodes, dashboardState) {
@@ -181,13 +181,20 @@ fun BriefingScreen(
         listOf(
             BriefingAction(
                 titleRes = Res.string.briefing_action_continue,
-                subtitle = todayNodes.firstOrNull()?.title ?: stringResource(Res.string.briefing_action_continue_subtitle),
+                subtitle =
+                    todayNodes.firstOrNull()?.title
+                        ?: stringResource(Res.string.briefing_action_continue_subtitle),
                 icon = Icons.Default.PlayArrow,
                 onClick = { onNavigateTo(Screen.Today) },
             ),
             BriefingAction(
                 titleRes = Res.string.briefing_action_notes,
-                subtitle = pluralStringResource(Res.plurals.briefing_action_notes_subtitle, dashboardState.notesCount, dashboardState.notesCount),
+                subtitle =
+                    pluralStringResource(
+                        Res.plurals.briefing_action_notes_subtitle,
+                        dashboardState.notesCount,
+                        dashboardState.notesCount,
+                    ),
                 icon = Icons.Default.Description,
                 onClick = { onNavigateTo(Screen.Notes) },
             ),
@@ -199,7 +206,12 @@ fun BriefingScreen(
             ),
             BriefingAction(
                 titleRes = Res.string.briefing_action_tasks,
-                subtitle = pluralStringResource(Res.plurals.briefing_action_tasks_subtitle, dashboardState.tasksCount, dashboardState.tasksCount),
+                subtitle =
+                    pluralStringResource(
+                        Res.plurals.briefing_action_tasks_subtitle,
+                        dashboardState.tasksCount,
+                        dashboardState.tasksCount,
+                    ),
                 icon = Icons.Default.Checklist,
                 onClick = onNavigateToTasks,
             ),
@@ -211,9 +223,24 @@ fun BriefingScreen(
             greetingText = greetingText,
             userName = userName,
             modeLine = modeLine,
-            prioritiesLine = pluralStringResource(Res.plurals.briefing_priorities_count, priorityCount, priorityCount),
-            eventsLine = pluralStringResource(Res.plurals.briefing_event_count, todayEventCount, todayEventCount),
-            notesLine = pluralStringResource(Res.plurals.briefing_note_count, dashboardState.notesCount, dashboardState.notesCount),
+            prioritiesLine =
+                pluralStringResource(
+                    Res.plurals.briefing_priorities_count,
+                    priorityCount,
+                    priorityCount,
+                ),
+            eventsLine =
+                pluralStringResource(
+                    Res.plurals.briefing_event_count,
+                    todayEventCount,
+                    todayEventCount,
+                ),
+            notesLine =
+                pluralStringResource(
+                    Res.plurals.briefing_note_count,
+                    dashboardState.notesCount,
+                    dashboardState.notesCount,
+                ),
             quickActions = quickActions,
             upcomingTitle = upcomingEvent?.title,
             upcomingTime = upcomingEvent?.startAt?.let(::formatClockTime),
@@ -245,7 +272,7 @@ fun BriefingScreen(
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
 private fun BriefingMainPane(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     greetingText: String,
     userName: String,
     modeLine: String,
@@ -290,7 +317,10 @@ private fun BriefingMainPane(
                     style = MaterialTheme.typography.bodyLarge,
                     color = TajsOSTheme.Muted,
                 )
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
                     Text(
                         text = prioritiesLine,
                         style = MaterialTheme.typography.bodyLarge,
@@ -648,12 +678,12 @@ private fun BriefingAtmosphere(modifier: Modifier = Modifier) {
 }
 
 /**
-     * Selects a localized greeting string appropriate for the given hour of day.
-     *
-     * @param hour The hour of day in 24-hour format (typically 0–23).
-     * @return The localized greeting string for the provided hour.
-     */
-    @Composable
+ * Selects a localized greeting string appropriate for the given hour of day.
+ *
+ * @param hour The hour of day in 24-hour format (typically 0–23).
+ * @return The localized greeting string for the provided hour.
+ */
+@Composable
 private fun briefingGreeting(hour: Int): String =
     when (briefingPeriodForHour(hour))
     {
@@ -676,9 +706,17 @@ private fun relativeUpdatedText(updatedAt: Long): String {
         return stringResource(Res.string.briefing_recent_updated_now)
     }
     if (diffHours < 24L) {
-        return stringResource(Res.string.briefing_recent_updated_hours, diffHours)
+        return pluralStringResource(
+            Res.plurals.briefing_recent_updated_hours,
+            diffHours.toInt(),
+            diffHours,
+        )
     }
-    return stringResource(Res.string.briefing_recent_updated_days, diffHours / 24L)
+    return pluralStringResource(
+        Res.plurals.briefing_recent_updated_days,
+        (diffHours / 24L).toInt(),
+        diffHours / 24L,
+    )
 }
 
 /**
@@ -688,7 +726,8 @@ private fun relativeUpdatedText(updatedAt: Long): String {
  * @return The local time portion formatted as `HH:MM`.
  */
 internal fun formatClockTime(timestamp: Long): String {
-    val local = Instant.fromEpochMilliseconds(timestamp).toLocalDateTime(TimeZone.currentSystemDefault())
+    val local =
+        Instant.fromEpochMilliseconds(timestamp).toLocalDateTime(TimeZone.currentSystemDefault())
     return local.time
         .toString()
         .take(5)
@@ -701,7 +740,8 @@ internal fun formatClockTime(timestamp: Long): String {
  * @return One of `"morning"`, `"afternoon"`, `"evening"`, or `"night"`.
  */
 internal fun briefingPeriodForHour(hour: Int): String =
-    when (hour) {
+    when (hour)
+    {
         in 5..11 -> "morning"
         in 12..17 -> "afternoon"
         in 18..22 -> "evening"
@@ -715,8 +755,10 @@ internal fun briefingPeriodForHour(hour: Int): String =
  * @param updatedAt Past time in epoch milliseconds.
  * @return Non-negative number of whole hours elapsed since [updatedAt].
  */
-internal fun relativeHourDiff(nowMs: Long, updatedAt: Long): Long =
-    ((nowMs - updatedAt) / 3_600_000L).coerceAtLeast(0L)
+internal fun relativeHourDiff(
+    nowMs: Long,
+    updatedAt: Long,
+): Long = ((nowMs - updatedAt) / 3_600_000L).coerceAtLeast(0L)
 
 private data class BriefingAction(
     val titleRes: StringResource,
