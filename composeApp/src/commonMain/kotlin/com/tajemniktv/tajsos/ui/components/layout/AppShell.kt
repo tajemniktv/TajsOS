@@ -31,6 +31,7 @@ import com.tajemniktv.tajsos.ui.components.common.glassContainerColor
 import com.tajemniktv.tajsos.ui.components.common.glassChrome
 import com.tajemniktv.tajsos.ui.components.notifications.NotificationUiModel
 import com.tajemniktv.tajsos.ui.components.notifications.NotificationVariant
+import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderModel
 import com.tajemniktv.tajsos.ui.screens.tasks.TasksTab
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import dev.chrisbanes.haze.hazeSource
@@ -42,30 +43,10 @@ import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
 
 /**
- * Top-level shell layout with persistent desktop sidebar and top header.
- *
- * The shell remains static while content routes change in the main content area.
- *
- * @param isDesktop Whether the current environment is a desktop layout.
- * @param shellState The current state of the app shell (sidebar mode, etc.).
- * @param currentDestination The current navigation destination.
- * @param activeTasksTab The currently selected tab in the Tasks screen.
- * @param onNavigate Callback to handle screen navigation.
- * @param onNavigateToTasksTab Callback to handle tab changes within the Tasks screen.
- * @param onNewEntry Callback invoked when the primary "New Entry" action is triggered.
- * @param currentMode The currently active system mode.
- * @param allModes The list of all available system modes.
- * @param packRegistry The registry of available packs.
- * @param userProfile The current user profile.
- * @param isGlassmorphismEnabled Whether glass effects should be rendered.
- * @param onModeSelect Callback when a different mode is selected.
- * @param drawerState State of the navigation drawer (used in mobile).
- * @param scope Coroutine scope for launching drawer actions.
- * @param modifier The modifier to be applied to the layout.
- * @param content The composable content for the main viewing area.
+ * Top-level application chrome with persistent sidebar, shell header, and routed content slot.
  */
 @Composable
-fun AppLayout(
+fun AppShell(
     isDesktop: Boolean,
     shellState: AppShellState,
     currentDestination: NavDestination?,
@@ -81,6 +62,7 @@ fun AppLayout(
     onModeSelect: (Long) -> Unit,
     drawerState: DrawerState,
     scope: CoroutineScope,
+    screenHeader: ScreenHeaderModel,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
@@ -173,6 +155,7 @@ fun AppLayout(
                             shellState = shellState,
                             isDesktop = true,
                             onModeSelect = onModeSelect,
+                            screenHeader = screenHeader,
                             modifier = Modifier.padding(bottom = 2.dp),
                         )
 
@@ -228,6 +211,7 @@ fun AppLayout(
                             isDesktop = false,
                             onModeSelect = onModeSelect,
                             onMenuClick = { scope.launch { drawerState.open() } },
+                            screenHeader = screenHeader,
                         )
                         Box(modifier = Modifier.fillMaxSize()) {
                             content()
@@ -279,8 +263,7 @@ private fun timeGreeting(displayName: String): String {
             .toLocalDateTime(TimeZone.currentSystemDefault())
             .hour
     val dayGreeting =
-        when (hour)
-        {
+        when (hour) {
             in 5..11 -> "Good morning"
             in 12..17 -> "Good afternoon"
             in 18..22 -> "Good evening"

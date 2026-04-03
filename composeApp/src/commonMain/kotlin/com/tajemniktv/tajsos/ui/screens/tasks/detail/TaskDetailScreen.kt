@@ -8,12 +8,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -32,6 +29,10 @@ import com.tajemniktv.tajsos.data.isTaskItem
 import com.tajemniktv.tajsos.data.taskStateOrNull
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
+import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderController
+import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderModel
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior
+import com.tajemniktv.tajsos.ui.components.screen.SplitScreenScaffold
 import com.tajemniktv.tajsos.ui.screens.notes.detail.NoteDetailScreen
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.datetime.TimeZone
@@ -60,6 +61,7 @@ fun TaskDetailScreen(
     onNavigateToNode: (Long) -> Unit,
     onNavigateToSearch: () -> Unit,
     isDesktop: Boolean = false,
+    screenHeaderController: ScreenHeaderController? = null,
 ) {
     val nodes by viewModel.allNodes.collectAsState()
     val areas by viewModel.allAreas.collectAsState()
@@ -83,6 +85,7 @@ fun TaskDetailScreen(
             onNavigateToNode = onNavigateToNode,
             onNavigateToSearch = onNavigateToSearch,
             isDesktop = isDesktop,
+            screenHeaderController = screenHeaderController,
         )
         return
     }
@@ -343,48 +346,49 @@ fun TaskDetailScreen(
 
         val plan = remember(surface) { buildTaskDetailPlan(surface) }
 
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = TajsOSTheme.SpacingLg)
-                    .padding(top = TajsOSTheme.SpacingMd, bottom = 80.dp),
-            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingLg),
-        ) {
-            if (surface == TaskDetailSurface.DESKTOP) {
-                // Header is first in primary, but we want it full width above the split
-                TaskDetailBlocks.resolve("task_header")?.invoke(context)
-
-                Row(
+        SplitScreenScaffold(
+            isSplitLayout = surface == TaskDetailSurface.DESKTOP,
+            screenHeaderController = screenHeaderController,
+            screenHeader = ScreenHeaderModel(title = task.title),
+            backgroundColor = TajsOSTheme.Background,
+            scrollBehavior = ScreenScrollBehavior.PaneScroll,
+            header = {
+                if (surface == TaskDetailSurface.DESKTOP) {
+                    TaskDetailBlocks.resolve("task_header")?.invoke(context)
+                }
+            },
+            primary = {
+                Column(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
-                    verticalAlignment = Alignment.Top,
+                    verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
                 ) {
-                    Column(
-                        modifier = Modifier.weight(2f),
-                        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
-                    ) {
-                        plan.primary.filterNot { it.id == "task_header" }.forEach { block ->
-                            TaskDetailBlocks.resolve(block.id)?.invoke(context)
+                    val blocks =
+                        if (surface == TaskDetailSurface.DESKTOP) {
+                            plan.primary.filterNot { it.id == "task_header" }
+                        } else {
+                            plan.primary
                         }
-                    }
-
-                    Column(
-                        modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
-                    ) {
-                        plan.secondary.forEach { block ->
-                            TaskDetailBlocks.resolve(block.id)?.invoke(context)
-                        }
+                    blocks.forEach { block ->
+                        TaskDetailBlocks.resolve(block.id)?.invoke(context)
                     }
                 }
-            } else {
-                plan.primary.forEach { block ->
-                    TaskDetailBlocks.resolve(block.id)?.invoke(context)
-                }
-            }
-        }
+            },
+            secondary =
+                if (surface == TaskDetailSurface.DESKTOP) {
+                    {
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
+                        ) {
+                            plan.secondary.forEach { block ->
+                                TaskDetailBlocks.resolve(block.id)?.invoke(context)
+                            }
+                        }
+                    }
+                } else {
+                    null
+                },
+        )
     }
 }
 

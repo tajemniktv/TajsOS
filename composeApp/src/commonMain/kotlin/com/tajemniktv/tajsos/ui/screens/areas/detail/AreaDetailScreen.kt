@@ -5,26 +5,21 @@
 package com.tajemniktv.tajsos.ui.screens.areas.detail
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -43,7 +38,10 @@ import com.tajemniktv.tajsos.data.isTaskItem
 import com.tajemniktv.tajsos.data.projectStateOrNull
 import com.tajemniktv.tajsos.data.taskStateOrNull
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.components.layout.LocalHeaderActions
+import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderController
+import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderModel
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior
+import com.tajemniktv.tajsos.ui.components.screen.SplitScreenScaffold
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
@@ -60,6 +58,7 @@ fun AreaDetailScreen(
     onEditNode: (Long) -> Unit,
     onBack: () -> Unit,
     isDesktop: Boolean = false,
+    screenHeaderController: ScreenHeaderController? = null,
 ) {
     val nodes by viewModel.allNodes.collectAsState()
     val nodeWithPin = remember(nodes, areaId) { nodes.find { it.node.id == areaId } }
@@ -177,53 +176,58 @@ fun AreaDetailScreen(
             onBack = onBack,
         )
 
-    CompositionLocalProvider(LocalHeaderActions provides actions) {
-        BoxWithConstraints(modifier = Modifier.fillMaxSize().background(TajsOSTheme.Background)) {
-            val surface =
-                if (isDesktop && maxWidth >= 1180.dp) {
-                    AreaDetailSurface.DESKTOP
-                } else {
-                    AreaDetailSurface.MOBILE
-                }
-
-            val plan = remember(surface) { buildAreaDetailPlan(surface) }
-
-            if (surface == AreaDetailSurface.DESKTOP) {
-                Row(
-                    modifier = Modifier.fillMaxSize().padding(12.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                ) {
-                    Column(
-                        modifier = Modifier.weight(1f).fillMaxHeight(),
-                        verticalArrangement = Arrangement.spacedBy(12.dp),
-                    ) {
-                        plan.primary.filterNot { it.id == "area_sidebar" }.forEach { block ->
-                            AreaDetailBlocks.resolve(block.id)?.invoke(context)
-                        }
-                    }
-                    Column(
-                        modifier = Modifier.width(320.dp).fillMaxHeight(),
-                        verticalArrangement = Arrangement.spacedBy(12.dp),
-                    ) {
-                        plan.secondary.forEach { block ->
-                            AreaDetailBlocks.resolve(block.id)?.invoke(context)
-                        }
-                    }
-                }
+    BoxWithConstraints(modifier = Modifier.fillMaxSize().background(TajsOSTheme.Background)) {
+        val surface =
+            if (isDesktop && maxWidth >= 1180.dp) {
+                AreaDetailSurface.DESKTOP
             } else {
+                AreaDetailSurface.MOBILE
+            }
+
+        val plan = remember(surface) { buildAreaDetailPlan(surface) }
+
+        SplitScreenScaffold(
+            isSplitLayout = surface == AreaDetailSurface.DESKTOP,
+            screenHeaderController = screenHeaderController,
+            screenHeader =
+                ScreenHeaderModel(
+                    title = area.title,
+                    subtitle = healthLabel,
+                    actions = actions,
+                ),
+            backgroundColor = TajsOSTheme.Background,
+            scrollBehavior = ScreenScrollBehavior.PaneScroll,
+            primary = {
                 Column(
-                    modifier =
-                        Modifier
-                            .fillMaxSize()
-                            .verticalScroll(rememberScrollState())
-                            .padding(12.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+                    verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp),
                 ) {
-                    plan.primary.forEach { block ->
+                    val blocks =
+                        if (surface == AreaDetailSurface.DESKTOP) {
+                            plan.primary.filterNot { it.id == "area_sidebar" }
+                        } else {
+                            plan.primary
+                        }
+                    blocks.forEach { block ->
                         AreaDetailBlocks.resolve(block.id)?.invoke(context)
                     }
                 }
-            }
-        }
+            },
+            secondary =
+                if (surface == AreaDetailSurface.DESKTOP) {
+                    {
+                        Column(
+                            modifier = Modifier.fillMaxWidth().width(320.dp).fillMaxHeight(),
+                            verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp),
+                        ) {
+                            plan.secondary.forEach { block ->
+                                AreaDetailBlocks.resolve(block.id)?.invoke(context)
+                            }
+                        }
+                    }
+                } else {
+                    null
+                },
+        )
     }
 }

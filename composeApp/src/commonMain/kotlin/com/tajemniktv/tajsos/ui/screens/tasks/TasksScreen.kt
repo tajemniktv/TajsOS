@@ -8,9 +8,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -19,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.isTaskItem
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 @Composable
@@ -65,17 +63,14 @@ fun TasksScreen(
             if (maxWidth > 980.dp) TasksDashboardSurface.DESKTOP else TasksDashboardSurface.MOBILE
         val plan = remember(surface, currentTab) { buildTasksDashboardPlan(surface, currentTab) }
 
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(TajsOSTheme.SpacingMd)
-                    .padding(bottom = 80.dp),
-            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
-        ) {
-            plan.primary.forEach { block ->
-                TasksDashboardBlocks.resolve(block.id)?.invoke(context)
+        ScreenScaffold {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
+            ) {
+                plan.primary.forEach { block ->
+                    TasksDashboardBlocks.resolve(block.id)?.invoke(context)
+                }
             }
         }
     }

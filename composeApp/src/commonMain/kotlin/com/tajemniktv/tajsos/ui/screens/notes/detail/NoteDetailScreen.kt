@@ -83,7 +83,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -99,7 +98,9 @@ import com.tajemniktv.tajsos.data.isTaskItem
 import com.tajemniktv.tajsos.data.itemKindOrNull
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.common.SelectorDialog
-import com.tajemniktv.tajsos.ui.components.layout.LocalHeaderActions
+import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderController
+import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderModel
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
@@ -120,6 +121,7 @@ fun NoteDetailScreen(
     onNavigateToNode: (Long) -> Unit,
     onNavigateToSearch: () -> Unit,
     isDesktop: Boolean = false,
+    screenHeaderController: ScreenHeaderController? = null,
 ) {
     val scope = rememberCoroutineScope()
     val nodes by viewModel.allNodes.collectAsState()
@@ -274,41 +276,37 @@ fun NoteDetailScreen(
             onToggleAtomicMode = { isAtomicMode = !isAtomicMode },
         )
 
-    CompositionLocalProvider(LocalHeaderActions provides actions) {
-        Box(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .background(TajsOSTheme.Background),
+    val surface = if (isDesktop) NoteDetailSurface.DESKTOP else NoteDetailSurface.MOBILE
+    val plan =
+        remember(surface, node.id, tags.size) { buildNoteDetailPlan(surface, context) }
+
+    ScreenScaffold(
+        screenHeaderController = screenHeaderController,
+        screenHeader =
+            ScreenHeaderModel(
+                title = node.title,
+                subtitle = node.itemKindOrNull()?.name,
+                actions = actions,
+            ),
+        backgroundColor = TajsOSTheme.Background,
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingLg),
         ) {
-            val surface = if (isDesktop) NoteDetailSurface.DESKTOP else NoteDetailSurface.MOBILE
-            val plan =
-                remember(surface, node.id, tags.size) { buildNoteDetailPlan(surface, context) }
-
-            Column(
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .background(TajsOSTheme.Background)
-                        .verticalScroll(rememberScrollState())
-                        .padding(horizontal = TajsOSTheme.SpacingMd)
-                        .padding(bottom = 80.dp),
-                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingLg),
-            ) {
-                plan.primary.forEach { block ->
-                    NoteDetailBlocks.resolve(block.id)?.invoke(context)
-                }
+            plan.primary.forEach { block ->
+                NoteDetailBlocks.resolve(block.id)?.invoke(context)
             }
+        }
 
-            FloatingActionButton(
-                onClick = { showRelationDialog = true },
-                containerColor = TajsOSTheme.Primary,
-                contentColor = TajsOSTheme.Background,
-                shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
-            ) {
-                Icon(Icons.Default.Link, contentDescription = null)
-            }
+        FloatingActionButton(
+            onClick = { showRelationDialog = true },
+            containerColor = TajsOSTheme.Primary,
+            contentColor = TajsOSTheme.Background,
+            shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+            modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
+        ) {
+            Icon(Icons.Default.Link, contentDescription = null)
         }
     }
 

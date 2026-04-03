@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -47,6 +48,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
+import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderModel
 import com.tajemniktv.tajsos.ui.components.common.GlassMaterial
 import com.tajemniktv.tajsos.ui.components.common.glassContainerColor
 import com.tajemniktv.tajsos.ui.components.common.glassChrome
@@ -95,6 +97,7 @@ fun AppShellHeader(
     shellState: AppShellState,
     isDesktop: Boolean,
     onModeSelect: (Long) -> Unit,
+    screenHeader: ScreenHeaderModel,
     modifier: Modifier = Modifier,
     onMenuClick: (() -> Unit)? = null,
 ) {
@@ -142,8 +145,28 @@ fun AppShellHeader(
                 Spacer(Modifier.width(24.dp))
                 GlobalSearchBar(modifier = Modifier.weight(1f))
                 Spacer(Modifier.width(24.dp))
+                HeaderScreenContext(
+                    model = screenHeader,
+                    modifier = Modifier.width(300.dp),
+                )
+                if (screenHeader.actions != null) {
+                    Spacer(Modifier.width(16.dp))
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        content = screenHeader.actions,
+                    )
+                }
             } else {
                 Spacer(Modifier.width(12.dp))
+                if (screenHeader.actions != null) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        content = screenHeader.actions,
+                    )
+                    Spacer(Modifier.width(12.dp))
+                }
             }
 
             HeaderModeSwitcher(
@@ -162,6 +185,8 @@ fun AppShellHeader(
                 onExpandedChange = { shellState.notificationsExpanded = it },
             )
         }
+
+        screenHeader.toolbar?.invoke()
     }
 }
 
@@ -190,6 +215,38 @@ fun HeaderGreeting(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
+    }
+}
+
+@Composable
+private fun HeaderScreenContext(
+    model: ScreenHeaderModel,
+    modifier: Modifier = Modifier,
+) {
+    if (model.title.isNullOrBlank() && model.subtitle.isNullOrBlank()) {
+        return
+    }
+
+    Column(modifier = modifier) {
+        model.title?.let { title ->
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                color = TajsOSTheme.Text,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+        model.subtitle?.takeIf { it.isNotBlank() }?.let { subtitle ->
+            Spacer(Modifier.height(2.dp))
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.labelSmall,
+                color = TajsOSTheme.Muted,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
     }
 }
 
