@@ -148,6 +148,7 @@ private fun TodaySection(
             if (tasks.isEmpty()) {
                 EmptyState(
                     message = stringResource(Res.string.tasks_no_results),
+                    description = null,
                     fillParent = false,
                     showContainer = false,
                 )
