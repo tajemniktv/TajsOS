@@ -22,7 +22,6 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
-import dev.chrisbanes.haze.HazeProgressive
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
@@ -94,12 +93,6 @@ fun Modifier.glassChrome(
     shape: Shape = RoundedCornerShape(16.dp),
     material: GlassMaterial = GlassMaterial.REGULAR,
     edgeWidth: Dp = 1.dp,
-    progressive: HazeProgressive? =
-        HazeProgressive.verticalGradient(
-            startIntensity = 0.35f,
-            endIntensity = 1f,
-            preferPerformance = true,
-        ),
 ): Modifier {
     val glass = LocalGlassSystem.current
     if (!glass.enabled || glass.hazeState == null) return this
@@ -125,9 +118,6 @@ fun Modifier.glassChrome(
             style = style,
             block = {
                 noiseFactor = 0.22f
-                if (progressive != null) {
-                    this.progressive = progressive
-                }
                 tints =
                     listOf(
                         HazeTint(TajsOSTheme.Text.copy(alpha = 0.08f), blendMode = BlendMode.Screen),
