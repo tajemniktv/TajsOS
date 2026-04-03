@@ -58,6 +58,7 @@ import tajsos.composeapp.generated.resources.nav_systems
 import tajsos.composeapp.generated.resources.profile_title
 import tajsos.composeapp.generated.resources.screen_archive
 import tajsos.composeapp.generated.resources.screen_area
+import tajsos.composeapp.generated.resources.screen_briefing
 import tajsos.composeapp.generated.resources.screen_cal
 import tajsos.composeapp.generated.resources.screen_cal_opts
 import tajsos.composeapp.generated.resources.screen_capacity
@@ -111,6 +112,9 @@ sealed class Screen(
      * Returns the list of child screens for this root screen.
      */
     open val children: List<Screen> get() = emptyList()
+
+    data object Briefing :
+        Screen("briefing", Res.string.screen_briefing, Icons.Default.Description)
 
     data object Dashboard :
         Screen("dashboard", Res.string.screen_dash, Icons.Default.Home)
@@ -402,6 +406,7 @@ sealed class Screen(
                     SettingsFeaturePacks,
                     SettingsData,
                     SettingsDebug,
+                    Briefing,
                     Dashboard,
                     Inbox,
                     Search,
@@ -459,7 +464,7 @@ sealed class Screen(
 
         val groupedItems by lazy {
             listOf(
-                Res.string.nav_core to listOf(Dashboard, Inbox, Search),
+                Res.string.nav_core to listOf(Briefing, Dashboard, Inbox, Search),
                 Res.string.nav_execution to
                     listOf(
                         Today,

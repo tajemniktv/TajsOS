@@ -23,6 +23,7 @@
 
     <!-- Screens -->
     <string name="screen_dash">DASHBOARD</string>
+    <string name="screen_briefing">BRIEFING</string>
     <string name="screen_inbox">INBOX</string>
     <string name="screen_search">FIND</string>
     <string name="screen_today">TODAY</string>
@@ -158,6 +159,36 @@
     <string name="dash_modules">MODULES</string>
     <string name="dash_module_active">ACTIVE</string>
     <string name="dash_module_view">VIEW</string>
+
+    <!-- Briefing -->
+    <string name="briefing_greeting_morning">Good morning</string>
+    <string name="briefing_greeting_afternoon">Good afternoon</string>
+    <string name="briefing_greeting_evening">Good evening</string>
+    <string name="briefing_greeting_night">Good night</string>
+    <string name="briefing_mode_line">%1$s mode is active.</string>
+    <string name="briefing_priorities_count">%1$d priorities</string>
+    <string name="briefing_event_count">%1$d event today</string>
+    <string name="briefing_note_count">%1$d notes waiting</string>
+    <string name="briefing_action_continue">Continue today</string>
+    <string name="briefing_action_continue_subtitle">Pick up your most relevant item.</string>
+    <string name="briefing_action_notes">Open notes</string>
+    <string name="briefing_action_notes_subtitle">%1$d notes available</string>
+    <string name="briefing_action_capture">Capture</string>
+    <string name="briefing_action_capture_subtitle">Save a thought</string>
+    <string name="briefing_action_tasks">Review tasks</string>
+    <string name="briefing_action_tasks_subtitle">%1$d active tasks</string>
+    <string name="briefing_upcoming">Upcoming</string>
+    <string name="briefing_next_event">Next event · %1$s</string>
+    <string name="briefing_no_upcoming">No upcoming event.</string>
+    <string name="briefing_recent">Recent</string>
+    <string name="briefing_no_recent">No recent items.</string>
+    <string name="briefing_recent_updated_now">Updated just now</string>
+    <string name="briefing_recent_updated_hours">Updated %1$dh ago</string>
+    <string name="briefing_recent_updated_days">Updated %1$dd ago</string>
+    <string name="briefing_resume">Resume</string>
+    <string name="briefing_no_resume">No item to resume.</string>
+    <string name="briefing_resume_hint">Pick up where you left off.</string>
+    <string name="briefing_capture_placeholder">Capture a thought, task, note, or command...</string>
 
     <!-- Dashboard Additions -->
     <string name="dash_morning_reset">MORNING RESET</string>

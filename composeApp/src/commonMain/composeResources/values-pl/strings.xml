@@ -18,6 +18,7 @@
 
     <!-- Screens -->
     <string name="screen_dash">PULPIT</string>
+    <string name="screen_briefing">ODPRAWA</string>
     <string name="screen_inbox">SKRZYNKA</string>
     <string name="screen_search">SZUKAJ</string>
     <string name="screen_today">DZIŚ</string>
@@ -149,6 +150,36 @@
     <string name="dash_warning_open_loops_decay">OTWARTE PĘTLE ROZKŁADAJĄ SIĘ // WYKONAJ PRZEGLĄD</string>
     <string name="dash_warning_system_overloaded">SYSTEM PRZECIĄŻONY // OGRANICZ DOPŁYW</string>
     <string name="dash_warning_attention_fragmented">UWAGA ROZPROSZONA // SKUPI SIĘ NA JEDNYM OBSZARZE</string>
+
+    <!-- Briefing -->
+    <string name="briefing_greeting_morning">Dzień dobry</string>
+    <string name="briefing_greeting_afternoon">Dobre popołudnie</string>
+    <string name="briefing_greeting_evening">Dobry wieczór</string>
+    <string name="briefing_greeting_night">Dobranoc</string>
+    <string name="briefing_mode_line">Aktywny jest tryb: %1$s.</string>
+    <string name="briefing_priorities_count">%1$d priorytety</string>
+    <string name="briefing_event_count">%1$d wydarzenie dzisiaj</string>
+    <string name="briefing_note_count">%1$d notatek czeka</string>
+    <string name="briefing_action_continue">Kontynuuj dzień</string>
+    <string name="briefing_action_continue_subtitle">Wróć do najważniejszego elementu.</string>
+    <string name="briefing_action_notes">Otwórz notatki</string>
+    <string name="briefing_action_notes_subtitle">Dostępne notatki: %1$d</string>
+    <string name="briefing_action_capture">Przechwyć</string>
+    <string name="briefing_action_capture_subtitle">Zapisz nową myśl</string>
+    <string name="briefing_action_tasks">Przejrzyj zadania</string>
+    <string name="briefing_action_tasks_subtitle">Aktywne zadania: %1$d</string>
+    <string name="briefing_upcoming">Nadchodzące</string>
+    <string name="briefing_next_event">Następne wydarzenie · %1$s</string>
+    <string name="briefing_no_upcoming">Brak nadchodzących wydarzeń.</string>
+    <string name="briefing_recent">Ostatnie</string>
+    <string name="briefing_no_recent">Brak ostatnich elementów.</string>
+    <string name="briefing_recent_updated_now">Zaktualizowano przed chwilą</string>
+    <string name="briefing_recent_updated_hours">Zaktualizowano %1$dh temu</string>
+    <string name="briefing_recent_updated_days">Zaktualizowano %1$dd temu</string>
+    <string name="briefing_resume">Wznów</string>
+    <string name="briefing_no_resume">Brak elementu do wznowienia.</string>
+    <string name="briefing_resume_hint">Wróć do miejsca, w którym skończyłeś.</string>
+    <string name="briefing_capture_placeholder">Przechwyć myśl, zadanie, notatkę lub komendę...</string>
 
     <!-- Settings -->
     <string name="settings_title">USTAWIENIA</string>

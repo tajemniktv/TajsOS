@@ -46,6 +46,7 @@ import com.tajemniktv.tajsos.ui.components.layout.rememberAppShellState
 import com.tajemniktv.tajsos.ui.screens.archive.ArchiveScreen
 import com.tajemniktv.tajsos.ui.screens.areas.AreasScreen
 import com.tajemniktv.tajsos.ui.screens.areas.detail.AreaDetailScreen
+import com.tajemniktv.tajsos.ui.screens.briefing.BriefingScreen
 import com.tajemniktv.tajsos.ui.screens.calendar.CalendarScreen
 import com.tajemniktv.tajsos.ui.screens.calendar.CalendarSettingsScreen
 import com.tajemniktv.tajsos.ui.screens.capacity.CapacityScreen
@@ -372,6 +373,14 @@ private fun AppScaffold(
             startDestination = Screen.Dashboard.route,
             modifier = Modifier.fillMaxSize(),
         ) {
+            composable(Screen.Briefing.route) {
+                BriefingScreen(
+                    viewModel = viewModel,
+                    onNavigateTo = { onNavigate(it.route) },
+                    onNavigateToTasks = { onTasksTabChange(TasksTab.TODAY) },
+                    onNewEntry = { onShowCaptureSheet(true) },
+                )
+            }
             composable(Screen.Dashboard.route) {
                 DashboardScreen(
                     viewModel,
