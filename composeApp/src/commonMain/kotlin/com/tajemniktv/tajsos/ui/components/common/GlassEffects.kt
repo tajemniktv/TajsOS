@@ -72,7 +72,7 @@ fun ProvideGlassSystem(
  */
 @Composable
 fun glassContainerColor(fallback: Color): Color =
-    if (LocalGlassSystem.current.enabled) {
+    if (LocalGlassSystem.current.enabled && LocalGlassSystem.current.hazeState != null) {
         Color.Transparent
     } else {
         fallback
@@ -82,7 +82,10 @@ fun glassContainerColor(fallback: Color): Color =
  * Whether glass is enabled in the current composition.
  */
 @Composable
-fun isGlassEnabled(): Boolean = LocalGlassSystem.current.enabled
+fun isGlassEnabled(): Boolean {
+    val glass = LocalGlassSystem.current
+    return glass.enabled && glass.hazeState != null
+}
 
 /**
  * Shared glass-style chrome for shell and reusable cards.

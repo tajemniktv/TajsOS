@@ -19,15 +19,24 @@ import androidx.compose.runtime.setValue
  */
 @Stable
 class ScreenHeaderController {
+    private var currentOwner: Any? by mutableStateOf(null)
+
     var model by mutableStateOf(ScreenHeaderModel())
         private set
 
-    fun update(model: ScreenHeaderModel) {
+    fun update(
+        owner: Any,
+        model: ScreenHeaderModel,
+    ) {
+        currentOwner = owner
         this.model = model
     }
 
-    fun clear() {
-        model = ScreenHeaderModel()
+    fun clear(owner: Any) {
+        if (currentOwner == owner) {
+            currentOwner = null
+            model = ScreenHeaderModel()
+        }
     }
 }
 
@@ -52,13 +61,15 @@ fun BindScreenHeader(
     controller: ScreenHeaderController,
     model: ScreenHeaderModel,
 ) {
+    val owner = remember { Any() }
+
     SideEffect {
-        controller.update(model)
+        controller.update(owner = owner, model = model)
     }
 
-    DisposableEffect(controller) {
+    DisposableEffect(controller, owner) {
         onDispose {
-            controller.clear()
+            controller.clear(owner)
         }
     }
 }

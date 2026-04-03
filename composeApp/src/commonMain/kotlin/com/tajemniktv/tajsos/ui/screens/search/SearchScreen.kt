@@ -8,6 +8,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -102,7 +105,11 @@ fun SearchScreen(
                 if (surface == SearchDashboardSurface.DESKTOP) {
                     {
                         Column(
-                            modifier = Modifier.fillMaxSize(),
+                            modifier =
+                                Modifier
+                                    .fillMaxSize()
+                                    .padding(top = 64.dp)
+                                    .verticalScroll(rememberScrollState()),
                             verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
                         ) {
                             plan.secondary.forEach { block ->

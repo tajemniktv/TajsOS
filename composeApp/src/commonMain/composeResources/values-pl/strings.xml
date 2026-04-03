@@ -901,6 +901,16 @@
     <string name="sidebar_brand">TAJSOS</string>
     <string name="header_search_placeholder">Szukaj w TajsOS</string>
     <string name="header_status_label">TAJSOS // STATUS: %1$s</string>
+    <string name="header_menu">Menu</string>
+    <string name="header_notifications">Powiadomienia</string>
+    <string name="header_notifications_title">STATUS SYSTEMU</string>
+    <string name="header_mode_label">SYSTEM: %1$s</string>
+    <string name="shell_protocol_state_with_name">Stan protokołu: %1$s</string>
+    <string name="shell_protocol_state_standby">Stan protokołu: tryb czuwania</string>
+    <string name="shell_mode_standby">TRYB CZUWANIA</string>
+    <string name="shell_mode_focus">Skupienie</string>
+    <string name="shell_mode_execution">Realizacja</string>
+    <string name="shell_mode_recovery">Regeneracja</string>
 
     <!-- Places -->
     <string name="places_title">KONTEKST I LOGISTYKA</string>

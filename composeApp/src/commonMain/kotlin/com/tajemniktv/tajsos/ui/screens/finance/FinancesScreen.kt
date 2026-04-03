@@ -137,10 +137,6 @@ fun FinancesScreen(
 
         SplitScreenScaffold(
             isSplitLayout = surface == FinanceDashboardSurface.DESKTOP,
-            backgroundBrush =
-                Brush.verticalGradient(
-                    listOf(TajsOSTheme.Background, TajsOSTheme.Surface.copy(alpha = 0.45f)),
-                ),
             scrollBehavior = ScreenScrollBehavior.None,
             primaryWeight = 1.3f,
             secondaryWeight = 1f,

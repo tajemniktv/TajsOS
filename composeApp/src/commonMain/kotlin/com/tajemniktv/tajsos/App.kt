@@ -43,6 +43,7 @@ import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.common.CaptureSheet
 import com.tajemniktv.tajsos.ui.components.layout.AppShell
 import com.tajemniktv.tajsos.ui.components.layout.rememberAppShellState
+import com.tajemniktv.tajsos.ui.components.notifications.NotificationUiModel
 import com.tajemniktv.tajsos.ui.components.screen.BindScreenHeader
 import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderController
 import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderModel
@@ -220,6 +221,7 @@ fun App(
                 drawerState = drawerState,
                 scope = scope,
                 screenHeader = screenHeaderController.model,
+                notifications = emptyList<NotificationUiModel>(),
             ) {
                 AppScaffold(
                     showCaptureSheet = showCaptureSheetState,
