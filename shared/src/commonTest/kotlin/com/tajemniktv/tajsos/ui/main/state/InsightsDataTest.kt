@@ -64,6 +64,15 @@ class InsightsDataTest {
         assertTrue(data.neglectedProjects.isEmpty())
     }
 
+    @Test
+    fun insightsData_defaultAdvancedMetrics_areZeroOrEmpty() {
+        val data = InsightsData()
+        assertEquals(0, data.inboxGrowth)
+        assertEquals(0.0, data.archiveRate)
+        assertTrue(data.completionsByArea.isEmpty())
+        assertTrue(data.completionsByProject.isEmpty())
+    }
+
     // --- Custom value construction ---
 
     @Test
@@ -78,7 +87,11 @@ class InsightsDataTest {
                 avgMood = 4.2,
                 avgEnergy = 3.8,
                 avgFocus = 4.0,
-                neglectedProjects = listOf(project)
+                neglectedProjects = listOf(project),
+                inboxGrowth = 2,
+                archiveRate = 0.5,
+                completionsByArea = mapOf(10L to 3),
+                completionsByProject = mapOf(20L to 2)
             )
 
         assertEquals(10, data.weeklyCaptures)
@@ -90,6 +103,10 @@ class InsightsDataTest {
         assertEquals(4.0, data.avgFocus)
         assertEquals(1, data.neglectedProjects.size)
         assertEquals("Old Project", data.neglectedProjects.first().title)
+        assertEquals(2, data.inboxGrowth)
+        assertEquals(0.5, data.archiveRate)
+        assertEquals(3, data.completionsByArea[10L])
+        assertEquals(2, data.completionsByProject[20L])
     }
 
     // --- Data class equality ---
