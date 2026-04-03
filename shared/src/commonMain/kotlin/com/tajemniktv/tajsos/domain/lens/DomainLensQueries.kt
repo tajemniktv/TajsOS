@@ -122,24 +122,40 @@ object DomainLensQueries {
             .filter(::matchesFinanceSignal)
             .sortedBy { it.node.dueAt ?: Long.MAX_VALUE }
 
+    /**
+     * Returns active maintenance items that belong to the health domain.
+     */
     fun healthMaintenanceItems(snapshot: MaintenanceSnapshot): List<MaintenanceStatusItem> =
         snapshot.active.filter { it.node.node.maintenanceType in healthMaintenanceTypes }
 
+    /**
+     * Returns overdue health-related maintenance work.
+     */
     fun healthOverdueItems(snapshot: MaintenanceSnapshot): List<MaintenanceStatusItem> =
         snapshot.overdue.filter { it.node.node.maintenanceType in healthMaintenanceTypes }
 
+    /**
+     * Returns active task-shaped work that reads as health-related.
+     */
     fun healthActionItems(nodes: List<NodeWithPin>): List<NodeWithPin> =
         nodes
             .filter { it.node.isTaskItem() && it.node.status == "active" }
             .filter(::matchesHealthSignal)
             .sortedBy { it.node.dueAt ?: Long.MAX_VALUE }
 
+    /**
+     * Returns active health notes and records worth surfacing in the health lens.
+     */
     fun healthKnowledgeItems(nodes: List<NodeWithPin>): List<NodeWithPin> =
         nodes
             .filter { it.node.isKnowledgeItem() && it.node.status == "active" }
             .filter(::matchesHealthSignal)
             .sortedByDescending { it.node.updatedAt }
 
+    /**
+     * Determines whether a node implicitly belongs to the finance domain based on tags,
+     * keywords in title/content, maintenance type, or note type (e.g., reference notes).
+     */
     private fun matchesFinanceSignal(node: NodeWithPin): Boolean {
         val title = node.node.title.lowercase()
         val content = node.node.content.lowercase()
@@ -153,6 +169,10 @@ object DomainLensQueries {
         return hasFinanceTag || mentionsFinanceTitle || mentionsFinanceContent || financeMaintenance || referenceFinanceNote
     }
 
+    /**
+     * Determines whether a node implicitly belongs to the health domain based on tags,
+     * keywords in title/content, maintenance type, or note type (e.g., reflections).
+     */
     private fun matchesHealthSignal(node: NodeWithPin): Boolean {
         val title = node.node.title.lowercase()
         val content = node.node.content.lowercase()
