@@ -144,7 +144,7 @@ object DomainLensQueries {
             .sortedBy { it.node.dueAt ?: Long.MAX_VALUE }
 
     /**
-     * Returns durable health notes and records worth surfacing in the health lens.
+     * Returns active health notes and records worth surfacing in the health lens.
      */
     fun healthKnowledgeItems(nodes: List<NodeWithPin>): List<NodeWithPin> =
         nodes
@@ -154,7 +154,7 @@ object DomainLensQueries {
 
     /**
      * Determines whether a node implicitly belongs to the finance domain based on tags,
-     * keywords in title/content, maintenance type, or note classification.
+     * keywords in title/content, maintenance type, or note type (e.g., reference notes).
      */
     private fun matchesFinanceSignal(node: NodeWithPin): Boolean {
         val title = node.node.title.lowercase()
@@ -171,7 +171,7 @@ object DomainLensQueries {
 
     /**
      * Determines whether a node implicitly belongs to the health domain based on tags,
-     * keywords in title/content, note type (e.g., reflections), or maintenance type.
+     * keywords in title/content, maintenance type, or note type (e.g., reflections).
      */
     private fun matchesHealthSignal(node: NodeWithPin): Boolean {
         val title = node.node.title.lowercase()
