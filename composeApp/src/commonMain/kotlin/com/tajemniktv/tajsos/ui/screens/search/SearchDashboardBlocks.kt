@@ -348,7 +348,7 @@ private fun renderSearchFilters(context: SearchDashboardContext) {
                         )
                     }
                 }
-                items(context.areasById.values.toList()) { area ->
+                items(context.areasById.values.toList(), key = { it.id }) { area ->
                     FilterChip(
                         selected = context.searchAreaFilter == area.id,
                         onClick = { viewModel.updateSearchAreaFilter(if (context.searchAreaFilter == area.id) null else area.id) },
@@ -362,7 +362,7 @@ private fun renderSearchFilters(context: SearchDashboardContext) {
                         },
                     )
                 }
-                items(context.projectsById.values.toList()) { project ->
+                items(context.projectsById.values.toList(), key = { it.id }) { project ->
                     FilterChip(
                         selected = context.searchProjectFilter == project.id,
                         onClick = {
