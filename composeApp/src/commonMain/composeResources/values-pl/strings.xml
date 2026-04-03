@@ -18,6 +18,7 @@
 
     <!-- Screens -->
     <string name="screen_dash">PULPIT</string>
+    <string name="screen_briefing">ODPRAWA</string>
     <string name="screen_inbox">SKRZYNKA</string>
     <string name="screen_search">SZUKAJ</string>
     <string name="screen_today">DZIŚ</string>
@@ -149,6 +150,73 @@
     <string name="dash_warning_open_loops_decay">OTWARTE PĘTLE ROZKŁADAJĄ SIĘ // WYKONAJ PRZEGLĄD</string>
     <string name="dash_warning_system_overloaded">SYSTEM PRZECIĄŻONY // OGRANICZ DOPŁYW</string>
     <string name="dash_warning_attention_fragmented">UWAGA ROZPROSZONA // SKUPI SIĘ NA JEDNYM OBSZARZE</string>
+
+    <!-- Briefing -->
+    <string name="briefing_greeting">%1$s, %2$s.</string>
+    <string name="briefing_greeting_morning">Dzień dobry</string>
+    <string name="briefing_greeting_afternoon">Dobre popołudnie</string>
+    <string name="briefing_greeting_evening">Dobry wieczór</string>
+    <string name="briefing_greeting_night">Dobranoc</string>
+    <string name="briefing_mode_line">Aktywny jest tryb: %1$s.</string>
+    <string name="briefing_mode_inactive">Brak aktywnego trybu.</string>
+    <plurals name="briefing_priorities_count">
+        <item quantity="one">%1$d priorytet</item>
+        <item quantity="few">%1$d priorytety</item>
+        <item quantity="many">%1$d priorytetów</item>
+        <item quantity="other">%1$d priorytetu</item>
+    </plurals>
+    <plurals name="briefing_event_count">
+        <item quantity="one">%1$d wydarzenie dzisiaj</item>
+        <item quantity="few">%1$d wydarzenia dzisiaj</item>
+        <item quantity="many">%1$d wydarzeń dzisiaj</item>
+        <item quantity="other">%1$d wydarzenia dzisiaj</item>
+    </plurals>
+    <plurals name="briefing_note_count">
+        <item quantity="one">%1$d notatka czeka</item>
+        <item quantity="few">%1$d notatki czekają</item>
+        <item quantity="many">%1$d notatek czeka</item>
+        <item quantity="other">%1$d notatki czekają</item>
+    </plurals>
+    <string name="briefing_action_continue">Kontynuuj dzień</string>
+    <string name="briefing_action_continue_subtitle">Wróć do najważniejszego elementu.</string>
+    <string name="briefing_action_notes">Otwórz notatki</string>
+    <plurals name="briefing_action_notes_subtitle">
+        <item quantity="one">%1$d notatka dostępna</item>
+        <item quantity="few">%1$d notatki dostępne</item>
+        <item quantity="many">%1$d notatek dostępnych</item>
+        <item quantity="other">%1$d notatki dostępne</item>
+    </plurals>
+    <string name="briefing_action_capture">Przechwyć</string>
+    <string name="briefing_action_capture_subtitle">Zapisz nową myśl</string>
+    <string name="briefing_action_tasks">Przejrzyj zadania</string>
+    <plurals name="briefing_action_tasks_subtitle">
+        <item quantity="one">%1$d aktywne zadanie</item>
+        <item quantity="few">%1$d aktywne zadania</item>
+        <item quantity="many">%1$d aktywnych zadań</item>
+        <item quantity="other">%1$d aktywnego zadania</item>
+    </plurals>
+    <string name="briefing_upcoming">Nadchodzące</string>
+    <string name="briefing_next_event">Następne wydarzenie · %1$s</string>
+    <string name="briefing_no_upcoming">Brak nadchodzących wydarzeń.</string>
+    <string name="briefing_recent">Ostatnie</string>
+    <string name="briefing_no_recent">Brak ostatnich elementów.</string>
+    <string name="briefing_recent_updated_now">Zaktualizowano przed chwilą</string>
+    <plurals name="briefing_recent_updated_hours">
+        <item quantity="one">Zaktualizowano %1$dh temu</item>
+        <item quantity="few">Zaktualizowano %1$dh temu</item>
+        <item quantity="many">Zaktualizowano %1$dh temu</item>
+        <item quantity="other">Zaktualizowano %1$dh temu</item>
+    </plurals>
+    <plurals name="briefing_recent_updated_days">
+        <item quantity="one">Zaktualizowano %1$dd temu</item>
+        <item quantity="few">Zaktualizowano %1$dd temu</item>
+        <item quantity="many">Zaktualizowano %1$dd temu</item>
+        <item quantity="other">Zaktualizowano %1$dd temu</item>
+    </plurals>
+    <string name="briefing_resume">Wznów</string>
+    <string name="briefing_no_resume">Brak elementu do wznowienia.</string>
+    <string name="briefing_resume_hint">Wróć do miejsca, w którym skończyłeś.</string>
+    <string name="briefing_capture_placeholder">Przechwyć myśl, zadanie, notatkę lub komendę...</string>
 
     <!-- Settings -->
     <string name="settings_title">USTAWIENIA</string>
@@ -1013,7 +1081,6 @@
     <string name="intent_shared_image">Udostępniony obraz</string>
     <string name="intent_shared_images">Udostępnione obrazy</string>
 </resources>
-
 
 
 

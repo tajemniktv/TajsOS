@@ -23,6 +23,7 @@
 
     <!-- Screens -->
     <string name="screen_dash">DASHBOARD</string>
+    <string name="screen_briefing">BRIEFING</string>
     <string name="screen_inbox">INBOX</string>
     <string name="screen_search">FIND</string>
     <string name="screen_today">TODAY</string>
@@ -158,6 +159,64 @@
     <string name="dash_modules">MODULES</string>
     <string name="dash_module_active">ACTIVE</string>
     <string name="dash_module_view">VIEW</string>
+
+    <!-- Briefing -->
+    <string name="briefing_greeting">%1$s, %2$s.</string>
+    <string name="briefing_greeting_morning">Good morning</string>
+    <string name="briefing_greeting_afternoon">Good afternoon</string>
+    <string name="briefing_greeting_evening">Good evening</string>
+    <string name="briefing_greeting_night">Good night</string>
+    <string name="briefing_mode_line">%1$s mode is active.</string>
+    <string name="briefing_mode_inactive">No active mode.</string>
+    <plurals name="briefing_priorities_count">
+        <item quantity="zero">%1$d priorities</item>
+        <item quantity="one">%1$d priority</item>
+        <item quantity="other">%1$d priorities</item>
+    </plurals>
+    <plurals name="briefing_event_count">
+        <item quantity="zero">no events today</item>
+        <item quantity="one">%1$d event today</item>
+        <item quantity="other">%1$d events today</item>
+    </plurals>
+    <plurals name="briefing_note_count">
+        <item quantity="zero">no notes waiting</item>
+        <item quantity="one">%1$d note waiting</item>
+        <item quantity="other">%1$d notes waiting</item>
+    </plurals>
+    <string name="briefing_action_continue">Continue today</string>
+    <string name="briefing_action_continue_subtitle">Pick up your most relevant item.</string>
+    <string name="briefing_action_notes">Open notes</string>
+    <plurals name="briefing_action_notes_subtitle">
+        <item quantity="zero">No notes available</item>
+        <item quantity="one">%1$d note available</item>
+        <item quantity="other">%1$d notes available</item>
+    </plurals>
+    <string name="briefing_action_capture">Capture</string>
+    <string name="briefing_action_capture_subtitle">Save a thought</string>
+    <string name="briefing_action_tasks">Review tasks</string>
+    <plurals name="briefing_action_tasks_subtitle">
+        <item quantity="zero">No active tasks</item>
+        <item quantity="one">%1$d active task</item>
+        <item quantity="other">%1$d active tasks</item>
+    </plurals>
+    <string name="briefing_upcoming">Upcoming</string>
+    <string name="briefing_next_event">Next event · %1$s</string>
+    <string name="briefing_no_upcoming">No upcoming event.</string>
+    <string name="briefing_recent">Recent</string>
+    <string name="briefing_no_recent">No recent items.</string>
+    <string name="briefing_recent_updated_now">Updated just now</string>
+    <plurals name="briefing_recent_updated_hours">
+        <item quantity="one">Updated %1$dh ago</item>
+        <item quantity="other">Updated %1$dh ago</item>
+    </plurals>
+    <plurals name="briefing_recent_updated_days">
+        <item quantity="one">Updated %1$dd ago</item>
+        <item quantity="other">Updated %1$dd ago</item>
+    </plurals>
+    <string name="briefing_resume">Resume</string>
+    <string name="briefing_no_resume">No item to resume.</string>
+    <string name="briefing_resume_hint">Pick up where you left off.</string>
+    <string name="briefing_capture_placeholder">Capture a thought, task, note, or command...</string>
 
     <!-- Dashboard Additions -->
     <string name="dash_morning_reset">MORNING RESET</string>
@@ -1165,7 +1224,6 @@
     <string name="intent_shared_image">Shared Image</string>
     <string name="intent_shared_images">Shared Images</string>
 </resources>
-
 
 
 
