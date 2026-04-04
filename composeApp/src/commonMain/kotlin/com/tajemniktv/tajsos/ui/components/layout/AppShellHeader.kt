@@ -10,6 +10,7 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,6 +27,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Notifications
@@ -48,12 +50,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
-import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderModel
 import com.tajemniktv.tajsos.ui.components.common.GlassMaterial
 import com.tajemniktv.tajsos.ui.components.common.glassContainerColor
 import com.tajemniktv.tajsos.ui.components.common.glassChrome
 import com.tajemniktv.tajsos.ui.components.notifications.NotificationUiModel
 import com.tajemniktv.tajsos.ui.components.notifications.TajsNotificationWidget
+import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderBreadcrumb
+import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderModel
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
@@ -229,11 +232,17 @@ private fun HeaderScreenContext(
     model: ScreenHeaderModel,
     modifier: Modifier = Modifier,
 ) {
-    if (model.title.isNullOrBlank() && model.subtitle.isNullOrBlank()) {
+    if (model.breadcrumbs.isEmpty() && model.title.isNullOrBlank() && model.subtitle.isNullOrBlank()) {
         return
     }
 
-    Column(modifier = modifier) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        if (model.breadcrumbs.isNotEmpty()) {
+            HeaderBreadcrumbs(model.breadcrumbs)
+        }
         model.title?.let { title ->
             Text(
                 text = title,
@@ -251,6 +260,39 @@ private fun HeaderScreenContext(
                 color = TajsOSTheme.Muted,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
+            )
+        }
+    }
+}
+
+@Composable
+private fun HeaderBreadcrumbs(breadcrumbs: List<ScreenHeaderBreadcrumb>) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        breadcrumbs.forEachIndexed { index, breadcrumb ->
+            if (index > 0) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                    contentDescription = null,
+                    modifier = Modifier.size(14.dp),
+                    tint = TajsOSTheme.Muted,
+                )
+            }
+
+            Text(
+                text = breadcrumb.label,
+                style = MaterialTheme.typography.labelSmall,
+                color = if (breadcrumb.onClick != null) TajsOSTheme.Text else TajsOSTheme.Muted,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier =
+                    if (breadcrumb.onClick != null) {
+                        Modifier.clickable(onClick = breadcrumb.onClick)
+                    } else {
+                        Modifier
+                    },
             )
         }
     }

@@ -38,10 +38,12 @@ import com.tajemniktv.tajsos.data.isTaskItem
 import com.tajemniktv.tajsos.data.projectStateOrNull
 import com.tajemniktv.tajsos.data.taskStateOrNull
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderController
 import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderModel
 import com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior
 import com.tajemniktv.tajsos.ui.components.screen.SplitScreenScaffold
+import com.tajemniktv.tajsos.ui.components.screen.screenBreadcrumbs
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
@@ -191,6 +193,7 @@ fun AreaDetailScreen(
             screenHeaderController = screenHeaderController,
             screenHeader =
                 ScreenHeaderModel(
+                    breadcrumbs = screenBreadcrumbs(Screen.AreaDetail),
                     title = area.title,
                     subtitle = healthLabel,
                     actions = actions,

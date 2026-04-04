@@ -108,6 +108,8 @@ sealed class Screen(
     val icon: ImageVector,
     val isRoot: Boolean = true,
 ) {
+    open val breadcrumbParent: Screen? get() = null
+
     /**
      * Returns the list of child screens for this root screen.
      */
@@ -141,21 +143,27 @@ sealed class Screen(
         Res.string.screen_note,
         Icons.Default.Edit,
         isRoot = false,
-    )
+    ) {
+        override val breadcrumbParent: Screen = Notes
+    }
 
     data object TaskDetail : Screen(
         "task/{taskId}",
         Res.string.type_task,
         Icons.AutoMirrored.Filled.List,
         isRoot = false,
-    )
+    ) {
+        override val breadcrumbParent: Screen = Tasks
+    }
 
     data object RecordDetail : Screen(
         "record/{recordId}",
         Res.string.type_record,
         Icons.Default.Description,
         isRoot = false,
-    )
+    ) {
+        override val breadcrumbParent: Screen = Notes
+    }
 
     data object Insights : Screen("insights", Res.string.screen_stats, Icons.Default.Info)
 
@@ -169,7 +177,9 @@ sealed class Screen(
             Res.string.screen_cal_opts,
             Icons.Default.Settings,
             isRoot = false,
-        )
+        ) {
+            override val breadcrumbParent: Screen = Settings
+        }
 
     data object Graph : Screen("graph", Res.string.screen_graph, Icons.Default.Share)
 
@@ -183,7 +193,9 @@ sealed class Screen(
         Res.string.screen_project,
         Icons.AutoMirrored.Filled.List,
         isRoot = false,
-    )
+    ) {
+        override val breadcrumbParent: Screen = Projects
+    }
 
     data object AreaDetail :
         Screen(
@@ -191,7 +203,9 @@ sealed class Screen(
             Res.string.screen_area,
             Icons.Default.LocationOn,
             isRoot = false,
-        )
+        ) {
+            override val breadcrumbParent: Screen = Areas
+        }
 
     data object Settings : Screen("settings", Res.string.screen_opts, Icons.Default.Settings) {
         override val children: List<Screen>
@@ -224,42 +238,54 @@ sealed class Screen(
         Res.string.screen_settings_health,
         Icons.Default.Favorite,
         isRoot = false,
-    )
+    ) {
+        override val breadcrumbParent: Screen = Settings
+    }
 
     data object SettingsAppearance : Screen(
         "settings_appearance",
         Res.string.screen_settings_appearance,
         Icons.Default.Palette,
         isRoot = false,
-    )
+    ) {
+        override val breadcrumbParent: Screen = Settings
+    }
 
     data object SettingsFeaturePacks : Screen(
         "settings_feature_packs",
         Res.string.screen_settings_feature_packs,
         Icons.Default.Extension,
         isRoot = false,
-    )
+    ) {
+        override val breadcrumbParent: Screen = Settings
+    }
 
     data object SettingsData : Screen(
         "settings_data",
         Res.string.screen_settings_data,
         Icons.Default.Storage,
         isRoot = false,
-    )
+    ) {
+        override val breadcrumbParent: Screen = Settings
+    }
 
     data object SettingsDebug : Screen(
         "settings_debug",
         Res.string.screen_settings_debug,
         Icons.Default.BugReport,
         isRoot = false,
-    )
+    ) {
+        override val breadcrumbParent: Screen = Settings
+    }
 
     data object Templates : Screen(
         "templates",
         Res.string.screen_templates,
         Icons.AutoMirrored.Filled.List,
         isRoot = false,
-    )
+    ) {
+        override val breadcrumbParent: Screen = Settings
+    }
 
     data object Review : Screen(
         "review",
@@ -273,7 +299,9 @@ sealed class Screen(
         Res.string.profile_title,
         Icons.Default.Person,
         isRoot = false,
-    )
+    ) {
+        override val breadcrumbParent: Screen = Settings
+    }
 
     data object Decisions : Screen(
         "decisions",
@@ -374,7 +402,11 @@ sealed class Screen(
         label: StringResource,
         icon: ImageVector,
         val paramName: String = "tab",
-    ) : Screen("${parent.route}?$paramName=$subRoute", label, icon, isRoot = false)
+    ) : Screen("${parent.route}?$paramName=$subRoute", label, icon, isRoot = false) {
+        override val breadcrumbParent: Screen = parent
+    }
+
+    fun breadcrumbTrail(): List<Screen> = breadcrumbParent?.breadcrumbTrail().orEmpty() + this
 
     companion object {
         /**

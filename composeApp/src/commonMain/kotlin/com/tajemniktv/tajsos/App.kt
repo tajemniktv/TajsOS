@@ -48,6 +48,7 @@ import com.tajemniktv.tajsos.ui.components.screen.BindScreenHeader
 import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderController
 import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderModel
 import com.tajemniktv.tajsos.ui.components.screen.rememberScreenHeaderController
+import com.tajemniktv.tajsos.ui.components.screen.screenBreadcrumbs
 import com.tajemniktv.tajsos.ui.screens.archive.ArchiveScreen
 import com.tajemniktv.tajsos.ui.screens.areas.AreasScreen
 import com.tajemniktv.tajsos.ui.screens.areas.detail.AreaDetailScreen
@@ -721,6 +722,7 @@ private fun AppScaffold(
                     onNavigateToNode = onEditNode,
                     onNavigateToSearch = { onNavigate(Screen.Search.route) },
                     isDesktop = isDesktop,
+                    screenHeaderController = screenHeaderController,
                 )
             }
             composable(Screen.Insights.route) {
@@ -867,7 +869,11 @@ private fun RootScreenFrame(
 ) {
     BindScreenHeader(
         controller = controller,
-        model = ScreenHeaderModel(title = stringResource(screen.label)),
+        model =
+            ScreenHeaderModel(
+                breadcrumbs = screenBreadcrumbs(screen),
+                title = stringResource(screen.label),
+            ),
     )
     content()
 }

@@ -28,11 +28,13 @@ import com.tajemniktv.tajsos.data.TaskState
 import com.tajemniktv.tajsos.data.isTaskItem
 import com.tajemniktv.tajsos.data.taskStateOrNull
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderController
 import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderModel
 import com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior
 import com.tajemniktv.tajsos.ui.components.screen.SplitScreenScaffold
+import com.tajemniktv.tajsos.ui.components.screen.screenBreadcrumbs
 import com.tajemniktv.tajsos.ui.screens.notes.detail.NoteDetailScreen
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.datetime.TimeZone
@@ -349,7 +351,11 @@ fun TaskDetailScreen(
         SplitScreenScaffold(
             isSplitLayout = surface == TaskDetailSurface.DESKTOP,
             screenHeaderController = screenHeaderController,
-            screenHeader = ScreenHeaderModel(title = task.title),
+            screenHeader =
+                ScreenHeaderModel(
+                    breadcrumbs = screenBreadcrumbs(Screen.TaskDetail),
+                    title = task.title,
+                ),
             backgroundColor = TajsOSTheme.Background,
             scrollBehavior = ScreenScrollBehavior.PaneScroll,
             header = {
