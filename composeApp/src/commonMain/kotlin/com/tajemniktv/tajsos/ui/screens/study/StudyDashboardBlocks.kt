@@ -84,7 +84,7 @@ internal fun renderStudyQuickActionsBlock(context: StudyDashboardContext) {
 internal fun renderAssignmentTrackerBlock(context: StudyDashboardContext) {
     SectionTitle("ASSIGNMENT TRACKER")
     if (context.state.assignmentTracker.isEmpty()) {
-        EmptyState("No assignments yet.")
+        EmptyState("No assignments yet.", description = null, fillParent = false, showContainer = false)
         return
     }
     context.state.assignmentTracker.take(10).forEach { node ->
@@ -96,7 +96,7 @@ internal fun renderAssignmentTrackerBlock(context: StudyDashboardContext) {
 internal fun renderExamPrepBlock(context: StudyDashboardContext) {
     SectionTitle("EXAM PREP BOARD")
     if (context.state.examPrepBoard.isEmpty()) {
-        EmptyState("No exam prep items yet.")
+        EmptyState("No exam prep items yet.", fillParent = false, showContainer = false)
         return
     }
     context.state.examPrepBoard.take(10).forEach { node ->
@@ -108,7 +108,7 @@ internal fun renderExamPrepBlock(context: StudyDashboardContext) {
 internal fun renderAssignmentDeadlinesBlock(context: StudyDashboardContext) {
     SectionTitle("ASSIGNMENT DEADLINE SUMMARY")
     if (context.state.assignmentDeadlines.isEmpty()) {
-        EmptyState("No upcoming assignment deadlines.")
+        EmptyState("No upcoming assignment deadlines.", fillParent = false, showContainer = false)
         return
     }
     context.state.assignmentDeadlines.forEach { node ->
@@ -120,7 +120,7 @@ internal fun renderAssignmentDeadlinesBlock(context: StudyDashboardContext) {
 internal fun renderRevisitBeforeExamBlock(context: StudyDashboardContext) {
     SectionTitle("REVISIT BEFORE EXAM")
     if (context.state.revisitBeforeExam.isEmpty()) {
-        EmptyState("No revisit queue yet.")
+        EmptyState("No revisit queue yet.", fillParent = false, showContainer = false)
         return
     }
     context.state.revisitBeforeExam.take(10).forEach { node ->
@@ -132,7 +132,7 @@ internal fun renderRevisitBeforeExamBlock(context: StudyDashboardContext) {
 internal fun renderReadingProgressBlock(context: StudyDashboardContext) {
     SectionTitle("READING PROGRESS TRACKER")
     if (context.state.readingProgress.isEmpty()) {
-        EmptyState("Set reading progress from this dashboard using +/- controls.")
+        EmptyState("Set reading progress from this dashboard using +/- controls.", description = null, fillParent = false, showContainer = false)
         context.state.readingBacklog.take(8).forEach { item ->
             ProgressControlCard(
                 node = item.node,
@@ -171,7 +171,7 @@ internal fun renderReadingProgressBlock(context: StudyDashboardContext) {
 internal fun renderTopicMasteryBlock(context: StudyDashboardContext) {
     SectionTitle("TOPIC MASTERY TRACKER")
     if (context.state.topicMastery.isEmpty()) {
-        EmptyState("No mastery values yet.")
+        EmptyState("No mastery values yet.", fillParent = false, showContainer = false)
         return
     }
     context.state.topicMastery.forEach { item ->
@@ -213,7 +213,7 @@ internal fun renderKnowledgeVaultsBlock(context: StudyDashboardContext) {
 internal fun renderFlashcardCandidatesBlock(context: StudyDashboardContext) {
     SectionTitle("FLASHCARD EXPORT LATER")
     if (context.state.flashcardCandidates.isEmpty()) {
-        EmptyState("Mark notes as flashcard candidates from note detail or trackers.")
+        EmptyState("Mark notes as flashcard candidates from note detail or trackers.", fillParent = false, showContainer = false)
         return
     }
     context.state.flashcardCandidates.take(12).forEach { item ->
@@ -300,7 +300,7 @@ internal fun renderLinksGraphBlock(context: StudyDashboardContext) {
 internal fun renderCourseDashboardBlock(context: StudyDashboardContext) {
     SectionTitle("COURSE DASHBOARD")
     if (context.state.courseDashboard.isEmpty()) {
-        EmptyState("No course metadata yet.")
+        EmptyState("No course metadata yet.", fillParent = false, showContainer = false)
         return
     }
     context.state.courseDashboard.forEach { summary ->
@@ -333,7 +333,7 @@ internal fun renderCourseDashboardBlock(context: StudyDashboardContext) {
 internal fun renderSemesterDashboardBlock(context: StudyDashboardContext) {
     SectionTitle("SEMESTER DASHBOARD")
     if (context.state.semesterDashboard.isEmpty()) {
-        EmptyState("No semester metadata yet.")
+        EmptyState("No semester metadata yet.", fillParent = false, showContainer = false)
         return
     }
     context.state.semesterDashboard.forEach { summary ->
@@ -371,7 +371,7 @@ private fun NodeSection(
         fontWeight = FontWeight.Medium,
     )
     if (nodes.isEmpty()) {
-        EmptyState("No entries yet.")
+        EmptyState("No entries yet.", fillParent = false, showContainer = false)
     } else {
         for (item in nodes.take(10)) {
             StudentNodeCard(context.viewModel, item, context.onEditNode)
