@@ -62,10 +62,24 @@ data class ScreenHeaderModel(
 fun rememberScreenHeaderController(): ScreenHeaderController = remember { ScreenHeaderController() }
 
 @Composable
-fun screenBreadcrumbs(screen: Screen): List<ScreenHeaderBreadcrumb> =
-    screen.breadcrumbTrail().map { breadcrumbScreen ->
-        ScreenHeaderBreadcrumb(label = stringResource(breadcrumbScreen.label))
+fun screenBreadcrumbs(
+    screen: Screen,
+    onScreenClick: ((Screen) -> (() -> Unit)?)? = null,
+): List<ScreenHeaderBreadcrumb> {
+    val trail = screen.breadcrumbTrail()
+    return trail.mapIndexed { index, breadcrumbScreen ->
+        val click =
+            if (index < trail.lastIndex) {
+                onScreenClick?.invoke(breadcrumbScreen)
+            } else {
+                null
+            }
+        ScreenHeaderBreadcrumb(
+            label = stringResource(breadcrumbScreen.label),
+            onClick = click,
+        )
     }
+}
 
 /**
  * Publishes the current screen header model to the persistent shell.
