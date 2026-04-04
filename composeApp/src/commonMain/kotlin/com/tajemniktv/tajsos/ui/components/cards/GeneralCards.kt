@@ -32,6 +32,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tajemniktv.tajsos.ui.components.common.GlassMaterial
+import com.tajemniktv.tajsos.ui.components.common.glassContainerColor
+import com.tajemniktv.tajsos.ui.components.common.glassChrome
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 @Composable
@@ -45,8 +48,8 @@ fun InfoCard(
 ) {
     Surface(
         onClick = onClick,
-        modifier = modifier,
-        color = TajsOSTheme.Surface,
+        modifier = modifier.glassChrome(shape = RoundedCornerShape(TajsOSTheme.RadiusMd), material = GlassMaterial.REGULAR),
+        color = glassContainerColor(TajsOSTheme.Surface),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         border = BorderStroke(1.dp, TajsOSTheme.Border),
     ) {
@@ -90,8 +93,8 @@ fun StatusCard(
 ) {
     Surface(
         onClick = onClick,
-        modifier = modifier.fillMaxWidth(),
-        color = TajsOSTheme.Surface,
+        modifier = modifier.fillMaxWidth().glassChrome(shape = RoundedCornerShape(TajsOSTheme.RadiusMd), material = GlassMaterial.REGULAR),
+        color = glassContainerColor(TajsOSTheme.Surface),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         border = BorderStroke(1.dp, TajsOSTheme.Border),
     ) {
@@ -128,8 +131,8 @@ fun LinkedNodeItem(
 ) {
     Surface(
         onClick = onClick,
-        modifier = modifier.fillMaxWidth(),
-        color = TajsOSTheme.Surface,
+        modifier = modifier.fillMaxWidth().glassChrome(shape = RoundedCornerShape(TajsOSTheme.RadiusMd), material = GlassMaterial.REGULAR),
+        color = glassContainerColor(TajsOSTheme.Surface),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         border = BorderStroke(1.dp, TajsOSTheme.Border),
     ) {
@@ -183,8 +186,8 @@ fun ConnectionCard(
 ) {
     Surface(
         onClick = onClick,
-        modifier = modifier.fillMaxWidth(),
-        color = Color.Transparent,
+        modifier = modifier.fillMaxWidth().glassChrome(shape = RoundedCornerShape(TajsOSTheme.RadiusMd), material = GlassMaterial.THIN),
+        color = glassContainerColor(Color.Transparent),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         border = BorderStroke(1.dp, TajsOSTheme.Border.copy(alpha = 0.5f)),
     ) {

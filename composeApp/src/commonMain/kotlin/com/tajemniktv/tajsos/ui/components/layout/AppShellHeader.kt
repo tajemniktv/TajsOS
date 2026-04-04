@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -47,13 +48,19 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
+import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderModel
+import com.tajemniktv.tajsos.ui.components.common.GlassMaterial
+import com.tajemniktv.tajsos.ui.components.common.glassContainerColor
 import com.tajemniktv.tajsos.ui.components.common.glassChrome
 import com.tajemniktv.tajsos.ui.components.notifications.NotificationUiModel
 import com.tajemniktv.tajsos.ui.components.notifications.TajsNotificationWidget
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
-import dev.chrisbanes.haze.HazeState
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.header_menu
+import tajsos.composeapp.generated.resources.header_mode_label
+import tajsos.composeapp.generated.resources.header_notifications
+import tajsos.composeapp.generated.resources.header_notifications_title
 import tajsos.composeapp.generated.resources.header_search_placeholder
 
 /**
@@ -81,7 +88,6 @@ data class ShellModeOption(
  * @param notifications List of current notifications.
  * @param shellState The current UI state of the app shell components.
  * @param isDesktop Whether the current environment is a desktop layout.
- * @param hazeState Shared haze state used for shell glass surfaces.
  * @param onModeSelect Callback when a mode is selected from the switcher.
  * @param modifier The modifier to be applied to the layout.
  */
@@ -94,8 +100,8 @@ fun AppShellHeader(
     notifications: List<NotificationUiModel>,
     shellState: AppShellState,
     isDesktop: Boolean,
-    hazeState: HazeState,
     onModeSelect: (Long) -> Unit,
+    screenHeader: ScreenHeaderModel,
     modifier: Modifier = Modifier,
     onMenuClick: (() -> Unit)? = null,
 ) {
@@ -104,66 +110,88 @@ fun AppShellHeader(
             modifier
                 .fillMaxWidth()
                 .glassChrome(
-                    hazeState = hazeState,
                     shape = RoundedCornerShape(0.dp),
+                    material = GlassMaterial.THICK,
                 )
                 .then(if (!isDesktop) Modifier.statusBarsPadding() else Modifier),
-        color = Color.Transparent,
+        color = glassContainerColor(TajsOSTheme.SurfaceLow),
         tonalElevation = 0.dp,
         shadowElevation = 0.dp,
     ) {
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        horizontal = if (isDesktop) 24.dp else 16.dp,
-                        vertical = if (isDesktop) 16.dp else 12.dp,
-                    ),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            if (!isDesktop && onMenuClick != null) {
-                IconButton(onClick = onMenuClick) {
-                    Icon(
-                        imageVector = Icons.Default.Menu,
-                        contentDescription = "Menu",
-                        tint = TajsOSTheme.Text,
-                    )
-                }
-                Spacer(Modifier.width(8.dp))
-            }
-
-            HeaderGreeting(
-                greeting = greeting,
-                protocolText = protocolText,
-                modifier = if (isDesktop) Modifier.width(320.dp) else Modifier.weight(1f),
-            )
-
-            if (isDesktop) {
-                Spacer(Modifier.width(24.dp))
-                GlobalSearchBar(modifier = Modifier.weight(1f))
-                Spacer(Modifier.width(24.dp))
-            } else {
-                Spacer(Modifier.width(12.dp))
-            }
-
-            HeaderModeSwitcher(
-                currentModeLabel = currentModeLabel,
-                modeOptions = modeOptions,
-                expanded = shellState.modeDropdownExpanded,
-                onExpandedChange = { shellState.modeDropdownExpanded = it },
-                hazeState = hazeState,
+        Column {
+            Row(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            horizontal = if (isDesktop) 24.dp else 16.dp,
+                            vertical = if (isDesktop) 16.dp else 12.dp,
+                        ),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                onModeSelect(it)
-                shellState.modeDropdownExpanded = false
+                if (!isDesktop && onMenuClick != null) {
+                    IconButton(onClick = onMenuClick) {
+                        Icon(
+                            imageVector = Icons.Default.Menu,
+                            contentDescription = stringResource(Res.string.header_menu),
+                            tint = TajsOSTheme.Text,
+                        )
+                    }
+                    Spacer(Modifier.width(8.dp))
+                }
+
+                HeaderGreeting(
+                    greeting = greeting,
+                    protocolText = protocolText,
+                    modifier = if (isDesktop) Modifier.width(320.dp) else Modifier.weight(1f),
+                )
+
+                if (isDesktop) {
+                    Spacer(Modifier.width(24.dp))
+                    GlobalSearchBar(modifier = Modifier.weight(1f))
+                    Spacer(Modifier.width(24.dp))
+                    HeaderScreenContext(
+                        model = screenHeader,
+                        modifier = Modifier.width(300.dp),
+                    )
+                    if (screenHeader.actions != null) {
+                        Spacer(Modifier.width(16.dp))
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            content = screenHeader.actions,
+                        )
+                    }
+                } else {
+                    Spacer(Modifier.width(12.dp))
+                    if (screenHeader.actions != null) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            content = screenHeader.actions,
+                        )
+                        Spacer(Modifier.width(12.dp))
+                    }
+                }
+
+                HeaderModeSwitcher(
+                    currentModeLabel = currentModeLabel,
+                    modeOptions = modeOptions,
+                    expanded = shellState.modeDropdownExpanded,
+                    onExpandedChange = { shellState.modeDropdownExpanded = it },
+                ) {
+                    onModeSelect(it)
+                    shellState.modeDropdownExpanded = false
+                }
+                Spacer(Modifier.width(10.dp))
+                NotificationsPopover(
+                    expanded = shellState.notificationsExpanded,
+                    notifications = notifications,
+                    onExpandedChange = { shellState.notificationsExpanded = it },
+                )
             }
-            Spacer(Modifier.width(10.dp))
-            NotificationsPopover(
-                expanded = shellState.notificationsExpanded,
-                notifications = notifications,
-                onExpandedChange = { shellState.notificationsExpanded = it },
-                hazeState = hazeState,
-            )
+
+            screenHeader.toolbar?.invoke()
         }
     }
 }
@@ -196,6 +224,38 @@ fun HeaderGreeting(
     }
 }
 
+@Composable
+private fun HeaderScreenContext(
+    model: ScreenHeaderModel,
+    modifier: Modifier = Modifier,
+) {
+    if (model.title.isNullOrBlank() && model.subtitle.isNullOrBlank()) {
+        return
+    }
+
+    Column(modifier = modifier) {
+        model.title?.let { title ->
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                color = TajsOSTheme.Text,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+        model.subtitle?.takeIf { it.isNotBlank() }?.let { subtitle ->
+            Spacer(Modifier.height(2.dp))
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.labelSmall,
+                color = TajsOSTheme.Muted,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+    }
+}
+
 /**
  * Header search entry placeholder prepared as a global shell search point.
  */
@@ -206,7 +266,11 @@ fun GlobalSearchBar(modifier: Modifier = Modifier) {
         onValueChange = {},
         readOnly = true,
         singleLine = true,
-        modifier = modifier,
+        modifier =
+            modifier.glassChrome(
+                shape = RoundedCornerShape(12.dp),
+                material = GlassMaterial.THIN,
+            ),
         textStyle = MaterialTheme.typography.bodyMedium.copy(color = TajsOSTheme.Text),
         placeholder = {
             Text(
@@ -233,7 +297,6 @@ fun GlobalSearchBar(modifier: Modifier = Modifier) {
  * @param modeOptions Available modes to switch to.
  * @param expanded Whether the mode dropdown is currently expanded.
  * @param onExpandedChange Callback to update the expanded state.
- * @param hazeState Shared haze state used for shell glass surfaces.
  * @param modifier The modifier to be applied to the layout.
  * @param onModeSelect Callback when a mode is selected.
  */
@@ -243,7 +306,6 @@ fun HeaderModeSwitcher(
     modeOptions: List<ShellModeOption>,
     expanded: Boolean,
     onExpandedChange: (Boolean) -> Unit,
-    hazeState: HazeState,
     modifier: Modifier = Modifier,
     onModeSelect: (Long) -> Unit,
 ) {
@@ -262,9 +324,9 @@ fun HeaderModeSwitcher(
     Box(modifier = modifier) {
         Surface(
             onClick = { onExpandedChange(!expanded) },
-            modifier = Modifier.glassChrome(hazeState = hazeState, shape = RoundedCornerShape(12.dp)),
+            modifier = Modifier.glassChrome(shape = RoundedCornerShape(12.dp), material = GlassMaterial.REGULAR),
             shape = RoundedCornerShape(12.dp),
-            color = Color.Transparent,
+            color = glassContainerColor(TajsOSTheme.SurfaceHigh),
             tonalElevation = 0.dp,
             shadowElevation = 0.dp,
         ) {
@@ -281,7 +343,7 @@ fun HeaderModeSwitcher(
                             .background(TajsOSTheme.Success, CircleShape),
                 )
                 Text(
-                    text = "SYSTEM: ${currentModeLabel.uppercase()}",
+                    text = stringResource(Res.string.header_mode_label, currentModeLabel.uppercase()),
                     style = MaterialTheme.typography.labelSmall,
                     color = TajsOSTheme.Text,
                     maxLines = 1,
@@ -335,7 +397,6 @@ fun HeaderModeSwitcher(
  * @param expanded Whether the notification popover is expanded.
  * @param notifications List of current notifications.
  * @param onExpandedChange Callback to update the expanded state.
- * @param hazeState Shared haze state used for shell glass surfaces.
  * @param modifier The modifier to be applied to the layout.
  */
 @Composable
@@ -343,14 +404,13 @@ fun NotificationsPopover(
     expanded: Boolean,
     notifications: List<NotificationUiModel>,
     onExpandedChange: (Boolean) -> Unit,
-    hazeState: HazeState,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier) {
         Surface(
-            modifier = Modifier.glassChrome(hazeState = hazeState, shape = RoundedCornerShape(12.dp)),
+            modifier = Modifier.glassChrome(shape = RoundedCornerShape(12.dp), material = GlassMaterial.REGULAR),
             shape = RoundedCornerShape(12.dp),
-            color = Color.Transparent,
+            color = glassContainerColor(TajsOSTheme.SurfaceHigh),
             tonalElevation = 0.dp,
             shadowElevation = 0.dp,
         ) {
@@ -360,7 +420,7 @@ fun NotificationsPopover(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Notifications,
-                        contentDescription = "Notifications",
+                        contentDescription = stringResource(Res.string.header_notifications),
                         tint = TajsOSTheme.Text,
                     )
                 }
@@ -388,15 +448,15 @@ fun NotificationsPopover(
                     modifier =
                         Modifier
                             .padding(top = 48.dp, end = 16.dp)
-                            .glassChrome(hazeState = hazeState, shape = RoundedCornerShape(TajsOSTheme.RadiusLg)),
+                            .glassChrome(shape = RoundedCornerShape(TajsOSTheme.RadiusLg), material = GlassMaterial.THICK),
                     shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
-                    color = Color.Transparent,
+                    color = glassContainerColor(TajsOSTheme.SurfaceHighest),
                     tonalElevation = 8.dp,
                     shadowElevation = 8.dp,
                 ) {
                     TajsNotificationWidget(
                         notifications = notifications,
-                        title = "SYSTEM STATUS",
+                        title = stringResource(Res.string.header_notifications_title),
                     )
                 }
             }

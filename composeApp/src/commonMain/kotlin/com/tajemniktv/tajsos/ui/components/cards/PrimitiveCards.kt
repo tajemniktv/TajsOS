@@ -18,6 +18,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.tajemniktv.tajsos.ui.components.common.GlassMaterial
+import com.tajemniktv.tajsos.ui.components.common.glassContainerColor
+import com.tajemniktv.tajsos.ui.components.common.glassChrome
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 @Composable
@@ -28,8 +31,8 @@ fun DashCard(
 ) {
     Surface(
         onClick = onClick,
-        modifier = modifier,
-        color = TajsOSTheme.Surface,
+        modifier = modifier.glassChrome(shape = RoundedCornerShape(TajsOSTheme.RadiusMd), material = GlassMaterial.REGULAR),
+        color = glassContainerColor(TajsOSTheme.Surface),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         border = BorderStroke(1.dp, Color.White.copy(alpha = 0.05f)),
         content = content,
@@ -46,7 +49,8 @@ fun TactileCard(
         modifier =
             modifier
                 .fillMaxWidth()
-                .background(TajsOSTheme.Surface, RoundedCornerShape(TajsOSTheme.RadiusMd))
+                .glassChrome(shape = RoundedCornerShape(TajsOSTheme.RadiusMd), material = GlassMaterial.REGULAR)
+                .background(glassContainerColor(TajsOSTheme.Surface), RoundedCornerShape(TajsOSTheme.RadiusMd))
                 .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
                 .padding(TajsOSTheme.SpacingMd),
         contentAlignment = Alignment.CenterStart,

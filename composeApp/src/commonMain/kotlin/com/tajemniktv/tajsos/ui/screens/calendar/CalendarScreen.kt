@@ -19,10 +19,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.ChevronRight
@@ -43,6 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
 import com.tajemniktv.tajsos.ui.main.state.CalendarEntry
 import com.tajemniktv.tajsos.ui.main.state.EntryType
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
@@ -102,18 +101,14 @@ fun CalendarScreen(
                     onEditNode,
                 )
             }
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(bottom = 80.dp),
-        ) {
-            plan.primary.forEach { block ->
-                CalendarDashboardBlocks
-                    .resolve(
-                        block.id,
-                    )?.invoke(context)
+        ScreenScaffold {
+            Column(modifier = Modifier.fillMaxSize()) {
+                plan.primary.forEach { block ->
+                    CalendarDashboardBlocks
+                        .resolve(
+                            block.id,
+                        )?.invoke(context)
+                }
             }
         }
     }

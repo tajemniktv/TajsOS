@@ -92,6 +92,14 @@ now.
 - **Backend:** Ktor (for sync / remote features)
 - **Build system:** Gradle Kotlin DSL
 
+### UI layering
+
+The Compose app now separates UI composition into three explicit layers:
+
+- `AppShell` for persistent chrome such as the sidebar, top header, shell spacing, and route host.
+- `ScreenScaffold` / `SplitScreenScaffold` for reusable page-level structure, width policy, and scroll behavior.
+- Screen route/content composables for state collection and screen-specific rendering only.
+
 ---
 
 ## Repository structure

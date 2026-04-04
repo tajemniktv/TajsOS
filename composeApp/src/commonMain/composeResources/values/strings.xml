@@ -1044,6 +1044,16 @@
     <string name="sidebar_brand">TAJSOS</string>
     <string name="header_search_placeholder">Search across TajsOS</string>
     <string name="header_status_label">TAJSOS // STATUS: %1$s</string>
+    <string name="header_menu">Menu</string>
+    <string name="header_notifications">Notifications</string>
+    <string name="header_notifications_title">SYSTEM STATUS</string>
+    <string name="header_mode_label">SYSTEM: %1$s</string>
+    <string name="shell_protocol_state_with_name">Protocol state: %1$s</string>
+    <string name="shell_protocol_state_standby">Protocol state: standby</string>
+    <string name="shell_mode_standby">STANDBY</string>
+    <string name="shell_mode_focus">Focus</string>
+    <string name="shell_mode_execution">Execution</string>
+    <string name="shell_mode_recovery">Recovery</string>
 
     <!-- Places -->
     <string name="places_title">CONTEXT &amp; LOGISTICS</string>

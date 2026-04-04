@@ -37,6 +37,8 @@ import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.isNoteItem
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.coroutines.launch
 
@@ -156,9 +158,10 @@ fun NotesRoute(
             }
         }
 
-    BoxWithConstraints(
-        modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd),
-    ) {
+    ScreenScaffold(scrollBehavior = ScreenScrollBehavior.None) {
+        BoxWithConstraints(
+            modifier = Modifier.fillMaxSize(),
+        ) {
         val isNarrow = maxWidth < 960.dp
 
         fun selectNote(noteId: Long) {
@@ -395,6 +398,7 @@ fun NotesRoute(
                     }
                 }
             }
+        }
         }
     }
 }

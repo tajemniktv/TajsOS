@@ -5,11 +5,9 @@
 package com.tajemniktv.tajsos.ui.screens.projects.detail
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,8 +15,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Adjust
 import androidx.compose.material.icons.filled.CalendarToday
@@ -32,7 +28,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -53,7 +48,10 @@ import com.tajemniktv.tajsos.data.taskStateOrNull
 import com.tajemniktv.tajsos.data.toNodeStatus
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.common.SelectorDialog
-import com.tajemniktv.tajsos.ui.components.layout.LocalHeaderActions
+import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderController
+import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderModel
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior
+import com.tajemniktv.tajsos.ui.components.screen.SplitScreenScaffold
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
@@ -64,6 +62,7 @@ import tajsos.composeapp.generated.resources.project_health_healthy
 import tajsos.composeapp.generated.resources.project_health_neglected
 import tajsos.composeapp.generated.resources.project_health_on_hold
 import tajsos.composeapp.generated.resources.project_set_status
+import tajsos.composeapp.generated.resources.screen_project
 
 /**
  * Project mission-control detail screen scoped to one project outcome.
@@ -75,6 +74,7 @@ fun ProjectDetailScreen(
     onEditNode: (Long) -> Unit,
     onBack: () -> Unit,
     isDesktop: Boolean = false,
+    screenHeaderController: ScreenHeaderController? = null,
 ) {
     val nodes by viewModel.allNodes.collectAsState()
     val allAreas by viewModel.allAreas.collectAsState()
@@ -230,78 +230,86 @@ fun ProjectDetailScreen(
         }
     }
 
-    CompositionLocalProvider(LocalHeaderActions provides actions) {
-        val context =
-            ProjectDetailContext(
-                viewModel = viewModel,
-                project = project,
-                areaName = areaName,
-                healthLabel = healthLabel,
-                healthColor = healthColor,
-                progress = progress,
-                completedTasksCount = completedTasks.size,
-                totalTasksCount = projectTasks.size,
-                outcomeText = outcomeText,
-                targetDate = targetDate,
-                selectedTab = selectedTab,
-                onSelectTab = { selectedTab = it },
-                nextActions = nextActions,
-                blockedTasks = blockedTasks,
-                linkedNotes = linkedNotes,
-                linkedRecords = linkedRecords,
-                linkedTasks = projectTasks,
-                timeline = logs,
-                attachments = attachments,
-                milestones = upcomingMilestones,
-                tags = tags.map { it.name },
-                relatedNodeIds = relatedNodeIds,
-                nodesById = nodesById,
-                attachmentNames = attachments.map { it.title ?: it.uriOrPath },
-                onEditNode = onEditNode,
-                onStatusClick = { showStatusDialog = true },
-            )
+    val context =
+        ProjectDetailContext(
+            viewModel = viewModel,
+            project = project,
+            areaName = areaName,
+            healthLabel = healthLabel,
+            healthColor = healthColor,
+            progress = progress,
+            completedTasksCount = completedTasks.size,
+            totalTasksCount = projectTasks.size,
+            outcomeText = outcomeText,
+            targetDate = targetDate,
+            selectedTab = selectedTab,
+            onSelectTab = { selectedTab = it },
+            nextActions = nextActions,
+            blockedTasks = blockedTasks,
+            linkedNotes = linkedNotes,
+            linkedRecords = linkedRecords,
+            linkedTasks = projectTasks,
+            timeline = logs,
+            attachments = attachments,
+            milestones = upcomingMilestones,
+            tags = tags.map { it.name },
+            relatedNodeIds = relatedNodeIds,
+            nodesById = nodesById,
+            attachmentNames = attachments.map { it.title ?: it.uriOrPath },
+            onEditNode = onEditNode,
+            onStatusClick = { showStatusDialog = true },
+        )
 
-        BoxWithConstraints(
-            modifier = Modifier.fillMaxSize().background(TajsOSTheme.Background),
-        ) {
-            val surface =
-                if (isDesktop && maxWidth >= 1180.dp) {
-                    ProjectDetailSurface.DESKTOP
-                } else {
-                    ProjectDetailSurface.MOBILE
-                }
+    BoxWithConstraints(
+        modifier = Modifier.fillMaxSize().background(TajsOSTheme.Background),
+    ) {
+        val surface =
+            if (isDesktop && maxWidth >= 1180.dp) {
+                ProjectDetailSurface.DESKTOP
+            } else {
+                ProjectDetailSurface.MOBILE
+            }
 
-            val plan = remember(surface) { buildProjectDetailPlan(surface) }
+        val plan = remember(surface) { buildProjectDetailPlan(surface) }
 
-            Column(
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState())
-                        .padding(12.dp)
-                        .padding(bottom = 80.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
+        SplitScreenScaffold(
+            isSplitLayout = surface == ProjectDetailSurface.DESKTOP,
+            screenHeaderController = screenHeaderController,
+            screenHeader =
+                ScreenHeaderModel(
+                    title = project.title,
+                    subtitle = stringResource(Res.string.screen_project),
+                    actions = actions,
+                ),
+            backgroundColor = TajsOSTheme.Background,
+            scrollBehavior = ScreenScrollBehavior.PaneScroll,
+            header = {
                 if (surface == ProjectDetailSurface.DESKTOP) {
-                    // Header and Hero are full width
                     ProjectDetailBlockRegistry.resolve("project_header")?.invoke(context)
                     ProjectDetailBlockRegistry.resolve("project_hero")?.invoke(context)
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    ) {
-                        Column(
-                            modifier = Modifier.weight(1f).fillMaxHeight(),
-                            verticalArrangement = Arrangement.spacedBy(12.dp),
-                        ) {
-                            ProjectDetailBlockRegistry.resolve("project_tabs")?.invoke(context)
-                            ProjectDetailBlockRegistry.resolve("project_content")?.invoke(context)
+                }
+            },
+            primary = {
+                Column(
+                    modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+                    verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp),
+                ) {
+                    if (surface == ProjectDetailSurface.DESKTOP) {
+                        ProjectDetailBlockRegistry.resolve("project_tabs")?.invoke(context)
+                        ProjectDetailBlockRegistry.resolve("project_content")?.invoke(context)
+                    } else {
+                        plan.primary.forEach { block ->
+                            ProjectDetailBlockRegistry.resolve(block.id)?.invoke(context)
                         }
-
+                    }
+                }
+            },
+            secondary =
+                if (surface == ProjectDetailSurface.DESKTOP) {
+                    {
                         Column(
-                            modifier = Modifier.width(320.dp).fillMaxHeight(),
-                            verticalArrangement = Arrangement.spacedBy(12.dp),
+                            modifier = Modifier.fillMaxWidth().width(320.dp).fillMaxHeight(),
+                            verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp),
                         ) {
                             plan.secondary.forEach { block ->
                                 ProjectDetailBlockRegistry.resolve(block.id)?.invoke(context)
@@ -309,12 +317,9 @@ fun ProjectDetailScreen(
                         }
                     }
                 } else {
-                    plan.primary.forEach { block ->
-                        ProjectDetailBlockRegistry.resolve(block.id)?.invoke(context)
-                    }
-                }
-            }
-        }
+                    null
+                },
+        )
     }
 
     if (showStatusDialog) {
