@@ -77,8 +77,9 @@ private val healthTitleKeywords =
  * into MainViewModel.
  *
  * Domains (such as finance or health) are categorized implicitly by checking for hardcoded
- * string markers within node tags, titles, content, maintenanceType, and noteType fields
- * rather than relying on explicit relational models.
+ * string markers within node tags, titles, content, maintenanceType, and noteType fields.
+ * While explicit domain associations can be defined in metadata (e.g., via associatedDomains),
+ * these queries provide a heuristic-based lens over all system nodes.
  */
 object DomainLensQueries {
     /**
