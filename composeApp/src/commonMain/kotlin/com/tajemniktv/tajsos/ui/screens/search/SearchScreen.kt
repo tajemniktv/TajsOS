@@ -7,7 +7,6 @@ package com.tajemniktv.tajsos.ui.screens.search
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -21,6 +20,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior
+import com.tajemniktv.tajsos.ui.components.screen.SplitScreenScaffold
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlin.time.Clock
 
@@ -82,39 +83,43 @@ fun SearchScreen(
             onToggleFilters = { showFilters = !showFilters },
         )
 
-    BoxWithConstraints(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(TajsOSTheme.SpacingMd)
-                .padding(bottom = 80.dp),
-    ) {
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val surface =
             if (maxWidth >= 1280.dp) SearchDashboardSurface.DESKTOP else SearchDashboardSurface.MOBILE
         val plan = remember(surface) { buildSearchDashboardPlan(surface) }
 
-        Row(
-            modifier = Modifier.fillMaxSize(),
-            horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
-        ) {
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
-            ) {
-                plan.primary.forEach { block ->
-                    SearchDashboardBlocks.resolve(block.id)?.invoke(context)
-                }
-            }
-
-            if (surface == SearchDashboardSurface.DESKTOP) {
-                Column(modifier = Modifier.padding(top = 64.dp)) {
-                    // Offset for search field
-                    plan.secondary.forEach { block ->
+        SplitScreenScaffold(
+            isSplitLayout = surface == SearchDashboardSurface.DESKTOP,
+            scrollBehavior = ScreenScrollBehavior.None,
+            primary = {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+                ) {
+                    plan.primary.forEach { block ->
                         SearchDashboardBlocks.resolve(block.id)?.invoke(context)
                     }
                 }
-            }
-        }
+            },
+            secondary =
+                if (surface == SearchDashboardSurface.DESKTOP) {
+                    {
+                        Column(
+                            modifier =
+                                Modifier
+                                    .fillMaxSize()
+                                    .padding(top = 64.dp)
+                                    .verticalScroll(rememberScrollState()),
+                            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+                        ) {
+                            plan.secondary.forEach { block ->
+                                SearchDashboardBlocks.resolve(block.id)?.invoke(context)
+                            }
+                        }
+                    }
+                } else {
+                    null
+                },
+        )
     }
 }

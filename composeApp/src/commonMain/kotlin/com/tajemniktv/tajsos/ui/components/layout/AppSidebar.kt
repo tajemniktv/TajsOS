@@ -145,7 +145,12 @@ fun AppSidebar(
                     interactionSource = hoverInteraction,
                     enabled = shellState.sidebarMode == SidebarMode.HOVER_EXPAND,
                 ),
-        color = glassContainerColor(TajsOSTheme.SurfaceLowest),
+        color =
+            if (applyGlass) {
+                glassContainerColor(TajsOSTheme.SurfaceLowest)
+            } else {
+                TajsOSTheme.SurfaceLowest
+            },
         shape = RoundedCornerShape(0.dp),
         tonalElevation = 0.dp,
         shadowElevation = 0.dp,

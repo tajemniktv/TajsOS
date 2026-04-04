@@ -14,7 +14,6 @@ import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -30,7 +29,7 @@ import com.tajemniktv.tajsos.ui.components.common.ProvideGlassSystem
 import com.tajemniktv.tajsos.ui.components.common.glassContainerColor
 import com.tajemniktv.tajsos.ui.components.common.glassChrome
 import com.tajemniktv.tajsos.ui.components.notifications.NotificationUiModel
-import com.tajemniktv.tajsos.ui.components.notifications.NotificationVariant
+import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderModel
 import com.tajemniktv.tajsos.ui.screens.tasks.TasksTab
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import dev.chrisbanes.haze.hazeSource
@@ -39,33 +38,25 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.compose.resources.stringResource
 import kotlin.time.Clock
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.briefing_greeting_afternoon
+import tajsos.composeapp.generated.resources.briefing_greeting_evening
+import tajsos.composeapp.generated.resources.briefing_greeting_morning
+import tajsos.composeapp.generated.resources.briefing_greeting_night
+import tajsos.composeapp.generated.resources.shell_mode_execution
+import tajsos.composeapp.generated.resources.shell_mode_focus
+import tajsos.composeapp.generated.resources.shell_mode_recovery
+import tajsos.composeapp.generated.resources.shell_mode_standby
+import tajsos.composeapp.generated.resources.shell_protocol_state_standby
+import tajsos.composeapp.generated.resources.shell_protocol_state_with_name
 
 /**
- * Top-level shell layout with persistent desktop sidebar and top header.
- *
- * The shell remains static while content routes change in the main content area.
- *
- * @param isDesktop Whether the current environment is a desktop layout.
- * @param shellState The current state of the app shell (sidebar mode, etc.).
- * @param currentDestination The current navigation destination.
- * @param activeTasksTab The currently selected tab in the Tasks screen.
- * @param onNavigate Callback to handle screen navigation.
- * @param onNavigateToTasksTab Callback to handle tab changes within the Tasks screen.
- * @param onNewEntry Callback invoked when the primary "New Entry" action is triggered.
- * @param currentMode The currently active system mode.
- * @param allModes The list of all available system modes.
- * @param packRegistry The registry of available packs.
- * @param userProfile The current user profile.
- * @param isGlassmorphismEnabled Whether glass effects should be rendered.
- * @param onModeSelect Callback when a different mode is selected.
- * @param drawerState State of the navigation drawer (used in mobile).
- * @param scope Coroutine scope for launching drawer actions.
- * @param modifier The modifier to be applied to the layout.
- * @param content The composable content for the main viewing area.
+ * Top-level application chrome with persistent sidebar, shell header, and routed content slot.
  */
 @Composable
-fun AppLayout(
+fun AppShell(
     isDesktop: Boolean,
     shellState: AppShellState,
     currentDestination: NavDestination?,
@@ -81,44 +72,21 @@ fun AppLayout(
     onModeSelect: (Long) -> Unit,
     drawerState: DrawerState,
     scope: CoroutineScope,
+    screenHeader: ScreenHeaderModel,
+    notifications: List<NotificationUiModel>,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
     val currentScreen = Screen.fromRoute(currentDestination?.route)
     val currentRoot = currentScreen?.let(Screen::sidebarContextRoot)
     val userName = userProfile.resolveDisplayName()
-    val greeting = remember(userName) { timeGreeting(userName) }
-    val protocolText = currentMode?.name?.let { "Protocol state: $it" } ?: "Protocol state: standby"
+    val greeting = timeGreeting(userName)
+    val protocolText =
+        currentMode?.name?.let { stringResource(Res.string.shell_protocol_state_with_name, it) }
+            ?: stringResource(Res.string.shell_protocol_state_standby)
     val modeOptions = rememberModeOptions(allModes)
+    val standbyLabel = stringResource(Res.string.shell_mode_standby)
     val hazeState = rememberHazeState(blurEnabled = isGlassmorphismEnabled)
-    val notifications =
-        remember {
-            listOf(
-                NotificationUiModel(
-                    id = "SYS-001",
-                    title = "System Integrity Nominal",
-                    body = "All local-first modules are operational.",
-                    category = "SYSTEM",
-                    variant = NotificationVariant.INFO,
-                ),
-                NotificationUiModel(
-                    id = "SYNC-042",
-                    title = "Pending Sync Activity",
-                    body = "3 nodes awaiting finalization in background.",
-                    category = "NETWORK",
-                    variant = NotificationVariant.SYNC,
-                    isUnread = true,
-                ),
-                NotificationUiModel(
-                    id = "ALRT-099",
-                    title = "Low Focus Threshold",
-                    body = "Productivity dip detected. Consider a recovery block.",
-                    category = "INSIGHT",
-                    variant = NotificationVariant.WARNING,
-                ),
-            )
-        }
-
     ProvideGlassSystem(
         enabled = isGlassmorphismEnabled,
         hazeState = hazeState,
@@ -167,12 +135,13 @@ fun AppLayout(
                         AppShellHeader(
                             greeting = greeting,
                             protocolText = protocolText,
-                            currentModeLabel = currentMode?.name ?: "STANDBY",
+                            currentModeLabel = currentMode?.name ?: standbyLabel,
                             modeOptions = modeOptions,
                             notifications = notifications,
                             shellState = shellState,
                             isDesktop = true,
                             onModeSelect = onModeSelect,
+                            screenHeader = screenHeader,
                             modifier = Modifier.padding(bottom = 2.dp),
                         )
 
@@ -186,7 +155,11 @@ fun AppLayout(
                     drawerState = drawerState,
                     drawerContent = {
                         ModalDrawerSheet(
-                            modifier = Modifier.glassChrome(material = GlassMaterial.THICK),
+                            modifier =
+                                Modifier.glassChrome(
+                                    shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp),
+                                    material = GlassMaterial.THICK,
+                                ),
                             drawerContainerColor = glassContainerColor(TajsOSTheme.SidebarBackground),
                         ) {
                             AppSidebar(
@@ -221,13 +194,14 @@ fun AppLayout(
                         AppShellHeader(
                             greeting = greeting,
                             protocolText = protocolText,
-                            currentModeLabel = currentMode?.name ?: "STANDBY",
+                            currentModeLabel = currentMode?.name ?: standbyLabel,
                             modeOptions = modeOptions,
                             notifications = notifications,
                             shellState = shellState,
                             isDesktop = false,
                             onModeSelect = onModeSelect,
                             onMenuClick = { scope.launch { drawerState.open() } },
+                            screenHeader = screenHeader,
                         )
                         Box(modifier = Modifier.fillMaxSize()) {
                             content()
@@ -239,6 +213,7 @@ fun AppLayout(
     }
 }
 
+@Composable
 private fun rememberModeOptions(modes: List<ModeEntity>): List<ShellModeOption> {
     if (modes.isNotEmpty()) {
         return modes.map { mode ->
@@ -253,25 +228,26 @@ private fun rememberModeOptions(modes: List<ModeEntity>): List<ShellModeOption> 
     return listOf(
         ShellModeOption(
             id = -1L,
-            name = "Focus",
+            name = stringResource(Res.string.shell_mode_focus),
             color = TajsOSTheme.PrimaryDim,
             isSelectable = false,
         ),
         ShellModeOption(
             id = -2L,
-            name = "Execution",
+            name = stringResource(Res.string.shell_mode_execution),
             color = TajsOSTheme.AccentBlue,
             isSelectable = false,
         ),
         ShellModeOption(
             id = -3L,
-            name = "Recovery",
+            name = stringResource(Res.string.shell_mode_recovery),
             color = TajsOSTheme.AccentAmber,
             isSelectable = false,
         ),
     )
 }
 
+@Composable
 private fun timeGreeting(displayName: String): String {
     val hour =
         Clock.System
@@ -279,12 +255,11 @@ private fun timeGreeting(displayName: String): String {
             .toLocalDateTime(TimeZone.currentSystemDefault())
             .hour
     val dayGreeting =
-        when (hour)
-        {
-            in 5..11 -> "Good morning"
-            in 12..17 -> "Good afternoon"
-            in 18..22 -> "Good evening"
-            else -> "Good night"
+        when (hour) {
+            in 5..11 -> stringResource(Res.string.briefing_greeting_morning)
+            in 12..17 -> stringResource(Res.string.briefing_greeting_afternoon)
+            in 18..22 -> stringResource(Res.string.briefing_greeting_evening)
+            else -> stringResource(Res.string.briefing_greeting_night)
         }
 
     return "$dayGreeting, $displayName"

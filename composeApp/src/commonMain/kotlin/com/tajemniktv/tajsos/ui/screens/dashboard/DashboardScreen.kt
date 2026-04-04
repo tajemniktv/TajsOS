@@ -61,6 +61,8 @@ import com.tajemniktv.tajsos.ui.components.cards.LifeSummaryCard
 import com.tajemniktv.tajsos.ui.components.cards.ModuleCard
 import com.tajemniktv.tajsos.ui.components.modes.ModeSuggestionBanner
 import com.tajemniktv.tajsos.ui.components.modes.ModeSwitcherHeader
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior
 import com.tajemniktv.tajsos.ui.lens.LensUiContract
 import com.tajemniktv.tajsos.ui.main.state.CalendarEntry
 import com.tajemniktv.tajsos.ui.main.state.InsightsData
@@ -220,63 +222,56 @@ private fun DashboardUnifiedContent(
             )
         }
 
-    if (surface == DashboardSurface.MOBILE) {
-        LazyColumn(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .background(TajsOSTheme.Background)
-                    .padding(TajsOSTheme.SpacingMd),
-            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingLg),
-        ) {
-            layoutPlan.primary.forEach { block ->
-                item(key = block.id) {
-                    RenderDashboardBlock(block = block, context = context)
-                }
-            }
-            layoutPlan.footer.forEach { block ->
-                item(key = block.id + "_footer") {
-                    RenderDashboardBlock(block = block, context = context)
-                }
-            }
-            item {
-                Spacer(Modifier.height(80.dp))
-            }
-        }
-        return
-    }
-
-    Column(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .background(TajsOSTheme.Background)
-                .padding(TajsOSTheme.SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingLg),
+    ScreenScaffold(
+        scrollBehavior = ScreenScrollBehavior.None,
+        backgroundColor = TajsOSTheme.Background,
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth().weight(1f),
-            horizontalArrangement = Arrangement.spacedBy(32.dp),
-        ) {
-            Column(
-                modifier = Modifier.weight(1.5f).verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(24.dp),
+        if (surface == DashboardSurface.MOBILE) {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingLg),
             ) {
                 layoutPlan.primary.forEach { block ->
-                    RenderDashboardBlock(block = block, context = context)
+                    item(key = block.id) {
+                        RenderDashboardBlock(block = block, context = context)
+                    }
+                }
+                layoutPlan.footer.forEach { block ->
+                    item(key = block.id + "_footer") {
+                        RenderDashboardBlock(block = block, context = context)
+                    }
                 }
             }
+        } else {
             Column(
-                modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(24.dp),
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingLg),
             ) {
-                layoutPlan.secondary.forEach { block ->
+                Row(
+                    modifier = Modifier.fillMaxWidth().weight(1f),
+                    horizontalArrangement = Arrangement.spacedBy(32.dp),
+                ) {
+                    Column(
+                        modifier = Modifier.weight(1.5f).verticalScroll(rememberScrollState()),
+                        verticalArrangement = Arrangement.spacedBy(24.dp),
+                    ) {
+                        layoutPlan.primary.forEach { block ->
+                            RenderDashboardBlock(block = block, context = context)
+                        }
+                    }
+                    Column(
+                        modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()),
+                        verticalArrangement = Arrangement.spacedBy(24.dp),
+                    ) {
+                        layoutPlan.secondary.forEach { block ->
+                            RenderDashboardBlock(block = block, context = context)
+                        }
+                    }
+                }
+                layoutPlan.bottomBar.forEach { block ->
                     RenderDashboardBlock(block = block, context = context)
                 }
             }
-        }
-        layoutPlan.bottomBar.forEach { block ->
-            RenderDashboardBlock(block = block, context = context)
         }
     }
 }

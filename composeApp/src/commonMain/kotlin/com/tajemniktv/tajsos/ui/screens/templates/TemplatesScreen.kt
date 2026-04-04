@@ -24,7 +24,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,7 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.components.layout.LocalHeaderActions
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
@@ -79,7 +78,10 @@ fun TemplatesScreen(
     val surface = TemplatesDashboardSurface.MOBILE // Default for now
     val plan = remember(surface) { buildTemplatesDashboardPlan(surface) }
 
-    CompositionLocalProvider(LocalHeaderActions provides actions) {
+    ScreenScaffold(
+        backgroundColor = TajsOSTheme.Background,
+        actions = actions,
+    ) {
         Box(
             modifier =
                 Modifier

@@ -7,9 +7,7 @@ package com.tajemniktv.tajsos.ui.screens.finance
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
@@ -23,6 +21,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.domain.lens.DomainLensQueries
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior
+import com.tajemniktv.tajsos.ui.components.screen.SplitScreenScaffold
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 @Composable
@@ -135,29 +135,14 @@ fun FinancesScreen(
                 )
             }
 
-        if (surface == FinanceDashboardSurface.MOBILE) {
-            LazyColumn(
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .padding(TajsOSTheme.SpacingMd)
-                        .padding(bottom = 80.dp),
-                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
-            ) {
-                items(plan.primary, key = { it.id }) { block ->
-                    FinanceDashboardBlockRegistry
-                        .resolve(
-                            block.id,
-                        )?.invoke(context)
-                }
-            }
-        } else {
-            Row(
-                modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd),
-                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
-            ) {
+        SplitScreenScaffold(
+            isSplitLayout = surface == FinanceDashboardSurface.DESKTOP,
+            scrollBehavior = ScreenScrollBehavior.None,
+            primaryWeight = 1.3f,
+            secondaryWeight = 1f,
+            primary = {
                 LazyColumn(
-                    modifier = Modifier.weight(1.3f).padding(bottom = 80.dp),
+                    modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
                 ) {
                     items(plan.primary, key = { it.id }) { block ->
@@ -167,18 +152,25 @@ fun FinancesScreen(
                             )?.invoke(context)
                     }
                 }
-                LazyColumn(
-                    modifier = Modifier.weight(1f).padding(bottom = 80.dp),
-                    verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
-                ) {
-                    items(plan.secondary, key = { it.id }) { block ->
-                        FinanceDashboardBlockRegistry
-                            .resolve(
-                                block.id,
-                            )?.invoke(context)
+            },
+            secondary =
+                if (surface == FinanceDashboardSurface.DESKTOP) {
+                    {
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
+                        ) {
+                            items(plan.secondary, key = { it.id }) { block ->
+                                FinanceDashboardBlockRegistry
+                                    .resolve(
+                                        block.id,
+                                    )?.invoke(context)
+                            }
+                        }
                     }
-                }
-            }
-        }
+                } else {
+                    null
+                },
+        )
     }
 }

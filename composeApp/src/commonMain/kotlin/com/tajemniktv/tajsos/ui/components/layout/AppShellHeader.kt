@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -47,6 +48,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
+import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderModel
 import com.tajemniktv.tajsos.ui.components.common.GlassMaterial
 import com.tajemniktv.tajsos.ui.components.common.glassContainerColor
 import com.tajemniktv.tajsos.ui.components.common.glassChrome
@@ -55,6 +57,10 @@ import com.tajemniktv.tajsos.ui.components.notifications.TajsNotificationWidget
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.header_menu
+import tajsos.composeapp.generated.resources.header_mode_label
+import tajsos.composeapp.generated.resources.header_notifications
+import tajsos.composeapp.generated.resources.header_notifications_title
 import tajsos.composeapp.generated.resources.header_search_placeholder
 
 /**
@@ -95,6 +101,7 @@ fun AppShellHeader(
     shellState: AppShellState,
     isDesktop: Boolean,
     onModeSelect: (Long) -> Unit,
+    screenHeader: ScreenHeaderModel,
     modifier: Modifier = Modifier,
     onMenuClick: (() -> Unit)? = null,
 ) {
@@ -111,56 +118,80 @@ fun AppShellHeader(
         tonalElevation = 0.dp,
         shadowElevation = 0.dp,
     ) {
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        horizontal = if (isDesktop) 24.dp else 16.dp,
-                        vertical = if (isDesktop) 16.dp else 12.dp,
-                    ),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            if (!isDesktop && onMenuClick != null) {
-                IconButton(onClick = onMenuClick) {
-                    Icon(
-                        imageVector = Icons.Default.Menu,
-                        contentDescription = "Menu",
-                        tint = TajsOSTheme.Text,
-                    )
-                }
-                Spacer(Modifier.width(8.dp))
-            }
-
-            HeaderGreeting(
-                greeting = greeting,
-                protocolText = protocolText,
-                modifier = if (isDesktop) Modifier.width(320.dp) else Modifier.weight(1f),
-            )
-
-            if (isDesktop) {
-                Spacer(Modifier.width(24.dp))
-                GlobalSearchBar(modifier = Modifier.weight(1f))
-                Spacer(Modifier.width(24.dp))
-            } else {
-                Spacer(Modifier.width(12.dp))
-            }
-
-            HeaderModeSwitcher(
-                currentModeLabel = currentModeLabel,
-                modeOptions = modeOptions,
-                expanded = shellState.modeDropdownExpanded,
-                onExpandedChange = { shellState.modeDropdownExpanded = it },
+        Column {
+            Row(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            horizontal = if (isDesktop) 24.dp else 16.dp,
+                            vertical = if (isDesktop) 16.dp else 12.dp,
+                        ),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                onModeSelect(it)
-                shellState.modeDropdownExpanded = false
+                if (!isDesktop && onMenuClick != null) {
+                    IconButton(onClick = onMenuClick) {
+                        Icon(
+                            imageVector = Icons.Default.Menu,
+                            contentDescription = stringResource(Res.string.header_menu),
+                            tint = TajsOSTheme.Text,
+                        )
+                    }
+                    Spacer(Modifier.width(8.dp))
+                }
+
+                HeaderGreeting(
+                    greeting = greeting,
+                    protocolText = protocolText,
+                    modifier = if (isDesktop) Modifier.width(320.dp) else Modifier.weight(1f),
+                )
+
+                if (isDesktop) {
+                    Spacer(Modifier.width(24.dp))
+                    GlobalSearchBar(modifier = Modifier.weight(1f))
+                    Spacer(Modifier.width(24.dp))
+                    HeaderScreenContext(
+                        model = screenHeader,
+                        modifier = Modifier.width(300.dp),
+                    )
+                    if (screenHeader.actions != null) {
+                        Spacer(Modifier.width(16.dp))
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            content = screenHeader.actions,
+                        )
+                    }
+                } else {
+                    Spacer(Modifier.width(12.dp))
+                    if (screenHeader.actions != null) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            content = screenHeader.actions,
+                        )
+                        Spacer(Modifier.width(12.dp))
+                    }
+                }
+
+                HeaderModeSwitcher(
+                    currentModeLabel = currentModeLabel,
+                    modeOptions = modeOptions,
+                    expanded = shellState.modeDropdownExpanded,
+                    onExpandedChange = { shellState.modeDropdownExpanded = it },
+                ) {
+                    onModeSelect(it)
+                    shellState.modeDropdownExpanded = false
+                }
+                Spacer(Modifier.width(10.dp))
+                NotificationsPopover(
+                    expanded = shellState.notificationsExpanded,
+                    notifications = notifications,
+                    onExpandedChange = { shellState.notificationsExpanded = it },
+                )
             }
-            Spacer(Modifier.width(10.dp))
-            NotificationsPopover(
-                expanded = shellState.notificationsExpanded,
-                notifications = notifications,
-                onExpandedChange = { shellState.notificationsExpanded = it },
-            )
+
+            screenHeader.toolbar?.invoke()
         }
     }
 }
@@ -190,6 +221,38 @@ fun HeaderGreeting(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
+    }
+}
+
+@Composable
+private fun HeaderScreenContext(
+    model: ScreenHeaderModel,
+    modifier: Modifier = Modifier,
+) {
+    if (model.title.isNullOrBlank() && model.subtitle.isNullOrBlank()) {
+        return
+    }
+
+    Column(modifier = modifier) {
+        model.title?.let { title ->
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                color = TajsOSTheme.Text,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+        model.subtitle?.takeIf { it.isNotBlank() }?.let { subtitle ->
+            Spacer(Modifier.height(2.dp))
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.labelSmall,
+                color = TajsOSTheme.Muted,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
     }
 }
 
@@ -280,7 +343,7 @@ fun HeaderModeSwitcher(
                             .background(TajsOSTheme.Success, CircleShape),
                 )
                 Text(
-                    text = "SYSTEM: ${currentModeLabel.uppercase()}",
+                    text = stringResource(Res.string.header_mode_label, currentModeLabel.uppercase()),
                     style = MaterialTheme.typography.labelSmall,
                     color = TajsOSTheme.Text,
                     maxLines = 1,
@@ -357,7 +420,7 @@ fun NotificationsPopover(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Notifications,
-                        contentDescription = "Notifications",
+                        contentDescription = stringResource(Res.string.header_notifications),
                         tint = TajsOSTheme.Text,
                     )
                 }
@@ -393,7 +456,7 @@ fun NotificationsPopover(
                 ) {
                     TajsNotificationWidget(
                         notifications = notifications,
-                        title = "SYSTEM STATUS",
+                        title = stringResource(Res.string.header_notifications_title),
                     )
                 }
             }
