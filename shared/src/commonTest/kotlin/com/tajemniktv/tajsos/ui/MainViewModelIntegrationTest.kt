@@ -215,7 +215,8 @@ class MainViewModelIntegrationTest {
         assertEquals("done", doneNode.status)
         assertEquals("active", newActiveNode.status)
         assertEquals("Daily Workout", newActiveNode.title)
-        assertTrue(newActiveNode.dueAt != null && newActiveNode.dueAt!! > now)
+        val newDueAt = newActiveNode.dueAt
+        assertTrue(newDueAt != null && newDueAt > now)
         assertEquals(false, newActiveNode.inboxState)
     }
 
