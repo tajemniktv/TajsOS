@@ -6,6 +6,8 @@ package com.tajemniktv.tajsos.ui.screens.records.detail
 
 import androidx.compose.runtime.Composable
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.Screen
+import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderController
 import com.tajemniktv.tajsos.ui.screens.notes.detail.NoteDetailScreen
 
 /**
@@ -22,6 +24,7 @@ fun RecordDetailScreen(
     onNavigateToNode: (Long) -> Unit,
     onNavigateToSearch: () -> Unit,
     isDesktop: Boolean = false,
+    screenHeaderController: ScreenHeaderController? = null,
 ) {
     NoteDetailScreen(
         viewModel = viewModel,
@@ -30,5 +33,7 @@ fun RecordDetailScreen(
         onNavigateToNode = onNavigateToNode,
         onNavigateToSearch = onNavigateToSearch,
         isDesktop = isDesktop,
+        screenHeaderController = screenHeaderController,
+        headerScreen = Screen.RecordDetail,
     )
 }

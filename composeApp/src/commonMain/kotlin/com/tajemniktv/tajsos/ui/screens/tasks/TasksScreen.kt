@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.isTaskItem
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior
 import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
@@ -63,7 +64,7 @@ fun TasksScreen(
             if (maxWidth > 980.dp) TasksDashboardSurface.DESKTOP else TasksDashboardSurface.MOBILE
         val plan = remember(surface, currentTab) { buildTasksDashboardPlan(surface, currentTab) }
 
-        ScreenScaffold {
+        ScreenScaffold(scrollBehavior = ScreenScrollBehavior.None) {
             Column(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),

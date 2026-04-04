@@ -97,11 +97,13 @@ import com.tajemniktv.tajsos.data.isNoteItem
 import com.tajemniktv.tajsos.data.isTaskItem
 import com.tajemniktv.tajsos.data.itemKindOrNull
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.common.SelectorDialog
 import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderController
 import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderModel
 import com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior
 import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
+import com.tajemniktv.tajsos.ui.components.screen.screenBreadcrumbs
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
@@ -128,6 +130,7 @@ fun NoteDetailScreen(
     onNavigateToSearch: () -> Unit,
     isDesktop: Boolean = false,
     screenHeaderController: ScreenHeaderController? = null,
+    headerScreen: Screen = Screen.NoteDetail,
 ) {
     val scope = rememberCoroutineScope()
     val nodes by viewModel.allNodes.collectAsState()
@@ -290,6 +293,7 @@ fun NoteDetailScreen(
         screenHeaderController = screenHeaderController,
         screenHeader =
             ScreenHeaderModel(
+                breadcrumbs = screenBreadcrumbs(headerScreen),
                 title = node.title,
                 subtitle = node.itemKindOrNull()?.let { itemKindLabel(it) },
                 actions = actions,
