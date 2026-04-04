@@ -84,7 +84,7 @@ internal fun renderStudyQuickActionsBlock(context: StudyDashboardContext) {
 internal fun renderAssignmentTrackerBlock(context: StudyDashboardContext) {
     SectionTitle("ASSIGNMENT TRACKER")
     if (context.state.assignmentTracker.isEmpty()) {
-        EmptyState("No assignments yet.", fillParent = false, showContainer = false)
+        EmptyState("No assignments yet.", description = null, fillParent = false, showContainer = false)
         return
     }
     context.state.assignmentTracker.take(10).forEach { node ->
@@ -132,7 +132,7 @@ internal fun renderRevisitBeforeExamBlock(context: StudyDashboardContext) {
 internal fun renderReadingProgressBlock(context: StudyDashboardContext) {
     SectionTitle("READING PROGRESS TRACKER")
     if (context.state.readingProgress.isEmpty()) {
-        EmptyState("Set reading progress from this dashboard using +/- controls.", fillParent = false, showContainer = false)
+        EmptyState("Set reading progress from this dashboard using +/- controls.", description = null, fillParent = false, showContainer = false)
         context.state.readingBacklog.take(8).forEach { item ->
             ProgressControlCard(
                 node = item.node,
