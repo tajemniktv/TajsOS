@@ -75,6 +75,10 @@ private val healthTitleKeywords =
  *
  * These helpers keep query logic out of UI composables and avoid pushing more orchestration
  * into MainViewModel.
+ *
+ * Domains (such as finance or health) are categorized implicitly by checking for hardcoded
+ * string markers within node tags, titles, content, maintenanceType, and noteType fields
+ * rather than relying on explicit relational models.
  */
 object DomainLensQueries {
     /**
