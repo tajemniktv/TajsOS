@@ -359,7 +359,7 @@ fun CaptureSheet(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
                 ) {
-                    items(templates.filter { it.nodeType == selectedType }) { template ->
+                    items(templates.filter { it.nodeType == selectedType }, key = { it.id }) { template ->
                         FilterChip(
                             selected = false,
                             onClick = {
@@ -380,7 +380,7 @@ fun CaptureSheet(
                         color = TajsOSTheme.Primary,
                     )
                     LazyRow(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
-                        items(areas) { area ->
+                        items(areas, key = { it.id }) { area ->
                             FilterChip(
                                 selected = selectedAreaId == area.id,
                                 onClick = {
@@ -400,7 +400,7 @@ fun CaptureSheet(
                         color = TajsOSTheme.Primary,
                     )
                     LazyRow(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
-                        items(projects) { project ->
+                        items(projects, key = { it.id }) { project ->
                             FilterChip(
                                 selected = selectedProjectId == project.id,
                                 onClick = {
@@ -578,7 +578,7 @@ fun CaptureSheet(
                     color = TajsOSTheme.Primary,
                 )
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
-                    items(areas) { area ->
+                    items(areas, key = { it.id }) { area ->
                         FilterChip(
                             selected = selectedAreaId == area.id,
                             onClick = {
