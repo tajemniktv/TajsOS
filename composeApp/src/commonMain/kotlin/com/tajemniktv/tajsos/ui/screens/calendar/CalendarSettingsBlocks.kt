@@ -7,13 +7,16 @@ package com.tajemniktv.tajsos.ui.screens.calendar
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -23,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.CalendarProviderEntity
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
@@ -68,7 +72,12 @@ private fun renderCalendarSettingsHeader(context: CalendarSettingsContext) {
 @Composable
 private fun renderCalendarSettingsList(context: CalendarSettingsContext) {
     if (context.providers.isEmpty()) {
-        EmptyState(message = stringResource(Res.string.cal_settings_empty))
+        EmptyState(message = stringResource(Res.string.cal_settings_empty)) {
+            Spacer(modifier = Modifier.height(TajsOSTheme.SpacingMd))
+            Button(onClick = context.onShowAddDialog) {
+                Text(stringResource(Res.string.cal_settings_add))
+            }
+        }
     } else {
         LazyColumn(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
             items(context.providers, key = { it.id }) { provider ->

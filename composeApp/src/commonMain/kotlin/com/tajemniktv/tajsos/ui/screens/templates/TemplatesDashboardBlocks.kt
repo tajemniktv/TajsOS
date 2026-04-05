@@ -5,11 +5,14 @@
 package com.tajemniktv.tajsos.ui.screens.templates
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
@@ -22,6 +25,7 @@ import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.archive_delete
+import tajsos.composeapp.generated.resources.templates_add_desc
 import tajsos.composeapp.generated.resources.templates_empty
 import tajsos.composeapp.generated.resources.type_area
 import tajsos.composeapp.generated.resources.type_note
@@ -42,7 +46,12 @@ object TemplatesDashboardBlocks {
 private fun renderTemplatesList(context: TemplatesDashboardContext) {
     val templates = context.templates
     if (templates.isEmpty()) {
-        EmptyState(message = stringResource(Res.string.templates_empty))
+        EmptyState(message = stringResource(Res.string.templates_empty)) {
+            Spacer(modifier = Modifier.height(TajsOSTheme.SpacingMd))
+            Button(onClick = context.onShowAddDialog) {
+                Text(stringResource(Res.string.templates_add_desc))
+            }
+        }
     } else {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
