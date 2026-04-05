@@ -103,6 +103,7 @@ private fun populateIpv6Values(
         if (rawParts[i].isEmpty()) continue
         val v = rawParts[i].toLongOrNull(16) ?: return -1
         if (v !in 0..0xFFFF) return -1
+        if (outputIdx < 0 || outputIdx >= values.size) return -1
         values[outputIdx] = v
         outputIdx += direction
         count++
