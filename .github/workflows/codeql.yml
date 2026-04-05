@@ -131,7 +131,7 @@ jobs:
       - name: Set up Node 22 (for website build)
         uses: actions/setup-node@v6
         with:
-          node-version: "22"
+          node-version: "24"
 
       - name: Cache npm for website
         uses: actions/cache@v5
