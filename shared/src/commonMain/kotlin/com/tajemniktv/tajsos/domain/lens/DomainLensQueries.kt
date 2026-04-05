@@ -181,8 +181,8 @@ object DomainLensQueries {
      * Determines whether a node implicitly belongs to the health domain based on tags,
      * keywords in title/content, maintenance type, or note type (e.g., reflections).
      *
-     * Classification relies entirely on checking against hardcoded marker constants:
-     * [healthTagMarkers], [healthTitleKeywords], and [healthMaintenanceTypes].
+     * Classification relies on checking against hardcoded marker constants ([healthTagMarkers],
+     * [healthTitleKeywords], [healthMaintenanceTypes]) and specific note types (e.g., "reflection").
      */
     private fun matchesHealthSignal(node: NodeWithPin): Boolean {
         val title = node.node.title.lowercase()
