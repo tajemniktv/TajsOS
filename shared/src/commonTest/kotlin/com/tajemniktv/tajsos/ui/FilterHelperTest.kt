@@ -561,6 +561,10 @@ class FilterHelperTest {
         assertEquals(2, shortNodes.size)
         assertTrue(shortNodes.any { it.node.id == 1L })
         assertTrue(shortNodes.any { it.node.id == 2L })
+
+        // "unknown_value" includes all nodes (due and no due)
+        val unknownNodes = filterWithHorizonExtended("unknown_value")
+        assertEquals(6, unknownNodes.size)
     }
 
     @Test
