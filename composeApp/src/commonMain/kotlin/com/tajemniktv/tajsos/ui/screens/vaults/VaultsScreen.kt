@@ -136,9 +136,9 @@ internal fun VaultsLayer(
             "official_deadline" to stringResource(Res.string.lens_reference_category_deadlines),
         )
 
-    val nowMillis = Clock.System.now().toEpochMilliseconds()
     val categoryCards =
-        remember(snapshot, nowMillis) {
+        remember(snapshot) {
+            val nowMillis = Clock.System.now().toEpochMilliseconds()
             listOf(
                 VaultCategoryCardData(
                     title = "Reference Library",
