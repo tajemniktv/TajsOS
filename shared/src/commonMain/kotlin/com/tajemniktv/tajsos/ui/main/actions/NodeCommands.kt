@@ -288,6 +288,7 @@ class NodeCommands(
                                 .removePrefix("-")
                                 .removePrefix("*")
                                 .trim()
+                                .ifBlank { "Next step" }
                         repository.updateNode(
                             node.copy(
                                 nextSmallestStep = firstLine,
@@ -424,7 +425,7 @@ class NodeCommands(
                 if (sections.size > 1) {
                     for (section in sections) {
                         val lines = section.lines()
-                        val title = lines.first().removePrefix("# ").trim()
+                        val title = lines.first().removePrefix("# ").trim().ifBlank { "Untitled" }
                         val content = lines.drop(1).joinToString("\n").trim()
 
                         repository.insertNode(

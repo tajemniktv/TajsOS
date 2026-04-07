@@ -38,10 +38,12 @@ import com.tajemniktv.tajsos.data.isTaskItem
 import com.tajemniktv.tajsos.data.projectStateOrNull
 import com.tajemniktv.tajsos.data.taskStateOrNull
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderController
 import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderModel
 import com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior
 import com.tajemniktv.tajsos.ui.components.screen.SplitScreenScaffold
+import com.tajemniktv.tajsos.ui.components.screen.screenBreadcrumbs
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
@@ -80,31 +82,35 @@ fun AreaDetailScreen(
     val logs by viewModel.getLogsForNode(areaId).collectAsState(initial = emptyList())
     var tab by rememberSaveable(areaId) { mutableStateOf(AreaTab.Overview) }
 
-    val tasks = items.map { it.node }.filter { it.isTaskItem() && it.status != "archived" }
-    val notes = items.map { it.node }.filter { it.isNoteItem() }
-    val records = items.map { it.node }.filter { it.isRecordItem() }
+    val tasks = remember(items) { items.map { it.node }.filter { it.isTaskItem() && it.status != "archived" } }
+    val notes = remember(items) { items.map { it.node }.filter { it.isNoteItem() } }
+    val records = remember(items) { items.map { it.node }.filter { it.isRecordItem() } }
     val activeProjects =
-        projects.filter {
-            it.projectStateOrNull() in
-                setOf(
-                    ProjectState.ACTIVE,
-                    ProjectState.ON_HOLD,
-                )
+        remember(projects) {
+            projects.filter {
+                it.projectStateOrNull() in
+                    setOf(
+                        ProjectState.ACTIVE,
+                        ProjectState.ON_HOLD,
+                    )
+            }
         }
     val openResponsibilities =
-        tasks.filter { it.projectId == null && it.taskStateOrNull() != TaskState.DONE }
+        remember(tasks) { tasks.filter { it.projectId == null && it.taskStateOrNull() != TaskState.DONE } }
     val pressure =
-        tasks.filter {
-            it.taskStateOrNull() == TaskState.BLOCKED ||
-                (
-                    it.isHardDeadline &&
-                        (it.dueAt ?: Long.MAX_VALUE) <
-                        Clock.System
-                            .now()
-                            .toEpochMilliseconds()
-                )
+        remember(tasks) {
+            tasks.filter {
+                it.taskStateOrNull() == TaskState.BLOCKED ||
+                    (
+                        it.isHardDeadline &&
+                            (it.dueAt ?: Long.MAX_VALUE) <
+                            Clock.System
+                                .now()
+                                .toEpochMilliseconds()
+                    )
+            }
         }
-    val recentItems = items.sortedByDescending { it.node.updatedAt }.take(10)
+    val recentItems = remember(items) { items.sortedByDescending { it.node.updatedAt }.take(10) }
     val healthLabel =
         metrics?.status?.replace("_", " ") ?: stringResource(Res.string.detail_unassign)
     val healthColor =
@@ -191,6 +197,7 @@ fun AreaDetailScreen(
             screenHeaderController = screenHeaderController,
             screenHeader =
                 ScreenHeaderModel(
+                    breadcrumbs = screenBreadcrumbs(Screen.AreaDetail),
                     title = area.title,
                     subtitle = healthLabel,
                     actions = actions,

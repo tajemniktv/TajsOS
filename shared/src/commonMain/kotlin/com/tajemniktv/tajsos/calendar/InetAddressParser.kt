@@ -70,6 +70,13 @@ private fun parseIpv6(host: String): IpAddress.Ipv6? {
     val values = LongArray(8) { 0L }
     val doubleColonIdx = rawParts.indexOf("")
 
+    // An IPv6 address can only have at most one "::" substitution.
+    // If the first and last occurrences of "::" are not the same, it's invalid.
+    if (host.indexOf("::") != host.lastIndexOf("::")) {
+        return null
+    }
+
+
     val success = if (doubleColonIdx != -1) {
         parseIpv6Abbreviated(rawParts, values, doubleColonIdx)
     } else {
@@ -100,9 +107,15 @@ private fun populateIpv6Values(
     var outputIdx = startOutputIndex
     var count = 0
     for (i in indices) {
-        if (rawParts[i].isEmpty()) continue
+        if (rawParts[i].isEmpty()) {
+            // Empty parts should only exist at the boundaries (e.g. "::1" -> "", "", "1").
+            // If we encounter one here during population, and it's not handled by the boundary cases,
+            // we skip it, but we already validated that there are no extra "::" in parseIpv6.
+            continue
+        }
         val v = rawParts[i].toLongOrNull(16) ?: return -1
         if (v !in 0..0xFFFF) return -1
+        if (outputIdx < 0 || outputIdx >= values.size) return -1
         values[outputIdx] = v
         outputIdx += direction
         count++

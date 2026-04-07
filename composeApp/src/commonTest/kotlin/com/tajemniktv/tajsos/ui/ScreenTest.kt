@@ -216,10 +216,12 @@ class ScreenTest {
             screens.contains(Screen.Briefing)
         }
         assertTrue(coreGroup != null, "Briefing should appear in one of the navigation groups")
-        assertTrue(
-            coreGroup!!.second.contains(Screen.Dashboard),
-            "Briefing's navigation group should also contain Dashboard (nav_core)",
-        )
+        if (coreGroup != null) {
+            assertTrue(
+                coreGroup.second.contains(Screen.Dashboard),
+                "Briefing's navigation group should also contain Dashboard (nav_core)",
+            )
+        }
     }
 
     @Test

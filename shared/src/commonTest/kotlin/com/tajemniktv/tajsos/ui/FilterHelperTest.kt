@@ -159,6 +159,45 @@ class FilterHelperTest {
     }
 
     @Test
+    fun testRelevanceSortingOrder() {
+        val exactMatch = createTestNode(1, "search", updatedAt = 100)
+        val startMatch = createTestNode(2, "search query", updatedAt = 100)
+        val containsMatch = createTestNode(3, "my search query", updatedAt = 100)
+        val contentMatch = createTestNode(4, "different", content = "search inside", updatedAt = 100)
+        val tagMatchExact = createTestNode(5, "other", tags = listOf("search"), updatedAt = 100)
+
+        val nodes = listOf(contentMatch, startMatch, containsMatch, exactMatch, tagMatchExact)
+
+        val sortedNodes =
+            FilterHelper.filterAndSortNodes(
+                nodes = nodes,
+                query = "search",
+                type = null,
+                status = null,
+                projectId = null,
+                areaId = null,
+                linkedToId = null,
+                maxMins = null,
+                energy = null,
+                friction = null,
+                locationContext = null,
+                energyContext = null,
+                deviceContext = null,
+                socialContext = null,
+                timeWindowContext = null,
+                timeHorizon = null,
+                relations = emptyList(),
+                sortMode = "relevance",
+            )
+
+        val ids = sortedNodes.map { it.node.id }
+        // exact (195) -> start (95) -> tag exact (35) -> contains (35) -> content (20)
+        // Since tag exact and contains both have score 35, they are then sorted by updatedAt (both 100)
+        // and then by ID descending. Tag exact (ID 5) will be before Contains (ID 3).
+        assertEquals(listOf(1L, 2L, 5L, 3L, 4L), ids)
+    }
+
+    @Test
     fun testSearchSortModeUpdatedOrdersByUpdatedAt() {
         val older = createTestNode(1, "Task One", updatedAt = 100)
         val newer = createTestNode(2, "Task Two", updatedAt = 200)
@@ -522,6 +561,10 @@ class FilterHelperTest {
         assertEquals(2, shortNodes.size)
         assertTrue(shortNodes.any { it.node.id == 1L })
         assertTrue(shortNodes.any { it.node.id == 2L })
+
+        // "unknown_value" includes all nodes (due and no due)
+        val unknownNodes = filterWithHorizonExtended("unknown_value")
+        assertEquals(6, unknownNodes.size)
     }
 
     @Test

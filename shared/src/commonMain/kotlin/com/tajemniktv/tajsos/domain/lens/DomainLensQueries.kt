@@ -160,6 +160,9 @@ object DomainLensQueries {
     /**
      * Determines whether a node implicitly belongs to the finance domain based on tags,
      * keywords in title/content, maintenance type, or note type (e.g., reference notes).
+     *
+     * Classification relies entirely on checking against hardcoded marker constants:
+     * [financeTagMarkers], [financeTitleKeywords], and [financeMaintenanceTypes].
      */
     private fun matchesFinanceSignal(node: NodeWithPin): Boolean {
         val title = node.node.title.lowercase()
@@ -177,6 +180,9 @@ object DomainLensQueries {
     /**
      * Determines whether a node implicitly belongs to the health domain based on tags,
      * keywords in title/content, maintenance type, or note type (e.g., reflections).
+     *
+     * Classification relies on checking against hardcoded marker constants ([healthTagMarkers],
+     * [healthTitleKeywords], [healthMaintenanceTypes]) and specific note types (e.g., "reflection").
      */
     private fun matchesHealthSignal(node: NodeWithPin): Boolean {
         val title = node.node.title.lowercase()

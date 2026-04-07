@@ -13,6 +13,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.tajemniktv.tajsos.ui.Screen
+import org.jetbrains.compose.resources.stringResource
 
 /**
  * Explicit bridge between screen routes and the persistent app shell header.
@@ -40,10 +42,16 @@ class ScreenHeaderController {
     }
 }
 
+data class ScreenHeaderBreadcrumb(
+    val label: String,
+    val onClick: (() -> Unit)? = null,
+)
+
 /**
  * Compact screen-level metadata rendered inside the shell header.
  */
 data class ScreenHeaderModel(
+    val breadcrumbs: List<ScreenHeaderBreadcrumb> = emptyList(),
     val title: String? = null,
     val subtitle: String? = null,
     val actions: (@Composable RowScope.() -> Unit)? = null,
@@ -52,6 +60,26 @@ data class ScreenHeaderModel(
 
 @Composable
 fun rememberScreenHeaderController(): ScreenHeaderController = remember { ScreenHeaderController() }
+
+@Composable
+fun screenBreadcrumbs(
+    screen: Screen,
+    onScreenClick: ((Screen) -> (() -> Unit)?)? = null,
+): List<ScreenHeaderBreadcrumb> {
+    val trail = remember(screen) { screen.breadcrumbTrail() }
+    return trail.mapIndexed { index, breadcrumbScreen ->
+        val click =
+            if (index < trail.lastIndex) {
+                onScreenClick?.invoke(breadcrumbScreen)
+            } else {
+                null
+            }
+        ScreenHeaderBreadcrumb(
+            label = stringResource(breadcrumbScreen.label),
+            onClick = click,
+        )
+    }
+}
 
 /**
  * Publishes the current screen header model to the persistent shell.

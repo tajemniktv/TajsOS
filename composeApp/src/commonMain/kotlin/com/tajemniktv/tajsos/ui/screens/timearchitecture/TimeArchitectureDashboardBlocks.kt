@@ -27,6 +27,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -111,14 +112,16 @@ private fun renderTimeHorizonSwitcher(context: TimeArchitectureDashboardContext)
 private fun renderTimeMap(context: TimeArchitectureDashboardContext) {
     val snapshot = context.snapshot
     val selectedHorizon = context.selectedHorizon
-    val horizonItems = selectedHorizon.items(snapshot)
+    val horizonItems = remember(selectedHorizon, snapshot) { selectedHorizon.items(snapshot) }
     val weeklyBuckets =
-        if (snapshot.weeklyMap.isEmpty()) {
-            emptyList()
-        } else {
-            snapshot.weeklyMap.entries
-                .toList()
-                .sortedBy { it.key }
+        remember(snapshot.weeklyMap) {
+            if (snapshot.weeklyMap.isEmpty()) {
+                emptyList()
+            } else {
+                snapshot.weeklyMap.entries
+                    .toList()
+                    .sortedBy { it.key }
+            }
         }
 
     Surface(
@@ -416,7 +419,7 @@ private fun renderTimeProjectPhases(context: TimeArchitectureDashboardContext) {
 private fun renderTimeHorizonQueue(context: TimeArchitectureDashboardContext) {
     val snapshot = context.snapshot
     val selectedHorizon = context.selectedHorizon
-    val horizonItems = selectedHorizon.items(snapshot)
+    val horizonItems = remember(selectedHorizon, snapshot) { selectedHorizon.items(snapshot) }
     val viewModel = context.viewModel
     val onEditNode = context.onEditNode
 

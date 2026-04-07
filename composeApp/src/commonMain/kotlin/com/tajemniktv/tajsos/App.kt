@@ -17,7 +17,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,6 +50,7 @@ import com.tajemniktv.tajsos.ui.components.screen.BindScreenHeader
 import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderController
 import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderModel
 import com.tajemniktv.tajsos.ui.components.screen.rememberScreenHeaderController
+import com.tajemniktv.tajsos.ui.components.screen.screenBreadcrumbs
 import com.tajemniktv.tajsos.ui.screens.archive.ArchiveScreen
 import com.tajemniktv.tajsos.ui.screens.areas.AreasScreen
 import com.tajemniktv.tajsos.ui.screens.areas.detail.AreaDetailScreen
@@ -91,6 +94,8 @@ import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.nav_capture
+
+private val LocalBreadcrumbNavigate = compositionLocalOf<((String) -> Unit)?> { null }
 
 /**
  * Hosts the application's top-level UI: sets up navigation, collects app state from the ViewModel,
@@ -380,21 +385,22 @@ private fun AppScaffold(
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        NavHost(
-            navController = navController,
-            startDestination = Screen.Dashboard.route,
-            modifier = Modifier.fillMaxSize(),
-        ) {
-            composable(Screen.Briefing.route) {
-                RootScreenFrame(screen = Screen.Briefing, controller = screenHeaderController) {
-                    BriefingScreen(
-                        viewModel = viewModel,
-                        onNavigateTo = { onNavigate(it.route) },
-                        onNavigateToTasks = { onTasksTabChange(TasksTab.TODAY) },
-                        onNewEntry = { onShowCaptureSheet(true) },
-                    )
+        CompositionLocalProvider(LocalBreadcrumbNavigate provides onNavigate) {
+            NavHost(
+                navController = navController,
+                startDestination = Screen.Dashboard.route,
+                modifier = Modifier.fillMaxSize(),
+            ) {
+                composable(Screen.Briefing.route) {
+                    RootScreenFrame(screen = Screen.Briefing, controller = screenHeaderController) {
+                        BriefingScreen(
+                            viewModel = viewModel,
+                            onNavigateTo = { onNavigate(it.route) },
+                            onNavigateToTasks = { onTasksTabChange(TasksTab.TODAY) },
+                            onNewEntry = { onShowCaptureSheet(true) },
+                        )
+                    }
                 }
-            }
             composable(Screen.Dashboard.route) {
                 RootScreenFrame(screen = Screen.Dashboard, controller = screenHeaderController) {
                     DashboardScreen(
@@ -440,7 +446,12 @@ private fun AppScaffold(
                 }
             }
             composable(Screen.Tasks.route) {
-                RootScreenFrame(screen = Screen.Tasks, controller = screenHeaderController) {
+                RootScreenFrame(
+                    screen = Screen.Tasks,
+                    breadcrumbScreen = currentTasksTab.toScreen(),
+                    onBreadcrumbNavigate = onNavigate,
+                    controller = screenHeaderController,
+                ) {
                     TasksScreen(
                         viewModel = viewModel,
                         onEditNode = onEditNode,
@@ -450,7 +461,12 @@ private fun AppScaffold(
                 }
             }
             composable(Screen.Tasks.route + "?tab={tab}") {
-                RootScreenFrame(screen = Screen.Tasks, controller = screenHeaderController) {
+                RootScreenFrame(
+                    screen = Screen.Tasks,
+                    breadcrumbScreen = currentTasksTab.toScreen(),
+                    onBreadcrumbNavigate = onNavigate,
+                    controller = screenHeaderController,
+                ) {
                     TasksScreen(
                         viewModel = viewModel,
                         onEditNode = onEditNode,
@@ -721,6 +737,7 @@ private fun AppScaffold(
                     onNavigateToNode = onEditNode,
                     onNavigateToSearch = { onNavigate(Screen.Search.route) },
                     isDesktop = isDesktop,
+                    screenHeaderController = screenHeaderController,
                 )
             }
             composable(Screen.Insights.route) {
@@ -752,14 +769,15 @@ private fun AppScaffold(
                     }
                 }
             }
-            composable(Screen.Profile.route) {
-                RootScreenFrame(screen = Screen.Profile, controller = screenHeaderController) {
-                    ProfileScreen(
-                        viewModel = viewModel,
-                        onPickAvatar = onPickAvatar,
-                        pickedAvatarRef = avatarPickResult,
-                        onAvatarPickConsume = onAvatarPickConsume,
-                    )
+                composable(Screen.Profile.route) {
+                    RootScreenFrame(screen = Screen.Profile, controller = screenHeaderController) {
+                        ProfileScreen(
+                            viewModel = viewModel,
+                            onPickAvatar = onPickAvatar,
+                            pickedAvatarRef = avatarPickResult,
+                            onAvatarPickConsume = onAvatarPickConsume,
+                        )
+                    }
                 }
             }
         }
@@ -862,12 +880,27 @@ private fun handleOnCapture(
 @Composable
 private fun RootScreenFrame(
     screen: Screen,
+    breadcrumbScreen: Screen = screen,
+    onBreadcrumbNavigate: ((String) -> Unit)? = null,
     controller: ScreenHeaderController,
     content: @Composable () -> Unit,
 ) {
+    val breadcrumbNavigate = onBreadcrumbNavigate ?: LocalBreadcrumbNavigate.current
+
     BindScreenHeader(
         controller = controller,
-        model = ScreenHeaderModel(title = stringResource(screen.label)),
+        model =
+            ScreenHeaderModel(
+                breadcrumbs =
+                    screenBreadcrumbs(breadcrumbScreen) { breadcrumb ->
+                        if (breadcrumbNavigate == null || breadcrumb.route.contains("{")) {
+                            null
+                        } else {
+                            { breadcrumbNavigate(breadcrumb.route) }
+                        }
+                    },
+                title = stringResource(screen.label),
+            ),
     )
     content()
 }

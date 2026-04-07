@@ -200,6 +200,15 @@ private data class LifeObjectFacetSnapshot(
     val area: AreaFacetEntity?,
 )
 
+/**
+ * AppRepository is the central coordinator for all local persistence.
+ *
+ * It acts as the single source of truth for the Room database, combining multiple DAOs
+ * (such as [NodeDao], [FocusSessionDao], and various facet DAOs) to seamlessly manage
+ * core LifeOS entities (`NodeEntity`) alongside their typed extension states (`TaskFacetEntity`,
+ * `NoteFacetEntity`, etc.). This pattern avoids maintaining a single massive nullable row
+ * and safely orchestrates creation, updates, and complex queries across related database tables.
+ */
 class AppRepository(
     private val nodeDao: NodeDao,
     private val focusSessionDao: FocusSessionDao,

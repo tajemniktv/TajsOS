@@ -68,4 +68,15 @@ class InetAddressParserTest {
         assertNull(parseIpAddress("1ffff::1"))
         assertNull(parseIpAddress("not:an:ipv6:at:all"))
     }
+
+    @Test
+    fun testInvalidIpv6MultipleDoubleColons() {
+        assertNull(parseIpAddress("1::2::3"), "Should reject multiple double colons")
+    }
+
+    @Test
+    fun testInvalidIpv6TripleColons() {
+        assertNull(parseIpAddress(":::"), "Should reject triple colons or more")
+        assertNull(parseIpAddress("1:::2"), "Should reject triple colons or more")
+    }
 }

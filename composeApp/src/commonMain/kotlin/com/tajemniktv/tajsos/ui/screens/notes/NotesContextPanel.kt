@@ -35,6 +35,7 @@ import com.tajemniktv.tajsos.data.AttachmentEntity
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.data.isNoteItem
 import com.tajemniktv.tajsos.data.isTaskItem
+import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -57,13 +58,12 @@ fun NotesContextPanel(
         shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
     ) {
         if (selectedNote == null) {
-            Column(
-                modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Text("Select a note to inspect context", color = TajsOSTheme.Muted)
-            }
+            EmptyState(
+                message = "Select a note to inspect context",
+                description = null,
+                fillParent = true,
+                showContainer = false,
+            )
             return@Surface
         }
 
