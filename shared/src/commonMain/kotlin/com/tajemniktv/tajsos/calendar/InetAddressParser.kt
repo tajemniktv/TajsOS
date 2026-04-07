@@ -71,22 +71,11 @@ private fun parseIpv6(host: String): IpAddress.Ipv6? {
     val doubleColonIdx = rawParts.indexOf("")
 
     // An IPv6 address can only have at most one "::" substitution.
-    // In `rawParts`, an empty string means two colons were adjacent.
-    // If the address starts or ends with "::", `split` might give us two empty strings adjacent,
-    // e.g. "::1" -> ["", "", "1"]. But generally, we must ensure there isn't more than one continuous empty block.
-    val emptyCount = rawParts.count { it.isEmpty() }
-
-    // A single "::" inside gives one empty string.
-    // "::1" gives two empty strings (at start).
-    // "1::" gives two empty strings (at end).
-    // "::" gives three empty strings.
-    // Anything more means multiple double colons or triple colons.
-    if (emptyCount > 0) {
-        if (host.contains(":::")) return null
-
-        val doubleColons = host.split("::").size - 1
-        if (doubleColons > 1) return null
+    // If the first and last occurrences of "::" are not the same, it's invalid.
+    if (host.indexOf("::") != host.lastIndexOf("::")) {
+        return null
     }
+
 
     val success = if (doubleColonIdx != -1) {
         parseIpv6Abbreviated(rawParts, values, doubleColonIdx)
