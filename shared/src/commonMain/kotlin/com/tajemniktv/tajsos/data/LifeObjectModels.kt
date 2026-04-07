@@ -801,7 +801,7 @@ fun parseCapturedText(rawText: String): ParsedCaptureText {
         return ParsedCaptureText(title = "", content = "")
     }
 
-    val title = lines.firstOrNull()?.ifBlank { "Untitled" } ?: "Untitled"
+    val title = lines.first()
     val content = lines.drop(1).joinToString("\n").trim()
     return ParsedCaptureText(title = title, content = content)
 }
