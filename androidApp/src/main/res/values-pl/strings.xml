@@ -5,6 +5,8 @@
 <resources>
     <string name="auth_app_locked">Aplikacja zablokowana</string>
     <string name="auth_unlock">Odblokuj</string>
+    <string name="next_step">Następny krok</string>
+    <string name="untitled">Bez tytułu</string>
     <string name="auth_biometric_title">Logowanie biometryczne</string>
     <string name="voice_speak_now">Mów teraz...</string>
     <string name="intent_shared_image">Udostępniony obraz</string>

@@ -129,6 +129,8 @@ class MainViewModel(
     private val repository: AppRepository,
     private val preferencesRepository: PreferencesRepository,
     private val calendarManager: com.tajemniktv.tajsos.calendar.CalendarManager,
+    private val nextStepFallbackLabel: String = "Next step",
+    private val untitledFallbackLabel: String = "Untitled",
 ) : ViewModel() {
     private val appBootstrapper by lazy {
         AppBootstrapper(
@@ -152,6 +154,8 @@ class MainViewModel(
             currentAllNodes = { allNodes.value.map { it.node } },
             parseInternalLinks = mainNodeSupport::parseInternalLinks,
             setTagOnNode = mainNodeSupport::setTagOnNode,
+            defaultNextStepLabel = { nextStepFallbackLabel },
+            defaultUntitledLabel = { untitledFallbackLabel },
         )
     }
     private val protocolCommands by lazy {

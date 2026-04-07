@@ -503,6 +503,7 @@
     <string name="notes_tab_recent">Recent</string>
     <string name="notes_tab_reference">Reference</string>
     <string name="notes_tab_rules">Rules</string>
+    <string name="note_select_inspect_context">Select a note to inspect context</string>
 
     <!-- Tasks Screen -->
     <string name="tasks_title">TASKS</string>
@@ -660,6 +661,8 @@
     <string name="detail_convert">Convert</string>
     <string name="detail_repeat">Repeat Task</string>
     <string name="detail_duplicate">Duplicate</string>
+    <string name="untitled">Untitled</string>
+    <string name="next_step">Next step</string>
     <string name="detail_untitled">Untitled...</string>
     <string name="detail_remove_tag">Remove Tag</string>
     <string name="detail_add_tag">Add Tag</string>
@@ -776,6 +779,7 @@
     <string name="project_detail_empty_timeline">No recent activity.</string>
     <string name="project_detail_empty_assets">No assets attached yet.</string>
     <string name="project_detail_set_status">Set status</string>
+    <string name="no_specific_outcome_defined">No specific outcome defined yet.</string>
     <string name="project_health">HEALTH</string>
     <string name="project_health_healthy">HEALTHY</string>
     <string name="project_health_neglected">NEGLECTED</string>

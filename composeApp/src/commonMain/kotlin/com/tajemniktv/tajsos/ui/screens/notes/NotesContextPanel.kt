@@ -39,6 +39,9 @@ import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.note_select_inspect_context
 import kotlin.time.Instant
 
 /**
@@ -56,10 +59,10 @@ fun NotesContextPanel(
         modifier = modifier.fillMaxSize(),
         color = TajsOSTheme.SurfaceLow,
         shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
-    ) {
+        ) {
         if (selectedNote == null) {
             EmptyState(
-                message = "Select a note to inspect context",
+                message = stringResource(Res.string.note_select_inspect_context),
                 description = null,
                 fillParent = true,
                 showContainer = false,

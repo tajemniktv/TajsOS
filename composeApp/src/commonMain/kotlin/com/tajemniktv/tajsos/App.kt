@@ -96,6 +96,7 @@ import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.nav_capture
 
 private val LocalBreadcrumbNavigate = compositionLocalOf<((String) -> Unit)?> { null }
+private val routeParameterPattern = Regex("\\{[^}]+}")
 
 /**
  * Hosts the application's top-level UI: sets up navigation, collects app state from the ViewModel,
@@ -769,16 +770,16 @@ private fun AppScaffold(
                     }
                 }
             }
-                composable(Screen.Profile.route) {
-                    RootScreenFrame(screen = Screen.Profile, controller = screenHeaderController) {
-                        ProfileScreen(
-                            viewModel = viewModel,
-                            onPickAvatar = onPickAvatar,
-                            pickedAvatarRef = avatarPickResult,
-                            onAvatarPickConsume = onAvatarPickConsume,
-                        )
-                    }
+            composable(Screen.Profile.route) {
+                RootScreenFrame(screen = Screen.Profile, controller = screenHeaderController) {
+                    ProfileScreen(
+                        viewModel = viewModel,
+                        onPickAvatar = onPickAvatar,
+                        pickedAvatarRef = avatarPickResult,
+                        onAvatarPickConsume = onAvatarPickConsume,
+                    )
                 }
+            }
             }
         }
 
@@ -893,7 +894,9 @@ private fun RootScreenFrame(
             ScreenHeaderModel(
                 breadcrumbs =
                     screenBreadcrumbs(breadcrumbScreen) { breadcrumb ->
-                        if (breadcrumbNavigate == null || breadcrumb.route.contains("{")) {
+                        if (breadcrumbNavigate == null ||
+                            routeParameterPattern.containsMatchIn(breadcrumb.route)
+                        ) {
                             null
                         } else {
                             { breadcrumbNavigate(breadcrumb.route) }

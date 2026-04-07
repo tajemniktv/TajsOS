@@ -422,6 +422,7 @@
     <string name="notes_resources">ODNIESIENIA</string>
     <string name="notes_empty">NIE ZNALEZIONO WIEDZY</string>
     <string name="notes_no_results">BRAK PASUJĄCYCH WYNIKÓW</string>
+    <string name="note_select_inspect_context">Wybierz notatkę, aby przejrzeć kontekst</string>
 
     <!-- Tasks Screen -->
     <string name="tasks_title">ZADANIA</string>
@@ -579,6 +580,8 @@
     <string name="detail_convert">Konwertuj</string>
     <string name="detail_repeat">Powtórz zadanie</string>
     <string name="detail_duplicate">Duplikuj</string>
+    <string name="untitled">Bez tytułu</string>
+    <string name="next_step">Następny krok</string>
     <string name="detail_untitled">Bez tytułu...</string>
     <string name="detail_remove_tag">Usuń tag</string>
     <string name="detail_add_tag">Dodaj tag</string>
@@ -689,6 +692,7 @@
     <string name="project_detail_empty_timeline">Brak ostatniej aktywności.</string>
     <string name="project_detail_empty_assets">Brak dołączonych zasobów.</string>
     <string name="project_detail_set_status">Ustaw status</string>
+    <string name="no_specific_outcome_defined">Nie zdefiniowano jeszcze konkretnego rezultatu.</string>
 
     <!-- Area Detail -->
     <string name="area_detail_not_found">Nie znaleziono obszaru</string>

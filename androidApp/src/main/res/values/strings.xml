@@ -6,6 +6,8 @@
     <string name="app_name" translatable="false">TajsOS</string>
     <string name="auth_app_locked">App Locked</string>
     <string name="auth_unlock">Unlock</string>
+    <string name="next_step">Next step</string>
+    <string name="untitled">Untitled</string>
     <string name="auth_biometric_title">Biometric login</string>
     <string name="voice_speak_now">Speak now...</string>
     <string name="intent_shared_image">Shared Image</string>

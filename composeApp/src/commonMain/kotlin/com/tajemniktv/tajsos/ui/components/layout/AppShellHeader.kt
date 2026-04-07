@@ -46,6 +46,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
@@ -289,7 +293,11 @@ private fun HeaderBreadcrumbs(breadcrumbs: List<ScreenHeaderBreadcrumb>) {
                 overflow = TextOverflow.Ellipsis,
                 modifier =
                     if (breadcrumb.onClick != null) {
-                        Modifier.clickable(onClick = breadcrumb.onClick)
+                        Modifier
+                            .semantics {
+                                role = Role.Button
+                                contentDescription = breadcrumb.label
+                            }.clickable(onClick = breadcrumb.onClick)
                     } else {
                         Modifier
                     },

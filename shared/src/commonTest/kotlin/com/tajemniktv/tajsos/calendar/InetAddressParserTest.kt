@@ -67,6 +67,7 @@ class InetAddressParserTest {
         assertNull(parseIpAddress("g::1"))
         assertNull(parseIpAddress("1ffff::1"))
         assertNull(parseIpAddress("not:an:ipv6:at:all"))
+        assertNull(parseIpAddress("1:2:3:4:5:6:7:8:9:10::"))
     }
 
     @Test
