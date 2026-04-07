@@ -66,7 +66,7 @@ fun screenBreadcrumbs(
     screen: Screen,
     onScreenClick: ((Screen) -> (() -> Unit)?)? = null,
 ): List<ScreenHeaderBreadcrumb> {
-    val trail = screen.breadcrumbTrail()
+    val trail = remember(screen) { screen.breadcrumbTrail() }
     return trail.mapIndexed { index, breadcrumbScreen ->
         val click =
             if (index < trail.lastIndex) {
