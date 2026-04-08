@@ -396,11 +396,11 @@ class AppRepository(
     /**
      * Converts a raw, unstructured inbox capture into a typed, actionable life object.
      *
-     * The first line of the raw text becomes the new item's title, and remaining lines become the body content.
+     * The first non-blank line of the raw text becomes the new item's title, and remaining lines become the body content.
      * This establishes the entry point for turning fleeting thoughts into durable nodes (tasks, notes, projects).
      *
      * **Side effects:**
-     * - Inserts the newly created typed item into the `node` table.
+     * - Inserts the newly created typed item into the nodes table and synchronizes its associated facets, domains, and schedules.
      * - Updates the origin [InboxEntryEntity] to mark it as processed, setting the `processedAt` timestamp and linking it via `triagedItemId`.
      * - Logs an `INBOX_TRIAGED` event to the system activity log.
      *
