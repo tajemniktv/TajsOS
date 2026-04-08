@@ -485,7 +485,7 @@ private fun RecentQueriesRow(
         )
         Spacer(modifier = Modifier.width(TajsOSTheme.SpacingSm))
         LazyRow(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
-            items(queries, key = { it }) { query ->
+            items(queries.distinct(), key = { it }) { query ->
                 Surface(
                     shape = RoundedCornerShape(999.dp),
                     color = TajsOSTheme.SurfaceHigh,
