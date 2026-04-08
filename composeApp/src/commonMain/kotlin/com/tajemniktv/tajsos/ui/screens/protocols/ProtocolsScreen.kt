@@ -209,8 +209,8 @@ internal fun ProtocolsLayer(
     if (activeProtocol == null && protocolViewState.value == ProtocolView.Active && snapshot.protocols.isNotEmpty()) {
         selectedProtocolTitleState.value =
             snapshot.protocols
-                .first()
-                .node.node.title
+                .firstOrNull()
+                ?.node?.node?.title
     }
 
     val newestRun = history.maxByOrNull { it.executedAt }?.executedAt

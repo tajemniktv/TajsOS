@@ -394,17 +394,19 @@ class AppRepository(
     }
 
     /**
-     * Converts a raw inbox capture into one of the core LifeOS item kinds.
+     * Converts a raw, unstructured inbox capture into a typed, actionable life object.
      *
-     * The first line becomes the new item title and remaining lines become the body content.
+     * The first non-blank line of the raw text becomes the new item's title, and remaining lines become the body content.
+     * This establishes the entry point for turning fleeting thoughts into durable nodes (tasks, notes, projects).
      *
      * **Side effects:**
-     * - Updates the inbox entry to mark it as processed, setting `processedAt` and `triagedItemId`.
-     * - Logs an "INBOX_TRIAGED" event with the newly created item ID.
+     * - Inserts the newly created typed item into the nodes table and synchronizes its associated facets, domains, and schedules.
+     * - Updates the origin [InboxEntryEntity] to mark it as processed, setting the `processedAt` timestamp and linking it via `triagedItemId`.
+     * - Logs an `INBOX_TRIAGED` event to the system activity log.
      *
-     * @param entryId The ID of the raw inbox entry to triage.
-     * @param kind The target [ItemKind] to convert the entry into.
-     * @return The created item identifier, or `0L` if the entry is missing or the parsed title is blank.
+     * @param entryId The unique ID of the raw pending inbox entry to triage.
+     * @param kind The explicit system [ItemKind] to convert the raw capture into.
+     * @return The generated ID of the newly inserted item, or `0L` if the entry could not be found or the parsed title is blank.
      */
     suspend fun triageInboxEntry(
         entryId: Long,
