@@ -208,7 +208,7 @@ private fun renderSearchFilters(context: SearchDashboardContext) {
                 )
             }
             val types = listOf("task", "note", "record", "project", "area")
-            items(types) { type ->
+            items(types, key = { it }) { type ->
                 val typeLabel =
                     when (type)
                     {
@@ -261,7 +261,7 @@ private fun renderSearchFilters(context: SearchDashboardContext) {
                     label = { Text("CONTEXT OFF") },
                 )
             }
-            items(contexts) { (key, labelRes) ->
+            items(contexts, key = { it.first }) { (key, labelRes) ->
                 val selected =
                     context.searchLocationContextFilter == key ||
                         context.searchEnergyContextFilter == key ||
@@ -297,7 +297,7 @@ private fun renderSearchFilters(context: SearchDashboardContext) {
                     label = { Text("HORIZON OFF") },
                 )
             }
-            items(horizons) { (key, label) ->
+            items(horizons, key = { it.first }) { (key, label) ->
                 FilterChip(
                     selected = context.searchTimeHorizonFilter == key,
                     onClick = {
@@ -485,7 +485,7 @@ private fun RecentQueriesRow(
         )
         Spacer(modifier = Modifier.width(TajsOSTheme.SpacingSm))
         LazyRow(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
-            items(queries) { query ->
+            items(queries.distinct(), key = { it }) { query ->
                 Surface(
                     shape = RoundedCornerShape(999.dp),
                     color = TajsOSTheme.SurfaceHigh,
