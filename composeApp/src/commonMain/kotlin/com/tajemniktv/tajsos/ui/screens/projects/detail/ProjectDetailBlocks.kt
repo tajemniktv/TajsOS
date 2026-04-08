@@ -57,6 +57,7 @@ import com.tajemniktv.tajsos.data.projectStateOrNull
 import com.tajemniktv.tajsos.data.taskStateOrNull
 import com.tajemniktv.tajsos.ui.components.cards.LinkedNodeItem
 import com.tajemniktv.tajsos.ui.components.common.DetailHeader
+import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.number
@@ -623,9 +624,11 @@ private fun ProjectEmptyState(text: StringResource) {
         color = TajsOSTheme.Surface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
     ) {
-        Text(
-            text = stringResource(text),
-            color = TajsOSTheme.Muted,
+        EmptyState(
+            message = stringResource(text),
+            description = null,
+            fillParent = false,
+            showContainer = false,
             modifier = Modifier.padding(12.dp),
         )
     }
