@@ -218,14 +218,14 @@ internal fun InsightsMainBlock(
             }
         }
 
-        if (insights.projectsWithoutTasks.isNotEmpty()) {
+        insights.projectsWithoutTasks.firstOrNull()?.let { firstProject ->
             item {
                 InsightPatternCard(
                     title = stringResource(Res.string.insights_stagnant_knowledge_title),
                     message =
                         stringResource(
                             Res.string.insights_stagnant_knowledge_msg,
-                            insights.projectsWithoutTasks.first().title,
+                            firstProject.title,
                         ),
                     icon = Icons.Default.Warning,
                     color = TajsOSTheme.Accent,
@@ -233,8 +233,7 @@ internal fun InsightsMainBlock(
             }
         }
 
-        if (insights.neglectedAreas.isNotEmpty()) {
-            val area = insights.neglectedAreas.first()
+        insights.neglectedAreas.firstOrNull()?.let { area ->
             item {
                 InsightPatternCard(
                     title = stringResource(Res.string.insights_radar_drop_title),
