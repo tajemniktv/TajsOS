@@ -316,6 +316,7 @@ fun CaptureSheet(
                             "project", // NON-NLS
                             "area", // NON-NLS
                         ),
+                        key = { it }
                     ) { type ->
                         val typeLabel =
                             when (type)
@@ -511,7 +512,7 @@ fun CaptureSheet(
 
                     if (isRecurring) {
                         LazyRow(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
-                            items(listOf("DAILY", "WEEKLY", "MONTHLY")) { interval ->
+                            items(listOf("DAILY", "WEEKLY", "MONTHLY"), key = { it }) { interval ->
                                 // NON-NLS
                                 val intervalLabel =
                                     when (interval)
