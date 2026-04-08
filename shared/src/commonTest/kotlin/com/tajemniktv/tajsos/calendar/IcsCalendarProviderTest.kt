@@ -262,4 +262,47 @@ class IcsCalendarProviderTest {
             // The parser should catch exceptions during date conversion and skip those events
             assertEquals(0, events.size)
         }
+
+    @Test
+    fun `test SSRF validation blocks dangerous URLs`(): TestResult =
+        runTest {
+            val ics =
+                """
+                BEGIN:VCALENDAR
+                BEGIN:VEVENT
+                UID:123
+                SUMMARY:Test
+                DTSTART:20231024T100000Z
+                END:VEVENT
+                END:VCALENDAR
+                """.trimIndent()
+
+            val provider = createProviderWithIcs(ics)
+
+            val testCases =
+                listOf(
+                    "file:///etc/passwd" to 0,
+                    "ftp://example.com/test.ics" to 0,
+                    "http://localhost:8080/test.ics" to 0,
+                    "http://127.0.0.1/test.ics" to 0,
+                    "http://169.254.169.254/latest/meta-data" to 0,
+                    "http://metadata.google.internal/computeMetadata/v1/" to 0,
+                    "http://10.0.0.1/test.ics" to 0,
+                    "http://192.168.1.1/test.ics" to 0,
+                    "https://example.com/test.ics" to 1,
+                    "http://public-ip.com/test.ics" to 1,
+                )
+
+            for ((url, expectedCount) in testCases) {
+                val entity =
+                    CalendarProviderEntity(
+                        id = 1,
+                        name = "Test",
+                        type = "ICS",
+                        url = url,
+                    )
+                val events = provider.fetchEvents(entity, defaultFrom, defaultTo)
+                assertEquals(expectedCount, events.size, "Failed for URL: $url")
+            }
+        }
 }
