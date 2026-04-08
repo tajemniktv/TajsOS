@@ -2057,11 +2057,11 @@ fun calculateLifeOSSecondBrainSnapshot(
         when
             {
                 dashboard.overdueNodes.isNotEmpty() -> {
-                    "Handle overdue first: ${dashboard.overdueNodes.first().node.title}."
+                    "Handle overdue first: ${dashboard.overdueNodes.firstOrNull()?.node?.title.orEmpty()}."
                 }
 
                 dashboard.upcomingDeadlines.isNotEmpty() -> {
-                    "Advance the nearest deadline: ${dashboard.upcomingDeadlines.first().node.title}."
+                    "Advance the nearest deadline: ${dashboard.upcomingDeadlines.firstOrNull()?.node?.title.orEmpty()}."
                 }
 
                 dashboard.suggestedContextTasks.isNotEmpty() -> {
@@ -2280,7 +2280,7 @@ fun calculateCombinedDirectionSnapshot(
             if (logistics.leaveHomeChecklists.isNotEmpty()) add("${logistics.leaveHomeChecklists.size} leave-home checklist items")
             if (dashboard.suggestedContextTasks.isNotEmpty()) add("${dashboard.suggestedContextTasks.size} context-suggested tasks")
             if (openLoops.review.isNotEmpty()) add("${openLoops.review.size} loops pending review")
-            if (capacity.capacityAwareSuggestions.isNotEmpty()) add(capacity.capacityAwareSuggestions.first())
+            capacity.capacityAwareSuggestions.firstOrNull()?.let { add(it) }
         }
 
     val posture =

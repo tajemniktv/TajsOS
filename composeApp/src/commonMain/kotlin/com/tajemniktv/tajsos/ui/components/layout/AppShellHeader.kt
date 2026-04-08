@@ -242,7 +242,7 @@ private fun HeaderScreenContext(
 
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(4.dp),
+        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingXs),
     ) {
         if (model.breadcrumbs.isNotEmpty()) {
             HeaderBreadcrumbs(model.breadcrumbs)
@@ -272,7 +272,7 @@ private fun HeaderScreenContext(
 @Composable
 private fun HeaderBreadcrumbs(breadcrumbs: List<ScreenHeaderBreadcrumb>) {
     Row(
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingXs),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         breadcrumbs.forEachIndexed { index, breadcrumb ->
