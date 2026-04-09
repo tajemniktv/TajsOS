@@ -156,7 +156,7 @@ interface NodeDao {
 }
 
 /**
- * Provides database access for managing deep work and focus sessions linked to specific nodes.
+ * Provides database access for managing deep work and [FocusSessionEntity] focus sessions linked to specific nodes.
  */
 @Dao
 interface FocusSessionDao {
@@ -174,7 +174,7 @@ interface FocusSessionDao {
 }
 
 /**
- * Provides database access for time tracking logs, capturing continuous effort against system nodes.
+ * Provides database access for [TrackEntryEntity] time tracking logs, capturing continuous effort against system nodes.
  */
 @Dao
 interface TrackDao {
@@ -195,7 +195,7 @@ interface TrackDao {
 }
 
 /**
- * Provides database access for resolving bi-directional graph relationships between nodes.
+ * Provides database access for resolving bi-directional [RelationEntity] graph relationships between nodes.
  */
 @Dao
 interface RelationDao {
@@ -244,7 +244,7 @@ interface RelationDao {
 }
 
 /**
- * Provides database access for global classification tags mapped across system nodes.
+ * Provides database access for global classification [TagEntity] tags mapped across system nodes via [NodeTagEntity].
  */
 @Dao
 interface TagDao {
@@ -278,7 +278,7 @@ interface TagDao {
 }
 
 /**
- * Provides database access for capturing immutable chronological activity events for system nodes.
+ * Provides database access for capturing immutable chronological [EventLogEntity] activity events for system nodes.
  */
 @Dao
 interface EventLogDao {
@@ -296,7 +296,7 @@ interface EventLogDao {
 }
 
 /**
- * Provides database access for tracking external file attachments connected to nodes.
+ * Provides database access for tracking external [AttachmentEntity] file attachments connected to nodes.
  */
 @Dao
 interface AttachmentDao {
@@ -615,7 +615,7 @@ interface SavedViewDao {
 }
 
 /**
- * Provides database access for saving and retrieving reusable parameterized structure templates.
+ * Provides database access for saving and retrieving reusable parameterized [TemplateEntity] structure templates.
  */
 @Dao
 interface TemplateDao {
@@ -633,7 +633,7 @@ interface TemplateDao {
 }
 
 /**
- * Provides database access for retaining point-in-time state snapshots for change analysis.
+ * Provides database access for retaining point-in-time [NodeSnapshotEntity] state snapshots for change analysis.
  */
 @Dao
 interface NodeSnapshotDao {
@@ -651,7 +651,7 @@ interface NodeSnapshotDao {
 }
 
 /**
- * Provides database access for periodic reflection sessions and their documented outcomes.
+ * Provides database access for periodic [ReviewEntity] reflection sessions and their documented outcomes.
  */
 @Dao
 interface ReviewDao {
@@ -666,7 +666,7 @@ interface ReviewDao {
 }
 
 /**
- * Provides database access for storing configurations of external calendar synchronization sources.
+ * Provides database access for storing configurations of external [CalendarProviderEntity] synchronization sources.
  */
 @Dao
 interface CalendarProviderDao {
@@ -687,7 +687,7 @@ interface CalendarProviderDao {
 }
 
 /**
- * Provides database access for querying synchronized external calendar events locally.
+ * Provides database access for querying synchronized external [CalendarEventEntity] calendar events locally.
  */
 @Dao
 interface CalendarEventDao {
@@ -714,7 +714,7 @@ interface CalendarEventDao {
 }
 
 /**
- * Provides database access for user-defined operational modes that adjust application behavior.
+ * Provides database access for user-defined [ModeEntity] operational modes that adjust application behavior.
  */
 @Dao
 interface ModeDao {
@@ -762,7 +762,7 @@ interface ModeDao {
 }
 
 /**
- * Provides database access for tracking execution history of automated operational protocols.
+ * Provides database access for tracking execution history of automated operational protocols as [ProtocolHistoryEntity] instances.
  */
 @Dao
 interface ProtocolDao {
@@ -774,7 +774,7 @@ interface ProtocolDao {
 }
 
 /**
- * Provides database access for tracking available options linked to a primary decision node.
+ * Provides database access for tracking available [DecisionOptionEntity] options linked to a primary decision node.
  */
 @Dao
 interface DecisionDao {
@@ -792,7 +792,7 @@ interface DecisionDao {
 }
 
 /**
- * Provides database access for retrieving the primary application user identity profile.
+ * Provides database access for retrieving the primary application [UserEntity] identity profile.
  */
 @Dao
 interface UserDao {
@@ -807,7 +807,7 @@ interface UserDao {
 }
 
 /**
- * Provides database access for managing user medication tracking.
+ * Provides database access for managing user [MedicationEntity] tracking.
  */
 @Dao
 interface MedicationDao {
