@@ -211,8 +211,8 @@ class FakeItemDomainDao : ItemDomainDao {
     }
 
     override suspend fun clearPrimaryFlag(itemId: Long) {
-        domains.replaceAll { domain ->
-            if (domain.itemId == itemId) domain.copy(isPrimary = false) else domain
+        for (i in domains.indices) { val domain = domains[i];
+            domains[i] = if (domain.itemId == itemId) domain.copy(isPrimary = false) else domain
         }
         domainsFlow.value = domains.toList()
     }
