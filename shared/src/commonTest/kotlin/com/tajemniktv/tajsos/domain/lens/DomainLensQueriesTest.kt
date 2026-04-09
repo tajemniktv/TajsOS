@@ -35,6 +35,7 @@ class DomainLensQueriesTest {
                         type = "note",
                         title = "Insurance policy reference",
                         noteType = "reference",
+                        updatedAt = 2_000L,
                     ),
                 pin = null,
                 tags = listOf(TagEntity(id = 11, name = "insurance", normalizedName = "insurance")),
@@ -47,6 +48,7 @@ class DomainLensQueriesTest {
                         type = "note",
                         title = "Tax filing deadline",
                         dueAt = 1_000L,
+                        updatedAt = 1_000L,
                     ),
                 pin = null,
                 tags = emptyList(),
@@ -100,7 +102,7 @@ class DomainLensQueriesTest {
             )
         val healthRecord =
             NodeWithPin(
-                node = NodeEntity(id = 2, type = "record", title = "Symptom log"),
+                node = NodeEntity(id = 2, type = "record", title = "Symptom log", updatedAt = 2_000L),
                 pin = null,
                 tags = listOf(TagEntity(id = 2, name = "symptom", normalizedName = "symptom")),
             )
