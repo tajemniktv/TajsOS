@@ -86,7 +86,12 @@ fun NotesContextPanel(
             item {
                 ContextSection(title = "Tags", icon = Icons.Default.Sell) {
                     if (selectedNote.tags.isEmpty()) {
-                        Text("No tags", color = TajsOSTheme.Muted)
+                        EmptyState(
+                            message = "No tags",
+                            description = null,
+                            fillParent = false,
+                            showContainer = false,
+                        )
                     } else {
                         selectedNote.tags.forEach {
                             Text("#$it", color = TajsOSTheme.Text)
@@ -107,7 +112,12 @@ fun NotesContextPanel(
             item {
                 ContextSection(title = "Linked Tasks", icon = Icons.Default.Link) {
                     if (linkedTasks.isEmpty()) {
-                        Text("No linked tasks", color = TajsOSTheme.Muted)
+                        EmptyState(
+                            message = "No linked tasks",
+                            description = null,
+                            fillParent = false,
+                            showContainer = false,
+                        )
                     } else {
                         linkedTasks.forEach { task ->
                             Text(
@@ -126,7 +136,12 @@ fun NotesContextPanel(
             item {
                 ContextSection(title = "Related Notes", icon = Icons.Default.Link) {
                     if (relatedNotes.isEmpty()) {
-                        Text("No related notes", color = TajsOSTheme.Muted)
+                        EmptyState(
+                            message = "No related notes",
+                            description = null,
+                            fillParent = false,
+                            showContainer = false,
+                        )
                     } else {
                         relatedNotes.forEach { note ->
                             Text(
@@ -145,7 +160,12 @@ fun NotesContextPanel(
             item {
                 ContextSection(title = "Attachments", icon = Icons.Default.AttachFile) {
                     if (attachments.isEmpty()) {
-                        Text("No attachments", color = TajsOSTheme.Muted)
+                        EmptyState(
+                            message = "No attachments",
+                            description = null,
+                            fillParent = false,
+                            showContainer = false,
+                        )
                     } else {
                         attachments.forEach {
                             Text(it.title ?: it.uriOrPath, color = TajsOSTheme.Text)
