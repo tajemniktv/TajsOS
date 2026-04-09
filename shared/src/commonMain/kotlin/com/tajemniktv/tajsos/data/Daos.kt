@@ -155,6 +155,9 @@ interface NodeDao {
     fun isPinnedToToday(nodeId: Long): Flow<Boolean>
 }
 
+/**
+ * Provides database access for managing deep work and focus sessions linked to specific nodes.
+ */
 @Dao
 interface FocusSessionDao {
     @Query("SELECT * FROM focus_sessions ORDER BY startedAt DESC")
@@ -170,6 +173,9 @@ interface FocusSessionDao {
     fun getActiveSession(): Flow<FocusSessionEntity?>
 }
 
+/**
+ * Provides database access for time tracking logs, capturing continuous effort against system nodes.
+ */
 @Dao
 interface TrackDao {
     @Query("SELECT * FROM track_entries ORDER BY date DESC, createdAt DESC")
@@ -188,6 +194,9 @@ interface TrackDao {
     fun getTrackMedications(trackEntryId: Long): Flow<List<TrackMedicationJoinEntity>>
 }
 
+/**
+ * Provides database access for resolving bi-directional graph relationships between nodes.
+ */
 @Dao
 interface RelationDao {
     @Query("SELECT * FROM relations WHERE fromNodeId = :nodeId OR toNodeId = :nodeId")
@@ -234,6 +243,9 @@ interface RelationDao {
     fun getAllRelations(): Flow<List<RelationEntity>>
 }
 
+/**
+ * Provides database access for global classification tags mapped across system nodes.
+ */
 @Dao
 interface TagDao {
     @Query("SELECT * FROM tags")
@@ -265,6 +277,9 @@ interface TagDao {
     suspend fun detachAllTagsFromNode(nodeId: Long)
 }
 
+/**
+ * Provides database access for capturing immutable chronological activity events for system nodes.
+ */
 @Dao
 interface EventLogDao {
     @Query("SELECT * FROM event_log ORDER BY timestamp DESC LIMIT :limit")
@@ -280,6 +295,9 @@ interface EventLogDao {
     suspend fun insertLogs(logs: List<EventLogEntity>)
 }
 
+/**
+ * Provides database access for tracking external file attachments connected to nodes.
+ */
 @Dao
 interface AttachmentDao {
     @Query("SELECT * FROM attachments")
@@ -596,6 +614,9 @@ interface SavedViewDao {
     suspend fun deleteVisibleFieldsForView(viewId: Long)
 }
 
+/**
+ * Provides database access for saving and retrieving reusable parameterized structure templates.
+ */
 @Dao
 interface TemplateDao {
     @Query("SELECT * FROM templates")
@@ -611,6 +632,9 @@ interface TemplateDao {
     suspend fun deleteTemplate(template: TemplateEntity)
 }
 
+/**
+ * Provides database access for retaining point-in-time state snapshots for change analysis.
+ */
 @Dao
 interface NodeSnapshotDao {
     @Query("SELECT * FROM node_snapshots WHERE nodeId = :nodeId ORDER BY timestamp DESC")
@@ -626,6 +650,9 @@ interface NodeSnapshotDao {
     suspend fun deleteSnapshotsForNode(nodeId: Long)
 }
 
+/**
+ * Provides database access for periodic reflection sessions and their documented outcomes.
+ */
 @Dao
 interface ReviewDao {
     @Query("SELECT * FROM reviews ORDER BY completedAt DESC")
@@ -638,6 +665,9 @@ interface ReviewDao {
     suspend fun getLastReviewByType(type: String): ReviewEntity?
 }
 
+/**
+ * Provides database access for storing configurations of external calendar synchronization sources.
+ */
 @Dao
 interface CalendarProviderDao {
     @Query("SELECT * FROM calendar_providers")
@@ -656,6 +686,9 @@ interface CalendarProviderDao {
     suspend fun getProviderById(id: Long): CalendarProviderEntity?
 }
 
+/**
+ * Provides database access for querying synchronized external calendar events locally.
+ */
 @Dao
 interface CalendarEventDao {
     @Query("SELECT * FROM calendar_events WHERE startAt >= :from AND startAt <= :to")
@@ -680,6 +713,9 @@ interface CalendarEventDao {
     suspend fun deleteEvent(event: CalendarEventEntity)
 }
 
+/**
+ * Provides database access for user-defined operational modes that adjust application behavior.
+ */
 @Dao
 interface ModeDao {
     @Query("SELECT * FROM modes ORDER BY sortOrder ASC")
@@ -725,6 +761,9 @@ interface ModeDao {
     )
 }
 
+/**
+ * Provides database access for tracking execution history of automated operational protocols.
+ */
 @Dao
 interface ProtocolDao {
     @Query("SELECT * FROM protocol_history ORDER BY executedAt DESC")
@@ -734,6 +773,9 @@ interface ProtocolDao {
     suspend fun insertProtocolHistory(history: ProtocolHistoryEntity): Long
 }
 
+/**
+ * Provides database access for tracking available options linked to a primary decision node.
+ */
 @Dao
 interface DecisionDao {
     @Query("SELECT * FROM decision_options WHERE decisionNodeId = :nodeId")
@@ -749,6 +791,9 @@ interface DecisionDao {
     suspend fun deleteDecisionOption(option: DecisionOptionEntity)
 }
 
+/**
+ * Provides database access for retrieving the primary application user identity profile.
+ */
 @Dao
 interface UserDao {
     @Query("SELECT * FROM users WHERE id = 1 LIMIT 1")
@@ -761,6 +806,9 @@ interface UserDao {
     suspend fun updateUser(user: UserEntity)
 }
 
+/**
+ * Provides database access for managing user medication tracking.
+ */
 @Dao
 interface MedicationDao {
     @Query("SELECT * FROM medications WHERE isEnabled = 1")
