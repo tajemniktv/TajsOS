@@ -113,9 +113,7 @@ fun NotesWorkspaceDetail(
     val projects by viewModel.allProjects.collectAsState()
 
     if (current == null) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text(stringResource(Res.string.notes_empty), color = TajsOSTheme.Muted)
-        }
+        com.tajemniktv.tajsos.ui.components.common.EmptyState(message = stringResource(Res.string.notes_empty))
         return
     }
 
