@@ -56,7 +56,13 @@ private fun parseIpv4(host: String): IpAddress.Ipv4? {
     if (parts.size != 4) return null
     var address = 0L
     for (i in 0..3) {
-        val byteVal = parts[i].toLongOrNull() ?: return null
+        val part = parts[i]
+        if (part.isEmpty()) return null
+        // Disallow leading spaces or any other non-digit character implicitly
+        if (part.any { !it.isDigit() }) return null
+        // Disallow leading zeros unless the part is exactly "0"
+        if (part.length > 1 && part.startsWith("0")) return null
+        val byteVal = part.toLongOrNull() ?: return null
         if (byteVal !in 0..255) return null
         address = (address shl 8) or byteVal
     }
@@ -65,6 +71,9 @@ private fun parseIpv4(host: String): IpAddress.Ipv4? {
 
 private fun parseIpv6(host: String): IpAddress.Ipv6? {
     if (!host.contains(":")) return null
+    if (host.startsWith(":") && !host.startsWith("::")) return null
+    if (host.endsWith(":") && !host.endsWith("::")) return null
+
     val rawParts = host.split(":")
 
     val values = LongArray(8) { 0L }
@@ -107,13 +116,16 @@ private fun populateIpv6Values(
     var outputIdx = startOutputIndex
     var count = 0
     for (i in indices) {
-        if (rawParts[i].isEmpty()) {
+        val part = rawParts[i]
+        if (part.isEmpty()) {
             // Empty parts should only exist at the boundaries (e.g. "::1" -> "", "", "1").
             // If we encounter one here during population, and it's not handled by the boundary cases,
             // we skip it, but we already validated that there are no extra "::" in parseIpv6.
             continue
         }
-        val v = rawParts[i].toLongOrNull(16) ?: return -1
+        if (part.length > 4) return -1
+        if (part.startsWith("-") || part.startsWith("+")) return -1
+        val v = part.toLongOrNull(16) ?: return -1
         if (v !in 0..0xFFFF) return -1
         if (outputIdx < 0 || outputIdx >= values.size) return -1
         values[outputIdx] = v
@@ -126,7 +138,10 @@ private fun populateIpv6Values(
 private fun parseIpv6Full(rawParts: List<String>, values: LongArray): Boolean {
     if (rawParts.size != 8) return false
     for (i in 0..7) {
-        val v = rawParts[i].toLongOrNull(16) ?: return false
+        val part = rawParts[i]
+        if (part.length > 4) return false
+        if (part.startsWith("-") || part.startsWith("+")) return false
+        val v = part.toLongOrNull(16) ?: return false
         if (v !in 0..0xFFFF) return false
         values[i] = v
     }
