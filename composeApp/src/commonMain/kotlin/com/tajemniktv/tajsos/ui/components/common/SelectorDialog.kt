@@ -42,18 +42,17 @@ import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
  *
  * When `show` is true this composable renders a modal dialog with a header, a two-column grid of option tiles, and a footer; tapping a tile calls `onSelect`, and dismissing calls `onDismiss`.
  *
+ * The provided `optionName` must return a unique string for each option, as it is used as the
+ * stable structural key during `LazyVerticalGrid` item rendering to optimize performance.
+ *
  * @param show Whether the dialog is visible.
  * @param onDismiss Callback invoked when the dialog should be dismissed.
  * @param title Dialog title displayed in the header.
  * @param prefix Short label shown above the title; defaults to "SYSTEM_SELECTOR // MODULE_INTAKE".
- * @param show Whether the selector is visible.
- * @param onDismiss Callback invoked when the selector is dismissed.
- * @param title The primary title to display.
- * @param prefix Functional prefix for the selector header.
  * @param options List of items to render as selectable tiles.
  * @param selectedOption Currently highlighted option, or `null` if none.
  * @param onSelect Callback invoked with the option that was tapped.
- * @param optionName Function that returns the display name for an option.
+ * @param optionName Function that returns the distinct display name for an option.
  * @param optionIcon Function that returns the icon for an option.
  * @param optionSubtext Function that returns optional subtext for an option; return an empty string to omit it.
  */
@@ -134,7 +133,7 @@ fun <T> SelectorDialog(
                     verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
                     modifier = Modifier.weight(1f),
                 ) {
-                    items(options) { option ->
+                    items(options, key = { optionName(it) }) { option ->
                         val isSelected = option == selectedOption
                         Surface(
                             onClick = { onSelect(option) },
