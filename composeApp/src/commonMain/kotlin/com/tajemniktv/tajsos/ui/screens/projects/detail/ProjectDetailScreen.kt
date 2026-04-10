@@ -58,6 +58,7 @@ import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.project_detail_not_found
+import tajsos.composeapp.generated.resources.no_specific_outcome_defined
 import tajsos.composeapp.generated.resources.project_health_critical
 import tajsos.composeapp.generated.resources.project_health_frozen
 import tajsos.composeapp.generated.resources.project_health_healthy
@@ -186,7 +187,7 @@ fun ProjectDetailScreen(
             ?.trim()
             ?.takeIf(String::isNotEmpty)
             ?: project.content.trim().takeIf(String::isNotEmpty)
-            ?: "No specific outcome defined yet." // Fallback string
+            ?: stringResource(Res.string.no_specific_outcome_defined)
 
     val targetDate = project.dueAt ?: upcomingMilestones.firstOrNull()?.dueAt
 

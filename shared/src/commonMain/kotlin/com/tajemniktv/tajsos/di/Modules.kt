@@ -88,5 +88,15 @@ class SharedModule(
     /**
      *
      */
-    fun createViewModel(): MainViewModel = MainViewModel(repository, preferencesRepository, calendarManager)
+    fun createViewModel(
+        nextStepFallbackLabel: String = "Next step",
+        untitledFallbackLabel: String = "Untitled",
+    ): MainViewModel =
+        MainViewModel(
+            repository = repository,
+            preferencesRepository = preferencesRepository,
+            calendarManager = calendarManager,
+            nextStepFallbackLabel = nextStepFallbackLabel,
+            untitledFallbackLabel = untitledFallbackLabel,
+        )
 }

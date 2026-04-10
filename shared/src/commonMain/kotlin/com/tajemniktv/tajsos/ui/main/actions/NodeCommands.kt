@@ -31,6 +31,8 @@ class NodeCommands(
     private val currentAllNodes: () -> List<NodeEntity>,
     private val parseInternalLinks: (Long) -> Unit,
     private val setTagOnNode: suspend (Long, String, Boolean) -> Unit,
+    private val defaultNextStepLabel: () -> String = { "Next step" },
+    private val defaultUntitledLabel: () -> String = { "Untitled" },
 ) {
     fun sweepStaleTasks(cutoffDays: Int = 3) {
         scope.launch {
@@ -288,7 +290,7 @@ class NodeCommands(
                                 .removePrefix("-")
                                 .removePrefix("*")
                                 .trim()
-                                .ifBlank { "Next step" }
+                                .ifBlank { defaultNextStepLabel() }
                         repository.updateNode(
                             node.copy(
                                 nextSmallestStep = firstLine,
@@ -425,7 +427,12 @@ class NodeCommands(
                 if (sections.size > 1) {
                     for (section in sections) {
                         val lines = section.lines()
-                        val title = lines.first().removePrefix("# ").trim().ifBlank { "Untitled" }
+                        val title =
+                            lines
+                                .first()
+                                .removePrefix("# ")
+                                .trim()
+                                .ifBlank { defaultUntitledLabel() }
                         val content = lines.drop(1).joinToString("\n").trim()
 
                         repository.insertNode(

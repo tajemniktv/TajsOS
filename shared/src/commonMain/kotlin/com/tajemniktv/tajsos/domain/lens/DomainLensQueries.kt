@@ -161,8 +161,9 @@ object DomainLensQueries {
      * Determines whether a node implicitly belongs to the finance domain based on tags,
      * keywords in title/content, maintenance type, or note type (e.g., reference notes).
      *
-     * Classification relies entirely on checking against hardcoded marker constants:
-     * [financeTagMarkers], [financeTitleKeywords], and [financeMaintenanceTypes].
+     * Classification uses hardcoded marker constants ([financeTagMarkers],
+     * [financeTitleKeywords], and [financeMaintenanceTypes]) plus non-constant node-state
+     * checks such as reference-note matching (`noteType == "reference"`).
      */
     private fun matchesFinanceSignal(node: NodeWithPin): Boolean {
         val title = node.node.title.lowercase()

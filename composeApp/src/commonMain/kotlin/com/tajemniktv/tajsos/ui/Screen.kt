@@ -581,7 +581,7 @@ sealed class Screen(
                 RecordDetail -> Notes
                 ProjectDetail -> Projects
                 AreaDetail -> Areas
-                CalendarSettings -> Calendar
+                CalendarSettings -> Settings
                 Templates -> Settings
                 Profile -> Settings
                 SettingsHealth -> Settings

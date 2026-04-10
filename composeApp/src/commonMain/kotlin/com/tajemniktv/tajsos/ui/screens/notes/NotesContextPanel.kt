@@ -39,6 +39,9 @@ import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.note_select_inspect_context
 import kotlin.time.Instant
 
 /**
@@ -56,10 +59,10 @@ fun NotesContextPanel(
         modifier = modifier.fillMaxSize(),
         color = TajsOSTheme.SurfaceLow,
         shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
-    ) {
+        ) {
         if (selectedNote == null) {
             EmptyState(
-                message = "Select a note to inspect context",
+                message = stringResource(Res.string.note_select_inspect_context),
                 description = null,
                 fillParent = true,
                 showContainer = false,
@@ -83,7 +86,12 @@ fun NotesContextPanel(
             item {
                 ContextSection(title = "Tags", icon = Icons.Default.Sell) {
                     if (selectedNote.tags.isEmpty()) {
-                        Text("No tags", color = TajsOSTheme.Muted)
+                        EmptyState(
+                            message = "No tags",
+                            description = null,
+                            fillParent = false,
+                            showContainer = false,
+                        )
                     } else {
                         selectedNote.tags.forEach {
                             Text("#$it", color = TajsOSTheme.Text)
@@ -104,7 +112,12 @@ fun NotesContextPanel(
             item {
                 ContextSection(title = "Linked Tasks", icon = Icons.Default.Link) {
                     if (linkedTasks.isEmpty()) {
-                        Text("No linked tasks", color = TajsOSTheme.Muted)
+                        EmptyState(
+                            message = "No linked tasks",
+                            description = null,
+                            fillParent = false,
+                            showContainer = false,
+                        )
                     } else {
                         linkedTasks.forEach { task ->
                             Text(
@@ -123,7 +136,12 @@ fun NotesContextPanel(
             item {
                 ContextSection(title = "Related Notes", icon = Icons.Default.Link) {
                     if (relatedNotes.isEmpty()) {
-                        Text("No related notes", color = TajsOSTheme.Muted)
+                        EmptyState(
+                            message = "No related notes",
+                            description = null,
+                            fillParent = false,
+                            showContainer = false,
+                        )
                     } else {
                         relatedNotes.forEach { note ->
                             Text(
@@ -142,7 +160,12 @@ fun NotesContextPanel(
             item {
                 ContextSection(title = "Attachments", icon = Icons.Default.AttachFile) {
                     if (attachments.isEmpty()) {
-                        Text("No attachments", color = TajsOSTheme.Muted)
+                        EmptyState(
+                            message = "No attachments",
+                            description = null,
+                            fillParent = false,
+                            showContainer = false,
+                        )
                     } else {
                         attachments.forEach {
                             Text(it.title ?: it.uriOrPath, color = TajsOSTheme.Text)

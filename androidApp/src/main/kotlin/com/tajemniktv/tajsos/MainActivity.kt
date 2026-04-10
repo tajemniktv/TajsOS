@@ -105,7 +105,11 @@ class MainActivity : FragmentActivity() {
         val database = createDatabase(applicationContext)
         val dataStore = createDataStore(applicationContext)
         val sharedModule = SharedModule(database, dataStore)
-        viewModel = sharedModule.createViewModel()
+        viewModel =
+            sharedModule.createViewModel(
+                nextStepFallbackLabel = getString(R.string.next_step),
+                untitledFallbackLabel = getString(R.string.untitled),
+            )
 
         viewModel.setBiometricHardwareAvailable(isBiometricAvailable())
         handleIntent(intent)

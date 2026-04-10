@@ -6,6 +6,7 @@ package com.tajemniktv.tajsos.ui
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 @Suppress("TestMethodWithoutAssertion")
@@ -215,13 +216,11 @@ class ScreenTest {
         val coreGroup = Screen.groupedItems.firstOrNull { (_, screens) ->
             screens.contains(Screen.Briefing)
         }
-        assertTrue(coreGroup != null, "Briefing should appear in one of the navigation groups")
-        if (coreGroup != null) {
-            assertTrue(
-                coreGroup.second.contains(Screen.Dashboard),
-                "Briefing's navigation group should also contain Dashboard (nav_core)",
-            )
-        }
+        val nonNullCoreGroup = assertNotNull(coreGroup, "Briefing should appear in one of the navigation groups")
+        assertTrue(
+            nonNullCoreGroup.second.contains(Screen.Dashboard),
+            "Briefing's navigation group should also contain Dashboard (nav_core)",
+        )
     }
 
     @Test

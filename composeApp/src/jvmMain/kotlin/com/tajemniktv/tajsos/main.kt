@@ -11,9 +11,13 @@ import androidx.compose.ui.window.application
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import com.tajemniktv.tajsos.data.createDatabase
 import com.tajemniktv.tajsos.di.SharedModule
+import kotlinx.coroutines.runBlocking
+import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.painterResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.app_icon
+import tajsos.composeapp.generated.resources.next_step
+import tajsos.composeapp.generated.resources.untitled
 import java.awt.FileDialog
 import java.awt.Frame
 import java.io.File
@@ -30,7 +34,11 @@ fun main() =
             )
 
         val sharedModule = SharedModule(database, dataStore)
-        val viewModel = sharedModule.createViewModel()
+        val viewModel =
+            sharedModule.createViewModel(
+                nextStepFallbackLabel = runBlocking { getString(Res.string.next_step) },
+                untitledFallbackLabel = runBlocking { getString(Res.string.untitled) },
+            )
 
         Window(
             onCloseRequest = ::exitApplication,

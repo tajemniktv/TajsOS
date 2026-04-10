@@ -13,63 +13,42 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class DomainLensQueriesTest {
+    private fun createTestNode(
+        id: Long,
+        type: String,
+        title: String,
+        dueAt: Long? = null,
+        updatedAt: Long = 0L,
+        noteType: String? = null,
+        maintenanceType: String? = null,
+        tags: List<String> = emptyList(),
+    ): NodeWithPin {
+        return NodeWithPin(
+            node =
+                NodeEntity(
+                    id = id,
+                    type = type,
+                    title = title,
+                    dueAt = dueAt,
+                    updatedAt = updatedAt,
+                    noteType = noteType,
+                    maintenanceType = maintenanceType,
+                ),
+            pin = null,
+            tags = tags.mapIndexed { index, tag -> TagEntity(id = index.toLong(), name = tag, normalizedName = tag.lowercase()) },
+        )
+    }
+
     @Test
     fun financeQueries_include_actions_knowledge_deadlines_and_maintenance_without_resource_types() {
-        val financeTask =
-            NodeWithPin(
-                node =
-                    NodeEntity(
-                        id = 10,
-                        type = "task",
-                        title = "Pay rent",
-                        dueAt = 2_000L,
-                    ),
-                pin = null,
-                tags = listOf(TagEntity(id = 10, name = "finance", normalizedName = "finance")),
-            )
-        val financeNote =
-            NodeWithPin(
-                node =
-                    NodeEntity(
-                        id = 11,
-                        type = "note",
-                        title = "Insurance policy reference",
-                        noteType = "reference",
-                    ),
-                pin = null,
-                tags = listOf(TagEntity(id = 11, name = "insurance", normalizedName = "insurance")),
-            )
-        val financeDeadline =
-            NodeWithPin(
-                node =
-                    NodeEntity(
-                        id = 12,
-                        type = "note",
-                        title = "Tax filing deadline",
-                        dueAt = 1_000L,
-                    ),
-                pin = null,
-                tags = emptyList(),
-            )
-        val unrelatedRecord =
-            NodeWithPin(
-                node = NodeEntity(id = 13, type = "record", title = "Therapy reflection"),
-                pin = null,
-                tags = emptyList(),
-            )
+        val financeTask = createTestNode(id = 10, type = "task", title = "Pay rent", dueAt = 2_000L, tags = listOf("finance"))
+        val financeNote = createTestNode(id = 11, type = "note", title = "Insurance policy reference", noteType = "reference", updatedAt = 2_000L, tags = listOf("insurance"))
+        val financeDeadline = createTestNode(id = 12, type = "note", title = "Tax filing deadline", dueAt = 1_000L, updatedAt = 1_000L)
+        val unrelatedRecord = createTestNode(id = 13, type = "record", title = "Therapy reflection")
+
         val maintenanceItem =
             MaintenanceStatusItem(
-                node =
-                    NodeWithPin(
-                        node =
-                            NodeEntity(
-                                id = 14,
-                                type = "maintenance",
-                                title = "Renew bank card",
-                                maintenanceType = "renewal",
-                            ),
-                        pin = null,
-                    ),
+                node = createTestNode(id = 14, type = "maintenance", title = "Renew bank card", maintenanceType = "renewal"),
                 urgency = "medium",
                 isRecurring = true,
             )
@@ -92,37 +71,13 @@ class DomainLensQueriesTest {
 
     @Test
     fun healthQueries_include_actions_knowledge_and_maintenance_without_special_domain_types() {
-        val healthTask =
-            NodeWithPin(
-                node = NodeEntity(id = 1, type = "task", title = "Book doctor appointment"),
-                pin = null,
-                tags = listOf(TagEntity(id = 1, name = "health", normalizedName = "health")),
-            )
-        val healthRecord =
-            NodeWithPin(
-                node = NodeEntity(id = 2, type = "record", title = "Symptom log"),
-                pin = null,
-                tags = listOf(TagEntity(id = 2, name = "symptom", normalizedName = "symptom")),
-            )
-        val unrelatedNote =
-            NodeWithPin(
-                node = NodeEntity(id = 3, type = "note", title = "Design references"),
-                pin = null,
-                tags = emptyList(),
-            )
+        val healthTask = createTestNode(id = 1, type = "task", title = "Book doctor appointment", tags = listOf("health"))
+        val healthRecord = createTestNode(id = 2, type = "record", title = "Symptom log", updatedAt = 2_000L, tags = listOf("symptom"))
+        val unrelatedNote = createTestNode(id = 3, type = "note", title = "Design references")
+
         val maintenanceItem =
             MaintenanceStatusItem(
-                node =
-                    NodeWithPin(
-                        node =
-                            NodeEntity(
-                                id = 4,
-                                type = "maintenance",
-                                title = "Refill prescription",
-                                maintenanceType = "prescription",
-                            ),
-                        pin = null,
-                    ),
+                node = createTestNode(id = 4, type = "maintenance", title = "Refill prescription", maintenanceType = "prescription"),
                 urgency = "high",
                 isRecurring = true,
             )
