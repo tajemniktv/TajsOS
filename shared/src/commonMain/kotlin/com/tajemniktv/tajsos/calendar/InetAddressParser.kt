@@ -69,22 +69,26 @@ private fun parseIpv4(host: String): IpAddress.Ipv4? {
     return IpAddress.Ipv4(address)
 }
 
+private fun validateIpv6Host(host: String): Boolean {
+    if (!host.contains(":")) return false
+    if (host.startsWith(":") && !host.startsWith("::")) return false
+    if (host.endsWith(":") && !host.endsWith("::")) return false
+
+    // An IPv6 address can only have at most one "::" substitution.
+    // If the first and last occurrences of "::" are not the same, it's invalid.
+    if (host.indexOf("::") != host.lastIndexOf("::")) {
+        return false
+    }
+    return true
+}
+
 private fun parseIpv6(host: String): IpAddress.Ipv6? {
-    if (!host.contains(":")) return null
-    if (host.startsWith(":") && !host.startsWith("::")) return null
-    if (host.endsWith(":") && !host.endsWith("::")) return null
+    if (!validateIpv6Host(host)) return null
 
     val rawParts = host.split(":")
 
     val values = LongArray(8) { 0L }
     val doubleColonIdx = rawParts.indexOf("")
-
-    // An IPv6 address can only have at most one "::" substitution.
-    // If the first and last occurrences of "::" are not the same, it's invalid.
-    if (host.indexOf("::") != host.lastIndexOf("::")) {
-        return null
-    }
-
 
     val success = if (doubleColonIdx != -1) {
         parseIpv6Abbreviated(rawParts, values, doubleColonIdx)
