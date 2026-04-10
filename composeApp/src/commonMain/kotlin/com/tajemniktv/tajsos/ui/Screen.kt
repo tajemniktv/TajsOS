@@ -409,6 +409,58 @@ sealed class Screen(
     fun breadcrumbTrail(): List<Screen> = breadcrumbParent?.breadcrumbTrail().orEmpty() + this
 
     companion object {
+        private val rootScreens: List<Screen> by lazy {
+            listOf(
+                NoteDetail,
+                TaskDetail,
+                RecordDetail,
+                ProjectDetail,
+                AreaDetail,
+                CalendarSettings,
+                SettingsHealth,
+                SettingsAppearance,
+                SettingsFeaturePacks,
+                SettingsData,
+                SettingsDebug,
+                Briefing,
+                Dashboard,
+                Inbox,
+                Search,
+                Today,
+                Focus,
+                Track,
+                Tasks,
+                Notes,
+                Insights,
+                Archive,
+                Calendar,
+                Graph,
+                Projects,
+                Areas,
+                Settings,
+                Templates,
+                Review,
+                Profile,
+                Decisions,
+                OpenLoops,
+                Protocols,
+                TimeArchitecture,
+                Places,
+                Finances,
+                Health,
+                Relationships,
+                Education,
+                Rules,
+                Vaults,
+                Capacity,
+                Identity,
+            )
+        }
+
+        private val allScreens: List<Screen> by lazy {
+            rootScreens + rootScreens.flatMap { it.children }
+        }
+
         /**
          * Resolve a navigation route string to its corresponding Screen.
          *
@@ -430,55 +482,6 @@ sealed class Screen(
                     .first()
             if (currentRouteBase == StudyLegacy.route) return Education
 
-            val rootScreens =
-                listOf(
-                    NoteDetail,
-                    TaskDetail,
-                    RecordDetail,
-                    ProjectDetail,
-                    AreaDetail,
-                    CalendarSettings,
-                    SettingsHealth,
-                    SettingsAppearance,
-                    SettingsFeaturePacks,
-                    SettingsData,
-                    SettingsDebug,
-                    Briefing,
-                    Dashboard,
-                    Inbox,
-                    Search,
-                    Today,
-                    Focus,
-                    Track,
-                    Tasks,
-                    Notes,
-                    Insights,
-                    Archive,
-                    Calendar,
-                    Graph,
-                    Projects,
-                    Areas,
-                    Settings,
-                    Templates,
-                    Review,
-                    Profile,
-                    Decisions,
-                    OpenLoops,
-                    Protocols,
-                    TimeArchitecture,
-                    Places,
-                    Finances,
-                    Health,
-                    Relationships,
-                    Education,
-                    Rules,
-                    Vaults,
-                    Capacity,
-                    Identity,
-                )
-
-            val allScreens = rootScreens + rootScreens.flatMap { it.children }
-
             // Try exact match first (for Sub screens with query params)
             allScreens.find { it.route == route }?.let { return it }
 
@@ -499,7 +502,7 @@ sealed class Screen(
             return rootScreens.find { it.route.split("/").first() == currentRouteBase }
         }
 
-        val groupedItems by lazy {
+        val groupedItems: List<Pair<StringResource, List<Screen>>> by lazy {
             listOf(
                 Res.string.nav_core to listOf(Briefing, Dashboard, Inbox, Search),
                 Res.string.nav_execution to
@@ -523,10 +526,9 @@ sealed class Screen(
                 Res.string.nav_status to listOf(Track, Insights, Capacity, Identity, Graph, Review),
                 Res.string.nav_system to
                     listOf(
-                        *DomainRegistry.screens.toTypedArray(),
                         Archive,
                         Settings,
-                    ),
+                    ) + DomainRegistry.screens,
             )
         }
 
