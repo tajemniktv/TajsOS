@@ -59,7 +59,7 @@ private fun parseIpv4(host: String): IpAddress.Ipv4? {
         val part = parts[i]
         if (part.isEmpty()) return null
         // Disallow leading spaces or any other non-digit character implicitly
-        if (part.any { !it.isDigit() }) return null
+        if (part.any { it !in '0'..'9' }) return null
         // Disallow leading zeros unless the part is exactly "0"
         if (part.length > 1 && part.startsWith("0")) return null
         val byteVal = part.toLongOrNull() ?: return null
