@@ -106,6 +106,14 @@ private fun parseIpv6Abbreviated(rawParts: List<String>, values: LongArray, doub
     return leftParsed <= (7 - rightParsed)
 }
 
+private fun parseIpv6Segment(part: String): Long? {
+    if (part.length > 4) return null
+    if (part.startsWith("-") || part.startsWith("+")) return null
+    val v = part.toLongOrNull(16) ?: return null
+    if (v !in 0..0xFFFF) return null
+    return v
+}
+
 private fun populateIpv6Values(
     rawParts: List<String>,
     indices: IntProgression,
@@ -123,10 +131,7 @@ private fun populateIpv6Values(
             // we skip it, but we already validated that there are no extra "::" in parseIpv6.
             continue
         }
-        if (part.length > 4) return -1
-        if (part.startsWith("-") || part.startsWith("+")) return -1
-        val v = part.toLongOrNull(16) ?: return -1
-        if (v !in 0..0xFFFF) return -1
+        val v = parseIpv6Segment(part) ?: return -1
         if (outputIdx < 0 || outputIdx >= values.size) return -1
         values[outputIdx] = v
         outputIdx += direction
@@ -138,11 +143,7 @@ private fun populateIpv6Values(
 private fun parseIpv6Full(rawParts: List<String>, values: LongArray): Boolean {
     if (rawParts.size != 8) return false
     for (i in 0..7) {
-        val part = rawParts[i]
-        if (part.length > 4) return false
-        if (part.startsWith("-") || part.startsWith("+")) return false
-        val v = part.toLongOrNull(16) ?: return false
-        if (v !in 0..0xFFFF) return false
+        val v = parseIpv6Segment(rawParts[i]) ?: return false
         values[i] = v
     }
     return true
