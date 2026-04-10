@@ -84,24 +84,36 @@ private val healthTitleKeywords =
 object DomainLensQueries {
     /**
      * Returns active maintenance items that belong to the finance domain.
+     *
+     * @param snapshot The snapshot containing current maintenance items separated by their schedule state.
+     * @return A list of active items whose maintenance type implies financial responsibility.
      */
     fun financeMaintenanceItems(snapshot: MaintenanceSnapshot): List<MaintenanceStatusItem> =
         snapshot.active.filter { it.node.node.maintenanceType in financeMaintenanceTypes }
 
     /**
      * Returns recurring finance-related maintenance commitments.
+     *
+     * @param snapshot The snapshot containing current maintenance items separated by their schedule state.
+     * @return A list of recurring items whose maintenance type implies financial responsibility.
      */
     fun financeRecurringItems(snapshot: MaintenanceSnapshot): List<MaintenanceStatusItem> =
         snapshot.recurring.filter { it.node.node.maintenanceType in financeMaintenanceTypes }
 
     /**
      * Returns overdue finance-related maintenance work.
+     *
+     * @param snapshot The snapshot containing current maintenance items separated by their schedule state.
+     * @return A list of overdue items whose maintenance type implies financial responsibility.
      */
     fun financeOverdueItems(snapshot: MaintenanceSnapshot): List<MaintenanceStatusItem> =
         snapshot.overdue.filter { it.node.node.maintenanceType in financeMaintenanceTypes }
 
     /**
      * Returns active task-shaped work that reads as finance-related.
+     *
+     * @param nodes A flat list of nodes wrapped with their today-pin context.
+     * @return A list of active task nodes matching finance heuristics, sorted by approaching deadline.
      */
     fun financeActionItems(nodes: List<NodeWithPin>): List<NodeWithPin> =
         nodes
@@ -111,6 +123,9 @@ object DomainLensQueries {
 
     /**
      * Returns durable finance notes and records worth surfacing in the finance lens.
+     *
+     * @param nodes A flat list of nodes wrapped with their today-pin context.
+     * @return A list of active knowledge nodes matching finance heuristics, sorted by most recently updated.
      */
     fun financeKnowledgeItems(nodes: List<NodeWithPin>): List<NodeWithPin> =
         nodes
@@ -120,6 +135,9 @@ object DomainLensQueries {
 
     /**
      * Returns finance-related items with explicit dates, regardless of whether they are tasks or notes.
+     *
+     * @param nodes A flat list of nodes wrapped with their today-pin context.
+     * @return A list of active, scheduled nodes matching finance heuristics, sorted by approaching deadline.
      */
     fun financeDeadlineItems(nodes: List<NodeWithPin>): List<NodeWithPin> =
         nodes
@@ -129,18 +147,27 @@ object DomainLensQueries {
 
     /**
      * Returns active maintenance items that belong to the health domain.
+     *
+     * @param snapshot The snapshot containing current maintenance items separated by their schedule state.
+     * @return A list of active items whose maintenance type implies health-related responsibility.
      */
     fun healthMaintenanceItems(snapshot: MaintenanceSnapshot): List<MaintenanceStatusItem> =
         snapshot.active.filter { it.node.node.maintenanceType in healthMaintenanceTypes }
 
     /**
      * Returns overdue health-related maintenance work.
+     *
+     * @param snapshot The snapshot containing current maintenance items separated by their schedule state.
+     * @return A list of overdue items whose maintenance type implies health-related responsibility.
      */
     fun healthOverdueItems(snapshot: MaintenanceSnapshot): List<MaintenanceStatusItem> =
         snapshot.overdue.filter { it.node.node.maintenanceType in healthMaintenanceTypes }
 
     /**
      * Returns active task-shaped work that reads as health-related.
+     *
+     * @param nodes A flat list of nodes wrapped with their today-pin context.
+     * @return A list of active task nodes matching health heuristics, sorted by approaching deadline.
      */
     fun healthActionItems(nodes: List<NodeWithPin>): List<NodeWithPin> =
         nodes
@@ -150,6 +177,9 @@ object DomainLensQueries {
 
     /**
      * Returns active health notes and records worth surfacing in the health lens.
+     *
+     * @param nodes A flat list of nodes wrapped with their today-pin context.
+     * @return A list of active knowledge nodes matching health heuristics, sorted by most recently updated.
      */
     fun healthKnowledgeItems(nodes: List<NodeWithPin>): List<NodeWithPin> =
         nodes
