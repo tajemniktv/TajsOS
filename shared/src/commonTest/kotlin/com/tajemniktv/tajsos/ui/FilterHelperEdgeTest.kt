@@ -89,12 +89,78 @@ class FilterHelperEdgeTest {
             sortMode = "relevance"
         )
 
-        // Exact match on title gets 100 + 60 (startsWith) + 30 (contains) + 5 (active status) = 195
-        // Starts with match gets 60 + 30 (contains) + 5 (active status) = 95
-        // exactTagMatchNode gets 20 (exact) + 10 (contains) + 5 = 35
-
         assertEquals(6, result.size)
         // Check exact match is first
         assertEquals(1L, result[0].node.id)
+    }
+
+    @Test
+    fun testFilterAndSortNodes_multipleStatuses() {
+        val activeNode = createTestNode(1, "Active Node", status = "active")
+        val onHoldNode = createTestNode(2, "On Hold Node", status = "on_hold")
+        val doneNode = createTestNode(3, "Done Node", status = "done")
+
+        val nodes = listOf(activeNode, onHoldNode, doneNode)
+
+        val result = FilterHelper.filterAndSortNodes(
+            nodes = nodes,
+            query = "",
+            type = null,
+            status = "active,on_hold",
+            projectId = null,
+            areaId = null,
+            linkedToId = null,
+            maxMins = null,
+            energy = null,
+            friction = null,
+            locationContext = null,
+            energyContext = null,
+            deviceContext = null,
+            socialContext = null,
+            timeWindowContext = null,
+            timeHorizon = null,
+            relations = emptyList(),
+            sortMode = "relevance"
+        )
+
+        assertEquals(2, result.size)
+        assertEquals(listOf(1L, 2L).sorted(), result.map { it.node.id }.sorted())
+    }
+
+    @Test
+    fun testRelevanceScore_pinAndStatus() {
+        // Query: "test"
+        // 30 (contains) + 5 (active) = 35
+        val unpinnedActive = createTestNode(1, "my test title", status = "active")
+
+        // 30 (contains) = 30
+        val unpinnedInactive = createTestNode(2, "my test title", status = "done")
+
+        val result = FilterHelper.filterAndSortNodes(
+            nodes = listOf(unpinnedInactive, unpinnedActive),
+            query = "test",
+            type = null,
+            status = null,
+            projectId = null,
+            areaId = null,
+            linkedToId = null,
+            maxMins = null,
+            energy = null,
+            friction = null,
+            locationContext = null,
+            energyContext = null,
+            deviceContext = null,
+            socialContext = null,
+            timeWindowContext = null,
+            timeHorizon = null,
+            relations = emptyList(),
+            sortMode = "relevance"
+        )
+
+        assertEquals(2, result.size)
+        // Highest score is unpinnedActive (35)
+        assertEquals(1L, result[0].node.id)
+        // Second is unpinnedInactive (30)
+        assertEquals(2L, result[1].node.id)
     }
 }
