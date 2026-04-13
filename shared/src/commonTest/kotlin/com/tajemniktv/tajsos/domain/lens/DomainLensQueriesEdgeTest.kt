@@ -199,9 +199,12 @@ class DomainLensQueriesEdgeTest {
     }
 
 
-    @Test
-    fun financeMaintenanceItems_handles_empty_active_and_wrong_domain() {
-        val snapshot = com.tajemniktv.tajsos.ui.MaintenanceSnapshot(
+
+
+
+
+    private fun createUnrelatedMaintenanceSnapshot(): com.tajemniktv.tajsos.ui.MaintenanceSnapshot {
+        return com.tajemniktv.tajsos.ui.MaintenanceSnapshot(
             active = listOf(
                 com.tajemniktv.tajsos.ui.MaintenanceStatusItem(
                     node = createNode(1, "Unrelated", maintenanceType = "random_chore"),
@@ -212,25 +215,19 @@ class DomainLensQueriesEdgeTest {
             recurring = emptyList(),
             overdue = emptyList()
         )
+    }
+
+    @Test
+    fun financeMaintenanceItems_handles_empty_active_and_wrong_domain() {
+        val snapshot = createUnrelatedMaintenanceSnapshot()
         val result = DomainLensQueries.financeMaintenanceItems(snapshot)
         assertEquals(0, result.size)
     }
 
     @Test
     fun healthMaintenanceItems_handles_empty_active_and_wrong_domain() {
-         val snapshot = com.tajemniktv.tajsos.ui.MaintenanceSnapshot(
-            active = listOf(
-                com.tajemniktv.tajsos.ui.MaintenanceStatusItem(
-                    node = createNode(1, "Unrelated", maintenanceType = "random_chore"),
-                    urgency = "low",
-                    isRecurring = false
-                )
-            ),
-            recurring = emptyList(),
-            overdue = emptyList()
-        )
+        val snapshot = createUnrelatedMaintenanceSnapshot()
         val result = DomainLensQueries.healthMaintenanceItems(snapshot)
         assertEquals(0, result.size)
     }
-
 }
