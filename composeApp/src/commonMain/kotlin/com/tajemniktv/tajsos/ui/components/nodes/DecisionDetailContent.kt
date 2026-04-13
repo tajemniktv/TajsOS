@@ -52,6 +52,7 @@ import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.cards.OptionCard
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
+import kotlin.time.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.plus
@@ -94,7 +95,6 @@ import tajsos.composeapp.generated.resources.decision_status_label
 import tajsos.composeapp.generated.resources.decision_tap_to_add
 import tajsos.composeapp.generated.resources.detail_none
 import tajsos.composeapp.generated.resources.identity_clear
-import kotlin.time.Clock
 
 /**
  * Renders a detailed UI for viewing and editing a single decision node.

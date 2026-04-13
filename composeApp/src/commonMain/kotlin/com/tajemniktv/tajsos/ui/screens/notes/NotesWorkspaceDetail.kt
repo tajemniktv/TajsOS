@@ -61,6 +61,7 @@ import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.isNoteItem
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
+import kotlin.time.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
@@ -86,7 +87,6 @@ import tajsos.composeapp.generated.resources.notes_workspace_title
 import tajsos.composeapp.generated.resources.screen_history
 import tajsos.composeapp.generated.resources.tasks_context_title
 import tajsos.composeapp.generated.resources.view_all
-import kotlin.time.Instant
 
 /**
  * Notes-first desktop workspace with separated reading/editing modes and contextual side panels.

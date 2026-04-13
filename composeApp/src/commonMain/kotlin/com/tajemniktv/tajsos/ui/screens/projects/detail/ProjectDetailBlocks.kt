@@ -59,6 +59,7 @@ import com.tajemniktv.tajsos.ui.components.cards.LinkedNodeItem
 import com.tajemniktv.tajsos.ui.components.common.DetailHeader
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
+import kotlin.math.roundToInt
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
@@ -96,7 +97,6 @@ import tajsos.composeapp.generated.resources.project_detail_work
 import tajsos.composeapp.generated.resources.type_area
 import tajsos.composeapp.generated.resources.type_note
 import tajsos.composeapp.generated.resources.type_record
-import kotlin.math.roundToInt
 
 object ProjectDetailBlockRegistry {
     private val renderers: Map<String, ProjectDetailBlockRenderer> =
