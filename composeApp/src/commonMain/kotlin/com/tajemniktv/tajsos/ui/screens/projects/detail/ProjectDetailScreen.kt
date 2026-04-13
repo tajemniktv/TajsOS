@@ -31,6 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -55,6 +56,8 @@ import com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior
 import com.tajemniktv.tajsos.ui.components.screen.SplitScreenScaffold
 import com.tajemniktv.tajsos.ui.components.screen.screenBreadcrumbs
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.project_detail_not_found
@@ -115,11 +118,15 @@ fun ProjectDetailScreen(
     val linkedNotes = remember(projectItems) { projectItems.filter { it.isNoteItem() } }
     val linkedRecords = remember(projectItems) { projectItems.filter { it.isRecordItem() } }
 
-    val now = remember {
-        kotlin.time.Clock.System
-            .now()
-            .toEpochMilliseconds()
+    // Periodic time state to keep time-sensitive computations fresh
+    var now by remember { mutableLongStateOf(kotlin.time.Clock.System.now().toEpochMilliseconds()) }
+    LaunchedEffect(Unit) {
+        while (isActive) {
+            delay(60_000L) // Update every minute
+            now = kotlin.time.Clock.System.now().toEpochMilliseconds()
+        }
     }
+
     val staleTime = now - (14 * 24 * 60 * 60 * 1000L)
 
     val completedTasks = remember(projectTasks) { projectTasks.filter { it.taskStateOrNull() == TaskState.DONE } }
