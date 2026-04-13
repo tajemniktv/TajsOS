@@ -357,4 +357,37 @@ class MainActivity : FragmentActivity() {
         super.onStop()
         viewModel.lockApp()
     }
+
+    /**
+     * Safely extracts a Parcelable extra from an Intent, handling OS version differences
+     * and catching potential unparcelling exceptions (e.g., BadParcelableException).
+     */
+    private inline fun <reified T : android.os.Parcelable> Intent.getSafeParcelableExtra(name: String): T? {
+        return try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                getParcelableExtra(name, T::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                getParcelableExtra(name) as? T
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    /**
+     * Safely extracts a Parcelable ArrayList extra from an Intent.
+     */
+    private inline fun <reified T : android.os.Parcelable> Intent.getSafeParcelableArrayListExtra(name: String): java.util.ArrayList<T>? {
+        return try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                getParcelableArrayListExtra(name, T::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                getParcelableArrayListExtra<T>(name)
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
 }
