@@ -136,7 +136,7 @@ class DomainLensQueriesEdgeTest {
     }
 
     @Test
-    fun sorting_financeDeadlineItems_places_null_dueAt_last() {
+    fun sorting_financeDeadlineItems_sorts_by_dueAt_ascending() {
         // Technically this list won't contain nulls because the filter says: it.node.dueAt != null
         val deadlineLater = createNode(2, "Finance item", dueAt = 2000L)
         val deadlineEarlier = createNode(3, "Finance item", dueAt = 1000L)
