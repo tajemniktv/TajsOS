@@ -72,7 +72,7 @@ object FilterHelper {
         val dayMs = 24 * 60 * 60 * 1000L
 
         // Hoist repeated allocations and evaluations out of the filtering loop
-        val targetStatuses = status?.split(",")?.map { it.trim() }?.toSet()
+        val targetStatuses = status?.takeIf { it.isNotBlank() }?.split(",")?.map { it.trim() }?.filter { it.isNotBlank() }?.toSet()
         val linkedNodeIds = if (linkedToId != null) {
             relations
                 .filter { it.fromNodeId == linkedToId || it.toNodeId == linkedToId }
