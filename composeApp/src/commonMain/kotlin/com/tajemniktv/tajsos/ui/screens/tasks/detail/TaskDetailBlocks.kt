@@ -451,6 +451,68 @@ private fun renderTaskDescription(context: TaskDetailContext) {
 }
 
 @Composable
+private fun SubtaskInputRow(
+    newChecklistItem: String,
+    onValueChange: (String) -> Unit,
+    onAdd: () -> Unit,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        OutlinedTextField(
+            value = newChecklistItem,
+            onValueChange = onValueChange,
+            modifier = Modifier.weight(1f),
+            singleLine = true,
+            label = { Text(stringResource(Res.string.detail_tag_new_placeholder)) },
+        )
+        Button(onClick = onAdd) {
+            Text(stringResource(Res.string.common_add))
+        }
+    }
+}
+
+@Composable
+private fun SubtaskMatrixList(
+    progressVal: Float?,
+    subtasks: List<TaskSubtaskUi>,
+    onToggle: (TaskSubtaskUi) -> Unit,
+    onRemoveInline: (TaskSubtaskUi) -> Unit,
+) {
+    if (progressVal != null) {
+        LinearProgressIndicator(
+            progress = { progressVal },
+            modifier = Modifier.fillMaxWidth(),
+            color = TajsOSTheme.Primary,
+            trackColor = TajsOSTheme.SurfaceHighest,
+        )
+    }
+
+    if (subtasks.isEmpty()) {
+        EmptyState(
+            message = stringResource(Res.string.protocol_no_steps),
+            description = null,
+            fillParent = false,
+            showContainer = false,
+        )
+    } else {
+        subtasks.forEach { subtask ->
+            SubtaskRow(
+                subtask = subtask,
+                onToggle = { onToggle(subtask) },
+                onRemove = {
+                    if (subtask.source == TaskSubtaskSource.InlineChecklist) {
+                        onRemoveInline(subtask)
+                    }
+                },
+            )
+        }
+    }
+}
+
+@Composable
 private fun renderTaskSubtasks(context: TaskDetailContext) {
     var newChecklistItem by remember(context.task.id) { mutableStateOf("") }
     Surface(
@@ -486,58 +548,21 @@ private fun renderTaskSubtasks(context: TaskDetailContext) {
                     Text(stringResource(Res.string.detail_split_subtasks))
                 }
             }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                OutlinedTextField(
-                    value = newChecklistItem,
-                    onValueChange = { newChecklistItem = it },
-                    modifier = Modifier.weight(1f),
-                    singleLine = true,
-                    label = { Text(stringResource(Res.string.detail_tag_new_placeholder)) },
-                )
-                Button(
-                    onClick = {
-                        context.onAddInlineSubtask(newChecklistItem)
-                        newChecklistItem = ""
-                    },
-                ) {
-                    Text(stringResource(Res.string.common_add))
+            SubtaskInputRow(
+                newChecklistItem = newChecklistItem,
+                onValueChange = { newChecklistItem = it },
+                onAdd = {
+                    context.onAddInlineSubtask(newChecklistItem)
+                    newChecklistItem = ""
                 }
-            }
+            )
 
-            val progressVal = context.subtaskProgress
-            if (progressVal != null) {
-                LinearProgressIndicator(
-                    progress = { progressVal },
-                    modifier = Modifier.fillMaxWidth(),
-                    color = TajsOSTheme.Primary,
-                    trackColor = TajsOSTheme.SurfaceHighest,
-                )
-            }
-
-            if (context.subtasks.isEmpty()) {
-                EmptyState(
-                    message = stringResource(Res.string.protocol_no_steps),
-                    description = null,
-                    fillParent = false,
-                    showContainer = false,
-                )
-            } else {
-                context.subtasks.forEach { subtask ->
-                    SubtaskRow(
-                        subtask = subtask,
-                        onToggle = { context.onToggleSubtask(subtask) },
-                        onRemove = {
-                            if (subtask.source == TaskSubtaskSource.InlineChecklist) {
-                                context.onRemoveInlineSubtask(subtask)
-                            }
-                        },
-                    )
-                }
-            }
+            SubtaskMatrixList(
+                progressVal = context.subtaskProgress,
+                subtasks = context.subtasks,
+                onToggle = { context.onToggleSubtask(it) },
+                onRemoveInline = { context.onRemoveInlineSubtask(it) },
+            )
         }
     }
 }
