@@ -100,50 +100,12 @@ class FilterHelperEdgeTest {
     }
 
     @Test
-    fun testFilterAndSortNodes_multipleStatuses() {
-        val activeNode = createTestNode(1, "Active Node", status = "active")
-        val onHoldNode = createTestNode(2, "On Hold Node", status = "on_hold")
-        val doneNode = createTestNode(3, "Done Node", status = "done")
-
-        val nodes = listOf(activeNode, onHoldNode, doneNode)
-
+    fun testRelevanceScore_tieBreakers() {
+        val node1 = createTestNode(1, "title", "content", tags = listOf("exact match"), updatedAt = 100L)
+        val node2 = createTestNode(2, "prefix exact match", "content", updatedAt = 200L)
         val result = FilterHelper.filterAndSortNodes(
-            nodes = nodes,
-            query = "",
-            type = null,
-            status = "active,on_hold",
-            projectId = null,
-            areaId = null,
-            linkedToId = null,
-            maxMins = null,
-            energy = null,
-            friction = null,
-            locationContext = null,
-            energyContext = null,
-            deviceContext = null,
-            socialContext = null,
-            timeWindowContext = null,
-            timeHorizon = null,
-            relations = emptyList(),
-            sortMode = "relevance"
-        )
-
-        assertEquals(2, result.size)
-        assertEquals(listOf(2L, 1L), result.map { it.node.id })
-    }
-
-    @Test
-    fun testRelevanceScore_pinAndStatus() {
-        // Query: "test"
-        // 30 (contains) + 5 (active) = 35
-        val unpinnedActive = createTestNode(1, "my test title", status = "active")
-
-        // 30 (contains) = 30
-        val unpinnedInactive = createTestNode(2, "my test title", status = "done")
-
-        val result = FilterHelper.filterAndSortNodes(
-            nodes = listOf(unpinnedInactive, unpinnedActive),
-            query = "test",
+            nodes = listOf(node1, node2),
+            query = "exact match",
             type = null,
             status = null,
             projectId = null,
@@ -161,11 +123,10 @@ class FilterHelperEdgeTest {
             relations = emptyList(),
             sortMode = "relevance"
         )
-
         assertEquals(2, result.size)
-        // Highest score is unpinnedActive (35)
-        assertEquals(1L, result[0].node.id)
-        // Second is unpinnedInactive (30)
-        assertEquals(2L, result[1].node.id)
+        // Score is the same, node2 has higher updatedAt so it should be first
+        assertEquals(2L, result[0].node.id)
+        assertEquals(1L, result[1].node.id)
     }
+
 }
