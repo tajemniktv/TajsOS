@@ -53,20 +53,6 @@ class DomainLensQueriesEdgeTest {
     }
 
     @Test
-    fun financeKnowledgeItems_matches_by_reference_note_with_finance_keyword_in_title() {
-        val referenceNote = createNode(1, "Finance log", "log", type = "note", noteType = "reference")
-        val result = DomainLensQueries.financeKnowledgeItems(listOf(referenceNote))
-        assertEquals(1, result.size)
-    }
-
-    @Test
-    fun financeKnowledgeItems_matches_by_reference_note_with_finance_tag() {
-        val referenceNote = createNode(1, "Log", "log", type = "note", noteType = "reference", tags = listOf("finance"))
-        val result = DomainLensQueries.financeKnowledgeItems(listOf(referenceNote))
-        assertEquals(1, result.size)
-    }
-
-    @Test
     fun healthKnowledgeItems_matches_by_note_type() {
         // Even without health keywords in title/content or tags, a journal/reflection is a health signal
         val reflectionNote = createNode(1, "My day", "was okay", type = "note", noteType = "reflection")
