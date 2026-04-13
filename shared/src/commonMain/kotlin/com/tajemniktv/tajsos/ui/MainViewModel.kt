@@ -131,7 +131,7 @@ import kotlin.time.Clock
  *
  * @property repository The [AppRepository] acting as the single source of truth for the local database.
  * @property preferencesRepository The [PreferencesRepository] handling app configuration and user settings.
- * @property calendarManager The [CalendarManager] responsible for fetching and synchronizing calendar events.
+ * @property calendarManager The [com.tajemniktv.tajsos.calendar.CalendarManager] responsible for fetching and synchronizing calendar events.
  * @property nextStepFallbackLabel Default label for generated next-step nodes.
  * @property untitledFallbackLabel Default label for nodes created without a title.
  */
