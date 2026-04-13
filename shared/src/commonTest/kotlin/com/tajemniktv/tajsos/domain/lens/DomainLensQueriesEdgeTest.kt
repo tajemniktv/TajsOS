@@ -53,6 +53,20 @@ class DomainLensQueriesEdgeTest {
     }
 
     @Test
+    fun financeKnowledgeItems_matches_by_reference_note_with_finance_keyword_in_title() {
+        val referenceNote = createNode(1, "Finance log", "log", type = "note", noteType = "reference")
+        val result = DomainLensQueries.financeKnowledgeItems(listOf(referenceNote))
+        assertEquals(1, result.size)
+    }
+
+    @Test
+    fun financeKnowledgeItems_matches_by_reference_note_with_finance_tag() {
+        val referenceNote = createNode(1, "Log", "log", type = "note", noteType = "reference", tags = listOf("finance"))
+        val result = DomainLensQueries.financeKnowledgeItems(listOf(referenceNote))
+        assertEquals(1, result.size)
+    }
+
+    @Test
     fun healthKnowledgeItems_matches_by_note_type() {
         // Even without health keywords in title/content or tags, a journal/reflection is a health signal
         val reflectionNote = createNode(1, "My day", "was okay", type = "note", noteType = "reflection")
@@ -95,4 +109,16 @@ class DomainLensQueriesEdgeTest {
         val result = DomainLensQueries.financeKnowledgeItems(listOf(oldNote, newNote, medNote))
         assertEquals(listOf(2L, 3L, 1L), result.map { it.node.id })
     }
+
+    @Test
+    fun healthActionItems_matches_by_content_and_title_keywords() {
+        val healthTaskTitle = createNode(1, "Doctor appointment", "just checkup")
+        val healthTaskContent = createNode(2, "Generic Task", "medical follow-up")
+        val unrelatedTask = createNode(3, "Work", "writing code")
+
+        val result = DomainLensQueries.healthActionItems(listOf(healthTaskTitle, healthTaskContent, unrelatedTask))
+        assertEquals(2, result.size)
+        assertEquals(setOf(1L, 2L), result.map { it.node.id }.toSet())
+    }
+
 }
