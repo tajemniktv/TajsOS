@@ -124,7 +124,7 @@ class FilterHelperEdgeTest {
         )
 
         assertEquals(2, result.size)
-        assertEquals(listOf(1L, 2L).sorted(), result.map { it.node.id }.sorted())
+        assertEquals(listOf(2L, 1L), result.map { it.node.id })
     }
 
     @Test
