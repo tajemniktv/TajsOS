@@ -60,6 +60,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.isNoteItem
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlin.time.Instant
 import kotlinx.datetime.TimeZone
@@ -113,9 +114,12 @@ fun NotesWorkspaceDetail(
     val projects by viewModel.allProjects.collectAsState()
 
     if (current == null) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text(stringResource(Res.string.notes_empty), color = TajsOSTheme.Muted)
-        }
+        EmptyState(
+            message = stringResource(Res.string.notes_empty),
+            description = null,
+            showContainer = false,
+            fillParent = true,
+        )
         return
     }
 
