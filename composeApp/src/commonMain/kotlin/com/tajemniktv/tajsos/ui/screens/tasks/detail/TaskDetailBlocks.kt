@@ -53,6 +53,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -518,10 +519,11 @@ private fun renderTaskSubtasks(context: TaskDetailContext) {
             }
 
             if (context.subtasks.isEmpty()) {
-                Text(
-                    text = stringResource(Res.string.protocol_no_steps),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = TajsOSTheme.Muted,
+                EmptyState(
+                    message = stringResource(Res.string.protocol_no_steps),
+                    description = null,
+                    fillParent = false,
+                    showContainer = false,
                 )
             } else {
                 context.subtasks.forEach { subtask ->
@@ -646,10 +648,11 @@ private fun renderTaskAttachments(context: TaskDetailContext) {
         ) {
             SectionTitle(stringResource(Res.string.detail_attachments))
             if (context.attachmentItems.isEmpty()) {
-                Text(
-                    text = stringResource(Res.string.task_detail_no_attachments),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = TajsOSTheme.Muted,
+                EmptyState(
+                    message = stringResource(Res.string.task_detail_no_attachments),
+                    description = null,
+                    fillParent = false,
+                    showContainer = false,
                 )
             } else {
                 context.attachmentItems.forEachIndexed { index, attachment ->
@@ -724,10 +727,11 @@ private fun renderTaskHistory(context: TaskDetailContext) {
         ) {
             SectionTitle(stringResource(Res.string.screen_history))
             if (context.historyItems.isEmpty()) {
-                Text(
-                    text = stringResource(Res.string.track_empty),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = TajsOSTheme.Muted,
+                EmptyState(
+                    message = stringResource(Res.string.track_empty),
+                    description = null,
+                    fillParent = false,
+                    showContainer = false,
                 )
             } else {
                 context.historyItems.forEach { item ->

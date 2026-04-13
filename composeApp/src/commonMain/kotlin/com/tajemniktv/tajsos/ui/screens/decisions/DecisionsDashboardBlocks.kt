@@ -19,6 +19,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -166,9 +167,11 @@ fun DecisionList(
 ) {
     if (nodes.isEmpty()) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text(
-                stringResource(Res.string.decision_no_decisions_category),
-                color = TajsOSTheme.Muted,
+            EmptyState(
+                message = stringResource(Res.string.decision_no_decisions_category),
+                description = null,
+                fillParent = false,
+                showContainer = false,
             )
         }
     } else {

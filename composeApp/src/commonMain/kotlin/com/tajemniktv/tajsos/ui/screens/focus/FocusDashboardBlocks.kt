@@ -36,6 +36,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -490,10 +491,11 @@ private fun FocusListCard(
                 fontWeight = FontWeight.SemiBold,
             )
             if (nodes.isEmpty()) {
-                Text(
-                    stringResource(Res.string.focus_no_active_task),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = TajsOSTheme.Muted,
+                EmptyState(
+                    message = stringResource(Res.string.focus_no_active_task),
+                    description = null,
+                    fillParent = false,
+                    showContainer = false,
                 )
             } else {
                 nodes.forEach { task ->
