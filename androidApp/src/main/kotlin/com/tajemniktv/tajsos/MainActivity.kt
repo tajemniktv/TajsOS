@@ -339,16 +339,18 @@ class MainActivity : FragmentActivity() {
     }
 
     /**
-     * Safely extracts a Parcelable extra from an Intent, handling OS version differences
-     * and catching potential unparcelling exceptions (e.g., BadParcelableException).
+     * Helper to safely extract Parcelables, handling OS version differences
+     * and catching potential unparcelling exceptions.
      */
-    private inline fun <reified T : android.os.Parcelable> Intent.getSafeParcelableExtra(name: String): T? {
+    private inline fun <T> safeParcelableExtraction(
+        tiramisuExtractor: () -> T?,
+        legacyExtractor: () -> T?
+    ): T? {
         return try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                getParcelableExtra(name, T::class.java)
+                tiramisuExtractor()
             } else {
-                @Suppress("DEPRECATION")
-                getParcelableExtra(name) as? T
+                legacyExtractor()
             }
         } catch (e: Exception) {
             null
@@ -356,18 +358,29 @@ class MainActivity : FragmentActivity() {
     }
 
     /**
+     * Safely extracts a Parcelable extra from an Intent, handling OS version differences
+     * and catching potential unparcelling exceptions (e.g., BadParcelableException).
+     */
+    private inline fun <reified T : android.os.Parcelable> Intent.getSafeParcelableExtra(name: String): T? {
+        return safeParcelableExtraction(
+            tiramisuExtractor = { getParcelableExtra(name, T::class.java) },
+            legacyExtractor = {
+                @Suppress("DEPRECATION")
+                getParcelableExtra(name) as? T
+            }
+        )
+    }
+
+    /**
      * Safely extracts a Parcelable ArrayList extra from an Intent.
      */
     private inline fun <reified T : android.os.Parcelable> Intent.getSafeParcelableArrayListExtra(name: String): java.util.ArrayList<T>? {
-        return try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                getParcelableArrayListExtra(name, T::class.java)
-            } else {
+        return safeParcelableExtraction(
+            tiramisuExtractor = { getParcelableArrayListExtra(name, T::class.java) },
+            legacyExtractor = {
                 @Suppress("DEPRECATION")
                 getParcelableArrayListExtra<T>(name)
             }
-        } catch (e: Exception) {
-            null
-        }
+        )
     }
 }
