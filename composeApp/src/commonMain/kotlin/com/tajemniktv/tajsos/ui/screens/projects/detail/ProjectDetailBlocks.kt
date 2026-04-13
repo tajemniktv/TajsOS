@@ -481,7 +481,10 @@ private fun renderProjectSidebar(context: ProjectDetailContext) {
             icon = Icons.Default.Hub,
         ) {
             if (context.relatedNodeIds.isEmpty()) {
-                ProjectEmptyState(Res.string.project_detail_empty_work)
+                Text(
+                    stringResource(Res.string.project_detail_empty_work),
+                    color = TajsOSTheme.Muted,
+                )
             } else {
                 context.relatedNodeIds.take(8).forEach { id ->
                     val node = context.nodesById[id]?.node ?: return@forEach
@@ -519,7 +522,10 @@ private fun renderProjectSidebar(context: ProjectDetailContext) {
             icon = Icons.Default.Archive,
         ) {
             if (context.attachmentNames.isEmpty()) {
-                ProjectEmptyState(Res.string.project_detail_empty_assets)
+                Text(
+                    stringResource(Res.string.project_detail_empty_assets),
+                    color = TajsOSTheme.Muted,
+                )
             } else {
                 context.attachmentNames.take(6).forEach {
                     Text("• $it", color = TajsOSTheme.Text)
@@ -532,7 +538,10 @@ private fun renderProjectSidebar(context: ProjectDetailContext) {
             icon = Icons.AutoMirrored.Filled.Label,
         ) {
             if (context.tags.isEmpty()) {
-                ProjectEmptyState(Res.string.project_detail_empty_timeline)
+                Text(
+                    stringResource(Res.string.project_detail_empty_timeline),
+                    color = TajsOSTheme.Muted,
+                )
             } else {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     context.tags.take(4).forEach { tag ->

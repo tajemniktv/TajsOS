@@ -24,20 +24,6 @@ import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
 
-/**
- * A core command dispatcher responsible for executing state changes and maintenance operations on nodes.
- *
- * This class orchestrates operations like sweeping stale tasks, shifting items to the inbox, and generating recurring node instances.
- *
- * @property repository The [AppRepository] used for direct database updates.
- * @property scope The [CoroutineScope] in which all asynchronous database operations execute.
- * @property currentTodayNodes A lambda supplier providing real-time access to the list of active nodes for today.
- * @property currentAllNodes A lambda supplier providing real-time access to the list of all active nodes.
- * @property parseInternalLinks A lambda function injected to trigger internal link parsing on a node.
- * @property setTagOnNode A suspended lambda function injected to attach or detach string tags on a node.
- * @property defaultNextStepLabel A lambda providing the default title for next step nodes.
- * @property defaultUntitledLabel A lambda providing the default title for untitled nodes.
- */
 class NodeCommands(
     private val repository: AppRepository,
     private val scope: CoroutineScope,

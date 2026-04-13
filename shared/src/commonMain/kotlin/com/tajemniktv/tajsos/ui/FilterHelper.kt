@@ -71,23 +71,6 @@ object FilterHelper {
                 .toEpochMilliseconds()
         val dayMs = 24 * 60 * 60 * 1000L
 
-        // Hoist repeated allocations and evaluations out of the filtering loop
-        val targetStatuses = status?.takeIf { it.isNotBlank() }?.split(",")?.map { it.trim() }?.filter { it.isNotBlank() }?.toSet()
-        val linkedNodeIds = if (linkedToId != null) {
-            relations
-                .filter { it.fromNodeId == linkedToId || it.toNodeId == linkedToId }
-                .map { if (it.fromNodeId == linkedToId) it.toNodeId else it.fromNodeId }
-                .toSet()
-        } else {
-            emptySet()
-        }
-        val anyContextFilter =
-            locationContext != null ||
-                energyContext != null ||
-                deviceContext != null ||
-                socialContext != null ||
-                timeWindowContext != null
-
         val filtered =
             nodes
                 .filter { nodeWithPin ->
@@ -98,13 +81,19 @@ object FilterHelper {
 
                     // Allow mode/status filtering logic (comma separated status like "active,on_hold")
                     val matchesStatus =
-                        targetStatuses == null || targetStatuses.contains(node.status)
+                        status == null || status.split(",").map { it.trim() }.contains(node.status)
 
                     val matchesProject = projectId == null || node.projectId == projectId
                     val matchesArea = areaId == null || node.areaId == areaId
                     val matchesMins = maxMins == null || (node.estimatedMinutes ?: 0) <= maxMins
                     val matchesEnergy = energy == null || node.energyLevel == energy
                     val matchesFriction = friction == null || node.friction == friction
+                    val anyContextFilter =
+                        locationContext != null ||
+                            energyContext != null ||
+                            deviceContext != null ||
+                            socialContext != null ||
+                            timeWindowContext != null
                     val matchesContextScope = !anyContextFilter || node.isTaskItem()
                     val matchesLocationContext =
                         locationContext == null || node.locationContext == locationContext
@@ -133,8 +122,11 @@ object FilterHelper {
                             }
                         }
                     val matchesLinkedTo =
-                        linkedToId == null || linkedNodeIds.contains(node.id)
-
+                        linkedToId == null ||
+                            relations.any {
+                                (it.fromNodeId == node.id && it.toNodeId == linkedToId) ||
+                                    (it.fromNodeId == linkedToId && it.toNodeId == node.id)
+                            }
                     matchesQuery &&
                         matchesType &&
                         matchesStatus &&
@@ -163,9 +155,8 @@ object FilterHelper {
             }
 
             else -> {
-                val cleanQueryLower = cleanQuery.lowercase()
                 filtered.sortedWith(
-                    compareByDescending<NodeWithPin> { relevanceScore(it, cleanQuery, cleanQueryLower) }
+                    compareByDescending<NodeWithPin> { relevanceScore(it, cleanQuery) }
                         .thenByDescending { it.node.updatedAt }
                         .thenByDescending { it.node.id },
                 )
@@ -211,22 +202,22 @@ object FilterHelper {
     private fun relevanceScore(
         nodeWithPin: NodeWithPin,
         query: String,
-        cleanQueryLower: String,
     ): Int
     {
         if (query.isBlank()) return 0
+        val cleanQuery = query.trim().lowercase()
             val node = nodeWithPin.node
             val title = node.title.lowercase()
             val content = node.content.lowercase()
             val tags = nodeWithPin.tags.map { it.name.lowercase() }
 
             var score = 0
-            if (title == cleanQueryLower) score += 100
-            if (title.startsWith(cleanQueryLower)) score += 60
-            if (title.contains(cleanQueryLower)) score += 30
-            if (content.contains(cleanQueryLower)) score += 15
-            if (tags.any { it == cleanQueryLower }) score += 20
-            if (tags.any { it.contains(cleanQueryLower) }) score += 10
+            if (title == cleanQuery) score += 100
+            if (title.startsWith(cleanQuery)) score += 60
+            if (title.contains(cleanQuery)) score += 30
+            if (content.contains(cleanQuery)) score += 15
+            if (tags.any { it == cleanQuery }) score += 20
+            if (tags.any { it.contains(cleanQuery) }) score += 10
             if (nodeWithPin.isPinnedToToday) score += 8
             if (node.status == "active") score += 5
         return score
