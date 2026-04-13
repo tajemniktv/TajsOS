@@ -89,12 +89,44 @@ class FilterHelperEdgeTest {
             sortMode = "relevance"
         )
 
-        // Exact match on title gets 100 + 60 (startsWith) + 30 (contains) + 5 (active status) = 195
-        // Starts with match gets 60 + 30 (contains) + 5 (active status) = 95
-        // exactTagMatchNode gets 20 (exact) + 10 (contains) + 5 = 35
-
         assertEquals(6, result.size)
-        // Check exact match is first
-        assertEquals(1L, result[0].node.id)
+
+        assertEquals(1L, result[0].node.id) // 195
+        assertEquals(2L, result[1].node.id) // 95
+        assertEquals(5L, result[2].node.id) // 35 (tiebreaker ID)
+        assertEquals(3L, result[3].node.id) // 35
+        assertEquals(4L, result[4].node.id) // 20
+        assertEquals(6L, result[5].node.id) // 15
     }
+
+    @Test
+    fun testRelevanceScore_tieBreakers() {
+        val node1 = createTestNode(1, "title", "content", tags = listOf("exact match"), updatedAt = 100L)
+        val node2 = createTestNode(2, "prefix exact match", "content", updatedAt = 200L)
+        val result = FilterHelper.filterAndSortNodes(
+            nodes = listOf(node1, node2),
+            query = "exact match",
+            type = null,
+            status = null,
+            projectId = null,
+            areaId = null,
+            linkedToId = null,
+            maxMins = null,
+            energy = null,
+            friction = null,
+            locationContext = null,
+            energyContext = null,
+            deviceContext = null,
+            socialContext = null,
+            timeWindowContext = null,
+            timeHorizon = null,
+            relations = emptyList(),
+            sortMode = "relevance"
+        )
+        assertEquals(2, result.size)
+        // Score is the same, node2 has higher updatedAt so it should be first
+        assertEquals(2L, result[0].node.id)
+        assertEquals(1L, result[1].node.id)
+    }
+
 }
