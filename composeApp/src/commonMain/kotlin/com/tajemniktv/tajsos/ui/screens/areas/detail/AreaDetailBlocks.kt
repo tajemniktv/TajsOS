@@ -39,6 +39,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import com.tajemniktv.tajsos.ui.components.common.EmptyState
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -402,10 +404,7 @@ private fun renderAreaSidebar(context: AreaDetailContext) {
             icon = Icons.Default.Hub,
         ) {
             if (context.relationIds.isEmpty()) {
-                Text(
-                    stringResource(Res.string.project_detail_empty_work),
-                    color = TajsOSTheme.Muted,
-                )
+                EmptyLabel(Res.string.project_detail_empty_work)
             }
             context.relationIds.take(8).forEach { id ->
                 val node = context.nodesById[id]?.node ?: return@forEach
@@ -421,10 +420,7 @@ private fun renderAreaSidebar(context: AreaDetailContext) {
             icon = Icons.Default.AttachFile,
         ) {
             if (context.attachmentNames.isEmpty()) {
-                Text(
-                    stringResource(Res.string.project_detail_empty_assets),
-                    color = TajsOSTheme.Muted,
-                )
+                EmptyLabel(Res.string.project_detail_empty_assets)
             }
             context.attachmentNames.take(6).forEach { Text("• $it", color = TajsOSTheme.Text) }
         }
@@ -433,10 +429,7 @@ private fun renderAreaSidebar(context: AreaDetailContext) {
             icon = Icons.Default.Description,
         ) {
             if (context.tags.isEmpty()) {
-                Text(
-                    stringResource(Res.string.detail_unassign),
-                    color = TajsOSTheme.Muted,
-                )
+                EmptyLabel(Res.string.detail_unassign)
             }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 context.tags.take(4).forEach { AssistChip(onClick = {}, label = { Text(it) }) }
@@ -512,8 +505,17 @@ private fun SectionHeader(
 
 @Composable
 private fun EmptyLabel(text: StringResource) {
-    Surface(color = TajsOSTheme.Surface, shape = RoundedCornerShape(TajsOSTheme.RadiusMd)) {
-        Text(stringResource(text), color = TajsOSTheme.Muted, modifier = Modifier.padding(12.dp))
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = TajsOSTheme.Surface,
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+    ) {
+        EmptyState(
+            message = stringResource(text),
+            description = null,
+            fillParent = false,
+            showContainer = true,
+        )
     }
 }
 
