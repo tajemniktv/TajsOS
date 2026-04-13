@@ -248,15 +248,10 @@ enum class RelationKind(
 enum class SavedViewLens(
     val storageKey: String,
 ) {
-    /** Projection focused on immediate, pressing tasks and currently active states. */
     NOW("now"), // NON-NLS
-    /** Projection focused on scheduling, future commitments, and time architecture. */
     PLAN("plan"), // NON-NLS
-    /** Projection focused on executing tasks, protocols, and standard operating procedures. */
     OPERATE("operate"), // NON-NLS
-    /** Projection focused on durable information, references, reflections, and records. */
     KNOWLEDGE("knowledge"), // NON-NLS
-    /** Projection focused on reflecting on past performance, metrics, and logs. */
     REVIEW("review"), // NON-NLS
     ;
 
@@ -275,13 +270,9 @@ enum class SavedViewLens(
 enum class SavedViewLayout(
     val storageKey: String,
 ) {
-    /** Displays items in a vertical, scrollable list. */
     LIST("list"), // NON-NLS
-    /** Displays items in a structured, multi-column grid or table. */
     TABLE("table"), // NON-NLS
-    /** Displays items categorized into columns (e.g., Kanban style). */
     BOARD("board"), // NON-NLS
-    /** Displays items in a multi-dimensional matrix, often used for cross-referencing metrics. */
     MATRIX("matrix"), // NON-NLS
     ;
 
@@ -300,31 +291,18 @@ enum class SavedViewLayout(
 enum class SavedViewFieldKey(
     val storageKey: String,
 ) {
-    /** The primary title or name of the item. */
     TITLE("title"), // NON-NLS
-    /** The active, completed, or archived status of the item. */
     STATUS("status"), // NON-NLS
-    /** The fundamental type or kind of the item (e.g., task, note). */
     KIND("kind"), // NON-NLS
-    /** The area of responsibility the item belongs to. */
     AREA("area"), // NON-NLS
-    /** The project the item is associated with. */
     PROJECT("project"), // NON-NLS
-    /** The life domain (e.g., finance, health) the item relates to. */
     DOMAIN("domain"), // NON-NLS
-    /** The deadline or target completion date for the item. */
     DUE_DATE("due_date"), // NON-NLS
-    /** The date work on the item is scheduled to begin. */
     START_DATE("start_date"), // NON-NLS
-    /** The timestamp when an event or log occurred. */
     OCCURRED_AT("occurred_at"), // NON-NLS
-    /** The timestamp when the item was originally created. */
     CREATED_AT("created_at"), // NON-NLS
-    /** The timestamp of the last modification to the item. */
     UPDATED_AT("updated_at"), // NON-NLS
-    /** A user-defined tag or label attached to the item. */
     TAG("tag"), // NON-NLS
-    /** Whether the item is pinned or highlighted in the current view. */
     PINNED("pinned"), // NON-NLS
     ;
 
@@ -343,11 +321,8 @@ enum class SavedViewFieldKey(
 enum class SavedViewMeasure(
     val storageKey: String,
 ) {
-    /** The total raw count of items matching the criteria. */
     COUNT("count"), // NON-NLS
-    /** The aggregated total of estimated minutes across matching items. */
     ESTIMATED_MINUTES("estimated_minutes"), // NON-NLS
-    /** The count of items that have reached a completed state. */
     COMPLETED_COUNT("completed_count"), // NON-NLS
     ;
 
@@ -366,25 +341,15 @@ enum class SavedViewMeasure(
 enum class SavedViewFilterOperator(
     val storageKey: String,
 ) {
-    /** Matches if the field exactly equals the filter value. */
     EQUALS("equals"), // NON-NLS
-    /** Matches if the field does not equal the filter value. */
     NOT_EQUALS("not_equals"), // NON-NLS
-    /** Matches if the field value is present within the provided set of values. */
     IN_SET("in_set"), // NON-NLS
-    /** Matches if the field contains the filter value (typically used for text). */
     CONTAINS("contains"), // NON-NLS
-    /** Matches if the field's date/time is before the filter value. */
     BEFORE("before"), // NON-NLS
-    /** Matches if the field's date/time is after the filter value. */
     AFTER("after"), // NON-NLS
-    /** Matches if the boolean field is true. */
     IS_TRUE("is_true"), // NON-NLS
-    /** Matches if the boolean field is false. */
     IS_FALSE("is_false"), // NON-NLS
-    /** Matches if the field does not hold any value. */
     IS_NULL("is_null"), // NON-NLS
-    /** Matches if the field holds any value. */
     IS_NOT_NULL("is_not_null"), // NON-NLS
     ;
 
@@ -403,17 +368,11 @@ enum class SavedViewFilterOperator(
 enum class SavedViewValueType(
     val storageKey: String,
 ) {
-    /** A plain text value. */
     STRING("string"), // NON-NLS
-    /** A numeric value. */
     NUMBER("number"), // NON-NLS
-    /** A true/false boolean value. */
     BOOLEAN("boolean"), // NON-NLS
-    /** A date or timestamp value. */
     DATE("date"), // NON-NLS
-    /** A value constrained to a specific set of predefined options. */
     ENUM("enum"), // NON-NLS
-    /** A value that references another entity's unique identifier. */
     REFERENCE("reference"), // NON-NLS
     ;
 
@@ -432,9 +391,7 @@ enum class SavedViewValueType(
 enum class SavedViewSortDirection(
     val storageKey: String,
 ) {
-    /** Sorts from lowest to highest, or alphabetically A to Z. */
     ASCENDING("asc"), // NON-NLS
-    /** Sorts from highest to lowest, or alphabetically Z to A. */
     DESCENDING("desc"), // NON-NLS
     ;
 
