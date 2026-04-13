@@ -514,7 +514,7 @@ private fun EmptyLabel(text: StringResource) {
             message = stringResource(text),
             description = null,
             fillParent = false,
-            showContainer = false,
+            showContainer = true,
         )
     }
 }
