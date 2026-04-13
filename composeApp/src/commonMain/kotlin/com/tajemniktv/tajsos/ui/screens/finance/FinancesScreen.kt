@@ -79,7 +79,7 @@ fun FinancesScreen(
         }
     }
 
-    val bars = remember(actionItems, knowledgeItems, deadlineItems, queue, recurring, overdue) {
+    val bars = remember(actionItems.size, knowledgeItems.size, deadlineItems.size, queue.size, recurring.size, overdue.size) {
         listOf(
             (actionItems.size + 1).coerceAtLeast(1),
             (knowledgeItems.size + 1).coerceAtLeast(1),
