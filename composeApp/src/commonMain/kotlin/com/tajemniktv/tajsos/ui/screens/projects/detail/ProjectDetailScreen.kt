@@ -115,25 +115,28 @@ fun ProjectDetailScreen(
     val linkedNotes = remember(projectItems) { projectItems.filter { it.isNoteItem() } }
     val linkedRecords = remember(projectItems) { projectItems.filter { it.isRecordItem() } }
 
-    val now =
+    val now = remember {
         kotlin.time.Clock.System
             .now()
             .toEpochMilliseconds()
+    }
     val staleTime = now - (14 * 24 * 60 * 60 * 1000L)
 
-    val completedTasks = projectTasks.filter { it.taskStateOrNull() == TaskState.DONE }
-    val activeTasks = projectTasks.filter { it.taskStateOrNull() == TaskState.ACTIVE }
+    val completedTasks = remember(projectTasks) { projectTasks.filter { it.taskStateOrNull() == TaskState.DONE } }
+    val activeTasks = remember(projectTasks) { projectTasks.filter { it.taskStateOrNull() == TaskState.ACTIVE } }
     val blockedTasks =
-        projectTasks.filter {
-            it.taskStateOrNull() == TaskState.BLOCKED ||
-                (
-                    it.taskStateOrNull() == TaskState.ACTIVE &&
-                        it.isHardDeadline &&
-                        (
-                            it.dueAt
-                                ?: Long.MAX_VALUE
-                        ) < now
-                )
+        remember(projectTasks, now) {
+            projectTasks.filter {
+                it.taskStateOrNull() == TaskState.BLOCKED ||
+                    (
+                        it.taskStateOrNull() == TaskState.ACTIVE &&
+                            it.isHardDeadline &&
+                            (
+                                it.dueAt
+                                    ?: Long.MAX_VALUE
+                            ) < now
+                    )
+            }
         }
     val nextActions = activeTasks.filterNot { task -> blockedTasks.any { it.id == task.id } }
     val upcomingMilestones =

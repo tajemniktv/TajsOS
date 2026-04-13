@@ -82,31 +82,30 @@ fun AreaDetailScreen(
     val logs by viewModel.getLogsForNode(areaId).collectAsState(initial = emptyList())
     var tab by rememberSaveable(areaId) { mutableStateOf(AreaTab.Overview) }
 
-    val tasks = remember(items) { items.map { it.node }.filter { it.isTaskItem() && it.status != "archived" } }
-    val notes = remember(items) { items.map { it.node }.filter { it.isNoteItem() } }
-    val records = remember(items) { items.map { it.node }.filter { it.isRecordItem() } }
+    /**
+     * Extracted mapping to reduce redundant allocations per node type.
+     */
+    val nodesList = remember(items) { items.map { it.node } }
+    val tasks = remember(nodesList) { nodesList.filter { it.isTaskItem() && it.status != "archived" } }
+    val notes = remember(nodesList) { nodesList.filter { it.isNoteItem() } }
+    val records = remember(nodesList) { nodesList.filter { it.isRecordItem() } }
     val activeProjects =
         remember(projects) {
             projects.filter {
-                it.projectStateOrNull() in
-                    setOf(
-                        ProjectState.ACTIVE,
-                        ProjectState.ON_HOLD,
-                    )
+                val state = it.projectStateOrNull()
+                state == ProjectState.ACTIVE || state == ProjectState.ON_HOLD
             }
         }
     val openResponsibilities =
         remember(tasks) { tasks.filter { it.projectId == null && it.taskStateOrNull() != TaskState.DONE } }
     val pressure =
         remember(tasks) {
+            val nowMs = Clock.System.now().toEpochMilliseconds()
             tasks.filter {
                 it.taskStateOrNull() == TaskState.BLOCKED ||
                     (
                         it.isHardDeadline &&
-                            (it.dueAt ?: Long.MAX_VALUE) <
-                            Clock.System
-                                .now()
-                                .toEpochMilliseconds()
+                            (it.dueAt ?: Long.MAX_VALUE) < nowMs
                     )
             }
         }
