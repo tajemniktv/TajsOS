@@ -498,6 +498,7 @@
     <string name="notes_notes">NOTES</string>
     <string name="notes_resources">REFERENCE</string>
     <string name="notes_empty">NO KNOWLEDGE FOUND</string>
+    <string name="notes_empty_desc">Create your first note to start building your knowledge workspace.</string>
     <string name="notes_no_results">NO MATCHING RESULTS</string>
     <string name="notes_tab_workspace">Workspace</string>
     <string name="notes_tab_recent">Recent</string>
