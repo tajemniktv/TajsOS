@@ -38,10 +38,6 @@ import com.tajemniktv.tajsos.data.isNoteItem
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
-import org.jetbrains.compose.resources.stringResource
-import tajsos.composeapp.generated.resources.Res
-import tajsos.composeapp.generated.resources.notes_empty
-import tajsos.composeapp.generated.resources.notes_empty_desc
 import com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.coroutines.launch
@@ -337,8 +333,8 @@ fun NotesRoute(
                     )
                     if (allNotes.isEmpty()) {
                         EmptyState(
-                            message = stringResource(Res.string.notes_empty),
-                            description = stringResource(Res.string.notes_empty_desc),
+                            message = "No notes",
+                            description = "Create your first note to start building your knowledge workspace.",
                             modifier = Modifier.weight(1f),
                         )
                     } else {

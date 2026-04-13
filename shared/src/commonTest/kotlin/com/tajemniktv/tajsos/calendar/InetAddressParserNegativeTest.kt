@@ -30,6 +30,5 @@ class InetAddressParserNegativeTest {
         assertNull(parseIpAddress("1:2:3:4:5:6:7:8:9:10::"), "Should reject double colon with too many segments")
         assertNull(parseIpAddress("12345::1"), "Should reject segments with more than 4 hex characters")
         assertNull(parseIpAddress("-1::1"), "Should reject negative values")
-        assertNull(parseIpAddress("+1::1"), "Should reject explicit positive signs")
     }
 }

@@ -15,25 +15,9 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.coroutines.CancellationException
 
-/**
- * In-memory development stub for storing synchronized items.
- *
- * NOTE: This is strictly for development and testing purposes.
- * It does not provide long-term persistence, clustering, or multi-user tenant separation.
- */
 private val syncStore = LinkedHashMap<String, SyncItem>()
-
-/**
- * Concurrency lock for safe access to the development in-memory [syncStore].
- */
 private val syncStoreLock = Any()
 
-/**
- * Configures the /sync endpoint for processing TajsOS synchronization payloads.
- *
- * NOTE: This endpoint currently relies on an internal in-memory store as a development stub.
- * It is not intended for long-term multi-user persistence in its current state.
- */
 fun Route.syncRoutes() {
     route("/sync") {
         post {
