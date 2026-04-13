@@ -124,6 +124,17 @@ import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.Json
 import kotlin.time.Clock
 
+/**
+ * The central ViewModel coordinating the primary UI state and user interactions for TajsOS.
+ *
+ * It aggregates data from the repository, exposes state snapshots for rendering, and delegates action handling to specialized command classes.
+ *
+ * @property repository The [AppRepository] acting as the single source of truth for the local database.
+ * @property preferencesRepository The [PreferencesRepository] handling app configuration and user settings.
+ * @property calendarManager The [CalendarManager] responsible for fetching and synchronizing calendar events.
+ * @property nextStepFallbackLabel Default label for generated next-step nodes.
+ * @property untitledFallbackLabel Default label for nodes created without a title.
+ */
 @Stable
 class MainViewModel(
     private val repository: AppRepository,
