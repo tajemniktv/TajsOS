@@ -33,18 +33,27 @@ class PreferencesRepository(
         val ENABLED_PACKS = stringSetPreferencesKey("enabled_packs")
     }
 
+    /**
+     * Whether biometric authentication (like fingerprint or Face ID) is enabled. Defaults to false.
+     */
     val isBiometricEnabled: Flow<Boolean> =
         dataStore.data
             .map { preferences ->
                 preferences[PreferencesKeys.BIOMETRIC_ENABLED] ?: false
             }
 
+    /**
+     * The unique identifier of the currently active operating mode, or null if using the default mode.
+     */
     val activeModeId: Flow<Long?> =
         dataStore.data
             .map { preferences ->
                 preferences[PreferencesKeys.ACTIVE_MODE_ID]
             }
 
+    /**
+     * Whether the dark theme is enabled globally across the application. Defaults to true.
+     */
     val isDarkThemeEnabled: Flow<Boolean> =
         dataStore.data
             .map { preferences ->
