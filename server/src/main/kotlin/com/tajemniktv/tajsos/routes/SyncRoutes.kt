@@ -29,9 +29,9 @@ private val syncStore = LinkedHashMap<String, SyncItem>()
 private val syncStoreLock = Any()
 
 /**
- * Configures the `/sync` endpoint for processing TajsOS synchronization payloads.
+ * Configures the /sync endpoint for processing TajsOS synchronization payloads.
  *
- * NOTE: This endpoint currently relies on the in-memory [syncStore] as a development stub.
+ * NOTE: This endpoint currently relies on an internal in-memory store as a development stub.
  * It is not intended for long-term multi-user persistence in its current state.
  */
 fun Route.syncRoutes() {

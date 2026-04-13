@@ -34,7 +34,7 @@ class PreferencesRepository(
     }
 
     /**
-     * Whether biometric authentication (like fingerprint or Face ID) is enabled.
+     * Whether biometric authentication (like fingerprint or Face ID) is enabled. Defaults to false.
      */
     val isBiometricEnabled: Flow<Boolean> =
         dataStore.data
@@ -52,7 +52,7 @@ class PreferencesRepository(
             }
 
     /**
-     * Whether the dark theme is enabled globally across the application.
+     * Whether the dark theme is enabled globally across the application. Defaults to true.
      */
     val isDarkThemeEnabled: Flow<Boolean> =
         dataStore.data
