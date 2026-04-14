@@ -50,6 +50,7 @@ import tajsos.composeapp.generated.resources.time_architecture_reserve_tracked
 import tajsos.composeapp.generated.resources.time_architecture_reserve_window
 import tajsos.composeapp.generated.resources.time_architecture_status_summary
 import tajsos.composeapp.generated.resources.time_architecture_title
+import com.tajemniktv.tajsos.ui.components.common.EmptyState
 
 object TimeArchitectureDashboardBlocks {
     private val renderers: Map<String, TimeArchitectureDashboardBlockRenderer> =
@@ -335,10 +336,11 @@ private fun renderTimeCadenceAnchors(context: TimeArchitectureDashboardContext) 
                 }
                 val anchorRows = snapshot.buildAnchorRows()
                 if (anchorRows.isEmpty()) {
-                    Text(
-                        "No anchor markers yet.",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = TajsOSTheme.Muted,
+                    EmptyState(
+                        message = "No anchor markers yet.",
+                        description = null,
+                        fillParent = false,
+                        showContainer = false,
                     )
                 } else {
                     anchorRows.take(6).forEach { anchor ->

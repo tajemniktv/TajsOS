@@ -75,6 +75,7 @@ import tajsos.composeapp.generated.resources.settings_force_crash
 import tajsos.composeapp.generated.resources.settings_theme_mode
 import tajsos.composeapp.generated.resources.settings_theme_mode_desc
 import tajsos.composeapp.generated.resources.settings_theme_settings
+import com.tajemniktv.tajsos.ui.components.common.EmptyState
 
 object SettingsDashboardBlocks {
     private val renderers: Map<String, SettingsDashboardBlockRenderer> =
@@ -119,10 +120,11 @@ private fun renderSettingsHealth(context: SettingsDashboardContext) {
         Spacer(Modifier.height(TajsOSTheme.SpacingMd))
 
         if (context.medications.isEmpty()) {
-            Text(
-                "No medication entries configured yet.",
-                style = MaterialTheme.typography.bodyMedium,
-                color = TajsOSTheme.Muted,
+            EmptyState(
+                message = "No medication entries configured yet.",
+                description = null,
+                fillParent = false,
+                showContainer = false,
             )
         } else {
             context.medications.forEach { medication ->
