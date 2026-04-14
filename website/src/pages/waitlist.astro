@@ -39,7 +39,8 @@ const title = "WAITLIST";
 <div class="w-full max-w-lg group relative">
 <div class="absolute -inset-0.5 bg-gradient-to-r from-primary to-primary-dim rounded-xl blur opacity-20 group-focus-within:opacity-50 transition duration-1000"></div>
 <div class="relative flex items-center bg-surface-container-lowest border border-outline-variant/30 rounded-xl overflow-hidden focus-within:border-primary transition-all duration-500">
-<input class="bg-transparent border-none focus:ring-0 text-on-surface placeholder:text-outline font-mono py-5 px-6 w-full text-lg" placeholder="email@example.com" type="email"/>
+<label for="waitlist-email" class="sr-only">Email address</label>
+<input id="waitlist-email" class="bg-transparent border-none focus:ring-0 text-on-surface placeholder:text-outline font-mono py-5 px-6 w-full text-lg" placeholder="email@example.com" type="email"/>
 <button class="bg-primary text-on-primary font-headline font-bold px-8 py-5 hover:bg-primary-fixed transition-all flex items-center gap-2 group/btn">
                         JOIN NOW
                         <span class="material-symbols-outlined text-xl transition-transform group-hover/btn:translate-x-1" data-icon="arrow_forward">arrow_forward</span>
