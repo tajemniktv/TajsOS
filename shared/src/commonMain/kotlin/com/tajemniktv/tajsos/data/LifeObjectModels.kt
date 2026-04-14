@@ -11,6 +11,10 @@ import kotlinx.serialization.Serializable
  *
  * These kinds intentionally stay narrow so the product can build rich lenses
  * and workflows without exploding into a large flat list of peer object types.
+ *
+ * This enum maps directly to the underlying `type` string column in `NodeEntity`
+ * (e.g., "task", "note", "record", "project", "area"). This guarantees type safety
+ * when querying or filtering core object kinds throughout the app.
  */
 @Serializable
 enum class ItemKind(
@@ -33,6 +37,10 @@ enum class ItemKind(
 
 /**
  * Canonical execution states for task-shaped work.
+ *
+ * This enum maps directly to the underlying `status` string column in `NodeEntity`
+ * when the node represents an actionable task. It represents the task's lifecycle
+ * phase, allowing UI layers to easily sort, filter, and display tasks in boards or lists.
  */
 @Serializable
 enum class TaskState(

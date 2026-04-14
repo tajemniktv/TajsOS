@@ -74,12 +74,15 @@ private val healthTitleKeywords =
  * Shared projection helpers for domain screens.
  *
  * These helpers keep query logic out of UI composables and avoid pushing more orchestration
- * into MainViewModel.
+ * into [com.tajemniktv.tajsos.ui.MainViewModel].
  *
  * Domains (such as finance or health) are categorized implicitly by checking for hardcoded
- * string markers within node tags, titles, content, maintenanceType, and noteType fields.
- * While explicit domain associations can be defined in metadata (e.g., via associatedDomains),
+ * string markers within node tags, titles, content, `maintenanceType`, and `noteType` fields.
+ * While explicit domain associations can be defined in metadata (e.g., via `associatedDomains`),
  * these queries provide a heuristic-based lens over all system nodes.
+ *
+ * This implicit matching ensures that even if a user forgets to explicitly assign a node to a
+ * domain, it will still appear in the correct lens if it matches the domain's terminology.
  */
 object DomainLensQueries {
     /**
