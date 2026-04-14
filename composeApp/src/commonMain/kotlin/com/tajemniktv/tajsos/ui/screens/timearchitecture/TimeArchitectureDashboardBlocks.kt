@@ -274,82 +274,108 @@ private fun renderTimeCadenceAnchors(context: TimeArchitectureDashboardContext) 
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
     ) {
-        Surface(
+        TimeArchitectureCadenceCard(
             modifier = Modifier.weight(1f),
-            color = TajsOSTheme.SurfaceLow,
-            shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
-            border = BorderStroke(1.dp, TajsOSTheme.GhostBorder.copy(alpha = 0.15f)),
+            snapshot = snapshot,
+            onRunMonthlyReset = { viewModel.runMonthlyReset() }
+        )
+
+        TimeArchitectureAnchorsCard(
+            modifier = Modifier.weight(1f),
+            snapshot = snapshot,
+            onAddAnchor = { viewModel.addLifePeriodMarker("New period marker") }
+        )
+    }
+}
+
+@Composable
+private fun TimeArchitectureCadenceCard(
+    modifier: Modifier = Modifier,
+    snapshot: com.tajemniktv.tajsos.ui.TimeArchitectureSnapshot,
+    onRunMonthlyReset: () -> Unit
+) {
+    Surface(
+        modifier = modifier,
+        color = TajsOSTheme.SurfaceLow,
+        shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
+        border = BorderStroke(1.dp, TajsOSTheme.GhostBorder.copy(alpha = 0.15f)),
+    ) {
+        Column(
+            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            Column(
-                modifier = Modifier.padding(TajsOSTheme.SpacingMd),
-                verticalArrangement = Arrangement.spacedBy(10.dp),
+            Text(
+                "Resets & Cadence",
+                style = MaterialTheme.typography.headlineSmall,
+                color = TajsOSTheme.Text,
+            )
+            CadenceRow(
+                title = "Daily startup",
+                detail = "${snapshot.todayLayer.size} items in today's horizon",
+                status = "Active",
+            )
+            CadenceRow(
+                title = "Weekly alignment",
+                detail = "${snapshot.weekLayer.size} items mapped this week",
+                status = "Live",
+            )
+            CadenceRow(
+                title = "Monthly reset",
+                detail = if (snapshot.monthlyResetDate.isNotBlank()) snapshot.monthlyResetDate else "Not set",
+                status = "Pending",
+            )
+            Button(onClick = onRunMonthlyReset) {
+                Text("Run Monthly Reset")
+            }
+        }
+    }
+}
+
+@Composable
+private fun TimeArchitectureAnchorsCard(
+    modifier: Modifier = Modifier,
+    snapshot: com.tajemniktv.tajsos.ui.TimeArchitectureSnapshot,
+    onAddAnchor: () -> Unit
+) {
+    Surface(
+        modifier = modifier,
+        color = TajsOSTheme.SurfaceLow,
+        shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
+        border = BorderStroke(1.dp, TajsOSTheme.GhostBorder.copy(alpha = 0.15f)),
+    ) {
+        Column(
+            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(
-                    "Resets & Cadence",
+                    "Temporal Anchors",
                     style = MaterialTheme.typography.headlineSmall,
                     color = TajsOSTheme.Text,
                 )
-                CadenceRow(
-                    title = "Daily startup",
-                    detail = "${snapshot.todayLayer.size} items in today's horizon",
-                    status = "Active",
+                AssistChip(
+                    onClick = onAddAnchor,
+                    label = { Text("Add Anchor") },
                 )
-                CadenceRow(
-                    title = "Weekly alignment",
-                    detail = "${snapshot.weekLayer.size} items mapped this week",
-                    status = "Live",
-                )
-                CadenceRow(
-                    title = "Monthly reset",
-                    detail = if (snapshot.monthlyResetDate.isNotBlank()) snapshot.monthlyResetDate else "Not set",
-                    status = "Pending",
-                )
-                Button(onClick = { viewModel.runMonthlyReset() }) {
-                    Text("Run Monthly Reset")
-                }
             }
-        }
-
-        Surface(
-            modifier = Modifier.weight(1f),
-            color = TajsOSTheme.SurfaceLow,
-            shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
-            border = BorderStroke(1.dp, TajsOSTheme.GhostBorder.copy(alpha = 0.15f)),
-        ) {
-            Column(
-                modifier = Modifier.padding(TajsOSTheme.SpacingMd),
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    Text(
-                        "Temporal Anchors",
-                        style = MaterialTheme.typography.headlineSmall,
-                        color = TajsOSTheme.Text,
+            val anchorRows = snapshot.buildAnchorRows()
+            if (anchorRows.isEmpty()) {
+                EmptyState(
+                    message = "No anchor markers yet.",
+                    description = null,
+                    fillParent = false,
+                    showContainer = false,
+                )
+            } else {
+                anchorRows.take(6).forEach { anchor ->
+                    AnchorRow(
+                        title = anchor.title,
+                        coordinate = anchor.coordinate,
+                        level = anchor.level,
                     )
-                    AssistChip(
-                        onClick = { viewModel.addLifePeriodMarker("New period marker") },
-                        label = { Text("Add Anchor") },
-                    )
-                }
-                val anchorRows = snapshot.buildAnchorRows()
-                if (anchorRows.isEmpty()) {
-                    EmptyState(
-                        message = "No anchor markers yet.",
-                        description = null,
-                        fillParent = false,
-                        showContainer = false,
-                    )
-                } else {
-                    anchorRows.take(6).forEach { anchor ->
-                        AnchorRow(
-                            title = anchor.title,
-                            coordinate = anchor.coordinate,
-                            level = anchor.level,
-                        )
-                    }
                 }
             }
         }
