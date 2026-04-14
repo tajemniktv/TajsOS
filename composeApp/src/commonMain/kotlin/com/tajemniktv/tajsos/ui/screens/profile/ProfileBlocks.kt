@@ -73,6 +73,7 @@ import tajsos.composeapp.generated.resources.profile_select_avatar
 import tajsos.composeapp.generated.resources.profile_time_zone
 import tajsos.composeapp.generated.resources.profile_unsaved
 import tajsos.composeapp.generated.resources.profile_website
+import com.tajemniktv.tajsos.ui.components.common.EmptyState
 
 private val profileBlockRenderers: Map<String, ProfileDashboardBlockRenderer> =
     mapOf(
@@ -397,10 +398,11 @@ private fun renderMedicationsModuleBlock(context: ProfileScreenContext) {
             }
         }
         if (context.medications.isEmpty()) {
-            Text(
-                "No medication entries configured.",
-                style = MaterialTheme.typography.bodySmall,
-                color = TajsOSTheme.Muted,
+            EmptyState(
+                message = "No medication entries configured.",
+                description = null,
+                fillParent = false,
+                showContainer = false,
             )
         } else {
             context.medications.forEach { med ->
