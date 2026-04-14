@@ -29,12 +29,12 @@
         Bridge the gap between biological thought and digital execution.
       </p>
       <div class="flex flex-col gap-6 pt-4">
-        <a href="/waitlist"
+        <a href={`${import.meta.env.BASE_URL}waitlist`}
           class="w-fit bg-primary text-on-primary-fixed font-mono font-bold px-10 py-6 rounded text-sm uppercase tracking-[0.2em] hover:shadow-[0_0_50px_rgba(186,158,255,0.4)] transition-all"
         >
           [ Join_Waitlist ]
         </a>
-        <a href="/architecture"
+        <a href={`${import.meta.env.BASE_URL}architecture`}
           class="w-fit font-mono font-bold uppercase tracking-widest text-[11px] text-on-surface-variant/60 hover:text-primary transition-colors pl-4 border-l border-outline-variant"
         >
           Architecture
@@ -50,7 +50,7 @@
         <img
           alt="TajsOS Dashboard Mockup"
           class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000"
-          src="/images/hero-dashboard.png"
+          src={`${import.meta.env.BASE_URL}images/hero-dashboard.png`}
         />
         <div
           class="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-transparent"
