@@ -217,17 +217,7 @@ class MainActivity : FragmentActivity() {
                 viewModel.addNode(title = sharedText, type = "note")
             }
         } else if (type.startsWith("image/")) {
-            val imageUri =
-                try {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
-                    } else {
-                        @Suppress("DEPRECATION")
-                        intent.getParcelableExtra(Intent.EXTRA_STREAM)
-                    }
-                } catch (e: Exception) {
-                    null
-                }
+            val imageUri = intent.getSafeParcelableExtra<Uri>(Intent.EXTRA_STREAM)
             imageUri?.let { uri ->
                 val nodeId =
                     viewModel.addNodeForResult(
@@ -247,17 +237,7 @@ class MainActivity : FragmentActivity() {
     private suspend fun handleActionSendMultiple(intent: Intent) {
         val type = intent.type ?: return
         if (type.startsWith("image/")) {
-            val imageUris =
-                try {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM, Uri::class.java)
-                    } else {
-                        @Suppress("DEPRECATION")
-                        intent.getParcelableArrayListExtra<Uri>(Intent.EXTRA_STREAM)
-                    }
-                } catch (e: Exception) {
-                    null
-                }
+            val imageUris = intent.getSafeParcelableArrayListExtra<Uri>(Intent.EXTRA_STREAM)
             imageUris?.let { uris ->
                 val nodeId =
                     viewModel.addNodeForResult(
