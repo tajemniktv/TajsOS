@@ -614,7 +614,7 @@ private data class AnchorMarkerRow(
     val level: String,
 )
 
-private fun TimeArchitectureSnapshot.buildAnchorRows(): List<AnchorMarkerRow> {
+private fun com.tajemniktv.tajsos.ui.TimeArchitectureSnapshot.buildAnchorRows(): List<AnchorMarkerRow> {
     val markerRows =
         lifePeriodMarkers.map { marker ->
             AnchorMarkerRow(
