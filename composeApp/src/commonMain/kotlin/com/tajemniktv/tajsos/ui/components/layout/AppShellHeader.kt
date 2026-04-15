@@ -323,8 +323,8 @@ fun GlobalSearchBar(modifier: Modifier = Modifier) {
             ),
         textStyle = MaterialTheme.typography.bodyMedium.copy(color = TajsOSTheme.Text),
         colors = androidx.compose.material3.OutlinedTextFieldDefaults.colors(
-            unfocusedContainerColor = TajsOSTheme.SurfaceHigh.copy(alpha = 0.5f),
-            focusedContainerColor = TajsOSTheme.SurfaceHighest.copy(alpha = 0.7f),
+            unfocusedContainerColor = glassContainerColor(TajsOSTheme.SurfaceHigh.copy(alpha = 0.5f)),
+            focusedContainerColor = glassContainerColor(TajsOSTheme.SurfaceHighest.copy(alpha = 0.7f)),
             unfocusedBorderColor = Color.Transparent,
             focusedBorderColor = TajsOSTheme.Primary.copy(alpha = 0.5f),
         ),
