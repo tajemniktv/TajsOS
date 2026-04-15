@@ -26,7 +26,7 @@ data class DomainDefinition(
  * Registry of first-class LifeOS domains.
  */
 object DomainRegistry {
-    val definitions: List<DomainDefinition> =
+    val definitions: List<DomainDefinition> by lazy {
         listOf(
             DomainDefinition(
                 kind = DomainKind.FINANCES,
@@ -49,8 +49,9 @@ object DomainRegistry {
                 capabilities = setOf("followups", "crm", "shared_plans"),
             ),
         )
+    }
 
-    val screens: List<Screen> = definitions.map { it.screen }
+    val screens: List<Screen> by lazy { definitions.map { it.screen } }
 
     fun byKind(kind: DomainKind): DomainDefinition? = definitions.find { it.kind == kind }
 

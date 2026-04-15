@@ -6,9 +6,12 @@ package com.tajemniktv.tajsos
 
 import android.content.Intent
 import android.net.Uri
+import android.os.BadParcelableException
 import android.os.Build
 import android.os.Bundle
+import android.os.ParcelFormatException
 import android.speech.RecognizerIntent
+import android.util.Log
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -54,6 +57,10 @@ import com.tajemniktv.tajsos.ui.MainViewModel
  * - Main UI hosting using Jetpack Compose.
  */
 class MainActivity : FragmentActivity() {
+    companion object {
+        private const val TAG = "MainActivity"
+    }
+
     /** The main view model for app-level orchestration. */
     private lateinit var viewModel: MainViewModel
 
@@ -217,17 +224,7 @@ class MainActivity : FragmentActivity() {
                 viewModel.addNode(title = sharedText, type = "note")
             }
         } else if (type.startsWith("image/")) {
-            val imageUri =
-                try {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
-                    } else {
-                        @Suppress("DEPRECATION")
-                        intent.getParcelableExtra(Intent.EXTRA_STREAM)
-                    }
-                } catch (e: Exception) {
-                    null
-                }
+            val imageUri = intent.getSafeParcelableExtra<Uri>(Intent.EXTRA_STREAM)
             imageUri?.let { uri ->
                 val nodeId =
                     viewModel.addNodeForResult(
@@ -247,17 +244,7 @@ class MainActivity : FragmentActivity() {
     private suspend fun handleActionSendMultiple(intent: Intent) {
         val type = intent.type ?: return
         if (type.startsWith("image/")) {
-            val imageUris =
-                try {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM, Uri::class.java)
-                    } else {
-                        @Suppress("DEPRECATION")
-                        intent.getParcelableArrayListExtra<Uri>(Intent.EXTRA_STREAM)
-                    }
-                } catch (e: Exception) {
-                    null
-                }
+            val imageUris = intent.getSafeParcelableArrayListExtra<Uri>(Intent.EXTRA_STREAM)
             imageUris?.let { uris ->
                 val nodeId =
                     viewModel.addNodeForResult(
@@ -356,5 +343,46 @@ class MainActivity : FragmentActivity() {
     override fun onStop() {
         super.onStop()
         viewModel.lockApp()
+    }
+
+    /**
+     * Safely extracts a Parcelable extra from an Intent, handling OS version differences
+     * and catching potential unparcelling exceptions (e.g., BadParcelableException).
+     */
+    private inline fun <reified T : android.os.Parcelable> Intent.getSafeParcelableExtra(name: String): T? {
+        return try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                getParcelableExtra(name, T::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                getParcelableExtra(name) as? T
+            }
+        } catch (e: BadParcelableException) {
+            Log.e(TAG, "Failed to read parcelable extra: $name", e)
+            null
+        } catch (e: ParcelFormatException) {
+            Log.e(TAG, "Failed to read parcelable extra (bad parcel format): $name", e)
+            null
+        }
+    }
+
+    /**
+     * Safely extracts a Parcelable ArrayList extra from an Intent.
+     */
+    private inline fun <reified T : android.os.Parcelable> Intent.getSafeParcelableArrayListExtra(name: String): java.util.ArrayList<T>? {
+        return try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                getParcelableArrayListExtra(name, T::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                getParcelableArrayListExtra<T>(name)
+            }
+        } catch (e: BadParcelableException) {
+            Log.e(TAG, "Failed to read parcelable array list extra: $name", e)
+            null
+        } catch (e: ParcelFormatException) {
+            Log.e(TAG, "Failed to read parcelable array list extra (bad parcel format): $name", e)
+            null
+        }
     }
 }

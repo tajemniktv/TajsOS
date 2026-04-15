@@ -96,7 +96,7 @@ import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.nav_capture
 
 private val LocalBreadcrumbNavigate = compositionLocalOf<((String) -> Unit)?> { null }
-private val routeParameterPattern = Regex("\\{[^}]+}")
+private val routeParameterPattern by lazy { Regex("""\{[a-zA-Z0-9_-]+\}""") }
 
 /**
  * Hosts the application's top-level UI: sets up navigation, collects app state from the ViewModel,
