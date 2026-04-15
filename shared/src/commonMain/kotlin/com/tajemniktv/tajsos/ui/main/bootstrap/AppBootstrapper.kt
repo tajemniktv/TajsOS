@@ -277,7 +277,141 @@ class AppBootstrapper(
     }
 
 
+
     private data class ModeDefinition(val mode: ModeEntity, val prefs: ModePreferenceEntity)
+
+    private fun getDefaultModes(): List<ModeDefinition> = listOf(
+        ModeDefinition(
+            ModeEntity(
+                key = "COMMAND",
+                name = "Command",
+                description = "Default everyday overview mode. What matters right now?",
+                icon = "dashboard",
+                themeColor = 0xFF3F51B5.toInt(),
+            ),
+            ModePreferenceEntity(
+                modeId = 0L,
+                dashboardBlocksJson = "[\"today_top_3\", \"resume_context\", \"inbox_count\", \"deadlines\", \"overdue\", \"pinned_note\"]",
+            )
+        ),
+        ModeDefinition(
+            ModeEntity(
+                key = "FOCUS",
+                name = "Focus",
+                description = "Narrow the system to one thing. keep attention on this.",
+                icon = "center_focus_strong",
+                sortOrder = 1,
+                themeColor = 0xFFF44336.toInt(),
+            ),
+            ModePreferenceEntity(
+                modeId = 0L,
+                showInbox = false,
+                showStats = false,
+                dashboardBlocksJson = "[\"current_task\", \"next_step\", \"timer\", \"blockers\", \"linked_resources\"]",
+            )
+        ),
+        ModeDefinition(
+            ModeEntity(
+                key = "RECOVERY",
+                name = "Recovery",
+                description = "Support low-capacity functioning. Smallest safe useful thing.",
+                icon = "medical_services",
+                sortOrder = 2,
+                themeColor = 0xFF4CAF50.toInt(),
+            ),
+            ModePreferenceEntity(
+                modeId = 0L,
+                showInbox = false,
+                showStats = false,
+                dashboardBlocksJson = "[\"basics\", \"easy_wins\", \"urgent_only\", \"recovery_protocol\", \"check_in\"]",
+            )
+        ),
+        ModeDefinition(
+            ModeEntity(
+                key = "STUDY",
+                name = "Study",
+                description = "Focus on learning and academic performance.",
+                icon = "school",
+                sortOrder = 3,
+                themeColor = 0xFFFF9800.toInt(),
+            ),
+            ModePreferenceEntity(
+                modeId = 0L,
+                dashboardBlocksJson = "[\"classes\", \"assignments\", \"deadlines\", \"notes\", \"revision_targets\"]",
+            )
+        ),
+        ModeDefinition(
+            ModeEntity(
+                key = "ERRAND",
+                name = "Errand",
+                description = "Out-of-home execution and logistical clustering.",
+                icon = "shopping_cart",
+                sortOrder = 4,
+                themeColor = 0xFF00BCD4.toInt(),
+            ),
+            ModePreferenceEntity(
+                modeId = 0L,
+                dashboardBlocksJson = "[\"shopping_list\", \"place_based_tasks\", \"errands\", \"what_to_bring\"]",
+            )
+        ),
+        ModeDefinition(
+            ModeEntity(
+                key = "ADMIN",
+                name = "Admin",
+                description = "Handle the 'paperwork' of life. Subscriptions, bills, forms.",
+                icon = "gavel",
+                sortOrder = 5,
+                themeColor = 0xFF607D8B.toInt(),
+            ),
+            ModePreferenceEntity(
+                modeId = 0L,
+                dashboardBlocksJson = "[\"paperwork\", \"bills\", \"renewals\", \"subscriptions\", \"bureaucracy\"]",
+            )
+        ),
+        ModeDefinition(
+            ModeEntity(
+                key = "SHUTDOWN",
+                name = "Shutdown",
+                description = "Nightly reset and preparation for tomorrow.",
+                icon = "bedtime",
+                sortOrder = 6,
+                themeColor = 0xFF673AB7.toInt(),
+            ),
+            ModePreferenceEntity(
+                modeId = 0L,
+                dashboardBlocksJson = "[\"tomorrow_prep\", \"mini_review\", \"dump_leftovers\", \"open_loops_reduction\"]",
+            )
+        ),
+        ModeDefinition(
+            ModeEntity(
+                key = "LOW_BATTERY",
+                name = "Low Battery",
+                description = "Minimal survival mode for when you are emotionally or physically drained.",
+                icon = "battery_alert",
+                sortOrder = 7,
+                themeColor = 0xFFE91E63.toInt(),
+            ),
+            ModePreferenceEntity(
+                modeId = 0L,
+                showInbox = false,
+                dashboardBlocksJson = "[\"survival_basics\", \"tiny_wins\", \"passive_input\", \"comfort_notes\"]",
+            )
+        ),
+        ModeDefinition(
+            ModeEntity(
+                key = "ALL",
+                name = "All",
+                description = "Unfiltered access to the entire system. No restrictions.",
+                icon = "all_inclusive",
+                sortOrder = 8,
+                themeColor = 0xFF9E9E9E.toInt(),
+            ),
+            ModePreferenceEntity(
+                modeId = 0L,
+                dashboardBlocksJson = "[\"today_top_3\", \"search\", \"alerts\", \"focus\", \"insights\", \"knowledge\", \"operational\"]",
+            )
+        )
+    )
 
     /**
      * Identifies if default system modes exist (e.g., Work, Recovery, Chaos), and inserts them
@@ -287,138 +421,7 @@ class AppBootstrapper(
         val existingModes = repository.getAllModes().first()
         val existingKeys = existingModes.map { it.key }.toSet()
 
-        val defaultModes = listOf(
-            ModeDefinition(
-                ModeEntity(
-                    key = "COMMAND",
-                    name = "Command",
-                    description = "Default everyday overview mode. What matters right now?",
-                    icon = "dashboard",
-                    themeColor = 0xFF3F51B5.toInt(),
-                ),
-                ModePreferenceEntity(
-                    modeId = 0L,
-                    dashboardBlocksJson = "[\"today_top_3\", \"resume_context\", \"inbox_count\", \"deadlines\", \"overdue\", \"pinned_note\"]",
-                )
-            ),
-            ModeDefinition(
-                ModeEntity(
-                    key = "FOCUS",
-                    name = "Focus",
-                    description = "Narrow the system to one thing. keep attention on this.",
-                    icon = "center_focus_strong",
-                    sortOrder = 1,
-                    themeColor = 0xFFF44336.toInt(),
-                ),
-                ModePreferenceEntity(
-                    modeId = 0L,
-                    showInbox = false,
-                    showStats = false,
-                    dashboardBlocksJson = "[\"current_task\", \"next_step\", \"timer\", \"blockers\", \"linked_resources\"]",
-                )
-            ),
-            ModeDefinition(
-                ModeEntity(
-                    key = "RECOVERY",
-                    name = "Recovery",
-                    description = "Support low-capacity functioning. Smallest safe useful thing.",
-                    icon = "medical_services",
-                    sortOrder = 2,
-                    themeColor = 0xFF4CAF50.toInt(),
-                ),
-                ModePreferenceEntity(
-                    modeId = 0L,
-                    showInbox = false,
-                    showStats = false,
-                    dashboardBlocksJson = "[\"basics\", \"easy_wins\", \"urgent_only\", \"recovery_protocol\", \"check_in\"]",
-                )
-            ),
-            ModeDefinition(
-                ModeEntity(
-                    key = "STUDY",
-                    name = "Study",
-                    description = "Focus on learning and academic performance.",
-                    icon = "school",
-                    sortOrder = 3,
-                    themeColor = 0xFFFF9800.toInt(),
-                ),
-                ModePreferenceEntity(
-                    modeId = 0L,
-                    dashboardBlocksJson = "[\"classes\", \"assignments\", \"deadlines\", \"notes\", \"revision_targets\"]",
-                )
-            ),
-            ModeDefinition(
-                ModeEntity(
-                    key = "ERRAND",
-                    name = "Errand",
-                    description = "Out-of-home execution and logistical clustering.",
-                    icon = "shopping_cart",
-                    sortOrder = 4,
-                    themeColor = 0xFF00BCD4.toInt(),
-                ),
-                ModePreferenceEntity(
-                    modeId = 0L,
-                    dashboardBlocksJson = "[\"shopping_list\", \"place_based_tasks\", \"errands\", \"what_to_bring\"]",
-                )
-            ),
-            ModeDefinition(
-                ModeEntity(
-                    key = "ADMIN",
-                    name = "Admin",
-                    description = "Handle the 'paperwork' of life. Subscriptions, bills, forms.",
-                    icon = "gavel",
-                    sortOrder = 5,
-                    themeColor = 0xFF607D8B.toInt(),
-                ),
-                ModePreferenceEntity(
-                    modeId = 0L,
-                    dashboardBlocksJson = "[\"paperwork\", \"bills\", \"renewals\", \"subscriptions\", \"bureaucracy\"]",
-                )
-            ),
-            ModeDefinition(
-                ModeEntity(
-                    key = "SHUTDOWN",
-                    name = "Shutdown",
-                    description = "Nightly reset and preparation for tomorrow.",
-                    icon = "bedtime",
-                    sortOrder = 6,
-                    themeColor = 0xFF673AB7.toInt(),
-                ),
-                ModePreferenceEntity(
-                    modeId = 0L,
-                    dashboardBlocksJson = "[\"tomorrow_prep\", \"mini_review\", \"dump_leftovers\", \"open_loops_reduction\"]",
-                )
-            ),
-            ModeDefinition(
-                ModeEntity(
-                    key = "LOW_BATTERY",
-                    name = "Low Battery",
-                    description = "Minimal survival mode for when you are emotionally or physically drained.",
-                    icon = "battery_alert",
-                    sortOrder = 7,
-                    themeColor = 0xFFE91E63.toInt(),
-                ),
-                ModePreferenceEntity(
-                    modeId = 0L,
-                    showInbox = false,
-                    dashboardBlocksJson = "[\"survival_basics\", \"tiny_wins\", \"passive_input\", \"comfort_notes\"]",
-                )
-            ),
-            ModeDefinition(
-                ModeEntity(
-                    key = "ALL",
-                    name = "All",
-                    description = "Unfiltered access to the entire system. No restrictions.",
-                    icon = "all_inclusive",
-                    sortOrder = 8,
-                    themeColor = 0xFF9E9E9E.toInt(),
-                ),
-                ModePreferenceEntity(
-                    modeId = 0L,
-                    dashboardBlocksJson = "[\"today_top_3\", \"search\", \"alerts\", \"focus\", \"insights\", \"knowledge\", \"operational\"]",
-                )
-            )
-        )
+        val defaultModes = getDefaultModes()
 
         for (def in defaultModes) {
             if (def.mode.key !in existingKeys) {
