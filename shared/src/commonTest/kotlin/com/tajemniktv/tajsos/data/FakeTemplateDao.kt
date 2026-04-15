@@ -18,14 +18,14 @@ class FakeTemplateDao : TemplateDao {
 
     override suspend fun insertTemplates(templates: List<TemplateEntity>) {
         for (template in templates) {
-            val index = templates.indexOfFirst { it.id == template.id }
+            val index = this.templates.indexOfFirst { it.id == template.id }
             if (index != -1) {
-                templates[index] = template
+                this.templates[index] = template
             } else {
-                templates.add(template)
+                this.templates.add(template)
             }
         }
-        templatesFlow.value = templates.toList()
+        templatesFlow.value = this.templates.toList()
     }
 
     override suspend fun updateTemplate(template: TemplateEntity) {
