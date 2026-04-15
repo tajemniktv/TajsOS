@@ -1,38 +1,12 @@
 package com.tajemniktv.tajsos.ui
 
-import com.tajemniktv.tajsos.data.NodeEntity
-import com.tajemniktv.tajsos.data.NodeWithPin
-import com.tajemniktv.tajsos.data.TagEntity
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class FilterHelperEdgeTest {
-    private fun createTestNode(
-        id: Long,
-        title: String,
-        content: String = "",
-        type: String = "task",
-        status: String = "active",
-        tags: List<String> = emptyList(),
-        updatedAt: Long = 0L,
-    ): NodeWithPin {
-        return NodeWithPin(
-            node = NodeEntity(
-                id = id,
-                title = title,
-                content = content,
-                type = type,
-                status = status,
-                updatedAt = updatedAt
-            ),
-            pin = null,
-            tags = tags.mapIndexed { index, tag -> TagEntity(id = index.toLong(), name = tag, normalizedName = tag.lowercase()) }
-        )
-    }
-
     @Test
     fun testRelevanceScore_emptyQuery() {
-        val node = createTestNode(1, "Test Node")
+        val node = buildTestNode(1, "Test Node")
         val result = FilterHelper.filterAndSortNodes(
             nodes = listOf(node),
             query = "",
@@ -59,12 +33,12 @@ class FilterHelperEdgeTest {
 
     @Test
     fun testRelevanceScore_variousMatches() {
-        val exactMatchNode = createTestNode(1, "exact match", "content", tags = listOf("tag"))
-        val startsWithNode = createTestNode(2, "exact match with suffix", "content", tags = listOf("tag"))
-        val containsTitleNode = createTestNode(3, "prefix exact match", "content", tags = listOf("tag"))
-        val containsContentNode = createTestNode(4, "title", "contains exact match", tags = listOf("tag"))
-        val exactTagMatchNode = createTestNode(5, "title", "content", tags = listOf("exact match"))
-        val containsTagMatchNode = createTestNode(6, "title", "content", tags = listOf("prefix exact match suffix"))
+        val exactMatchNode = buildTestNode(1, "exact match", "content", tags = listOf("tag"))
+        val startsWithNode = buildTestNode(2, "exact match with suffix", "content", tags = listOf("tag"))
+        val containsTitleNode = buildTestNode(3, "prefix exact match", "content", tags = listOf("tag"))
+        val containsContentNode = buildTestNode(4, "title", "contains exact match", tags = listOf("tag"))
+        val exactTagMatchNode = buildTestNode(5, "title", "content", tags = listOf("exact match"))
+        val containsTagMatchNode = buildTestNode(6, "title", "content", tags = listOf("prefix exact match suffix"))
 
         val nodes = listOf(exactMatchNode, startsWithNode, containsTitleNode, containsContentNode, exactTagMatchNode, containsTagMatchNode)
 
@@ -101,8 +75,8 @@ class FilterHelperEdgeTest {
 
     @Test
     fun testRelevanceScore_tieBreakers() {
-        val node1 = createTestNode(1, "title", "content", tags = listOf("exact match"), updatedAt = 100L)
-        val node2 = createTestNode(2, "prefix exact match", "content", updatedAt = 200L)
+        val node1 = buildTestNode(1, "title", "content", tags = listOf("exact match"), updatedAt = 100L)
+        val node2 = buildTestNode(2, "prefix exact match", "content", updatedAt = 200L)
         val result = FilterHelper.filterAndSortNodes(
             nodes = listOf(node1, node2),
             query = "exact match",

@@ -72,6 +72,7 @@ import tajsos.composeapp.generated.resources.settings_biometric_lock
 import tajsos.composeapp.generated.resources.settings_biometric_unavailable
 import tajsos.composeapp.generated.resources.settings_export_data
 import tajsos.composeapp.generated.resources.settings_force_crash
+import tajsos.composeapp.generated.resources.settings_no_medication_entries_configured_yet
 import tajsos.composeapp.generated.resources.settings_theme_mode
 import tajsos.composeapp.generated.resources.settings_theme_mode_desc
 import tajsos.composeapp.generated.resources.settings_theme_settings
@@ -140,7 +141,7 @@ private fun SettingsHealthHeader(onAddMedicationClick: () -> Unit) {
 private fun SettingsHealthMedicationList(context: SettingsDashboardContext) {
     if (context.medications.isEmpty()) {
         EmptyState(
-            message = "No medication entries configured yet.",
+            message = stringResource(Res.string.settings_no_medication_entries_configured_yet),
             description = null,
             fillParent = false,
             showContainer = false,

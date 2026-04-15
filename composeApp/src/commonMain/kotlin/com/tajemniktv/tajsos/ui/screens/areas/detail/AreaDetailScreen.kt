@@ -98,7 +98,7 @@ fun AreaDetailScreen(
      * Extracted mapping to reduce redundant allocations per node type.
      */
     val nodesList = remember(items) { items.map { it.node } }
-    val tasks = remember(nodesList) { nodesList.filter { it.isTaskItem() && it.status != "archived" } }
+    val tasks = remember(nodesList) { nodesList.filter { it.isTaskItem() && it.taskStateOrNull() != TaskState.ARCHIVED } }
     val notes = remember(nodesList) { nodesList.filter { it.isNoteItem() } }
     val records = remember(nodesList) { nodesList.filter { it.isRecordItem() } }
     val activeProjects =

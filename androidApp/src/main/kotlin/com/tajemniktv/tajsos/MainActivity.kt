@@ -6,9 +6,12 @@ package com.tajemniktv.tajsos
 
 import android.content.Intent
 import android.net.Uri
+import android.os.BadParcelableException
 import android.os.Build
 import android.os.Bundle
+import android.os.ParcelFormatException
 import android.speech.RecognizerIntent
+import android.util.Log
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -54,6 +57,10 @@ import com.tajemniktv.tajsos.ui.MainViewModel
  * - Main UI hosting using Jetpack Compose.
  */
 class MainActivity : FragmentActivity() {
+    companion object {
+        private const val TAG = "MainActivity"
+    }
+
     /** The main view model for app-level orchestration. */
     private lateinit var viewModel: MainViewModel
 
@@ -350,7 +357,11 @@ class MainActivity : FragmentActivity() {
                 @Suppress("DEPRECATION")
                 getParcelableExtra(name) as? T
             }
-        } catch (e: Exception) {
+        } catch (e: BadParcelableException) {
+            Log.e(TAG, "Failed to read parcelable extra: $name", e)
+            null
+        } catch (e: ParcelFormatException) {
+            Log.e(TAG, "Failed to read parcelable extra (bad parcel format): $name", e)
             null
         }
     }
@@ -366,7 +377,11 @@ class MainActivity : FragmentActivity() {
                 @Suppress("DEPRECATION")
                 getParcelableArrayListExtra<T>(name)
             }
-        } catch (e: Exception) {
+        } catch (e: BadParcelableException) {
+            Log.e(TAG, "Failed to read parcelable array list extra: $name", e)
+            null
+        } catch (e: ParcelFormatException) {
+            Log.e(TAG, "Failed to read parcelable array list extra (bad parcel format): $name", e)
             null
         }
     }

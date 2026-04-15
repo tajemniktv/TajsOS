@@ -430,6 +430,8 @@
     <string name="profile_empty_hint">No avatar selected</string>
     <string name="profile_medications">MEDICATIONS</string>
     <string name="profile_add_med">ADD MEDICATION</string>
+    <string name="medication_empty_message">No medication entries configured.</string>
+    <string name="settings_no_medication_entries_configured_yet">No medication entries configured yet.</string>
     <string name="med_substance">SUBSTANCE</string>
     <string name="med_brand_names">BRAND NAMES</string>
     <string name="med_dosage">DOSAGE</string>
@@ -1024,6 +1026,16 @@
     <string name="time_architecture_reserve_label">Long-range load and semester pressure</string>
     <string name="time_architecture_reserve_tracked">%1$d long-horizon commitments tracked</string>
     <string name="time_architecture_exam_pressure">Exam-period pressure detected</string>
+    <string name="time_architecture_resets_cadence">Resets &amp; Cadence</string>
+    <string name="time_architecture_daily_startup">Daily startup</string>
+    <string name="time_architecture_daily_detail">%1$d items in today's horizon</string>
+    <string name="time_architecture_weekly_alignment">Weekly alignment</string>
+    <string name="time_architecture_weekly_detail">%1$d items mapped this week</string>
+    <string name="time_architecture_monthly_reset">Monthly reset</string>
+    <string name="time_architecture_monthly_detail">Last reset: %1$s</string>
+    <string name="time_architecture_not_set">Not set</string>
+    <string name="time_architecture_temporal_anchors">Temporal Anchors</string>
+    <string name="time_architecture_no_anchor_markers">No anchor markers yet.</string>
 
     <!-- Protocols -->
     <string name="protocol_session_paused">Session paused</string>
@@ -1051,6 +1063,8 @@
     <string name="header_menu">Menu</string>
     <string name="header_notifications">Notifications</string>
     <string name="header_notifications_title">SYSTEM STATUS</string>
+    <string name="no_active_system_alerts">No active system alerts.</string>
+    <string name="pending_nodes_due_soon">No pending nodes due soon.</string>
     <string name="header_mode_label">SYSTEM: %1$s</string>
     <string name="shell_protocol_state_with_name">Protocol state: %1$s</string>
     <string name="shell_protocol_state_standby">Protocol state: standby</string>

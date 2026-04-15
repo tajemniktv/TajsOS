@@ -51,7 +51,7 @@ object DomainRegistry {
         )
     }
 
-    val screens: List<Screen> get() = definitions.map { it.screen }
+    val screens: List<Screen> by lazy { definitions.map { it.screen } }
 
     fun byKind(kind: DomainKind): DomainDefinition? = definitions.find { it.kind == kind }
 

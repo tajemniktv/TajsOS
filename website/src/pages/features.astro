@@ -4,9 +4,47 @@ import Navbar from '../components/landing/Navbar.astro';
 import Footer from '../components/landing/Footer.astro';
 
 const title = "FEATURES";
+const features = [
+  {
+    icon: "inbox",
+    title: "Inbox Captures",
+    description:
+      "Fast intake before forced classification. Capture thoughts, tasks, and notes instantly without worrying about where they belong right now.",
+  },
+  {
+    icon: "check_circle",
+    title: "Tasks for Execution",
+    description:
+      "Manage your execution layer. Tasks are first-class citizens connected to projects and areas, helping you focus on what matters now.",
+  },
+  {
+    icon: "sticky_note_2",
+    title: "Notes for Knowledge",
+    description:
+      "Durable knowledge and reference. Create rich text documents that link to tasks and projects, forming your personal knowledge base.",
+  },
+  {
+    icon: "history",
+    title: "Chronological Records",
+    description:
+      "Logs, reflections, and observations stored chronologically to build a timeline of your life and projects over time.",
+  },
+  {
+    icon: "account_tree",
+    title: "Projects & Areas",
+    description:
+      "Group items by outcomes (Projects) or ongoing responsibilities (Areas) to keep different domains organized without isolated silos.",
+  },
+  {
+    icon: "hub",
+    title: "Relations & Tags",
+    description:
+      "Relations, schedules, and tags act as shared layers across the system, tying tasks to notes to records seamlessly.",
+  },
+];
 ---
 
-<Layout>
+<Layout title={title}>
   <div class="fixed inset-0 noise-bg pointer-events-none z-50"></div>
   <div class="fixed top-[-10%] right-[-5%] w-[600px] h-[600px] gradient-sphere pointer-events-none -z-10"></div>
 
@@ -23,47 +61,15 @@ const title = "FEATURES";
     </header>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-32">
-      <!-- Feature 1 -->
-      <div class="bg-surface-container-low p-8 rounded-xl border border-outline-variant/10 hover:border-primary/30 transition-all group">
-          <span class="material-symbols-outlined text-4xl text-primary mb-6" style="font-variation-settings: 'FILL' 1;">inbox</span>
-          <h3 class="font-headline font-bold text-2xl mb-4 text-on-surface">Inbox Captures</h3>
-          <p class="text-on-surface-variant leading-relaxed">Fast intake before forced classification. Capture thoughts, tasks, and notes instantly without worrying about where they belong right now.</p>
-      </div>
-
-      <!-- Feature 2 -->
-      <div class="bg-surface-container-low p-8 rounded-xl border border-outline-variant/10 hover:border-primary/30 transition-all group">
-          <span class="material-symbols-outlined text-4xl text-primary mb-6" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-          <h3 class="font-headline font-bold text-2xl mb-4 text-on-surface">Tasks for Execution</h3>
-          <p class="text-on-surface-variant leading-relaxed">Manage your execution layer. Tasks are first-class citizens connected to projects and areas, helping you focus on what matters now.</p>
-      </div>
-
-      <!-- Feature 3 -->
-      <div class="bg-surface-container-low p-8 rounded-xl border border-outline-variant/10 hover:border-primary/30 transition-all group">
-          <span class="material-symbols-outlined text-4xl text-primary mb-6" style="font-variation-settings: 'FILL' 1;">sticky_note_2</span>
-          <h3 class="font-headline font-bold text-2xl mb-4 text-on-surface">Notes for Knowledge</h3>
-          <p class="text-on-surface-variant leading-relaxed">Durable knowledge and reference. Create rich text documents that link to tasks and projects, forming your personal knowledge base.</p>
-      </div>
-
-      <!-- Feature 4 -->
-      <div class="bg-surface-container-low p-8 rounded-xl border border-outline-variant/10 hover:border-primary/30 transition-all group">
-          <span class="material-symbols-outlined text-4xl text-primary mb-6" style="font-variation-settings: 'FILL' 1;">history</span>
-          <h3 class="font-headline font-bold text-2xl mb-4 text-on-surface">Chronological Records</h3>
-          <p class="text-on-surface-variant leading-relaxed">Logs, reflections, and observations stored chronologically to build a timeline of your life and projects over time.</p>
-      </div>
-
-      <!-- Feature 5 -->
-      <div class="bg-surface-container-low p-8 rounded-xl border border-outline-variant/10 hover:border-primary/30 transition-all group">
-          <span class="material-symbols-outlined text-4xl text-primary mb-6" style="font-variation-settings: 'FILL' 1;">account_tree</span>
-          <h3 class="font-headline font-bold text-2xl mb-4 text-on-surface">Projects & Areas</h3>
-          <p class="text-on-surface-variant leading-relaxed">Group items by outcomes (Projects) or ongoing responsibilities (Areas) to keep different domains organized without isolated silos.</p>
-      </div>
-
-      <!-- Feature 6 -->
-      <div class="bg-surface-container-low p-8 rounded-xl border border-outline-variant/10 hover:border-primary/30 transition-all group">
-          <span class="material-symbols-outlined text-4xl text-primary mb-6" style="font-variation-settings: 'FILL' 1;">hub</span>
-          <h3 class="font-headline font-bold text-2xl mb-4 text-on-surface">Relations & Tags</h3>
-          <p class="text-on-surface-variant leading-relaxed">Relations, schedules, and tags act as shared layers across the system, tying tasks to notes to records seamlessly.</p>
-      </div>
+      {features.map((feature) => (
+        <div class="bg-surface-container-low p-8 rounded-xl border border-outline-variant/10 hover:border-primary/30 transition-all group">
+          <span class="material-symbols-outlined text-4xl text-primary mb-6" style="font-variation-settings: 'FILL' 1;">
+            {feature.icon}
+          </span>
+          <h3 class="font-headline font-bold text-2xl mb-4 text-on-surface">{feature.title}</h3>
+          <p class="text-on-surface-variant leading-relaxed">{feature.description}</p>
+        </div>
+      ))}
     </div>
 
   </main>

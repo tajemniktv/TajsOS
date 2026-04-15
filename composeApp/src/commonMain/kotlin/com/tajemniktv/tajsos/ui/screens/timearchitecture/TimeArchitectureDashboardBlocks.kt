@@ -39,17 +39,29 @@ import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.time_architecture_active_label
 import tajsos.composeapp.generated.resources.time_architecture_active_window
+import tajsos.composeapp.generated.resources.time_architecture_daily_detail
+import tajsos.composeapp.generated.resources.time_architecture_daily_startup
 import tajsos.composeapp.generated.resources.time_architecture_all_horizons
 import tajsos.composeapp.generated.resources.time_architecture_current_horizon
 import tajsos.composeapp.generated.resources.time_architecture_desc
 import tajsos.composeapp.generated.resources.time_architecture_exam_pressure
 import tajsos.composeapp.generated.resources.time_architecture_map_title
+import tajsos.composeapp.generated.resources.time_architecture_monthly_detail
+import tajsos.composeapp.generated.resources.time_architecture_monthly_reset
 import tajsos.composeapp.generated.resources.time_architecture_no_items
+import tajsos.composeapp.generated.resources.time_architecture_no_anchor_markers
+import tajsos.composeapp.generated.resources.time_architecture_not_set
 import tajsos.composeapp.generated.resources.time_architecture_reserve_label
 import tajsos.composeapp.generated.resources.time_architecture_reserve_tracked
 import tajsos.composeapp.generated.resources.time_architecture_reserve_window
+import tajsos.composeapp.generated.resources.time_architecture_resets_cadence
 import tajsos.composeapp.generated.resources.time_architecture_status_summary
+import tajsos.composeapp.generated.resources.time_architecture_temporal_anchors
 import tajsos.composeapp.generated.resources.time_architecture_title
+import tajsos.composeapp.generated.resources.time_architecture_weekly_alignment
+import tajsos.composeapp.generated.resources.time_architecture_weekly_detail
+import tajsos.composeapp.generated.resources.time_architecture_add_anchor
+import tajsos.composeapp.generated.resources.time_architecture_run_monthly_reset
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
 
 object TimeArchitectureDashboardBlocks {
@@ -291,7 +303,7 @@ private fun renderTimeCadenceAnchors(context: TimeArchitectureDashboardContext) 
 @Composable
 private fun TimeArchitectureCadenceCard(
     modifier: Modifier = Modifier,
-    snapshot: com.tajemniktv.tajsos.ui.TimeArchitectureSnapshot,
+    snapshot: TimeArchitectureSnapshot,
     onRunMonthlyReset: () -> Unit
 ) {
     Surface(
@@ -305,27 +317,33 @@ private fun TimeArchitectureCadenceCard(
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             Text(
-                "Resets & Cadence",
+                stringResource(Res.string.time_architecture_resets_cadence),
                 style = MaterialTheme.typography.headlineSmall,
                 color = TajsOSTheme.Text,
             )
             CadenceRow(
-                title = "Daily startup",
-                detail = "${snapshot.todayLayer.size} items in today's horizon",
+                title = stringResource(Res.string.time_architecture_daily_startup),
+                detail = stringResource(Res.string.time_architecture_daily_detail, snapshot.todayLayer.size),
                 status = "Active",
             )
             CadenceRow(
-                title = "Weekly alignment",
-                detail = "${snapshot.weekLayer.size} items mapped this week",
+                title = stringResource(Res.string.time_architecture_weekly_alignment),
+                detail = stringResource(Res.string.time_architecture_weekly_detail, snapshot.weekLayer.size),
                 status = "Live",
             )
             CadenceRow(
-                title = "Monthly reset",
-                detail = if (snapshot.monthlyResetDate.isNotBlank()) snapshot.monthlyResetDate else "Not set",
+                title = stringResource(Res.string.time_architecture_monthly_reset),
+                detail =
+                    stringResource(
+                        Res.string.time_architecture_monthly_detail,
+                        snapshot.monthlyResetDate.ifBlank {
+                            stringResource(Res.string.time_architecture_not_set)
+                        },
+                    ),
                 status = "Pending",
             )
             Button(onClick = onRunMonthlyReset) {
-                Text("Run Monthly Reset")
+                Text(stringResource(Res.string.time_architecture_run_monthly_reset))
             }
         }
     }
@@ -334,7 +352,7 @@ private fun TimeArchitectureCadenceCard(
 @Composable
 private fun TimeArchitectureAnchorsCard(
     modifier: Modifier = Modifier,
-    snapshot: com.tajemniktv.tajsos.ui.TimeArchitectureSnapshot,
+    snapshot: TimeArchitectureSnapshot,
     onAddAnchor: () -> Unit
 ) {
     Surface(
@@ -352,19 +370,19 @@ private fun TimeArchitectureAnchorsCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(
-                    "Temporal Anchors",
+                    stringResource(Res.string.time_architecture_temporal_anchors),
                     style = MaterialTheme.typography.headlineSmall,
                     color = TajsOSTheme.Text,
                 )
                 AssistChip(
                     onClick = onAddAnchor,
-                    label = { Text("Add Anchor") },
+                    label = { Text(stringResource(Res.string.time_architecture_add_anchor)) },
                 )
             }
             val anchorRows = snapshot.buildAnchorRows()
             if (anchorRows.isEmpty()) {
                 EmptyState(
-                    message = "No anchor markers yet.",
+                    message = stringResource(Res.string.time_architecture_no_anchor_markers),
                     description = null,
                     fillParent = false,
                     showContainer = false,
@@ -614,7 +632,7 @@ private data class AnchorMarkerRow(
     val level: String,
 )
 
-private fun com.tajemniktv.tajsos.ui.TimeArchitectureSnapshot.buildAnchorRows(): List<AnchorMarkerRow> {
+private fun TimeArchitectureSnapshot.buildAnchorRows(): List<AnchorMarkerRow> {
     val markerRows =
         lifePeriodMarkers.map { marker ->
             AnchorMarkerRow(

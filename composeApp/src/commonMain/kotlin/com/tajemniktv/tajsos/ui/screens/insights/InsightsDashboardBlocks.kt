@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.cards.AdvancedSystemCard
@@ -77,6 +78,7 @@ internal fun InsightsMainBlock(
     val allAreas by viewModel.allAreas.collectAsState()
     val areaSnapshot by viewModel.areaHealthSnapshot.collectAsState()
     val allProjects by viewModel.allProjects.collectAsState()
+    val projectsById = remember(allProjects) { allProjects.associateBy { it.id } }
 
     LazyColumn(
         modifier =
@@ -272,7 +274,7 @@ internal fun InsightsMainBlock(
                 )
             }
             items(highEntropyProjects.keys.toList(), key = { "entropy_$it" }) { projectId ->
-                val project = allProjects.find { it.id == projectId }
+                val project = projectsById[projectId]
                 if (project != null) {
                     ProjectEntropyItem(project, highEntropyProjects[projectId] ?: 0.0) {
                         onNavigateToProject(project.id)

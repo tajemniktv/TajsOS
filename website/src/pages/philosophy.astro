@@ -6,7 +6,7 @@ import Footer from '../components/landing/Footer.astro';
 const title = "PHILOSOPHY";
 ---
 
-<Layout>
+<Layout title={title}>
   <div class="fixed inset-0 noise-bg pointer-events-none z-50"></div>
   <div class="fixed top-[-10%] right-[-5%] w-[600px] h-[600px] gradient-sphere pointer-events-none -z-10"></div>
 
@@ -16,6 +16,7 @@ const title = "PHILOSOPHY";
 <div class="grid grid-cols-12 gap-16">
 <!-- Main Content Area -->
 <div class="col-span-12 lg:col-span-8 space-y-32">
+<h1 class="font-headline text-5xl font-bold tracking-tight text-on-surface">Philosophy</h1>
 <!-- Section I -->
 <section class="space-y-10" id="neurodivergent-by-design">
 <div class="flex items-baseline gap-4">
