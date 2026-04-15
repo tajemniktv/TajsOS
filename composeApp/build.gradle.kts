@@ -22,10 +22,22 @@ kotlin {
     // Android target configured via android block (replaces androidTarget + android{}) (Earlier: androidLibrary)
     android {
         namespace = "com.tajemniktv.tajsos.composeapp"
-        compileSdk =
-            libs.versions.android.compileSdk
+        compileSdk {
+            version =
+                release(
+                    libs.versions.android.compileSdk
+                        .get()
+                        .toInt(),
+                ) {
+                    minorApiLevel =
+                        libs.versions.android.compileSdkMinor
+                            .get()
+                            .toInt()
+                }
+        }
+        buildToolsVersion =
+            libs.versions.android.buildTools
                 .get()
-                .toInt()
         minSdk =
             libs.versions.android.minSdk
                 .get()

@@ -1,8 +1,10 @@
 [versions]
 agp = "9.1.1"
-android-compileSdk = "36"
+android-compileSdk = "37"
+android-compileSdkMinor = "0"
+android-buildTools = "37.0.0"
 android-minSdk = "24"
-android-targetSdk = "36"
+android-targetSdk = "37"
 androidx-activity = "1.13.0"
 androidx-appcompat = "1.7.1"
 androidx-core = "1.18.0"
@@ -17,7 +19,7 @@ androidx-sqlite = "2.6.2"
 kotlinx-datetime = "0.7.1"
 kotlinx-serialization = "1.11.0"
 composeHotReload = "1.0.0"
-composeMultiplatform = "1.10.3"
+composeMultiplatform = "1.11.0-beta02"
 compose-icons = "1.7.3"
 junit = "4.13.2"
 kotlin = "2.3.20"
@@ -106,7 +108,6 @@ composeStabilityRuntime = { module = "com.github.skydoves:compose-stability-runt
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
-androidLibrary = { id = "com.android.library", version.ref = "agp" }
 androidKotlinMultiplatformLibrary = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 composeHotReload = { id = "org.jetbrains.compose.hot-reload", version.ref = "composeHotReload" }
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
