@@ -221,13 +221,19 @@ fun HeaderGreeting(
             overflow = TextOverflow.Ellipsis,
         )
         Spacer(Modifier.height(2.dp))
-        Text(
-            text = protocolText.uppercase(),
-            style = MaterialTheme.typography.labelSmall,
-            color = TajsOSTheme.Muted,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
+        Surface(
+            color = TajsOSTheme.Primary.copy(alpha = 0.1f),
+            shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
+        ) {
+            Text(
+                text = protocolText.uppercase(),
+                style = MaterialTheme.typography.labelSmall,
+                color = TajsOSTheme.Primary,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+            )
+        }
     }
 }
 
