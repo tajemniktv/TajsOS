@@ -349,7 +349,7 @@ class MainActivity : FragmentActivity() {
      * Safely executes an Intent extraction block, handling OS version differences
      * and catching potential unparcelling exceptions (e.g., BadParcelableException).
      */
-    private inline fun <T> safeIntentExtraction(name: String, block: () -> T?): T? =
+    private inline fun <T> Intent.safeIntentExtraction(name: String, block: () -> T?): T? =
         try {
             block()
         } catch (e: BadParcelableException) {
@@ -367,20 +367,6 @@ class MainActivity : FragmentActivity() {
      * Safely extracts a Parcelable extra from an Intent, handling OS version differences
      * and catching potential unparcelling exceptions (e.g., BadParcelableException).
      */
-    private inline fun <T> safeIntentExtraction(name: String, block: () -> T?): T? =
-        try {
-            block()
-        } catch (e: BadParcelableException) {
-            Log.e(TAG, "Failed to read parcelable extra: $name", e)
-            null
-        } catch (e: ParcelFormatException) {
-            Log.e(TAG, "Failed to read parcelable extra (bad parcel format): $name", e)
-            null
-        } catch (e: ClassCastException) {
-            Log.e(TAG, "Failed to read parcelable extra (class cast): $name", e)
-            null
-        }
-
     private inline fun <reified T : android.os.Parcelable> Intent.getSafeParcelableExtra(name: String): T? =
         safeIntentExtraction(name) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
