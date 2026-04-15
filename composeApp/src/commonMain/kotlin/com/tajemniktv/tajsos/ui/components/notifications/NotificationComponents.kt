@@ -22,12 +22,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -158,21 +156,6 @@ fun TajsNotificationCard(
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
                     )
-                }
-
-                if (notification.onDismiss != null) {
-                    Spacer(Modifier.width(TajsOSTheme.SpacingSm))
-                    IconButton(
-                        onClick = { notification.onDismiss?.invoke() },
-                        modifier = Modifier.size(24.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Dismiss",
-                            tint = TajsOSTheme.Muted,
-                            modifier = Modifier.size(16.dp)
-                        )
-                    }
                 }
             }
 
