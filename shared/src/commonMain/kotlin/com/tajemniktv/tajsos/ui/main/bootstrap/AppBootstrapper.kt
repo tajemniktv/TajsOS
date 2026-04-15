@@ -270,10 +270,9 @@ class AppBootstrapper(
                 ),
             )
 
-        templates.forEach { template ->
-            if (!existingNames.contains(template.name.trim().lowercase())) {
-                repository.insertTemplate(template)
-            }
+        val toInsert = templates.filter { it.name.trim().lowercase() !in existingNames }
+        if (toInsert.isNotEmpty()) {
+            repository.insertTemplates(toInsert)
         }
     }
 
