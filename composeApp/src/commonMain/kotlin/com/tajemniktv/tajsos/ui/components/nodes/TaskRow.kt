@@ -25,6 +25,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
@@ -96,7 +97,7 @@ fun TaskRow(
                 onCheckedChange = { onToggleDone(if (it) "done" else "active") },
                 colors = CheckboxDefaults.colors(checkedColor = TajsOSTheme.Primary),
             )
-            Column(modifier = Modifier.weight(1f)) {
+            Column(modifier = Modifier.weight(1f).alpha(if (isDone) 0.5f else 1f)) {
                 Text(
                     text = node.title,
                     style =

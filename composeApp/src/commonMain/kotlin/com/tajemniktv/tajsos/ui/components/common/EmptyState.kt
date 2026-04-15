@@ -62,11 +62,12 @@ fun EmptyState(
     description: String? = stringResource(Res.string.empty_state_default_desc),
     fillParent: Boolean = true,
     showContainer: Boolean = true,
+    pulseIcon: Boolean = showContainer,
     content: @Composable ColumnScope.() -> Unit = {},
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "EmptyStatePulse")
     val alpha by infiniteTransition.animateFloat(
-        initialValue = 0.1f,
+        initialValue = if (pulseIcon) 0.1f else 0.6f,
         targetValue = 0.6f,
         animationSpec =
             infiniteRepeatable(
