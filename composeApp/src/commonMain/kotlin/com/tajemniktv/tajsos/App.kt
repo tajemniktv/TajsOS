@@ -161,12 +161,10 @@ fun App(
                         blue = hex.substring(4, 6).toInt(16),
                     )
                 } else {
-                    androidx.compose.ui.graphics
-                        .Color(0xFFBA9EFF)
+                    TajsOSTheme.Primary
                 }
             } catch (_: Exception) {
-                androidx.compose.ui.graphics
-                    .Color(0xFFBA9EFF)
+                TajsOSTheme.Primary
             }
         }
 
@@ -178,6 +176,7 @@ fun App(
 
             // The primary navigation callback for the main content area.
             val navigate: (String) -> Unit = {
+                // Resolve the route, ensuring Tasks always includes the active tab segment.
                 val resolvedRoute =
                     if (it == Screen.Tasks.route) {
                         Screen.Tasks.route + "?tab=" + selectedTasksTab.routeSegment
@@ -185,6 +184,7 @@ fun App(
                         it
                     }
 
+                // If the target is a tasks tab, keep our shell state synchronized.
                 if (resolvedRoute.startsWith(Screen.Tasks.route + "?tab=")) {
                     val tabSegment =
                         resolvedRoute.substringAfter("?tab=", missingDelimiterValue = "")
@@ -192,15 +192,36 @@ fun App(
                 }
 
                 val targetScreen = Screen.fromRoute(resolvedRoute)
-                if (targetScreen?.isRoot == true) {
-                    navController.popBackStack(Screen.Dashboard.route, inclusive = false)
-                    if (resolvedRoute != Screen.Dashboard.route) {
+
+                // Root destinations and their respective sub-tabs should replace each other on the backstack
+                // to preserve a flat navigation history in the sidebar shell.
+                if (targetScreen?.isRoot == true || targetScreen is Screen.Sub) {
+                    if (resolvedRoute == Screen.Dashboard.route) {
+                        val popped =
+                            navController.popBackStack(
+                                Screen.Dashboard.route,
+                                inclusive = false,
+                            )
+                        if (!popped && currentDestination?.route != Screen.Dashboard.route) {
+                            navController.navigate(Screen.Dashboard.route) {
+                                popUpTo(navController.graph.startDestinationId) {
+                                    inclusive = true
+                                }
+                                launchSingleTop = true
+                            }
+                        }
+                    } else {
                         navController.navigate(resolvedRoute) {
+                            popUpTo(Screen.Dashboard.route) {
+                                inclusive = false
+                                saveState = true
+                            }
                             restoreState = true
                             launchSingleTop = true
                         }
                     }
                 } else {
+                    // Detail screens are pushed onto the current backstack context.
                     navController.navigate(resolvedRoute) {
                         launchSingleTop = true
                     }
@@ -402,384 +423,435 @@ private fun AppScaffold(
                         )
                     }
                 }
-            composable(Screen.Dashboard.route) {
-                RootScreenFrame(screen = Screen.Dashboard, controller = screenHeaderController) {
-                    DashboardScreen(
+                composable(Screen.Dashboard.route) {
+                    RootScreenFrame(
+                        screen = Screen.Dashboard,
+                        controller = screenHeaderController,
+                    ) {
+                        DashboardScreen(
+                            viewModel,
+                            onNavigateTo = { onNavigate(it.route) },
+                            onEditNode = onEditNode,
+                            onNavigateToProject = {
+                                onNavigate(
+                                    Screen.ProjectDetail.route.replace(
+                                        "{projectId}",
+                                        it.toString(),
+                                    ),
+                                )
+                            },
+                            onNewEntry = { onShowCaptureSheet(true) },
+                            currentDestination = currentDestination,
+                        )
+                    }
+                }
+                composable(Screen.Inbox.route) {
+                    RootScreenFrame(screen = Screen.Inbox, controller = screenHeaderController) {
+                        InboxScreen(viewModel, onEditNode)
+                    }
+                }
+                composable(Screen.Search.route) {
+                    RootScreenFrame(screen = Screen.Search, controller = screenHeaderController) {
+                        SearchScreen(viewModel, onEditNode)
+                    }
+                }
+                composable(Screen.Today.route) {
+                    RootScreenFrame(screen = Screen.Today, controller = screenHeaderController) {
+                        TodayScreen(viewModel, onEditNode)
+                    }
+                }
+                composable(Screen.Focus.route) {
+                    RootScreenFrame(screen = Screen.Focus, controller = screenHeaderController) {
+                        FocusScreen(viewModel)
+                    }
+                }
+                composable(Screen.Track.route) {
+                    RootScreenFrame(screen = Screen.Track, controller = screenHeaderController) {
+                        TrackScreen(viewModel)
+                    }
+                }
+                Screen.Tasks.children.forEach { child ->
+                    composable(child.route) {
+                        val tab = TasksTab.fromRouteSegment(child.route.substringAfterLast("="))
+                        RootScreenFrame(
+                            screen = Screen.Tasks,
+                            breadcrumbScreen = child,
+                            onBreadcrumbNavigate = onNavigate,
+                            controller = screenHeaderController,
+                        ) {
+                            TasksScreen(
+                                viewModel = viewModel,
+                                onEditNode = onEditNode,
+                                currentTab = tab,
+                                onTabChange = onTasksTabChange,
+                            )
+                        }
+                    }
+                }
+                composable(Screen.Tasks.route) {
+                    RootScreenFrame(
+                        screen = Screen.Tasks,
+                        breadcrumbScreen = currentTasksTab.toScreen(),
+                        onBreadcrumbNavigate = onNavigate,
+                        controller = screenHeaderController,
+                    ) {
+                        TasksScreen(
+                            viewModel = viewModel,
+                            onEditNode = onEditNode,
+                            currentTab = currentTasksTab,
+                            onTabChange = onTasksTabChange,
+                        )
+                    }
+                }
+                composable(Screen.Notes.route) {
+                    RootScreenFrame(screen = Screen.Notes, controller = screenHeaderController) {
+                        NotesScreen(viewModel, onEditNode)
+                    }
+                }
+                composable(Screen.Notes.route + "?noteId={noteId}") {
+                    val noteId =
+                        it.savedStateHandle
+                            .get<Any>("noteId")
+                            ?.toString()
+                            ?.toLongOrNull()
+                    RootScreenFrame(screen = Screen.Notes, controller = screenHeaderController) {
+                        NotesScreen(
+                            viewModel = viewModel,
+                            onNoteClick = onEditNode,
+                            initialSelectedNoteId = noteId,
+                        )
+                    }
+                }
+                composable(Screen.Calendar.route) {
+                    RootScreenFrame(screen = Screen.Calendar, controller = screenHeaderController) {
+                        CalendarScreen(viewModel, onEditNode)
+                    }
+                }
+                composable(Screen.Decisions.route) {
+                    RootScreenFrame(
+                        screen = Screen.Decisions,
+                        controller = screenHeaderController,
+                    ) {
+                        DecisionsScreen(viewModel, onEditNode)
+                    }
+                }
+                composable(Screen.OpenLoops.route) {
+                    RootScreenFrame(
+                        screen = Screen.OpenLoops,
+                        controller = screenHeaderController,
+                    ) {
+                        OpenLoopsScreen(viewModel, onEditNode)
+                    }
+                }
+                composable(Screen.Protocols.route) {
+                    RootScreenFrame(
+                        screen = Screen.Protocols,
+                        controller = screenHeaderController,
+                    ) {
+                        ProtocolsScreen(viewModel, onEditNode)
+                    }
+                }
+                composable(Screen.TimeArchitecture.route) {
+                    RootScreenFrame(
+                        screen = Screen.TimeArchitecture,
+                        controller = screenHeaderController,
+                    ) {
+                        TimeArchitectureScreen(viewModel, onEditNode)
+                    }
+                }
+                composable(Screen.Places.route) {
+                    RootScreenFrame(screen = Screen.Places, controller = screenHeaderController) {
+                        PlacesScreen(viewModel, onEditNode)
+                    }
+                }
+                composable(Screen.Finances.route) {
+                    RootScreenFrame(screen = Screen.Finances, controller = screenHeaderController) {
+                        FinancesScreen(viewModel, onEditNode)
+                    }
+                }
+                composable(Screen.Health.route) {
+                    RootScreenFrame(screen = Screen.Health, controller = screenHeaderController) {
+                        HealthScreen(viewModel, onEditNode)
+                    }
+                }
+                composable(Screen.Relationships.route) {
+                    RootScreenFrame(
+                        screen = Screen.Relationships,
+                        controller = screenHeaderController,
+                    ) {
+                        RelationshipsScreen(viewModel, onEditNode)
+                    }
+                }
+                composable(Screen.Education.route) {
+                    RootScreenFrame(
+                        screen = Screen.Education,
+                        controller = screenHeaderController,
+                    ) {
+                        StudyScreen(viewModel, onEditNode)
+                    }
+                }
+                composable(Screen.StudyLegacy.route) {
+                    RootScreenFrame(
+                        screen = Screen.StudyLegacy,
+                        controller = screenHeaderController,
+                    ) {
+                        StudyScreen(viewModel, onEditNode)
+                    }
+                }
+                composable(Screen.Rules.route) {
+                    RootScreenFrame(screen = Screen.Rules, controller = screenHeaderController) {
+                        RulesScreen(viewModel, onEditNode)
+                    }
+                }
+                composable(Screen.Vaults.route) {
+                    RootScreenFrame(screen = Screen.Vaults, controller = screenHeaderController) {
+                        VaultsScreen(viewModel, onEditNode)
+                    }
+                }
+                composable(Screen.Capacity.route) {
+                    RootScreenFrame(screen = Screen.Capacity, controller = screenHeaderController) {
+                        CapacityScreen(viewModel)
+                    }
+                }
+                composable(Screen.Identity.route) {
+                    RootScreenFrame(screen = Screen.Identity, controller = screenHeaderController) {
+                        IdentityScreen(viewModel, onEditNode)
+                    }
+                }
+                composable(Screen.Templates.route) {
+                    RootScreenFrame(
+                        screen = Screen.Templates,
+                        controller = screenHeaderController,
+                    ) {
+                        TemplatesScreen(viewModel) { navController.popBackStack() }
+                    }
+                }
+                composable(Screen.Settings.route) {
+                    RootScreenFrame(screen = Screen.Settings, controller = screenHeaderController) {
+                        SettingsScreen(viewModel)
+                    }
+                }
+                val settingsPref =
+                    Screen.Settings.children.first {
+                        (it is Screen.Sub) &&
+                            it.route.contains("preferences")
+                    }
+                composable(settingsPref.route) {
+                    RootScreenFrame(screen = Screen.Settings, controller = screenHeaderController) {
+                        SettingsScreen(viewModel)
+                    }
+                }
+                val settingsCal =
+                    Screen.Settings.children.first {
+                        (it is Screen.Sub) &&
+                            it.route.contains("calendar")
+                    }
+                composable(settingsCal.route) {
+                    RootScreenFrame(
+                        screen = Screen.CalendarSettings,
+                        controller = screenHeaderController,
+                    ) {
+                        CalendarSettingsScreen(viewModel)
+                    }
+                }
+                composable(Screen.SettingsHealth.route) {
+                    RootScreenFrame(
+                        screen = Screen.SettingsHealth,
+                        controller = screenHeaderController,
+                    ) {
+                        SettingsScreen(viewModel, screenId = "health")
+                    }
+                }
+                composable(Screen.SettingsAppearance.route) {
+                    RootScreenFrame(
+                        screen = Screen.SettingsAppearance,
+                        controller = screenHeaderController,
+                    ) {
+                        SettingsScreen(viewModel, screenId = "appearance")
+                    }
+                }
+                composable(Screen.SettingsFeaturePacks.route) {
+                    RootScreenFrame(
+                        screen = Screen.SettingsFeaturePacks,
+                        controller = screenHeaderController,
+                    ) {
+                        SettingsScreen(viewModel, screenId = "feature_packs")
+                    }
+                }
+                composable(Screen.SettingsData.route) {
+                    RootScreenFrame(
+                        screen = Screen.SettingsData,
+                        controller = screenHeaderController,
+                    ) {
+                        SettingsScreen(viewModel, screenId = "data")
+                    }
+                }
+                composable(Screen.SettingsDebug.route) {
+                    RootScreenFrame(
+                        screen = Screen.SettingsDebug,
+                        controller = screenHeaderController,
+                    ) {
+                        SettingsScreen(viewModel, screenId = "debug")
+                    }
+                }
+                composable(Screen.CalendarSettings.route) {
+                    RootScreenFrame(
+                        screen = Screen.CalendarSettings,
+                        controller = screenHeaderController,
+                    ) {
+                        CalendarSettingsScreen(viewModel)
+                    }
+                }
+                composable(Screen.Projects.route) {
+                    RootScreenFrame(screen = Screen.Projects, controller = screenHeaderController) {
+                        ProjectsScreen(viewModel) { onNavigate(it) }
+                    }
+                }
+                composable(Screen.Areas.route) {
+                    RootScreenFrame(screen = Screen.Areas, controller = screenHeaderController) {
+                        AreasScreen(viewModel) { onNavigate(it) }
+                    }
+                }
+                composable(Screen.ProjectDetail.route) {
+                    /**
+                     * The back stack entry for the project detail screen.
+                     */
+                    val projectId =
+                        it.savedStateHandle
+                            .get<Any>("projectId")
+                            ?.toString()
+                            ?.toLongOrNull() ?: -1L
+                    ProjectDetailScreen(
                         viewModel,
-                        onNavigateTo = { onNavigate(it.route) },
+                        projectId,
+                        onEditNode,
+                        onBack = { navController.popBackStack() },
+                        isDesktop = isDesktop,
+                        screenHeaderController = screenHeaderController,
+                    )
+                }
+                composable(Screen.AreaDetail.route) {
+                    /**
+                     * The back stack entry for the area detail screen.
+                     */
+                    val areaId =
+                        it.savedStateHandle
+                            .get<Any>("areaId")
+                            ?.toString()
+                            ?.toLongOrNull() ?: -1L
+                    AreaDetailScreen(
+                        viewModel,
+                        areaId,
+                        onNavigateToProject = { id ->
+                            onNavigate(
+                                Screen.ProjectDetail.route.replace(
+                                    "{projectId}",
+                                    id.toString(),
+                                ),
+                            )
+                        },
                         onEditNode = onEditNode,
-                        onNavigateToProject = {
+                        onBack = { navController.popBackStack() },
+                        isDesktop = isDesktop,
+                        screenHeaderController = screenHeaderController,
+                    )
+                }
+                composable(Screen.NoteDetail.route) {
+                    /**
+                     * The back stack entry for the note detail screen.
+                     */
+                    val noteId =
+                        it.savedStateHandle
+                            .get<Any>("noteId")
+                            ?.toString()
+                            ?.toLongOrNull() ?: -1L
+                    NoteDetailScreen(
+                        viewModel,
+                        noteId,
+                        onBack = { navController.popBackStack() },
+                        onNavigateToNode = onEditNode,
+                        onNavigateToSearch = { onNavigate(Screen.Search.route) },
+                        isDesktop = isDesktop,
+                        screenHeaderController = screenHeaderController,
+                    )
+                }
+                composable(Screen.TaskDetail.route) {
+                    /**
+                     * The back stack entry for the task detail screen.
+                     */
+                    val taskId =
+                        it.savedStateHandle
+                            .get<Any>("taskId")
+                            ?.toString()
+                            ?.toLongOrNull() ?: -1L
+                    TaskDetailScreen(
+                        viewModel = viewModel,
+                        taskId = taskId,
+                        onBack = { navController.popBackStack() },
+                        onNavigateToNode = onEditNode,
+                        onNavigateToSearch = { onNavigate(Screen.Search.route) },
+                        isDesktop = isDesktop,
+                        screenHeaderController = screenHeaderController,
+                    )
+                }
+                composable(Screen.RecordDetail.route) {
+                    /**
+                     * The back stack entry for the record detail screen.
+                     */
+                    val recordId =
+                        it.savedStateHandle
+                            .get<Any>("recordId")
+                            ?.toString()
+                            ?.toLongOrNull() ?: -1L
+                    RecordDetailScreen(
+                        viewModel = viewModel,
+                        recordId = recordId,
+                        onBack = { navController.popBackStack() },
+                        onNavigateToNode = onEditNode,
+                        onNavigateToSearch = { onNavigate(Screen.Search.route) },
+                        isDesktop = isDesktop,
+                        screenHeaderController = screenHeaderController,
+                    )
+                }
+                composable(Screen.Insights.route) {
+                    RootScreenFrame(screen = Screen.Insights, controller = screenHeaderController) {
+                        InsightsScreen(viewModel) {
                             onNavigate(
                                 Screen.ProjectDetail.route.replace(
                                     "{projectId}",
                                     it.toString(),
                                 ),
                             )
-                        },
-                        onNewEntry = { onShowCaptureSheet(true) },
-                        currentDestination = currentDestination,
-                    )
+                        }
+                    }
                 }
-            }
-            composable(Screen.Inbox.route) {
-                RootScreenFrame(screen = Screen.Inbox, controller = screenHeaderController) {
-                    InboxScreen(viewModel, onEditNode)
+                composable(Screen.Graph.route) {
+                    RootScreenFrame(screen = Screen.Graph, controller = screenHeaderController) {
+                        GraphScreen(viewModel, onNodeClick = onEditNode)
+                    }
                 }
-            }
-            composable(Screen.Search.route) {
-                RootScreenFrame(screen = Screen.Search, controller = screenHeaderController) {
-                    SearchScreen(viewModel, onEditNode)
+                composable(Screen.Archive.route) {
+                    RootScreenFrame(screen = Screen.Archive, controller = screenHeaderController) {
+                        ArchiveScreen(viewModel, onEditNode)
+                    }
                 }
-            }
-            composable(Screen.Today.route) {
-                RootScreenFrame(screen = Screen.Today, controller = screenHeaderController) {
-                    TodayScreen(viewModel, onEditNode)
+                composable(Screen.Review.route) {
+                    RootScreenFrame(screen = Screen.Review, controller = screenHeaderController) {
+                        ReviewScreen(viewModel) {
+                            navController.popBackStack()
+                        }
+                    }
                 }
-            }
-            composable(Screen.Focus.route) {
-                RootScreenFrame(screen = Screen.Focus, controller = screenHeaderController) {
-                    FocusScreen(viewModel)
-                }
-            }
-            composable(Screen.Track.route) {
-                RootScreenFrame(screen = Screen.Track, controller = screenHeaderController) {
-                    TrackScreen(viewModel)
-                }
-            }
-            composable(Screen.Tasks.route) {
-                RootScreenFrame(
-                    screen = Screen.Tasks,
-                    breadcrumbScreen = currentTasksTab.toScreen(),
-                    onBreadcrumbNavigate = onNavigate,
-                    controller = screenHeaderController,
-                ) {
-                    TasksScreen(
-                        viewModel = viewModel,
-                        onEditNode = onEditNode,
-                        currentTab = currentTasksTab,
-                        onTabChange = onTasksTabChange,
-                    )
-                }
-            }
-            composable(Screen.Tasks.route + "?tab={tab}") {
-                RootScreenFrame(
-                    screen = Screen.Tasks,
-                    breadcrumbScreen = currentTasksTab.toScreen(),
-                    onBreadcrumbNavigate = onNavigate,
-                    controller = screenHeaderController,
-                ) {
-                    TasksScreen(
-                        viewModel = viewModel,
-                        onEditNode = onEditNode,
-                        currentTab = currentTasksTab,
-                        onTabChange = onTasksTabChange,
-                    )
-                }
-            }
-            composable(Screen.Notes.route) {
-                RootScreenFrame(screen = Screen.Notes, controller = screenHeaderController) {
-                    NotesScreen(viewModel, onEditNode)
-                }
-            }
-            composable(Screen.Notes.route + "?noteId={noteId}") {
-                val noteId =
-                    it.savedStateHandle
-                        .get<Any>("noteId")
-                        ?.toString()
-                        ?.toLongOrNull()
-                RootScreenFrame(screen = Screen.Notes, controller = screenHeaderController) {
-                    NotesScreen(
-                        viewModel = viewModel,
-                        onNoteClick = onEditNode,
-                        initialSelectedNoteId = noteId,
-                    )
-                }
-            }
-            composable(Screen.Calendar.route) {
-                RootScreenFrame(screen = Screen.Calendar, controller = screenHeaderController) {
-                    CalendarScreen(viewModel, onEditNode)
-                }
-            }
-            composable(Screen.Decisions.route) {
-                RootScreenFrame(screen = Screen.Decisions, controller = screenHeaderController) {
-                    DecisionsScreen(viewModel, onEditNode)
-                }
-            }
-            composable(Screen.OpenLoops.route) {
-                RootScreenFrame(screen = Screen.OpenLoops, controller = screenHeaderController) {
-                    OpenLoopsScreen(viewModel, onEditNode)
-                }
-            }
-            composable(Screen.Protocols.route) {
-                RootScreenFrame(screen = Screen.Protocols, controller = screenHeaderController) {
-                    ProtocolsScreen(viewModel, onEditNode)
-                }
-            }
-            composable(Screen.TimeArchitecture.route) {
-                RootScreenFrame(screen = Screen.TimeArchitecture, controller = screenHeaderController) {
-                    TimeArchitectureScreen(viewModel, onEditNode)
-                }
-            }
-            composable(Screen.Places.route) {
-                RootScreenFrame(screen = Screen.Places, controller = screenHeaderController) {
-                    PlacesScreen(viewModel, onEditNode)
-                }
-            }
-            composable(Screen.Finances.route) {
-                RootScreenFrame(screen = Screen.Finances, controller = screenHeaderController) {
-                    FinancesScreen(viewModel, onEditNode)
-                }
-            }
-            composable(Screen.Health.route) {
-                RootScreenFrame(screen = Screen.Health, controller = screenHeaderController) {
-                    HealthScreen(viewModel, onEditNode)
-                }
-            }
-            composable(Screen.Relationships.route) {
-                RootScreenFrame(screen = Screen.Relationships, controller = screenHeaderController) {
-                    RelationshipsScreen(viewModel, onEditNode)
-                }
-            }
-            composable(Screen.Education.route) {
-                RootScreenFrame(screen = Screen.Education, controller = screenHeaderController) {
-                    StudyScreen(viewModel, onEditNode)
-                }
-            }
-            composable(Screen.StudyLegacy.route) {
-                RootScreenFrame(screen = Screen.StudyLegacy, controller = screenHeaderController) {
-                    StudyScreen(viewModel, onEditNode)
-                }
-            }
-            composable(Screen.Rules.route) {
-                RootScreenFrame(screen = Screen.Rules, controller = screenHeaderController) {
-                    RulesScreen(viewModel, onEditNode)
-                }
-            }
-            composable(Screen.Vaults.route) {
-                RootScreenFrame(screen = Screen.Vaults, controller = screenHeaderController) {
-                    VaultsScreen(viewModel, onEditNode)
-                }
-            }
-            composable(Screen.Capacity.route) {
-                RootScreenFrame(screen = Screen.Capacity, controller = screenHeaderController) {
-                    CapacityScreen(viewModel)
-                }
-            }
-            composable(Screen.Identity.route) {
-                RootScreenFrame(screen = Screen.Identity, controller = screenHeaderController) {
-                    IdentityScreen(viewModel, onEditNode)
-                }
-            }
-            composable(Screen.Templates.route) {
-                RootScreenFrame(screen = Screen.Templates, controller = screenHeaderController) {
-                    TemplatesScreen(viewModel) { navController.popBackStack() }
-                }
-            }
-            composable(Screen.Settings.route) {
-                RootScreenFrame(screen = Screen.Settings, controller = screenHeaderController) {
-                    SettingsScreen(viewModel)
-                }
-            }
-            val settingsPref =
-                Screen.Settings.children.first {
-                    (it is Screen.Sub) &&
-                        it.route.contains("preferences")
-                }
-            composable(settingsPref.route) {
-                RootScreenFrame(screen = Screen.Settings, controller = screenHeaderController) {
-                    SettingsScreen(viewModel)
-                }
-            }
-            val settingsCal =
-                Screen.Settings.children.first {
-                    (it is Screen.Sub) &&
-                        it.route.contains("calendar")
-                }
-            composable(settingsCal.route) {
-                RootScreenFrame(screen = Screen.CalendarSettings, controller = screenHeaderController) {
-                    CalendarSettingsScreen(viewModel)
-                }
-            }
-            composable(Screen.SettingsHealth.route) {
-                RootScreenFrame(screen = Screen.SettingsHealth, controller = screenHeaderController) {
-                    SettingsScreen(viewModel, screenId = "health")
-                }
-            }
-            composable(Screen.SettingsAppearance.route) {
-                RootScreenFrame(screen = Screen.SettingsAppearance, controller = screenHeaderController) {
-                    SettingsScreen(viewModel, screenId = "appearance")
-                }
-            }
-            composable(Screen.SettingsFeaturePacks.route) {
-                RootScreenFrame(screen = Screen.SettingsFeaturePacks, controller = screenHeaderController) {
-                    SettingsScreen(viewModel, screenId = "feature_packs")
-                }
-            }
-            composable(Screen.SettingsData.route) {
-                RootScreenFrame(screen = Screen.SettingsData, controller = screenHeaderController) {
-                    SettingsScreen(viewModel, screenId = "data")
-                }
-            }
-            composable(Screen.SettingsDebug.route) {
-                RootScreenFrame(screen = Screen.SettingsDebug, controller = screenHeaderController) {
-                    SettingsScreen(viewModel, screenId = "debug")
-                }
-            }
-            composable(Screen.CalendarSettings.route) {
-                RootScreenFrame(screen = Screen.CalendarSettings, controller = screenHeaderController) {
-                    CalendarSettingsScreen(viewModel)
-                }
-            }
-            composable(Screen.Projects.route) {
-                RootScreenFrame(screen = Screen.Projects, controller = screenHeaderController) {
-                    ProjectsScreen(viewModel) { onNavigate(it) }
-                }
-            }
-            composable(Screen.Areas.route) {
-                RootScreenFrame(screen = Screen.Areas, controller = screenHeaderController) {
-                    AreasScreen(viewModel) { onNavigate(it) }
-                }
-            }
-            composable(Screen.ProjectDetail.route) {
-                /**
-                 * The back stack entry for the project detail screen.
-                 */
-                val projectId =
-                    it.savedStateHandle
-                        .get<Any>("projectId")
-                        ?.toString()
-                        ?.toLongOrNull() ?: -1L
-                ProjectDetailScreen(
-                    viewModel,
-                    projectId,
-                    onEditNode,
-                    onBack = { navController.popBackStack() },
-                    isDesktop = isDesktop,
-                    screenHeaderController = screenHeaderController,
-                )
-            }
-            composable(Screen.AreaDetail.route) {
-                /**
-                 * The back stack entry for the area detail screen.
-                 */
-                val areaId =
-                    it.savedStateHandle
-                        .get<Any>("areaId")
-                        ?.toString()
-                        ?.toLongOrNull() ?: -1L
-                AreaDetailScreen(
-                    viewModel,
-                    areaId,
-                    onNavigateToProject = { id ->
-                        onNavigate(
-                            Screen.ProjectDetail.route.replace(
-                                "{projectId}",
-                                id.toString(),
-                            ),
-                        )
-                    },
-                    onEditNode = onEditNode,
-                    onBack = { navController.popBackStack() },
-                    isDesktop = isDesktop,
-                    screenHeaderController = screenHeaderController,
-                )
-            }
-            composable(Screen.NoteDetail.route) {
-                /**
-                 * The back stack entry for the note detail screen.
-                 */
-                val noteId =
-                    it.savedStateHandle
-                        .get<Any>("noteId")
-                        ?.toString()
-                        ?.toLongOrNull() ?: -1L
-                NoteDetailScreen(
-                    viewModel,
-                    noteId,
-                    onBack = { navController.popBackStack() },
-                    onNavigateToNode = onEditNode,
-                    onNavigateToSearch = { onNavigate(Screen.Search.route) },
-                    isDesktop = isDesktop,
-                    screenHeaderController = screenHeaderController,
-                )
-            }
-            composable(Screen.TaskDetail.route) {
-                /**
-                 * The back stack entry for the task detail screen.
-                 */
-                val taskId =
-                    it.savedStateHandle
-                        .get<Any>("taskId")
-                        ?.toString()
-                        ?.toLongOrNull() ?: -1L
-                TaskDetailScreen(
-                    viewModel = viewModel,
-                    taskId = taskId,
-                    onBack = { navController.popBackStack() },
-                    onNavigateToNode = onEditNode,
-                    onNavigateToSearch = { onNavigate(Screen.Search.route) },
-                    isDesktop = isDesktop,
-                    screenHeaderController = screenHeaderController,
-                )
-            }
-            composable(Screen.RecordDetail.route) {
-                /**
-                 * The back stack entry for the record detail screen.
-                 */
-                val recordId =
-                    it.savedStateHandle
-                        .get<Any>("recordId")
-                        ?.toString()
-                        ?.toLongOrNull() ?: -1L
-                RecordDetailScreen(
-                    viewModel = viewModel,
-                    recordId = recordId,
-                    onBack = { navController.popBackStack() },
-                    onNavigateToNode = onEditNode,
-                    onNavigateToSearch = { onNavigate(Screen.Search.route) },
-                    isDesktop = isDesktop,
-                    screenHeaderController = screenHeaderController,
-                )
-            }
-            composable(Screen.Insights.route) {
-                RootScreenFrame(screen = Screen.Insights, controller = screenHeaderController) {
-                    InsightsScreen(viewModel) {
-                        onNavigate(
-                            Screen.ProjectDetail.route.replace(
-                                "{projectId}",
-                                it.toString(),
-                            ),
+                composable(Screen.Profile.route) {
+                    RootScreenFrame(screen = Screen.Profile, controller = screenHeaderController) {
+                        ProfileScreen(
+                            viewModel = viewModel,
+                            onPickAvatar = onPickAvatar,
+                            pickedAvatarRef = avatarPickResult,
+                            onAvatarPickConsume = onAvatarPickConsume,
                         )
                     }
                 }
-            }
-            composable(Screen.Graph.route) {
-                RootScreenFrame(screen = Screen.Graph, controller = screenHeaderController) {
-                    GraphScreen(viewModel, onNodeClick = onEditNode)
-                }
-            }
-            composable(Screen.Archive.route) {
-                RootScreenFrame(screen = Screen.Archive, controller = screenHeaderController) {
-                    ArchiveScreen(viewModel, onEditNode)
-                }
-            }
-            composable(Screen.Review.route) {
-                RootScreenFrame(screen = Screen.Review, controller = screenHeaderController) {
-                    ReviewScreen(viewModel) {
-                        navController.popBackStack()
-                    }
-                }
-            }
-            composable(Screen.Profile.route) {
-                RootScreenFrame(screen = Screen.Profile, controller = screenHeaderController) {
-                    ProfileScreen(
-                        viewModel = viewModel,
-                        onPickAvatar = onPickAvatar,
-                        pickedAvatarRef = avatarPickResult,
-                        onAvatarPickConsume = onAvatarPickConsume,
-                    )
-                }
-            }
             }
         }
 
@@ -842,8 +914,7 @@ private fun handleOnCapture(
     sticky: Boolean,
     decisionCat: String?,
 ) {
-    when (type)
-    {
+    when (type) {
         "inbox" -> {
             viewModel.captureInboxEntry(
                 rawText = text,

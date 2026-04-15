@@ -115,8 +115,8 @@ fun TactileSlider(
             colors =
                 SliderDefaults.colors(
                     thumbColor = Color.Transparent, // Custom thumb below
-                    activeTrackColor = Color(0xFF27272A),
-                    inactiveTrackColor = Color(0xFF18181B),
+                    activeTrackColor = TajsOSTheme.SurfaceHigh,
+                    inactiveTrackColor = TajsOSTheme.SurfaceLow,
                     activeTickColor = Color.Transparent,
                     inactiveTickColor = Color.Transparent,
                 ),
@@ -199,8 +199,8 @@ fun TactileTextField(
                 Modifier
                     .fillMaxWidth()
                     .heightIn(min = 120.dp)
-                    .background(Color.Black, RoundedCornerShape(TajsOSTheme.RadiusMd))
-                    .border(1.dp, Color(0xFF1C1C21), RoundedCornerShape(TajsOSTheme.RadiusMd))
+                    .background(TajsOSTheme.SurfaceLowest, RoundedCornerShape(TajsOSTheme.RadiusMd))
+                    .border(1.dp, TajsOSTheme.SurfaceLow, RoundedCornerShape(TajsOSTheme.RadiusMd))
                     .padding(TajsOSTheme.SpacingMd),
         ) {
             if (value.isEmpty()) {

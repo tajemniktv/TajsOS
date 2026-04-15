@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.FilterChip
@@ -197,8 +196,8 @@ fun ProjectListContent(
             }
         }
     } else {
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
-            items(state.filteredProjects, key = { it.id }) { project ->
+        Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
+            state.filteredProjects.forEach { project ->
                 val projectNodes = state.nodesByProjectId[project.id] ?: emptyList()
                 val total = projectNodes.size
                 val completed = projectNodes.count { it.node.status == "done" }
@@ -225,9 +224,7 @@ fun ProjectListContent(
                     )
                 }
             }
-            item {
-                Spacer(modifier = Modifier.height(80.dp))
-            }
+            Spacer(modifier = Modifier.height(80.dp))
         }
     }
 }

@@ -15,7 +15,6 @@ import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
@@ -26,8 +25,8 @@ import com.tajemniktv.tajsos.data.resolveDisplayName
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.common.GlassMaterial
 import com.tajemniktv.tajsos.ui.components.common.ProvideGlassSystem
-import com.tajemniktv.tajsos.ui.components.common.glassContainerColor
 import com.tajemniktv.tajsos.ui.components.common.glassChrome
+import com.tajemniktv.tajsos.ui.components.common.glassContainerColor
 import com.tajemniktv.tajsos.ui.components.notifications.NotificationUiModel
 import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderModel
 import com.tajemniktv.tajsos.ui.screens.tasks.TasksTab
@@ -39,7 +38,6 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
-import kotlin.time.Clock
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.briefing_greeting_afternoon
 import tajsos.composeapp.generated.resources.briefing_greeting_evening
@@ -51,6 +49,7 @@ import tajsos.composeapp.generated.resources.shell_mode_recovery
 import tajsos.composeapp.generated.resources.shell_mode_standby
 import tajsos.composeapp.generated.resources.shell_protocol_state_standby
 import tajsos.composeapp.generated.resources.shell_protocol_state_with_name
+import kotlin.time.Clock
 
 /**
  * Top-level application chrome with persistent sidebar, shell header, and routed content slot.
@@ -96,17 +95,7 @@ fun AppShell(
                 modifier =
                     Modifier
                         .fillMaxSize()
-                        .background(
-                            brush =
-                                Brush.linearGradient(
-                                    colors =
-                                        listOf(
-                                            TajsOSTheme.Background,
-                                            TajsOSTheme.SurfaceLow,
-                                            TajsOSTheme.Background,
-                                        ),
-                                ),
-                        )
+                        .background(TajsOSTheme.Background)
                         .then(
                             if (isGlassmorphismEnabled) {
                                 Modifier.hazeSource(hazeState)
@@ -116,7 +105,7 @@ fun AppShell(
                         ),
             )
             if (isDesktop) {
-                Row(modifier = Modifier.fillMaxSize().background(TajsOSTheme.Background.copy(alpha = 0.74f))) {
+                Row(modifier = Modifier.fillMaxSize().background(TajsOSTheme.Background)) {
                     AppSidebar(
                         shellState = shellState,
                         menuGroups = Screen.groupedItemsForPacks(packRegistry),
@@ -157,7 +146,9 @@ fun AppShell(
                         ModalDrawerSheet(
                             modifier =
                                 Modifier.glassChrome(
-                                    shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp),
+                                    shape =
+                                        androidx.compose.foundation.shape
+                                            .RoundedCornerShape(0.dp),
                                     material = GlassMaterial.THICK,
                                 ),
                             drawerContainerColor = glassContainerColor(TajsOSTheme.SidebarBackground),
@@ -190,7 +181,7 @@ fun AppShell(
                         }
                     },
                 ) {
-                    Column(modifier = Modifier.fillMaxSize().background(TajsOSTheme.Background.copy(alpha = 0.74f))) {
+                    Column(modifier = Modifier.fillMaxSize().background(TajsOSTheme.Background)) {
                         AppShellHeader(
                             greeting = greeting,
                             protocolText = protocolText,

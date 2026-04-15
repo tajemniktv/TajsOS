@@ -4,6 +4,8 @@
 
 package com.tajemniktv.tajsos.ui.screens.notes
 
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -93,8 +95,13 @@ fun NotesContextPanel(
                             showContainer = false,
                         )
                     } else {
-                        selectedNote.tags.forEach {
-                            Text("#$it", color = TajsOSTheme.Text)
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = Modifier.horizontalScroll(rememberScrollState())
+                        ) {
+                            selectedNote.tags.forEach {
+                                Text("#$it", color = TajsOSTheme.Primary, style = MaterialTheme.typography.bodyMedium)
+                            }
                         }
                     }
                 }

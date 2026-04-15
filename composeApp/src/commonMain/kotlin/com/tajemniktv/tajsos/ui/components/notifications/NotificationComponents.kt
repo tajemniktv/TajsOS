@@ -13,9 +13,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -38,8 +41,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.no_active_system_alerts
@@ -53,8 +56,7 @@ fun TajsNotificationCard(
     modifier: Modifier = Modifier,
 ) {
     val accentColor =
-        when (notification.variant)
-        {
+        when (notification.variant) {
             NotificationVariant.ALERT -> TajsOSTheme.Error
             NotificationVariant.WARNING -> TajsOSTheme.AccentAmber
             NotificationVariant.SYNC -> TajsOSTheme.AccentBlue
@@ -230,8 +232,13 @@ fun TajsNotificationWidget(
                 modifier = Modifier.padding(vertical = TajsOSTheme.SpacingLg),
             )
         } else {
-            notifications.forEach { notification ->
-                TajsNotificationCard(notification = notification)
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth().heightIn(max = 480.dp),
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+            ) {
+                items(notifications, key = { it.id }) { notification ->
+                    TajsNotificationCard(notification = notification)
+                }
             }
         }
     }
@@ -244,7 +251,7 @@ private fun PreviewNotificationCards() {
         Column(
             modifier =
                 Modifier
-                    .background(Color(0xFF0E0E12))
+                    .background(TajsOSTheme.Background)
                     .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
@@ -291,7 +298,7 @@ private fun PreviewNotificationCards() {
 @Composable
 private fun PreviewNotificationWidget() {
     MaterialTheme(colorScheme = darkColorScheme()) {
-        Surface(color = Color(0xFF1F1F24)) {
+        Surface(color = TajsOSTheme.SurfaceHigh) {
             TajsNotificationWidget(
                 notifications =
                     listOf(

@@ -199,6 +199,17 @@ object FilterHelper {
         }
     }
 
+    /**
+     * Calculates a relevance score for a node based on how well it matches a given query.
+     *
+     * The score is determined by factors such as exact title match, title prefix match,
+     * title inclusion, content inclusion, tag matches, and whether the node is pinned
+     * or currently active.
+     *
+     * @param nodeWithPin The wrapper object containing the node entity and its associated tags.
+     * @param query The query string to evaluate against (will be trimmed and lowercased).
+     * @return An integer score representing the node's relevance. Higher is better.
+     */
     private fun relevanceScore(
         nodeWithPin: NodeWithPin,
         query: String,
