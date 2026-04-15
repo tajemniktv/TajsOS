@@ -12,10 +12,10 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.graphics.Color
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.modes.RecoveryBasicsBlock
 import com.tajemniktv.tajsos.ui.components.nodes.SuggestionGroup
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.dash_action_open_study
@@ -86,8 +86,7 @@ internal fun renderStudyModuleBlock(
 ) {
     val studentBoard by context.viewModel.studentBoardState.collectAsState()
     val studyNodes =
-        when (key)
-        {
+        when (key) {
             "classes" -> studentBoard.assignmentTracker
             "assignments" -> studentBoard.assignmentDeadlines
             else -> studentBoard.revisitBeforeExam
@@ -95,7 +94,7 @@ internal fun renderStudyModuleBlock(
     SuggestionGroup(
         title = stringResource(Res.string.dash_label_study_module, key.uppercase()),
         icon = Icons.Default.School,
-        color = Color(0xFFFF9800),
+        color = TajsOSTheme.AccentAmber,
         nodes = studyNodes.take(5),
         onEditNode = context.onEditNode,
     )
@@ -109,7 +108,7 @@ internal fun renderPaperworkBlock(context: DashboardBlockContext) {
     SuggestionGroup(
         title = stringResource(Res.string.dash_label_admin_paperwork),
         icon = Icons.Default.Gavel,
-        color = Color(0xFF607D8B),
+        color = TajsOSTheme.Muted,
         nodes = context.dashboardState.unresolvedBureaucracy,
         onEditNode = context.onEditNode,
     )

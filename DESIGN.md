@@ -29,16 +29,16 @@ define focus, not just decoration.
 
 ### The Palette (Material Design Convention)
 
-* **Background:** `#0e0e12` (The Void)
-* **Surface:** `#0e0e12`
+* **Background:** `#0e0e12` (The Void) / `#f8f9fa` (High-Key Industrial)
+* **Surface:** `#0e0e12` / `#ffffff`
 * **Surface Containers:**
-* *Lowest:* `#000000` (Recessed areas)
-* *Low:* `#131317`
-* *High:* `#1f1f24`
-* *Highest:* `#25252b` (Prominent cards)
-* **Primary (Neon Purple):** `#ba9eff`
+    * *Lowest:* `#000000` (Recessed areas) / `#f1f3f5`
+    * *Low:* `#131317` / `#e9ecef`
+    * *High:* `#1f1f24` / `#dee2e6`
+    * *Highest:* `#25252b` (Prominent cards) / `#ced4da`
+* **Primary (Neon Purple):** `#ba9eff` (Adjustable via Accent Settings)
 * **Primary Dim:** `#8455ef` (For subtle glows and states)
-* **On-Surface:** `#fcf8fe` (Crisp white text)
+* **On-Surface:** `#fcf8fe` / `#1a1a1e` (Crisp text)
 
 ### The "No-Line" Rule
 
@@ -59,7 +59,7 @@ To achieve the high-end industrial look, use **Glassmorphism** for floating elem
 bars, Modals). Use semi-transparent surface colors with a `backdrop-blur` of 20px–40px.
 
 * **Signature Textures:** For primary CTAs, do not use flat colors. Use a linear gradient from
-  `primary` (#ba9eff) to `primary_dim` (#8455ef) at a 135-degree angle to provide a "lit from
+  `primary` to `primary_dim` at a 135-degree angle to provide a "lit from
   within" neon glow.
 
 ---
@@ -68,15 +68,12 @@ bars, Modals). Use semi-transparent surface colors with a `backdrop-blur` of 20p
 
 * **Display (Space Grotesk):** Used for "Hero" moments. The wide tracking and bold weights convey an
   authoritative, high-tech personality.
-* *Display-LG:* 3.5rem / Bold / -0.02em tracking.
-* **Headings:** Space Grotesk, 700, 24-32sp - Used to introduce content sections. It acts as the "
-  industrial"
-  anchor of the page.
-* **Body:** Outfit, 400, 16sp
-* **Small text**: JetBrains Mono, 500, 12sp (uppercase)
-* **Labels (Space Grotesk, 600, 16sp):** Small caps or technical labels should always use Space
-  Grotesk to
-  maintain the "software instrument" vibe.
+    * *Display-LG:* 32sp / Bold.
+* **Headings:** Space Grotesk, 700 (Bold), 24sp - Used to introduce content sections.
+* **Body (Outfit):** 400 (Regular), 16sp
+* **Small text (JetBrains Mono)**: 500 (Medium), 12sp (letter-spacing: 1sp)
+* **Labels (Space Grotesk):** 500/600 (Medium/SemiBold), 16sp. Technical labels should always use
+  Space Grotesk.
 
 ---
 
@@ -85,15 +82,15 @@ bars, Modals). Use semi-transparent surface colors with a `backdrop-blur` of 20p
 We eschew traditional shadows in favor of **Tonal Layering** and **Ambient Glows**.
 
 * **The Layering Principle:** Depth is achieved by stacking surface tokens.
-* *Level 0:* `surface` (Background)
-* *Level 1:* `surface-container-low` (Content Sections)
-* *Level 2:* `surface-container-highest` (Interactive Cards)
+    * *Level 0:* `surface` (Background)
+    * *Level 1:* `surface-container-low` (Content Sections)
+    * *Level 2:* `surface-container-highest` (Interactive Cards)
 * **Ambient Shadows:** If a card must "float," use an extra-diffused shadow.
-* *Values:* `0px 20px 40px rgba(0, 0, 0, 0.4)`
-* *Pro Tip:* Add a 1px inner-glow (top-down) using `outline-variant` at 10% opacity to mimic light
-  catching the edge of a glass pane.
+    * *Values:* `0px 20px 40px rgba(0, 0, 0, 0.4)`
 * **The "Ghost Border":** High-contrast borders are forbidden. If a boundary is required for
-  accessibility, use the `outline-variant` token at **15% opacity**. It should be felt, not seen.
+  accessibility, use the `ghost-border` token (which is `outline-variant` in Material3). It should
+  be
+  felt, not seen.
 * **Neon Diffusion:** Primary elements should cast a soft `primary-dim` glow onto the surface below
   them, simulating a real-world light source.
 
@@ -103,15 +100,15 @@ We eschew traditional shadows in favor of **Tonal Layering** and **Ambient Glows
 
 ### Buttons
 
-* **Primary:** Gradient (`primary` to `primary_dim`), 8dp (0.5rem) rounded corners. Text is
-  `on-primary-fixed` (Black) for maximum legibility.
+* **Primary:** Gradient (`primary` to `primary_dim`), 8dp (RadiusMd) rounded corners. Text is
+  `on-primary` (usually background color) for maximum legibility.
 * **Secondary:** `surface-container-highest` background with a "Ghost Border."
-* **Tertiary:** Ghost button, Space Grotesk, 0.05em tracking.
+* **Tertiary:** Ghost button, Space Grotesk.
 
 ### Cards & Modules
 
 * **Rule:** Forbid the use of divider lines.
-* **Structure:** Use vertical white space (Spacing scale `8` or `10`) to separate content. Use a
+* **Structure:** Use vertical white space (Spacing scale `Md` or `Lg`) to separate content. Use a
   `surface-container-low` background for the card body and `surface-container-highest` for the
   header of the card to create internal hierarchy.
 
@@ -124,7 +121,15 @@ We eschew traditional shadows in favor of **Tonal Layering** and **Ambient Glows
 ### Custom Component: The "Intelligence Feed"
 
 A specialized list item for TajsOS. Use a leading icon with a `primary` neon glow. Use `label-sm` (
-Space Grotesk) for metadata tags, ensuring the "technical" font is used for data-driven elements.
+JetBrains Mono) for metadata tags, ensuring the "technical" font is used for data-driven elements.
+
+---
+
+## 6. Layout Constants
+
+* **Sidebar Width:** 280dp
+* **Radius:** Xs (2dp), Sm (4dp), Md (8dp), Lg (16dp)
+* **Spacing:** Xs (4dp), Sm (8dp), Md (16dp), Lg (24dp), Xl (32dp)
 
 ---
 
