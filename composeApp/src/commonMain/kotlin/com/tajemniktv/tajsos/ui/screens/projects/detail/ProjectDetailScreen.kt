@@ -145,12 +145,17 @@ fun ProjectDetailScreen(
                     )
             }
         }
-    val nextActions = activeTasks.filterNot { task -> blockedTasks.any { it.id == task.id } }
+    val blockedTaskIds = remember(blockedTasks) { blockedTasks.map { it.id }.toSet() }
+    val nextActions = remember(activeTasks, blockedTaskIds) {
+        activeTasks.filterNot { task -> task.id in blockedTaskIds }
+    }
     val upcomingMilestones =
-        projectTasks
-            .filter { it.dueAt != null }
-            .sortedBy { it.dueAt }
-            .take(5)
+        remember(projectTasks) {
+            projectTasks
+                .filter { it.dueAt != null }
+                .sortedBy { it.dueAt }
+                .take(5)
+        }
 
     val hasCriticalOverdue =
         blockedTasks.any { it.isHardDeadline && (it.dueAt ?: Long.MAX_VALUE) < now }
