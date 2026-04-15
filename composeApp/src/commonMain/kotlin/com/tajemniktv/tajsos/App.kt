@@ -197,7 +197,19 @@ fun App(
                 // to preserve a flat navigation history in the sidebar shell.
                 if (targetScreen?.isRoot == true || targetScreen is Screen.Sub) {
                     if (resolvedRoute == Screen.Dashboard.route) {
-                        navController.popBackStack(Screen.Dashboard.route, inclusive = false)
+                        val popped =
+                            navController.popBackStack(
+                                Screen.Dashboard.route,
+                                inclusive = false,
+                            )
+                        if (!popped && currentDestination?.route != Screen.Dashboard.route) {
+                            navController.navigate(Screen.Dashboard.route) {
+                                popUpTo(navController.graph.startDestinationId) {
+                                    inclusive = true
+                                }
+                                launchSingleTop = true
+                            }
+                        }
                     } else {
                         navController.navigate(resolvedRoute) {
                             popUpTo(Screen.Dashboard.route) {
