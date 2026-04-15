@@ -7,20 +7,32 @@ package com.tajemniktv.tajsos.ui.theme
 import androidx.compose.ui.graphics.Color
 
 /**
- * TajsOS Color Palette - Neural Interface
- * Main design idea in DESIGN.md
+ * TajsOS Color Palette - The "Neural Interface"
+ *
+ * This file contains the raw color definitions for the TajsOS design system.
+ * Avoid using these directly in UI components; prefer [TajsOSTheme] tokens
+ * to ensure reactive theme switching and consistency.
+ *
+ * Design principles:
+ * - High contrast (The Void background vs Neon signals)
+ * - Tonal layering (Surface containers)
+ * - Organic Industrialism (Vibrant accents)
  */
-val PrimaryPurple = Color(0xFFBA9EFF)
-val PrimaryPurpleDim = Color(0xFF8455EF)
-val DeepBackground = Color(0xFF0E0E12)
-val DarkSidebarBackground = Color(0xFF000000)
-val SurfaceDark = Color(0xFF0E0E12)
-val SurfaceContainerLowest = Color(0xFF000000)
-val SurfaceContainerLow = Color(0xFF131317)
-val SurfaceContainerHigh = Color(0xFF1F1F24)
-val SurfaceContainerHighest = Color(0xFF25252B)
-val TextPrimary = Color(0xFFFCF8FE)
-val TextMuted = Color(0xFFA8A2B3)
+
+// Dark Theme Palette - "The Void"
+internal val PrimaryPurple = Color(0xFFBA9EFF)
+internal val PrimaryPurpleDim = Color(0xFF8455EF)
+internal val DeepBackground = Color(0xFF0E0E12)
+internal val DarkSidebarBackground = Color(0xFF000000)
+internal val SurfaceDark = Color(0xFF0E0E12)
+internal val SurfaceContainerLowest = Color(0xFF000000)
+internal val SurfaceContainerLow = Color(0xFF131317)
+internal val SurfaceContainerHigh = Color(0xFF1F1F24)
+internal val SurfaceContainerHighest = Color(0xFF25252B)
+internal val TextPrimary = Color(0xFFFCF8FE)
+internal val TextMuted = Color(0xFFA8A2B3)
+
+// Accents
 val AccentMagenta = Color(0xFFFF6FAE)
 val AccentAmber = Color(0xFFF4B740)
 val AccentGreen = Color(0xFF30D158)
@@ -36,19 +48,19 @@ val PaletteAccentAmber = Color(0xFFFBBF24)
 val PaletteAccentGreen = Color(0xFF34D399)
 
 // Light Theme Palette - "High-Key Industrial"
-val LightBackground = Color(0xFFF8F9FA)
-val LightSurface = Color(0xFFFFFFFF)
-val LightSurfaceLowest = Color(0xFFF1F3F5)
-val LightSurfaceLow = Color(0xFFE9ECEF)
-val LightSurfaceHigh = Color(0xFFDEE2E6)
-val LightSurfaceHighest = Color(0xFFCED4DA)
-val LightTextPrimary = Color(0xFF1A1A1E)
-val LightTextMuted = Color(0xFF6C757D)
-val LightBorder = Color(0xFFADB5BD).copy(alpha = 0.5f)
-val LightOutlineVariant = Color(0xFFADB5BD).copy(alpha = 0.25f)
+internal val LightBackground = Color(0xFFF8F9FA)
+internal val LightSurface = Color(0xFFFFFFFF)
+internal val LightSurfaceLowest = Color(0xFFF1F3F5)
+internal val LightSurfaceLow = Color(0xFFE9ECEF)
+internal val LightSurfaceHigh = Color(0xFFDEE2E6)
+internal val LightSurfaceHighest = Color(0xFFCED4DA)
+internal val LightTextPrimary = Color(0xFF1A1A1E)
+internal val LightTextMuted = Color(0xFF6C757D)
+internal val LightBorder = Color(0xFFADB5BD).copy(alpha = 0.5f)
+internal val LightOutlineVariant = Color(0xFFADB5BD).copy(alpha = 0.25f)
 
-// Legacy aliases kept for compatibility with existing screens.
-val AccentSuccess = AccentGreen
-val AccentError = AccentRed
-val SubtleBorder = Color(0xFF4F4A5D)
-val OutlineVariant = Color(0xFF6B6580)
+// Legacy aliases kept for compatibility with [TajsOSColors] mapping.
+internal val AccentSuccess = AccentGreen
+internal val AccentError = AccentRed
+internal val SubtleBorder = Color(0xFF4F4A5D)
+internal val OutlineVariant = Color(0xFF6B6580)

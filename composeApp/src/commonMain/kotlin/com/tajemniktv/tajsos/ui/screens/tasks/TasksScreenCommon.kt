@@ -16,7 +16,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeEntity
@@ -39,11 +38,10 @@ internal fun TaskTabChip(
 @Composable
 internal fun StatusPill(state: TaskState) {
     val color =
-        when (state)
-        {
+        when (state) {
             TaskState.ACTIVE -> TajsOSTheme.Primary
-            TaskState.DONE -> Color(0xFF2BAE66)
-            TaskState.ON_HOLD -> Color(0xFFF5A623)
+            TaskState.DONE -> TajsOSTheme.Success
+            TaskState.ON_HOLD -> TajsOSTheme.AccentAmber
             TaskState.SOMEDAY -> TajsOSTheme.Muted
             TaskState.BLOCKED -> TajsOSTheme.Error
             TaskState.ARCHIVED -> TajsOSTheme.Muted
@@ -107,24 +105,21 @@ internal fun scoreTask(
     task.dueAt?.let {
         val delta = it - now
         score +=
-            when
-                {
-                    delta < 0 -> 12
-                    delta <= 24L * 60 * 60 * 1000 -> 10
-                    delta <= 72L * 60 * 60 * 1000 -> 7
-                    else -> 2
-                }
+            when {
+                delta < 0 -> 12
+                delta <= 24L * 60 * 60 * 1000 -> 10
+                delta <= 72L * 60 * 60 * 1000 -> 7
+                else -> 2
+            }
     }
     score +=
-        when (task.energyLevel)
-        {
+        when (task.energyLevel) {
             1 -> 4
             2 -> 2
             else -> 0
         }
     score +=
-        when (task.friction)
-        {
+        when (task.friction) {
             "easy" -> 3
             "unclear" -> -2
             "mentally_heavy" -> -1

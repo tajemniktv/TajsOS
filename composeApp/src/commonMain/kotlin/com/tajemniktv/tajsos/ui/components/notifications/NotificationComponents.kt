@@ -38,8 +38,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
+import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.no_active_system_alerts
@@ -53,8 +53,7 @@ fun TajsNotificationCard(
     modifier: Modifier = Modifier,
 ) {
     val accentColor =
-        when (notification.variant)
-        {
+        when (notification.variant) {
             NotificationVariant.ALERT -> TajsOSTheme.Error
             NotificationVariant.WARNING -> TajsOSTheme.AccentAmber
             NotificationVariant.SYNC -> TajsOSTheme.AccentBlue
@@ -244,7 +243,7 @@ private fun PreviewNotificationCards() {
         Column(
             modifier =
                 Modifier
-                    .background(Color(0xFF0E0E12))
+                    .background(TajsOSTheme.Background)
                     .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
@@ -291,7 +290,7 @@ private fun PreviewNotificationCards() {
 @Composable
 private fun PreviewNotificationWidget() {
     MaterialTheme(colorScheme = darkColorScheme()) {
-        Surface(color = Color(0xFF1F1F24)) {
+        Surface(color = TajsOSTheme.SurfaceHigh) {
             TajsNotificationWidget(
                 notifications =
                     listOf(
