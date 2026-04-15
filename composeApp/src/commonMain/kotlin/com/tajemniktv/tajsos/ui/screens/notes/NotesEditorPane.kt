@@ -40,6 +40,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.TextStyle
@@ -68,6 +71,7 @@ fun NotesEditorPane(
     onToggleFocusMode: () -> Unit,
     onToggleContextPanel: () -> Unit,
     onDuplicate: () -> Unit,
+    onDelete: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Surface(
@@ -84,6 +88,7 @@ fun NotesEditorPane(
         }
 
         val titleFocusRequester = remember(note.id) { FocusRequester() }
+        val clipboardManager = LocalClipboardManager.current
         LaunchedEffect(note.id, focusTitleSignal) {
             if (focusTitleSignal > 0) {
                 titleFocusRequester.requestFocus()
@@ -127,11 +132,16 @@ fun NotesEditorPane(
                         onToggleFocusMode = onToggleFocusMode,
                         onToggleContextPanel = onToggleContextPanel,
                         onDuplicate = onDuplicate,
+                        onCopyContent = {
+                            clipboardManager.setText(AnnotatedString(note.content))
+                        },
+                        onDelete = onDelete
                     )
                     Spacer(Modifier.height(8.dp))
                     BasicTextField(
                         value = note.content,
                         onValueChange = onContentChange,
+                        cursorBrush = SolidColor(TajsOSTheme.Primary),
                         textStyle =
                             MaterialTheme.typography.bodyLarge.merge(
                                 TextStyle(
@@ -167,6 +177,8 @@ fun NotesEditorHeaderActions(
     onToggleFocusMode: () -> Unit,
     onToggleContextPanel: () -> Unit,
     onDuplicate: () -> Unit,
+    onCopyContent: () -> Unit,
+    onDelete: () -> Unit,
 ) {
     var menuOpen by remember { mutableStateOf(false) }
     Row(
@@ -210,6 +222,20 @@ fun NotesEditorHeaderActions(
                     onClick = {
                         menuOpen = false
                         onDuplicate()
+                    },
+                )
+                DropdownMenuItem(
+                    text = { Text("Copy content") },
+                    onClick = {
+                        menuOpen = false
+                        onCopyContent()
+                    },
+                )
+                DropdownMenuItem(
+                    text = { Text("Delete note") },
+                    onClick = {
+                        menuOpen = false
+                        onDelete()
                     },
                 )
             }
