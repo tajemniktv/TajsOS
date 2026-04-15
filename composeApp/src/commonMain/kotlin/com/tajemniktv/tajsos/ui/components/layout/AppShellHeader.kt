@@ -221,9 +221,9 @@ fun HeaderGreeting(
             overflow = TextOverflow.Ellipsis,
         )
         Spacer(Modifier.height(2.dp))
-        androidx.compose.material3.Surface(
+        Surface(
             color = TajsOSTheme.Primary.copy(alpha = 0.1f),
-            shape = RoundedCornerShape(4.dp),
+            shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
         ) {
             Text(
                 text = protocolText.uppercase(),

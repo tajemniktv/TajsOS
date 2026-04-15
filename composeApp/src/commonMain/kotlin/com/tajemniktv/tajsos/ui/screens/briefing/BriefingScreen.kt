@@ -324,7 +324,7 @@ private fun BriefingMainPane(
                 ) {
                     Surface(
                         color = TajsOSTheme.Primary.copy(alpha = 0.1f),
-                        shape = RoundedCornerShape(16.dp),
+                        shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
                     ) {
                         Text(
                             text = prioritiesLine,
@@ -335,7 +335,7 @@ private fun BriefingMainPane(
                     }
                     Surface(
                         color = TajsOSTheme.SurfaceLow,
-                        shape = RoundedCornerShape(16.dp),
+                        shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
                         border = androidx.compose.foundation.BorderStroke(1.dp, TajsOSTheme.Border.copy(alpha = 0.5f))
                     ) {
                         Text(
@@ -347,7 +347,7 @@ private fun BriefingMainPane(
                     }
                     Surface(
                         color = TajsOSTheme.SurfaceLow,
-                        shape = RoundedCornerShape(16.dp),
+                        shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
                         border = androidx.compose.foundation.BorderStroke(1.dp, TajsOSTheme.Border.copy(alpha = 0.5f))
                     ) {
                         Text(
