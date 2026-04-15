@@ -276,47 +276,25 @@ class AppBootstrapper(
         }
     }
 
-    /**
-     * Identifies if default system modes exist (e.g., Work, Recovery, Chaos), and inserts them
-     * alongside their associated [ModePreferenceEntity] configurations if they are missing.
-     */
-    private suspend fun seedDefaultModes() {
-        val existingModes = repository.getAllModes().first()
-        val existingKeys = existingModes.map { it.key }
 
-        if ("COMMAND" !in existingKeys) seedCommandMode()
-        if ("FOCUS" !in existingKeys) seedFocusMode()
-        if ("RECOVERY" !in existingKeys) seedRecoveryMode()
-        if ("STUDY" !in existingKeys) seedStudyMode()
-        if ("ERRAND" !in existingKeys) seedErrandMode()
-        if ("ADMIN" !in existingKeys) seedAdminMode()
-        if ("SHUTDOWN" !in existingKeys) seedShutdownMode()
-        if ("LOW_BATTERY" !in existingKeys) seedLowBatteryMode()
-        if ("ALL" !in existingKeys) seedAllMode()
-    }
 
-    private suspend fun seedCommandMode() {
-        val commandId =
-            insertModeWithPreferences(
-                ModeEntity(
-                    key = "COMMAND",
-                    name = "Command",
-                    description = "Default everyday overview mode. What matters right now?",
-                    icon = "dashboard",
-                    themeColor = 0xFF3F51B5.toInt(),
-                ),
-                ModePreferenceEntity(
-                    modeId = 0L,
-                    dashboardBlocksJson = "[\"today_top_3\", \"resume_context\", \"inbox_count\", \"deadlines\", \"overdue\", \"pinned_note\"]",
-                ),
+    private data class ModeDefinition(val mode: ModeEntity, val prefs: ModePreferenceEntity)
+
+    private fun getDefaultModes(): List<ModeDefinition> = listOf(
+        ModeDefinition(
+            ModeEntity(
+                key = "COMMAND",
+                name = "Command",
+                description = "Default everyday overview mode. What matters right now?",
+                icon = "dashboard",
+                themeColor = 0xFF3F51B5.toInt(),
+            ),
+            ModePreferenceEntity(
+                modeId = 0L,
+                dashboardBlocksJson = "[\"today_top_3\", \"resume_context\", \"inbox_count\", \"deadlines\", \"overdue\", \"pinned_note\"]",
             )
-        if (preferencesRepository.activeModeId.first() == null) {
-            preferencesRepository.updateActiveModeId(commandId)
-        }
-    }
-
-    private suspend fun seedFocusMode() {
-        insertModeWithPreferences(
+        ),
+        ModeDefinition(
             ModeEntity(
                 key = "FOCUS",
                 name = "Focus",
@@ -330,12 +308,9 @@ class AppBootstrapper(
                 showInbox = false,
                 showStats = false,
                 dashboardBlocksJson = "[\"current_task\", \"next_step\", \"timer\", \"blockers\", \"linked_resources\"]",
-            ),
-        )
-    }
-
-    private suspend fun seedRecoveryMode() {
-        insertModeWithPreferences(
+            )
+        ),
+        ModeDefinition(
             ModeEntity(
                 key = "RECOVERY",
                 name = "Recovery",
@@ -349,12 +324,9 @@ class AppBootstrapper(
                 showInbox = false,
                 showStats = false,
                 dashboardBlocksJson = "[\"basics\", \"easy_wins\", \"urgent_only\", \"recovery_protocol\", \"check_in\"]",
-            ),
-        )
-    }
-
-    private suspend fun seedStudyMode() {
-        insertModeWithPreferences(
+            )
+        ),
+        ModeDefinition(
             ModeEntity(
                 key = "STUDY",
                 name = "Study",
@@ -366,12 +338,9 @@ class AppBootstrapper(
             ModePreferenceEntity(
                 modeId = 0L,
                 dashboardBlocksJson = "[\"classes\", \"assignments\", \"deadlines\", \"notes\", \"revision_targets\"]",
-            ),
-        )
-    }
-
-    private suspend fun seedErrandMode() {
-        insertModeWithPreferences(
+            )
+        ),
+        ModeDefinition(
             ModeEntity(
                 key = "ERRAND",
                 name = "Errand",
@@ -383,12 +352,9 @@ class AppBootstrapper(
             ModePreferenceEntity(
                 modeId = 0L,
                 dashboardBlocksJson = "[\"shopping_list\", \"place_based_tasks\", \"errands\", \"what_to_bring\"]",
-            ),
-        )
-    }
-
-    private suspend fun seedAdminMode() {
-        insertModeWithPreferences(
+            )
+        ),
+        ModeDefinition(
             ModeEntity(
                 key = "ADMIN",
                 name = "Admin",
@@ -400,12 +366,9 @@ class AppBootstrapper(
             ModePreferenceEntity(
                 modeId = 0L,
                 dashboardBlocksJson = "[\"paperwork\", \"bills\", \"renewals\", \"subscriptions\", \"bureaucracy\"]",
-            ),
-        )
-    }
-
-    private suspend fun seedShutdownMode() {
-        insertModeWithPreferences(
+            )
+        ),
+        ModeDefinition(
             ModeEntity(
                 key = "SHUTDOWN",
                 name = "Shutdown",
@@ -417,12 +380,9 @@ class AppBootstrapper(
             ModePreferenceEntity(
                 modeId = 0L,
                 dashboardBlocksJson = "[\"tomorrow_prep\", \"mini_review\", \"dump_leftovers\", \"open_loops_reduction\"]",
-            ),
-        )
-    }
-
-    private suspend fun seedLowBatteryMode() {
-        insertModeWithPreferences(
+            )
+        ),
+        ModeDefinition(
             ModeEntity(
                 key = "LOW_BATTERY",
                 name = "Low Battery",
@@ -435,12 +395,9 @@ class AppBootstrapper(
                 modeId = 0L,
                 showInbox = false,
                 dashboardBlocksJson = "[\"survival_basics\", \"tiny_wins\", \"passive_input\", \"comfort_notes\"]",
-            ),
-        )
-    }
-
-    private suspend fun seedAllMode() {
-        insertModeWithPreferences(
+            )
+        ),
+        ModeDefinition(
             ModeEntity(
                 key = "ALL",
                 name = "All",
@@ -452,10 +409,29 @@ class AppBootstrapper(
             ModePreferenceEntity(
                 modeId = 0L,
                 dashboardBlocksJson = "[\"today_top_3\", \"search\", \"alerts\", \"focus\", \"insights\", \"knowledge\", \"operational\"]",
-            ),
+            )
         )
-    }
+    )
 
+    /**
+     * Identifies if default system modes exist (e.g., Work, Recovery, Chaos), and inserts them
+     * alongside their associated [ModePreferenceEntity] configurations if they are missing.
+     */
+    private suspend fun seedDefaultModes() {
+        val existingModes = repository.getAllModes().first()
+        val existingKeys = existingModes.map { it.key }.toSet()
+
+        val defaultModes = getDefaultModes()
+
+        for (def in defaultModes) {
+            if (def.mode.key !in existingKeys) {
+                val modeId = insertModeWithPreferences(def.mode, def.prefs)
+                if (def.mode.key == "COMMAND" && preferencesRepository.activeModeId.first() == null) {
+                    preferencesRepository.updateActiveModeId(modeId)
+                }
+            }
+        }
+    }
     private suspend fun insertModeWithPreferences(
         mode: ModeEntity,
         preference: ModePreferenceEntity,
