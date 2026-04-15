@@ -53,6 +53,8 @@ import com.tajemniktv.tajsos.data.taskStateOrNull
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
+import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.hazeSource
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.StringResource
@@ -159,8 +161,7 @@ fun BriefingScreen(
         remember(todayNodes, dashboardState) {
             val activeToday =
                 todayNodes.count { node ->
-                    when (node.taskStateOrNull())
-                    {
+                    when (node.taskStateOrNull()) {
                         TaskState.DONE,
                         TaskState.ARCHIVED,
                         -> false
@@ -660,21 +661,43 @@ private fun BriefingCaptureField(onClick: () -> Unit) {
  */
 @Composable
 private fun BriefingAtmosphere(modifier: Modifier = Modifier) {
+    val hazeState = remember { dev.chrisbanes.haze.HazeState() }
+    val stops =
+        remember {
+            arrayOf(
+                0.0f to TajsOSTheme.Primary.copy(alpha = 0.15f),
+                0.2f to TajsOSTheme.Primary.copy(alpha = 0.12f),
+                0.4f to TajsOSTheme.Primary.copy(alpha = 0.10f),
+                0.6f to TajsOSTheme.AccentBlue.copy(alpha = 0.08f),
+                0.8f to TajsOSTheme.AccentBlue.copy(alpha = 0.04f),
+                1.0f to Color.Transparent,
+            )
+        }
+
     Box(
         modifier =
             modifier
                 .clip(RoundedCornerShape(20.dp))
-                .background(
-                    Brush.radialGradient(
-                        colors =
-                            listOf(
-                                TajsOSTheme.Primary.copy(alpha = 0.24f),
-                                TajsOSTheme.AccentBlue.copy(alpha = 0.08f),
-                                Color.Transparent,
-                            ),
+                .hazeSource(state = hazeState),
+    ) {
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(Brush.radialGradient(colorStops = stops)),
+        )
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .hazeEffect(
+                        state = hazeState,
+                        block = {
+                            noiseFactor = 0.25f
+                        },
                     ),
-                ),
-    )
+        )
+    }
 }
 
 /**
@@ -685,8 +708,7 @@ private fun BriefingAtmosphere(modifier: Modifier = Modifier) {
  */
 @Composable
 private fun briefingGreeting(hour: Int): String =
-    when (briefingPeriodForHour(hour))
-    {
+    when (briefingPeriodForHour(hour)) {
         "morning" -> stringResource(Res.string.briefing_greeting_morning)
         "afternoon" -> stringResource(Res.string.briefing_greeting_afternoon)
         "evening" -> stringResource(Res.string.briefing_greeting_evening)
@@ -740,8 +762,7 @@ internal fun formatClockTime(timestamp: Long): String {
  * @return One of `"morning"`, `"afternoon"`, `"evening"`, or `"night"`.
  */
 internal fun briefingPeriodForHour(hour: Int): String =
-    when (hour)
-    {
+    when (hour) {
         in 5..11 -> "morning"
         in 12..17 -> "afternoon"
         in 18..22 -> "evening"
