@@ -62,8 +62,8 @@ import com.tajemniktv.tajsos.data.resolveDisplayName
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.SidebarMode
 import com.tajemniktv.tajsos.ui.components.common.GlassMaterial
-import com.tajemniktv.tajsos.ui.components.common.glassChrome
 import com.tajemniktv.tajsos.ui.components.common.glassContainerColor
+import com.tajemniktv.tajsos.ui.components.common.glassChrome
 import com.tajemniktv.tajsos.ui.screens.tasks.TasksTab
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.coroutines.delay
@@ -129,7 +129,8 @@ fun AppSidebar(
                     } else {
                         Modifier.fillMaxWidth()
                     },
-                ).fillMaxHeight()
+                )
+                .fillMaxHeight()
                 .then(
                     if (applyGlass) {
                         Modifier.glassChrome(
@@ -139,7 +140,8 @@ fun AppSidebar(
                     } else {
                         Modifier
                     },
-                ).hoverable(
+                )
+                .hoverable(
                     interactionSource = hoverInteraction,
                     enabled = shellState.sidebarMode == SidebarMode.HOVER_EXPAND,
                 ),
@@ -422,14 +424,13 @@ fun SidebarBottomActions(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 10.dp)
-                .padding(top = 10.dp, bottom = 24.dp),
+                .padding(horizontal = 10.dp, vertical = 10.dp),
     ) {
         NewEntryButton(
             expanded = showExpandedContent,
             onClick = onNewEntry,
         )
-        Spacer(Modifier.height(10.dp))
+        Spacer(Modifier.height(8.dp))
         UserProfileSidebarSection(
             expanded = showExpandedContent,
             userProfile = userProfile,
