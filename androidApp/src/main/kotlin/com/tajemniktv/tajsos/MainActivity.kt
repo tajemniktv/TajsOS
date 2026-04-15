@@ -346,41 +346,47 @@ class MainActivity : FragmentActivity() {
     }
 
     /**
-     * Safely extracts a Parcelable extra from an Intent, handling OS version differences
+     * Safely executes an Intent extraction block, handling OS version differences
      * and catching potential unparcelling exceptions (e.g., BadParcelableException).
      */
-    private inline fun <reified T : android.os.Parcelable> Intent.getSafeParcelableExtra(name: String): T? =
+    private inline fun <T> safeIntentExtraction(name: String, block: () -> T?): T? =
         try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                getParcelableExtra(name, T::class.java)
-            } else {
-                @Suppress("DEPRECATION")
-                getParcelableExtra(name) as? T
-            }
+            block()
         } catch (e: BadParcelableException) {
             Log.e(TAG, "Failed to read parcelable extra: $name", e)
             null
         } catch (e: ParcelFormatException) {
             Log.e(TAG, "Failed to read parcelable extra (bad parcel format): $name", e)
             null
+        } catch (e: ClassCastException) {
+            Log.e(TAG, "Failed to read parcelable extra (class cast exception): $name", e)
+            null
+        }
+
+    /**
+     * Safely extracts a Parcelable extra from an Intent, handling OS version differences
+     * and catching potential unparcelling exceptions (e.g., BadParcelableException).
+     */
+    private inline fun <reified T : android.os.Parcelable> Intent.getSafeParcelableExtra(name: String): T? =
+        safeIntentExtraction(name) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                getParcelableExtra(name, T::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                getParcelableExtra(name) as? T
+            }
         }
 
     /**
      * Safely extracts a Parcelable ArrayList extra from an Intent.
      */
     private inline fun <reified T : android.os.Parcelable> Intent.getSafeParcelableArrayListExtra(name: String): java.util.ArrayList<T>? =
-        try {
+        safeIntentExtraction(name) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 getParcelableArrayListExtra(name, T::class.java)
             } else {
                 @Suppress("DEPRECATION")
                 getParcelableArrayListExtra<T>(name)
             }
-        } catch (e: BadParcelableException) {
-            Log.e(TAG, "Failed to read parcelable array list extra: $name", e)
-            null
-        } catch (e: ParcelFormatException) {
-            Log.e(TAG, "Failed to read parcelable array list extra (bad parcel format): $name", e)
-            null
         }
 }
