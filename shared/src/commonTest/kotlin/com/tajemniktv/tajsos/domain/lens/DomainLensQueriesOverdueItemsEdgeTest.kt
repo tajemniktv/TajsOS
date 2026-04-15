@@ -46,7 +46,7 @@ class DomainLensQueriesOverdueItemsEdgeTest {
 
         val result = DomainLensQueries.financeOverdueItems(snapshot)
         assertEquals(2, result.size)
-        assertEquals(listOf(1L, 2L).sorted(), result.map { it.node.node.id }.sorted())
+        assertEquals(setOf(1L, 2L), result.map { it.node.node.id }.toSet())
     }
 
     @Test
@@ -65,6 +65,6 @@ class DomainLensQueriesOverdueItemsEdgeTest {
 
         val result = DomainLensQueries.healthOverdueItems(snapshot)
         assertEquals(2, result.size)
-        assertEquals(listOf(2L, 3L).sorted(), result.map { it.node.node.id }.sorted())
+        assertEquals(setOf(2L, 3L), result.map { it.node.node.id }.toSet())
     }
 }
