@@ -86,8 +86,8 @@ fun EmptyState(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier =
                     Modifier
-                        .defaultMinSize(minHeight = 120.dp)
-                        .padding(TajsOSTheme.SpacingLg),
+                        .defaultMinSize(minHeight = if (fillParent) 200.dp else 120.dp)
+                        .padding(if (fillParent) TajsOSTheme.SpacingXl else TajsOSTheme.SpacingLg),
             ) {
                 Icon(
                     imageVector = icon,
