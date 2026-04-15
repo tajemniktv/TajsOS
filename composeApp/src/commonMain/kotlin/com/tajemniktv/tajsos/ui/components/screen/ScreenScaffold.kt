@@ -253,7 +253,7 @@ private object ScreenScaffoldDefaults {
             start = TajsOSTheme.SpacingMd,
             top = TajsOSTheme.SpacingMd,
             end = TajsOSTheme.SpacingMd,
-            bottom = 96.dp,
+            bottom = TajsOSTheme.SpacingLg,
         )
 }
 
