@@ -37,19 +37,22 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
+import com.tajemniktv.tajsos.ui.platform.toClipEntry
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
+import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlin.math.max
@@ -88,7 +91,8 @@ fun NotesEditorPane(
         }
 
         val titleFocusRequester = remember(note.id) { FocusRequester() }
-        val clipboardManager = LocalClipboardManager.current
+        val clipboard = LocalClipboard.current
+        val scope = rememberCoroutineScope()
         LaunchedEffect(note.id, focusTitleSignal) {
             if (focusTitleSignal > 0) {
                 titleFocusRequester.requestFocus()
@@ -133,9 +137,11 @@ fun NotesEditorPane(
                         onToggleContextPanel = onToggleContextPanel,
                         onDuplicate = onDuplicate,
                         onCopyContent = {
-                            clipboardManager.setText(AnnotatedString(note.content))
+                            scope.launch {
+                                clipboard.setClipEntry(AnnotatedString(note.content).toClipEntry())
+                            }
                         },
-                        onDelete = onDelete
+                        onDelete = onDelete,
                     )
                     Spacer(Modifier.height(8.dp))
                     BasicTextField(
