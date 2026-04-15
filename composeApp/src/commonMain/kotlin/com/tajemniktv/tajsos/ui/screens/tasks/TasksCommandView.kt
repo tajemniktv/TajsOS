@@ -202,6 +202,11 @@ internal fun TasksCommandView(
                         onDone,
                         onSetTodayPayload,
                     )
+                    Text(
+                        stringResource(Res.string.tasks_queue_title),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = TajsOSTheme.Text,
+                    )
                     QueueList(queue, projectById, areaById, onOpen, onStartFocus, onDone)
                 }
                 CommandSidebar(
@@ -340,39 +345,20 @@ private fun QueueList(
         border = BorderStroke(1.dp, TajsOSTheme.Border),
     ) {
         Column {
-            tasks.forEach { task ->
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            task.title,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = TajsOSTheme.Text,
-                        )
-                        val context =
-                            listOfNotNull(
-                                task.projectId?.let { projectById[it] },
-                                task.areaId?.let { areaById[it] },
-                                task.dueAt?.let(::shortDate),
-                            ).joinToString(" • ")
-                        if (context.isNotBlank()) {
-                            Text(
-                                context,
-                                style = MaterialTheme.typography.bodySmall,
-                                color = TajsOSTheme.Muted,
-                            )
-                        }
-                    }
-                    Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
+            tasks.forEachIndexed { index, task ->
+                StandardTaskRow(
+                    task = task,
+                    projectById = projectById,
+                    areaById = areaById,
+                    onClick = { onOpen(task.id) },
+                    onToggleDone = { if (it) onDone(task) },
+                    trailingActions = {
                         OutlinedButton(onClick = { onDoNow(task) }) { Text(stringResource(Res.string.tasks_start_focus_action)) }
-                        OutlinedButton(onClick = { onOpen(task.id) }) { Text(stringResource(Res.string.tasks_open_action)) }
-                        IconButton(onClick = { onDone(task) }) { Icon(Icons.Default.Check, null) }
                     }
+                )
+                if (index < tasks.size - 1) {
+                    HorizontalDivider(color = TajsOSTheme.Border)
                 }
-                HorizontalDivider(color = TajsOSTheme.Border)
             }
         }
     }

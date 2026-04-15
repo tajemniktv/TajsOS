@@ -70,34 +70,14 @@ internal fun TasksArchiveView(
             border = BorderStroke(1.dp, TajsOSTheme.Border),
         ) {
             Column {
-                archivedTasks.forEach { task ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                task.title,
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = TajsOSTheme.Text,
-                            )
-                            val context =
-                                listOfNotNull(
-                                    task.projectId?.let { projectById[it] },
-                                    task.areaId?.let { areaById[it] },
-                                    task.archivedAt?.let(::shortDate),
-                                ).joinToString(" • ")
-                            if (context.isNotBlank()) {
-                                Text(
-                                    context,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = TajsOSTheme.Muted,
-                                )
-                            }
-                        }
-                        Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
-                            OutlinedButton(onClick = { onOpen(task.id) }) { Text(stringResource(Res.string.tasks_open_action)) }
+                archivedTasks.forEachIndexed { index, task ->
+                    StandardTaskRow(
+                        task = task,
+                        projectById = projectById,
+                        areaById = areaById,
+                        onClick = { onOpen(task.id) },
+                        showStatusPill = true,
+                        trailingActions = {
                             OutlinedButton(onClick = { onRestore(task) }) { Text(stringResource(Res.string.tasks_restore_action)) }
                             IconButton(onClick = { onDelete(task) }) {
                                 Icon(
@@ -107,8 +87,10 @@ internal fun TasksArchiveView(
                                 )
                             }
                         }
+                    )
+                    if (index < archivedTasks.size - 1) {
+                        HorizontalDivider(color = TajsOSTheme.Border)
                     }
-                    HorizontalDivider(color = TajsOSTheme.Border)
                 }
             }
         }

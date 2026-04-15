@@ -4,8 +4,8 @@
 
 package com.tajemniktv.tajsos.ui.components.nodes
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -57,7 +57,7 @@ import tajsos.composeapp.generated.resources.task_row_unpin_desc
  * @param onClick Optional click handler for the row.
  * @param onArchive Optional archive handler invoked when the archive action (shown only for completed tasks) is pressed.
  */
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
 @Composable
 fun TaskRow(
     node: NodeEntity,
@@ -73,7 +73,6 @@ fun TaskRow(
         modifier =
             modifier
                 .fillMaxWidth()
-                .height(80.dp)
                 .drawBehind {
                     drawRect(
                         color = TajsOSTheme.Primary,
@@ -89,24 +88,40 @@ fun TaskRow(
         color = TajsOSTheme.Surface,
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = TajsOSTheme.SpacingMd),
+            modifier = Modifier.padding(horizontal = TajsOSTheme.SpacingMd, vertical = TajsOSTheme.SpacingSm),
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)
         ) {
             Checkbox(
                 checked = isDone,
                 onCheckedChange = { onToggleDone(if (it) "done" else "active") },
                 colors = CheckboxDefaults.colors(checkedColor = TajsOSTheme.Primary),
             )
-            Column(modifier = Modifier.weight(1f).alpha(if (isDone) 0.5f else 1f)) {
+            Column(modifier = Modifier.weight(1f).alpha(if (isDone) 0.5f else 1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
                     text = node.title,
                     style =
                         MaterialTheme.typography.bodyLarge.copy(
                             textDecoration = if (isDone) TextDecoration.LineThrough else null,
+                            fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
                         ),
                     color = if (isDone) TajsOSTheme.Muted else TajsOSTheme.Text,
                 )
-                Row(verticalAlignment = Alignment.CenterVertically) {
+
+                if (!node.nextSmallestStep.isNullOrEmpty()) {
+                    Text(
+                        text = "↳ ${node.nextSmallestStep}",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = TajsOSTheme.Accent,
+                        maxLines = 1,
+                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                    )
+                }
+
+                androidx.compose.foundation.layout.FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
                     val energyLevel = node.energyLevel
                     if (energyLevel != null) {
                         Text(
@@ -121,7 +136,6 @@ fun TaskRow(
                                     else -> TajsOSTheme.Muted
                                 },
                         )
-                        Spacer(Modifier.width(8.dp))
                     }
                     val friction = node.friction
                     if (friction != null) {
@@ -139,7 +153,6 @@ fun TaskRow(
                             style = MaterialTheme.typography.labelSmall,
                             color = TajsOSTheme.Primary,
                         )
-                        Spacer(Modifier.width(8.dp))
                     }
                     if ((node.status != "active") && (node.status != "done")) {
                         val statusColor =
@@ -154,16 +167,6 @@ fun TaskRow(
                             text = node.status.uppercase().replace("_", " "),
                             style = MaterialTheme.typography.labelSmall,
                             color = statusColor,
-                        )
-                        Spacer(Modifier.width(8.dp))
-                    }
-                    if (!node.nextSmallestStep.isNullOrEmpty()) {
-                        Text(
-                            text = "↳ ${node.nextSmallestStep}",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = TajsOSTheme.Accent,
-                            maxLines = 1,
-                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
                         )
                     }
                 }

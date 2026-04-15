@@ -137,13 +137,14 @@ private fun TodaySection(
         border = BorderStroke(1.dp, TajsOSTheme.Border),
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
+            modifier = Modifier.fillMaxWidth().padding(top = TajsOSTheme.SpacingMd, bottom = TajsOSTheme.SpacingSm),
             verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
         ) {
             Text(
                 title,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.padding(horizontal = TajsOSTheme.SpacingMd)
             )
             if (tasks.isEmpty()) {
                 EmptyState(
@@ -151,60 +152,28 @@ private fun TodaySection(
                     description = null,
                     fillParent = false,
                     showContainer = false,
+                    modifier = Modifier.padding(horizontal = TajsOSTheme.SpacingMd)
                 )
             } else {
-                tasks.take(8).forEach { task ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                task.title,
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = TajsOSTheme.Text,
-                            )
-                            val context =
-                                listOfNotNull(
-                                    task.projectId?.let { projectById[it] },
-                                    task.areaId?.let { areaById[it] },
-                                    task.dueAt?.let(::shortDate),
-                                ).joinToString(" • ")
-                            if (context.isNotBlank()) {
-                                Text(
-                                    context,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = TajsOSTheme.Muted,
-                                )
+                tasks.take(8).forEachIndexed { index, task ->
+                    StandardTaskRow(
+                        task = task,
+                        projectById = projectById,
+                        areaById = areaById,
+                        onClick = { onOpen(task.id) },
+                        onToggleDone = { if (it) onDone(task) },
+                        trailingActions = {
+                            OutlinedButton(onClick = { onStartFocus(task) }) {
+                                Text(stringResource(Res.string.tasks_start_focus_action))
                             }
-                        }
-                        Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
-                            OutlinedButton(onClick = {
-                                onStartFocus(task)
-                            }) { Text(stringResource(Res.string.tasks_start_focus_action)) }
-                            OutlinedButton(onClick = {
-                                onOpen(task.id)
-                            }) { Text(stringResource(Res.string.tasks_open_action)) }
-                            OutlinedButton(onClick = {
-                                onSetTodayPayload(task, task.id !in todayTaskIds)
-                            }) {
+                            OutlinedButton(onClick = { onSetTodayPayload(task, task.id !in todayTaskIds) }) {
                                 Icon(Icons.Default.Star, null)
-                                Text(
-                                    if (task.id in todayTaskIds) {
-                                        " Remove Today"
-                                    } else {
-                                        " Add Today"
-                                    },
-                                )
-                            }
-                            IconButton(onClick = { onDone(task) }) {
-                                Icon(
-                                    Icons.Default.Check,
-                                    null,
-                                )
+                                Text(if (task.id in todayTaskIds) " Remove Today" else " Add Today")
                             }
                         }
+                    )
+                    if (index < tasks.take(8).size - 1) {
+                        androidx.compose.material3.HorizontalDivider(color = TajsOSTheme.Border)
                     }
                 }
             }
