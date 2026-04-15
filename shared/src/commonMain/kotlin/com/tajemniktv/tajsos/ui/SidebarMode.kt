@@ -17,7 +17,7 @@ enum class SidebarMode {
      */
     COLLAPSED,
     /**
-     * Sidebar is collapsed but temporarily overlays content when hovered.
+     * Sidebar is collapsed but temporarily expands when hovered.
      */
     HOVER_EXPAND,
 }

@@ -207,7 +207,7 @@ object FilterHelper {
      * or currently active.
      *
      * @param nodeWithPin The wrapper object containing the node entity and its associated tags.
-     * @param query The clean query string to evaluate against.
+     * @param query The query string to evaluate against (will be trimmed and lowercased).
      * @return An integer score representing the node's relevance. Higher is better.
      */
     private fun relevanceScore(
