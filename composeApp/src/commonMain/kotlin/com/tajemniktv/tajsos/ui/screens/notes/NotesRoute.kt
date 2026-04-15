@@ -175,7 +175,7 @@ fun NotesRoute(
             scope.launch {
                 val newId =
                     viewModel.addNodeForResult(
-                        title = "Untitled note",
+                        title = "",
                         type = "note",
                         inboxState = false,
                     )
@@ -243,6 +243,10 @@ fun NotesRoute(
                                 focusTitleSignal += 1
                             }
                         },
+                        onDelete = {
+                            viewModel.deleteNodePermanently(selectedNote.source)
+                            mobileInDetail = false
+                        },
                         modifier = Modifier.fillMaxWidth().height(600.dp),
                     )
                     NotesContextPanel(
@@ -306,6 +310,12 @@ fun NotesRoute(
                                     selectedNoteId = newId
                                     focusTitleSignal += 1
                                 }
+                            }
+                        },
+                        onDelete = {
+                            selectedNote?.let { item ->
+                                viewModel.deleteNodePermanently(item.source)
+                                selectedNoteId = -1L
                             }
                         },
                         modifier = Modifier.widthIn(max = 960.dp).fillMaxSize(),
@@ -376,6 +386,12 @@ fun NotesRoute(
                                         selectedNoteId = newId
                                         focusTitleSignal += 1
                                     }
+                                }
+                            },
+                            onDelete = {
+                                selectedNote?.let { item ->
+                                    viewModel.deleteNodePermanently(item.source)
+                                    selectedNoteId = -1L
                                 }
                             },
                             modifier = Modifier.weight(1f),

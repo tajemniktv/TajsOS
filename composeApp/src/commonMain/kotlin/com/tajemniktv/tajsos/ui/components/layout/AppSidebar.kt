@@ -73,8 +73,8 @@ import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.common_no_active_mode
 import tajsos.composeapp.generated.resources.sidebar_brand
 
-private val ExpandedSidebarWidth = 190.dp
-private val CollapsedSidebarWidth = 86.dp
+private val ExpandedSidebarWidth = 220.dp
+private val CollapsedSidebarWidth = 92.dp
 
 /**
  * Persistent app sidebar with explicit behavior modes and inline expandable root sections.
@@ -106,10 +106,10 @@ fun AppSidebar(
         }
 
         if (isHovered) {
-            delay(110)
+            delay(150)
             shellState.hoverExpanded = true
         } else {
-            delay(180)
+            delay(250)
             shellState.hoverExpanded = false
         }
     }
@@ -532,7 +532,7 @@ fun UserProfileSidebarSection(
                             Text(
                                 text = initials,
                                 color = TajsOSTheme.Text,
-                                style = MaterialTheme.typography.labelSmall,
+                                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
                                 maxLines = 1,
                             )
                         }

@@ -350,7 +350,10 @@ fun CaptureSheet(
                 }
             }
 
-            if (templates.isNotEmpty() && !brainDumpMode) {
+            val relevantTemplates = remember(templates, selectedType) {
+                templates.filter { it.nodeType == selectedType }
+            }
+            if (relevantTemplates.isNotEmpty() && !brainDumpMode) {
                 Text(
                     stringResource(Res.string.capture_use_template),
                     style = MaterialTheme.typography.labelSmall,
@@ -360,7 +363,7 @@ fun CaptureSheet(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
                 ) {
-                    items(templates.filter { it.nodeType == selectedType }, key = { it.id }) { template ->
+                    items(relevantTemplates, key = { it.id }) { template ->
                         FilterChip(
                             selected = false,
                             onClick = {
