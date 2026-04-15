@@ -1,5 +1,12 @@
 ---
 import "../styles/global.css";
+
+interface Props {
+  title?: string;
+}
+
+const { title } = Astro.props as Props;
+const pageTitle = title ? `TajsOS | ${title}` : "TajsOS | The Neural Interface";
 ---
 
 <!doctype html>
@@ -7,9 +14,9 @@ import "../styles/global.css";
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="icon" type="image/png" href={`${import.meta.env.BASE_URL}favicon.png`} />
     <meta name="generator" content={Astro.generator} />
-    <title>TajsOS | The Neural Interface</title>
+    <title>{pageTitle}</title>
 
     <link
       href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"

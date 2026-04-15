@@ -39,6 +39,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
+import com.tajemniktv.tajsos.ui.components.common.EmptyState
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.no_active_system_alerts
 
 /**
  * Premium "system-monitor" notification card with futuristic aesthetics.
@@ -218,19 +222,13 @@ fun TajsNotificationWidget(
         }
 
         if (notifications.isEmpty()) {
-            Box(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = TajsOSTheme.SpacingLg),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    "No active system alerts.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = TajsOSTheme.Muted.copy(alpha = 0.5f),
-                )
-            }
+            EmptyState(
+                message = stringResource(Res.string.no_active_system_alerts),
+                description = null,
+                fillParent = false,
+                showContainer = false,
+                modifier = Modifier.padding(vertical = TajsOSTheme.SpacingLg),
+            )
         } else {
             notifications.forEach { notification ->
                 TajsNotificationCard(notification = notification)
