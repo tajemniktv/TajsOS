@@ -46,6 +46,8 @@ import com.tajemniktv.tajsos.ui.components.common.CaptureSheet
 import com.tajemniktv.tajsos.ui.components.layout.AppShell
 import com.tajemniktv.tajsos.ui.components.layout.rememberAppShellState
 import com.tajemniktv.tajsos.ui.components.notifications.NotificationUiModel
+import com.tajemniktv.tajsos.ui.components.notifications.NotificationVariant
+import androidx.compose.material.icons.filled.Info
 import com.tajemniktv.tajsos.ui.components.screen.BindScreenHeader
 import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderController
 import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderModel
@@ -145,6 +147,30 @@ fun App(
     val userProfile by viewModel.userProfile.collectAsState()
     val sidebarMode by viewModel.sidebarMode.collectAsState()
 
+    var notifications by remember {
+        mutableStateOf(
+            listOf(
+                NotificationUiModel(
+                    id = "SYS-001",
+                    title = "System Online",
+                    body = "Neural link established. Operations normal.",
+                    category = "SYSTEM",
+                    variant = NotificationVariant.INFO,
+                    icon = Icons.Default.Info,
+                    isUnread = true
+                )
+            )
+        )
+    }
+
+    val notificationsWithDismiss = remember(notifications) {
+        notifications.map { notif ->
+            notif.copy(onDismiss = {
+                notifications = notifications.filter { it.id != notif.id }
+            })
+        }
+    }
+
     var showCaptureSheetState by remember { mutableStateOf(value = false) }
     var selectedTasksTab by rememberSaveable { mutableStateOf(TasksTab.COMMAND) }
     val shellState = rememberAppShellState(sidebarMode = sidebarMode)
@@ -227,7 +253,7 @@ fun App(
                 drawerState = drawerState,
                 scope = scope,
                 screenHeader = screenHeaderController.model,
-                notifications = emptyList<NotificationUiModel>(),
+                notifications = notificationsWithDismiss,
             ) {
                 AppScaffold(
                     showCaptureSheet = showCaptureSheetState,
