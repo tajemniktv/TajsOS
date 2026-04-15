@@ -61,6 +61,14 @@ class AppBootstrapper(
         }
     }
 
+    /**
+     * Seeds initial sample data to demonstrate system capabilities and provide an immediate
+     * working environment for new users.
+     *
+     * This includes a default area (TajsOS Development), a core project, sample tasks,
+     * reference notes, and examples of various item types like records, maintenance,
+     * decisions, and open loops.
+     */
     private suspend fun seedOnboardingData() {
         if (repository.getAllNodes().first().isNotEmpty()) return
 
@@ -464,6 +472,10 @@ class AppBootstrapper(
         }
     }
 
+    /**
+     * Seeds initial life logistics templates, providing boilerplate for common physical and
+     * organizational tasks like travel packing.
+     */
     private suspend fun seedLifeLogisticsTemplates() {
         val existingNames =
             repository
