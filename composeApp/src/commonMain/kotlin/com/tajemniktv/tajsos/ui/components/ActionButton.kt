@@ -39,12 +39,14 @@ fun ActionButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     containerColor: Color = TajsOSTheme.Surface,
     contentColor: Color = TajsOSTheme.Text,
     icon: ImageVector? = null,
 ) {
     Button(
         onClick = onClick,
+        enabled = enabled,
         modifier = modifier.height(48.dp),
         colors =
             ButtonDefaults.buttonColors(
