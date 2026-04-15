@@ -25,16 +25,6 @@ import com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior
 import com.tajemniktv.tajsos.ui.components.screen.SplitScreenScaffold
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
-/**
- * Finance dashboard screen rendering the unified state of financial systems.
- *
- * Performance note: Complex list filtering and metric calculations are hoisted into `remember`
- * blocks keyed by their source data (`snapshot` and `allNodes`) to prevent expensive redundant
- * traversals during unrelated recompositions (e.g., when toggling the maintenance view tab).
- *
- * @param viewModel Main view model to collect state.
- * @param onEditNode Callback to open the editor for a node.
- */
 @Composable
 fun FinancesScreen(
     viewModel: MainViewModel,
@@ -45,14 +35,12 @@ fun FinancesScreen(
     val allNodes by viewModel.allNodes.collectAsState()
     var maintenanceView by remember { mutableStateOf(FinanceMaintenanceView.Queue) }
 
-    val queue = remember(snapshot) { DomainLensQueries.financeMaintenanceItems(snapshot) }
-    val recurring = remember(snapshot) { DomainLensQueries.financeRecurringItems(snapshot) }
-    val overdue = remember(snapshot) { DomainLensQueries.financeOverdueItems(snapshot) }
-
-    val actionItems = remember(allNodes) { DomainLensQueries.financeActionItems(allNodes) }
-    val knowledgeItems = remember(allNodes) { DomainLensQueries.financeKnowledgeItems(allNodes) }
-    val deadlineItems = remember(allNodes) { DomainLensQueries.financeDeadlineItems(allNodes) }
-
+    val queue = DomainLensQueries.financeMaintenanceItems(snapshot)
+    val recurring = DomainLensQueries.financeRecurringItems(snapshot)
+    val overdue = DomainLensQueries.financeOverdueItems(snapshot)
+    val actionItems = DomainLensQueries.financeActionItems(allNodes)
+    val knowledgeItems = DomainLensQueries.financeKnowledgeItems(allNodes)
+    val deadlineItems = DomainLensQueries.financeDeadlineItems(allNodes)
     val itemsInView =
         when (maintenanceView)
         {
@@ -60,26 +48,18 @@ fun FinancesScreen(
             FinanceMaintenanceView.Recurring -> recurring
             FinanceMaintenanceView.Overdue -> overdue
         }
-
-    val allItems = remember(queue, recurring, overdue) {
-        (queue + recurring + overdue).distinctBy { it.node.node.id }
-    }
-
-    val recentItems = remember(deadlineItems, actionItems, knowledgeItems) {
+    val allItems = (queue + recurring + overdue).distinctBy { it.node.node.id }
+    val recentItems =
         (deadlineItems + actionItems + knowledgeItems)
             .distinctBy { it.node.id }
             .sortedByDescending { it.node.updatedAt }
-    }
-
-    val liquidity = remember(recentItems) {
+    val liquidity =
         recentItems.sumOf {
             financeSyntheticLiquidity(
                 it.node.title,
             )
         }
-    }
-
-    val bars = remember(actionItems, knowledgeItems, deadlineItems, queue, recurring, overdue) {
+    val bars =
         listOf(
             (actionItems.size + 1).coerceAtLeast(1),
             (knowledgeItems.size + 1).coerceAtLeast(1),
@@ -87,9 +67,7 @@ fun FinancesScreen(
             (queue.size + recurring.size + 1).coerceAtLeast(1),
             (overdue.size + 1).coerceAtLeast(1),
         )
-    }
-
-    val confidence = remember(snapshot) { (100 - snapshot.adminDebtMeter / 2).coerceIn(35, 98) }
+    val confidence = (100 - snapshot.adminDebtMeter / 2).coerceIn(35, 98)
 
     val context =
         remember(

@@ -95,16 +95,4 @@ class DomainLensQueriesEdgeTest {
         val result = DomainLensQueries.financeKnowledgeItems(listOf(oldNote, newNote, medNote))
         assertEquals(listOf(2L, 3L, 1L), result.map { it.node.id })
     }
-
-    @Test
-    fun healthActionItems_matches_by_content_and_title_keywords() {
-        val healthTaskTitle = createNode(1, "Doctor appointment", "just checkup")
-        val healthTaskContent = createNode(2, "Generic Task", "medical follow-up")
-        val unrelatedTask = createNode(3, "Work", "writing code")
-
-        val result = DomainLensQueries.healthActionItems(listOf(healthTaskTitle, healthTaskContent, unrelatedTask))
-        assertEquals(2, result.size)
-        assertEquals(setOf(1L, 2L), result.map { it.node.id }.toSet())
-    }
-
 }

@@ -23,7 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -46,8 +45,6 @@ import com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior
 import com.tajemniktv.tajsos.ui.components.screen.SplitScreenScaffold
 import com.tajemniktv.tajsos.ui.components.screen.screenBreadcrumbs
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.area_detail_not_found
@@ -85,38 +82,31 @@ fun AreaDetailScreen(
     val logs by viewModel.getLogsForNode(areaId).collectAsState(initial = emptyList())
     var tab by rememberSaveable(areaId) { mutableStateOf(AreaTab.Overview) }
 
-    // Periodic time state to keep time-sensitive computations fresh
-    var currentTimeMs by remember { mutableLongStateOf(Clock.System.now().toEpochMilliseconds()) }
-    LaunchedEffect(Unit) {
-        while (isActive) {
-            delay(60_000L) // Update every minute
-            currentTimeMs = Clock.System.now().toEpochMilliseconds()
-        }
-    }
-
-    /**
-     * Extracted mapping to reduce redundant allocations per node type.
-     */
-    val nodesList = remember(items) { items.map { it.node } }
-    val tasks = remember(nodesList) { nodesList.filter { it.isTaskItem() && it.taskStateOrNull() != TaskState.ARCHIVED } }
-    val notes = remember(nodesList) { nodesList.filter { it.isNoteItem() } }
-    val records = remember(nodesList) { nodesList.filter { it.isRecordItem() } }
+    val tasks = remember(items) { items.map { it.node }.filter { it.isTaskItem() && it.status != "archived" } }
+    val notes = remember(items) { items.map { it.node }.filter { it.isNoteItem() } }
+    val records = remember(items) { items.map { it.node }.filter { it.isRecordItem() } }
     val activeProjects =
         remember(projects) {
             projects.filter {
-                val state = it.projectStateOrNull()
-                state == ProjectState.ACTIVE || state == ProjectState.ON_HOLD
+                it.projectStateOrNull() in
+                    setOf(
+                        ProjectState.ACTIVE,
+                        ProjectState.ON_HOLD,
+                    )
             }
         }
     val openResponsibilities =
         remember(tasks) { tasks.filter { it.projectId == null && it.taskStateOrNull() != TaskState.DONE } }
     val pressure =
-        remember(tasks, currentTimeMs) {
+        remember(tasks) {
             tasks.filter {
                 it.taskStateOrNull() == TaskState.BLOCKED ||
                     (
                         it.isHardDeadline &&
-                            (it.dueAt ?: Long.MAX_VALUE) < currentTimeMs
+                            (it.dueAt ?: Long.MAX_VALUE) <
+                            Clock.System
+                                .now()
+                                .toEpochMilliseconds()
                     )
             }
         }

@@ -10,34 +10,24 @@ class FakeTemplateDao : TemplateDao {
     override fun getAllTemplates(): Flow<List<TemplateEntity>> = templatesFlow
 
     override suspend fun insertTemplate(template: TemplateEntity) {
-        val newId = (storedTemplates.size + 1).toLong()
-        val newTemplate = template.copy(id = newId)
-        storedTemplates.add(newTemplate)
+        val index = storedTemplates.indexOfFirst { it.id == template.id && it.id != 0L }
+        if (index != -1) {
+            storedTemplates[index] = template
+        } else {
+            val newId = if (template.id == 0L) (storedTemplates.size + 1).toLong() else template.id
+            storedTemplates.add(template.copy(id = newId))
+        }
         templatesFlow.value = storedTemplates.toList()
     }
 
     override suspend fun insertTemplates(templates: List<TemplateEntity>) {
-        templates.forEach { insertTemplate(it) }
-    }
-
-    override suspend fun insertTemplates(templates: List<TemplateEntity>) {
         for (template in templates) {
-            val index = templates.indexOfFirst { it.id == template.id }
-            if (index != -1) {
-                templates[index] = template
-            } else {
-                templates.add(template)
-            }
+            insertTemplate(template)
         }
-        templatesFlow.value = templates.toList()
     }
 
     override suspend fun updateTemplate(template: TemplateEntity) {
-        val index = storedTemplates.indexOfFirst { it.id == template.id }
-        if (index != -1) {
-            storedTemplates[index] = template
-            templatesFlow.value = storedTemplates.toList()
-        }
+        insertTemplate(template)
     }
 
     override suspend fun deleteTemplate(template: TemplateEntity) {

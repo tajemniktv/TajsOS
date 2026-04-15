@@ -39,30 +39,17 @@ import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.time_architecture_active_label
 import tajsos.composeapp.generated.resources.time_architecture_active_window
-import tajsos.composeapp.generated.resources.time_architecture_daily_detail
-import tajsos.composeapp.generated.resources.time_architecture_daily_startup
 import tajsos.composeapp.generated.resources.time_architecture_all_horizons
 import tajsos.composeapp.generated.resources.time_architecture_current_horizon
 import tajsos.composeapp.generated.resources.time_architecture_desc
 import tajsos.composeapp.generated.resources.time_architecture_exam_pressure
 import tajsos.composeapp.generated.resources.time_architecture_map_title
-import tajsos.composeapp.generated.resources.time_architecture_monthly_detail
-import tajsos.composeapp.generated.resources.time_architecture_monthly_reset
 import tajsos.composeapp.generated.resources.time_architecture_no_items
-import tajsos.composeapp.generated.resources.time_architecture_no_anchor_markers
-import tajsos.composeapp.generated.resources.time_architecture_not_set
 import tajsos.composeapp.generated.resources.time_architecture_reserve_label
 import tajsos.composeapp.generated.resources.time_architecture_reserve_tracked
 import tajsos.composeapp.generated.resources.time_architecture_reserve_window
-import tajsos.composeapp.generated.resources.time_architecture_resets_cadence
 import tajsos.composeapp.generated.resources.time_architecture_status_summary
-import tajsos.composeapp.generated.resources.time_architecture_temporal_anchors
 import tajsos.composeapp.generated.resources.time_architecture_title
-import tajsos.composeapp.generated.resources.time_architecture_weekly_alignment
-import tajsos.composeapp.generated.resources.time_architecture_weekly_detail
-import tajsos.composeapp.generated.resources.time_architecture_add_anchor
-import tajsos.composeapp.generated.resources.time_architecture_run_monthly_reset
-import com.tajemniktv.tajsos.ui.components.common.EmptyState
 
 object TimeArchitectureDashboardBlocks {
     private val renderers: Map<String, TimeArchitectureDashboardBlockRenderer> =
@@ -286,114 +273,81 @@ private fun renderTimeCadenceAnchors(context: TimeArchitectureDashboardContext) 
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
     ) {
-        TimeArchitectureCadenceCard(
+        Surface(
             modifier = Modifier.weight(1f),
-            snapshot = snapshot,
-            onRunMonthlyReset = { viewModel.runMonthlyReset() }
-        )
-
-        TimeArchitectureAnchorsCard(
-            modifier = Modifier.weight(1f),
-            snapshot = snapshot,
-            onAddAnchor = { viewModel.addLifePeriodMarker("New period marker") }
-        )
-    }
-}
-
-@Composable
-private fun TimeArchitectureCadenceCard(
-    modifier: Modifier = Modifier,
-    snapshot: TimeArchitectureSnapshot,
-    onRunMonthlyReset: () -> Unit
-) {
-    Surface(
-        modifier = modifier,
-        color = TajsOSTheme.SurfaceLow,
-        shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
-        border = BorderStroke(1.dp, TajsOSTheme.GhostBorder.copy(alpha = 0.15f)),
-    ) {
-        Column(
-            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
+            color = TajsOSTheme.SurfaceLow,
+            shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
+            border = BorderStroke(1.dp, TajsOSTheme.GhostBorder.copy(alpha = 0.15f)),
         ) {
-            Text(
-                stringResource(Res.string.time_architecture_resets_cadence),
-                style = MaterialTheme.typography.headlineSmall,
-                color = TajsOSTheme.Text,
-            )
-            CadenceRow(
-                title = stringResource(Res.string.time_architecture_daily_startup),
-                detail = stringResource(Res.string.time_architecture_daily_detail, snapshot.todayLayer.size),
-                status = "Active",
-            )
-            CadenceRow(
-                title = stringResource(Res.string.time_architecture_weekly_alignment),
-                detail = stringResource(Res.string.time_architecture_weekly_detail, snapshot.weekLayer.size),
-                status = "Live",
-            )
-            CadenceRow(
-                title = stringResource(Res.string.time_architecture_monthly_reset),
-                detail =
-                    stringResource(
-                        Res.string.time_architecture_monthly_detail,
-                        snapshot.monthlyResetDate.ifBlank {
-                            stringResource(Res.string.time_architecture_not_set)
-                        },
-                    ),
-                status = "Pending",
-            )
-            Button(onClick = onRunMonthlyReset) {
-                Text(stringResource(Res.string.time_architecture_run_monthly_reset))
-            }
-        }
-    }
-}
-
-@Composable
-private fun TimeArchitectureAnchorsCard(
-    modifier: Modifier = Modifier,
-    snapshot: TimeArchitectureSnapshot,
-    onAddAnchor: () -> Unit
-) {
-    Surface(
-        modifier = modifier,
-        color = TajsOSTheme.SurfaceLow,
-        shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
-        border = BorderStroke(1.dp, TajsOSTheme.GhostBorder.copy(alpha = 0.15f)),
-    ) {
-        Column(
-            modifier = Modifier.padding(TajsOSTheme.SpacingMd),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
+            Column(
+                modifier = Modifier.padding(TajsOSTheme.SpacingMd),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 Text(
-                    stringResource(Res.string.time_architecture_temporal_anchors),
+                    "Resets & Cadence",
                     style = MaterialTheme.typography.headlineSmall,
                     color = TajsOSTheme.Text,
                 )
-                AssistChip(
-                    onClick = onAddAnchor,
-                    label = { Text(stringResource(Res.string.time_architecture_add_anchor)) },
+                CadenceRow(
+                    title = "Daily startup",
+                    detail = "${snapshot.todayLayer.size} items in today's horizon",
+                    status = "Active",
                 )
+                CadenceRow(
+                    title = "Weekly alignment",
+                    detail = "${snapshot.weekLayer.size} items mapped this week",
+                    status = "Live",
+                )
+                CadenceRow(
+                    title = "Monthly reset",
+                    detail = if (snapshot.monthlyResetDate.isNotBlank()) snapshot.monthlyResetDate else "Not set",
+                    status = "Pending",
+                )
+                Button(onClick = { viewModel.runMonthlyReset() }) {
+                    Text("Run Monthly Reset")
+                }
             }
-            val anchorRows = snapshot.buildAnchorRows()
-            if (anchorRows.isEmpty()) {
-                EmptyState(
-                    message = stringResource(Res.string.time_architecture_no_anchor_markers),
-                    description = null,
-                    fillParent = false,
-                    showContainer = false,
-                )
-            } else {
-                anchorRows.take(6).forEach { anchor ->
-                    AnchorRow(
-                        title = anchor.title,
-                        coordinate = anchor.coordinate,
-                        level = anchor.level,
+        }
+
+        Surface(
+            modifier = Modifier.weight(1f),
+            color = TajsOSTheme.SurfaceLow,
+            shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
+            border = BorderStroke(1.dp, TajsOSTheme.GhostBorder.copy(alpha = 0.15f)),
+        ) {
+            Column(
+                modifier = Modifier.padding(TajsOSTheme.SpacingMd),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    Text(
+                        "Temporal Anchors",
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = TajsOSTheme.Text,
                     )
+                    AssistChip(
+                        onClick = { viewModel.addLifePeriodMarker("New period marker") },
+                        label = { Text("Add Anchor") },
+                    )
+                }
+                val anchorRows = snapshot.buildAnchorRows()
+                if (anchorRows.isEmpty()) {
+                    Text(
+                        "No anchor markers yet.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = TajsOSTheme.Muted,
+                    )
+                } else {
+                    anchorRows.take(6).forEach { anchor ->
+                        AnchorRow(
+                            title = anchor.title,
+                            coordinate = anchor.coordinate,
+                            level = anchor.level,
+                        )
+                    }
                 }
             }
         }

@@ -31,7 +31,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -56,8 +55,6 @@ import com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior
 import com.tajemniktv.tajsos.ui.components.screen.SplitScreenScaffold
 import com.tajemniktv.tajsos.ui.components.screen.screenBreadcrumbs
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.project_detail_not_found
@@ -118,44 +115,32 @@ fun ProjectDetailScreen(
     val linkedNotes = remember(projectItems) { projectItems.filter { it.isNoteItem() } }
     val linkedRecords = remember(projectItems) { projectItems.filter { it.isRecordItem() } }
 
-    // Periodic time state to keep time-sensitive computations fresh
-    var now by remember { mutableLongStateOf(kotlin.time.Clock.System.now().toEpochMilliseconds()) }
-    LaunchedEffect(Unit) {
-        while (isActive) {
-            delay(60_000L) // Update every minute
-            now = kotlin.time.Clock.System.now().toEpochMilliseconds()
-        }
-    }
-
+    val now =
+        kotlin.time.Clock.System
+            .now()
+            .toEpochMilliseconds()
     val staleTime = now - (14 * 24 * 60 * 60 * 1000L)
 
-    val completedTasks = remember(projectTasks) { projectTasks.filter { it.taskStateOrNull() == TaskState.DONE } }
-    val activeTasks = remember(projectTasks) { projectTasks.filter { it.taskStateOrNull() == TaskState.ACTIVE } }
+    val completedTasks = projectTasks.filter { it.taskStateOrNull() == TaskState.DONE }
+    val activeTasks = projectTasks.filter { it.taskStateOrNull() == TaskState.ACTIVE }
     val blockedTasks =
-        remember(projectTasks, now) {
-            projectTasks.filter {
-                it.taskStateOrNull() == TaskState.BLOCKED ||
-                    (
-                        it.taskStateOrNull() == TaskState.ACTIVE &&
-                            it.isHardDeadline &&
-                            (
-                                it.dueAt
-                                    ?: Long.MAX_VALUE
-                            ) < now
-                    )
-            }
+        projectTasks.filter {
+            it.taskStateOrNull() == TaskState.BLOCKED ||
+                (
+                    it.taskStateOrNull() == TaskState.ACTIVE &&
+                        it.isHardDeadline &&
+                        (
+                            it.dueAt
+                                ?: Long.MAX_VALUE
+                        ) < now
+                )
         }
-    val blockedTaskIds = remember(blockedTasks) { blockedTasks.map { it.id }.toSet() }
-    val nextActions = remember(activeTasks, blockedTaskIds) {
-        activeTasks.filterNot { task -> task.id in blockedTaskIds }
-    }
+    val nextActions = activeTasks.filterNot { task -> blockedTasks.any { it.id == task.id } }
     val upcomingMilestones =
-        remember(projectTasks) {
-            projectTasks
-                .filter { it.dueAt != null }
-                .sortedBy { it.dueAt }
-                .take(5)
-        }
+        projectTasks
+            .filter { it.dueAt != null }
+            .sortedBy { it.dueAt }
+            .take(5)
 
     val hasCriticalOverdue =
         blockedTasks.any { it.isHardDeadline && (it.dueAt ?: Long.MAX_VALUE) < now }

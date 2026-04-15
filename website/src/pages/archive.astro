@@ -1,0 +1,184 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/landing/Navbar.astro';
+import Footer from '../components/landing/Footer.astro';
+
+const title = "ARCHIVE";
+---
+
+<Layout>
+  <div class="fixed inset-0 noise-bg pointer-events-none z-50"></div>
+  <div class="fixed top-[-10%] right-[-5%] w-[600px] h-[600px] gradient-sphere pointer-events-none -z-10"></div>
+
+  <Navbar />
+  <main class="relative pt-32 max-w-[1600px] mx-auto px-8 min-h-screen">
+
+<!-- Sidebar Navigation (Filter System) -->
+<aside class="col-span-12 lg:col-span-3 space-y-8">
+<div class="sticky top-32">
+<div class="mb-10">
+<h2 class="font-headline text-xs font-bold text-primary tracking-[0.3em] uppercase mb-4">Core Directory</h2>
+<div class="space-y-1">
+<button class="w-full flex items-center justify-between p-3 rounded-lg bg-surface-container-high border-l-2 border-primary text-on-surface transition-all">
+<span class="flex items-center gap-3 font-label text-sm uppercase tracking-wider">
+<span class="material-symbols-outlined text-sm">memory</span>
+                                Memory Segments
+                            </span>
+<span class="font-mono text-[10px] opacity-40">642 GB</span>
+</button>
+<button class="w-full flex items-center justify-between p-3 rounded-lg hover:bg-surface-container-low text-on-surface-variant transition-all">
+<span class="flex items-center gap-3 font-label text-sm uppercase tracking-wider">
+<span class="material-symbols-outlined text-sm">terminal</span>
+                                Kernel Logs
+                            </span>
+<span class="font-mono text-[10px] opacity-40">ERR_0/LOGS_12</span>
+</button>
+<button class="w-full flex items-center justify-between p-3 rounded-lg hover:bg-surface-container-low text-on-surface-variant transition-all">
+<span class="flex items-center gap-3 font-label text-sm uppercase tracking-wider">
+<span class="material-symbols-outlined text-sm">view_in_ar</span>
+                                Interface States
+                            </span>
+<span class="font-mono text-[10px] opacity-40">v4.0.1</span>
+</button>
+</div>
+</div>
+<div class="p-6 rounded-xl bg-surface-container-lowest border border-outline-variant/10">
+<div class="flex items-center gap-3 mb-4">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<h3 class="font-headline text-[10px] uppercase tracking-widest text-on-surface-variant">System Latency</h3>
+</div>
+<div class="h-16 flex items-end gap-1 px-1">
+<div class="flex-1 bg-primary/20 h-[40%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary/40 h-[60%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary/30 h-[45%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary/60 h-[80%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary/20 h-[30%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary/90 h-[95%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary/50 h-[55%] rounded-t-sm"></div>
+</div>
+<p class="font-mono text-[10px] mt-3 text-on-surface-variant/60">0.02ms sync // stable</p>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<section class="col-span-12 lg:col-span-9 space-y-12">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div>
+<p class="font-mono text-[10px] text-primary-fixed-dim tracking-[0.4em] uppercase mb-2">Neural_Index // Vol_4</p>
+<h1 class="font-headline text-5xl md:text-7xl font-bold tracking-tighter uppercase leading-none">
+                        The Neural <br/>
+<span class="text-primary font-light italic">//</span> Archive
+                    </h1>
+</div>
+<div class="flex gap-4">
+<div class="relative">
+<input class="bg-surface-container-lowest border-none text-xs font-mono tracking-widest px-6 py-3 rounded-lg focus:ring-1 focus:ring-primary w-64 placeholder:text-outline/40" placeholder="QUERY_ARCHIVE..." type="text"/>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-primary/40 text-sm">search</span>
+</div>
+</div>
+</div>
+<!-- Bento Grid Archive Timeline -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Entry 1: Large Featured -->
+<article class="md:col-span-2 glass-card rounded-xl p-8 group hover:border-primary/30 transition-all duration-500 overflow-hidden relative">
+<div class="absolute -right-20 -top-20 w-64 h-64 bg-primary/5 blur-[80px] group-hover:bg-primary/10 transition-colors"></div>
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+<div class="flex items-center gap-4">
+<span class="font-mono text-xs text-primary-fixed-dim bg-primary/10 px-3 py-1 rounded border border-primary/20">0x44FA</span>
+<span class="font-mono text-[10px] text-on-surface-variant tracking-widest">TIMESTAMP: 2024.05.12_14:20:01</span>
+</div>
+<div class="flex gap-2">
+<span class="px-2 py-0.5 rounded text-[9px] font-mono border border-outline-variant text-on-surface-variant uppercase">Cognitive</span>
+<span class="px-2 py-0.5 rounded text-[9px] font-mono border border-outline-variant text-on-surface-variant uppercase">Critical</span>
+</div>
+</div>
+<h3 class="font-headline text-3xl font-bold mb-4 tracking-tight group-hover:text-primary transition-colors">Project Nebula Deep Dive</h3>
+<p class="text-on-surface-variant leading-relaxed max-w-2xl mb-8">Comprehensive trace of synaptic patterns during the Nebula conceptualization phase. Total node integration at 98.4% with minimal heuristic drift.</p>
+<div class="flex items-center gap-6">
+<button class="bg-gradient-to-br from-primary to-primary-dim text-on-primary-fixed px-6 py-2.5 rounded-lg font-label font-bold text-xs uppercase tracking-widest active:scale-95 transition-transform">Expand Trace</button>
+<button class="text-xs font-mono uppercase tracking-widest text-on-surface-variant hover:text-on-surface transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">download</span> Meta_JSON
+                        </button>
+</div>
+</article>
+<!-- Small Entry 2 -->
+<article class="glass-card rounded-xl p-6 group hover:bg-surface-container-high/60 transition-all duration-300">
+<div class="flex items-center justify-between mb-4">
+<span class="font-mono text-[10px] text-primary/80">0x992B</span>
+<span class="font-mono text-[9px] text-on-surface-variant opacity-40">12m ago</span>
+</div>
+<h4 class="font-headline text-xl font-bold mb-2 tracking-tight">Quantum Leak Protocol</h4>
+<p class="text-sm text-on-surface-variant/80 font-body mb-6">Automated log of localized memory fractures within the secondary cortex layer.</p>
+<div class="pt-4 border-t border-outline-variant/10 flex justify-between items-center">
+<span class="material-symbols-outlined text-primary text-lg">shield</span>
+<span class="font-mono text-[10px] text-on-surface-variant">SEGMENT_CORRUPT: FALSE</span>
+</div>
+</article>
+<!-- Small Entry 3 -->
+<article class="glass-card rounded-xl p-6 group hover:bg-surface-container-high/60 transition-all duration-300">
+<div class="flex items-center justify-between mb-4">
+<span class="font-mono text-[10px] text-primary/80">0x1102</span>
+<span class="font-mono text-[9px] text-on-surface-variant opacity-40">2h ago</span>
+</div>
+<h4 class="font-headline text-xl font-bold mb-2 tracking-tight">Vocal Synthesis Test</h4>
+<p class="text-sm text-on-surface-variant/80 font-body mb-6">Analysis of naturalistic pauses and cadence modulation in OS-human interaction.</p>
+<div class="pt-4 border-t border-outline-variant/10 flex justify-between items-center">
+<span class="material-symbols-outlined text-primary text-lg">mic</span>
+<span class="font-mono text-[10px] text-on-surface-variant">BITRATE: 412kbps</span>
+</div>
+</article>
+<!-- Asymmetric List Entry -->
+<article class="md:col-span-2 bg-surface-container-low rounded-xl p-6 flex flex-col md:flex-row items-center gap-8 border border-outline-variant/5">
+<div class="w-full md:w-48 h-32 rounded-lg overflow-hidden bg-black shrink-0 relative">
+<div class="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent"></div>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="font-mono text-[10px] text-primary opacity-50">GRAPH_DATA_STREAM</span>
+</div>
+<img alt="Abstract neural data visualization" class="w-full h-full object-cover opacity-40" data-alt="Cyberpunk neural network data visualization with purple particles" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4ETXhJGdl1cXQDS3VBSffNxA-y1IgkwAAZJV5UQDX3A-IYfTpvGG7Nwz8E-yaIYGBRKTxzEyWCrKel1_GpKos55Lqk74xwwU9rL46uNKqdKMe5eZk80qAeL_iptdZdOcNWay1Rq0P0CgoGnNipk-wFDc7uCT_Xp_75oI6CrLi53PucMWEASsZRZ_VETWsyrCwvsGO4_vTBqp6fBGwpv0vpqQzPZV-8_7NtsBGWLitaN7gbVWpgfwK4jpf4DfHY4Fafno_VNHIRHs"/>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-4 mb-2">
+<span class="font-mono text-[10px] uppercase text-primary tracking-widest">Hash_0xFEED</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="font-mono text-[10px] text-on-surface-variant uppercase tracking-widest">Yesterday</span>
+</div>
+<h4 class="font-headline text-2xl font-bold tracking-tight mb-2">Sensorimotor Mapping // ALPHA</h4>
+<p class="text-sm text-on-surface-variant max-w-xl">Reconstruction of physical sensory inputs translated to digital impulse sets. Performance threshold met in 3/4 quadrants.</p>
+</div>
+<div class="shrink-0">
+<button class="w-12 h-12 rounded-full border border-primary/30 flex items-center justify-center text-primary hover:bg-primary hover:text-on-primary transition-all">
+<span class="material-symbols-outlined">play_arrow</span>
+</button>
+</div>
+</article>
+</div>
+<!-- More Stats / Technical Bottom Section -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-8">
+<div class="p-6 rounded-xl border border-outline-variant/20 bg-surface-container-high/30">
+<h5 class="font-label text-[10px] text-on-surface-variant uppercase tracking-[0.2em] mb-4">Archive Density</h5>
+<div class="text-3xl font-headline font-bold mb-2">92.8 <span class="text-xs text-primary">PB</span></div>
+<div class="w-full h-1 bg-surface-container-lowest rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[92%]"></div>
+</div>
+</div>
+<div class="p-6 rounded-xl border border-outline-variant/20 bg-surface-container-high/30">
+<h5 class="font-label text-[10px] text-on-surface-variant uppercase tracking-[0.2em] mb-4">Neural Stability</h5>
+<div class="text-3xl font-headline font-bold mb-2">99.9 <span class="text-xs text-primary">%</span></div>
+<div class="w-full h-1 bg-surface-container-lowest rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[99.9%]"></div>
+</div>
+</div>
+<div class="p-6 rounded-xl border border-outline-variant/20 bg-surface-container-high/30">
+<h5 class="font-label text-[10px] text-on-surface-variant uppercase tracking-[0.2em] mb-4">Encryption Level</h5>
+<div class="text-3xl font-headline font-bold mb-2 text-primary">AES-4k</div>
+<div class="w-full h-1 bg-surface-container-lowest rounded-full overflow-hidden">
+<div class="h-full bg-primary w-full"></div>
+</div>
+</div>
+</div>
+</section>
+
+  </main>
+  <Footer />
+</Layout>

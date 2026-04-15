@@ -92,14 +92,10 @@ data class ModeQueryProfile(
 /**
  * Constructs a mode configuration by combining the stored preference with the provided area and type filters.
  *
- * This function acts as a bridge between the raw SQLite database entities ([ModePreferenceEntity],
- * [ModeAreaFilterEntity], [ModeTypeFilterEntity]) and the domain-level [ModeQueryProfile] used by
- * the UI layer. It handles the deserialization of JSON fields like quick actions and dashboard blocks.
- *
  * @param preference The persisted mode preference containing visibility flags, sort strategy, and JSON fields for quick actions, dashboard blocks, and suggestions.
  * @param areaFilters A list of area filter entities; entries with `include == true` indicate areas to include in the profile.
  * @param typeFilters A list of type filter entities; entries with `include == true` indicate node types to include in the profile.
- * @return A [ModeQueryProfile] that consolidates visibility, filtering, actions, suggestions, and dashboard block settings for the mode.
+ * @return A ModeQueryProfile that consolidates visibility, filtering, actions, suggestions, and dashboard block settings for the mode.
  */
 fun buildModeQueryProfile(
     preference: ModePreferenceEntity,

@@ -44,7 +44,6 @@ import androidx.compose.material.icons.filled.Storage
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.tajemniktv.tajsos.data.AppPack
 import com.tajemniktv.tajsos.data.PackRegistry
-import com.tajemniktv.tajsos.ui.Screen.Companion.groupedItems
 import com.tajemniktv.tajsos.ui.domain.DomainRegistry
 import com.tajemniktv.tajsos.ui.screens.tasks.TasksTab
 import org.jetbrains.compose.resources.StringResource
@@ -101,15 +100,7 @@ import tajsos.composeapp.generated.resources.type_record
 import tajsos.composeapp.generated.resources.type_task
 
 /**
- * Defines the navigation graph and destinations of the TajsOS application.
- *
- * This sealed class hierarchy centralizes all screen definitions, routes, and navigation metadata.
- * It supports a hierarchical structure for breadcrumbs and nested tab-based sub-navigation.
- *
- * @property route The unique string identifier for navigation, matching the URI pattern.
- * @property label A [StringResource] for the localized name of the screen.
- * @property icon The [ImageVector] used to represent this screen in UI components like the sidebar.
- * @property isRoot True if this screen is a top-level destination in the navigation shell.
+ * Screen defines the navigation graph of the app.
  */
 sealed class Screen(
     val route: String,
@@ -117,69 +108,36 @@ sealed class Screen(
     val icon: ImageVector,
     val isRoot: Boolean = true,
 ) {
-    /**
-     * The parent screen in the navigation hierarchy for breadcrumb generation.
-     */
     open val breadcrumbParent: Screen? get() = null
 
     /**
-     * The list of child screens or tabs reachable from this screen.
+     * Returns the list of child screens for this root screen.
      */
     open val children: List<Screen> get() = emptyList()
 
-    /**
-     * Daily briefing lens providing a situational awareness overview.
-     */
     data object Briefing :
         Screen("briefing", Res.string.screen_briefing, Icons.Default.Description)
 
-    /**
-     * Central execution hub and system status overview.
-     */
     data object Dashboard :
         Screen("dashboard", Res.string.screen_dash, Icons.Default.Home)
 
-    /**
-     * Rapid capture entry point for unorganized items and thoughts.
-     */
     data object Inbox : Screen("inbox", Res.string.screen_inbox, Icons.Default.Email)
 
-    /**
-     * Global search interface for the entire operating system state.
-     */
     data object Search : Screen("search", Res.string.screen_search, Icons.Default.Search)
 
-    /**
-     * Focused view of today's calendar, tasks, and time-sensitive commitments.
-     */
     data object Today : Screen("today", Res.string.screen_today, Icons.Default.DateRange)
 
-    /**
-     * Deep work environment focused on the execution of a single item.
-     */
     data object Focus : Screen("focus", Res.string.screen_focus, Icons.Default.PlayArrow)
 
-    /**
-     * Habit tracking and recurring behavior monitoring lens.
-     */
     data object Track : Screen("track", Res.string.screen_track, Icons.Default.CheckCircle)
 
-    /**
-     * Primary task management lens for active and planned work.
-     */
     data object Tasks : Screen("tasks", Res.string.screen_tasks, Icons.Default.Checklist) {
         override val children: List<Screen>
             get() = TasksTab.entries.map { it.toScreen() }
     }
 
-    /**
-     * Knowledge management lens for long-form notes and references.
-     */
     data object Notes : Screen("notes", Res.string.screen_notes, Icons.AutoMirrored.Filled.Notes)
 
-    /**
-     * View/edit interface for a specific note.
-     */
     data object NoteDetail : Screen(
         "note/{noteId}",
         Res.string.screen_note,
@@ -189,9 +147,6 @@ sealed class Screen(
         override val breadcrumbParent: Screen = Notes
     }
 
-    /**
-     * View/edit interface for a specific task.
-     */
     data object TaskDetail : Screen(
         "task/{taskId}",
         Res.string.type_task,
@@ -201,9 +156,6 @@ sealed class Screen(
         override val breadcrumbParent: Screen = Tasks
     }
 
-    /**
-     * Detailed view for a specific temporal record or journal entry.
-     */
     data object RecordDetail : Screen(
         "record/{recordId}",
         Res.string.type_record,
@@ -213,24 +165,12 @@ sealed class Screen(
         override val breadcrumbParent: Screen = Notes
     }
 
-    /**
-     * Analytics and statistical lens over system-wide data.
-     */
     data object Insights : Screen("insights", Res.string.screen_stats, Icons.Default.Info)
 
-    /**
-     * Management of deleted and historical items.
-     */
     data object Archive : Screen("archive", Res.string.screen_archive, Icons.Default.Delete)
 
-    /**
-     * Temporal planning lens for scheduling and forward commitments.
-     */
     data object Calendar : Screen("calendar", Res.string.screen_cal, Icons.Default.Event)
 
-    /**
-     * Preferences for calendar behavior and provider integrations.
-     */
     data object CalendarSettings :
         Screen(
             "calendar_settings",
@@ -238,28 +178,16 @@ sealed class Screen(
             Icons.Default.Settings,
             isRoot = false,
         ) {
-        override val breadcrumbParent: Screen = Settings
-    }
+            override val breadcrumbParent: Screen = Settings
+        }
 
-    /**
-     * Visualization of the relationship graph between system entities.
-     */
     data object Graph : Screen("graph", Res.string.screen_graph, Icons.Default.Share)
 
-    /**
-     * Coordination lens for outcomes and complex initiatives.
-     */
     data object Projects :
         Screen("projects", Res.string.screen_proj, Icons.AutoMirrored.Filled.List)
 
-    /**
-     * Management lens for ongoing spheres of responsibility.
-     */
     data object Areas : Screen("areas", Res.string.screen_area, Icons.Default.LocationOn)
 
-    /**
-     * Focused view of a specific project and its components.
-     */
     data object ProjectDetail : Screen(
         "project/{projectId}",
         Res.string.screen_project,
@@ -269,9 +197,6 @@ sealed class Screen(
         override val breadcrumbParent: Screen = Projects
     }
 
-    /**
-     * Focused view of a specific area of responsibility.
-     */
     data object AreaDetail :
         Screen(
             "area/{areaId}",
@@ -279,12 +204,9 @@ sealed class Screen(
             Icons.Default.LocationOn,
             isRoot = false,
         ) {
-        override val breadcrumbParent: Screen = Areas
-    }
+            override val breadcrumbParent: Screen = Areas
+        }
 
-    /**
-     * Global application configuration and preference management.
-     */
     data object Settings : Screen("settings", Res.string.screen_opts, Icons.Default.Settings) {
         override val children: List<Screen>
             get() =
@@ -311,9 +233,6 @@ sealed class Screen(
                 )
     }
 
-    /**
-     * Configuration for health-related metrics and biometric integrations.
-     */
     data object SettingsHealth : Screen(
         "settings_health",
         Res.string.screen_settings_health,
@@ -323,9 +242,6 @@ sealed class Screen(
         override val breadcrumbParent: Screen = Settings
     }
 
-    /**
-     * UI/UX customization including themes, fonts, and layout modes.
-     */
     data object SettingsAppearance : Screen(
         "settings_appearance",
         Res.string.screen_settings_appearance,
@@ -335,9 +251,6 @@ sealed class Screen(
         override val breadcrumbParent: Screen = Settings
     }
 
-    /**
-     * Marketplace and management of optional feature packs.
-     */
     data object SettingsFeaturePacks : Screen(
         "settings_feature_packs",
         Res.string.screen_settings_feature_packs,
@@ -347,9 +260,6 @@ sealed class Screen(
         override val breadcrumbParent: Screen = Settings
     }
 
-    /**
-     * Low-level data management, export, and synchronization settings.
-     */
     data object SettingsData : Screen(
         "settings_data",
         Res.string.screen_settings_data,
@@ -359,9 +269,6 @@ sealed class Screen(
         override val breadcrumbParent: Screen = Settings
     }
 
-    /**
-     * Developer diagnostics, internal state inspection, and testing tools.
-     */
     data object SettingsDebug : Screen(
         "settings_debug",
         Res.string.screen_settings_debug,
@@ -371,9 +278,6 @@ sealed class Screen(
         override val breadcrumbParent: Screen = Settings
     }
 
-    /**
-     * Library of reusable structures for notes and project boilerplate.
-     */
     data object Templates : Screen(
         "templates",
         Res.string.screen_templates,
@@ -383,9 +287,6 @@ sealed class Screen(
         override val breadcrumbParent: Screen = Settings
     }
 
-    /**
-     * Periodic maintenance and reflection interface for system hygiene.
-     */
     data object Review : Screen(
         "review",
         Res.string.screen_review,
@@ -393,9 +294,6 @@ sealed class Screen(
         isRoot = false,
     )
 
-    /**
-     * Management of personal identity, user data, and system-wide persona.
-     */
     data object Profile : Screen(
         "profile",
         Res.string.profile_title,
@@ -405,126 +303,84 @@ sealed class Screen(
         override val breadcrumbParent: Screen = Settings
     }
 
-    /**
-     * Decision-making lens for tracking choices and trade-offs.
-     */
     data object Decisions : Screen(
         "decisions",
         Res.string.dash_decisions,
         Icons.Default.QuestionMark,
     )
 
-    /**
-     * Maintenance view for resolving cognitive leaks and unfinished items.
-     */
     data object OpenLoops : Screen(
         "open_loops",
         Res.string.screen_open_loops,
         Icons.Default.AllInclusive,
     )
 
-    /**
-     * Workflow lens for standard operating procedures and automation.
-     */
     data object Protocols : Screen(
         "protocols",
         Res.string.screen_protocols,
         Icons.Default.RocketLaunch,
     )
 
-    /**
-     * Temporal block design and routine management lens.
-     */
     data object TimeArchitecture : Screen(
         "time_architecture",
         Res.string.screen_time_architecture,
         Icons.Default.Schedule,
     )
 
-    /**
-     * Spatial and location management lens.
-     */
     data object Places : Screen(
         "places",
         Res.string.screen_places,
         Icons.Default.Place,
     )
 
-    /**
-     * Financial management and monetary tracking lens.
-     */
     data object Finances : Screen(
         "finances",
         Res.string.screen_finances,
         Icons.Default.AttachMoney,
     )
 
-    /**
-     * Health and well-being tracking lens.
-     */
     data object Health : Screen(
         "health",
         Res.string.screen_health,
         Icons.Default.Favorite,
     )
 
-    /**
-     * Social connection and relationship management lens.
-     */
     data object Relationships : Screen(
         "relationships",
         Res.string.screen_relationships,
         Icons.Default.People,
     )
 
-    /**
-     * Learning management and knowledge acquisition lens.
-     */
     data object Education : Screen(
         "education",
         Res.string.screen_education,
         Icons.Default.School,
     )
 
-    /**
-     * Legacy route for study content; redirecting to [Education].
-     */
     data object StudyLegacy : Screen(
         "study",
         Res.string.screen_study,
         Icons.Default.School,
     )
 
-    /**
-     * Personal principles and decision framework management.
-     */
     data object Rules : Screen(
         "rules",
         Res.string.screen_rules,
         Icons.Default.Gavel,
     )
 
-    /**
-     * Secure storage for sensitive and encrypted data.
-     */
     data object Vaults : Screen(
         "vaults",
         Res.string.screen_vaults,
         Icons.Default.Inventory2,
     )
 
-    /**
-     * Energy and cognitive bandwidth monitoring lens.
-     */
     data object Capacity : Screen(
         "capacity",
         Res.string.screen_capacity,
         Icons.Default.Speed,
     )
 
-    /**
-     * Self-perception and value alignment lens.
-     */
     data object Identity : Screen(
         "identity",
         Res.string.screen_identity,
@@ -550,80 +406,19 @@ sealed class Screen(
         override val breadcrumbParent: Screen = parent
     }
 
-    /**
-     * Returns the full chain of screens from the root to this screen.
-     */
     fun breadcrumbTrail(): List<Screen> = breadcrumbParent?.breadcrumbTrail().orEmpty() + this
 
     companion object {
         /**
-         * Exhaustive list of all top-level root screens.
-         */
-        private val rootScreens: List<Screen> by lazy {
-            listOf(
-                NoteDetail,
-                TaskDetail,
-                RecordDetail,
-                ProjectDetail,
-                AreaDetail,
-                CalendarSettings,
-                SettingsHealth,
-                SettingsAppearance,
-                SettingsFeaturePacks,
-                SettingsData,
-                SettingsDebug,
-                Briefing,
-                Dashboard,
-                Inbox,
-                Search,
-                Today,
-                Focus,
-                Track,
-                Tasks,
-                Notes,
-                Insights,
-                Archive,
-                Calendar,
-                Graph,
-                Projects,
-                Areas,
-                Settings,
-                Templates,
-                Review,
-                Profile,
-                Decisions,
-                OpenLoops,
-                Protocols,
-                TimeArchitecture,
-                Places,
-                Finances,
-                Health,
-                Relationships,
-                Education,
-                Rules,
-                Vaults,
-                Capacity,
-                Identity,
-            )
-        }
-
-        /**
-         * Exhaustive list of every screen in the system, including children and sub-tabs.
-         */
-        private val allScreens: List<Screen> by lazy {
-            rootScreens + rootScreens.flatMap { it.children }
-        }
-
-        /**
-         * Resolves a navigation route string to its corresponding [Screen].
+         * Resolve a navigation route string to its corresponding Screen.
          *
          * The function first checks for an exact screen route match (including query parameters), then attempts to match
-         * tab-style [Sub] routes derived from query parameters, applies a special-case mapping of the legacy study route
-         * to [Education], and finally falls back to matching the first root screen whose base path segment equals the
+         * tab-style `Sub` routes derived from query parameters, applies a special-case mapping of the legacy study route
+         * to `Education`, and finally falls back to matching the first root screen whose base path segment equals the
          * route's base segment.
          *
          * @param route The navigation route string, which may include path segments and query parameters (for example, "note/123?edit=true"); may be null.
-         * @return The matching [Screen], or `null` if `route` is null or no match exists.
+         * @return The matching `Screen`, or `null` if `route` is null or no match exists.
          */
         fun fromRoute(route: String?): Screen? {
             if (route == null) return null
@@ -634,6 +429,55 @@ sealed class Screen(
                     .split("?")
                     .first()
             if (currentRouteBase == StudyLegacy.route) return Education
+
+            val rootScreens =
+                listOf(
+                    NoteDetail,
+                    TaskDetail,
+                    RecordDetail,
+                    ProjectDetail,
+                    AreaDetail,
+                    CalendarSettings,
+                    SettingsHealth,
+                    SettingsAppearance,
+                    SettingsFeaturePacks,
+                    SettingsData,
+                    SettingsDebug,
+                    Briefing,
+                    Dashboard,
+                    Inbox,
+                    Search,
+                    Today,
+                    Focus,
+                    Track,
+                    Tasks,
+                    Notes,
+                    Insights,
+                    Archive,
+                    Calendar,
+                    Graph,
+                    Projects,
+                    Areas,
+                    Settings,
+                    Templates,
+                    Review,
+                    Profile,
+                    Decisions,
+                    OpenLoops,
+                    Protocols,
+                    TimeArchitecture,
+                    Places,
+                    Finances,
+                    Health,
+                    Relationships,
+                    Education,
+                    Rules,
+                    Vaults,
+                    Capacity,
+                    Identity,
+                )
+
+            val allScreens = rootScreens + rootScreens.flatMap { it.children }
 
             // Try exact match first (for Sub screens with query params)
             allScreens.find { it.route == route }?.let { return it }
@@ -655,10 +499,7 @@ sealed class Screen(
             return rootScreens.find { it.route.split("/").first() == currentRouteBase }
         }
 
-        /**
-         * Defines the logical grouping of screens for display in the application's sidebar.
-         */
-        val groupedItems: List<Pair<StringResource, List<Screen>>> by lazy {
+        val groupedItems by lazy {
             listOf(
                 Res.string.nav_core to listOf(Briefing, Dashboard, Inbox, Search),
                 Res.string.nav_execution to
@@ -682,16 +523,13 @@ sealed class Screen(
                 Res.string.nav_status to listOf(Track, Insights, Capacity, Identity, Graph, Review),
                 Res.string.nav_system to
                     listOf(
+                        *DomainRegistry.screens.toTypedArray(),
                         Archive,
                         Settings,
-                    ) +
-                    DomainRegistry.screens,
+                    ),
             )
         }
 
-        /**
-         * Returns [groupedItems] filtered by the availability of features in the given [packRegistry].
-         */
         fun groupedItemsForPacks(packRegistry: PackRegistry): List<Pair<StringResource, List<Screen>>> {
             val visible =
                 groupedItems.map { (group, screens) ->
@@ -735,12 +573,6 @@ sealed class Screen(
             return visible.filter { (_, screens) -> screens.isNotEmpty() }
         }
 
-        /**
-         * Determines which root screen should be considered the "active" context in the sidebar for a given screen.
-         *
-         * This ensures that detail screens (like [NoteDetail]) keep their respective root (like [Notes]) highlighted
-         * in the sidebar.
-         */
         fun sidebarContextRoot(screen: Screen): Screen =
             when (screen)
             {

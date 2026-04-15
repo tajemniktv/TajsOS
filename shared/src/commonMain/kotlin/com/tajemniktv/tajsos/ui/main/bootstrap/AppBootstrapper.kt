@@ -61,14 +61,6 @@ class AppBootstrapper(
         }
     }
 
-    /**
-     * Seeds initial sample data to demonstrate system capabilities and provide an immediate
-     * working environment for new users.
-     *
-     * This includes a default area (TajsOS Development), a core project, sample tasks,
-     * reference notes, and examples of various item types like records, maintenance,
-     * decisions, and open loops.
-     */
     private suspend fun seedOnboardingData() {
         if (repository.getAllNodes().first().isNotEmpty()) return
 
@@ -284,191 +276,194 @@ class AppBootstrapper(
         val existingModes = repository.getAllModes().first()
         val existingKeys = existingModes.map { it.key }
 
-        if ("COMMAND" !in existingKeys) seedCommandMode()
-        if ("FOCUS" !in existingKeys) seedFocusMode()
-        if ("RECOVERY" !in existingKeys) seedRecoveryMode()
-        if ("STUDY" !in existingKeys) seedStudyMode()
-        if ("ERRAND" !in existingKeys) seedErrandMode()
-        if ("ADMIN" !in existingKeys) seedAdminMode()
-        if ("SHUTDOWN" !in existingKeys) seedShutdownMode()
-        if ("LOW_BATTERY" !in existingKeys) seedLowBatteryMode()
-        if ("ALL" !in existingKeys) seedAllMode()
-    }
-
-    private suspend fun seedCommandMode() {
-        val commandId =
-            insertModeWithPreferences(
-                ModeEntity(
-                    key = "COMMAND",
-                    name = "Command",
-                    description = "Default everyday overview mode. What matters right now?",
-                    icon = "dashboard",
-                    themeColor = 0xFF3F51B5.toInt(),
-                ),
+        if ("COMMAND" !in existingKeys) {
+            val commandId =
+                repository.insertMode(
+                    ModeEntity(
+                        key = "COMMAND",
+                        name = "Command",
+                        description = "Default everyday overview mode. What matters right now?",
+                        icon = "dashboard",
+                        themeColor = 0xFF3F51B5.toInt(),
+                    ),
+                )
+            repository.insertPreference(
                 ModePreferenceEntity(
-                    modeId = 0L,
+                    modeId = commandId,
                     dashboardBlocksJson = "[\"today_top_3\", \"resume_context\", \"inbox_count\", \"deadlines\", \"overdue\", \"pinned_note\"]",
                 ),
             )
-        if (preferencesRepository.activeModeId.first() == null) {
-            preferencesRepository.updateActiveModeId(commandId)
+            if (preferencesRepository.activeModeId.first() == null) {
+                preferencesRepository.updateActiveModeId(commandId)
+            }
+        }
+
+        if ("FOCUS" !in existingKeys) {
+            val focusId =
+                repository.insertMode(
+                    ModeEntity(
+                        key = "FOCUS",
+                        name = "Focus",
+                        description = "Narrow the system to one thing. keep attention on this.",
+                        icon = "center_focus_strong",
+                        sortOrder = 1,
+                        themeColor = 0xFFF44336.toInt(),
+                    ),
+                )
+            repository.insertPreference(
+                ModePreferenceEntity(
+                    modeId = focusId,
+                    showInbox = false,
+                    showStats = false,
+                    dashboardBlocksJson = "[\"current_task\", \"next_step\", \"timer\", \"blockers\", \"linked_resources\"]",
+                ),
+            )
+        }
+
+        if ("RECOVERY" !in existingKeys) {
+            val recoveryId =
+                repository.insertMode(
+                    ModeEntity(
+                        key = "RECOVERY",
+                        name = "Recovery",
+                        description = "Support low-capacity functioning. Smallest safe useful thing.",
+                        icon = "medical_services",
+                        sortOrder = 2,
+                        themeColor = 0xFF4CAF50.toInt(),
+                    ),
+                )
+            repository.insertPreference(
+                ModePreferenceEntity(
+                    modeId = recoveryId,
+                    showInbox = false,
+                    showStats = false,
+                    dashboardBlocksJson = "[\"basics\", \"easy_wins\", \"urgent_only\", \"recovery_protocol\", \"check_in\"]",
+                ),
+            )
+        }
+
+        if ("STUDY" !in existingKeys) {
+            val studyId =
+                repository.insertMode(
+                    ModeEntity(
+                        key = "STUDY",
+                        name = "Study",
+                        description = "Focus on learning and academic performance.",
+                        icon = "school",
+                        sortOrder = 3,
+                        themeColor = 0xFFFF9800.toInt(),
+                    ),
+                )
+            repository.insertPreference(
+                ModePreferenceEntity(
+                    modeId = studyId,
+                    dashboardBlocksJson = "[\"classes\", \"assignments\", \"deadlines\", \"notes\", \"revision_targets\"]",
+                ),
+            )
+        }
+
+        if ("ERRAND" !in existingKeys) {
+            val errandId =
+                repository.insertMode(
+                    ModeEntity(
+                        key = "ERRAND",
+                        name = "Errand",
+                        description = "Out-of-home execution and logistical clustering.",
+                        icon = "shopping_cart",
+                        sortOrder = 4,
+                        themeColor = 0xFF00BCD4.toInt(),
+                    ),
+                )
+            repository.insertPreference(
+                ModePreferenceEntity(
+                    modeId = errandId,
+                    dashboardBlocksJson = "[\"shopping_list\", \"place_based_tasks\", \"errands\", \"what_to_bring\"]",
+                ),
+            )
+        }
+
+        if ("ADMIN" !in existingKeys) {
+            val adminId =
+                repository.insertMode(
+                    ModeEntity(
+                        key = "ADMIN",
+                        name = "Admin",
+                        description = "Handle the 'paperwork' of life. Subscriptions, bills, forms.",
+                        icon = "gavel",
+                        sortOrder = 5,
+                        themeColor = 0xFF607D8B.toInt(),
+                    ),
+                )
+            repository.insertPreference(
+                ModePreferenceEntity(
+                    modeId = adminId,
+                    dashboardBlocksJson = "[\"paperwork\", \"bills\", \"renewals\", \"subscriptions\", \"bureaucracy\"]",
+                ),
+            )
+        }
+
+        if ("SHUTDOWN" !in existingKeys) {
+            val shutdownId =
+                repository.insertMode(
+                    ModeEntity(
+                        key = "SHUTDOWN",
+                        name = "Shutdown",
+                        description = "Nightly reset and preparation for tomorrow.",
+                        icon = "bedtime",
+                        sortOrder = 6,
+                        themeColor = 0xFF673AB7.toInt(),
+                    ),
+                )
+            repository.insertPreference(
+                ModePreferenceEntity(
+                    modeId = shutdownId,
+                    dashboardBlocksJson = "[\"tomorrow_prep\", \"mini_review\", \"dump_leftovers\", \"open_loops_reduction\"]",
+                ),
+            )
+        }
+
+        if ("LOW_BATTERY" !in existingKeys) {
+            val lowBatteryId =
+                repository.insertMode(
+                    ModeEntity(
+                        key = "LOW_BATTERY",
+                        name = "Low Battery",
+                        description = "Minimal survival mode for when you are emotionally or physically drained.",
+                        icon = "battery_alert",
+                        sortOrder = 7,
+                        themeColor = 0xFFE91E63.toInt(),
+                    ),
+                )
+            repository.insertPreference(
+                ModePreferenceEntity(
+                    modeId = lowBatteryId,
+                    showInbox = false,
+                    dashboardBlocksJson = "[\"survival_basics\", \"tiny_wins\", \"passive_input\", \"comfort_notes\"]",
+                ),
+            )
+        }
+
+        if ("ALL" !in existingKeys) {
+            val allModeId =
+                repository.insertMode(
+                    ModeEntity(
+                        key = "ALL",
+                        name = "All",
+                        description = "Unfiltered access to the entire system. No restrictions.",
+                        icon = "all_inclusive",
+                        sortOrder = 8,
+                        themeColor = 0xFF9E9E9E.toInt(),
+                    ),
+                )
+            repository.insertPreference(
+                ModePreferenceEntity(
+                    modeId = allModeId,
+                    dashboardBlocksJson = "[\"today_top_3\", \"search\", \"alerts\", \"focus\", \"insights\", \"knowledge\", \"operational\"]",
+                ),
+            )
         }
     }
 
-    private suspend fun seedFocusMode() {
-        insertModeWithPreferences(
-            ModeEntity(
-                key = "FOCUS",
-                name = "Focus",
-                description = "Narrow the system to one thing. keep attention on this.",
-                icon = "center_focus_strong",
-                sortOrder = 1,
-                themeColor = 0xFFF44336.toInt(),
-            ),
-            ModePreferenceEntity(
-                modeId = 0L,
-                showInbox = false,
-                showStats = false,
-                dashboardBlocksJson = "[\"current_task\", \"next_step\", \"timer\", \"blockers\", \"linked_resources\"]",
-            ),
-        )
-    }
-
-    private suspend fun seedRecoveryMode() {
-        insertModeWithPreferences(
-            ModeEntity(
-                key = "RECOVERY",
-                name = "Recovery",
-                description = "Support low-capacity functioning. Smallest safe useful thing.",
-                icon = "medical_services",
-                sortOrder = 2,
-                themeColor = 0xFF4CAF50.toInt(),
-            ),
-            ModePreferenceEntity(
-                modeId = 0L,
-                showInbox = false,
-                showStats = false,
-                dashboardBlocksJson = "[\"basics\", \"easy_wins\", \"urgent_only\", \"recovery_protocol\", \"check_in\"]",
-            ),
-        )
-    }
-
-    private suspend fun seedStudyMode() {
-        insertModeWithPreferences(
-            ModeEntity(
-                key = "STUDY",
-                name = "Study",
-                description = "Focus on learning and academic performance.",
-                icon = "school",
-                sortOrder = 3,
-                themeColor = 0xFFFF9800.toInt(),
-            ),
-            ModePreferenceEntity(
-                modeId = 0L,
-                dashboardBlocksJson = "[\"classes\", \"assignments\", \"deadlines\", \"notes\", \"revision_targets\"]",
-            ),
-        )
-    }
-
-    private suspend fun seedErrandMode() {
-        insertModeWithPreferences(
-            ModeEntity(
-                key = "ERRAND",
-                name = "Errand",
-                description = "Out-of-home execution and logistical clustering.",
-                icon = "shopping_cart",
-                sortOrder = 4,
-                themeColor = 0xFF00BCD4.toInt(),
-            ),
-            ModePreferenceEntity(
-                modeId = 0L,
-                dashboardBlocksJson = "[\"shopping_list\", \"place_based_tasks\", \"errands\", \"what_to_bring\"]",
-            ),
-        )
-    }
-
-    private suspend fun seedAdminMode() {
-        insertModeWithPreferences(
-            ModeEntity(
-                key = "ADMIN",
-                name = "Admin",
-                description = "Handle the 'paperwork' of life. Subscriptions, bills, forms.",
-                icon = "gavel",
-                sortOrder = 5,
-                themeColor = 0xFF607D8B.toInt(),
-            ),
-            ModePreferenceEntity(
-                modeId = 0L,
-                dashboardBlocksJson = "[\"paperwork\", \"bills\", \"renewals\", \"subscriptions\", \"bureaucracy\"]",
-            ),
-        )
-    }
-
-    private suspend fun seedShutdownMode() {
-        insertModeWithPreferences(
-            ModeEntity(
-                key = "SHUTDOWN",
-                name = "Shutdown",
-                description = "Nightly reset and preparation for tomorrow.",
-                icon = "bedtime",
-                sortOrder = 6,
-                themeColor = 0xFF673AB7.toInt(),
-            ),
-            ModePreferenceEntity(
-                modeId = 0L,
-                dashboardBlocksJson = "[\"tomorrow_prep\", \"mini_review\", \"dump_leftovers\", \"open_loops_reduction\"]",
-            ),
-        )
-    }
-
-    private suspend fun seedLowBatteryMode() {
-        insertModeWithPreferences(
-            ModeEntity(
-                key = "LOW_BATTERY",
-                name = "Low Battery",
-                description = "Minimal survival mode for when you are emotionally or physically drained.",
-                icon = "battery_alert",
-                sortOrder = 7,
-                themeColor = 0xFFE91E63.toInt(),
-            ),
-            ModePreferenceEntity(
-                modeId = 0L,
-                showInbox = false,
-                dashboardBlocksJson = "[\"survival_basics\", \"tiny_wins\", \"passive_input\", \"comfort_notes\"]",
-            ),
-        )
-    }
-
-    private suspend fun seedAllMode() {
-        insertModeWithPreferences(
-            ModeEntity(
-                key = "ALL",
-                name = "All",
-                description = "Unfiltered access to the entire system. No restrictions.",
-                icon = "all_inclusive",
-                sortOrder = 8,
-                themeColor = 0xFF9E9E9E.toInt(),
-            ),
-            ModePreferenceEntity(
-                modeId = 0L,
-                dashboardBlocksJson = "[\"today_top_3\", \"search\", \"alerts\", \"focus\", \"insights\", \"knowledge\", \"operational\"]",
-            ),
-        )
-    }
-
-    private suspend fun insertModeWithPreferences(
-        mode: ModeEntity,
-        preference: ModePreferenceEntity,
-    ): Long {
-        val modeId = repository.insertMode(mode)
-        repository.insertPreference(preference.copy(modeId = modeId))
-        return modeId
-    }
-
-    /**
-     * Seeds initial life logistics templates, providing boilerplate for common physical and
-     * organizational tasks like travel packing.
-     */
     private suspend fun seedLifeLogisticsTemplates() {
         val existingNames =
             repository

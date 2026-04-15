@@ -353,8 +353,6 @@
     <string name="profile_empty_hint">Nie wybrano avatara</string>
     <string name="profile_medications">LEKI</string>
     <string name="profile_add_med">DODAJ LEK</string>
-    <string name="medication_empty_message">Brak skonfigurowanych wpisów leków.</string>
-    <string name="settings_no_medication_entries_configured_yet">Brak jeszcze skonfigurowanych wpisów leków.</string>
     <string name="med_substance">SUBSTANCJA</string>
     <string name="med_brand_names">NAZWY HANDLOWE</string>
     <string name="med_dosage">DAWKOWANIE</string>
@@ -883,16 +881,6 @@
     <string name="time_architecture_reserve_label">Obciążenie długoterminowe i presja semestralna</string>
     <string name="time_architecture_reserve_tracked">%1$d zobowiązań długoterminowych</string>
     <string name="time_architecture_exam_pressure">Wykryto presję okresu egzaminacyjnego</string>
-    <string name="time_architecture_resets_cadence">Resety i rytm</string>
-    <string name="time_architecture_daily_startup">Dzienne uruchomienie</string>
-    <string name="time_architecture_daily_detail">%1$d elementów w dzisiejszym horyzoncie</string>
-    <string name="time_architecture_weekly_alignment">Tygodniowe wyrównanie</string>
-    <string name="time_architecture_weekly_detail">%1$d elementów zaplanowanych na ten tydzień</string>
-    <string name="time_architecture_monthly_reset">Miesięczny reset</string>
-    <string name="time_architecture_monthly_detail">Ostatni reset: %1$s</string>
-    <string name="time_architecture_not_set">Nie ustawiono</string>
-    <string name="time_architecture_temporal_anchors">Kotwice czasowe</string>
-    <string name="time_architecture_no_anchor_markers">Brak punktów zakotwiczenia.</string>
 
     <!-- Protocols -->
     <string name="protocol_session_paused">Sesja wstrzymana</string>
@@ -920,8 +908,6 @@
     <string name="header_menu">Menu</string>
     <string name="header_notifications">Powiadomienia</string>
     <string name="header_notifications_title">STATUS SYSTEMU</string>
-    <string name="no_active_system_alerts">Brak aktywnych alertów systemowych.</string>
-    <string name="pending_nodes_due_soon">Brak oczekujących elementów z bliskim terminem.</string>
     <string name="header_mode_label">SYSTEM: %1$s</string>
     <string name="shell_protocol_state_with_name">Stan protokołu: %1$s</string>
     <string name="shell_protocol_state_standby">Stan protokołu: tryb czuwania</string>

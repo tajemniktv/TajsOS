@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/landing/Navbar.astro';
 import Footer from '../components/landing/Footer.astro';
 
-const title = "SYSTEM STATUS";
+const title = "API-STATUS";
 ---
 
 <Layout>
@@ -24,7 +24,7 @@ const title = "SYSTEM STATUS";
 <span class="font-mono text-[10px] tracking-[0.2em] text-emerald-400 uppercase font-bold">System // Operational</span>
 </div>
 <h1 class="text-5xl md:text-7xl font-headline font-bold tracking-tighter text-on-surface">
-                    System <br/><span class="text-primary">Status</span>
+                    Global Network <br/><span class="text-primary">Status</span>
 </h1>
 </div>
 <div class="text-right hidden md:block">
@@ -49,7 +49,7 @@ const title = "SYSTEM STATUS";
 <div class="flex-1 bg-emerald-500/80 rounded-full"></div>
 <div class="flex-1 bg-emerald-500/80 rounded-full"></div>
 </div>
-<p class="mt-4 font-mono text-[10px] text-on-surface-variant/60">Service reliability measured over the last 90 days.</p>
+<p class="mt-4 font-mono text-[10px] text-on-surface-variant/60">Service reliability measured over the last 90 solar cycles.</p>
 </div>
 <div class="bg-surface-container-highest p-10 rounded-xl border border-outline-variant/10 flex flex-col justify-between">
 <div>
@@ -109,10 +109,10 @@ const title = "SYSTEM STATUS";
 </div>
 </div>
 </div>
-<!-- Backend Sync API -->
+<!-- Neural Link API -->
 <div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/5 hover:border-primary/20 transition-all cursor-default">
 <div class="flex justify-between items-start mb-6">
-<h3 class="font-headline font-bold text-lg">Backend Sync API</h3>
+<h3 class="font-headline font-bold text-lg">Neural Link API</h3>
 <span class="text-[10px] font-mono text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded uppercase">Operational</span>
 </div>
 <div class="flex items-center gap-4 mb-4">
@@ -131,10 +131,10 @@ const title = "SYSTEM STATUS";
 </div>
 </div>
 </div>
-<!-- CDN -->
+<!-- Global Edge -->
 <div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/5 hover:border-primary/20 transition-all cursor-default">
 <div class="flex justify-between items-start mb-6">
-<h3 class="font-headline font-bold text-lg">CDN</h3>
+<h3 class="font-headline font-bold text-lg">Global Edge</h3>
 <span class="text-[10px] font-mono text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded uppercase">Operational</span>
 </div>
 <div class="flex items-center gap-4 mb-4">
@@ -214,7 +214,7 @@ const title = "SYSTEM STATUS";
 <h2 class="font-headline font-bold text-2xl tracking-tight">Incident History</h2>
 <div class="bg-surface-container-lowest border border-outline-variant/10 rounded-xl overflow-hidden">
 <div class="bg-surface-container-high px-6 py-3 flex items-center justify-between border-b border-outline-variant/10">
-<span class="font-mono text-xs uppercase tracking-widest text-on-surface-variant">Changelog // May 2024</span>
+<span class="font-mono text-xs uppercase tracking-widest text-on-surface-variant">System Log // May 2024</span>
 <span class="font-mono text-xs text-emerald-400">STATUS: NOMINAL</span>
 </div>
 <div class="p-0 divide-y divide-outline-variant/5">
@@ -237,7 +237,7 @@ const title = "SYSTEM STATUS";
 <span class="material-symbols-outlined text-sm">check_circle</span>
                                 System Maintenance
                             </h4>
-<p class="text-sm text-on-surface-variant leading-relaxed">Completed scheduled database maintenance in the EU-CENTRAL-1 region. Zero downtime recorded.</p>
+<p class="text-sm text-on-surface-variant leading-relaxed">Completed scheduled hot-swap of redundant storage arrays in the EU-CENTRAL-1 region. Zero downtime recorded.</p>
 </div>
 </div>
 <!-- Log Item -->
@@ -248,7 +248,7 @@ const title = "SYSTEM STATUS";
 <span class="material-symbols-outlined text-sm">warning</span>
                                 Minor Latency Spike
                             </h4>
-<p class="text-sm text-on-surface-variant leading-relaxed font-mono">CODE: 0x4492. Resolved: CDN cache invalidation delay. Impact: &lt;5 minutes.</p>
+<p class="text-sm text-on-surface-variant leading-relaxed font-mono">CODE: 0x4492. Resolved: Routing table optimization for Global Edge Nodes. Impact: &lt;5 minutes.</p>
 </div>
 </div>
 </div>

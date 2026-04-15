@@ -46,10 +46,8 @@ import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.cal_agenda_title
-import tajsos.composeapp.generated.resources.pending_nodes_due_soon
 import kotlin.time.Clock
 import kotlin.time.Instant
-import com.tajemniktv.tajsos.ui.components.common.EmptyState
 
 object CalendarDashboardBlocks {
     private val renderers: Map<String, CalendarDashboardBlockRenderer> =
@@ -219,11 +217,10 @@ internal fun CalendarMainBlock(
                                 )
                             }
                             if (pendingNodes.isEmpty()) {
-                                EmptyState(
-                                    message = stringResource(Res.string.pending_nodes_due_soon),
-                                    description = null,
-                                    fillParent = false,
-                                    showContainer = false,
+                                Text(
+                                    "No pending nodes due soon.",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = TajsOSTheme.Muted,
                                 )
                             } else {
                                 pendingNodes.forEach { node ->

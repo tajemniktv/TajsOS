@@ -56,39 +56,26 @@ private fun parseIpv4(host: String): IpAddress.Ipv4? {
     if (parts.size != 4) return null
     var address = 0L
     for (i in 0..3) {
-        val part = parts[i]
-        if (part.isEmpty()) return null
-        // Disallow leading spaces or any other non-digit character implicitly
-        if (part.any { it !in '0'..'9' }) return null
-        // Disallow leading zeros unless the part is exactly "0"
-        if (part.length > 1 && part.startsWith("0")) return null
-        val byteVal = part.toLongOrNull() ?: return null
+        val byteVal = parts[i].toLongOrNull() ?: return null
         if (byteVal !in 0..255) return null
         address = (address shl 8) or byteVal
     }
     return IpAddress.Ipv4(address)
 }
 
-private fun validateIpv6Host(host: String): Boolean {
-    if (!host.contains(":")) return false
-    if (host.startsWith(":") && !host.startsWith("::")) return false
-    if (host.endsWith(":") && !host.endsWith("::")) return false
-
-    // An IPv6 address can only have at most one "::" substitution.
-    // If the first and last occurrences of "::" are not the same, it's invalid.
-    if (host.indexOf("::") != host.lastIndexOf("::")) {
-        return false
-    }
-    return true
-}
-
 private fun parseIpv6(host: String): IpAddress.Ipv6? {
-    if (!validateIpv6Host(host)) return null
-
+    if (!host.contains(":")) return null
     val rawParts = host.split(":")
 
     val values = LongArray(8) { 0L }
     val doubleColonIdx = rawParts.indexOf("")
+
+    // An IPv6 address can only have at most one "::" substitution.
+    // If the first and last occurrences of "::" are not the same, it's invalid.
+    if (host.indexOf("::") != host.lastIndexOf("::")) {
+        return null
+    }
+
 
     val success = if (doubleColonIdx != -1) {
         parseIpv6Abbreviated(rawParts, values, doubleColonIdx)
@@ -110,14 +97,6 @@ private fun parseIpv6Abbreviated(rawParts: List<String>, values: LongArray, doub
     return leftParsed <= (7 - rightParsed)
 }
 
-private fun parseIpv6Segment(part: String): Long? {
-    if (part.length > 4) return null
-    if (part.startsWith("-") || part.startsWith("+")) return null
-    val v = part.toLongOrNull(16) ?: return null
-    if (v !in 0..0xFFFF) return null
-    return v
-}
-
 private fun populateIpv6Values(
     rawParts: List<String>,
     indices: IntProgression,
@@ -128,14 +107,14 @@ private fun populateIpv6Values(
     var outputIdx = startOutputIndex
     var count = 0
     for (i in indices) {
-        val part = rawParts[i]
-        if (part.isEmpty()) {
+        if (rawParts[i].isEmpty()) {
             // Empty parts should only exist at the boundaries (e.g. "::1" -> "", "", "1").
             // If we encounter one here during population, and it's not handled by the boundary cases,
             // we skip it, but we already validated that there are no extra "::" in parseIpv6.
             continue
         }
-        val v = parseIpv6Segment(part) ?: return -1
+        val v = rawParts[i].toLongOrNull(16) ?: return -1
+        if (v !in 0..0xFFFF) return -1
         if (outputIdx < 0 || outputIdx >= values.size) return -1
         values[outputIdx] = v
         outputIdx += direction
@@ -147,7 +126,8 @@ private fun populateIpv6Values(
 private fun parseIpv6Full(rawParts: List<String>, values: LongArray): Boolean {
     if (rawParts.size != 8) return false
     for (i in 0..7) {
-        val v = parseIpv6Segment(rawParts[i]) ?: return false
+        val v = rawParts[i].toLongOrNull(16) ?: return false
+        if (v !in 0..0xFFFF) return false
         values[i] = v
     }
     return true
