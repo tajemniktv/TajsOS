@@ -44,6 +44,13 @@ revert - explicit revert commit
 
 For now, the current targets are androidApp and composeApp (JVM), so test against those.
 
+- CI verification baseline (see `.github/workflows/ci.yml`) currently runs:
+    - `:shared:jvmTest`
+    - `:composeApp:jvmTest`
+    - `:server:test`
+    - `:androidApp:lintDebug`
+    - `:androidApp:assembleDebug`
+
 ### Platforms and modules
 
 - Active Gradle modules: `:androidApp`, `:composeApp`, `:shared`, `:server`.
@@ -96,6 +103,10 @@ For now, the current targets are androidApp and composeApp (JVM), so test agains
 - Treat `NodeEntity` as an overloaded legacy surface that should not absorb unlimited new nullable
   fields.
 - Prefer typed companion models/tables for deeper domain behavior.
+- Current typed companions and support tables live in
+  `shared/src/commonMain/kotlin/com/tajemniktv/tajsos/data/LifeObjectEntities.kt`
+  (`TaskFacetEntity`, `NoteFacetEntity`, `ProjectFacetEntity`, `AreaFacetEntity`,
+  `RecordFacetEntity`, `ScheduleEntryEntity`, `RichContentDocumentEntity`, `SavedViewEntity`).
 - Keep relation graph behavior (`RelationEntity`) as a first-class capability.
 - During current pre-alpha development, do not preserve weak legacy ontology just for compatibility.
 - Prefer collapsing legacy pseudo-types such as `idea`, `resource`, `vault`, `open_loop`, and
@@ -114,6 +125,8 @@ For now, the current targets are androidApp and composeApp (JVM), so test agains
 - `YYYY-MM-DD` string matching for "today" is a temporary compromise, not a long-term pattern.
 - New date-sensitive behavior should use real date abstractions (`LocalDate`/`epochDay`) with
   explicit timezone semantics.
+- Prefer schedule persistence via `ScheduleEntryEntity.localDateEpochDay` + `timezoneId` instead of
+  introducing new date-only string columns.
 
 ### Sync boundaries
 
@@ -138,6 +151,10 @@ For now, the current targets are androidApp and composeApp (JVM), so test agains
 
 - Desktop layout must keep a persistent operating frame: always-visible left sidebar, always-visible
   top header, and a route-swapped main content area.
+- Keep the current three-layer UI composition split: shell chrome in
+  `ui/components/layout/AppShell.kt`, reusable page scaffolds in
+  `ui/components/screen/ScreenScaffold.kt` and `SplitScreenScaffold.kt`, and screen-specific route
+  content in screen composables.
 - Do not reintroduce secondary/contextual/sub-sidebars as a separate panel. Root sections should
   expand inline within the primary sidebar.
 - Sidebar behavior modes must remain explicit shell state (collapsed, expanded, hover-expand), not
