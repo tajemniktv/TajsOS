@@ -4,28 +4,32 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class FakeTemplateDao : TemplateDao {
-    private val templates = mutableListOf<TemplateEntity>()
+    private val storedTemplates = mutableListOf<TemplateEntity>()
     private val templatesFlow = MutableStateFlow<List<TemplateEntity>>(emptyList())
 
     override fun getAllTemplates(): Flow<List<TemplateEntity>> = templatesFlow
 
     override suspend fun insertTemplate(template: TemplateEntity) {
-        val newId = (templates.size + 1).toLong()
+        val newId = (storedTemplates.size + 1).toLong()
         val newTemplate = template.copy(id = newId)
-        templates.add(newTemplate)
-        templatesFlow.value = templates.toList()
+        storedTemplates.add(newTemplate)
+        templatesFlow.value = storedTemplates.toList()
+    }
+
+    override suspend fun insertTemplates(templates: List<TemplateEntity>) {
+        templates.forEach { insertTemplate(it) }
     }
 
     override suspend fun updateTemplate(template: TemplateEntity) {
-        val index = templates.indexOfFirst { it.id == template.id }
+        val index = storedTemplates.indexOfFirst { it.id == template.id }
         if (index != -1) {
-            templates[index] = template
-            templatesFlow.value = templates.toList()
+            storedTemplates[index] = template
+            templatesFlow.value = storedTemplates.toList()
         }
     }
 
     override suspend fun deleteTemplate(template: TemplateEntity) {
-        templates.removeAll { it.id == template.id }
-        templatesFlow.value = templates.toList()
+        storedTemplates.removeAll { it.id == template.id }
+        templatesFlow.value = storedTemplates.toList()
     }
 }
