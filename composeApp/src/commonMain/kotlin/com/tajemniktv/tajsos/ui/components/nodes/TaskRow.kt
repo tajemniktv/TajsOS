@@ -4,8 +4,11 @@
 
 package com.tajemniktv.tajsos.ui.components.nodes
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -57,7 +60,7 @@ import tajsos.composeapp.generated.resources.task_row_unpin_desc
  * @param onClick Optional click handler for the row.
  * @param onArchive Optional archive handler invoked when the archive action (shown only for completed tasks) is pressed.
  */
-@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalLayoutApi::class)
 @Composable
 fun TaskRow(
     node: NodeEntity,

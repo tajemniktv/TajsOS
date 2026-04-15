@@ -207,10 +207,11 @@ internal fun StandardTaskRow(
                 val contextStr = listOfNotNull(
                     task.projectId?.let { projectById[it] },
                     task.areaId?.let { areaById[it] }
+                val contextStr = listOfNotNull(
+                    task.projectId?.let { projectById[it] },
+                    task.areaId?.let { areaById[it] },
+                    extraContext
                 ).joinToString(" • ")
-
-                if (contextStr.isNotBlank()) {
-                    Text(contextStr, style = MaterialTheme.typography.bodySmall, color = TajsOSTheme.Muted)
                 }
 
                 task.dueAt?.let {
