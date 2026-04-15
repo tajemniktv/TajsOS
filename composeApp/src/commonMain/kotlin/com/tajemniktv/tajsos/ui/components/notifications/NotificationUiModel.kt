@@ -30,4 +30,5 @@ data class NotificationUiModel(
     val icon: ImageVector? = null,
     val progress: Float? = null,
     val onClick: () -> Unit = {},
+    val onDismiss: (() -> Unit)? = null,
 )
