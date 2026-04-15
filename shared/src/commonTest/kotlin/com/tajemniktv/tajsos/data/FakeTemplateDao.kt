@@ -16,6 +16,10 @@ class FakeTemplateDao : TemplateDao {
         templatesFlow.value = templates.toList()
     }
 
+    override suspend fun insertTemplates(templates: List<TemplateEntity>) {
+        templates.forEach { insertTemplate(it) }
+    }
+
     override suspend fun updateTemplate(template: TemplateEntity) {
         val index = templates.indexOfFirst { it.id == template.id }
         if (index != -1) {
