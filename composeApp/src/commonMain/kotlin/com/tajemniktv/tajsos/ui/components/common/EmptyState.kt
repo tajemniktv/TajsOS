@@ -62,11 +62,12 @@ fun EmptyState(
     description: String? = stringResource(Res.string.empty_state_default_desc),
     fillParent: Boolean = true,
     showContainer: Boolean = true,
+    pulseIcon: Boolean = showContainer,
     content: @Composable ColumnScope.() -> Unit = {},
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "EmptyStatePulse")
     val alpha by infiniteTransition.animateFloat(
-        initialValue = 0.1f,
+        initialValue = if (pulseIcon) 0.1f else 0.6f,
         targetValue = 0.6f,
         animationSpec =
             infiniteRepeatable(
@@ -85,8 +86,8 @@ fun EmptyState(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier =
                     Modifier
-                        .defaultMinSize(minHeight = 120.dp)
-                        .padding(TajsOSTheme.SpacingLg),
+                        .defaultMinSize(minHeight = if (fillParent) 200.dp else 120.dp)
+                        .padding(if (fillParent) TajsOSTheme.SpacingXl else TajsOSTheme.SpacingLg),
             ) {
                 Icon(
                     imageVector = icon,

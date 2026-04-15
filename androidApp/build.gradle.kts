@@ -22,10 +22,19 @@ android {
         }
     }
     namespace = "com.tajemniktv.tajsos"
-    compileSdk =
-        libs.versions.android.compileSdk
-            .get()
-            .toInt()
+    compileSdk {
+        version =
+            release(
+                libs.versions.android.compileSdk
+                    .get()
+                    .toInt(),
+            ) {
+                minorApiLevel =
+                    libs.versions.android.compileSdkMinor
+                        .get()
+                        .toInt()
+            }
+    }
 
     defaultConfig {
         applicationId = "com.tajemniktv.tajsos"
@@ -61,7 +70,9 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    buildToolsVersion = "36.1.0"
+    buildToolsVersion =
+        libs.versions.android.buildTools
+            .get()
 }
 
 kotlin {

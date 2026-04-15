@@ -221,13 +221,19 @@ fun HeaderGreeting(
             overflow = TextOverflow.Ellipsis,
         )
         Spacer(Modifier.height(2.dp))
-        Text(
-            text = protocolText.uppercase(),
-            style = MaterialTheme.typography.labelSmall,
-            color = TajsOSTheme.Muted,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
+        Surface(
+            color = TajsOSTheme.Primary.copy(alpha = 0.1f),
+            shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
+        ) {
+            Text(
+                text = protocolText.uppercase(),
+                style = MaterialTheme.typography.labelSmall,
+                color = TajsOSTheme.Primary,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+            )
+        }
     }
 }
 
@@ -287,8 +293,8 @@ private fun HeaderBreadcrumbs(breadcrumbs: List<ScreenHeaderBreadcrumb>) {
 
             Text(
                 text = breadcrumb.label,
-                style = MaterialTheme.typography.labelSmall,
-                color = if (breadcrumb.onClick != null) TajsOSTheme.Text else TajsOSTheme.Muted,
+                style = MaterialTheme.typography.labelMedium,
+                color = if (breadcrumb.onClick != null) TajsOSTheme.Text else TajsOSTheme.Muted.copy(alpha = 0.8f),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier =
@@ -322,6 +328,12 @@ fun GlobalSearchBar(modifier: Modifier = Modifier) {
                 material = GlassMaterial.THIN,
             ),
         textStyle = MaterialTheme.typography.bodyMedium.copy(color = TajsOSTheme.Text),
+        colors = androidx.compose.material3.OutlinedTextFieldDefaults.colors(
+            unfocusedContainerColor = glassContainerColor(TajsOSTheme.SurfaceHigh.copy(alpha = 0.5f)),
+            focusedContainerColor = glassContainerColor(TajsOSTheme.SurfaceHighest.copy(alpha = 0.7f)),
+            unfocusedBorderColor = Color.Transparent,
+            focusedBorderColor = TajsOSTheme.Primary.copy(alpha = 0.5f),
+        ),
         placeholder = {
             Text(
                 text = stringResource(Res.string.header_search_placeholder),
@@ -361,11 +373,11 @@ fun HeaderModeSwitcher(
 ) {
     val pulseTransition = rememberInfiniteTransition(label = "modePulse")
     val pulseAlpha by pulseTransition.animateFloat(
-        initialValue = 0.35f,
+        initialValue = 0.5f,
         targetValue = 1f,
         animationSpec =
             infiniteRepeatable(
-                animation = tween(durationMillis = 900, easing = LinearEasing),
+                animation = tween(durationMillis = 1500, easing = LinearEasing),
                 repeatMode = RepeatMode.Reverse,
             ),
         label = "modePulseAlpha",
@@ -374,14 +386,14 @@ fun HeaderModeSwitcher(
     Box(modifier = modifier) {
         Surface(
             onClick = { onExpandedChange(!expanded) },
-            modifier = Modifier.glassChrome(shape = RoundedCornerShape(12.dp), material = GlassMaterial.REGULAR),
+            modifier = Modifier.height(42.dp).glassChrome(shape = RoundedCornerShape(12.dp), material = GlassMaterial.REGULAR),
             shape = RoundedCornerShape(12.dp),
             color = glassContainerColor(TajsOSTheme.SurfaceHigh),
             tonalElevation = 0.dp,
             shadowElevation = 0.dp,
         ) {
             Row(
-                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                modifier = Modifier.padding(horizontal = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
@@ -467,6 +479,7 @@ fun NotificationsPopover(
             Box {
                 IconButton(
                     onClick = { onExpandedChange(!expanded) },
+                    modifier = Modifier.size(42.dp),
                 ) {
                     Icon(
                         imageVector = Icons.Default.Notifications,
