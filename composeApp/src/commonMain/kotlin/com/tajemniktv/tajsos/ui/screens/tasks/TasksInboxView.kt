@@ -157,7 +157,7 @@ internal fun TasksInboxView(
                     )
                 } else {
                     inboxTasks.forEachIndexed { index, task ->
-                        StandardTaskRow(
+                        TasksScreenComponents.StandardTaskRow(
                             task = task,
                             projectById = projectById,
                             areaById = areaById,

@@ -122,7 +122,7 @@ internal fun TasksAllView(
             {
                 TaskSort.PRIORITY -> {
                     filtered.sortedByDescending {
-                        scoreTask(
+                        TaskScoring.scoreTask(
                             it,
                             Clock.System.now().toEpochMilliseconds(),
                             emptySet(),
@@ -283,7 +283,7 @@ private fun TaskTable(
         Column {
             tasks.forEachIndexed { index, task ->
                 val selected = task.id == selectedId
-                StandardTaskRow(
+                TasksScreenComponents.StandardTaskRow(
                     task = task,
                     projectById = projectById,
                     areaById = areaById,

@@ -195,9 +195,6 @@ class RepositoryDelegationTest {
         override suspend fun insertTemplate(template: TemplateEntity) {
         }
 
-        override suspend fun insertTemplates(templates: List<TemplateEntity>) {
-        }
-
         override suspend fun updateTemplate(template: TemplateEntity) {
         }
 

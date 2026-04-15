@@ -71,7 +71,7 @@ internal fun TasksArchiveView(
         ) {
             Column {
                 archivedTasks.forEachIndexed { index, task ->
-                    StandardTaskRow(
+                    TasksScreenComponents.StandardTaskRow(
                         task = task,
                         projectById = projectById,
                         areaById = areaById,

@@ -200,22 +200,6 @@ class AppRepositoryTest {
         }
 
     @Test
-    fun testInsertTemplates_batchInsertsCorrectly(): TestResult =
-        runTest {
-            val templates = listOf(
-                TemplateEntity(name = "T1", nodeType = "note", defaultTitle = "Title 1", defaultContent = "C1"),
-                TemplateEntity(name = "T2", nodeType = "note", defaultTitle = "Title 2", defaultContent = "C2"),
-            )
-
-            repository.insertTemplates(templates)
-
-            val savedTemplates = repository.getAllTemplates().first()
-            assertEquals(2, savedTemplates.size)
-            assertTrue(savedTemplates.any { it.name == "T1" })
-            assertTrue(savedTemplates.any { it.name == "T2" })
-        }
-
-    @Test
     fun testInsertNodeLogsEvent(): TestResult =
         runTest {
             val node = NodeEntity(type = "task", title = "Test Node")

@@ -210,7 +210,8 @@ private fun renderSearchFilters(context: SearchDashboardContext) {
             val types = listOf("task", "note", "record", "project", "area")
             items(types, key = { it }) { type ->
                 val typeLabel =
-                    when (type) {
+                    when (type)
+                    {
                         "task" -> stringResource(Res.string.type_task)
                         "note" -> stringResource(Res.string.type_note)
                         "record" -> stringResource(Res.string.type_record)
@@ -789,7 +790,8 @@ private fun SearchResultCard(
 }
 
 private fun iconForType(type: String): ImageVector =
-    when (type.lowercase()) {
+    when (type.lowercase())
+    {
         "task" -> Icons.Default.TaskAlt
         "project" -> Icons.Default.Folder
         "note" -> Icons.Default.Description
@@ -798,11 +800,12 @@ private fun iconForType(type: String): ImageVector =
     }
 
 private fun iconTintForType(type: String): Color =
-    when (type.lowercase()) {
-        "task" -> TajsOSTheme.AccentRed
-        "project" -> TajsOSTheme.Primary
-        "note" -> TajsOSTheme.AccentBlue
-        "record" -> TajsOSTheme.AccentCyan
+    when (type.lowercase())
+    {
+        "task" -> Color(0xFFFF7A8B)
+        "project" -> Color(0xFF9D7AFF)
+        "note" -> Color(0xFF8EA4FF)
+        "record" -> Color(0xFF57D7C6)
         else -> TajsOSTheme.Primary
     }
 
@@ -812,11 +815,12 @@ private fun formatRelativeTime(
 ): String {
     if (timestampMs <= 0L || timestampMs >= nowMs) return "JUST NOW"
     val minutes = ((nowMs - timestampMs) / 60_000L).toInt()
-    return when {
-        minutes < 1 -> "JUST NOW"
-        minutes < 60 -> "${minutes}M AGO"
-        minutes < 1_440 -> "${minutes / 60}H AGO"
-        minutes < 10_080 -> "${minutes / 1_440}D AGO"
-        else -> "${minutes / 10_080}W AGO"
-    }
+    return when
+        {
+            minutes < 1 -> "JUST NOW"
+            minutes < 60 -> "${minutes}M AGO"
+            minutes < 1_440 -> "${minutes / 60}H AGO"
+            minutes < 10_080 -> "${minutes / 1_440}D AGO"
+            else -> "${minutes / 10_080}W AGO"
+        }
 }

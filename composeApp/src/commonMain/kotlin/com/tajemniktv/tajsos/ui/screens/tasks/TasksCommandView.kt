@@ -88,7 +88,7 @@ internal fun TasksCommandView(
         remember(tasks, todayTaskIds) {
             tasks
                 .sortedByDescending {
-                    scoreTask(
+                    TaskScoring.scoreTask(
                         it,
                         now,
                         todayTaskIds,
@@ -346,7 +346,7 @@ private fun QueueList(
     ) {
         Column {
             tasks.forEachIndexed { index, task ->
-                StandardTaskRow(
+                TasksScreenComponents.StandardTaskRow(
                     task = task,
                     projectById = projectById,
                     areaById = areaById,

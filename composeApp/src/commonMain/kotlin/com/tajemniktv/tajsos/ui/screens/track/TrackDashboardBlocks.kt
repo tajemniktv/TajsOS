@@ -27,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -114,7 +115,7 @@ private fun renderTrackHeader(context: TrackDashboardContext) {
         Text(
             stringResource(Res.string.track_description),
             style = MaterialTheme.typography.bodySmall,
-            color = TajsOSTheme.Muted,
+            color = Color(0xFF52525B),
         )
         Spacer(Modifier.height(TajsOSTheme.SpacingLg))
     }
@@ -220,7 +221,7 @@ private fun renderTrackBio(context: TrackDashboardContext) {
             Text(
                 stringResource(Res.string.track_active),
                 style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                color = TajsOSTheme.Muted,
+                color = Color(0xFF52525B),
             )
         }
     }

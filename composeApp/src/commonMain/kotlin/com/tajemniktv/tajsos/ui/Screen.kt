@@ -390,6 +390,7 @@ sealed class Screen(
         "review",
         Res.string.screen_review,
         Icons.Default.RateReview,
+        isRoot = false,
     )
 
     /**
@@ -696,7 +697,8 @@ sealed class Screen(
                 groupedItems.map { (group, screens) ->
                     group to
                         screens.filter { screen ->
-                            when (screen) {
+                            when (screen)
+                            {
                                 Graph -> {
                                     packRegistry.isEnabled(AppPack.CREATOR) ||
                                         packRegistry.isEnabled(
@@ -740,7 +742,8 @@ sealed class Screen(
          * in the sidebar.
          */
         fun sidebarContextRoot(screen: Screen): Screen =
-            when (screen) {
+            when (screen)
+            {
                 NoteDetail -> Notes
                 TaskDetail -> Tasks
                 RecordDetail -> Notes

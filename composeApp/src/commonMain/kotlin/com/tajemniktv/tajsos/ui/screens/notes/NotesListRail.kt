@@ -20,10 +20,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.IconButton
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.filled.Search
@@ -90,13 +86,6 @@ fun NotesListRail(
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-                trailingIcon = {
-                    if (searchQuery.isNotEmpty()) {
-                        IconButton(onClick = { onSearchChange("") }) {
-                            Icon(Icons.Default.Close, contentDescription = "Clear search")
-                        }
-                    }
-                },
                 placeholder = { Text("Search notes...") },
             )
             NotesFilterRow(activeFilter = activeFilter, onFilterChange = onFilterChange)
@@ -138,7 +127,7 @@ private fun NotesFilterRow(
     activeFilter: NotesListFilter,
     onFilterChange: (NotesListFilter) -> Unit,
 ) {
-    Row(horizontalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.horizontalScroll(rememberScrollState())) {
+    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
         listOf(
             NotesListFilter.ALL to "All",
             NotesListFilter.PINNED to "Pinned",
@@ -160,7 +149,7 @@ private fun NotesDomainRow(
     activeDomain: NotesDomain?,
     onDomainChange: (NotesDomain?) -> Unit,
 ) {
-    Row(horizontalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.horizontalScroll(rememberScrollState())) {
+    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
         listOf(
             null to "Any",
             NotesDomain.PERSONAL to "Personal",
@@ -182,7 +171,7 @@ private fun NotesSortPicker(
     sortOrder: NotesSortOrder,
     onSortOrderChange: (NotesSortOrder) -> Unit,
 ) {
-    Row(horizontalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.horizontalScroll(rememberScrollState())) {
+    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
         listOf(
             NotesSortOrder.UPDATED to "Updated",
             NotesSortOrder.CREATED to "Created",
@@ -229,7 +218,7 @@ fun NotesListItem(
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = note.title.ifBlank { "Untitled note" },
+                    text = note.title,
                     style = MaterialTheme.typography.titleSmall,
                     color = titleColor,
                     fontWeight = FontWeight.SemiBold,

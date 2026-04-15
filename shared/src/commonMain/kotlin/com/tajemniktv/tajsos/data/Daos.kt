@@ -625,9 +625,6 @@ interface TemplateDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTemplate(template: TemplateEntity)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertTemplates(templates: List<TemplateEntity>)
-
     @Update
     suspend fun updateTemplate(template: TemplateEntity)
 

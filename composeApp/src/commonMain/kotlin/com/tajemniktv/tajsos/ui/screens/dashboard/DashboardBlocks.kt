@@ -16,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.ui.components.cards.AlertCard
 import com.tajemniktv.tajsos.ui.components.cards.DashCard
@@ -80,7 +81,7 @@ fun ErrandListBlock(
         SuggestionGroup(
             title = "ERRANDS // OUT AND ABOUT",
             icon = Icons.Default.ShoppingCart,
-            color = TajsOSTheme.AccentCyan,
+            color = Color(0xFF00BCD4),
             nodes = errands,
             onEditNode = onEdit,
         )
@@ -96,7 +97,7 @@ fun TinyVictoriesBlock(
         SuggestionGroup(
             title = "TINY VICTORIES // RECENT",
             icon = Icons.Default.EmojiEvents,
-            color = TajsOSTheme.AccentAmber,
+            color = Color(0xFFFFD700),
             nodes = victories,
             onEditNode = onEdit,
         )

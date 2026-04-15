@@ -71,7 +71,7 @@ fun NodeWithPin.toNotesWorkspaceItem(
 ): NotesWorkspaceItem =
     NotesWorkspaceItem(
         id = node.id,
-        title = node.title,
+        title = node.title.ifBlank { "Untitled note" },
         content = node.content,
         preview =
             node.content
