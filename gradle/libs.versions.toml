@@ -86,6 +86,7 @@ material = { module = "com.google.android.material:material", version.ref = "mat
 slf4j-android = { module = "uk.uuid.slf4j:slf4j-android", version.ref = "slf4j-android" }
 ktor-serverCore = { module = "io.ktor:ktor-server-core-jvm", version.ref = "ktor" }
 ktor-serverNetty = { module = "io.ktor:ktor-server-netty-jvm", version.ref = "ktor" }
+ktor-serverAuth = { module = "io.ktor:ktor-server-auth", version.ref = "ktor" }
 ktor-serverTestHost = { module = "io.ktor:ktor-server-test-host-jvm", version.ref = "ktor" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
