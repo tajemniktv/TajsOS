@@ -95,7 +95,7 @@ fun EmptyState(
                     modifier = Modifier.size(if (fillParent) 48.dp else if (showContainer) 40.dp else 32.dp),
                     tint = TajsOSTheme.Primary.copy(alpha = alpha),
                 )
-                Spacer(modifier = Modifier.height(if (fillParent) TajsOSTheme.SpacingMd else TajsOSTheme.SpacingSm))
+Spacer(modifier = Modifier.height(if (fillParent) TajsOSTheme.SpacingMd else if (showContainer) TajsOSTheme.SpacingSm else TajsOSTheme.SpacingXs))
                 Text(
                     text = message,
                     style = MaterialTheme.typography.bodyMedium,
