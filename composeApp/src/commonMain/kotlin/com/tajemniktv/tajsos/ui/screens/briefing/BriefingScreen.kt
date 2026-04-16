@@ -330,31 +330,39 @@ private fun BriefingMainPane(
                             text = prioritiesLine,
                             style = MaterialTheme.typography.labelMedium,
                             color = TajsOSTheme.Primary,
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                         )
                     }
                     Surface(
                         color = TajsOSTheme.SurfaceLow,
                         shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, TajsOSTheme.Border.copy(alpha = 0.5f))
+                        border =
+                            androidx.compose.foundation.BorderStroke(
+                                1.dp,
+                                TajsOSTheme.Border.copy(alpha = 0.5f),
+                            ),
                     ) {
                         Text(
                             text = eventsLine,
                             style = MaterialTheme.typography.labelMedium,
                             color = TajsOSTheme.Text,
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                         )
                     }
                     Surface(
                         color = TajsOSTheme.SurfaceLow,
                         shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, TajsOSTheme.Border.copy(alpha = 0.5f))
+                        border =
+                            androidx.compose.foundation.BorderStroke(
+                                1.dp,
+                                TajsOSTheme.Border.copy(alpha = 0.5f),
+                            ),
                     ) {
                         Text(
                             text = notesLine,
                             style = MaterialTheme.typography.labelMedium,
                             color = TajsOSTheme.Text,
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                         )
                     }
                 }
@@ -541,7 +549,11 @@ private fun BriefingSignalCard(
         color = TajsOSTheme.SurfaceLow.copy(alpha = 0.55f),
         tonalElevation = 0.dp,
         shadowElevation = 0.dp,
-        border = androidx.compose.foundation.BorderStroke(1.dp, TajsOSTheme.Border.copy(alpha = 0.5f))
+        border =
+            androidx.compose.foundation.BorderStroke(
+                1.dp,
+                TajsOSTheme.Border.copy(alpha = 0.5f),
+            ),
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
