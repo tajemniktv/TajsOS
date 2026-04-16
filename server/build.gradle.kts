@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
 plugins {
     alias(libs.plugins.kotlinJvm)
     alias(libs.plugins.ktor)
@@ -9,9 +13,13 @@ group = "com.tajemniktv.tajsos"
 version = "1.0.0"
 application {
     mainClass.set("com.tajemniktv.tajsos.ApplicationKt")
-    
+
     val isDevelopment: Boolean = project.ext.has("development")
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
+}
+
+kotlin {
+    jvmToolchain(25)
 }
 
 dependencies {

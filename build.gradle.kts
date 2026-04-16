@@ -20,6 +20,7 @@ plugins {
     alias(libs.plugins.kover)
     alias(libs.plugins.composeStabilityAnalyzer) apply false
 }
+val sourceCompatibility by extra(JavaVersion.VERSION_25)
 
 kover {
     reports {
@@ -34,5 +35,13 @@ kover {
     }
     merge {
         subprojects()
+    }
+}
+
+allprojects {
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_25)
+        }
     }
 }

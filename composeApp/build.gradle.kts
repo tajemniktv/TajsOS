@@ -22,6 +22,7 @@ composeCompiler {
 }
 
 kotlin {
+    jvmToolchain(25)
     // Android target configured via android block (replaces androidTarget + android{}) (Earlier: androidLibrary)
     android {
         namespace = "com.tajemniktv.tajsos.composeapp"
