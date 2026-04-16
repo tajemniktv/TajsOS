@@ -2,6 +2,8 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidKotlinMultiplatformLibrary)
@@ -10,9 +12,11 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeStabilityAnalyzer)
+    alias(libs.plugins.kover)
 }
 
 kotlin {
+    jvmToolchain(25)
     // Android target configured via androidLibrary block (replaces androidTarget + android{})
     android {
         namespace = "com.tajemniktv.tajsos.shared"
@@ -36,6 +40,10 @@ kotlin {
             libs.versions.android.minSdk
                 .get()
                 .toInt()
+
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_25)
+        }
     }
 
     iosArm64()

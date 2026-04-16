@@ -175,8 +175,26 @@ jobs:
             :server:test \
             :androidApp:lintDebug \
             :androidApp:assembleDebug \
+            :koverXmlReport \
             --stacktrace \
             --no-daemon
+
+      - name: Upload coverage to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./build/reports/kover/report.xml
+          fail_ci_if_error: false
+
+      - name: Upload test results to Codecov (Test Analytics)
+        if: ${{ !cancelled() }}
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          report_type: test_results
+          directory: .
+          fail_ci_if_error: false
 
       - name: Upload reports on failure
         if: ${{ failure() }}

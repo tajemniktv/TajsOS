@@ -2,6 +2,8 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
+@file:Suppress("KDocMissingDocumentation")
+
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -12,6 +14,7 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
     alias(libs.plugins.composeStabilityAnalyzer)
+    alias(libs.plugins.kover)
 }
 
 composeCompiler {
@@ -19,6 +22,7 @@ composeCompiler {
 }
 
 kotlin {
+    jvmToolchain(25)
     // Android target configured via android block (replaces androidTarget + android{}) (Earlier: androidLibrary)
     android {
         namespace = "com.tajemniktv.tajsos.composeapp"
