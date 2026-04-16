@@ -119,7 +119,7 @@ jobs:
             exit 1
           fi
           (yes || true) | sdkmanager --licenses >/dev/null || true
-          sdkmanager "platform-tools" "platforms;android-${COMPILE_SDK}"
+          sdkmanager "platform-tools" "platforms;android-${COMPILE_SDK}.0"
 
       - name: Prepare google-services config for CI
         shell: bash

@@ -1357,6 +1357,8 @@ class AppRepository(
 
     suspend fun insertTemplate(template: TemplateEntity) = templateDao.insertTemplate(template)
 
+    suspend fun insertTemplates(templates: List<TemplateEntity>) = templateDao.insertTemplates(templates)
+
     suspend fun updateTemplate(template: TemplateEntity) = templateDao.updateTemplate(template)
 
     suspend fun deleteTemplate(template: TemplateEntity) = templateDao.deleteTemplate(template)
