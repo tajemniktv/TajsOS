@@ -1,9 +1,14 @@
 [versions]
 agp = "9.1.1"
+#noinspection UnusedVersionCatalogEntry
 android-compileSdk = "37"
+#noinspection UnusedVersionCatalogEntry
 android-compileSdkMinor = "0"
+#noinspection UnusedVersionCatalogEntry
 android-buildTools = "37.0.0"
+#noinspection UnusedVersionCatalogEntry
 android-minSdk = "24"
+#noinspection UnusedVersionCatalogEntry
 android-targetSdk = "37"
 androidx-activity = "1.13.0"
 androidx-appcompat = "1.7.1"
