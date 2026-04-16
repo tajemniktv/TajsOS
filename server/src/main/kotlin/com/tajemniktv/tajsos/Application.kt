@@ -1,5 +1,7 @@
 package com.tajemniktv.tajsos
 
+import java.security.MessageDigest
+
 import com.tajemniktv.tajsos.routes.healthRoutes
 import com.tajemniktv.tajsos.routes.syncRoutes
 import io.ktor.serialization.kotlinx.json.*
@@ -9,6 +11,8 @@ import io.ktor.server.netty.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.server.auth.*
+
 import kotlinx.serialization.json.Json
 
 fun main() {
@@ -18,6 +22,23 @@ fun main() {
 }
 
 fun Application.module() {
+    val expectedToken = environment.config.propertyOrNull("TAJSOS_SYNC_TOKEN")?.getString()
+        ?: System.getenv("TAJSOS_SYNC_TOKEN")
+        ?: error("TAJSOS_SYNC_TOKEN environment variable must be set")
+
+    install(Authentication) {
+        bearer("sync-auth") {
+            authenticate { tokenCredential ->
+
+                if (MessageDigest.isEqual(tokenCredential.token.toByteArray(), expectedToken.toByteArray())) {
+                    UserIdPrincipal("sync-client")
+                } else {
+                    null
+                }
+            }
+        }
+    }
+
     install(ContentNegotiation) {
         json(Json {
             prettyPrint = true

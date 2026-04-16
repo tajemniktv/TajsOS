@@ -21,6 +21,7 @@ dependencies {
     implementation(libs.logback)
     implementation(libs.ktor.serverCore)
     implementation(libs.ktor.serverNetty)
+    implementation(libs.ktor.serverAuth)
     implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
     implementation(libs.ktor.serialization.kotlinx.json)
 
