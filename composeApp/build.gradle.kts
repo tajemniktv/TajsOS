@@ -12,6 +12,7 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
     alias(libs.plugins.composeStabilityAnalyzer)
+    alias(libs.plugins.kover)
 }
 
 composeCompiler {

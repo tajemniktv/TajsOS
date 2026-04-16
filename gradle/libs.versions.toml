@@ -31,6 +31,7 @@ logback = "1.5.32"
 material = "1.13.0"
 material3 = "1.11.0-alpha06"
 slf4j-android = "2.0.17-0"
+kover = "0.9.8"
 ksp = "2.3.6"
 google-services = "4.4.4"
 firebase-auth-native = "24.0.1"
@@ -123,4 +124,5 @@ google-services = { id = "com.google.gms.google-services", version.ref = "google
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics-gradle" }
 firebase-app-distribution = { id = "com.google.firebase.appdistribution", version.ref = "firebase-app-distribution-gradle" }
 firebase-perf = { id = "com.google.firebase.firebase-perf", version.ref = "firebase-perf-gradle" }
+kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 composeStabilityAnalyzer = { id = "com.github.skydoves.compose.stability.analyzer", version.ref = "compose-stability" }

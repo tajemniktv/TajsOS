@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeStabilityAnalyzer)
+    alias(libs.plugins.kover)
 }
 
 kotlin {

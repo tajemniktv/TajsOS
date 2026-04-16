@@ -17,5 +17,22 @@ plugins {
     alias(libs.plugins.firebase.crashlytics) apply false
     alias(libs.plugins.firebase.app.distribution) apply false
     alias(libs.plugins.firebase.perf) apply false
+    alias(libs.plugins.kover)
     alias(libs.plugins.composeStabilityAnalyzer) apply false
+}
+
+kover {
+    reports {
+        total {
+            xml {
+                onCheck.set(true)
+            }
+            html {
+                onCheck.set(true)
+            }
+        }
+    }
+    merge {
+        subprojects()
+    }
 }
