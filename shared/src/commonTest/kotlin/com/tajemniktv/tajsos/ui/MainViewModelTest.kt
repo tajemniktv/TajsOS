@@ -216,6 +216,9 @@ class MainViewModelTest {
         override suspend fun insertTemplate(template: TemplateEntity) {
         }
 
+        override suspend fun insertTemplates(templates: List<TemplateEntity>) {
+        }
+
         override suspend fun updateTemplate(template: TemplateEntity) {
         }
 
@@ -226,9 +229,7 @@ class MainViewModelTest {
     class FakeDataStore : DataStore<Preferences> {
         override val data: Flow<Preferences> = flowOf(emptyPreferences())
 
-        override suspend fun updateData(
-            transform: suspend (t: Preferences) -> Preferences
-        ): Preferences = transform(emptyPreferences())
+        override suspend fun updateData(transform: suspend (t: Preferences) -> Preferences): Preferences = transform(emptyPreferences())
     }
 
     @Test
