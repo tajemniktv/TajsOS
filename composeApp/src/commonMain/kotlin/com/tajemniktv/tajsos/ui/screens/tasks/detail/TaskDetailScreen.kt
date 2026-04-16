@@ -137,7 +137,7 @@ fun TaskDetailScreen(
         remember(inlineChecklistLines) {
             inlineChecklistLines.mapIndexed { index, line ->
                 TaskSubtaskUi(
-                    id = ("inline-$index-${line.title}").hashCode().toLong(),
+                    id = -(index + 1L),
                     title = line.title,
                     state = if (line.checked) TaskSubtaskState.COMPLETE else TaskSubtaskState.QUEUED,
                     source = TaskSubtaskSource.InlineChecklist,
