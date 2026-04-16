@@ -4,6 +4,7 @@
 
 package com.tajemniktv.tajsos
 
+import io.ktor.client.request.header
 import com.tajemniktv.tajsos.dto.HealthResponse
 import com.tajemniktv.tajsos.dto.SyncItem
 import com.tajemniktv.tajsos.dto.SyncRequest
@@ -29,7 +30,26 @@ import kotlinx.serialization.json.Json
 @Suppress("unused")
 class ApplicationTest {
     @Test
+    fun testSyncEndpoint_Unauthorized(): TestResult = testApplication {
+        environment {
+            config = io.ktor.server.config.MapApplicationConfig("TAJSOS_SYNC_TOKEN" to "default-dev-token")
+        }
+        application {
+            module()
+        }
+        val response =
+            client.post("/sync") {
+                setBody("{\"lastSyncTime\": 0, \"items\": []}")
+            }
+
+        assertEquals(HttpStatusCode.Unauthorized, response.status)
+    }
+
+    @Test
     fun testRoot(): TestResult = testApplication {
+        environment {
+            config = io.ktor.server.config.MapApplicationConfig("TAJSOS_SYNC_TOKEN" to "default-dev-token")
+        }
         application {
             module()
         }
@@ -40,6 +60,9 @@ class ApplicationTest {
 
     @Test
     fun testHealthEndpoint(): TestResult = testApplication {
+        environment {
+            config = io.ktor.server.config.MapApplicationConfig("TAJSOS_SYNC_TOKEN" to "default-dev-token")
+        }
         application {
             module()
         }
@@ -65,6 +88,9 @@ class ApplicationTest {
 
     @Test
     fun testSyncEndpoint_HappyPath(): TestResult = testApplication {
+        environment {
+            config = io.ktor.server.config.MapApplicationConfig("TAJSOS_SYNC_TOKEN" to "default-dev-token")
+        }
         application {
             module()
         }
@@ -96,6 +122,8 @@ class ApplicationTest {
 
         val response =
             clientWithNegotiation.post("/sync") {
+                header(io.ktor.http.HttpHeaders.Authorization, "Bearer default-dev-token")
+
                 contentType(ContentType.Application.Json)
                 setBody(requestPayload)
             }
@@ -112,11 +140,16 @@ class ApplicationTest {
 
     @Test
     fun testSyncEndpoint_BadPayload(): TestResult = testApplication {
+        environment {
+            config = io.ktor.server.config.MapApplicationConfig("TAJSOS_SYNC_TOKEN" to "default-dev-token")
+        }
         application {
             module()
         }
         val response =
             client.post("/sync") {
+                header(io.ktor.http.HttpHeaders.Authorization, "Bearer default-dev-token")
+
                 contentType(ContentType.Application.Json)
                 setBody("{\"malformed\": \"json\"}")
             }
@@ -128,6 +161,9 @@ class ApplicationTest {
 
     @Test
     fun testSyncEndpoint_returnsDeltaAndConflict(): TestResult = testApplication {
+        environment {
+            config = io.ktor.server.config.MapApplicationConfig("TAJSOS_SYNC_TOKEN" to "default-dev-token")
+        }
         application {
             module()
         }
@@ -159,6 +195,8 @@ class ApplicationTest {
 
         val firstResponse =
             clientWithNegotiation.post("/sync") {
+                header(io.ktor.http.HttpHeaders.Authorization, "Bearer default-dev-token")
+
                 contentType(ContentType.Application.Json)
                 setBody(firstRequest)
             }
@@ -181,6 +219,8 @@ class ApplicationTest {
 
         val secondResponse =
             clientWithNegotiation.post("/sync") {
+                header(io.ktor.http.HttpHeaders.Authorization, "Bearer default-dev-token")
+
                 contentType(ContentType.Application.Json)
                 setBody(staleUpdate)
             }
@@ -193,11 +233,16 @@ class ApplicationTest {
 
     @Test
     fun testSyncEndpoint_MissingContentType(): TestResult = testApplication {
+        environment {
+            config = io.ktor.server.config.MapApplicationConfig("TAJSOS_SYNC_TOKEN" to "default-dev-token")
+        }
         application {
             module()
         }
         val response =
             client.post("/sync") {
+                header(io.ktor.http.HttpHeaders.Authorization, "Bearer default-dev-token")
+
                 setBody("{\"lastSyncTime\": 0, \"items\": []}")
             }
 
