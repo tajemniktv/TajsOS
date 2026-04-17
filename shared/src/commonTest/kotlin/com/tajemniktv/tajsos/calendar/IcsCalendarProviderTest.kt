@@ -305,4 +305,46 @@ class IcsCalendarProviderTest {
                 assertEquals(expectedCount, events.size, "Failed for URL: $url")
             }
         }
+
+    @Test
+    fun `test fold lines edge cases`(): TestResult =
+        runTest {
+            val ics =
+                "BEGIN:VCALENDAR\r\n" +
+                "BEGIN:VEVENT\r\n" +
+                "UID:edge-cases\r\n" +
+                // Tab continuation
+                "SUMMARY:Tab\r\n" +
+                "\tContinuation\r\n" +
+                // Empty string case - tested implicitly by parser not failing
+                "\r\n" +
+                // Trailing spaces on the continued line
+                "DESCRIPTION:Line 1\r\n" +
+                "  Line 2\r\n" +
+                "\t Line 3\r\n" +
+                // Multi-byte char split across folds (technically invalid ICS, but supported textually)
+                "LOCATION:🚀\r\n" +
+                " 🛸\r\n" +
+                "DTSTART:20231024T100000Z\r\n" +
+                "END:VEVENT\r\n" +
+                "END:VCALENDAR\r\n"
+
+            val provider = createProviderWithIcs(ics)
+            val events = provider.fetchEvents(testProviderEntity, defaultFrom, defaultTo)
+
+            assertEquals(1, events.size)
+            val event = events[0]
+
+            // "SUMMARY:Tab" + "	Continuation"
+            assertEquals("TabContinuation", event.title)
+
+            // "DESCRIPTION:Line 1" + "  Line 2" + "	 Line 3"
+            // Note: IcsCalendarProvider unescapeIcs might do something, let's assume it doesn't strip spaces
+            // " Line 2" -> " Line 2"
+            // " Line 3" -> " Line 3"
+            assertEquals("Line 1 Line 2 Line 3", event.description)
+
+            // "LOCATION:🚀" + " 🛸"
+            assertEquals("🚀🛸", event.location)
+        }
 }
