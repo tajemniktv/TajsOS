@@ -700,7 +700,12 @@ data class NodeSnapshotEntity(
 )
 
 /**
- * NodeWithPin is a "POJO" used by Room to perform a JOIN.
+ * NodeWithPin is a "POJO" used by Room to perform a JOIN, creating a rich read-model.
+ *
+ * @property node The core entity data.
+ * @property pin The pinning status, joining the node with any active pin for today.
+ * @property tags The list of tags associated with the node, retrieved via a junction table.
+ * @property snapshots The historical content snapshots associated with the node.
  */
 @Immutable
 data class NodeWithPin(
@@ -727,5 +732,8 @@ data class NodeWithPin(
     )
     val snapshots: List<NodeSnapshotEntity> = emptyList(),
 ) {
+    /**
+     * Helper to quickly determine if the node is currently pinned to today's view.
+     */
     val isPinnedToToday: Boolean get() = pin != null
 }

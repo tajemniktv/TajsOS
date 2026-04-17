@@ -121,7 +121,7 @@ const title = "WAITLIST";
         throw new Error(`Request failed with status ${response.status}`);
       }
 
-      waitlistForm.reset();
+      if (waitlistForm instanceof HTMLFormElement) waitlistForm.reset();
       waitlistStatus.textContent = "You are on the waitlist. We will contact you soon.";
       waitlistStatus.className = "mt-3 text-sm text-primary";
     } catch {
