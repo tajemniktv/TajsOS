@@ -33,6 +33,7 @@ import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -55,9 +56,16 @@ fun InsightsRoute(
     onNavigate: (String) -> Unit,
 ) {
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val surface = if (maxWidth > 900.dp) InsightsDashboardSurface.DESKTOP else InsightsDashboardSurface.MOBILE
+        val surface =
+            if (maxWidth > 900.dp) InsightsDashboardSurface.DESKTOP else InsightsDashboardSurface.MOBILE
         val plan = remember(surface) { buildInsightsDashboardPlan(surface) }
-        val context = remember(viewModel, onNavigateToProject) { InsightsDashboardContext(viewModel, onNavigateToProject) }
+        val context =
+            remember(viewModel, onNavigateToProject) {
+                InsightsDashboardContext(
+                    viewModel,
+                    onNavigateToProject,
+                )
+            }
 
         InsightsScreen(
             context = context,
@@ -83,6 +91,7 @@ fun InsightsScreen(
     ScreenScaffold(
         screen = Screen.Insights,
         onNavigate = onNavigate,
+        scrollBehavior = ScreenScrollBehavior.None,
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             plan.primary.forEach { block ->

@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -33,6 +32,7 @@ import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.components.nodes.ProjectItem
 import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
@@ -58,9 +58,11 @@ fun ProjectsRoute(
     onNavigate: (String) -> Unit,
 ) {
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val surface = if (maxWidth > 900.dp) ProjectsDashboardSurface.DESKTOP else ProjectsDashboardSurface.MOBILE
+        val surface =
+            if (maxWidth > 900.dp) ProjectsDashboardSurface.DESKTOP else ProjectsDashboardSurface.MOBILE
         val plan = remember(surface) { buildProjectsDashboardPlan(surface) }
-        val context = remember(viewModel, onNavigate) { ProjectsDashboardContext(viewModel, onNavigate) }
+        val context =
+            remember(viewModel, onNavigate) { ProjectsDashboardContext(viewModel, onNavigate) }
 
         ProjectsScreen(
             context = context,
@@ -86,6 +88,8 @@ fun ProjectsScreen(
     ScreenScaffold(
         screen = Screen.Projects,
         onNavigate = onNavigate,
+        // Disable body scroll to allow inner LazyColumn to handle its own scrolling and measurement
+        scrollBehavior = ScreenScrollBehavior.None,
     ) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),

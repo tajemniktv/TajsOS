@@ -188,7 +188,7 @@ sealed class Screen(
      * View/edit interface for a specific note.
      */
     data object NoteDetail : Screen(
-        "note/{noteId}",
+        "note/{$PARAM_NOTE_ID}",
         Res.string.screen_note,
         Icons.Default.Edit,
         isRoot = false,
@@ -201,7 +201,7 @@ sealed class Screen(
      * View/edit interface for a specific task.
      */
     data object TaskDetail : Screen(
-        "task/{taskId}",
+        "task/{$PARAM_TASK_ID}",
         Res.string.type_task,
         Icons.AutoMirrored.Filled.List,
         isRoot = false,
@@ -214,7 +214,7 @@ sealed class Screen(
      * Detailed view for a specific temporal record or journal entry.
      */
     data object RecordDetail : Screen(
-        "record/{recordId}",
+        "record/{$PARAM_RECORD_ID}",
         Res.string.type_record,
         Icons.Default.Description,
         isRoot = false,
@@ -272,7 +272,7 @@ sealed class Screen(
      * Focused view of a specific project and its components.
      */
     data object ProjectDetail : Screen(
-        "project/{projectId}",
+        "project/{$PARAM_PROJECT_ID}",
         Res.string.screen_project,
         Icons.AutoMirrored.Filled.List,
         isRoot = false,
@@ -286,7 +286,7 @@ sealed class Screen(
      */
     data object AreaDetail :
         Screen(
-            "area/{areaId}",
+            "area/{$PARAM_AREA_ID}",
             Res.string.screen_area,
             Icons.Default.LocationOn,
             isRoot = false,
@@ -299,12 +299,22 @@ sealed class Screen(
      * Global application configuration and preference management.
      */
     data object Settings : Screen("settings", Res.string.screen_opts, Icons.Default.Settings) {
+        /**
+         * The route segment for user preferences.
+         */
+        const val SUB_PREFERENCES = "preferences"
+
+        /**
+         * The route segment for calendar settings.
+         */
+        const val SUB_CALENDAR = "calendar"
+
         override val children: List<Screen>
             get() =
                 listOf(
                     Sub(
                         Settings,
-                        "preferences",
+                        SUB_PREFERENCES,
                         Res.string.settings_tab_preferences,
                         Icons.Default.Settings,
                     ),
@@ -312,7 +322,7 @@ sealed class Screen(
                     SettingsAppearance,
                     Sub(
                         Settings,
-                        "calendar",
+                        SUB_CALENDAR,
                         Res.string.screen_cal_opts,
                         Icons.Default.Event,
                         "view",
@@ -333,6 +343,10 @@ sealed class Screen(
         Icons.Default.Favorite,
         isRoot = false,
     ) {
+        /**
+         * The unique identifier for health settings.
+         */
+        const val ID = "health"
         override val breadcrumbParent: Screen = Settings
     }
 
@@ -345,6 +359,10 @@ sealed class Screen(
         Icons.Default.Palette,
         isRoot = false,
     ) {
+        /**
+         * The unique identifier for appearance settings.
+         */
+        const val ID = "appearance"
         override val breadcrumbParent: Screen = Settings
     }
 
@@ -357,6 +375,10 @@ sealed class Screen(
         Icons.Default.Extension,
         isRoot = false,
     ) {
+        /**
+         * The unique identifier for feature pack settings.
+         */
+        const val ID = "feature_packs"
         override val breadcrumbParent: Screen = Settings
     }
 
@@ -369,6 +391,10 @@ sealed class Screen(
         Icons.Default.Storage,
         isRoot = false,
     ) {
+        /**
+         * The unique identifier for data management settings.
+         */
+        const val ID = "data"
         override val breadcrumbParent: Screen = Settings
     }
 
@@ -381,6 +407,10 @@ sealed class Screen(
         Icons.Default.BugReport,
         isRoot = false,
     ) {
+        /**
+         * The unique identifier for developer debug settings.
+         */
+        const val ID = "debug"
         override val breadcrumbParent: Screen = Settings
     }
 
@@ -558,7 +588,7 @@ sealed class Screen(
         subRoute: String,
         label: StringResource,
         icon: ImageVector,
-        val paramName: String = "tab",
+        val paramName: String = PARAM_TAB,
     ) : Screen("${parent.route}?$paramName=$subRoute", label, icon, isRoot = false) {
         override val breadcrumbParent: Screen = parent
         override val sidebarContextRoot: Screen = parent
@@ -570,6 +600,36 @@ sealed class Screen(
     fun breadcrumbTrail(): List<Screen> = breadcrumbParent?.breadcrumbTrail().orEmpty() + this
 
     companion object {
+        /**
+         * The query parameter name used for tab-based sub-navigation.
+         */
+        const val PARAM_TAB = "tab"
+
+        /**
+         * The path parameter name for note identifiers.
+         */
+        const val PARAM_NOTE_ID = "noteId"
+
+        /**
+         * The path parameter name for task identifiers.
+         */
+        const val PARAM_TASK_ID = "taskId"
+
+        /**
+         * The path parameter name for record identifiers.
+         */
+        const val PARAM_RECORD_ID = "recordId"
+
+        /**
+         * The path parameter name for project identifiers.
+         */
+        const val PARAM_PROJECT_ID = "projectId"
+
+        /**
+         * The path parameter name for area identifiers.
+         */
+        const val PARAM_AREA_ID = "areaId"
+
         /**
          * Exhaustive list of all top-level root screens.
          */
@@ -656,12 +716,13 @@ sealed class Screen(
             // if route string was partially modified.
             if (route.contains("?")) {
                 val queryBase = route.substringBefore("?")
-                val sub =
-                    allScreens.filterIsInstance<Sub>().find {
-                        it.route == route ||
-                            it.route == "$queryBase?tab=${route.substringAfter("=")}"
-                    }
-                if (sub != null) return sub
+                allScreens
+                    .asSequence()
+                    .filterIsInstance<Sub>()
+                    .find {
+                        (it.route == route) ||
+                            (it.route == "$queryBase?${PARAM_TAB}=${route.substringAfter("=")}")
+                    }?.let { return it }
             }
 
             // Try base route match, ensuring we don't accidentally match sub-screens that share a base
@@ -705,6 +766,8 @@ sealed class Screen(
 
         /**
          * Returns [groupedItems] filtered by the availability of features in the given [packRegistry].
+         *
+         * @param packRegistry The registry of enabled feature packs.
          */
         fun groupedItemsForPacks(packRegistry: PackRegistry): List<Pair<StringResource, List<Screen>>> {
             val visible =
@@ -754,7 +817,10 @@ sealed class Screen(
          * This ensures that detail screens (like [NoteDetail]) keep their respective root (like [Notes]) highlighted
          * in the sidebar.
          */
-        @Deprecated("Use Screen.sidebarContextRoot property", ReplaceWith("screen.sidebarContextRoot"))
+        @Deprecated(
+            "Use Screen.sidebarContextRoot property",
+            ReplaceWith("screen.sidebarContextRoot"),
+        )
         fun sidebarContextRoot(screen: Screen): Screen = screen.sidebarContextRoot
     }
 }

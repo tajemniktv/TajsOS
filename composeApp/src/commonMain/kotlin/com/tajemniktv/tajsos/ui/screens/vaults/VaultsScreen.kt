@@ -58,6 +58,7 @@ import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior
 import com.tajemniktv.tajsos.ui.lens.LensUiContract
 import com.tajemniktv.tajsos.ui.main.state.VaultsSnapshot
 import com.tajemniktv.tajsos.ui.screens.GroupedOpenLoopSection
@@ -104,9 +105,11 @@ fun VaultsRoute(
     onNavigate: (String) -> Unit,
 ) {
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val surface = if (maxWidth > 900.dp) VaultsDashboardSurface.DESKTOP else VaultsDashboardSurface.MOBILE
+        val surface =
+            if (maxWidth > 900.dp) VaultsDashboardSurface.DESKTOP else VaultsDashboardSurface.MOBILE
         val plan = remember(surface) { buildVaultsDashboardPlan(surface) }
-        val context = remember(viewModel, onEditNode) { VaultsDashboardContext(viewModel, onEditNode) }
+        val context =
+            remember(viewModel, onEditNode) { VaultsDashboardContext(viewModel, onEditNode) }
 
         VaultsScreen(
             context = context,
@@ -132,6 +135,7 @@ fun VaultsScreen(
     ScreenScaffold(
         screen = Screen.Vaults,
         onNavigate = onNavigate,
+        scrollBehavior = ScreenScrollBehavior.None,
     ) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
@@ -749,8 +753,7 @@ private fun VaultEntryComposer(
             ) {
                 listOf("note", "record", "task").forEach { type ->
                     val typeLabel =
-                        when (type)
-                        {
+                        when (type) {
                             "note" -> stringResource(Res.string.type_note)
                             "record" -> stringResource(Res.string.type_record)
                             "task" -> stringResource(Res.string.type_task)
@@ -818,13 +821,12 @@ private fun latestRelative(
     val hour = 60 * 60 * 1000L
     val day = 24 * hour
 
-    return when
-        {
-            diff < hour -> "Today"
-            diff < day -> "${diff / hour}h ago"
-            diff < day * 7 -> "${diff / day}d ago"
-            else -> formatLocalDate(latest)
-        }
+    return when {
+        diff < hour -> "Today"
+        diff < day -> "${diff / hour}h ago"
+        diff < day * 7 -> "${diff / day}d ago"
+        else -> formatLocalDate(latest)
+    }
 }
 
 private fun formatLocalDate(timestamp: Long): String {

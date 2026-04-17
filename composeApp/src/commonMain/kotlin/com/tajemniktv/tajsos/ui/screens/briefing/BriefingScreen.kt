@@ -7,7 +7,6 @@ package com.tajemniktv.tajsos.ui.screens.briefing
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -50,7 +49,7 @@ import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.data.TaskState
 import com.tajemniktv.tajsos.data.resolveDisplayName
 import com.tajemniktv.tajsos.data.taskStateOrNull
-import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.LocalMainViewModel
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
 import com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior
@@ -106,16 +105,15 @@ import kotlin.time.Instant
  * and signal cards for the next upcoming event, recent nodes, and a resume node. User interactions invoke the
  * provided navigation and entry-creation callbacks.
  *
- * @param viewModel Source of UI state (dashboard, nodes, calendar entries, mode, profile) used to derive the view.
  * @param onNavigate Callback invoked with a destination route.
  * @param onNewEntry Callback invoked to start creating a new entry/capture from the briefing UI.
  */
 @Composable
 fun BriefingRoute(
-    viewModel: MainViewModel,
     onNavigate: (String) -> Unit,
     onNewEntry: () -> Unit,
 ) {
+    val viewModel = LocalMainViewModel.current
     val dashboardState by viewModel.dashboardUIState.collectAsState()
     val todayNodes by viewModel.todayNodes.collectAsState()
     val allNodes by viewModel.allNodes.collectAsState()
@@ -287,7 +285,10 @@ fun BriefingScreen(
         screen = Screen.Briefing,
         onNavigate = onNavigate,
         scrollBehavior = ScreenScrollBehavior.None,
-        contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp), // Briefing has custom padding
+        contentPadding =
+            androidx.compose.foundation.layout
+                .PaddingValues(0.dp),
+        // Briefing has custom padding
     ) {
         BriefingMainPane(
             modifier = Modifier.fillMaxSize(),

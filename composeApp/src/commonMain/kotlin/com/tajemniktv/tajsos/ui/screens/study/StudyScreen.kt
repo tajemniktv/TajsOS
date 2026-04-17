@@ -5,14 +5,11 @@
 package com.tajemniktv.tajsos.ui.screens.study
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -32,6 +29,7 @@ import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.common.SelectorDialog
 import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 /**
@@ -40,6 +38,7 @@ import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
  * The screen uses a shared layout engine and block registry so desktop/mobile structure and future
  * user customization can evolve without rewriting screen-level logic.
  */
+
 /**
  * Central study entry point that collects system state and coordinates layout.
  *
@@ -224,6 +223,7 @@ fun StudyScreen(
     ScreenScaffold(
         screen = Screen.Education,
         onNavigate = onNavigate,
+        scrollBehavior = ScreenScrollBehavior.None,
     ) {
         if (surface == StudyDashboardSurface.MOBILE) {
             LazyColumn(

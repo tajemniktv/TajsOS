@@ -28,6 +28,6 @@ fun ProfileScreen(
         onNavigate = onNavigate,
         onPickAvatar = onPickAvatar,
         pickedAvatarRef = pickedAvatarRef,
-        onAvatarPickedConsumed = onAvatarPickConsume,
+        onAvatarPickConsume = onAvatarPickConsume,
     )
 }

@@ -22,6 +22,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
@@ -45,27 +47,37 @@ import tajsos.composeapp.generated.resources.profile_add_med
 /**
  * Profile feature route that owns state orchestration and delegates visual sections to block
  * renderers.
+ *
+ * @param viewModel The main ViewModel.
+ * @param onNavigate Navigation callback.
+ * @param modifier The modifier to be applied to the layout.
+ * @param onPickAvatar Optional callback to request a platform avatar picker.
+ * @param pickedAvatarRef Optional URI of a picked avatar.
+ * @param onAvatarPickConsume Callback invoked when an avatar pick has been consumed.
  */
 @Composable
 fun ProfileRoute(
     viewModel: MainViewModel,
     onNavigate: (String) -> Unit,
+    modifier: Modifier = Modifier,
     onPickAvatar: (() -> Unit)? = null,
     pickedAvatarRef: String? = null,
-    onAvatarPickedConsumed: () -> Unit = {},
+    onAvatarPickConsume: () -> Unit = {},
 ) {
     val profile by viewModel.userProfile.collectAsState()
     val medications by viewModel.medications.collectAsState()
 
     var editor by remember(profile.updatedAt) { mutableStateOf(ProfileEditorState.from(profile)) }
-    var showAddMedDialog by remember { mutableStateOf(false) }
-    var showEmailError by remember { mutableStateOf(false) }
-    var justSaved by remember { mutableStateOf(false) }
+    var showAddMedDialog by remember { mutableStateOf(value = false) }
+    var showEmailError by remember { mutableStateOf(value = false) }
+    var justSaved by remember { mutableStateOf(value = false) }
+
+    val currentOnAvatarPickConsume by rememberUpdatedState(onAvatarPickConsume)
 
     LaunchedEffect(pickedAvatarRef) {
         if (!pickedAvatarRef.isNullOrBlank()) {
             editor = editor.copy(avatarRef = pickedAvatarRef)
-            onAvatarPickedConsumed()
+            currentOnAvatarPickConsume()
         }
     }
 
@@ -77,7 +89,7 @@ fun ProfileRoute(
         if (hasChanges) justSaved = false
     }
 
-    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+    BoxWithConstraints(modifier = modifier.fillMaxSize()) {
         val surface =
             if (maxWidth > 920.dp) {
                 ProfileDashboardSurface.DESKTOP
@@ -104,8 +116,9 @@ fun ProfileRoute(
                 },
                 onShowEmailErrorChange = { showEmailError = it },
                 onOpenAddMedication = { showAddMedDialog = true },
-                onDeleteMedication = { med -> viewModel.deleteMedication(med) },
-            )
+            ) {
+                viewModel.deleteMedication(it)
+            }
 
         ProfileScreen(
             context = context,
@@ -117,11 +130,10 @@ fun ProfileRoute(
     if (showAddMedDialog) {
         AddMedicationDialog(
             onDismiss = { showAddMedDialog = false },
-            onSave = { substance, brands, dosage, hour, optional ->
-                viewModel.addMedication(substance, brands, dosage, hour, optional)
-                showAddMedDialog = false
-            },
-        )
+        ) { sub, br, dos, hr, isOpt ->
+            viewModel.addMedication(sub, br, dos, hr, isOpt)
+            showAddMedDialog = false
+        }
     }
 }
 
@@ -131,16 +143,20 @@ fun ProfileRoute(
  * @param context Profile screen context.
  * @param blockSequence Sequence of blocks to render.
  * @param onNavigate Navigation callback.
+ * @param modifier The modifier to be applied to the layout.
  */
 @Composable
 fun ProfileScreen(
     context: ProfileScreenContext,
     blockSequence: List<ProfileDashboardBlock>,
     onNavigate: (String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     ScreenScaffold(
         screen = Screen.Profile,
         onNavigate = onNavigate,
+        scrollBehavior = ScreenScrollBehavior.None,
+        modifier = modifier,
         backgroundBrush =
             Brush.verticalGradient(
                 colors =
@@ -155,26 +171,35 @@ fun ProfileScreen(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
         ) {
-            items(blockSequence, key = { it.id }) { block ->
-                renderProfileBlock(block.id, context)
+            items(blockSequence, key = { it.id }) {
+                renderProfileBlock(it.id, context)
             }
         }
     }
 }
 
+/**
+ * Dialog for adding a new medication.
+ *
+ * @param onDismiss Callback invoked when the dialog is dismissed.
+ * @param modifier The modifier to be applied to the layout.
+ * @param onSave Callback invoked when the medication is saved.
+ */
 @Composable
 private fun AddMedicationDialog(
     onDismiss: () -> Unit,
-    onSave: (String, String, String?, Int?, Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+    onSave: (substance: String, brands: String, dosage: String?, hour: Int?, optional: Boolean) -> Unit,
 ) {
     var substance by remember { mutableStateOf("") }
     var brands by remember { mutableStateOf("") }
     var dosage by remember { mutableStateOf("") }
     var hour by remember { mutableStateOf("") }
-    var isOptional by remember { mutableStateOf(false) }
+    var isOptional by remember { mutableStateOf(value = false) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
+        modifier = modifier,
         title = { Text(stringResource(Res.string.profile_add_med)) },
         text = {
             androidx.compose.foundation.layout.Column(

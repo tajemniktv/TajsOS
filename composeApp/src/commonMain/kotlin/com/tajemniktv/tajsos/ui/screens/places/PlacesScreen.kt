@@ -33,6 +33,7 @@ import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.cards.NodeCard
 import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior
 import com.tajemniktv.tajsos.ui.main.state.PhysicalLogisticsSnapshot
 import com.tajemniktv.tajsos.ui.screens.GroupedOpenLoopSection
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
@@ -97,6 +98,7 @@ fun PlacesScreen(
     ScreenScaffold(
         screen = Screen.Places,
         onNavigate = onNavigate,
+        scrollBehavior = ScreenScrollBehavior.None,
     ) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),

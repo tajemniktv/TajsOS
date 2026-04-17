@@ -28,11 +28,12 @@ import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.Screen
-import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
 import com.tajemniktv.tajsos.ui.OpenLoopsSnapshot
+import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.cards.OpenLoopCard
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior
 import com.tajemniktv.tajsos.ui.screens.GroupedOpenLoopSection
 import com.tajemniktv.tajsos.ui.screens.OpenLoopView
 import com.tajemniktv.tajsos.ui.screens.openLoopTypes
@@ -62,9 +63,11 @@ fun OpenLoopsRoute(
     onNavigate: (String) -> Unit,
 ) {
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val surface = if (maxWidth > 900.dp) OpenLoopsDashboardSurface.DESKTOP else OpenLoopsDashboardSurface.MOBILE
+        val surface =
+            if (maxWidth > 900.dp) OpenLoopsDashboardSurface.DESKTOP else OpenLoopsDashboardSurface.MOBILE
         val plan = remember(surface) { buildOpenLoopsDashboardPlan(surface) }
-        val context = remember(viewModel, onEditNode) { OpenLoopsDashboardContext(viewModel, onEditNode) }
+        val context =
+            remember(viewModel, onEditNode) { OpenLoopsDashboardContext(viewModel, onEditNode) }
 
         OpenLoopsScreen(
             context = context,
@@ -90,6 +93,7 @@ fun OpenLoopsScreen(
     ScreenScaffold(
         screen = Screen.OpenLoops,
         onNavigate = onNavigate,
+        scrollBehavior = ScreenScrollBehavior.None,
     ) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
@@ -115,8 +119,7 @@ internal fun OpenLoopsLayer(
     onEditNode: (Long) -> Unit,
 ) {
     val loops =
-        when (openLoopView)
-        {
+        when (openLoopView) {
             OpenLoopView.Inbox -> snapshot.inbox
             OpenLoopView.Review -> snapshot.review
             OpenLoopView.All -> snapshot.active

@@ -63,7 +63,6 @@ import tajsos.composeapp.generated.resources.focus_capture_hint
 import tajsos.composeapp.generated.resources.focus_capture_save
 import tajsos.composeapp.generated.resources.focus_complete_task
 import tajsos.composeapp.generated.resources.focus_current_task
-import tajsos.composeapp.generated.resources.focus_end_session
 import tajsos.composeapp.generated.resources.focus_focus_minutes_today
 import tajsos.composeapp.generated.resources.focus_mode
 import tajsos.composeapp.generated.resources.focus_next_tiny_step
@@ -89,7 +88,8 @@ object FocusDashboardBlockRegistry {
     fun resolve(id: String): FocusDashboardBlockRenderer? = renderers[id]
 }
 
-@Composable private fun renderFocusMainBlock(context: FocusDashboardContext) = FocusMainBlock(context.viewModel)
+@Composable
+private fun renderFocusMainBlock(context: FocusDashboardContext) = FocusMainBlock(context.viewModel)
 
 @Composable
 internal fun FocusMainBlock(viewModel: MainViewModel) {
@@ -158,7 +158,7 @@ internal fun FocusMainBlock(viewModel: MainViewModel) {
             while (true) {
                 seconds =
                     (
-                            (
+                        (
                             kotlin.time.Clock.System
                                 .now()
                                 .toEpochMilliseconds() -
@@ -236,59 +236,62 @@ internal fun FocusMainBlock(viewModel: MainViewModel) {
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    Button(onClick = {
-                        if (activeSession == null) {
-                            viewModel.startFocusSession(
-                                current.id,
-                            )
-                        } else {
-                            viewModel.stopFocusSession(completed = false, interrupted = true)
+                    if (activeSession == null) {
+                        Button(
+                            onClick = { viewModel.startFocusSession(current.id) },
+                            modifier = Modifier.weight(1.5f),
+                        ) {
+                            Icon(Icons.Default.PlayArrow, null)
+                            Spacer(Modifier.size(6.dp))
+                            Text(stringResource(Res.string.focus_start))
                         }
-                    }, modifier = Modifier.weight(1f)) {
-                        Icon(
-                            if (activeSession == null) Icons.Default.PlayArrow else Icons.Default.Pause,
-                            null,
-                        )
-                        Spacer(Modifier.size(6.dp))
-                        Text(
-                            if (activeSession == null) {
-                                stringResource(
-                                    Res.string.focus_start,
+                        OutlinedButton(
+                            onClick = { viewModel.resumeLastSession() },
+                            modifier = Modifier.weight(1f),
+                        ) {
+                            Icon(Icons.Default.History, null)
+                            Spacer(Modifier.size(6.dp))
+                            Text(stringResource(Res.string.focus_resume))
+                        }
+                        OutlinedButton(
+                            onClick = { viewModel.updateNodeStatus(current, "done") },
+                            modifier = Modifier.weight(1f),
+                        ) {
+                            Icon(Icons.Default.Check, null)
+                            Spacer(Modifier.size(6.dp))
+                            Text(stringResource(Res.string.focus_complete_task))
+                        }
+                    } else {
+                        Button(
+                            onClick = {
+                                viewModel.stopFocusSession(
+                                    completed = false,
+                                    interrupted = true,
                                 )
-                            } else {
-                                stringResource(Res.string.focus_pause)
                             },
-                        )
-                    }
-                    OutlinedButton(
-                        onClick = { viewModel.resumeLastSession() },
-                        modifier = Modifier.weight(1f),
-                    ) {
-                        Icon(Icons.Default.PlayArrow, null)
-                        Spacer(Modifier.size(6.dp))
-                        Text(
-                            stringResource(Res.string.focus_resume),
-                        )
-                    }
-                    OutlinedButton(
-                        onClick = { viewModel.updateNodeStatus(current, "done") },
-                        modifier = Modifier.weight(1f),
-                    ) {
-                        Icon(Icons.Default.Check, null)
-                        Spacer(Modifier.size(6.dp))
-                        Text(
-                            stringResource(Res.string.focus_complete_task),
-                        )
-                    }
-                    OutlinedButton(
-                        onClick = { viewModel.stopFocusSession() },
-                        modifier = Modifier.weight(1f),
-                    ) {
-                        Icon(Icons.Default.Stop, null)
-                        Spacer(Modifier.size(6.dp))
-                        Text(
-                            stringResource(Res.string.focus_end_session),
-                        )
+                            modifier = Modifier.weight(1.5f),
+                        ) {
+                            Icon(Icons.Default.Pause, null)
+                            Spacer(Modifier.size(6.dp))
+                            Text(stringResource(Res.string.focus_pause))
+                        }
+                        OutlinedButton(
+                            onClick = {
+                                viewModel.stopFocusSession()
+                                viewModel.updateNodeStatus(current, "done")
+                            },
+                            modifier = Modifier.weight(1.5f),
+                        ) {
+                            Icon(Icons.Default.Check, null)
+                            Spacer(Modifier.size(6.dp))
+                            Text(stringResource(Res.string.focus_complete_task))
+                        }
+                        OutlinedButton(
+                            onClick = { viewModel.stopFocusSession(completed = false) },
+                            modifier = Modifier.weight(0.7f),
+                        ) {
+                            Icon(Icons.Default.Stop, null)
+                        }
                     }
                 }
             }
@@ -327,10 +330,6 @@ internal fun FocusMainBlock(viewModel: MainViewModel) {
                         onClick = { viewModel.updateNode(current.copy(nextSmallestStep = step)) },
                         modifier = Modifier.weight(1f),
                     ) { Text(stringResource(Res.string.focus_replace_step)) }
-                    OutlinedButton(
-                        onClick = { viewModel.updateNodeStatus(current, "done") },
-                        modifier = Modifier.weight(1f),
-                    ) { Text(stringResource(Res.string.focus_complete_task)) }
                     OutlinedButton(
                         onClick = { viewModel.togglePin(current, true) },
                         modifier = Modifier.weight(1f),

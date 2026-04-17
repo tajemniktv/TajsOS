@@ -35,12 +35,26 @@ import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
  * Shared page-level width policies for screen scaffolds.
  */
 sealed interface ScreenContentWidth {
+    /**
+     * Use full available width.
+     */
     data object Full : ScreenContentWidth
 
+    /**
+     * Use a wide container (max 1440dp).
+     */
     data object Wide : ScreenContentWidth
 
+    /**
+     * Use a readable text container (max 1040dp).
+     */
     data object Readable : ScreenContentWidth
 
+    /**
+     * Use a fixed maximum width.
+     *
+     * @param maxWidth The maximum width for the content.
+     */
     data class Fixed(
         val maxWidth: Dp,
     ) : ScreenContentWidth
@@ -50,21 +64,48 @@ sealed interface ScreenContentWidth {
  * Shared outer scroll modes for screen scaffolds.
  */
 enum class ScreenScrollBehavior {
+    /**
+     * The entire body of the scaffold scrolls as a single unit.
+     */
     BodyScroll,
+
+    /**
+     * Individual panes inside the scaffold handle their own scrolling.
+     */
     PaneScroll,
+
+    /**
+     * No scrolling is applied by the scaffold.
+     */
     None,
 }
 
 /**
  * Standard single-screen template with optional page header and shell-header integration.
+ *
+ * @param modifier The modifier to be applied to the layout.
+ * @param screen The screen type for automatic breadcrumb generation.
+ * @param onNavigate Navigation callback for breadcrumbs.
+ * @param screenHeaderController Controller for shell-header integration.
+ * @param screenHeader Optional override for the header model.
+ * @param contentWidth The width policy for the screen content.
+ * @param scrollBehavior The scroll behavior for the scaffold.
+ * @param contentPadding Padding applied to the inner content.
+ * @param backgroundColor The background color of the scaffold.
+ * @param backgroundBrush Optional background brush (overrides [backgroundColor]).
+ * @param title Optional page-level title.
+ * @param subtitle Optional page-level subtitle.
+ * @param actions Optional page-level actions row.
+ * @param toolbar Optional page-level toolbar.
+ * @param content The main screen content.
  */
 @Composable
 fun ScreenScaffold(
+    modifier: Modifier = Modifier,
     screen: Screen? = null,
     onNavigate: ((String) -> Unit)? = null,
     screenHeaderController: ScreenHeaderController? = LocalScreenHeaderController.current,
     screenHeader: ScreenHeaderModel? = null,
-    modifier: Modifier = Modifier,
     contentWidth: ScreenContentWidth = ScreenContentWidth.Full,
     scrollBehavior: ScreenScrollBehavior = ScreenScrollBehavior.BodyScroll,
     contentPadding: PaddingValues = ScreenScaffoldDefaults.contentPadding(),
@@ -76,24 +117,24 @@ fun ScreenScaffold(
     toolbar: (@Composable () -> Unit)? = null,
     content: @Composable BoxScope.() -> Unit,
 ) {
-    val breadcrumbs = if (screen != null) {
-        screenBreadcrumbs(screen) { breadcrumb ->
-            if (onNavigate == null || breadcrumb.route.contains("{")) {
-                null
-            } else {
-                { onNavigate(breadcrumb.route) }
+    val breadcrumbs =
+        if (screen != null) {
+            screenBreadcrumbs(screen) {
+                if (onNavigate == null || it.route.contains("{")) {
+                    null
+                } else {
+                    { onNavigate(it.route) }
+                }
             }
+        } else {
+            emptyList()
         }
-    } else {
-        emptyList()
-    }
 
     val finalHeaderModel =
         remember(screenHeader, breadcrumbs, screen) {
             screenHeader ?: if (screen != null) {
                 ScreenHeaderModel(
                     breadcrumbs = breadcrumbs,
-                    title = null,
                 )
             } else {
                 null
@@ -150,7 +191,10 @@ fun ScreenScaffold(
                     toolbar = toolbar,
                 )
                 Box(
-                    modifier = Modifier.fillMaxWidth().weight(1f, fill = scrollBehavior == ScreenScrollBehavior.None),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .weight(1f, fill = scrollBehavior == ScreenScrollBehavior.None),
                     content = content,
                 )
             }
@@ -160,14 +204,29 @@ fun ScreenScaffold(
 
 /**
  * Convenience version of [ScreenScaffold] that defaults to [ScreenScrollBehavior.BodyScroll].
+ *
+ * @param modifier The modifier to be applied to the layout.
+ * @param screen The screen type for automatic breadcrumb generation.
+ * @param onNavigate Navigation callback for breadcrumbs.
+ * @param screenHeaderController Controller for shell-header integration.
+ * @param screenHeader Optional override for the header model.
+ * @param contentWidth The width policy for the screen content.
+ * @param contentPadding Padding applied to the inner content.
+ * @param backgroundColor The background color of the scaffold.
+ * @param backgroundBrush Optional background brush (overrides [backgroundColor]).
+ * @param title Optional page-level title.
+ * @param subtitle Optional page-level subtitle.
+ * @param actions Optional page-level actions row.
+ * @param toolbar Optional page-level toolbar.
+ * @param content The main screen content.
  */
 @Composable
 fun ScrollableScreenScaffold(
+    modifier: Modifier = Modifier,
     screen: Screen? = null,
     onNavigate: ((String) -> Unit)? = null,
     screenHeaderController: ScreenHeaderController? = LocalScreenHeaderController.current,
     screenHeader: ScreenHeaderModel? = null,
-    modifier: Modifier = Modifier,
     contentWidth: ScreenContentWidth = ScreenContentWidth.Full,
     contentPadding: PaddingValues = ScreenScaffoldDefaults.contentPadding(),
     backgroundColor: Color = Color.Transparent,
@@ -179,11 +238,11 @@ fun ScrollableScreenScaffold(
     content: @Composable BoxScope.() -> Unit,
 ) {
     ScreenScaffold(
+        modifier = modifier,
         screen = screen,
         onNavigate = onNavigate,
         screenHeaderController = screenHeaderController,
         screenHeader = screenHeader,
-        modifier = modifier,
         contentWidth = contentWidth,
         scrollBehavior = ScreenScrollBehavior.BodyScroll,
         contentPadding = contentPadding,
@@ -199,15 +258,38 @@ fun ScrollableScreenScaffold(
 
 /**
  * Reusable split-layout scaffold for detail and dual-pane screens.
+ *
+ * @param isSplitLayout Whether to use a dual-pane layout or stack panes vertically.
+ * @param primary The primary screen content.
+ * @param modifier The modifier to be applied to the layout.
+ * @param screen The screen type for automatic breadcrumb generation.
+ * @param onNavigate Navigation callback for breadcrumbs.
+ * @param screenHeaderController Controller for shell-header integration.
+ * @param screenHeader Optional override for the header model.
+ * @param contentWidth The width policy for the screen content.
+ * @param scrollBehavior The scroll behavior for the scaffold.
+ * @param contentPadding Padding applied to the inner content.
+ * @param backgroundColor The background color of the scaffold.
+ * @param backgroundBrush Optional background brush (overrides [backgroundColor]).
+ * @param title Optional page-level title.
+ * @param subtitle Optional page-level subtitle.
+ * @param actions Optional page-level actions row.
+ * @param toolbar Optional page-level toolbar.
+ * @param header Optional header above the panes.
+ * @param secondaryWidth Fixed width for the secondary pane (if [secondaryWeight] is 0).
+ * @param primaryWeight Weight for the primary pane in split layout.
+ * @param secondaryWeight Weight for the secondary pane in split layout.
+ * @param secondary Optional secondary screen content.
  */
 @Composable
 fun SplitScreenScaffold(
     isSplitLayout: Boolean,
+    primary: @Composable BoxScope.() -> Unit,
+    modifier: Modifier = Modifier,
     screen: Screen? = null,
     onNavigate: ((String) -> Unit)? = null,
     screenHeaderController: ScreenHeaderController? = LocalScreenHeaderController.current,
     screenHeader: ScreenHeaderModel? = null,
-    modifier: Modifier = Modifier,
     contentWidth: ScreenContentWidth = ScreenContentWidth.Full,
     scrollBehavior: ScreenScrollBehavior = ScreenScrollBehavior.PaneScroll,
     contentPadding: PaddingValues = ScreenScaffoldDefaults.contentPadding(),
@@ -221,27 +303,26 @@ fun SplitScreenScaffold(
     secondaryWidth: Dp = 320.dp,
     primaryWeight: Float = 1f,
     secondaryWeight: Float = 0f,
-    primary: @Composable BoxScope.() -> Unit,
     secondary: (@Composable BoxScope.() -> Unit)? = null,
 ) {
-    val breadcrumbs = if (screen != null) {
-        screenBreadcrumbs(screen) { breadcrumb ->
-            if (onNavigate == null || breadcrumb.route.contains("{")) {
-                null
-            } else {
-                { onNavigate(breadcrumb.route) }
+    val breadcrumbs =
+        if (screen != null) {
+            screenBreadcrumbs(screen) {
+                if (onNavigate == null || it.route.contains("{")) {
+                    null
+                } else {
+                    { onNavigate(it.route) }
+                }
             }
+        } else {
+            emptyList()
         }
-    } else {
-        emptyList()
-    }
 
     val finalHeaderModel =
         remember(screenHeader, breadcrumbs, screen) {
             screenHeader ?: if (screen != null) {
                 ScreenHeaderModel(
                     breadcrumbs = breadcrumbs,
-                    title = null,
                 )
             } else {
                 null
@@ -317,7 +398,7 @@ fun SplitScreenScaffold(
                     scrollBehavior = scrollBehavior,
                     content = primary,
                 )
-                if (secondary != null) {
+                secondary?.let {
                     val secondaryModifier =
                         if (secondaryWeight > 0f) {
                             Modifier.weight(secondaryWeight)
@@ -327,7 +408,7 @@ fun SplitScreenScaffold(
                     SplitPane(
                         modifier = secondaryModifier,
                         scrollBehavior = scrollBehavior,
-                        content = secondary,
+                        content = it,
                     )
                 }
             }
@@ -335,10 +416,23 @@ fun SplitScreenScaffold(
     }
 }
 
-private object ScreenScaffoldDefaults {
-    val sectionSpacing = TajsOSTheme.SpacingMd
-    val paneSpacing = TajsOSTheme.SpacingMd
+/**
+ * Default values for screen scaffolds.
+ */
+object ScreenScaffoldDefaults {
+    /**
+     * Default vertical spacing between sections.
+     */
+    val sectionSpacing: Dp = TajsOSTheme.SpacingMd
 
+    /**
+     * Default horizontal spacing between panes in split layout.
+     */
+    val paneSpacing: Dp = TajsOSTheme.SpacingMd
+
+    /**
+     * Returns the default content padding for screen scaffolds.
+     */
     @Composable
     fun contentPadding(): PaddingValues =
         PaddingValues(
@@ -349,6 +443,14 @@ private object ScreenScaffoldDefaults {
         )
 }
 
+/**
+ * Header component for [ScreenScaffold] and its variants.
+ *
+ * @param title Optional title content.
+ * @param subtitle Optional subtitle content.
+ * @param actions Optional actions content.
+ * @param toolbar Optional toolbar content.
+ */
 @Composable
 private fun ScreenScaffoldHeader(
     title: (@Composable () -> Unit)?,
@@ -391,9 +493,16 @@ private fun ScreenScaffoldHeader(
     }
 }
 
+/**
+ * Container for a single pane in [SplitScreenScaffold].
+ *
+ * @param modifier The modifier to be applied to the pane.
+ * @param scrollBehavior The scroll behavior for the pane.
+ * @param content The content of the pane.
+ */
 @Composable
 private fun SplitPane(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     scrollBehavior: ScreenScrollBehavior,
     content: @Composable BoxScope.() -> Unit,
 ) {
@@ -411,6 +520,11 @@ private fun SplitPane(
     }
 }
 
+/**
+ * Returns a [Modifier] that applies the maximum width specified by [contentWidth].
+ *
+ * @param contentWidth The width policy to apply.
+ */
 private fun contentWidthModifier(contentWidth: ScreenContentWidth): Modifier =
     when (contentWidth) {
         ScreenContentWidth.Full -> Modifier
@@ -419,20 +533,40 @@ private fun contentWidthModifier(contentWidth: ScreenContentWidth): Modifier =
         is ScreenContentWidth.Fixed -> Modifier.widthIn(max = contentWidth.maxWidth)
     }
 
+/**
+ * Standard screen-level title component.
+ *
+ * @param text The title text.
+ * @param modifier The modifier to be applied to the text.
+ */
 @Composable
-fun ScreenTitle(text: String) {
+fun ScreenTitle(
+    text: String,
+    modifier: Modifier = Modifier,
+) {
     Text(
         text = text,
         style = MaterialTheme.typography.headlineSmall,
         color = TajsOSTheme.Text,
+        modifier = modifier,
     )
 }
 
+/**
+ * Standard screen-level subtitle component.
+ *
+ * @param text The subtitle text.
+ * @param modifier The modifier to be applied to the text.
+ */
 @Composable
-fun ScreenSubtitle(text: String) {
+fun ScreenSubtitle(
+    text: String,
+    modifier: Modifier = Modifier,
+) {
     Text(
         text = text,
         style = MaterialTheme.typography.bodyMedium,
         color = TajsOSTheme.Muted,
+        modifier = modifier,
     )
 }

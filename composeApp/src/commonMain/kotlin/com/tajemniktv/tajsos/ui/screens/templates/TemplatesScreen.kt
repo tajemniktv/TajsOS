@@ -32,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
@@ -81,6 +82,7 @@ fun TemplatesScreen(
     ScreenScaffold(
         backgroundColor = TajsOSTheme.Background,
         actions = actions,
+        scrollBehavior = ScreenScrollBehavior.None,
     ) {
         Box(
             modifier =
@@ -111,8 +113,7 @@ fun TemplatesScreen(
                     Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                         listOf("task", "note", "record", "project", "area").forEach { t ->
                             val typeLabel =
-                                when (t)
-                                {
+                                when (t) {
                                     "task" -> stringResource(Res.string.type_task)
                                     "note" -> stringResource(Res.string.type_note)
                                     "record" -> stringResource(Res.string.type_record)
