@@ -74,6 +74,16 @@ jobs:
             npm ci
           fi
         working-directory: ${{ env.BUILD_PATH }}
+      - name: Check with Astro
+        shell: bash
+        run: |
+          if [ "${{ steps.detect-package-manager.outputs.manager }}" = "yarn" ]; then
+            yarn run check
+          else
+            npm run check
+          fi
+        working-directory: ${{ env.BUILD_PATH }}
+
       - name: Build with Astro
         shell: bash
         run: |
