@@ -21,6 +21,35 @@ export default defineConfig({
   integrations: [starlight({
     title: 'Docs',
     description: 'TajsOS Documentation',
+
+    sidebar: [
+      {
+        label: 'Introduction',
+        items: [
+          { label: 'Overview', slug: 'overview' },
+          { label: 'Current Status', slug: 'current-status' },
+          { label: 'Product Philosophy', slug: 'product-philosophy' },
+          { label: 'Roadmap', slug: 'roadmap' },
+        ],
+      },
+      {
+        label: 'Architecture & Model',
+        items: [
+          { label: 'Core Object Model', slug: 'core-object-model' },
+          { label: 'Local-First Architecture', slug: 'local-first-architecture' },
+          { label: 'App Surfaces & Layering', slug: 'app-surfaces' },
+          { label: 'Tech Stack', slug: 'tech-stack' },
+        ],
+      },
+      {
+        label: 'Development & Design',
+        items: [
+          { label: 'Design System', slug: 'design-system' },
+          { label: 'Agent & Contributor Rules', slug: 'agent-rules' },
+        ],
+      },
+    ],
+
     logo: {
       src: './src/assets/logo.png',
       alt: 'TajsOS Logo'
