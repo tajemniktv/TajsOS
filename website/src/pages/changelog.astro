@@ -12,235 +12,67 @@ const title = "Changelog";
   
   <Navbar />
   <main class="relative pt-32 max-w-[1600px] mx-auto px-8 min-h-screen">
-    
-<!-- Sidebar: System Vitals -->
-<aside class="col-span-3 flex flex-col gap-6">
-<div class="flex flex-col gap-1">
-<h2 class="font-headline text-2xl font-bold tracking-tight text-on-surface">System Vital Statistics</h2>
-<p class="font-mono text-[10px] text-primary uppercase tracking-[0.2em]">Live Telemetry Feed</p>
+
+<!-- Header -->
+<header class="mb-24">
+    <h1 class="font-headline font-bold text-7xl md:text-9xl tracking-tighter text-on-surface glow-text mb-6">
+        CHANGELOG
+    </h1>
+    <p class="font-body text-xl text-on-surface-variant max-w-2xl leading-relaxed">
+        Tracking the development progress of TajsOS.
+    </p>
+</header>
+
+<div class="grid grid-cols-1 md:grid-cols-12 gap-12 mb-32">
+    <!-- Main Log -->
+    <div class="md:col-span-8 space-y-12">
+
+        <article class="glass-panel p-8 rounded-xl relative">
+            <div class="absolute -left-3 top-10 w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+                <div class="w-2 h-2 rounded-full bg-surface"></div>
+            </div>
+            <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
+                <h2 class="font-headline text-3xl font-bold text-primary">Alpha 0.1.0</h2>
+                <span class="font-mono text-sm text-on-surface-variant bg-surface-container px-3 py-1 rounded-full border border-outline-variant/20">Early 2024</span>
+            </div>
+            <div class="prose prose-invert prose-p:text-on-surface-variant max-w-none">
+                <p>Initial foundation laid for the local-first personal dashboard.</p>
+                <ul>
+                    <li><strong>Feature:</strong> Jetpack Compose Multiplatform UI structure created.</li>
+                    <li><strong>Feature:</strong> SQLite local database integration using Room.</li>
+                    <li><strong>Feature:</strong> Basic Node and Protocol (task management) UI.</li>
+                    <li><strong>Experiment:</strong> Setup rudimentary Ktor server for future sync tests.</li>
+                </ul>
+            </div>
+        </article>
+
+        <article class="glass-panel p-8 rounded-xl relative opacity-80">
+            <div class="absolute -left-3 top-10 w-6 h-6 rounded-full bg-surface-container-high border-2 border-primary/50 flex items-center justify-center">
+                <div class="w-2 h-2 rounded-full bg-primary/50"></div>
+            </div>
+            <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
+                <h2 class="font-headline text-3xl font-bold">Project Inception</h2>
+                <span class="font-mono text-sm text-on-surface-variant bg-surface-container px-3 py-1 rounded-full border border-outline-variant/20">Late 2023</span>
+            </div>
+            <div class="prose prose-invert prose-p:text-on-surface-variant max-w-none">
+                <p>Exploration of local-first patterns, UI mockups, and architectural planning.</p>
+            </div>
+        </article>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="md:col-span-4">
+        <div class="glass-panel p-6 rounded-xl border border-outline-variant/10 sticky top-32">
+            <h3 class="font-headline text-xl font-bold mb-4">Development Log</h3>
+            <p class="text-sm text-on-surface-variant mb-6 leading-relaxed">
+                TajsOS is currently developed in bursts. This log tracks major milestones and architectural shifts rather than every minor commit.
+            </p>
+            <a href="https://github.com/tajemniktv/TajsOS" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary-dim transition-colors text-sm font-bold flex items-center gap-2">
+                View GitHub Commits <span class="material-symbols-outlined text-sm">open_in_new</span>
+            </a>
+        </div>
+    </aside>
 </div>
-<!-- Vital Graphs -->
-<div class="flex flex-col gap-4">
-<!-- CPU -->
-<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/10 relative overflow-hidden group">
-<div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-3xl rounded-full -mr-16 -mt-16"></div>
-<div class="flex justify-between items-end mb-4">
-<div>
-<p class="font-mono text-[10px] text-outline uppercase">CPU Load</p>
-<p class="font-headline text-3xl font-bold">42<span class="text-sm text-primary ml-1">%</span></p>
-</div>
-<div class="flex gap-1 items-end h-8">
-<div class="w-1 bg-zinc-800 h-2"></div>
-<div class="w-1 bg-zinc-800 h-4"></div>
-<div class="w-1 bg-primary h-6 shadow-[0_0_10px_#ba9eff]"></div>
-<div class="w-1 bg-primary h-5 shadow-[0_0_10px_#ba9eff]"></div>
-<div class="w-1 bg-zinc-800 h-3"></div>
-</div>
-</div>
-<div class="w-full h-1.5 bg-surface-container-lowest rounded-full overflow-hidden">
-<div class="h-full bg-gradient-to-r from-primary-dim to-primary w-[42%]"></div>
-</div>
-</div>
-<!-- Neural Load -->
-<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/10 relative overflow-hidden group">
-<div class="flex justify-between items-end mb-4">
-<div>
-<p class="font-mono text-[10px] text-outline uppercase">Neural Synapse</p>
-<p class="font-headline text-3xl font-bold">89<span class="text-sm text-primary ml-1">Hz</span></p>
-</div>
-<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">psychology</span>
-</div>
-<div class="w-full h-12 flex items-center justify-between gap-1">
-<div class="flex-1 h-1 bg-primary/20 rounded-full"></div>
-<div class="flex-1 h-3 bg-primary/40 rounded-full"></div>
-<div class="flex-1 h-6 bg-primary rounded-full shadow-[0_0_15px_#ba9eff]"></div>
-<div class="flex-1 h-8 bg-primary-dim rounded-full"></div>
-<div class="flex-1 h-4 bg-primary/40 rounded-full"></div>
-<div class="flex-1 h-2 bg-primary/20 rounded-full"></div>
-</div>
-</div>
-<!-- Memory -->
-<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/10">
-<p class="font-mono text-[10px] text-outline uppercase mb-2">Memory Allocation</p>
-<div class="flex items-center gap-4">
-<div class="relative w-16 h-16">
-<svg class="w-full h-full -rotate-90" viewbox="0 0 36 36">
-<circle class="stroke-surface-container-highest" cx="18" cy="18" fill="none" r="16" stroke-width="3"></circle>
-<circle class="stroke-primary" cx="18" cy="18" fill="none" r="16" stroke-dasharray="75, 100" stroke-linecap="round" stroke-width="3"></circle>
-</svg>
-<div class="absolute inset-0 flex items-center justify-center text-[10px] font-mono">75%</div>
-</div>
-<div class="flex flex-col">
-<span class="text-xl font-headline font-bold">12.4<span class="text-xs text-outline font-normal">/16GB</span></span>
-<span class="text-[10px] font-mono text-zinc-500 uppercase">Buffer: 2.1GB</span>
-</div>
-</div>
-</div>
-</div>
-<!-- Status Nodes -->
-<div class="mt-4 flex flex-col gap-4">
-<p class="font-mono text-[10px] text-outline uppercase tracking-widest">Cognitive Services</p>
-<div class="grid grid-cols-2 gap-3">
-<div class="bg-surface-container-highest p-3 rounded-lg border border-outline-variant/5 flex flex-col gap-2">
-<div class="flex justify-between items-start">
-<span class="material-symbols-outlined text-xs text-primary">hub</span>
-<div class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_5px_#ba9eff]"></div>
-</div>
-<span class="font-mono text-[9px] uppercase tracking-tighter">Sync_Node</span>
-</div>
-<div class="bg-surface-container-highest p-3 rounded-lg border border-outline-variant/5 flex flex-col gap-2">
-<div class="flex justify-between items-start">
-<span class="material-symbols-outlined text-xs text-zinc-500">memory</span>
-<div class="w-1.5 h-1.5 rounded-full bg-zinc-700"></div>
-</div>
-<span class="font-mono text-[9px] uppercase tracking-tighter text-zinc-500">Core_Idle</span>
-</div>
-<div class="bg-surface-container-highest p-3 rounded-lg border border-outline-variant/5 flex flex-col gap-2">
-<div class="flex justify-between items-start">
-<span class="material-symbols-outlined text-xs text-primary">security</span>
-<div class="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_5px_#ba9eff]"></div>
-</div>
-<span class="font-mono text-[9px] uppercase tracking-tighter">Vault_Enc</span>
-</div>
-<div class="bg-surface-container-highest p-3 rounded-lg border border-outline-variant/5 flex flex-col gap-2">
-<div class="flex justify-between items-start">
-<span class="material-symbols-outlined text-xs text-tertiary">warning</span>
-<div class="w-1.5 h-1.5 rounded-full bg-tertiary"></div>
-</div>
-<span class="font-mono text-[9px] uppercase tracking-tighter text-tertiary">Latency_H</span>
-</div>
-</div>
-</div>
-</aside>
-<!-- Main Center: Terminal Live Activity -->
-<section class="col-span-9 flex flex-col gap-4">
-<div class="bg-surface-container-lowest border border-outline-variant/10 rounded-xl flex flex-col h-[750px] overflow-hidden terminal-glow shadow-2xl">
-<!-- Terminal Header -->
-<div class="bg-surface-container-high px-6 py-3 flex justify-between items-center border-b border-outline-variant/5">
-<div class="flex items-center gap-4">
-<div class="flex gap-1.5">
-<div class="w-2.5 h-2.5 rounded-full bg-error/20 border border-error/40"></div>
-<div class="w-2.5 h-2.5 rounded-full bg-primary/20 border border-primary/40"></div>
-<div class="w-2.5 h-2.5 rounded-full bg-zinc-800 border border-zinc-700"></div>
-</div>
-<span class="font-mono text-[11px] text-zinc-400">system_activity_monitor --live</span>
-</div>
-<div class="flex items-center gap-4">
-<span class="font-mono text-[10px] text-zinc-600">STABLE_RELEASE_V4.02</span>
-<div class="flex bg-surface-container-lowest rounded overflow-hidden border border-outline-variant/20">
-<button class="px-3 py-1 bg-primary text-on-primary text-[10px] font-mono">LIVE</button>
-<button class="px-3 py-1 text-zinc-500 text-[10px] font-mono hover:text-white">HISTORY</button>
-</div>
-</div>
-</div>
-<!-- Terminal Content -->
-<div class="flex-1 overflow-y-auto p-8 font-mono text-[13px] leading-relaxed selection:bg-primary/30">
-<div class="flex flex-col gap-2">
-<!-- Log Entry -->
-<div class="grid grid-cols-[140px_1fr] group">
-<span class="text-zinc-600">[2024.05.12 14:22:01]</span>
-<div class="flex items-start gap-4">
-<span class="text-primary font-bold">INFO</span>
-<p class="text-zinc-300">Kernel initialized. Loading neural weights for <span class="text-secondary-fixed">model_id: T-900</span>...</p>
-</div>
-</div>
-<div class="grid grid-cols-[140px_1fr] group">
-<span class="text-zinc-600">[2024.05.12 14:22:03]</span>
-<div class="flex items-start gap-4">
-<span class="text-primary font-bold">INFO</span>
-<p class="text-zinc-300">Memory allocation successful. <span class="text-primary">4096MB</span> reserved for context window.</p>
-</div>
-</div>
-<div class="grid grid-cols-[140px_1fr] group bg-zinc-900/40 -mx-8 px-8 py-1 border-l-2 border-primary">
-<span class="text-zinc-600">[2024.05.12 14:22:05]</span>
-<div class="flex items-start gap-4">
-<span class="text-primary font-bold">PROCESS</span>
-<p class="text-white">Neural synapsing sequence <span class="text-primary">#OP-9821</span> initiated by user_auth_primary.</p>
-</div>
-</div>
-<div class="grid grid-cols-[140px_1fr] group">
-<span class="text-zinc-600">[2024.05.12 14:22:12]</span>
-<div class="flex items-start gap-4">
-<span class="text-zinc-500 font-bold">DEBUG</span>
-<p class="text-zinc-500">Latency spike detected in <span class="font-bold underline decoration-zinc-700">region_eu_west</span>. Rerouting via secondary node.</p>
-</div>
-</div>
-<div class="grid grid-cols-[140px_1fr] group">
-<span class="text-zinc-600">[2024.05.12 14:22:15]</span>
-<div class="flex items-start gap-4">
-<span class="text-primary font-bold">INFO</span>
-<p class="text-zinc-300">Reroute successful. Current latency: <span class="text-primary">12ms</span>.</p>
-</div>
-</div>
-<div class="grid grid-cols-[140px_1fr] group py-1">
-<span class="text-zinc-600">[2024.05.12 14:22:18]</span>
-<div class="flex items-start gap-4">
-<span class="text-tertiary font-bold">WARN</span>
-<p class="text-tertiary/80">Cognitive load exceeding threshold (85%). Initiating cooling protocol.</p>
-</div>
-</div>
-<div class="grid grid-cols-[140px_1fr] group">
-<span class="text-zinc-600">[2024.05.12 14:22:20]</span>
-<div class="flex items-start gap-4">
-<span class="text-primary font-bold">INFO</span>
-<p class="text-zinc-300">Thermal management engaged. CPU frequency scaled to <span class="text-primary">3.2GHz</span>.</p>
-</div>
-</div>
-<div class="grid grid-cols-[140px_1fr] group">
-<span class="text-zinc-600">[2024.05.12 14:22:25]</span>
-<div class="flex items-start gap-4">
-<span class="text-primary font-bold">SUCCESS</span>
-<p class="text-zinc-300">Neural Sync established. Ready for cognitive queries.</p>
-</div>
-</div>
-<!-- Typing Prompt -->
-<div class="mt-8 flex gap-4 items-center">
-<span class="text-primary font-bold animate-pulse">_</span>
-<div class="h-5 w-1 bg-primary animate-pulse"></div>
-</div>
-</div>
-</div>
-<!-- Footer Console Input -->
-<div class="bg-surface-container-low px-8 py-4 border-t border-outline-variant/10 flex items-center gap-4">
-<span class="text-primary font-mono text-sm">tajsos@root:~ $</span>
-<input class="bg-transparent border-none focus:ring-0 w-full text-white font-mono placeholder:text-zinc-700" placeholder="Execute command..." type="text"/>
-<div class="flex gap-3">
-<span class="material-symbols-outlined text-zinc-600 cursor-pointer hover:text-white transition-colors">history</span>
-<span class="material-symbols-outlined text-zinc-600 cursor-pointer hover:text-white transition-colors">terminal</span>
-</div>
-</div>
-</div>
-<!-- Bottom Cards Row -->
-<div class="grid grid-cols-3 gap-6">
-<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/10 flex items-center gap-4 group hover:border-primary/20 transition-all">
-<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary border border-outline-variant/10 group-hover:shadow-[0_0_15px_rgba(186,158,255,0.2)]">
-<span class="material-symbols-outlined">analytics</span>
-</div>
-<div>
-<h4 class="font-headline font-bold">Deep Insights</h4>
-<p class="text-xs text-outline font-mono uppercase tracking-tighter">Analyze patterns</p>
-</div>
-</div>
-<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/10 flex items-center gap-4 group hover:border-primary/20 transition-all">
-<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center text-secondary border border-outline-variant/10 group-hover:shadow-[0_0_15px_rgba(192,140,247,0.2)]">
-<span class="material-symbols-outlined">dns</span>
-</div>
-<div>
-<h4 class="font-headline font-bold">Node Manager</h4>
-<p class="text-xs text-outline font-mono uppercase tracking-tighter">12 Active Clusters</p>
-</div>
-</div>
-<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/10 flex items-center gap-4 group hover:border-primary/20 transition-all">
-<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center text-tertiary border border-outline-variant/10 group-hover:shadow-[0_0_15px_rgba(255,151,181,0.2)]">
-<span class="material-symbols-outlined">security</span>
-</div>
-<div>
-<h4 class="font-headline font-bold">Security Hub</h4>
-<p class="text-xs text-outline font-mono uppercase tracking-tighter">Level 4 Protocol</p>
-</div>
-</div>
-</div>
-</section>
 
   </main>
   <Footer />

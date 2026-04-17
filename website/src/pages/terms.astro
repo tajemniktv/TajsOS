@@ -12,166 +12,39 @@ const title = "TERMS";
   
   <Navbar />
   <main class="relative pt-32 max-w-[1600px] mx-auto px-8 min-h-screen">
-    
-<!-- Hero Section -->
-<section class="grid grid-cols-12 gap-8 mb-32">
-<div class="col-span-12 lg:col-span-8">
-<div class="flex items-center gap-4 mb-6">
-<span class="font-mono text-primary text-sm tracking-tighter">REF_ID: 0x9928-NET-OS</span>
-<div class="h-[1px] flex-grow bg-outline-variant/30"></div>
-</div>
-<h1 class="font-headline font-bold text-7xl md:text-9xl tracking-tighter leading-[0.85] text-glow mb-8">
-                    TERMS //<br/>
-<span class="text-primary-dim">OF NETWORK</span>
-</h1>
-<p class="font-body text-xl text-on-surface-variant max-w-2xl leading-relaxed">
-                    This document governs the operational parameters of the TajsOS Neural Interface. By accessing the decentralized architecture, you acknowledge full synchronization with our Protocol Standards.
-                </p>
-</div>
-<div class="col-span-12 lg:col-span-4 flex flex-col justify-end items-start lg:items-end">
-<div class="p-6 glass-panel rounded-xl w-full lg:w-auto">
-<p class="font-mono text-[10px] text-on-surface-variant uppercase tracking-widest mb-2">Last Updated</p>
-<p class="font-mono text-xl text-primary font-bold">2024.11.14 // 08:42:01</p>
-<div class="mt-6 space-y-2">
-<div class="flex justify-between items-center gap-4">
-<span class="text-[10px] font-label text-on-surface-variant uppercase tracking-[0.1em]">Encryption</span>
-<span class="text-[10px] font-label text-primary uppercase">Active_AES_256</span>
-</div>
-<div class="flex justify-between items-center gap-4">
-<span class="text-[10px] font-label text-on-surface-variant uppercase tracking-[0.1em]">Auth_Level</span>
-<span class="text-[10px] font-label text-primary uppercase">Zero_Knowledge</span>
-</div>
-</div>
-</div>
-</div>
-</section>
-<!-- Content Layout -->
-<div class="grid grid-cols-12 gap-16">
-<!-- Sidebar Nav -->
-<aside class="hidden lg:block col-span-3 sticky top-32 h-fit">
 
-<div class="mt-24 p-6 bg-surface-container-low rounded-xl border-l-2 border-primary">
-<span class="material-symbols-outlined text-primary mb-4" style="font-variation-settings: 'FILL' 1;">info</span>
-<h4 class="font-headline text-xs font-bold uppercase tracking-widest mb-2">Network Advisory</h4>
-<p class="text-xs text-on-surface-variant leading-relaxed">
-                        Nodes operating outside of version 2.4.0 may experience synchronization latency. Ensure your interface is current.
-                    </p>
-</div>
-</aside>
-<!-- Main Legal Text -->
-<div class="col-span-12 lg:col-span-9 space-y-24">
-<!-- Section 01 -->
-<section class="scroll-mt-32" id="protocol">
-<div class="flex items-baseline gap-4 mb-10">
-<span class="font-mono text-4xl text-primary-dim opacity-50">01.</span>
-<h2 class="font-headline text-5xl font-bold tracking-tight">Protocol Standards</h2>
-</div>
-<div class="glass-panel p-10 rounded-2xl space-y-8">
-<div class="space-y-4">
-<h3 class="font-headline text-xl font-bold text-primary flex items-center gap-3">
-                                1.1 Synchronization Requirements
-                            </h3>
-<p class="text-on-surface-variant leading-relaxed">
-                                The TajsOS Network requires all nodes to maintain a minimum of 99.9% uptime for primary protocol synchronization. Failure to maintain these parameters may result in temporary node isolation within the cluster. Users must ensure that their neural interfaces are calibrated to the current protocol version.
-                            </p>
-</div>
-<div class="space-y-4">
-<h3 class="font-headline text-xl font-bold text-primary flex items-center gap-3">
-                                1.2 Data Transmission Latency
-                            </h3>
-<p class="text-on-surface-variant leading-relaxed">
-                                Transmission through the Neural Interface is subject to spatial-temporal latency constraints. While the protocol optimizes for near-instantaneous relay, TajsOS does not guarantee zero-latency performance in sub-optimal network environments.
-                            </p>
-</div>
-</div>
+<!-- Hero Section -->
+<section class="mb-24">
+    <h1 class="font-headline font-bold text-7xl md:text-9xl tracking-tighter leading-[0.85] text-glow mb-8">
+        TERMS
+    </h1>
+    <p class="font-body text-xl text-on-surface-variant max-w-2xl leading-relaxed">
+        Basic rules for using our experimental open-source project.
+    </p>
 </section>
-<!-- Section 02 -->
-<section class="scroll-mt-32" id="security">
-<div class="flex items-baseline gap-4 mb-10">
-<span class="font-mono text-4xl text-primary-dim opacity-50">02.</span>
-<h2 class="font-headline text-5xl font-bold tracking-tight">Security &amp; Encryption</h2>
-</div>
-<div class="bg-surface-container-low p-10 rounded-2xl space-y-8 border-t border-primary/20">
-<div class="grid md:grid-cols-2 gap-12">
-<div class="space-y-4">
-<h3 class="font-headline text-xl font-bold text-on-surface uppercase tracking-tight">2.1 Zero-Knowledge Proofs</h3>
-<p class="text-sm text-on-surface-variant leading-relaxed">
-                                    Our security architecture utilizes recursive SNARKs to ensure privacy. At no point does the central network store unencrypted neural signatures or personal cognitive data. You remain the sole custodian of your decryption keys.
-                                </p>
-</div>
-<div class="space-y-4">
-<h3 class="font-headline text-xl font-bold text-on-surface uppercase tracking-tight">2.2 Node Validation</h3>
-<p class="text-sm text-on-surface-variant leading-relaxed">
-                                    Every interaction is validated against the global ledger. Nodes found propagating anomalous or malicious payloads will be automatically purged by the network's immune system protocol (ISP-01).
-                                </p>
-</div>
-</div>
-<div class="mt-8 pt-8 border-t border-outline-variant/20 flex items-center justify-between">
-<div class="flex items-center gap-3">
-<span class="material-symbols-outlined text-primary">verified_user</span>
-<span class="font-mono text-[10px] text-on-surface-variant uppercase tracking-widest">Quantum_Resistance_Applied</span>
-</div>
-<div class="flex items-center gap-3">
-<span class="material-symbols-outlined text-primary">lock_open</span>
-<span class="font-mono text-[10px] text-on-surface-variant uppercase tracking-widest">End_To_End_Enforced</span>
-</div>
-</div>
-</div>
+
+<section class="max-w-4xl space-y-8 mb-32">
+    <div class="glass-panel p-8 rounded-xl border border-outline-variant/10">
+        <h2 class="font-headline text-2xl font-bold mb-4">1. Experimental Nature</h2>
+        <p class="text-on-surface-variant font-body leading-relaxed">
+            TajsOS is provided "AS IS", without warranty of any kind, express or implied. It is an experimental project. We are not responsible for any data loss, bugs, or system crashes that may occur while using the software. Always back up your local database.
+        </p>
+    </div>
+
+    <div class="glass-panel p-8 rounded-xl border border-outline-variant/10">
+        <h2 class="font-headline text-2xl font-bold mb-4">2. Open Source License</h2>
+        <p class="text-on-surface-variant font-body leading-relaxed">
+            The code is governed by its respective open-source license found in the repository. You are free to use, modify, and distribute it in accordance with those terms.
+        </p>
+    </div>
+
+    <div class="glass-panel p-8 rounded-xl border border-outline-variant/10">
+        <h2 class="font-headline text-2xl font-bold mb-4">3. Hosted Services</h2>
+        <p class="text-on-surface-variant font-body leading-relaxed">
+            We do not currently provide an official hosted cloud sync service with a Service Level Agreement (SLA). Any sync servers you connect to are your own responsibility to maintain and secure.
+        </p>
+    </div>
 </section>
-<!-- Section 03 -->
-<section class="scroll-mt-32" id="liability">
-<div class="flex items-baseline gap-4 mb-10">
-<span class="font-mono text-4xl text-primary-dim opacity-50">03.</span>
-<h2 class="font-headline text-5xl font-bold tracking-tight">Liability Limitation</h2>
-</div>
-<div class="glass-panel p-10 rounded-2xl relative overflow-hidden">
-<div class="absolute top-0 right-0 w-64 h-64 bg-primary/5 blur-[100px] -z-10"></div>
-<p class="text-lg text-on-surface-variant leading-relaxed mb-6 italic">
-                            "The network is a neutral fabric; it is the user's intent that shapes its outcome."
-                        </p>
-<p class="text-on-surface-variant leading-relaxed">
-                            TajsOS provides the infrastructure "AS IS" and "AS AVAILABLE." We disclaim all liability for cognitive fatigue, data loss, or unauthorized node access resulting from user-end security breaches. Under no circumstances shall TajsOS be liable for indirect, incidental, special, or consequential damages resulting from protocol interaction.
-                        </p>
-</div>
-</section>
-<!-- Section 04 -->
-<section class="scroll-mt-32" id="nodes">
-<div class="flex items-baseline gap-4 mb-10">
-<span class="font-mono text-4xl text-primary-dim opacity-50">04.</span>
-<h2 class="font-headline text-5xl font-bold tracking-tight">Node Operator Conduct</h2>
-</div>
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-<div class="p-8 bg-surface-container-highest rounded-xl">
-<h4 class="font-headline text-xs font-bold text-primary uppercase tracking-[0.2em] mb-4">Integrity</h4>
-<p class="text-sm text-on-surface-variant">Maintain the purity of the ledger and refrain from any computational deception.</p>
-</div>
-<div class="p-8 bg-surface-container-highest rounded-xl">
-<h4 class="font-headline text-xs font-bold text-primary uppercase tracking-[0.2em] mb-4">Cooperation</h4>
-<p class="text-sm text-on-surface-variant">Assist neighboring nodes in data propagation and network healing routines.</p>
-</div>
-<div class="p-8 bg-surface-container-highest rounded-xl">
-<h4 class="font-headline text-xs font-bold text-primary uppercase tracking-[0.2em] mb-4">Anonymity</h4>
-<p class="text-sm text-on-surface-variant">Respect the privacy headers of all encapsulated data packets.</p>
-</div>
-</div>
-</section>
-<!-- CTA Actions -->
-<div class="pt-20 border-t border-outline-variant/30 flex flex-col md:flex-row items-center justify-between gap-8">
-<div class="flex flex-col gap-2">
-<p class="font-headline font-bold text-2xl">Confirm Synchronization</p>
-<p class="text-sm text-on-surface-variant">By proceeding, you bind your node to these protocols.</p>
-</div>
-<div class="flex items-center gap-4 w-full md:w-auto">
-<button class="flex-1 md:flex-none px-8 py-4 bg-surface-container-highest text-on-surface font-label text-sm font-bold rounded-xl border border-outline-variant/30 hover:bg-surface-variant transition-all">
-                            Download Whitepaper
-                        </button>
-<button class="flex-1 md:flex-none px-12 py-4 bg-gradient-to-br from-primary to-primary-dim text-on-primary font-label text-sm font-bold rounded-xl shadow-[0_0_20px_rgba(186,158,255,0.4)] active:scale-95 transition-all">
-                            Accept Protocol
-                        </button>
-</div>
-</div>
-</div>
-</div>
 
   </main>
   <Footer />
