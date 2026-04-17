@@ -197,6 +197,10 @@ object DomainLensQueries {
      * Classification uses hardcoded marker constants ([financeTagMarkers],
      * [financeTitleKeywords], and [financeMaintenanceTypes]) plus non-constant node-state
      * checks such as reference-note matching (`noteType == "reference"`).
+     *
+     * Note: This intentionally bypasses explicit `ItemDomainEntity` database associations
+     * to provide a zero-configuration experience, ensuring finance items are surfaced even
+     * if the user forgets to manually assign the finance domain.
      */
     private fun matchesFinanceSignal(node: NodeWithPin): Boolean {
         val title = node.node.title.lowercase()
@@ -217,6 +221,10 @@ object DomainLensQueries {
      *
      * Classification relies on checking against hardcoded marker constants ([healthTagMarkers],
      * [healthTitleKeywords], [healthMaintenanceTypes]) and specific note types (e.g., "reflection").
+     *
+     * Note: This intentionally bypasses explicit `ItemDomainEntity` database associations
+     * to provide a zero-configuration experience, ensuring health items are surfaced even
+     * if the user forgets to manually assign the health domain.
      */
     private fun matchesHealthSignal(node: NodeWithPin): Boolean {
         val title = node.node.title.lowercase()
