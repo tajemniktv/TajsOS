@@ -89,10 +89,13 @@ class MainStateAssemblersTest {
 
         assertEquals(2, result.size)
 
-        assertEquals(10L, result[0].historyId)
-        assertEquals(1L, result[0].protocolNodeId)
-        assertEquals("Morning Routine", result[0].protocolLabel)
-        assertEquals("note1", result[0].notes)
+        assertEquals(2, result.size)
+        assertEquals(setOf(10L, 20L), result.map { it.historyId }.toSet())
+        val item1 = result.first { it.historyId == 10L }
+        assertEquals(1L, item1.protocolNodeId)
+        assertEquals("Morning Routine", item1.protocolLabel)
+        assertEquals(1000L, item1.executedAt)
+        assertEquals("note1", item1.notes)
 
         assertEquals(20L, result[1].historyId)
         assertEquals(2L, result[1].protocolNodeId)
