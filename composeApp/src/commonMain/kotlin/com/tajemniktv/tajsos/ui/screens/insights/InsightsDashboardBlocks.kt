@@ -80,6 +80,13 @@ internal fun InsightsMainBlock(
     val allProjects by viewModel.allProjects.collectAsState()
     val projectsById = remember(allProjects) { allProjects.associateBy { it.id } }
 
+    /**
+     * Hoist mapping and filtering computations for entropy projects outside of the lazy list.
+     * This avoids redundant collection sorting/mapping each time LazyColumn triggers a composition update.
+     */
+    val highEntropyProjects = remember(insights.projectEntropy) { insights.projectEntropy.filter { it.value > 0.5 } }
+    val highEntropyProjectKeys = remember(highEntropyProjects) { highEntropyProjects.keys.toList() }
+
     LazyColumn(
         modifier =
             Modifier
@@ -264,7 +271,6 @@ internal fun InsightsMainBlock(
             }
         }
 
-        val highEntropyProjects = insights.projectEntropy.filter { it.value > 0.5 }
         if (highEntropyProjects.isNotEmpty()) {
             item {
                 Text(
@@ -273,7 +279,7 @@ internal fun InsightsMainBlock(
                     color = TajsOSTheme.Error,
                 )
             }
-            items(highEntropyProjects.keys.toList(), key = { "entropy_$it" }) { projectId ->
+            items(highEntropyProjectKeys, key = { "entropy_$it" }) { projectId ->
                 val project = projectsById[projectId]
                 if (project != null) {
                     ProjectEntropyItem(project, highEntropyProjects[projectId] ?: 0.0) {

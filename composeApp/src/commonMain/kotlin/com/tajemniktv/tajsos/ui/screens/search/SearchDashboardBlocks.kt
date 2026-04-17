@@ -146,6 +146,13 @@ private fun renderSearchRecent(context: SearchDashboardContext) {
 @Composable
 private fun renderSearchFilters(context: SearchDashboardContext) {
     val viewModel = context.viewModel
+
+    /** Pre-calculate areas list to avoid mapping allocation inside LazyRow composition on every frame. */
+    val areasList = remember(context.areasById) { context.areasById.values.toList() }
+
+    /** Pre-calculate projects list to avoid mapping allocation inside LazyRow composition on every frame. */
+    val projectsList = remember(context.projectsById) { context.projectsById.values.toList() }
+
     if (!context.showFilters) return
     val activeSummary =
         remember(context) {
@@ -347,7 +354,7 @@ private fun renderSearchFilters(context: SearchDashboardContext) {
                         )
                     }
                 }
-                items(context.areasById.values.toList(), key = { it.id }) { area ->
+                items(areasList, key = { it.id }) { area ->
                     FilterChip(
                         selected = context.searchAreaFilter == area.id,
                         onClick = { viewModel.updateSearchAreaFilter(if (context.searchAreaFilter == area.id) null else area.id) },
@@ -361,7 +368,7 @@ private fun renderSearchFilters(context: SearchDashboardContext) {
                         },
                     )
                 }
-                items(context.projectsById.values.toList(), key = { it.id }) { project ->
+                items(projectsList, key = { it.id }) { project ->
                     FilterChip(
                         selected = context.searchProjectFilter == project.id,
                         onClick = {
@@ -476,6 +483,8 @@ private fun RecentQueriesRow(
     queries: List<String>,
     onQueryClick: (String) -> Unit,
 ) {
+    /** Pre-calculate unique query suggestions to prevent distinct evaluations on each recomposition. */
+    val distinctQueries = remember(queries) { queries.distinct() }
     Row(verticalAlignment = Alignment.CenterVertically) {
         Text(
             "RECENT QUERIES",
@@ -484,7 +493,7 @@ private fun RecentQueriesRow(
         )
         Spacer(modifier = Modifier.width(TajsOSTheme.SpacingSm))
         LazyRow(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
-            items(queries.distinct(), key = { it }) { query ->
+            items(distinctQueries, key = { it }) { query ->
                 Surface(
                     shape = RoundedCornerShape(999.dp),
                     color = TajsOSTheme.SurfaceHigh,
