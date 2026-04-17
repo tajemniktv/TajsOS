@@ -61,4 +61,21 @@ class PackRegistryTest {
             )
         assertTrue(registry.validateEnabledPacks().isEmpty())
     }
+
+    @Test
+    fun isDependencySatisfied_returnsCorrectStatus() {
+        val registryNoDeps = PackRegistry(emptySet(), setOf(AppPack.MAINTENANCE.key))
+        val registryWithDeps = PackRegistry(emptySet(), setOf(AppPack.MAINTENANCE.key, AppPack.FINANCE.key))
+        val registryMissingDeps = PackRegistry(emptySet(), setOf(AppPack.FINANCE.key))
+
+        // STUDENT has no dependencies
+        assertTrue(registryNoDeps.isDependencySatisfied(AppPack.STUDENT))
+
+        // MAINTENANCE has no dependencies
+        assertTrue(registryNoDeps.isDependencySatisfied(AppPack.MAINTENANCE))
+
+        // FINANCE has dependency on MAINTENANCE
+        assertTrue(registryWithDeps.isDependencySatisfied(AppPack.FINANCE))
+        assertFalse(registryMissingDeps.isDependencySatisfied(AppPack.FINANCE))
+    }
 }
