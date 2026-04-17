@@ -249,3 +249,26 @@ Before broad changes, check and update if impacted:
 - `AGENTS.md`
 - `DESIGN.md`
 - `LICENSE.md`
+
+## Skills quick guide
+
+- Repo skill packs are maintained in `.agent/skills`, one level deep (
+  `.agent/skills/<skill-name>/SKILL.md`).
+- Skill precedence:
+    1. Current user/task instruction
+    2. Current repo reality + canonical docs (`AGENTS.md`, `README.md`, `ARCHITECTURE.md`,
+       `DESIGN.md`)
+    3. TajsOS overlay skills (`tajsos-*`)
+    4. Generic/reference skills
+    5. External inspiration/examples
+- TajsOS overlay skills can override generic skill guidance, but never current code reality or
+  canonical docs.
+
+### Android Studio / JetBrains Claude usage
+
+- Claude Code project skills are discovered from `.claude/skills/<skill-name>/SKILL.md`.
+- If skills are not being used in Android Studio:
+    1. Ensure Claude plugin is installed and enabled.
+    2. Run `claude` from the IDE integrated terminal at project root.
+    3. Mirror `.agent/skills` to `.claude/skills` (same one-level structure), then restart
+       IDE/Claude session.
