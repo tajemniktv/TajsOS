@@ -55,6 +55,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -113,9 +114,11 @@ fun NotesWorkspaceDetail(
     val projects by viewModel.allProjects.collectAsState()
 
     if (current == null) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text(stringResource(Res.string.notes_empty), color = TajsOSTheme.Muted)
-        }
+        EmptyState(
+            message = stringResource(Res.string.notes_empty),
+            fillParent = true,
+            showContainer = false,
+        )
         return
     }
 
@@ -404,9 +407,11 @@ fun NotesWorkspaceDetail(
                 icon = Icons.Default.Hub,
             ) {
                 if (linked.isEmpty()) {
-                    Text(
-                        stringResource(Res.string.detail_no_linked_items),
-                        color = TajsOSTheme.Muted,
+                    EmptyState(
+                        message = stringResource(Res.string.detail_no_linked_items),
+                        fillParent = false,
+                        showContainer = false,
+                        description = null,
                     )
                 } else {
                     linked.take(6).forEach { id ->
@@ -431,9 +436,11 @@ fun NotesWorkspaceDetail(
                 icon = Icons.Default.Attachment,
             ) {
                 if (attachments.isEmpty()) {
-                    Text(
-                        stringResource(Res.string.detail_no_attachments_simple),
-                        color = TajsOSTheme.Muted,
+                    EmptyState(
+                        message = stringResource(Res.string.detail_no_attachments_simple),
+                        fillParent = false,
+                        showContainer = false,
+                        description = null,
                     )
                 } else {
                     attachments.take(4).forEach {
@@ -447,7 +454,12 @@ fun NotesWorkspaceDetail(
                 icon = Icons.Default.History,
             ) {
                 if (snapshots.isEmpty()) {
-                    Text(stringResource(Res.string.detail_no_snapshots), color = TajsOSTheme.Muted)
+                    EmptyState(
+                        message = stringResource(Res.string.detail_no_snapshots),
+                        fillParent = false,
+                        showContainer = false,
+                        description = null,
+                    )
                 } else {
                     snapshots.take(4).forEach { snapshot ->
                         val label =
