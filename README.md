@@ -118,6 +118,7 @@ iosApp/       iOS scaffold
 ## Project stats
 
 [![CI](https://img.shields.io/github/actions/workflow/status/tajemniktv/TajsOS/ci.yml?branch=main&label=CI)](https://github.com/tajemniktv/TajsOS/actions/workflows/ci.yml)
+[![Codecov](https://codecov.io/gh/tajemniktv/TajsOS/branch/main/graph/badge.svg)](https://codecov.io/gh/tajemniktv/TajsOS)
 [![CodeQL](https://img.shields.io/github/actions/workflow/status/tajemniktv/TajsOS/codeql.yml?branch=main&label=CodeQL)](https://github.com/tajemniktv/TajsOS/actions/workflows/codeql.yml)
 [![Latest release](https://img.shields.io/github/v/release/tajemniktv/TajsOS?display_name=release)](https://github.com/tajemniktv/TajsOS/releases)
 [![Last commit](https://img.shields.io/github/last-commit/tajemniktv/TajsOS)](https://github.com/tajemniktv/TajsOS/commits/main)

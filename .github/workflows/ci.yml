@@ -185,7 +185,8 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./build/reports/kover/report.xml
-          fail_ci_if_error: false
+          fail_ci_if_error: true # Now that it's more intentional, failures should be addressed
+          name: kmp-unit-tests
 
       - name: Upload test results to Codecov (Test Analytics)
         if: ${{ !cancelled() }}
