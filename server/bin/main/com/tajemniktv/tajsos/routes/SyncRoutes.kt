@@ -13,13 +13,16 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.server.auth.*
+
 import kotlinx.coroutines.CancellationException
 
 private val syncStore = LinkedHashMap<String, SyncItem>()
 private val syncStoreLock = Any()
 
 fun Route.syncRoutes() {
-    route("/sync") {
+    authenticate("sync-auth") {
+        route("/sync") {
         post {
             try {
                 // Manually check content type but use match to handle charsets correctly
@@ -86,5 +89,6 @@ fun Route.syncRoutes() {
                 )
             }
         }
+    }
     }
 }
