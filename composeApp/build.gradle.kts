@@ -32,12 +32,7 @@ kotlin {
                     libs.versions.android.compileSdk
                         .get()
                         .toInt(),
-                ) {
-                    minorApiLevel =
-                        libs.versions.android.compileSdkMinor
-                            .get()
-                            .toInt()
-                }
+                )
         }
         buildToolsVersion =
             libs.versions.android.buildTools
