@@ -118,6 +118,7 @@ fun NotesWorkspaceDetail(
             message = stringResource(Res.string.notes_empty),
             fillParent = true,
             showContainer = false,
+            description = null,
         )
         return
     }
