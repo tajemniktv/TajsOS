@@ -1,14 +1,15 @@
 ---
 // src/components/landing/Navbar.astro
+import { SITE, NAV_LINKS } from '../../data/site';
 ---
 
 <nav
   class="fixed top-0 w-full z-100 bg-surface/40 backdrop-blur-2xl border-b border-primary/10"
 >
   <div
-    class="flex justify-between items-center w-full px-4 md:px-8 py-4 max-w-400 mx-auto"
+    class="flex justify-between items-center w-full px-8 py-4 max-w-400 mx-auto"
   >
-    <a href={`${import.meta.env.BASE_URL}`} class="flex items-center gap-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-4 rounded-lg">
+    <a href={`${import.meta.env.BASE_URL}`} class="flex items-center gap-4">
       <img
         alt="TajsOS Icon"
         class="w-8 h-8"
@@ -16,44 +17,30 @@
       />
       <span
         class="text-2xl font-bold tracking-tighter text-[#fcf8fe] font-headline"
-        >TajsOS</span
+        >{SITE.title}</span
       >
     </a>
     <div class="hidden md:flex gap-12">
-      <a
-        class="font-mono text-[10px] tracking-widest uppercase font-bold text-on-surface-variant hover:text-on-surface transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-4"
-        href={`${import.meta.env.BASE_URL}overview`}>DOCS</a
-      >
-      <a
-        class="font-mono text-[10px] tracking-widest uppercase font-bold text-on-surface-variant hover:text-on-surface transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-4"
-        href={`${import.meta.env.BASE_URL}app`}>APP</a
-      >
-      <a
-        class="font-mono text-[10px] tracking-widest uppercase font-bold text-on-surface-variant hover:text-on-surface transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-4"
-        href={`${import.meta.env.BASE_URL}local-first`}>LOCAL-FIRST</a
-      >
-      <a
-        class="font-mono text-[10px] tracking-widest uppercase font-bold text-on-surface-variant hover:text-on-surface transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-4"
-        href={`${import.meta.env.BASE_URL}features`}>FEATURES</a
-      >
-      <a
-        class="font-mono text-[10px] tracking-widest uppercase font-bold text-on-surface-variant hover:text-on-surface transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-4"
-        href={`${import.meta.env.BASE_URL}architecture`}>ARCHITECTURE</a
-      >
+      {NAV_LINKS.map(link => (
+        <a
+          class="font-mono text-[10px] tracking-widest uppercase font-bold text-on-surface-variant hover:text-on-surface transition-colors"
+          href={`${import.meta.env.BASE_URL}${link.href}`}>{link.label}</a
+        >
+      ))}
     </div>
     <div class="flex items-center gap-6">
       <div class="flex gap-4">
         <span
-          class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-4"
+          class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer transition-colors"
           data-icon="settings">settings</span
         >
         <span
-          class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-4"
+          class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer transition-colors"
           data-icon="account_circle">account_circle</span
         >
       </div>
-      <a href={`${import.meta.env.BASE_URL}waitlist`} aria-label="Join Waitlist"
-        class="bg-primary text-on-primary-fixed font-mono font-bold px-6 py-2 rounded text-[10px] tracking-widest uppercase hover:shadow-[0_0_20px_rgba(186,158,255,0.4)] transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-4"
+      <a href={`${import.meta.env.BASE_URL}${SITE.waitlistUrl}`} aria-label="Join Waitlist"
+        class="bg-primary text-on-primary-fixed font-mono font-bold px-6 py-2 rounded text-[10px] tracking-widest uppercase hover:shadow-[0_0_20px_rgba(186,158,255,0.4)] transition-all"
         >JOIN WAITLIST</a
       >
     </div>
