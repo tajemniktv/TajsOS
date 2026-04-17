@@ -61,4 +61,22 @@ class PackRegistryTest {
             )
         assertTrue(registry.validateEnabledPacks().isEmpty())
     }
+
+    @Test
+    fun packRegistry_reportsMissingDependencies() {
+        // AppPack.FINANCE has a dependency on "maintenance"
+        val registry =
+            PackRegistry(
+                ownedPackKeys = setOf(AppPack.FINANCE.key, AppPack.MAINTENANCE.key),
+                enabledPackKeys = setOf(AppPack.FINANCE.key), // Only FINANCE enabled, missing MAINTENANCE
+            )
+
+        val missing = registry.validateEnabledPacks()
+
+        // Expected string format: "<packKey>:missing:<depKey>"
+        val expectedError = "${AppPack.FINANCE.key}:missing:${AppPack.MAINTENANCE.key}"
+
+        assertTrue(missing.contains(expectedError))
+        assertTrue(missing.size == 1)
+    }
 }
