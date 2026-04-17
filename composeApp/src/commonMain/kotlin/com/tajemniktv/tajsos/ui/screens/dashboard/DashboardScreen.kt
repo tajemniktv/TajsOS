@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -319,8 +318,7 @@ private fun RenderDashboardBlock(
     block: DashboardBlockInstance,
     context: DashboardRenderContext,
 ) {
-    when (block.id)
-    {
+    when (block.id) {
         "mode_controls" -> {
             ModeSwitcherHeader(
                 currentMode = context.currentMode,
@@ -478,7 +476,7 @@ private fun RenderDashboardBlock(
                 needsWeeklyReview = context.needsWeeklyReview,
                 dailyProgress = context.dailyProgress,
                 localNow = context.localNow,
-                onNavigate = context.onNavigate,
+                onNavigateTo = { context.onNavigate(it.route) },
                 onEditNode = context.onEditNode,
                 onNavigateToProject = context.onNavigateToProject,
             )
@@ -489,78 +487,78 @@ private fun RenderDashboardBlock(
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
 fun DashboardModules(
-todayNodes: List<NodeEntity>,
-inboxCount: Int,
-activeSession: FocusSessionEntity?,
-moodToday: TrackEntryEntity?,
-tasksCount: Int,
-notesCount: Int,
-allProjects: List<NodeEntity>,
-allAreas: List<NodeEntity>,
-calendarEntries: List<CalendarEntry>,
-allSessions: List<FocusSessionEntity>,
-onNavigate: (String) -> Unit,
-viewModel: MainViewModel,
+    todayNodes: List<NodeEntity>,
+    inboxCount: Int,
+    activeSession: FocusSessionEntity?,
+    moodToday: TrackEntryEntity?,
+    tasksCount: Int,
+    notesCount: Int,
+    allProjects: List<NodeEntity>,
+    allAreas: List<NodeEntity>,
+    calendarEntries: List<CalendarEntry>,
+    allSessions: List<FocusSessionEntity>,
+    onNavigate: (String) -> Unit,
+    viewModel: MainViewModel,
 ) {
-Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)) {
-Text(
-    "CORE MODULES",
-    style = MaterialTheme.typography.labelSmall,
-    color = TajsOSTheme.Muted,
-    fontWeight = FontWeight.Bold,
-    letterSpacing = 1.sp,
-)
+    Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)) {
+        Text(
+            "CORE MODULES",
+            style = MaterialTheme.typography.labelSmall,
+            color = TajsOSTheme.Muted,
+            fontWeight = FontWeight.Bold,
+            letterSpacing = 1.sp,
+        )
 
-FlowRow(
-    modifier = Modifier.fillMaxWidth(),
-    horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
-    verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
-) {
-    val itemModifier = Modifier.weight(1f).widthIn(min = 160.dp)
+        FlowRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+        ) {
+            val itemModifier = Modifier.weight(1f).widthIn(min = 160.dp)
 
-    ModuleCard(
-        modifier = itemModifier,
-        title = stringResource(Res.string.screen_today),
-        icon = Icons.Default.Today,
-        status = "${todayNodes.size}",
-        onClick = { onNavigate(Screen.Today.route) },
-    )
+            ModuleCard(
+                modifier = itemModifier,
+                title = stringResource(Res.string.screen_today),
+                icon = Icons.Default.Today,
+                status = "${todayNodes.size}",
+                onClick = { onNavigate(Screen.Today.route) },
+            )
 
-    ModuleCard(
-        modifier = itemModifier,
-        title = stringResource(Res.string.screen_inbox),
-        icon = Icons.Default.Inbox,
-        status = "$inboxCount",
-        onClick = { onNavigate(Screen.Inbox.route) },
-        color = TajsOSTheme.Accent,
-    )
+            ModuleCard(
+                modifier = itemModifier,
+                title = stringResource(Res.string.screen_inbox),
+                icon = Icons.Default.Inbox,
+                status = "$inboxCount",
+                onClick = { onNavigate(Screen.Inbox.route) },
+                color = TajsOSTheme.Accent,
+            )
 
-    ModuleCard(
-        modifier = itemModifier,
-        title = stringResource(Res.string.screen_project),
-        icon = Icons.Default.AccountTree,
-        status = "${allProjects.size}",
-        onClick = { onNavigate(Screen.Projects.route) },
-        color = TajsOSTheme.Success,
-    )
+            ModuleCard(
+                modifier = itemModifier,
+                title = stringResource(Res.string.screen_project),
+                icon = Icons.Default.AccountTree,
+                status = "${allProjects.size}",
+                onClick = { onNavigate(Screen.Projects.route) },
+                color = TajsOSTheme.Success,
+            )
 
-    ModuleCard(
-        modifier = itemModifier,
-        title = stringResource(Res.string.screen_focus),
-        icon = Icons.Default.Timer,
-        status = if (activeSession != null) "ACTIVE" else "READY",
-        onClick = { onNavigate(Screen.Focus.route) },
-        color = if (activeSession != null) TajsOSTheme.Primary else TajsOSTheme.Muted,
-    )
-}
-}
+            ModuleCard(
+                modifier = itemModifier,
+                title = stringResource(Res.string.screen_focus),
+                icon = Icons.Default.Timer,
+                status = if (activeSession != null) "ACTIVE" else "READY",
+                onClick = { onNavigate(Screen.Focus.route) },
+                color = if (activeSession != null) TajsOSTheme.Primary else TajsOSTheme.Muted,
+            )
+        }
+    }
 }
 
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
 private fun DashboardOperationsOverview(
-viewModel: MainViewModel,
-onNavigate: (String) -> Unit,
+    viewModel: MainViewModel,
+    onNavigate: (String) -> Unit,
 ) {
     val capacitySnapshot by viewModel.capacitySnapshot.collectAsState()
     val lifeOSSignatureSnapshot by viewModel.lifeOSSignatureSnapshot.collectAsState()

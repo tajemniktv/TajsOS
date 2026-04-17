@@ -36,6 +36,23 @@ import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
 import com.tajemniktv.tajsos.ui.main.state.PhysicalLogisticsSnapshot
 import com.tajemniktv.tajsos.ui.screens.GroupedOpenLoopSection
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.places_add_campus_location
+import tajsos.composeapp.generated.resources.places_add_home_zone
+import tajsos.composeapp.generated.resources.places_add_place
+import tajsos.composeapp.generated.resources.places_class_bring_list
+import tajsos.composeapp.generated.resources.places_dont_forget_set
+import tajsos.composeapp.generated.resources.places_ensure_travel_pack_template
+import tajsos.composeapp.generated.resources.places_event_prep_list
+import tajsos.composeapp.generated.resources.places_leave_home_checklist
+import tajsos.composeapp.generated.resources.places_packing_list
+import tajsos.composeapp.generated.resources.places_physical_logistics_note
+import tajsos.composeapp.generated.resources.places_placeholder_list_title
+import tajsos.composeapp.generated.resources.places_placeholder_logistics_notes
+import tajsos.composeapp.generated.resources.places_placeholder_place_name
+import tajsos.composeapp.generated.resources.places_what_to_bring
+
 /**
  * Central places entry point that collects system state and coordinates layout.
  *
@@ -50,9 +67,11 @@ fun PlacesRoute(
     onNavigate: (String) -> Unit,
 ) {
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val surface = if (maxWidth > 900.dp) PlacesDashboardSurface.DESKTOP else PlacesDashboardSurface.MOBILE
+        val surface =
+            if (maxWidth > 900.dp) PlacesDashboardSurface.DESKTOP else PlacesDashboardSurface.MOBILE
         val plan = remember(surface) { buildPlacesDashboardPlan(surface) }
-        val context = remember(viewModel, onEditNode) { PlacesDashboardContext(viewModel, onEditNode) }
+        val context =
+            remember(viewModel, onEditNode) { PlacesDashboardContext(viewModel, onEditNode) }
 
         PlacesScreen(
             context = context,

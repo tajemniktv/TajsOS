@@ -4,16 +4,9 @@
 
 package com.tajemniktv.tajsos.ui.screens.profile
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -142,20 +135,21 @@ fun ProfileRoute(
 @Composable
 fun ProfileScreen(
     context: ProfileScreenContext,
-    blockSequence: List<ProfileBlockInstance>,
+    blockSequence: List<ProfileDashboardBlock>,
     onNavigate: (String) -> Unit,
 ) {
     ScreenScaffold(
         screen = Screen.Profile,
         onNavigate = onNavigate,
-        backgroundBrush = Brush.verticalGradient(
-            colors =
-                listOf(
-                    TajsOSTheme.Background,
-                    TajsOSTheme.SurfaceLowest,
-                    TajsOSTheme.Background,
-                ),
-        ),
+        backgroundBrush =
+            Brush.verticalGradient(
+                colors =
+                    listOf(
+                        TajsOSTheme.Background,
+                        TajsOSTheme.SurfaceLowest,
+                        TajsOSTheme.Background,
+                    ),
+            ),
     ) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
@@ -185,7 +179,7 @@ private fun AddMedicationDialog(
         text = {
             androidx.compose.foundation.layout.Column(
                 verticalArrangement =
-                    androidx.compose.foundation.layout.Arrangement.spacedBy(
+                    Arrangement.spacedBy(
                         TajsOSTheme.SpacingSm,
                     ),
             ) {

@@ -18,12 +18,14 @@ import com.tajemniktv.tajsos.ui.MainViewModel
 @Composable
 fun ProfileScreen(
     viewModel: MainViewModel,
+    onNavigate: (String) -> Unit,
     onPickAvatar: (() -> Unit)? = null,
     pickedAvatarRef: String? = null,
     onAvatarPickConsume: () -> Unit = {},
 ) {
     ProfileRoute(
         viewModel = viewModel,
+        onNavigate = onNavigate,
         onPickAvatar = onPickAvatar,
         pickedAvatarRef = pickedAvatarRef,
         onAvatarPickedConsumed = onAvatarPickConsume,

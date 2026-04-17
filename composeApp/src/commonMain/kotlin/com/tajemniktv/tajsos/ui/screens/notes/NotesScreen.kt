@@ -17,11 +17,13 @@ import com.tajemniktv.tajsos.ui.MainViewModel
 fun NotesScreen(
     viewModel: MainViewModel,
     onNoteClick: (Long) -> Unit,
+    onNavigate: (String) -> Unit,
     initialSelectedNoteId: Long? = null,
 ) {
     NotesRoute(
         viewModel = viewModel,
         onNavigateToNode = onNoteClick,
+        onNavigate = onNavigate,
         initialSelectedNoteId = initialSelectedNoteId,
     )
 }
