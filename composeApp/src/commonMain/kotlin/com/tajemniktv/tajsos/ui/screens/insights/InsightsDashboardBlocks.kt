@@ -80,6 +80,16 @@ internal fun InsightsMainBlock(
     val allProjects by viewModel.allProjects.collectAsState()
     val projectsById = remember(allProjects) { allProjects.associateBy { it.id } }
 
+    /**
+     * Hoist dynamic list allocations out of the compose rendering phase to prevent
+     * redundant object creation on every recomposition.
+     */
+    val topAreas = remember(areaSnapshot) { areaSnapshot.areas.take(4) }
+    val highEntropyProjectKeys =
+        remember(insights) {
+            insights.projectEntropy.filter { it.value > 0.5 }.keys.toList()
+        }
+
     LazyColumn(
         modifier =
             Modifier
@@ -182,7 +192,7 @@ internal fun InsightsMainBlock(
                     disappearingCount = areaSnapshot.disappearingAreaIds.size,
                 )
             }
-            items(areaSnapshot.areas.take(4), key = { "area_${it.areaId}" }) { area ->
+            items(topAreas, key = { "area_${it.areaId}" }) { area ->
                 AreaHealthInsightCard(area)
             }
         }
@@ -264,8 +274,7 @@ internal fun InsightsMainBlock(
             }
         }
 
-        val highEntropyProjects = insights.projectEntropy.filter { it.value > 0.5 }
-        if (highEntropyProjects.isNotEmpty()) {
+        if (highEntropyProjectKeys.isNotEmpty()) {
             item {
                 Text(
                     stringResource(Res.string.insights_high_entropy_projects),
@@ -273,10 +282,10 @@ internal fun InsightsMainBlock(
                     color = TajsOSTheme.Error,
                 )
             }
-            items(highEntropyProjects.keys.toList(), key = { "entropy_$it" }) { projectId ->
+            items(highEntropyProjectKeys, key = { "entropy_$it" }) { projectId ->
                 val project = projectsById[projectId]
                 if (project != null) {
-                    ProjectEntropyItem(project, highEntropyProjects[projectId] ?: 0.0) {
+                    ProjectEntropyItem(project, insights.projectEntropy[projectId] ?: 0.0) {
                         onNavigateToProject(project.id)
                     }
                 }
