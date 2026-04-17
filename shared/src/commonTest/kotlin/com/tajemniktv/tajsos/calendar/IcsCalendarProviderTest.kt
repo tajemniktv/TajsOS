@@ -318,13 +318,13 @@ class IcsCalendarProviderTest {
                 "\tContinuation\r\n" +
                 // Empty string case - tested implicitly by parser not failing
                 "\r\n" +
-                // Trailing spaces on the continued line
-                "DESCRIPTION:Line 1\r\n" +
+                // Trailing spaces on the continued line (should be preserved)
+                "DESCRIPTION:Line 1 \r\n" +
                 "  Line 2\r\n" +
                 "\t Line 3\r\n" +
-                // Multi-byte char split across folds (technically invalid ICS, but supported textually)
-                "LOCATION:🚀\r\n" +
-                " 🛸\r\n" +
+                // Multi-byte char (surrogate pair) split across folds
+                "LOCATION:\uD83D\r\n" +
+                " \uDE80\r\n" +
                 "DTSTART:20231024T100000Z\r\n" +
                 "END:VEVENT\r\n" +
                 "END:VCALENDAR\r\n"
@@ -338,13 +338,10 @@ class IcsCalendarProviderTest {
             // "SUMMARY:Tab" + "	Continuation"
             assertEquals("TabContinuation", event.title)
 
-            // "DESCRIPTION:Line 1" + "  Line 2" + "	 Line 3"
-            // Note: IcsCalendarProvider unescapeIcs might do something, let's assume it doesn't strip spaces
-            // " Line 2" -> " Line 2"
-            // " Line 3" -> " Line 3"
-            assertEquals("Line 1 Line 2 Line 3", event.description)
+            // "DESCRIPTION:Line 1 " + " Line 2" + " Line 3"
+            assertEquals("Line 1  Line 2 Line 3", event.description)
 
-            // "LOCATION:🚀" + " 🛸"
-            assertEquals("🚀🛸", event.location)
+            // "LOCATION:\uD83D" + "\uDE80"
+            assertEquals("🚀", event.location)
         }
 }
