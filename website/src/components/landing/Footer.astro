@@ -20,41 +20,14 @@ import { SITE, FOOTER_LINKS } from '../../data/site';
       </p>
     </div>
     <div class="grid grid-cols-2 md:grid-cols-3 gap-x-24 gap-y-8">
-      <div class="flex flex-col gap-4">
-        <span class="font-mono text-[10px] text-primary mb-2 tracking-widest">PROTOCOLS</span>
-        {FOOTER_LINKS.protocols.map(link => (
-          <a
-            class="font-mono text-[10px] tracking-widest uppercase text-on-surface-variant/80 hover:text-primary transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded"
-            href={`${import.meta.env.BASE_URL}${link.href}`}
-          >
-            {link.label}
-          </a>
-        ))}
-      </div>
-
-      <div class="flex flex-col gap-4">
-        <span class="font-mono text-[10px] text-primary mb-2 tracking-widest">NETWORK</span>
-        {FOOTER_LINKS.network.map(link => (
-          <a
-            class="font-mono text-[10px] tracking-widest uppercase text-on-surface-variant/80 hover:text-primary transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded"
-            href={`${import.meta.env.BASE_URL}${link.href}`}
-          >
-            {link.label}
-          </a>
-        ))}
-      </div>
-
-      <div class="flex flex-col gap-4">
-        <span class="font-mono text-[10px] text-primary mb-2 tracking-widest">DOCUMENTATION</span>
-        {FOOTER_LINKS.documentation.map(link => (
-          <a
-            class="font-mono text-[10px] tracking-widest uppercase text-on-surface-variant/80 hover:text-primary transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded"
-            href={`${import.meta.env.BASE_URL}${link.href}`}
-          >
-            {link.label}
-          </a>
-        ))}
-      </div>
+      {Object.entries(FOOTER_LINKS).map(([group, links]) => (
+        <div class="flex flex-col gap-4">
+          <span class="font-mono text-[10px] text-primary mb-2 tracking-widest">{group.toUpperCase()}</span>
+          {links.map(link => (
+            <a class="font-mono text-[10px] tracking-widest uppercase text-on-surface-variant/60 hover:text-primary transition-colors" href={`${import.meta.env.BASE_URL}${link.href}`}>{link.label}</a>
+          ))}
+        </div>
+      ))}
     </div>
   </div>
 </footer>

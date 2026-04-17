@@ -1,4 +1,10 @@
-export const FEATURES = [
+export type Feature = {
+  icon: string;
+  title: string;
+  description: string;
+};
+
+export const FEATURES: readonly Feature[] = [
   {
     icon: "inbox",
     title: "Inbox Captures",
