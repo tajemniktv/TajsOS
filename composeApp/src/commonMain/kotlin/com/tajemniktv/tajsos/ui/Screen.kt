@@ -110,12 +110,14 @@ import tajsos.composeapp.generated.resources.type_task
  * @property label A [StringResource] for the localized name of the screen.
  * @property icon The [ImageVector] used to represent this screen in UI components like the sidebar.
  * @property isRoot True if this screen is a top-level destination in the navigation shell.
+ * @property isNavigableRoot True if this screen should be treated as a canonical sidebar destination.
  */
 sealed class Screen(
     val route: String,
     val label: StringResource,
     val icon: ImageVector,
     val isRoot: Boolean = true,
+    open val isNavigableRoot: Boolean = true,
 ) {
     /**
      * The parent screen in the navigation hierarchy for breadcrumb generation.
@@ -186,6 +188,7 @@ sealed class Screen(
         Icons.Default.Edit,
         isRoot = false,
     ) {
+        override val isNavigableRoot: Boolean = false
         override val breadcrumbParent: Screen = Notes
     }
 
@@ -198,6 +201,7 @@ sealed class Screen(
         Icons.AutoMirrored.Filled.List,
         isRoot = false,
     ) {
+        override val isNavigableRoot: Boolean = false
         override val breadcrumbParent: Screen = Tasks
     }
 
@@ -210,6 +214,7 @@ sealed class Screen(
         Icons.Default.Description,
         isRoot = false,
     ) {
+        override val isNavigableRoot: Boolean = false
         override val breadcrumbParent: Screen = Notes
     }
 
@@ -238,6 +243,7 @@ sealed class Screen(
             Icons.Default.Settings,
             isRoot = false,
         ) {
+        override val isNavigableRoot: Boolean = false
         override val breadcrumbParent: Screen = Settings
     }
 
@@ -266,6 +272,7 @@ sealed class Screen(
         Icons.AutoMirrored.Filled.List,
         isRoot = false,
     ) {
+        override val isNavigableRoot: Boolean = false
         override val breadcrumbParent: Screen = Projects
     }
 
@@ -279,6 +286,7 @@ sealed class Screen(
             Icons.Default.LocationOn,
             isRoot = false,
         ) {
+        override val isNavigableRoot: Boolean = false
         override val breadcrumbParent: Screen = Areas
     }
 
@@ -380,6 +388,7 @@ sealed class Screen(
         Icons.AutoMirrored.Filled.List,
         isRoot = false,
     ) {
+        override val isNavigableRoot: Boolean = false
         override val breadcrumbParent: Screen = Settings
     }
 

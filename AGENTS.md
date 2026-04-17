@@ -152,6 +152,9 @@ For now, the current targets are androidApp and composeApp (JVM), so test agains
   change across routes.
 - Keep `NEW ENTRY` as a distinct primary action in sidebar footer, separated from navigation links,
   with profile/account section anchored at the bottom.
+- Sidebar navigation should always target canonical root destinations. Detail screens must not be
+  saved or restored as sidebar-resumable state. Preserve root tab state (like scroll position) only
+  when navigating between root-like destinations.
 
 ### Bootstrap boundaries
 

@@ -191,11 +191,12 @@ fun App(
                     selectedTasksTab = TasksTab.fromRouteSegment(tabSegment)
                 }
 
+                val currentScreen = Screen.fromRoute(currentDestination?.route)
                 val targetScreen = Screen.fromRoute(resolvedRoute)
 
                 // Root destinations and their respective sub-tabs should replace each other on the backstack
                 // to preserve a flat navigation history in the sidebar shell.
-                if (targetScreen?.isRoot == true || targetScreen is Screen.Sub) {
+                if (targetScreen?.isNavigableRoot == true) {
                     if (resolvedRoute == Screen.Dashboard.route) {
                         val popped =
                             navController.popBackStack(
@@ -211,12 +212,26 @@ fun App(
                             }
                         }
                     } else {
+                        val currentRoot = currentScreen?.let(Screen::sidebarContextRoot)
+                        val targetRoot = targetScreen.let(Screen::sidebarContextRoot)
+
+                        val isCurrentNavRoot = currentScreen?.isNavigableRoot == true
+
+                        // Restore state ONLY if we are switching between root domains (e.g. Tasks to Notes)
+                        // OR if we are already on a root-like screen (to preserve scroll positions when switching tabs).
+                        // If we are on a detail screen and click its parent root in sidebar, we want to RESET to that root.
+                        val shouldRestore = (currentRoot != targetRoot) || isCurrentNavRoot
+
+                        // Save state ONLY if we are leaving a root-like screen.
+                        // This prevents "stuck" detail screens from being saved and restored via sidebar jumps.
+                        val shouldSave = isCurrentNavRoot
+
                         navController.navigate(resolvedRoute) {
                             popUpTo(Screen.Dashboard.route) {
                                 inclusive = false
-                                saveState = true
+                                saveState = shouldSave
                             }
-                            restoreState = true
+                            restoreState = shouldRestore
                             launchSingleTop = true
                         }
                     }
