@@ -4,10 +4,11 @@
 
 package com.tajemniktv.tajsos.ui.screens.review
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -21,6 +22,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.Screen
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.review_step_archive
@@ -32,10 +35,18 @@ import tajsos.composeapp.generated.resources.review_step_plan
 import tajsos.composeapp.generated.resources.review_step_stats
 import tajsos.composeapp.generated.resources.review_step_wins
 
+/**
+ * Central review entry point that collects system state and coordinates layout.
+ *
+ * @param viewModel Source of review state.
+ * @param onBack Callback to go back.
+ * @param onNavigate Navigation callback.
+ */
 @Composable
-fun ReviewScreen(
+fun ReviewRoute(
     viewModel: MainViewModel,
     onBack: () -> Unit,
+    onNavigate: (String) -> Unit,
 ) {
     var reviewType by remember { mutableStateOf<String?>(null) }
     var currentStep by remember { mutableStateOf(0) }
@@ -94,18 +105,34 @@ fun ReviewScreen(
     val surface = ReviewDashboardSurface.MOBILE // Default for now
     val plan = remember(surface, reviewType) { buildReviewDashboardPlan(surface, reviewType) }
 
-    Box(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .background(TajsOSTheme.Background),
+    ReviewScreen(
+        context = context,
+        plan = plan,
+        onNavigate = onNavigate,
+    )
+}
+
+/**
+ * Stateless review screen content.
+ *
+ * @param context Review dashboard context.
+ * @param plan Review dashboard plan.
+ * @param onNavigate Navigation callback.
+ */
+@Composable
+fun ReviewScreen(
+    context: ReviewDashboardContext,
+    plan: ReviewDashboardPlan,
+    onNavigate: (String) -> Unit,
+) {
+    ScreenScaffold(
+        screen = Screen.Review,
+        onNavigate = onNavigate,
+        scrollBehavior = com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior.BodyScroll,
     ) {
         Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(bottom = 80.dp),
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             plan.primary.forEach { block ->
                 ReviewDashboardBlocks.resolve(block.id)?.invoke(context)

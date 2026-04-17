@@ -13,21 +13,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
 
 /**
- * Renders the "Today" screen showing up to three nodes scheduled for today and placeholder slots when fewer than three exist.
+ * Central today entry point that collects system state and coordinates layout.
  *
- * Shows an empty state when there are no today nodes. For each shown node, the row supports swipe-to-complete (start-to-end) which marks the node done, toggling done status, unpinning, editing via click/long-click, and archiving through the provided callbacks; remaining slots are rendered as bordered placeholders labeled with their slot index.
- *
- * @param viewModel View model providing `todayNodes` and actions used to update node status, pinning, and archiving.
- * @param onEditNode Callback invoked with a node ID when the user requests to edit a node (click or long-click).
+ * @param viewModel Source of today state.
+ * @param onEditNode Node edit callback.
+ * @param onNavigate Navigation callback.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TodayScreen(
+fun TodayRoute(
     viewModel: MainViewModel,
     onEditNode: (Long) -> Unit,
+    onNavigate: (String) -> Unit,
 ) {
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val surface =
@@ -35,11 +35,35 @@ fun TodayScreen(
         val plan = remember(surface) { buildTodayDashboardPlan(surface) }
         val context =
             remember(viewModel, onEditNode) { TodayDashboardContext(viewModel, onEditNode) }
-        ScreenScaffold {
-            Column(modifier = Modifier.fillMaxSize()) {
-                plan.primary.forEach { block ->
-                    TodayDashboardBlocks.resolve(block.id)?.invoke(context)
-                }
+
+        TodayScreen(
+            context = context,
+            plan = plan,
+            onNavigate = onNavigate,
+        )
+    }
+}
+
+/**
+ * Stateless today screen content.
+ *
+ * @param context Today dashboard context.
+ * @param plan Today dashboard plan.
+ * @param onNavigate Navigation callback.
+ */
+@Composable
+fun TodayScreen(
+    context: TodayDashboardContext,
+    plan: TodayDashboardPlan,
+    onNavigate: (String) -> Unit,
+) {
+    ScreenScaffold(
+        screen = Screen.Today,
+        onNavigate = onNavigate,
+    ) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            plan.primary.forEach { block ->
+                TodayDashboardBlocks.resolve(block.id)?.invoke(context)
             }
         }
     }

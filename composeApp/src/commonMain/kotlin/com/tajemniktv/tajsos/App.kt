@@ -47,47 +47,39 @@ import com.tajemniktv.tajsos.ui.components.layout.AppShell
 import com.tajemniktv.tajsos.ui.components.layout.rememberAppShellState
 import com.tajemniktv.tajsos.ui.components.notifications.NotificationUiModel
 import com.tajemniktv.tajsos.ui.components.screen.BindScreenHeader
+import com.tajemniktv.tajsos.ui.components.screen.LocalScreenHeaderController
 import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderController
 import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderModel
 import com.tajemniktv.tajsos.ui.components.screen.rememberScreenHeaderController
 import com.tajemniktv.tajsos.ui.components.screen.screenBreadcrumbs
 import com.tajemniktv.tajsos.ui.screens.archive.ArchiveScreen
-import com.tajemniktv.tajsos.ui.screens.areas.AreasScreen
 import com.tajemniktv.tajsos.ui.screens.areas.detail.AreaDetailScreen
-import com.tajemniktv.tajsos.ui.screens.briefing.BriefingScreen
 import com.tajemniktv.tajsos.ui.screens.calendar.CalendarScreen
 import com.tajemniktv.tajsos.ui.screens.calendar.CalendarSettingsScreen
 import com.tajemniktv.tajsos.ui.screens.capacity.CapacityScreen
-import com.tajemniktv.tajsos.ui.screens.dashboard.DashboardScreen
 import com.tajemniktv.tajsos.ui.screens.decisions.DecisionsScreen
 import com.tajemniktv.tajsos.ui.screens.finance.FinancesScreen
 import com.tajemniktv.tajsos.ui.screens.focus.FocusScreen
 import com.tajemniktv.tajsos.ui.screens.graph.GraphScreen
 import com.tajemniktv.tajsos.ui.screens.health.HealthScreen
 import com.tajemniktv.tajsos.ui.screens.identity.IdentityScreen
-import com.tajemniktv.tajsos.ui.screens.inbox.InboxScreen
 import com.tajemniktv.tajsos.ui.screens.insights.InsightsScreen
 import com.tajemniktv.tajsos.ui.screens.notes.NotesScreen
 import com.tajemniktv.tajsos.ui.screens.notes.detail.NoteDetailScreen
 import com.tajemniktv.tajsos.ui.screens.openloops.OpenLoopsScreen
 import com.tajemniktv.tajsos.ui.screens.places.PlacesScreen
 import com.tajemniktv.tajsos.ui.screens.profile.ProfileScreen
-import com.tajemniktv.tajsos.ui.screens.projects.ProjectsScreen
 import com.tajemniktv.tajsos.ui.screens.projects.detail.ProjectDetailScreen
 import com.tajemniktv.tajsos.ui.screens.protocols.ProtocolsScreen
 import com.tajemniktv.tajsos.ui.screens.records.detail.RecordDetailScreen
 import com.tajemniktv.tajsos.ui.screens.relationships.RelationshipsScreen
 import com.tajemniktv.tajsos.ui.screens.review.ReviewScreen
 import com.tajemniktv.tajsos.ui.screens.rules.RulesScreen
-import com.tajemniktv.tajsos.ui.screens.search.SearchScreen
 import com.tajemniktv.tajsos.ui.screens.settings.SettingsScreen
 import com.tajemniktv.tajsos.ui.screens.study.StudyScreen
-import com.tajemniktv.tajsos.ui.screens.tasks.TasksScreen
 import com.tajemniktv.tajsos.ui.screens.tasks.TasksTab
-import com.tajemniktv.tajsos.ui.screens.tasks.detail.TaskDetailScreen
 import com.tajemniktv.tajsos.ui.screens.templates.TemplatesScreen
 import com.tajemniktv.tajsos.ui.screens.timearchitecture.TimeArchitectureScreen
-import com.tajemniktv.tajsos.ui.screens.today.TodayScreen
 import com.tajemniktv.tajsos.ui.screens.track.TrackScreen
 import com.tajemniktv.tajsos.ui.screens.vaults.VaultsScreen
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
@@ -95,7 +87,6 @@ import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.nav_capture
 
-private val LocalBreadcrumbNavigate = compositionLocalOf<((String) -> Unit)?> { null }
 private val routeParameterPattern by lazy { Regex("""\{[a-zA-Z0-9_-]+\}""") }
 
 /**
@@ -194,8 +185,7 @@ fun App(
                 val currentScreen = Screen.fromRoute(currentDestination?.route)
                 val targetScreen = Screen.fromRoute(resolvedRoute)
 
-                // Root destinations and their respective sub-tabs should replace each other on the backstack
-                // to preserve a flat navigation history in the sidebar shell.
+                // Navigation logic governed by explicit route classification.
                 if (targetScreen?.isNavigableRoot == true) {
                     if (resolvedRoute == Screen.Dashboard.route) {
                         val popped =
@@ -212,15 +202,13 @@ fun App(
                             }
                         }
                     } else {
-                        val currentRoot = currentScreen?.let(Screen::sidebarContextRoot)
-                        val targetRoot = targetScreen.let(Screen::sidebarContextRoot)
-
                         val isCurrentNavRoot = currentScreen?.isNavigableRoot == true
 
                         // Restore state ONLY if we are switching between root domains (e.g. Tasks to Notes)
                         // OR if we are already on a root-like screen (to preserve scroll positions when switching tabs).
-                        // If we are on a detail screen and click its parent root in sidebar, we want to RESET to that root.
-                        val shouldRestore = (currentRoot != targetRoot) || isCurrentNavRoot
+                        val shouldRestore =
+                            (currentScreen?.sidebarContextRoot != targetScreen.sidebarContextRoot) ||
+                                isCurrentNavRoot
 
                         // Save state ONLY if we are leaving a root-like screen.
                         // This prevents "stuck" detail screens from being saved and restored via sidebar jumps.
@@ -236,7 +224,7 @@ fun App(
                         }
                     }
                 } else {
-                    // Detail screens are pushed onto the current backstack context.
+                    // Detail and utility screens are pushed onto the current backstack context.
                     navController.navigate(resolvedRoute) {
                         launchSingleTop = true
                     }
@@ -265,33 +253,35 @@ fun App(
                 screenHeader = screenHeaderController.model,
                 notifications = emptyList<NotificationUiModel>(),
             ) {
-                AppScaffold(
-                    showCaptureSheet = showCaptureSheetState,
-                    onShowCaptureSheet = { showCaptureSheetState = it },
-                    navController = navController,
-                    viewModel = viewModel,
-                    onVoiceCapture = onVoiceCapture,
-                    voiceCaptureResult = voiceCaptureResult,
-                    onVoiceCaptureConsume = onVoiceCaptureConsume,
-                    onPickAvatar = onPickAvatar,
-                    avatarPickResult = avatarPickResult,
-                    onAvatarPickConsume = onAvatarPickConsume,
-                    allProjects = allProjects.toStableList(),
-                    allAreas = allAreas.toStableList(),
-                    allNodes = allNodes.toStableList(),
-                    allTemplates = allTemplates.toStableList(),
-                    lastActiveProjectId = lastActiveProjectId,
-                    lastActiveAreaId = lastActiveAreaId,
-                    currentDestination = currentDestination,
-                    isDesktop = isDesktop,
-                    currentTasksTab = selectedTasksTab,
-                    onTasksTabChange = {
-                        selectedTasksTab = it
-                        navigate(Screen.Tasks.route + "?tab=" + it.routeSegment)
-                    },
-                    onNavigate = navigate,
-                    screenHeaderController = screenHeaderController,
-                )
+                CompositionLocalProvider(LocalScreenHeaderController provides screenHeaderController) {
+                    AppScaffold(
+                        showCaptureSheet = showCaptureSheetState,
+                        onShowCaptureSheet = { showCaptureSheetState = it },
+                        navController = navController,
+                        viewModel = viewModel,
+                        onVoiceCapture = onVoiceCapture,
+                        voiceCaptureResult = voiceCaptureResult,
+                        onVoiceCaptureConsume = onVoiceCaptureConsume,
+                        onPickAvatar = onPickAvatar,
+                        avatarPickResult = avatarPickResult,
+                        onAvatarPickConsume = onAvatarPickConsume,
+                        allProjects = allProjects.toStableList(),
+                        allAreas = allAreas.toStableList(),
+                        allNodes = allNodes.toStableList(),
+                        allTemplates = allTemplates.toStableList(),
+                        lastActiveProjectId = lastActiveProjectId,
+                        lastActiveAreaId = lastActiveAreaId,
+                        currentDestination = currentDestination,
+                        isDesktop = isDesktop,
+                        currentTasksTab = selectedTasksTab,
+                        onTasksTabChange = {
+                            selectedTasksTab = it
+                            navigate(Screen.Tasks.route + "?tab=" + it.routeSegment)
+                        },
+                        onNavigate = navigate,
+                        screenHeaderController = screenHeaderController,
+                    )
+                }
             }
         }
     }
@@ -422,106 +412,95 @@ private fun AppScaffold(
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        CompositionLocalProvider(LocalBreadcrumbNavigate provides onNavigate) {
-            NavHost(
-                navController = navController,
-                startDestination = Screen.Dashboard.route,
-                modifier = Modifier.fillMaxSize(),
-            ) {
+        NavHost(
+            navController = navController,
+            startDestination = Screen.Dashboard.route,
+            modifier = Modifier.fillMaxSize(),
+        ) {
                 composable(Screen.Briefing.route) {
-                    RootScreenFrame(screen = Screen.Briefing, controller = screenHeaderController) {
-                        BriefingScreen(
-                            viewModel = viewModel,
-                            onNavigateTo = { onNavigate(it.route) },
-                            onNavigateToTasks = { onTasksTabChange(TasksTab.TODAY) },
-                            onNewEntry = { onShowCaptureSheet(true) },
-                        )
-                    }
+                    com.tajemniktv.tajsos.ui.screens.briefing.BriefingRoute(
+                        viewModel = viewModel,
+                        onNavigate = onNavigate,
+                        onNewEntry = { onShowCaptureSheet(true) },
+                    )
                 }
                 composable(Screen.Dashboard.route) {
-                    RootScreenFrame(
-                        screen = Screen.Dashboard,
-                        controller = screenHeaderController,
-                    ) {
-                        DashboardScreen(
-                            viewModel,
-                            onNavigateTo = { onNavigate(it.route) },
-                            onEditNode = onEditNode,
-                            onNavigateToProject = {
-                                onNavigate(
-                                    Screen.ProjectDetail.route.replace(
-                                        "{projectId}",
-                                        it.toString(),
-                                    ),
-                                )
-                            },
-                            onNewEntry = { onShowCaptureSheet(true) },
-                            currentDestination = currentDestination,
-                        )
-                    }
+                    com.tajemniktv.tajsos.ui.screens.dashboard.DashboardRoute(
+                        viewModel = viewModel,
+                        onNavigate = onNavigate,
+                        onEditNode = onEditNode,
+                        onNavigateToProject = {
+                            onNavigate(
+                                Screen.ProjectDetail.route.replace(
+                                    "{projectId}",
+                                    it.toString(),
+                                ),
+                            )
+                        },
+                        onNewEntry = { onShowCaptureSheet(true) },
+                        currentDestination = currentDestination,
+                    )
                 }
                 composable(Screen.Inbox.route) {
-                    RootScreenFrame(screen = Screen.Inbox, controller = screenHeaderController) {
-                        InboxScreen(viewModel, onEditNode)
-                    }
+                    com.tajemniktv.tajsos.ui.screens.inbox.InboxRoute(
+                        viewModel = viewModel,
+                        onEditNode = onEditNode,
+                        onNavigate = onNavigate,
+                    )
                 }
                 composable(Screen.Search.route) {
-                    RootScreenFrame(screen = Screen.Search, controller = screenHeaderController) {
-                        SearchScreen(viewModel, onEditNode)
-                    }
+                    com.tajemniktv.tajsos.ui.screens.search.SearchRoute(
+                        viewModel = viewModel,
+                        onItemClick = onEditNode,
+                        onNavigate = onNavigate,
+                    )
                 }
                 composable(Screen.Today.route) {
-                    RootScreenFrame(screen = Screen.Today, controller = screenHeaderController) {
-                        TodayScreen(viewModel, onEditNode)
-                    }
+                    com.tajemniktv.tajsos.ui.screens.today.TodayRoute(
+                        viewModel = viewModel,
+                        onEditNode = onEditNode,
+                        onNavigate = onNavigate,
+                    )
                 }
                 composable(Screen.Focus.route) {
-                    RootScreenFrame(screen = Screen.Focus, controller = screenHeaderController) {
-                        FocusScreen(viewModel)
-                    }
+                    com.tajemniktv.tajsos.ui.screens.focus.FocusRoute(
+                        viewModel = viewModel,
+                        onNavigate = onNavigate,
+                    )
                 }
                 composable(Screen.Track.route) {
-                    RootScreenFrame(screen = Screen.Track, controller = screenHeaderController) {
-                        TrackScreen(viewModel)
-                    }
+                    com.tajemniktv.tajsos.ui.screens.track.TrackRoute(
+                        viewModel = viewModel,
+                        onNavigate = onNavigate,
+                    )
                 }
                 Screen.Tasks.children.forEach { child ->
                     composable(child.route) {
                         val tab = TasksTab.fromRouteSegment(child.route.substringAfterLast("="))
-                        RootScreenFrame(
-                            screen = Screen.Tasks,
-                            breadcrumbScreen = child,
-                            onBreadcrumbNavigate = onNavigate,
-                            controller = screenHeaderController,
-                        ) {
-                            TasksScreen(
-                                viewModel = viewModel,
-                                onEditNode = onEditNode,
-                                currentTab = tab,
-                                onTabChange = onTasksTabChange,
-                            )
-                        }
-                    }
-                }
-                composable(Screen.Tasks.route) {
-                    RootScreenFrame(
-                        screen = Screen.Tasks,
-                        breadcrumbScreen = currentTasksTab.toScreen(),
-                        onBreadcrumbNavigate = onNavigate,
-                        controller = screenHeaderController,
-                    ) {
-                        TasksScreen(
+                        com.tajemniktv.tajsos.ui.screens.tasks.TasksRoute(
                             viewModel = viewModel,
                             onEditNode = onEditNode,
-                            currentTab = currentTasksTab,
+                            onNavigate = onNavigate,
+                            currentTab = tab,
                             onTabChange = onTasksTabChange,
                         )
                     }
                 }
+                composable(Screen.Tasks.route) {
+                    com.tajemniktv.tajsos.ui.screens.tasks.TasksRoute(
+                        viewModel = viewModel,
+                        onEditNode = onEditNode,
+                        onNavigate = onNavigate,
+                        currentTab = currentTasksTab,
+                        onTabChange = onTasksTabChange,
+                    )
+                }
                 composable(Screen.Notes.route) {
-                    RootScreenFrame(screen = Screen.Notes, controller = screenHeaderController) {
-                        NotesScreen(viewModel, onEditNode)
-                    }
+                    com.tajemniktv.tajsos.ui.screens.notes.NotesRoute(
+                        viewModel = viewModel,
+                        onNavigateToNode = onEditNode,
+                        onNavigate = onNavigate,
+                    )
                 }
                 composable(Screen.Notes.route + "?noteId={noteId}") {
                     val noteId =
@@ -529,122 +508,125 @@ private fun AppScaffold(
                             .get<Any>("noteId")
                             ?.toString()
                             ?.toLongOrNull()
-                    RootScreenFrame(screen = Screen.Notes, controller = screenHeaderController) {
-                        NotesScreen(
-                            viewModel = viewModel,
-                            onNoteClick = onEditNode,
-                            initialSelectedNoteId = noteId,
-                        )
-                    }
+                    com.tajemniktv.tajsos.ui.screens.notes.NotesRoute(
+                        viewModel = viewModel,
+                        onNavigateToNode = onEditNode,
+                        onNavigate = onNavigate,
+                        initialSelectedNoteId = noteId,
+                    )
                 }
                 composable(Screen.Calendar.route) {
-                    RootScreenFrame(screen = Screen.Calendar, controller = screenHeaderController) {
-                        CalendarScreen(viewModel, onEditNode)
-                    }
+                    com.tajemniktv.tajsos.ui.screens.calendar.CalendarRoute(
+                        viewModel = viewModel,
+                        onEditNode = onEditNode,
+                        onNavigate = onNavigate,
+                    )
                 }
                 composable(Screen.Decisions.route) {
-                    RootScreenFrame(
-                        screen = Screen.Decisions,
-                        controller = screenHeaderController,
-                    ) {
-                        DecisionsScreen(viewModel, onEditNode)
-                    }
+                    com.tajemniktv.tajsos.ui.screens.decisions.DecisionsRoute(
+                        viewModel = viewModel,
+                        onEditNode = onEditNode,
+                        onNavigate = onNavigate,
+                    )
                 }
                 composable(Screen.OpenLoops.route) {
-                    RootScreenFrame(
-                        screen = Screen.OpenLoops,
-                        controller = screenHeaderController,
-                    ) {
-                        OpenLoopsScreen(viewModel, onEditNode)
-                    }
+                    com.tajemniktv.tajsos.ui.screens.openloops.OpenLoopsRoute(
+                        viewModel = viewModel,
+                        onEditNode = onEditNode,
+                        onNavigate = onNavigate,
+                    )
                 }
                 composable(Screen.Protocols.route) {
-                    RootScreenFrame(
-                        screen = Screen.Protocols,
-                        controller = screenHeaderController,
-                    ) {
-                        ProtocolsScreen(viewModel, onEditNode)
-                    }
+                    com.tajemniktv.tajsos.ui.screens.protocols.ProtocolsRoute(
+                        viewModel = viewModel,
+                        onEditNode = onEditNode,
+                        onNavigate = onNavigate,
+                    )
                 }
                 composable(Screen.TimeArchitecture.route) {
-                    RootScreenFrame(
-                        screen = Screen.TimeArchitecture,
-                        controller = screenHeaderController,
-                    ) {
-                        TimeArchitectureScreen(viewModel, onEditNode)
-                    }
+                    com.tajemniktv.tajsos.ui.screens.timearchitecture.TimeArchitectureRoute(
+                        viewModel = viewModel,
+                        onEditNode = onEditNode,
+                        onNavigate = onNavigate,
+                    )
                 }
                 composable(Screen.Places.route) {
-                    RootScreenFrame(screen = Screen.Places, controller = screenHeaderController) {
-                        PlacesScreen(viewModel, onEditNode)
-                    }
+                    com.tajemniktv.tajsos.ui.screens.places.PlacesRoute(
+                        viewModel = viewModel,
+                        onEditNode = onEditNode,
+                        onNavigate = onNavigate,
+                    )
                 }
                 composable(Screen.Finances.route) {
-                    RootScreenFrame(screen = Screen.Finances, controller = screenHeaderController) {
-                        FinancesScreen(viewModel, onEditNode)
-                    }
+                    com.tajemniktv.tajsos.ui.screens.finance.FinancesRoute(
+                        viewModel = viewModel,
+                        onEditNode = onEditNode,
+                        onNavigate = onNavigate,
+                    )
                 }
                 composable(Screen.Health.route) {
-                    RootScreenFrame(screen = Screen.Health, controller = screenHeaderController) {
-                        HealthScreen(viewModel, onEditNode)
-                    }
+                    com.tajemniktv.tajsos.ui.screens.health.HealthRoute(
+                        viewModel = viewModel,
+                        onEditNode = onEditNode,
+                        onNavigate = onNavigate,
+                    )
                 }
                 composable(Screen.Relationships.route) {
-                    RootScreenFrame(
-                        screen = Screen.Relationships,
-                        controller = screenHeaderController,
-                    ) {
-                        RelationshipsScreen(viewModel, onEditNode)
-                    }
+                    com.tajemniktv.tajsos.ui.screens.relationships.RelationshipsRoute(
+                        viewModel = viewModel,
+                        onEditNode = onEditNode,
+                        onNavigate = onNavigate,
+                    )
                 }
                 composable(Screen.Education.route) {
-                    RootScreenFrame(
-                        screen = Screen.Education,
-                        controller = screenHeaderController,
-                    ) {
-                        StudyScreen(viewModel, onEditNode)
-                    }
+                    com.tajemniktv.tajsos.ui.screens.study.StudyRoute(
+                        viewModel = viewModel,
+                        onEditNode = onEditNode,
+                        onNavigate = onNavigate,
+                    )
                 }
                 composable(Screen.StudyLegacy.route) {
-                    RootScreenFrame(
-                        screen = Screen.StudyLegacy,
-                        controller = screenHeaderController,
-                    ) {
-                        StudyScreen(viewModel, onEditNode)
-                    }
+                    com.tajemniktv.tajsos.ui.screens.study.StudyRoute(
+                        viewModel = viewModel,
+                        onEditNode = onEditNode,
+                        onNavigate = onNavigate,
+                    )
                 }
                 composable(Screen.Rules.route) {
-                    RootScreenFrame(screen = Screen.Rules, controller = screenHeaderController) {
-                        RulesScreen(viewModel, onEditNode)
-                    }
+                    com.tajemniktv.tajsos.ui.screens.rules.RulesRoute(
+                        viewModel = viewModel,
+                        onEditNode = onEditNode,
+                        onNavigate = onNavigate,
+                    )
                 }
                 composable(Screen.Vaults.route) {
-                    RootScreenFrame(screen = Screen.Vaults, controller = screenHeaderController) {
-                        VaultsScreen(viewModel, onEditNode)
-                    }
+                    com.tajemniktv.tajsos.ui.screens.vaults.VaultsRoute(
+                        viewModel = viewModel,
+                        onEditNode = onEditNode,
+                        onNavigate = onNavigate,
+                    )
                 }
                 composable(Screen.Capacity.route) {
-                    RootScreenFrame(screen = Screen.Capacity, controller = screenHeaderController) {
-                        CapacityScreen(viewModel)
-                    }
+                    com.tajemniktv.tajsos.ui.screens.capacity.CapacityRoute(
+                        viewModel = viewModel,
+                        onNavigate = onNavigate,
+                    )
                 }
                 composable(Screen.Identity.route) {
-                    RootScreenFrame(screen = Screen.Identity, controller = screenHeaderController) {
-                        IdentityScreen(viewModel, onEditNode)
-                    }
+                    com.tajemniktv.tajsos.ui.screens.identity.IdentityRoute(
+                        viewModel = viewModel,
+                        onEditNode = onEditNode,
+                        onNavigate = onNavigate,
+                    )
                 }
                 composable(Screen.Templates.route) {
-                    RootScreenFrame(
-                        screen = Screen.Templates,
-                        controller = screenHeaderController,
-                    ) {
-                        TemplatesScreen(viewModel) { navController.popBackStack() }
-                    }
+                    TemplatesScreen(viewModel) { navController.popBackStack() }
                 }
                 composable(Screen.Settings.route) {
-                    RootScreenFrame(screen = Screen.Settings, controller = screenHeaderController) {
-                        SettingsScreen(viewModel)
-                    }
+                    com.tajemniktv.tajsos.ui.screens.settings.SettingsRoute(
+                        viewModel = viewModel,
+                        onNavigate = onNavigate,
+                    )
                 }
                 val settingsPref =
                     Screen.Settings.children.first {
@@ -652,9 +634,10 @@ private fun AppScaffold(
                             it.route.contains("preferences")
                     }
                 composable(settingsPref.route) {
-                    RootScreenFrame(screen = Screen.Settings, controller = screenHeaderController) {
-                        SettingsScreen(viewModel)
-                    }
+                    com.tajemniktv.tajsos.ui.screens.settings.SettingsRoute(
+                        viewModel = viewModel,
+                        onNavigate = onNavigate,
+                    )
                 }
                 val settingsCal =
                     Screen.Settings.children.first {
@@ -662,70 +645,60 @@ private fun AppScaffold(
                             it.route.contains("calendar")
                     }
                 composable(settingsCal.route) {
-                    RootScreenFrame(
-                        screen = Screen.CalendarSettings,
-                        controller = screenHeaderController,
-                    ) {
-                        CalendarSettingsScreen(viewModel)
-                    }
+                    com.tajemniktv.tajsos.ui.screens.calendar.CalendarSettingsRoute(
+                        viewModel = viewModel,
+                        onNavigate = onNavigate,
+                    )
                 }
                 composable(Screen.SettingsHealth.route) {
-                    RootScreenFrame(
-                        screen = Screen.SettingsHealth,
-                        controller = screenHeaderController,
-                    ) {
-                        SettingsScreen(viewModel, screenId = "health")
-                    }
+                    com.tajemniktv.tajsos.ui.screens.settings.SettingsRoute(
+                        viewModel = viewModel,
+                        onNavigate = onNavigate,
+                        screenId = "health",
+                    )
                 }
                 composable(Screen.SettingsAppearance.route) {
-                    RootScreenFrame(
-                        screen = Screen.SettingsAppearance,
-                        controller = screenHeaderController,
-                    ) {
-                        SettingsScreen(viewModel, screenId = "appearance")
-                    }
+                    com.tajemniktv.tajsos.ui.screens.settings.SettingsRoute(
+                        viewModel = viewModel,
+                        onNavigate = onNavigate,
+                        screenId = "appearance",
+                    )
                 }
                 composable(Screen.SettingsFeaturePacks.route) {
-                    RootScreenFrame(
-                        screen = Screen.SettingsFeaturePacks,
-                        controller = screenHeaderController,
-                    ) {
-                        SettingsScreen(viewModel, screenId = "feature_packs")
-                    }
+                    com.tajemniktv.tajsos.ui.screens.settings.SettingsRoute(
+                        viewModel = viewModel,
+                        onNavigate = onNavigate,
+                        screenId = "feature_packs",
+                    )
                 }
                 composable(Screen.SettingsData.route) {
-                    RootScreenFrame(
-                        screen = Screen.SettingsData,
-                        controller = screenHeaderController,
-                    ) {
-                        SettingsScreen(viewModel, screenId = "data")
-                    }
+                    com.tajemniktv.tajsos.ui.screens.settings.SettingsRoute(
+                        viewModel = viewModel,
+                        onNavigate = onNavigate,
+                        screenId = "data",
+                    )
                 }
                 composable(Screen.SettingsDebug.route) {
-                    RootScreenFrame(
-                        screen = Screen.SettingsDebug,
-                        controller = screenHeaderController,
-                    ) {
-                        SettingsScreen(viewModel, screenId = "debug")
-                    }
+                    com.tajemniktv.tajsos.ui.screens.settings.SettingsRoute(
+                        viewModel = viewModel,
+                        onNavigate = onNavigate,
+                        screenId = "debug",
+                    )
                 }
                 composable(Screen.CalendarSettings.route) {
-                    RootScreenFrame(
-                        screen = Screen.CalendarSettings,
-                        controller = screenHeaderController,
-                    ) {
-                        CalendarSettingsScreen(viewModel)
-                    }
+                    com.tajemniktv.tajsos.ui.screens.calendar.CalendarSettingsScreen(viewModel)
                 }
                 composable(Screen.Projects.route) {
-                    RootScreenFrame(screen = Screen.Projects, controller = screenHeaderController) {
-                        ProjectsScreen(viewModel) { onNavigate(it) }
-                    }
+                    com.tajemniktv.tajsos.ui.screens.projects.ProjectsRoute(
+                        viewModel = viewModel,
+                        onNavigate = onNavigate,
+                    )
                 }
                 composable(Screen.Areas.route) {
-                    RootScreenFrame(screen = Screen.Areas, controller = screenHeaderController) {
-                        AreasScreen(viewModel) { onNavigate(it) }
-                    }
+                    com.tajemniktv.tajsos.ui.screens.areas.AreasRoute(
+                        viewModel = viewModel,
+                        onNavigate = onNavigate,
+                    )
                 }
                 composable(Screen.ProjectDetail.route) {
                     /**
@@ -736,13 +709,13 @@ private fun AppScaffold(
                             .get<Any>("projectId")
                             ?.toString()
                             ?.toLongOrNull() ?: -1L
-                    ProjectDetailScreen(
-                        viewModel,
-                        projectId,
-                        onEditNode,
+                    com.tajemniktv.tajsos.ui.screens.projects.detail.ProjectDetailRoute(
+                        viewModel = viewModel,
+                        projectId = projectId,
+                        onEditNode = onEditNode,
                         onBack = { navController.popBackStack() },
                         isDesktop = isDesktop,
-                        screenHeaderController = screenHeaderController,
+                        onNavigate = onNavigate,
                     )
                 }
                 composable(Screen.AreaDetail.route) {
@@ -754,9 +727,9 @@ private fun AppScaffold(
                             .get<Any>("areaId")
                             ?.toString()
                             ?.toLongOrNull() ?: -1L
-                    AreaDetailScreen(
-                        viewModel,
-                        areaId,
+                    com.tajemniktv.tajsos.ui.screens.areas.detail.AreaDetailRoute(
+                        viewModel = viewModel,
+                        areaId = areaId,
                         onNavigateToProject = { id ->
                             onNavigate(
                                 Screen.ProjectDetail.route.replace(
@@ -768,7 +741,7 @@ private fun AppScaffold(
                         onEditNode = onEditNode,
                         onBack = { navController.popBackStack() },
                         isDesktop = isDesktop,
-                        screenHeaderController = screenHeaderController,
+                        onNavigate = onNavigate,
                     )
                 }
                 composable(Screen.NoteDetail.route) {
@@ -781,13 +754,13 @@ private fun AppScaffold(
                             ?.toString()
                             ?.toLongOrNull() ?: -1L
                     NoteDetailScreen(
-                        viewModel,
-                        noteId,
+                        viewModel = viewModel,
+                        noteId = noteId,
                         onBack = { navController.popBackStack() },
                         onNavigateToNode = onEditNode,
                         onNavigateToSearch = { onNavigate(Screen.Search.route) },
                         isDesktop = isDesktop,
-                        screenHeaderController = screenHeaderController,
+                        onNavigate = onNavigate,
                     )
                 }
                 composable(Screen.TaskDetail.route) {
@@ -799,14 +772,14 @@ private fun AppScaffold(
                             .get<Any>("taskId")
                             ?.toString()
                             ?.toLongOrNull() ?: -1L
-                    TaskDetailScreen(
+                    com.tajemniktv.tajsos.ui.screens.tasks.detail.TaskDetailRoute(
                         viewModel = viewModel,
                         taskId = taskId,
                         onBack = { navController.popBackStack() },
                         onNavigateToNode = onEditNode,
                         onNavigateToSearch = { onNavigate(Screen.Search.route) },
                         isDesktop = isDesktop,
-                        screenHeaderController = screenHeaderController,
+                        onNavigate = onNavigate,
                     )
                 }
                 composable(Screen.RecordDetail.route) {
@@ -818,57 +791,64 @@ private fun AppScaffold(
                             .get<Any>("recordId")
                             ?.toString()
                             ?.toLongOrNull() ?: -1L
-                    RecordDetailScreen(
+                    com.tajemniktv.tajsos.ui.screens.records.detail.RecordDetailRoute(
                         viewModel = viewModel,
                         recordId = recordId,
                         onBack = { navController.popBackStack() },
                         onNavigateToNode = onEditNode,
                         onNavigateToSearch = { onNavigate(Screen.Search.route) },
                         isDesktop = isDesktop,
-                        screenHeaderController = screenHeaderController,
+                        onNavigate = onNavigate,
                     )
                 }
                 composable(Screen.Insights.route) {
-                    RootScreenFrame(screen = Screen.Insights, controller = screenHeaderController) {
-                        InsightsScreen(viewModel) {
+                    com.tajemniktv.tajsos.ui.screens.insights.InsightsRoute(
+                        viewModel = viewModel,
+                        onNavigateToProject = {
                             onNavigate(
                                 Screen.ProjectDetail.route.replace(
                                     "{projectId}",
                                     it.toString(),
                                 ),
                             )
-                        }
-                    }
+                        },
+                        onNavigate = onNavigate,
+                    )
                 }
                 composable(Screen.Graph.route) {
-                    RootScreenFrame(screen = Screen.Graph, controller = screenHeaderController) {
-                        GraphScreen(viewModel, onNodeClick = onEditNode)
-                    }
+                    com.tajemniktv.tajsos.ui.screens.graph.GraphRoute(
+                        viewModel = viewModel,
+                        onNodeClick = onEditNode,
+                        onNavigate = onNavigate,
+                    )
                 }
                 composable(Screen.Archive.route) {
-                    RootScreenFrame(screen = Screen.Archive, controller = screenHeaderController) {
-                        ArchiveScreen(viewModel, onEditNode)
-                    }
+                    com.tajemniktv.tajsos.ui.screens.archive.ArchiveRoute(
+                        viewModel = viewModel,
+                        onEditNode = onEditNode,
+                        onNavigate = onNavigate,
+                    )
                 }
                 composable(Screen.Review.route) {
-                    RootScreenFrame(screen = Screen.Review, controller = screenHeaderController) {
-                        ReviewScreen(viewModel) {
-                            navController.popBackStack()
-                        }
-                    }
+                    com.tajemniktv.tajsos.ui.screens.review.ReviewRoute(
+                        viewModel = viewModel,
+                        onBack = { navController.popBackStack() },
+                        onNavigate = onNavigate,
+                    )
                 }
                 composable(Screen.Profile.route) {
-                    RootScreenFrame(screen = Screen.Profile, controller = screenHeaderController) {
-                        ProfileScreen(
-                            viewModel = viewModel,
-                            onPickAvatar = onPickAvatar,
-                            pickedAvatarRef = avatarPickResult,
-                            onAvatarPickConsume = onAvatarPickConsume,
-                        )
-                    }
+                    com.tajemniktv.tajsos.ui.screens.profile.ProfileRoute(
+                        viewModel = viewModel,
+                        onNavigate = onNavigate,
+                        onPickAvatar = onPickAvatar,
+                        pickedAvatarRef = avatarPickResult,
+                        onAvatarPickedConsumed = onAvatarPickConsume,
+                    )
                 }
             }
         }
+    }
+}
 
         if (!isDesktop || (currentDestination?.route != Screen.Dashboard.route)) {
             FloatingActionButton(
@@ -962,34 +942,4 @@ private fun handleOnCapture(
             )
         }
     }
-}
-
-@Composable
-private fun RootScreenFrame(
-    screen: Screen,
-    breadcrumbScreen: Screen = screen,
-    onBreadcrumbNavigate: ((String) -> Unit)? = null,
-    controller: ScreenHeaderController,
-    content: @Composable () -> Unit,
-) {
-    val breadcrumbNavigate = onBreadcrumbNavigate ?: LocalBreadcrumbNavigate.current
-
-    BindScreenHeader(
-        controller = controller,
-        model =
-            ScreenHeaderModel(
-                breadcrumbs =
-                    screenBreadcrumbs(breadcrumbScreen) { breadcrumb ->
-                        if (breadcrumbNavigate == null ||
-                            routeParameterPattern.containsMatchIn(breadcrumb.route)
-                        ) {
-                            null
-                        } else {
-                            { breadcrumbNavigate(breadcrumb.route) }
-                        }
-                    },
-                title = stringResource(screen.label),
-            ),
-    )
-    content()
 }

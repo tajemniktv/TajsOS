@@ -80,28 +80,32 @@ import tajsos.composeapp.generated.resources.screen_project
 import tajsos.composeapp.generated.resources.screen_today
 import kotlin.time.Clock
 
+/**
+ * Central dashboard entry point that collects system state and coordinates layout.
+ *
+ * @param viewModel Source of dashboard state.
+ * @param onNavigate Navigation callback.
+ * @param onEditNode Node edit callback.
+ * @param onNavigateToProject Project navigation callback.
+ * @param onNewEntry Entry creation callback.
+ * @param currentDestination Current navigation state.
+ */
 @Composable
-@OptIn(ExperimentalLayoutApi::class)
-fun DashboardScreen(
+fun DashboardRoute(
     viewModel: MainViewModel,
-    onNavigateTo: (Screen) -> Unit,
+    onNavigate: (String) -> Unit,
     onEditNode: (Long) -> Unit,
     onNavigateToProject: (Long) -> Unit,
     onNewEntry: () -> Unit,
     currentDestination: NavDestination? = null,
 ) {
     BoxWithConstraints {
-        DashboardUnifiedContent(
-            surface =
-                if (maxWidth >
-                    800.dp
-                ) {
-                    DashboardSurface.DESKTOP
-                } else {
-                    DashboardSurface.MOBILE
-                },
+        val surface = if (maxWidth > 800.dp) DashboardSurface.DESKTOP else DashboardSurface.MOBILE
+
+        DashboardScreen(
+            surface = surface,
             viewModel = viewModel,
-            onNavigateTo = onNavigateTo,
+            onNavigate = onNavigate,
             onEditNode = onEditNode,
             onNavigateToProject = onNavigateToProject,
             onNewEntry = onNewEntry,
@@ -112,10 +116,10 @@ fun DashboardScreen(
 
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
-private fun DashboardUnifiedContent(
+private fun DashboardScreen(
     surface: DashboardSurface,
     viewModel: MainViewModel,
-    onNavigateTo: (Screen) -> Unit,
+    onNavigate: (String) -> Unit,
     onEditNode: (Long) -> Unit,
     onNavigateToProject: (Long) -> Unit,
     onNewEntry: () -> Unit,
@@ -189,7 +193,7 @@ private fun DashboardUnifiedContent(
             calendarEntries,
             allModes,
             currentMode,
-            onNavigateTo,
+            onNavigate,
             onEditNode,
             onNavigateToProject,
             onNewEntry,
@@ -214,7 +218,7 @@ private fun DashboardUnifiedContent(
                 calendarEntries = calendarEntries,
                 allModes = allModes,
                 currentMode = currentMode,
-                onNavigateTo = onNavigateTo,
+                onNavigate = onNavigate,
                 onEditNode = onEditNode,
                 onNavigateToProject = onNavigateToProject,
                 onNewEntry = onNewEntry,
@@ -223,6 +227,8 @@ private fun DashboardUnifiedContent(
         }
 
     ScreenScaffold(
+        screen = Screen.Dashboard,
+        onNavigate = onNavigate,
         scrollBehavior = ScreenScrollBehavior.None,
         backgroundColor = TajsOSTheme.Background,
     ) {
@@ -298,7 +304,7 @@ private data class DashboardRenderContext(
     val calendarEntries: List<CalendarEntry>,
     val allModes: List<ModeEntity>,
     val currentMode: ModeEntity?,
-    val onNavigateTo: (Screen) -> Unit,
+    val onNavigate: (String) -> Unit,
     val onEditNode: (Long) -> Unit,
     val onNavigateToProject: (Long) -> Unit,
     val onNewEntry: () -> Unit,
@@ -354,7 +360,7 @@ private fun RenderDashboardBlock(
             LifeSummaryCard(
                 captures = context.insights.weeklyCaptures,
                 completions = context.insights.weeklyCompletions,
-                onClick = { context.onNavigateTo(Screen.Insights) },
+                onClick = { context.onNavigate(Screen.Insights.route) },
             )
         }
 
@@ -370,7 +376,7 @@ private fun RenderDashboardBlock(
                 allAreas = context.allAreas,
                 calendarEntries = context.calendarEntries,
                 allSessions = context.allSessions,
-                onNavigateTo = context.onNavigateTo,
+                onNavigate = context.onNavigate,
                 viewModel = context.viewModel,
             )
         }
@@ -378,7 +384,7 @@ private fun RenderDashboardBlock(
         "operations_overview" -> {
             DashboardOperationsOverview(
                 viewModel = context.viewModel,
-                onNavigateTo = context.onNavigateTo,
+                onNavigate = context.onNavigate,
             )
         }
 
@@ -472,7 +478,7 @@ private fun RenderDashboardBlock(
                 needsWeeklyReview = context.needsWeeklyReview,
                 dailyProgress = context.dailyProgress,
                 localNow = context.localNow,
-                onNavigateTo = context.onNavigateTo,
+                onNavigate = context.onNavigate,
                 onEditNode = context.onEditNode,
                 onNavigateToProject = context.onNavigateToProject,
             )
@@ -483,78 +489,78 @@ private fun RenderDashboardBlock(
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
 fun DashboardModules(
-    todayNodes: List<NodeEntity>,
-    inboxCount: Int,
-    activeSession: FocusSessionEntity?,
-    moodToday: TrackEntryEntity?,
-    tasksCount: Int,
-    notesCount: Int,
-    allProjects: List<NodeEntity>,
-    allAreas: List<NodeEntity>,
-    calendarEntries: List<CalendarEntry>,
-    allSessions: List<FocusSessionEntity>,
-    onNavigateTo: (Screen) -> Unit,
-    viewModel: MainViewModel,
+todayNodes: List<NodeEntity>,
+inboxCount: Int,
+activeSession: FocusSessionEntity?,
+moodToday: TrackEntryEntity?,
+tasksCount: Int,
+notesCount: Int,
+allProjects: List<NodeEntity>,
+allAreas: List<NodeEntity>,
+calendarEntries: List<CalendarEntry>,
+allSessions: List<FocusSessionEntity>,
+onNavigate: (String) -> Unit,
+viewModel: MainViewModel,
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)) {
-        Text(
-            "CORE MODULES",
-            style = MaterialTheme.typography.labelSmall,
-            color = TajsOSTheme.Muted,
-            fontWeight = FontWeight.Bold,
-            letterSpacing = 1.sp,
-        )
+Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)) {
+Text(
+    "CORE MODULES",
+    style = MaterialTheme.typography.labelSmall,
+    color = TajsOSTheme.Muted,
+    fontWeight = FontWeight.Bold,
+    letterSpacing = 1.sp,
+)
 
-        FlowRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
-            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
-        ) {
-            val itemModifier = Modifier.weight(1f).widthIn(min = 160.dp)
+FlowRow(
+    modifier = Modifier.fillMaxWidth(),
+    horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+    verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+) {
+    val itemModifier = Modifier.weight(1f).widthIn(min = 160.dp)
 
-            ModuleCard(
-                modifier = itemModifier,
-                title = stringResource(Res.string.screen_today),
-                icon = Icons.Default.Today,
-                status = "${todayNodes.size}",
-                onClick = { onNavigateTo(Screen.Today) },
-            )
+    ModuleCard(
+        modifier = itemModifier,
+        title = stringResource(Res.string.screen_today),
+        icon = Icons.Default.Today,
+        status = "${todayNodes.size}",
+        onClick = { onNavigate(Screen.Today.route) },
+    )
 
-            ModuleCard(
-                modifier = itemModifier,
-                title = stringResource(Res.string.screen_inbox),
-                icon = Icons.Default.Inbox,
-                status = "$inboxCount",
-                onClick = { onNavigateTo(Screen.Inbox) },
-                color = TajsOSTheme.Accent,
-            )
+    ModuleCard(
+        modifier = itemModifier,
+        title = stringResource(Res.string.screen_inbox),
+        icon = Icons.Default.Inbox,
+        status = "$inboxCount",
+        onClick = { onNavigate(Screen.Inbox.route) },
+        color = TajsOSTheme.Accent,
+    )
 
-            ModuleCard(
-                modifier = itemModifier,
-                title = stringResource(Res.string.screen_project),
-                icon = Icons.Default.AccountTree,
-                status = "${allProjects.size}",
-                onClick = { onNavigateTo(Screen.Projects) },
-                color = TajsOSTheme.Success,
-            )
+    ModuleCard(
+        modifier = itemModifier,
+        title = stringResource(Res.string.screen_project),
+        icon = Icons.Default.AccountTree,
+        status = "${allProjects.size}",
+        onClick = { onNavigate(Screen.Projects.route) },
+        color = TajsOSTheme.Success,
+    )
 
-            ModuleCard(
-                modifier = itemModifier,
-                title = stringResource(Res.string.screen_focus),
-                icon = Icons.Default.Timer,
-                status = if (activeSession != null) "ACTIVE" else "READY",
-                onClick = { onNavigateTo(Screen.Focus) },
-                color = if (activeSession != null) TajsOSTheme.Primary else TajsOSTheme.Muted,
-            )
-        }
-    }
+    ModuleCard(
+        modifier = itemModifier,
+        title = stringResource(Res.string.screen_focus),
+        icon = Icons.Default.Timer,
+        status = if (activeSession != null) "ACTIVE" else "READY",
+        onClick = { onNavigate(Screen.Focus.route) },
+        color = if (activeSession != null) TajsOSTheme.Primary else TajsOSTheme.Muted,
+    )
+}
+}
 }
 
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
 private fun DashboardOperationsOverview(
-    viewModel: MainViewModel,
-    onNavigateTo: (Screen) -> Unit,
+viewModel: MainViewModel,
+onNavigate: (String) -> Unit,
 ) {
     val capacitySnapshot by viewModel.capacitySnapshot.collectAsState()
     val lifeOSSignatureSnapshot by viewModel.lifeOSSignatureSnapshot.collectAsState()
@@ -602,7 +608,7 @@ private fun DashboardOperationsOverview(
                                 1.dp,
                                 TajsOSTheme.Border,
                                 RoundedCornerShape(TajsOSTheme.RadiusMd),
-                            ).clickable { onNavigateTo(module.screen) }
+                            ).clickable { onNavigate(module.screen.route) }
                             .padding(TajsOSTheme.SpacingMd),
                     verticalArrangement = Arrangement.spacedBy(6.dp),
                 ) {

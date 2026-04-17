@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 /**
@@ -59,7 +60,9 @@ enum class ScreenScrollBehavior {
  */
 @Composable
 fun ScreenScaffold(
-    screenHeaderController: ScreenHeaderController? = null,
+    screen: Screen? = null,
+    onNavigate: ((String) -> Unit)? = null,
+    screenHeaderController: ScreenHeaderController? = LocalScreenHeaderController.current,
     screenHeader: ScreenHeaderModel? = null,
     modifier: Modifier = Modifier,
     contentWidth: ScreenContentWidth = ScreenContentWidth.Full,
@@ -73,10 +76,34 @@ fun ScreenScaffold(
     toolbar: (@Composable () -> Unit)? = null,
     content: @Composable BoxScope.() -> Unit,
 ) {
-    if (screenHeaderController != null && screenHeader != null) {
+    val breadcrumbs = if (screen != null) {
+        screenBreadcrumbs(screen) { breadcrumb ->
+            if (onNavigate == null || breadcrumb.route.contains("{")) {
+                null
+            } else {
+                { onNavigate(breadcrumb.route) }
+            }
+        }
+    } else {
+        emptyList()
+    }
+
+    val finalHeaderModel =
+        remember(screenHeader, breadcrumbs, screen) {
+            screenHeader ?: if (screen != null) {
+                ScreenHeaderModel(
+                    breadcrumbs = breadcrumbs,
+                    title = null,
+                )
+            } else {
+                null
+            }
+        }
+
+    if (screenHeaderController != null && finalHeaderModel != null) {
         BindScreenHeader(
             controller = screenHeaderController,
-            model = screenHeader,
+            model = finalHeaderModel,
         )
     }
 
@@ -132,12 +159,53 @@ fun ScreenScaffold(
 }
 
 /**
+ * Convenience version of [ScreenScaffold] that defaults to [ScreenScrollBehavior.BodyScroll].
+ */
+@Composable
+fun ScrollableScreenScaffold(
+    screen: Screen? = null,
+    onNavigate: ((String) -> Unit)? = null,
+    screenHeaderController: ScreenHeaderController? = LocalScreenHeaderController.current,
+    screenHeader: ScreenHeaderModel? = null,
+    modifier: Modifier = Modifier,
+    contentWidth: ScreenContentWidth = ScreenContentWidth.Full,
+    contentPadding: PaddingValues = ScreenScaffoldDefaults.contentPadding(),
+    backgroundColor: Color = Color.Transparent,
+    backgroundBrush: Brush? = null,
+    title: (@Composable () -> Unit)? = null,
+    subtitle: (@Composable () -> Unit)? = null,
+    actions: (@Composable RowScope.() -> Unit)? = null,
+    toolbar: (@Composable () -> Unit)? = null,
+    content: @Composable BoxScope.() -> Unit,
+) {
+    ScreenScaffold(
+        screen = screen,
+        onNavigate = onNavigate,
+        screenHeaderController = screenHeaderController,
+        screenHeader = screenHeader,
+        modifier = modifier,
+        contentWidth = contentWidth,
+        scrollBehavior = ScreenScrollBehavior.BodyScroll,
+        contentPadding = contentPadding,
+        backgroundColor = backgroundColor,
+        backgroundBrush = backgroundBrush,
+        title = title,
+        subtitle = subtitle,
+        actions = actions,
+        toolbar = toolbar,
+        content = content,
+    )
+}
+
+/**
  * Reusable split-layout scaffold for detail and dual-pane screens.
  */
 @Composable
 fun SplitScreenScaffold(
     isSplitLayout: Boolean,
-    screenHeaderController: ScreenHeaderController? = null,
+    screen: Screen? = null,
+    onNavigate: ((String) -> Unit)? = null,
+    screenHeaderController: ScreenHeaderController? = LocalScreenHeaderController.current,
     screenHeader: ScreenHeaderModel? = null,
     modifier: Modifier = Modifier,
     contentWidth: ScreenContentWidth = ScreenContentWidth.Full,
@@ -156,10 +224,34 @@ fun SplitScreenScaffold(
     primary: @Composable BoxScope.() -> Unit,
     secondary: (@Composable BoxScope.() -> Unit)? = null,
 ) {
-    if (screenHeaderController != null && screenHeader != null) {
+    val breadcrumbs = if (screen != null) {
+        screenBreadcrumbs(screen) { breadcrumb ->
+            if (onNavigate == null || breadcrumb.route.contains("{")) {
+                null
+            } else {
+                { onNavigate(breadcrumb.route) }
+            }
+        }
+    } else {
+        emptyList()
+    }
+
+    val finalHeaderModel =
+        remember(screenHeader, breadcrumbs, screen) {
+            screenHeader ?: if (screen != null) {
+                ScreenHeaderModel(
+                    breadcrumbs = breadcrumbs,
+                    title = null,
+                )
+            } else {
+                null
+            }
+        }
+
+    if (screenHeaderController != null && finalHeaderModel != null) {
         BindScreenHeader(
             controller = screenHeaderController,
-            model = screenHeader,
+            model = finalHeaderModel,
         )
     }
 

@@ -5,10 +5,12 @@
 package com.tajemniktv.tajsos.ui.screens.study
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -27,7 +29,9 @@ import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.data.isNoteItem
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.common.SelectorDialog
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 /**
@@ -36,10 +40,18 @@ import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
  * The screen uses a shared layout engine and block registry so desktop/mobile structure and future
  * user customization can evolve without rewriting screen-level logic.
  */
+/**
+ * Central study entry point that collects system state and coordinates layout.
+ *
+ * @param viewModel Source of study state.
+ * @param onEditNode Node edit callback.
+ * @param onNavigate Navigation callback.
+ */
 @Composable
-fun StudyScreen(
+fun StudyRoute(
     viewModel: MainViewModel,
     onEditNode: (Long) -> Unit,
+    onNavigate: (String) -> Unit,
 ) {
     val studentState by viewModel.studentBoardState.collectAsState()
     val allTemplates by viewModel.allTemplates.collectAsState()
@@ -185,13 +197,37 @@ fun StudyScreen(
             if (maxWidth > 980.dp) StudyDashboardSurface.DESKTOP else StudyDashboardSurface.MOBILE
         val plan = remember(surface) { buildStudyDashboardPlan(surface = surface) }
 
+        StudyScreen(
+            context = context,
+            plan = plan,
+            surface = surface,
+            onNavigate = onNavigate,
+        )
+    }
+}
+
+/**
+ * Stateless study screen content.
+ *
+ * @param context Study dashboard context.
+ * @param plan Study dashboard plan.
+ * @param surface Current UI surface mode.
+ * @param onNavigate Navigation callback.
+ */
+@Composable
+fun StudyScreen(
+    context: StudyDashboardContext,
+    plan: StudyDashboardPlan,
+    surface: StudyDashboardSurface,
+    onNavigate: (String) -> Unit,
+) {
+    ScreenScaffold(
+        screen = Screen.Education,
+        onNavigate = onNavigate,
+    ) {
         if (surface == StudyDashboardSurface.MOBILE) {
             LazyColumn(
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .padding(TajsOSTheme.SpacingMd)
-                        .padding(bottom = 80.dp),
+                modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
             ) {
                 items(plan.primary, key = { it.id }) { block ->
@@ -200,11 +236,11 @@ fun StudyScreen(
             }
         } else {
             Row(
-                modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd),
+                modifier = Modifier.fillMaxSize(),
                 horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
             ) {
                 LazyColumn(
-                    modifier = Modifier.weight(1.35f).padding(bottom = 80.dp),
+                    modifier = Modifier.weight(1.35f),
                     verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
                 ) {
                     items(plan.primary, key = { it.id }) { block ->
@@ -213,11 +249,11 @@ fun StudyScreen(
                 }
 
                 LazyColumn(
-                    modifier = Modifier.weight(1f).padding(bottom = 80.dp),
+                    modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
                 ) {
                     items(plan.secondary, key = { it.id }) { block ->
-                        Column(modifier = Modifier.width(720.dp)) {
+                        Column(modifier = Modifier.fillMaxWidth()) {
                             StudyDashboardBlockRegistry.resolve(block.id)?.invoke(context)
                         }
                     }

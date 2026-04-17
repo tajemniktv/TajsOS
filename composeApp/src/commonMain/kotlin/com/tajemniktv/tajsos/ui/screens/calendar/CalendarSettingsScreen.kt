@@ -21,6 +21,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.Screen
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
@@ -30,8 +32,17 @@ import tajsos.composeapp.generated.resources.cal_settings_dialog_name
 import tajsos.composeapp.generated.resources.cal_settings_dialog_title
 import tajsos.composeapp.generated.resources.cal_settings_dialog_url
 
+/**
+ * Central calendar settings entry point that collects system state and coordinates layout.
+ *
+ * @param viewModel Source of calendar settings state.
+ * @param onNavigate Navigation callback.
+ */
 @Composable
-fun CalendarSettingsScreen(viewModel: MainViewModel) {
+fun CalendarSettingsRoute(
+    viewModel: MainViewModel,
+    onNavigate: (String) -> Unit,
+) {
     val providers by viewModel.calendarProviders.collectAsState()
     var showAddDialog by remember { mutableStateOf(false) }
 
@@ -48,24 +59,52 @@ fun CalendarSettingsScreen(viewModel: MainViewModel) {
 
     val plan = remember { buildCalendarSettingsPlan() }
 
-    Column(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .padding(TajsOSTheme.SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
+    CalendarSettingsScreen(
+        context = context,
+        plan = plan,
+        showAddDialog = showAddDialog,
+        onDismissAddDialog = { showAddDialog = false },
+        onNavigate = onNavigate,
+    )
+}
+
+/**
+ * Stateless calendar settings screen content.
+ *
+ * @param context Calendar settings context.
+ * @param plan Calendar settings plan.
+ * @param showAddDialog Whether to show the add provider dialog.
+ * @param onDismissAddDialog Callback to dismiss the add provider dialog.
+ * @param onNavigate Navigation callback.
+ */
+@Composable
+fun CalendarSettingsScreen(
+    context: CalendarSettingsContext,
+    plan: CalendarSettingsPlan,
+    showAddDialog: Boolean,
+    onDismissAddDialog: () -> Unit,
+    onNavigate: (String) -> Unit,
+) {
+    ScreenScaffold(
+        screen = Screen.CalendarSettings,
+        onNavigate = onNavigate,
     ) {
-        plan.primary.forEach { block ->
-            CalendarSettingsBlockRegistry.resolve(block.id)?.invoke(context)
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
+        ) {
+            plan.primary.forEach { block ->
+                CalendarSettingsBlockRegistry.resolve(block.id)?.invoke(context)
+            }
         }
     }
 
     if (showAddDialog) {
         AddCalendarDialog(
-            onDismiss = { showAddDialog = false },
+            onDismiss = onDismissAddDialog,
             onAdd = { name, type, url ->
                 context.onAddProvider(name, type, url)
-                showAddDialog = false
+                onDismissAddDialog()
             },
         )
     }

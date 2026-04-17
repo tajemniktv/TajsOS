@@ -28,6 +28,8 @@ import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.Screen
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
 import com.tajemniktv.tajsos.ui.OpenLoopsSnapshot
 import com.tajemniktv.tajsos.ui.components.cards.OpenLoopCard
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
@@ -46,43 +48,55 @@ import tajsos.composeapp.generated.resources.lens_unresolved_group_person
 import tajsos.composeapp.generated.resources.lens_unresolved_group_urgency
 import tajsos.composeapp.generated.resources.lens_unresolved_stats
 
+/**
+ * Central open loops entry point that collects system state and coordinates layout.
+ *
+ * @param viewModel Source of open loops state.
+ * @param onEditNode Node edit callback.
+ * @param onNavigate Navigation callback.
+ */
 @Composable
-@OptIn(ExperimentalLayoutApi::class)
-fun OpenLoopsScreen(
+fun OpenLoopsRoute(
     viewModel: MainViewModel,
     onEditNode: (Long) -> Unit,
+    onNavigate: (String) -> Unit,
 ) {
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val surface =
-            if (maxWidth >
-                900.dp
-            ) {
-                OpenLoopsDashboardSurface.DESKTOP
-            } else {
-                OpenLoopsDashboardSurface.MOBILE
-            }
-        val plan =
-            remember(surface) {
-                buildOpenLoopsDashboardPlan(
-                    surface,
-                )
-            }
-        val context =
-            remember(viewModel, onEditNode) {
-                OpenLoopsDashboardContext(
-                    viewModel,
-                    onEditNode,
-                )
-            }
+        val surface = if (maxWidth > 900.dp) OpenLoopsDashboardSurface.DESKTOP else OpenLoopsDashboardSurface.MOBILE
+        val plan = remember(surface) { buildOpenLoopsDashboardPlan(surface) }
+        val context = remember(viewModel, onEditNode) { OpenLoopsDashboardContext(viewModel, onEditNode) }
+
+        OpenLoopsScreen(
+            context = context,
+            plan = plan,
+            onNavigate = onNavigate,
+        )
+    }
+}
+
+/**
+ * Stateless open loops screen content.
+ *
+ * @param context Open loops dashboard context.
+ * @param plan Open loops dashboard plan.
+ * @param onNavigate Navigation callback.
+ */
+@Composable
+fun OpenLoopsScreen(
+    context: OpenLoopsDashboardContext,
+    plan: OpenLoopsDashboardPlan,
+    onNavigate: (String) -> Unit,
+) {
+    ScreenScaffold(
+        screen = Screen.OpenLoops,
+        onNavigate = onNavigate,
+    ) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(bottom = 80.dp),
+            modifier = Modifier.fillMaxSize(),
         ) {
             plan.primary.forEach { block ->
                 item(key = block.id) {
-                    OpenLoopsDashboardBlockRegistry
-                        .resolve(
-                            block.id,
-                        )?.invoke(context)
+                    OpenLoopsDashboardBlockRegistry.resolve(block.id)?.invoke(context)
                 }
             }
         }

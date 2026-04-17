@@ -5,8 +5,14 @@
 package com.tajemniktv.tajsos.ui.screens.profile
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -29,6 +35,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.Screen
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
@@ -48,6 +56,7 @@ import tajsos.composeapp.generated.resources.profile_add_med
 @Composable
 fun ProfileRoute(
     viewModel: MainViewModel,
+    onNavigate: (String) -> Unit,
     onPickAvatar: (() -> Unit)? = null,
     pickedAvatarRef: String? = null,
     onAvatarPickedConsumed: () -> Unit = {},
@@ -75,21 +84,7 @@ fun ProfileRoute(
         if (hasChanges) justSaved = false
     }
 
-    BoxWithConstraints(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        colors =
-                            listOf(
-                                TajsOSTheme.Background,
-                                TajsOSTheme.SurfaceLowest,
-                                TajsOSTheme.Background,
-                            ),
-                    ),
-                ),
-    ) {
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val surface =
             if (maxWidth > 920.dp) {
                 ProfileDashboardSurface.DESKTOP
@@ -119,21 +114,11 @@ fun ProfileRoute(
                 onDeleteMedication = { med -> viewModel.deleteMedication(med) },
             )
 
-        LazyColumn(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(TajsOSTheme.SpacingMd)
-                    .padding(bottom = 80.dp),
-            verticalArrangement =
-                androidx.compose.foundation.layout.Arrangement.spacedBy(
-                    TajsOSTheme.SpacingMd,
-                ),
-        ) {
-            items(blockSequence, key = { it.id }) { block ->
-                renderProfileBlock(block.id, context)
-            }
-        }
+        ProfileScreen(
+            context = context,
+            blockSequence = blockSequence,
+            onNavigate = onNavigate,
+        )
     }
 
     if (showAddMedDialog) {
@@ -144,6 +129,42 @@ fun ProfileRoute(
                 showAddMedDialog = false
             },
         )
+    }
+}
+
+/**
+ * Stateless profile screen content.
+ *
+ * @param context Profile screen context.
+ * @param blockSequence Sequence of blocks to render.
+ * @param onNavigate Navigation callback.
+ */
+@Composable
+fun ProfileScreen(
+    context: ProfileScreenContext,
+    blockSequence: List<ProfileBlockInstance>,
+    onNavigate: (String) -> Unit,
+) {
+    ScreenScaffold(
+        screen = Screen.Profile,
+        onNavigate = onNavigate,
+        backgroundBrush = Brush.verticalGradient(
+            colors =
+                listOf(
+                    TajsOSTheme.Background,
+                    TajsOSTheme.SurfaceLowest,
+                    TajsOSTheme.Background,
+                ),
+        ),
+    ) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
+        ) {
+            items(blockSequence, key = { it.id }) { block ->
+                renderProfileBlock(block.id, context)
+            }
+        }
     }
 }
 

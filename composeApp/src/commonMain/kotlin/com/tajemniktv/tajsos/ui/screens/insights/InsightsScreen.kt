@@ -31,6 +31,8 @@ import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.EventLogEntity
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.Screen
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -40,49 +42,51 @@ import tajsos.composeapp.generated.resources.insights_needs_attention
 import kotlin.time.Instant
 
 /**
- * Render the Insights screen, displaying computed insight cards, pattern alerts, project lists, and recent activity
- * based on the provided view model state.
+ * Central insights entry point that collects system state and coordinates layout.
  *
- * The UI reacts to the view model's current insights, recent logs, and areas, conditionally showing cards and
- * lists (e.g., auto-review, completion/focus/efficiency/vault/system summaries, pattern alerts, neglected and
- * high-entropy projects, and recent activity). Project items call the navigation callback when selected.
+ * @param viewModel Source of insights state.
+ * @param onNavigateToProject Project navigation callback.
+ * @param onNavigate Navigation callback.
+ */
+@Composable
+fun InsightsRoute(
+    viewModel: MainViewModel,
+    onNavigateToProject: (Long) -> Unit,
+    onNavigate: (String) -> Unit,
+) {
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val surface = if (maxWidth > 900.dp) InsightsDashboardSurface.DESKTOP else InsightsDashboardSurface.MOBILE
+        val plan = remember(surface) { buildInsightsDashboardPlan(surface) }
+        val context = remember(viewModel, onNavigateToProject) { InsightsDashboardContext(viewModel, onNavigateToProject) }
+
+        InsightsScreen(
+            context = context,
+            plan = plan,
+            onNavigate = onNavigate,
+        )
+    }
+}
+
+/**
+ * Stateless insights screen content.
  *
- * @param viewModel Source of truth for insights, recent activity, and area/project data.
- * @param onNavigateToProject Callback invoked with a project's id when the user selects a project item.
+ * @param context Insights dashboard context.
+ * @param plan Insights dashboard plan.
+ * @param onNavigate Navigation callback.
  */
 @Composable
 fun InsightsScreen(
-    viewModel: MainViewModel,
-    onNavigateToProject: (Long) -> Unit,
+    context: InsightsDashboardContext,
+    plan: InsightsDashboardPlan,
+    onNavigate: (String) -> Unit,
 ) {
-    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val surface =
-            if (maxWidth >
-                900.dp
-            ) {
-                InsightsDashboardSurface.DESKTOP
-            } else {
-                InsightsDashboardSurface.MOBILE
-            }
-        val plan =
-            remember(surface) {
-                buildInsightsDashboardPlan(
-                    surface,
-                )
-            }
-        val context =
-            remember(viewModel, onNavigateToProject) {
-                InsightsDashboardContext(
-                    viewModel,
-                    onNavigateToProject,
-                )
-            }
+    ScreenScaffold(
+        screen = Screen.Insights,
+        onNavigate = onNavigate,
+    ) {
         Column(modifier = Modifier.fillMaxSize()) {
             plan.primary.forEach { block ->
-                InsightsDashboardBlockRegistry
-                    .resolve(
-                        block.id,
-                    )?.invoke(context)
+                InsightsDashboardBlockRegistry.resolve(block.id)?.invoke(context)
             }
         }
     }

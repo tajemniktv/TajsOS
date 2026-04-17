@@ -42,6 +42,9 @@ import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.ModeEntity
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.Screen
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior
 import com.tajemniktv.tajsos.ui.main.state.PlaybookSnapshot
 import com.tajemniktv.tajsos.ui.main.state.ProtocolHistoryItem
 import com.tajemniktv.tajsos.ui.main.state.TransitionProtocolItem
@@ -100,25 +103,49 @@ import tajsos.composeapp.generated.resources.screen_protocols
 import kotlin.math.max
 
 /**
- * Root screen for the Protocols feature. It resolves the dashboard plan based on surface size and
- * delegates rendering to protocol-specific dashboard blocks.
+ * Central protocols entry point that collects system state and coordinates layout.
+ *
+ * @param viewModel Source of protocols state.
+ * @param onEditNode Node edit callback.
+ * @param onNavigate Navigation callback.
+ */
+@Composable
+fun ProtocolsRoute(
+    viewModel: MainViewModel,
+    onEditNode: (Long) -> Unit,
+    onNavigate: (String) -> Unit,
+) {
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val surface = if (maxWidth > 900.dp) ProtocolsDashboardSurface.DESKTOP else ProtocolsDashboardSurface.MOBILE
+        val plan = remember(surface) { buildProtocolsDashboardPlan(surface) }
+        val context = remember(viewModel, onEditNode) { ProtocolsDashboardContext(viewModel, onEditNode) }
+
+        ProtocolsScreen(
+            context = context,
+            plan = plan,
+            onNavigate = onNavigate,
+        )
+    }
+}
+
+/**
+ * Stateless protocols screen content.
+ *
+ * @param context Protocols dashboard context.
+ * @param plan Protocols dashboard plan.
+ * @param onNavigate Navigation callback.
  */
 @Composable
 fun ProtocolsScreen(
-    viewModel: MainViewModel,
-    onEditNode: (Long) -> Unit,
+    context: ProtocolsDashboardContext,
+    plan: ProtocolsDashboardPlan,
+    onNavigate: (String) -> Unit,
 ) {
-    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val surface =
-            if (maxWidth > 900.dp) {
-                ProtocolsDashboardSurface.DESKTOP
-            } else {
-                ProtocolsDashboardSurface.MOBILE
-            }
-        val plan = remember(surface) { buildProtocolsDashboardPlan(surface) }
-        val context =
-            remember(viewModel, onEditNode) { ProtocolsDashboardContext(viewModel, onEditNode) }
-
+    ScreenScaffold(
+        screen = Screen.Protocols,
+        onNavigate = onNavigate,
+        scrollBehavior = ScreenScrollBehavior.None,
+    ) {
         Column(
             modifier =
                 Modifier

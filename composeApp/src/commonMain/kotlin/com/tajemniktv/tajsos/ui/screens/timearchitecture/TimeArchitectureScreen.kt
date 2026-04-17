@@ -17,12 +17,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.Screen
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
+/**
+ * Central time architecture entry point that collects system state and coordinates layout.
+ *
+ * @param viewModel Source of time architecture state.
+ * @param onEditNode Node edit callback.
+ * @param onNavigate Navigation callback.
+ */
 @Composable
-fun TimeArchitectureScreen(
+fun TimeArchitectureRoute(
     viewModel: MainViewModel,
     onEditNode: (Long) -> Unit,
+    onNavigate: (String) -> Unit,
 ) {
     val timeArchitectureSnapshot by viewModel.timeArchitectureSnapshot.collectAsState()
     var selectedHorizon by remember { mutableStateOf(TimeArchitectureHorizon.MONTH) }
@@ -42,17 +52,38 @@ fun TimeArchitectureScreen(
     val surface = TimeArchitectureDashboardSurface.MOBILE // Default for now
     val plan = remember(surface) { buildTimeArchitectureDashboardPlan(surface) }
 
-    LazyColumn(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .padding(TajsOSTheme.SpacingMd)
-                .padding(bottom = 80.dp),
-        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
+    TimeArchitectureScreen(
+        context = context,
+        plan = plan,
+        onNavigate = onNavigate,
+    )
+}
+
+/**
+ * Stateless time architecture screen content.
+ *
+ * @param context Time architecture dashboard context.
+ * @param plan Time architecture dashboard plan.
+ * @param onNavigate Navigation callback.
+ */
+@Composable
+fun TimeArchitectureScreen(
+    context: TimeArchitectureDashboardContext,
+    plan: TimeArchitectureDashboardPlan,
+    onNavigate: (String) -> Unit,
+) {
+    ScreenScaffold(
+        screen = Screen.TimeArchitecture,
+        onNavigate = onNavigate,
     ) {
-        plan.primary.forEach { block ->
-            item(key = block.id) {
-                TimeArchitectureDashboardBlocks.resolve(block.id)?.invoke(context)
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
+        ) {
+            plan.primary.forEach { block ->
+                item(key = block.id) {
+                    TimeArchitectureDashboardBlocks.resolve(block.id)?.invoke(context)
+                }
             }
         }
     }

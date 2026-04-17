@@ -12,31 +12,55 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
 
 /**
- * Minimal Health domain lens over shared system data.
+ * Central health entry point that collects system state and coordinates layout.
+ *
+ * @param viewModel Source of health state.
+ * @param onEditNode Node edit callback.
+ * @param onNavigate Navigation callback.
+ */
+@Composable
+fun HealthRoute(
+    viewModel: MainViewModel,
+    onEditNode: (Long) -> Unit,
+    onNavigate: (String) -> Unit,
+) {
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val surface = if (maxWidth > 900.dp) HealthDashboardSurface.DESKTOP else HealthDashboardSurface.MOBILE
+        val plan = remember(surface) { buildHealthDashboardPlan(surface) }
+        val context = remember(viewModel, onEditNode) { HealthDashboardContext(viewModel, onEditNode) }
+
+        HealthScreen(
+            context = context,
+            plan = plan,
+            onNavigate = onNavigate,
+        )
+    }
+}
+
+/**
+ * Stateless health screen content.
+ *
+ * @param context Health dashboard context.
+ * @param plan Health dashboard plan.
+ * @param onNavigate Navigation callback.
  */
 @Composable
 fun HealthScreen(
-    viewModel: MainViewModel,
-    onEditNode: (Long) -> Unit,
+    context: HealthDashboardContext,
+    plan: HealthDashboardPlan,
+    onNavigate: (String) -> Unit,
 ) {
-    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val surface =
-            if (maxWidth > 900.dp) {
-                HealthDashboardSurface.DESKTOP
-            } else {
-                HealthDashboardSurface.MOBILE
-            }
-        val plan = remember(surface) { buildHealthDashboardPlan(surface) }
-        val context =
-            remember(viewModel, onEditNode) { HealthDashboardContext(viewModel, onEditNode) }
-        ScreenScaffold {
-            Column(modifier = Modifier.fillMaxSize()) {
-                plan.primary.forEach { block ->
-                    HealthDashboardBlockRegistry.resolve(block.id)?.invoke(context)
-                }
+    ScreenScaffold(
+        screen = Screen.Health,
+        onNavigate = onNavigate,
+    ) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            plan.primary.forEach { block ->
+                HealthDashboardBlockRegistry.resolve(block.id)?.invoke(context)
             }
         }
     }

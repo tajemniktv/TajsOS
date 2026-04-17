@@ -13,14 +13,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
-@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+/**
+ * Central decisions entry point that collects system state and coordinates layout.
+ *
+ * @param viewModel Source of decisions state.
+ * @param onEditNode Node edit callback.
+ * @param onNavigate Navigation callback.
+ */
 @Composable
-fun DecisionsScreen(
+fun DecisionsRoute(
     viewModel: MainViewModel,
     onEditNode: (Long) -> Unit,
+    onNavigate: (String) -> Unit,
 ) {
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val surface =
@@ -32,11 +40,35 @@ fun DecisionsScreen(
         val plan = remember(surface) { buildDecisionsDashboardPlan(surface) }
         val context =
             remember(viewModel, onEditNode) { DecisionsDashboardContext(viewModel, onEditNode) }
-        ScreenScaffold {
-            Column(modifier = Modifier.fillMaxSize()) {
-                plan.primary.forEach { block ->
-                    DecisionsDashboardBlocks.resolve(block.id)?.invoke(context)
-                }
+
+        DecisionsScreen(
+            context = context,
+            plan = plan,
+            onNavigate = onNavigate,
+        )
+    }
+}
+
+/**
+ * Stateless decisions screen content.
+ *
+ * @param context Decisions dashboard context.
+ * @param plan Decisions dashboard plan.
+ * @param onNavigate Navigation callback.
+ */
+@Composable
+fun DecisionsScreen(
+    context: DecisionsDashboardContext,
+    plan: DecisionsDashboardPlan,
+    onNavigate: (String) -> Unit,
+) {
+    ScreenScaffold(
+        screen = Screen.Decisions,
+        onNavigate = onNavigate,
+    ) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            plan.primary.forEach { block ->
+                DecisionsDashboardBlocks.resolve(block.id)?.invoke(context)
             }
         }
     }

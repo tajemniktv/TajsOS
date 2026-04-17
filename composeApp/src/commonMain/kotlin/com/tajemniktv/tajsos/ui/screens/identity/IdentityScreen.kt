@@ -15,12 +15,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.Screen
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
+/**
+ * Central identity entry point that collects system state and coordinates layout.
+ *
+ * @param viewModel Source of identity state.
+ * @param onEditNode Node edit callback.
+ * @param onNavigate Navigation callback.
+ */
 @Composable
-fun IdentityScreen(
+fun IdentityRoute(
     viewModel: MainViewModel,
     onEditNode: (Long) -> Unit,
+    onNavigate: (String) -> Unit,
 ) {
     val lifeOSSignatureSnapshot by viewModel.lifeOSSignatureSnapshot.collectAsState()
     val lifeOSSecondBrainSnapshot by viewModel.lifeOSSecondBrainSnapshot.collectAsState()
@@ -40,13 +50,38 @@ fun IdentityScreen(
     val surface = IdentityDashboardSurface.MOBILE // Default for now
     val plan = remember(surface) { buildIdentityDashboardPlan(surface) }
 
-    LazyColumn(
-        modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd).padding(bottom = 80.dp),
-        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
+    IdentityScreen(
+        context = context,
+        plan = plan,
+        onNavigate = onNavigate,
+    )
+}
+
+/**
+ * Stateless identity screen content.
+ *
+ * @param context Identity dashboard context.
+ * @param plan Identity dashboard plan.
+ * @param onNavigate Navigation callback.
+ */
+@Composable
+fun IdentityScreen(
+    context: IdentityDashboardContext,
+    plan: IdentityDashboardPlan,
+    onNavigate: (String) -> Unit,
+) {
+    ScreenScaffold(
+        screen = Screen.Identity,
+        onNavigate = onNavigate,
     ) {
-        plan.primary.forEach { block ->
-            item(key = block.id) {
-                IdentityDashboardBlockRegistry.resolve(block.id)?.invoke(context)
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
+        ) {
+            plan.primary.forEach { block ->
+                item(key = block.id) {
+                    IdentityDashboardBlockRegistry.resolve(block.id)?.invoke(context)
+                }
             }
         }
     }

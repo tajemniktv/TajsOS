@@ -20,15 +20,24 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior
 import com.tajemniktv.tajsos.ui.components.screen.SplitScreenScaffold
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlin.time.Clock
 
+/**
+ * Central search entry point that collects system state and coordinates layout.
+ *
+ * @param viewModel Source of search state.
+ * @param onItemClick Item click callback.
+ * @param onNavigate Navigation callback.
+ */
 @Composable
-fun SearchScreen(
+fun SearchRoute(
     viewModel: MainViewModel,
     onItemClick: (Long) -> Unit,
+    onNavigate: (String) -> Unit,
 ) {
     val searchQuery by viewModel.searchQuery.collectAsState()
     val searchResults by viewModel.searchResults.collectAsState()
@@ -88,38 +97,63 @@ fun SearchScreen(
             if (maxWidth >= 1280.dp) SearchDashboardSurface.DESKTOP else SearchDashboardSurface.MOBILE
         val plan = remember(surface) { buildSearchDashboardPlan(surface) }
 
-        SplitScreenScaffold(
-            isSplitLayout = surface == SearchDashboardSurface.DESKTOP,
-            scrollBehavior = ScreenScrollBehavior.None,
-            primary = {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
-                ) {
-                    plan.primary.forEach { block ->
-                        SearchDashboardBlocks.resolve(block.id)?.invoke(context)
-                    }
-                }
-            },
-            secondary =
-                if (surface == SearchDashboardSurface.DESKTOP) {
-                    {
-                        Column(
-                            modifier =
-                                Modifier
-                                    .fillMaxSize()
-                                    .padding(top = 64.dp)
-                                    .verticalScroll(rememberScrollState()),
-                            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
-                        ) {
-                            plan.secondary.forEach { block ->
-                                SearchDashboardBlocks.resolve(block.id)?.invoke(context)
-                            }
-                        }
-                    }
-                } else {
-                    null
-                },
+        SearchScreen(
+            context = context,
+            plan = plan,
+            surface = surface,
+            onNavigate = onNavigate,
         )
     }
+}
+
+/**
+ * Stateless search screen content.
+ *
+ * @param context Search dashboard context.
+ * @param plan Search dashboard plan.
+ * @param surface Current UI surface mode.
+ * @param onNavigate Navigation callback.
+ */
+@Composable
+fun SearchScreen(
+    context: SearchDashboardContext,
+    plan: SearchDashboardPlan,
+    surface: SearchDashboardSurface,
+    onNavigate: (String) -> Unit,
+) {
+    SplitScreenScaffold(
+        isSplitLayout = surface == SearchDashboardSurface.DESKTOP,
+        screen = Screen.Search,
+        onNavigate = onNavigate,
+        scrollBehavior = ScreenScrollBehavior.None,
+        primary = {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+            ) {
+                plan.primary.forEach { block ->
+                    SearchDashboardBlocks.resolve(block.id)?.invoke(context)
+                }
+            }
+        },
+        secondary =
+            if (surface == SearchDashboardSurface.DESKTOP) {
+                {
+                    Column(
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .padding(top = 64.dp)
+                                .verticalScroll(rememberScrollState()),
+                        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+                    ) {
+                        plan.secondary.forEach { block ->
+                            SearchDashboardBlocks.resolve(block.id)?.invoke(context)
+                        }
+                    }
+                }
+            } else {
+                null
+            },
+    )
 }

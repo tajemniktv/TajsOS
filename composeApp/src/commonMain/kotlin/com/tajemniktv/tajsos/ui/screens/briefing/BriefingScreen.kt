@@ -52,6 +52,8 @@ import com.tajemniktv.tajsos.data.resolveDisplayName
 import com.tajemniktv.tajsos.data.taskStateOrNull
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.hazeSource
@@ -105,15 +107,13 @@ import kotlin.time.Instant
  * provided navigation and entry-creation callbacks.
  *
  * @param viewModel Source of UI state (dashboard, nodes, calendar entries, mode, profile) used to derive the view.
- * @param onNavigateTo Callback invoked with a destination Screen when an action requests navigation.
- * @param onNavigateToTasks Callback invoked to navigate specifically to the tasks screen.
+ * @param onNavigate Callback invoked with a destination route.
  * @param onNewEntry Callback invoked to start creating a new entry/capture from the briefing UI.
  */
 @Composable
-fun BriefingScreen(
+fun BriefingRoute(
     viewModel: MainViewModel,
-    onNavigateTo: (Screen) -> Unit,
-    onNavigateToTasks: () -> Unit,
+    onNavigate: (String) -> Unit,
     onNewEntry: () -> Unit,
 ) {
     val dashboardState by viewModel.dashboardUIState.collectAsState()
@@ -186,7 +186,7 @@ fun BriefingScreen(
                     todayNodes.firstOrNull()?.title
                         ?: stringResource(Res.string.briefing_action_continue_subtitle),
                 icon = Icons.Default.PlayArrow,
-                onClick = { onNavigateTo(Screen.Today) },
+                onClick = { onNavigate(Screen.Today.route) },
             ),
             BriefingAction(
                 titleRes = Res.string.briefing_action_notes,
@@ -197,7 +197,7 @@ fun BriefingScreen(
                         dashboardState.notesCount,
                     ),
                 icon = Icons.Default.Description,
-                onClick = { onNavigateTo(Screen.Notes) },
+                onClick = { onNavigate(Screen.Notes.route) },
             ),
             BriefingAction(
                 titleRes = Res.string.briefing_action_capture,
@@ -214,40 +214,95 @@ fun BriefingScreen(
                         dashboardState.tasksCount,
                     ),
                 icon = Icons.Default.Checklist,
-                onClick = onNavigateToTasks,
+                onClick = { onNavigate(Screen.Tasks.route) },
             ),
         )
 
-    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+    BriefingScreen(
+        greetingText = greetingText,
+        userName = userName,
+        modeLine = modeLine,
+        prioritiesLine =
+            pluralStringResource(
+                Res.plurals.briefing_priorities_count,
+                priorityCount,
+                priorityCount,
+            ),
+        eventsLine =
+            pluralStringResource(
+                Res.plurals.briefing_event_count,
+                todayEventCount,
+                todayEventCount,
+            ),
+        notesLine =
+            pluralStringResource(
+                Res.plurals.briefing_note_count,
+                dashboardState.notesCount,
+                dashboardState.notesCount,
+            ),
+        quickActions = quickActions,
+        upcomingTitle = upcomingEvent?.title,
+        upcomingTime = upcomingEvent?.startAt?.let(::formatClockTime),
+        recentNodes = recentNodes,
+        resumeNode = resumeNode,
+        onCapture = onNewEntry,
+        onNavigate = onNavigate,
+    )
+}
+
+/**
+ * calm, desktop-first orientation screen showing a lightweight daily briefing.
+ *
+ * @param greetingText Localized greeting (e.g., "Good morning").
+ * @param userName Display name shown alongside the greeting.
+ * @param modeLine Single-line status or mode label shown under the greeting.
+ * @param prioritiesLine Summary text for today's priority tasks.
+ * @param eventsLine Summary text for today's events.
+ * @param notesLine Summary text for recent notes.
+ * @param quickActions List of action descriptors used to render the quick-action cards.
+ * @param upcomingTitle Title of the next calendar entry, or `null` if none.
+ * @param upcomingTime Formatted time string for the upcoming entry, or `null` if none.
+ * @param recentNodes Two most recently updated nodes to display in the Recent card.
+ * @param resumeNode Node suggested for resuming work, or `null` if none.
+ * @param onCapture Callback invoked when the capture field is clicked.
+ * @param onNavigate Callback invoked with a destination route.
+ */
+@Composable
+fun BriefingScreen(
+    greetingText: String,
+    userName: String,
+    modeLine: String,
+    prioritiesLine: String,
+    eventsLine: String,
+    notesLine: String,
+    quickActions: List<BriefingAction>,
+    upcomingTitle: String?,
+    upcomingTime: String?,
+    recentNodes: List<NodeWithPin>,
+    resumeNode: NodeWithPin?,
+    onCapture: () -> Unit,
+    onNavigate: (String) -> Unit,
+) {
+    ScreenScaffold(
+        screen = Screen.Briefing,
+        onNavigate = onNavigate,
+        scrollBehavior = ScreenScrollBehavior.None,
+        contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp), // Briefing has custom padding
+    ) {
         BriefingMainPane(
             modifier = Modifier.fillMaxSize(),
             greetingText = greetingText,
             userName = userName,
             modeLine = modeLine,
-            prioritiesLine =
-                pluralStringResource(
-                    Res.plurals.briefing_priorities_count,
-                    priorityCount,
-                    priorityCount,
-                ),
-            eventsLine =
-                pluralStringResource(
-                    Res.plurals.briefing_event_count,
-                    todayEventCount,
-                    todayEventCount,
-                ),
-            notesLine =
-                pluralStringResource(
-                    Res.plurals.briefing_note_count,
-                    dashboardState.notesCount,
-                    dashboardState.notesCount,
-                ),
+            prioritiesLine = prioritiesLine,
+            eventsLine = eventsLine,
+            notesLine = notesLine,
             quickActions = quickActions,
-            upcomingTitle = upcomingEvent?.title,
-            upcomingTime = upcomingEvent?.startAt?.let(::formatClockTime),
+            upcomingTitle = upcomingTitle,
+            upcomingTime = upcomingTime,
             recentNodes = recentNodes,
             resumeNode = resumeNode,
-            onCapture = onNewEntry,
+            onCapture = onCapture,
         )
     }
 }
@@ -804,7 +859,10 @@ internal fun relativeHourDiff(
     updatedAt: Long,
 ): Long = ((nowMs - updatedAt) / 3_600_000L).coerceAtLeast(0L)
 
-private data class BriefingAction(
+/**
+ * Descriptor for a briefing quick action.
+ */
+data class BriefingAction(
     val titleRes: StringResource,
     val subtitle: String,
     val icon: ImageVector,

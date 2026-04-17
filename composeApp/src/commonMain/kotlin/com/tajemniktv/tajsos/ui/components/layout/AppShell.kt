@@ -77,7 +77,7 @@ fun AppShell(
     content: @Composable () -> Unit,
 ) {
     val currentScreen = Screen.fromRoute(currentDestination?.route)
-    val currentRoot = currentScreen?.let(Screen::sidebarContextRoot)
+    val currentRoot = currentScreen?.sidebarContextRoot
     val userName = userProfile.resolveDisplayName()
     val greeting = timeGreeting(userName)
     val protocolText =

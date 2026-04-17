@@ -125,6 +125,11 @@ sealed class Screen(
     open val breadcrumbParent: Screen? get() = null
 
     /**
+     * The canonical root destination for this screen used for sidebar highlighting.
+     */
+    open val sidebarContextRoot: Screen get() = breadcrumbParent?.sidebarContextRoot ?: this
+
+    /**
      * The list of child screens or tabs reachable from this screen.
      */
     open val children: List<Screen> get() = emptyList()
@@ -556,6 +561,7 @@ sealed class Screen(
         val paramName: String = "tab",
     ) : Screen("${parent.route}?$paramName=$subRoute", label, icon, isRoot = false) {
         override val breadcrumbParent: Screen = parent
+        override val sidebarContextRoot: Screen = parent
     }
 
     /**
@@ -748,23 +754,7 @@ sealed class Screen(
          * This ensures that detail screens (like [NoteDetail]) keep their respective root (like [Notes]) highlighted
          * in the sidebar.
          */
-        fun sidebarContextRoot(screen: Screen): Screen =
-            when (screen) {
-                NoteDetail -> Notes
-                TaskDetail -> Tasks
-                RecordDetail -> Notes
-                ProjectDetail -> Projects
-                AreaDetail -> Areas
-                CalendarSettings -> Settings
-                Templates -> Settings
-                Profile -> Settings
-                SettingsHealth -> Settings
-                SettingsAppearance -> Settings
-                SettingsFeaturePacks -> Settings
-                SettingsData -> Settings
-                SettingsDebug -> Settings
-                is Sub -> screen.parent
-                else -> screen
-            }
+        @Deprecated("Use Screen.sidebarContextRoot property", ReplaceWith("screen.sidebarContextRoot"))
+        fun sidebarContextRoot(screen: Screen): Screen = screen.sidebarContextRoot
     }
 }

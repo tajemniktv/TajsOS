@@ -41,6 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
 import com.tajemniktv.tajsos.ui.main.state.CalendarEntry
 import com.tajemniktv.tajsos.ui.main.state.EntryType
@@ -63,52 +64,51 @@ import kotlin.time.Clock
 import kotlin.time.Instant
 
 /**
- * Composes the calendar screen UI: a header with month navigation and sync, a month grid, and an agenda for the selected day.
+ * Central calendar entry point that collects system state and coordinates layout.
  *
- * The composable maintains local state for the currently displayed month and the currently selected date, collects calendar entries
- * from the provided view model, and wires interactions:
- * - navigating months and jumping to today update the displayed month and selection,
- * - sync triggers `viewModel.syncCalendars()`,
- * - selecting a date updates the agenda,
- * - tapping an agenda entry invokes `onEditNode` only when the entry is `EntryType.INTERNAL` and has a non-null `originalId`.
+ * @param viewModel Source of calendar state.
+ * @param onEditNode Node edit callback.
+ * @param onNavigate Navigation callback.
+ */
+@Composable
+fun CalendarRoute(
+    viewModel: MainViewModel,
+    onEditNode: (Long) -> Unit,
+    onNavigate: (String) -> Unit,
+) {
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val surface = if (maxWidth > 900.dp) CalendarDashboardSurface.DESKTOP else CalendarDashboardSurface.MOBILE
+        val plan = remember(surface) { buildCalendarDashboardPlan(surface) }
+        val context = remember(viewModel, onEditNode) { CalendarDashboardContext(viewModel, onEditNode) }
+
+        CalendarScreen(
+            context = context,
+            plan = plan,
+            onNavigate = onNavigate,
+        )
+    }
+}
+
+/**
+ * Stateless calendar screen content.
  *
- * @param onEditNode Callback invoked with an entry's `originalId` when an editable internal entry is selected.
+ * @param context Calendar dashboard context.
+ * @param plan Calendar dashboard plan.
+ * @param onNavigate Navigation callback.
  */
 @Composable
 fun CalendarScreen(
-    viewModel: MainViewModel,
-    onEditNode: (Long) -> Unit,
+    context: CalendarDashboardContext,
+    plan: CalendarDashboardPlan,
+    onNavigate: (String) -> Unit,
 ) {
-    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val surface =
-            if (maxWidth >
-                900.dp
-            ) {
-                CalendarDashboardSurface.DESKTOP
-            } else {
-                CalendarDashboardSurface.MOBILE
-            }
-        val plan =
-            remember(surface) {
-                buildCalendarDashboardPlan(
-                    surface,
-                )
-            }
-        val context =
-            remember(viewModel, onEditNode) {
-                CalendarDashboardContext(
-                    viewModel,
-                    onEditNode,
-                )
-            }
-        ScreenScaffold {
-            Column(modifier = Modifier.fillMaxSize()) {
-                plan.primary.forEach { block ->
-                    CalendarDashboardBlocks
-                        .resolve(
-                            block.id,
-                        )?.invoke(context)
-                }
+    ScreenScaffold(
+        screen = Screen.Calendar,
+        onNavigate = onNavigate,
+    ) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            plan.primary.forEach { block ->
+                CalendarDashboardBlocks.resolve(block.id)?.invoke(context)
             }
         }
     }

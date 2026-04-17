@@ -15,52 +15,60 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.Screen
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior
 
 /**
- * Displays the inbox triage UI with incoming captures, recent entries, and per-item actions.
+ * Central inbox entry point that collects system state and coordinates layout.
  *
- * Delegates node operations (add, update status, pin/unpin, archive, mark processed) to the provided ViewModel.
+ * @param viewModel Source of inbox state.
+ * @param onEditNode Node edit callback.
+ * @param onNavigate Navigation callback.
+ */
+@Composable
+fun InboxRoute(
+    viewModel: MainViewModel,
+    onEditNode: (Long) -> Unit,
+    onNavigate: (String) -> Unit,
+) {
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val surface = if (maxWidth > 900.dp) InboxDashboardSurface.DESKTOP else InboxDashboardSurface.MOBILE
+        val plan = remember(surface) { buildInboxDashboardPlan(surface) }
+        val context = remember(viewModel, onEditNode) { InboxDashboardContext(viewModel, onEditNode) }
+
+        InboxScreen(
+            context = context,
+            plan = plan,
+            onNavigate = onNavigate,
+        )
+    }
+}
+
+/**
+ * Stateless inbox screen content.
  *
- * @param onEditNode Callback invoked with a node ID when the user requests to edit that node.
+ * @param context Inbox dashboard context.
+ * @param plan Inbox dashboard plan.
+ * @param onNavigate Navigation callback.
  */
 @Composable
 fun InboxScreen(
-    viewModel: MainViewModel,
-    onEditNode: (Long) -> Unit,
+    context: InboxDashboardContext,
+    plan: InboxDashboardPlan,
+    onNavigate: (String) -> Unit,
 ) {
-    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val surface =
-            if (maxWidth >
-                900.dp
-            ) {
-                InboxDashboardSurface.DESKTOP
-            } else {
-                InboxDashboardSurface.MOBILE
-            }
-        val plan =
-            remember(surface) {
-                buildInboxDashboardPlan(
-                    surface,
-                )
-            }
-        val context =
-            remember(viewModel, onEditNode) {
-                InboxDashboardContext(
-                    viewModel,
-                    onEditNode,
-                )
-            }
+    ScreenScaffold(
+        screen = Screen.Inbox,
+        onNavigate = onNavigate,
+        scrollBehavior = ScreenScrollBehavior.BodyScroll,
+    ) {
         Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(bottom = 80.dp),
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(16.dp),
         ) {
             plan.primary.forEach { block ->
-                InboxDashboardBlockRegistry
-                    .resolve(block.id)
-                    ?.invoke(context)
+                InboxDashboardBlockRegistry.resolve(block.id)?.invoke(context)
             }
         }
     }

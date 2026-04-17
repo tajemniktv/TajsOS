@@ -17,12 +17,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.Screen
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
+/**
+ * Central rules entry point that collects system state and coordinates layout.
+ *
+ * @param viewModel Source of rules state.
+ * @param onEditNode Node edit callback.
+ * @param onNavigate Navigation callback.
+ */
 @Composable
-fun RulesScreen(
+fun RulesRoute(
     viewModel: MainViewModel,
     onEditNode: (Long) -> Unit,
+    onNavigate: (String) -> Unit,
 ) {
     val personalRulesSnapshot by viewModel.personalRulesSnapshot.collectAsState()
     val playbookSnapshot by viewModel.playbookSnapshot.collectAsState()
@@ -57,13 +67,38 @@ fun RulesScreen(
     val surface = RulesDashboardSurface.MOBILE // Default for now
     val plan = remember(surface) { buildRulesDashboardPlan(surface) }
 
-    LazyColumn(
-        modifier = Modifier.fillMaxSize().padding(TajsOSTheme.SpacingMd).padding(bottom = 80.dp),
-        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
+    RulesScreen(
+        context = context,
+        plan = plan,
+        onNavigate = onNavigate,
+    )
+}
+
+/**
+ * Stateless rules screen content.
+ *
+ * @param context Rules dashboard context.
+ * @param plan Rules dashboard plan.
+ * @param onNavigate Navigation callback.
+ */
+@Composable
+fun RulesScreen(
+    context: RulesDashboardContext,
+    plan: RulesDashboardPlan,
+    onNavigate: (String) -> Unit,
+) {
+    ScreenScaffold(
+        screen = Screen.Rules,
+        onNavigate = onNavigate,
     ) {
-        plan.primary.forEach { block ->
-            item(key = block.id) {
-                RulesDashboardBlocks.resolve(block.id)?.invoke(context)
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
+        ) {
+            plan.primary.forEach { block ->
+                item(key = block.id) {
+                    RulesDashboardBlocks.resolve(block.id)?.invoke(context)
+                }
             }
         }
     }

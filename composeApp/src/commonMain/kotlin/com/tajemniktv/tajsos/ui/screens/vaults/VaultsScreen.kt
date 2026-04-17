@@ -56,6 +56,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.Screen
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
 import com.tajemniktv.tajsos.ui.lens.LensUiContract
 import com.tajemniktv.tajsos.ui.main.state.VaultsSnapshot
 import com.tajemniktv.tajsos.ui.screens.GroupedOpenLoopSection
@@ -88,20 +90,51 @@ import tajsos.composeapp.generated.resources.type_task
 import kotlin.time.Clock
 import kotlin.time.Instant
 
+/**
+ * Central vaults entry point that collects system state and coordinates layout.
+ *
+ * @param viewModel Source of vaults state.
+ * @param onEditNode Node edit callback.
+ * @param onNavigate Navigation callback.
+ */
 @Composable
-@OptIn(ExperimentalLayoutApi::class)
-fun VaultsScreen(
+fun VaultsRoute(
     viewModel: MainViewModel,
     onEditNode: (Long) -> Unit,
+    onNavigate: (String) -> Unit,
 ) {
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val surface =
-            if (maxWidth > 900.dp) VaultsDashboardSurface.DESKTOP else VaultsDashboardSurface.MOBILE
+        val surface = if (maxWidth > 900.dp) VaultsDashboardSurface.DESKTOP else VaultsDashboardSurface.MOBILE
         val plan = remember(surface) { buildVaultsDashboardPlan(surface) }
-        val context =
-            remember(viewModel, onEditNode) { VaultsDashboardContext(viewModel, onEditNode) }
+        val context = remember(viewModel, onEditNode) { VaultsDashboardContext(viewModel, onEditNode) }
+
+        VaultsScreen(
+            context = context,
+            plan = plan,
+            onNavigate = onNavigate,
+        )
+    }
+}
+
+/**
+ * Stateless vaults screen content.
+ *
+ * @param context Vaults dashboard context.
+ * @param plan Vaults dashboard plan.
+ * @param onNavigate Navigation callback.
+ */
+@Composable
+fun VaultsScreen(
+    context: VaultsDashboardContext,
+    plan: VaultsDashboardPlan,
+    onNavigate: (String) -> Unit,
+) {
+    ScreenScaffold(
+        screen = Screen.Vaults,
+        onNavigate = onNavigate,
+    ) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(bottom = 80.dp),
+            modifier = Modifier.fillMaxSize(),
         ) {
             plan.primary.forEach { block ->
                 item(key = block.id) {

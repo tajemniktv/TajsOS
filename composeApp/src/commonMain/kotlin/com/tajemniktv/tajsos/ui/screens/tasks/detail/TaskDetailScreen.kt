@@ -54,16 +54,24 @@ private const val OneDayMillis = 24L * 60L * 60L * 1000L
 
 /**
  * Typed task detail entrypoint with a desktop-first operator layout.
+ *
+ * @param viewModel Source of task state.
+ * @param taskId ID of the task to display.
+ * @param onBack Callback to go back.
+ * @param onNavigateToNode Callback to navigate to another node.
+ * @param onNavigateToSearch Callback to navigate to search.
+ * @param isDesktop Whether the current environment is a desktop layout.
+ * @param onNavigate Navigation callback.
  */
 @Composable
-fun TaskDetailScreen(
+fun TaskDetailRoute(
     viewModel: MainViewModel,
     taskId: Long,
     onBack: () -> Unit,
     onNavigateToNode: (Long) -> Unit,
     onNavigateToSearch: () -> Unit,
     isDesktop: Boolean = false,
-    screenHeaderController: ScreenHeaderController? = null,
+    onNavigate: (String) -> Unit,
 ) {
     val nodes by viewModel.allNodes.collectAsState()
     val areas by viewModel.allAreas.collectAsState()
@@ -87,7 +95,7 @@ fun TaskDetailScreen(
             onNavigateToNode = onNavigateToNode,
             onNavigateToSearch = onNavigateToSearch,
             isDesktop = isDesktop,
-            screenHeaderController = screenHeaderController,
+            onNavigate = onNavigate,
         )
         return
     }
@@ -348,54 +356,78 @@ fun TaskDetailScreen(
 
         val plan = remember(surface) { buildTaskDetailPlan(surface) }
 
-        SplitScreenScaffold(
-            isSplitLayout = surface == TaskDetailSurface.DESKTOP,
-            screenHeaderController = screenHeaderController,
-            screenHeader =
-                ScreenHeaderModel(
-                    breadcrumbs = screenBreadcrumbs(Screen.TaskDetail),
-                    title = task.title,
-                ),
-            backgroundColor = TajsOSTheme.Background,
-            scrollBehavior = ScreenScrollBehavior.PaneScroll,
-            header = {
-                if (surface == TaskDetailSurface.DESKTOP) {
-                    TaskDetailBlocks.resolve("task_header")?.invoke(context)
-                }
-            },
-            primary = {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
-                ) {
-                    val blocks =
-                        if (surface == TaskDetailSurface.DESKTOP) {
-                            plan.primary.filterNot { it.id == "task_header" }
-                        } else {
-                            plan.primary
-                        }
-                    blocks.forEach { block ->
-                        TaskDetailBlocks.resolve(block.id)?.invoke(context)
-                    }
-                }
-            },
-            secondary =
-                if (surface == TaskDetailSurface.DESKTOP) {
-                    {
-                        Column(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
-                        ) {
-                            plan.secondary.forEach { block ->
-                                TaskDetailBlocks.resolve(block.id)?.invoke(context)
-                            }
-                        }
-                    }
-                } else {
-                    null
-                },
+        TaskDetailScreen(
+            context = context,
+            plan = plan,
+            surface = surface,
+            onNavigate = onNavigate,
         )
     }
+}
+
+/**
+ * Stateless task detail screen content.
+ *
+ * @param context Task detail context.
+ * @param plan Task detail plan.
+ * @param surface Current UI surface mode.
+ * @param onNavigate Navigation callback.
+ */
+@Composable
+fun TaskDetailScreen(
+    context: TaskDetailContext,
+    plan: TaskDetailPlan,
+    surface: TaskDetailSurface,
+    onNavigate: (String) -> Unit,
+) {
+    SplitScreenScaffold(
+        isSplitLayout = surface == TaskDetailSurface.DESKTOP,
+        screen = Screen.TaskDetail,
+        onNavigate = onNavigate,
+        screenHeader =
+            ScreenHeaderModel(
+                breadcrumbs = screenBreadcrumbs(Screen.TaskDetail),
+                title = context.task.title,
+            ),
+        backgroundColor = TajsOSTheme.Background,
+        scrollBehavior = ScreenScrollBehavior.PaneScroll,
+        header = {
+            if (surface == TaskDetailSurface.DESKTOP) {
+                TaskDetailBlocks.resolve("task_header")?.invoke(context)
+            }
+        },
+        primary = {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
+            ) {
+                val blocks =
+                    if (surface == TaskDetailSurface.DESKTOP) {
+                        plan.primary.filterNot { it.id == "task_header" }
+                    } else {
+                        plan.primary
+                    }
+                blocks.forEach { block ->
+                    TaskDetailBlocks.resolve(block.id)?.invoke(context)
+                }
+            }
+        },
+        secondary =
+            if (surface == TaskDetailSurface.DESKTOP) {
+                {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
+                    ) {
+                        plan.secondary.forEach { block ->
+                            TaskDetailBlocks.resolve(block.id)?.invoke(context)
+                        }
+                    }
+                }
+            } else {
+                null
+            },
+    )
 }
 
 private fun NodeEntity.toSubtaskUi(): TaskSubtaskUi {

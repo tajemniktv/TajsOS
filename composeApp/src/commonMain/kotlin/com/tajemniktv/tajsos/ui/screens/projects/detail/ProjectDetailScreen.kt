@@ -71,16 +71,23 @@ import tajsos.composeapp.generated.resources.project_set_status
 import tajsos.composeapp.generated.resources.screen_project
 
 /**
- * Project mission-control detail screen scoped to one project outcome.
+ * Project mission-control detail route that collects state and coordinates interactions.
+ *
+ * @param viewModel Source of project state.
+ * @param projectId ID of the project to display.
+ * @param onEditNode Callback to edit a node.
+ * @param onBack Callback to go back.
+ * @param isDesktop Whether the current environment is a desktop layout.
+ * @param onNavigate Navigation callback.
  */
 @Composable
-fun ProjectDetailScreen(
+fun ProjectDetailRoute(
     viewModel: MainViewModel,
     projectId: Long,
     onEditNode: (Long) -> Unit,
     onBack: () -> Unit,
     isDesktop: Boolean = false,
-    screenHeaderController: ScreenHeaderController? = null,
+    onNavigate: (String) -> Unit,
 ) {
     val nodes by viewModel.allNodes.collectAsState()
     val allAreas by viewModel.allAreas.collectAsState()
@@ -223,31 +230,6 @@ fun ProjectDetailScreen(
         viewModel.setLastActiveContext(projectId, project.areaId)
     }
 
-    val actions: @Composable RowScope.() -> Unit = {
-        IconButton(onClick = { showStatusDialog = true }) {
-            Icon(Icons.Default.Tune, contentDescription = null, modifier = Modifier.size(18.dp))
-        }
-        IconButton(onClick = { onEditNode(projectId) }) {
-            Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(18.dp))
-        }
-        IconButton(onClick = { viewModel.updateNode(project.copy(isFrozen = !project.isFrozen)) }) {
-            Icon(
-                if (project.isFrozen) Icons.Default.WbSunny else Icons.Default.Schedule,
-                contentDescription = null,
-                tint = if (project.isFrozen) TajsOSTheme.Primary else TajsOSTheme.Muted,
-                modifier = Modifier.size(18.dp),
-            )
-        }
-        IconButton(
-            onClick = {
-                viewModel.archiveNode(project)
-                onBack()
-            },
-        ) {
-            Icon(Icons.Default.Delete, contentDescription = null, modifier = Modifier.size(18.dp))
-        }
-    }
-
     val context =
         ProjectDetailContext(
             viewModel = viewModel,
@@ -290,67 +272,126 @@ fun ProjectDetailScreen(
 
         val plan = remember(surface) { buildProjectDetailPlan(surface) }
 
-        SplitScreenScaffold(
-            isSplitLayout = surface == ProjectDetailSurface.DESKTOP,
-            screenHeaderController = screenHeaderController,
-            screenHeader =
-                ScreenHeaderModel(
-                    breadcrumbs = screenBreadcrumbs(Screen.ProjectDetail),
-                    title = project.title,
-                    subtitle = stringResource(Res.string.screen_project),
-                    actions = actions,
-                ),
-            backgroundColor = TajsOSTheme.Background,
-            scrollBehavior = ScreenScrollBehavior.PaneScroll,
-            header = {
-                if (surface == ProjectDetailSurface.DESKTOP) {
-                    ProjectDetailBlockRegistry.resolve("project_header")?.invoke(context)
-                    ProjectDetailBlockRegistry.resolve("project_hero")?.invoke(context)
-                }
+        ProjectDetailScreen(
+            context = context,
+            plan = plan,
+            surface = surface,
+            onBack = onBack,
+            onNavigate = onNavigate,
+            showStatusDialog = showStatusDialog,
+            onDismissStatusDialog = { showStatusDialog = false },
+        )
+    }
+}
+
+/**
+ * Stateless project detail screen content.
+ *
+ * @param context Project detail context.
+ * @param plan Project detail plan.
+ * @param surface Current UI surface mode.
+ * @param onBack Callback to go back.
+ * @param onNavigate Navigation callback.
+ * @param showStatusDialog Whether to show the status dialog.
+ * @param onDismissStatusDialog Callback to dismiss the status dialog.
+ */
+@Composable
+fun ProjectDetailScreen(
+    context: ProjectDetailContext,
+    plan: ProjectDetailPlan,
+    surface: ProjectDetailSurface,
+    onBack: () -> Unit,
+    onNavigate: (String) -> Unit,
+    showStatusDialog: Boolean,
+    onDismissStatusDialog: () -> Unit,
+) {
+    val project = context.project
+    val actions: @Composable RowScope.() -> Unit = {
+        IconButton(onClick = { context.onStatusClick() }) {
+            Icon(Icons.Default.Tune, contentDescription = null, modifier = Modifier.size(18.dp))
+        }
+        IconButton(onClick = { context.onEditNode(project.id) }) {
+            Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(18.dp))
+        }
+        IconButton(onClick = { context.viewModel.updateNode(project.copy(isFrozen = !project.isFrozen)) }) {
+            Icon(
+                if (project.isFrozen) Icons.Default.WbSunny else Icons.Default.Schedule,
+                contentDescription = null,
+                tint = if (project.isFrozen) TajsOSTheme.Primary else TajsOSTheme.Muted,
+                modifier = Modifier.size(18.dp),
+            )
+        }
+        IconButton(
+            onClick = {
+                context.viewModel.archiveNode(project)
+                onBack()
             },
-            primary = {
-                Column(
-                    modifier = Modifier.fillMaxWidth().fillMaxHeight(),
-                    verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp),
-                ) {
-                    if (surface == ProjectDetailSurface.DESKTOP) {
-                        ProjectDetailBlockRegistry.resolve("project_tabs")?.invoke(context)
-                        ProjectDetailBlockRegistry.resolve("project_content")?.invoke(context)
-                    } else {
-                        plan.primary.forEach { block ->
+        ) {
+            Icon(Icons.Default.Delete, contentDescription = null, modifier = Modifier.size(18.dp))
+        }
+    }
+
+    SplitScreenScaffold(
+        isSplitLayout = surface == ProjectDetailSurface.DESKTOP,
+        screen = Screen.ProjectDetail,
+        onNavigate = onNavigate,
+        screenHeader =
+            ScreenHeaderModel(
+                breadcrumbs = screenBreadcrumbs(Screen.ProjectDetail),
+                title = project.title,
+                subtitle = stringResource(Res.string.screen_project),
+                actions = actions,
+            ),
+        backgroundColor = TajsOSTheme.Background,
+        scrollBehavior = ScreenScrollBehavior.PaneScroll,
+        header = {
+            if (surface == ProjectDetailSurface.DESKTOP) {
+                ProjectDetailBlockRegistry.resolve("project_header")?.invoke(context)
+                ProjectDetailBlockRegistry.resolve("project_hero")?.invoke(context)
+            }
+        },
+        primary = {
+            Column(
+                modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+                verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp),
+            ) {
+                if (surface == ProjectDetailSurface.DESKTOP) {
+                    ProjectDetailBlockRegistry.resolve("project_tabs")?.invoke(context)
+                    ProjectDetailBlockRegistry.resolve("project_content")?.invoke(context)
+                } else {
+                    plan.primary.forEach { block ->
+                        ProjectDetailBlockRegistry.resolve(block.id)?.invoke(context)
+                    }
+                }
+            }
+        },
+        secondary =
+            if (surface == ProjectDetailSurface.DESKTOP) {
+                {
+                    Column(
+                        modifier = Modifier.fillMaxWidth().width(320.dp).fillMaxHeight(),
+                        verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp),
+                    ) {
+                        plan.secondary.forEach { block ->
                             ProjectDetailBlockRegistry.resolve(block.id)?.invoke(context)
                         }
                     }
                 }
+            } else {
+                null
             },
-            secondary =
-                if (surface == ProjectDetailSurface.DESKTOP) {
-                    {
-                        Column(
-                            modifier = Modifier.fillMaxWidth().width(320.dp).fillMaxHeight(),
-                            verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp),
-                        ) {
-                            plan.secondary.forEach { block ->
-                                ProjectDetailBlockRegistry.resolve(block.id)?.invoke(context)
-                            }
-                        }
-                    }
-                } else {
-                    null
-                },
-        )
-    }
+    )
 
     if (showStatusDialog) {
         SelectorDialog(
             show = true,
-            onDismiss = { showStatusDialog = false },
+            onDismiss = onDismissStatusDialog,
             title = stringResource(Res.string.project_set_status),
             options = listOf("active", "on_hold", "someday"),
             selectedOption = project.projectStateOrNull()?.toNodeStatus() ?: project.status,
             onSelect = { status ->
-                viewModel.updateNodeStatus(project, status)
-                showStatusDialog = false
+                context.viewModel.updateNodeStatus(project, status)
+                onDismissStatusDialog()
             },
             optionName = { it },
             optionIcon = { status ->

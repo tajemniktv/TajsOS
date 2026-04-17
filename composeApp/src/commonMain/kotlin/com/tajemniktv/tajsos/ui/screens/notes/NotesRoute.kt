@@ -36,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.isNoteItem
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
 import com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior
@@ -52,6 +53,7 @@ import kotlinx.coroutines.launch
 fun NotesRoute(
     viewModel: MainViewModel,
     onNavigateToNode: (Long) -> Unit,
+    onNavigate: (String) -> Unit,
     initialSelectedNoteId: Long? = null,
 ) {
     val allNodes by viewModel.allNodes.collectAsState()
@@ -158,7 +160,11 @@ fun NotesRoute(
             }
         }
 
-    ScreenScaffold(scrollBehavior = ScreenScrollBehavior.None) {
+    ScreenScaffold(
+        screen = Screen.Notes,
+        onNavigate = onNavigate,
+        scrollBehavior = ScreenScrollBehavior.None,
+    ) {
         BoxWithConstraints(
             modifier = Modifier.fillMaxSize(),
         ) {

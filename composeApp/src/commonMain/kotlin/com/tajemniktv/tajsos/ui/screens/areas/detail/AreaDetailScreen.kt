@@ -55,15 +55,26 @@ import tajsos.composeapp.generated.resources.area_detail_responsibility_fallback
 import tajsos.composeapp.generated.resources.detail_unassign
 import kotlin.time.Clock
 
+/**
+ * Area detail route that collects system state and coordinates interactions.
+ *
+ * @param viewModel Source of area state.
+ * @param areaId ID of the area to display.
+ * @param onNavigateToProject Project navigation callback.
+ * @param onEditNode Node edit callback.
+ * @param onBack Callback to go back.
+ * @param isDesktop Whether the current environment is a desktop layout.
+ * @param onNavigate Navigation callback.
+ */
 @Composable
-fun AreaDetailScreen(
+fun AreaDetailRoute(
     viewModel: MainViewModel,
     areaId: Long,
     onNavigateToProject: (Long) -> Unit,
     onEditNode: (Long) -> Unit,
     onBack: () -> Unit,
     isDesktop: Boolean = false,
-    screenHeaderController: ScreenHeaderController? = null,
+    onNavigate: (String) -> Unit,
 ) {
     val nodes by viewModel.allNodes.collectAsState()
     val nodeWithPin = remember(nodes, areaId) { nodes.find { it.node.id == areaId } }
@@ -154,15 +165,6 @@ fun AreaDetailScreen(
 
     LaunchedEffect(areaId) { viewModel.setLastActiveContext(null, areaId) }
 
-    val actions: @Composable RowScope.() -> Unit = {
-        IconButton(onClick = {
-            viewModel.archiveNode(area)
-            onBack()
-        }) {
-            Icon(Icons.Default.Delete, contentDescription = null, modifier = Modifier.size(18.dp))
-        }
-    }
-
     val context =
         AreaDetailContext(
             viewModel = viewModel,
@@ -202,49 +204,89 @@ fun AreaDetailScreen(
 
         val plan = remember(surface) { buildAreaDetailPlan(surface) }
 
-        SplitScreenScaffold(
-            isSplitLayout = surface == AreaDetailSurface.DESKTOP,
-            screenHeaderController = screenHeaderController,
-            screenHeader =
-                ScreenHeaderModel(
-                    breadcrumbs = screenBreadcrumbs(Screen.AreaDetail),
-                    title = area.title,
-                    subtitle = healthLabel,
-                    actions = actions,
-                ),
-            backgroundColor = TajsOSTheme.Background,
-            scrollBehavior = ScreenScrollBehavior.PaneScroll,
-            primary = {
-                Column(
-                    modifier = Modifier.fillMaxWidth().fillMaxHeight(),
-                    verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp),
-                ) {
-                    val blocks =
-                        if (surface == AreaDetailSurface.DESKTOP) {
-                            plan.primary.filterNot { it.id == "area_sidebar" }
-                        } else {
-                            plan.primary
-                        }
-                    blocks.forEach { block ->
-                        AreaDetailBlocks.resolve(block.id)?.invoke(context)
-                    }
-                }
-            },
-            secondary =
-                if (surface == AreaDetailSurface.DESKTOP) {
-                    {
-                        Column(
-                            modifier = Modifier.fillMaxWidth().width(320.dp).fillMaxHeight(),
-                            verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp),
-                        ) {
-                            plan.secondary.forEach { block ->
-                                AreaDetailBlocks.resolve(block.id)?.invoke(context)
-                            }
-                        }
-                    }
-                } else {
-                    null
-                },
+        AreaDetailScreen(
+            context = context,
+            plan = plan,
+            surface = surface,
+            healthLabel = healthLabel,
+            onBack = onBack,
+            onNavigate = onNavigate,
         )
     }
+}
+
+/**
+ * Stateless area detail screen content.
+ *
+ * @param context Area detail context.
+ * @param plan Area detail plan.
+ * @param surface Current UI surface mode.
+ * @param healthLabel Formatted health status label.
+ * @param onBack Callback to go back.
+ * @param onNavigate Navigation callback.
+ */
+@Composable
+fun AreaDetailScreen(
+    context: AreaDetailContext,
+    plan: AreaDetailPlan,
+    surface: AreaDetailSurface,
+    healthLabel: String,
+    onBack: () -> Unit,
+    onNavigate: (String) -> Unit,
+) {
+    val area = context.area
+    val actions: @Composable RowScope.() -> Unit = {
+        IconButton(onClick = {
+            context.viewModel.archiveNode(area)
+            onBack()
+        }) {
+            Icon(Icons.Default.Delete, contentDescription = null, modifier = Modifier.size(18.dp))
+        }
+    }
+
+    SplitScreenScaffold(
+        isSplitLayout = surface == AreaDetailSurface.DESKTOP,
+        screen = Screen.AreaDetail,
+        onNavigate = onNavigate,
+        screenHeader =
+            ScreenHeaderModel(
+                breadcrumbs = screenBreadcrumbs(Screen.AreaDetail),
+                title = area.title,
+                subtitle = healthLabel,
+                actions = actions,
+            ),
+        backgroundColor = TajsOSTheme.Background,
+        scrollBehavior = ScreenScrollBehavior.PaneScroll,
+        primary = {
+            Column(
+                modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+                verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp),
+            ) {
+                val blocks =
+                    if (surface == AreaDetailSurface.DESKTOP) {
+                        plan.primary.filterNot { it.id == "area_sidebar" }
+                    } else {
+                        plan.primary
+                    }
+                blocks.forEach { block ->
+                    AreaDetailBlocks.resolve(block.id)?.invoke(context)
+                }
+            }
+        },
+        secondary =
+            if (surface == AreaDetailSurface.DESKTOP) {
+                {
+                    Column(
+                        modifier = Modifier.fillMaxWidth().width(320.dp).fillMaxHeight(),
+                        verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp),
+                    ) {
+                        plan.secondary.forEach { block ->
+                            AreaDetailBlocks.resolve(block.id)?.invoke(context)
+                        }
+                    }
+                }
+            } else {
+                null
+            },
+    )
 }

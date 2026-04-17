@@ -30,63 +30,61 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.cards.NodeCard
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
 import com.tajemniktv.tajsos.ui.main.state.PhysicalLogisticsSnapshot
 import com.tajemniktv.tajsos.ui.screens.GroupedOpenLoopSection
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
-import org.jetbrains.compose.resources.stringResource
-import tajsos.composeapp.generated.resources.Res
-import tajsos.composeapp.generated.resources.places_add_campus_location
-import tajsos.composeapp.generated.resources.places_add_home_zone
-import tajsos.composeapp.generated.resources.places_add_place
-import tajsos.composeapp.generated.resources.places_class_bring_list
-import tajsos.composeapp.generated.resources.places_dont_forget_set
-import tajsos.composeapp.generated.resources.places_ensure_travel_pack_template
-import tajsos.composeapp.generated.resources.places_event_prep_list
-import tajsos.composeapp.generated.resources.places_leave_home_checklist
-import tajsos.composeapp.generated.resources.places_packing_list
-import tajsos.composeapp.generated.resources.places_physical_logistics_note
-import tajsos.composeapp.generated.resources.places_placeholder_list_title
-import tajsos.composeapp.generated.resources.places_placeholder_logistics_notes
-import tajsos.composeapp.generated.resources.places_placeholder_place_name
-import tajsos.composeapp.generated.resources.places_what_to_bring
-
+/**
+ * Central places entry point that collects system state and coordinates layout.
+ *
+ * @param viewModel Source of places state.
+ * @param onEditNode Node edit callback.
+ * @param onNavigate Navigation callback.
+ */
 @Composable
-@OptIn(ExperimentalLayoutApi::class)
-fun PlacesScreen(
+fun PlacesRoute(
     viewModel: MainViewModel,
     onEditNode: (Long) -> Unit,
+    onNavigate: (String) -> Unit,
 ) {
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val surface =
-            if (maxWidth >
-                900.dp
-            ) {
-                PlacesDashboardSurface.DESKTOP
-            } else {
-                PlacesDashboardSurface.MOBILE
-            }
-        val plan =
-            remember(surface) {
-                buildPlacesDashboardPlan(
-                    surface,
-                )
-            }
-        val context =
-            remember(viewModel, onEditNode) {
-                PlacesDashboardContext(
-                    viewModel,
-                    onEditNode,
-                )
-            }
+        val surface = if (maxWidth > 900.dp) PlacesDashboardSurface.DESKTOP else PlacesDashboardSurface.MOBILE
+        val plan = remember(surface) { buildPlacesDashboardPlan(surface) }
+        val context = remember(viewModel, onEditNode) { PlacesDashboardContext(viewModel, onEditNode) }
+
+        PlacesScreen(
+            context = context,
+            plan = plan,
+            onNavigate = onNavigate,
+        )
+    }
+}
+
+/**
+ * Stateless places screen content.
+ *
+ * @param context Places dashboard context.
+ * @param plan Places dashboard plan.
+ * @param onNavigate Navigation callback.
+ */
+@Composable
+fun PlacesScreen(
+    context: PlacesDashboardContext,
+    plan: PlacesDashboardPlan,
+    onNavigate: (String) -> Unit,
+) {
+    ScreenScaffold(
+        screen = Screen.Places,
+        onNavigate = onNavigate,
+    ) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(bottom = 80.dp),
+            modifier = Modifier.fillMaxSize(),
         ) {
             plan.primary.forEach { block ->
                 item(key = block.id) {
-                    PlacesDashboardBlockRegistry
-                        .resolve(block.id)
-                        ?.invoke(context)
+                    PlacesDashboardBlockRegistry.resolve(block.id)?.invoke(context)
                 }
             }
         }

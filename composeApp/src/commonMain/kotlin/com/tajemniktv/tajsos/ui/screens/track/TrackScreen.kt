@@ -18,13 +18,24 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.Screen
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlin.math.roundToInt
 
+/**
+ * Central track entry point that collects system state and coordinates layout.
+ *
+ * @param viewModel Source of track state.
+ * @param onNavigate Navigation callback.
+ */
 @Composable
-fun TrackScreen(viewModel: MainViewModel) {
+fun TrackRoute(
+    viewModel: MainViewModel,
+    onNavigate: (String) -> Unit,
+) {
     val trackEntries by viewModel.trackEntries.collectAsState()
     val medications by viewModel.medications.collectAsState()
 
@@ -111,17 +122,39 @@ fun TrackScreen(viewModel: MainViewModel) {
     val surface = TrackDashboardSurface.MOBILE // Default for now
     val plan = remember(surface) { buildTrackDashboardPlan(surface) }
 
-    LazyColumn(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .padding(TajsOSTheme.SpacingMd)
-                .padding(bottom = 80.dp),
-        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
+    TrackScreen(
+        context = context,
+        plan = plan,
+        onNavigate = onNavigate,
+    )
+}
+
+/**
+ * Stateless track screen content.
+ *
+ * @param context Track dashboard context.
+ * @param plan Track dashboard plan.
+ * @param onNavigate Navigation callback.
+ */
+@Composable
+fun TrackScreen(
+    context: TrackDashboardContext,
+    plan: TrackDashboardPlan,
+    onNavigate: (String) -> Unit,
+) {
+    ScreenScaffold(
+        screen = Screen.Track,
+        onNavigate = onNavigate,
+        scrollBehavior = com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior.None,
     ) {
-        plan.primary.forEach { block ->
-            item(key = block.id) {
-                TrackDashboardBlocks.resolve(block.id)?.invoke(context)
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
+        ) {
+            plan.primary.forEach { block ->
+                item(key = block.id) {
+                    TrackDashboardBlocks.resolve(block.id)?.invoke(context)
+                }
             }
         }
     }

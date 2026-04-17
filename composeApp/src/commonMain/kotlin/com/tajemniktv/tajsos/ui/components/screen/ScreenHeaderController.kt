@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,6 +42,8 @@ class ScreenHeaderController {
         }
     }
 }
+
+val LocalScreenHeaderController = compositionLocalOf<ScreenHeaderController?> { null }
 
 data class ScreenHeaderBreadcrumb(
     val label: String,

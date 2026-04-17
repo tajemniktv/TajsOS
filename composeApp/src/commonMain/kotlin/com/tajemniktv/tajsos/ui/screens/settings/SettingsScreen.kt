@@ -15,12 +15,21 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
 import kotlinx.coroutines.launch
 
+/**
+ * Central settings entry point that collects system state and coordinates layout.
+ *
+ * @param viewModel Source of settings state.
+ * @param onNavigate Navigation callback.
+ * @param screenId The ID of the settings screen to display.
+ */
 @Composable
-fun SettingsScreen(
+fun SettingsRoute(
     viewModel: MainViewModel,
+    onNavigate: (String) -> Unit,
     screenId: String = "preferences",
 ) {
     val medications by viewModel.medications.collectAsState()
@@ -59,7 +68,6 @@ fun SettingsScreen(
             onExportData = {
                 scope.launch {
                     viewModel.exportDataJson()
-                    // SnackBar logic would need a host, keeping it simple or delegating to VM if needed
                 }
             },
             onExportBundle = {
@@ -83,7 +91,42 @@ fun SettingsScreen(
 
     val plan = remember(screenId) { buildSettingsPlan(screenId) }
 
-    ScreenScaffold {
+    SettingsScreen(
+        context = context,
+        plan = plan,
+        screenId = screenId,
+        onNavigate = onNavigate,
+    )
+}
+
+/**
+ * Stateless settings screen content.
+ *
+ * @param context Settings dashboard context.
+ * @param plan Settings dashboard plan.
+ * @param screenId The ID of the settings screen to display.
+ * @param onNavigate Navigation callback.
+ */
+@Composable
+fun SettingsScreen(
+    context: SettingsDashboardContext,
+    plan: SettingsDashboardPlan,
+    screenId: String,
+    onNavigate: (String) -> Unit,
+) {
+    val targetScreen = when (screenId) {
+        "appearance" -> Screen.SettingsAppearance
+        "health" -> Screen.SettingsHealth
+        "feature_packs" -> Screen.SettingsFeaturePacks
+        "data" -> Screen.SettingsData
+        "debug" -> Screen.SettingsDebug
+        else -> Screen.Settings
+    }
+
+    ScreenScaffold(
+        screen = targetScreen,
+        onNavigate = onNavigate,
+    ) {
         Column(modifier = Modifier.fillMaxSize()) {
             plan.primary.forEach { block ->
                 SettingsDashboardBlocks.resolve(block.id)?.invoke(context)

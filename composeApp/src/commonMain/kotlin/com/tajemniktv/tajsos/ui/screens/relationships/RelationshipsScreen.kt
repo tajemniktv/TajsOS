@@ -23,17 +23,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.Screen
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
 import com.tajemniktv.tajsos.ui.components.cards.PersonRelationshipCard
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.main.state.RelationshipSnapshot
 import com.tajemniktv.tajsos.ui.screens.GroupedOpenLoopSection
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
+/**
+ * Central relationships entry point that collects system state and coordinates layout.
+ *
+ * @param viewModel Source of relationships state.
+ * @param onEditNode Node edit callback.
+ * @param onNavigate Navigation callback.
+ */
 @Composable
-@OptIn(ExperimentalLayoutApi::class)
-fun RelationshipsScreen(
+fun RelationshipsRoute(
     viewModel: MainViewModel,
     onEditNode: (Long) -> Unit,
+    onNavigate: (String) -> Unit,
 ) {
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val surface =
@@ -41,8 +50,34 @@ fun RelationshipsScreen(
         val plan = remember(surface) { buildRelationshipsDashboardPlan(surface) }
         val context =
             remember(viewModel, onEditNode) { RelationshipsDashboardContext(viewModel, onEditNode) }
+
+        RelationshipsScreen(
+            context = context,
+            plan = plan,
+            onNavigate = onNavigate,
+        )
+    }
+}
+
+/**
+ * Stateless relationships screen content.
+ *
+ * @param context Relationships dashboard context.
+ * @param plan Relationships dashboard plan.
+ * @param onNavigate Navigation callback.
+ */
+@Composable
+fun RelationshipsScreen(
+    context: RelationshipsDashboardContext,
+    plan: RelationshipsDashboardPlan,
+    onNavigate: (String) -> Unit,
+) {
+    ScreenScaffold(
+        screen = Screen.Relationships,
+        onNavigate = onNavigate,
+    ) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(bottom = 80.dp),
+            modifier = Modifier.fillMaxSize(),
         ) {
             plan.primary.forEach { block ->
                 item(key = block.id) {

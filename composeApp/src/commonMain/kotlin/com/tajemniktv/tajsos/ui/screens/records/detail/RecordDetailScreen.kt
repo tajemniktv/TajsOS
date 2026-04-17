@@ -11,10 +11,47 @@ import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderController
 import com.tajemniktv.tajsos.ui.screens.notes.detail.NoteDetailScreen
 
 /**
- * Typed record detail entrypoint.
+ * Record detail route that reuses note detail architecture.
  *
- * Currently reuses the standard note detail architecture but is separated for later
- * specialized record layout engines.
+ * @param viewModel Source of record state.
+ * @param recordId ID of the record to display.
+ * @param onBack Callback to go back.
+ * @param onNavigateToNode Callback to navigate to another node.
+ * @param onNavigateToSearch Callback to navigate to search.
+ * @param isDesktop Whether the current environment is a desktop layout.
+ * @param onNavigate Navigation callback.
+ */
+@Composable
+fun RecordDetailRoute(
+    viewModel: MainViewModel,
+    recordId: Long,
+    onBack: () -> Unit,
+    onNavigateToNode: (Long) -> Unit,
+    onNavigateToSearch: () -> Unit,
+    isDesktop: Boolean = false,
+    onNavigate: (String) -> Unit,
+) {
+    RecordDetailScreen(
+        viewModel = viewModel,
+        recordId = recordId,
+        onBack = onBack,
+        onNavigateToNode = onNavigateToNode,
+        onNavigateToSearch = onNavigateToSearch,
+        isDesktop = isDesktop,
+        onNavigate = onNavigate,
+    )
+}
+
+/**
+ * Stateless record detail screen content.
+ *
+ * @param viewModel Source of record state.
+ * @param recordId ID of the record to display.
+ * @param onBack Callback to go back.
+ * @param onNavigateToNode Callback to navigate to another node.
+ * @param onNavigateToSearch Callback to navigate to search.
+ * @param isDesktop Whether the current environment is a desktop layout.
+ * @param onNavigate Navigation callback.
  */
 @Composable
 fun RecordDetailScreen(
@@ -24,7 +61,7 @@ fun RecordDetailScreen(
     onNavigateToNode: (Long) -> Unit,
     onNavigateToSearch: () -> Unit,
     isDesktop: Boolean = false,
-    screenHeaderController: ScreenHeaderController? = null,
+    onNavigate: (String) -> Unit,
 ) {
     NoteDetailScreen(
         viewModel = viewModel,
@@ -33,7 +70,7 @@ fun RecordDetailScreen(
         onNavigateToNode = onNavigateToNode,
         onNavigateToSearch = onNavigateToSearch,
         isDesktop = isDesktop,
-        screenHeaderController = screenHeaderController,
+        onNavigate = onNavigate,
         headerScreen = Screen.RecordDetail,
     )
 }

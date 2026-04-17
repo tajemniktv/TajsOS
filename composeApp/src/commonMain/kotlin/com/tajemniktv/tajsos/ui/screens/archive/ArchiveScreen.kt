@@ -13,30 +13,54 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.Screen
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
 
 /**
- * Renders the Archive dashboard shell and delegates block rendering using the archive plan.
+ * Central archive entry point that collects system state and coordinates layout.
  *
- * @param viewModel Source of archived node state and actions.
- * @param onEditNode Callback invoked with a node id to open the node editor.
+ * @param viewModel Source of archive state.
+ * @param onEditNode Node edit callback.
+ * @param onNavigate Navigation callback.
+ */
+@Composable
+fun ArchiveRoute(
+    viewModel: MainViewModel,
+    onEditNode: (Long) -> Unit,
+    onNavigate: (String) -> Unit,
+) {
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val surface = if (maxWidth > 900.dp) ArchiveDashboardSurface.DESKTOP else ArchiveDashboardSurface.MOBILE
+        val plan = remember(surface) { buildArchiveDashboardPlan(surface) }
+        val context = remember(viewModel, onEditNode) { ArchiveDashboardContext(viewModel, onEditNode) }
+
+        ArchiveScreen(
+            context = context,
+            plan = plan,
+            onNavigate = onNavigate,
+        )
+    }
+}
+
+/**
+ * Stateless archive screen content.
+ *
+ * @param context Archive dashboard context.
+ * @param plan Archive dashboard plan.
+ * @param onNavigate Navigation callback.
  */
 @Composable
 fun ArchiveScreen(
-    viewModel: MainViewModel,
-    onEditNode: (Long) -> Unit,
+    context: ArchiveDashboardContext,
+    plan: ArchiveDashboardPlan,
+    onNavigate: (String) -> Unit,
 ) {
-    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val surface =
-            if (maxWidth > 900.dp) {
-                ArchiveDashboardSurface.DESKTOP
-            } else {
-                ArchiveDashboardSurface.MOBILE
-            }
-        val plan = remember(surface) { buildArchiveDashboardPlan(surface) }
-        val context =
-            remember(viewModel, onEditNode) { ArchiveDashboardContext(viewModel, onEditNode) }
+    ScreenScaffold(
+        screen = Screen.Archive,
+        onNavigate = onNavigate,
+    ) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(bottom = 80.dp),
+            modifier = Modifier.fillMaxSize(),
         ) {
             plan.primary.forEach { block ->
                 item(key = block.id) {

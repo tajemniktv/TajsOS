@@ -119,6 +119,15 @@ import tajsos.composeapp.generated.resources.type_task
 
 /**
  * Detailed view for a single node (Note, Idea, Task, etc.)
+ *
+ * @param viewModel Source of note state.
+ * @param noteId ID of the note to display.
+ * @param onBack Callback to go back.
+ * @param onNavigateToNode Callback to navigate to another node.
+ * @param onNavigateToSearch Callback to navigate to search.
+ * @param isDesktop Whether the current environment is a desktop layout.
+ * @param onNavigate Navigation callback.
+ * @param headerScreen Override screen for breadcrumbs.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -129,7 +138,7 @@ fun NoteDetailScreen(
     onNavigateToNode: (Long) -> Unit,
     onNavigateToSearch: () -> Unit,
     isDesktop: Boolean = false,
-    screenHeaderController: ScreenHeaderController? = null,
+    onNavigate: (String) -> Unit,
     headerScreen: Screen = Screen.NoteDetail,
 ) {
     val scope = rememberCoroutineScope()
@@ -290,7 +299,8 @@ fun NoteDetailScreen(
         remember(surface, node.id, tags.size) { buildNoteDetailPlan(surface, context) }
 
     ScreenScaffold(
-        screenHeaderController = screenHeaderController,
+        screen = headerScreen,
+        onNavigate = onNavigate,
         screenHeader =
             ScreenHeaderModel(
                 breadcrumbs = screenBreadcrumbs(headerScreen),

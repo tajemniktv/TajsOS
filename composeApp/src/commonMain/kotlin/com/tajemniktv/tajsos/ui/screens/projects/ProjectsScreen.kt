@@ -32,6 +32,7 @@ import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.components.nodes.ProjectItem
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
@@ -46,51 +47,52 @@ import tajsos.composeapp.generated.resources.projects_filter_active
 import tajsos.composeapp.generated.resources.projects_filter_someday
 
 /**
- * Displays the projects screen with search, status filters, project list, and add-project flow.
+ * Central projects entry point that collects system state and coordinates layout.
  *
- * Collects projects and nodes from the provided ViewModel, derives filtered projects and nodes grouped
- * by project ID, renders the header, search field, status chips, and the project list, and shows an
- * add-project dialog that creates a new project node and updates its status.
+ * @param viewModel Source of project and node state.
+ * @param onNavigate Navigation callback.
+ */
+@Composable
+fun ProjectsRoute(
+    viewModel: MainViewModel,
+    onNavigate: (String) -> Unit,
+) {
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val surface = if (maxWidth > 900.dp) ProjectsDashboardSurface.DESKTOP else ProjectsDashboardSurface.MOBILE
+        val plan = remember(surface) { buildProjectsDashboardPlan(surface) }
+        val context = remember(viewModel, onNavigate) { ProjectsDashboardContext(viewModel, onNavigate) }
+
+        ProjectsScreen(
+            context = context,
+            plan = plan,
+            onNavigate = onNavigate,
+        )
+    }
+}
+
+/**
+ * Stateless projects screen content.
  *
- * @param viewModel Source of project and node state and actions for creating/updating nodes.
- * @param onNavigateTo Callback invoked with a navigation route when navigating from a project item.
+ * @param context Projects dashboard context.
+ * @param plan Projects dashboard plan.
+ * @param onNavigate Navigation callback.
  */
 @Composable
 fun ProjectsScreen(
-    viewModel: MainViewModel,
-    onNavigateTo: (String) -> Unit,
+    context: ProjectsDashboardContext,
+    plan: ProjectsDashboardPlan,
+    onNavigate: (String) -> Unit,
 ) {
-    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val surface =
-            if (maxWidth >
-                900.dp
-            ) {
-                ProjectsDashboardSurface.DESKTOP
-            } else {
-                ProjectsDashboardSurface.MOBILE
-            }
-        val plan =
-            remember(surface) {
-                buildProjectsDashboardPlan(
-                    surface,
-                )
-            }
-        val context =
-            remember(viewModel, onNavigateTo) {
-                ProjectsDashboardContext(
-                    viewModel,
-                    onNavigateTo,
-                )
-            }
+    ScreenScaffold(
+        screen = Screen.Projects,
+        onNavigate = onNavigate,
+    ) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(bottom = 80.dp),
+            modifier = Modifier.fillMaxSize(),
         ) {
             plan.primary.forEach { block ->
                 item(key = block.id) {
-                    ProjectsDashboardBlockRegistry
-                        .resolve(
-                            block.id,
-                        )?.invoke(context)
+                    ProjectsDashboardBlockRegistry.resolve(block.id)?.invoke(context)
                 }
             }
         }

@@ -20,10 +20,20 @@ import com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior
 import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
+/**
+ * Central tasks entry point that collects system state and coordinates layout.
+ *
+ * @param viewModel Source of tasks state.
+ * @param onEditNode Node edit callback.
+ * @param onNavigate Navigation callback.
+ * @param currentTab Currently active tasks tab.
+ * @param onTabChange Callback when tab is changed.
+ */
 @Composable
-fun TasksScreen(
+fun TasksRoute(
     viewModel: MainViewModel,
     onEditNode: (Long) -> Unit,
+    onNavigate: (String) -> Unit,
     currentTab: TasksTab = TasksTab.COMMAND,
     onTabChange: (TasksTab) -> Unit = {},
 ) {
@@ -64,14 +74,38 @@ fun TasksScreen(
             if (maxWidth > 980.dp) TasksDashboardSurface.DESKTOP else TasksDashboardSurface.MOBILE
         val plan = remember(surface, currentTab) { buildTasksDashboardPlan(surface, currentTab) }
 
-        ScreenScaffold(scrollBehavior = ScreenScrollBehavior.None) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
-            ) {
-                plan.primary.forEach { block ->
-                    TasksDashboardBlocks.resolve(block.id)?.invoke(context)
-                }
+        TasksScreen(
+            context = context,
+            plan = plan,
+            onNavigate = onNavigate,
+        )
+    }
+}
+
+/**
+ * Stateless tasks screen content.
+ *
+ * @param context Tasks dashboard context.
+ * @param plan Tasks dashboard plan.
+ * @param onNavigate Navigation callback.
+ */
+@Composable
+fun TasksScreen(
+    context: TasksDashboardContext,
+    plan: TasksDashboardPlan,
+    onNavigate: (String) -> Unit,
+) {
+    ScreenScaffold(
+        screen = context.currentTab.toScreen(),
+        onNavigate = onNavigate,
+        scrollBehavior = ScreenScrollBehavior.None,
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
+        ) {
+            plan.primary.forEach { block ->
+                TasksDashboardBlocks.resolve(block.id)?.invoke(context)
             }
         }
     }
