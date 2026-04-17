@@ -117,6 +117,10 @@ data class RecordFacetEntity(
  * Lens-oriented domain associations for any life object.
  *
  * Domains remain read-model classifications over shared objects rather than hard containers.
+ *
+ * Note: These explicit mappings are currently stored but frequently bypassed by UI lenses
+ * (e.g., DomainLensQueries), which prefer implicit terminology matching (tags, titles, maintenance type)
+ * over these explicit DB associations. This provides resilience against users forgetting to assign domains.
  */
 @Entity(
     tableName = "item_domains",
