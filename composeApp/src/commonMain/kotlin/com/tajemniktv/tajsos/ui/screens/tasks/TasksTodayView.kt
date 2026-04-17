@@ -54,11 +54,14 @@ internal fun TasksTodayView(
     onStartFocus: (NodeEntity) -> Unit,
     onSetTodayPayload: (NodeEntity, Boolean) -> Unit,
 ) {
-    val now = Clock.System.now().toEpochMilliseconds()
-    val tomorrow = now + 24L * 60 * 60 * 1000
-    val overdue = remember(tasks) { tasks.filter { (it.dueAt ?: Long.MAX_VALUE) < now } }
+    val overdue = remember(tasks) {
+        val now = Clock.System.now().toEpochMilliseconds()
+        tasks.filter { (it.dueAt ?: Long.MAX_VALUE) < now }
+    }
     val dueSoon =
         remember(tasks) {
+            val now = Clock.System.now().toEpochMilliseconds()
+            val tomorrow = now + 24L * 60 * 60 * 1000
             tasks.filter {
                 it.dueAt != null && (it.dueAt ?: Long.MAX_VALUE) in now..tomorrow
             }

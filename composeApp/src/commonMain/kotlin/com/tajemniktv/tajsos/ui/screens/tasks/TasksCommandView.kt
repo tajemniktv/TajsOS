@@ -83,9 +83,9 @@ internal fun TasksCommandView(
     onQuickAdd: (String) -> Unit,
     onQuickCapture: (String) -> Unit,
 ) {
-    val now = Clock.System.now().toEpochMilliseconds()
     val queue =
         remember(tasks, todayTaskIds) {
+            val now = Clock.System.now().toEpochMilliseconds()
             tasks
                 .sortedByDescending {
                     scoreTask(

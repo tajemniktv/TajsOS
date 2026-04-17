@@ -69,6 +69,7 @@ fun <T> SelectorDialog(
     optionName: (T) -> String,
     optionIcon: (T) -> ImageVector,
     optionSubtext: (T) -> String = { "" },
+    keySelector: ((T) -> Any)? = null,
 ) {
     if (!show) return
 
@@ -134,7 +135,7 @@ fun <T> SelectorDialog(
                     verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
                     modifier = Modifier.weight(1f),
                 ) {
-                    items(options) { option ->
+                    items(options, key = keySelector?.let { { option -> it(option) } }) { option ->
                         val isSelected = option == selectedOption
                         Surface(
                             onClick = { onSelect(option) },

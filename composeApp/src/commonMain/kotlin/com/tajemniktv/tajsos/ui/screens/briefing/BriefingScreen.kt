@@ -35,6 +35,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,6 +59,7 @@ import com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.hazeSource
+import kotlinx.coroutines.delay
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.StringResource
@@ -122,7 +126,13 @@ fun BriefingRoute(
     val userProfile by viewModel.userProfile.collectAsState()
 
     val timeZone = TimeZone.currentSystemDefault()
-    val nowInstant = Clock.System.now()
+    var nowInstant by remember { mutableStateOf(Clock.System.now()) }
+    LaunchedEffect(Unit) {
+        while (true) {
+            kotlinx.coroutines.delay(60_000L) // Update every minute
+            nowInstant = Clock.System.now()
+        }
+    }
     val nowEpochMillis = nowInstant.toEpochMilliseconds()
     val todayDate = nowInstant.toLocalDateTime(timeZone).date
     val todayEventCount =
