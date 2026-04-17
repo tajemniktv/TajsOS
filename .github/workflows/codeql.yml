@@ -39,17 +39,12 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v4
 
-      - name: Install Android compile SDK
+      - name: Prepare Android SDK manager
         shell: bash
         run: |
           set -euo pipefail
-          COMPILE_SDK="$(grep -Eo 'android-compileSdk\s*=\s*"[0-9]+"' gradle/libs.versions.toml | sed -E 's/.*"([0-9]+)".*/\1/' || true)"
-          if [ -z "${COMPILE_SDK}" ]; then
-            echo "Unable to detect android-compileSdk in gradle/libs.versions.toml"
-            exit 1
-          fi
           (yes || true) | sdkmanager --licenses >/dev/null || true
-          sdkmanager "platform-tools" "platforms;android-${COMPILE_SDK}"
+          sdkmanager "platform-tools"
 
       - name: Prepare google-services config for CI
         shell: bash
@@ -105,6 +100,7 @@ jobs:
         shell: bash
         run: |
           ./gradlew \
+            -Pandroid.builder.sdkDownload=true \
             :shared:compileKotlinJvm \
             :composeApp:compileKotlinJvm \
             :server:classes \

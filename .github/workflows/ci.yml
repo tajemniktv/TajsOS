@@ -109,17 +109,12 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v4
 
-      - name: Install Android compile SDK
+      - name: Prepare Android SDK manager
         shell: bash
         run: |
           set -euo pipefail
-          COMPILE_SDK="$(grep -Eo 'android-compileSdk\s*=\s*"[0-9]+"' gradle/libs.versions.toml | sed -E 's/.*"([0-9]+)".*/\1/' || true)"
-          if [ -z "${COMPILE_SDK}" ]; then
-            echo "Unable to detect android-compileSdk in gradle/libs.versions.toml"
-            exit 1
-          fi
           (yes || true) | sdkmanager --licenses >/dev/null || true
-          sdkmanager "platform-tools" "platforms;android-${COMPILE_SDK}"
+          sdkmanager "platform-tools"
 
       - name: Prepare google-services config for CI
         shell: bash
@@ -170,6 +165,7 @@ jobs:
         shell: bash
         run: |
           ./gradlew \
+            -Pandroid.builder.sdkDownload=true \
             :shared:jvmTest \
             :composeApp:jvmTest \
             :server:test \
@@ -180,7 +176,7 @@ jobs:
             --no-daemon
 
       - name: Upload coverage to Codecov
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && hashFiles('build/reports/kover/report.xml') != '' }}
         uses: codecov/codecov-action@v6
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
