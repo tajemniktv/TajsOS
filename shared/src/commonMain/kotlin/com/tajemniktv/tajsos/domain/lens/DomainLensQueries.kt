@@ -10,8 +10,19 @@ import com.tajemniktv.tajsos.data.isTaskItem
 import com.tajemniktv.tajsos.ui.MaintenanceSnapshot
 import com.tajemniktv.tajsos.ui.MaintenanceStatusItem
 
+/**
+ * Explicit maintenance item types that classify as financial responsibilities.
+ */
 private val financeMaintenanceTypes = setOf("bill", "subscription", "renewal")
+
+/**
+ * Explicit maintenance item types that classify as health and medical responsibilities.
+ */
 private val healthMaintenanceTypes = setOf("appointment", "prescription", "med_refill")
+
+/**
+ * Set of normalized tag names used to heuristically detect finance-related items.
+ */
 private val financeTagMarkers =
     setOf(
         "finance",
@@ -29,6 +40,10 @@ private val financeTagMarkers =
         "receipt",
         "insurance",
     )
+
+/**
+ * List of substring keywords used to search titles and content for financial context.
+ */
 private val financeTitleKeywords =
     listOf(
         "finance",
@@ -47,6 +62,10 @@ private val financeTitleKeywords =
         "salary",
         "paycheck",
     )
+
+/**
+ * Set of normalized tag names used to heuristically detect health-related items.
+ */
 private val healthTagMarkers =
     setOf(
         "health",
@@ -58,6 +77,10 @@ private val healthTagMarkers =
         "wellbeing",
         "mental_health",
     )
+
+/**
+ * List of substring keywords used to search titles and content for health and medical context.
+ */
 private val healthTitleKeywords =
     listOf(
         "health",
