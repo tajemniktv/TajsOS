@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/landing/Navbar.astro';
 import Footer from '../components/landing/Footer.astro';
+import { SITE } from '../data/site';
 
 const title = "WAITLIST";
 ---
@@ -26,7 +27,7 @@ const title = "WAITLIST";
 <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
 <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
 </span>
-<span class="font-mono text-[10px] tracking-[0.3em] text-primary uppercase">System Access Granted</span>
+<span class="font-mono text-[10px] tracking-[0.3em] text-primary uppercase">{SITE.statusText}</span>
 </div>
 <!-- Main Headline -->
 <h1 class="font-headline font-bold text-6xl md:text-8xl lg:text-9xl tracking-tighter text-on-surface glow-text mb-4 leading-none">

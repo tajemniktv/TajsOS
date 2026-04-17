@@ -1,5 +1,6 @@
 ---
 // src/components/landing/Footer.astro
+import { SITE, FOOTER_LINKS } from '../../data/site';
 ---
 
 <footer class="w-full border-t border-primary/10 bg-surface py-24 px-12">
@@ -10,53 +11,32 @@
       <div
         class="text-2xl font-bold text-primary font-headline uppercase tracking-tighter"
       >
-        TajsOS
+        {SITE.title}
       </div>
       <p
         class="font-mono text-[10px] tracking-[0.3em] uppercase text-on-surface-variant/40"
       >
-        © 2026 TajsOS. All systems nominal and all rights reserved.
+        {SITE.copyright}
       </p>
     </div>
     <div class="grid grid-cols-2 md:grid-cols-3 gap-x-24 gap-y-8">
       <div class="flex flex-col gap-4">
-        <span class="font-mono text-[10px] text-primary mb-2 tracking-widest"
-          >PROTOCOLS</span
-        >
-        <a
-          class="font-mono text-[10px] tracking-widest uppercase text-on-surface-variant/60 hover:text-primary transition-colors"
-          href={`${import.meta.env.BASE_URL}privacy`}>Privacy</a
-        >
-        <a
-          class="font-mono text-[10px] tracking-widest uppercase text-on-surface-variant/60 hover:text-primary transition-colors"
-          href={`${import.meta.env.BASE_URL}security`}>Security</a
-        >
+        <span class="font-mono text-[10px] text-primary mb-2 tracking-widest">PROTOCOLS</span>
+        {FOOTER_LINKS.protocols.map(link => (
+          <a class="font-mono text-[10px] tracking-widest uppercase text-on-surface-variant/60 hover:text-primary transition-colors" href={`${import.meta.env.BASE_URL}${link.href}`}>{link.label}</a>
+        ))}
       </div>
       <div class="flex flex-col gap-4">
-        <span class="font-mono text-[10px] text-primary mb-2 tracking-widest"
-          >NETWORK</span
-        >
-        <a
-          class="font-mono text-[10px] tracking-widest uppercase text-on-surface-variant/60 hover:text-primary transition-colors"
-          href={`${import.meta.env.BASE_URL}terms`}>Terms</a
-        >
-        <a
-          class="font-mono text-[10px] tracking-widest uppercase text-on-surface-variant/60 hover:text-primary transition-colors"
-          href={`${import.meta.env.BASE_URL}status`}>System Status</a
-        >
+        <span class="font-mono text-[10px] text-primary mb-2 tracking-widest">NETWORK</span>
+        {FOOTER_LINKS.network.map(link => (
+          <a class="font-mono text-[10px] tracking-widest uppercase text-on-surface-variant/60 hover:text-primary transition-colors" href={`${import.meta.env.BASE_URL}${link.href}`}>{link.label}</a>
+        ))}
       </div>
       <div class="flex flex-col gap-4">
-        <span class="font-mono text-[10px] text-primary mb-2 tracking-widest"
-          >DOCUMENTATION</span
-        >
-        <a
-          class="font-mono text-[10px] tracking-widest uppercase text-on-surface-variant/60 hover:text-primary transition-colors"
-          href={`${import.meta.env.BASE_URL}philosophy`}>Philosophy</a
-        >
-        <a
-          class="font-mono text-[10px] tracking-widest uppercase text-on-surface-variant/60 hover:text-primary transition-colors"
-          href={`${import.meta.env.BASE_URL}changelog`}>Changelog</a
-        >
+        <span class="font-mono text-[10px] text-primary mb-2 tracking-widest">DOCUMENTATION</span>
+        {FOOTER_LINKS.documentation.map(link => (
+          <a class="font-mono text-[10px] tracking-widest uppercase text-on-surface-variant/60 hover:text-primary transition-colors" href={`${import.meta.env.BASE_URL}${link.href}`}>{link.label}</a>
+        ))}
       </div>
     </div>
   </div>
