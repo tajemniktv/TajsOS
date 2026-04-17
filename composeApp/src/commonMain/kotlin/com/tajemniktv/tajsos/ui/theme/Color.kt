@@ -13,13 +13,9 @@ import androidx.compose.ui.graphics.Color
  * Avoid using these directly in UI components; prefer [TajsOSTheme] tokens
  * to ensure reactive theme switching and consistency.
  *
- * Design principles:
- * - High contrast (The Void background vs Neon signals)
- * - Tonal layering (Surface containers)
- * - Organic Industrialism (Vibrant accents)
+ * Design principles in DESIGN.md
  */
 
-// Dark Theme Palette - "The Void"
 internal val PrimaryPurple = Color(0xFFBA9EFF)
 internal val PrimaryPurpleDim = Color(0xFF8455EF)
 internal val DeepBackground = Color(0xFF0E0E12)
