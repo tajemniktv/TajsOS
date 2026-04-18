@@ -47,7 +47,7 @@ internal sealed class IpAddress {
  * Returns null if the string is not a valid IPv4 or IPv6 literal.
  */
 internal fun parseIpAddress(host: String): IpAddress? {
-    val cleanHost = host.removePrefix("[").removeSuffix("]").trim()
+    val cleanHost = host.trim().removePrefix("[").removeSuffix("]").trim()
     return parseIpv4(cleanHost) ?: parseIpv6(cleanHost)
 }
 
