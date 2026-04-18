@@ -326,7 +326,7 @@ class MainActivity : FragmentActivity() {
                         // Require auth on every key use (timeout = 0 means no time window).
                         setUserAuthenticationParameters(0, KeyProperties.AUTH_BIOMETRIC_STRONG)
                     } else {
-                        // -1 mirrors the "per-use" semantic of timeout = 0 on API 30+.
+                        // On API < 30, -1 is the documented constant for per-use authentication.
                         setUserAuthenticationRequired(true)
                         @Suppress("DEPRECATION")
                         setUserAuthenticationValidityDurationSeconds(-1)
@@ -452,7 +452,7 @@ class MainActivity : FragmentActivity() {
      * cancellation (e.g. pressing Cancel or the back button) rather than a terminal
      * hardware or security failure.
      *
-     * Use this to distinguish errors where calling [com.tajemniktv.tajsos.ui.MainViewModel.setAuthenticated]
+     * Use this to distinguish errors where calling [MainViewModel.setAuthenticated]
      * is unnecessary because the user intends to stay on the lock screen and retry later.
      */
     private fun isBiometricUserCancellation(errorCode: Int): Boolean =
