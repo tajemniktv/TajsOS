@@ -101,15 +101,15 @@ private val healthTitleKeywords =
  *
  * Domains (such as finance or health) are categorized implicitly by checking for hardcoded
  * string markers within node tags, titles, content, `maintenanceType`, and `noteType` fields.
- * While explicit domain associations can be defined in metadata (e.g., via `associatedDomains`),
- * these queries provide a heuristic-based lens over all system nodes.
  *
- * This implicit matching ensures that even if a user forgets to explicitly assign a node to a
- * domain, it will still appear in the correct lens if it matches the domain's terminology.
+ * Note: These queries intentionally bypass explicit domain mappings stored in `ItemDomainEntity`
+ * (the `item_domains` table) in favor of terminology matching. This ensures a zero-configuration
+ * experience where items are surfaced appropriately even if the user forgets to manually assign the domain.
  */
 object DomainLensQueries {
     /**
      * Returns active maintenance items that belong to the finance domain.
+     * Filters the snapshot's active items for those where `maintenanceType` is within `financeMaintenanceTypes`.
      *
      * @param snapshot The snapshot containing current maintenance items separated by their schedule state.
      * @return A list of active items whose maintenance type implies financial responsibility.
@@ -119,6 +119,7 @@ object DomainLensQueries {
 
     /**
      * Returns recurring finance-related maintenance commitments.
+     * Filters the snapshot's recurring items for those where `maintenanceType` is within `financeMaintenanceTypes`.
      *
      * @param snapshot The snapshot containing current maintenance items separated by their schedule state.
      * @return A list of recurring items whose maintenance type implies financial responsibility.
@@ -128,6 +129,7 @@ object DomainLensQueries {
 
     /**
      * Returns overdue finance-related maintenance work.
+     * Filters the snapshot's overdue items for those where `maintenanceType` is within `financeMaintenanceTypes`.
      *
      * @param snapshot The snapshot containing current maintenance items separated by their schedule state.
      * @return A list of overdue items whose maintenance type implies financial responsibility.
@@ -137,6 +139,8 @@ object DomainLensQueries {
 
     /**
      * Returns active task-shaped work that reads as finance-related.
+     * Filters nodes to include only active tasks that match the `matchesFinanceSignal` heuristics.
+     * The results are sorted by approaching deadline (nodes without deadlines are placed at the end).
      *
      * @param nodes A flat list of nodes wrapped with their today-pin context.
      * @return A list of active task nodes matching finance heuristics, sorted by approaching deadline.
@@ -149,6 +153,8 @@ object DomainLensQueries {
 
     /**
      * Returns durable finance notes and records worth surfacing in the finance lens.
+     * Filters nodes to include only active knowledge items that match the `matchesFinanceSignal` heuristics.
+     * The results are sorted by their most recent update time.
      *
      * @param nodes A flat list of nodes wrapped with their today-pin context.
      * @return A list of active knowledge nodes matching finance heuristics, sorted by most recently updated.
@@ -161,6 +167,8 @@ object DomainLensQueries {
 
     /**
      * Returns finance-related items with explicit dates, regardless of whether they are tasks or notes.
+     * Filters active nodes to include only those with explicit due dates matching the `matchesFinanceSignal` heuristics.
+     * The results are sorted by approaching deadline.
      *
      * @param nodes A flat list of nodes wrapped with their today-pin context.
      * @return A list of active, scheduled nodes matching finance heuristics, sorted by approaching deadline.
@@ -173,6 +181,7 @@ object DomainLensQueries {
 
     /**
      * Returns active maintenance items that belong to the health domain.
+     * Filters the snapshot's active items for those where `maintenanceType` is within `healthMaintenanceTypes`.
      *
      * @param snapshot The snapshot containing current maintenance items separated by their schedule state.
      * @return A list of active items whose maintenance type implies health-related responsibility.
@@ -182,6 +191,7 @@ object DomainLensQueries {
 
     /**
      * Returns overdue health-related maintenance work.
+     * Filters the snapshot's overdue items for those where `maintenanceType` is within `healthMaintenanceTypes`.
      *
      * @param snapshot The snapshot containing current maintenance items separated by their schedule state.
      * @return A list of overdue items whose maintenance type implies health-related responsibility.
@@ -191,6 +201,8 @@ object DomainLensQueries {
 
     /**
      * Returns active task-shaped work that reads as health-related.
+     * Filters nodes to include only active tasks that match the `matchesHealthSignal` heuristics.
+     * The results are sorted by approaching deadline (nodes without deadlines are placed at the end).
      *
      * @param nodes A flat list of nodes wrapped with their today-pin context.
      * @return A list of active task nodes matching health heuristics, sorted by approaching deadline.
@@ -203,6 +215,8 @@ object DomainLensQueries {
 
     /**
      * Returns active health notes and records worth surfacing in the health lens.
+     * Filters nodes to include only active knowledge items that match the `matchesHealthSignal` heuristics.
+     * The results are sorted by their most recent update time.
      *
      * @param nodes A flat list of nodes wrapped with their today-pin context.
      * @return A list of active knowledge nodes matching health heuristics, sorted by most recently updated.
