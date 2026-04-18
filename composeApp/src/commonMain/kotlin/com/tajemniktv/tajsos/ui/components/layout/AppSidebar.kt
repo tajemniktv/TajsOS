@@ -193,7 +193,7 @@ fun AppSidebar(
                             isExpandedRoot = shellState.isRootExpanded(rootScreen.route),
                             activeTasksTab = activeTasksTab,
                             onRootClick = {
-                                if (expandable) {
+                                if (expandable && showExpandedContent) {
                                     shellState.toggleRootExpanded(rootScreen.route)
                                 } else {
                                     onNavigate(rootScreen)
