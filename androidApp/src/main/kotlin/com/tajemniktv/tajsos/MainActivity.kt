@@ -290,13 +290,10 @@ class MainActivity : FragmentActivity() {
 
     /**
      * Displays the system biometric prompt for user authentication.
-     * Automatically authenticates if hardware is unavailable.
-     *
      * @param viewModel The ViewModel to update upon successful authentication.
      */
     private fun showBiometricPrompt(viewModel: MainViewModel) {
         if (!isBiometricAvailable()) {
-            viewModel.setAuthenticated(true)
             return
         }
 
