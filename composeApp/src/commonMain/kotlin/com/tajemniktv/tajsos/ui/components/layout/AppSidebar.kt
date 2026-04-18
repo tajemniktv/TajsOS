@@ -158,7 +158,7 @@ fun AppSidebar(
     LaunchedEffect(showExpandedContent, currentRootScreen?.route) {
         if (!showExpandedContent) return@LaunchedEffect
         val activeRoot = currentRootScreen ?: return@LaunchedEffect
-        if (activeRoot.children.isNotEmpty()) {
+        if (sidebarChildren(activeRoot).isNotEmpty()) {
             shellState.setRootExpanded(activeRoot.route, true)
         }
     }
@@ -377,7 +377,7 @@ fun ExpandableNavSection(
     onChildNavigate: (Screen) -> Unit,
 ) {
     val rootLabel = stringResource(screen.label)
-    val children = screen.children
+    val children = sidebarChildren(screen)
     val expandable = children.isNotEmpty()
     val activeChildRoutes =
         children.mapNotNull { child ->
@@ -599,7 +599,7 @@ fun ExpandableNavSection(
 
     AnimatedVisibility(visible = showChildrenInline, enter = fadeIn(), exit = fadeOut()) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(start = 34.dp, end = 10.dp, top = 2.dp),
+            modifier = Modifier.fillMaxWidth().padding(start = 34.dp, end = 10.dp, top = 6.dp),
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
             children.forEach { child ->
@@ -948,4 +948,14 @@ private fun Screen.toTasksTabOrNull(): TasksTab? =
         TasksTab.fromRouteSegment(route.substringAfterLast("="))
     } else {
         null
+    }
+
+private fun sidebarChildren(screen: Screen): List<Screen> =
+    screen.children.filterNot { child ->
+        val isDefaultTasksChild = screen == Screen.Tasks && child.toTasksTabOrNull() == TasksTab.COMMAND
+        val isDefaultSettingsChild =
+            screen == Screen.Settings &&
+                child is Screen.Sub &&
+                child.route.contains("${Screen.PARAM_TAB}=${Screen.Settings.SUB_PREFERENCES}")
+        isDefaultTasksChild || isDefaultSettingsChild
     }
