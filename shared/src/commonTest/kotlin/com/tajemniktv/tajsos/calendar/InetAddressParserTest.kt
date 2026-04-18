@@ -8,6 +8,23 @@ import kotlin.test.assertNull
 
 class InetAddressParserTest {
     @Test
+    fun testBracketsAndWhitespace() {
+        val ipv4Clean = parseIpAddress("1.2.3.4")
+        val ipv4Dirty = parseIpAddress("  1.2.3.4  ")
+        assertNotNull(ipv4Dirty, "ipv4Dirty was null")
+        kotlin.test.assertEquals(ipv4Clean, ipv4Dirty)
+
+        val ipv6Clean = parseIpAddress("::1")
+        val ipv6Brackets = parseIpAddress("[::1]")
+        assertNotNull(ipv6Brackets, "ipv6Brackets was null")
+        kotlin.test.assertEquals(ipv6Clean, ipv6Brackets)
+
+        val ipv6BracketsWhitespace = parseIpAddress("  [::1]  ")
+        assertNotNull(ipv6BracketsWhitespace, "ipv6BracketsWhitespace was null")
+        kotlin.test.assertEquals(ipv6Clean, ipv6BracketsWhitespace)
+    }
+
+    @Test
     fun testIpv4() {
         val loopback = parseIpAddress("127.0.0.1")
         assertNotNull(loopback)
