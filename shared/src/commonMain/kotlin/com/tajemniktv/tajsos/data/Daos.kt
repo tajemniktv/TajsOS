@@ -133,7 +133,7 @@ interface NodeDao {
      *
      * @param pin The [TodayPinEntity] representing the pinned state.
      */
-    @Upsert
+    @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
     suspend fun pinToToday(pin: TodayPinEntity)
 
     /**
@@ -180,7 +180,7 @@ interface TrackDao {
     @Query("SELECT * FROM track_entries ORDER BY date DESC, createdAt DESC")
     fun getAllTrackEntries(): Flow<List<TrackEntryEntity>>
 
-    @Upsert
+    @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
     suspend fun insertTrackEntry(entry: TrackEntryEntity): Long
 
     @Query("SELECT * FROM track_entries WHERE date = :date LIMIT 1")
@@ -699,13 +699,13 @@ interface CalendarEventDao {
         to: Long,
     ): Flow<List<CalendarEventEntity>>
 
-    @Upsert
+    @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
     suspend fun insertEvents(events: List<CalendarEventEntity>)
 
     @Query("DELETE FROM calendar_events WHERE providerId = :providerId")
     suspend fun deleteEventsByProvider(providerId: Long)
 
-    @Upsert
+    @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
     suspend fun insertEvent(event: CalendarEventEntity): Long
 
     @Update
