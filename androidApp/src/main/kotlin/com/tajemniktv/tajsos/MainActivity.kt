@@ -356,8 +356,8 @@ class MainActivity : FragmentActivity() {
                 getCipher().apply {
                     init(Cipher.ENCRYPT_MODE, getOrCreateSecretKey())
                 }
-            } catch (inner: GeneralSecurityException) {
-                Log.e(TAG, "Failed to reinitialize cipher after key regeneration", inner)
+            } catch (regenerationException: GeneralSecurityException) {
+                Log.e(TAG, "Failed to reinitialize cipher after key regeneration", regenerationException)
                 null
             }
         } catch (e: GeneralSecurityException) {
@@ -403,7 +403,14 @@ class MainActivity : FragmentActivity() {
                     ) {
                         super.onAuthenticationError(errorCode, errString)
                         Log.e(TAG, "Biometric authentication error [$errorCode]: $errString")
-                        viewModel.setAuthenticated(false)
+                        // User-initiated dismissal is not a security failure — the lock screen
+                        // stays visible and the user can retry via the Unlock button.
+                        val isUserCancellation =
+                            errorCode == BiometricPrompt.ERROR_USER_CANCELED ||
+                                errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON
+                        if (!isUserCancellation) {
+                            viewModel.setAuthenticated(false)
+                        }
                     }
 
                     override fun onAuthenticationFailed() {
