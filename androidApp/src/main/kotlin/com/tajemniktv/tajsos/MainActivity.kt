@@ -12,6 +12,8 @@ import android.os.Bundle
 import android.os.ParcelFormatException
 import android.speech.RecognizerIntent
 import android.util.Log
+import android.security.keystore.KeyGenParameterSpec
+import android.security.keystore.KeyProperties
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -41,6 +43,10 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import com.google.firebase.FirebaseApp
+import java.security.KeyStore
+import javax.crypto.Cipher
+import javax.crypto.KeyGenerator
+import javax.crypto.SecretKey
 import com.tajemniktv.tajsos.data.createDataStore
 import com.tajemniktv.tajsos.data.createDatabase
 import com.tajemniktv.tajsos.di.SharedModule
@@ -59,6 +65,10 @@ import com.tajemniktv.tajsos.ui.MainViewModel
 class MainActivity : FragmentActivity() {
     companion object {
         private const val TAG = "MainActivity"
+        private const val BIOMETRIC_KEY_ALIAS = "tajsos_biometric_key"
+        private const val ANDROID_KEYSTORE = "AndroidKeyStore"
+        private const val CIPHER_TRANSFORMATION =
+            "${KeyProperties.KEY_ALGORITHM_AES}/${KeyProperties.BLOCK_MODE_CBC}/${KeyProperties.ENCRYPTION_PADDING_PKCS7}"
     }
 
     /** The main view model for app-level orchestration. */
@@ -288,6 +298,27 @@ class MainActivity : FragmentActivity() {
         }
     }
 
+    private fun getOrCreateSecretKey(): SecretKey {
+        val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply { load(null) }
+        (keyStore.getKey(BIOMETRIC_KEY_ALIAS, null) as? SecretKey)?.let { return it }
+
+        val keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEYSTORE)
+        val keyGenParameterSpec =
+            KeyGenParameterSpec
+                .Builder(
+                    BIOMETRIC_KEY_ALIAS,
+                    KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT,
+                ).setBlockModes(KeyProperties.BLOCK_MODE_CBC)
+                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
+                .setUserAuthenticationRequired(true)
+                .setInvalidatedByBiometricEnrollment(true)
+                .build()
+        keyGenerator.init(keyGenParameterSpec)
+        return keyGenerator.generateKey()
+    }
+
+    private fun getCipher(): Cipher = Cipher.getInstance(CIPHER_TRANSFORMATION)
+
     /**
      * Displays the system biometric prompt for user authentication.
      * @param viewModel The ViewModel to update upon successful authentication.
@@ -297,6 +328,16 @@ class MainActivity : FragmentActivity() {
             return
         }
 
+        val cipher =
+            try {
+                getCipher().apply {
+                    init(Cipher.ENCRYPT_MODE, getOrCreateSecretKey())
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to initialize biometric crypto", e)
+                return
+            }
+
         val executor = ContextCompat.getMainExecutor(this)
         val biometricPrompt =
             BiometricPrompt(
@@ -305,7 +346,10 @@ class MainActivity : FragmentActivity() {
                 object : BiometricPrompt.AuthenticationCallback() {
                     override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                         super.onAuthenticationSucceeded(result)
-                        viewModel.setAuthenticated(true)
+                        val authCipher = result.cryptoObject?.cipher ?: return
+                        runCatching { authCipher.doFinal("auth".toByteArray()) }
+                            .onSuccess { viewModel.setAuthenticated(true) }
+                            .onFailure { Log.e(TAG, "Biometric crypto operation failed", it) }
                     }
                 },
             )
@@ -318,7 +362,7 @@ class MainActivity : FragmentActivity() {
                     BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.DEVICE_CREDENTIAL,
                 ).build()
 
-        biometricPrompt.authenticate(promptInfo)
+        biometricPrompt.authenticate(promptInfo, BiometricPrompt.CryptoObject(cipher))
     }
 
     /**
