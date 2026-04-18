@@ -381,7 +381,7 @@ internal fun VaultsLayer(
         snapshot.retrievalQueue.forEach { item ->
             Surface(
                 modifier = Modifier.fillMaxWidth(),
-                color = TajsOSTheme.Surface,
+                color = TajsOSTheme.CardSurface,
                 shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                 border = BorderStroke(1.dp, TajsOSTheme.Primary),
             ) {
@@ -593,7 +593,7 @@ private fun VaultCard(
                 }
                 if (data.badge != null) {
                     Surface(
-                        color = TajsOSTheme.Surface.copy(alpha = 0.45f),
+                        color = TajsOSTheme.CardSurface.copy(alpha = 0.45f),
                         shape = RoundedCornerShape(999.dp),
                         border = BorderStroke(1.dp, TajsOSTheme.VaultBorder),
                     ) {
@@ -844,3 +844,4 @@ private fun formatLocalTime(timestamp: Long): String {
     val minute = local.minute.toString().padStart(2, '0')
     return "$hour:$minute"
 }
+

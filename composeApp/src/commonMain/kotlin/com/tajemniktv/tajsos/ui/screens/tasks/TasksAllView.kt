@@ -205,8 +205,8 @@ internal fun TasksAllView(
                     Surface(
                         modifier = Modifier.weight(2f),
                         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                        color = TajsOSTheme.Surface,
-                        border = BorderStroke(1.dp, TajsOSTheme.Border),
+                        color = TajsOSTheme.CardSurface,
+                        border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
                     ) {
                         TaskTable(
                             sorted,
@@ -219,8 +219,8 @@ internal fun TasksAllView(
                     Surface(
                         modifier = Modifier.weight(1f),
                         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                        color = TajsOSTheme.Surface,
-                        border = BorderStroke(1.dp, TajsOSTheme.Border),
+                        color = TajsOSTheme.CardSurface,
+                        border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
                     ) {
                         TaskDetails(
                             selected,
@@ -237,8 +237,8 @@ internal fun TasksAllView(
             } else {
                 Surface(
                     shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                    color = TajsOSTheme.Surface,
-                    border = BorderStroke(1.dp, TajsOSTheme.Border),
+                    color = TajsOSTheme.CardSurface,
+                    border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
                 ) {
                     Column(modifier = Modifier.fillMaxWidth()) {
                         TaskTable(
@@ -473,3 +473,4 @@ private fun TaskDetails(
         }
     }
 }
+

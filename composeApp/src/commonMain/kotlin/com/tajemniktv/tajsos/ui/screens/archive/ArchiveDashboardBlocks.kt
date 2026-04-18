@@ -125,7 +125,7 @@ internal fun ArchiveMainBlock(
                                 onClick = { onEditNode(nodeWithPin.node.id) },
                                 onLongClick = { onEditNode(nodeWithPin.node.id) },
                             ),
-                        colors = ListItemDefaults.colors(containerColor = TajsOSTheme.Surface),
+                        colors = ListItemDefaults.colors(containerColor = TajsOSTheme.CardSurface),
                     )
                     HorizontalDivider(color = TajsOSTheme.Muted.copy(alpha = 0.5f))
                 }
@@ -133,3 +133,4 @@ internal fun ArchiveMainBlock(
         }
     }
 }
+

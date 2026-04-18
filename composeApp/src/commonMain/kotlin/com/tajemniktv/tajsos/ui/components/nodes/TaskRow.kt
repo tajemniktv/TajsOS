@@ -86,7 +86,7 @@ fun TaskRow(
                     onClick = onClick,
                     onLongClick = onLongClick,
                 ),
-        color = TajsOSTheme.Surface,
+        color = TajsOSTheme.CardSurface,
     ) {
         Row(
             modifier = Modifier.padding(horizontal = TajsOSTheme.SpacingMd),
@@ -187,3 +187,4 @@ fun TaskRow(
         }
     }
 }
+

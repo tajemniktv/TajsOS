@@ -39,7 +39,7 @@ fun OptionCard(
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = TajsOSTheme.Background,
-        border = BorderStroke(1.dp, TajsOSTheme.Border),
+        border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
         shape = RoundedCornerShape(2.dp),
     ) {
         Column(modifier = Modifier.padding(TajsOSTheme.SpacingSm)) {
@@ -72,3 +72,4 @@ fun OptionCard(
         }
     }
 }
+

@@ -36,7 +36,7 @@ fun BasicSurvivalCard(
     Surface(
         onClick = onClick,
         modifier = modifier,
-        color = TajsOSTheme.Surface,
+        color = TajsOSTheme.CardSurface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         border = BorderStroke(1.dp, color.copy(alpha = 0.2f)),
     ) {
@@ -56,3 +56,4 @@ fun BasicSurvivalCard(
         }
     }
 }
+

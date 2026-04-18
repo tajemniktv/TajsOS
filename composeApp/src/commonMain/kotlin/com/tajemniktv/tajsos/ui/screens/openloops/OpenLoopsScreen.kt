@@ -128,9 +128,9 @@ internal fun OpenLoopsLayer(
 
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TajsOSTheme.Surface,
+        color = TajsOSTheme.CardSurface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.Border),
+        border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
     ) {
         Column(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -257,3 +257,4 @@ internal fun OpenLoopsLayer(
         }
     }
 }
+

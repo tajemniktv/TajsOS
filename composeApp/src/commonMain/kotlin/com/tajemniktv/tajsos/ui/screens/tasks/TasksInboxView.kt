@@ -71,8 +71,8 @@ internal fun TasksInboxView(
 
         Surface(
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            color = TajsOSTheme.Surface,
-            border = BorderStroke(1.dp, TajsOSTheme.Border),
+            color = TajsOSTheme.CardSurface,
+            border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
@@ -134,8 +134,8 @@ internal fun TasksInboxView(
 
         Surface(
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            color = TajsOSTheme.Surface,
-            border = BorderStroke(1.dp, TajsOSTheme.Border),
+            color = TajsOSTheme.CardSurface,
+            border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
@@ -204,3 +204,4 @@ internal fun TasksInboxView(
         }
     }
 }
+

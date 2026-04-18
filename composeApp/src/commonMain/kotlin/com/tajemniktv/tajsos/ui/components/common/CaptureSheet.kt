@@ -154,7 +154,7 @@ fun CaptureSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = TajsOSTheme.Surface,
+        containerColor = TajsOSTheme.CardSurface,
         shape =
             RoundedCornerShape(
                 topStart = TajsOSTheme.RadiusLg,
@@ -644,3 +644,4 @@ fun CaptureSheet(
         }
     }
 }
+

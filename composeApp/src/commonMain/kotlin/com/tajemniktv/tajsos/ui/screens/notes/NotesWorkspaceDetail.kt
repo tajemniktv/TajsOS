@@ -199,7 +199,7 @@ fun NotesWorkspaceDetail(
     ) {
         Surface(
             modifier = Modifier.width(320.dp).fillMaxHeight(),
-            color = TajsOSTheme.Surface,
+            color = TajsOSTheme.CardSurface,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         ) {
             Column(
@@ -283,7 +283,7 @@ fun NotesWorkspaceDetail(
 
         Surface(
             modifier = Modifier.weight(1f).fillMaxHeight(),
-            color = TajsOSTheme.Surface,
+            color = TajsOSTheme.CardSurface,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         ) {
             Column(
@@ -499,7 +499,7 @@ private fun SidePanelCard(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TajsOSTheme.Surface,
+        color = TajsOSTheme.CardSurface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
     ) {
         Column(
@@ -521,3 +521,4 @@ private fun SidePanelCard(
         }
     }
 }
+

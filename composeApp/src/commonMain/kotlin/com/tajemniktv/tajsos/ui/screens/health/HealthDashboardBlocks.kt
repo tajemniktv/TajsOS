@@ -61,9 +61,9 @@ internal fun HealthMainBlock(
     ) {
         Surface(
             modifier = Modifier.fillMaxWidth(),
-            color = TajsOSTheme.Surface,
+            color = TajsOSTheme.CardSurface,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            border = BorderStroke(1.dp, TajsOSTheme.Border),
+            border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
         ) {
             Column(
                 modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -117,9 +117,9 @@ internal fun HealthMainBlock(
             healthQueue.forEach { item ->
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
-                    color = TajsOSTheme.Surface,
+                    color = TajsOSTheme.CardSurface,
                     shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
-                    border = BorderStroke(1.dp, TajsOSTheme.Border),
+                    border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
                     onClick = { onEditNode(item.node.node.id) },
                 ) {
                     Column(
@@ -147,3 +147,4 @@ internal fun HealthMainBlock(
         }
     }
 }
+

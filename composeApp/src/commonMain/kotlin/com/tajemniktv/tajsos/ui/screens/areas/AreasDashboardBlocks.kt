@@ -178,7 +178,7 @@ private fun AreaTopSummary(
     areas: List<NodeEntity>,
     metricsById: Map<Long, AreaHealthMetrics>,
 ) {
-    Surface(color = TajsOSTheme.Surface, shape = RoundedCornerShape(TajsOSTheme.RadiusMd)) {
+    Surface(color = TajsOSTheme.CardSurface, shape = RoundedCornerShape(TajsOSTheme.RadiusMd)) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
             verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
@@ -341,7 +341,7 @@ private fun AreaCard(
     val load = metrics?.stressLoad ?: 0
     Surface(
         modifier = Modifier.fillMaxWidth().clickable(onClick = onClick),
-        color = TajsOSTheme.Surface,
+        color = TajsOSTheme.CardSurface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         border = BorderStroke(1.dp, color.copy(alpha = 0.28f)),
     ) {
@@ -467,3 +467,4 @@ private fun areaStatusColor(status: String): Color =
     }
 
 internal fun routeForAreaDetail(areaId: Long): String = Screen.AreaDetail.route.replace("{areaId}", areaId.toString())
+

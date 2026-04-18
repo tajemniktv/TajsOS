@@ -451,7 +451,7 @@ private fun SidebarBlock(
     icon: ImageVector,
     content: @Composable () -> Unit,
 ) {
-    Surface(color = TajsOSTheme.Surface, shape = RoundedCornerShape(TajsOSTheme.RadiusMd)) {
+    Surface(color = TajsOSTheme.CardSurface, shape = RoundedCornerShape(TajsOSTheme.RadiusMd)) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -512,7 +512,7 @@ private fun SectionHeader(
 
 @Composable
 private fun EmptyLabel(text: StringResource) {
-    Surface(color = TajsOSTheme.Surface, shape = RoundedCornerShape(TajsOSTheme.RadiusMd)) {
+    Surface(color = TajsOSTheme.CardSurface, shape = RoundedCornerShape(TajsOSTheme.RadiusMd)) {
         Text(stringResource(text), color = TajsOSTheme.Muted, modifier = Modifier.padding(12.dp))
     }
 }
@@ -527,3 +527,4 @@ private fun formatTimestamp(timestamp: Long?): String {
         dt.day.toString().padStart(2, '0')
     }"
 }
+

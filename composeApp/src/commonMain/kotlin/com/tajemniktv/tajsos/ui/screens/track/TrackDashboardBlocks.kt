@@ -283,7 +283,7 @@ private fun renderTrackHistoryList(context: TrackDashboardContext) {
 private fun TrackHistoryItem(entry: TrackEntryEntity) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TajsOSTheme.Surface.copy(alpha = 0.5f),
+        color = TajsOSTheme.CardSurface.copy(alpha = 0.5f),
         shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
         border =
             androidx.compose.foundation.BorderStroke(
@@ -348,3 +348,4 @@ private fun StatusChip(
         color = TajsOSTheme.Text,
     )
 }
+

@@ -230,7 +230,7 @@ private fun renderSettingsData(context: SettingsDashboardContext) {
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
             colors =
                 ButtonDefaults.buttonColors(
-                    containerColor = TajsOSTheme.Surface,
+                    containerColor = TajsOSTheme.CardSurface,
                     contentColor = TajsOSTheme.Primary,
                 ),
         ) {
@@ -245,7 +245,7 @@ private fun renderSettingsData(context: SettingsDashboardContext) {
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
             colors =
                 ButtonDefaults.buttonColors(
-                    containerColor = TajsOSTheme.Surface,
+                    containerColor = TajsOSTheme.CardSurface,
                     contentColor = TajsOSTheme.Primary,
                 ),
         ) {
@@ -276,7 +276,7 @@ private fun renderSettingsData(context: SettingsDashboardContext) {
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
             colors =
                 ButtonDefaults.buttonColors(
-                    containerColor = TajsOSTheme.Surface,
+                    containerColor = TajsOSTheme.CardSurface,
                     contentColor = TajsOSTheme.Primary,
                 ),
         ) {
@@ -741,3 +741,4 @@ private fun SettingsAddMedicationDialog(
         },
     )
 }
+

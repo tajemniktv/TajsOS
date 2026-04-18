@@ -389,9 +389,9 @@ private fun RenderDashboardBlock(
         "system_clock" -> {
             Surface(
                 modifier = Modifier.fillMaxWidth(),
-                color = TajsOSTheme.Surface,
+                color = TajsOSTheme.CardSurface,
                 shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                border = BorderStroke(1.dp, TajsOSTheme.Border),
+                border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
             ) {
                 Column(Modifier.padding(20.dp)) {
                     Text(
@@ -425,9 +425,9 @@ private fun RenderDashboardBlock(
         "command_bar" -> {
             Surface(
                 modifier = Modifier.fillMaxWidth(),
-                color = TajsOSTheme.Surface.copy(alpha = 0.5f),
+                color = TajsOSTheme.CardSurface.copy(alpha = 0.5f),
                 shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                border = BorderStroke(1.dp, TajsOSTheme.Border),
+                border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
             ) {
                 Row(
                     modifier = Modifier.padding(12.dp).fillMaxWidth(),
@@ -654,3 +654,4 @@ private fun CommandItem(
         )
     }
 }
+

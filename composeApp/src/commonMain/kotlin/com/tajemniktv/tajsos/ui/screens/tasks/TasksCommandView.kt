@@ -255,8 +255,8 @@ private fun PriorityTaskCard(
 ) {
     Surface(
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        color = TajsOSTheme.Surface,
-        border = BorderStroke(1.dp, TajsOSTheme.Border),
+        color = TajsOSTheme.CardSurface,
+        border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
@@ -336,8 +336,8 @@ private fun QueueList(
 ) {
     Surface(
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        color = TajsOSTheme.Surface,
-        border = BorderStroke(1.dp, TajsOSTheme.Border),
+        color = TajsOSTheme.CardSurface,
+        border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
     ) {
         Column {
             tasks.forEach { task ->
@@ -398,8 +398,8 @@ private fun CommandSidebar(
     Surface(
         modifier = modifier,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        color = TajsOSTheme.Surface,
-        border = BorderStroke(1.dp, TajsOSTheme.Border),
+        color = TajsOSTheme.CardSurface,
+        border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
@@ -492,3 +492,4 @@ private fun CommandSidebar(
         )
     }
 }
+

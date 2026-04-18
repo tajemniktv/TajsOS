@@ -287,9 +287,9 @@ private fun renderNoteTaskMetadata(context: NoteDetailContext) {
 
         Surface(
             modifier = Modifier.fillMaxWidth(),
-            color = TajsOSTheme.Surface,
+            color = TajsOSTheme.CardSurface,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            border = BorderStroke(1.dp, TajsOSTheme.Border),
+            border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
         ) {
             Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
                 Row(
@@ -451,9 +451,9 @@ private fun renderNoteResourceMetadata(context: NoteDetailContext) {
 
         Surface(
             modifier = Modifier.fillMaxWidth(),
-            color = TajsOSTheme.Surface,
+            color = TajsOSTheme.CardSurface,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            border = BorderStroke(1.dp, TajsOSTheme.Border),
+            border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
         ) {
             Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
                 Row(
@@ -533,7 +533,7 @@ private fun renderNoteContextGraph(context: NoteDetailContext) {
         modifier = Modifier.fillMaxWidth(),
         color = Color.Black.copy(alpha = 0.3f),
         shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
-        border = BorderStroke(1.dp, TajsOSTheme.Border.copy(alpha = 0.5f)),
+        border = BorderStroke(1.dp, TajsOSTheme.CardStroke.copy(alpha = 0.5f)),
     ) {
         Column(modifier = Modifier.padding(TajsOSTheme.SpacingLg)) {
             Row(
@@ -567,9 +567,9 @@ private fun renderNoteContextGraph(context: NoteDetailContext) {
                     )
                 }
                 Surface(
-                    color = TajsOSTheme.Surface,
+                    color = TajsOSTheme.CardSurface,
                     shape = CircleShape,
-                    border = BorderStroke(1.dp, TajsOSTheme.Border),
+                    border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
                 ) {
                     Text(
                         "${tags.size} Tags",
@@ -613,7 +613,7 @@ private fun renderNoteContextGraph(context: NoteDetailContext) {
                         },
                         colors =
                             AssistChipDefaults.assistChipColors(
-                                containerColor = TajsOSTheme.Surface,
+                                containerColor = TajsOSTheme.CardSurface,
                                 labelColor = TajsOSTheme.Text,
                             ),
                         shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
@@ -636,9 +636,9 @@ private fun renderNoteCadence(context: NoteDetailContext) {
     Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)) {
         Surface(
             modifier = Modifier.fillMaxWidth(),
-            color = TajsOSTheme.Surface,
+            color = TajsOSTheme.CardSurface,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            border = BorderStroke(1.dp, TajsOSTheme.Border),
+            border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
         ) {
             Row(
                 modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -691,9 +691,9 @@ private fun renderNoteAwarePlanning(context: NoteDetailContext) {
     val viewModel = context.viewModel
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TajsOSTheme.Surface,
+        color = TajsOSTheme.CardSurface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.Border),
+        border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
     ) {
         Column(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -806,9 +806,9 @@ private fun renderNoteOrganization(context: NoteDetailContext) {
 
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TajsOSTheme.Surface,
+        color = TajsOSTheme.CardSurface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.Border),
+        border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
     ) {
         Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
             Text(
@@ -904,9 +904,9 @@ private fun renderNoteKnowledgeConfig(context: NoteDetailContext) {
 
         Surface(
             modifier = Modifier.fillMaxWidth(),
-            color = TajsOSTheme.Surface,
+            color = TajsOSTheme.CardSurface,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            border = BorderStroke(1.dp, TajsOSTheme.Border),
+            border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
         ) {
             Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
                 Row(
@@ -995,3 +995,4 @@ private fun renderNoteContentEditor(context: NoteDetailContext) {
         )
     }
 }
+

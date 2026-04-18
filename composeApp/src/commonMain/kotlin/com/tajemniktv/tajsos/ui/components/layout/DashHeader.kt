@@ -88,7 +88,7 @@ fun DashHeader(
             Surface(
                 color = Color.Black.copy(alpha = 0.5f),
                 shape = CircleShape,
-                border = BorderStroke(1.dp, TajsOSTheme.Border),
+                border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
             ) {
                 Row(
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
@@ -125,3 +125,4 @@ fun DashHeader(
         }
     }
 }
+

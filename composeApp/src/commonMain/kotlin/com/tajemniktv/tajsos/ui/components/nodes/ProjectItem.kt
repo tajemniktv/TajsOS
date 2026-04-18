@@ -51,7 +51,7 @@ fun ProjectItem(
                     onClick = onClick,
                     onLongClick = onLongClick,
                 ),
-        color = TajsOSTheme.Surface,
+        color = TajsOSTheme.CardSurface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
         border =
             androidx.compose.foundation.BorderStroke(
@@ -98,3 +98,4 @@ fun ProjectItem(
         }
     }
 }
+

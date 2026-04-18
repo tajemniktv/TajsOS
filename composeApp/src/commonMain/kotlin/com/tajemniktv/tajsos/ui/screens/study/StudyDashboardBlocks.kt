@@ -217,7 +217,7 @@ internal fun renderFlashcardCandidatesBlock(context: StudyDashboardContext) {
         return
     }
     context.state.flashcardCandidates.take(12).forEach { item ->
-        Card(colors = CardDefaults.cardColors(containerColor = TajsOSTheme.Surface)) {
+        Card(colors = CardDefaults.cardColors(containerColor = TajsOSTheme.CardSurface)) {
             Row(
                 modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -246,7 +246,7 @@ internal fun renderFlashcardCandidatesBlock(context: StudyDashboardContext) {
 @Composable
 internal fun renderLinksGraphBlock(context: StudyDashboardContext) {
     SectionTitle("LINKS & GRAPH")
-    Card(colors = CardDefaults.cardColors(containerColor = TajsOSTheme.Surface)) {
+    Card(colors = CardDefaults.cardColors(containerColor = TajsOSTheme.CardSurface)) {
         Column(modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd)) {
             Text("TOPIC-TO-NOTE LINKING", style = MaterialTheme.typography.titleMedium)
             Text(
@@ -261,7 +261,7 @@ internal fun renderLinksGraphBlock(context: StudyDashboardContext) {
         }
     }
 
-    Card(colors = CardDefaults.cardColors(containerColor = TajsOSTheme.Surface)) {
+    Card(colors = CardDefaults.cardColors(containerColor = TajsOSTheme.CardSurface)) {
         Column(modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd)) {
             Text("PAPER-TO-NOTE LINKING", style = MaterialTheme.typography.titleMedium)
             Text(
@@ -276,7 +276,7 @@ internal fun renderLinksGraphBlock(context: StudyDashboardContext) {
         }
     }
 
-    Card(colors = CardDefaults.cardColors(containerColor = TajsOSTheme.Surface)) {
+    Card(colors = CardDefaults.cardColors(containerColor = TajsOSTheme.CardSurface)) {
         Column(modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd)) {
             Text("PSYCHOLOGY CONCEPT KNOWLEDGE GRAPH", style = MaterialTheme.typography.titleMedium)
             Text(
@@ -304,7 +304,7 @@ internal fun renderCourseDashboardBlock(context: StudyDashboardContext) {
         return
     }
     context.state.courseDashboard.forEach { summary ->
-        Card(colors = CardDefaults.cardColors(containerColor = TajsOSTheme.Surface)) {
+        Card(colors = CardDefaults.cardColors(containerColor = TajsOSTheme.CardSurface)) {
             Column(modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd)) {
                 Text(summary.courseName, style = MaterialTheme.typography.titleMedium)
                 Text("Course: ${summary.courseId}", style = MaterialTheme.typography.bodySmall)
@@ -337,7 +337,7 @@ internal fun renderSemesterDashboardBlock(context: StudyDashboardContext) {
         return
     }
     context.state.semesterDashboard.forEach { summary ->
-        Card(colors = CardDefaults.cardColors(containerColor = TajsOSTheme.Surface)) {
+        Card(colors = CardDefaults.cardColors(containerColor = TajsOSTheme.CardSurface)) {
             Column(modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd)) {
                 Text(summary.semester, style = MaterialTheme.typography.titleMedium)
                 Text("Courses: ${summary.courseCount}", style = MaterialTheme.typography.bodySmall)
@@ -388,3 +388,4 @@ private fun SectionTitle(title: String) {
         fontWeight = FontWeight.SemiBold,
     )
 }
+

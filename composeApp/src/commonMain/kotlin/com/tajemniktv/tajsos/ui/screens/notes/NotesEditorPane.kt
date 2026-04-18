@@ -79,7 +79,7 @@ fun NotesEditorPane(
 ) {
     Surface(
         modifier = modifier.fillMaxSize(),
-        color = TajsOSTheme.Surface,
+        color = TajsOSTheme.CardSurface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
     ) {
         if (note == null) {
@@ -264,3 +264,4 @@ private fun absoluteDateLabel(epochMillis: Long): String =
         .toString()
         .replace("T", " ")
         .take(16)
+

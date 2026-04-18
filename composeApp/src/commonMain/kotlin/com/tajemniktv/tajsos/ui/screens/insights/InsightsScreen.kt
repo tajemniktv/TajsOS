@@ -119,7 +119,7 @@ fun ProjectEntropyItem(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TajsOSTheme.Surface,
+        color = TajsOSTheme.CardSurface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
         border =
             BorderStroke(
@@ -173,7 +173,7 @@ fun ActivityLogItem(log: EventLogEntity) {
 
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TajsOSTheme.Surface,
+        color = TajsOSTheme.CardSurface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
         border =
             BorderStroke(
@@ -218,7 +218,7 @@ fun NeglectedProjectItem(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TajsOSTheme.Surface,
+        color = TajsOSTheme.CardSurface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
         border =
             BorderStroke(
@@ -248,3 +248,4 @@ fun NeglectedProjectItem(
         }
     }
 }
+

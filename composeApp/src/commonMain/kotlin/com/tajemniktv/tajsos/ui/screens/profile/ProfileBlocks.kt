@@ -562,7 +562,7 @@ private fun MedicationItem(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TajsOSTheme.Surface.copy(alpha = 0.7f),
+        color = TajsOSTheme.CardSurface.copy(alpha = 0.7f),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
     ) {
         Row(
@@ -595,3 +595,4 @@ private fun MedicationItem(
         }
     }
 }
+

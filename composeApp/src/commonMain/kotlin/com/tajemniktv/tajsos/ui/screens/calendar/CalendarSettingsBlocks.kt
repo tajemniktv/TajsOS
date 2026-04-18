@@ -97,7 +97,7 @@ private fun ProviderRow(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = TajsOSTheme.Surface),
+        colors = CardDefaults.cardColors(containerColor = TajsOSTheme.CardSurface),
     ) {
         Row(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -134,3 +134,4 @@ private fun ProviderRow(
         }
     }
 }
+

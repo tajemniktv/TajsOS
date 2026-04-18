@@ -561,7 +561,7 @@ private fun SidebarCard(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TajsOSTheme.Surface,
+        color = TajsOSTheme.CardSurface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
     ) {
         Column(
@@ -621,7 +621,7 @@ private fun ProjectSectionTitle(
 private fun ProjectEmptyState(text: StringResource) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TajsOSTheme.Surface,
+        color = TajsOSTheme.CardSurface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
     ) {
         EmptyState(
@@ -643,7 +643,7 @@ private fun MissionMetric(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TajsOSTheme.Surface,
+        color = TajsOSTheme.CardSurface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
     ) {
         Row(
@@ -724,3 +724,4 @@ private fun formatTimestamp(timestamp: Long?): String {
         date.day.toString().padStart(2, '0')
     }"
 }
+

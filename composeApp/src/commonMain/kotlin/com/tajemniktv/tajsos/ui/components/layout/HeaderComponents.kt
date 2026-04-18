@@ -66,7 +66,7 @@ fun SystemOnlineStatus(tintColor: Color) {
     Surface(
         color = Color.Black.copy(alpha = 0.5f),
         shape = CircleShape,
-        border = BorderStroke(1.dp, TajsOSTheme.Border),
+        border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
@@ -107,9 +107,9 @@ fun SystemOnlineStatus(tintColor: Color) {
 @Composable
 fun DesktopSearchSurface() {
     Surface(
-        color = TajsOSTheme.Surface,
+        color = TajsOSTheme.CardSurface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.Border),
+        border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
@@ -130,3 +130,4 @@ fun DesktopSearchSurface() {
         }
     }
 }
+

@@ -94,7 +94,7 @@ internal fun DecisionsMainBlock(
         Spacer(Modifier.height(8.dp))
         SecondaryTabRow(
             selectedTabIndex = selectedTab,
-            containerColor = TajsOSTheme.Surface,
+            containerColor = TajsOSTheme.CardSurface,
             contentColor = TajsOSTheme.Primary,
         ) {
             tabs.forEachIndexed { index, title ->
@@ -198,3 +198,4 @@ fun DecisionList(
         }
     }
 }
+

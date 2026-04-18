@@ -64,7 +64,7 @@ import tajsos.composeapp.generated.resources.templates_title
 
 @Composable
 fun StudentSummaryCard(state: StudentBoardState) {
-    Card(colors = CardDefaults.cardColors(containerColor = TajsOSTheme.Surface)) {
+    Card(colors = CardDefaults.cardColors(containerColor = TajsOSTheme.CardSurface)) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
             verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
@@ -142,7 +142,7 @@ fun TemplateQuickActionsCard(
     val paperTemplate =
         templates.firstOrNull { it.name.equals("Paper Summary Template", ignoreCase = true) }
 
-    Card(colors = CardDefaults.cardColors(containerColor = TajsOSTheme.Surface)) {
+    Card(colors = CardDefaults.cardColors(containerColor = TajsOSTheme.CardSurface)) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
             verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
@@ -267,7 +267,7 @@ fun ProgressControlCard(
     onIncrease: () -> Unit,
     onOpen: () -> Unit,
 ) {
-    Card(colors = CardDefaults.cardColors(containerColor = TajsOSTheme.Surface)) {
+    Card(colors = CardDefaults.cardColors(containerColor = TajsOSTheme.CardSurface)) {
         Column(modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd)) {
             Text(title, style = MaterialTheme.typography.titleSmall)
             Text("$value%", style = MaterialTheme.typography.bodySmall, color = TajsOSTheme.Accent)
@@ -318,3 +318,4 @@ fun StudentNodeCard(
     }
     androidx.compose.material3.HorizontalDivider()
 }
+

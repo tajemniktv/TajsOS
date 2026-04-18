@@ -113,7 +113,7 @@ fun <T> SelectorDialog(
                     Surface(
                         color = Color.Black.copy(alpha = 0.5f),
                         shape = RoundedCornerShape(4.dp),
-                        border = BorderStroke(1.dp, TajsOSTheme.Border),
+                        border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
                     ) {
                         Text(
                             "STATUS: READY",
@@ -217,7 +217,7 @@ fun <T> SelectorDialog(
                         onClick = onDismiss,
                         colors =
                             ButtonDefaults.buttonColors(
-                                containerColor = TajsOSTheme.Surface,
+                                containerColor = TajsOSTheme.CardSurface,
                                 contentColor = TajsOSTheme.Text,
                             ),
                         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
@@ -234,3 +234,4 @@ fun <T> SelectorDialog(
         }
     }
 }
+

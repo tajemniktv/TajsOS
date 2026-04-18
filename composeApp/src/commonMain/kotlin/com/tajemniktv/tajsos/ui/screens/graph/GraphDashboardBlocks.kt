@@ -4,6 +4,7 @@
 
 package com.tajemniktv.tajsos.ui.screens.graph
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -98,7 +99,7 @@ internal fun GraphMainBlock(
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Card(
                 colors = CardDefaults.cardColors(containerColor = TajsOSTheme.SurfaceLow),
-                border = androidx.compose.foundation.BorderStroke(1.dp, TajsOSTheme.Border),
+                border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
             ) {
                 Text(
                     text = stringResource(Res.string.graph_no_data),
@@ -231,3 +232,4 @@ internal fun GraphMainBlock(
         }
     }
 }
+

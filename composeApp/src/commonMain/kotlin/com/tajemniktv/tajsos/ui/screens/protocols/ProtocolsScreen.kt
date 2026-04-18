@@ -257,7 +257,7 @@ internal fun ProtocolsLayer(
             modifier = Modifier.fillMaxWidth(),
             color = TajsOSTheme.SurfaceLowest,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            border = BorderStroke(1.dp, TajsOSTheme.Border.copy(alpha = 0.6f)),
+            border = BorderStroke(1.dp, TajsOSTheme.CardStroke.copy(alpha = 0.6f)),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingSm),
@@ -338,9 +338,9 @@ private fun ProtocolsHeader(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TajsOSTheme.Surface,
+        color = TajsOSTheme.CardSurface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
-        border = BorderStroke(1.dp, TajsOSTheme.Border),
+        border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
     ) {
         Column(
             modifier =
@@ -404,7 +404,7 @@ private fun HeaderStatChip(
 ) {
     Surface(
         color = TajsOSTheme.SurfaceHighest.copy(alpha = 0.9f),
-        border = BorderStroke(1.dp, TajsOSTheme.Border.copy(alpha = 0.45f)),
+        border = BorderStroke(1.dp, TajsOSTheme.CardStroke.copy(alpha = 0.45f)),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
     ) {
         Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
@@ -475,8 +475,8 @@ private fun ProtocolLibrarySurface(
         if (filtered.isEmpty()) {
             Surface(
                 modifier = Modifier.fillMaxWidth(),
-                color = TajsOSTheme.Surface,
-                border = BorderStroke(1.dp, TajsOSTheme.Border),
+                color = TajsOSTheme.CardSurface,
+                border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
                 shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
             ) {
                 Text(
@@ -511,9 +511,9 @@ private fun ProtocolLibraryCard(
 ) {
     Surface(
         modifier = Modifier.width(360.dp),
-        color = TajsOSTheme.Surface,
+        color = TajsOSTheme.CardSurface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.Border),
+        border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
@@ -598,9 +598,9 @@ private fun ProtocolRunSurface(
     if (activeProtocol == null) {
         Surface(
             modifier = Modifier.fillMaxWidth(),
-            color = TajsOSTheme.Surface,
+            color = TajsOSTheme.CardSurface,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            border = BorderStroke(1.dp, TajsOSTheme.Border),
+            border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
@@ -767,9 +767,9 @@ private fun ProtocolRunMainPanel(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TajsOSTheme.Surface,
+        color = TajsOSTheme.CardSurface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
-        border = BorderStroke(1.dp, TajsOSTheme.Border),
+        border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingLg),
@@ -815,7 +815,7 @@ private fun ProtocolRunMainPanel(
                 modifier = Modifier.fillMaxWidth(),
                 color = TajsOSTheme.SurfaceLowest,
                 shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                border = BorderStroke(1.dp, TajsOSTheme.Border.copy(alpha = 0.7f)),
+                border = BorderStroke(1.dp, TajsOSTheme.CardStroke.copy(alpha = 0.7f)),
             ) {
                 Column(
                     modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
@@ -908,9 +908,9 @@ private fun ProtocolRunSidebar(
 ) {
     Surface(
         modifier = modifier,
-        color = TajsOSTheme.Surface,
+        color = TajsOSTheme.CardSurface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
-        border = BorderStroke(1.dp, TajsOSTheme.Border),
+        border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
@@ -939,7 +939,7 @@ private fun ProtocolRunSidebar(
                 Surface(
                     color = TajsOSTheme.SurfaceHighest.copy(alpha = 0.8f),
                     shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                    border = BorderStroke(1.dp, TajsOSTheme.Border.copy(alpha = 0.5f)),
+                    border = BorderStroke(1.dp, TajsOSTheme.CardStroke.copy(alpha = 0.5f)),
                 ) {
                     Text(
                         text = stringResource(Res.string.protocol_up_next, upNext),
@@ -1158,3 +1158,4 @@ private inline fun <T> List<T>.indexOfFirstFrom(
     }
     return -1
 }
+

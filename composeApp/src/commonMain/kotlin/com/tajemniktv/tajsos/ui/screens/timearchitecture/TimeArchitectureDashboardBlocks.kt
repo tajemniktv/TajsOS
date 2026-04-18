@@ -141,7 +141,7 @@ private fun renderTimeMap(context: TimeArchitectureDashboardContext) {
         modifier = Modifier.fillMaxWidth(),
         color = TajsOSTheme.SurfaceLow,
         shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
-        border = BorderStroke(1.dp, TajsOSTheme.GhostBorder.copy(alpha = 0.18f)),
+        border = BorderStroke(1.dp, TajsOSTheme.CardStroke.copy(alpha = 0.18f)),
     ) {
         Column(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -310,7 +310,7 @@ private fun TimeArchitectureCadenceCard(
         modifier = modifier,
         color = TajsOSTheme.SurfaceLow,
         shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
-        border = BorderStroke(1.dp, TajsOSTheme.GhostBorder.copy(alpha = 0.15f)),
+        border = BorderStroke(1.dp, TajsOSTheme.CardStroke.copy(alpha = 0.15f)),
     ) {
         Column(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -359,7 +359,7 @@ private fun TimeArchitectureAnchorsCard(
         modifier = modifier,
         color = TajsOSTheme.SurfaceLow,
         shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
-        border = BorderStroke(1.dp, TajsOSTheme.GhostBorder.copy(alpha = 0.15f)),
+        border = BorderStroke(1.dp, TajsOSTheme.CardStroke.copy(alpha = 0.15f)),
     ) {
         Column(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -410,7 +410,7 @@ private fun renderTimeProjectPhases(context: TimeArchitectureDashboardContext) {
             modifier = Modifier.fillMaxWidth(),
             color = TajsOSTheme.SurfaceLow,
             shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
-            border = BorderStroke(1.dp, TajsOSTheme.GhostBorder.copy(alpha = 0.15f)),
+            border = BorderStroke(1.dp, TajsOSTheme.CardStroke.copy(alpha = 0.15f)),
         ) {
             Column(
                 modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -474,7 +474,7 @@ private fun renderTimeHorizonQueue(context: TimeArchitectureDashboardContext) {
             modifier = Modifier.fillMaxWidth(),
             color = TajsOSTheme.SurfaceLow,
             shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
-            border = BorderStroke(1.dp, TajsOSTheme.GhostBorder.copy(alpha = 0.15f)),
+            border = BorderStroke(1.dp, TajsOSTheme.CardStroke.copy(alpha = 0.15f)),
         ) {
             Column(
                 modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -651,3 +651,4 @@ private fun TimeArchitectureSnapshot.buildAnchorRows(): List<AnchorMarkerRow> {
         }
     return (countdownRows + markerRows).distinctBy { it.title + it.coordinate }
 }
+

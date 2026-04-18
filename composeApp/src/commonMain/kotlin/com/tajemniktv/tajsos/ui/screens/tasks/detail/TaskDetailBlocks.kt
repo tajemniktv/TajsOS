@@ -300,7 +300,7 @@ private fun HeaderTitleEditor(
     Surface(
         shape = RoundedCornerShape(10.dp),
         color = TajsOSTheme.SurfaceHighest,
-        border = BorderStroke(1.dp, TajsOSTheme.GhostBorder.copy(alpha = 0.25f)),
+        border = BorderStroke(1.dp, TajsOSTheme.CardStroke.copy(alpha = 0.25f)),
     ) {
         BasicTextField(
             value = value,
@@ -390,7 +390,7 @@ private fun renderTaskDescription(context: TaskDetailContext) {
                 Surface(
                     shape = RoundedCornerShape(10.dp),
                     color = TajsOSTheme.SurfaceHighest,
-                    border = BorderStroke(1.dp, TajsOSTheme.GhostBorder.copy(alpha = 0.22f)),
+                    border = BorderStroke(1.dp, TajsOSTheme.CardStroke.copy(alpha = 0.22f)),
                 ) {
                     BasicTextField(
                         value = context.draftDescription,
@@ -578,7 +578,7 @@ private fun SubtaskRow(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(10.dp),
         color = background,
-        border = BorderStroke(1.dp, TajsOSTheme.GhostBorder.copy(alpha = 0.18f)),
+        border = BorderStroke(1.dp, TajsOSTheme.CardStroke.copy(alpha = 0.18f)),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 10.dp),
@@ -1219,3 +1219,4 @@ private fun TaskStateBadge(
         )
     }
 }
+

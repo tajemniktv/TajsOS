@@ -90,9 +90,9 @@ private fun renderIdentitySignature(context: IdentityDashboardContext) {
     Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)) {
         Surface(
             modifier = Modifier.fillMaxWidth(),
-            color = TajsOSTheme.Surface,
+            color = TajsOSTheme.CardSurface,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            border = BorderStroke(1.dp, TajsOSTheme.Border),
+            border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
         ) {
             Column(
                 modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -150,9 +150,9 @@ private fun renderIdentitySignature(context: IdentityDashboardContext) {
 
             Surface(
                 modifier = Modifier.fillMaxWidth(),
-                color = TajsOSTheme.Surface,
+                color = TajsOSTheme.CardSurface,
                 shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                border = BorderStroke(1.dp, TajsOSTheme.Border),
+                border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
             ) {
                 Column(
                     modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -190,9 +190,9 @@ private fun renderIdentitySignature(context: IdentityDashboardContext) {
                 val dueMinusDay = dueAt?.minus(24L * 60 * 60 * 1000)
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
-                    color = TajsOSTheme.Surface,
+                    color = TajsOSTheme.CardSurface,
                     shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                    border = BorderStroke(1.dp, TajsOSTheme.Border),
+                    border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
                 ) {
                     Column(
                         modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -242,9 +242,9 @@ private fun renderIdentityDistinction(context: IdentityDashboardContext) {
     Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
         Surface(
             modifier = Modifier.fillMaxWidth(),
-            color = TajsOSTheme.Surface,
+            color = TajsOSTheme.CardSurface,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            border = BorderStroke(1.dp, TajsOSTheme.Border),
+            border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
         ) {
             Column(
                 modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -298,9 +298,9 @@ private fun renderIdentityDirection(context: IdentityDashboardContext) {
     Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
         Surface(
             modifier = Modifier.fillMaxWidth(),
-            color = TajsOSTheme.Surface,
+            color = TajsOSTheme.CardSurface,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            border = BorderStroke(1.dp, TajsOSTheme.Border),
+            border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
         ) {
             Column(
                 modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -343,9 +343,9 @@ private fun renderIdentityCoreShift(context: IdentityDashboardContext) {
     Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
         Surface(
             modifier = Modifier.fillMaxWidth(),
-            color = TajsOSTheme.Surface,
+            color = TajsOSTheme.CardSurface,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            border = BorderStroke(1.dp, TajsOSTheme.Border),
+            border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
         ) {
             Column(
                 modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -378,3 +378,4 @@ private fun renderIdentityCoreShift(context: IdentityDashboardContext) {
         }
     }
 }
+

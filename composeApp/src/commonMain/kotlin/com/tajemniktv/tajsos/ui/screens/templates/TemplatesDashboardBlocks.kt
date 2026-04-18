@@ -82,9 +82,10 @@ private fun renderTemplatesList(context: TemplatesDashboardContext) {
                             )
                         }
                     },
-                    colors = ListItemDefaults.colors(containerColor = TajsOSTheme.Surface),
+                    colors = ListItemDefaults.colors(containerColor = TajsOSTheme.CardSurface),
                 )
             }
         }
     }
 }
+

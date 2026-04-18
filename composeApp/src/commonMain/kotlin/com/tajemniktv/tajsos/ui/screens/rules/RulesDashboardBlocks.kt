@@ -63,9 +63,9 @@ private fun renderRulesStats(context: RulesDashboardContext) {
     val snapshot = context.snapshot
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TajsOSTheme.Surface,
+        color = TajsOSTheme.CardSurface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.Border),
+        border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
     ) {
         Column(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -109,9 +109,9 @@ private fun renderRulesInput(context: RulesDashboardContext) {
 
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = TajsOSTheme.Surface,
+        color = TajsOSTheme.CardSurface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.Border),
+        border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
     ) {
         Column(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -246,7 +246,7 @@ private fun renderRulesList(context: RulesDashboardContext) {
             val isPinned = snapshot.pinnedPrinciples.any { it.node.id == rule.node.id }
             Surface(
                 modifier = Modifier.fillMaxWidth(),
-                color = TajsOSTheme.Surface,
+                color = TajsOSTheme.CardSurface,
                 shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                 border =
                     BorderStroke(
@@ -319,3 +319,4 @@ private fun renderRulesList(context: RulesDashboardContext) {
         }
     }
 }
+
