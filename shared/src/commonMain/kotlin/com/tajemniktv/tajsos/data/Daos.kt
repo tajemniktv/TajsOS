@@ -6,7 +6,6 @@ package com.tajemniktv.tajsos.data
 
 import androidx.room.Dao
 import androidx.room.Delete
-import androidx.room.Insert
 import androidx.room.Upsert
 import androidx.room.Query
 import androidx.room.Transaction
@@ -103,13 +102,13 @@ interface NodeDao {
      * @param node The [NodeEntity] to insert.
      * @return The auto-generated or existing primary key ID of the inserted node.
      */
-    @Upsert
+    @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
     suspend fun insertNode(node: NodeEntity): Long
 
     /**
-     * Inserts multiple nodes, returning their generated identifiers.
+     * Inserts multiple nodes, returning their generated or existing identifiers.
      */
-    @Upsert
+    @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
     suspend fun insertNodes(nodes: List<NodeEntity>): List<Long>
 
     /**
@@ -202,10 +201,10 @@ interface RelationDao {
     @Query("SELECT * FROM relations WHERE fromNodeId = :nodeId OR toNodeId = :nodeId")
     fun getRelationsForNode(nodeId: Long): Flow<List<RelationEntity>>
 
-    @Upsert
+    @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
     suspend fun insertRelation(relation: RelationEntity)
 
-    @Upsert
+    @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
     suspend fun insertRelations(relations: List<RelationEntity>)
 
     @Delete
