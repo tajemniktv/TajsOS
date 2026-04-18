@@ -22,6 +22,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.foundation.background
+
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 /**
@@ -44,15 +48,30 @@ fun ActionButton(
     contentColor: Color = TajsOSTheme.Text,
     icon: ImageVector? = null,
 ) {
+    val isPrimary = containerColor == TajsOSTheme.Primary
+    val finalModifier = modifier.height(48.dp).then(
+        if (isPrimary && enabled) {
+            Modifier.background(
+                brush = Brush.linearGradient(
+                    colors = listOf(TajsOSTheme.Primary, TajsOSTheme.PrimaryDim),
+                    start = Offset(0f, 0f),
+                    end = Offset.Infinite
+                ),
+                shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
+            )
+        } else {
+            Modifier
+        }
+    )
+
     Button(
         onClick = onClick,
         enabled = enabled,
-        modifier = modifier.height(48.dp),
-        colors =
-            ButtonDefaults.buttonColors(
-                containerColor = containerColor,
-                contentColor = contentColor,
-            ),
+        modifier = finalModifier,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = if (isPrimary && enabled) Color.Transparent else containerColor,
+            contentColor = if (isPrimary && contentColor == TajsOSTheme.Text) TajsOSTheme.Background else contentColor,
+        ),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         contentPadding = PaddingValues(horizontal = 16.dp),
     ) {
