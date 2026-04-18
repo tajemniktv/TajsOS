@@ -323,9 +323,13 @@ class MainActivity : FragmentActivity() {
                 .setInvalidatedByBiometricEnrollment(true)
                 .apply {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                        // Require auth on every key use (timeout = 0 means no time window).
                         setUserAuthenticationParameters(0, KeyProperties.AUTH_BIOMETRIC_STRONG)
                     } else {
+                        // -1 mirrors the "per-use" semantic of timeout = 0 on API 30+.
                         setUserAuthenticationRequired(true)
+                        @Suppress("DEPRECATION")
+                        setUserAuthenticationValidityDurationSeconds(-1)
                     }
                 }.build()
         keyGenerator.init(spec)
@@ -405,10 +409,7 @@ class MainActivity : FragmentActivity() {
                         Log.e(TAG, "Biometric authentication error [$errorCode]: $errString")
                         // User-initiated dismissal is not a security failure — the lock screen
                         // stays visible and the user can retry via the Unlock button.
-                        val isUserCancellation =
-                            errorCode == BiometricPrompt.ERROR_USER_CANCELED ||
-                                errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON
-                        if (!isUserCancellation) {
+                        if (!isBiometricUserCancellation(errorCode)) {
                             viewModel.setAuthenticated(false)
                         }
                     }
@@ -445,6 +446,18 @@ class MainActivity : FragmentActivity() {
         return biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG) ==
             BiometricManager.BIOMETRIC_SUCCESS
     }
+
+    /**
+     * Returns `true` for [BiometricPrompt] error codes that represent deliberate user
+     * cancellation (e.g. pressing Cancel or the back button) rather than a terminal
+     * hardware or security failure.
+     *
+     * Use this to distinguish errors where calling [com.tajemniktv.tajsos.ui.MainViewModel.setAuthenticated]
+     * is unnecessary because the user intends to stay on the lock screen and retry later.
+     */
+    private fun isBiometricUserCancellation(errorCode: Int): Boolean =
+        errorCode == BiometricPrompt.ERROR_USER_CANCELED ||
+            errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON
 
     /**
      * Called when the activity is no longer visible.
