@@ -100,7 +100,7 @@ We eschew traditional shadows in favor of **Tonal Layering** and **Ambient Glows
 
 ### Buttons
 
-* **Primary:** Gradient (`primary` to `primary_dim`), 8dp (RadiusMd) rounded corners. Text is
+* **Primary:** Gradient (`primary` to `primary_dim`), 12dp (RadiusMd) rounded corners. Text is
   `on-primary` (usually background color) for maximum legibility.
 * **Secondary:** `surface-container-highest` background with a "Ghost Border."
 * **Tertiary:** Ghost button, Space Grotesk.
@@ -128,7 +128,7 @@ JetBrains Mono) for metadata tags, ensuring the "technical" font is used for dat
 ## 6. Layout Constants
 
 * **Sidebar Width:** 280dp
-* **Radius:** Xs (2dp), Sm (4dp), Md (8dp), Lg (16dp)
+* **Radius:** Xs (2dp), Sm (4dp), Md (12dp), Lg (16dp)
 * **Spacing:** Xs (4dp), Sm (8dp), Md (16dp), Lg (24dp), Xl (32dp)
 
 ---

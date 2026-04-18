@@ -229,7 +229,7 @@ private fun DashboardScreen(
         screen = Screen.Dashboard,
         onNavigate = onNavigate,
         scrollBehavior = ScreenScrollBehavior.None,
-        backgroundColor = TajsOSTheme.Background,
+        backgroundColor = TajsOSTheme.ScreenCanvas,
     ) {
         if (surface == DashboardSurface.MOBILE) {
             LazyColumn(

@@ -452,7 +452,7 @@ fun NewEntryButton(
     SidebarTooltip(enabled = !expanded, text = label) {
         Surface(
             onClick = onClick,
-            shape = RoundedCornerShape(12.dp),
+            shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
             color = TajsOSTheme.Primary,
             modifier = Modifier.fillMaxWidth().height(if (expanded) 46.dp else 42.dp),
             tonalElevation = 0.dp,
@@ -503,8 +503,8 @@ fun UserProfileSidebarSection(
         Surface(
             onClick = onClick,
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp),
-            color = TajsOSTheme.SurfaceLow,
+            shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+            color = TajsOSTheme.CardNestedSurface,
             tonalElevation = 0.dp,
             shadowElevation = 0.dp,
         ) {

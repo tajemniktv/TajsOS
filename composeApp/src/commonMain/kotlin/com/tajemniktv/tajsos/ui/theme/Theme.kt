@@ -59,6 +59,10 @@ object TajsOSTheme {
     val Accent: Color get() = currentColors.primary
     val Border: Color get() = currentColors.border
     val GhostBorder: Color get() = currentColors.ghostBorder
+    val ScreenCanvas: Color get() = currentColors.surfaceLowest
+    val CardSurface: Color get() = currentColors.surface
+    val CardNestedSurface: Color get() = currentColors.surfaceLow
+    val CardStroke: Color get() = currentColors.ghostBorder.copy(alpha = 0.55f)
     val VaultShell: Color get() = currentColors.surfaceLow
     val VaultGradientStart: Color get() = currentColors.surfaceHigh
     val VaultGradientMid: Color get() = currentColors.surfaceLow
@@ -85,7 +89,7 @@ object TajsOSTheme {
 
     val RadiusXs = 2.dp
     val RadiusSm = 4.dp
-    val RadiusMd = 8.dp
+    val RadiusMd = 12.dp
     val RadiusLg = 16.dp
 
     val SpacingXs = 4.dp

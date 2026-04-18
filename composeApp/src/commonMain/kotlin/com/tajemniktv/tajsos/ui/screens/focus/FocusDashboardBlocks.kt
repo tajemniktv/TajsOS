@@ -26,8 +26,7 @@ import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -187,14 +186,14 @@ internal fun FocusMainBlock(viewModel: MainViewModel) {
         modifier =
             Modifier
                 .fillMaxWidth()
-                .background(TajsOSTheme.Background)
+                .background(TajsOSTheme.ScreenCanvas)
                 .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Surface(
-            color = TajsOSTheme.Surface,
+            color = TajsOSTheme.CardSurface,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),
+            border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -298,9 +297,9 @@ internal fun FocusMainBlock(viewModel: MainViewModel) {
         }
 
         Surface(
-            color = TajsOSTheme.Surface,
+            color = TajsOSTheme.CardSurface,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),
+            border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -370,9 +369,9 @@ internal fun FocusMainBlock(viewModel: MainViewModel) {
         }
 
         Surface(
-            color = TajsOSTheme.Surface,
+            color = TajsOSTheme.CardSurface,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),
+            border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -417,9 +416,9 @@ internal fun FocusMainBlock(viewModel: MainViewModel) {
         }
 
         Surface(
-            color = TajsOSTheme.Surface,
+            color = TajsOSTheme.CardSurface,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),
+            border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -474,9 +473,9 @@ private fun FocusListCard(
     onPick: (NodeEntity) -> Unit,
 ) {
     Surface(
-        color = TajsOSTheme.Surface,
+        color = TajsOSTheme.CardSurface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),
+        border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -496,13 +495,9 @@ private fun FocusListCard(
                 )
             } else {
                 nodes.forEach { task ->
-                    ElevatedCard(
-                        colors =
-                            CardDefaults.elevatedCardColors(
-                                containerColor = TajsOSTheme.SurfaceLow,
-                            ),
+                    Surface(
+                        color = TajsOSTheme.CardNestedSurface,
                         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 0.dp),
                     ) {
                         Row(
                             modifier = Modifier.fillMaxWidth().padding(10.dp),
@@ -530,7 +525,15 @@ private fun FocusListCard(
                                     color = TajsOSTheme.Muted,
                                 )
                             }
-                            OutlinedButton(onClick = { onPick(task) }) {
+                            OutlinedButton(
+                                onClick = { onPick(task) },
+                                shape = RoundedCornerShape(999.dp),
+                                border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
+                                colors =
+                                    ButtonDefaults.outlinedButtonColors(
+                                        containerColor = TajsOSTheme.CardSurface,
+                                    ),
+                            ) {
                                 Icon(
                                     Icons.Default.SkipNext,
                                     null,
