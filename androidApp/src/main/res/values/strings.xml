@@ -9,6 +9,7 @@
     <string name="next_step">Next step</string>
     <string name="untitled">Untitled</string>
     <string name="auth_biometric_title">Biometric login</string>
+    <string name="auth_biometric_cancel">Cancel</string>
     <string name="voice_speak_now">Speak now...</string>
     <string name="intent_shared_image">Shared Image</string>
     <string name="intent_shared_images">Shared Images</string>
