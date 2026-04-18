@@ -20,8 +20,43 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      kmp: ${{ steps.filter.outputs.kmp }}
+      website: ${{ steps.filter.outputs.website }}
+      workflows: ${{ steps.filter.outputs.workflows }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Filter paths
+        id: filter
+        uses: dorny/paths-filter@v4
+        with:
+          filters: |
+            workflows:
+              - '.github/workflows/**'
+              - '.github/actions/**'
+            website:
+              - 'website/**'
+            kmp:
+              - 'androidApp/**'
+              - 'composeApp/**'
+              - 'shared/**'
+              - 'server/**'
+              - 'gradle/**'
+              - 'build.gradle.kts'
+              - 'settings.gradle.kts'
+              - 'gradle.properties'
+              - 'gradlew'
+              - 'gradlew.bat'
+
   analyze-jvm-kotlin:
     name: Analyze JVM Kotlin (manual build)
+    needs: changes
+    if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || needs.changes.outputs.kmp == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -115,6 +150,8 @@ jobs:
 
   analyze-actions:
     name: Analyze GitHub Actions workflows
+    needs: changes
+    if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || needs.changes.outputs.workflows == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -134,6 +171,8 @@ jobs:
 
   analyze-js-ts:
     name: Analyze website JavaScript/TypeScript
+    needs: changes
+    if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || needs.changes.outputs.website == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
