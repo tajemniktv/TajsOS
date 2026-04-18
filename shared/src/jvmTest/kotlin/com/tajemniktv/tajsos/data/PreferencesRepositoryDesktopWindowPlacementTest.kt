@@ -16,6 +16,13 @@ import kotlin.test.assertTrue
 
 class PreferencesRepositoryDesktopWindowPlacementTest {
     @Test
+    fun desktopWindowStartupMode_defaultsToRestoreLast() =
+        runTest {
+            val repository = PreferencesRepository(createTestDataStore())
+            assertEquals(DesktopWindowStartupMode.RESTORE_LAST, repository.desktopWindowStartupMode.first())
+        }
+
+    @Test
     fun updateDesktopWindowPlacement_persistsValuesAndMinimumSize() =
         runTest {
             val repository = PreferencesRepository(createTestDataStore())
@@ -59,6 +66,18 @@ class PreferencesRepositoryDesktopWindowPlacementTest {
             assertNull(persisted.widthDp)
             assertNull(persisted.heightDp)
             assertFalse(persisted.isMaximized)
+        }
+
+    @Test
+    fun updateDesktopWindowStartupMode_persistsSelectedMode() =
+        runTest {
+            val repository = PreferencesRepository(createTestDataStore())
+            repository.updateDesktopWindowStartupMode(DesktopWindowStartupMode.ALWAYS_MAXIMIZED)
+
+            assertEquals(
+                DesktopWindowStartupMode.ALWAYS_MAXIMIZED,
+                repository.desktopWindowStartupMode.first(),
+            )
         }
 
     private fun createTestDataStore() =

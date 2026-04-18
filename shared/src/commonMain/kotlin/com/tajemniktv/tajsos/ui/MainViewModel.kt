@@ -12,6 +12,7 @@ import com.tajemniktv.tajsos.data.AppRepository
 import com.tajemniktv.tajsos.data.AttachmentEntity
 import com.tajemniktv.tajsos.data.CalendarProviderEntity
 import com.tajemniktv.tajsos.data.DecisionOptionEntity
+import com.tajemniktv.tajsos.data.DesktopWindowStartupMode
 import com.tajemniktv.tajsos.data.EventLogEntity
 import com.tajemniktv.tajsos.data.ExportBundle
 import com.tajemniktv.tajsos.data.FocusSessionEntity
@@ -475,6 +476,17 @@ class MainViewModel(
                 viewModelScope,
                 SharingStarted.Eagerly,
                 PreferencesRepository.DEFAULT_SIDEBAR_EXPANDED_WIDTH_DP,
+            )
+
+    /**
+     * Startup strategy for desktop window placement behavior.
+     */
+    val desktopWindowStartupMode: StateFlow<DesktopWindowStartupMode> =
+        preferencesRepository.desktopWindowStartupMode
+            .stateIn(
+                viewModelScope,
+                SharingStarted.Eagerly,
+                DesktopWindowStartupMode.RESTORE_LAST,
             )
 
     val enabledPacks: StateFlow<PackRegistry> =
@@ -998,6 +1010,15 @@ class MainViewModel(
     fun setSidebarExpandedWidthDp(widthDp: Int) {
         viewModelScope.launch {
             preferencesRepository.updateSidebarExpandedWidthDp(widthDp)
+        }
+    }
+
+    /**
+     * Updates desktop startup behavior for the application window.
+     */
+    fun setDesktopWindowStartupMode(mode: DesktopWindowStartupMode) {
+        viewModelScope.launch {
+            preferencesRepository.updateDesktopWindowStartupMode(mode)
         }
     }
 

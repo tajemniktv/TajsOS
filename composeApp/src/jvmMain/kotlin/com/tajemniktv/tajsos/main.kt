@@ -17,6 +17,7 @@ import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
 import androidx.compose.ui.window.application
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import com.tajemniktv.tajsos.data.DesktopWindowStartupMode
 import com.tajemniktv.tajsos.data.PreferencesRepository
 import com.tajemniktv.tajsos.data.createDatabase
 import com.tajemniktv.tajsos.di.SharedModule
@@ -52,15 +53,23 @@ fun main() =
             runBlocking {
                 preferencesRepository.desktopWindowPlacement.first()
             }
+        val desktopWindowStartupMode =
+            runBlocking {
+                preferencesRepository.desktopWindowStartupMode.first()
+            }
         val windowState =
             rememberWindowState(
                 position = persistedWindowPlacement.toWindowPosition(),
                 size = persistedWindowPlacement.toWindowSize(),
                 placement =
-                    if (persistedWindowPlacement.isMaximized) {
-                        WindowPlacement.Maximized
-                    } else {
-                        WindowPlacement.Floating
+                    when (desktopWindowStartupMode) {
+                        DesktopWindowStartupMode.ALWAYS_MAXIMIZED -> WindowPlacement.Maximized
+                        DesktopWindowStartupMode.RESTORE_LAST ->
+                            if (persistedWindowPlacement.isMaximized) {
+                                WindowPlacement.Maximized
+                            } else {
+                                WindowPlacement.Floating
+                            }
                     },
             )
         val viewModel =

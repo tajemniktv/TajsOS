@@ -985,6 +985,12 @@
     <string name="settings_theme_light">Jasny</string>
     <string name="settings_theme_dark">Ciemny</string>
     <string name="settings_unlock">Odblokuj</string>
+    <string name="settings_window_startup_title">Uruchamianie okna</string>
+    <string name="settings_window_startup_mode">Zachowanie przy starcie</string>
+    <string name="settings_window_startup_mode_desc">Wybierz, jak okno desktopowe ma się otwierać przy uruchomieniu.</string>
+    <string name="settings_window_startup_restore_last">Przywróć ostatnie okno</string>
+    <string name="settings_window_startup_always_maximized">Zawsze zmaksymalizowane</string>
+    <string name="settings_window_startup_desc">Dotyczy tylko desktopu. Rozmiar i pozycja okna nadal są zapamiętywane w tle.</string>
 
     <string name="protocols_action_run">Uruchom</string>
     <string name="protocols_placeholder_search">Poranny reset, start nauki, rutyna zamknięcia...</string>

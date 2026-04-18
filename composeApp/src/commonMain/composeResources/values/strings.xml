@@ -1128,6 +1128,12 @@
     <string name="settings_theme_light">Light</string>
     <string name="settings_theme_dark">Dark</string>
     <string name="settings_unlock">Unlock</string>
+    <string name="settings_window_startup_title">Window Startup</string>
+    <string name="settings_window_startup_mode">Startup Behavior</string>
+    <string name="settings_window_startup_mode_desc">Choose how the desktop window opens on launch.</string>
+    <string name="settings_window_startup_restore_last">Restore Last Window</string>
+    <string name="settings_window_startup_always_maximized">Always Maximized</string>
+    <string name="settings_window_startup_desc">Applies to desktop only. Window size and position are still remembered in the background.</string>
 
     <string name="protocols_action_run">Run</string>
     <string name="protocols_placeholder_search">Morning reset, study startup, shutdown routine...</string>

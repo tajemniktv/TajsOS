@@ -17,6 +17,14 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 /**
+ * Startup strategy for desktop window placement.
+ */
+enum class DesktopWindowStartupMode {
+    RESTORE_LAST,
+    ALWAYS_MAXIMIZED,
+}
+
+/**
  * PreferencesRepository handles all of TajsOS's configuration data.
  */
 class PreferencesRepository(
@@ -55,6 +63,7 @@ class PreferencesRepository(
         val DESKTOP_WINDOW_WIDTH_DP = intPreferencesKey("desktop_window_width_dp")
         val DESKTOP_WINDOW_HEIGHT_DP = intPreferencesKey("desktop_window_height_dp")
         val DESKTOP_WINDOW_MAXIMIZED = booleanPreferencesKey("desktop_window_maximized")
+        val DESKTOP_WINDOW_STARTUP_MODE = stringPreferencesKey("desktop_window_startup_mode")
         val OWNED_PACKS = stringSetPreferencesKey("owned_packs")
         val ENABLED_PACKS = stringSetPreferencesKey("enabled_packs")
     }
@@ -140,6 +149,23 @@ class PreferencesRepository(
             )
         }
 
+    /**
+     * Startup strategy for desktop window placement behavior.
+     */
+    val desktopWindowStartupMode: Flow<DesktopWindowStartupMode> =
+        dataStore.data.map { preferences ->
+            val rawValue = preferences[PreferencesKeys.DESKTOP_WINDOW_STARTUP_MODE]
+            try {
+                if (rawValue != null) {
+                    DesktopWindowStartupMode.valueOf(rawValue)
+                } else {
+                    DesktopWindowStartupMode.RESTORE_LAST
+                }
+            } catch (_: IllegalArgumentException) {
+                DesktopWindowStartupMode.RESTORE_LAST
+            }
+        }
+
     val enabledPacks: Flow<PackRegistry> =
         dataStore.data.map { preferences ->
             val owned = preferences[PreferencesKeys.OWNED_PACKS] ?: AppPack.defaultFreePackKeys
@@ -216,6 +242,15 @@ class PreferencesRepository(
                 preferences.remove(PreferencesKeys.DESKTOP_WINDOW_HEIGHT_DP)
             }
             preferences[PreferencesKeys.DESKTOP_WINDOW_MAXIMIZED] = placement.isMaximized
+        }
+    }
+
+    /**
+     * Persists desktop startup strategy.
+     */
+    suspend fun updateDesktopWindowStartupMode(mode: DesktopWindowStartupMode) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.DESKTOP_WINDOW_STARTUP_MODE] = mode.name
         }
     }
 

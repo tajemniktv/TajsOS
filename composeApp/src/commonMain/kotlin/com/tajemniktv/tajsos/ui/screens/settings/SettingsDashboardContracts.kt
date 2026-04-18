@@ -6,6 +6,7 @@ package com.tajemniktv.tajsos.ui.screens.settings
 
 import androidx.compose.runtime.Composable
 import com.tajemniktv.tajsos.data.AppPack
+import com.tajemniktv.tajsos.data.DesktopWindowStartupMode
 import com.tajemniktv.tajsos.data.MedicationEntity
 import com.tajemniktv.tajsos.data.PackRegistry
 import com.tajemniktv.tajsos.ui.MainViewModel
@@ -47,6 +48,7 @@ data class SettingsDashboardContext(
     val isGlassmorphismEnabled: Boolean,
     val reduceMotion: Boolean,
     val sidebarMode: SidebarMode,
+    val desktopWindowStartupMode: DesktopWindowStartupMode,
     val importPayload: String,
     val onImportPayloadChange: (String) -> Unit,
     val onSaveMedication: (String, String, String?, Int?, Boolean) -> Unit,
@@ -62,6 +64,7 @@ data class SettingsDashboardContext(
     val onSetGlassmorphismEnabled: (Boolean) -> Unit,
     val onSetReduceMotion: (Boolean) -> Unit,
     val onSetSidebarMode: (SidebarMode) -> Unit,
+    val onSetDesktopWindowStartupMode: (DesktopWindowStartupMode) -> Unit,
     val onForceCrash: () -> Unit,
 )
 
