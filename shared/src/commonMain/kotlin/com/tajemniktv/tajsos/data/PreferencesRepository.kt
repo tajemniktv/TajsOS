@@ -22,10 +22,23 @@ import kotlinx.coroutines.flow.map
 class PreferencesRepository(
     private val dataStore: DataStore<Preferences>,
 ) {
+    /**
+     * Persisted desktop window geometry and placement behavior.
+     */
+    data class DesktopWindowPlacement(
+        val xDp: Int? = null,
+        val yDp: Int? = null,
+        val widthDp: Int? = null,
+        val heightDp: Int? = null,
+        val isMaximized: Boolean = false,
+    )
+
     companion object {
         const val DEFAULT_SIDEBAR_EXPANDED_WIDTH_DP: Int = 236
         private const val MIN_SIDEBAR_EXPANDED_WIDTH_DP: Int = 220
         private const val MAX_SIDEBAR_EXPANDED_WIDTH_DP: Int = 360
+        private const val MIN_DESKTOP_WINDOW_WIDTH_DP: Int = 640
+        private const val MIN_DESKTOP_WINDOW_HEIGHT_DP: Int = 480
     }
 
     private object PreferencesKeys {
@@ -37,6 +50,11 @@ class PreferencesRepository(
         val ACTIVE_MODE_ID = longPreferencesKey("active_mode_id")
         val SIDEBAR_MODE = stringPreferencesKey("sidebar_mode")
         val SIDEBAR_EXPANDED_WIDTH_DP = intPreferencesKey("sidebar_expanded_width_dp")
+        val DESKTOP_WINDOW_X_DP = intPreferencesKey("desktop_window_x_dp")
+        val DESKTOP_WINDOW_Y_DP = intPreferencesKey("desktop_window_y_dp")
+        val DESKTOP_WINDOW_WIDTH_DP = intPreferencesKey("desktop_window_width_dp")
+        val DESKTOP_WINDOW_HEIGHT_DP = intPreferencesKey("desktop_window_height_dp")
+        val DESKTOP_WINDOW_MAXIMIZED = booleanPreferencesKey("desktop_window_maximized")
         val OWNED_PACKS = stringSetPreferencesKey("owned_packs")
         val ENABLED_PACKS = stringSetPreferencesKey("enabled_packs")
     }
@@ -108,6 +126,20 @@ class PreferencesRepository(
                 .coerceIn(MIN_SIDEBAR_EXPANDED_WIDTH_DP, MAX_SIDEBAR_EXPANDED_WIDTH_DP)
         }
 
+    /**
+     * Persisted desktop window placement used to restore geometry after app restart.
+     */
+    val desktopWindowPlacement: Flow<DesktopWindowPlacement> =
+        dataStore.data.map { preferences ->
+            DesktopWindowPlacement(
+                xDp = preferences[PreferencesKeys.DESKTOP_WINDOW_X_DP],
+                yDp = preferences[PreferencesKeys.DESKTOP_WINDOW_Y_DP],
+                widthDp = preferences[PreferencesKeys.DESKTOP_WINDOW_WIDTH_DP],
+                heightDp = preferences[PreferencesKeys.DESKTOP_WINDOW_HEIGHT_DP],
+                isMaximized = preferences[PreferencesKeys.DESKTOP_WINDOW_MAXIMIZED] ?: false,
+            )
+        }
+
     val enabledPacks: Flow<PackRegistry> =
         dataStore.data.map { preferences ->
             val owned = preferences[PreferencesKeys.OWNED_PACKS] ?: AppPack.defaultFreePackKeys
@@ -158,6 +190,32 @@ class PreferencesRepository(
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.SIDEBAR_EXPANDED_WIDTH_DP] =
                 widthDp.coerceIn(MIN_SIDEBAR_EXPANDED_WIDTH_DP, MAX_SIDEBAR_EXPANDED_WIDTH_DP)
+        }
+    }
+
+    /**
+     * Persists desktop window geometry and placement mode.
+     */
+    suspend fun updateDesktopWindowPlacement(placement: DesktopWindowPlacement) {
+        dataStore.edit { preferences ->
+            if (placement.xDp != null && placement.yDp != null) {
+                preferences[PreferencesKeys.DESKTOP_WINDOW_X_DP] = placement.xDp
+                preferences[PreferencesKeys.DESKTOP_WINDOW_Y_DP] = placement.yDp
+            } else {
+                preferences.remove(PreferencesKeys.DESKTOP_WINDOW_X_DP)
+                preferences.remove(PreferencesKeys.DESKTOP_WINDOW_Y_DP)
+            }
+
+            if (placement.widthDp != null && placement.heightDp != null) {
+                preferences[PreferencesKeys.DESKTOP_WINDOW_WIDTH_DP] =
+                    placement.widthDp.coerceAtLeast(MIN_DESKTOP_WINDOW_WIDTH_DP)
+                preferences[PreferencesKeys.DESKTOP_WINDOW_HEIGHT_DP] =
+                    placement.heightDp.coerceAtLeast(MIN_DESKTOP_WINDOW_HEIGHT_DP)
+            } else {
+                preferences.remove(PreferencesKeys.DESKTOP_WINDOW_WIDTH_DP)
+                preferences.remove(PreferencesKeys.DESKTOP_WINDOW_HEIGHT_DP)
+            }
+            preferences[PreferencesKeys.DESKTOP_WINDOW_MAXIMIZED] = placement.isMaximized
         }
     }
 
