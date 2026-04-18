@@ -6,8 +6,7 @@ package com.tajemniktv.tajsos.data
 
 import androidx.room.Dao
 import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
+import androidx.room.Upsert
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
@@ -103,13 +102,13 @@ interface NodeDao {
      * @param node The [NodeEntity] to insert.
      * @return The auto-generated or existing primary key ID of the inserted node.
      */
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
     suspend fun insertNode(node: NodeEntity): Long
 
     /**
-     * Inserts multiple nodes, returning their generated identifiers.
+     * Inserts multiple nodes, returning their generated or existing identifiers.
      */
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
     suspend fun insertNodes(nodes: List<NodeEntity>): List<Long>
 
     /**
@@ -134,7 +133,7 @@ interface NodeDao {
      *
      * @param pin The [TodayPinEntity] representing the pinned state.
      */
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
     suspend fun pinToToday(pin: TodayPinEntity)
 
     /**
@@ -163,7 +162,7 @@ interface FocusSessionDao {
     @Query("SELECT * FROM focus_sessions ORDER BY startedAt DESC")
     fun getAllSessions(): Flow<List<FocusSessionEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertSession(session: FocusSessionEntity): Long
 
     @Update
@@ -181,13 +180,13 @@ interface TrackDao {
     @Query("SELECT * FROM track_entries ORDER BY date DESC, createdAt DESC")
     fun getAllTrackEntries(): Flow<List<TrackEntryEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
     suspend fun insertTrackEntry(entry: TrackEntryEntity): Long
 
     @Query("SELECT * FROM track_entries WHERE date = :date LIMIT 1")
     suspend fun getTrackEntryByDate(date: String): TrackEntryEntity?
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertTrackMedication(join: TrackMedicationJoinEntity)
 
     @Query("SELECT * FROM track_medications WHERE trackEntryId = :trackEntryId")
@@ -202,10 +201,10 @@ interface RelationDao {
     @Query("SELECT * FROM relations WHERE fromNodeId = :nodeId OR toNodeId = :nodeId")
     fun getRelationsForNode(nodeId: Long): Flow<List<RelationEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
     suspend fun insertRelation(relation: RelationEntity)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
     suspend fun insertRelations(relations: List<RelationEntity>)
 
     @Delete
@@ -251,7 +250,7 @@ interface TagDao {
     @Query("SELECT * FROM tags")
     fun getAllTags(): Flow<List<TagEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertTag(tag: TagEntity): Long
 
     @Transaction
@@ -264,7 +263,7 @@ interface TagDao {
     )
     fun getTagsForNode(nodeId: Long): Flow<List<TagEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun attachTagToNode(nodeTag: NodeTagEntity)
 
     @Query("DELETE FROM node_tags WHERE nodeId = :nodeId AND tagId = :tagId")
@@ -288,10 +287,10 @@ interface EventLogDao {
     @Query("SELECT * FROM event_log WHERE nodeId = :nodeId OR relatedNodeId = :nodeId ORDER BY timestamp DESC")
     fun getLogsForNode(nodeId: Long): Flow<List<EventLogEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertLog(log: EventLogEntity)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertLogs(logs: List<EventLogEntity>)
 }
 
@@ -306,7 +305,7 @@ interface AttachmentDao {
     @Query("SELECT * FROM attachments WHERE nodeId = :nodeId")
     fun getAttachmentsForNode(nodeId: Long): Flow<List<AttachmentEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertAttachment(attachment: AttachmentEntity)
 
     @Delete
@@ -336,7 +335,7 @@ interface InboxEntryDao {
     @Query("SELECT * FROM inbox_entries WHERE id = :id")
     suspend fun getInboxEntryById(id: Long): InboxEntryEntity?
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertInboxEntry(entry: InboxEntryEntity): Long
 
     @Update
@@ -357,7 +356,7 @@ interface TaskFacetDao {
     @Query("SELECT * FROM task_facets WHERE itemId = :itemId")
     fun observeTaskFacet(itemId: Long): Flow<TaskFacetEntity?>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun upsertTaskFacet(facet: TaskFacetEntity)
 
     @Query("DELETE FROM task_facets WHERE itemId = :itemId")
@@ -378,7 +377,7 @@ interface NoteFacetDao {
     @Query("SELECT * FROM note_facets WHERE itemId = :itemId")
     fun observeNoteFacet(itemId: Long): Flow<NoteFacetEntity?>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun upsertNoteFacet(facet: NoteFacetEntity)
 
     @Query("DELETE FROM note_facets WHERE itemId = :itemId")
@@ -399,7 +398,7 @@ interface ProjectFacetDao {
     @Query("SELECT * FROM project_facets WHERE itemId = :itemId")
     fun observeProjectFacet(itemId: Long): Flow<ProjectFacetEntity?>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun upsertProjectFacet(facet: ProjectFacetEntity)
 
     @Query("DELETE FROM project_facets WHERE itemId = :itemId")
@@ -420,7 +419,7 @@ interface AreaFacetDao {
     @Query("SELECT * FROM area_facets WHERE itemId = :itemId")
     fun observeAreaFacet(itemId: Long): Flow<AreaFacetEntity?>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun upsertAreaFacet(facet: AreaFacetEntity)
 
     @Query("DELETE FROM area_facets WHERE itemId = :itemId")
@@ -441,7 +440,7 @@ interface RecordFacetDao {
     @Query("SELECT * FROM record_facets WHERE itemId = :itemId")
     fun observeRecordFacet(itemId: Long): Flow<RecordFacetEntity?>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun upsertRecordFacet(facet: RecordFacetEntity)
 
     @Query("DELETE FROM record_facets WHERE itemId = :itemId")
@@ -459,7 +458,7 @@ interface ItemDomainDao {
     @Query("SELECT * FROM item_domains WHERE itemId = :itemId ORDER BY isPrimary DESC, assignedAt ASC")
     fun getDomainsForItem(itemId: Long): Flow<List<ItemDomainEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun upsertDomain(domain: ItemDomainEntity)
 
     @Query("DELETE FROM item_domains WHERE itemId = :itemId AND domainKey = :domainKey")
@@ -489,7 +488,7 @@ interface RichContentDocumentDao {
     @Query("SELECT * FROM rich_content_documents WHERE itemId = :itemId")
     suspend fun getDocumentForItem(itemId: Long): RichContentDocumentEntity?
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun upsertDocument(document: RichContentDocumentEntity)
 
     @Query("DELETE FROM rich_content_documents WHERE itemId = :itemId")
@@ -538,10 +537,10 @@ interface ScheduleEntryDao {
     @Query("DELETE FROM schedule_entries WHERE itemId = :itemId")
     suspend fun deleteScheduleEntriesForItem(itemId: Long)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertScheduleEntry(entry: ScheduleEntryEntity): Long
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertScheduleEntries(entries: List<ScheduleEntryEntity>)
 }
 
@@ -556,7 +555,7 @@ interface SavedViewDao {
     @Query("SELECT * FROM saved_views WHERE id = :id")
     suspend fun getSavedViewById(id: Long): SavedViewEntity?
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertSavedView(view: SavedViewEntity): Long
 
     @Update
@@ -571,7 +570,7 @@ interface SavedViewDao {
     @Query("SELECT * FROM saved_view_source_kinds WHERE viewId = :viewId")
     suspend fun getSourceKindsForView(viewId: Long): List<SavedViewSourceKindEntity>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertSavedViewSourceKinds(sourceKinds: List<SavedViewSourceKindEntity>)
 
     @Query("DELETE FROM saved_view_source_kinds WHERE viewId = :viewId")
@@ -583,7 +582,7 @@ interface SavedViewDao {
     @Query("SELECT * FROM saved_view_filters WHERE viewId = :viewId ORDER BY position ASC")
     suspend fun getFiltersForView(viewId: Long): List<SavedViewFilterEntity>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertSavedViewFilters(filters: List<SavedViewFilterEntity>)
 
     @Query("DELETE FROM saved_view_filters WHERE viewId = :viewId")
@@ -595,7 +594,7 @@ interface SavedViewDao {
     @Query("SELECT * FROM saved_view_sorts WHERE viewId = :viewId ORDER BY position ASC")
     suspend fun getSortsForView(viewId: Long): List<SavedViewSortEntity>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertSavedViewSorts(sorts: List<SavedViewSortEntity>)
 
     @Query("DELETE FROM saved_view_sorts WHERE viewId = :viewId")
@@ -607,7 +606,7 @@ interface SavedViewDao {
     @Query("SELECT * FROM saved_view_visible_fields WHERE viewId = :viewId ORDER BY position ASC")
     suspend fun getVisibleFieldsForView(viewId: Long): List<SavedViewVisibleFieldEntity>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertSavedViewVisibleFields(fields: List<SavedViewVisibleFieldEntity>)
 
     @Query("DELETE FROM saved_view_visible_fields WHERE viewId = :viewId")
@@ -622,10 +621,10 @@ interface TemplateDao {
     @Query("SELECT * FROM templates")
     fun getAllTemplates(): Flow<List<TemplateEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertTemplate(template: TemplateEntity)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertTemplates(templates: List<TemplateEntity>)
 
     @Update
@@ -643,7 +642,7 @@ interface NodeSnapshotDao {
     @Query("SELECT * FROM node_snapshots WHERE nodeId = :nodeId ORDER BY timestamp DESC")
     fun getSnapshotsForNode(nodeId: Long): Flow<List<NodeSnapshotEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertSnapshot(snapshot: NodeSnapshotEntity)
 
     @Delete
@@ -661,7 +660,7 @@ interface ReviewDao {
     @Query("SELECT * FROM reviews ORDER BY completedAt DESC")
     fun getAllReviews(): Flow<List<ReviewEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertReview(review: ReviewEntity): Long
 
     @Query("SELECT * FROM reviews WHERE type = :type ORDER BY completedAt DESC LIMIT 1")
@@ -676,7 +675,7 @@ interface CalendarProviderDao {
     @Query("SELECT * FROM calendar_providers")
     fun getAllProviders(): Flow<List<CalendarProviderEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertProvider(provider: CalendarProviderEntity): Long
 
     @Update
@@ -700,13 +699,13 @@ interface CalendarEventDao {
         to: Long,
     ): Flow<List<CalendarEventEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
     suspend fun insertEvents(events: List<CalendarEventEntity>)
 
     @Query("DELETE FROM calendar_events WHERE providerId = :providerId")
     suspend fun deleteEventsByProvider(providerId: Long)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
     suspend fun insertEvent(event: CalendarEventEntity): Long
 
     @Update
@@ -724,7 +723,7 @@ interface ModeDao {
     @Query("SELECT * FROM modes ORDER BY sortOrder ASC")
     fun getAllModes(): Flow<List<ModeEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertMode(mode: ModeEntity): Long
 
     @Update
@@ -736,25 +735,25 @@ interface ModeDao {
     @Query("SELECT * FROM mode_preferences WHERE modeId = :modeId")
     fun getPreferencesForMode(modeId: Long): Flow<ModePreferenceEntity?>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertPreference(preference: ModePreferenceEntity)
 
     @Query("SELECT * FROM mode_area_filters WHERE modeId = :modeId")
     fun getAreaFiltersForMode(modeId: Long): Flow<List<ModeAreaFilterEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertAreaFilter(filter: ModeAreaFilterEntity)
 
     @Query("SELECT * FROM mode_type_filters WHERE modeId = :modeId")
     fun getTypeFiltersForMode(modeId: Long): Flow<List<ModeTypeFilterEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertTypeFilter(filter: ModeTypeFilterEntity)
 
     @Query("SELECT * FROM mode_usage_logs ORDER BY activatedAt DESC")
     fun getAllUsageLogs(): Flow<List<ModeUsageLogEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertUsageLog(log: ModeUsageLogEntity): Long
 
     @Query("UPDATE mode_usage_logs SET deactivatedAt = :timestamp WHERE id = :id")
@@ -772,7 +771,7 @@ interface ProtocolDao {
     @Query("SELECT * FROM protocol_history ORDER BY executedAt DESC")
     fun getAllProtocolHistory(): Flow<List<ProtocolHistoryEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertProtocolHistory(history: ProtocolHistoryEntity): Long
 }
 
@@ -784,7 +783,7 @@ interface DecisionDao {
     @Query("SELECT * FROM decision_options WHERE decisionNodeId = :nodeId")
     fun getOptionsForDecision(nodeId: Long): Flow<List<DecisionOptionEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertDecisionOption(option: DecisionOptionEntity): Long
 
     @Update
@@ -802,7 +801,7 @@ interface UserDao {
     @Query("SELECT * FROM users WHERE id = 1 LIMIT 1")
     fun getUser(): Flow<UserEntity?>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertUser(user: UserEntity)
 
     @Update
@@ -817,7 +816,7 @@ interface MedicationDao {
     @Query("SELECT * FROM medications WHERE isEnabled = 1")
     fun getAllMedications(): Flow<List<MedicationEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertMedication(medication: MedicationEntity): Long
 
     @Update
