@@ -41,6 +41,18 @@ class AppShellState(
             }
     }
 
+    fun setRootExpanded(
+        route: String,
+        expanded: Boolean,
+    ) {
+        expandedRootRoutes =
+            if (expanded) {
+                expandedRootRoutes + route
+            } else {
+                expandedRootRoutes - route
+            }
+    }
+
     fun isRootExpanded(route: String): Boolean = expandedRootRoutes.contains(route)
 }
 

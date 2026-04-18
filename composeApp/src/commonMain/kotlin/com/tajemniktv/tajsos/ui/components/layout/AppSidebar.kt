@@ -37,7 +37,11 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.FiberManualRecord
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Surface
@@ -49,7 +53,9 @@ import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -72,6 +78,7 @@ import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.common_no_active_mode
 import tajsos.composeapp.generated.resources.sidebar_brand
+import tajsos.composeapp.generated.resources.sidebar_new_entry
 
 private val ExpandedSidebarWidth = 220.dp
 private val CollapsedSidebarWidth = 92.dp
@@ -115,6 +122,22 @@ fun AppSidebar(
     }
 
     val showExpandedContent = shellState.isSidebarExpandedPresentation
+    var expandedFlyoutRoute by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(showExpandedContent) {
+        if (showExpandedContent) {
+            expandedFlyoutRoute = null
+        }
+    }
+
+    LaunchedEffect(showExpandedContent, currentRootScreen?.route) {
+        if (!showExpandedContent) return@LaunchedEffect
+        val activeRoot = currentRootScreen ?: return@LaunchedEffect
+        if (activeRoot.children.isNotEmpty()) {
+            shellState.setRootExpanded(activeRoot.route, true)
+        }
+    }
+
     val sidebarWidth by animateDpAsState(
         targetValue = if (showExpandedContent) ExpandedSidebarWidth else CollapsedSidebarWidth,
         label = "sidebarWidth",
@@ -183,32 +206,33 @@ fun AppSidebar(
 
                     screens.forEach { rootScreen ->
                         val isActiveRoot = currentRootScreen?.route == rootScreen.route
-                        val children = rootScreen.children
-                        val expandable = children.isNotEmpty()
                         ExpandableNavSection(
                             screen = rootScreen,
                             currentScreen = currentScreen,
+                            currentRootScreen = currentRootScreen,
                             isExpandedPresentation = showExpandedContent,
                             isActiveRoot = isActiveRoot,
                             isExpandedRoot = shellState.isRootExpanded(rootScreen.route),
+                            isFlyoutExpanded = expandedFlyoutRoute == rootScreen.route,
                             activeTasksTab = activeTasksTab,
-                            onRootClick = {
-                                if (expandable && showExpandedContent) {
-                                    shellState.toggleRootExpanded(rootScreen.route)
-                                } else {
-                                    onNavigate(rootScreen)
+                            onRootNavigate = { onNavigate(rootScreen) },
+                            onRootExpandToggle = {
+                                shellState.toggleRootExpanded(rootScreen.route)
+                            },
+                            onExpandFlyout = {
+                                expandedFlyoutRoute = rootScreen.route
+                            },
+                            onDismissFlyout = {
+                                if (expandedFlyoutRoute == rootScreen.route) {
+                                    expandedFlyoutRoute = null
                                 }
                             },
-                            onChildClick = { child ->
-                                if (child is Screen.Sub && child.parent == Screen.Tasks) {
-                                    val tab =
-                                        TasksTab.fromRouteSegment(
-                                            child.route.substringAfterLast("="),
-                                        )
-                                    onNavigateToTasksTab(tab)
-                                } else {
-                                    onNavigate(child)
-                                }
+                            onChildNavigate = { child ->
+                                navigateFromSidebar(
+                                    screen = child,
+                                    onNavigate = onNavigate,
+                                    onNavigateToTasksTab = onNavigateToTasksTab,
+                                )
                             },
                         )
                     }
@@ -262,95 +286,215 @@ fun SidebarLogoHeader(showExpandedContent: Boolean) {
 fun ExpandableNavSection(
     screen: Screen,
     currentScreen: Screen?,
+    currentRootScreen: Screen?,
     isExpandedPresentation: Boolean,
     isActiveRoot: Boolean,
     isExpandedRoot: Boolean,
+    isFlyoutExpanded: Boolean,
     activeTasksTab: TasksTab,
-    onRootClick: () -> Unit,
-    onChildClick: (Screen) -> Unit,
+    onRootNavigate: () -> Unit,
+    onRootExpandToggle: () -> Unit,
+    onExpandFlyout: () -> Unit,
+    onDismissFlyout: () -> Unit,
+    onChildNavigate: (Screen) -> Unit,
 ) {
     val rootLabel = stringResource(screen.label)
     val children = screen.children
     val expandable = children.isNotEmpty()
+    val activeChildRoutes =
+        children.mapNotNull { child ->
+            if (isChildActive(screen, child, currentScreen, currentRootScreen, activeTasksTab)) {
+                child.route
+            } else {
+                null
+            }
+        }
+    val hasActiveChild = activeChildRoutes.isNotEmpty()
+    val isActiveBranch = isActiveRoot || hasActiveChild
+    val showChildrenInline = isExpandedPresentation && expandable && (isExpandedRoot || hasActiveChild)
+    val rootClickAction =
+        when {
+            !expandable -> onRootNavigate
+            isExpandedPresentation -> onRootNavigate
+            else -> onExpandFlyout
+        }
 
-    SidebarTooltip(enabled = !isExpandedPresentation, text = rootLabel) {
-        Surface(
-            onClick = onRootClick,
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 2.dp),
-            shape = RoundedCornerShape(10.dp),
-            color =
-                if (isActiveRoot) {
-                    TajsOSTheme.Primary.copy(alpha = 0.17f)
-                } else {
-                    Color.Transparent
-                },
-            tonalElevation = 0.dp,
-            shadowElevation = 0.dp,
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 10.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
+    Box(modifier = Modifier.fillMaxWidth()) {
+        SidebarTooltip(enabled = !isExpandedPresentation && !isFlyoutExpanded, text = rootLabel) {
+            Surface(
+                onClick = rootClickAction,
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 10.dp, vertical = 2.dp),
+                shape = RoundedCornerShape(10.dp),
+                color =
+                    if (isActiveBranch) {
+                        TajsOSTheme.Primary.copy(alpha = 0.17f)
+                    } else {
+                        Color.Transparent
+                    },
+                tonalElevation = 0.dp,
+                shadowElevation = 0.dp,
             ) {
-                Icon(
-                    imageVector = screen.icon,
-                    contentDescription = rootLabel,
-                    tint = if (isActiveRoot) TajsOSTheme.Primary else TajsOSTheme.Muted,
-                )
-                AnimatedVisibility(
-                    visible = isExpandedPresentation,
-                    enter = fadeIn(),
-                    exit = fadeOut(),
+                Row(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                horizontal = if (isExpandedPresentation) 12.dp else 10.dp,
+                                vertical = if (isExpandedPresentation) 10.dp else 9.dp,
+                            ),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
+                    Box(
+                        modifier =
+                            Modifier
+                                .size(20.dp),
                     ) {
-                        Text(
-                            text = rootLabel,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = if (isActiveRoot) TajsOSTheme.Text else TajsOSTheme.Muted,
-                            fontWeight = if (isActiveRoot) FontWeight.SemiBold else FontWeight.Normal,
-                            modifier = Modifier.weight(1f),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
+                        Icon(
+                            imageVector = screen.icon,
+                            contentDescription = rootLabel,
+                            tint = if (isActiveBranch) TajsOSTheme.Primary else TajsOSTheme.Muted,
+                            modifier = Modifier.align(Alignment.Center),
                         )
-                        if (expandable) {
-                            Icon(
-                                imageVector = if (isExpandedRoot) Icons.Default.ArrowDropDown else Icons.AutoMirrored.Filled.ArrowRight,
-                                contentDescription = null,
-                                tint = TajsOSTheme.Muted,
+                        if (!isExpandedPresentation && expandable) {
+                            Surface(
+                                shape = CircleShape,
+                                color = if (isActiveBranch) TajsOSTheme.Primary else TajsOSTheme.Muted,
+                                modifier =
+                                    Modifier
+                                        .size(6.dp)
+                                        .align(Alignment.BottomEnd),
+                            ) {}
+                        }
+                    }
+                    AnimatedVisibility(
+                        visible = isExpandedPresentation,
+                        enter = fadeIn(),
+                        exit = fadeOut(),
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                text = rootLabel,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = if (isActiveBranch) TajsOSTheme.Text else TajsOSTheme.Muted,
+                                fontWeight = if (isActiveBranch) FontWeight.SemiBold else FontWeight.Normal,
+                                modifier = Modifier.weight(1f),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
                             )
+                            if (expandable) {
+                                IconButton(
+                                    onClick = onRootExpandToggle,
+                                    modifier = Modifier.size(28.dp),
+                                ) {
+                                    Icon(
+                                        imageVector =
+                                            if (showChildrenInline) {
+                                                Icons.Default.ArrowDropDown
+                                            } else {
+                                                Icons.AutoMirrored.Filled.ArrowRight
+                                            },
+                                        contentDescription = null,
+                                        tint = TajsOSTheme.Muted,
+                                    )
+                                }
+                            }
                         }
                     }
                 }
             }
         }
+
+        if (!isExpandedPresentation && expandable) {
+            DropdownMenu(
+                expanded = isFlyoutExpanded,
+                onDismissRequest = onDismissFlyout,
+            ) {
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            text = rootLabel,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = screen.icon,
+                            contentDescription = null,
+                        )
+                    },
+                    onClick = {
+                        onDismissFlyout()
+                        onRootNavigate()
+                    },
+                )
+                HorizontalDivider()
+                children.forEach { child ->
+                    val isActiveChild =
+                        isChildActive(
+                            root = screen,
+                            child = child,
+                            currentScreen = currentScreen,
+                            currentRootScreen = currentRootScreen,
+                            activeTasksTab = activeTasksTab,
+                        )
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = stringResource(child.label),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = sidebarScreenIcon(child),
+                                contentDescription = null,
+                            )
+                        },
+                        trailingIcon = {
+                            if (isActiveChild) {
+                                Icon(
+                                    imageVector = Icons.Default.FiberManualRecord,
+                                    contentDescription = null,
+                                    tint = TajsOSTheme.Primary,
+                                    modifier = Modifier.size(10.dp),
+                                )
+                            }
+                        },
+                        onClick = {
+                            onDismissFlyout()
+                            onChildNavigate(child)
+                        },
+                    )
+                }
+            }
+        }
     }
 
-    val shouldShowChildren = isExpandedPresentation && expandable && isExpandedRoot
-    AnimatedVisibility(visible = shouldShowChildren, enter = fadeIn(), exit = fadeOut()) {
+    AnimatedVisibility(visible = showChildrenInline, enter = fadeIn(), exit = fadeOut()) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(start = 34.dp, end = 10.dp),
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
             children.forEach { child ->
                 val isActiveChild =
-                    if (child is Screen.Sub && child.parent == Screen.Tasks) {
-                        val tab =
-                            TasksTab.fromRouteSegment(
-                                child.route.substringAfterLast("="),
-                            )
-                        // If current screen is NOT tasks or child of tasks, we don't highlight anything.
-                        // This prevents "Command" (the default) from being highlighted when on Dashboard.
-                        val isActuallyTasks =
-                            currentScreen?.route?.startsWith(Screen.Tasks.route) == true
-                        isActuallyTasks && activeTasksTab == tab
-                    } else {
-                        currentScreen?.route == child.route
-                    }
+                    isChildActive(
+                        root = screen,
+                        child = child,
+                        currentScreen = currentScreen,
+                        currentRootScreen = currentRootScreen,
+                        activeTasksTab = activeTasksTab,
+                    )
                 Surface(
-                    onClick = { onChildClick(child) },
+                    onClick = { onChildNavigate(child) },
                     modifier = Modifier.fillMaxWidth(),
                     color =
                         if (isActiveChild) {
@@ -371,20 +515,7 @@ fun ExpandableNavSection(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         Icon(
-                            imageVector =
-                                if (child is Screen.Sub && child.parent == Screen.Tasks) {
-                                    val tab =
-                                        TasksTab.fromRouteSegment(
-                                            child.route.substringAfterLast("="),
-                                        )
-                                    if (tab == TasksTab.ALL) {
-                                        Icons.AutoMirrored.Filled.List
-                                    } else {
-                                        tab.icon
-                                    }
-                                } else {
-                                    child.icon
-                                },
+                            imageVector = sidebarScreenIcon(child),
                             contentDescription = null,
                             tint =
                                 if (isActiveChild) {
@@ -448,7 +579,7 @@ fun NewEntryButton(
     expanded: Boolean,
     onClick: () -> Unit,
 ) {
-    val label = "NEW ENTRY"
+    val label = stringResource(Res.string.sidebar_new_entry)
     SidebarTooltip(enabled = !expanded, text = label) {
         Surface(
             onClick = onClick,
@@ -620,3 +751,50 @@ private fun profileInitials(profile: UserProfile): String {
         .take(2)
         .uppercase()
 }
+
+private fun navigateFromSidebar(
+    screen: Screen,
+    onNavigate: (Screen) -> Unit,
+    onNavigateToTasksTab: (TasksTab) -> Unit,
+) {
+    val tab = screen.toTasksTabOrNull()
+    if (tab != null) {
+        onNavigateToTasksTab(tab)
+    } else {
+        onNavigate(screen)
+    }
+}
+
+private fun sidebarScreenIcon(screen: Screen): androidx.compose.ui.graphics.vector.ImageVector {
+    val tab = screen.toTasksTabOrNull()
+    return if (tab == TasksTab.ALL) Icons.AutoMirrored.Filled.List else tab?.icon ?: screen.icon
+}
+
+private fun isChildActive(
+    root: Screen,
+    child: Screen,
+    currentScreen: Screen?,
+    currentRootScreen: Screen?,
+    activeTasksTab: TasksTab,
+): Boolean {
+    val tab = child.toTasksTabOrNull()
+    if (tab != null && root == Screen.Tasks) {
+        return currentRootScreen == Screen.Tasks && activeTasksTab == tab
+    }
+
+    if (currentScreen?.route == child.route) {
+        return true
+    }
+
+    return child is Screen.Sub &&
+        root == Screen.Settings &&
+        child.route.contains("${Screen.PARAM_TAB}=${Screen.Settings.SUB_PREFERENCES}") &&
+        currentScreen == Screen.Settings
+}
+
+private fun Screen.toTasksTabOrNull(): TasksTab? =
+    if (this is Screen.Sub && parent == Screen.Tasks) {
+        TasksTab.fromRouteSegment(route.substringAfterLast("="))
+    } else {
+        null
+    }

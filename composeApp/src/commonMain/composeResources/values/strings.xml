@@ -1058,6 +1058,7 @@
 
     <!-- Sidebar & Header -->
     <string name="sidebar_brand">TAJSOS</string>
+    <string name="sidebar_new_entry">NEW ENTRY</string>
     <string name="header_search_placeholder">Search across TajsOS</string>
     <string name="header_status_label">TAJSOS // STATUS: %1$s</string>
     <string name="header_menu">Menu</string>
