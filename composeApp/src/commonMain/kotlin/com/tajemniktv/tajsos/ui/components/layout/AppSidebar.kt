@@ -389,7 +389,7 @@ fun ExpandableNavSection(
         }
     val hasActiveChild = activeChildRoutes.isNotEmpty()
     val isActiveBranch = isActiveRoot || hasActiveChild
-    val showChildrenInline = isExpandedPresentation && expandable && (isExpandedRoot || hasActiveChild)
+    val showChildrenInline = isExpandedPresentation && expandable && isExpandedRoot
     val contextMenuState = rememberMouseContextMenuState()
     val rootClickAction =
         when {
@@ -599,7 +599,7 @@ fun ExpandableNavSection(
 
     AnimatedVisibility(visible = showChildrenInline, enter = fadeIn(), exit = fadeOut()) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(start = 34.dp, end = 10.dp),
+            modifier = Modifier.fillMaxWidth().padding(start = 34.dp, end = 10.dp, top = 2.dp),
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
             children.forEach { child ->
