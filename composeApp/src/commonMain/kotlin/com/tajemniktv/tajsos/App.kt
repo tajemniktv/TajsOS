@@ -105,6 +105,7 @@ fun App(
     val isGlassmorphismEnabled by viewModel.isGlassmorphismEnabled.collectAsState()
     val userProfile by viewModel.userProfile.collectAsState()
     val sidebarMode by viewModel.sidebarMode.collectAsState()
+    val sidebarExpandedWidthDp by viewModel.sidebarExpandedWidthDp.collectAsState()
 
     var showCaptureSheetState by remember { mutableStateOf(value = false) }
     var selectedTasksTab by rememberSaveable { mutableStateOf(TasksTab.COMMAND) }
@@ -221,6 +222,8 @@ fun App(
                         selectedTasksTab = it
                         navigate("${Screen.Tasks.route}?${Screen.PARAM_TAB}=${it.routeSegment}")
                     },
+                    sidebarExpandedWidthDp = sidebarExpandedWidthDp,
+                    onSidebarExpandedWidthChange = { viewModel.setSidebarExpandedWidthDp(it) },
                     onNewEntry = { showCaptureSheetState = true },
                     currentMode = currentMode,
                     allModes = allModes,

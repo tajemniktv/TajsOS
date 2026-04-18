@@ -8,6 +8,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
@@ -21,6 +22,12 @@ import kotlinx.coroutines.flow.map
 class PreferencesRepository(
     private val dataStore: DataStore<Preferences>,
 ) {
+    companion object {
+        const val DEFAULT_SIDEBAR_EXPANDED_WIDTH_DP: Int = 236
+        private const val MIN_SIDEBAR_EXPANDED_WIDTH_DP: Int = 220
+        private const val MAX_SIDEBAR_EXPANDED_WIDTH_DP: Int = 360
+    }
+
     private object PreferencesKeys {
         val BIOMETRIC_ENABLED = booleanPreferencesKey("biometric_enabled")
         val DARK_THEME_ENABLED = booleanPreferencesKey("dark_theme_enabled")
@@ -29,6 +36,7 @@ class PreferencesRepository(
         val REDUCE_MOTION = booleanPreferencesKey("reduce_motion")
         val ACTIVE_MODE_ID = longPreferencesKey("active_mode_id")
         val SIDEBAR_MODE = stringPreferencesKey("sidebar_mode")
+        val SIDEBAR_EXPANDED_WIDTH_DP = intPreferencesKey("sidebar_expanded_width_dp")
         val OWNED_PACKS = stringSetPreferencesKey("owned_packs")
         val ENABLED_PACKS = stringSetPreferencesKey("enabled_packs")
     }
@@ -91,6 +99,15 @@ class PreferencesRepository(
             }
         }
 
+    /**
+     * Persisted sidebar expanded width in density-independent pixels.
+     */
+    val sidebarExpandedWidthDp: Flow<Int> =
+        dataStore.data.map { preferences ->
+            (preferences[PreferencesKeys.SIDEBAR_EXPANDED_WIDTH_DP] ?: DEFAULT_SIDEBAR_EXPANDED_WIDTH_DP)
+                .coerceIn(MIN_SIDEBAR_EXPANDED_WIDTH_DP, MAX_SIDEBAR_EXPANDED_WIDTH_DP)
+        }
+
     val enabledPacks: Flow<PackRegistry> =
         dataStore.data.map { preferences ->
             val owned = preferences[PreferencesKeys.OWNED_PACKS] ?: AppPack.defaultFreePackKeys
@@ -131,6 +148,16 @@ class PreferencesRepository(
     suspend fun updateSidebarMode(mode: SidebarMode) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.SIDEBAR_MODE] = mode.name
+        }
+    }
+
+    /**
+     * Persists sidebar expanded width (dp), clamped to a safe desktop range.
+     */
+    suspend fun updateSidebarExpandedWidthDp(widthDp: Int) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.SIDEBAR_EXPANDED_WIDTH_DP] =
+                widthDp.coerceIn(MIN_SIDEBAR_EXPANDED_WIDTH_DP, MAX_SIDEBAR_EXPANDED_WIDTH_DP)
         }
     }
 

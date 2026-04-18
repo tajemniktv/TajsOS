@@ -466,6 +466,17 @@ class MainViewModel(
         preferencesRepository.sidebarMode
             .stateIn(viewModelScope, SharingStarted.Eagerly, SidebarMode.EXPANDED)
 
+    /**
+     * Persisted desktop expanded sidebar width in dp.
+     */
+    val sidebarExpandedWidthDp: StateFlow<Int> =
+        preferencesRepository.sidebarExpandedWidthDp
+            .stateIn(
+                viewModelScope,
+                SharingStarted.Eagerly,
+                PreferencesRepository.DEFAULT_SIDEBAR_EXPANDED_WIDTH_DP,
+            )
+
     val enabledPacks: StateFlow<PackRegistry> =
         preferencesRepository.enabledPacks
             .stateIn(
@@ -978,6 +989,15 @@ class MainViewModel(
     fun setSidebarMode(mode: SidebarMode) {
         viewModelScope.launch {
             preferencesRepository.updateSidebarMode(mode)
+        }
+    }
+
+    /**
+     * Updates persisted expanded sidebar width for desktop shell.
+     */
+    fun setSidebarExpandedWidthDp(widthDp: Int) {
+        viewModelScope.launch {
+            preferencesRepository.updateSidebarExpandedWidthDp(widthDp)
         }
     }
 

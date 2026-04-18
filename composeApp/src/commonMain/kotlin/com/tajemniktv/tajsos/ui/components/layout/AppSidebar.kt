@@ -11,6 +11,9 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.hoverable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -53,12 +56,14 @@ import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -79,8 +84,11 @@ import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.common_no_active_mode
 import tajsos.composeapp.generated.resources.sidebar_brand
 import tajsos.composeapp.generated.resources.sidebar_new_entry
+import kotlin.math.roundToInt
 
-private val ExpandedSidebarWidth = 220.dp
+private const val MinExpandedSidebarWidthDp = 220f
+private const val MaxExpandedSidebarWidthDp = 360f
+private const val DefaultExpandedSidebarWidthDp = 236
 private val CollapsedSidebarWidth = 92.dp
 
 /**
@@ -99,6 +107,9 @@ fun AppSidebar(
     onNavigateToTasksTab: (TasksTab) -> Unit,
     onNewEntry: () -> Unit,
     onNavigateToProfile: () -> Unit,
+    expandedWidthDp: Int = DefaultExpandedSidebarWidthDp,
+    resizeEnabled: Boolean = false,
+    onExpandedWidthCommit: ((Int) -> Unit)? = null,
     forceExpandedPresentation: Boolean = false,
     useFixedWidth: Boolean = true,
     applyGlass: Boolean = true,
@@ -123,7 +134,13 @@ fun AppSidebar(
     }
 
     val showExpandedContent = forceExpandedPresentation || shellState.isSidebarExpandedPresentation
+    var liveExpandedWidthDp by remember { mutableFloatStateOf(expandedWidthDp.toFloat()) }
     var expandedFlyoutRoute by remember { mutableStateOf<String?>(null) }
+    val density = LocalDensity.current
+
+    LaunchedEffect(expandedWidthDp) {
+        liveExpandedWidthDp = expandedWidthDp.toFloat().coerceIn(MinExpandedSidebarWidthDp, MaxExpandedSidebarWidthDp)
+    }
 
     LaunchedEffect(showExpandedContent) {
         if (showExpandedContent) {
@@ -140,9 +157,16 @@ fun AppSidebar(
     }
 
     val sidebarWidth by animateDpAsState(
-        targetValue = if (showExpandedContent) ExpandedSidebarWidth else CollapsedSidebarWidth,
+        targetValue = if (showExpandedContent) liveExpandedWidthDp.dp else CollapsedSidebarWidth,
         label = "sidebarWidth",
     )
+
+    val canResizeDesktopSidebar =
+        resizeEnabled &&
+            useFixedWidth &&
+            !forceExpandedPresentation &&
+            shellState.sidebarMode == SidebarMode.EXPANDED &&
+            showExpandedContent
 
     Surface(
         modifier =
@@ -179,76 +203,122 @@ fun AppSidebar(
         tonalElevation = 0.dp,
         shadowElevation = 0.dp,
     ) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            SidebarLogoHeader(showExpandedContent = showExpandedContent)
+        Box(modifier = Modifier.fillMaxSize()) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                SidebarLogoHeader(showExpandedContent = showExpandedContent)
 
-            Column(
-                modifier =
-                    Modifier
-                        .weight(1f)
-                        .verticalScroll(rememberScrollState())
-                        .padding(bottom = 12.dp),
-            ) {
-                menuGroups.forEach { (groupTitle, screens) ->
-                    if (showExpandedContent) {
-                        Text(
-                            text = stringResource(groupTitle).uppercase(),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = TajsOSTheme.Muted,
-                            modifier =
-                                Modifier.padding(
-                                    horizontal = 16.dp,
-                                    vertical = 8.dp,
-                                ),
-                        )
-                    } else {
-                        Spacer(Modifier.height(10.dp))
+                Column(
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .verticalScroll(rememberScrollState())
+                            .padding(bottom = 12.dp),
+                ) {
+                    menuGroups.forEach { (groupTitle, screens) ->
+                        if (showExpandedContent) {
+                            Text(
+                                text = stringResource(groupTitle).uppercase(),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = TajsOSTheme.Muted,
+                                modifier =
+                                    Modifier.padding(
+                                        horizontal = 16.dp,
+                                        vertical = 8.dp,
+                                    ),
+                            )
+                        } else {
+                            Spacer(Modifier.height(10.dp))
+                        }
+
+                        screens.forEach { rootScreen ->
+                            val isActiveRoot = currentRootScreen?.route == rootScreen.route
+                            ExpandableNavSection(
+                                screen = rootScreen,
+                                currentScreen = currentScreen,
+                                currentRootScreen = currentRootScreen,
+                                isExpandedPresentation = showExpandedContent,
+                                isActiveRoot = isActiveRoot,
+                                isExpandedRoot = shellState.isRootExpanded(rootScreen.route),
+                                isFlyoutExpanded = expandedFlyoutRoute == rootScreen.route,
+                                activeTasksTab = activeTasksTab,
+                                onRootNavigate = { onNavigate(rootScreen) },
+                                onRootExpandToggle = {
+                                    shellState.toggleRootExpanded(rootScreen.route)
+                                },
+                                onExpandFlyout = {
+                                    expandedFlyoutRoute = rootScreen.route
+                                },
+                                onDismissFlyout = {
+                                    if (expandedFlyoutRoute == rootScreen.route) {
+                                        expandedFlyoutRoute = null
+                                    }
+                                },
+                                onChildNavigate = { child ->
+                                    navigateFromSidebar(
+                                        screen = child,
+                                        onNavigate = onNavigate,
+                                        onNavigateToTasksTab = onNavigateToTasksTab,
+                                    )
+                                },
+                            )
+                        }
                     }
+                }
 
-                    screens.forEach { rootScreen ->
-                        val isActiveRoot = currentRootScreen?.route == rootScreen.route
-                        ExpandableNavSection(
-                            screen = rootScreen,
-                            currentScreen = currentScreen,
-                            currentRootScreen = currentRootScreen,
-                            isExpandedPresentation = showExpandedContent,
-                            isActiveRoot = isActiveRoot,
-                            isExpandedRoot = shellState.isRootExpanded(rootScreen.route),
-                            isFlyoutExpanded = expandedFlyoutRoute == rootScreen.route,
-                            activeTasksTab = activeTasksTab,
-                            onRootNavigate = { onNavigate(rootScreen) },
-                            onRootExpandToggle = {
-                                shellState.toggleRootExpanded(rootScreen.route)
-                            },
-                            onExpandFlyout = {
-                                expandedFlyoutRoute = rootScreen.route
-                            },
-                            onDismissFlyout = {
-                                if (expandedFlyoutRoute == rootScreen.route) {
-                                    expandedFlyoutRoute = null
-                                }
-                            },
-                            onChildNavigate = { child ->
-                                navigateFromSidebar(
-                                    screen = child,
-                                    onNavigate = onNavigate,
-                                    onNavigateToTasksTab = onNavigateToTasksTab,
-                                )
-                            },
-                        )
+                SidebarBottomActions(
+                    showExpandedContent = showExpandedContent,
+                    currentMode = currentMode,
+                    userProfile = userProfile,
+                    onNewEntry = onNewEntry,
+                    onNavigateToProfile = onNavigateToProfile,
+                )
+            }
+
+            if (canResizeDesktopSidebar) {
+                onExpandedWidthCommit?.let { commitSidebarWidth ->
+                val resizeInteraction = remember { MutableInteractionSource() }
+                val isResizeHovered by resizeInteraction.collectIsHoveredAsState()
+                Box(
+                    modifier =
+                        Modifier
+                            .align(Alignment.CenterEnd)
+                            .fillMaxHeight()
+                            .width(10.dp)
+                            .hoverable(interactionSource = resizeInteraction)
+                            .draggable(
+                                orientation = Orientation.Horizontal,
+                                state =
+                                    rememberDraggableState { deltaPx ->
+                                        val deltaDp = with(density) { deltaPx.toDp().value }
+                                        liveExpandedWidthDp =
+                                            (liveExpandedWidthDp + deltaDp)
+                                                .coerceIn(
+                                                    MinExpandedSidebarWidthDp,
+                                                    MaxExpandedSidebarWidthDp,
+                                                )
+                                    },
+                                onDragStopped = {
+                                    commitSidebarWidth(liveExpandedWidthDp.roundToInt())
+                                },
+                            ),
+                ) {
+                            if (isResizeHovered) {
+                                Surface(
+                            modifier =
+                                Modifier
+                                    .align(Alignment.Center)
+                                    .width(2.dp)
+                                    .height(48.dp),
+                            color = TajsOSTheme.Primary.copy(alpha = 0.5f),
+                            tonalElevation = 0.dp,
+                            shadowElevation = 0.dp,
+                                ) {}
+                            }
+                        }
                     }
                 }
             }
-
-            SidebarBottomActions(
-                showExpandedContent = showExpandedContent,
-                currentMode = currentMode,
-                userProfile = userProfile,
-                onNewEntry = onNewEntry,
-                onNavigateToProfile = onNavigateToProfile,
-            )
         }
-    }
 }
 
 /**
