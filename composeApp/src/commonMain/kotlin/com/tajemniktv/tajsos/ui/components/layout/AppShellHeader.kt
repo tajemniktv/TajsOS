@@ -10,7 +10,6 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -57,6 +56,7 @@ import androidx.compose.ui.window.PopupProperties
 import com.tajemniktv.tajsos.ui.components.common.GlassMaterial
 import com.tajemniktv.tajsos.ui.components.common.glassContainerColor
 import com.tajemniktv.tajsos.ui.components.common.glassChrome
+import com.tajemniktv.tajsos.ui.components.common.mouseClickable
 import com.tajemniktv.tajsos.ui.components.notifications.NotificationUiModel
 import com.tajemniktv.tajsos.ui.components.notifications.TajsNotificationWidget
 import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderBreadcrumb
@@ -303,7 +303,11 @@ private fun HeaderBreadcrumbs(breadcrumbs: List<ScreenHeaderBreadcrumb>) {
                             .semantics {
                                 role = Role.Button
                                 contentDescription = breadcrumb.label
-                            }.clickable(onClick = breadcrumb.onClick)
+                            }.mouseClickable(
+                                onClick = breadcrumb.onClick,
+                                onSecondaryClick = breadcrumb.onClick,
+                                middleClickFallbackToPrimary = true,
+                            )
                     } else {
                         Modifier
                     },

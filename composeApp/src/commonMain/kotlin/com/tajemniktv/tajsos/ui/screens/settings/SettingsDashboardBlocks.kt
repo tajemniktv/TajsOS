@@ -49,6 +49,7 @@ import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.components.common.GlassMaterial
 import com.tajemniktv.tajsos.ui.components.common.glassContainerColor
 import com.tajemniktv.tajsos.ui.components.common.glassChrome
+import com.tajemniktv.tajsos.ui.components.common.mouseClickable
 import com.tajemniktv.tajsos.ui.theme.PaletteAccentAmber
 import com.tajemniktv.tajsos.ui.theme.PaletteAccentBlue
 import com.tajemniktv.tajsos.ui.theme.PaletteAccentGreen
@@ -663,7 +664,11 @@ private fun AppearanceAccentDot(
                     width = if (selected) 2.dp else 0.dp,
                     color = if (selected) TajsOSTheme.Text else Color.Transparent,
                     shape = CircleShape,
-                ).clickable(onClick = onClick),
+                ).mouseClickable(
+                    onClick = onClick,
+                    onSecondaryClick = onClick,
+                    middleClickFallbackToPrimary = true,
+                ),
     )
 }
 

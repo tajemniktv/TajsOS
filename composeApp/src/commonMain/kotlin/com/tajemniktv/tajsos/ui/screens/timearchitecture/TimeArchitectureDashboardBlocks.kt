@@ -6,7 +6,6 @@ package com.tajemniktv.tajsos.ui.screens.timearchitecture
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.TimeArchitectureSnapshot
+import com.tajemniktv.tajsos.ui.components.common.mouseClickable
 import com.tajemniktv.tajsos.ui.screens.formatProtocolTimestamp
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
@@ -604,7 +604,11 @@ private fun HorizonQueueRow(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .clickable(onClick = onOpen),
+                .mouseClickable(
+                    onClick = onOpen,
+                    onSecondaryClick = onOpen,
+                    middleClickFallbackToPrimary = true,
+                ),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 10.dp),

@@ -29,6 +29,7 @@ import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -41,11 +42,17 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.tajemniktv.tajsos.ui.components.common.MouseContextMenuHost
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
+import com.tajemniktv.tajsos.ui.components.common.mouseClickable
+import com.tajemniktv.tajsos.ui.components.common.rememberMouseContextMenuState
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Instant
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.common_open
 
 /**
  * Notes workspace left rail with creation, search, filtering, sorting, and note list navigation.
@@ -207,6 +214,7 @@ fun NotesListItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val contextMenuState = rememberMouseContextMenuState()
     val titleColor = if (selected) TajsOSTheme.Primary else TajsOSTheme.Text
     val surfaceColor =
         if (selected) {
@@ -214,62 +222,80 @@ fun NotesListItem(
         } else {
             TajsOSTheme.SurfaceHighest.copy(alpha = 0.55f)
         }
-    Surface(
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(TajsOSTheme.RadiusMd))
-                .clickable(onClick = onClick),
-        color = surfaceColor,
-        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+    MouseContextMenuHost(
+        state = contextMenuState,
+        modifier = modifier.fillMaxWidth(),
+        menuContent = {
+            DropdownMenuItem(
+                text = { Text(text = stringResource(Res.string.common_open)) },
+                onClick = {
+                    contextMenuState.dismiss()
+                    onClick()
+                },
+            )
+        },
     ) {
-        Column(
-            modifier = Modifier.fillMaxWidth().padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
+        Surface(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(TajsOSTheme.RadiusMd))
+                    .mouseClickable(
+                        onClick = onClick,
+                        onSecondaryClickAt = { contextMenuState.showAt(it) },
+                        middleClickFallbackToPrimary = true,
+                    ),
+            color = surfaceColor,
+            shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(12.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = note.title.ifBlank { "Untitled note" },
+                        style = MaterialTheme.typography.titleSmall,
+                        color = titleColor,
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f),
+                    )
+                    if (note.isPinned) {
+                        Icon(
+                            imageVector = Icons.Default.PushPin,
+                            contentDescription = null,
+                            tint = TajsOSTheme.Primary,
+                            modifier = Modifier.padding(start = 4.dp).width(14.dp),
+                        )
+                    }
+                    if (note.isFavorite) {
+                        Icon(
+                            imageVector = Icons.Default.Star,
+                            contentDescription = null,
+                            tint = TajsOSTheme.Primary,
+                            modifier = Modifier.padding(start = 4.dp).width(14.dp),
+                        )
+                    }
+                }
                 Text(
-                    text = note.title.ifBlank { "Untitled note" },
-                    style = MaterialTheme.typography.titleSmall,
-                    color = titleColor,
-                    fontWeight = FontWeight.SemiBold,
+                    text = note.preview.ifBlank { "No content yet..." },
+                    style = MaterialTheme.typography.bodySmall,
+                    color = TajsOSTheme.Muted,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    text = "${
+                        note.domain.name.lowercase().replaceFirstChar(Char::titlecase)
+                    } • ${relativeDateLabel(note.updatedAt)}",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TajsOSTheme.Muted,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f),
                 )
-                if (note.isPinned) {
-                    Icon(
-                        imageVector = Icons.Default.PushPin,
-                        contentDescription = null,
-                        tint = TajsOSTheme.Primary,
-                        modifier = Modifier.padding(start = 4.dp).width(14.dp),
-                    )
-                }
-                if (note.isFavorite) {
-                    Icon(
-                        imageVector = Icons.Default.Star,
-                        contentDescription = null,
-                        tint = TajsOSTheme.Primary,
-                        modifier = Modifier.padding(start = 4.dp).width(14.dp),
-                    )
-                }
             }
-            Text(
-                text = note.preview.ifBlank { "No content yet..." },
-                style = MaterialTheme.typography.bodySmall,
-                color = TajsOSTheme.Muted,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-            )
-            Text(
-                text = "${
-                    note.domain.name.lowercase().replaceFirstChar(Char::titlecase)
-                } • ${relativeDateLabel(note.updatedAt)}",
-                style = MaterialTheme.typography.labelSmall,
-                color = TajsOSTheme.Muted,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
         }
     }
 }
@@ -290,7 +316,11 @@ private fun NotesTokenButton(
                     } else {
                         TajsOSTheme.SurfaceHighest.copy(alpha = 0.5f)
                     },
-                ).clickable(onClick = onClick)
+                ).mouseClickable(
+                    onClick = onClick,
+                    onSecondaryClick = onClick,
+                    middleClickFallbackToPrimary = true,
+                )
                 .padding(horizontal = 10.dp, vertical = 6.dp),
     ) {
         Text(

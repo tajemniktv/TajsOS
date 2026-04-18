@@ -1235,6 +1235,8 @@
     <string name="common_flashcard">Flashcard</string>
     <string name="common_revisit">Revisit</string>
     <string name="common_open">Open</string>
+    <string name="common_expand">Expand</string>
+    <string name="common_collapse">Collapse</string>
     <string name="common_no_active_mode">No active mode</string>
 
     <string name="places_action_open_page">OPEN PLACE PAGE</string>

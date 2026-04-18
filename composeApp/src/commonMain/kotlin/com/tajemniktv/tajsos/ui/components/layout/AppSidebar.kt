@@ -75,6 +75,10 @@ import com.tajemniktv.tajsos.ui.SidebarMode
 import com.tajemniktv.tajsos.ui.components.common.GlassMaterial
 import com.tajemniktv.tajsos.ui.components.common.glassContainerColor
 import com.tajemniktv.tajsos.ui.components.common.glassChrome
+import com.tajemniktv.tajsos.ui.components.common.MouseContextMenuHost
+import com.tajemniktv.tajsos.ui.components.common.mouseButtons
+import com.tajemniktv.tajsos.ui.components.common.mouseClickable
+import com.tajemniktv.tajsos.ui.components.common.rememberMouseContextMenuState
 import com.tajemniktv.tajsos.ui.screens.tasks.TasksTab
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.coroutines.delay
@@ -82,6 +86,9 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.common_no_active_mode
+import tajsos.composeapp.generated.resources.common_open
+import tajsos.composeapp.generated.resources.common_expand
+import tajsos.composeapp.generated.resources.common_collapse
 import tajsos.composeapp.generated.resources.sidebar_brand
 import tajsos.composeapp.generated.resources.sidebar_new_entry
 import kotlin.math.roundToInt
@@ -383,6 +390,7 @@ fun ExpandableNavSection(
     val hasActiveChild = activeChildRoutes.isNotEmpty()
     val isActiveBranch = isActiveRoot || hasActiveChild
     val showChildrenInline = isExpandedPresentation && expandable && (isExpandedRoot || hasActiveChild)
+    val contextMenuState = rememberMouseContextMenuState()
     val rootClickAction =
         when {
             !expandable -> onRootNavigate
@@ -390,14 +398,53 @@ fun ExpandableNavSection(
             else -> onExpandFlyout
         }
 
-    Box(modifier = Modifier.fillMaxWidth()) {
+    MouseContextMenuHost(
+        state = contextMenuState,
+        modifier = Modifier.fillMaxWidth(),
+        menuContent = {
+            DropdownMenuItem(
+                text = { Text(text = rootLabel) },
+                onClick = {
+                    contextMenuState.dismiss()
+                    onRootNavigate()
+                },
+            )
+            if (expandable) {
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            text =
+                                if (isExpandedPresentation) {
+                                    stringResource(if (showChildrenInline) Res.string.common_collapse else Res.string.common_expand)
+                                } else {
+                                    stringResource(Res.string.common_open)
+                                },
+                        )
+                    },
+                    onClick = {
+                        contextMenuState.dismiss()
+                        if (isExpandedPresentation) {
+                            onRootExpandToggle()
+                        } else {
+                            onExpandFlyout()
+                        }
+                    },
+                )
+            }
+        },
+    ) {
+        Box(modifier = Modifier.fillMaxWidth()) {
         SidebarTooltip(enabled = !isExpandedPresentation && !isFlyoutExpanded, text = rootLabel) {
             Surface(
-                onClick = rootClickAction,
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 10.dp, vertical = 2.dp),
+                        .padding(horizontal = 10.dp, vertical = 2.dp)
+                        .mouseClickable(
+                            onClick = rootClickAction,
+                            onSecondaryClickAt = { contextMenuState.showAt(it) },
+                            middleClickFallbackToPrimary = true,
+                        ),
                 shape = RoundedCornerShape(10.dp),
                 color =
                     if (isActiveBranch) {
@@ -556,6 +603,7 @@ fun ExpandableNavSection(
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
             children.forEach { child ->
+                val childContextMenuState = rememberMouseContextMenuState()
                 val isActiveChild =
                     isChildActive(
                         root = screen,
@@ -564,50 +612,71 @@ fun ExpandableNavSection(
                         currentRootScreen = currentRootScreen,
                         activeTasksTab = activeTasksTab,
                     )
-                Surface(
-                    onClick = { onChildNavigate(child) },
+                MouseContextMenuHost(
+                    state = childContextMenuState,
                     modifier = Modifier.fillMaxWidth(),
-                    color =
-                        if (isActiveChild) {
-                            TajsOSTheme.Primary.copy(alpha = 0.12f)
-                        } else {
-                            Color.Transparent
-                        },
-                    shape = RoundedCornerShape(8.dp),
-                    tonalElevation = 0.dp,
-                    shadowElevation = 0.dp,
+                    menuContent = {
+                        DropdownMenuItem(
+                            text = { Text(text = stringResource(Res.string.common_open)) },
+                            onClick = {
+                                childContextMenuState.dismiss()
+                                onChildNavigate(child)
+                            },
+                        )
+                    },
                 ) {
-                    Row(
+                    Surface(
                         modifier =
                             Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 10.dp, vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                .mouseClickable(
+                                    onClick = { onChildNavigate(child) },
+                                    onSecondaryClickAt = { childContextMenuState.showAt(it) },
+                                    middleClickFallbackToPrimary = true,
+                                ),
+                        color =
+                            if (isActiveChild) {
+                                TajsOSTheme.Primary.copy(alpha = 0.12f)
+                            } else {
+                                Color.Transparent
+                            },
+                        shape = RoundedCornerShape(8.dp),
+                        tonalElevation = 0.dp,
+                        shadowElevation = 0.dp,
                     ) {
-                        Icon(
-                            imageVector = sidebarScreenIcon(child),
-                            contentDescription = null,
-                            tint =
-                                if (isActiveChild) {
-                                    TajsOSTheme.Primary
-                                } else {
-                                    TajsOSTheme.Muted.copy(alpha = 0.75f)
-                                },
-                            modifier = Modifier.size(14.dp),
-                        )
-                        Text(
-                            text = stringResource(child.label),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = if (isActiveChild) TajsOSTheme.Text else TajsOSTheme.Muted,
-                            fontWeight = if (isActiveChild) FontWeight.SemiBold else FontWeight.Normal,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
+                        Row(
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 10.dp, vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            Icon(
+                                imageVector = sidebarScreenIcon(child),
+                                contentDescription = null,
+                                tint =
+                                    if (isActiveChild) {
+                                        TajsOSTheme.Primary
+                                    } else {
+                                        TajsOSTheme.Muted.copy(alpha = 0.75f)
+                                    },
+                                modifier = Modifier.size(14.dp),
+                            )
+                            Text(
+                                text = stringResource(child.label),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = if (isActiveChild) TajsOSTheme.Text else TajsOSTheme.Muted,
+                                fontWeight = if (isActiveChild) FontWeight.SemiBold else FontWeight.Normal,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        }
                     }
                 }
             }
         }
+    }
     }
 }
 
@@ -656,7 +725,14 @@ fun NewEntryButton(
             onClick = onClick,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
             color = TajsOSTheme.Primary,
-            modifier = Modifier.fillMaxWidth().height(if (expanded) 46.dp else 42.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(if (expanded) 46.dp else 42.dp)
+                    .mouseButtons(
+                        onSecondaryClick = onClick,
+                        onMiddleClick = onClick,
+                    ),
             tonalElevation = 0.dp,
             shadowElevation = 0.dp,
         ) {
@@ -704,7 +780,11 @@ fun UserProfileSidebarSection(
     SidebarTooltip(enabled = !expanded, text = displayName) {
         Surface(
             onClick = onClick,
-            modifier = Modifier.fillMaxWidth(),
+            modifier =
+                Modifier.fillMaxWidth().mouseButtons(
+                    onSecondaryClick = onClick,
+                    onMiddleClick = onClick,
+                ),
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
             color = TajsOSTheme.CardNestedSurface,
             tonalElevation = 0.dp,

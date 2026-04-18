@@ -1092,6 +1092,8 @@
     <string name="common_flashcard">Fiszka</string>
     <string name="common_revisit">Odśwież</string>
     <string name="common_open">Otwórz</string>
+    <string name="common_expand">Rozwiń</string>
+    <string name="common_collapse">Zwiń</string>
     <string name="common_no_active_mode">Brak aktywnego trybu</string>
 
     <string name="places_action_open_page">OTWÓRZ STRONĘ MIEJSCA</string>
