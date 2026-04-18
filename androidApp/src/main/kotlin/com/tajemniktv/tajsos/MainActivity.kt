@@ -15,6 +15,7 @@ import android.util.Log
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.security.keystore.KeyPermanentlyInvalidatedException
+import java.security.GeneralSecurityException
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -299,45 +300,88 @@ class MainActivity : FragmentActivity() {
         }
     }
 
+    /**
+     * Retrieves the existing Keystore-backed AES key or creates a new one.
+     *
+     * On API 30+ the key is explicitly bound to strong biometric authentication using
+     * [KeyProperties.AUTH_BIOMETRIC_STRONG] via [KeyGenParameterSpec.Builder.setUserAuthenticationParameters].
+     * On earlier API levels [KeyGenParameterSpec.Builder.setUserAuthenticationRequired] is used.
+     * The key is invalidated whenever new biometric enrolment occurs.
+     */
     private fun getOrCreateSecretKey(): SecretKey {
         val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply { load(null) }
         (keyStore.getKey(BIOMETRIC_KEY_ALIAS, null) as? SecretKey)?.let { return it }
 
         val keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEYSTORE)
-        val keyGenParameterSpec =
+        val spec =
             KeyGenParameterSpec
                 .Builder(
                     BIOMETRIC_KEY_ALIAS,
                     KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT,
                 ).setBlockModes(KeyProperties.BLOCK_MODE_GCM)
                 .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
-                .setUserAuthenticationRequired(true)
                 .setInvalidatedByBiometricEnrollment(true)
-                .build()
-        keyGenerator.init(keyGenParameterSpec)
+                .apply {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                        setUserAuthenticationParameters(0, KeyProperties.AUTH_BIOMETRIC_STRONG)
+                    } else {
+                        setUserAuthenticationRequired(true)
+                    }
+                }.build()
+        keyGenerator.init(spec)
         return keyGenerator.generateKey()
     }
 
+    /** Returns a new [Cipher] instance configured for [CIPHER_TRANSFORMATION]. */
     private fun getCipher(): Cipher = Cipher.getInstance(CIPHER_TRANSFORMATION)
 
     /**
+     * Initialises a [Cipher] in [Cipher.ENCRYPT_MODE] using the Keystore-backed key.
+     *
+     * If the existing key has been permanently invalidated (e.g. after a biometric enrolment
+     * change) it is deleted and a fresh key is provisioned before retrying.
+     *
+     * @return An initialised [Cipher], or `null` if initialisation fails.
+     */
+    private fun initCipher(): Cipher? {
+        return try {
+            getCipher().apply {
+                init(Cipher.ENCRYPT_MODE, getOrCreateSecretKey())
+            }
+        } catch (e: KeyPermanentlyInvalidatedException) {
+            Log.w(TAG, "Biometric key invalidated, regenerating key", e)
+            try {
+                val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply { load(null) }
+                keyStore.deleteEntry(BIOMETRIC_KEY_ALIAS)
+                getCipher().apply {
+                    init(Cipher.ENCRYPT_MODE, getOrCreateSecretKey())
+                }
+            } catch (inner: GeneralSecurityException) {
+                Log.e(TAG, "Failed to reinitialize cipher after key regeneration", inner)
+                null
+            }
+        } catch (e: GeneralSecurityException) {
+            Log.e(TAG, "Failed to initialize biometric cipher", e)
+            null
+        }
+    }
+
+    /**
      * Displays the system biometric prompt for user authentication.
-     * @param viewModel The ViewModel to update upon successful authentication.
+     *
+     * Biometric unlock is cryptographically bound to the Android Keystore through a
+     * [BiometricPrompt.CryptoObject]. Authentication succeeds only when the hardware
+     * biometric sensor approves the operation **and** the Keystore-backed cipher can
+     * complete successfully.
+     *
+     * @param viewModel The ViewModel to update upon successful or failed authentication.
      */
     private fun showBiometricPrompt(viewModel: MainViewModel) {
         if (!isBiometricAvailable()) {
             return
         }
 
-        val cipher =
-            try {
-                getCipher().apply {
-                    init(Cipher.ENCRYPT_MODE, getOrCreateSecretKey())
-                }
-            } catch (e: Exception) {
-                Log.e(TAG, "Failed to initialize biometric crypto", e)
-                return
-            }
+        val cipher = initCipher() ?: return
 
         val executor = ContextCompat.getMainExecutor(this)
         val biometricPrompt =
@@ -352,6 +396,20 @@ class MainActivity : FragmentActivity() {
                             .onSuccess { viewModel.setAuthenticated(true) }
                             .onFailure { Log.e(TAG, "Biometric crypto operation failed", it) }
                     }
+
+                    override fun onAuthenticationError(
+                        errorCode: Int,
+                        errString: CharSequence,
+                    ) {
+                        super.onAuthenticationError(errorCode, errString)
+                        Log.e(TAG, "Biometric authentication error [$errorCode]: $errString")
+                        viewModel.setAuthenticated(false)
+                    }
+
+                    override fun onAuthenticationFailed() {
+                        super.onAuthenticationFailed()
+                        Log.w(TAG, "Biometric authentication attempt failed")
+                    }
                 },
             )
 
@@ -359,23 +417,26 @@ class MainActivity : FragmentActivity() {
             BiometricPrompt.PromptInfo
                 .Builder()
                 .setTitle(getString(R.string.auth_biometric_title))
-                .setAllowedAuthenticators(
-                    BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.DEVICE_CREDENTIAL,
-                ).build()
+                .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG)
+                .setNegativeButtonText(getString(R.string.auth_biometric_cancel))
+                .build()
 
         biometricPrompt.authenticate(promptInfo, BiometricPrompt.CryptoObject(cipher))
     }
 
     /**
-     * Checks if biometric authentication hardware is available and configured on the device.
+     * Checks if strong biometric authentication hardware is available and enrolled on the device.
      *
-     * @return True if biometrics can be used for authentication.
+     * Only [BiometricManager.Authenticators.BIOMETRIC_STRONG] is checked because the biometric
+     * prompt uses a [BiometricPrompt.CryptoObject] which is incompatible with device-credential
+     * fallback.
+     *
+     * @return `true` if strong biometrics can be used for authentication.
      */
     private fun isBiometricAvailable(): Boolean {
         val biometricManager = BiometricManager.from(this)
-        return biometricManager.canAuthenticate(
-            BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.DEVICE_CREDENTIAL,
-        ) == BiometricManager.BIOMETRIC_SUCCESS
+        return biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG) ==
+            BiometricManager.BIOMETRIC_SUCCESS
     }
 
     /**
