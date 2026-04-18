@@ -99,6 +99,7 @@ fun AppSidebar(
     onNavigateToTasksTab: (TasksTab) -> Unit,
     onNewEntry: () -> Unit,
     onNavigateToProfile: () -> Unit,
+    forceExpandedPresentation: Boolean = false,
     useFixedWidth: Boolean = true,
     applyGlass: Boolean = true,
     modifier: Modifier = Modifier,
@@ -106,8 +107,8 @@ fun AppSidebar(
     val hoverInteraction = remember { MutableInteractionSource() }
     val isHovered by hoverInteraction.collectIsHoveredAsState()
 
-    LaunchedEffect(isHovered, shellState.sidebarMode) {
-        if (shellState.sidebarMode != SidebarMode.HOVER_EXPAND) {
+    LaunchedEffect(isHovered, shellState.sidebarMode, forceExpandedPresentation) {
+        if (forceExpandedPresentation || shellState.sidebarMode != SidebarMode.HOVER_EXPAND) {
             shellState.hoverExpanded = false
             return@LaunchedEffect
         }
@@ -121,7 +122,7 @@ fun AppSidebar(
         }
     }
 
-    val showExpandedContent = shellState.isSidebarExpandedPresentation
+    val showExpandedContent = forceExpandedPresentation || shellState.isSidebarExpandedPresentation
     var expandedFlyoutRoute by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(showExpandedContent) {
@@ -166,7 +167,7 @@ fun AppSidebar(
                 )
                 .hoverable(
                     interactionSource = hoverInteraction,
-                    enabled = shellState.sidebarMode == SidebarMode.HOVER_EXPAND,
+                    enabled = !forceExpandedPresentation && shellState.sidebarMode == SidebarMode.HOVER_EXPAND,
                 ),
         color =
             if (applyGlass) {

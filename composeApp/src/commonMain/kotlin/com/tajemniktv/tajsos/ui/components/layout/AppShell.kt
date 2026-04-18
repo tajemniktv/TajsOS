@@ -174,6 +174,7 @@ fun AppShell(
                                     onNavigate(Screen.Profile)
                                     scope.launch { drawerState.close() }
                                 },
+                                forceExpandedPresentation = true,
                                 useFixedWidth = false,
                                 applyGlass = false,
                                 modifier = Modifier.fillMaxSize(),
