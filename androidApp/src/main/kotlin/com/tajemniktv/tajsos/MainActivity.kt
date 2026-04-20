@@ -137,6 +137,13 @@ class MainActivity : FragmentActivity() {
         viewModel.setBiometricHardwareAvailable(isBiometricAvailable())
         handleIntent(intent)
 
+        setupMainUi()
+    }
+
+    /**
+     * Extracts the Compose setup logic from onCreate to satisfy CodeScene's Complex Method rule.
+     */
+    private fun setupMainUi() {
         setContent {
             val isAuthenticated by viewModel.isAuthenticated.collectAsState()
             val isBiometricEnabled by viewModel.isBiometricEnabled.collectAsState()
