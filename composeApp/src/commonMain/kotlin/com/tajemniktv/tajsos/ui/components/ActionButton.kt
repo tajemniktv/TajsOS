@@ -44,11 +44,18 @@ fun ActionButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    containerColor: Color = TajsOSTheme.Surface,
+    containerColor: Color = TajsOSTheme.SurfaceHighest,
     contentColor: Color = TajsOSTheme.Text,
     icon: ImageVector? = null,
 ) {
     val isPrimary = containerColor == TajsOSTheme.Primary
+    val isGhost = containerColor == Color.Transparent
+    val buttonBorder = if (!isPrimary && !isGhost) {
+        androidx.compose.foundation.BorderStroke(1.dp, TajsOSTheme.GhostBorder)
+    } else {
+        null
+    }
+
     val finalModifier = modifier.height(48.dp).then(
         if (isPrimary && enabled) {
             Modifier.background(
@@ -73,6 +80,7 @@ fun ActionButton(
             contentColor = if (isPrimary && contentColor == TajsOSTheme.Text) TajsOSTheme.Background else contentColor,
         ),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+        border = buttonBorder,
         contentPadding = PaddingValues(horizontal = 16.dp),
     ) {
         if (icon != null) {
