@@ -86,6 +86,10 @@ class ProtocolCommandsTest {
         val node = savedNodes.first().node
         assertEquals("protocol", node.type)
         assertEquals("morning_startup", node.title)
+
+        val history = repo.getAllProtocolHistory().first()
+        assertEquals(setOf(node.id), history.map { it.protocolNodeId }.toSet())
+        assertEquals("Triggered from test", history.first().notes)
     }
 
     @Test
@@ -179,10 +183,11 @@ class ProtocolCommandsTest {
             content = initialContent,
             inboxState = false
         )
-        repo.insertNode(node)
+        val nodeId = repo.insertNode(node)
         testScheduler.advanceUntilIdle()
 
-        commands.toggleProtocolChecklistStep(node, 0, true)
+        val insertedNode = repo.getNodeById(nodeId)!!
+        commands.toggleProtocolChecklistStep(insertedNode, 0, true)
         testScheduler.advanceUntilIdle()
 
         val savedNodes1 = repo.getAllNodes().first()
