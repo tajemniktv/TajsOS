@@ -102,13 +102,13 @@ interface NodeDao {
      * @param node The [NodeEntity] to insert.
      * @return The auto-generated or existing primary key ID of the inserted node.
      */
-    @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
+    @androidx.room.Upsert
     suspend fun insertNode(node: NodeEntity): Long
 
     /**
      * Inserts multiple nodes, returning their generated or existing identifiers.
      */
-    @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
+    @androidx.room.Upsert
     suspend fun insertNodes(nodes: List<NodeEntity>): List<Long>
 
     /**
@@ -133,7 +133,7 @@ interface NodeDao {
      *
      * @param pin The [TodayPinEntity] representing the pinned state.
      */
-    @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
+    @androidx.room.Upsert
     suspend fun pinToToday(pin: TodayPinEntity)
 
     /**
@@ -180,7 +180,7 @@ interface TrackDao {
     @Query("SELECT * FROM track_entries ORDER BY date DESC, createdAt DESC")
     fun getAllTrackEntries(): Flow<List<TrackEntryEntity>>
 
-    @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
+    @androidx.room.Upsert
     suspend fun insertTrackEntry(entry: TrackEntryEntity): Long
 
     @Query("SELECT * FROM track_entries WHERE date = :date LIMIT 1")
@@ -201,10 +201,10 @@ interface RelationDao {
     @Query("SELECT * FROM relations WHERE fromNodeId = :nodeId OR toNodeId = :nodeId")
     fun getRelationsForNode(nodeId: Long): Flow<List<RelationEntity>>
 
-    @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
+    @androidx.room.Upsert
     suspend fun insertRelation(relation: RelationEntity)
 
-    @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
+    @androidx.room.Upsert
     suspend fun insertRelations(relations: List<RelationEntity>)
 
     @Delete
@@ -699,13 +699,13 @@ interface CalendarEventDao {
         to: Long,
     ): Flow<List<CalendarEventEntity>>
 
-    @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
+    @androidx.room.Upsert
     suspend fun insertEvents(events: List<CalendarEventEntity>)
 
     @Query("DELETE FROM calendar_events WHERE providerId = :providerId")
     suspend fun deleteEventsByProvider(providerId: Long)
 
-    @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
+    @androidx.room.Upsert
     suspend fun insertEvent(event: CalendarEventEntity): Long
 
     @Update
