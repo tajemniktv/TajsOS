@@ -1,6 +1,6 @@
 package com.tajemniktv.tajsos.ui
 
-import com.tajemniktv.tajsos.data.TodayPinEntity
+
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

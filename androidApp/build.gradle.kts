@@ -102,3 +102,30 @@ dependencies {
     implementation(libs.compose.uiToolingPreview)
     debugImplementation(libs.compose.uiTooling)
 }
+
+
+
+
+abstract class ConditionalGoogleServicesTask : DefaultTask() {
+    @get:Input
+    abstract val projectDirectory: Property<File>
+
+    @TaskAction
+    fun checkAndCreateMock() {
+        val googleServicesJson = File(projectDirectory.get(), "google-services.json")
+        if (!googleServicesJson.exists()) {
+            println("Creating mock google-services.json for CI to bypass crashlytics build error.")
+            googleServicesJson.writeText("""
+                {"project_info": {"project_number": "1", "project_id": "test"}, "client": [{"client_info": {"mobilesdk_app_id": "1", "android_client_info": {"package_name": "com.tajemniktv.tajsos"}}, "api_key": [{"current_key": "1"}]}]}
+            """.trimIndent())
+        }
+    }
+}
+
+val bypassGoogleServicesError by tasks.registering(ConditionalGoogleServicesTask::class) {
+    projectDirectory.set(layout.projectDirectory.asFile)
+}
+
+tasks.matching { it.name.contains("processDebugGoogleServices") || it.name.contains("processReleaseGoogleServices") }.configureEach {
+    dependsOn(bypassGoogleServicesError)
+}
