@@ -20,10 +20,15 @@ import kotlinx.serialization.Serializable
 enum class ItemKind(
     val storageKey: String,
 ) {
+    /** Represents actionable work to be completed. */
     TASK("task"), // NON-NLS
+    /** Represents durable knowledge or reference material. */
     NOTE("note"), // NON-NLS
+    /** Represents a chronological log or reflection. */
     RECORD("record"), // NON-NLS
+    /** Represents an outcome-bearing endeavor. */
     PROJECT("project"), // NON-NLS
+    /** Represents an ongoing area of responsibility. */
     AREA("area"), // NON-NLS
     ;
 

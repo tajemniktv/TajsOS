@@ -11,6 +11,9 @@ internal sealed class IpAddress {
 
     fun isPrivateOrLocal(): Boolean = isLoopback() || isLinkLocal() || isSiteLocal()
 
+    /**
+     * Represents an IPv4 address.
+     */
     data class Ipv4(val address: Long) : IpAddress() {
         override fun isLoopback(): Boolean = (address ushr 24) == 127L
         override fun isLinkLocal(): Boolean = (address ushr 16) == 0xA9FEL // 169.254.x.x
@@ -21,6 +24,9 @@ internal sealed class IpAddress {
         }
     }
 
+    /**
+     * Represents an IPv6 address.
+     */
     data class Ipv6(val words: LongArray) : IpAddress() {
         override fun isLoopback(): Boolean = words[0] == 0L && words[1] == 0L && words[2] == 0L && words[3] == 1L
 
