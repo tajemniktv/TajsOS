@@ -74,13 +74,12 @@ class FilterHelperEdgeTest {
     }
 
 
-
     @Test
     fun testRelevanceScore_activeAndPinnedStatus() {
         val today = "2024-01-01"
 
         val activePinnedNode = buildTestNode(1, "query exact", "content", status = "active").copy(
-            pin = com.tajemniktv.tajsos.data.TodayPinEntity(id = 1, nodeId = 1, date = today, position = 0)
+            pin = TodayPinEntity(id = 1, nodeId = 1, date = today, position = 0)
         )
         val activeNode = buildTestNode(2, "query exact", "content", status = "active")
         val inactiveNode = buildTestNode(3, "query exact", "content", status = "on_hold")
