@@ -26,6 +26,11 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import kotlinx.coroutines.delay
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -175,6 +180,14 @@ fun FocusCard(
     val activeTask =
         activeSession?.let { session -> allNodes.find { it.node.id == session.nodeId }?.node }
 
+    var currentMillis by remember { mutableLongStateOf(Clock.System.now().toEpochMilliseconds()) }
+    LaunchedEffect(activeSession) {
+        while (activeSession != null) {
+            currentMillis = Clock.System.now().toEpochMilliseconds()
+            delay(1000L)
+        }
+    }
+
     DashCard(modifier = modifier, onClick = onClick) {
         Column(modifier = Modifier.padding(TajsOSTheme.SpacingLg)) {
             Row(
@@ -199,7 +212,7 @@ fun FocusCard(
                 }
                 if (activeSession != null) {
                     val duration =
-                        (Clock.System.now().toEpochMilliseconds() - activeSession.startedAt) / 1000
+                        (currentMillis - activeSession.startedAt) / 1000
                     val h = duration / 3600
                     val m = (duration % 3600) / 60
                     val s = duration % 60
