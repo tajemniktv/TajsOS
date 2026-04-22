@@ -122,7 +122,7 @@ Spacer(modifier = Modifier.height(if (fillParent) TajsOSTheme.SpacingMd else if 
                 border =
                     androidx.compose.foundation.BorderStroke(
                         1.dp,
-                        TajsOSTheme.Primary.copy(alpha = 0.2f),
+                        TajsOSTheme.GhostBorder,
                     ),
             ) {
                 contentComposable()
