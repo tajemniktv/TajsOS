@@ -53,7 +53,7 @@ class FakeCalendarEventDao : CalendarEventDao {
 
     override suspend fun insertEvents(events: List<CalendarEventEntity>) {}
     override suspend fun deleteEventsByProvider(providerId: Long) {}
-    override suspend fun insertEvent(event: CalendarEventEntity): Long = 0
+    override suspend fun insertEvent(event: CalendarEventEntity) {}
     override suspend fun updateEvent(event: CalendarEventEntity) {}
     override suspend fun deleteEvent(event: CalendarEventEntity) {}
 }
