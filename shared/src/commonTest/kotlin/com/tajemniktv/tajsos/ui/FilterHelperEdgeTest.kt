@@ -73,6 +73,80 @@ class FilterHelperEdgeTest {
         assertEquals(6L, result[5].node.id) // 15
     }
 
+
+    @Test
+    fun testRelevanceScore_activeAndPinnedStatus() {
+        val today = "2024-01-01"
+
+        val activePinnedNode = buildTestNode(1, "query exact", "content", status = "active").copy(
+            pin = TodayPinEntity(id = 1, nodeId = 1, date = today, position = 0)
+        )
+        val activeNode = buildTestNode(2, "query exact", "content", status = "active")
+        val inactiveNode = buildTestNode(3, "query exact", "content", status = "on_hold")
+
+        val result = FilterHelper.filterAndSortNodes(
+            nodes = listOf(inactiveNode, activeNode, activePinnedNode),
+            query = "query exact",
+            type = null, status = null, projectId = null, areaId = null, linkedToId = null,
+            maxMins = null, energy = null, friction = null, locationContext = null,
+            energyContext = null, deviceContext = null, socialContext = null,
+            timeWindowContext = null, timeHorizon = null, relations = emptyList(),
+            sortMode = "relevance"
+        )
+
+        assertEquals(3, result.size)
+        // Score order: activePinnedNode (1), activeNode (2), inactiveNode (3)
+        assertEquals(1L, result[0].node.id)
+        assertEquals(2L, result[1].node.id)
+        assertEquals(3L, result[2].node.id)
+    }
+
+    @Test
+    fun testRelevanceScore_tagMatches() {
+        val exactTagMatch = buildTestNode(1, "title", "content", tags = listOf("query exact"))
+        val containsTagMatch = buildTestNode(2, "title", "content", tags = listOf("prefix query exact suffix"))
+        val noTagMatch = buildTestNode(3, "title", "content", tags = listOf("other"))
+
+        val result = FilterHelper.filterAndSortNodes(
+            nodes = listOf(noTagMatch, containsTagMatch, exactTagMatch),
+            query = "query exact",
+            type = null, status = null, projectId = null, areaId = null, linkedToId = null,
+            maxMins = null, energy = null, friction = null, locationContext = null,
+            energyContext = null, deviceContext = null, socialContext = null,
+            timeWindowContext = null, timeHorizon = null, relations = emptyList(),
+            sortMode = "relevance"
+        )
+
+        assertEquals(2, result.size) // noTagMatch shouldn't match the query
+        // Score order: exactTagMatch (1), containsTagMatch (2)
+        assertEquals(1L, result[0].node.id)
+        assertEquals(2L, result[1].node.id)
+    }
+
+    @Test
+    fun testRelevanceScore_titleAndContentMatches() {
+        val exactMatch = buildTestNode(1, "query exact", "content")
+        val startsWithMatch = buildTestNode(2, "query exact suffix", "content")
+        val containsMatch = buildTestNode(3, "prefix query exact", "content")
+        val contentMatch = buildTestNode(4, "other title", "content query exact")
+
+        val result = FilterHelper.filterAndSortNodes(
+            nodes = listOf(contentMatch, containsMatch, startsWithMatch, exactMatch),
+            query = "query exact",
+            type = null, status = null, projectId = null, areaId = null, linkedToId = null,
+            maxMins = null, energy = null, friction = null, locationContext = null,
+            energyContext = null, deviceContext = null, socialContext = null,
+            timeWindowContext = null, timeHorizon = null, relations = emptyList(),
+            sortMode = "relevance"
+        )
+
+        assertEquals(4, result.size)
+        assertEquals(1L, result[0].node.id) // Exact
+        assertEquals(2L, result[1].node.id) // Starts With
+        assertEquals(3L, result[2].node.id) // Contains
+        assertEquals(4L, result[3].node.id) // Content Match
+    }
+
     @Test
     fun testRelevanceScore_tieBreakers() {
         val node1 = buildTestNode(1, "title", "content", tags = listOf("exact match"), updatedAt = 100L)
