@@ -123,7 +123,7 @@ const title = "WAITLIST";
     if (waitlistButtonText) waitlistButtonText.classList.add("invisible");
 
     try {
-      const response = await fetch("/api/waitlist", {
+      const response = await fetch(`${import.meta.env.BASE_URL}api/waitlist`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
