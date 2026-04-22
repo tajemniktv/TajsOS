@@ -106,9 +106,10 @@ dependencies {
 
 
 
+
 abstract class ConditionalGoogleServicesTask : DefaultTask() {
     @get:Input
-    abstract val projectDirectory: Property<File>
+    abstract val projectDirectory: Property<String>
 
     @TaskAction
     fun checkAndCreateMock() {
@@ -123,7 +124,7 @@ abstract class ConditionalGoogleServicesTask : DefaultTask() {
 }
 
 val bypassGoogleServicesError by tasks.registering(ConditionalGoogleServicesTask::class) {
-    projectDirectory.set(layout.projectDirectory.asFile)
+    projectDirectory.set(layout.projectDirectory.asFile.absolutePath)
 }
 
 tasks.matching { it.name.contains("processDebugGoogleServices") || it.name.contains("processReleaseGoogleServices") }.configureEach {
