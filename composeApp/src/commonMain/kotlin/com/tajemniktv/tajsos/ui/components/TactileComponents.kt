@@ -6,6 +6,8 @@ package com.tajemniktv.tajsos.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,6 +27,8 @@ import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -183,6 +187,9 @@ fun TactileTextField(
     modifier: Modifier = Modifier,
     placeholder: String = "Type system log entries here...",
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
             text = label,
@@ -198,25 +205,47 @@ fun TactileTextField(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .heightIn(min = 120.dp)
-                    .background(TajsOSTheme.SurfaceLowest, RoundedCornerShape(TajsOSTheme.RadiusMd))
-                    .border(1.dp, TajsOSTheme.SurfaceLow, RoundedCornerShape(TajsOSTheme.RadiusMd))
-                    .padding(TajsOSTheme.SpacingMd),
         ) {
-            if (value.isEmpty()) {
-                Text(
-                    text = placeholder,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = TajsOSTheme.Muted,
+            if (isFocused) {
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .blur(8.dp)
+                        .background(
+                            TajsOSTheme.Primary.copy(alpha = 0.2f),
+                            RoundedCornerShape(TajsOSTheme.RadiusMd)
+                        )
                 )
             }
-            BasicTextField(
-                value = value,
-                onValueChange = onValueChange,
-                modifier = Modifier.fillMaxWidth(),
-                textStyle = MaterialTheme.typography.bodyMedium.copy(color = TajsOSTheme.Text),
-                cursorBrush = SolidColor(TajsOSTheme.Primary),
-            )
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 120.dp)
+                    .background(TajsOSTheme.SurfaceLowest, RoundedCornerShape(TajsOSTheme.RadiusMd))
+                    .border(
+                        1.dp,
+                        if (isFocused) TajsOSTheme.GhostBorder else TajsOSTheme.SurfaceLow,
+                        RoundedCornerShape(TajsOSTheme.RadiusMd)
+                    )
+                    .padding(TajsOSTheme.SpacingMd)
+            ) {
+                if (value.isEmpty()) {
+                    Text(
+                        text = placeholder,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = TajsOSTheme.Muted,
+                    )
+                }
+                BasicTextField(
+                    value = value,
+                    onValueChange = onValueChange,
+                    modifier = Modifier.fillMaxSize(),
+                    textStyle = MaterialTheme.typography.bodyMedium.copy(color = TajsOSTheme.Text),
+                    cursorBrush = SolidColor(TajsOSTheme.Primary),
+                    interactionSource = interactionSource,
+                )
+            }
         }
     }
 }
