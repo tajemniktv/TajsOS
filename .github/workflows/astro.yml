@@ -40,15 +40,15 @@ jobs:
       - name: Detect package manager
         id: detect-package-manager
         env:
-          WORKSPACE: ${{ github.workspace }}
+          GITHUB_WORKSPACE: ${{ github.workspace }}
         run: |
-          if [ -f "${WORKSPACE}/website/yarn.lock" ]; then
+          if [ -f "${GITHUB_WORKSPACE}/website/yarn.lock" ]; then
             {
               echo "manager=yarn"
               echo "lockfile=yarn.lock"
             } >> "${GITHUB_OUTPUT}"
             exit 0
-          elif [ -f "${{ github.workspace }}/website/package.json" ]; then
+          elif [ -f "${GITHUB_WORKSPACE}/website/package.json" ]; then
             {
               echo "manager=npm"
               echo "lockfile=package-lock.json"
