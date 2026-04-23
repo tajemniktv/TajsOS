@@ -189,6 +189,16 @@ object DomainLensQueries {
         snapshot.active.filter { it.node.node.maintenanceType in healthMaintenanceTypes }
 
     /**
+     * Returns recurring health-related maintenance commitments.
+     * Filters the snapshot's recurring items for those where `maintenanceType` is within `healthMaintenanceTypes`.
+     *
+     * @param snapshot The snapshot containing current maintenance items separated by their schedule state.
+     * @return A list of recurring items whose maintenance type implies health-related responsibility.
+     */
+    fun healthRecurringItems(snapshot: MaintenanceSnapshot): List<MaintenanceStatusItem> =
+        snapshot.recurring.filter { it.node.node.maintenanceType in healthMaintenanceTypes }
+
+    /**
      * Returns overdue health-related maintenance work.
      * Filters the snapshot's overdue items for those where `maintenanceType` is within `healthMaintenanceTypes`.
      *
