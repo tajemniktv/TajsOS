@@ -205,7 +205,6 @@ fun TactileTextField(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .heightIn(min = 120.dp)
         ) {
             if (isFocused) {
                 Box(
@@ -241,7 +240,7 @@ fun TactileTextField(
                 BasicTextField(
                     value = value,
                     onValueChange = onValueChange,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxSize(),
                     textStyle = MaterialTheme.typography.bodyMedium.copy(color = TajsOSTheme.Text),
                     cursorBrush = SolidColor(TajsOSTheme.Primary),
                     interactionSource = interactionSource,
