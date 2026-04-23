@@ -33,6 +33,10 @@ enum class DesktopWindowStartupMode {
 class PreferencesRepository(
     private val dataStore: DataStore<Preferences>,
 ) {
+
+    private val safeData: Flow<Preferences> =
+        dataStore.data.catch { if (it is IOException) emit(emptyPreferences()) else throw it }
+
     /**
      * Persisted desktop window geometry and placement behavior.
      */
@@ -72,22 +76,19 @@ class PreferencesRepository(
     }
 
     val isBiometricEnabled: Flow<Boolean> =
-        dataStore.data
-            .catch { if (it is IOException) emit(emptyPreferences()) else throw it }
+        safeData
             .map { preferences ->
                 preferences[PreferencesKeys.BIOMETRIC_ENABLED] ?: false
             }
 
     val activeModeId: Flow<Long?> =
-        dataStore.data
-            .catch { if (it is IOException) emit(emptyPreferences()) else throw it }
+        safeData
             .map { preferences ->
                 preferences[PreferencesKeys.ACTIVE_MODE_ID]
             }
 
     val isDarkThemeEnabled: Flow<Boolean> =
-        dataStore.data
-            .catch { if (it is IOException) emit(emptyPreferences()) else throw it }
+        safeData
             .map { preferences ->
                 preferences[PreferencesKeys.DARK_THEME_ENABLED] ?: true
             }
@@ -96,8 +97,7 @@ class PreferencesRepository(
      * Selected accent color hex string (e.g., "#BA9EFF").
      */
     val accentColorHex: Flow<String> =
-        dataStore.data
-            .catch { if (it is IOException) emit(emptyPreferences()) else throw it }
+        safeData
             .map { preferences ->
                 preferences[PreferencesKeys.ACCENT_COLOR] ?: "#BA9EFF"
             }
@@ -106,8 +106,7 @@ class PreferencesRepository(
      * Whether glassmorphism effects are enabled.
      */
     val isGlassmorphismEnabled: Flow<Boolean> =
-        dataStore.data
-            .catch { if (it is IOException) emit(emptyPreferences()) else throw it }
+        safeData
             .map { preferences ->
                 preferences[PreferencesKeys.GLASSMORPHISM_ENABLED] ?: true
             }
@@ -116,8 +115,7 @@ class PreferencesRepository(
      * Whether to reduce system animations and transitions.
      */
     val reduceMotion: Flow<Boolean> =
-        dataStore.data
-            .catch { if (it is IOException) emit(emptyPreferences()) else throw it }
+        safeData
             .map { preferences ->
                 preferences[PreferencesKeys.REDUCE_MOTION] ?: false
             }
@@ -126,8 +124,7 @@ class PreferencesRepository(
      * Persisted sidebar behavior mode.
      */
     val sidebarMode: Flow<SidebarMode> =
-        dataStore.data
-            .catch { if (it is IOException) emit(emptyPreferences()) else throw it }
+        safeData
             .map { preferences ->
             val modeStr = preferences[PreferencesKeys.SIDEBAR_MODE]
             try {
@@ -141,8 +138,7 @@ class PreferencesRepository(
      * Persisted sidebar expanded width in density-independent pixels.
      */
     val sidebarExpandedWidthDp: Flow<Int> =
-        dataStore.data
-            .catch { if (it is IOException) emit(emptyPreferences()) else throw it }
+        safeData
             .map { preferences ->
             (preferences[PreferencesKeys.SIDEBAR_EXPANDED_WIDTH_DP] ?: DEFAULT_SIDEBAR_EXPANDED_WIDTH_DP)
                 .coerceIn(MIN_SIDEBAR_EXPANDED_WIDTH_DP, MAX_SIDEBAR_EXPANDED_WIDTH_DP)
@@ -152,8 +148,7 @@ class PreferencesRepository(
      * Persisted desktop window placement used to restore geometry after app restart.
      */
     val desktopWindowPlacement: Flow<DesktopWindowPlacement> =
-        dataStore.data
-            .catch { if (it is IOException) emit(emptyPreferences()) else throw it }
+        safeData
             .map { preferences ->
             DesktopWindowPlacement(
                 xDp = preferences[PreferencesKeys.DESKTOP_WINDOW_X_DP],
@@ -168,8 +163,7 @@ class PreferencesRepository(
      * Startup strategy for desktop window placement behavior.
      */
     val desktopWindowStartupMode: Flow<DesktopWindowStartupMode> =
-        dataStore.data
-            .catch { if (it is IOException) emit(emptyPreferences()) else throw it }
+        safeData
             .map { preferences ->
             val rawValue = preferences[PreferencesKeys.DESKTOP_WINDOW_STARTUP_MODE]
             try {
@@ -184,8 +178,7 @@ class PreferencesRepository(
         }
 
     val enabledPacks: Flow<PackRegistry> =
-        dataStore.data
-            .catch { if (it is IOException) emit(emptyPreferences()) else throw it }
+        safeData
             .map { preferences ->
             val owned = preferences[PreferencesKeys.OWNED_PACKS] ?: AppPack.defaultFreePackKeys
             val enabled = preferences[PreferencesKeys.ENABLED_PACKS] ?: AppPack.defaultFreePackKeys
@@ -196,8 +189,7 @@ class PreferencesRepository(
         }
 
     val ownedPacks: Flow<Set<String>> =
-        dataStore.data
-            .catch { if (it is IOException) emit(emptyPreferences()) else throw it }
+        safeData
             .map { preferences ->
             preferences[PreferencesKeys.OWNED_PACKS] ?: AppPack.defaultFreePackKeys
         }
