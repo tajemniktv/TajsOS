@@ -34,8 +34,14 @@ class PreferencesRepository(
     private val dataStore: DataStore<Preferences>,
 ) {
 
-    private val safeData: Flow<Preferences> =
-        dataStore.data.catch { if (it is IOException) emit(emptyPreferences()) else throw it }
+    private val safeData: Flow<Preferences>
+        get() = dataStore.data.catch { e ->
+            if (e is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw e
+            }
+        }
 
     /**
      * Persisted desktop window geometry and placement behavior.
