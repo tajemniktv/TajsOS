@@ -15,6 +15,9 @@ import androidx.datastore.preferences.core.stringSetPreferencesKey
 import com.tajemniktv.tajsos.ui.SidebarMode
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import androidx.datastore.preferences.core.emptyPreferences
+import kotlinx.coroutines.flow.catch
+import okio.IOException
 
 /**
  * Startup strategy for desktop window placement.
@@ -30,6 +33,10 @@ enum class DesktopWindowStartupMode {
 class PreferencesRepository(
     private val dataStore: DataStore<Preferences>,
 ) {
+
+    private val safeData: Flow<Preferences> =
+        dataStore.data.catchIoException()
+
     /**
      * Persisted desktop window geometry and placement behavior.
      */
@@ -69,19 +76,19 @@ class PreferencesRepository(
     }
 
     val isBiometricEnabled: Flow<Boolean> =
-        dataStore.data
+        safeData
             .map { preferences ->
                 preferences[PreferencesKeys.BIOMETRIC_ENABLED] ?: false
             }
 
     val activeModeId: Flow<Long?> =
-        dataStore.data
+        safeData
             .map { preferences ->
                 preferences[PreferencesKeys.ACTIVE_MODE_ID]
             }
 
     val isDarkThemeEnabled: Flow<Boolean> =
-        dataStore.data
+        safeData
             .map { preferences ->
                 preferences[PreferencesKeys.DARK_THEME_ENABLED] ?: true
             }
@@ -90,7 +97,7 @@ class PreferencesRepository(
      * Selected accent color hex string (e.g., "#BA9EFF").
      */
     val accentColorHex: Flow<String> =
-        dataStore.data
+        safeData
             .map { preferences ->
                 preferences[PreferencesKeys.ACCENT_COLOR] ?: "#BA9EFF"
             }
@@ -99,7 +106,7 @@ class PreferencesRepository(
      * Whether glassmorphism effects are enabled.
      */
     val isGlassmorphismEnabled: Flow<Boolean> =
-        dataStore.data
+        safeData
             .map { preferences ->
                 preferences[PreferencesKeys.GLASSMORPHISM_ENABLED] ?: true
             }
@@ -108,7 +115,7 @@ class PreferencesRepository(
      * Whether to reduce system animations and transitions.
      */
     val reduceMotion: Flow<Boolean> =
-        dataStore.data
+        safeData
             .map { preferences ->
                 preferences[PreferencesKeys.REDUCE_MOTION] ?: false
             }
@@ -117,7 +124,8 @@ class PreferencesRepository(
      * Persisted sidebar behavior mode.
      */
     val sidebarMode: Flow<SidebarMode> =
-        dataStore.data.map { preferences ->
+        safeData
+            .map { preferences ->
             val modeStr = preferences[PreferencesKeys.SIDEBAR_MODE]
             try {
                 if (modeStr != null) SidebarMode.valueOf(modeStr) else SidebarMode.EXPANDED
@@ -130,7 +138,8 @@ class PreferencesRepository(
      * Persisted sidebar expanded width in density-independent pixels.
      */
     val sidebarExpandedWidthDp: Flow<Int> =
-        dataStore.data.map { preferences ->
+        safeData
+            .map { preferences ->
             (preferences[PreferencesKeys.SIDEBAR_EXPANDED_WIDTH_DP] ?: DEFAULT_SIDEBAR_EXPANDED_WIDTH_DP)
                 .coerceIn(MIN_SIDEBAR_EXPANDED_WIDTH_DP, MAX_SIDEBAR_EXPANDED_WIDTH_DP)
         }
@@ -139,7 +148,8 @@ class PreferencesRepository(
      * Persisted desktop window placement used to restore geometry after app restart.
      */
     val desktopWindowPlacement: Flow<DesktopWindowPlacement> =
-        dataStore.data.map { preferences ->
+        safeData
+            .map { preferences ->
             DesktopWindowPlacement(
                 xDp = preferences[PreferencesKeys.DESKTOP_WINDOW_X_DP],
                 yDp = preferences[PreferencesKeys.DESKTOP_WINDOW_Y_DP],
@@ -153,7 +163,8 @@ class PreferencesRepository(
      * Startup strategy for desktop window placement behavior.
      */
     val desktopWindowStartupMode: Flow<DesktopWindowStartupMode> =
-        dataStore.data.map { preferences ->
+        safeData
+            .map { preferences ->
             val rawValue = preferences[PreferencesKeys.DESKTOP_WINDOW_STARTUP_MODE]
             try {
                 if (rawValue != null) {
@@ -167,7 +178,8 @@ class PreferencesRepository(
         }
 
     val enabledPacks: Flow<PackRegistry> =
-        dataStore.data.map { preferences ->
+        safeData
+            .map { preferences ->
             val owned = preferences[PreferencesKeys.OWNED_PACKS] ?: AppPack.defaultFreePackKeys
             val enabled = preferences[PreferencesKeys.ENABLED_PACKS] ?: AppPack.defaultFreePackKeys
             PackRegistry(
@@ -177,7 +189,8 @@ class PreferencesRepository(
         }
 
     val ownedPacks: Flow<Set<String>> =
-        dataStore.data.map { preferences ->
+        safeData
+            .map { preferences ->
             preferences[PreferencesKeys.OWNED_PACKS] ?: AppPack.defaultFreePackKeys
         }
 
@@ -351,5 +364,13 @@ class PreferencesRepository(
                 preferences[PreferencesKeys.ENABLED_PACKS] = enabled.intersect(owned)
             }
         }
+    }
+}
+
+private fun Flow<Preferences>.catchIoException(): Flow<Preferences> = catch { e ->
+    if (e is IOException) {
+        emit(emptyPreferences())
+    } else {
+        throw e
     }
 }
