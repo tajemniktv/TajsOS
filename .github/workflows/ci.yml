@@ -126,20 +126,21 @@ jobs:
           GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
         run: |
           set -euo pipefail
-          if [ -f "androidApp/google-services.json" ]; then
-            echo "Found androidApp/google-services.json in workspace."
+          mkdir -p androidApp/src/debug
+          if [ -f "androidApp/src/debug/google-services.json" ]; then
+            echo "Found androidApp/src/debug/google-services.json in workspace."
             exit 0
           fi
 
           if [ -n "${GOOGLE_SERVICES_JSON:-}" ]; then
-            echo "${GOOGLE_SERVICES_JSON}" > androidApp/google-services.json
-            echo "Wrote androidApp/google-services.json from repository secret."
+            echo "${GOOGLE_SERVICES_JSON}" > androidApp/src/debug/google-services.json
+            echo "Wrote androidApp/src/debug/google-services.json from repository secret."
             exit 0
           fi
 
           # Public CI fallback: generate a harmless placeholder so build tasks can run
           # without requiring private Firebase project credentials in the repository.
-          cat > androidApp/google-services.json <<'JSON'
+          cat > androidApp/src/debug/google-services.json <<'JSON'
           {
             "project_info": {
               "project_number": "1234567890",
