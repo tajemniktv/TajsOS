@@ -35,12 +35,7 @@ class PreferencesRepository(
 ) {
 
     private val safeData: Flow<Preferences> =
-        dataStore.data.catch { e ->
-            when (e) {
-                is IOException -> emit(emptyPreferences())
-                else -> throw e
-            }
-        }
+        dataStore.data.catchIoException()
 
     /**
      * Persisted desktop window geometry and placement behavior.
@@ -369,5 +364,13 @@ class PreferencesRepository(
                 preferences[PreferencesKeys.ENABLED_PACKS] = enabled.intersect(owned)
             }
         }
+    }
+}
+
+private fun Flow<Preferences>.catchIoException(): Flow<Preferences> = catch { e ->
+    if (e is IOException) {
+        emit(emptyPreferences())
+    } else {
+        throw e
     }
 }
