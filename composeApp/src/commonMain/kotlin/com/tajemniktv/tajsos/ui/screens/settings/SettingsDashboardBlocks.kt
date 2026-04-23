@@ -42,11 +42,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.AppPack
+import com.tajemniktv.tajsos.data.DesktopWindowStartupMode
 import com.tajemniktv.tajsos.data.MedicationEntity
 import com.tajemniktv.tajsos.ui.SidebarMode
+import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.components.common.GlassMaterial
 import com.tajemniktv.tajsos.ui.components.common.glassContainerColor
 import com.tajemniktv.tajsos.ui.components.common.glassChrome
+import com.tajemniktv.tajsos.ui.components.common.mouseClickable
 import com.tajemniktv.tajsos.ui.theme.PaletteAccentAmber
 import com.tajemniktv.tajsos.ui.theme.PaletteAccentBlue
 import com.tajemniktv.tajsos.ui.theme.PaletteAccentGreen
@@ -76,7 +79,14 @@ import tajsos.composeapp.generated.resources.settings_no_medication_entries_conf
 import tajsos.composeapp.generated.resources.settings_theme_mode
 import tajsos.composeapp.generated.resources.settings_theme_mode_desc
 import tajsos.composeapp.generated.resources.settings_theme_settings
-import com.tajemniktv.tajsos.ui.components.common.EmptyState
+import tajsos.composeapp.generated.resources.settings_theme_dark
+import tajsos.composeapp.generated.resources.settings_theme_light
+import tajsos.composeapp.generated.resources.settings_window_startup_always_maximized
+import tajsos.composeapp.generated.resources.settings_window_startup_desc
+import tajsos.composeapp.generated.resources.settings_window_startup_mode
+import tajsos.composeapp.generated.resources.settings_window_startup_mode_desc
+import tajsos.composeapp.generated.resources.settings_window_startup_restore_last
+import tajsos.composeapp.generated.resources.settings_window_startup_title
 
 object SettingsDashboardBlocks {
     private val renderers: Map<String, SettingsDashboardBlockRenderer> =
@@ -359,7 +369,7 @@ private fun renderSettingsAppearance(context: SettingsDashboardContext) {
                                     },
                             ),
                     ) {
-                        Text("Dark")
+                        Text(stringResource(Res.string.settings_theme_dark))
                     }
                     OutlinedButton(
                         onClick = { context.onSetDarkTheme(false) },
@@ -374,7 +384,7 @@ private fun renderSettingsAppearance(context: SettingsDashboardContext) {
                                     },
                             ),
                     ) {
-                        Text("Light")
+                        Text(stringResource(Res.string.settings_theme_light))
                     }
                 }
             }
@@ -466,6 +476,45 @@ private fun renderSettingsAppearance(context: SettingsDashboardContext) {
                     colors = SwitchDefaults.colors(checkedThumbColor = TajsOSTheme.Primary),
                 )
             }
+        }
+
+        AppearanceSectionCard(title = stringResource(Res.string.settings_window_startup_title)) {
+            AppearanceSettingRow(
+                title = stringResource(Res.string.settings_window_startup_mode),
+                description = stringResource(Res.string.settings_window_startup_mode_desc),
+            ) {
+                Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
+                    DesktopWindowStartupMode.entries.forEach { mode ->
+                        val label =
+                            when (mode) {
+                                DesktopWindowStartupMode.RESTORE_LAST ->
+                                    stringResource(Res.string.settings_window_startup_restore_last)
+                                DesktopWindowStartupMode.ALWAYS_MAXIMIZED ->
+                                    stringResource(Res.string.settings_window_startup_always_maximized)
+                            }
+                        OutlinedButton(
+                            onClick = { context.onSetDesktopWindowStartupMode(mode) },
+                            shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
+                            colors =
+                                ButtonDefaults.outlinedButtonColors(
+                                    containerColor =
+                                        if (context.desktopWindowStartupMode == mode) {
+                                            TajsOSTheme.Primary.copy(alpha = 0.2f)
+                                        } else {
+                                            Color.Transparent
+                                        },
+                                ),
+                        ) {
+                            Text(label)
+                        }
+                    }
+                }
+            }
+            Text(
+                text = stringResource(Res.string.settings_window_startup_desc),
+                style = MaterialTheme.typography.bodySmall,
+                color = TajsOSTheme.Muted,
+            )
         }
     }
 }
@@ -615,7 +664,11 @@ private fun AppearanceAccentDot(
                     width = if (selected) 2.dp else 0.dp,
                     color = if (selected) TajsOSTheme.Text else Color.Transparent,
                     shape = CircleShape,
-                ).clickable(onClick = onClick),
+                ).mouseClickable(
+                    onClick = onClick,
+                    onSecondaryClick = onClick,
+                    middleClickFallbackToPrimary = true,
+                ),
     )
 }
 

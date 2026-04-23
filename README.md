@@ -65,6 +65,22 @@ significantly.
 Other platforms and integrations may be explored later, but Android/Desktop are the main focus for
 now.
 
+### Desktop mouse controls
+
+Desktop surfaces now use a shared mouse interaction model:
+
+- Left click: primary activation.
+- Right click: context menu on major navigable shell/list/card items.
+- Middle click: mirrors primary activation on navigable surfaces.
+- Mouse back/forward buttons: wired into app navigation.
+
+Current limits:
+
+- Forward navigation can only replay concrete routes (dynamic route patterns with unresolved
+  placeholders are intentionally skipped).
+- Context menus are currently focused on shared shell/navigation and high-traffic list/card surfaces
+  rather than every form control.
+
 ---
 
 ## Documentation

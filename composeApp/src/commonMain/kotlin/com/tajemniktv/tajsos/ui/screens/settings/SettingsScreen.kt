@@ -41,6 +41,7 @@ fun SettingsRoute(
     val isGlassmorphismEnabled by viewModel.isGlassmorphismEnabled.collectAsState()
     val reduceMotion by viewModel.reduceMotion.collectAsState()
     val sidebarMode by viewModel.sidebarMode.collectAsState()
+    val desktopWindowStartupMode by viewModel.desktopWindowStartupMode.collectAsState()
 
     var importPayload by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
@@ -57,6 +58,7 @@ fun SettingsRoute(
             isGlassmorphismEnabled = isGlassmorphismEnabled,
             reduceMotion = reduceMotion,
             sidebarMode = sidebarMode,
+            desktopWindowStartupMode = desktopWindowStartupMode,
             importPayload = importPayload,
             onImportPayloadChange = { importPayload = it },
             onSaveMedication = { substance, brands, dosage, hour, optional ->
@@ -86,6 +88,7 @@ fun SettingsRoute(
             onSetGlassmorphismEnabled = { viewModel.setGlassmorphismEnabled(it) },
             onSetReduceMotion = { viewModel.setReduceMotion(it) },
             onSetSidebarMode = { viewModel.setSidebarMode(it) },
+            onSetDesktopWindowStartupMode = { viewModel.setDesktopWindowStartupMode(it) },
             onForceCrash = { throw RuntimeException("Test Crash") },
         )
 

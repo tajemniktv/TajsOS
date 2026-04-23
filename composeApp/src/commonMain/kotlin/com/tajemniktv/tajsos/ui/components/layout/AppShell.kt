@@ -62,6 +62,8 @@ fun AppShell(
     activeTasksTab: TasksTab,
     onNavigate: (Screen) -> Unit,
     onNavigateToTasksTab: (TasksTab) -> Unit,
+    sidebarExpandedWidthDp: Int,
+    onSidebarExpandedWidthChange: (Int) -> Unit,
     onNewEntry: () -> Unit,
     currentMode: ModeEntity?,
     allModes: List<ModeEntity>,
@@ -116,6 +118,9 @@ fun AppShell(
                         userProfile = userProfile,
                         onNavigate = onNavigate,
                         onNavigateToTasksTab = onNavigateToTasksTab,
+                        expandedWidthDp = sidebarExpandedWidthDp,
+                        resizeEnabled = true,
+                        onExpandedWidthCommit = onSidebarExpandedWidthChange,
                         onNewEntry = onNewEntry,
                         onNavigateToProfile = { onNavigate(Screen.Profile) },
                     )
@@ -169,11 +174,13 @@ fun AppShell(
                                     onNavigateToTasksTab(tab)
                                     scope.launch { drawerState.close() }
                                 },
+                                expandedWidthDp = sidebarExpandedWidthDp,
                                 onNewEntry = onNewEntry,
                                 onNavigateToProfile = {
                                     onNavigate(Screen.Profile)
                                     scope.launch { drawerState.close() }
                                 },
+                                forceExpandedPresentation = true,
                                 useFixedWidth = false,
                                 applyGlass = false,
                                 modifier = Modifier.fillMaxSize(),

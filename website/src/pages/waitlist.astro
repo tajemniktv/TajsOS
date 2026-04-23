@@ -56,7 +56,7 @@ const title = "WAITLIST";
 <div class="mt-16 flex flex-col items-center">
 <span class="font-label text-[10px] tracking-[0.4em] text-outline uppercase mb-4">Time to Early Access</span>
 <div class="font-mono text-4xl md:text-5xl tracking-widest text-on-surface-variant tabular-nums">
-                    04<span class="text-primary animate-pulse">:</span>12<span class="text-primary animate-pulse">:</span>09<span class="text-primary animate-pulse">:</span>55
+                    <span id="countdown-days">04</span><span class="text-primary animate-pulse">:</span><span id="countdown-hours">12</span><span class="text-primary animate-pulse">:</span><span id="countdown-minutes">09</span><span class="text-primary animate-pulse">:</span><span id="countdown-seconds">55</span>
                 </div>
 </div>
 <!-- Status Panels - Bento Style -->
@@ -123,7 +123,7 @@ const title = "WAITLIST";
     if (waitlistButtonText) waitlistButtonText.classList.add("invisible");
 
     try {
-      const response = await fetch("/api/waitlist", {
+      const response = await fetch(`${import.meta.env.BASE_URL}api/waitlist`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -149,4 +149,38 @@ const title = "WAITLIST";
       if (waitlistButtonText) waitlistButtonText.classList.remove("invisible");
     }
   });
+</script>
+
+
+<script>
+  // Countdown Timer
+  const targetDate = new Date();
+  targetDate.setDate(targetDate.getDate() + 14); // 14 days from now
+
+  function updateCountdown() {
+    const now = new Date().getTime();
+    const distance = targetDate.getTime() - now;
+
+    if (distance < 0) {
+      return;
+    }
+
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    const elDays = document.getElementById("countdown-days");
+    const elHours = document.getElementById("countdown-hours");
+    const elMinutes = document.getElementById("countdown-minutes");
+    const elSeconds = document.getElementById("countdown-seconds");
+
+    if (elDays) elDays.textContent = days.toString().padStart(2, "0");
+    if (elHours) elHours.textContent = hours.toString().padStart(2, "0");
+    if (elMinutes) elMinutes.textContent = minutes.toString().padStart(2, "0");
+    if (elSeconds) elSeconds.textContent = seconds.toString().padStart(2, "0");
+  }
+
+  setInterval(updateCountdown, 1000);
+  updateCountdown();
 </script>

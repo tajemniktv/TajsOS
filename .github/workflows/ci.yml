@@ -56,25 +56,29 @@ jobs:
       - name: Classify run scope
         id: classify
         shell: bash
+        env:
+          FILTER_DOCS: ${{ steps.filter.outputs.docs }}
+          FILTER_WEBSITE: ${{ steps.filter.outputs.website }}
+          FILTER_KMP: ${{ steps.filter.outputs.kmp }}
         run: |
           docs_only=false
           website_only=false
           run_gradle=false
           run_website=false
 
-          if [[ "${{ steps.filter.outputs.docs }}" == "true" && "${{ steps.filter.outputs.website }}" != "true" && "${{ steps.filter.outputs.kmp }}" != "true" ]]; then
+          if [[ "${FILTER_DOCS}" == "true" && "${FILTER_WEBSITE}" != "true" && "${FILTER_KMP}" != "true" ]]; then
             docs_only=true
           fi
 
-          if [[ "${{ steps.filter.outputs.website }}" == "true" && "${{ steps.filter.outputs.kmp }}" != "true" ]]; then
+          if [[ "${FILTER_WEBSITE}" == "true" && "${FILTER_KMP}" != "true" ]]; then
             website_only=true
           fi
 
-          if [[ "${{ steps.filter.outputs.kmp }}" == "true" ]]; then
+          if [[ "${FILTER_KMP}" == "true" ]]; then
             run_gradle=true
           fi
 
-          if [[ "${{ steps.filter.outputs.website }}" == "true" ]]; then
+          if [[ "${FILTER_WEBSITE}" == "true" ]]; then
             run_website=true
           fi
 
@@ -122,14 +126,23 @@ jobs:
           GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
         run: |
           set -euo pipefail
+
           if [ -f "androidApp/google-services.json" ]; then
             echo "Found androidApp/google-services.json in workspace."
+            mkdir -p androidApp/src/debug
+            mkdir -p androidApp/src/release
+            cp androidApp/google-services.json androidApp/src/debug/google-services.json || true
+            cp androidApp/google-services.json androidApp/src/release/google-services.json || true
             exit 0
           fi
 
           if [ -n "${GOOGLE_SERVICES_JSON:-}" ]; then
             echo "${GOOGLE_SERVICES_JSON}" > androidApp/google-services.json
             echo "Wrote androidApp/google-services.json from repository secret."
+            mkdir -p androidApp/src/debug
+            mkdir -p androidApp/src/release
+            cp androidApp/google-services.json androidApp/src/debug/google-services.json || true
+            cp androidApp/google-services.json androidApp/src/release/google-services.json || true
             exit 0
           fi
 
@@ -160,6 +173,10 @@ jobs:
             "configuration_version": "1"
           }
           JSON
+          mkdir -p androidApp/src/debug
+          mkdir -p androidApp/src/release
+          cp androidApp/google-services.json androidApp/src/debug/google-services.json || true
+          cp androidApp/google-services.json androidApp/src/release/google-services.json || true
 
       - name: Build and test
         shell: bash
@@ -181,7 +198,8 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./build/reports/kover/report.xml
-          fail_ci_if_error: true # Now that it's more intentional, failures should be addressed
+          fail_ci_if_error: false # Codecov GPG verify is broken
+          skip_validation: true
           name: kmp-unit-tests
 
       - name: Upload test results to Codecov (Test Analytics)
@@ -192,6 +210,7 @@ jobs:
           report_type: test_results
           directory: .
           fail_ci_if_error: false
+          skip_validation: true
 
       - name: Upload reports on failure
         if: ${{ failure() }}
@@ -260,21 +279,31 @@ jobs:
     steps:
       - name: Write summary
         shell: bash
+        env:
+          REF_NAME: ${{ github.ref_name }}
+          EVENT_NAME: ${{ github.event_name }}
+          CHANGES_KMP: ${{ needs.changes.outputs.kmp }}
+          CHANGES_WEBSITE: ${{ needs.changes.outputs.website }}
+          CHANGES_DOCS: ${{ needs.changes.outputs.docs }}
+          CHANGES_DOCS_ONLY: ${{ needs.changes.outputs.docs_only }}
+          CHANGES_WEBSITE_ONLY: ${{ needs.changes.outputs.website_only }}
+          GRADLE_RESULT: ${{ needs.gradle.result || 'skipped' }}
+          WEBSITE_RESULT: ${{ needs.website.result || 'skipped' }}
         run: |
           {
             echo "## CI Summary"
             echo ""
-            echo "- Ref: \`${{ github.ref_name }}\`"
-            echo "- Event: \`${{ github.event_name }}\`"
-            echo "- KMP changes: \`${{ needs.changes.outputs.kmp }}\`"
-            echo "- Website changes: \`${{ needs.changes.outputs.website }}\`"
-            echo "- Docs changes: \`${{ needs.changes.outputs.docs }}\`"
-            echo "- Docs-only change: \`${{ needs.changes.outputs.docs_only }}\`"
-            echo "- Website-only change: \`${{ needs.changes.outputs.website_only }}\`"
+            echo "- Ref: \`${REF_NAME}\`"
+            echo "- Event: \`${EVENT_NAME}\`"
+            echo "- KMP changes: \`${CHANGES_KMP}\`"
+            echo "- Website changes: \`${CHANGES_WEBSITE}\`"
+            echo "- Docs changes: \`${CHANGES_DOCS}\`"
+            echo "- Docs-only change: \`${CHANGES_DOCS_ONLY}\`"
+            echo "- Website-only change: \`${CHANGES_WEBSITE_ONLY}\`"
             echo ""
             echo "### Jobs"
-            echo "- Gradle job: \`${{ needs.gradle.result || 'skipped' }}\`"
-            echo "- Website job: \`${{ needs.website.result || 'skipped' }}\`"
+            echo "- Gradle job: \`${GRADLE_RESULT}\`"
+            echo "- Website job: \`${WEBSITE_RESULT}\`"
             echo ""
             echo "### Artifacts"
             echo "- Failure reports: uploaded only when Gradle job fails"

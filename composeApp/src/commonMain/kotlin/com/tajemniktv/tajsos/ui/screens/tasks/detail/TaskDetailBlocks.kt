@@ -5,7 +5,6 @@
 package com.tajemniktv.tajsos.ui.screens.tasks.detail
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -66,6 +65,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.TaskState
 import com.tajemniktv.tajsos.data.taskStateOrNull
+import com.tajemniktv.tajsos.ui.components.common.mouseClickable
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -589,7 +589,12 @@ private fun SubtaskRow(
                 modifier =
                     Modifier
                         .weight(1f)
-                        .clickable(enabled = subtask.source == TaskSubtaskSource.Node) { onToggle() },
+                        .mouseClickable(
+                            enabled = subtask.source == TaskSubtaskSource.Node,
+                            onClick = onToggle,
+                            onSecondaryClick = onToggle,
+                            middleClickFallbackToPrimary = true,
+                        ),
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {

@@ -4,8 +4,6 @@
 
 package com.tajemniktv.tajsos.ui.screens.archive
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -21,13 +19,17 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.components.common.MouseContextMenuHost
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
+import com.tajemniktv.tajsos.ui.components.common.mouseClickable
+import com.tajemniktv.tajsos.ui.components.common.rememberMouseContextMenuState
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
@@ -36,6 +38,7 @@ import tajsos.composeapp.generated.resources.archive_empty
 import tajsos.composeapp.generated.resources.archive_restore
 import tajsos.composeapp.generated.resources.archive_subtitle
 import tajsos.composeapp.generated.resources.archive_title
+import tajsos.composeapp.generated.resources.common_open
 import tajsos.composeapp.generated.resources.type_area
 import tajsos.composeapp.generated.resources.type_idea
 import tajsos.composeapp.generated.resources.type_note
@@ -54,7 +57,6 @@ private fun renderArchiveMainBlock(context: ArchiveDashboardContext) {
     ArchiveMainBlock(viewModel = context.viewModel, onEditNode = context.onEditNode)
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun ArchiveMainBlock(
     viewModel: MainViewModel,
@@ -80,53 +82,69 @@ internal fun ArchiveMainBlock(
         } else {
             Column {
                 archivedNodes.forEach { nodeWithPin ->
-                    ListItem(
-                        headlineContent = { Text(nodeWithPin.node.title) },
-                        supportingContent = {
-                            val typeLabel =
-                                when (nodeWithPin.node.type)
-                                {
-                                    "task" -> stringResource(Res.string.type_task)
-                                    "note" -> stringResource(Res.string.type_note)
-                                    "idea" -> stringResource(Res.string.type_idea)
-                                    "project" -> stringResource(Res.string.type_project)
-                                    "area" -> stringResource(Res.string.type_area)
-                                    else -> nodeWithPin.node.type
-                                }
-                            Text(typeLabel.uppercase())
+                    val contextMenuState = rememberMouseContextMenuState()
+                    MouseContextMenuHost(
+                        state = contextMenuState,
+                        menuContent = {
+                            DropdownMenuItem(
+                                text = { Text(text = stringResource(Res.string.common_open)) },
+                                onClick = {
+                                    contextMenuState.dismiss()
+                                    onEditNode(nodeWithPin.node.id)
+                                },
+                            )
                         },
-                        trailingContent = {
-                            Row {
-                                IconButton(
-                                    onClick = {
-                                        viewModel.updateNodeStatus(
-                                            nodeWithPin.node,
-                                            "active",
+                    ) {
+                        ListItem(
+                            headlineContent = { Text(nodeWithPin.node.title) },
+                            supportingContent = {
+                                val typeLabel =
+                                    when (nodeWithPin.node.type)
+                                    {
+                                        "task" -> stringResource(Res.string.type_task)
+                                        "note" -> stringResource(Res.string.type_note)
+                                        "idea" -> stringResource(Res.string.type_idea)
+                                        "project" -> stringResource(Res.string.type_project)
+                                        "area" -> stringResource(Res.string.type_area)
+                                        else -> nodeWithPin.node.type
+                                    }
+                                Text(typeLabel.uppercase())
+                            },
+                            trailingContent = {
+                                Row {
+                                    IconButton(
+                                        onClick = {
+                                            viewModel.updateNodeStatus(
+                                                nodeWithPin.node,
+                                                "active",
+                                            )
+                                        },
+                                    ) {
+                                        Icon(
+                                            Icons.Default.Refresh,
+                                            contentDescription = stringResource(Res.string.archive_restore),
+                                            tint = TajsOSTheme.Primary,
                                         )
-                                    },
-                                ) {
-                                    Icon(
-                                        Icons.Default.Refresh,
-                                        contentDescription = stringResource(Res.string.archive_restore),
-                                        tint = TajsOSTheme.Primary,
-                                    )
+                                    }
+                                    IconButton(onClick = { viewModel.deleteNodePermanently(nodeWithPin.node) }) {
+                                        Icon(
+                                            Icons.Default.Delete,
+                                            contentDescription = stringResource(Res.string.archive_delete),
+                                            tint = TajsOSTheme.Error,
+                                        )
+                                    }
                                 }
-                                IconButton(onClick = { viewModel.deleteNodePermanently(nodeWithPin.node) }) {
-                                    Icon(
-                                        Icons.Default.Delete,
-                                        contentDescription = stringResource(Res.string.archive_delete),
-                                        tint = TajsOSTheme.Error,
-                                    )
-                                }
-                            }
-                        },
-                        modifier =
-                            Modifier.combinedClickable(
-                                onClick = { onEditNode(nodeWithPin.node.id) },
-                                onLongClick = { onEditNode(nodeWithPin.node.id) },
-                            ),
-                        colors = ListItemDefaults.colors(containerColor = TajsOSTheme.CardSurface),
-                    )
+                            },
+                            modifier =
+                                Modifier.mouseClickable(
+                                    onClick = { onEditNode(nodeWithPin.node.id) },
+                                    onLongClick = { onEditNode(nodeWithPin.node.id) },
+                                    onSecondaryClickAt = { contextMenuState.showAt(it) },
+                                    middleClickFallbackToPrimary = true,
+                                ),
+                            colors = ListItemDefaults.colors(containerColor = TajsOSTheme.CardSurface),
+                        )
+                    }
                     HorizontalDivider(color = TajsOSTheme.Muted.copy(alpha = 0.5f))
                 }
             }

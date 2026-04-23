@@ -6,7 +6,6 @@ package com.tajemniktv.tajsos.ui.components.cards
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -37,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.components.common.GlassMaterial
 import com.tajemniktv.tajsos.ui.components.common.glassContainerColor
 import com.tajemniktv.tajsos.ui.components.common.glassChrome
+import com.tajemniktv.tajsos.ui.components.common.mouseClickable
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 @Composable
@@ -58,13 +58,15 @@ fun ModuleCard(
             modifier
                 .graphicsLayer(scaleX = scale, scaleY = scale)
                 .glassChrome(shape = RoundedCornerShape(TajsOSTheme.RadiusMd), material = GlassMaterial.REGULAR)
-                .clickable(
+                .mouseClickable(
                     interactionSource = interactionSource,
                     indication = null,
                     onClick = {
                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                         onClick()
                     },
+                    onSecondaryClick = onClick,
+                    middleClickFallbackToPrimary = true,
         ),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         color = glassContainerColor(TajsOSTheme.Surface),

@@ -42,6 +42,7 @@ import com.tajemniktv.tajsos.ui.LocalMainViewModel
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.common.CaptureSheet
+import com.tajemniktv.tajsos.ui.components.common.mouseButtons
 import com.tajemniktv.tajsos.ui.components.layout.AppShell
 import com.tajemniktv.tajsos.ui.components.layout.rememberAppShellState
 import com.tajemniktv.tajsos.ui.components.screen.LocalScreenHeaderController
@@ -105,11 +106,18 @@ fun App(
     val isGlassmorphismEnabled by viewModel.isGlassmorphismEnabled.collectAsState()
     val userProfile by viewModel.userProfile.collectAsState()
     val sidebarMode by viewModel.sidebarMode.collectAsState()
+    val sidebarExpandedWidthDp by viewModel.sidebarExpandedWidthDp.collectAsState()
 
     var showCaptureSheetState by remember { mutableStateOf(value = false) }
     var selectedTasksTab by rememberSaveable { mutableStateOf(TasksTab.COMMAND) }
     val shellState = rememberAppShellState(sidebarMode = sidebarMode)
     val screenHeaderController = rememberScreenHeaderController()
+    val mouseForwardRoutes = remember { ArrayDeque<String>() }
+
+    fun isForwardNavigable(route: String?): Boolean =
+        !route.isNullOrBlank() &&
+            !route.contains('{') &&
+            route != Screen.Dashboard.route
 
     val accentColor =
         remember(accentColorHex) {
@@ -166,6 +174,7 @@ fun App(
 
                             // Navigation logic governed by explicit route classification.
                             if (targetScreen?.isNavigableRoot == true) {
+                                mouseForwardRoutes.clear()
                                 if (resolvedRoute == Screen.Dashboard.route) {
                                     val popped =
                                         navController.popBackStack(
@@ -203,6 +212,7 @@ fun App(
                                     }
                                 }
                             } else {
+                                mouseForwardRoutes.clear()
                                 // Detail and utility screens are pushed onto the current backstack context.
                                 navController.navigate(resolvedRoute) {
                                     launchSingleTop = true
@@ -212,6 +222,23 @@ fun App(
                     }
 
                 AppShell(
+                    modifier =
+                        Modifier.mouseButtons(
+                            enabled = !showCaptureSheetState && !shellState.modeDropdownExpanded && !shellState.notificationsExpanded,
+                            onBackClick = {
+                                val currentRoute = currentDestination?.route
+                                val canPop = navController.previousBackStackEntry != null
+                                if (!canPop) return@mouseButtons
+                                if (isForwardNavigable(currentRoute)) {
+                                    mouseForwardRoutes.addLast(currentRoute!!)
+                                }
+                                navController.popBackStack()
+                            },
+                            onForwardClick = {
+                                val nextRoute = mouseForwardRoutes.removeLastOrNull() ?: return@mouseButtons
+                                navController.navigate(nextRoute) { launchSingleTop = true }
+                            },
+                        ),
                     isDesktop = isDesktop,
                     shellState = shellState,
                     currentDestination = currentDestination,
@@ -221,6 +248,8 @@ fun App(
                         selectedTasksTab = it
                         navigate("${Screen.Tasks.route}?${Screen.PARAM_TAB}=${it.routeSegment}")
                     },
+                    sidebarExpandedWidthDp = sidebarExpandedWidthDp,
+                    onSidebarExpandedWidthChange = { viewModel.setSidebarExpandedWidthDp(it) },
                     onNewEntry = { showCaptureSheetState = true },
                     currentMode = currentMode,
                     allModes = allModes,

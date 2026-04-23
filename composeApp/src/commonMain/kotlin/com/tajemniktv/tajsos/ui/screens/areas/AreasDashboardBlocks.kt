@@ -6,7 +6,6 @@ package com.tajemniktv.tajsos.ui.screens.areas
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -32,6 +31,7 @@ import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -59,6 +59,9 @@ import com.tajemniktv.tajsos.ui.AreaHealthMetrics
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
+import com.tajemniktv.tajsos.ui.components.common.MouseContextMenuHost
+import com.tajemniktv.tajsos.ui.components.common.mouseClickable
+import com.tajemniktv.tajsos.ui.components.common.rememberMouseContextMenuState
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
@@ -80,6 +83,7 @@ import tajsos.composeapp.generated.resources.areas_projects_active
 import tajsos.composeapp.generated.resources.areas_recent_activity
 import tajsos.composeapp.generated.resources.areas_title
 import tajsos.composeapp.generated.resources.areas_upcoming_deadlines
+import tajsos.composeapp.generated.resources.common_open
 
 object AreasDashboardBlocks {
     private val renderers: Map<String, AreasDashboardBlockRenderer> =
@@ -339,64 +343,84 @@ private fun AreaCard(
     val status = metrics?.status ?: "stable"
     val color = areaStatusColor(status)
     val load = metrics?.stressLoad ?: 0
-    Surface(
-        modifier = Modifier.fillMaxWidth().clickable(onClick = onClick),
-        color = TajsOSTheme.CardSurface,
-        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, color.copy(alpha = 0.28f)),
+    val contextMenuState = rememberMouseContextMenuState()
+    MouseContextMenuHost(
+        state = contextMenuState,
+        modifier = Modifier.fillMaxWidth(),
+        menuContent = {
+            DropdownMenuItem(
+                text = { Text(text = stringResource(Res.string.common_open)) },
+                onClick = {
+                    contextMenuState.dismiss()
+                    onClick()
+                },
+            )
+        },
     ) {
-        Column(
-            modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+        Surface(
+            modifier =
+                Modifier.fillMaxWidth().mouseClickable(
+                    onClick = onClick,
+                    onSecondaryClickAt = { contextMenuState.showAt(it) },
+                    middleClickFallbackToPrimary = true,
+                ),
+            color = TajsOSTheme.CardSurface,
+            shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+            border = BorderStroke(1.dp, color.copy(alpha = 0.28f)),
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                Text(
-                    area.title,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = TajsOSTheme.Text,
-                    fontWeight = FontWeight.Bold,
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        area.title,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = TajsOSTheme.Text,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Text(
+                        status.replace("_", " ").uppercase(),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = color,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
+                HorizontalDivider(color = TajsOSTheme.GhostBorder)
+                MetricLine(Icons.Default.Speed, stringResource(Res.string.areas_load), "$load%")
+                MetricLine(
+                    Icons.Default.Folder,
+                    stringResource(Res.string.areas_projects_active),
+                    activeProjects.toString(),
                 )
-                Text(
-                    status.replace("_", " ").uppercase(),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = color,
-                    fontWeight = FontWeight.Bold,
+                MetricLine(
+                    Icons.Default.CheckCircle,
+                    stringResource(Res.string.areas_open_responsibilities),
+                    (metrics?.openLoops ?: 0).toString(),
                 )
-            }
-            HorizontalDivider(color = TajsOSTheme.GhostBorder)
-            MetricLine(Icons.Default.Speed, stringResource(Res.string.areas_load), "$load%")
-            MetricLine(
-                Icons.Default.Folder,
-                stringResource(Res.string.areas_projects_active),
-                activeProjects.toString(),
-            )
-            MetricLine(
-                Icons.Default.CheckCircle,
-                stringResource(Res.string.areas_open_responsibilities),
-                (metrics?.openLoops ?: 0).toString(),
-            )
-            MetricLine(
-                Icons.Default.EventBusy,
-                stringResource(Res.string.areas_upcoming_deadlines),
-                "${metrics?.overdueDeadlines ?: 0}/${metrics?.deadlines ?: 0}",
-            )
-            MetricLine(
-                Icons.Default.History,
-                stringResource(Res.string.areas_recent_activity),
-                "${metrics?.recentActivity ?: 0}",
-            )
-            MetricLine(
-                Icons.Default.Warning,
-                stringResource(Res.string.areas_neglected),
-                "${metrics?.neglectedDays ?: 0}d",
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            OutlinedButton(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(Res.string.areas_enter))
+                MetricLine(
+                    Icons.Default.EventBusy,
+                    stringResource(Res.string.areas_upcoming_deadlines),
+                    "${metrics?.overdueDeadlines ?: 0}/${metrics?.deadlines ?: 0}",
+                )
+                MetricLine(
+                    Icons.Default.History,
+                    stringResource(Res.string.areas_recent_activity),
+                    "${metrics?.recentActivity ?: 0}",
+                )
+                MetricLine(
+                    Icons.Default.Warning,
+                    stringResource(Res.string.areas_neglected),
+                    "${metrics?.neglectedDays ?: 0}d",
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                OutlinedButton(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
+                    Text(stringResource(Res.string.areas_enter))
+                }
             }
         }
     }
