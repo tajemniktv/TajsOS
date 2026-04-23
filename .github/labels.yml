@@ -16,6 +16,9 @@
 - name: deps
   color: "0366D6"
   description: Dependency updates or dependency-related work
+- name: dependabot
+  color: "0366D6"
+  description: Dependency updates from Dependabot  
 - name: needs-review
   color: "FBCA04"
   description: Ready for review
