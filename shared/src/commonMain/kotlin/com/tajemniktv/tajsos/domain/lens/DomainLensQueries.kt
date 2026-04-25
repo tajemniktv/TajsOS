@@ -101,9 +101,11 @@ private val healthTitleKeywords =
  *
  * Domains (such as finance or health) are categorized implicitly by checking for hardcoded
  * string markers within node tags, titles, content, `maintenanceType`, and `noteType` fields.
+ * This heuristic-based approach provides a zero-configuration experience, allowing items to be surfaced
+ * appropriately even if the user forgets to manually assign the domain.
  *
- * Note: These queries intentionally bypass explicit domain associations (e.g., via associatedDomains in metadata) in favor of terminology matching. This ensures a zero-configuration
- * experience where items are surfaced appropriately even if the user forgets to manually assign the domain.
+ * Note: These queries intentionally bypass explicit domain associations (e.g., via `associatedDomains`
+ * in `AreaMetadata`) in favor of terminology matching to lower the friction of capturing new data.
  */
 object DomainLensQueries {
     /**
