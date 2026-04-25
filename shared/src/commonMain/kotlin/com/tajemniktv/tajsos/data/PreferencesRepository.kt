@@ -29,6 +29,13 @@ enum class DesktopWindowStartupMode {
 
 /**
  * PreferencesRepository handles all of TajsOS's configuration data.
+ *
+ * It manages application-wide settings such as UI preferences (theme, sidebar mode),
+ * operational state (active mode id, active packs), and desktop-specific geometry
+ * using the multiplatform [DataStore] library.
+ *
+ * All properties are exposed as [Flow] streams that emit the current value,
+ * and automatically handle [IOException]s by emitting [emptyPreferences] as a fallback.
  */
 class PreferencesRepository(
     private val dataStore: DataStore<Preferences>,

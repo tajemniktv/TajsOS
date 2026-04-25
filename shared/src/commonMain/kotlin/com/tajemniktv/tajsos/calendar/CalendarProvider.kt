@@ -10,6 +10,10 @@ import kotlin.time.Instant
 
 /**
  * Represents a generic calendar provider capable of fetching and synchronizing events.
+ *
+ * Implementations are responsible for parsing remote data into the common [CalendarEventEntity] format,
+ * handling specific connectivity protocols (e.g., HTTP for iCal), and respecting the provided
+ * date ranges.
  */
 interface CalendarProvider {
     /**
