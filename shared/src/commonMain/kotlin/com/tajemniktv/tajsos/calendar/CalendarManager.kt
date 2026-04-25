@@ -18,7 +18,7 @@ import kotlin.time.Duration.Companion.days
  *
  * It uses a local-first design strategy by pulling external events into the shared data layer via
  * [CalendarProviderEntity] and [CalendarEventEntity]. Synchronization works by deduplicating and merging remote events
- * with local representations, preserving primary keys and local metadata. This ensures that the app
+ * with local representations. This ensures that the app
  * relies exclusively on the local Room database for rapid UI rendering, decoupling feature correctness
  * from live network availability.
  *
