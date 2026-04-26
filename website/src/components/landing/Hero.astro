@@ -7,10 +7,10 @@ import { SITE } from '../../data/site';
   <div class="w-full lg:w-3/4 z-10">
     <div class="flex items-center gap-4 mb-12">
       <span
-        class="font-mono text-[10px] tracking-[0.5em] text-primary bg-primary/10 px-4 py-2 rounded border border-primary/20 uppercase"
+        class="font-mono text-[10px] tracking-[0.5em] text-primary bg-surface-container-highest px-4 py-2 rounded shadow-[0_0_15px_rgba(186,158,255,0.1)] uppercase"
         >LOCAL_FIRST</span
       >
-      <div class="h-px w-32 bg-primary/30"></div>
+
     </div>
     <h1
       class="font-headline text-[clamp(5rem,15vw,12rem)] leading-[0.8] font-bold tracking-tighter uppercase text-on-surface"
@@ -36,7 +36,7 @@ import { SITE } from '../../data/site';
           [ Join_Waitlist ]
         </a>
         <a href={`${import.meta.env.BASE_URL}architecture`}
-          class="w-fit font-mono font-bold uppercase tracking-widest text-[11px] text-on-surface-variant/60 hover:text-primary transition-colors pl-4 border-l border-outline-variant"
+          class="w-fit font-mono font-bold uppercase tracking-widest text-[11px] text-on-surface-variant/60 hover:text-primary transition-colors bg-surface-container-low px-4 py-2 rounded-lg"
         >
           Architecture
         </a>
@@ -58,7 +58,7 @@ import { SITE } from '../../data/site';
         >
         </div>
         <div
-          class="absolute bottom-8 left-8 right-8 bg-surface/80 backdrop-blur-xl p-6 rounded border border-primary/20"
+          class="absolute bottom-8 left-8 right-8 bg-surface-container-highest/90 backdrop-blur-xl p-6 rounded-xl shadow-[0_20px_40px_rgba(0,0,0,0.4)]"
         >
           <span
             class="font-mono text-[9px] text-primary block mb-3 tracking-[0.3em] uppercase"
