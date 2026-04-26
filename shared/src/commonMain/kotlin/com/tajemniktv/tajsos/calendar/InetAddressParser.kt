@@ -30,11 +30,11 @@ internal sealed class IpAddress {
     data class Ipv6(val words: LongArray) : IpAddress() {
         override fun isLoopback(): Boolean = words[0] == 0L && words[1] == 0L && words[2] == 0L && words[3] == 1L
 
-        override fun isLinkLocal(): Boolean = (words[0] ushr 16) == 0xFE80L // fe80::/10
+        override fun isLinkLocal(): Boolean = (words[0] ushr 22) == 0x3FAL // fe80::/10
 
         override fun isSiteLocal(): Boolean {
             val prefix7 = (words[0] ushr 25)
-            return prefix7 == 0x7EL || prefix7 == 0x7FL // fc00::/7 => fc00 to fdff
+            return prefix7 == 0x7EL // fc00::/7 => fc00 to fdff
         }
 
         override fun equals(other: Any?): Boolean {
