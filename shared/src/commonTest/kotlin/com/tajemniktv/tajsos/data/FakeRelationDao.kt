@@ -13,10 +13,16 @@ class FakeRelationDao : RelationDao {
     }
 
     override suspend fun insertRelation(relation: RelationEntity) {
-        val newId = (relations.size + 1).toLong()
-        val newRelation = relation.copy(id = newId)
-        relations.add(newRelation)
-        relationsFlow.value = relations.toList()
+        val index = relations.indexOfFirst { it.id == relation.id }
+        if (index != -1 && relation.id != 0L) {
+            relations[index] = relation
+            relationsFlow.value = relations.toList()
+        } else {
+            val newId = if (relation.id != 0L) relation.id else (relations.maxOfOrNull { it.id } ?: 0L) + 1L
+            val newRelation = relation.copy(id = newId)
+            relations.add(newRelation)
+            relationsFlow.value = relations.toList()
+        }
     }
 
     override suspend fun insertRelations(relations: List<RelationEntity>) {

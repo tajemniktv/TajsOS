@@ -637,19 +637,21 @@ class AppRepository(
                 fromEpochDay = fromEpochDay,
                 toEpochDay = toEpochDay,
             ).map { entries -> entries.map { it.toModel() } }
-
     /**
      * Inserts a new node into the database.
+     *
+     * Handles @Upsert behaviour where it returns -1L if it's updating an existing entity instead of inserting.
      *
      * **Side effects:**
      * - Logs a "NODE_CREATED" event.
      * - Synchronizes "BELONGS_TO" relations for the node's associated project and area.
      *
      * @param node The node entity to insert.
-     * @return The auto-generated ID of the newly inserted node.
+     * @return The auto-generated ID of the newly inserted node, or the existing ID if updated.
      */
     suspend fun insertNode(node: NodeEntity): Long {
-        val id = nodeDao.insertNode(node)
+        var id = nodeDao.insertNode(node)
+        if (id == -1L) id = node.id
         logEvent("NODE_CREATED", id)
         syncBelongsToRelations(id, node.projectId, node.areaId)
         syncTypedFacetsFromNode(node.copy(id = id))
@@ -1079,7 +1081,8 @@ class AppRepository(
     fun getActiveSession(): Flow<FocusSessionEntity?> = focusSessionDao.getActiveSession()
 
     suspend fun insertSession(session: FocusSessionEntity): Long {
-        val id = focusSessionDao.insertSession(session)
+        var id = focusSessionDao.insertSession(session)
+        if (id == -1L) id = session.id
         logEvent("SESSION_STARTED", session.nodeId)
         return id
     }
@@ -1094,7 +1097,8 @@ class AppRepository(
     fun getAllTrackEntries(): Flow<List<TrackEntryEntity>> = trackDao.getAllTrackEntries()
 
     suspend fun insertTrackEntry(entry: TrackEntryEntity): Long {
-        val id = trackDao.insertTrackEntry(entry)
+        var id = trackDao.insertTrackEntry(entry)
+        if (id == -1L) id = entry.id
         logEvent("CHECKIN_CREATED")
         return id
     }
