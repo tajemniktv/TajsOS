@@ -649,7 +649,8 @@ class AppRepository(
      * @return The auto-generated ID of the newly inserted node.
      */
     suspend fun insertNode(node: NodeEntity): Long {
-        val id = nodeDao.insertNode(node)
+        var id = nodeDao.insertNode(node)
+        if (id == -1L) id = node.id
         logEvent("NODE_CREATED", id)
         syncBelongsToRelations(id, node.projectId, node.areaId)
         syncTypedFacetsFromNode(node.copy(id = id))
@@ -1094,7 +1095,8 @@ class AppRepository(
     fun getAllTrackEntries(): Flow<List<TrackEntryEntity>> = trackDao.getAllTrackEntries()
 
     suspend fun insertTrackEntry(entry: TrackEntryEntity): Long {
-        val id = trackDao.insertTrackEntry(entry)
+        var id = trackDao.insertTrackEntry(entry)
+        if (id == -1L) id = entry.id
         logEvent("CHECKIN_CREATED")
         return id
     }
