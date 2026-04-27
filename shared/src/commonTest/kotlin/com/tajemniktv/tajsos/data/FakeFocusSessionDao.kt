@@ -13,9 +13,9 @@ class FakeFocusSessionDao : FocusSessionDao {
     }
 
     override suspend fun insertSession(session: FocusSessionEntity): Long {
-        val newId = (sessions.size + 1).toLong()
+        val newId = if (session.id != 0L) session.id else (sessions.maxOfOrNull { it.id } ?: 0L) + 1L
         val newSession = session.copy(id = newId)
-        sessions.add(newSession)
+        sessions.removeAll { it.id == newId }; sessions.add(newSession)
         sessionsFlow.value = sessions.toList()
         return newId
     }

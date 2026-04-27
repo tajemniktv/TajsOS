@@ -63,9 +63,9 @@ class FakeNodeDao : NodeDao {
     }
 
     override suspend fun insertNode(node: NodeEntity): Long {
-        val newId = (nodes.size + 1).toLong()
+        val newId = if (node.id != 0L) node.id else (nodes.maxOfOrNull { it.id } ?: 0L) + 1L
         val newNode = node.copy(id = newId)
-        nodes.add(newNode)
+        nodes.removeAll { it.id == newId }; nodes.add(newNode)
         nodesFlow.value = nodes.toList()
         return newId
     }

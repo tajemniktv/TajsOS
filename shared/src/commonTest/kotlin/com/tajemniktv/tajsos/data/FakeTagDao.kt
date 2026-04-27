@@ -13,9 +13,9 @@ class FakeTagDao : TagDao {
     override fun getAllTags(): Flow<List<TagEntity>> = tagsFlow
 
     override suspend fun insertTag(tag: TagEntity): Long {
-        val newId = (tags.size + 1).toLong()
+        val newId = if (tag.id != 0L) tag.id else (tags.maxOfOrNull { it.id } ?: 0L) + 1L
         val newTag = tag.copy(id = newId)
-        tags.add(newTag)
+        tags.removeAll { it.id == newId }; tags.add(newTag)
         tagsFlow.value = tags.toList()
         return newId
     }

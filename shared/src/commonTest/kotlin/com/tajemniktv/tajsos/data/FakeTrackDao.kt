@@ -15,9 +15,9 @@ class FakeTrackDao : TrackDao {
     }
 
     override suspend fun insertTrackEntry(entry: TrackEntryEntity): Long {
-        val newId = (entries.size + 1).toLong()
+        val newId = if (entry.id != 0L) entry.id else (entries.maxOfOrNull { it.id } ?: 0L) + 1L
         val newEntry = entry.copy(id = newId)
-        entries.add(newEntry)
+        entries.removeAll { it.id == newId }; entries.add(newEntry)
         entriesFlow.value = entries.toList()
         return newId
     }
