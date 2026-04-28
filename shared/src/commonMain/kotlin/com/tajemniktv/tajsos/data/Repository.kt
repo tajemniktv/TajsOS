@@ -351,6 +351,7 @@ class AppRepository(
 
     /**
      * Stores a raw capture entry before it becomes a typed life object.
+     * Raw captures sit in an unprocessed state until semantic triage turns them into actionable items.
      *
      * @return The auto-generated inbox entry identifier.
      */
@@ -398,6 +399,11 @@ class AppRepository(
      *
      * The first non-blank line of the raw text becomes the new item's title, and remaining lines become the body content.
      * This establishes the entry point for turning fleeting thoughts into durable nodes (tasks, notes, projects).
+     *
+     * **State and Data Flow Transitions:**
+     * - The un-triaged raw capture transitions from `processedAt = null` to having a concrete processing timestamp.
+     * - A new typed node is generated based on the inferred or user-selected [ItemKind].
+     * - The original raw entry retains a reference (`triagedItemId`) to the newly spawned node, completing the pipeline.
      *
      * **Side effects:**
      * - Inserts the newly created typed item into the nodes table and synchronizes its associated facets, domains, and schedules.
