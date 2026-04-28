@@ -54,6 +54,6 @@ class InetAddressParserEdgeTest {
         val ipv6A = parseIpAddress("2001:db8::1")
         val ipv6B = parseIpAddress("2001:db8:0:0:0:0:0:1")
         assertEquals(ipv6A, ipv6B)
-        assertEquals(ipv6A.hashCode(), ipv6B.hashCode())
+        assertEquals(ipv6A!!.hashCode(), ipv6B!!.hashCode())
     }
 }
