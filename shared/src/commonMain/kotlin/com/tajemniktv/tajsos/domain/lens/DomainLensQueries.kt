@@ -248,7 +248,8 @@ object DomainLensQueries {
      *
      * Note: This intentionally bypasses explicit `ItemDomainEntity` database associations
      * to provide a zero-configuration experience, ensuring finance items are surfaced even
-     * if the user forgets to manually assign the finance domain.
+     * if the user forgets to manually assign the finance domain. This heuristic-based logic
+     * relies on implicit keyword matching to decouple domain categorization from explicit user action.
      */
     private fun matchesFinanceSignal(node: NodeWithPin): Boolean {
         val title = node.node.title.lowercase()
@@ -272,7 +273,8 @@ object DomainLensQueries {
      *
      * Note: This intentionally bypasses explicit `ItemDomainEntity` database associations
      * to provide a zero-configuration experience, ensuring health items are surfaced even
-     * if the user forgets to manually assign the health domain.
+     * if the user forgets to manually assign the health domain. This heuristic-based logic
+     * relies on implicit keyword matching to decouple domain categorization from explicit user action.
      */
     private fun matchesHealthSignal(node: NodeWithPin): Boolean {
         val title = node.node.title.lowercase()
