@@ -193,7 +193,6 @@ internal fun FocusMainBlock(viewModel: MainViewModel) {
         Surface(
             color = TajsOSTheme.CardSurface,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -299,7 +298,6 @@ internal fun FocusMainBlock(viewModel: MainViewModel) {
         Surface(
             color = TajsOSTheme.CardSurface,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -371,7 +369,6 @@ internal fun FocusMainBlock(viewModel: MainViewModel) {
         Surface(
             color = TajsOSTheme.CardSurface,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -418,7 +415,6 @@ internal fun FocusMainBlock(viewModel: MainViewModel) {
         Surface(
             color = TajsOSTheme.CardSurface,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -475,7 +471,6 @@ private fun FocusListCard(
     Surface(
         color = TajsOSTheme.CardSurface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -528,7 +523,6 @@ private fun FocusListCard(
                             OutlinedButton(
                                 onClick = { onPick(task) },
                                 shape = RoundedCornerShape(999.dp),
-                                border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
                                 colors =
                                     ButtonDefaults.outlinedButtonColors(
                                         containerColor = TajsOSTheme.CardSurface,

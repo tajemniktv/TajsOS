@@ -15,11 +15,18 @@ class FakeTrackDao : TrackDao {
     }
 
     override suspend fun insertTrackEntry(entry: TrackEntryEntity): Long {
-        val newId = (entries.size + 1).toLong()
-        val newEntry = entry.copy(id = newId)
-        entries.add(newEntry)
-        entriesFlow.value = entries.toList()
-        return newId
+        val index = entries.indexOfFirst { it.id == entry.id }
+        if (index != -1 && entry.id != 0L) {
+            entries[index] = entry
+            entriesFlow.value = entries.toList()
+            return -1L
+        } else {
+            val newId = if (entry.id != 0L) entry.id else (entries.maxOfOrNull { it.id } ?: 0L) + 1L
+            val newEntry = entry.copy(id = newId)
+            entries.add(newEntry)
+            entriesFlow.value = entries.toList()
+            return newId
+        }
     }
 
     override suspend fun getTrackEntryByDate(date: String): TrackEntryEntity? {

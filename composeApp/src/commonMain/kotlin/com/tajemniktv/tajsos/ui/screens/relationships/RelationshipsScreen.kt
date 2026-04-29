@@ -101,7 +101,6 @@ internal fun PeopleLayer(
         modifier = Modifier.fillMaxWidth(),
         color = TajsOSTheme.CardSurface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
     ) {
         Column(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),

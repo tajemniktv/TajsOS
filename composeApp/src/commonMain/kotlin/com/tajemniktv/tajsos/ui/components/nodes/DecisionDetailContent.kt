@@ -232,7 +232,6 @@ fun DecisionDetailContent(
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
                     color = TajsOSTheme.Background,
-                    border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
                     shape = RoundedCornerShape(2.dp),
                 ) {
                     Row(
@@ -355,7 +354,6 @@ fun DecisionDetailContent(
                 onClick = { viewModel.convertDecisionToTask(node.id) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(2.dp),
-                border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
             ) {
                 Text(stringResource(Res.string.decision_convert_task), color = TajsOSTheme.Text)
             }

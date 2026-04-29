@@ -99,7 +99,7 @@ data class AreaMetadata(
  *
  * It silently ignores parsing errors or unknown keys (via [nodeMetadataJson] configuration),
  * returning null if the payload is malformed or empty. This ensures that corrupt metadata
- * does not crash the UI.
+ * does not crash the UI. This design prevents a single broken node from taking down the entire list view.
  */
 fun NodeEntity.metadataEnvelopeOrNull(): NodeMetadataEnvelope? =
     metadataJson?.takeIf { it.isNotBlank() }?.let {
@@ -113,6 +113,7 @@ fun NodeEntity.metadataEnvelopeOrNull(): NodeMetadataEnvelope? =
  * to reflect the provided [envelope].
  *
  * If [envelope] is null, the resulting JSON string will be null (clearing the metadata).
+ * Uses the pre-configured [nodeMetadataJson] to serialize the structure.
  */
 fun NodeEntity.withMetadataEnvelope(envelope: NodeMetadataEnvelope?): NodeEntity =
     copy(

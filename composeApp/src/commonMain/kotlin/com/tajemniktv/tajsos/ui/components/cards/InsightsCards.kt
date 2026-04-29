@@ -635,7 +635,6 @@ fun AreaHealthSystemCard(
         shape =
             androidx.compose.foundation.shape
                 .RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
     ) {
         Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
             Text(

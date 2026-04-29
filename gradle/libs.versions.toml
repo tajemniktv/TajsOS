@@ -23,7 +23,7 @@ composeHotReload = "1.0.0"
 composeMultiplatform = "1.11.0-beta03"
 compose-icons = "1.7.3"
 junit = "4.13.2"
-kotlin = "2.3.20"
+kotlin = "2.3.21"
 kotlinx-coroutines = "1.10.2"
 turbine = "1.2.1"
 mockk = "1.14.9"
@@ -47,7 +47,7 @@ firebase-crashlytics-gradle = "3.0.7"
 firebase-app-distribution-gradle = "5.2.1"
 firebase-perf-gradle = "2.0.2"
 haze = "1.7.2"
-compose-stability = "0.7.3"
+compose-stability = "0.7.4"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }

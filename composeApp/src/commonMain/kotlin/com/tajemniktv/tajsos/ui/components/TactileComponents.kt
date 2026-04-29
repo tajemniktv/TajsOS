@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -223,9 +224,10 @@ fun TactileTextField(
                     .fillMaxWidth()
                     .heightIn(min = 120.dp)
                     .background(TajsOSTheme.SurfaceLowest, RoundedCornerShape(TajsOSTheme.RadiusMd))
+                    // Obey DESIGN.md: no solid borders. Use GhostBorder.
                     .border(
                         1.dp,
-                        if (isFocused) TajsOSTheme.GhostBorder else TajsOSTheme.SurfaceLow,
+                        if (isFocused) TajsOSTheme.GhostBorder.copy(alpha = 0.5f) else Color.Transparent,
                         RoundedCornerShape(TajsOSTheme.RadiusMd)
                     )
                     .padding(TajsOSTheme.SpacingMd)

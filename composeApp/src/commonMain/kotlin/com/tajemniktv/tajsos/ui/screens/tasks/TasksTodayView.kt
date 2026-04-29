@@ -134,7 +134,6 @@ private fun TodaySection(
     Surface(
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         color = TajsOSTheme.CardSurface,
-        border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),

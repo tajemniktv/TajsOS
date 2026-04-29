@@ -70,7 +70,6 @@ fun ModuleCard(
         ),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         color = glassContainerColor(TajsOSTheme.Surface),
-        border = BorderStroke(1.dp, TajsOSTheme.CardStroke.copy(alpha = 0.5f)),
         shadowElevation = 2.dp,
     ) {
         Column(
