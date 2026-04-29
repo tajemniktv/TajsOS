@@ -397,6 +397,7 @@ class AppRepository(
     /**
      * Converts a raw, unstructured inbox capture into a typed, actionable life object.
      *
+     * This is a critical business rule for the "capture -> triage -> execute" flow.
      * The first non-blank line of the raw text becomes the new item's title, and remaining lines become the body content.
      * This establishes the entry point for turning fleeting thoughts into durable nodes (tasks, notes, projects).
      *
