@@ -92,7 +92,6 @@ private fun renderIdentitySignature(context: IdentityDashboardContext) {
             modifier = Modifier.fillMaxWidth(),
             color = TajsOSTheme.CardSurface,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
         ) {
             Column(
                 modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -152,7 +151,6 @@ private fun renderIdentitySignature(context: IdentityDashboardContext) {
                 modifier = Modifier.fillMaxWidth(),
                 color = TajsOSTheme.CardSurface,
                 shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
             ) {
                 Column(
                     modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -192,7 +190,6 @@ private fun renderIdentitySignature(context: IdentityDashboardContext) {
                     modifier = Modifier.fillMaxWidth(),
                     color = TajsOSTheme.CardSurface,
                     shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                    border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
                 ) {
                     Column(
                         modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -244,7 +241,6 @@ private fun renderIdentityDistinction(context: IdentityDashboardContext) {
             modifier = Modifier.fillMaxWidth(),
             color = TajsOSTheme.CardSurface,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
         ) {
             Column(
                 modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -300,7 +296,6 @@ private fun renderIdentityDirection(context: IdentityDashboardContext) {
             modifier = Modifier.fillMaxWidth(),
             color = TajsOSTheme.CardSurface,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
         ) {
             Column(
                 modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -345,7 +340,6 @@ private fun renderIdentityCoreShift(context: IdentityDashboardContext) {
             modifier = Modifier.fillMaxWidth(),
             color = TajsOSTheme.CardSurface,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
         ) {
             Column(
                 modifier = Modifier.padding(TajsOSTheme.SpacingMd),

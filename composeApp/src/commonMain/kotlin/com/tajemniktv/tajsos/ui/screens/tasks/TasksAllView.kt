@@ -206,7 +206,6 @@ internal fun TasksAllView(
                         modifier = Modifier.weight(2f),
                         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                         color = TajsOSTheme.CardSurface,
-                        border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
                     ) {
                         TaskTable(
                             sorted,
@@ -220,7 +219,6 @@ internal fun TasksAllView(
                         modifier = Modifier.weight(1f),
                         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                         color = TajsOSTheme.CardSurface,
-                        border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
                     ) {
                         TaskDetails(
                             selected,
@@ -238,7 +236,6 @@ internal fun TasksAllView(
                 Surface(
                     shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                     color = TajsOSTheme.CardSurface,
-                    border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
                 ) {
                     Column(modifier = Modifier.fillMaxWidth()) {
                         TaskTable(

@@ -31,7 +31,7 @@ fun DashCard(
         modifier = modifier,
         color = TajsOSTheme.CardSurface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
+        border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),
         content = content,
     )
 }
@@ -47,7 +47,7 @@ fun TactileCard(
             modifier
                 .fillMaxWidth()
                 .background(TajsOSTheme.CardSurface, RoundedCornerShape(TajsOSTheme.RadiusMd))
-                .border(1.dp, TajsOSTheme.CardStroke, RoundedCornerShape(TajsOSTheme.RadiusMd))
+                .border(1.dp, TajsOSTheme.GhostBorder, RoundedCornerShape(TajsOSTheme.RadiusMd))
                 .then(
                     if (onClick != null) {
                         Modifier.mouseClickable(

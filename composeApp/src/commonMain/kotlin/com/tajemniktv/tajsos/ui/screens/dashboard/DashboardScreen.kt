@@ -391,7 +391,6 @@ private fun RenderDashboardBlock(
                 modifier = Modifier.fillMaxWidth(),
                 color = TajsOSTheme.CardSurface,
                 shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
             ) {
                 Column(Modifier.padding(20.dp)) {
                     Text(
@@ -427,7 +426,6 @@ private fun RenderDashboardBlock(
                 modifier = Modifier.fillMaxWidth(),
                 color = TajsOSTheme.CardSurface.copy(alpha = 0.5f),
                 shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
             ) {
                 Row(
                     modifier = Modifier.padding(12.dp).fillMaxWidth(),
