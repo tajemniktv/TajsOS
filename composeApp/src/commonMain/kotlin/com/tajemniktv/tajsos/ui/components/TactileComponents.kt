@@ -227,7 +227,7 @@ fun TactileTextField(
                     // Obey DESIGN.md: no solid borders. Use GhostBorder.
                     .border(
                         1.dp,
-                        if (isFocused) TajsOSTheme.GhostBorder else Color.Transparent,
+                        if (isFocused) TajsOSTheme.GhostBorder.copy(alpha = 0.5f) else Color.Transparent,
                         RoundedCornerShape(TajsOSTheme.RadiusMd)
                     )
                     .padding(TajsOSTheme.SpacingMd)
