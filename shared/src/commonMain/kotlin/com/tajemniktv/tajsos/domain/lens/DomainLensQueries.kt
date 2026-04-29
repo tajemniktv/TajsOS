@@ -106,6 +106,12 @@ private val healthTitleKeywords =
  *
  * Note: These queries intentionally bypass explicit domain associations (e.g., via `associatedDomains`
  * in `AreaMetadata`) in favor of terminology matching to lower the friction of capturing new data.
+ *
+ * This object implements a zero-configuration classification strategy. Instead of relying on
+ * explicit database associations (like a many-to-many domain relation table), items are
+ * implicitly categorized into domains via keyword matching in titles, content, tags, and
+ * specific maintenance/note types. This decoupling allows items to naturally surface in the
+ * right lenses without requiring manual user curation.
  */
 object DomainLensQueries {
     /**
