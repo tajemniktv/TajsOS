@@ -78,7 +78,6 @@ fun StateAwareActionsGrid(
                 modifier = Modifier.weight(1f),
                 color = TajsOSTheme.CardSurface,
                 shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
             ) {
                 Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
                     Icon(

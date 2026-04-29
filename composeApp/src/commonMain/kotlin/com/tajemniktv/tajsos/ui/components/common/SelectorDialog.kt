@@ -113,7 +113,6 @@ fun <T> SelectorDialog(
                     Surface(
                         color = Color.Black.copy(alpha = 0.5f),
                         shape = RoundedCornerShape(4.dp),
-                        border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
                     ) {
                         Text(
                             "STATUS: READY",

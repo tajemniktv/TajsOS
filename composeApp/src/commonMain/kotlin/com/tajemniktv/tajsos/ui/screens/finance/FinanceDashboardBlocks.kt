@@ -73,7 +73,6 @@ internal fun renderFinanceHeaderBlock(context: FinanceDashboardContext) {
         modifier = Modifier.fillMaxWidth(),
         color = TajsOSTheme.CardSurface.copy(alpha = 0.6f),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
     ) {
         Column(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -133,7 +132,6 @@ internal fun renderFinanceMetricsBlock(context: FinanceDashboardContext) {
         Surface(
             modifier = Modifier.weight(1f),
             color = TajsOSTheme.CardSurface.copy(alpha = 0.65f),
-            border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         ) {
             Column(
@@ -169,7 +167,6 @@ internal fun renderFinanceMetricsBlock(context: FinanceDashboardContext) {
         Surface(
             modifier = Modifier.weight(1f),
             color = TajsOSTheme.CardSurface.copy(alpha = 0.65f),
-            border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         ) {
             Column(
@@ -201,7 +198,6 @@ internal fun renderFinanceActivityBlock(context: FinanceDashboardContext) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = TajsOSTheme.CardSurface.copy(alpha = 0.7f),
-        border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
     ) {
         Column(
@@ -264,7 +260,6 @@ internal fun renderFinanceInsightsBlock(context: FinanceDashboardContext) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = TajsOSTheme.CardSurface.copy(alpha = 0.7f),
-        border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
     ) {
         Column(
@@ -289,7 +284,6 @@ internal fun renderFinanceInsightsBlock(context: FinanceDashboardContext) {
                     modifier = Modifier.fillMaxWidth(),
                     color = TajsOSTheme.Background.copy(alpha = 0.35f),
                     shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
-                    border = BorderStroke(1.dp, TajsOSTheme.CardStroke.copy(alpha = 0.7f)),
                 ) {
                     Text(
                         item,
@@ -320,7 +314,6 @@ internal fun renderFinanceVaultBlock(context: FinanceDashboardContext) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = TajsOSTheme.CardSurface.copy(alpha = 0.7f),
-        border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
     ) {
         Column(
@@ -366,7 +359,6 @@ internal fun renderFinanceQueueControlsBlock(context: FinanceDashboardContext) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = TajsOSTheme.CardSurface.copy(alpha = 0.7f),
-        border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
     ) {
         Column(

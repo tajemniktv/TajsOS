@@ -99,7 +99,6 @@ internal fun GraphMainBlock(
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Card(
                 colors = CardDefaults.cardColors(containerColor = TajsOSTheme.SurfaceLow),
-                border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
             ) {
                 Text(
                     text = stringResource(Res.string.graph_no_data),
