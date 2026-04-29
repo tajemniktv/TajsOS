@@ -65,6 +65,13 @@ class MainStateAssemblersDashboardTest {
         updatedAt = 0L
     )
 
+
+    private fun generateNodes(count: Int, type: String, applyExtra: (NodeEntity) -> NodeEntity = { it }): List<NodeWithPin> {
+        return (1..count).map {
+            createTestNodeWithPin(applyExtra(defaultNode(it.toLong(), type, "active")))
+        }
+    }
+
     private fun createRepo(): AppRepository {
         return AppRepository(
             nodeDao = FakeNodeDao(),
@@ -87,6 +94,20 @@ class MainStateAssemblersDashboardTest {
         )
     }
 
+
+    private suspend fun assembleState(
+        repo: AppRepository,
+        nodes: List<NodeWithPin>,
+        mode: ModeEntity? = null
+    ) = buildDashboardUIState(
+        repository = repo,
+        nodes = nodes,
+        modesList = mode?.let { listOf(it) } ?: emptyList(),
+        activeId = mode?.id,
+        areasList = emptyList(),
+        packs = PackRegistry(emptySet(), emptySet())
+    )
+
     @Test
     fun `buildDashboardUIState basic state count`() = runTest {
         val repo = createRepo()
@@ -98,14 +119,7 @@ class MainStateAssemblersDashboardTest {
         val mode = ModeEntity(id = 1L, key = "FOCUS", name = "Focus", icon = "focus")
 
         val nodes = listOf(nodeActiveTask1, nodeActiveTask2, nodeDoneTask, nodeNote)
-        val state = buildDashboardUIState(
-            repository = repo,
-            nodes = nodes,
-            modesList = listOf(mode),
-            activeId = 1L,
-            areasList = emptyList(),
-            packs = PackRegistry(emptySet(), emptySet())
-        )
+        val state = assembleState(repo, nodes, mode)
 
         assertEquals(2, state.tasksCount)
         assertEquals(1, state.notesCount)
@@ -121,14 +135,7 @@ class MainStateAssemblersDashboardTest {
         val mode = ModeEntity(id = 1L, key = "RECOVERY", name = "Recovery", icon = "recovery")
 
         val nodes = listOf(highEnergyTask, lowEnergyTask, nodeNote)
-        val state = buildDashboardUIState(
-            repository = repo,
-            nodes = nodes,
-            modesList = listOf(mode),
-            activeId = 1L,
-            areasList = emptyList(),
-            packs = PackRegistry(emptySet(), emptySet())
-        )
+        val state = assembleState(repo, nodes, mode)
 
         assertEquals(1, state.tasksCount)
         assertTrue(state.lowEnergyTasks.size == 1)
@@ -138,18 +145,9 @@ class MainStateAssemblersDashboardTest {
     @Test
     fun `buildDashboardUIState capacity warnings trigger correctly`() = runTest {
         val repo = createRepo()
-        val nodes = (1..51).map {
-            createTestNodeWithPin(defaultNode(it.toLong(), "task", "active"))
-        }
+        val nodes = generateNodes(51, "task")
 
-        val state = buildDashboardUIState(
-            repository = repo,
-            nodes = nodes,
-            modesList = emptyList(),
-            activeId = null,
-            areasList = emptyList(),
-            packs = PackRegistry(emptySet(), emptySet())
-        )
+        val state = assembleState(repo, nodes)
 
         assertNotNull(state.capacityWarning)
         assertTrue(state.capacityWarning!!.contains("SYSTEM OVERLOADED"))
@@ -158,18 +156,9 @@ class MainStateAssemblersDashboardTest {
     @Test
     fun `buildDashboardUIState fragmentation warnings trigger correctly`() = runTest {
         val repo = createRepo()
-        val nodes = (1..9).map {
-            createTestNodeWithPin(defaultNode(it.toLong(), "task", "active").copy(projectId = it.toLong()))
-        }
+        val nodes = generateNodes(9, "task") { it.copy(projectId = it.id) }
 
-        val state = buildDashboardUIState(
-            repository = repo,
-            nodes = nodes,
-            modesList = emptyList(),
-            activeId = null,
-            areasList = emptyList(),
-            packs = PackRegistry(emptySet(), emptySet())
-        )
+        val state = assembleState(repo, nodes)
 
         assertNotNull(state.capacityWarning)
         assertTrue(state.capacityWarning!!.contains("ATTENTION FRAGMENTED"))
@@ -180,18 +169,9 @@ class MainStateAssemblersDashboardTest {
         val repo = createRepo()
         val now = Clock.System.now().toEpochMilliseconds()
 
-        val nodes = (1..12).map {
-            createTestNodeWithPin(defaultNode(it.toLong(), "open_loop", "active").copy(createdAt = now - 10000))
-        }
+        val nodes = generateNodes(12, "open_loop") { it.copy(createdAt = now - 10000) }
 
-        val state = buildDashboardUIState(
-            repository = repo,
-            nodes = nodes,
-            modesList = emptyList(),
-            activeId = null,
-            areasList = emptyList(),
-            packs = PackRegistry(emptySet(), emptySet())
-        )
+        val state = assembleState(repo, nodes)
 
         assertEquals(12, state.openLoops.size)
         assertNotNull(state.openLoopsOverloadWarning)
@@ -210,14 +190,7 @@ class MainStateAssemblersDashboardTest {
 
         val nodes = listOf(activeRecentTask, activeStaleTask, activeRecentNote)
 
-        val state = buildDashboardUIState(
-            repository = repo,
-            nodes = nodes,
-            modesList = emptyList(),
-            activeId = null,
-            areasList = emptyList(),
-            packs = PackRegistry(emptySet(), emptySet())
-        )
+        val state = assembleState(repo, nodes)
 
         assertEquals(1, state.staleTasksCount)
     }
@@ -233,14 +206,7 @@ class MainStateAssemblersDashboardTest {
 
         val nodes = listOf(homeTask, workTask, homeTask2, nullContextTask)
 
-        val state = buildDashboardUIState(
-            repository = repo,
-            nodes = nodes,
-            modesList = emptyList(),
-            activeId = null,
-            areasList = emptyList(),
-            packs = PackRegistry(emptySet(), emptySet())
-        )
+        val state = assembleState(repo, nodes)
 
         assertEquals(3, state.contextClusteredTasks.size) // at_home, at_work, general (null defaults to general)
         assertEquals(2, state.contextClusteredTasks["at_home"]?.size)
@@ -290,14 +256,7 @@ class MainStateAssemblersDashboardTest {
 
         val nodes = listOf(includedAreaTask, excludedAreaTask, otherAreaTask, includedAreaNote, includedAreaIdea, areaItem)
 
-        val state = buildDashboardUIState(
-            repository = repo,
-            nodes = nodes,
-            modesList = listOf(mode),
-            activeId = 1L,
-            areasList = emptyList(),
-            packs = PackRegistry(emptySet(), emptySet())
-        )
+        val state = assembleState(repo, nodes, mode)
 
         // Only includedAreaTask should remain as an active task
         assertEquals(1, state.tasksCount)
@@ -315,14 +274,7 @@ class MainStateAssemblersDashboardTest {
 
         val nodes = listOf(contextNode)
 
-        val state = buildDashboardUIState(
-            repository = repo,
-            nodes = nodes,
-            modesList = emptyList(),
-            activeId = null,
-            areasList = emptyList(),
-            packs = PackRegistry(emptySet(), emptySet())
-        )
+        val state = assembleState(repo, nodes)
 
         assertNotNull(state.suggestedContextKey)
         assertTrue(state.suggestedContextTasks.isNotEmpty())
@@ -340,14 +292,7 @@ class MainStateAssemblersDashboardTest {
 
         val nodes = listOf(noteWithPin)
 
-        val state = buildDashboardUIState(
-            repository = repo,
-            nodes = nodes,
-            modesList = emptyList(),
-            activeId = null,
-            areasList = emptyList(),
-            packs = PackRegistry(emptySet(), emptySet())
-        )
+        val state = assembleState(repo, nodes)
 
         assertTrue(state.foundationalNotes.isNotEmpty())
     }
