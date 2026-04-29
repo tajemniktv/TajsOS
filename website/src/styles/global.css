@@ -61,9 +61,9 @@
 
 @layer utilities {
     .glass-panel {
-        background: rgba(31, 31, 36, 0.5);
-        backdrop-filter: blur(60px);
-        border: 1px solid rgba(186, 158, 255, 0.15);
+        background: color-mix(in srgb, var(--color-surface-container-high) 60%, transparent);
+        backdrop-filter: blur(40px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
     }
     .instrument-glow {
         box-shadow: 0 0 50px rgba(186, 158, 255, 0.08), inset 0 0 30px rgba(186, 158, 255, 0.03);
