@@ -60,8 +60,8 @@
 }
 
 @layer utilities {
-        .glass-panel {
-        background: rgba(31, 31, 36, 0.6);
+    .glass-panel {
+        background: color-mix(in srgb, var(--color-surface-container-high) 60%, transparent);
         backdrop-filter: blur(40px);
         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
     }
