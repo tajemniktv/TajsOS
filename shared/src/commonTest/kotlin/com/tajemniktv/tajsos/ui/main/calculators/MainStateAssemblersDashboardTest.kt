@@ -138,7 +138,7 @@ class MainStateAssemblersDashboardTest {
         val state = assembleState(repo, nodes, mode)
 
         assertEquals(1, state.tasksCount)
-        assertTrue(state.lowEnergyTasks.size == 1)
+        assertEquals(1, state.lowEnergyTasks.size)
         assertEquals(2L, state.lowEnergyTasks.first().node.id)
     }
 
@@ -277,7 +277,7 @@ class MainStateAssemblersDashboardTest {
         val state = assembleState(repo, nodes)
 
         assertNotNull(state.suggestedContextKey)
-        assertTrue(state.suggestedContextTasks.isNotEmpty())
+        assertEquals(1, state.suggestedContextTasks.size)
     }
 
     @Test
@@ -294,6 +294,6 @@ class MainStateAssemblersDashboardTest {
 
         val state = assembleState(repo, nodes)
 
-        assertTrue(state.foundationalNotes.isNotEmpty())
+        assertEquals(1, state.foundationalNotes.size)
     }
 }
