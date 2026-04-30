@@ -112,6 +112,10 @@ private val healthTitleKeywords =
  * implicitly categorized into domains via keyword matching in titles, content, tags, and
  * specific maintenance/note types. This decoupling allows items to naturally surface in the
  * right lenses without requiring manual user curation.
+ *
+ * Currently, heuristic matching queries are only implemented for the `FINANCES` and `HEALTH` domains.
+ * Other domains defined in `DomainKind` (e.g., `EDUCATION` and `RELATIONSHIPS`) do not yet have dedicated
+ * queries in this object.
  */
 object DomainLensQueries {
     /**
