@@ -2,7 +2,6 @@ package com.tajemniktv.tajsos.data
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
 
 class FakeProtocolDao : ProtocolDao {
     private val historyList = mutableListOf<ProtocolHistoryEntity>()

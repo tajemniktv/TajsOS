@@ -24,7 +24,6 @@ import com.tajemniktv.tajsos.data.FakeTrackDao
 import com.tajemniktv.tajsos.data.FakeUserDao
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.data.NodeWithPin
-import com.tajemniktv.tajsos.data.TagEntity
 import com.tajemniktv.tajsos.ui.main.state.PlaybookTemplate
 import com.tajemniktv.tajsos.ui.main.state.TransitionProtocolTemplate
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -33,7 +32,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
