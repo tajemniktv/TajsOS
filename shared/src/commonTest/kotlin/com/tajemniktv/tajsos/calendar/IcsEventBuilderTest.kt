@@ -79,4 +79,45 @@ class IcsEventBuilderTest {
         val tz = builder.extractTimeZone("DTSTART;TZID=Invalid/Timezone")
         assertEquals(kotlinx.datetime.TimeZone.currentSystemDefault().id, tz.id)
     }
+
+    @Test
+    fun testBuildMissingDtStart() {
+        val builder = IcsEventBuilder()
+        builder.processLine("SUMMARY:Missing start")
+        assertNull(builder.build(1L))
+    }
+
+    @Test
+    fun testBuildInvalidDtStartReturnsNull() {
+        val builder = IcsEventBuilder()
+        builder.processLine("DTSTART:123") // Too short, parseDate will return null
+        assertNull(builder.build(1L))
+    }
+
+    @Test
+    fun testBuildMissingDtEndFallsBackToDtStart() {
+        val builder = IcsEventBuilder()
+        builder.processLine("DTSTART:20231024") // All day
+        val event = builder.build(1L)
+        assertTrue(event != null)
+        assertEquals(event.startAt, event.endAt)
+    }
+
+    @Test
+    fun testBuildInvalidDtEndFallsBackToDtStart() {
+        val builder = IcsEventBuilder()
+        builder.processLine("DTSTART:20231024T100000Z")
+        builder.processLine("DTEND:invalid")
+        val event = builder.build(1L)
+        assertTrue(event != null)
+        assertEquals(event.startAt, event.endAt)
+    }
+
+    @Test
+    fun testParseDateReturnsNullOnException() {
+        val builder = IcsEventBuilder()
+        builder.processLine("DTSTART:20231024T") // length < 15, parseIsoDate throws IllegalArgumentException
+        assertNull(builder.build(1L))
+    }
+
 }
