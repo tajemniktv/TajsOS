@@ -90,7 +90,7 @@ class IcsEventBuilderTest {
     @Test
     fun testBuildInvalidDtStartReturnsNull() {
         val builder = IcsEventBuilder()
-        builder.processLine("DTSTART:123") // Too short, parseDate will catch exception and return null
+        builder.processLine("DTSTART:123") // Too short, parseDate will return null
         assertNull(builder.build(1L))
     }
 
