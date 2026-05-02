@@ -169,4 +169,10 @@ class UserProfileTest {
         )
         assertEquals("John Doe", profile.resolveDisplayName())
     }
+
+    @Test
+    fun testResolveDisplayName_DefaultProfile() {
+        val profile = UserProfile()
+        assertEquals("OPERATOR", profile.resolveDisplayName())
+    }
 }
