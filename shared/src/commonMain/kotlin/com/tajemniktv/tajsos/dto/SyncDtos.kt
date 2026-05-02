@@ -33,7 +33,7 @@ data class SyncRequest(
  * @property entityType The string representation of the underlying model type (e.g., "NodeEntity", "RelationEntity").
  * @property payload The serialized representation of the entity.
  * @property updatedAt The epoch timestamp indicating when this mutation occurred.
- * @property isDeleted A flag indicating whether this operation represents a deletion (tombstone).
+ * @property isDeleted A flag indicating whether this item represents a deleted state (tombstone).
  * @property operation The type of operation being performed (e.g., "upsert", "delete").
  * @property payloadVersion The version of the payload schema. Used for future migration compatibility.
  */
@@ -55,7 +55,7 @@ data class SyncItem(
  * @property protocolVersion The current synchronization protocol version (default is 1).
  * @property serverTime The current epoch timestamp on the server. The client should store this and use it as the `lastSyncTime` in the next request.
  * @property items The list of items from the server that are newer than the client's `lastSyncTime`.
- * @property conflicts A list of item IDs that the server rejected due to conflict. Currently, the server treats conflicts naively by simply dropping rejected updates.
+ * @property conflicts A list of item IDs that the server rejected due to conflict.
  * @property ackedItemIds A list of item IDs from the client's request that were successfully processed and applied by the server.
  */
 @Serializable
