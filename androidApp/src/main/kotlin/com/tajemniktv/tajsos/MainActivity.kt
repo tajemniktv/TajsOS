@@ -364,7 +364,7 @@ class MainActivity : FragmentActivity() {
                 init(Cipher.ENCRYPT_MODE, getOrCreateSecretKey())
             }
         } catch (e: KeyPermanentlyInvalidatedException) {
-            Log.w(TAG, "Biometric key invalidated, regenerating key", e)
+            Log.w(TAG, "Biometric key invalidated, regenerating key")
             try {
                 val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply { load(null) }
                 keyStore.deleteEntry(BIOMETRIC_KEY_ALIAS)
@@ -372,11 +372,11 @@ class MainActivity : FragmentActivity() {
                     init(Cipher.ENCRYPT_MODE, getOrCreateSecretKey())
                 }
             } catch (regenerationException: GeneralSecurityException) {
-                Log.e(TAG, "Failed to reinitialize cipher after key regeneration", regenerationException)
+                Log.e(TAG, "Failed to reinitialize cipher after key regeneration: ${regenerationException.javaClass.simpleName}")
                 null
             }
         } catch (e: GeneralSecurityException) {
-            Log.e(TAG, "Failed to initialize biometric cipher", e)
+            Log.e(TAG, "Failed to initialize biometric cipher: ${e.javaClass.simpleName}")
             null
         }
     }
@@ -409,7 +409,7 @@ class MainActivity : FragmentActivity() {
                         val authCipher = result.cryptoObject?.cipher ?: return
                         runCatching { authCipher.doFinal("auth".toByteArray()) }
                             .onSuccess { viewModel.setAuthenticated(true) }
-                            .onFailure { Log.e(TAG, "Biometric crypto operation failed", it) }
+                            .onFailure { Log.e(TAG, "Biometric crypto operation failed: ${it.javaClass.simpleName}") }
                     }
 
                     override fun onAuthenticationError(
