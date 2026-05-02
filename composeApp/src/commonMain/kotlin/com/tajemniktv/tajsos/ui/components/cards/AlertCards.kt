@@ -25,6 +25,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
+/**
+ * Alert card
+ *
+ * @param title
+ * @param description
+ * @param icon
+ * @param color
+ * @param action
+ * @param onClick
+ * @receiver
+ */
 @Composable
 fun AlertCard(
     title: String,

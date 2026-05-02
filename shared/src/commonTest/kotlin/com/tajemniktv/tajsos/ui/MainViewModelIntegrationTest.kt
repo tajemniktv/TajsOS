@@ -29,7 +29,6 @@ import io.ktor.client.engine.mock.respond
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -93,7 +92,7 @@ class MainViewModelIntegrationTest {
     }
 
     @Test
-    fun searchResults_updatesWhenFiltersChange(): TestResult =
+    fun searchResults_updatesWhenFiltersChange() =
         runTest(testDispatcher) {
             val nodeDao = FakeNodeDao()
             nodeDao.insertNode(NodeEntity(type = "task", title = "Task 1", projectId = 1L))
@@ -157,7 +156,7 @@ class MainViewModelIntegrationTest {
         }
 
     @Test
-    fun searchResults_updatesWhenQueryChanges(): TestResult =
+    fun searchResults_updatesWhenQueryChanges() =
         runTest(testDispatcher) {
             val nodeDao = FakeNodeDao()
             nodeDao.insertNode(NodeEntity(type = "task", title = "Buy groceries"))
@@ -183,7 +182,7 @@ class MainViewModelIntegrationTest {
         }
 
     @Test
-    fun updateNodeStatus_done_createsRecurringCopy(): TestResult =
+    fun updateNodeStatus_done_createsRecurringCopy() =
         runTest(testDispatcher) {
             val nodeDao = FakeNodeDao()
             val now =
@@ -229,7 +228,7 @@ class MainViewModelIntegrationTest {
         }
 
     @Test
-    fun archiveNode_updatesStatusToArchived(): TestResult =
+    fun archiveNode_updatesStatusToArchived() =
         runTest(testDispatcher) {
             val nodeDao = FakeNodeDao()
             val nodeId =
@@ -255,7 +254,7 @@ class MainViewModelIntegrationTest {
     // ---- splitNote tests ----
 
     @Test
-    fun splitNote_createsOneNodePerSection(): TestResult =
+    fun splitNote_createsOneNodePerSection() =
         runTest(testDispatcher) {
             val nodeDao = FakeNodeDao()
             val content =
@@ -273,16 +272,16 @@ class MainViewModelIntegrationTest {
             viewModel.splitNote(originalId)
 
             // 3 new notes + 1 archived original = 4 total, filter active (3)
-            val activeNodes =
+            val activeNodesList =
                 viewModel.allNodes.first { list ->
                     list.count { it.node.status == "active" } == 3
                 }
-            val activeNotes = activeNodes.filter { it.node.status == "active" }
+            val activeNotes = activeNodesList.filter { it.node.status == "active" }
             assertEquals(3, activeNotes.size)
         }
 
     @Test
-    fun splitNote_usesHeaderAsTitle(): TestResult =
+    fun splitNote_usesHeaderAsTitle() =
         runTest(testDispatcher) {
             val nodeDao = FakeNodeDao()
             val content = "# Alpha\nAlpha body\n# Beta\nBeta body"
@@ -302,7 +301,7 @@ class MainViewModelIntegrationTest {
         }
 
     @Test
-    fun splitNote_archivesOriginalNode(): TestResult =
+    fun splitNote_archivesOriginalNode() =
         runTest(testDispatcher) {
             val nodeDao = FakeNodeDao()
             val content = "# Section One\nContent one\n# Section Two\nContent two"
@@ -323,7 +322,7 @@ class MainViewModelIntegrationTest {
         }
 
     @Test
-    fun splitNote_doesNotSplitWhenOnlyOneSection(): TestResult =
+    fun splitNote_doesNotSplitWhenOnlyOneSection() =
         runTest(testDispatcher) {
             val nodeDao = FakeNodeDao()
             val content = "# Only Section\nSome content here"
@@ -350,7 +349,7 @@ class MainViewModelIntegrationTest {
         }
 
     @Test
-    fun splitNote_inheritsProjectAndAreaFromOriginal(): TestResult =
+    fun splitNote_inheritsProjectAndAreaFromOriginal() =
         runTest(testDispatcher) {
             val nodeDao = FakeNodeDao()
             val projectId = 10L
@@ -386,7 +385,7 @@ class MainViewModelIntegrationTest {
         }
 
     @Test
-    fun splitNote_doesNotSplitWhenNodeHasNoContent(): TestResult =
+    fun splitNote_doesNotSplitWhenNodeHasNoContent() =
         runTest(testDispatcher) {
             val nodeDao = FakeNodeDao()
             val originalId = nodeDao.insertNode(NodeEntity(type = "note", title = "Empty Note"))

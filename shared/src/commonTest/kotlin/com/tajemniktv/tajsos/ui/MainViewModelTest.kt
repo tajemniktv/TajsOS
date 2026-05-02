@@ -45,7 +45,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.resetMain
@@ -234,7 +233,7 @@ class MainViewModelTest {
     }
 
     @Test
-    fun exportDataJson_serializes_current_nodes_state_to_JSON(): TestResult =
+    fun exportDataJson_serializes_current_nodes_state_to_JSON() =
         runTest {
             val testNodes =
                 listOf(
@@ -300,8 +299,6 @@ class MainViewModelTest {
 
             advanceTimeBy(100)
             runCurrent()
-
-            viewModel.allNodes.value
 
             val exportJson = viewModel.exportDataJson()
             client.close()

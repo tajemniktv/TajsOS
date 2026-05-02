@@ -290,9 +290,6 @@ fun TemplateQuickActionsCard(
  * @param onDecrease
  * @param onIncrease
  * @param onOpen
- * @receiver
- * @receiver
- * @receiver
  */
 @Composable
 fun ProgressControlCard(
@@ -343,8 +340,8 @@ fun StudentNodeCard(
 ) {
     NodeCard(
         nodeWithPin = node,
-        onToggleDone = { status -> viewModel.updateNodeStatus(node.node, status) },
-        onTogglePin = { isPinned -> viewModel.togglePin(node.node, isPinned) },
+        onToggleDone = { viewModel.updateNodeStatus(node.node, it) },
+        onTogglePin = { viewModel.togglePin(node.node, it) },
         onClick = { onEditNode(node.node.id) },
         onLongClick = { onEditNode(node.node.id) },
         onArchive = { viewModel.archiveNode(node.node) },
