@@ -64,16 +64,7 @@ fun main() =
             rememberWindowState(
                 position = persistedWindowPlacement.toWindowPosition(),
                 size = persistedWindowPlacement.toWindowSize(),
-                placement =
-                    when (desktopWindowStartupMode) {
-                        DesktopWindowStartupMode.ALWAYS_MAXIMIZED -> WindowPlacement.Maximized
-                        DesktopWindowStartupMode.RESTORE_LAST ->
-                            if (persistedWindowPlacement.isMaximized) {
-                                WindowPlacement.Maximized
-                            } else {
-                                WindowPlacement.Floating
-                            }
-                    },
+                placement = resolveWindowPlacement(desktopWindowStartupMode, persistedWindowPlacement.isMaximized),
             )
         val viewModel =
             sharedModule.createViewModel(
@@ -170,5 +161,24 @@ private fun Dp.toPersistedDpOrNull(): Int? {
         null
     } else {
         rawValue.toInt()
+    }
+}
+
+
+/**
+ * Resolves [WindowPlacement] based on startup mode and persistence.
+ */
+private fun resolveWindowPlacement(
+    startupMode: DesktopWindowStartupMode,
+    isMaximized: Boolean,
+): WindowPlacement {
+    return when (startupMode) {
+        DesktopWindowStartupMode.ALWAYS_MAXIMIZED -> WindowPlacement.Maximized
+        DesktopWindowStartupMode.RESTORE_LAST ->
+            if (isMaximized) {
+                WindowPlacement.Maximized
+            } else {
+                WindowPlacement.Floating
+            }
     }
 }
