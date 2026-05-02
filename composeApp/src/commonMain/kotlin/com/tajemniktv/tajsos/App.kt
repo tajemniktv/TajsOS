@@ -152,7 +152,11 @@ fun App(
             BoxWithConstraints(modifier = modifier) {
                 val isDesktop = maxWidth > 800.dp
 
-                // The primary navigation callback for the main content area.
+                /**
+                 * The primary navigation callback for the main content area.
+                 * Handles route resolution, state synchronization for tasks, and conditional
+                 * save/restore of navigation state.
+                 */
                 val navigate: (String) -> Unit =
                     remember(navController, currentDestination, selectedTasksTab) {
                         {
@@ -270,6 +274,9 @@ fun App(
                 ) {
                     CompositionLocalProvider(LocalScreenHeaderController provides screenHeaderController) {
                         Box(modifier = Modifier.fillMaxSize()) {
+                            /**
+                             * Callback for editing a node, resolves the correct detail route.
+                             */
                             val onEditNode: (Long) -> Unit = {
                                 navigate(
                                     DetailNavigationContract.routeForNodeId(
@@ -297,11 +304,11 @@ fun App(
                                         viewModel = mainViewModel,
                                         onNavigate = navigate,
                                         onEditNode = onEditNode,
-                                        onNavigateToProject = {
+                                        onNavigateToProject = { projectId ->
                                             navigate(
                                                 Screen.ProjectDetail.route.replace(
                                                     "{${Screen.PARAM_PROJECT_ID}}",
-                                                    it.toString(),
+                                                    projectId.toString(),
                                                 ),
                                             )
                                         },
@@ -604,16 +611,11 @@ fun App(
                                     com.tajemniktv.tajsos.ui.screens.areas.detail.AreaDetailRoute(
                                         viewModel = mainViewModel,
                                         areaId = areaId,
-                                        /**
-                                         * Navigation handler for jumping to a specific project.
-                                         *
-                                         * @param id The unique identifier of the target project.
-                                         */
-                                        onNavigateToProject = { id ->
+                                        onNavigateToProject = { projectId ->
                                             navigate(
                                                 Screen.ProjectDetail.route.replace(
                                                     "{${Screen.PARAM_PROJECT_ID}}",
-                                                    id.toString(),
+                                                    projectId.toString(),
                                                 ),
                                             )
                                         },
@@ -674,11 +676,11 @@ fun App(
                                 composable(Screen.Insights.route) {
                                     com.tajemniktv.tajsos.ui.screens.insights.InsightsRoute(
                                         viewModel = mainViewModel,
-                                        onNavigateToProject = {
+                                        onNavigateToProject = { projectId ->
                                             navigate(
                                                 Screen.ProjectDetail.route.replace(
                                                     "{${Screen.PARAM_PROJECT_ID}}",
-                                                    it.toString(),
+                                                    projectId.toString(),
                                                 ),
                                             )
                                         },
@@ -797,20 +799,6 @@ private fun AppCaptureSheet(
                 onDismiss()
                 onVoiceConsume()
             },
-            /**
-             * Processes the captured data from the sheet.
-             *
-             * @param text The title or raw text captured.
-             * @param type The inferred or selected item kind.
-             * @param projectId The project to associate the item with.
-             * @param areaId The area to associate the item with.
-             * @param isRec Whether the item is recurring.
-             * @param recInt The recurrence interval string.
-             * @param remAt Reminder timestamp.
-             * @param ctx The screen context of capture.
-             * @param sticky Whether the item is pinned.
-             * @param decisionCat Optional decision category.
-             */
             onCapture = { text, type, projectId, areaId, isRec, recInt, remAt, ctx, sticky, decisionCat ->
                 handleOnCapture(
                     viewModel = viewModel,

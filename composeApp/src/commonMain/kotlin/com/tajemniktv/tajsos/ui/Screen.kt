@@ -223,19 +223,13 @@ sealed class Screen(
         override val breadcrumbParent: Screen = Notes
     }
 
-    /**
-     * Analytics and statistical lens over system-wide data.
-     */
+    /** Statistical overview and data analytics. */
     data object Insights : Screen("insights", Res.string.screen_stats, Icons.Default.Info)
 
-    /**
-     * Management of deleted and historical items.
-     */
+    /** Repository for deleted or historical items. */
     data object Archive : Screen("archive", Res.string.screen_archive, Icons.Default.Delete)
 
-    /**
-     * Temporal planning lens for scheduling and forward commitments.
-     */
+    /** External calendar integration and timeline view. */
     data object Calendar : Screen("calendar", Res.string.screen_cal, Icons.Default.Event)
 
     /**
@@ -252,20 +246,14 @@ sealed class Screen(
         override val breadcrumbParent: Screen = Settings
     }
 
-    /**
-     * Visualization of the relationship graph between system entities.
-     */
+    /** Visual representation of the link graph between entities. */
     data object Graph : Screen("graph", Res.string.screen_graph, Icons.Default.Share)
 
-    /**
-     * Coordination lens for outcomes and complex initiatives.
-     */
+    /** Unified list of all system projects. */
     data object Projects :
         Screen("projects", Res.string.screen_proj, Icons.AutoMirrored.Filled.List)
 
-    /**
-     * Management lens for ongoing spheres of responsibility.
-     */
+    /** Unified list of all system areas. */
     data object Areas : Screen("areas", Res.string.screen_area, Icons.Default.LocationOn)
 
     /**
@@ -493,27 +481,21 @@ sealed class Screen(
         Icons.Default.Place,
     )
 
-    /**
-     * Financial management and monetary tracking lens.
-     */
+    /** Monetary and financial management tracking. */
     data object Finances : Screen(
         "finances",
         Res.string.screen_finances,
         Icons.Default.AttachMoney,
     )
 
-    /**
-     * Health and well-being tracking lens.
-     */
+    /** Physical and mental health monitoring. */
     data object Health : Screen(
         "health",
         Res.string.screen_health,
         Icons.Default.Favorite,
     )
 
-    /**
-     * Social connection and relationship management lens.
-     */
+    /** Social network and connection mapping. */
     data object Relationships : Screen(
         "relationships",
         Res.string.screen_relationships,
@@ -721,7 +703,7 @@ sealed class Screen(
                     .filterIsInstance<Sub>()
                     .find {
                         (it.route == route) ||
-                            (it.route == "$queryBase?${PARAM_TAB}=${route.substringAfter("=")}")
+                            (it.route == "$queryBase?$PARAM_TAB=${route.substringAfter("=")}")
                     }?.let { return it }
             }
 
@@ -814,8 +796,7 @@ sealed class Screen(
         /**
          * Determines which root screen should be considered the "active" context in the sidebar for a given screen.
          *
-         * This ensures that detail screens (like [NoteDetail]) keep their respective root (like [Notes]) highlighted
-         * in the sidebar.
+         * @param screen The screen to resolve the context for.
          */
         @Deprecated(
             "Use Screen.sidebarContextRoot property",

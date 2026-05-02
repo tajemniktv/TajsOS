@@ -53,6 +53,28 @@ import kotlin.time.Clock
 
 /**
  * Top-level application chrome with persistent sidebar, shell header, and routed content slot.
+ *
+ * @param isDesktop Whether to use the wide desktop layout with persistent sidebar.
+ * @param shellState The current state of the application shell (e.g. expanded state).
+ * @param currentDestination The currently active navigation destination.
+ * @param activeTasksTab The active tab within the tasks domain.
+ * @param onNavigate Callback for screen-level navigation.
+ * @param onNavigateToTasksTab Callback for switching between task filter tabs.
+ * @param sidebarExpandedWidthDp The current width of the expanded sidebar.
+ * @param onSidebarExpandedWidthChange Callback for updating the sidebar width.
+ * @param onNewEntry Callback to trigger the global capture flow.
+ * @param currentMode The currently active focus/operating mode.
+ * @param allModes List of all available operating modes.
+ * @param packRegistry Registry of enabled feature packs for conditional UI.
+ * @param userProfile The current user's profile information.
+ * @param isGlassmorphismEnabled Whether to apply glassmorphism effects to the UI.
+ * @param onModeSelect Callback for switching between operating modes.
+ * @param drawerState State of the navigation drawer used in mobile layout.
+ * @param scope Coroutine scope for shell-level animations and actions.
+ * @param screenHeader Model defining the title and actions for the current screen.
+ * @param notifications List of pending system notifications.
+ * @param modifier The modifier to be applied to the shell root.
+ * @param content The main screen content to be rendered within the shell.
  */
 @Composable
 fun AppShell(
@@ -211,6 +233,12 @@ fun AppShell(
     }
 }
 
+/**
+ * Maps raw mode entities to display-ready shell mode options.
+ *
+ * @param modes The list of available modes from the repository.
+ * @return A list of [ShellModeOption] for the mode selector.
+ */
 @Composable
 private fun rememberModeOptions(modes: List<ModeEntity>): List<ShellModeOption> {
     if (modes.isNotEmpty()) {
@@ -245,6 +273,12 @@ private fun rememberModeOptions(modes: List<ModeEntity>): List<ShellModeOption> 
     )
 }
 
+/**
+ * Generates a time-aware greeting message for the user.
+ *
+ * @param displayName The name to address the user by.
+ * @return A localized greeting string (e.g. "Good morning, human").
+ */
 @Composable
 private fun timeGreeting(displayName: String): String {
     val hour =

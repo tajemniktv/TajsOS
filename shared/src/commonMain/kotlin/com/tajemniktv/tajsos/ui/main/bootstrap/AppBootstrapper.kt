@@ -27,12 +27,11 @@ import kotlinx.coroutines.flow.first
  *
  * It generates default entities such as focus modes, academic templates, logistical systems,
  * and base user data if the local storage is detected as entirely empty.
- *
- * @property repository The [AppRepository] used for direct database inserts.
- * @property preferencesRepository The [PreferencesRepository] used to handle default tier access checks.
  */
 class AppBootstrapper(
+    /** The main application repository for database interactions. */
     private val repository: AppRepository,
+    /** The repository for managing user preferences and system settings. */
     private val preferencesRepository: PreferencesRepository,
 ) {
     /**
@@ -276,11 +275,20 @@ class AppBootstrapper(
         }
     }
 
+    /**
+     * Represents a system mode and its associated default preferences.
+     *
+     * @property mode The core mode entity containing identity and visual tokens.
+     * @property prefs The layout and feature visibility preferences for this mode.
+     */
     private data class ModeDefinition(
         val mode: ModeEntity,
         val prefs: ModePreferenceEntity,
     )
 
+    /**
+     * Defines the standard set of system operating modes provided out of the box.
+     */
     private fun getDefaultModes(): List<ModeDefinition> =
         listOf(
             ModeDefinition(
@@ -435,6 +443,28 @@ class AppBootstrapper(
         }
     }
 
+    /**
+     * Persists a new system mode along with its corresponding preference configuration.
+     *
+     * @param mode The mode entity to persist.
+     * @param preference The default preference set to link with the new mode.
+     * @return The unique database identifier of the newly created mode.
+     */
+    /**
+     * Persists a new system mode along with its corresponding preference configuration.
+     *
+     * @param mode The mode entity to persist.
+     * @param preference The default preference set to link with the new mode.
+     * @return The unique database identifier of the newly created mode.
+     */
+
+    /**
+     * Helper to insert a mode and its corresponding preference record.
+     *
+     * @param mode The mode entity to insert.
+     * @param preference The default preference configuration for this mode.
+     * @return The unique identifier of the inserted mode.
+     */
     private suspend fun insertModeWithPreferences(
         mode: ModeEntity,
         preference: ModePreferenceEntity,
