@@ -9,7 +9,7 @@ import androidx.datastore.preferences.core.emptyPreferences
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
     name = "settings",
-    corruptionHandler = ReplaceFileCorruptionHandler { emptyPreferences() }
+    corruptionHandler = ReplaceFileCorruptionHandler { emptyPreferences() },
 )
 
 fun createDataStore(context: Context): DataStore<Preferences> {
