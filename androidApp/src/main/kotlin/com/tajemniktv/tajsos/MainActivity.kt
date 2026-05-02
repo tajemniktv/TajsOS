@@ -364,7 +364,7 @@ class MainActivity : FragmentActivity() {
                 init(Cipher.ENCRYPT_MODE, getOrCreateSecretKey())
             }
         } catch (e: KeyPermanentlyInvalidatedException) {
-            Log.w(TAG, "Biometric key invalidated, regenerating key: ${e.javaClass.simpleName}")
+            Log.w(TAG, "Biometric key invalidated, regenerating key")
             try {
                 val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply { load(null) }
                 keyStore.deleteEntry(BIOMETRIC_KEY_ALIAS)
