@@ -24,6 +24,16 @@ import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
 
+/**
+ * A centralized command handler for business logic operations on [NodeEntity]s.
+ *
+ * This class encapsulates complex mutations, such as sweeping stale tasks, adding/updating nodes, splitting notes,
+ * and managing open loops. It runs operations asynchronously on the provided [scope] and interacts with the underlying
+ * [repository].
+ *
+ * Note: As part of the domain modeling boundaries, this class operates primarily on the legacy [NodeEntity]
+ * surface.
+ */
 class NodeCommands(
     private val repository: AppRepository,
     private val scope: CoroutineScope,
