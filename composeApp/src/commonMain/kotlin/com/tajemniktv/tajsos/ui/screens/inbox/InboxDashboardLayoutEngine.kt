@@ -5,8 +5,7 @@
 package com.tajemniktv.tajsos.ui.screens.inbox
 
 fun buildInboxDashboardPlan(surface: InboxDashboardSurface): InboxDashboardPlan =
-    when (surface)
-    {
+    when (surface) {
         InboxDashboardSurface.MOBILE -> {
             InboxDashboardPlan(
                 primary =

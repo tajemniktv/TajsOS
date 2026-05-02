@@ -185,8 +185,7 @@ private fun renderAreaContent(context: AreaDetailContext) {
             modifier = Modifier.fillMaxWidth().padding(14.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            when (context.tab)
-            {
+            when (context.tab) {
                 AreaTab.Overview -> {
                     SectionHeader(
                         Res.string.area_detail_open_responsibilities,
@@ -527,4 +526,3 @@ private fun formatTimestamp(timestamp: Long?): String {
         dt.day.toString().padStart(2, '0')
     }"
 }
-

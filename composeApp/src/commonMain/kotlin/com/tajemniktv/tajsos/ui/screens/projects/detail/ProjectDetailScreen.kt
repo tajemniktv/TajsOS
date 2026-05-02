@@ -50,7 +50,6 @@ import com.tajemniktv.tajsos.data.toNodeStatus
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.common.SelectorDialog
-import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderController
 import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderModel
 import com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior
 import com.tajemniktv.tajsos.ui.components.screen.SplitScreenScaffold
@@ -60,8 +59,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
-import tajsos.composeapp.generated.resources.project_detail_not_found
 import tajsos.composeapp.generated.resources.no_specific_outcome_defined
+import tajsos.composeapp.generated.resources.project_detail_not_found
 import tajsos.composeapp.generated.resources.project_health_critical
 import tajsos.composeapp.generated.resources.project_health_frozen
 import tajsos.composeapp.generated.resources.project_health_healthy
@@ -126,18 +125,29 @@ fun ProjectDetailRoute(
     val linkedRecords = remember(projectItems) { projectItems.filter { it.isRecordItem() } }
 
     // Periodic time state to keep time-sensitive computations fresh
-    var now by remember { mutableLongStateOf(kotlin.time.Clock.System.now().toEpochMilliseconds()) }
+    var now by remember {
+        mutableLongStateOf(
+            kotlin.time.Clock.System
+                .now()
+                .toEpochMilliseconds(),
+        )
+    }
     LaunchedEffect(Unit) {
         while (isActive) {
             delay(60_000L) // Update every minute
-            now = kotlin.time.Clock.System.now().toEpochMilliseconds()
+            now =
+                kotlin.time.Clock.System
+                    .now()
+                    .toEpochMilliseconds()
         }
     }
 
     val staleTime = now - (14 * 24 * 60 * 60 * 1000L)
 
-    val completedTasks = remember(projectTasks) { projectTasks.filter { it.taskStateOrNull() == TaskState.DONE } }
-    val activeTasks = remember(projectTasks) { projectTasks.filter { it.taskStateOrNull() == TaskState.ACTIVE } }
+    val completedTasks =
+        remember(projectTasks) { projectTasks.filter { it.taskStateOrNull() == TaskState.DONE } }
+    val activeTasks =
+        remember(projectTasks) { projectTasks.filter { it.taskStateOrNull() == TaskState.ACTIVE } }
     val blockedTasks =
         remember(projectTasks, now) {
             projectTasks.filter {
@@ -153,9 +163,10 @@ fun ProjectDetailRoute(
             }
         }
     val blockedTaskIds = remember(blockedTasks) { blockedTasks.map { it.id }.toSet() }
-    val nextActions = remember(activeTasks, blockedTaskIds) {
-        activeTasks.filterNot { task -> task.id in blockedTaskIds }
-    }
+    val nextActions =
+        remember(activeTasks, blockedTaskIds) {
+            activeTasks.filterNot { task -> task.id in blockedTaskIds }
+        }
     val upcomingMilestones =
         remember(projectTasks) {
             projectTasks
@@ -172,30 +183,29 @@ fun ProjectDetailRoute(
             !project.isFrozen
 
     val (healthLabel, healthColor) =
-        when
-            {
-                project.isFrozen -> {
-                    stringResource(Res.string.project_health_frozen) to TajsOSTheme.Accent
-                }
-
-                project.projectStateOrNull() == ProjectState.ON_HOLD -> {
-                    stringResource(Res.string.project_health_on_hold) to TajsOSTheme.Muted
-                }
-
-                hasCriticalOverdue -> {
-                    stringResource(Res.string.project_health_critical) to TajsOSTheme.Error
-                }
-
-                isNeglected -> {
-                    stringResource(Res.string.project_health_neglected) to
-                        TajsOSTheme.Error
-                }
-
-                else -> {
-                    stringResource(Res.string.project_health_healthy) to
-                        TajsOSTheme.Success
-                }
+        when {
+            project.isFrozen -> {
+                stringResource(Res.string.project_health_frozen) to TajsOSTheme.Accent
             }
+
+            project.projectStateOrNull() == ProjectState.ON_HOLD -> {
+                stringResource(Res.string.project_health_on_hold) to TajsOSTheme.Muted
+            }
+
+            hasCriticalOverdue -> {
+                stringResource(Res.string.project_health_critical) to TajsOSTheme.Error
+            }
+
+            isNeglected -> {
+                stringResource(Res.string.project_health_neglected) to
+                    TajsOSTheme.Error
+            }
+
+            else -> {
+                stringResource(Res.string.project_health_healthy) to
+                    TajsOSTheme.Success
+            }
+        }
 
     val progress =
         if (projectTasks.isNotEmpty()) {
@@ -217,8 +227,7 @@ fun ProjectDetailRoute(
     val relatedNodeIds =
         remember(relations, projectId) {
             relations.mapNotNull { relation ->
-                when (projectId)
-                {
+                when (projectId) {
                     relation.fromNodeId -> relation.toNodeId
                     relation.toNodeId -> relation.fromNodeId
                     else -> null
@@ -353,7 +362,9 @@ fun ProjectDetailScreen(
         primary = {
             Column(
                 modifier = Modifier.fillMaxWidth().fillMaxHeight(),
-                verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp),
+                verticalArrangement =
+                    androidx.compose.foundation.layout.Arrangement
+                        .spacedBy(12.dp),
             ) {
                 if (surface == ProjectDetailSurface.DESKTOP) {
                     ProjectDetailBlockRegistry.resolve("project_tabs")?.invoke(context)
@@ -370,7 +381,9 @@ fun ProjectDetailScreen(
                 {
                     Column(
                         modifier = Modifier.fillMaxWidth().width(320.dp).fillMaxHeight(),
-                        verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp),
+                        verticalArrangement =
+                            androidx.compose.foundation.layout.Arrangement
+                                .spacedBy(12.dp),
                     ) {
                         plan.secondary.forEach { block ->
                             ProjectDetailBlockRegistry.resolve(block.id)?.invoke(context)
@@ -395,8 +408,7 @@ fun ProjectDetailScreen(
             },
             optionName = { it },
             optionIcon = { status ->
-                when (status)
-                {
+                when (status) {
                     "active" -> Icons.Default.PlayArrow
                     "on_hold" -> Icons.Default.Schedule
                     "someday" -> Icons.Default.CalendarToday

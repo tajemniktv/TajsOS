@@ -5,8 +5,7 @@
 package com.tajemniktv.tajsos.ui.screens.relationships
 
 fun buildRelationshipsDashboardPlan(surface: RelationshipsDashboardSurface): RelationshipsDashboardPlan =
-    when (surface)
-    {
+    when (surface) {
         RelationshipsDashboardSurface.MOBILE -> {
             RelationshipsDashboardPlan(
                 primary =

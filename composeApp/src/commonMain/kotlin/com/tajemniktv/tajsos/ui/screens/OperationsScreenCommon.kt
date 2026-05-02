@@ -4,7 +4,6 @@
 
 package com.tajemniktv.tajsos.ui.screens
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -103,12 +102,11 @@ internal fun GroupedOpenLoopSection(
 internal fun parseProtocolChecklist(content: String): List<Pair<Boolean, String>> =
     content.lines().mapNotNull { line ->
         val trimmed = line.trimStart()
-        when
-            {
-                trimmed.startsWith("- [x] ") -> true to trimmed.removePrefix("- [x] ").trim()
-                trimmed.startsWith("- [ ] ") -> false to trimmed.removePrefix("- [ ] ").trim()
-                else -> null
-            }
+        when {
+            trimmed.startsWith("- [x] ") -> true to trimmed.removePrefix("- [x] ").trim()
+            trimmed.startsWith("- [ ] ") -> false to trimmed.removePrefix("- [ ] ").trim()
+            else -> null
+        }
     }
 
 internal fun formatProtocolTimestamp(timestamp: Long): String {
@@ -118,4 +116,3 @@ internal fun formatProtocolTimestamp(timestamp: Long): String {
     val mm = local.minute.toString().padStart(2, '0')
     return "${local.date} $hh:$mm"
 }
-

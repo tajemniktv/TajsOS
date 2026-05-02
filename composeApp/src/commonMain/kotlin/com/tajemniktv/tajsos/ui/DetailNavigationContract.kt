@@ -33,8 +33,7 @@ object DetailNavigationContract {
         node: NodeEntity?,
         fallbackNodeId: Long,
     ): String =
-        when (node?.itemKindOrNull())
-        {
+        when (node?.itemKindOrNull()) {
             ItemKind.TASK -> {
                 Screen.TaskDetail.route.replace(
                     "{taskId}",

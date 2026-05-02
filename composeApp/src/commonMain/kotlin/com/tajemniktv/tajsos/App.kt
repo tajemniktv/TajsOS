@@ -235,7 +235,8 @@ fun App(
                                 navController.popBackStack()
                             },
                             onForwardClick = {
-                                val nextRoute = mouseForwardRoutes.removeLastOrNull() ?: return@mouseButtons
+                                val nextRoute =
+                                    mouseForwardRoutes.removeLastOrNull() ?: return@mouseButtons
                                 navController.navigate(nextRoute) { launchSingleTop = true }
                             },
                         ),

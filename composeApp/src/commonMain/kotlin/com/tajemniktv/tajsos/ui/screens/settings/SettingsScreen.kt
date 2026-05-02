@@ -117,14 +117,15 @@ fun SettingsScreen(
     screenId: String,
     onNavigate: (String) -> Unit,
 ) {
-    val targetScreen = when (screenId) {
-        "appearance" -> Screen.SettingsAppearance
-        "health" -> Screen.SettingsHealth
-        "feature_packs" -> Screen.SettingsFeaturePacks
-        "data" -> Screen.SettingsData
-        "debug" -> Screen.SettingsDebug
-        else -> Screen.Settings
-    }
+    val targetScreen =
+        when (screenId) {
+            "appearance" -> Screen.SettingsAppearance
+            "health" -> Screen.SettingsHealth
+            "feature_packs" -> Screen.SettingsFeaturePacks
+            "data" -> Screen.SettingsData
+            "debug" -> Screen.SettingsDebug
+            else -> Screen.Settings
+        }
 
     ScreenScaffold(
         screen = targetScreen,

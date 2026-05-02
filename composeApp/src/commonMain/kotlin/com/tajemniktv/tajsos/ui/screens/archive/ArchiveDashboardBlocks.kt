@@ -13,21 +13,21 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.tajemniktv.tajsos.ui.MainViewModel
-import com.tajemniktv.tajsos.ui.components.common.MouseContextMenuHost
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
+import com.tajemniktv.tajsos.ui.components.common.MouseContextMenuHost
 import com.tajemniktv.tajsos.ui.components.common.mouseClickable
 import com.tajemniktv.tajsos.ui.components.common.rememberMouseContextMenuState
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
@@ -99,8 +99,7 @@ internal fun ArchiveMainBlock(
                             headlineContent = { Text(nodeWithPin.node.title) },
                             supportingContent = {
                                 val typeLabel =
-                                    when (nodeWithPin.node.type)
-                                    {
+                                    when (nodeWithPin.node.type) {
                                         "task" -> stringResource(Res.string.type_task)
                                         "note" -> stringResource(Res.string.type_note)
                                         "idea" -> stringResource(Res.string.type_idea)
@@ -126,7 +125,11 @@ internal fun ArchiveMainBlock(
                                             tint = TajsOSTheme.Primary,
                                         )
                                     }
-                                    IconButton(onClick = { viewModel.deleteNodePermanently(nodeWithPin.node) }) {
+                                    IconButton(onClick = {
+                                        viewModel.deleteNodePermanently(
+                                            nodeWithPin.node,
+                                        )
+                                    }) {
                                         Icon(
                                             Icons.Default.Delete,
                                             contentDescription = stringResource(Res.string.archive_delete),
@@ -151,4 +154,3 @@ internal fun ArchiveMainBlock(
         }
     }
 }
-

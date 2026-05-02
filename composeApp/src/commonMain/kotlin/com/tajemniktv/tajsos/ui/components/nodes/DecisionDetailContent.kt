@@ -4,7 +4,6 @@
 
 package com.tajemniktv.tajsos.ui.components.nodes
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -563,4 +562,3 @@ fun DecisionField(
  * @param onUpdate Callback invoked to request an update to the given `option`.
  * @param onDelete Callback invoked when the user requests deletion of the given `option`.
  */
-

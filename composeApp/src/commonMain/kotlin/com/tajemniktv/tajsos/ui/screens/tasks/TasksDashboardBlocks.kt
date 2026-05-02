@@ -10,9 +10,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import com.tajemniktv.tajsos.data.ItemKind
 import com.tajemniktv.tajsos.data.TaskState
 import com.tajemniktv.tajsos.data.taskStateOrNull
@@ -68,7 +68,8 @@ private fun renderTasksViewCommand(context: TasksDashboardContext) {
     val dashboardUIState by viewModel.dashboardUIState.collectAsState()
 
     /** Cache filtered incomplete tasks to avoid redundant O(N) traversals during recomposition */
-    val incompleteTasks = remember(context.activeTasks) { context.activeTasks.filter { it.taskStateOrNull() != TaskState.DONE } }
+    val incompleteTasks =
+        remember(context.activeTasks) { context.activeTasks.filter { it.taskStateOrNull() != TaskState.DONE } }
 
     TasksCommandView(
         tasks = incompleteTasks,
@@ -102,8 +103,10 @@ private fun renderTasksViewCommand(context: TasksDashboardContext) {
 @Composable
 private fun renderTasksViewInbox(context: TasksDashboardContext) {
     val viewModel = context.viewModel
+
     /** Cache filtered inbox tasks to avoid redundant O(N) traversals during recomposition */
-    val inboxTasks = remember(context.activeTasks) { context.activeTasks.filter { it.inboxState && it.taskStateOrNull() != TaskState.DONE } }
+    val inboxTasks =
+        remember(context.activeTasks) { context.activeTasks.filter { it.inboxState && it.taskStateOrNull() != TaskState.DONE } }
 
     TasksInboxView(
         inboxEntries = context.inboxEntries,
@@ -120,8 +123,10 @@ private fun renderTasksViewInbox(context: TasksDashboardContext) {
 @Composable
 private fun renderTasksViewToday(context: TasksDashboardContext) {
     val viewModel = context.viewModel
+
     /** Cache filtered incomplete tasks to avoid redundant O(N) traversals during recomposition */
-    val incompleteTasks = remember(context.activeTasks) { context.activeTasks.filter { it.taskStateOrNull() != TaskState.DONE } }
+    val incompleteTasks =
+        remember(context.activeTasks) { context.activeTasks.filter { it.taskStateOrNull() != TaskState.DONE } }
 
     TasksTodayView(
         tasks = incompleteTasks,

@@ -44,6 +44,8 @@ kotlin {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_25)
         }
+
+        withHostTest {}
     }
 
     iosArm64()

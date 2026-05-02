@@ -4,7 +4,6 @@
 
 package com.tajemniktv.tajsos.ui.components.modes
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -54,8 +53,7 @@ fun StateAwareActionsGrid(
             Surface(
                 onClick = {
                     viewModel.clearSearchFilters()
-                    when (title)
-                    {
+                    when (title) {
                         "OVERWHELMED" -> {
                             viewModel.updateSearchFrictionFilter("easy")
                             viewModel.updateSearchEnergyFilter(
@@ -103,4 +101,3 @@ fun StateAwareActionsGrid(
         }
     }
 }
-

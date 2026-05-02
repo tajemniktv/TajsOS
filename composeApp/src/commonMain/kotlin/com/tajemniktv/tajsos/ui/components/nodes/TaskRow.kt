@@ -5,7 +5,6 @@
 package com.tajemniktv.tajsos.ui.components.nodes
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,16 +17,16 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.text.style.TextDecoration
@@ -134,8 +133,7 @@ fun TaskRow(
                                 text = "⚡".repeat(energyLevel),
                                 style = MaterialTheme.typography.labelSmall,
                                 color =
-                                    when (energyLevel)
-                                    {
+                                    when (energyLevel) {
                                         1 -> TajsOSTheme.Success
                                         2 -> TajsOSTheme.Primary
                                         3 -> TajsOSTheme.Error
@@ -147,8 +145,7 @@ fun TaskRow(
                         val friction = node.friction
                         if (friction != null) {
                             val frictionLabel =
-                                when (friction)
-                                {
+                                when (friction) {
                                     "easy" -> "EASY"
                                     "annoying" -> stringResource(Res.string.dash_annoying)
                                     "mentally_heavy" -> stringResource(Res.string.dash_heavy)
@@ -164,8 +161,7 @@ fun TaskRow(
                         }
                         if ((node.status != "active") && (node.status != "done")) {
                             val statusColor =
-                                when (node.status)
-                                {
+                                when (node.status) {
                                     "blocked" -> TajsOSTheme.Error
                                     "on_hold" -> TajsOSTheme.Accent
                                     "someday" -> TajsOSTheme.Muted
@@ -209,4 +205,3 @@ fun TaskRow(
         }
     }
 }
-

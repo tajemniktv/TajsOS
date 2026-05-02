@@ -36,6 +36,7 @@ import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
  * @param viewModel Main view model to collect state.
  * @param onEditNode Callback to open the editor for a node.
  */
+
 /**
  * Central finance entry point that collects system state and coordinates layout.
  *
@@ -63,40 +64,43 @@ fun FinancesRoute(
     val deadlineItems = remember(allNodes) { DomainLensQueries.financeDeadlineItems(allNodes) }
 
     val itemsInView =
-        when (maintenanceView)
-        {
+        when (maintenanceView) {
             FinanceMaintenanceView.Queue -> queue
             FinanceMaintenanceView.Recurring -> recurring
             FinanceMaintenanceView.Overdue -> overdue
         }
 
-    val allItems = remember(queue, recurring, overdue) {
-        (queue + recurring + overdue).distinctBy { it.node.node.id }
-    }
+    val allItems =
+        remember(queue, recurring, overdue) {
+            (queue + recurring + overdue).distinctBy { it.node.node.id }
+        }
 
-    val recentItems = remember(deadlineItems, actionItems, knowledgeItems) {
-        (deadlineItems + actionItems + knowledgeItems)
-            .distinctBy { it.node.id }
-            .sortedByDescending { it.node.updatedAt }
-    }
+    val recentItems =
+        remember(deadlineItems, actionItems, knowledgeItems) {
+            (deadlineItems + actionItems + knowledgeItems)
+                .distinctBy { it.node.id }
+                .sortedByDescending { it.node.updatedAt }
+        }
 
-    val liquidity = remember(recentItems) {
-        recentItems.sumOf {
-            financeSyntheticLiquidity(
-                it.node.title,
+    val liquidity =
+        remember(recentItems) {
+            recentItems.sumOf {
+                financeSyntheticLiquidity(
+                    it.node.title,
+                )
+            }
+        }
+
+    val bars =
+        remember(actionItems, knowledgeItems, deadlineItems, queue, recurring, overdue) {
+            listOf(
+                (actionItems.size + 1).coerceAtLeast(1),
+                (knowledgeItems.size + 1).coerceAtLeast(1),
+                (deadlineItems.size + 1).coerceAtLeast(1),
+                (queue.size + recurring.size + 1).coerceAtLeast(1),
+                (overdue.size + 1).coerceAtLeast(1),
             )
         }
-    }
-
-    val bars = remember(actionItems, knowledgeItems, deadlineItems, queue, recurring, overdue) {
-        listOf(
-            (actionItems.size + 1).coerceAtLeast(1),
-            (knowledgeItems.size + 1).coerceAtLeast(1),
-            (deadlineItems.size + 1).coerceAtLeast(1),
-            (queue.size + recurring.size + 1).coerceAtLeast(1),
-            (overdue.size + 1).coerceAtLeast(1),
-        )
-    }
 
     val confidence = remember(snapshot) { (100 - snapshot.adminDebtMeter / 2).coerceIn(35, 98) }
 

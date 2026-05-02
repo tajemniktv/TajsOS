@@ -205,32 +205,36 @@ fun TactileTextField(
         Box(
             modifier =
                 Modifier
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
         ) {
             if (isFocused) {
                 Box(
-                    modifier = Modifier
-                        .matchParentSize()
-                        .blur(8.dp)
-                        .background(
-                            TajsOSTheme.Primary.copy(alpha = 0.2f),
-                            RoundedCornerShape(TajsOSTheme.RadiusMd)
-                        )
+                    modifier =
+                        Modifier
+                            .matchParentSize()
+                            .blur(8.dp)
+                            .background(
+                                TajsOSTheme.Primary.copy(alpha = 0.2f),
+                                RoundedCornerShape(TajsOSTheme.RadiusMd),
+                            ),
                 )
             }
 
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = 120.dp)
-                    .background(TajsOSTheme.SurfaceLowest, RoundedCornerShape(TajsOSTheme.RadiusMd))
-                    // Obey DESIGN.md: no solid borders. Use GhostBorder.
-                    .border(
-                        1.dp,
-                        if (isFocused) TajsOSTheme.GhostBorder else Color.Transparent,
-                        RoundedCornerShape(TajsOSTheme.RadiusMd)
-                    )
-                    .padding(TajsOSTheme.SpacingMd)
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 120.dp)
+                        .background(
+                            TajsOSTheme.SurfaceLowest,
+                            RoundedCornerShape(TajsOSTheme.RadiusMd),
+                        )
+                        // Obey DESIGN.md: no solid borders. Use GhostBorder.
+                        .border(
+                            1.dp,
+                            if (isFocused) TajsOSTheme.GhostBorder else Color.Transparent,
+                            RoundedCornerShape(TajsOSTheme.RadiusMd),
+                        ).padding(TajsOSTheme.SpacingMd),
             ) {
                 if (value.isEmpty()) {
                     Text(

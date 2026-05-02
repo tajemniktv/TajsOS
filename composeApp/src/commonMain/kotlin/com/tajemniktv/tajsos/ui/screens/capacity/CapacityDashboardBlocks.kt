@@ -4,7 +4,6 @@
 
 package com.tajemniktv.tajsos.ui.screens.capacity
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -152,4 +151,3 @@ internal fun CapacityLayer(
         }
     }
 }
-

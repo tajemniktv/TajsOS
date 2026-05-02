@@ -8,8 +8,7 @@ package com.tajemniktv.tajsos.ui.screens.rules
  * Builds a rules dashboard layout plan based on the active surface.
  */
 fun buildRulesDashboardPlan(surface: RulesDashboardSurface): RulesDashboardPlan =
-    when (surface)
-    {
+    when (surface) {
         RulesDashboardSurface.MOBILE -> {
             RulesDashboardPlan(
                 primary =

@@ -7,7 +7,6 @@ package com.tajemniktv.tajsos.ui.screens.notes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -55,12 +54,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.isNoteItem
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -116,7 +115,6 @@ fun NotesWorkspaceDetail(
     if (current == null) {
         EmptyState(
             message = stringResource(Res.string.notes_empty),
-            fillParent = true,
             showContainer = false,
             description = null,
         )
@@ -172,8 +170,7 @@ fun NotesWorkspaceDetail(
     val linked =
         remember(relations, noteId) {
             relations.mapNotNull { relation ->
-                when (noteId)
-                {
+                when (noteId) {
                     relation.fromNodeId -> relation.toNodeId
                     relation.toNodeId -> relation.fromNodeId
                     else -> null
@@ -521,4 +518,3 @@ private fun SidePanelCard(
         }
     }
 }
-

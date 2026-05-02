@@ -10,8 +10,7 @@ package com.tajemniktv.tajsos.ui.screens.settings
 fun buildSettingsPlan(screenId: String): SettingsDashboardPlan {
     val primary = mutableListOf<SettingsDashboardBlock>()
 
-    when (screenId)
-    {
+    when (screenId) {
         "health" -> primary.add(SettingsDashboardBlock("settings_health"))
         "feature_packs" -> primary.add(SettingsDashboardBlock("settings_feature_packs"))
         "data" -> primary.add(SettingsDashboardBlock("settings_data"))

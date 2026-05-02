@@ -248,4 +248,3 @@ fun NeglectedProjectItem(
         }
     }
 }
-

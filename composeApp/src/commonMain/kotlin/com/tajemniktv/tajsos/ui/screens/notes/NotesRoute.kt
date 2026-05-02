@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
@@ -116,8 +115,7 @@ fun NotesRoute(
                             note.content.lowercase().contains(query) ||
                             note.tags.any { it.lowercase().contains(query) }
                     val matchesFilter =
-                        when (listFilter)
-                        {
+                        when (listFilter) {
                             NotesListFilter.ALL -> !note.isArchived
                             NotesListFilter.PINNED -> !note.isArchived && note.isPinned
                             NotesListFilter.RECENT -> !note.isArchived && (now - note.updatedAt) <= recentWindow
@@ -127,12 +125,11 @@ fun NotesRoute(
                     val matchesDomain = domainFilter == null || note.domain == domainFilter
                     matchesQuery && matchesFilter && matchesDomain
                 }.sortedWith(
-                    when (sortOrder)
-                        {
-                            NotesSortOrder.UPDATED -> compareByDescending<NotesWorkspaceItem> { it.updatedAt }
-                            NotesSortOrder.CREATED -> compareByDescending<NotesWorkspaceItem> { it.createdAt }
-                            NotesSortOrder.ALPHABETICAL -> compareBy { it.title.lowercase() }
-                        },
+                    when (sortOrder) {
+                        NotesSortOrder.UPDATED -> compareByDescending<NotesWorkspaceItem> { it.updatedAt }
+                        NotesSortOrder.CREATED -> compareByDescending<NotesWorkspaceItem> { it.createdAt }
+                        NotesSortOrder.ALPHABETICAL -> compareBy { it.title.lowercase() }
+                    },
                 ).toList()
         }
 
@@ -149,8 +146,7 @@ fun NotesRoute(
                 allRelations
                     .asSequence()
                     .mapNotNull { relation ->
-                        when (selectedNoteId)
-                        {
+                        when (selectedNoteId) {
                             relation.fromNodeId -> nodesById[relation.toNodeId]
                             relation.toNodeId -> nodesById[relation.fromNodeId]
                             else -> null
@@ -168,170 +164,33 @@ fun NotesRoute(
         BoxWithConstraints(
             modifier = Modifier.fillMaxSize(),
         ) {
-        val isNarrow = maxWidth < 960.dp
+            val isNarrow = maxWidth < 960.dp
 
-        fun selectNote(noteId: Long) {
-            selectedNoteId = noteId
-            if (isNarrow) {
-                mobileInDetail = true
-            }
-        }
-
-        fun createNote() {
-            scope.launch {
-                val newId =
-                    viewModel.addNodeForResult(
-                        title = "",
-                        type = "note",
-                        inboxState = false,
-                    )
-                selectedNoteId = newId
-                focusTitleSignal += 1
+            fun selectNote(noteId: Long) {
+                selectedNoteId = noteId
                 if (isNarrow) {
                     mobileInDetail = true
                 }
             }
-        }
 
-        if (isNarrow) {
-            if (!mobileInDetail || selectedNote == null) {
-                NotesListRail(
-                    notes = filteredNotes,
-                    selectedNoteId = selectedNoteId.takeIf { it > 0L },
-                    searchQuery = searchQuery,
-                    activeFilter = listFilter,
-                    activeDomain = domainFilter,
-                    sortOrder = sortOrder,
-                    onCreateNote = { createNote() },
-                    onSearchChange = { searchQuery = it },
-                    onFilterChange = { listFilter = it },
-                    onDomainChange = { domainFilter = it },
-                    onSortOrderChange = { sortOrder = it },
-                    onSelectNote = { selectNote(it) },
-                )
-            } else {
-                Column(
-                    modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
-                    verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        IconButton(onClick = { mobileInDetail = false }) {
-                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
-                        }
+            fun createNote() {
+                scope.launch {
+                    val newId =
+                        viewModel.addNodeForResult(
+                            title = "",
+                            type = "note",
+                            inboxState = false,
+                        )
+                    selectedNoteId = newId
+                    focusTitleSignal += 1
+                    if (isNarrow) {
+                        mobileInDetail = true
                     }
-                    NotesEditorPane(
-                        note = selectedNote,
-                        focusMode = focusMode,
-                        contextPanelVisible = true,
-                        focusTitleSignal = focusTitleSignal,
-                        onTitleChange = { viewModel.updateNode(selectedNote.source.copy(title = it)) },
-                        onContentChange = { viewModel.updateNode(selectedNote.source.copy(content = it)) },
-                        onToggleFavorite = { viewModel.togglePermanentPin(selectedNote.source) },
-                        onArchive = {
-                            viewModel.archiveNode(selectedNote.source)
-                            mobileInDetail = false
-                        },
-                        onToggleFocusMode = { focusMode = !focusMode },
-                        onToggleContextPanel = {},
-                        onDuplicate = {
-                            scope.launch {
-                                val newId =
-                                    viewModel.addNodeForResult(
-                                        title = "${selectedNote.title} (Copy)",
-                                        content = selectedNote.content,
-                                        type = "note",
-                                        inboxState = false,
-                                    )
-                                selectedNoteId = newId
-                                focusTitleSignal += 1
-                            }
-                        },
-                        onDelete = {
-                            viewModel.deleteNodePermanently(selectedNote.source)
-                            mobileInDetail = false
-                        },
-                        modifier = Modifier.fillMaxWidth().height(600.dp),
-                    )
-                    NotesContextPanel(
-                        selectedNote = selectedNote,
-                        relatedNodes = relatedNodes,
-                        attachments = selectedAttachments,
-                        onOpenNode = { id ->
-                            if (allNotes.any { it.id == id }) {
-                                selectNote(id)
-                            } else {
-                                onNavigateToNode(id)
-                            }
-                        },
-                        modifier = Modifier.fillMaxWidth().height(420.dp),
-                    )
                 }
             }
-        } else {
-            if (focusMode) {
-                Row(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalArrangement = Arrangement.Center,
-                ) {
-                    NotesEditorPane(
-                        note = selectedNote,
-                        focusMode = true,
-                        contextPanelVisible = false,
-                        focusTitleSignal = focusTitleSignal,
-                        onTitleChange = { title ->
-                            selectedNote?.let {
-                                viewModel.updateNode(
-                                    it.source.copy(
-                                        title = title,
-                                    ),
-                                )
-                            }
-                        },
-                        onContentChange = { content ->
-                            selectedNote?.let {
-                                viewModel.updateNode(
-                                    it.source.copy(
-                                        content = content,
-                                    ),
-                                )
-                            }
-                        },
-                        onToggleFavorite = { selectedNote?.let { viewModel.togglePermanentPin(it.source) } },
-                        onArchive = { selectedNote?.let { viewModel.archiveNode(it.source) } },
-                        onToggleFocusMode = { focusMode = false },
-                        onToggleContextPanel = {},
-                        onDuplicate = {
-                            selectedNote?.let { item ->
-                                scope.launch {
-                                    val newId =
-                                        viewModel.addNodeForResult(
-                                            title = "${item.title} (Copy)",
-                                            content = item.content,
-                                            type = "note",
-                                            inboxState = false,
-                                        )
-                                    selectedNoteId = newId
-                                    focusTitleSignal += 1
-                                }
-                            }
-                        },
-                        onDelete = {
-                            selectedNote?.let { item ->
-                                viewModel.deleteNodePermanently(item.source)
-                                selectedNoteId = -1L
-                            }
-                        },
-                        modifier = Modifier.widthIn(max = 960.dp).fillMaxSize(),
-                    )
-                }
-            } else {
-                Row(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
-                ) {
+
+            if (isNarrow) {
+                if (!mobileInDetail || selectedNote == null) {
                     NotesListRail(
                         notes = filteredNotes,
                         selectedNoteId = selectedNoteId.takeIf { it > 0L },
@@ -345,19 +204,84 @@ fun NotesRoute(
                         onDomainChange = { domainFilter = it },
                         onSortOrderChange = { sortOrder = it },
                         onSelectNote = { selectNote(it) },
-                        modifier = Modifier.width(330.dp),
                     )
-                    if (allNotes.isEmpty()) {
-                        EmptyState(
-                            message = "No notes",
-                            description = "Create your first note to start building your knowledge workspace.",
-                            modifier = Modifier.weight(1f),
-                        )
-                    } else {
+                } else {
+                    Column(
+                        modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+                        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            IconButton(onClick = { mobileInDetail = false }) {
+                                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
+                            }
+                        }
                         NotesEditorPane(
                             note = selectedNote,
-                            focusMode = false,
-                            contextPanelVisible = contextVisible,
+                            focusMode = focusMode,
+                            contextPanelVisible = true,
+                            focusTitleSignal = focusTitleSignal,
+                            onTitleChange = { viewModel.updateNode(selectedNote.source.copy(title = it)) },
+                            onContentChange = {
+                                viewModel.updateNode(
+                                    selectedNote.source.copy(
+                                        content = it,
+                                    ),
+                                )
+                            },
+                            onToggleFavorite = { viewModel.togglePermanentPin(selectedNote.source) },
+                            onArchive = {
+                                viewModel.archiveNode(selectedNote.source)
+                                mobileInDetail = false
+                            },
+                            onToggleFocusMode = { focusMode = !focusMode },
+                            onToggleContextPanel = {},
+                            onDuplicate = {
+                                scope.launch {
+                                    val newId =
+                                        viewModel.addNodeForResult(
+                                            title = "${selectedNote.title} (Copy)",
+                                            content = selectedNote.content,
+                                            type = "note",
+                                            inboxState = false,
+                                        )
+                                    selectedNoteId = newId
+                                    focusTitleSignal += 1
+                                }
+                            },
+                            onDelete = {
+                                viewModel.deleteNodePermanently(selectedNote.source)
+                                mobileInDetail = false
+                            },
+                            modifier = Modifier.fillMaxWidth().height(600.dp),
+                        )
+                        NotesContextPanel(
+                            selectedNote = selectedNote,
+                            relatedNodes = relatedNodes,
+                            attachments = selectedAttachments,
+                            onOpenNode = { id ->
+                                if (allNotes.any { it.id == id }) {
+                                    selectNote(id)
+                                } else {
+                                    onNavigateToNode(id)
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth().height(420.dp),
+                        )
+                    }
+                }
+            } else {
+                if (focusMode) {
+                    Row(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalArrangement = Arrangement.Center,
+                    ) {
+                        NotesEditorPane(
+                            note = selectedNote,
+                            focusMode = true,
+                            contextPanelVisible = false,
                             focusTitleSignal = focusTitleSignal,
                             onTitleChange = { title ->
                                 selectedNote?.let {
@@ -371,14 +295,16 @@ fun NotesRoute(
                             onContentChange = { content ->
                                 selectedNote?.let {
                                     viewModel.updateNode(
-                                        it.source.copy(content = content),
+                                        it.source.copy(
+                                            content = content,
+                                        ),
                                     )
                                 }
                             },
                             onToggleFavorite = { selectedNote?.let { viewModel.togglePermanentPin(it.source) } },
                             onArchive = { selectedNote?.let { viewModel.archiveNode(it.source) } },
-                            onToggleFocusMode = { focusMode = true },
-                            onToggleContextPanel = { contextVisible = !contextVisible },
+                            onToggleFocusMode = { focusMode = false },
+                            onToggleContextPanel = {},
                             onDuplicate = {
                                 selectedNote?.let { item ->
                                     scope.launch {
@@ -400,27 +326,109 @@ fun NotesRoute(
                                     selectedNoteId = -1L
                                 }
                             },
-                            modifier = Modifier.weight(1f),
+                            modifier = Modifier.widthIn(max = 960.dp).fillMaxSize(),
                         )
                     }
-                    if (contextVisible) {
-                        NotesContextPanel(
-                            selectedNote = selectedNote,
-                            relatedNodes = relatedNodes,
-                            attachments = selectedAttachments,
-                            onOpenNode = { id ->
-                                if (allNotes.any { it.id == id }) {
-                                    selectNote(id)
-                                } else {
-                                    onNavigateToNode(id)
-                                }
-                            },
-                            modifier = Modifier.width(300.dp),
+                } else {
+                    Row(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+                    ) {
+                        NotesListRail(
+                            notes = filteredNotes,
+                            selectedNoteId = selectedNoteId.takeIf { it > 0L },
+                            searchQuery = searchQuery,
+                            activeFilter = listFilter,
+                            activeDomain = domainFilter,
+                            sortOrder = sortOrder,
+                            onCreateNote = { createNote() },
+                            onSearchChange = { searchQuery = it },
+                            onFilterChange = { listFilter = it },
+                            onDomainChange = { domainFilter = it },
+                            onSortOrderChange = { sortOrder = it },
+                            onSelectNote = { selectNote(it) },
+                            modifier = Modifier.width(330.dp),
                         )
+                        if (allNotes.isEmpty()) {
+                            EmptyState(
+                                message = "No notes",
+                                description = "Create your first note to start building your knowledge workspace.",
+                                modifier = Modifier.weight(1f),
+                            )
+                        } else {
+                            NotesEditorPane(
+                                note = selectedNote,
+                                focusMode = false,
+                                contextPanelVisible = contextVisible,
+                                focusTitleSignal = focusTitleSignal,
+                                onTitleChange = { title ->
+                                    selectedNote?.let {
+                                        viewModel.updateNode(
+                                            it.source.copy(
+                                                title = title,
+                                            ),
+                                        )
+                                    }
+                                },
+                                onContentChange = { content ->
+                                    selectedNote?.let {
+                                        viewModel.updateNode(
+                                            it.source.copy(content = content),
+                                        )
+                                    }
+                                },
+                                onToggleFavorite = {
+                                    selectedNote?.let {
+                                        viewModel.togglePermanentPin(
+                                            it.source,
+                                        )
+                                    }
+                                },
+                                onArchive = { selectedNote?.let { viewModel.archiveNode(it.source) } },
+                                onToggleFocusMode = { focusMode = true },
+                                onToggleContextPanel = { contextVisible = !contextVisible },
+                                onDuplicate = {
+                                    selectedNote?.let { item ->
+                                        scope.launch {
+                                            val newId =
+                                                viewModel.addNodeForResult(
+                                                    title = "${item.title} (Copy)",
+                                                    content = item.content,
+                                                    type = "note",
+                                                    inboxState = false,
+                                                )
+                                            selectedNoteId = newId
+                                            focusTitleSignal += 1
+                                        }
+                                    }
+                                },
+                                onDelete = {
+                                    selectedNote?.let { item ->
+                                        viewModel.deleteNodePermanently(item.source)
+                                        selectedNoteId = -1L
+                                    }
+                                },
+                                modifier = Modifier.weight(1f),
+                            )
+                        }
+                        if (contextVisible) {
+                            NotesContextPanel(
+                                selectedNote = selectedNote,
+                                relatedNodes = relatedNodes,
+                                attachments = selectedAttachments,
+                                onOpenNode = { id ->
+                                    if (allNotes.any { it.id == id }) {
+                                        selectNote(id)
+                                    } else {
+                                        onNavigateToNode(id)
+                                    }
+                                },
+                                modifier = Modifier.width(300.dp),
+                            )
+                        }
                     }
                 }
             }
-        }
         }
     }
 }

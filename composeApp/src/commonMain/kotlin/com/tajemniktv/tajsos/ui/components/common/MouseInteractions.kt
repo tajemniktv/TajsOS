@@ -5,14 +5,14 @@
 package com.tajemniktv.tajsos.ui.components.common
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Indication
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.LocalIndication
-import androidx.compose.foundation.Indication
-import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
@@ -169,7 +169,9 @@ private suspend fun AwaitPointerEventScope.handleMouseButtonPress(
                 true
             }
 
-            else -> false
+            else -> {
+                false
+            }
         }
 
     if (consumed) {
@@ -203,7 +205,9 @@ fun Modifier.mouseClickable(
                 this.combinedClickable(
                     enabled = enabled,
                     role = role,
-                    interactionSource = interactionSource ?: remember { MutableInteractionSource() },
+                    interactionSource =
+                        interactionSource
+                            ?: remember { MutableInteractionSource() },
                     indication = indication ?: LocalIndication.current,
                     onClick = { onClick?.invoke() },
                     onLongClick = onLongClick,

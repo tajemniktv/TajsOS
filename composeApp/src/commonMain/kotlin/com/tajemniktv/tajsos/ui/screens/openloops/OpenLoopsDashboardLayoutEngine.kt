@@ -5,8 +5,7 @@
 package com.tajemniktv.tajsos.ui.screens.openloops
 
 fun buildOpenLoopsDashboardPlan(surface: OpenLoopsDashboardSurface): OpenLoopsDashboardPlan =
-    when (surface)
-    {
+    when (surface) {
         OpenLoopsDashboardSurface.MOBILE -> {
             OpenLoopsDashboardPlan(
                 primary =

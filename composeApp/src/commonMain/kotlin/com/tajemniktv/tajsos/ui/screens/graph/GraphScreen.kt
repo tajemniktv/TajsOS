@@ -29,9 +29,11 @@ fun GraphRoute(
     onNavigate: (String) -> Unit,
 ) {
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val surface = if (maxWidth > 900.dp) GraphDashboardSurface.DESKTOP else GraphDashboardSurface.MOBILE
+        val surface =
+            if (maxWidth > 900.dp) GraphDashboardSurface.DESKTOP else GraphDashboardSurface.MOBILE
         val plan = remember(surface) { buildGraphDashboardPlan(surface) }
-        val context = remember(viewModel, onNodeClick) { GraphDashboardContext(viewModel, onNodeClick) }
+        val context =
+            remember(viewModel, onNodeClick) { GraphDashboardContext(viewModel, onNodeClick) }
 
         GraphScreen(
             context = context,

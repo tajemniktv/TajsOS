@@ -55,6 +55,8 @@ kotlin {
         androidResources {
             enable = true
         }
+
+        withHostTest {}
     }
 
     listOf(
@@ -113,10 +115,11 @@ kotlin {
 compose.desktop {
     application {
         mainClass = "com.tajemniktv.tajsos.MainKt"
-        jvmArgs += listOf(
-            "--enable-native-access=ALL-UNNAMED",
-            "--sun-misc-unsafe-memory-access=allow",
-        )
+        jvmArgs +=
+            listOf(
+                "--enable-native-access=ALL-UNNAMED",
+                "--sun-misc-unsafe-memory-access=allow",
+            )
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)

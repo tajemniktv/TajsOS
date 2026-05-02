@@ -317,4 +317,3 @@ private fun renderRulesList(context: RulesDashboardContext) {
         }
     }
 }
-

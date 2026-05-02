@@ -5,8 +5,7 @@
 package com.tajemniktv.tajsos.ui.screens.decisions
 
 fun buildDecisionsDashboardPlan(surface: DecisionsDashboardSurface): DecisionsDashboardPlan =
-    when (surface)
-    {
+    when (surface) {
         DecisionsDashboardSurface.MOBILE -> {
             DecisionsDashboardPlan(
                 primary =

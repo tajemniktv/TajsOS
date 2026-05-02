@@ -348,4 +348,3 @@ private fun StatusChip(
         color = TajsOSTheme.Text,
     )
 }
-

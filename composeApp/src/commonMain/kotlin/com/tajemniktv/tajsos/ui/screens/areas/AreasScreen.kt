@@ -27,9 +27,11 @@ fun AreasRoute(
     onNavigate: (String) -> Unit,
 ) {
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val surface = if (maxWidth > 900.dp) AreasDashboardSurface.DESKTOP else AreasDashboardSurface.MOBILE
+        val surface =
+            if (maxWidth > 900.dp) AreasDashboardSurface.DESKTOP else AreasDashboardSurface.MOBILE
         val plan = remember(surface) { buildAreasDashboardPlan(surface) }
-        val context = remember(viewModel, onNavigate) { AreasDashboardContext(viewModel, onNavigate) }
+        val context =
+            remember(viewModel, onNavigate) { AreasDashboardContext(viewModel, onNavigate) }
 
         AreasScreen(
             context = context,

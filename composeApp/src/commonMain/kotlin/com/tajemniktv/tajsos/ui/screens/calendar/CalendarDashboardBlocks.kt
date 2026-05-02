@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
+import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.main.state.EntryType
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.datetime.DateTimeUnit
@@ -49,7 +50,6 @@ import tajsos.composeapp.generated.resources.cal_agenda_title
 import tajsos.composeapp.generated.resources.pending_nodes_due_soon
 import kotlin.time.Clock
 import kotlin.time.Instant
-import com.tajemniktv.tajsos.ui.components.common.EmptyState
 
 object CalendarDashboardBlocks {
     private val renderers: Map<String, CalendarDashboardBlockRenderer> =

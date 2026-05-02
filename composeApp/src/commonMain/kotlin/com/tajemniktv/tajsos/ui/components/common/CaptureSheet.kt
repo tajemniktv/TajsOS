@@ -231,8 +231,7 @@ fun CaptureSheet(
                     decorationBox = { innerTextField ->
                         if (text.isEmpty()) {
                             val placeholder =
-                                when (selectedType)
-                                {
+                                when (selectedType) {
                                     "project" -> {
                                         stringResource(Res.string.capture_placeholder_project)
                                     }
@@ -316,11 +315,10 @@ fun CaptureSheet(
                             "project", // NON-NLS
                             "area", // NON-NLS
                         ),
-                        key = { it }
+                        key = { it },
                     ) { type ->
                         val typeLabel =
-                            when (type)
-                            {
+                            when (type) {
                                 "inbox" -> stringResource(Res.string.capture_label_capture)
 
                                 // NON-NLS
@@ -350,9 +348,10 @@ fun CaptureSheet(
                 }
             }
 
-            val relevantTemplates = remember(templates, selectedType) {
-                templates.filter { it.nodeType == selectedType }
-            }
+            val relevantTemplates =
+                remember(templates, selectedType) {
+                    templates.filter { it.nodeType == selectedType }
+                }
             if (relevantTemplates.isNotEmpty() && !brainDumpMode) {
                 Text(
                     stringResource(Res.string.capture_use_template),
@@ -518,8 +517,7 @@ fun CaptureSheet(
                             items(listOf("DAILY", "WEEKLY", "MONTHLY"), key = { it }) { interval ->
                                 // NON-NLS
                                 val intervalLabel =
-                                    when (interval)
-                                    {
+                                    when (interval) {
                                         "DAILY" -> stringResource(Res.string.capture_interval_daily)
 
                                         // NON-NLS
@@ -625,8 +623,7 @@ fun CaptureSheet(
                         stringResource(Res.string.capture_save_continue)
                     } else {
                         val typeLabel =
-                            when (selectedType)
-                            {
+                            when (selectedType) {
                                 "task" -> stringResource(Res.string.type_task)
                                 "note" -> stringResource(Res.string.type_note)
                                 "record" -> stringResource(Res.string.type_record)
@@ -644,4 +641,3 @@ fun CaptureSheet(
         }
     }
 }
-

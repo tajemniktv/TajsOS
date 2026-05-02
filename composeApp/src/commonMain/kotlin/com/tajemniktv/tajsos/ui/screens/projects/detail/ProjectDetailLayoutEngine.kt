@@ -8,8 +8,7 @@ package com.tajemniktv.tajsos.ui.screens.projects.detail
  * Builds a project detail layout plan based on the active surface.
  */
 fun buildProjectDetailPlan(surface: ProjectDetailSurface): ProjectDetailPlan =
-    when (surface)
-    {
+    when (surface) {
         ProjectDetailSurface.MOBILE -> {
             ProjectDetailPlan(
                 primary =

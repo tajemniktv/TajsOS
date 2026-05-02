@@ -5,8 +5,7 @@
 package com.tajemniktv.tajsos.ui.screens.protocols
 
 fun buildProtocolsDashboardPlan(surface: ProtocolsDashboardSurface): ProtocolsDashboardPlan =
-    when (surface)
-    {
+    when (surface) {
         ProtocolsDashboardSurface.MOBILE -> {
             ProtocolsDashboardPlan(
                 primary =

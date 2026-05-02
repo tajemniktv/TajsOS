@@ -5,8 +5,7 @@
 package com.tajemniktv.tajsos.ui.screens.insights
 
 fun buildInsightsDashboardPlan(surface: InsightsDashboardSurface): InsightsDashboardPlan =
-    when (surface)
-    {
+    when (surface) {
         InsightsDashboardSurface.MOBILE -> {
             InsightsDashboardPlan(
                 primary =

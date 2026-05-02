@@ -69,8 +69,7 @@ fun buildFinanceDashboardPlan(
         )
     }
 
-    return when (surface)
-    {
+    return when (surface) {
         FinanceDashboardSurface.MOBILE -> {
             FinanceDashboardPlan(
                 primary =

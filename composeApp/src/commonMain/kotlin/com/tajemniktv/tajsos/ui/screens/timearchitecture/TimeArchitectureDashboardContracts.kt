@@ -64,8 +64,7 @@ enum class TimeArchitectureHorizon(
     fun count(snapshot: TimeArchitectureSnapshot): Int = items(snapshot).size
 
     fun items(snapshot: TimeArchitectureSnapshot): List<NodeWithPin> =
-        when (this)
-        {
+        when (this) {
             TODAY -> {
                 snapshot.todayLayer
             }

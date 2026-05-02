@@ -28,8 +28,7 @@ private val desktopPrimaryDefaults =
  * Builds the profile dashboard plan.
  */
 fun buildProfileDashboardPlan(surface: ProfileDashboardSurface): ProfileDashboardPlan =
-    when (surface)
-    {
+    when (surface) {
         ProfileDashboardSurface.MOBILE -> {
             ProfileDashboardPlan(primary = mobileDefaults.map { ProfileDashboardBlock(it) })
         }

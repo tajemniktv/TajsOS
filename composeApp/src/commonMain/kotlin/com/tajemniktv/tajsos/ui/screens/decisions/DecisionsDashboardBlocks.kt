@@ -150,8 +150,7 @@ internal fun DecisionsMainBlock(
             }
         }
 
-        when (selectedTab)
-        {
+        when (selectedTab) {
             0 -> DecisionList(inbox, onEditNode)
             1 -> DecisionList(pending, onEditNode)
             2 -> DecisionList(log, onEditNode)
@@ -198,4 +197,3 @@ fun DecisionList(
         }
     }
 }
-

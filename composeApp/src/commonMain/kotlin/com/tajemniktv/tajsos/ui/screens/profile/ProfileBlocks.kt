@@ -41,9 +41,11 @@ import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.MedicationEntity
 import com.tajemniktv.tajsos.data.UserDisplayNameFormat
 import com.tajemniktv.tajsos.data.resolveDisplayName
+import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.medication_empty_message
 import tajsos.composeapp.generated.resources.profile_bio
 import tajsos.composeapp.generated.resources.profile_birth_date
 import tajsos.composeapp.generated.resources.profile_city
@@ -73,8 +75,6 @@ import tajsos.composeapp.generated.resources.profile_select_avatar
 import tajsos.composeapp.generated.resources.profile_time_zone
 import tajsos.composeapp.generated.resources.profile_unsaved
 import tajsos.composeapp.generated.resources.profile_website
-import tajsos.composeapp.generated.resources.medication_empty_message
-import com.tajemniktv.tajsos.ui.components.common.EmptyState
 
 private val profileBlockRenderers: Map<String, ProfileDashboardBlockRenderer> =
     mapOf(
@@ -336,23 +336,22 @@ private fun renderAboutModuleBlock(context: ProfileScreenContext) {
         ) {
             Text(
                 text =
-                    when
-                        {
-                            context.justSaved -> {
-                                stringResource(Res.string.profile_saved)
-                            }
+                    when {
+                        context.justSaved -> {
+                            stringResource(Res.string.profile_saved)
+                        }
 
-                            context.hasChanges -> {
-                                stringResource(Res.string.profile_unsaved)
-                            }
+                        context.hasChanges -> {
+                            stringResource(Res.string.profile_unsaved)
+                        }
 
-                            else -> {
-                                stringResource(
-                                    Res.string.profile_completion,
-                                    context.completion,
-                                )
-                            }
-                        },
+                        else -> {
+                            stringResource(
+                                Res.string.profile_completion,
+                                context.completion,
+                            )
+                        }
+                    },
                 style = MaterialTheme.typography.labelSmall,
                 color = if (context.justSaved) TajsOSTheme.Primary else TajsOSTheme.Muted,
             )
@@ -595,4 +594,3 @@ private fun MedicationItem(
         }
     }
 }
-

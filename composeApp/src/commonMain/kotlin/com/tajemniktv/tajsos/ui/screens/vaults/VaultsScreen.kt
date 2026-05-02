@@ -844,4 +844,3 @@ private fun formatLocalTime(timestamp: Long): String {
     val minute = local.minute.toString().padStart(2, '0')
     return "$hour:$minute"
 }
-

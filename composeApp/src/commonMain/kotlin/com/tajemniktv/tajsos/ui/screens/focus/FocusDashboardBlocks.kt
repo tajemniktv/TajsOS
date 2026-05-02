@@ -4,7 +4,6 @@
 
 package com.tajemniktv.tajsos.ui.screens.focus
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -161,7 +160,7 @@ internal fun FocusMainBlock(viewModel: MainViewModel) {
                             kotlin.time.Clock.System
                                 .now()
                                 .toEpochMilliseconds() -
-                                    (
+                                (
                                     activeSession?.startedAt
                                         ?: 0L
                                 )

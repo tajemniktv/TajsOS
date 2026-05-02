@@ -76,8 +76,7 @@ fun buildStudyDashboardPlan(
         )
     }
 
-    return when (surface)
-    {
+    return when (surface) {
         StudyDashboardSurface.MOBILE -> {
             StudyDashboardPlan(primary = mobileDefaults.map { StudyDashboardBlock(it) })
         }

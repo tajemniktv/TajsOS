@@ -4,7 +4,6 @@
 
 package com.tajemniktv.tajsos.ui.screens.relationships
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -188,4 +187,3 @@ internal fun PeopleLayer(
         }
     }
 }
-

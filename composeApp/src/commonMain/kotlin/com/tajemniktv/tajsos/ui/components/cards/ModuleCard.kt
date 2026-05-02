@@ -4,7 +4,6 @@
 
 package com.tajemniktv.tajsos.ui.components.cards
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -34,8 +33,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.components.common.GlassMaterial
-import com.tajemniktv.tajsos.ui.components.common.glassContainerColor
 import com.tajemniktv.tajsos.ui.components.common.glassChrome
+import com.tajemniktv.tajsos.ui.components.common.glassContainerColor
 import com.tajemniktv.tajsos.ui.components.common.mouseClickable
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
@@ -57,17 +56,18 @@ fun ModuleCard(
         modifier =
             modifier
                 .graphicsLayer(scaleX = scale, scaleY = scale)
-                .glassChrome(shape = RoundedCornerShape(TajsOSTheme.RadiusMd), material = GlassMaterial.REGULAR)
-                .mouseClickable(
+                .glassChrome(
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+                    material = GlassMaterial.REGULAR,
+                ).mouseClickable(
                     interactionSource = interactionSource,
-                    indication = null,
                     onClick = {
                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                         onClick()
                     },
                     onSecondaryClick = onClick,
                     middleClickFallbackToPrimary = true,
-        ),
+                ),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         color = glassContainerColor(TajsOSTheme.Surface),
         shadowElevation = 2.dp,
@@ -113,4 +113,3 @@ fun ModuleCard(
         }
     }
 }
-

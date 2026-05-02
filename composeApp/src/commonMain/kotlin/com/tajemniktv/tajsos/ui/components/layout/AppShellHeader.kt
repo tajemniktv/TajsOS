@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -54,8 +53,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import com.tajemniktv.tajsos.ui.components.common.GlassMaterial
-import com.tajemniktv.tajsos.ui.components.common.glassContainerColor
 import com.tajemniktv.tajsos.ui.components.common.glassChrome
+import com.tajemniktv.tajsos.ui.components.common.glassContainerColor
 import com.tajemniktv.tajsos.ui.components.common.mouseClickable
 import com.tajemniktv.tajsos.ui.components.notifications.NotificationUiModel
 import com.tajemniktv.tajsos.ui.components.notifications.TajsNotificationWidget
@@ -119,8 +118,7 @@ fun AppShellHeader(
                 .glassChrome(
                     shape = RoundedCornerShape(0.dp),
                     material = GlassMaterial.THICK,
-                )
-                .then(if (!isDesktop) Modifier.statusBarsPadding() else Modifier),
+                ).then(if (!isDesktop) Modifier.statusBarsPadding() else Modifier),
         color = glassContainerColor(TajsOSTheme.SurfaceLow),
         tonalElevation = 0.dp,
         shadowElevation = 0.dp,
@@ -231,7 +229,7 @@ fun HeaderGreeting(
                 color = TajsOSTheme.Primary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
             )
         }
     }
@@ -294,7 +292,14 @@ private fun HeaderBreadcrumbs(breadcrumbs: List<ScreenHeaderBreadcrumb>) {
             Text(
                 text = breadcrumb.label,
                 style = MaterialTheme.typography.labelMedium,
-                color = if (breadcrumb.onClick != null) TajsOSTheme.Text else TajsOSTheme.Muted.copy(alpha = 0.8f),
+                color =
+                    if (breadcrumb.onClick != null) {
+                        TajsOSTheme.Text
+                    } else {
+                        TajsOSTheme.Muted.copy(
+                            alpha = 0.8f,
+                        )
+                    },
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier =
@@ -332,12 +337,13 @@ fun GlobalSearchBar(modifier: Modifier = Modifier) {
                 material = GlassMaterial.THIN,
             ),
         textStyle = MaterialTheme.typography.bodyMedium.copy(color = TajsOSTheme.Text),
-        colors = androidx.compose.material3.OutlinedTextFieldDefaults.colors(
-            unfocusedContainerColor = glassContainerColor(TajsOSTheme.SurfaceHigh.copy(alpha = 0.5f)),
-            focusedContainerColor = glassContainerColor(TajsOSTheme.SurfaceHighest.copy(alpha = 0.7f)),
-            unfocusedBorderColor = Color.Transparent,
-            focusedBorderColor = TajsOSTheme.Primary.copy(alpha = 0.5f),
-        ),
+        colors =
+            androidx.compose.material3.OutlinedTextFieldDefaults.colors(
+                unfocusedContainerColor = glassContainerColor(TajsOSTheme.SurfaceHigh.copy(alpha = 0.5f)),
+                focusedContainerColor = glassContainerColor(TajsOSTheme.SurfaceHighest.copy(alpha = 0.7f)),
+                unfocusedBorderColor = Color.Transparent,
+                focusedBorderColor = TajsOSTheme.Primary.copy(alpha = 0.5f),
+            ),
         placeholder = {
             Text(
                 text = stringResource(Res.string.header_search_placeholder),
@@ -390,7 +396,13 @@ fun HeaderModeSwitcher(
     Box(modifier = modifier) {
         Surface(
             onClick = { onExpandedChange(!expanded) },
-            modifier = Modifier.height(42.dp).glassChrome(shape = RoundedCornerShape(12.dp), material = GlassMaterial.REGULAR),
+            modifier =
+                Modifier
+                    .height(42.dp)
+                    .glassChrome(
+                        shape = RoundedCornerShape(12.dp),
+                        material = GlassMaterial.REGULAR,
+                    ),
             shape = RoundedCornerShape(12.dp),
             color = glassContainerColor(TajsOSTheme.SurfaceHigh),
             tonalElevation = 0.dp,
@@ -409,7 +421,11 @@ fun HeaderModeSwitcher(
                             .background(TajsOSTheme.Success, CircleShape),
                 )
                 Text(
-                    text = stringResource(Res.string.header_mode_label, currentModeLabel.uppercase()),
+                    text =
+                        stringResource(
+                            Res.string.header_mode_label,
+                            currentModeLabel.uppercase(),
+                        ),
                     style = MaterialTheme.typography.labelSmall,
                     color = TajsOSTheme.Text,
                     maxLines = 1,
@@ -474,7 +490,11 @@ fun NotificationsPopover(
 ) {
     Box(modifier = modifier) {
         Surface(
-            modifier = Modifier.glassChrome(shape = RoundedCornerShape(12.dp), material = GlassMaterial.REGULAR),
+            modifier =
+                Modifier.glassChrome(
+                    shape = RoundedCornerShape(12.dp),
+                    material = GlassMaterial.REGULAR,
+                ),
             shape = RoundedCornerShape(12.dp),
             color = glassContainerColor(TajsOSTheme.SurfaceHigh),
             tonalElevation = 0.dp,
@@ -515,7 +535,10 @@ fun NotificationsPopover(
                     modifier =
                         Modifier
                             .padding(top = 48.dp, end = 16.dp)
-                            .glassChrome(shape = RoundedCornerShape(TajsOSTheme.RadiusLg), material = GlassMaterial.THICK),
+                            .glassChrome(
+                                shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
+                                material = GlassMaterial.THICK,
+                            ),
                     shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
                     color = glassContainerColor(TajsOSTheme.SurfaceHighest),
                     tonalElevation = 8.dp,

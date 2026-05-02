@@ -8,8 +8,7 @@ package com.tajemniktv.tajsos.ui.screens.identity
  * Builds an identity dashboard layout plan based on the active surface.
  */
 fun buildIdentityDashboardPlan(surface: IdentityDashboardSurface): IdentityDashboardPlan =
-    when (surface)
-    {
+    when (surface) {
         IdentityDashboardSurface.MOBILE -> {
             IdentityDashboardPlan(
                 primary =

@@ -185,8 +185,7 @@ private fun renderNoteRelationshipInspector(context: NoteDetailContext) {
                             title = relatedNode.title,
                             subtitle = stringResource(Res.string.note_detail_linked_context),
                             icon =
-                                when (relatedNode.type)
-                                {
+                                when (relatedNode.type) {
                                     "project" -> Icons.AutoMirrored.Filled.List
                                     "area" -> Icons.Default.Work
                                     else -> Icons.AutoMirrored.Filled.Article
@@ -203,8 +202,7 @@ private fun renderNoteRelationshipInspector(context: NoteDetailContext) {
                         title = relatedNode.title,
                         subtitle = relation.relationType,
                         icon =
-                            when (relatedNode.type)
-                            {
+                            when (relatedNode.type) {
                                 "task" -> Icons.Default.CheckCircle
                                 "project" -> Icons.AutoMirrored.Filled.List
                                 else -> Icons.AutoMirrored.Filled.Article
@@ -222,8 +220,7 @@ private fun renderNoteStatusCard(context: NoteDetailContext) {
     StatusCard(
         status = context.node.status,
         color =
-            when (context.node.status)
-            {
+            when (context.node.status) {
                 "active" -> TajsOSTheme.Success
                 "done" -> TajsOSTheme.Primary
                 "archived" -> TajsOSTheme.Muted
@@ -308,18 +305,16 @@ private fun renderNoteTaskMetadata(context: NoteDetailContext) {
                             fontSize = 8.sp,
                         )
                         Text(
-                            when (node.energyLevel)
-                                {
-                                    1 -> "LOW"
-                                    2 -> "MED"
-                                    3 -> "HIGH"
-                                    else -> "NOT SET"
-                                },
+                            when (node.energyLevel) {
+                                1 -> "LOW"
+                                2 -> "MED"
+                                3 -> "HIGH"
+                                else -> "NOT SET"
+                            },
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.Bold,
                             color =
-                                when (node.energyLevel)
-                                {
+                                when (node.energyLevel) {
                                     1 -> TajsOSTheme.Success
                                     2 -> TajsOSTheme.Primary
                                     3 -> TajsOSTheme.Error
@@ -987,4 +982,3 @@ private fun renderNoteContentEditor(context: NoteDetailContext) {
         )
     }
 }
-

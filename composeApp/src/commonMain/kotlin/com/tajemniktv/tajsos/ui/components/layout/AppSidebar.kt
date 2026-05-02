@@ -10,10 +10,10 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
+import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -39,9 +39,9 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.FiberManualRecord
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -73,9 +73,9 @@ import com.tajemniktv.tajsos.data.resolveDisplayName
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.SidebarMode
 import com.tajemniktv.tajsos.ui.components.common.GlassMaterial
-import com.tajemniktv.tajsos.ui.components.common.glassContainerColor
-import com.tajemniktv.tajsos.ui.components.common.glassChrome
 import com.tajemniktv.tajsos.ui.components.common.MouseContextMenuHost
+import com.tajemniktv.tajsos.ui.components.common.glassChrome
+import com.tajemniktv.tajsos.ui.components.common.glassContainerColor
 import com.tajemniktv.tajsos.ui.components.common.mouseButtons
 import com.tajemniktv.tajsos.ui.components.common.mouseClickable
 import com.tajemniktv.tajsos.ui.components.common.rememberMouseContextMenuState
@@ -85,10 +85,10 @@ import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.common_collapse
+import tajsos.composeapp.generated.resources.common_expand
 import tajsos.composeapp.generated.resources.common_no_active_mode
 import tajsos.composeapp.generated.resources.common_open
-import tajsos.composeapp.generated.resources.common_expand
-import tajsos.composeapp.generated.resources.common_collapse
 import tajsos.composeapp.generated.resources.sidebar_brand
 import tajsos.composeapp.generated.resources.sidebar_new_entry
 import kotlin.math.roundToInt
@@ -146,7 +146,8 @@ fun AppSidebar(
     val density = LocalDensity.current
 
     LaunchedEffect(expandedWidthDp) {
-        liveExpandedWidthDp = expandedWidthDp.toFloat().coerceIn(MinExpandedSidebarWidthDp, MaxExpandedSidebarWidthDp)
+        liveExpandedWidthDp =
+            expandedWidthDp.toFloat().coerceIn(MinExpandedSidebarWidthDp, MaxExpandedSidebarWidthDp)
     }
 
     LaunchedEffect(showExpandedContent) {
@@ -184,8 +185,7 @@ fun AppSidebar(
                     } else {
                         Modifier.fillMaxWidth()
                     },
-                )
-                .fillMaxHeight()
+                ).fillMaxHeight()
                 .then(
                     if (applyGlass) {
                         Modifier.glassChrome(
@@ -195,8 +195,7 @@ fun AppSidebar(
                     } else {
                         Modifier
                     },
-                )
-                .hoverable(
+                ).hoverable(
                     interactionSource = hoverInteraction,
                     enabled = !forceExpandedPresentation && shellState.sidebarMode == SidebarMode.HOVER_EXPAND,
                 ),
@@ -283,49 +282,49 @@ fun AppSidebar(
 
             if (canResizeDesktopSidebar) {
                 onExpandedWidthCommit?.let { commitSidebarWidth ->
-                val resizeInteraction = remember { MutableInteractionSource() }
-                val isResizeHovered by resizeInteraction.collectIsHoveredAsState()
-                Box(
-                    modifier =
-                        Modifier
-                            .align(Alignment.CenterEnd)
-                            .fillMaxHeight()
-                            .width(10.dp)
-                            .hoverable(interactionSource = resizeInteraction)
-                            .draggable(
-                                orientation = Orientation.Horizontal,
-                                state =
-                                    rememberDraggableState { deltaPx ->
-                                        val deltaDp = with(density) { deltaPx.toDp().value }
-                                        liveExpandedWidthDp =
-                                            (liveExpandedWidthDp + deltaDp)
-                                                .coerceIn(
-                                                    MinExpandedSidebarWidthDp,
-                                                    MaxExpandedSidebarWidthDp,
-                                                )
+                    val resizeInteraction = remember { MutableInteractionSource() }
+                    val isResizeHovered by resizeInteraction.collectIsHoveredAsState()
+                    Box(
+                        modifier =
+                            Modifier
+                                .align(Alignment.CenterEnd)
+                                .fillMaxHeight()
+                                .width(10.dp)
+                                .hoverable(interactionSource = resizeInteraction)
+                                .draggable(
+                                    orientation = Orientation.Horizontal,
+                                    state =
+                                        rememberDraggableState { deltaPx ->
+                                            val deltaDp = with(density) { deltaPx.toDp().value }
+                                            liveExpandedWidthDp =
+                                                (liveExpandedWidthDp + deltaDp)
+                                                    .coerceIn(
+                                                        MinExpandedSidebarWidthDp,
+                                                        MaxExpandedSidebarWidthDp,
+                                                    )
+                                        },
+                                    onDragStopped = {
+                                        commitSidebarWidth(liveExpandedWidthDp.roundToInt())
                                     },
-                                onDragStopped = {
-                                    commitSidebarWidth(liveExpandedWidthDp.roundToInt())
-                                },
-                            ),
-                ) {
-                            if (isResizeHovered) {
-                                Surface(
-                            modifier =
-                                Modifier
-                                    .align(Alignment.Center)
-                                    .width(2.dp)
-                                    .height(48.dp),
-                            color = TajsOSTheme.Primary.copy(alpha = 0.5f),
-                            tonalElevation = 0.dp,
-                            shadowElevation = 0.dp,
-                                ) {}
-                            }
+                                ),
+                    ) {
+                        if (isResizeHovered) {
+                            Surface(
+                                modifier =
+                                    Modifier
+                                        .align(Alignment.Center)
+                                        .width(2.dp)
+                                        .height(48.dp),
+                                color = TajsOSTheme.Primary.copy(alpha = 0.5f),
+                                tonalElevation = 0.dp,
+                                shadowElevation = 0.dp,
+                            ) {}
                         }
                     }
                 }
             }
         }
+    }
 }
 
 /**
@@ -434,127 +433,179 @@ fun ExpandableNavSection(
         },
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
-        SidebarTooltip(enabled = !isExpandedPresentation && !isFlyoutExpanded, text = rootLabel) {
-            Surface(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 10.dp, vertical = 2.dp)
-                        .mouseClickable(
-                            onClick = rootClickAction,
-                            onSecondaryClickAt = { contextMenuState.showAt(it) },
-                            middleClickFallbackToPrimary = true,
-                        ),
-                shape = RoundedCornerShape(10.dp),
-                color =
-                    if (isActiveBranch) {
-                        TajsOSTheme.Primary.copy(alpha = 0.17f)
-                    } else {
-                        Color.Transparent
-                    },
-                tonalElevation = 0.dp,
-                shadowElevation = 0.dp,
+            SidebarTooltip(
+                enabled = !isExpandedPresentation && !isFlyoutExpanded,
+                text = rootLabel,
             ) {
-                Row(
+                Surface(
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .padding(
-                                horizontal = if (isExpandedPresentation) 12.dp else 10.dp,
-                                vertical = if (isExpandedPresentation) 10.dp else 9.dp,
+                            .padding(horizontal = 10.dp, vertical = 2.dp)
+                            .mouseClickable(
+                                onClick = rootClickAction,
+                                onSecondaryClickAt = { contextMenuState.showAt(it) },
+                                middleClickFallbackToPrimary = true,
                             ),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    shape = RoundedCornerShape(10.dp),
+                    color =
+                        if (isActiveBranch) {
+                            TajsOSTheme.Primary.copy(alpha = 0.17f)
+                        } else {
+                            Color.Transparent
+                        },
+                    tonalElevation = 0.dp,
+                    shadowElevation = 0.dp,
                 ) {
-                    Box(
+                    Row(
                         modifier =
                             Modifier
-                                .size(20.dp),
+                                .fillMaxWidth()
+                                .padding(
+                                    horizontal = if (isExpandedPresentation) 12.dp else 10.dp,
+                                    vertical = if (isExpandedPresentation) 10.dp else 9.dp,
+                                ),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
                     ) {
-                        Icon(
-                            imageVector = screen.icon,
-                            contentDescription = rootLabel,
-                            tint = if (isActiveBranch) TajsOSTheme.Primary else TajsOSTheme.Muted,
-                            modifier = Modifier.align(Alignment.Center),
-                        )
-                        if (!isExpandedPresentation && expandable) {
-                            Surface(
-                                shape = CircleShape,
-                                color = if (isActiveBranch) TajsOSTheme.Primary else TajsOSTheme.Muted,
-                                modifier =
-                                    Modifier
-                                        .size(6.dp)
-                                        .align(Alignment.BottomEnd),
-                            ) {}
-                        }
-                    }
-                    AnimatedVisibility(
-                        visible = isExpandedPresentation,
-                        enter = fadeIn(),
-                        exit = fadeOut(),
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
+                        Box(
+                            modifier =
+                                Modifier
+                                    .size(20.dp),
                         ) {
-                            Text(
-                                text = rootLabel,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = if (isActiveBranch) TajsOSTheme.Text else TajsOSTheme.Muted,
-                                fontWeight = if (isActiveBranch) FontWeight.SemiBold else FontWeight.Normal,
-                                modifier = Modifier.weight(1f),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
+                            Icon(
+                                imageVector = screen.icon,
+                                contentDescription = rootLabel,
+                                tint = if (isActiveBranch) TajsOSTheme.Primary else TajsOSTheme.Muted,
+                                modifier = Modifier.align(Alignment.Center),
                             )
-                            if (expandable) {
-                                IconButton(
-                                    onClick = onRootExpandToggle,
-                                    modifier = Modifier.size(28.dp),
-                                ) {
-                                    Icon(
-                                        imageVector =
-                                            if (showChildrenInline) {
-                                                Icons.Default.ArrowDropDown
-                                            } else {
-                                                Icons.AutoMirrored.Filled.ArrowRight
-                                            },
-                                        contentDescription = null,
-                                        tint = TajsOSTheme.Muted,
-                                    )
+                            if (!isExpandedPresentation && expandable) {
+                                Surface(
+                                    shape = CircleShape,
+                                    color = if (isActiveBranch) TajsOSTheme.Primary else TajsOSTheme.Muted,
+                                    modifier =
+                                        Modifier
+                                            .size(6.dp)
+                                            .align(Alignment.BottomEnd),
+                                ) {}
+                            }
+                        }
+                        AnimatedVisibility(
+                            visible = isExpandedPresentation,
+                            enter = fadeIn(),
+                            exit = fadeOut(),
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Text(
+                                    text = rootLabel,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = if (isActiveBranch) TajsOSTheme.Text else TajsOSTheme.Muted,
+                                    fontWeight = if (isActiveBranch) FontWeight.SemiBold else FontWeight.Normal,
+                                    modifier = Modifier.weight(1f),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                                if (expandable) {
+                                    IconButton(
+                                        onClick = onRootExpandToggle,
+                                        modifier = Modifier.size(28.dp),
+                                    ) {
+                                        Icon(
+                                            imageVector =
+                                                if (showChildrenInline) {
+                                                    Icons.Default.ArrowDropDown
+                                                } else {
+                                                    Icons.AutoMirrored.Filled.ArrowRight
+                                                },
+                                            contentDescription = null,
+                                            tint = TajsOSTheme.Muted,
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
+
+            if (!isExpandedPresentation && expandable) {
+                DropdownMenu(
+                    expanded = isFlyoutExpanded,
+                    onDismissRequest = onDismissFlyout,
+                ) {
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = rootLabel,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = screen.icon,
+                                contentDescription = null,
+                            )
+                        },
+                        onClick = {
+                            onDismissFlyout()
+                            onRootNavigate()
+                        },
+                    )
+                    HorizontalDivider(color = TajsOSTheme.GhostBorder)
+                    children.forEach { child ->
+                        val isActiveChild =
+                            isChildActive(
+                                root = screen,
+                                child = child,
+                                currentScreen = currentScreen,
+                                currentRootScreen = currentRootScreen,
+                                activeTasksTab = activeTasksTab,
+                            )
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    text = stringResource(child.label),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = sidebarScreenIcon(child),
+                                    contentDescription = null,
+                                )
+                            },
+                            trailingIcon = {
+                                if (isActiveChild) {
+                                    Icon(
+                                        imageVector = Icons.Default.FiberManualRecord,
+                                        contentDescription = null,
+                                        tint = TajsOSTheme.Primary,
+                                        modifier = Modifier.size(10.dp),
+                                    )
+                                }
+                            },
+                            onClick = {
+                                onDismissFlyout()
+                                onChildNavigate(child)
+                            },
+                        )
+                    }
+                }
+            }
         }
 
-        if (!isExpandedPresentation && expandable) {
-            DropdownMenu(
-                expanded = isFlyoutExpanded,
-                onDismissRequest = onDismissFlyout,
+        AnimatedVisibility(visible = showChildrenInline, enter = fadeIn(), exit = fadeOut()) {
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(start = 34.dp, end = 10.dp, top = 6.dp),
+                verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
-                DropdownMenuItem(
-                    text = {
-                        Text(
-                            text = rootLabel,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = screen.icon,
-                            contentDescription = null,
-                        )
-                    },
-                    onClick = {
-                        onDismissFlyout()
-                        onRootNavigate()
-                    },
-                )
-                HorizontalDivider(color = TajsOSTheme.GhostBorder)
                 children.forEach { child ->
+                    val childContextMenuState = rememberMouseContextMenuState()
                     val isActiveChild =
                         isChildActive(
                             root = screen,
@@ -563,120 +614,71 @@ fun ExpandableNavSection(
                             currentRootScreen = currentRootScreen,
                             activeTasksTab = activeTasksTab,
                         )
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                text = stringResource(child.label),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
+                    MouseContextMenuHost(
+                        state = childContextMenuState,
+                        modifier = Modifier.fillMaxWidth(),
+                        menuContent = {
+                            DropdownMenuItem(
+                                text = { Text(text = stringResource(Res.string.common_open)) },
+                                onClick = {
+                                    childContextMenuState.dismiss()
+                                    onChildNavigate(child)
+                                },
                             )
                         },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = sidebarScreenIcon(child),
-                                contentDescription = null,
-                            )
-                        },
-                        trailingIcon = {
-                            if (isActiveChild) {
-                                Icon(
-                                    imageVector = Icons.Default.FiberManualRecord,
-                                    contentDescription = null,
-                                    tint = TajsOSTheme.Primary,
-                                    modifier = Modifier.size(10.dp),
-                                )
-                            }
-                        },
-                        onClick = {
-                            onDismissFlyout()
-                            onChildNavigate(child)
-                        },
-                    )
-                }
-            }
-        }
-    }
-
-    AnimatedVisibility(visible = showChildrenInline, enter = fadeIn(), exit = fadeOut()) {
-        Column(
-            modifier = Modifier.fillMaxWidth().padding(start = 34.dp, end = 10.dp, top = 6.dp),
-            verticalArrangement = Arrangement.spacedBy(2.dp),
-        ) {
-            children.forEach { child ->
-                val childContextMenuState = rememberMouseContextMenuState()
-                val isActiveChild =
-                    isChildActive(
-                        root = screen,
-                        child = child,
-                        currentScreen = currentScreen,
-                        currentRootScreen = currentRootScreen,
-                        activeTasksTab = activeTasksTab,
-                    )
-                MouseContextMenuHost(
-                    state = childContextMenuState,
-                    modifier = Modifier.fillMaxWidth(),
-                    menuContent = {
-                        DropdownMenuItem(
-                            text = { Text(text = stringResource(Res.string.common_open)) },
-                            onClick = {
-                                childContextMenuState.dismiss()
-                                onChildNavigate(child)
-                            },
-                        )
-                    },
-                ) {
-                    Surface(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .mouseClickable(
-                                    onClick = { onChildNavigate(child) },
-                                    onSecondaryClickAt = { childContextMenuState.showAt(it) },
-                                    middleClickFallbackToPrimary = true,
-                                ),
-                        color =
-                            if (isActiveChild) {
-                                TajsOSTheme.Primary.copy(alpha = 0.12f)
-                            } else {
-                                Color.Transparent
-                            },
-                        shape = RoundedCornerShape(8.dp),
-                        tonalElevation = 0.dp,
-                        shadowElevation = 0.dp,
                     ) {
-                        Row(
+                        Surface(
                             modifier =
                                 Modifier
                                     .fillMaxWidth()
-                                    .padding(horizontal = 10.dp, vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    .mouseClickable(
+                                        onClick = { onChildNavigate(child) },
+                                        onSecondaryClickAt = { childContextMenuState.showAt(it) },
+                                        middleClickFallbackToPrimary = true,
+                                    ),
+                            color =
+                                if (isActiveChild) {
+                                    TajsOSTheme.Primary.copy(alpha = 0.12f)
+                                } else {
+                                    Color.Transparent
+                                },
+                            shape = RoundedCornerShape(8.dp),
+                            tonalElevation = 0.dp,
+                            shadowElevation = 0.dp,
                         ) {
-                            Icon(
-                                imageVector = sidebarScreenIcon(child),
-                                contentDescription = null,
-                                tint =
-                                    if (isActiveChild) {
-                                        TajsOSTheme.Primary
-                                    } else {
-                                        TajsOSTheme.Muted.copy(alpha = 0.75f)
-                                    },
-                                modifier = Modifier.size(14.dp),
-                            )
-                            Text(
-                                text = stringResource(child.label),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = if (isActiveChild) TajsOSTheme.Text else TajsOSTheme.Muted,
-                                fontWeight = if (isActiveChild) FontWeight.SemiBold else FontWeight.Normal,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                            )
+                            Row(
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 10.dp, vertical = 8.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            ) {
+                                Icon(
+                                    imageVector = sidebarScreenIcon(child),
+                                    contentDescription = null,
+                                    tint =
+                                        if (isActiveChild) {
+                                            TajsOSTheme.Primary
+                                        } else {
+                                            TajsOSTheme.Muted.copy(alpha = 0.75f)
+                                        },
+                                    modifier = Modifier.size(14.dp),
+                                )
+                                Text(
+                                    text = stringResource(child.label),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = if (isActiveChild) TajsOSTheme.Text else TajsOSTheme.Muted,
+                                    fontWeight = if (isActiveChild) FontWeight.SemiBold else FontWeight.Normal,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            }
                         }
                     }
                 }
             }
         }
-    }
     }
 }
 
@@ -952,7 +954,8 @@ private fun Screen.toTasksTabOrNull(): TasksTab? =
 
 private fun sidebarChildren(screen: Screen): List<Screen> =
     screen.children.filterNot { child ->
-        val isDefaultTasksChild = screen == Screen.Tasks && child.toTasksTabOrNull() == TasksTab.COMMAND
+        val isDefaultTasksChild =
+            screen == Screen.Tasks && child.toTasksTabOrNull() == TasksTab.COMMAND
         val isDefaultSettingsChild =
             screen == Screen.Settings &&
                 child is Screen.Sub &&

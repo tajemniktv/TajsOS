@@ -5,7 +5,7 @@
 package com.tajemniktv.tajsos.ui.screens.notes
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,20 +17,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.IconButton
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -42,17 +41,17 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.tajemniktv.tajsos.ui.components.common.MouseContextMenuHost
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
+import com.tajemniktv.tajsos.ui.components.common.MouseContextMenuHost
 import com.tajemniktv.tajsos.ui.components.common.mouseClickable
 import com.tajemniktv.tajsos.ui.components.common.rememberMouseContextMenuState
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import kotlin.time.Instant
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.common_open
+import kotlin.time.Instant
 
 /**
  * Notes workspace left rail with creation, search, filtering, sorting, and note list navigation.
@@ -145,7 +144,10 @@ private fun NotesFilterRow(
     activeFilter: NotesListFilter,
     onFilterChange: (NotesListFilter) -> Unit,
 ) {
-    Row(horizontalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.horizontalScroll(rememberScrollState())) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        modifier = Modifier.horizontalScroll(rememberScrollState()),
+    ) {
         listOf(
             NotesListFilter.ALL to "All",
             NotesListFilter.PINNED to "Pinned",
@@ -167,7 +169,10 @@ private fun NotesDomainRow(
     activeDomain: NotesDomain?,
     onDomainChange: (NotesDomain?) -> Unit,
 ) {
-    Row(horizontalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.horizontalScroll(rememberScrollState())) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        modifier = Modifier.horizontalScroll(rememberScrollState()),
+    ) {
         listOf(
             null to "Any",
             NotesDomain.PERSONAL to "Personal",
@@ -189,7 +194,10 @@ private fun NotesSortPicker(
     sortOrder: NotesSortOrder,
     onSortOrderChange: (NotesSortOrder) -> Unit,
 ) {
-    Row(horizontalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.horizontalScroll(rememberScrollState())) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        modifier = Modifier.horizontalScroll(rememberScrollState()),
+    ) {
         listOf(
             NotesSortOrder.UPDATED to "Updated",
             NotesSortOrder.CREATED to "Created",
@@ -320,8 +328,7 @@ private fun NotesTokenButton(
                     onClick = onClick,
                     onSecondaryClick = onClick,
                     middleClickFallbackToPrimary = true,
-                )
-                .padding(horizontal = 10.dp, vertical = 6.dp),
+                ).padding(horizontal = 10.dp, vertical = 6.dp),
     ) {
         Text(
             text = label,
@@ -338,26 +345,25 @@ private fun relativeDateLabel(epochMillis: Long): String {
             .toEpochMilliseconds()
     val day = 24 * 60 * 60 * 1000L
     val diff = (now - epochMillis).coerceAtLeast(0L)
-    return when
-        {
-            diff < day -> {
-                "Today"
-            }
+    return when {
+        diff < day -> {
+            "Today"
+        }
 
-            diff < day * 2 -> {
-                "Yesterday"
-            }
+        diff < day * 2 -> {
+            "Yesterday"
+        }
 
-            diff < day * 7 -> {
-                "${diff / day}d ago"
-            }
+        diff < day * 7 -> {
+            "${diff / day}d ago"
+        }
 
-            else -> {
-                val dt =
-                    Instant
-                        .fromEpochMilliseconds(epochMillis)
-                        .toLocalDateTime(TimeZone.currentSystemDefault())
-                "${dt.date}"
+        else -> {
+            val dt =
+                Instant
+                    .fromEpochMilliseconds(epochMillis)
+                    .toLocalDateTime(TimeZone.currentSystemDefault())
+            "${dt.date}"
         }
     }
 }

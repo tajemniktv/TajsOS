@@ -86,16 +86,52 @@ fun EmptyState(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier =
                     Modifier
-                        .defaultMinSize(minHeight = if (fillParent) 200.dp else if (showContainer) 120.dp else 80.dp)
-                        .padding(if (fillParent) TajsOSTheme.SpacingXl else if (showContainer) TajsOSTheme.SpacingLg else TajsOSTheme.SpacingMd),
+                        .defaultMinSize(
+                            minHeight =
+                                if (fillParent) {
+                                    200.dp
+                                } else if (showContainer) {
+                                    120.dp
+                                } else {
+                                    80.dp
+                                },
+                        ).padding(
+                            if (fillParent) {
+                                TajsOSTheme.SpacingXl
+                            } else if (showContainer) {
+                                TajsOSTheme.SpacingLg
+                            } else {
+                                TajsOSTheme.SpacingMd
+                            },
+                        ),
             ) {
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
-                    modifier = Modifier.size(if (fillParent) 48.dp else if (showContainer) 40.dp else 32.dp),
+                    modifier =
+                        Modifier.size(
+                            if (fillParent) {
+                                48.dp
+                            } else if (showContainer) {
+                                40.dp
+                            } else {
+                                32.dp
+                            },
+                        ),
                     tint = TajsOSTheme.Primary.copy(alpha = alpha),
                 )
-Spacer(modifier = Modifier.height(if (fillParent) TajsOSTheme.SpacingMd else if (showContainer) TajsOSTheme.SpacingSm else TajsOSTheme.SpacingXs))
+                Spacer(
+                    modifier =
+                        Modifier.height(
+                            if (fillParent) {
+                                TajsOSTheme.SpacingMd
+                            } else if (showContainer) {
+                                TajsOSTheme.SpacingSm
+                            } else {
+                                TajsOSTheme.SpacingXs
+                            },
+                        ),
+                )
                 Text(
                     text = message,
                     style = MaterialTheme.typography.bodyMedium,

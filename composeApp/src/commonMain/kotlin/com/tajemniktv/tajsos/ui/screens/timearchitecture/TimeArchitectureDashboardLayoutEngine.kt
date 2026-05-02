@@ -8,8 +8,7 @@ package com.tajemniktv.tajsos.ui.screens.timearchitecture
  * Builds a time architecture dashboard layout plan based on the active surface.
  */
 fun buildTimeArchitectureDashboardPlan(surface: TimeArchitectureDashboardSurface): TimeArchitectureDashboardPlan =
-    when (surface)
-    {
+    when (surface) {
         TimeArchitectureDashboardSurface.MOBILE -> {
             TimeArchitectureDashboardPlan(
                 primary =

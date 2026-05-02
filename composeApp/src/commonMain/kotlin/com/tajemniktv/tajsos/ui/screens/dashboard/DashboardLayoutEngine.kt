@@ -360,8 +360,7 @@ fun buildDashboardLayoutPlan(
             surface,
             enabledPacks,
         )
-    return when (surface)
-    {
+    return when (surface) {
         DashboardSurface.MOBILE -> {
             val fallback =
                 normalizeBlocks(

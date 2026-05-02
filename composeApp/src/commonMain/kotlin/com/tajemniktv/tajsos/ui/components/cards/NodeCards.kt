@@ -40,8 +40,8 @@ import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.ui.components.common.GlassMaterial
 import com.tajemniktv.tajsos.ui.components.common.MouseContextMenuHost
-import com.tajemniktv.tajsos.ui.components.common.glassContainerColor
 import com.tajemniktv.tajsos.ui.components.common.glassChrome
+import com.tajemniktv.tajsos.ui.components.common.glassContainerColor
 import com.tajemniktv.tajsos.ui.components.common.mouseClickable
 import com.tajemniktv.tajsos.ui.components.common.rememberMouseContextMenuState
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
@@ -87,7 +87,7 @@ fun NodeCard(
     val contextMenuState = rememberMouseContextMenuState()
     Surface(
         modifier = modifier.fillMaxWidth(),
-        color = androidx.compose.ui.graphics.Color.Transparent,
+        color = Color.Transparent,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
     ) {
         MouseContextMenuHost(
@@ -107,8 +107,10 @@ fun NodeCard(
                     Modifier
                         .fillMaxWidth()
                         .graphicsLayer(scaleX = animatedScale, scaleY = animatedScale)
-                        .glassChrome(shape = RoundedCornerShape(TajsOSTheme.RadiusMd), material = GlassMaterial.REGULAR)
-                        .mouseClickable(
+                        .glassChrome(
+                            shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+                            material = GlassMaterial.REGULAR,
+                        ).mouseClickable(
                             onClick = onClick,
                             onLongClick = onLongClick,
                             onSecondaryClickAt = { contextMenuState.showAt(it) },
@@ -153,8 +155,7 @@ fun NodeCard(
                         }
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             val typeLabel =
-                                when (node.type)
-                                {
+                                when (node.type) {
                                     "task" -> stringResource(Res.string.type_task)
                                     "note" -> stringResource(Res.string.type_note)
                                     "record" -> stringResource(Res.string.type_record)
@@ -198,7 +199,10 @@ fun NodeCard(
                                 )
                             }
                             val staleTime =
-                                Clock.System.now().toEpochMilliseconds() - (14 * 24 * 60 * 60 * 1000L)
+                                Clock.System
+                                    .now()
+                                    .toEpochMilliseconds() -
+                                    (14 * 24 * 60 * 60 * 1000L)
                             if (node.status == "active" && node.updatedAt < staleTime) {
                                 Spacer(Modifier.width(8.dp))
                                 Text(
@@ -213,8 +217,7 @@ fun NodeCard(
                                 NodeBadge(
                                     text = "⚡".repeat(energyLevel),
                                     color =
-                                        when (energyLevel)
-                                        {
+                                        when (energyLevel) {
                                             1 -> TajsOSTheme.Success
                                             2 -> TajsOSTheme.Primary
                                             3 -> TajsOSTheme.Error
@@ -226,21 +229,22 @@ fun NodeCard(
                             if (friction != null) {
                                 Spacer(Modifier.width(8.dp))
                                 val frictionLabel =
-                                    when (friction)
-                                    {
+                                    when (friction) {
                                         "easy" -> "EASY"
                                         "annoying" -> "ANNOYING"
                                         "mentally_heavy" -> "HEAVY"
                                         "unclear" -> "UNCLEAR"
                                         else -> friction
                                     }
-                                NodeBadge(text = frictionLabel.uppercase(), color = TajsOSTheme.Primary)
+                                NodeBadge(
+                                    text = frictionLabel.uppercase(),
+                                    color = TajsOSTheme.Primary,
+                                )
                             }
                             if (node.status != "active" && node.status != "done") {
                                 Spacer(Modifier.width(8.dp))
                                 val statusColor =
-                                    when (node.status)
-                                    {
+                                    when (node.status) {
                                         "blocked" -> TajsOSTheme.Error
                                         "on_hold" -> TajsOSTheme.Accent
                                         "someday" -> TajsOSTheme.Muted

@@ -86,8 +86,7 @@ private fun renderReviewSelector(context: ReviewDashboardContext) {
         selectedOption = null,
         onSelect = { context.onReviewTypeSelect(it) },
         optionName = {
-            when (it)
-            {
+            when (it) {
                 "daily" -> dailyLabel
                 "weekly" -> weeklyLabel
                 "monthly" -> monthlyLabel
@@ -95,8 +94,7 @@ private fun renderReviewSelector(context: ReviewDashboardContext) {
             }
         },
         optionIcon = {
-            when (it)
-            {
+            when (it) {
                 "daily" -> Icons.Default.WbSunny
                 "weekly" -> Icons.Default.DateRange
                 "monthly" -> Icons.Default.CalendarMonth
@@ -134,8 +132,7 @@ private fun renderReviewFlow(context: ReviewDashboardContext) {
         Spacer(Modifier.height(16.dp))
 
         Box(Modifier.weight(1f)) {
-            when (steps[currentStep])
-            {
+            when (steps[currentStep]) {
                 Res.string.review_step_mood_energy -> {
                     Column {
                         Text(stringResource(Res.string.review_prompt_how_feeling))

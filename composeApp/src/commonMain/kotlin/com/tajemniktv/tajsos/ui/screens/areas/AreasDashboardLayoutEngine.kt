@@ -5,8 +5,7 @@
 package com.tajemniktv.tajsos.ui.screens.areas
 
 fun buildAreasDashboardPlan(surface: AreasDashboardSurface): AreasDashboardPlan =
-    when (surface)
-    {
+    when (surface) {
         AreasDashboardSurface.MOBILE -> AreasDashboardPlan(primary = listOf(AreasDashboardBlock("areas_main")))
         AreasDashboardSurface.DESKTOP -> AreasDashboardPlan(primary = listOf(AreasDashboardBlock("areas_main")))
     }

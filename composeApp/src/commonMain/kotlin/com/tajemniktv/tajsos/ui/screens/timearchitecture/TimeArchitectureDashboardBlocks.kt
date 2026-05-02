@@ -4,7 +4,6 @@
 
 package com.tajemniktv.tajsos.ui.screens.timearchitecture
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.TimeArchitectureSnapshot
+import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.components.common.mouseClickable
 import com.tajemniktv.tajsos.ui.screens.formatProtocolTimestamp
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
@@ -39,30 +39,29 @@ import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.time_architecture_active_label
 import tajsos.composeapp.generated.resources.time_architecture_active_window
-import tajsos.composeapp.generated.resources.time_architecture_daily_detail
-import tajsos.composeapp.generated.resources.time_architecture_daily_startup
+import tajsos.composeapp.generated.resources.time_architecture_add_anchor
 import tajsos.composeapp.generated.resources.time_architecture_all_horizons
 import tajsos.composeapp.generated.resources.time_architecture_current_horizon
+import tajsos.composeapp.generated.resources.time_architecture_daily_detail
+import tajsos.composeapp.generated.resources.time_architecture_daily_startup
 import tajsos.composeapp.generated.resources.time_architecture_desc
 import tajsos.composeapp.generated.resources.time_architecture_exam_pressure
 import tajsos.composeapp.generated.resources.time_architecture_map_title
 import tajsos.composeapp.generated.resources.time_architecture_monthly_detail
 import tajsos.composeapp.generated.resources.time_architecture_monthly_reset
-import tajsos.composeapp.generated.resources.time_architecture_no_items
 import tajsos.composeapp.generated.resources.time_architecture_no_anchor_markers
+import tajsos.composeapp.generated.resources.time_architecture_no_items
 import tajsos.composeapp.generated.resources.time_architecture_not_set
 import tajsos.composeapp.generated.resources.time_architecture_reserve_label
 import tajsos.composeapp.generated.resources.time_architecture_reserve_tracked
 import tajsos.composeapp.generated.resources.time_architecture_reserve_window
 import tajsos.composeapp.generated.resources.time_architecture_resets_cadence
+import tajsos.composeapp.generated.resources.time_architecture_run_monthly_reset
 import tajsos.composeapp.generated.resources.time_architecture_status_summary
 import tajsos.composeapp.generated.resources.time_architecture_temporal_anchors
 import tajsos.composeapp.generated.resources.time_architecture_title
 import tajsos.composeapp.generated.resources.time_architecture_weekly_alignment
 import tajsos.composeapp.generated.resources.time_architecture_weekly_detail
-import tajsos.composeapp.generated.resources.time_architecture_add_anchor
-import tajsos.composeapp.generated.resources.time_architecture_run_monthly_reset
-import com.tajemniktv.tajsos.ui.components.common.EmptyState
 
 object TimeArchitectureDashboardBlocks {
     private val renderers: Map<String, TimeArchitectureDashboardBlockRenderer> =
@@ -288,13 +287,13 @@ private fun renderTimeCadenceAnchors(context: TimeArchitectureDashboardContext) 
         TimeArchitectureCadenceCard(
             modifier = Modifier.weight(1f),
             snapshot = snapshot,
-            onRunMonthlyReset = { viewModel.runMonthlyReset() }
+            onRunMonthlyReset = { viewModel.runMonthlyReset() },
         )
 
         TimeArchitectureAnchorsCard(
             modifier = Modifier.weight(1f),
             snapshot = snapshot,
-            onAddAnchor = { viewModel.addLifePeriodMarker("New period marker") }
+            onAddAnchor = { viewModel.addLifePeriodMarker("New period marker") },
         )
     }
 }
@@ -303,7 +302,7 @@ private fun renderTimeCadenceAnchors(context: TimeArchitectureDashboardContext) 
 private fun TimeArchitectureCadenceCard(
     modifier: Modifier = Modifier,
     snapshot: TimeArchitectureSnapshot,
-    onRunMonthlyReset: () -> Unit
+    onRunMonthlyReset: () -> Unit,
 ) {
     Surface(
         modifier = modifier,
@@ -321,12 +320,20 @@ private fun TimeArchitectureCadenceCard(
             )
             CadenceRow(
                 title = stringResource(Res.string.time_architecture_daily_startup),
-                detail = stringResource(Res.string.time_architecture_daily_detail, snapshot.todayLayer.size),
+                detail =
+                    stringResource(
+                        Res.string.time_architecture_daily_detail,
+                        snapshot.todayLayer.size,
+                    ),
                 status = "Active",
             )
             CadenceRow(
                 title = stringResource(Res.string.time_architecture_weekly_alignment),
-                detail = stringResource(Res.string.time_architecture_weekly_detail, snapshot.weekLayer.size),
+                detail =
+                    stringResource(
+                        Res.string.time_architecture_weekly_detail,
+                        snapshot.weekLayer.size,
+                    ),
                 status = "Live",
             )
             CadenceRow(
@@ -351,7 +358,7 @@ private fun TimeArchitectureCadenceCard(
 private fun TimeArchitectureAnchorsCard(
     modifier: Modifier = Modifier,
     snapshot: TimeArchitectureSnapshot,
-    onAddAnchor: () -> Unit
+    onAddAnchor: () -> Unit,
 ) {
     Surface(
         modifier = modifier,
@@ -650,4 +657,3 @@ private fun TimeArchitectureSnapshot.buildAnchorRows(): List<AnchorMarkerRow> {
         }
     return (countdownRows + markerRows).distinctBy { it.title + it.coordinate }
 }
-

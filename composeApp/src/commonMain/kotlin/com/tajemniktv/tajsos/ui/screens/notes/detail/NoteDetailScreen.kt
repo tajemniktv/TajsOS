@@ -4,7 +4,6 @@
 
 package com.tajemniktv.tajsos.ui.screens.notes.detail
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,8 +11,8 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Article
@@ -99,10 +98,9 @@ import com.tajemniktv.tajsos.data.itemKindOrNull
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.common.SelectorDialog
-import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderController
 import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderModel
-import com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior
 import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
+import com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior
 import com.tajemniktv.tajsos.ui.components.screen.screenBreadcrumbs
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.coroutines.launch
@@ -371,8 +369,7 @@ fun NoteDetailScreen(
             },
             optionName = { it.node.title },
             optionIcon = {
-                when (it.node.type)
-                {
+                when (it.node.type) {
                     "task" -> Icons.Default.CheckCircle
                     "project" -> Icons.AutoMirrored.Filled.List
                     "area" -> Icons.Default.Work
@@ -397,8 +394,7 @@ fun NoteDetailScreen(
             },
             optionName = { it },
             optionIcon = {
-                when (it)
-                {
+                when (it) {
                     "active" -> Icons.Default.PlayArrow
                     "done" -> Icons.Default.Check
                     "archived" -> Icons.Default.Archive
@@ -474,8 +470,7 @@ fun NoteDetailScreen(
             },
             optionName = { it.first },
             optionIcon = {
-                when (it.first)
-                {
+                when (it.first) {
                     "Today" -> Icons.Default.Today
                     "Tomorrow" -> Icons.Default.Event
                     "1 Week" -> Icons.AutoMirrored.Filled.NextPlan
@@ -508,8 +503,7 @@ fun NoteDetailScreen(
             },
             optionName = { it.first },
             optionIcon = {
-                when (it.first)
-                {
+                when (it.first) {
                     "1 Hour" -> Icons.Default.Timer
                     "Tomorrow" -> Icons.Default.NotificationsActive
                     "Next Week" -> Icons.AutoMirrored.Filled.EventNote
@@ -591,8 +585,7 @@ fun NoteDetailScreen(
             },
             optionName = { it },
             optionIcon = {
-                when (it)
-                {
+                when (it) {
                     "thought" -> Icons.Default.Psychology
                     "lecture" -> Icons.Default.School
                     "research" -> Icons.Default.Search
@@ -627,8 +620,7 @@ fun NoteDetailScreen(
             },
             optionName = { it },
             optionIcon = {
-                when (it)
-                {
+                when (it) {
                     "raw" -> Icons.AutoMirrored.Filled.Article
                     "highlighted" -> Icons.Default.FormatQuote
                     "distilled" -> Icons.Default.FilterAlt
@@ -654,8 +646,7 @@ fun NoteDetailScreen(
             },
             optionName = { it },
             optionIcon = {
-                when (it)
-                {
+                when (it) {
                     "book" -> Icons.AutoMirrored.Filled.MenuBook
                     "article" -> Icons.AutoMirrored.Filled.Article
                     "podcast" -> Icons.Default.Podcasts
@@ -716,8 +707,7 @@ fun NoteDetailScreen(
                 showEnergyDialog = false
             },
             optionName = {
-                when (it)
-                {
+                when (it) {
                     1 -> "LOW"
                     2 -> "MEDIUM"
                     3 -> "HIGH"
@@ -725,8 +715,7 @@ fun NoteDetailScreen(
                 }
             },
             optionIcon = {
-                when (it)
-                {
+                when (it) {
                     1 -> Icons.Default.Battery1Bar
                     2 -> Icons.Default.Battery4Bar
                     3 -> Icons.Default.BatteryFull
@@ -751,8 +740,7 @@ fun NoteDetailScreen(
             },
             optionName = { it.replace("_", " ") },
             optionIcon = {
-                when (it)
-                {
+                when (it) {
                     "easy" -> Icons.Default.Bolt
                     "annoying" -> Icons.Default.SentimentDissatisfied
                     "mentally_heavy" -> Icons.Default.Psychology
@@ -841,8 +829,7 @@ fun NoteDetailScreen(
             selectedOption = null,
             onSelect = { action ->
                 showMoreDialog = false
-                when (action.id)
-                {
+                when (action.id) {
                     "atomic" -> {
                         isAtomicMode = !isAtomicMode
                     }
@@ -882,8 +869,7 @@ fun NoteDetailScreen(
                         scope.launch {
                             viewModel.getNodeById(noteId)?.let { original ->
                                 val targetType =
-                                    when (original.itemKindOrNull())
-                                    {
+                                    when (original.itemKindOrNull()) {
                                         ItemKind.NOTE -> if (original.noteType == "idea") "project" else "task"
                                         ItemKind.TASK -> "project"
                                         ItemKind.RECORD -> "note"
@@ -921,8 +907,7 @@ fun NoteDetailScreen(
             },
             optionName = { it },
             optionIcon = {
-                when (it)
-                {
+                when (it) {
                     "NONE" -> Icons.Default.Close
                     "DAILY" -> Icons.Default.Today
                     "WEEKLY" -> Icons.Default.DateRange

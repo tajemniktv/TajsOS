@@ -4,7 +4,6 @@
 
 package com.tajemniktv.tajsos.ui.screens.protocols
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -116,9 +115,11 @@ fun ProtocolsRoute(
     onNavigate: (String) -> Unit,
 ) {
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val surface = if (maxWidth > 900.dp) ProtocolsDashboardSurface.DESKTOP else ProtocolsDashboardSurface.MOBILE
+        val surface =
+            if (maxWidth > 900.dp) ProtocolsDashboardSurface.DESKTOP else ProtocolsDashboardSurface.MOBILE
         val plan = remember(surface) { buildProtocolsDashboardPlan(surface) }
-        val context = remember(viewModel, onEditNode) { ProtocolsDashboardContext(viewModel, onEditNode) }
+        val context =
+            remember(viewModel, onEditNode) { ProtocolsDashboardContext(viewModel, onEditNode) }
 
         ProtocolsScreen(
             context = context,
@@ -237,7 +238,9 @@ internal fun ProtocolsLayer(
         selectedProtocolTitleState.value =
             snapshot.protocols
                 .firstOrNull()
-                ?.node?.node?.title
+                ?.node
+                ?.node
+                ?.title
     }
 
     val newestRun = history.maxByOrNull { it.executedAt }?.executedAt
@@ -276,8 +279,7 @@ internal fun ProtocolsLayer(
             modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
             verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
         ) {
-            when (protocolViewState.value)
-            {
+            when (protocolViewState.value) {
                 ProtocolView.Library -> {
                     ProtocolLibrarySurface(
                         items = libraryItems,
@@ -1045,64 +1047,63 @@ private fun buildLibraryItems(
 
 private fun describeProtocol(title: String): ProtocolDescriptor {
     val normalized = normalizeLabel(title)
-    return when
-        {
-            normalized.contains("morning") || normalized.contains("sleep") || normalized.contains("migraine") -> {
-                ProtocolDescriptor(
-                    category = ProtocolCategory.Health,
-                    purpose = "Support physical stability and energy before the day or during recovery.",
-                    useWhen = "Sleep transitions, low energy, or symptom management.",
-                )
-            }
-
-            normalized.contains("panic") || normalized.contains("anxiety") || normalized.contains("grounding") -> {
-                ProtocolDescriptor(
-                    category = ProtocolCategory.EmotionalRegulation,
-                    purpose = "Guide a calm, structured response during overwhelm or acute stress.",
-                    useWhen = "Rising panic, anxiety spikes, or emotional overload.",
-                )
-            }
-
-            normalized.contains("study") || normalized.contains("exam") || normalized.contains("learning") -> {
-                ProtocolDescriptor(
-                    category = ProtocolCategory.Study,
-                    purpose = "Set up focused learning sessions with clear startup and follow-through steps.",
-                    useWhen = "Before classes, revision blocks, or exam prep sessions.",
-                )
-            }
-
-            normalized.contains("home") || normalized.contains("leaving") -> {
-                ProtocolDescriptor(
-                    category = ProtocolCategory.Home,
-                    purpose = "Reduce friction and mistakes in repeated home transitions.",
-                    useWhen = "Leaving home, arriving home, or house reset moments.",
-                )
-            }
-
-            normalized.contains("shutdown") || normalized.contains("email") || normalized.contains("admin") -> {
-                ProtocolDescriptor(
-                    category = ProtocolCategory.Admin,
-                    purpose = "Close loops and handle maintenance tasks in a consistent way.",
-                    useWhen = "End-of-day shutdown or backlog maintenance windows.",
-                )
-            }
-
-            normalized.contains("relationship") || normalized.contains("check-in") -> {
-                ProtocolDescriptor(
-                    category = ProtocolCategory.Relationships,
-                    purpose = "Preserve relationship consistency with intentional check-ins.",
-                    useWhen = "Planned relationship maintenance or difficult follow-ups.",
-                )
-            }
-
-            else -> {
-                ProtocolDescriptor(
-                    category = ProtocolCategory.Work,
-                    purpose = "Provide a repeatable execution flow to reduce decision friction.",
-                    useWhen = "Any recurring situation where step order improves outcomes.",
-                )
-            }
+    return when {
+        normalized.contains("morning") || normalized.contains("sleep") || normalized.contains("migraine") -> {
+            ProtocolDescriptor(
+                category = ProtocolCategory.Health,
+                purpose = "Support physical stability and energy before the day or during recovery.",
+                useWhen = "Sleep transitions, low energy, or symptom management.",
+            )
         }
+
+        normalized.contains("panic") || normalized.contains("anxiety") || normalized.contains("grounding") -> {
+            ProtocolDescriptor(
+                category = ProtocolCategory.EmotionalRegulation,
+                purpose = "Guide a calm, structured response during overwhelm or acute stress.",
+                useWhen = "Rising panic, anxiety spikes, or emotional overload.",
+            )
+        }
+
+        normalized.contains("study") || normalized.contains("exam") || normalized.contains("learning") -> {
+            ProtocolDescriptor(
+                category = ProtocolCategory.Study,
+                purpose = "Set up focused learning sessions with clear startup and follow-through steps.",
+                useWhen = "Before classes, revision blocks, or exam prep sessions.",
+            )
+        }
+
+        normalized.contains("home") || normalized.contains("leaving") -> {
+            ProtocolDescriptor(
+                category = ProtocolCategory.Home,
+                purpose = "Reduce friction and mistakes in repeated home transitions.",
+                useWhen = "Leaving home, arriving home, or house reset moments.",
+            )
+        }
+
+        normalized.contains("shutdown") || normalized.contains("email") || normalized.contains("admin") -> {
+            ProtocolDescriptor(
+                category = ProtocolCategory.Admin,
+                purpose = "Close loops and handle maintenance tasks in a consistent way.",
+                useWhen = "End-of-day shutdown or backlog maintenance windows.",
+            )
+        }
+
+        normalized.contains("relationship") || normalized.contains("check-in") -> {
+            ProtocolDescriptor(
+                category = ProtocolCategory.Relationships,
+                purpose = "Preserve relationship consistency with intentional check-ins.",
+                useWhen = "Planned relationship maintenance or difficult follow-ups.",
+            )
+        }
+
+        else -> {
+            ProtocolDescriptor(
+                category = ProtocolCategory.Work,
+                purpose = "Provide a repeatable execution flow to reduce decision friction.",
+                useWhen = "Any recurring situation where step order improves outcomes.",
+            )
+        }
+    }
 }
 
 private fun normalizeLabel(value: String): String = value.trim().lowercase()
@@ -1148,4 +1149,3 @@ private inline fun <T> List<T>.indexOfFirstFrom(
     }
     return -1
 }
-

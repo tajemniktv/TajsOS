@@ -481,8 +481,7 @@ fun AddAreaDialog(
 }
 
 private fun areaStatusColor(status: String): Color =
-    when (status)
-    {
+    when (status) {
         "on_fire" -> TajsOSTheme.Error
         "overloaded" -> TajsOSTheme.Accent
         "neglected" -> TajsOSTheme.Muted
@@ -491,4 +490,3 @@ private fun areaStatusColor(status: String): Color =
     }
 
 internal fun routeForAreaDetail(areaId: Long): String = Screen.AreaDetail.route.replace("{areaId}", areaId.toString())
-

@@ -8,8 +8,7 @@ package com.tajemniktv.tajsos.ui.screens.tasks.detail
  * Builds a task detail layout plan based on the active surface.
  */
 fun buildTaskDetailPlan(surface: TaskDetailSurface): TaskDetailPlan =
-    when (surface)
-    {
+    when (surface) {
         TaskDetailSurface.MOBILE -> {
             TaskDetailPlan(
                 primary =

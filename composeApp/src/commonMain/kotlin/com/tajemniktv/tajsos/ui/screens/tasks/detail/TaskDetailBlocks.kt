@@ -139,23 +139,21 @@ private fun renderTaskHeader(context: TaskDetailContext) {
     val task = context.task
     val state = task.taskStateOrNull() ?: TaskState.ACTIVE
     val badgeTone =
-        when
-            {
-                task.isHardDeadline -> HeaderBadgeTone.Critical
-                state == TaskState.DONE -> HeaderBadgeTone.Stable
-                else -> HeaderBadgeTone.Neutral
-            }
+        when {
+            task.isHardDeadline -> HeaderBadgeTone.Critical
+            state == TaskState.DONE -> HeaderBadgeTone.Stable
+            else -> HeaderBadgeTone.Neutral
+        }
 
     val badgeLabel =
-        when
-            {
-                task.isHardDeadline -> stringResource(Res.string.task_detail_critical)
-                state == TaskState.DONE -> stringResource(Res.string.task_detail_complete)
-                state == TaskState.BLOCKED -> stringResource(Res.string.task_detail_blocked)
-                state == TaskState.ON_HOLD -> stringResource(Res.string.task_detail_on_hold)
-                state == TaskState.SOMEDAY -> stringResource(Res.string.task_detail_queued)
-                else -> stringResource(Res.string.task_detail_active)
-            }
+        when {
+            task.isHardDeadline -> stringResource(Res.string.task_detail_critical)
+            state == TaskState.DONE -> stringResource(Res.string.task_detail_complete)
+            state == TaskState.BLOCKED -> stringResource(Res.string.task_detail_blocked)
+            state == TaskState.ON_HOLD -> stringResource(Res.string.task_detail_on_hold)
+            state == TaskState.SOMEDAY -> stringResource(Res.string.task_detail_queued)
+            else -> stringResource(Res.string.task_detail_active)
+        }
 
     Surface(
         color = TajsOSTheme.SurfaceLow,
@@ -545,8 +543,7 @@ private fun SubtaskRow(
     onRemove: (() -> Unit)? = null,
 ) {
     val (icon, tint, background) =
-        when (subtask.state)
-        {
+        when (subtask.state) {
             TaskSubtaskState.COMPLETE -> {
                 Triple(
                     Icons.Outlined.CheckCircleOutline,
@@ -613,8 +610,7 @@ private fun SubtaskRow(
             }
             Text(
                 text =
-                    when (subtask.state)
-                    {
+                    when (subtask.state) {
                         TaskSubtaskState.COMPLETE -> "Done"
                         TaskSubtaskState.ACTIVE -> "In Progress"
                         TaskSubtaskState.QUEUED -> "Queued"
@@ -1034,8 +1030,7 @@ private data class TaskPropertyOption(
 @Composable
 private fun StatusPill(state: TaskState) {
     val (label, tint) =
-        when (state)
-        {
+        when (state) {
             TaskState.ACTIVE -> "ACTIVE" to TajsOSTheme.AccentBlue
             TaskState.DONE -> "DONE" to TajsOSTheme.AccentGreen
             TaskState.BLOCKED -> "BLOCKED" to TajsOSTheme.Error
@@ -1198,11 +1193,9 @@ private fun formatDateTime(epochMillis: Long): String {
 private fun TaskStateBadge(
     label: String,
     tone: HeaderBadgeTone,
-)
-{
+) {
     val tint =
-        when (tone)
-        {
+        when (tone) {
             HeaderBadgeTone.Critical -> TajsOSTheme.Error
             HeaderBadgeTone.Stable -> TajsOSTheme.AccentGreen
             HeaderBadgeTone.Neutral -> TajsOSTheme.Primary
@@ -1212,13 +1205,12 @@ private fun TaskStateBadge(
         shape = RoundedCornerShape(999.dp),
         color = tint.copy(alpha = 0.16f),
         border = BorderStroke(1.dp, tint.copy(alpha = 0.35f)),
-        ) {
-            Text(
-                text = label,
-                modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+    ) {
+        Text(
+            text = label,
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
             style = MaterialTheme.typography.labelSmall,
             color = tint,
         )
     }
 }
-

@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -30,7 +29,6 @@ import com.tajemniktv.tajsos.data.taskStateOrNull
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
-import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderController
 import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderModel
 import com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior
 import com.tajemniktv.tajsos.ui.components.screen.SplitScreenScaffold
@@ -242,8 +240,7 @@ fun TaskDetailRoute(
             onDuePresetChange = { duePreset ->
                 val now = Clock.System.now().toEpochMilliseconds()
                 val dueAt =
-                    when (duePreset)
-                    {
+                    when (duePreset) {
                         TaskDuePreset.None -> null
                         TaskDuePreset.Today -> now
                         TaskDuePreset.Tomorrow -> now + OneDayMillis
@@ -266,8 +263,7 @@ fun TaskDetailRoute(
                 viewModel.updateNode(task.copy(isHardDeadline = isCritical))
             },
             onToggleSubtask = { subtask ->
-                when (subtask.source)
-                {
+                when (subtask.source) {
                     TaskSubtaskSource.Node -> {
                         subtask.node?.let { child ->
                             val newState =
@@ -432,8 +428,7 @@ fun TaskDetailScreen(
 
 private fun NodeEntity.toSubtaskUi(): TaskSubtaskUi {
     val state =
-        when (taskStateOrNull())
-        {
+        when (taskStateOrNull()) {
             TaskState.DONE -> TaskSubtaskState.COMPLETE
             TaskState.ACTIVE -> TaskSubtaskState.ACTIVE
             else -> TaskSubtaskState.QUEUED
@@ -456,26 +451,25 @@ private data class InlineChecklistLine(
 private fun parseInlineChecklistLines(content: String): List<InlineChecklistLine> =
     content.lines().mapNotNull { line ->
         val value = line.trim()
-        when
-            {
-                value.startsWith("- [x] ", ignoreCase = true) -> {
-                    InlineChecklistLine(
-                        title = value.removePrefix("- [x] ").trim(),
-                        checked = true,
-                    )
-                }
-
-                value.startsWith("- [ ] ") -> {
-                    InlineChecklistLine(
-                        title = value.removePrefix("- [ ] ").trim(),
-                        checked = false,
-                    )
-                }
-
-                else -> {
-                    null
-                }
+        when {
+            value.startsWith("- [x] ", ignoreCase = true) -> {
+                InlineChecklistLine(
+                    title = value.removePrefix("- [x] ").trim(),
+                    checked = true,
+                )
             }
+
+            value.startsWith("- [ ] ") -> {
+                InlineChecklistLine(
+                    title = value.removePrefix("- [ ] ").trim(),
+                    checked = false,
+                )
+            }
+
+            else -> {
+                null
+            }
+        }
     }
 
 private fun replaceInlineChecklist(
@@ -560,11 +554,10 @@ private fun formatBytes(bytes: Long): String {
     val kb = 1024.0
     val mb = kb * 1024.0
     val gb = mb * 1024.0
-    return when
-        {
-            bytes >= gb -> "${(bytes / gb * 10).roundToInt() / 10.0} GB"
-            bytes >= mb -> "${(bytes / mb * 10).roundToInt() / 10.0} MB"
-            bytes >= kb -> "${(bytes / kb * 10).roundToInt() / 10.0} KB"
-            else -> "$bytes B"
-        }
+    return when {
+        bytes >= gb -> "${(bytes / gb * 10).roundToInt() / 10.0} GB"
+        bytes >= mb -> "${(bytes / mb * 10).roundToInt() / 10.0} MB"
+        bytes >= kb -> "${(bytes / kb * 10).roundToInt() / 10.0} KB"
+        else -> "$bytes B"
+    }
 }

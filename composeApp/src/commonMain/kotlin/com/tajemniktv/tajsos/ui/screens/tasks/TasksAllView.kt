@@ -4,7 +4,6 @@
 
 package com.tajemniktv.tajsos.ui.screens.tasks
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -98,8 +97,7 @@ internal fun TasksAllView(
 
     val base =
         remember(scope, activeTasks, archivedTasks) {
-            when (scope)
-            {
+            when (scope) {
                 TaskScope.ACTIVE -> activeTasks.filter { it.taskStateOrNull() != TaskState.DONE }
                 TaskScope.COMPLETED -> activeTasks.filter { it.taskStateOrNull() == TaskState.DONE }
                 TaskScope.ARCHIVED -> archivedTasks
@@ -118,8 +116,7 @@ internal fun TasksAllView(
         }
     val sorted =
         remember(filtered, sort) {
-            when (sort)
-            {
+            when (sort) {
                 TaskSort.PRIORITY -> {
                     filtered.sortedByDescending {
                         scoreTask(
@@ -470,4 +467,3 @@ private fun TaskDetails(
         }
     }
 }
-

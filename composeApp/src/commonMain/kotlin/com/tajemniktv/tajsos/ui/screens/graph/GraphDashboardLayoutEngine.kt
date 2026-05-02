@@ -5,8 +5,7 @@
 package com.tajemniktv.tajsos.ui.screens.graph
 
 fun buildGraphDashboardPlan(surface: GraphDashboardSurface): GraphDashboardPlan =
-    when (surface)
-    {
+    when (surface) {
         GraphDashboardSurface.MOBILE -> GraphDashboardPlan(primary = listOf(GraphDashboardBlock("graph_main")))
         GraphDashboardSurface.DESKTOP -> GraphDashboardPlan(primary = listOf(GraphDashboardBlock("graph_main")))
     }

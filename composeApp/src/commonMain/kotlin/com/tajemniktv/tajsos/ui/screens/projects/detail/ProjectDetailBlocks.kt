@@ -265,8 +265,7 @@ private fun renderProjectContent(context: ProjectDetailContext) {
             modifier = Modifier.fillMaxWidth().padding(14.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            when (context.selectedTab)
-            {
+            when (context.selectedTab) {
                 ProjectDetailTab.Overview -> {
                     ProjectSectionTitle(
                         Res.string.project_detail_next_actions,
@@ -724,4 +723,3 @@ private fun formatTimestamp(timestamp: Long?): String {
         date.day.toString().padStart(2, '0')
     }"
 }
-

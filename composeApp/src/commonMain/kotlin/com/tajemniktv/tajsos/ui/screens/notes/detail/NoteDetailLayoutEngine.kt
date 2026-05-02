@@ -59,8 +59,7 @@ fun buildNoteDetailPlan(
 
     primary.add(NoteDetailBlock("note_content_editor"))
 
-    return when (surface)
-    {
+    return when (surface) {
         NoteDetailSurface.MOBILE -> NoteDetailPlan(primary = primary)
         NoteDetailSurface.DESKTOP -> NoteDetailPlan(primary = primary) // Desktop currently uses the same or Workspace
     }

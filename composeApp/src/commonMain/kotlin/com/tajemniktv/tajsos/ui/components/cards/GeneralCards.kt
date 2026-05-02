@@ -4,7 +4,6 @@
 
 package com.tajemniktv.tajsos.ui.components.cards
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,8 +32,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.components.common.GlassMaterial
-import com.tajemniktv.tajsos.ui.components.common.glassContainerColor
 import com.tajemniktv.tajsos.ui.components.common.glassChrome
+import com.tajemniktv.tajsos.ui.components.common.glassContainerColor
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 @Composable
@@ -48,7 +47,11 @@ fun InfoCard(
 ) {
     Surface(
         onClick = onClick,
-        modifier = modifier.glassChrome(shape = RoundedCornerShape(TajsOSTheme.RadiusMd), material = GlassMaterial.REGULAR),
+        modifier =
+            modifier.glassChrome(
+                shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+                material = GlassMaterial.REGULAR,
+            ),
         color = glassContainerColor(TajsOSTheme.Surface),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
     ) {
@@ -92,7 +95,11 @@ fun StatusCard(
 ) {
     Surface(
         onClick = onClick,
-        modifier = modifier.fillMaxWidth().glassChrome(shape = RoundedCornerShape(TajsOSTheme.RadiusMd), material = GlassMaterial.REGULAR),
+        modifier =
+            modifier.fillMaxWidth().glassChrome(
+                shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+                material = GlassMaterial.REGULAR,
+            ),
         color = glassContainerColor(TajsOSTheme.Surface),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
     ) {
@@ -129,7 +136,11 @@ fun LinkedNodeItem(
 ) {
     Surface(
         onClick = onClick,
-        modifier = modifier.fillMaxWidth().glassChrome(shape = RoundedCornerShape(TajsOSTheme.RadiusMd), material = GlassMaterial.REGULAR),
+        modifier =
+            modifier.fillMaxWidth().glassChrome(
+                shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+                material = GlassMaterial.REGULAR,
+            ),
         color = glassContainerColor(TajsOSTheme.Surface),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
     ) {
@@ -183,7 +194,11 @@ fun ConnectionCard(
 ) {
     Surface(
         onClick = onClick,
-        modifier = modifier.fillMaxWidth().glassChrome(shape = RoundedCornerShape(TajsOSTheme.RadiusMd), material = GlassMaterial.THIN),
+        modifier =
+            modifier.fillMaxWidth().glassChrome(
+                shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+                material = GlassMaterial.THIN,
+            ),
         color = glassContainerColor(Color.Transparent),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
     ) {
@@ -209,4 +224,3 @@ fun ConnectionCard(
         }
     }
 }
-

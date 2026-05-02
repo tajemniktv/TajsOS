@@ -8,8 +8,7 @@ package com.tajemniktv.tajsos.ui.screens.areas.detail
  * Builds an area detail layout plan based on the active surface.
  */
 fun buildAreaDetailPlan(surface: AreaDetailSurface): AreaDetailPlan =
-    when (surface)
-    {
+    when (surface) {
         AreaDetailSurface.MOBILE -> {
             AreaDetailPlan(
                 primary =

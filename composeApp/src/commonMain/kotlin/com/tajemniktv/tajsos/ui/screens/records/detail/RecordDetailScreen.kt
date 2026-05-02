@@ -7,7 +7,6 @@ package com.tajemniktv.tajsos.ui.screens.records.detail
 import androidx.compose.runtime.Composable
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
-import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderController
 import com.tajemniktv.tajsos.ui.screens.notes.detail.NoteDetailScreen
 
 /**

@@ -8,8 +8,7 @@ package com.tajemniktv.tajsos.ui.screens.search
  * Builds a search dashboard layout plan based on the active surface.
  */
 fun buildSearchDashboardPlan(surface: SearchDashboardSurface): SearchDashboardPlan =
-    when (surface)
-    {
+    when (surface) {
         SearchDashboardSurface.MOBILE -> {
             SearchDashboardPlan(
                 primary =

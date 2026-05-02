@@ -8,8 +8,7 @@ package com.tajemniktv.tajsos.ui.screens.track
  * Builds a track dashboard layout plan based on the active surface.
  */
 fun buildTrackDashboardPlan(surface: TrackDashboardSurface): TrackDashboardPlan =
-    when (surface)
-    {
+    when (surface) {
         TrackDashboardSurface.MOBILE -> {
             TrackDashboardPlan(
                 primary =

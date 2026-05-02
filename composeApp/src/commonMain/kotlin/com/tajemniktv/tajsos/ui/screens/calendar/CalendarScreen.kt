@@ -77,9 +77,11 @@ fun CalendarRoute(
     onNavigate: (String) -> Unit,
 ) {
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val surface = if (maxWidth > 900.dp) CalendarDashboardSurface.DESKTOP else CalendarDashboardSurface.MOBILE
+        val surface =
+            if (maxWidth > 900.dp) CalendarDashboardSurface.DESKTOP else CalendarDashboardSurface.MOBILE
         val plan = remember(surface) { buildCalendarDashboardPlan(surface) }
-        val context = remember(viewModel, onEditNode) { CalendarDashboardContext(viewModel, onEditNode) }
+        val context =
+            remember(viewModel, onEditNode) { CalendarDashboardContext(viewModel, onEditNode) }
 
         CalendarScreen(
             context = context,

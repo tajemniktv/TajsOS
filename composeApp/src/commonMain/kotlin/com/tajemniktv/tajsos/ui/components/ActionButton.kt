@@ -4,6 +4,7 @@
 
 package com.tajemniktv.tajsos.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -17,15 +18,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.foundation.background
-
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 /**
@@ -50,35 +49,39 @@ fun ActionButton(
 ) {
     val isPrimary = containerColor == TajsOSTheme.Primary
     val isGhost = containerColor == Color.Transparent
-    val buttonBorder = if (!isPrimary && !isGhost) {
-        androidx.compose.foundation.BorderStroke(1.dp, TajsOSTheme.GhostBorder)
-    } else {
-        null
-    }
-
-    val finalModifier = modifier.height(48.dp).then(
-        if (isPrimary && enabled) {
-            Modifier.background(
-                brush = Brush.linearGradient(
-                    colors = listOf(TajsOSTheme.Primary, TajsOSTheme.PrimaryDim),
-                    start = Offset(0f, 0f),
-                    end = Offset.Infinite
-                ),
-                shape = RoundedCornerShape(TajsOSTheme.RadiusMd)
-            )
+    val buttonBorder =
+        if (!isPrimary && !isGhost) {
+            androidx.compose.foundation.BorderStroke(1.dp, TajsOSTheme.GhostBorder)
         } else {
-            Modifier
+            null
         }
-    )
+
+    val finalModifier =
+        modifier.height(48.dp).then(
+            if (isPrimary && enabled) {
+                Modifier.background(
+                    brush =
+                        Brush.linearGradient(
+                            colors = listOf(TajsOSTheme.Primary, TajsOSTheme.PrimaryDim),
+                            start = Offset(0f, 0f),
+                            end = Offset.Infinite,
+                        ),
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+                )
+            } else {
+                Modifier
+            },
+        )
 
     Button(
         onClick = onClick,
         enabled = enabled,
         modifier = finalModifier,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = if (isPrimary && enabled) Color.Transparent else containerColor,
-            contentColor = if (isPrimary && contentColor == TajsOSTheme.Text) TajsOSTheme.Background else contentColor,
-        ),
+        colors =
+            ButtonDefaults.buttonColors(
+                containerColor = if (isPrimary && enabled) Color.Transparent else containerColor,
+                contentColor = if (isPrimary && contentColor == TajsOSTheme.Text) TajsOSTheme.Background else contentColor,
+            ),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         border = buttonBorder,
         contentPadding = PaddingValues(horizontal = 16.dp),

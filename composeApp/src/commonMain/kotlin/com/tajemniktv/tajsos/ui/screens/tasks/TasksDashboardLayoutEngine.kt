@@ -16,8 +16,7 @@ fun buildTasksDashboardPlan(
     primary.add(TasksDashboardBlock("tasks_header"))
     primary.add(TasksDashboardBlock("tasks_tabs"))
 
-    when (tab)
-    {
+    when (tab) {
         TasksTab.COMMAND -> primary.add(TasksDashboardBlock("tasks_view_command"))
         TasksTab.INBOX -> primary.add(TasksDashboardBlock("tasks_view_inbox"))
         TasksTab.TODAY -> primary.add(TasksDashboardBlock("tasks_view_today"))

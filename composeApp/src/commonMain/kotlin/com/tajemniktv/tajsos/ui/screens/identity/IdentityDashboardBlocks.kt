@@ -4,7 +4,6 @@
 
 package com.tajemniktv.tajsos.ui.screens.identity
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -372,4 +371,3 @@ private fun renderIdentityCoreShift(context: IdentityDashboardContext) {
         }
     }
 }
-

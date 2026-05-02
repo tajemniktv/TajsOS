@@ -164,8 +164,7 @@ internal fun NotesMainBlock(
         Column(
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            when (selectedGroup)
-            {
+            when (selectedGroup) {
                 "TYPE" -> {
                     if (typePinned.isNotEmpty()) {
                         GroupHeader(stringResource(Res.string.notes_pinned_knowledge))

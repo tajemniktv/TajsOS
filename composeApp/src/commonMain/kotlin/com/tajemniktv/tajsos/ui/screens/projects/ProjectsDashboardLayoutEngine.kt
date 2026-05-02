@@ -5,8 +5,7 @@
 package com.tajemniktv.tajsos.ui.screens.projects
 
 fun buildProjectsDashboardPlan(surface: ProjectsDashboardSurface): ProjectsDashboardPlan =
-    when (surface)
-    {
+    when (surface) {
         ProjectsDashboardSurface.MOBILE -> {
             ProjectsDashboardPlan(
                 primary =

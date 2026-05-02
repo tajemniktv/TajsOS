@@ -5,13 +5,8 @@
 package com.tajemniktv.tajsos.ui.screens.review
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -24,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
-import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.review_step_archive
 import tajsos.composeapp.generated.resources.review_step_blockers

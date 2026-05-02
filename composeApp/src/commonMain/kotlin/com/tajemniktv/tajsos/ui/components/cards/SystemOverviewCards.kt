@@ -136,12 +136,11 @@ private fun getLoadColor(
     inverse: Boolean = false,
 ): Color {
     val v = if (inverse) 100 - value else value
-    return when
-        {
-            v > 80 -> TajsOSTheme.Error
-            v > 50 -> TajsOSTheme.Accent
-            else -> TajsOSTheme.Success
-        }
+    return when {
+        v > 80 -> TajsOSTheme.Error
+        v > 50 -> TajsOSTheme.Accent
+        else -> TajsOSTheme.Success
+    }
 }
 
 @Composable
@@ -154,8 +153,7 @@ fun AreaHealthCard(
     val status = metrics?.status ?: "stable"
     val load = metrics?.stressLoad ?: 0
     val (color, statusLabel) =
-        when (status)
-        {
+        when (status) {
             "on_fire" -> TajsOSTheme.Error to "ON FIRE"
             "overloaded" -> TajsOSTheme.Error to "OVERLOADED"
             "neglected" -> TajsOSTheme.Muted to "NEGLECTED"
@@ -219,4 +217,3 @@ fun AreaHealthCard(
         }
     }
 }
-

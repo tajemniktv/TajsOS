@@ -12,10 +12,10 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
@@ -50,7 +50,7 @@ enum class GlassMaterial {
 /**
  * Composition-local glass configuration used by shell and reusable components.
  */
-val LocalGlassSystem = compositionLocalOf { GlassSystemConfig(enabled = false, hazeState = null) }
+val LocalGlassSystem = compositionLocalOf { GlassSystemConfig(enabled = false) }
 
 /**
  * Provides the current glass system configuration to descendants.
@@ -61,7 +61,8 @@ fun ProvideGlassSystem(
     hazeState: HazeState?,
     content: @Composable () -> Unit,
 ) {
-    val config = remember(enabled, hazeState) { GlassSystemConfig(enabled = enabled, hazeState = hazeState) }
+    val config =
+        remember(enabled, hazeState) { GlassSystemConfig(enabled = enabled, hazeState = hazeState) }
     CompositionLocalProvider(LocalGlassSystem provides config) {
         content()
     }
@@ -107,8 +108,7 @@ fun Modifier.glassChrome(
     val bottomTint = TajsOSTheme.SurfaceLow.copy(alpha = 0.36f)
     val edgeColor = TajsOSTheme.GhostBorder.copy(alpha = 0.2f)
     val style =
-        when (material)
-        {
+        when (material) {
             GlassMaterial.ULTRA_THIN -> CupertinoMaterials.ultraThin(TajsOSTheme.SurfaceHigh)
             GlassMaterial.THIN -> CupertinoMaterials.thin(TajsOSTheme.SurfaceHigh)
             GlassMaterial.REGULAR -> CupertinoMaterials.regular(TajsOSTheme.SurfaceHigh)
@@ -123,7 +123,10 @@ fun Modifier.glassChrome(
                 noiseFactor = 0.22f
                 tints =
                     listOf(
-                        HazeTint(TajsOSTheme.Text.copy(alpha = 0.08f), blendMode = BlendMode.Screen),
+                        HazeTint(
+                            TajsOSTheme.Text.copy(alpha = 0.08f),
+                            blendMode = BlendMode.Screen,
+                        ),
                         HazeTint(TajsOSTheme.SurfaceHigh.copy(alpha = 0.18f)),
                     )
             },
@@ -137,8 +140,7 @@ fun Modifier.glassChrome(
                 Brush.verticalGradient(
                     colors = listOf(topTint, bottomTint),
                 ),
-        )
-        .drawWithContent {
+        ).drawWithContent {
             drawContent()
             drawRect(
                 brush =
@@ -146,8 +148,7 @@ fun Modifier.glassChrome(
                         colors = listOf(topGlow, bottomShadow),
                     ),
             )
-        }
-        .border(
+        }.border(
             width = edgeWidth,
             color = edgeColor,
             shape = shape,

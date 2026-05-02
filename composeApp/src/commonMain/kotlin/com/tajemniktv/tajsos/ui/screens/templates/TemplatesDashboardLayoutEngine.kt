@@ -8,8 +8,7 @@ package com.tajemniktv.tajsos.ui.screens.templates
  * Builds a templates dashboard layout plan based on the active surface.
  */
 fun buildTemplatesDashboardPlan(surface: TemplatesDashboardSurface): TemplatesDashboardPlan =
-    when (surface)
-    {
+    when (surface) {
         TemplatesDashboardSurface.MOBILE -> {
             TemplatesDashboardPlan(
                 primary =

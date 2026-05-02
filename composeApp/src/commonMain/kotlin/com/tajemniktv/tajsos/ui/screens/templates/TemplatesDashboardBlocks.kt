@@ -62,8 +62,7 @@ private fun renderTemplatesList(context: TemplatesDashboardContext) {
                     headlineContent = { Text(template.name) },
                     supportingContent = {
                         val typeLabel =
-                            when (template.nodeType)
-                            {
+                            when (template.nodeType) {
                                 "task" -> stringResource(Res.string.type_task)
                                 "note" -> stringResource(Res.string.type_note)
                                 "record" -> stringResource(Res.string.type_record)
@@ -88,4 +87,3 @@ private fun renderTemplatesList(context: TemplatesDashboardContext) {
         }
     }
 }
-

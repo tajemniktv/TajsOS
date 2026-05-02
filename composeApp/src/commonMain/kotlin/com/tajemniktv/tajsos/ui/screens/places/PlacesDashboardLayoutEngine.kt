@@ -5,8 +5,7 @@
 package com.tajemniktv.tajsos.ui.screens.places
 
 fun buildPlacesDashboardPlan(surface: PlacesDashboardSurface): PlacesDashboardPlan =
-    when (surface)
-    {
+    when (surface) {
         PlacesDashboardSurface.MOBILE -> {
             PlacesDashboardPlan(
                 primary =

@@ -8,8 +8,7 @@ package com.tajemniktv.tajsos.ui.screens.health
  * Returns the block composition plan for the Health lens based on available surface width.
  */
 fun buildHealthDashboardPlan(surface: HealthDashboardSurface): HealthDashboardPlan =
-    when (surface)
-    {
+    when (surface) {
         HealthDashboardSurface.MOBILE -> {
             HealthDashboardPlan(
                 primary =

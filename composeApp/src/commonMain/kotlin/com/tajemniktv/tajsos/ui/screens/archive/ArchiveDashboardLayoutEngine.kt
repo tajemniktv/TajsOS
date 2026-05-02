@@ -5,8 +5,7 @@
 package com.tajemniktv.tajsos.ui.screens.archive
 
 fun buildArchiveDashboardPlan(surface: ArchiveDashboardSurface): ArchiveDashboardPlan =
-    when (surface)
-    {
+    when (surface) {
         ArchiveDashboardSurface.MOBILE -> {
             ArchiveDashboardPlan(
                 primary =

@@ -5,8 +5,7 @@
 package com.tajemniktv.tajsos.ui.screens.notes
 
 fun buildNotesDashboardPlan(surface: NotesDashboardSurface): NotesDashboardPlan =
-    when (surface)
-    {
+    when (surface) {
         NotesDashboardSurface.MOBILE -> {
             NotesDashboardPlan(
                 primary =

@@ -27,7 +27,8 @@ fun FocusRoute(
     onNavigate: (String) -> Unit,
 ) {
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val surface = if (maxWidth > 900.dp) FocusDashboardSurface.DESKTOP else FocusDashboardSurface.MOBILE
+        val surface =
+            if (maxWidth > 900.dp) FocusDashboardSurface.DESKTOP else FocusDashboardSurface.MOBILE
         val plan = remember(surface) { buildFocusDashboardPlan(surface) }
         val context = remember(viewModel) { FocusDashboardContext(viewModel) }
 

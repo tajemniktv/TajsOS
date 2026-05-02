@@ -40,7 +40,6 @@ import com.tajemniktv.tajsos.data.projectStateOrNull
 import com.tajemniktv.tajsos.data.taskStateOrNull
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
-import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderController
 import com.tajemniktv.tajsos.ui.components.screen.ScreenHeaderModel
 import com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior
 import com.tajemniktv.tajsos.ui.components.screen.SplitScreenScaffold
@@ -109,7 +108,8 @@ fun AreaDetailRoute(
      * Extracted mapping to reduce redundant allocations per node type.
      */
     val nodesList = remember(items) { items.map { it.node } }
-    val tasks = remember(nodesList) { nodesList.filter { it.isTaskItem() && it.taskStateOrNull() != TaskState.ARCHIVED } }
+    val tasks =
+        remember(nodesList) { nodesList.filter { it.isTaskItem() && it.taskStateOrNull() != TaskState.ARCHIVED } }
     val notes = remember(nodesList) { nodesList.filter { it.isNoteItem() } }
     val records = remember(nodesList) { nodesList.filter { it.isRecordItem() } }
     val activeProjects =
@@ -135,8 +135,7 @@ fun AreaDetailRoute(
     val healthLabel =
         metrics?.status?.replace("_", " ") ?: stringResource(Res.string.detail_unassign)
     val healthColor =
-        when (metrics?.status)
-        {
+        when (metrics?.status) {
             "on_fire" -> TajsOSTheme.Error
             "overloaded" -> TajsOSTheme.Accent
             "neglected" -> TajsOSTheme.Muted
@@ -260,7 +259,9 @@ fun AreaDetailScreen(
         primary = {
             Column(
                 modifier = Modifier.fillMaxWidth().fillMaxHeight(),
-                verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp),
+                verticalArrangement =
+                    androidx.compose.foundation.layout.Arrangement
+                        .spacedBy(12.dp),
             ) {
                 val blocks =
                     if (surface == AreaDetailSurface.DESKTOP) {
@@ -278,7 +279,9 @@ fun AreaDetailScreen(
                 {
                     Column(
                         modifier = Modifier.fillMaxWidth().width(320.dp).fillMaxHeight(),
-                        verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp),
+                        verticalArrangement =
+                            androidx.compose.foundation.layout.Arrangement
+                                .spacedBy(12.dp),
                     ) {
                         plan.secondary.forEach { block ->
                             AreaDetailBlocks.resolve(block.id)?.invoke(context)

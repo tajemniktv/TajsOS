@@ -87,7 +87,10 @@ internal fun InsightsMainBlock(
     val topAreas = remember(areaSnapshot) { areaSnapshot.areas.take(4) }
     val highEntropyProjectKeys =
         remember(insights) {
-            insights.projectEntropy.filter { it.value > 0.5 }.keys.toList()
+            insights.projectEntropy
+                .filter { it.value > 0.5 }
+                .keys
+                .toList()
         }
 
     LazyColumn(

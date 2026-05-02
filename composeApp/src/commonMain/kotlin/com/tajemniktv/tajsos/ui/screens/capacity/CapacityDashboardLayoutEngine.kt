@@ -5,8 +5,7 @@
 package com.tajemniktv.tajsos.ui.screens.capacity
 
 fun buildCapacityDashboardPlan(surface: CapacityDashboardSurface): CapacityDashboardPlan =
-    when (surface)
-    {
+    when (surface) {
         CapacityDashboardSurface.MOBILE -> {
             CapacityDashboardPlan(primary = listOf(CapacityDashboardBlock("capacity_main")))
         }

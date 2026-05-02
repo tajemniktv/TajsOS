@@ -319,4 +319,3 @@ fun StudentNodeCard(
     }
     HorizontalDivider(color = TajsOSTheme.GhostBorder)
 }
-

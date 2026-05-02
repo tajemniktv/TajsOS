@@ -4,9 +4,8 @@
 
 package com.tajemniktv.tajsos.ui.screens.notes
 
-import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -15,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AttachFile
@@ -61,12 +61,11 @@ fun NotesContextPanel(
         modifier = modifier.fillMaxSize(),
         color = TajsOSTheme.SurfaceLow,
         shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
-        ) {
+    ) {
         if (selectedNote == null) {
             EmptyState(
                 message = stringResource(Res.string.note_select_inspect_context),
                 description = null,
-                fillParent = true,
                 showContainer = false,
             )
             return@Surface
@@ -97,10 +96,14 @@ fun NotesContextPanel(
                     } else {
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            modifier = Modifier.horizontalScroll(rememberScrollState())
+                            modifier = Modifier.horizontalScroll(rememberScrollState()),
                         ) {
                             selectedNote.tags.forEach {
-                                Text("#$it", color = TajsOSTheme.Primary, style = MaterialTheme.typography.bodyMedium)
+                                Text(
+                                    "#$it",
+                                    color = TajsOSTheme.Primary,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                )
                             }
                         }
                     }

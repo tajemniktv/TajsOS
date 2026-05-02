@@ -58,8 +58,7 @@ fun TactileCard(
                     } else {
                         Modifier
                     },
-                )
-                .padding(TajsOSTheme.SpacingMd),
+                ).padding(TajsOSTheme.SpacingMd),
         contentAlignment = Alignment.CenterStart,
         content = content,
     )

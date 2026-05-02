@@ -4,7 +4,6 @@
 
 package com.tajemniktv.tajsos.ui.components.cards
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -667,8 +666,7 @@ fun AreaHealthSystemCard(
 @Composable
 fun AreaHealthInsightCard(area: AreaHealthMetrics) {
     val color =
-        when (area.status)
-        {
+        when (area.status) {
             "on_fire" -> TajsOSTheme.Error
             "overloaded" -> TajsOSTheme.Accent
             "neglected" -> TajsOSTheme.Muted
@@ -703,4 +701,3 @@ fun AreaHealthInsightCard(area: AreaHealthMetrics) {
         }
     }
 }
-

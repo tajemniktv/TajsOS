@@ -102,24 +102,23 @@ fun inferNotesDomain(node: NodeWithPin): NotesDomain {
             append(' ')
             append(node.tags.joinToString(" ") { it.name })
         }.lowercase()
-    return when
-        {
-            searchable.contains("study") || searchable.contains("exam") || searchable.contains("course") -> {
-                NotesDomain.STUDY
-            }
-
-            searchable.contains("work") || searchable.contains("client") || searchable.contains("meeting") -> {
-                NotesDomain.WORK
-            }
-
-            searchable.contains("health") || searchable.contains("med") || searchable.contains("symptom") -> {
-                NotesDomain.HEALTH
-            }
-
-            else -> {
-                NotesDomain.PERSONAL
-            }
+    return when {
+        searchable.contains("study") || searchable.contains("exam") || searchable.contains("course") -> {
+            NotesDomain.STUDY
         }
+
+        searchable.contains("work") || searchable.contains("client") || searchable.contains("meeting") -> {
+            NotesDomain.WORK
+        }
+
+        searchable.contains("health") || searchable.contains("med") || searchable.contains("symptom") -> {
+            NotesDomain.HEALTH
+        }
+
+        else -> {
+            NotesDomain.PERSONAL
+        }
+    }
 }
 
 /**

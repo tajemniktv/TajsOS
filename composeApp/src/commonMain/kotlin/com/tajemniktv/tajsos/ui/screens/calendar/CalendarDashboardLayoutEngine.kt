@@ -5,8 +5,7 @@
 package com.tajemniktv.tajsos.ui.screens.calendar
 
 fun buildCalendarDashboardPlan(surface: CalendarDashboardSurface): CalendarDashboardPlan =
-    when (surface)
-    {
+    when (surface) {
         CalendarDashboardSurface.MOBILE -> {
             CalendarDashboardPlan(
                 primary =

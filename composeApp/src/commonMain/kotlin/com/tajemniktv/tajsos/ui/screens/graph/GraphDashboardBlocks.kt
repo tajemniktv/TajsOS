@@ -4,7 +4,6 @@
 
 package com.tajemniktv.tajsos.ui.screens.graph
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -33,7 +32,6 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
@@ -152,8 +150,7 @@ internal fun GraphMainBlock(
                 if (start != null && end != null) {
                     drawLine(
                         color =
-                            when (relation.relationType)
-                            {
+                            when (relation.relationType) {
                                 "BELONGS_TO" -> TajsOSTheme.Primary.copy(alpha = 0.3f)
                                 "DEPENDS_ON" -> TajsOSTheme.Error.copy(alpha = 0.3f)
                                 else -> Color.White.copy(alpha = 0.1f)
@@ -168,8 +165,7 @@ internal fun GraphMainBlock(
             nodes.forEach { nodeWithPin ->
                 val pos = nodePositions[nodeWithPin.node.id] ?: return@forEach
                 val color =
-                    when (nodeWithPin.node.type)
-                    {
+                    when (nodeWithPin.node.type) {
                         "project" -> {
                             TajsOSTheme.Primary
                         }
@@ -231,4 +227,3 @@ internal fun GraphMainBlock(
         }
     }
 }
-

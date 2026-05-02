@@ -27,7 +27,8 @@ fun CapacityRoute(
     onNavigate: (String) -> Unit,
 ) {
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val surface = if (maxWidth > 900.dp) CapacityDashboardSurface.DESKTOP else CapacityDashboardSurface.MOBILE
+        val surface =
+            if (maxWidth > 900.dp) CapacityDashboardSurface.DESKTOP else CapacityDashboardSurface.MOBILE
         val plan = remember(surface) { buildCapacityDashboardPlan(surface) }
         val context = remember(viewModel) { CapacityDashboardContext(viewModel) }
 

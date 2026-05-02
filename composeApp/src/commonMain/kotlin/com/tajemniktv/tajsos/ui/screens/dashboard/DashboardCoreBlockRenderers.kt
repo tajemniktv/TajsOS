@@ -780,8 +780,7 @@ internal fun renderProtocolsBlock(context: DashboardBlockContext) {
         ) {
             context.viewModel.transitionProtocolTemplates.forEach { template ->
                 val (icon, color, destination) =
-                    when (template.key)
-                    {
+                    when (template.key) {
                         "morning_startup" -> {
                             Triple(
                                 Icons.Default.WbSunny,

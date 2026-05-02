@@ -5,8 +5,7 @@
 package com.tajemniktv.tajsos.ui.screens.vaults
 
 fun buildVaultsDashboardPlan(surface: VaultsDashboardSurface): VaultsDashboardPlan =
-    when (surface)
-    {
+    when (surface) {
         VaultsDashboardSurface.MOBILE -> {
             VaultsDashboardPlan(
                 primary =

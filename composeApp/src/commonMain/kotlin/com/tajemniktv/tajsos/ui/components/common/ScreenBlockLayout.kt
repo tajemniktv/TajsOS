@@ -29,8 +29,7 @@ fun screenBlockPlan(
     desktopPrimary: List<String> = mobile,
     desktopSecondary: List<String> = emptyList(),
 ): ScreenBlockPlan =
-    when (surface)
-    {
+    when (surface) {
         ScreenBlockSurface.MOBILE -> {
             ScreenBlockPlan(primary = mobile)
         }

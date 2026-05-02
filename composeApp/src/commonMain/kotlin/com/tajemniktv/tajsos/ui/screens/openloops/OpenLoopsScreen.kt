@@ -4,7 +4,6 @@
 
 package com.tajemniktv.tajsos.ui.screens.openloops
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -256,4 +255,3 @@ internal fun OpenLoopsLayer(
         }
     }
 }
-

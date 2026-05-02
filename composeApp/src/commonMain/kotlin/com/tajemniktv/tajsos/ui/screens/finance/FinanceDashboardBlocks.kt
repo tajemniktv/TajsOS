@@ -6,7 +6,6 @@
 
 package com.tajemniktv.tajsos.ui.screens.finance
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -426,25 +425,24 @@ internal fun renderFinanceQueueListBlock(context: FinanceDashboardContext) {
 
 @Composable
 private fun financeItemLabel(node: NodeEntity): String =
-    when
-        {
-            node.isTaskItem() -> {
-                node.maintenanceType?.uppercase()
-                    ?: stringResource(Res.string.finance_item_action)
-            }
-
-            node.isRecordItem() -> {
-                stringResource(Res.string.finance_item_record)
-            }
-
-            node.isNoteItem() -> {
-                stringResource(Res.string.finance_item_note)
-            }
-
-            else -> {
-                node.type.uppercase()
-            }
+    when {
+        node.isTaskItem() -> {
+            node.maintenanceType?.uppercase()
+                ?: stringResource(Res.string.finance_item_action)
         }
+
+        node.isRecordItem() -> {
+            stringResource(Res.string.finance_item_record)
+        }
+
+        node.isNoteItem() -> {
+            stringResource(Res.string.finance_item_note)
+        }
+
+        else -> {
+            node.type.uppercase()
+        }
+    }
 
 @Composable
 private fun FinanceMiniBars(
@@ -502,4 +500,3 @@ private fun formatCurrency(amount: Double): String {
             .reversed()
     return "$sign$$groupedWhole.${centsPart.toString().padStart(2, '0')}"
 }
-

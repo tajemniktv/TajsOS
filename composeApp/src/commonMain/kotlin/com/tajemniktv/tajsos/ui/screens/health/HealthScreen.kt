@@ -29,9 +29,11 @@ fun HealthRoute(
     onNavigate: (String) -> Unit,
 ) {
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val surface = if (maxWidth > 900.dp) HealthDashboardSurface.DESKTOP else HealthDashboardSurface.MOBILE
+        val surface =
+            if (maxWidth > 900.dp) HealthDashboardSurface.DESKTOP else HealthDashboardSurface.MOBILE
         val plan = remember(surface) { buildHealthDashboardPlan(surface) }
-        val context = remember(viewModel, onEditNode) { HealthDashboardContext(viewModel, onEditNode) }
+        val context =
+            remember(viewModel, onEditNode) { HealthDashboardContext(viewModel, onEditNode) }
 
         HealthScreen(
             context = context,

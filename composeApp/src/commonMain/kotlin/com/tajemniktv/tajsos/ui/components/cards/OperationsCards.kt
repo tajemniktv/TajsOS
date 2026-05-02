@@ -67,8 +67,7 @@ fun OpenLoopCard(
     onArchive: () -> Unit,
 ) {
     val urgencyColor =
-        when (item.urgency)
-        {
+        when (item.urgency) {
             "critical" -> TajsOSTheme.Error
             "high" -> TajsOSTheme.Accent
             "medium" -> TajsOSTheme.Primary
@@ -186,8 +185,7 @@ fun MaintenanceCard(
     onArchive: () -> Unit,
 ) {
     val urgencyColor =
-        when (item.urgency)
-        {
+        when (item.urgency) {
             "critical" -> TajsOSTheme.Error
             "high" -> TajsOSTheme.Accent
             "medium" -> TajsOSTheme.Primary
@@ -655,4 +653,3 @@ fun PersonRelationshipCard(
         }
     }
 }
-

@@ -5,8 +5,7 @@
 package com.tajemniktv.tajsos.ui.screens.today
 
 fun buildTodayDashboardPlan(surface: TodayDashboardSurface): TodayDashboardPlan =
-    when (surface)
-    {
+    when (surface) {
         TodayDashboardSurface.MOBILE -> TodayDashboardPlan(primary = listOf(TodayDashboardBlock("today_main")))
         TodayDashboardSurface.DESKTOP -> TodayDashboardPlan(primary = listOf(TodayDashboardBlock("today_main")))
     }
