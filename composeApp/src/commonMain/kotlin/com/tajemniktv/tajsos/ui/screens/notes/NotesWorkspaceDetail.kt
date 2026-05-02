@@ -241,7 +241,7 @@ fun NotesWorkspaceDetail(
                         )
                     }
                 }
-                HorizontalDivider(color = TajsOSTheme.Border)
+                HorizontalDivider(color = TajsOSTheme.GhostBorder)
                 LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     items(filtered, key = { it.id }) { item ->
                         Surface(
