@@ -56,7 +56,10 @@ kotlin {
             enable = true
         }
 
-        withHostTest {}
+        withHostTest {
+            isIncludeAndroidResources = true
+            isReturnDefaultValues = true
+        }
     }
 
     listOf(

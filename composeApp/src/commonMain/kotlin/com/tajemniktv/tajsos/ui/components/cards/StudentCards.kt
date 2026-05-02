@@ -63,6 +63,11 @@ import tajsos.composeapp.generated.resources.study_label_flashcards
 import tajsos.composeapp.generated.resources.study_label_study_time
 import tajsos.composeapp.generated.resources.templates_title
 
+/**
+ * Student summary card
+ *
+ * @param state
+ */
 @Composable
 fun StudentSummaryCard(state: StudentBoardState) {
     Card(colors = CardDefaults.cardColors(containerColor = TajsOSTheme.CardSurface)) {
@@ -124,6 +129,23 @@ fun StudentSummaryCard(state: StudentBoardState) {
     }
 }
 
+/**
+ * Template quick actions card
+ *
+ * @param state
+ * @param templates
+ * @param courseId
+ * @param courseName
+ * @param semester
+ * @param onCourseIdChange
+ * @param onCourseNameChange
+ * @param onSemesterChange
+ * @param onCreate
+ * @receiver
+ * @receiver
+ * @receiver
+ * @receiver
+ */
 @Composable
 fun TemplateQuickActionsCard(
     state: StudentBoardState,
@@ -259,6 +281,19 @@ fun TemplateQuickActionsCard(
     }
 }
 
+/**
+ * Progress control card
+ *
+ * @param node
+ * @param title
+ * @param value
+ * @param onDecrease
+ * @param onIncrease
+ * @param onOpen
+ * @receiver
+ * @receiver
+ * @receiver
+ */
 @Composable
 fun ProgressControlCard(
     node: NodeEntity,
@@ -292,6 +327,14 @@ fun ProgressControlCard(
     }
 }
 
+/**
+ * Student node card
+ *
+ * @param viewModel
+ * @param node
+ * @param onEditNode
+ * @receiver
+ */
 @Composable
 fun StudentNodeCard(
     viewModel: MainViewModel,

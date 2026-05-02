@@ -39,6 +39,7 @@ import com.tajemniktv.tajsos.data.TrackDao
 import com.tajemniktv.tajsos.data.TrackEntryEntity
 import com.tajemniktv.tajsos.data.TrackMedicationJoinEntity
 import com.tajemniktv.tajsos.ui.main.state.ExportData
+import io.ktor.client.engine.mock.respond
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -286,7 +287,11 @@ class MainViewModelTest {
 
             val fakeDataStore = FakeDataStore()
             val testPrefs = PreferencesRepository(fakeDataStore)
-            val client = io.ktor.client.HttpClient()
+            val mockEngine =
+                io.ktor.client.engine.mock.MockEngine {
+                    respond("", io.ktor.http.HttpStatusCode.OK)
+                }
+            val client = io.ktor.client.HttpClient(mockEngine)
             val calendarManager =
                 com.tajemniktv.tajsos.calendar
                     .CalendarManager(testRepo, client)
