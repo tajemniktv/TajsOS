@@ -17,6 +17,8 @@ import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
 import androidx.compose.ui.window.application
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
+import androidx.datastore.preferences.core.emptyPreferences
 import com.tajemniktv.tajsos.data.DesktopWindowStartupMode
 import com.tajemniktv.tajsos.data.PreferencesRepository
 import com.tajemniktv.tajsos.data.createDatabase
@@ -44,6 +46,7 @@ fun main() =
         // Simple DataStore setup for Desktop
         val dataStore =
             PreferenceDataStoreFactory.create(
+                corruptionHandler = ReplaceFileCorruptionHandler { emptyPreferences() },
                 produceFile = { File(System.getProperty("user.home"), "tajsos.preferences_pb") },
             )
 

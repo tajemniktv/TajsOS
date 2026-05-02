@@ -4,6 +4,8 @@
 
 package com.tajemniktv.tajsos.data
 
+import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
+import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -82,6 +84,7 @@ class PreferencesRepositoryDesktopWindowPlacementTest {
 
     private fun createTestDataStore() =
         PreferenceDataStoreFactory.create(
+            corruptionHandler = ReplaceFileCorruptionHandler { emptyPreferences() },
             produceFile = {
                 Files.createTempFile("tajsos-prefs-test", ".preferences_pb").toFile().apply {
                     deleteOnExit()
