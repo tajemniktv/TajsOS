@@ -114,8 +114,8 @@ private val healthTitleKeywords =
  * right lenses without requiring manual user curation.
  *
  * Currently, heuristic matching queries are only implemented for the `FINANCES` and `HEALTH` domains.
- * Other domains defined in `DomainKind` (e.g., `EDUCATION` and `RELATIONSHIPS`) do not yet have dedicated
- * queries in this object.
+ * `EDUCATION` and `RELATIONSHIPS` (defined in [com.tajemniktv.tajsos.domain.DomainKind])
+ * do not yet have dedicated queries in this object.
  */
 object DomainLensQueries {
     /**
