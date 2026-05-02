@@ -605,7 +605,11 @@ class AppRepository(
     // Calendar
     fun getAllCalendarProviders() = calendarProviderDao.getAllProviders()
 
-    suspend fun insertCalendarProvider(provider: CalendarProviderEntity) = calendarProviderDao.insertProvider(provider)
+    suspend fun insertCalendarProvider(provider: CalendarProviderEntity): Long {
+        var id = calendarProviderDao.insertProvider(provider)
+        if (id == -1L) id = provider.id
+        return id
+    }
 
     suspend fun updateCalendarProvider(provider: CalendarProviderEntity) = calendarProviderDao.updateProvider(provider)
 
@@ -1134,7 +1138,11 @@ class AppRepository(
 
     fun getTagsForNode(nodeId: Long) = tagDao.getTagsForNode(nodeId)
 
-    suspend fun insertTag(tag: TagEntity) = tagDao.insertTag(tag)
+    suspend fun insertTag(tag: TagEntity): Long {
+        var id = tagDao.insertTag(tag)
+        if (id == -1L) id = tag.id
+        return id
+    }
 
     suspend fun attachTagToNode(
         nodeId: Long,
@@ -1384,14 +1392,22 @@ class AppRepository(
     // Reviews
     fun getAllReviews() = reviewDao.getAllReviews()
 
-    suspend fun insertReview(review: ReviewEntity) = reviewDao.insertReview(review)
+    suspend fun insertReview(review: ReviewEntity): Long {
+        var id = reviewDao.insertReview(review)
+        if (id == -1L) id = review.id
+        return id
+    }
 
     suspend fun getLastReviewByType(type: String) = reviewDao.getLastReviewByType(type)
 
     // Operating Modes
     fun getAllModes() = modeDao.getAllModes()
 
-    suspend fun insertMode(mode: ModeEntity) = modeDao.insertMode(mode)
+    suspend fun insertMode(mode: ModeEntity): Long {
+        var id = modeDao.insertMode(mode)
+        if (id == -1L) id = mode.id
+        return id
+    }
 
     suspend fun updateMode(mode: ModeEntity) = modeDao.updateMode(mode)
 
@@ -1409,7 +1425,11 @@ class AppRepository(
 
     fun getAllModeUsageLogs() = modeDao.getAllUsageLogs()
 
-    suspend fun insertModeUsageLog(log: ModeUsageLogEntity) = modeDao.insertUsageLog(log)
+    suspend fun insertModeUsageLog(log: ModeUsageLogEntity): Long {
+        var id = modeDao.insertUsageLog(log)
+        if (id == -1L) id = log.id
+        return id
+    }
 
     suspend fun deactivateModeUsageLog(
         id: Long,
@@ -1431,7 +1451,11 @@ class AppRepository(
     // Protocols
     fun getAllProtocolHistory() = protocolDao.getAllProtocolHistory()
 
-    suspend fun insertProtocolHistory(history: ProtocolHistoryEntity) = protocolDao.insertProtocolHistory(history)
+    suspend fun insertProtocolHistory(history: ProtocolHistoryEntity): Long {
+        var id = protocolDao.insertProtocolHistory(history)
+        if (id == -1L) id = history.id
+        return id
+    }
 
     // Decisions
 
@@ -1569,7 +1593,11 @@ class AppRepository(
 
     fun getOptionsForDecision(nodeId: Long) = decisionDao.getOptionsForDecision(nodeId)
 
-    suspend fun insertDecisionOption(option: DecisionOptionEntity) = decisionDao.insertDecisionOption(option)
+    suspend fun insertDecisionOption(option: DecisionOptionEntity): Long {
+        var id = decisionDao.insertDecisionOption(option)
+        if (id == -1L) id = option.id
+        return id
+    }
 
     suspend fun updateDecisionOption(option: DecisionOptionEntity) = decisionDao.updateDecisionOption(option)
 
@@ -1599,7 +1627,11 @@ class AppRepository(
 
     fun getAllMedications(): Flow<List<MedicationEntity>> = medicationDao.getAllMedications()
 
-    suspend fun insertMedication(medication: MedicationEntity): Long = medicationDao.insertMedication(medication)
+    suspend fun insertMedication(medication: MedicationEntity): Long {
+        var id = medicationDao.insertMedication(medication)
+        if (id == -1L) id = medication.id
+        return id
+    }
 
     suspend fun updateMedication(medication: MedicationEntity) = medicationDao.updateMedication(medication)
 
