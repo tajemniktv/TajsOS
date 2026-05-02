@@ -316,6 +316,6 @@ fun StudentNodeCard(
             Text(stringResource(Res.string.common_revisit))
         }
     }
-    androidx.compose.material3.HorizontalDivider()
+    androidx.compose.material3.HorizontalDivider(color = TajsOSTheme.GhostBorder)
 }
 

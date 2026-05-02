@@ -107,7 +107,7 @@ internal fun TasksArchiveView(
                             }
                         }
                     }
-                    HorizontalDivider(color = TajsOSTheme.Border)
+                    HorizontalDivider(color = TajsOSTheme.GhostBorder)
                 }
             }
         }

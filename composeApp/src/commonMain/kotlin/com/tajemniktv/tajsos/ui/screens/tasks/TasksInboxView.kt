@@ -125,7 +125,7 @@ internal fun TasksInboxView(
                                 }
                             }
                         }
-                        HorizontalDivider(color = TajsOSTheme.Border)
+                        HorizontalDivider(color = TajsOSTheme.GhostBorder)
                     }
                 }
             }
@@ -195,7 +195,7 @@ internal fun TasksInboxView(
                                 }
                             }
                         }
-                        HorizontalDivider(color = TajsOSTheme.Border)
+                        HorizontalDivider(color = TajsOSTheme.GhostBorder)
                     }
                 }
             }

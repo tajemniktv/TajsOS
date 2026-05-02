@@ -204,7 +204,7 @@ internal fun CalendarMainBlock(
                                 )
                             }
 
-                            HorizontalDivider(color = TajsOSTheme.Border.copy(alpha = 0.6f))
+                            HorizontalDivider(color = TajsOSTheme.GhostBorder.copy(alpha = 0.6f))
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Icon(
                                     Icons.Default.TaskAlt,
