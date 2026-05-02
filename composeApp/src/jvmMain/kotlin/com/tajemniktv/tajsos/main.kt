@@ -17,6 +17,8 @@ import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
 import androidx.compose.ui.window.application
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
+import androidx.datastore.preferences.core.emptyPreferences
 import com.tajemniktv.tajsos.data.DesktopWindowStartupMode
 import com.tajemniktv.tajsos.data.PreferencesRepository
 import com.tajemniktv.tajsos.data.createDatabase
@@ -44,6 +46,7 @@ fun main() =
         // Simple DataStore setup for Desktop
         val dataStore =
             PreferenceDataStoreFactory.create(
+                corruptionHandler = ReplaceFileCorruptionHandler { emptyPreferences() },
                 produceFile = { File(System.getProperty("user.home"), "tajsos.preferences_pb") },
             )
 
@@ -61,16 +64,7 @@ fun main() =
             rememberWindowState(
                 position = persistedWindowPlacement.toWindowPosition(),
                 size = persistedWindowPlacement.toWindowSize(),
-                placement =
-                    when (desktopWindowStartupMode) {
-                        DesktopWindowStartupMode.ALWAYS_MAXIMIZED -> WindowPlacement.Maximized
-                        DesktopWindowStartupMode.RESTORE_LAST ->
-                            if (persistedWindowPlacement.isMaximized) {
-                                WindowPlacement.Maximized
-                            } else {
-                                WindowPlacement.Floating
-                            }
-                    },
+                placement = resolveWindowPlacement(desktopWindowStartupMode, persistedWindowPlacement.isMaximized),
             )
         val viewModel =
             sharedModule.createViewModel(
@@ -167,5 +161,24 @@ private fun Dp.toPersistedDpOrNull(): Int? {
         null
     } else {
         rawValue.toInt()
+    }
+}
+
+
+/**
+ * Resolves [WindowPlacement] based on startup mode and persistence.
+ */
+private fun resolveWindowPlacement(
+    startupMode: DesktopWindowStartupMode,
+    isMaximized: Boolean,
+): WindowPlacement {
+    return when (startupMode) {
+        DesktopWindowStartupMode.ALWAYS_MAXIMIZED -> WindowPlacement.Maximized
+        DesktopWindowStartupMode.RESTORE_LAST ->
+            if (isMaximized) {
+                WindowPlacement.Maximized
+            } else {
+                WindowPlacement.Floating
+            }
     }
 }
