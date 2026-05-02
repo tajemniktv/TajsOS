@@ -612,7 +612,7 @@ private fun AppearanceSectionCard(
             style = MaterialTheme.typography.titleMedium,
             color = TajsOSTheme.Text,
         )
-        HorizontalDivider(color = TajsOSTheme.GhostBorder.copy(alpha = 0.3f))
+        HorizontalDivider(color = TajsOSTheme.GhostBorder)
         content()
     }
 }
