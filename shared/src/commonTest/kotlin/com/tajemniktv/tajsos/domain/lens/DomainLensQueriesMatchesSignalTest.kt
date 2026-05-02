@@ -5,6 +5,7 @@ import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.data.TagEntity
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class DomainLensQueriesMatchesSignalTest {
     private fun createNode(
@@ -49,6 +50,18 @@ class DomainLensQueriesMatchesSignalTest {
     }
 
     @Test
+    fun financeActionItems_case_insensitivity() {
+        val nodeTitle = createNode(1, "MY BUDGET")
+        val nodeContent = createNode(2, "some task", "PAY TAX")
+        val nodeTag = createNode(3, "some task", tags = listOf("MONEY"))
+
+        val result = DomainLensQueries.financeActionItems(listOf(nodeTitle, nodeContent, nodeTag))
+        assertEquals(3, result.size)
+        val expectedIds = listOf(1L, 2L, 3L)
+        assertEquals(expectedIds, result.map { it.node.id }.sorted())
+    }
+
+    @Test
     fun financeKnowledgeItems_includes_reference_notes() {
         val nodeReferenceMatch = createNode(1, "some budget", type = "note", noteType = "reference")
         val nodeReferenceTagMatch = createNode(2, "some doc", type = "note", noteType = "reference", tags = listOf("finance"))
@@ -73,6 +86,18 @@ class DomainLensQueriesMatchesSignalTest {
         val result = DomainLensQueries.healthActionItems(listOf(nodeTitle, nodeContent, nodeTag, nodeMaintenance, nodeReflection, nodeNone))
         assertEquals(4, result.size)
         val expectedIds = listOf(1L, 2L, 3L, 4L)
+        assertEquals(expectedIds, result.map { it.node.id }.sorted())
+    }
+
+    @Test
+    fun healthActionItems_case_insensitivity() {
+        val nodeTitle = createNode(1, "SEE DOCTOR")
+        val nodeContent = createNode(2, "some task", "PICK UP MEDICATION")
+        val nodeTag = createNode(3, "some task", tags = listOf("MEDICAL"))
+
+        val result = DomainLensQueries.healthActionItems(listOf(nodeTitle, nodeContent, nodeTag))
+        assertEquals(3, result.size)
+        val expectedIds = listOf(1L, 2L, 3L)
         assertEquals(expectedIds, result.map { it.node.id }.sorted())
     }
 

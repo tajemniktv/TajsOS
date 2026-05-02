@@ -10,7 +10,9 @@ import kotlinx.serialization.Serializable
  * Built-in, first-class LifeOS domains.
  *
  * Domains are product-level lenses over shared system data and are not equivalent
- * to user-defined Areas.
+ * to user-defined Areas. TajsOS utilizes heuristic-based, zero-configuration logic
+ * (e.g., implicit keyword matching) for categorizing domains rather than requiring
+ * explicit user associations.
  */
 @Serializable
 enum class DomainKind {

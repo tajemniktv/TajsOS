@@ -206,7 +206,6 @@ internal fun TasksAllView(
                         modifier = Modifier.weight(2f),
                         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                         color = TajsOSTheme.CardSurface,
-                        border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
                     ) {
                         TaskTable(
                             sorted,
@@ -220,7 +219,6 @@ internal fun TasksAllView(
                         modifier = Modifier.weight(1f),
                         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                         color = TajsOSTheme.CardSurface,
-                        border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
                     ) {
                         TaskDetails(
                             selected,
@@ -238,7 +236,6 @@ internal fun TasksAllView(
                 Surface(
                     shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                     color = TajsOSTheme.CardSurface,
-                    border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
                 ) {
                     Column(modifier = Modifier.fillMaxWidth()) {
                         TaskTable(
@@ -248,7 +245,7 @@ internal fun TasksAllView(
                             areaById,
                             onSelect = { selectedId = it },
                         )
-                        HorizontalDivider(color = TajsOSTheme.Border)
+                        HorizontalDivider(color = TajsOSTheme.GhostBorder)
                         TaskDetails(
                             selected,
                             projectById,
@@ -304,7 +301,7 @@ private fun TaskTable(
                 color = TajsOSTheme.Muted,
             )
         }
-        HorizontalDivider(color = TajsOSTheme.Border)
+        HorizontalDivider(color = TajsOSTheme.GhostBorder)
         Column {
             tasks.forEach { task ->
                 val selected = task.id == selectedId
@@ -360,7 +357,7 @@ private fun TaskTable(
                     onClick = { onSelect(task.id) },
                     modifier = Modifier.padding(horizontal = TajsOSTheme.SpacingMd),
                 ) { Text(stringResource(Res.string.tasks_open_action)) }
-                HorizontalDivider(color = TajsOSTheme.Border)
+                HorizontalDivider(color = TajsOSTheme.GhostBorder)
             }
         }
     }
@@ -412,7 +409,7 @@ private fun TaskDetails(
                 color = TajsOSTheme.Text,
             )
         }
-        HorizontalDivider(color = TajsOSTheme.Border)
+        HorizontalDivider(color = TajsOSTheme.GhostBorder)
         DetailRow(
             stringResource(Res.string.tasks_detail_status),
             (task.taskStateOrNull() ?: TaskState.ACTIVE).storageKey,

@@ -67,7 +67,6 @@ internal fun TasksArchiveView(
         Surface(
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
             color = TajsOSTheme.CardSurface,
-            border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
         ) {
             Column {
                 archivedTasks.forEach { task ->
@@ -108,7 +107,7 @@ internal fun TasksArchiveView(
                             }
                         }
                     }
-                    HorizontalDivider(color = TajsOSTheme.Border)
+                    HorizontalDivider(color = TajsOSTheme.GhostBorder)
                 }
             }
         }

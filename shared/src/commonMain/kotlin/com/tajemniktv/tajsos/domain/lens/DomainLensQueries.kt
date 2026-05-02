@@ -101,9 +101,21 @@ private val healthTitleKeywords =
  *
  * Domains (such as finance or health) are categorized implicitly by checking for hardcoded
  * string markers within node tags, titles, content, `maintenanceType`, and `noteType` fields.
+ * This heuristic-based approach provides a zero-configuration experience, allowing items to be surfaced
+ * appropriately even if the user forgets to manually assign the domain.
  *
- * Note: These queries intentionally bypass explicit domain associations (e.g., via associatedDomains in metadata) in favor of terminology matching. This ensures a zero-configuration
- * experience where items are surfaced appropriately even if the user forgets to manually assign the domain.
+ * Note: These queries intentionally bypass explicit domain associations (e.g., via `associatedDomains`
+ * in `AreaMetadata`) in favor of terminology matching to lower the friction of capturing new data.
+ *
+ * This object implements a zero-configuration classification strategy. Instead of relying on
+ * explicit database associations (like a many-to-many domain relation table), items are
+ * implicitly categorized into domains via keyword matching in titles, content, tags, and
+ * specific maintenance/note types. This decoupling allows items to naturally surface in the
+ * right lenses without requiring manual user curation.
+ *
+ * Currently, heuristic matching queries are only implemented for the `FINANCES` and `HEALTH` domains.
+ * `EDUCATION` and `RELATIONSHIPS` (defined in [com.tajemniktv.tajsos.domain.DomainKind])
+ * do not yet have dedicated queries in this object.
  */
 object DomainLensQueries {
     /**
@@ -246,7 +258,8 @@ object DomainLensQueries {
      *
      * Note: This intentionally bypasses explicit `ItemDomainEntity` database associations
      * to provide a zero-configuration experience, ensuring finance items are surfaced even
-     * if the user forgets to manually assign the finance domain.
+     * if the user forgets to manually assign the finance domain. This heuristic-based logic
+     * relies on implicit keyword matching to decouple domain categorization from explicit user action.
      */
     private fun matchesFinanceSignal(node: NodeWithPin): Boolean {
         val title = node.node.title.lowercase()
@@ -270,7 +283,8 @@ object DomainLensQueries {
      *
      * Note: This intentionally bypasses explicit `ItemDomainEntity` database associations
      * to provide a zero-configuration experience, ensuring health items are surfaced even
-     * if the user forgets to manually assign the health domain.
+     * if the user forgets to manually assign the health domain. This heuristic-based logic
+     * relies on implicit keyword matching to decouple domain categorization from explicit user action.
      */
     private fun matchesHealthSignal(node: NodeWithPin): Boolean {
         val title = node.node.title.lowercase()

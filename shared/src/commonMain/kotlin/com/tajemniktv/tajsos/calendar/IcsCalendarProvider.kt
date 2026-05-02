@@ -171,7 +171,7 @@ class IcsCalendarProvider(
  * @property value The raw date/time string value (e.g., "20231225" or "20231225T100000Z").
  * @property rawKey The raw property key (e.g., "DTSTART" or "DTSTART;VALUE=DATE").
  */
-private data class IcsDateProperty(
+internal data class IcsDateProperty(
     val value: String,
     val rawKey: String,
 ) {
@@ -185,13 +185,13 @@ private data class IcsDateProperty(
  * A stateful builder class designed to construct a single [CalendarEventEntity] iteratively
  * by processing lines within a `BEGIN:VEVENT` and `END:VEVENT` block.
  */
-private class IcsEventBuilder {
-    private var uid: String? = null
-    private var summary: String = "No Title"
-    private var description: String? = null
-    private var location: String? = null
-    private var startProp: IcsDateProperty? = null
-    private var endProp: IcsDateProperty? = null
+internal class IcsEventBuilder {
+    internal var uid: String? = null
+    internal var summary: String = "No Title"
+    internal var description: String? = null
+    internal var location: String? = null
+    internal var startProp: IcsDateProperty? = null
+    internal var endProp: IcsDateProperty? = null
 
     /**
      * Updates the builder's fields from a single unfolded VEVENT line.
@@ -291,7 +291,7 @@ private class IcsEventBuilder {
      * @return An Instant representing the parsed date at 00:00 UTC.
      * @throws IllegalArgumentException if `cleanDate` has fewer than 8 characters.
      */
-    private fun parseAllDayDate(cleanDate: String): Instant {
+    internal fun parseAllDayDate(cleanDate: String): Instant {
         if (cleanDate.length < 8) throw IllegalArgumentException("Invalid date length")
         val year = cleanDate.substring(0, 4).toInt()
         val month = cleanDate.substring(4, 6).toInt()
@@ -308,7 +308,7 @@ private class IcsEventBuilder {
      * @return The parsed Instant representing that point in time.
      * @throws IllegalArgumentException If the datetime string is shorter than the expected minimum length.
      */
-    private fun parseIsoDate(property: IcsDateProperty): Instant {
+    internal fun parseIsoDate(property: IcsDateProperty): Instant {
         val cleanDate = property.value.trim()
         if (cleanDate.length < 15) throw IllegalArgumentException("Invalid ISO date length")
         val year = cleanDate.substring(0, 4)
@@ -334,7 +334,7 @@ private class IcsEventBuilder {
      * @param rawKey The raw property key containing potential `TZID` parameters.
      * @return The parsed [TimeZone] or the system default fallback.
      */
-    private fun extractTimeZone(rawKey: String): TimeZone {
+    internal fun extractTimeZone(rawKey: String): TimeZone {
         val tzidMatch =
             Regex("TZID=([^;:]+)").find(rawKey) ?: return TimeZone.currentSystemDefault()
         return try {

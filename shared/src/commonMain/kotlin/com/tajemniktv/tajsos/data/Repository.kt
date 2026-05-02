@@ -351,6 +351,7 @@ class AppRepository(
 
     /**
      * Stores a raw capture entry before it becomes a typed life object.
+     * Raw captures sit in an unprocessed state until semantic triage turns them into actionable items.
      *
      * @return The auto-generated inbox entry identifier.
      */
@@ -396,8 +397,14 @@ class AppRepository(
     /**
      * Converts a raw, unstructured inbox capture into a typed, actionable life object.
      *
+     * This is a critical business rule for the "capture -> triage -> execute" flow.
      * The first non-blank line of the raw text becomes the new item's title, and remaining lines become the body content.
      * This establishes the entry point for turning fleeting thoughts into durable nodes (tasks, notes, projects).
+     *
+     * **State and Data Flow Transitions:**
+     * - The un-triaged raw capture transitions from `processedAt = null` to having a concrete processing timestamp.
+     * - A new typed node is generated based on the inferred or user-selected [ItemKind].
+     * - The original raw entry retains a reference (`triagedItemId`) to the newly spawned node, completing the pipeline.
      *
      * **Side effects:**
      * - Inserts the newly created typed item into the nodes table and synchronizes its associated facets, domains, and schedules.
@@ -598,7 +605,11 @@ class AppRepository(
     // Calendar
     fun getAllCalendarProviders() = calendarProviderDao.getAllProviders()
 
-    suspend fun insertCalendarProvider(provider: CalendarProviderEntity) = calendarProviderDao.insertProvider(provider)
+    suspend fun insertCalendarProvider(provider: CalendarProviderEntity): Long {
+        var id = calendarProviderDao.insertProvider(provider)
+        if (id == -1L) id = provider.id
+        return id
+    }
 
     suspend fun updateCalendarProvider(provider: CalendarProviderEntity) = calendarProviderDao.updateProvider(provider)
 
@@ -637,19 +648,21 @@ class AppRepository(
                 fromEpochDay = fromEpochDay,
                 toEpochDay = toEpochDay,
             ).map { entries -> entries.map { it.toModel() } }
-
     /**
      * Inserts a new node into the database.
+     *
+     * Handles @Upsert behaviour where it returns -1L if it's updating an existing entity instead of inserting.
      *
      * **Side effects:**
      * - Logs a "NODE_CREATED" event.
      * - Synchronizes "BELONGS_TO" relations for the node's associated project and area.
      *
      * @param node The node entity to insert.
-     * @return The auto-generated ID of the newly inserted node.
+     * @return The auto-generated ID of the newly inserted node, or the existing ID if updated.
      */
     suspend fun insertNode(node: NodeEntity): Long {
-        val id = nodeDao.insertNode(node)
+        var id = nodeDao.insertNode(node)
+        if (id == -1L) id = node.id
         logEvent("NODE_CREATED", id)
         syncBelongsToRelations(id, node.projectId, node.areaId)
         syncTypedFacetsFromNode(node.copy(id = id))
@@ -1079,7 +1092,8 @@ class AppRepository(
     fun getActiveSession(): Flow<FocusSessionEntity?> = focusSessionDao.getActiveSession()
 
     suspend fun insertSession(session: FocusSessionEntity): Long {
-        val id = focusSessionDao.insertSession(session)
+        var id = focusSessionDao.insertSession(session)
+        if (id == -1L) id = session.id
         logEvent("SESSION_STARTED", session.nodeId)
         return id
     }
@@ -1094,7 +1108,8 @@ class AppRepository(
     fun getAllTrackEntries(): Flow<List<TrackEntryEntity>> = trackDao.getAllTrackEntries()
 
     suspend fun insertTrackEntry(entry: TrackEntryEntity): Long {
-        val id = trackDao.insertTrackEntry(entry)
+        var id = trackDao.insertTrackEntry(entry)
+        if (id == -1L) id = entry.id
         logEvent("CHECKIN_CREATED")
         return id
     }
@@ -1123,7 +1138,11 @@ class AppRepository(
 
     fun getTagsForNode(nodeId: Long) = tagDao.getTagsForNode(nodeId)
 
-    suspend fun insertTag(tag: TagEntity) = tagDao.insertTag(tag)
+    suspend fun insertTag(tag: TagEntity): Long {
+        var id = tagDao.insertTag(tag)
+        if (id == -1L) id = tag.id
+        return id
+    }
 
     suspend fun attachTagToNode(
         nodeId: Long,
@@ -1373,14 +1392,22 @@ class AppRepository(
     // Reviews
     fun getAllReviews() = reviewDao.getAllReviews()
 
-    suspend fun insertReview(review: ReviewEntity) = reviewDao.insertReview(review)
+    suspend fun insertReview(review: ReviewEntity): Long {
+        var id = reviewDao.insertReview(review)
+        if (id == -1L) id = review.id
+        return id
+    }
 
     suspend fun getLastReviewByType(type: String) = reviewDao.getLastReviewByType(type)
 
     // Operating Modes
     fun getAllModes() = modeDao.getAllModes()
 
-    suspend fun insertMode(mode: ModeEntity) = modeDao.insertMode(mode)
+    suspend fun insertMode(mode: ModeEntity): Long {
+        var id = modeDao.insertMode(mode)
+        if (id == -1L) id = mode.id
+        return id
+    }
 
     suspend fun updateMode(mode: ModeEntity) = modeDao.updateMode(mode)
 
@@ -1398,7 +1425,11 @@ class AppRepository(
 
     fun getAllModeUsageLogs() = modeDao.getAllUsageLogs()
 
-    suspend fun insertModeUsageLog(log: ModeUsageLogEntity) = modeDao.insertUsageLog(log)
+    suspend fun insertModeUsageLog(log: ModeUsageLogEntity): Long {
+        var id = modeDao.insertUsageLog(log)
+        if (id == -1L) id = log.id
+        return id
+    }
 
     suspend fun deactivateModeUsageLog(
         id: Long,
@@ -1420,7 +1451,11 @@ class AppRepository(
     // Protocols
     fun getAllProtocolHistory() = protocolDao.getAllProtocolHistory()
 
-    suspend fun insertProtocolHistory(history: ProtocolHistoryEntity) = protocolDao.insertProtocolHistory(history)
+    suspend fun insertProtocolHistory(history: ProtocolHistoryEntity): Long {
+        var id = protocolDao.insertProtocolHistory(history)
+        if (id == -1L) id = history.id
+        return id
+    }
 
     // Decisions
 
@@ -1558,7 +1593,11 @@ class AppRepository(
 
     fun getOptionsForDecision(nodeId: Long) = decisionDao.getOptionsForDecision(nodeId)
 
-    suspend fun insertDecisionOption(option: DecisionOptionEntity) = decisionDao.insertDecisionOption(option)
+    suspend fun insertDecisionOption(option: DecisionOptionEntity): Long {
+        var id = decisionDao.insertDecisionOption(option)
+        if (id == -1L) id = option.id
+        return id
+    }
 
     suspend fun updateDecisionOption(option: DecisionOptionEntity) = decisionDao.updateDecisionOption(option)
 
@@ -1588,7 +1627,11 @@ class AppRepository(
 
     fun getAllMedications(): Flow<List<MedicationEntity>> = medicationDao.getAllMedications()
 
-    suspend fun insertMedication(medication: MedicationEntity): Long = medicationDao.insertMedication(medication)
+    suspend fun insertMedication(medication: MedicationEntity): Long {
+        var id = medicationDao.insertMedication(medication)
+        if (id == -1L) id = medication.id
+        return id
+    }
 
     suspend fun updateMedication(medication: MedicationEntity) = medicationDao.updateMedication(medication)
 

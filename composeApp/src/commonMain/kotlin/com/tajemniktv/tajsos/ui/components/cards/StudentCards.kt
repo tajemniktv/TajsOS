@@ -317,6 +317,6 @@ fun StudentNodeCard(
             Text(stringResource(Res.string.common_revisit))
         }
     }
-    HorizontalDivider()
+    HorizontalDivider(color = TajsOSTheme.GhostBorder)
 }
 

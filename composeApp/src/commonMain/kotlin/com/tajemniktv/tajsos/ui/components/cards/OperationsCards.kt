@@ -138,7 +138,7 @@ fun OpenLoopCard(
                     )
                 }
             }
-            HorizontalDivider(color = TajsOSTheme.Border)
+            HorizontalDivider(color = TajsOSTheme.GhostBorder)
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
                 verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
@@ -271,7 +271,7 @@ fun MaintenanceCard(
                 }, label = { Text("DUE +7D") })
                 AssistChip(onClick = { onSetOverdue(null) }, label = { Text("CLEAR DUE") })
             }
-            HorizontalDivider(color = TajsOSTheme.Border)
+            HorizontalDivider(color = TajsOSTheme.GhostBorder)
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
                 verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
@@ -307,7 +307,6 @@ fun ProtocolCard(
         shape =
             androidx.compose.foundation.shape
                 .RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
     ) {
         Column(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),

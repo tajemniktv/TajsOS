@@ -256,7 +256,6 @@ private fun PriorityTaskCard(
     Surface(
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         color = TajsOSTheme.CardSurface,
-        border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
@@ -337,7 +336,6 @@ private fun QueueList(
     Surface(
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         color = TajsOSTheme.CardSurface,
-        border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
     ) {
         Column {
             tasks.forEach { task ->
@@ -372,7 +370,7 @@ private fun QueueList(
                         IconButton(onClick = { onDone(task) }) { Icon(Icons.Default.Check, null) }
                     }
                 }
-                HorizontalDivider(color = TajsOSTheme.Border)
+                HorizontalDivider(color = TajsOSTheme.GhostBorder)
             }
         }
     }
@@ -399,7 +397,6 @@ private fun CommandSidebar(
         modifier = modifier,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         color = TajsOSTheme.CardSurface,
-        border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
@@ -423,7 +420,7 @@ private fun CommandSidebar(
                     ),
                 )
             }
-            HorizontalDivider(color = TajsOSTheme.Border)
+            HorizontalDivider(color = TajsOSTheme.GhostBorder)
             Text(
                 stringResource(Res.string.tasks_quick_capture_title),
                 style = MaterialTheme.typography.titleMedium,
@@ -440,7 +437,7 @@ private fun CommandSidebar(
                     stringResource(Res.string.tasks_quick_capture_action),
                 )
             }
-            HorizontalDivider(color = TajsOSTheme.Border)
+            HorizontalDivider(color = TajsOSTheme.GhostBorder)
             Text(
                 stringResource(Res.string.tasks_context_title),
                 style = MaterialTheme.typography.titleMedium,
@@ -451,7 +448,7 @@ private fun CommandSidebar(
             ContextRow(stringResource(Res.string.tasks_context_due_soon), dueSoonCount)
 
             if (staleTasksCount > 0) {
-                HorizontalDivider(color = TajsOSTheme.Border)
+                HorizontalDivider(color = TajsOSTheme.GhostBorder)
                 OutlinedButton(
                     onClick = { showSweepDialog = true },
                     modifier = Modifier.fillMaxWidth(),

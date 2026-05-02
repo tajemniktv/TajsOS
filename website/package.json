@@ -21,18 +21,18 @@
     "@tailwindcss/vite": "^4.2.4",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "astro": "^6.1.9",
+    "astro": "^6.2.1",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "starlight-blog": "^0.26.1",
     "starlight-image-zoom": "^0.14.1",
-    "starlight-links-validator": "^0.23.0",
+    "starlight-links-validator": "^0.24.0",
     "starlight-obsidian": "^0.12.1",
     "starlight-videos": "^0.4.0",
     "tailwindcss": "^4.2.2"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.8",
-    "typescript": "^5.9.3"
+    "@astrojs/check": "^0.9.9",
+    "typescript": "^6.0.3"
   }
 }

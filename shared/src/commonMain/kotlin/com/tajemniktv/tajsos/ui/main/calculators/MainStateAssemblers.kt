@@ -253,6 +253,15 @@ fun buildPlaybookSnapshot(
     )
 }
 
+/**
+ * Assembles the comprehensive view state required for the Dashboard.
+ *
+ * This function orchestrates a complex, non-obvious data flow by combining raw database nodes
+ * with current Operating Mode filters (e.g., excluding specific areas/types). It evaluates
+ * heuristic rules to calculate critical state projections such as system load, open loop decay,
+ * and area health imbalances. It also derives contextual suggestions (like mode or context hints)
+ * based on the current time and available tasks.
+ */
 suspend fun buildDashboardUIState(
     repository: AppRepository,
     nodes: List<NodeWithPin>,

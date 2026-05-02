@@ -553,7 +553,7 @@ fun ExpandableNavSection(
                         onRootNavigate()
                     },
                 )
-                HorizontalDivider()
+                HorizontalDivider(color = TajsOSTheme.GhostBorder)
                 children.forEach { child ->
                     val isActiveChild =
                         isChildActive(

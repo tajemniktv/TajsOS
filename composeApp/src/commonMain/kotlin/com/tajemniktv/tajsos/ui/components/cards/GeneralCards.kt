@@ -51,7 +51,6 @@ fun InfoCard(
         modifier = modifier.glassChrome(shape = RoundedCornerShape(TajsOSTheme.RadiusMd), material = GlassMaterial.REGULAR),
         color = glassContainerColor(TajsOSTheme.Surface),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
     ) {
         Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
             Row(
@@ -96,7 +95,6 @@ fun StatusCard(
         modifier = modifier.fillMaxWidth().glassChrome(shape = RoundedCornerShape(TajsOSTheme.RadiusMd), material = GlassMaterial.REGULAR),
         color = glassContainerColor(TajsOSTheme.Surface),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
     ) {
         Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
             Text(
@@ -134,7 +132,6 @@ fun LinkedNodeItem(
         modifier = modifier.fillMaxWidth().glassChrome(shape = RoundedCornerShape(TajsOSTheme.RadiusMd), material = GlassMaterial.REGULAR),
         color = glassContainerColor(TajsOSTheme.Surface),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.CardStroke),
     ) {
         Row(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -189,7 +186,6 @@ fun ConnectionCard(
         modifier = modifier.fillMaxWidth().glassChrome(shape = RoundedCornerShape(TajsOSTheme.RadiusMd), material = GlassMaterial.THIN),
         color = glassContainerColor(Color.Transparent),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.CardStroke.copy(alpha = 0.5f)),
     ) {
         Row(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
