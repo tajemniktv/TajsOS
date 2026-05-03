@@ -37,7 +37,8 @@ class SharedModule(
     }
 
     /**
-     *
+     * Central repository handling persistence, queries, and complex operations over core
+     * life objects (nodes, facets, relations) and app state (preferences, modes).
      */
     val repository: AppRepository by lazy {
         AppRepository(
@@ -72,21 +73,26 @@ class SharedModule(
     }
 
     /**
-     *
+     * Manager responsible for syncing and orchestrating external calendar providers
+     * (e.g., ICS feeds) into the local event database.
      */
     val calendarManager: CalendarManager by lazy {
         CalendarManager(repository, httpClient)
     }
 
     /**
-     *
+     * Repository handling lightweight, key-value application settings backed by DataStore.
      */
     val preferencesRepository: PreferencesRepository by lazy {
         PreferencesRepository(dataStore)
     }
 
     /**
+     * Factory function to instantiate the root [MainViewModel].
      *
+     * @param nextStepFallbackLabel Fallback text when a project lacks a defined next action.
+     * @param untitledFallbackLabel Fallback text when an item lacks a title.
+     * @return The constructed [MainViewModel] wired with necessary repositories.
      */
     fun createViewModel(
         nextStepFallbackLabel: String = "Next step",
