@@ -492,10 +492,10 @@ class MainActivity : FragmentActivity() {
                 getParcelableExtra(name) as? T
             }
         } catch (e: BadParcelableException) {
-            Log.e(TAG, "Failed to read parcelable extra: $name", e)
+            Log.e(TAG, "Failed to read parcelable extra: $name: ${e.javaClass.simpleName}")
             null
         } catch (e: ParcelFormatException) {
-            Log.e(TAG, "Failed to read parcelable extra (bad parcel format): $name", e)
+            Log.e(TAG, "Failed to read parcelable extra (bad parcel format): $name: ${e.javaClass.simpleName}")
             null
         }
 
@@ -511,10 +511,10 @@ class MainActivity : FragmentActivity() {
                 getParcelableArrayListExtra<T>(name)
             }
         } catch (e: BadParcelableException) {
-            Log.e(TAG, "Failed to read parcelable array list extra: $name", e)
+            Log.e(TAG, "Failed to read parcelable array list extra: $name: ${e.javaClass.simpleName}")
             null
         } catch (e: ParcelFormatException) {
-            Log.e(TAG, "Failed to read parcelable array list extra (bad parcel format): $name", e)
+            Log.e(TAG, "Failed to read parcelable array list extra (bad parcel format): $name: ${e.javaClass.simpleName}")
             null
         }
 }
