@@ -1,38 +1,22 @@
+# @format
+
 # Codecov configuration
 # https://docs.codecov.com/docs/codecovyml-reference
 
 codecov:
-  require_ci_to_pass: yes
-
-coverage:
-  precision: 2
-  round: down
-  range: "70...100"
-
-  status:
-    project:
-      default:
-        # project-wide coverage
-        target: auto
-        threshold: 1% # Allow up to 1% drop
-    patch:
-      default:
-        # coverage of the pull request itself
-        target: auto
-        threshold: 1%
-        informational: true # Do not block PRs based on patch coverage
+  require_ci_to_pass: true
 
 comment:
-  layout: "reach,diff,flags,files"
   behavior: default
+  layout: "reach,diff,flags,files"
   require_changes: false # Show comment even if coverage doesn't change
 
 component_management:
   default_rules:
     statuses:
-      - type: project
-        target: auto
+      - target: auto
         threshold: 1%
+        type: project
   individual_components:
     - component_id: shared
       name: shared
@@ -51,6 +35,22 @@ component_management:
       paths:
         - androidApp/.*
 
-# Disable noisy line annotations in GitHub Checks
+coverage:
+  precision: 2
+  range: "70...100"
+  round: down
+  status:
+    patch:
+      default:
+        # coverage of the pull request itself
+        informational: true # Do not block PRs based on patch coverage
+        target: auto
+        threshold: 1%
+    project:
+      default:
+        # project-wide coverage
+        target: auto
+        threshold: 1% # Allow up to 1% drop# Disable noisy line annotations in GitHub Checks
+
 github_checks:
-  annotations: false
+  annotations: true
