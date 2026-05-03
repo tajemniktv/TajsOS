@@ -2,6 +2,8 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
+@file:Suppress("TestMethodWithoutAssertion")
+
 package com.tajemniktv.tajsos.ui
 
 import androidx.datastore.core.DataStore
@@ -39,12 +41,12 @@ import com.tajemniktv.tajsos.data.TrackDao
 import com.tajemniktv.tajsos.data.TrackEntryEntity
 import com.tajemniktv.tajsos.data.TrackMedicationJoinEntity
 import com.tajemniktv.tajsos.ui.main.state.ExportData
+import io.ktor.client.engine.mock.respond
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.resetMain
@@ -233,7 +235,7 @@ class MainViewModelTest {
     }
 
     @Test
-    fun exportDataJson_serializes_current_nodes_state_to_JSON(): TestResult =
+    fun exportDataJson_serializes_current_nodes_state_to_JSON() =
         runTest {
             val testNodes =
                 listOf(
@@ -286,7 +288,11 @@ class MainViewModelTest {
 
             val fakeDataStore = FakeDataStore()
             val testPrefs = PreferencesRepository(fakeDataStore)
-            val client = io.ktor.client.HttpClient()
+            val mockEngine =
+                io.ktor.client.engine.mock.MockEngine {
+                    respond("", io.ktor.http.HttpStatusCode.OK)
+                }
+            val client = io.ktor.client.HttpClient(mockEngine)
             val calendarManager =
                 com.tajemniktv.tajsos.calendar
                     .CalendarManager(testRepo, client)
@@ -295,8 +301,6 @@ class MainViewModelTest {
 
             advanceTimeBy(100)
             runCurrent()
-
-            viewModel.allNodes.value
 
             val exportJson = viewModel.exportDataJson()
             client.close()

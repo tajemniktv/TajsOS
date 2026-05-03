@@ -63,6 +63,11 @@ import tajsos.composeapp.generated.resources.study_label_flashcards
 import tajsos.composeapp.generated.resources.study_label_study_time
 import tajsos.composeapp.generated.resources.templates_title
 
+/**
+ * Student summary card
+ *
+ * @param state
+ */
 @Composable
 fun StudentSummaryCard(state: StudentBoardState) {
     Card(colors = CardDefaults.cardColors(containerColor = TajsOSTheme.CardSurface)) {
@@ -124,6 +129,23 @@ fun StudentSummaryCard(state: StudentBoardState) {
     }
 }
 
+/**
+ * Template quick actions card
+ *
+ * @param state
+ * @param templates
+ * @param courseId
+ * @param courseName
+ * @param semester
+ * @param onCourseIdChange
+ * @param onCourseNameChange
+ * @param onSemesterChange
+ * @param onCreate
+ * @receiver
+ * @receiver
+ * @receiver
+ * @receiver
+ */
 @Composable
 fun TemplateQuickActionsCard(
     state: StudentBoardState,
@@ -259,6 +281,16 @@ fun TemplateQuickActionsCard(
     }
 }
 
+/**
+ * Progress control card
+ *
+ * @param node
+ * @param title
+ * @param value
+ * @param onDecrease
+ * @param onIncrease
+ * @param onOpen
+ */
 @Composable
 fun ProgressControlCard(
     node: NodeEntity,
@@ -292,6 +324,14 @@ fun ProgressControlCard(
     }
 }
 
+/**
+ * Student node card
+ *
+ * @param viewModel
+ * @param node
+ * @param onEditNode
+ * @receiver
+ */
 @Composable
 fun StudentNodeCard(
     viewModel: MainViewModel,
@@ -300,8 +340,8 @@ fun StudentNodeCard(
 ) {
     NodeCard(
         nodeWithPin = node,
-        onToggleDone = { status -> viewModel.updateNodeStatus(node.node, status) },
-        onTogglePin = { isPinned -> viewModel.togglePin(node.node, isPinned) },
+        onToggleDone = { viewModel.updateNodeStatus(node.node, it) },
+        onTogglePin = { viewModel.togglePin(node.node, it) },
         onClick = { onEditNode(node.node.id) },
         onLongClick = { onEditNode(node.node.id) },
         onArchive = { viewModel.archiveNode(node.node) },
@@ -310,10 +350,15 @@ fun StudentNodeCard(
         modifier = Modifier.fillMaxWidth().padding(bottom = TajsOSTheme.SpacingSm),
         horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
     ) {
-        OutlinedButton(onClick = { viewModel.toggleFlashcardCandidate(node.node, true) }) {
+        OutlinedButton(onClick = {
+            viewModel.toggleFlashcardCandidate(
+                node.node,
+                enabled = true,
+            )
+        }) {
             Text(stringResource(Res.string.common_flashcard))
         }
-        OutlinedButton(onClick = { viewModel.toggleRevisitBeforeExam(node.node, true) }) {
+        OutlinedButton(onClick = { viewModel.toggleRevisitBeforeExam(node.node, enabled = true) }) {
             Text(stringResource(Res.string.common_revisit))
         }
     }

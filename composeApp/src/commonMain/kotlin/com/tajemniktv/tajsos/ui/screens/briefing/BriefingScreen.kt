@@ -127,9 +127,9 @@ fun BriefingRoute(
     val todayDate = nowInstant.toLocalDateTime(timeZone).date
     val todayEventCount =
         remember(calendarEntries, todayDate, timeZone) {
-            calendarEntries.count { entry ->
+            calendarEntries.count {
                 Instant
-                    .fromEpochMilliseconds(entry.startAt)
+                    .fromEpochMilliseconds(it.startAt)
                     .toLocalDateTime(timeZone)
                     .date == todayDate
             }
@@ -158,8 +158,8 @@ fun BriefingRoute(
     val priorityCount =
         remember(todayNodes, dashboardState) {
             val activeToday =
-                todayNodes.count { node ->
-                    when (node.taskStateOrNull()) {
+                todayNodes.count {
+                    when (it.taskStateOrNull()) {
                         TaskState.DONE,
                         TaskState.ARCHIVED,
                         -> false
@@ -249,7 +249,7 @@ fun BriefingRoute(
 }
 
 /**
- * calm, desktop-first orientation screen showing a lightweight daily briefing.
+ * Composable screen for the daily briefing, presenting situational awareness to the user.
  *
  * @param greetingText Localized greeting (e.g., "Good morning").
  * @param userName Display name shown alongside the greeting.
@@ -431,8 +431,8 @@ private fun BriefingMainPane(
                 horizontalArrangement = Arrangement.Center,
                 verticalArrangement = Arrangement.spacedBy(14.dp),
             ) {
-                quickActions.forEach { action ->
-                    BriefingActionCard(action = action)
+                quickActions.forEach {
+                    BriefingActionCard(action = it)
                 }
             }
 
@@ -861,7 +861,12 @@ internal fun relativeHourDiff(
 ): Long = ((nowMs - updatedAt) / 3_600_000L).coerceAtLeast(0L)
 
 /**
- * Descriptor for a briefing quick action.
+ * Represents a quick action available on the briefing screen.
+ *
+ * @property titleRes The localized label for the action.
+ * @property subtitle A descriptive secondary text.
+ * @property icon The iconography for the action button.
+ * @property onClick Callback invoked when the action is selected.
  */
 data class BriefingAction(
     val titleRes: StringResource,

@@ -48,7 +48,8 @@ For now, the current targets are androidApp and composeApp (JVM), so test agains
 
 - Active Gradle modules: `:androidApp`, `:composeApp`, `:shared`, `:server`.
 - Active runtime targets in code: Android app, Desktop JVM app, and iOS framework integration.
-- `website/` is separate from KMP runtime concerns.
+- `website/` is separate from KMP runtime concerns. It contains current landing page and website for
+  the project.
 - Server is currently Ktor/Netty and intentionally lightweight.
 
 ### Foundations to preserve unless explicitly changing
@@ -240,6 +241,14 @@ When working in this repo, agents should:
     trigger "back" gesture.
 29. Always use Context7 when user needs library/API documentation, code generation, setup or
     configuration steps without them having to explicitly ask.
+30. After every succesfull feature, fix, refactor etc., commit to VCS (GitHub) with a clear message
+    according to the convention. You can use MCP to do that.
+31. Prefer integrated IDE tools or native tools, if something is not covered by those, use native
+    MCP tools, if native MCP tools don't cover something, use MCP tools that the user has added. If
+    that's not enough, you can use shell commands.
+32. This project is usually open in Android Studio. If your native tools are not available for
+    specific task, call `get_mcp_companion_overview` to discover available tools and how to use
+    them.
 
 ## Documentation touchpoints
 
@@ -263,12 +272,3 @@ Before broad changes, check and update if impacted:
     5. External inspiration/examples
 - TajsOS overlay skills can override generic skill guidance, but never current code reality or
   canonical docs.
-
-### Android Studio / JetBrains Claude usage
-
-- Claude Code project skills are discovered from `.claude/skills/<skill-name>/SKILL.md`.
-- If skills are not being used in Android Studio:
-    1. Ensure Claude plugin is installed and enabled.
-    2. Run `claude` from the IDE integrated terminal at project root.
-    3. Mirror `.agent/skills` to `.claude/skills` (same one-level structure), then restart
-       IDE/Claude session.

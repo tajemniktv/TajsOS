@@ -45,7 +45,10 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_25)
         }
 
-        withHostTest {}
+        withHostTest {
+            isIncludeAndroidResources = true
+            isReturnDefaultValues = true
+        }
     }
 
     iosArm64()
@@ -94,9 +97,6 @@ kotlin {
             implementation(libs.kotlin.test)
             implementation(libs.kotlinx.coroutines.test)
             implementation(libs.turbine)
-        }
-        jvmTest.dependencies {
-            implementation(libs.mockk)
         }
     }
 }

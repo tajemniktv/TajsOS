@@ -3,7 +3,7 @@
   "type": "module",
   "version": "1.0.0",
   "engines": {
-    "node": ">=22.12.0"
+    "node": ">=24"
   },
   "scripts": {
     "dev": "astro dev",
@@ -13,11 +13,13 @@
     "check": "astro check"
   },
   "dependencies": {
+    "@astrojs/check": "^0.9.9",
     "@astrojs/mdx": "^5.0.4",
     "@astrojs/partytown": "^2.1.7",
     "@astrojs/react": "^5.0.4",
     "@astrojs/sitemap": "^3.7.2",
     "@astrojs/starlight": "^0.38.4",
+    "@biomejs/biome": "^2.4.14",
     "@tailwindcss/vite": "^4.2.4",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
@@ -27,12 +29,14 @@
     "starlight-blog": "^0.26.1",
     "starlight-image-zoom": "^0.14.1",
     "starlight-links-validator": "^0.24.0",
-    "starlight-obsidian": "^0.12.1",
     "starlight-videos": "^0.4.0",
-    "tailwindcss": "^4.2.2"
+    "tailwindcss": "^4.2.4",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.2"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.9",
-    "typescript": "^6.0.3"
+  },
+  "overrides": {
+    "vite": "$vite"
   }
 }

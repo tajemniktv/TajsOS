@@ -25,18 +25,30 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
+/**
+ * Alert card
+ *
+ * @param title
+ * @param description
+ * @param icon
+ * @param color
+ * @param onClick
+ * @param modifier
+ * @param content
+ */
 @Composable
 fun AlertCard(
     title: String,
     description: String,
     icon: ImageVector,
     color: Color,
-    action: @Composable (() -> Unit)? = null,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable (() -> Unit)? = null,
 ) {
     Surface(
         onClick = onClick,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         color = color.copy(alpha = 0.05f),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         border = BorderStroke(1.dp, color.copy(alpha = 0.3f)),
@@ -60,7 +72,7 @@ fun AlertCard(
                     color = TajsOSTheme.Text,
                 )
             }
-            action?.invoke()
+            content?.invoke()
         }
     }
 }
