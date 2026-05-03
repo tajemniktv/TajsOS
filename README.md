@@ -141,10 +141,6 @@ iosApp/       iOS scaffold
 [![Open issues](https://img.shields.io/github/issues/tajemniktv/TajsOS)](https://github.com/tajemniktv/TajsOS/issues)
 [![Open PRs](https://img.shields.io/github/issues-pr/tajemniktv/TajsOS)](https://github.com/tajemniktv/TajsOS/pulls)
 
-<p align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=tajemniktv&repo=TajsOS&show_icons=true&hide_border=true&rank_icon=github" alt="TajsOS repository stats" />
-</p>
+![TajsOS repository stats](https://github-readme-stats.vercel.app/api?username=tajemniktv&repo=TajsOS&show_icons=true&hide_border=true&rank_icon=github)
 
-<p align="center">
-  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=tajemniktv&repo=TajsOS&layout=compact&hide_border=true" alt="TajsOS top languages" />
-</p>
+![TajsOS top languages](https://github-readme-stats.vercel.app/api/top-langs/?username=tajemniktv&repo=TajsOS&layout=compact&hide_border=true)
