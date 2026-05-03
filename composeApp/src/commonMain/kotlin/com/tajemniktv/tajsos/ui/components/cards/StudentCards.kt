@@ -350,10 +350,15 @@ fun StudentNodeCard(
         modifier = Modifier.fillMaxWidth().padding(bottom = TajsOSTheme.SpacingSm),
         horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
     ) {
-        OutlinedButton(onClick = { viewModel.toggleFlashcardCandidate(node.node, true) }) {
+        OutlinedButton(onClick = {
+            viewModel.toggleFlashcardCandidate(
+                node.node,
+                enabled = true,
+            )
+        }) {
             Text(stringResource(Res.string.common_flashcard))
         }
-        OutlinedButton(onClick = { viewModel.toggleRevisitBeforeExam(node.node, true) }) {
+        OutlinedButton(onClick = { viewModel.toggleRevisitBeforeExam(node.node, enabled = true) }) {
             Text(stringResource(Res.string.common_revisit))
         }
     }

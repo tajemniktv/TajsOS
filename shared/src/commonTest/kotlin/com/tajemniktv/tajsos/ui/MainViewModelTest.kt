@@ -2,6 +2,8 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
+@file:Suppress("TestMethodWithoutAssertion")
+
 package com.tajemniktv.tajsos.ui
 
 import androidx.datastore.core.DataStore

@@ -4,6 +4,7 @@
 
 package com.tajemniktv.tajsos.data
 
+import androidx.room.ConstructedBy
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
@@ -58,6 +59,7 @@ import androidx.room.RoomDatabaseConstructor
         ],
     version = 33,
 )
+@ConstructedBy(AppDatabaseConstructor::class)
 abstract class AppDatabase : RoomDatabase() {
     /** Data Access Object for managing core life-objects (Nodes). */
     abstract fun nodeDao(): NodeDao
@@ -142,7 +144,6 @@ abstract class AppDatabase : RoomDatabase() {
 }
 
 /** Expected constructor for platform-specific Room implementation. */
-@Suppress("NO_ACTUAL_FOR_EXPECT")
 expect object AppDatabaseConstructor : RoomDatabaseConstructor<AppDatabase> {
     /** Factory method to initialize the database instance. */
     override fun initialize(): AppDatabase

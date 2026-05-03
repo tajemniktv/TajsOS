@@ -1,68 +1,74 @@
 // @ts-check
-import { defineConfig } from 'astro/config';
-
-import starlight from '@astrojs/starlight';
-
-import tailwindcss from '@tailwindcss/vite';
-
-import sitemap from '@astrojs/sitemap';
-import mdx from '@astrojs/mdx';
-import react from '@astrojs/react';
-import partytown from '@astrojs/partytown';
-import starlightBlog from 'starlight-blog';
-import starlightLinksValidator from 'starlight-links-validator';
-import starlightImageZoom from 'starlight-image-zoom';
-import starlightVideos from 'starlight-videos';
+import { defineConfig } from "astro/config";
+import starlight from "@astrojs/starlight";
+import tailwindcss from "@tailwindcss/vite";
+import sitemap from "@astrojs/sitemap";
+import mdx from "@astrojs/mdx";
+import react from "@astrojs/react";
+import partytown from "@astrojs/partytown";
+import starlightBlog from "starlight-blog";
+import starlightLinksValidator from "starlight-links-validator";
+import starlightImageZoom from "starlight-image-zoom";
+import starlightVideos from "starlight-videos";
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://tajemniktv.github.io/TajsOS/',
-  base: '/TajsOS/',
-  integrations: [starlight({
-    title: 'Docs',
-    description: 'TajsOS Documentation',
+  site: "https://tajemniktv.github.io/TajsOS/",
+  base: "/TajsOS/",
+  integrations: [
+    starlight({
+      title: "Docs",
+      description: "TajsOS Documentation",
 
-    sidebar: [
-      {
-        label: 'Introduction',
-        items: [
-          { label: 'Overview', slug: 'overview' },
-          { label: 'Current Status', slug: 'current-status' },
-          { label: 'Product Philosophy', slug: 'product-philosophy' },
-          { label: 'Roadmap', slug: 'roadmap' },
-        ],
-      },
-      {
-        label: 'Architecture & Model',
-        items: [
-          { label: 'Core Object Model', slug: 'core-object-model' },
-          { label: 'Local-First Architecture', slug: 'local-first-architecture' },
-          { label: 'App Surfaces & Layering', slug: 'app-surfaces' },
-          { label: 'Tech Stack', slug: 'tech-stack' },
-        ],
-      },
-      {
-        label: 'Development & Design',
-        items: [
-          { label: 'Design System', slug: 'design-system' },
-          { label: 'Agent & Contributor Rules', slug: 'agent-rules' },
-        ],
-      },
-    ],
+      sidebar: [
+        {
+          label: "Introduction",
+          items: [
+            { label: "Overview", slug: "overview" },
+            { label: "Current Status", slug: "current-status" },
+            { label: "Product Philosophy", slug: "product-philosophy" },
+            { label: "Roadmap", slug: "roadmap" },
+          ],
+        },
+        {
+          label: "Architecture & Model",
+          items: [
+            { label: "Core Object Model", slug: "core-object-model" },
+            {
+              label: "Local-First Architecture",
+              slug: "local-first-architecture",
+            },
+            { label: "App Surfaces & Layering", slug: "app-surfaces" },
+            { label: "Tech Stack", slug: "tech-stack" },
+          ],
+        },
+        {
+          label: "Development & Design",
+          items: [
+            { label: "Design System", slug: "design-system" },
+            { label: "Agent & Contributor Rules", slug: "agent-rules" },
+          ],
+        },
+      ],
 
-    logo: {
-      src: './src/assets/logo.png',
-      alt: 'TajsOS Logo'
-    },
-    plugins: [
-      starlightBlog(),
-      starlightLinksValidator(),
-      starlightImageZoom(),
-      starlightVideos()
-    ]
-  }), sitemap(), mdx(), react(), partytown()],
+      logo: {
+        src: "./src/assets/logo.png",
+        alt: "TajsOS Logo",
+      },
+      plugins: [
+        starlightBlog(),
+        starlightLinksValidator(),
+        starlightImageZoom(),
+        starlightVideos(),
+      ],
+    }),
+    sitemap(),
+    mdx(),
+    react(),
+    partytown(),
+  ],
 
   vite: {
-    plugins: [tailwindcss()]
-  }
+    plugins: [tailwindcss()],
+  },
 });

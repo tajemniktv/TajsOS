@@ -1,9 +1,14 @@
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
 package com.tajemniktv.tajsos.calendar
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
+import kotlin.time.Instant
 
 class IcsEventBuilderTest {
     @Test
@@ -55,7 +60,7 @@ class IcsEventBuilderTest {
     fun testParseAllDayDate() {
         val builder = IcsEventBuilder()
         val instant = builder.parseAllDayDate("20231024")
-        assertEquals(kotlinx.datetime.Instant.parse("2023-10-24T00:00:00Z"), instant)
+        assertEquals(Instant.parse("2023-10-24T00:00:00Z"), instant)
     }
 
     @Test
@@ -63,7 +68,7 @@ class IcsEventBuilderTest {
         val builder = IcsEventBuilder()
         val prop = IcsDateProperty("20231024T100000Z", "DTSTART")
         val instant = builder.parseIsoDate(prop)
-        assertEquals(kotlinx.datetime.Instant.parse("2023-10-24T10:00:00Z"), instant)
+        assertEquals(Instant.parse("2023-10-24T10:00:00Z"), instant)
     }
 
     @Test
@@ -77,7 +82,12 @@ class IcsEventBuilderTest {
     fun testExtractTimeZoneFallbackToSystem() {
         val builder = IcsEventBuilder()
         val tz = builder.extractTimeZone("DTSTART;TZID=Invalid/Timezone")
-        assertEquals(kotlinx.datetime.TimeZone.currentSystemDefault().id, tz.id)
+        assertEquals(
+            kotlinx.datetime.TimeZone
+                .currentSystemDefault()
+                .id,
+            tz.id,
+        )
     }
 
     @Test
@@ -119,5 +129,4 @@ class IcsEventBuilderTest {
         builder.processLine("DTSTART:20231024T") // length < 15, parseIsoDate throws IllegalArgumentException
         assertNull(builder.build(1L))
     }
-
 }
