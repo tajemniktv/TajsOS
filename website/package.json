@@ -31,7 +31,7 @@
     "starlight-links-validator": "^0.24.0",
     "starlight-videos": "^0.4.0",
     "tailwindcss": "^4.2.4",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.3",
     "vite": "^7.3.2"
   },
   "devDependencies": {
