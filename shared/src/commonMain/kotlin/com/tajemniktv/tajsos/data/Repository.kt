@@ -1668,12 +1668,12 @@ class AppRepository(
     suspend fun importBundle(bundle: ExportBundle): ImportReport {
         bundle.nodes.forEach { nodeDao.insertNode(it) }
         bundle.relations.forEach { relationDao.insertRelation(it) }
-        bundle.tags.forEach { tagDao.insertTag(it) }
+        tagDao.insertTags(bundle.tags)
         bundle.templates.forEach { templateDao.insertTemplate(it) }
-        bundle.reviews.forEach { reviewDao.insertReview(it) }
-        bundle.tracks.forEach { trackDao.insertTrackEntry(it) }
-        bundle.sessions.forEach { focusSessionDao.insertSession(it) }
-        bundle.providers.forEach { calendarProviderDao.insertProvider(it) }
+        reviewDao.insertReviews(bundle.reviews)
+        trackDao.insertTrackEntries(bundle.tracks)
+        focusSessionDao.insertSessions(bundle.sessions)
+        calendarProviderDao.insertProviders(bundle.providers)
         if (bundle.calendars.isNotEmpty()) {
             calendarEventDao.insertEvents(bundle.calendars)
         }
