@@ -166,7 +166,7 @@ interface FocusSessionDao {
     suspend fun insertSession(session: FocusSessionEntity): Long
 
     /**
-     * Inserts multiple focus sessions.
+     * Inserts or updates multiple focus sessions.
      */
     @Upsert
     suspend fun insertSessions(sessions: List<FocusSessionEntity>)
@@ -190,7 +190,7 @@ interface TrackDao {
     suspend fun insertTrackEntry(entry: TrackEntryEntity): Long
 
     /**
-     * Inserts multiple track entries.
+     * Inserts or updates multiple track entries.
      */
     @Upsert
     suspend fun insertTrackEntries(entries: List<TrackEntryEntity>)
@@ -266,7 +266,7 @@ interface TagDao {
     suspend fun insertTag(tag: TagEntity): Long
 
     /**
-     * Inserts multiple tags, generating new IDs as necessary.
+     * Inserts or updates multiple tags, generating new IDs as necessary.
      */
     @Upsert
     suspend fun insertTags(tags: List<TagEntity>)
@@ -682,7 +682,7 @@ interface ReviewDao {
     suspend fun insertReview(review: ReviewEntity): Long
 
     /**
-     * Inserts multiple reviews.
+     * Inserts or updates multiple reviews.
      */
     @Upsert
     suspend fun insertReviews(reviews: List<ReviewEntity>)
@@ -703,7 +703,7 @@ interface CalendarProviderDao {
     suspend fun insertProvider(provider: CalendarProviderEntity): Long
 
     /**
-     * Inserts multiple calendar providers.
+     * Inserts or updates multiple calendar providers.
      */
     @Upsert
     suspend fun insertProviders(providers: List<CalendarProviderEntity>)
