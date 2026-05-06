@@ -4,10 +4,8 @@
 
 package com.tajemniktv.tajsos.domain.lens
 
-import com.tajemniktv.tajsos.data.ItemKind
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.data.NodeWithPin
-import com.tajemniktv.tajsos.data.NoteKind
 import com.tajemniktv.tajsos.data.TagEntity
 import com.tajemniktv.tajsos.ui.MaintenanceSnapshot
 import com.tajemniktv.tajsos.ui.MaintenanceStatusItem
@@ -24,7 +22,6 @@ class DomainLensQueriesTest {
         noteType: String? = null,
         maintenanceType: String? = null,
         tags: List<String> = emptyList(),
-        content: String? = null,
     ): NodeWithPin {
         return NodeWithPin(
             node =
@@ -36,7 +33,6 @@ class DomainLensQueriesTest {
                     updatedAt = updatedAt,
                     noteType = noteType,
                     maintenanceType = maintenanceType,
-                    content = content,
                 ),
             pin = null,
             tags = tags.mapIndexed { index, tag -> TagEntity(id = index.toLong(), name = tag, normalizedName = tag.lowercase()) },
@@ -45,10 +41,10 @@ class DomainLensQueriesTest {
 
     @Test
     fun financeQueries_include_actions_knowledge_deadlines_and_maintenance_without_resource_types() {
-        val financeTask = createTestNode(id = 10, type = ItemKind.TASK.storageKey, title = "Pay rent", dueAt = 2_000L, tags = listOf("finance"))
-        val financeNote = createTestNode(id = 11, type = ItemKind.NOTE.storageKey, title = "Insurance policy reference", noteType = NoteKind.REFERENCE.storageKey, updatedAt = 2_000L, tags = listOf("insurance"))
-        val financeDeadline = createTestNode(id = 12, type = ItemKind.NOTE.storageKey, title = "Tax filing deadline", dueAt = 1_000L, updatedAt = 1_000L)
-        val unrelatedRecord = createTestNode(id = 13, type = ItemKind.RECORD.storageKey, title = "Therapy reflection")
+        val financeTask = createTestNode(id = 10, type = "task", title = "Pay rent", dueAt = 2_000L, tags = listOf("finance"))
+        val financeNote = createTestNode(id = 11, type = "note", title = "Insurance policy reference", noteType = "reference", updatedAt = 2_000L, tags = listOf("insurance"))
+        val financeDeadline = createTestNode(id = 12, type = "note", title = "Tax filing deadline", dueAt = 1_000L, updatedAt = 1_000L)
+        val unrelatedRecord = createTestNode(id = 13, type = "record", title = "Therapy reflection")
 
         val maintenanceItem =
             MaintenanceStatusItem(
@@ -75,9 +71,9 @@ class DomainLensQueriesTest {
 
     @Test
     fun healthQueries_include_actions_knowledge_and_maintenance_without_special_domain_types() {
-        val healthTask = createTestNode(id = 1, type = ItemKind.TASK.storageKey, title = "Book doctor appointment", tags = listOf("health"))
-        val healthRecord = createTestNode(id = 2, type = ItemKind.RECORD.storageKey, title = "Symptom log", updatedAt = 2_000L, tags = listOf("symptom"))
-        val unrelatedNote = createTestNode(id = 3, type = ItemKind.NOTE.storageKey, title = "Design references")
+        val healthTask = createTestNode(id = 1, type = "task", title = "Book doctor appointment", tags = listOf("health"))
+        val healthRecord = createTestNode(id = 2, type = "record", title = "Symptom log", updatedAt = 2_000L, tags = listOf("symptom"))
+        val unrelatedNote = createTestNode(id = 3, type = "note", title = "Design references")
 
         val maintenanceItem =
             MaintenanceStatusItem(
@@ -98,18 +94,18 @@ class DomainLensQueriesTest {
     @Test
     fun financeQueries_heuristics_edge_cases() {
         // financeTitleKeywords includes "budget", "paycheck"
-        val titleMatch = createTestNode(id = 1, type = ItemKind.TASK.storageKey, title = "Update monthly budget")
-        val contentMatch = createTestNode(id = 2, type = ItemKind.TASK.storageKey, title = "Task", updatedAt = 1_000L, content = "Got my paycheck today")
-        val refNoteTitleMatch = createTestNode(id = 3, type = ItemKind.NOTE.storageKey, title = "budget", noteType = NoteKind.REFERENCE.storageKey, updatedAt = 1_000L)
-        val refNoteTagMatch = createTestNode(id = 4, type = ItemKind.NOTE.storageKey, title = "Ref", noteType = NoteKind.REFERENCE.storageKey, tags = listOf("finance"), updatedAt = 1_000L)
-        val nonMatchingRefNote = createTestNode(id = 5, type = ItemKind.NOTE.storageKey, title = "General Info", noteType = NoteKind.REFERENCE.storageKey)
-        val unrelatedTask = createTestNode(id = 6, type = ItemKind.TASK.storageKey, title = "Walk the dog")
+        val titleMatch = createTestNode(id = 1, type = "task", title = "Update monthly budget")
+        val contentMatch = createTestNode(id = 2, type = "task", title = "Task", updatedAt = 1_000L).copy(node = NodeEntity(id = 2, type = "task", title = "Task", content = "Got my paycheck today", updatedAt = 1_000L))
+        val refNoteTitleMatch = createTestNode(id = 3, type = "note", title = "budget", noteType = "reference", updatedAt = 1_000L)
+        val refNoteTagMatch = createTestNode(id = 4, type = "note", title = "Ref", noteType = "reference", tags = listOf("finance"), updatedAt = 1_000L)
+        val nonMatchingRefNote = createTestNode(id = 5, type = "note", title = "General Info", noteType = "reference")
+        val unrelatedTask = createTestNode(id = 6, type = "task", title = "Walk the dog")
 
         val allNodes = listOf(titleMatch, contentMatch, refNoteTitleMatch, refNoteTagMatch, nonMatchingRefNote, unrelatedTask)
 
         // Active tasks matching finance heuristics
         val actionItems = DomainLensQueries.financeActionItems(allNodes).map { it.node.id }
-        assertEquals(listOf(1L, 2L).sorted(), actionItems.sorted())
+        assertEquals(listOf(1L, 2L), actionItems)
 
         // Active knowledge matching finance heuristics
         val knowledgeItems = DomainLensQueries.financeKnowledgeItems(allNodes).map { it.node.id }
@@ -119,16 +115,16 @@ class DomainLensQueriesTest {
     @Test
     fun healthQueries_heuristics_edge_cases() {
         // healthTitleKeywords includes "doctor", "symptom"
-        val titleMatch = createTestNode(id = 1, type = ItemKind.TASK.storageKey, title = "See the doctor")
-        val contentMatch = createTestNode(id = 2, type = ItemKind.TASK.storageKey, title = "Task", updatedAt = 1_000L, content = "Feeling a symptom")
-        val reflectionNote = createTestNode(id = 3, type = ItemKind.RECORD.storageKey, title = "Daily", noteType = NoteKind.REFLECTION.storageKey, updatedAt = 1_000L)
-        val journalNote = createTestNode(id = 4, type = ItemKind.RECORD.storageKey, title = "Log", noteType = NoteKind.JOURNAL.storageKey, updatedAt = 1_000L)
-        val unrelatedTask = createTestNode(id = 5, type = ItemKind.TASK.storageKey, title = "Buy groceries")
+        val titleMatch = createTestNode(id = 1, type = "task", title = "See the doctor")
+        val contentMatch = createTestNode(id = 2, type = "task", title = "Task", updatedAt = 1_000L).copy(node = NodeEntity(id = 2, type = "task", title = "Task", content = "Feeling a symptom", updatedAt = 1_000L))
+        val reflectionNote = createTestNode(id = 3, type = "note", title = "Daily", noteType = "reflection", updatedAt = 1_000L)
+        val journalNote = createTestNode(id = 4, type = "note", title = "Log", noteType = "journal", updatedAt = 1_000L)
+        val unrelatedTask = createTestNode(id = 5, type = "task", title = "Buy groceries")
 
         val allNodes = listOf(titleMatch, contentMatch, reflectionNote, journalNote, unrelatedTask)
 
         val actionItems = DomainLensQueries.healthActionItems(allNodes).map { it.node.id }
-        assertEquals(listOf(1L, 2L).sorted(), actionItems.sorted())
+        assertEquals(listOf(1L, 2L), actionItems)
 
         val knowledgeItems = DomainLensQueries.healthKnowledgeItems(allNodes).map { it.node.id }
         assertEquals(listOf(3L, 4L), knowledgeItems.sorted())
