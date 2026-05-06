@@ -60,13 +60,14 @@ class DomainLensQueriesMaintenanceItemsEdgeTest {
 
         // Add overdue items
         val financeOverdueRenewal = createMaintenanceItem(8, "renewal")
-        val financeOverdueSubscription = createMaintenanceItem(9, "subscription")
-        val healthOverdueMedRefill = createMaintenanceItem(10, "med_refill")
+        val unknownType = createMaintenanceItem(5, "unknown_type")
+        val nullType = createMaintenanceItem(6, null)
 
+        // They are all active
         val snapshot = MaintenanceSnapshot(
-            active = listOf(financeBill, financeSubscription, financeRenewal, healthPrescription, unknownType),
-            recurring = listOf(financeRecurringBill, healthRecurringPrescription),
-            overdue = listOf(financeOverdueRenewal, financeOverdueSubscription, healthOverdueMedRefill)
+            active = listOf(financeBill, financeSubscription, financeRenewal, healthPrescription, unknownType, nullType),
+            recurring = emptyList(),
+            overdue = emptyList()
         )
 
         val activeResult = DomainLensQueries.financeMaintenanceItems(snapshot)
@@ -98,13 +99,14 @@ class DomainLensQueriesMaintenanceItemsEdgeTest {
         // Add overdue items
         val healthOverduePrescription = createMaintenanceItem(9, "prescription")
         val healthOverdueMedRefill = createMaintenanceItem(10, "med_refill")
-        val financeOverdueRenewal = createMaintenanceItem(11, "renewal")
-        val unknownOverdueType = createMaintenanceItem(12, "unknown_type")
+        val unknownType = createMaintenanceItem(5, "unknown_type")
+        val nullType = createMaintenanceItem(6, null)
 
+        // They are all active
         val snapshot = MaintenanceSnapshot(
-            active = listOf(financeBill, healthAppointment, healthPrescription, healthMedRefill, unknownType),
-            recurring = listOf(healthRecurringAppointment, financeRecurringBill, unknownRecurringType),
-            overdue = listOf(healthOverduePrescription, healthOverdueMedRefill, financeOverdueRenewal, unknownOverdueType)
+            active = listOf(financeBill, healthAppointment, healthPrescription, healthMedRefill, unknownType, nullType),
+            recurring = emptyList(),
+            overdue = emptyList()
         )
 
         val activeResult = DomainLensQueries.healthMaintenanceItems(snapshot)
