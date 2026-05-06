@@ -46,7 +46,9 @@ class FakeCalendarProviderDao : CalendarProviderDao {
         MutableStateFlow(emptyList())
 
     override suspend fun insertProvider(provider: CalendarProviderEntity): Long = 0
-    override suspend fun insertProviders(providers: List<CalendarProviderEntity>) {}
+    override suspend fun insertProviders(providers: List<CalendarProviderEntity>) {
+        // no-op for tests
+    }
     override suspend fun updateProvider(provider: CalendarProviderEntity) {}
     override suspend fun deleteProvider(provider: CalendarProviderEntity) {}
     override suspend fun getProviderById(id: Long): CalendarProviderEntity? = null

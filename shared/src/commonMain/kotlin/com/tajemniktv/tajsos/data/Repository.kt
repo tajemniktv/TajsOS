@@ -1667,9 +1667,9 @@ class AppRepository(
 
     suspend fun importBundle(bundle: ExportBundle): ImportReport {
         bundle.nodes.forEach { nodeDao.insertNode(it) }
-        bundle.relations.forEach { relationDao.insertRelation(it) }
+        relationDao.insertRelations(bundle.relations)
         tagDao.insertTags(bundle.tags)
-        bundle.templates.forEach { templateDao.insertTemplate(it) }
+        templateDao.insertTemplates(bundle.templates)
         reviewDao.insertReviews(bundle.reviews)
         trackDao.insertTrackEntries(bundle.tracks)
         focusSessionDao.insertSessions(bundle.sessions)
@@ -1677,7 +1677,7 @@ class AppRepository(
         if (bundle.calendars.isNotEmpty()) {
             calendarEventDao.insertEvents(bundle.calendars)
         }
-        bundle.recentEvents.forEach { eventLogDao.insertLog(it) }
+        eventLogDao.insertLogs(bundle.recentEvents)
 
         return ImportReport(
             nodes = bundle.nodes.size,
