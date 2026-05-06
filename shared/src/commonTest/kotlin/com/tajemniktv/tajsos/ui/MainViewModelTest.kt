@@ -116,6 +116,7 @@ class MainViewModelTest {
 
     class StubFocusSessionDao : FocusSessionDao {
         override suspend fun insertSession(session: FocusSessionEntity): Long = 0
+        override suspend fun insertSessions(sessions: List<FocusSessionEntity>) {}
 
         override suspend fun updateSession(session: FocusSessionEntity) {
         }
@@ -129,6 +130,7 @@ class MainViewModelTest {
         override fun getAllTrackEntries(): Flow<List<TrackEntryEntity>> = flowOf(emptyList())
 
         override suspend fun insertTrackEntry(entry: TrackEntryEntity): Long = 0
+        override suspend fun insertTrackEntries(entries: List<TrackEntryEntity>) {}
 
         override suspend fun getTrackEntryByDate(date: String): TrackEntryEntity? = null
 
@@ -170,6 +172,7 @@ class MainViewModelTest {
         override fun getAllTags(): Flow<List<TagEntity>> = flowOf(emptyList())
 
         override suspend fun insertTag(tag: TagEntity): Long = 0
+        override suspend fun insertTags(tags: List<TagEntity>) {}
 
         override fun getTagsForNode(nodeId: Long): Flow<List<TagEntity>> = flowOf(emptyList())
 
