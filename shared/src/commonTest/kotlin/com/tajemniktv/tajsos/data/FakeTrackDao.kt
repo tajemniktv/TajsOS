@@ -29,6 +29,10 @@ class FakeTrackDao : TrackDao {
         }
     }
 
+    override suspend fun insertTrackEntries(entries: List<TrackEntryEntity>) {
+        entries.forEach { insertTrackEntry(it) }
+    }
+
     override suspend fun getTrackEntryByDate(date: String): TrackEntryEntity? {
         return entriesFlow.value.find { it.date == date }
     }
