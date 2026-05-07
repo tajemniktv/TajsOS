@@ -97,6 +97,7 @@ private object NoOpItemDomainDao : ItemDomainDao {
     override fun getDomainsForItem(itemId: Long): Flow<List<ItemDomainEntity>> = flowOf(emptyList())
 
     override suspend fun upsertDomain(domain: ItemDomainEntity) = Unit
+    override suspend fun upsertDomains(domains: List<ItemDomainEntity>) = Unit
 
     override suspend fun deleteDomain(
         itemId: Long,
@@ -855,14 +856,15 @@ class AppRepository(
     private suspend fun syncDomainsFromNodeMetadata(node: NodeEntity) {
         val associatedDomains = node.areaMetadataOrNull()?.associatedDomains ?: return
         itemDomainDao.deleteDomainsForItem(node.id)
-        associatedDomains.forEachIndexed { index, domain ->
-            itemDomainDao.upsertDomain(
+        if (associatedDomains.isNotEmpty()) {
+            val itemDomains = associatedDomains.mapIndexed { index, domain ->
                 ItemDomainEntity(
                     itemId = node.id,
                     domainKey = domain.name,
                     isPrimary = index == 0,
-                ),
-            )
+                )
+            }
+            itemDomainDao.upsertDomains(itemDomains)
         }
     }
 
@@ -1500,12 +1502,17 @@ class AppRepository(
         val node = nodeDao.getNodeById(nodeId) ?: return
         val options = decisionDao.getOptionsForDecision(nodeId).first()
 
-        options.forEach { option ->
+        val updatedOptions = options.mapNotNull { option ->
             if (option.id == selectedOptionId) {
-                decisionDao.updateDecisionOption(option.copy(isSelected = true))
+                option.copy(isSelected = true)
             } else if (option.isSelected) {
-                decisionDao.updateDecisionOption(option.copy(isSelected = false))
+                option.copy(isSelected = false)
+            } else {
+                null
             }
+        }
+        if (updatedOptions.isNotEmpty()) {
+            decisionDao.updateDecisionOptions(updatedOptions)
         }
 
         nodeDao.updateNode(
@@ -1666,7 +1673,9 @@ class AppRepository(
         )
 
     suspend fun importBundle(bundle: ExportBundle): ImportReport {
-        bundle.nodes.forEach { nodeDao.insertNode(it) }
+        if (bundle.nodes.isNotEmpty()) {
+            nodeDao.insertNodes(bundle.nodes)
+        }
         relationDao.insertRelations(bundle.relations)
         tagDao.insertTags(bundle.tags)
         templateDao.insertTemplates(bundle.templates)
@@ -1689,7 +1698,9 @@ class AppRepository(
     }
 
     suspend fun importLegacyNodes(nodes: List<NodeEntity>): Int {
-        nodes.forEach { nodeDao.insertNode(it) }
+        if (nodes.isNotEmpty()) {
+            nodeDao.insertNodes(nodes)
+        }
         return nodes.size
     }
 }

@@ -479,6 +479,12 @@ interface ItemDomainDao {
     @Upsert
     suspend fun upsertDomain(domain: ItemDomainEntity)
 
+    /**
+     * Upserts a list of item domain entities in a single batch transaction.
+     */
+    @Upsert
+    suspend fun upsertDomains(domains: List<ItemDomainEntity>)
+
     @Query("DELETE FROM item_domains WHERE itemId = :itemId AND domainKey = :domainKey")
     suspend fun deleteDomain(
         itemId: Long,
@@ -818,6 +824,12 @@ interface DecisionDao {
 
     @Update
     suspend fun updateDecisionOption(option: DecisionOptionEntity)
+
+    /**
+     * Updates multiple decision options in a single batch transaction.
+     */
+    @Update
+    suspend fun updateDecisionOptions(options: List<DecisionOptionEntity>)
 
     @Delete
     suspend fun deleteDecisionOption(option: DecisionOptionEntity)

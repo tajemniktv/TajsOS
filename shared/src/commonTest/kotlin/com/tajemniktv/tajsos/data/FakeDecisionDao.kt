@@ -33,6 +33,13 @@ class FakeDecisionDao : DecisionDao {
             }
     }
 
+    override suspend fun updateDecisionOptions(options: List<DecisionOptionEntity>) {
+        optionsFlow.value = optionsFlow.value.map {
+            val opt = options.find { o -> o.id == it.id }
+            opt ?: it
+        }
+    }
+
     override suspend fun deleteDecisionOption(option: DecisionOptionEntity) {
         optionsFlow.value = optionsFlow.value.filter { it.id != option.id }
     }
