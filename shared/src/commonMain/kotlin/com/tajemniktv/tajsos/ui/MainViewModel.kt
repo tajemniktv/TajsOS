@@ -125,6 +125,13 @@ import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.Json
 import kotlin.time.Clock
 
+/**
+ * Global orchestrator for the application shell.
+ *
+ * MainViewModel handles shell-level state (like modes, sync status, app locks, and sidebar state).
+ * It delegates feature-heavy orchestration to other scoped components but acts as the root provider
+ * of core app state.
+ */
 @Stable
 class MainViewModel(
     private val repository: AppRepository,
