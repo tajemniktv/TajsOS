@@ -342,7 +342,7 @@ fun GlobalSearchBar(modifier: Modifier = Modifier) {
                 unfocusedContainerColor = glassContainerColor(TajsOSTheme.SurfaceHigh.copy(alpha = 0.5f)),
                 focusedContainerColor = glassContainerColor(TajsOSTheme.SurfaceHighest.copy(alpha = 0.7f)),
                 unfocusedBorderColor = Color.Transparent,
-                focusedBorderColor = TajsOSTheme.Primary.copy(alpha = 0.5f),
+                focusedBorderColor = TajsOSTheme.GhostBorder,
             ),
         placeholder = {
             Text(

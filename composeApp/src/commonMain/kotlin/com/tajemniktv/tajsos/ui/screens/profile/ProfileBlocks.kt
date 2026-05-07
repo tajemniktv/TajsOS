@@ -492,7 +492,7 @@ private fun profileFieldColors() =
         unfocusedTextColor = TajsOSTheme.Text,
         focusedContainerColor = TajsOSTheme.SurfaceLowest.copy(alpha = 0.95f),
         unfocusedContainerColor = TajsOSTheme.SurfaceLowest.copy(alpha = 0.92f),
-        focusedBorderColor = TajsOSTheme.Primary.copy(alpha = 0.8f),
+        focusedBorderColor = TajsOSTheme.GhostBorder,
         unfocusedBorderColor = TajsOSTheme.GhostBorder.copy(alpha = 0.25f),
         cursorColor = TajsOSTheme.Primary,
         focusedLabelColor = TajsOSTheme.Primary,

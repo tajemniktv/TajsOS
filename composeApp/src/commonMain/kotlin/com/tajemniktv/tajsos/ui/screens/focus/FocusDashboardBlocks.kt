@@ -314,7 +314,7 @@ internal fun FocusMainBlock(viewModel: MainViewModel) {
                     modifier = Modifier.fillMaxWidth(),
                     colors =
                         OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = TajsOSTheme.Primary,
+                            focusedBorderColor = TajsOSTheme.GhostBorder,
                             unfocusedBorderColor = TajsOSTheme.Border,
                         ),
                 )
@@ -386,7 +386,7 @@ internal fun FocusMainBlock(viewModel: MainViewModel) {
                     placeholder = { Text(stringResource(Res.string.focus_capture_hint)) },
                     colors =
                         OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = TajsOSTheme.Primary,
+                            focusedBorderColor = TajsOSTheme.GhostBorder,
                             unfocusedBorderColor = TajsOSTheme.Border,
                         ),
                 )
