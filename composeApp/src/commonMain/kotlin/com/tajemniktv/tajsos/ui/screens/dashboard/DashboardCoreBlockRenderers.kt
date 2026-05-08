@@ -349,7 +349,7 @@ internal fun renderSearchBlock(context: DashboardBlockContext) {
         colors =
             OutlinedTextFieldDefaults.colors(
                 unfocusedBorderColor = TajsOSTheme.Border,
-                focusedBorderColor = TajsOSTheme.Primary,
+                focusedBorderColor = TajsOSTheme.GhostBorder,
                 unfocusedContainerColor = TajsOSTheme.Surface,
                 focusedContainerColor = TajsOSTheme.Surface,
             ),

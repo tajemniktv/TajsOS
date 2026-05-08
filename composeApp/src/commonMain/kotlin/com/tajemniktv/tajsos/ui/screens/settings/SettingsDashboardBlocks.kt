@@ -273,7 +273,7 @@ private fun renderSettingsData(context: SettingsDashboardContext) {
             colors =
                 OutlinedTextFieldDefaults.colors(
                     unfocusedBorderColor = TajsOSTheme.Border,
-                    focusedBorderColor = TajsOSTheme.Primary,
+                    focusedBorderColor = TajsOSTheme.GhostBorder,
                 ),
         )
 
