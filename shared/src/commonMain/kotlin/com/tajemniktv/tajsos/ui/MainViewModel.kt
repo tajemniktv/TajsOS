@@ -128,9 +128,9 @@ import kotlin.time.Clock
 /**
  * Global orchestrator for the application shell.
  *
- * MainViewModel handles shell-level state (like modes, sync status, app locks, and sidebar state).
- * It delegates feature-heavy orchestration to other scoped components but acts as the root provider
- * of core app state.
+ * Handles shell-level state (including modes, sync status, application locking, and sidebar state).
+ * It delegates feature-heavy orchestration to internal command handlers (e.g., [NodeCommands])
+ * but acts as the root provider of core app state.
  */
 @Stable
 class MainViewModel(
