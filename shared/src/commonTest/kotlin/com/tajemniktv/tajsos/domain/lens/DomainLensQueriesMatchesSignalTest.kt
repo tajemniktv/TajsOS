@@ -33,6 +33,11 @@ class DomainLensQueriesMatchesSignalTest {
         )
     }
 
+
+    private fun assertDomainQueryResult(expectedIds: List<Long>, result: List<NodeWithPin>) {
+        assertEquals(expectedIds.size, result.size)
+        assertEquals(expectedIds.sorted(), result.map { it.node.id }.sorted())
+    }
     @Test
     fun financeActionItems_includes_all_signals() {
         val nodeTitle = createNode(1, "my budget is tight")
@@ -44,9 +49,7 @@ class DomainLensQueriesMatchesSignalTest {
         val nodeNone = createNode(6, "unrelated")
 
         val result = DomainLensQueries.financeActionItems(listOf(nodeTitle, nodeContent, nodeTag, nodeMaintenance, nodeReference, nodeNone))
-        assertEquals(4, result.size)
-        val expectedIds = listOf(1L, 2L, 3L, 4L)
-        assertEquals(expectedIds, result.map { it.node.id }.sorted())
+        assertDomainQueryResult(listOf(1L, 2L, 3L, 4L), result)
     }
 
     @Test
@@ -56,9 +59,7 @@ class DomainLensQueriesMatchesSignalTest {
         val nodeTag = createNode(3, "some task", tags = listOf("MONEY"))
 
         val result = DomainLensQueries.financeActionItems(listOf(nodeTitle, nodeContent, nodeTag))
-        assertEquals(3, result.size)
-        val expectedIds = listOf(1L, 2L, 3L)
-        assertEquals(expectedIds, result.map { it.node.id }.sorted())
+        assertDomainQueryResult(listOf(1L, 2L, 3L), result)
     }
 
     @Test
@@ -68,9 +69,7 @@ class DomainLensQueriesMatchesSignalTest {
         val nodeReferenceNoMatch = createNode(3, "some doc", type = "note", noteType = "reference")
 
         val result = DomainLensQueries.financeKnowledgeItems(listOf(nodeReferenceMatch, nodeReferenceTagMatch, nodeReferenceNoMatch))
-        assertEquals(2, result.size)
-        val expectedIds = listOf(1L, 2L)
-        assertEquals(expectedIds, result.map { it.node.id }.sorted())
+        assertDomainQueryResult(listOf(1L, 2L), result)
     }
 
     @Test
@@ -84,9 +83,7 @@ class DomainLensQueriesMatchesSignalTest {
         val nodeNone = createNode(6, "unrelated")
 
         val result = DomainLensQueries.healthActionItems(listOf(nodeTitle, nodeContent, nodeTag, nodeMaintenance, nodeReflection, nodeNone))
-        assertEquals(4, result.size)
-        val expectedIds = listOf(1L, 2L, 3L, 4L)
-        assertEquals(expectedIds, result.map { it.node.id }.sorted())
+        assertDomainQueryResult(listOf(1L, 2L, 3L, 4L), result)
     }
 
     @Test
@@ -96,9 +93,7 @@ class DomainLensQueriesMatchesSignalTest {
         val nodeTag = createNode(3, "some task", tags = listOf("MEDICAL"))
 
         val result = DomainLensQueries.healthActionItems(listOf(nodeTitle, nodeContent, nodeTag))
-        assertEquals(3, result.size)
-        val expectedIds = listOf(1L, 2L, 3L)
-        assertEquals(expectedIds, result.map { it.node.id }.sorted())
+        assertDomainQueryResult(listOf(1L, 2L, 3L), result)
     }
 
     @Test
@@ -108,9 +103,7 @@ class DomainLensQueriesMatchesSignalTest {
         val nodeOtherNote = createNode(3, "some text", type = "note")
 
         val result = DomainLensQueries.healthKnowledgeItems(listOf(nodeReflection, nodeJournal, nodeOtherNote))
-        assertEquals(2, result.size)
-        val expectedIds = listOf(1L, 2L)
-        assertEquals(expectedIds, result.map { it.node.id }.sorted())
+        assertDomainQueryResult(listOf(1L, 2L), result)
     }
 
     @Test
