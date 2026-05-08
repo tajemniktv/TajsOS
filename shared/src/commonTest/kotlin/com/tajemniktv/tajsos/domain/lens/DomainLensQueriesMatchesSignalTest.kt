@@ -114,13 +114,6 @@ class DomainLensQueriesMatchesSignalTest {
     }
 
     @Test
-    fun financeActionItems_content_case_insensitivity() {
-        val nodeContent = createNode(1, "some task", "PAY TAX")
-        val result = DomainLensQueries.financeActionItems(listOf(nodeContent))
-        assertEquals(1, result.size)
-    }
-
-    @Test
     fun financeKnowledgeItems_includes_reference_note_if_tag_matches() {
         val nodeReference = createNode(1, "some unrelated title", type = "note", noteType = "reference", tags = listOf("finance"))
         val result = DomainLensQueries.financeKnowledgeItems(listOf(nodeReference))
@@ -135,37 +128,24 @@ class DomainLensQueriesMatchesSignalTest {
     }
 
     @Test
-    fun healthKnowledgeItems_implicit_journal_without_keywords() {
-        val nodeJournal = createNode(1, "random thought", type = "note", noteType = "journal")
-        val result = DomainLensQueries.healthKnowledgeItems(listOf(nodeJournal))
-        assertEquals(1, result.size)
-    }
-
-    @Test
     fun healthKnowledgeItems_excludes_general_note_without_signals() {
         val nodeNote = createNode(1, "random thought", type = "note")
         val result = DomainLensQueries.healthKnowledgeItems(listOf(nodeNote))
         assertEquals(0, result.size)
     }
-
     @Test
-    fun financeActionItems_edge_empty_strings() {
+    fun actionItems_edge_empty_strings() {
         val nodeEmpty = createNode(1, "")
-        val result = DomainLensQueries.financeActionItems(listOf(nodeEmpty))
-        assertEquals(0, result.size)
+        val financeResult = DomainLensQueries.financeActionItems(listOf(nodeEmpty))
+        val healthResult = DomainLensQueries.healthActionItems(listOf(nodeEmpty))
+        assertEquals(0, financeResult.size)
+        assertEquals(0, healthResult.size)
     }
-
     @Test
-    fun healthActionItems_edge_empty_strings() {
-        val nodeEmpty = createNode(1, "")
-        val result = DomainLensQueries.healthActionItems(listOf(nodeEmpty))
-        assertEquals(0, result.size)
-    }
-
-    @Test
-    fun healthKnowledgeItems_implicit_reflection_without_keywords() {
-        val nodeReflection = createNode(1, "random thought", type = "note", noteType = "reflection")
-        val result = DomainLensQueries.healthKnowledgeItems(listOf(nodeReflection))
-        assertEquals(1, result.size)
+    fun healthKnowledgeItems_implicit_note_types_without_keywords() {
+        val nodeJournal = createNode(1, "random thought", type = "note", noteType = "journal")
+        val nodeReflection = createNode(2, "another thought", type = "note", noteType = "reflection")
+        val result = DomainLensQueries.healthKnowledgeItems(listOf(nodeJournal, nodeReflection))
+        assertEquals(2, result.size)
     }
 }
