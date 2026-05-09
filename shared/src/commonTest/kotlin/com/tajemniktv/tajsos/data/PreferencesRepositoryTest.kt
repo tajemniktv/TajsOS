@@ -13,11 +13,35 @@ import app.cash.turbine.test
 import com.tajemniktv.tajsos.ui.SidebarMode
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flow
+import okio.IOException
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class PreferencesRepositoryTest {
+
+    private class FaultyDataStore : DataStore<Preferences> {
+        override val data: Flow<Preferences> = flow {
+            throw IOException("Corrupted file")
+        }
+
+        override suspend fun updateData(transform: suspend (t: Preferences) -> Preferences): Preferences {
+            return emptyPreferences()
+        }
+    }
+
+    @Test
+    fun catchIoException_emitsEmptyPreferences() = runTest {
+        val dataStore = FaultyDataStore()
+        val repository = PreferencesRepository(dataStore)
+
+        repository.sidebarMode.test {
+            assertEquals(SidebarMode.EXPANDED, awaitItem())
+            awaitComplete()
+        }
+    }
+
 
     private class FakeDataStore : DataStore<Preferences> {
         private val _data = MutableStateFlow(emptyPreferences())

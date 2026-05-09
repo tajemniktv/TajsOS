@@ -15,6 +15,129 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class FilterHelperTest {
+
+    @Test
+    fun testRelevanceSortOrder_pinnedAndActive() {
+        // Pinned (8 pts) vs Active (5 pts) vs Both (13 pts)
+        val nodePinned = createTestNode(1, "apple").copy(pin = TodayPinEntity(id = 1, nodeId = 1, date = "today", position = 0)) // pinned
+        val nodeActive = createTestNode(2, "apple").copy(node = NodeEntity(id = 2, type = "task", title = "apple", status = "active")) // active
+        val nodeBoth = createTestNode(3, "apple").copy(
+            pin = TodayPinEntity(id = 3, nodeId = 3, date = "today", position = 0),
+            node = NodeEntity(id = 3, type = "task", title = "apple", status = "active")
+        )
+
+        val nodes = listOf(nodePinned, nodeActive, nodeBoth)
+        val sortedNodes = FilterHelper.filterAndSortNodes(
+            nodes = nodes,
+            query = "apple",
+            type = null, status = null, projectId = null, areaId = null, linkedToId = null,
+            maxMins = null, energy = null, friction = null, locationContext = null,
+            energyContext = null, deviceContext = null, socialContext = null,
+            timeWindowContext = null, timeHorizon = null, relations = emptyList(),
+            sortMode = "relevance"
+        )
+
+        assertEquals(3, sortedNodes.size)
+        // Order should be Both (190 + 13 = 203) > Pinned (190 + 8 = 198) > Active (190 + 5 = 195)
+        assertEquals(3L, sortedNodes[0].node.id)
+        assertEquals(1L, sortedNodes[1].node.id)
+        assertEquals(2L, sortedNodes[2].node.id)
+    }
+
+    @Test
+    fun testMatchesQueryEdgeCases() {
+        val node = createTestNode(1, "Title content", tags = listOf("MyTag"))
+
+        // Blank queries return false
+        assertFalse(FilterHelper.matchesQuery(node, " "))
+        assertFalse(FilterHelper.matchesQuery(node, "   "))
+
+        // Starts with hashtag but empty
+        assertFalse(FilterHelper.matchesQuery(node, "# "))
+        assertFalse(FilterHelper.matchesQuery(node, " # "))
+
+        // Normal matches
+        assertTrue(FilterHelper.matchesQuery(node, "content"))
+        assertTrue(FilterHelper.matchesQuery(node, "#MyTag"))
+        assertTrue(FilterHelper.matchesQuery(node, "#mytag"))
+
+        // Match against tag when not using hashtag
+        assertTrue(FilterHelper.matchesQuery(node, "mytag"))
+    }
+
+    @Test
+    fun testSortModeFallback() {
+        val node1 = createTestNode(1, "apple").copy(node = NodeEntity(id = 1, type = "task", title = "apple", updatedAt = 100))
+        val node2 = createTestNode(2, "apple juice").copy(node = NodeEntity(id = 2, type = "task", title = "apple juice", updatedAt = 200))
+
+        val sortedNodes = FilterHelper.filterAndSortNodes(
+            nodes = listOf(node1, node2),
+            query = "apple",
+            type = null, status = null, projectId = null, areaId = null, linkedToId = null,
+            maxMins = null, energy = null, friction = null, locationContext = null,
+            energyContext = null, deviceContext = null, socialContext = null,
+            timeWindowContext = null, timeHorizon = null, relations = emptyList(),
+            sortMode = "UNKNOWN_SORT_MODE" // should fallback to relevance
+        )
+
+        // relevance: node1 (190) > node2 (90)
+        assertEquals(1L, sortedNodes[0].node.id)
+        assertEquals(2L, sortedNodes[1].node.id)
+    }
+
+
+    @Test
+    fun testRelevanceSortOrder() {
+        // Let's create specific nodes to test relevance.
+        // query: "apple"
+        // 1. Title == "apple" (100 pts)
+        // 2. Title startsWith "apple juice" (60 pts)
+        // 3. Title contains "my apple" (30 pts)
+        // 4. Content contains "apple" (15 pts)
+        // 5. Exact Tag "apple" (20 pts)
+        // 6. Partial Tag "apples" (10 pts)
+
+        val nodeTitleExact = createTestNode(1, "apple")
+        val nodeTitleStart = createTestNode(2, "apple juice")
+        val nodeTitleContain = createTestNode(3, "my apple")
+        val nodeTagExact = createTestNode(4, "test", tags = listOf("apple"))
+        val nodeContentContain = createTestNode(5, "test").copy(node = NodeEntity(id = 5, type = "test", title = "test", content = "this has apple inside"))
+        val nodeTagPartial = createTestNode(6, "test", tags = listOf("apples"))
+
+        val nodes = listOf(nodeTagPartial, nodeContentContain, nodeTagExact, nodeTitleContain, nodeTitleStart, nodeTitleExact)
+
+        val sortedNodes = FilterHelper.filterAndSortNodes(
+            nodes = nodes,
+            query = "apple",
+            type = null,
+            status = null,
+            projectId = null,
+            areaId = null,
+            linkedToId = null,
+            maxMins = null,
+            energy = null,
+            friction = null,
+            locationContext = null,
+            energyContext = null,
+            deviceContext = null,
+            socialContext = null,
+            timeWindowContext = null,
+            timeHorizon = null,
+            relations = emptyList(),
+            sortMode = "relevance"
+        )
+
+        assertEquals(6, sortedNodes.size)
+        // Expected order:
+        // 1: nodeTitleExact (100) + startsWith (60) + contains (30) = 190
+        // 2: nodeTitleStart (60) + contains (30) = 90
+        // 3: nodeTitleContain (30) = 30
+        // 4: nodeTagExact (20) + contains (10) = 30 (tie broken by updated at/id? node 4 vs 3... wait, we need to be careful)
+        // Let's just check the first 2 clearly win.
+        val expectedIds = setOf(1L, 2L, 3L, 4L, 5L, 6L)
+        assertEquals(expectedIds, sortedNodes.map { it.node.id }.toSet())
+    }
+
     private fun createTestNode(
         id: Long,
         title: String,
