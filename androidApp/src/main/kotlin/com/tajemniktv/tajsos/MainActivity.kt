@@ -486,12 +486,12 @@ class MainActivity : FragmentActivity() {
      */
     private inline fun <reified T : android.os.Parcelable> Intent.getSafeParcelableExtra(name: String): T? =
         try {
-            androidx.core.content.IntentCompat.getParcelableExtra(this, name, T::class.java)
-        } catch (e: android.os.BadParcelableException) {
-            android.util.Log.e(TAG, "Failed to read parcelable extra: $name: ${e.javaClass.simpleName}")
+            IntentCompat.getParcelableExtra(this, name, T::class.java)
+        } catch (e: BadParcelableException) {
+            Log.e(TAG, "Failed to read parcelable extra: $name: ${e.javaClass.simpleName}")
             null
-        } catch (e: android.os.ParcelFormatException) {
-            android.util.Log.e(TAG, "Failed to read parcelable extra (bad parcel format): $name: ${e.javaClass.simpleName}")
+        } catch (e: ParcelFormatException) {
+            Log.e(TAG, "Failed to read parcelable extra (bad parcel format): $name: ${e.javaClass.simpleName}")
             null
         }
 
@@ -500,12 +500,12 @@ class MainActivity : FragmentActivity() {
      */
     private inline fun <reified T : android.os.Parcelable> Intent.getSafeParcelableArrayListExtra(name: String): java.util.ArrayList<T>? =
         try {
-            androidx.core.content.IntentCompat.getParcelableArrayListExtra(this, name, T::class.java)
-        } catch (e: android.os.BadParcelableException) {
-            android.util.Log.e(TAG, "Failed to read parcelable array list extra: $name: ${e.javaClass.simpleName}")
+            IntentCompat.getParcelableArrayListExtra(this, name, T::class.java)
+        } catch (e: BadParcelableException) {
+            Log.e(TAG, "Failed to read parcelable array list extra: $name: ${e.javaClass.simpleName}")
             null
-        } catch (e: android.os.ParcelFormatException) {
-            android.util.Log.e(TAG, "Failed to read parcelable array list extra (bad parcel format): $name: ${e.javaClass.simpleName}")
+        } catch (e: ParcelFormatException) {
+            Log.e(TAG, "Failed to read parcelable array list extra (bad parcel format): $name: ${e.javaClass.simpleName}")
             null
         }
 }
