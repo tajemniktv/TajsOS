@@ -43,6 +43,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.core.content.IntentCompat
 import androidx.fragment.app.FragmentActivity
 import com.google.firebase.FirebaseApp
 import java.security.KeyStore
@@ -485,17 +486,12 @@ class MainActivity : FragmentActivity() {
      */
     private inline fun <reified T : android.os.Parcelable> Intent.getSafeParcelableExtra(name: String): T? =
         try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                getParcelableExtra(name, T::class.java)
-            } else {
-                @Suppress("DEPRECATION")
-                getParcelableExtra(name) as? T
-            }
-        } catch (e: BadParcelableException) {
-            Log.e(TAG, "Failed to read parcelable extra: $name: ${e.javaClass.simpleName}")
+            androidx.core.content.IntentCompat.getParcelableExtra(this, name, T::class.java)
+        } catch (e: android.os.BadParcelableException) {
+            android.util.Log.e(TAG, "Failed to read parcelable extra: $name: ${e.javaClass.simpleName}")
             null
-        } catch (e: ParcelFormatException) {
-            Log.e(TAG, "Failed to read parcelable extra (bad parcel format): $name: ${e.javaClass.simpleName}")
+        } catch (e: android.os.ParcelFormatException) {
+            android.util.Log.e(TAG, "Failed to read parcelable extra (bad parcel format): $name: ${e.javaClass.simpleName}")
             null
         }
 
@@ -504,17 +500,12 @@ class MainActivity : FragmentActivity() {
      */
     private inline fun <reified T : android.os.Parcelable> Intent.getSafeParcelableArrayListExtra(name: String): java.util.ArrayList<T>? =
         try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                getParcelableArrayListExtra(name, T::class.java)
-            } else {
-                @Suppress("DEPRECATION")
-                getParcelableArrayListExtra<T>(name)
-            }
-        } catch (e: BadParcelableException) {
-            Log.e(TAG, "Failed to read parcelable array list extra: $name: ${e.javaClass.simpleName}")
+            androidx.core.content.IntentCompat.getParcelableArrayListExtra(this, name, T::class.java)
+        } catch (e: android.os.BadParcelableException) {
+            android.util.Log.e(TAG, "Failed to read parcelable array list extra: $name: ${e.javaClass.simpleName}")
             null
-        } catch (e: ParcelFormatException) {
-            Log.e(TAG, "Failed to read parcelable array list extra (bad parcel format): $name: ${e.javaClass.simpleName}")
+        } catch (e: android.os.ParcelFormatException) {
+            android.util.Log.e(TAG, "Failed to read parcelable array list extra (bad parcel format): $name: ${e.javaClass.simpleName}")
             null
         }
 }
