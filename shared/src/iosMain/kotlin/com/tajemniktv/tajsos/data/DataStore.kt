@@ -9,25 +9,25 @@ import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
-import kotlinx.cinterop.ExperimentalForeignApi
-import platform.Foundation.NSDocumentDirectory
-import platform.Foundation.NSFileManager
-import platform.Foundation.NSUserDomainMask
 import okio.Path.Companion.toPath
 
-@OptIn(ExperimentalForeignApi::class)
+/**
+ * Creates a DataStore instance for storing user preferences on iOS.
+ *
+ * This function uses the iOS document directory to persist preferences in a file named
+ * "tajsos.preferences_pb". If the file becomes corrupted, it will be replaced with
+ * empty preferences.
+ *
+ * Note: This function uses [ExperimentalForeignApi] for iOS platform interop via
+ * the internal [getDocumentDirectory] helper.
+ *
+ * @return A configured [DataStore] instance for [Preferences]
+ */
 fun createDataStore(): DataStore<Preferences> {
     return PreferenceDataStoreFactory.createWithPath(
         corruptionHandler = ReplaceFileCorruptionHandler { emptyPreferences() },
         produceFile = {
-            val dir = NSFileManager.defaultManager.URLForDirectory(
-                directory = NSDocumentDirectory,
-                inDomain = NSUserDomainMask,
-                appropriateForURL = null,
-                create = false,
-                error = null
-            )
-            val path = requireNotNull(dir?.URLByAppendingPathComponent("tajsos.preferences_pb")?.path)
+            val path = getDocumentDirectory() + "/tajsos.preferences_pb"
             path.toPath()
         }
     )
