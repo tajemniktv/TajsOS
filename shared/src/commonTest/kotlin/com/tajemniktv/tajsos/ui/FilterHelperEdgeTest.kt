@@ -217,7 +217,7 @@ class FilterHelperEdgeTest {
         val now = kotlin.time.Clock.System.now().toEpochMilliseconds()
         val dayMs = 24 * 60 * 60 * 1000L
 
-        val nodeToday = buildTestNode(1, "today", dueAt = now + 1000L)
+        val nodeToday = buildTestNode(1, "today", dueAt = now + (dayMs / 2))
         val nodeWeek = buildTestNode(2, "week", dueAt = now + 4 * dayMs)
         val nodeMonth = buildTestNode(3, "month", dueAt = now + 15 * dayMs)
         val nodeSemester = buildTestNode(4, "semester", dueAt = now + 60 * dayMs)
@@ -240,8 +240,7 @@ class FilterHelperEdgeTest {
             timeWindowContext = null, timeHorizon = "week", relations = emptyList(), sortMode = "updated"
         )
         assertEquals(2, resultWeek.size)
-        kotlin.test.assertTrue(resultWeek.any { it.node.id == 1L })
-        kotlin.test.assertTrue(resultWeek.any { it.node.id == 2L })
+        assertEquals(setOf(1L, 2L), resultWeek.map { it.node.id }.toSet())
 
         val resultLong = FilterHelper.filterAndSortNodes(
             nodes = nodes, query = "", type = null, status = null, projectId = null, areaId = null, linkedToId = null,
@@ -249,8 +248,7 @@ class FilterHelperEdgeTest {
             timeWindowContext = null, timeHorizon = "long", relations = emptyList(), sortMode = "updated"
         )
         assertEquals(2, resultLong.size)
-        kotlin.test.assertTrue(resultLong.any { it.node.id == 4L })
-        kotlin.test.assertTrue(resultLong.any { it.node.id == 5L })
+        assertEquals(setOf(4L, 5L), resultLong.map { it.node.id }.toSet())
 
         val resultShort = FilterHelper.filterAndSortNodes(
             nodes = nodes, query = "", type = null, status = null, projectId = null, areaId = null, linkedToId = null,
@@ -258,8 +256,7 @@ class FilterHelperEdgeTest {
             timeWindowContext = null, timeHorizon = "short", relations = emptyList(), sortMode = "updated"
         )
         assertEquals(2, resultShort.size)
-        kotlin.test.assertTrue(resultShort.any { it.node.id == 1L })
-        kotlin.test.assertTrue(resultShort.any { it.node.id == 2L })
+        assertEquals(setOf(1L, 2L), resultShort.map { it.node.id }.toSet())
 
         val resultInvalid = FilterHelper.filterAndSortNodes(
             nodes = nodes, query = "", type = null, status = null, projectId = null, areaId = null, linkedToId = null,
