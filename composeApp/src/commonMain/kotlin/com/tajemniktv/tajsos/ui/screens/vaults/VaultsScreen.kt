@@ -429,7 +429,7 @@ private fun VaultHeroPrimary(modifier: Modifier = Modifier) {
         Surface(
             color = TajsOSTheme.Primary.copy(alpha = 0.14f),
             shape = RoundedCornerShape(999.dp),
-            border = BorderStroke(1.dp, TajsOSTheme.Primary.copy(alpha = 0.35f)),
+            border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),
         ) {
             Text(
                 stringResource(Res.string.dash_module_ready),

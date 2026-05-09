@@ -453,7 +453,7 @@ private fun CommandSidebar(
                 OutlinedButton(
                     onClick = { showSweepDialog = true },
                     modifier = Modifier.fillMaxWidth(),
-                    border = BorderStroke(1.dp, TajsOSTheme.Primary.copy(alpha = 0.5f)),
+                    border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),
                 ) {
                     Text("Sweep $staleTasksCount Stale Tasks", color = TajsOSTheme.Primary)
                 }

@@ -430,7 +430,7 @@ private fun renderTaskDescription(context: TaskDetailContext) {
                         Surface(
                             shape = RoundedCornerShape(999.dp),
                             color = TajsOSTheme.Primary.copy(alpha = 0.15f),
-                            border = BorderStroke(1.dp, TajsOSTheme.Primary.copy(alpha = 0.35f)),
+                            border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),
                         ) {
                             Text(
                                 text = chip,
@@ -1043,7 +1043,7 @@ private fun StatusPill(state: TaskState) {
     Surface(
         shape = RoundedCornerShape(999.dp),
         color = tint.copy(alpha = 0.15f),
-        border = BorderStroke(1.dp, tint.copy(alpha = 0.35f)),
+        border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),
     ) {
         Text(
             text = label,
@@ -1205,7 +1205,7 @@ private fun TaskStateBadge(
     Surface(
         shape = RoundedCornerShape(999.dp),
         color = tint.copy(alpha = 0.16f),
-        border = BorderStroke(1.dp, tint.copy(alpha = 0.35f)),
+        border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),
     ) {
         Text(
             text = label,
