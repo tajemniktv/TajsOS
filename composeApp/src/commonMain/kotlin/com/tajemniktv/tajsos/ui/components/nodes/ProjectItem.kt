@@ -112,7 +112,7 @@ fun ProjectItem(
                         progress = { progress },
                         modifier = Modifier.fillMaxWidth().height(2.dp),
                         color = TajsOSTheme.Primary,
-                        trackColor = TajsOSTheme.GhostBorder,
+                        trackColor = TajsOSTheme.Border,
                     )
                 }
             }
