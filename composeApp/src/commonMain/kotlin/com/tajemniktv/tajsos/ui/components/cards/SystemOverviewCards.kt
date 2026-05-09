@@ -166,7 +166,7 @@ fun AreaHealthCard(
         modifier = modifier.width(190.dp),
         color = TajsOSTheme.CardSurface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, color.copy(alpha = 0.3f)),
+        border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),
     ) {
         Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
             Text(

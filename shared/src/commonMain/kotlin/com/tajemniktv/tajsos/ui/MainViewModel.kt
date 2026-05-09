@@ -125,6 +125,13 @@ import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.Json
 import kotlin.time.Clock
 
+/**
+ * Global orchestrator for the application shell.
+ *
+ * Handles shell-level state (including modes, sync status, application locking, and sidebar state).
+ * It delegates feature-heavy orchestration to internal command handlers (e.g., [NodeCommands])
+ * but acts as the root provider of core app state.
+ */
 @Stable
 class MainViewModel(
     private val repository: AppRepository,

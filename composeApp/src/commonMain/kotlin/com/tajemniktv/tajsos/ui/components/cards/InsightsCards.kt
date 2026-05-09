@@ -601,7 +601,7 @@ fun InsightPatternCard(
         shape =
             androidx.compose.foundation.shape
                 .RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = androidx.compose.foundation.BorderStroke(1.dp, color.copy(alpha = 0.2f)),
+        border = androidx.compose.foundation.BorderStroke(1.dp, TajsOSTheme.GhostBorder),
     ) {
         Row(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -679,7 +679,7 @@ fun AreaHealthInsightCard(area: AreaHealthMetrics) {
         shape =
             androidx.compose.foundation.shape
                 .RoundedCornerShape(TajsOSTheme.RadiusSm),
-        border = androidx.compose.foundation.BorderStroke(1.dp, color.copy(alpha = 0.25f)),
+        border = androidx.compose.foundation.BorderStroke(1.dp, TajsOSTheme.GhostBorder),
     ) {
         Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
             Text(

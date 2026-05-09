@@ -4,6 +4,7 @@
 
 package com.tajemniktv.tajsos.ui.screens.settings
 
+import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -263,7 +264,7 @@ private fun renderSettingsData(context: SettingsDashboardContext) {
 
         Spacer(Modifier.height(TajsOSTheme.SpacingMd))
 
-        OutlinedTextField(
+        TactileOutlinedTextField(
             value = context.importPayload,
             onValueChange = context.onImportPayloadChange,
             modifier = Modifier.fillMaxWidth().height(180.dp),
@@ -273,7 +274,7 @@ private fun renderSettingsData(context: SettingsDashboardContext) {
             colors =
                 OutlinedTextFieldDefaults.colors(
                     unfocusedBorderColor = TajsOSTheme.Border,
-                    focusedBorderColor = TajsOSTheme.Primary,
+                    focusedBorderColor = TajsOSTheme.GhostBorder,
                 ),
         )
 
@@ -744,25 +745,25 @@ private fun SettingsAddMedicationDialog(
             Column(
                 verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
             ) {
-                OutlinedTextField(
+                TactileOutlinedTextField(
                     value = substance,
                     onValueChange = { substance = it },
                     label = { Text(stringResource(Res.string.med_substance)) },
                     shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                 )
-                OutlinedTextField(
+                TactileOutlinedTextField(
                     value = brands,
                     onValueChange = { brands = it },
                     label = { Text(stringResource(Res.string.med_brand_names)) },
                     shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                 )
-                OutlinedTextField(
+                TactileOutlinedTextField(
                     value = dosage,
                     onValueChange = { dosage = it },
                     label = { Text(stringResource(Res.string.med_dosage)) },
                     shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                 )
-                OutlinedTextField(
+                TactileOutlinedTextField(
                     value = hour,
                     onValueChange = { hour = it },
                     label = { Text(stringResource(Res.string.med_take_at)) },
