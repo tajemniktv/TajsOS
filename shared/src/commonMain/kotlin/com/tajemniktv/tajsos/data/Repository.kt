@@ -1666,16 +1666,15 @@ class AppRepository(
         )
 
     /**
-     * Imports a comprehensive [ExportBundle] into the database.
+     * Imports a complete data bundle into the repository.
+     * Uses batch insertion operations (like [insertNodes]) to ensure high performance
+     * and minimize database transaction overhead during large imports.
      *
-     * Performance optimization: Utilizes batch operations (e.g., [NodeDao.insertNodes])
-     * for all entity lists to minimize database transactions and significantly improve import speed.
-     *
-     * @param bundle The full bundle containing nodes, relations, tags, etc.
-     * @return An [ImportReport] summarizing the counts of entities inserted.
+     * @param bundle The [ExportBundle] containing the data to import.
+     * @return An [ImportReport] summarizing the imported entity counts.
      */
     suspend fun importBundle(bundle: ExportBundle): ImportReport {
-insertNodes(bundle.nodes)
+        nodeDao.insertNodes(bundle.nodes)
         relationDao.insertRelations(bundle.relations)
         tagDao.insertTags(bundle.tags)
         templateDao.insertTemplates(bundle.templates)
@@ -1698,16 +1697,14 @@ insertNodes(bundle.nodes)
     }
 
     /**
-     * Imports a list of legacy nodes into the database.
+     * Imports a list of legacy nodes into the repository.
+     * Utilizes batch insertion via [insertNodes] for optimized performance.
      *
-     * Performance optimization: Uses a batch insert via [NodeDao.insertNodes] rather than
-     * iterating over individual insertions to prevent transaction overhead.
-     *
-     * @param nodes The legacy nodes to import.
-     * @return The number of nodes imported.
+     * @param nodes The list of [NodeEntity] legacy nodes to import.
+     * @return The number of nodes successfully imported.
      */
     suspend fun importLegacyNodes(nodes: List<NodeEntity>): Int {
-insertNodes(nodes)
+        nodeDao.insertNodes(nodes)
         return nodes.size
     }
 }
