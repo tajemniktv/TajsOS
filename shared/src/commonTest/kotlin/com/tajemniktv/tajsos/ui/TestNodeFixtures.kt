@@ -12,6 +12,7 @@ internal fun buildTestNode(
     status: String = "active",
     tags: List<String> = emptyList(),
     updatedAt: Long = 0L,
+    dueAt: Long? = null,
 ): NodeWithPin =
     NodeWithPin(
         node =
@@ -22,6 +23,7 @@ internal fun buildTestNode(
                 type = type,
                 status = status,
                 updatedAt = updatedAt,
+                dueAt = dueAt,
             ),
         pin = null,
         tags =

@@ -3,6 +3,7 @@ package com.tajemniktv.tajsos.ui
 import com.tajemniktv.tajsos.data.TodayPinEntity
 import kotlin.test.Test
 import kotlin.test.assertEquals
+@OptIn(kotlin.time.ExperimentalTime::class)
 
 class FilterHelperEdgeTest {
     @Test
@@ -208,6 +209,64 @@ class FilterHelperEdgeTest {
 
         assertEquals(2, result.size)
         assertEquals(listOf(1L, 2L), result.map { it.node.id }.sorted())
+    }
+
+
+    @Test
+    fun testFilterAndSortNodes_timeHorizon() {
+        val now = kotlin.time.Clock.System.now().toEpochMilliseconds()
+        val dayMs = 24 * 60 * 60 * 1000L
+
+        val nodeToday = buildTestNode(1, "today", dueAt = now + 1000L)
+        val nodeWeek = buildTestNode(2, "week", dueAt = now + 4 * dayMs)
+        val nodeMonth = buildTestNode(3, "month", dueAt = now + 15 * dayMs)
+        val nodeSemester = buildTestNode(4, "semester", dueAt = now + 60 * dayMs)
+        val nodeLong = buildTestNode(5, "long", dueAt = now + 40 * dayMs)
+        val nodeNullDue = buildTestNode(6, "null due")
+
+        val nodes = listOf(nodeToday, nodeWeek, nodeMonth, nodeSemester, nodeLong, nodeNullDue)
+
+        val resultToday = FilterHelper.filterAndSortNodes(
+            nodes = nodes, query = "", type = null, status = null, projectId = null, areaId = null, linkedToId = null,
+            maxMins = null, energy = null, friction = null, locationContext = null, energyContext = null, deviceContext = null, socialContext = null,
+            timeWindowContext = null, timeHorizon = "today", relations = emptyList(), sortMode = "updated"
+        )
+        assertEquals(1, resultToday.size)
+        assertEquals(1L, resultToday[0].node.id)
+
+        val resultWeek = FilterHelper.filterAndSortNodes(
+            nodes = nodes, query = "", type = null, status = null, projectId = null, areaId = null, linkedToId = null,
+            maxMins = null, energy = null, friction = null, locationContext = null, energyContext = null, deviceContext = null, socialContext = null,
+            timeWindowContext = null, timeHorizon = "week", relations = emptyList(), sortMode = "updated"
+        )
+        assertEquals(2, resultWeek.size)
+        kotlin.test.assertTrue(resultWeek.any { it.node.id == 1L })
+        kotlin.test.assertTrue(resultWeek.any { it.node.id == 2L })
+
+        val resultLong = FilterHelper.filterAndSortNodes(
+            nodes = nodes, query = "", type = null, status = null, projectId = null, areaId = null, linkedToId = null,
+            maxMins = null, energy = null, friction = null, locationContext = null, energyContext = null, deviceContext = null, socialContext = null,
+            timeWindowContext = null, timeHorizon = "long", relations = emptyList(), sortMode = "updated"
+        )
+        assertEquals(2, resultLong.size)
+        kotlin.test.assertTrue(resultLong.any { it.node.id == 4L })
+        kotlin.test.assertTrue(resultLong.any { it.node.id == 5L })
+
+        val resultShort = FilterHelper.filterAndSortNodes(
+            nodes = nodes, query = "", type = null, status = null, projectId = null, areaId = null, linkedToId = null,
+            maxMins = null, energy = null, friction = null, locationContext = null, energyContext = null, deviceContext = null, socialContext = null,
+            timeWindowContext = null, timeHorizon = "short", relations = emptyList(), sortMode = "updated"
+        )
+        assertEquals(2, resultShort.size)
+        kotlin.test.assertTrue(resultShort.any { it.node.id == 1L })
+        kotlin.test.assertTrue(resultShort.any { it.node.id == 2L })
+
+        val resultInvalid = FilterHelper.filterAndSortNodes(
+            nodes = nodes, query = "", type = null, status = null, projectId = null, areaId = null, linkedToId = null,
+            maxMins = null, energy = null, friction = null, locationContext = null, energyContext = null, deviceContext = null, socialContext = null,
+            timeWindowContext = null, timeHorizon = "invalid_horizon", relations = emptyList(), sortMode = "updated"
+        )
+        assertEquals(6, resultInvalid.size)
     }
 
 }
