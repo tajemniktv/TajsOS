@@ -4,6 +4,7 @@
 
 package com.tajemniktv.tajsos.ui.screens.notes
 
+import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -90,7 +91,7 @@ fun NotesListRail(
                 Spacer(Modifier.width(8.dp))
                 Text("New note")
             }
-            OutlinedTextField(
+            TactileOutlinedTextField(
                 value = searchQuery,
                 onValueChange = onSearchChange,
                 modifier = Modifier.fillMaxWidth(),
