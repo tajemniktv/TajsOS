@@ -4,7 +4,6 @@
 
 package com.tajemniktv.tajsos.ui.screens.notes
 
-import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -214,7 +213,7 @@ fun NotesWorkspaceDetail(
                         fontWeight = FontWeight.Bold,
                     )
                 }
-                TactileOutlinedTextField(
+                OutlinedTextField(
                     value = query,
                     onValueChange = { query = it },
                     modifier = Modifier.fillMaxWidth(),
@@ -323,18 +322,17 @@ fun NotesWorkspaceDetail(
                 }
 
                 if (isEditMode) {
-                    TactileOutlinedTextField(
+                    OutlinedTextField(
                         value = titleDraft,
                         onValueChange = { titleDraft = it },
                         modifier = Modifier.fillMaxWidth(),
                         label = { Text(stringResource(Res.string.detail_title)) },
                         singleLine = true,
                     )
-                    TactileOutlinedTextField(
+                    OutlinedTextField(
                         value = contentDraft,
                         onValueChange = { contentDraft = it },
-                        modifier = Modifier.fillMaxWidth(),
-                        containerModifier = Modifier.weight(1f),
+                        modifier = Modifier.fillMaxWidth().weight(1f),
                         label = { Text(stringResource(Res.string.detail_content)) },
                     )
                 } else {

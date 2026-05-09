@@ -4,7 +4,6 @@
 
 package com.tajemniktv.tajsos.ui.screens.tasks.detail
 
-import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -430,7 +429,7 @@ private fun renderTaskDescription(context: TaskDetailContext) {
                         Surface(
                             shape = RoundedCornerShape(999.dp),
                             color = TajsOSTheme.Primary.copy(alpha = 0.15f),
-                            border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),
+                            border = BorderStroke(1.dp, TajsOSTheme.Primary.copy(alpha = 0.35f)),
                         ) {
                             Text(
                                 text = chip,
@@ -487,10 +486,10 @@ private fun renderTaskSubtasks(context: TaskDetailContext) {
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                TactileOutlinedTextField(
+                OutlinedTextField(
                     value = newChecklistItem,
                     onValueChange = { newChecklistItem = it },
-                    containerModifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f),
                     singleLine = true,
                     label = { Text(stringResource(Res.string.detail_tag_new_placeholder)) },
                 )
@@ -1043,7 +1042,7 @@ private fun StatusPill(state: TaskState) {
     Surface(
         shape = RoundedCornerShape(999.dp),
         color = tint.copy(alpha = 0.15f),
-        border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),
+        border = BorderStroke(1.dp, tint.copy(alpha = 0.35f)),
     ) {
         Text(
             text = label,
@@ -1205,7 +1204,7 @@ private fun TaskStateBadge(
     Surface(
         shape = RoundedCornerShape(999.dp),
         color = tint.copy(alpha = 0.16f),
-        border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),
+        border = BorderStroke(1.dp, tint.copy(alpha = 0.35f)),
     ) {
         Text(
             text = label,

@@ -38,7 +38,7 @@ fun BasicSurvivalCard(
         modifier = modifier,
         color = TajsOSTheme.CardSurface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),
+        border = BorderStroke(1.dp, color.copy(alpha = 0.2f)),
     ) {
         Column(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),

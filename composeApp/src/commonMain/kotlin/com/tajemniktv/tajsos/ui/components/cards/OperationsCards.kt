@@ -4,7 +4,6 @@
 
 package com.tajemniktv.tajsos.ui.components.cards
 
-import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -619,14 +618,14 @@ fun PersonRelationshipCard(
                     label = { Text("OPEN RELATIONSHIP") },
                 )
             }
-            TactileOutlinedTextField(
+            OutlinedTextField(
                 value = socialNotes,
                 onValueChange = { socialNotes = it },
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text("Social energy notes") },
                 minLines = 2,
             )
-            TactileOutlinedTextField(
+            OutlinedTextField(
                 value = relationshipContext,
                 onValueChange = { relationshipContext = it },
                 modifier = Modifier.fillMaxWidth(),

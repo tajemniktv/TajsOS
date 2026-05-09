@@ -4,7 +4,6 @@
 
 package com.tajemniktv.tajsos.ui.screens.tasks
 
-import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -158,10 +157,10 @@ internal fun TasksAllView(
             horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            TactileOutlinedTextField(
+            OutlinedTextField(
                 value = query,
                 onValueChange = { query = it },
-                containerModifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f),
                 placeholder = { Text(stringResource(Res.string.tasks_search_placeholder)) },
                 leadingIcon = { Icon(Icons.Default.Search, null) },
                 singleLine = true,

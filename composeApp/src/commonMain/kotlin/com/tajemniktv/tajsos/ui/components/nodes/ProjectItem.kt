@@ -76,7 +76,7 @@ fun ProjectItem(
             border =
                 androidx.compose.foundation.BorderStroke(
                     1.dp,
-                    TajsOSTheme.GhostBorder,
+                    TajsOSTheme.Muted.copy(alpha = 0.2f),
                 ),
         ) {
             Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
@@ -112,7 +112,7 @@ fun ProjectItem(
                         progress = { progress },
                         modifier = Modifier.fillMaxWidth().height(2.dp),
                         color = TajsOSTheme.Primary,
-                        trackColor = TajsOSTheme.Border,
+                        trackColor = TajsOSTheme.Muted.copy(alpha = 0.2f),
                     )
                 }
             }

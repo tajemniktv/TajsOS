@@ -4,7 +4,6 @@
 
 package com.tajemniktv.tajsos.ui.screens.dashboard
 
-import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -338,7 +337,7 @@ private fun RenderDashboardBlock(
         }
 
         "search_capture" -> {
-            TactileOutlinedTextField(
+            OutlinedTextField(
                 value = "",
                 onValueChange = {},
                 modifier = Modifier.fillMaxWidth(),

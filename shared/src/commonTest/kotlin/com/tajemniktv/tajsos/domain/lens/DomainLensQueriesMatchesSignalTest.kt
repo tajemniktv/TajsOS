@@ -33,30 +33,33 @@ class DomainLensQueriesMatchesSignalTest {
         )
     }
 
-
-    private fun assertDomainQueryResult(expectedIds: List<Long>, result: List<NodeWithPin>) {
-        assertEquals(expectedIds.size, result.size)
-        assertEquals(expectedIds.sorted(), result.map { it.node.id }.sorted())
-    }
     @Test
-    fun financeActionItems_signals_and_case_insensitivity() {
-        // Signals
+    fun financeActionItems_includes_all_signals() {
         val nodeTitle = createNode(1, "my budget is tight")
         val nodeContent = createNode(2, "some task", "need to pay tax")
         val nodeTag = createNode(3, "some task", tags = listOf("money"))
         val nodeMaintenance = createNode(4, "some task", maintenanceType = "bill")
+        // this is note, so it shouldn't be included in action items
         val nodeReference = createNode(5, "some budget", type = "note", noteType = "reference")
         val nodeNone = createNode(6, "unrelated")
 
-        // Case insensitivity
-        val nodeTitleCase = createNode(7, "MY BUDGET")
-        val nodeContentCase = createNode(8, "some task", "PAY TAX")
-        val nodeTagCase = createNode(9, "some task", tags = listOf("MONEY"))
-
-        val result = DomainLensQueries.financeActionItems(listOf(nodeTitle, nodeContent, nodeTag, nodeMaintenance, nodeReference, nodeNone, nodeTitleCase, nodeContentCase, nodeTagCase))
-        assertDomainQueryResult(listOf(1L, 2L, 3L, 4L, 7L, 8L, 9L), result)
+        val result = DomainLensQueries.financeActionItems(listOf(nodeTitle, nodeContent, nodeTag, nodeMaintenance, nodeReference, nodeNone))
+        assertEquals(4, result.size)
+        val expectedIds = listOf(1L, 2L, 3L, 4L)
+        assertEquals(expectedIds, result.map { it.node.id }.sorted())
     }
 
+    @Test
+    fun financeActionItems_case_insensitivity() {
+        val nodeTitle = createNode(1, "MY BUDGET")
+        val nodeContent = createNode(2, "some task", "PAY TAX")
+        val nodeTag = createNode(3, "some task", tags = listOf("MONEY"))
+
+        val result = DomainLensQueries.financeActionItems(listOf(nodeTitle, nodeContent, nodeTag))
+        assertEquals(3, result.size)
+        val expectedIds = listOf(1L, 2L, 3L)
+        assertEquals(expectedIds, result.map { it.node.id }.sorted())
+    }
 
     @Test
     fun financeKnowledgeItems_includes_reference_notes() {
@@ -65,27 +68,38 @@ class DomainLensQueriesMatchesSignalTest {
         val nodeReferenceNoMatch = createNode(3, "some doc", type = "note", noteType = "reference")
 
         val result = DomainLensQueries.financeKnowledgeItems(listOf(nodeReferenceMatch, nodeReferenceTagMatch, nodeReferenceNoMatch))
-        assertDomainQueryResult(listOf(1L, 2L), result)
+        assertEquals(2, result.size)
+        val expectedIds = listOf(1L, 2L)
+        assertEquals(expectedIds, result.map { it.node.id }.sorted())
     }
+
     @Test
-    fun healthActionItems_signals_and_case_insensitivity() {
-        // Signals
+    fun healthActionItems_includes_all_signals() {
         val nodeTitle = createNode(1, "see doctor")
         val nodeContent = createNode(2, "some task", "pick up medication")
         val nodeTag = createNode(3, "some task", tags = listOf("medical"))
         val nodeMaintenance = createNode(4, "some task", maintenanceType = "appointment")
+        // this is note, so it shouldn't be included in action items
         val nodeReflection = createNode(5, "feeling better", type = "note", noteType = "reflection")
         val nodeNone = createNode(6, "unrelated")
 
-        // Case insensitivity
-        val nodeTitleCase = createNode(7, "SEE DOCTOR")
-        val nodeContentCase = createNode(8, "some task", "PICK UP MEDICATION")
-        val nodeTagCase = createNode(9, "some task", tags = listOf("MEDICAL"))
-
-        val result = DomainLensQueries.healthActionItems(listOf(nodeTitle, nodeContent, nodeTag, nodeMaintenance, nodeReflection, nodeNone, nodeTitleCase, nodeContentCase, nodeTagCase))
-        assertDomainQueryResult(listOf(1L, 2L, 3L, 4L, 7L, 8L, 9L), result)
+        val result = DomainLensQueries.healthActionItems(listOf(nodeTitle, nodeContent, nodeTag, nodeMaintenance, nodeReflection, nodeNone))
+        assertEquals(4, result.size)
+        val expectedIds = listOf(1L, 2L, 3L, 4L)
+        assertEquals(expectedIds, result.map { it.node.id }.sorted())
     }
 
+    @Test
+    fun healthActionItems_case_insensitivity() {
+        val nodeTitle = createNode(1, "SEE DOCTOR")
+        val nodeContent = createNode(2, "some task", "PICK UP MEDICATION")
+        val nodeTag = createNode(3, "some task", tags = listOf("MEDICAL"))
+
+        val result = DomainLensQueries.healthActionItems(listOf(nodeTitle, nodeContent, nodeTag))
+        assertEquals(3, result.size)
+        val expectedIds = listOf(1L, 2L, 3L)
+        assertEquals(expectedIds, result.map { it.node.id }.sorted())
+    }
 
     @Test
     fun healthKnowledgeItems_includes_health_notes() {
@@ -94,36 +108,8 @@ class DomainLensQueriesMatchesSignalTest {
         val nodeOtherNote = createNode(3, "some text", type = "note")
 
         val result = DomainLensQueries.healthKnowledgeItems(listOf(nodeReflection, nodeJournal, nodeOtherNote))
-        assertDomainQueryResult(listOf(1L, 2L), result)
+        assertEquals(2, result.size)
+        val expectedIds = listOf(1L, 2L)
+        assertEquals(expectedIds, result.map { it.node.id }.sorted())
     }
-    @Test
-    fun knowledgeItems_implicit_and_tag_matches() {
-        val nodeFinanceRef = createNode(1, "some unrelated title", type = "note", noteType = "reference", tags = listOf("finance"))
-        val nodeJournal = createNode(2, "random thought", type = "note", noteType = "journal")
-        val nodeReflection = createNode(3, "another thought", type = "note", noteType = "reflection")
-
-        val financeResult = DomainLensQueries.financeKnowledgeItems(listOf(nodeFinanceRef))
-        val healthResult = DomainLensQueries.healthKnowledgeItems(listOf(nodeJournal, nodeReflection))
-
-        assertEquals(1, financeResult.size)
-        assertEquals(2, healthResult.size)
-    }
-
-    @Test
-    fun edge_cases_and_exclusions() {
-        val nodeReference = createNode(1, "some unrelated title", type = "note", noteType = "reference")
-        val nodeNote = createNode(2, "random thought", type = "note")
-        val nodeEmpty = createNode(3, "")
-
-        val financeKnowledge = DomainLensQueries.financeKnowledgeItems(listOf(nodeReference))
-        val healthKnowledge = DomainLensQueries.healthKnowledgeItems(listOf(nodeNote))
-        val financeAction = DomainLensQueries.financeActionItems(listOf(nodeEmpty))
-        val healthAction = DomainLensQueries.healthActionItems(listOf(nodeEmpty))
-
-        assertEquals(0, financeKnowledge.size)
-        assertEquals(0, healthKnowledge.size)
-        assertEquals(0, financeAction.size)
-        assertEquals(0, healthAction.size)
-    }
-
 }

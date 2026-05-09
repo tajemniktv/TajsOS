@@ -4,7 +4,6 @@
 
 package com.tajemniktv.tajsos.ui.components.nodes
 
-import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -375,7 +374,7 @@ fun DecisionDetailContent(
             onDismissRequest = { showAddOptionDialog = false },
             title = { Text(stringResource(Res.string.decision_add_option_title)) },
             text = {
-                TactileOutlinedTextField(
+                OutlinedTextField(
                     value = optionTitle,
                     onValueChange = { optionTitle = it },
                     label = { Text(stringResource(Res.string.decision_add_option_field)) },
@@ -432,7 +431,7 @@ fun DecisionDetailContent(
                             Text(option.title)
                         }
                     }
-                    TactileOutlinedTextField(
+                    OutlinedTextField(
                         value = outcome,
                         onValueChange = { outcome = it },
                         label = { Text(stringResource(Res.string.decision_outcome_reason)) },

@@ -4,7 +4,6 @@
 
 package com.tajemniktv.tajsos.ui.components.cards
 
-import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -233,22 +232,22 @@ fun TemplateQuickActionsCard(
                 )
             }
             Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
-                TactileOutlinedTextField(
-                    containerModifier = Modifier.weight(1f),
+                OutlinedTextField(
+                    modifier = Modifier.weight(1f),
                     value = courseId,
                     onValueChange = onCourseIdChange,
                     label = { Text(stringResource(Res.string.student_course_id)) },
                     singleLine = true,
                 )
-                TactileOutlinedTextField(
-                    containerModifier = Modifier.weight(1f),
+                OutlinedTextField(
+                    modifier = Modifier.weight(1f),
                     value = semester,
                     onValueChange = onSemesterChange,
                     label = { Text(stringResource(Res.string.student_semester)) },
                     singleLine = true,
                 )
             }
-            TactileOutlinedTextField(
+            OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = courseName,
                 onValueChange = onCourseNameChange,

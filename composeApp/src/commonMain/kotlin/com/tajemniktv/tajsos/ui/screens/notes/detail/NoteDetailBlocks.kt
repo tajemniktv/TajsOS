@@ -400,7 +400,7 @@ private fun renderNoteTaskMetadata(context: NoteDetailContext) {
                 modifier = Modifier.fillMaxWidth(),
                 color = TajsOSTheme.Accent.copy(alpha = 0.1f),
                 shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),
+                border = BorderStroke(1.dp, TajsOSTheme.Accent.copy(alpha = 0.3f)),
             ) {
                 Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
                     Text(

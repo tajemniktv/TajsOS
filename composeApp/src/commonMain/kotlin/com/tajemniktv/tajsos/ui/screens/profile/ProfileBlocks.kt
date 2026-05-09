@@ -4,7 +4,6 @@
 
 package com.tajemniktv.tajsos.ui.screens.profile
 
-import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -321,7 +320,7 @@ private fun renderAboutModuleBlock(context: ProfileScreenContext) {
             onValueChange = { context.onEditorChange(context.editor.copy(preferredGreeting = it)) },
             label = stringResource(Res.string.profile_greeting),
         )
-        TactileOutlinedTextField(
+        OutlinedTextField(
             value = context.editor.bio,
             onValueChange = { context.onEditorChange(context.editor.copy(bio = it)) },
             label = { Text(stringResource(Res.string.profile_bio)) },
@@ -470,7 +469,7 @@ private fun ProfileField(
     isError: Boolean = false,
     supportingText: String? = null,
 ) {
-    TactileOutlinedTextField(
+    OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
         label = { Text(label) },
@@ -493,7 +492,7 @@ private fun profileFieldColors() =
         unfocusedTextColor = TajsOSTheme.Text,
         focusedContainerColor = TajsOSTheme.SurfaceLowest.copy(alpha = 0.95f),
         unfocusedContainerColor = TajsOSTheme.SurfaceLowest.copy(alpha = 0.92f),
-        focusedBorderColor = TajsOSTheme.GhostBorder,
+        focusedBorderColor = TajsOSTheme.Primary.copy(alpha = 0.8f),
         unfocusedBorderColor = TajsOSTheme.GhostBorder.copy(alpha = 0.25f),
         cursorColor = TajsOSTheme.Primary,
         focusedLabelColor = TajsOSTheme.Primary,

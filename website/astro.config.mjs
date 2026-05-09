@@ -20,10 +20,6 @@ export default defineConfig({
       title: "Docs",
       description: "TajsOS Documentation",
 
-      components: {
-        MarkdownContent: './src/components/MarkdownContent.astro',
-      },
-
       sidebar: [
         {
           label: "Introduction",

@@ -4,7 +4,6 @@
 
 package com.tajemniktv.tajsos.ui.screens.vaults
 
-import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -298,7 +297,7 @@ internal fun VaultsLayer(
                             ).padding(22.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
-                    TactileOutlinedTextField(
+                    OutlinedTextField(
                         value = searchQuery,
                         onValueChange = { searchQuery = it },
                         modifier = Modifier.fillMaxWidth(),
@@ -429,7 +428,7 @@ private fun VaultHeroPrimary(modifier: Modifier = Modifier) {
         Surface(
             color = TajsOSTheme.Primary.copy(alpha = 0.14f),
             shape = RoundedCornerShape(999.dp),
-            border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),
+            border = BorderStroke(1.dp, TajsOSTheme.Primary.copy(alpha = 0.35f)),
         ) {
             Text(
                 stringResource(Res.string.dash_module_ready),
@@ -722,14 +721,14 @@ private fun VaultEntryComposer(
                 style = MaterialTheme.typography.titleSmall,
                 color = TajsOSTheme.VaultTextStrong,
             )
-            TactileOutlinedTextField(
+            OutlinedTextField(
                 value = entryTitle,
                 onValueChange = onEntryTitleChange,
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text(stringResource(Res.string.lens_reference_entry_title)) },
                 singleLine = true,
             )
-            TactileOutlinedTextField(
+            OutlinedTextField(
                 value = entryContent,
                 onValueChange = onEntryContentChange,
                 modifier = Modifier.fillMaxWidth(),

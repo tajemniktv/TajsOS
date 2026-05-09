@@ -4,7 +4,6 @@
 
 package com.tajemniktv.tajsos.ui.screens.tasks
 
-import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -408,7 +407,7 @@ private fun CommandSidebar(
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
             )
-            TactileOutlinedTextField(
+            OutlinedTextField(
                 value = quickAdd,
                 onValueChange = onQuickAddChanged,
                 modifier = Modifier.fillMaxWidth(),
@@ -427,7 +426,7 @@ private fun CommandSidebar(
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
             )
-            TactileOutlinedTextField(
+            OutlinedTextField(
                 value = capture,
                 onValueChange = onCaptureChanged,
                 modifier = Modifier.fillMaxWidth(),
@@ -453,7 +452,7 @@ private fun CommandSidebar(
                 OutlinedButton(
                     onClick = { showSweepDialog = true },
                     modifier = Modifier.fillMaxWidth(),
-                    border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),
+                    border = BorderStroke(1.dp, TajsOSTheme.Primary.copy(alpha = 0.5f)),
                 ) {
                     Text("Sweep $staleTasksCount Stale Tasks", color = TajsOSTheme.Primary)
                 }

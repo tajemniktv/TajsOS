@@ -4,7 +4,6 @@
 
 package com.tajemniktv.tajsos.ui.screens.rules
 
-import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -116,13 +115,13 @@ private fun renderRulesInput(context: RulesDashboardContext) {
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            TactileOutlinedTextField(
+            OutlinedTextField(
                 value = context.ruleTitle,
                 onValueChange = context.onRuleTitleChange,
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text("Rule title") },
             )
-            TactileOutlinedTextField(
+            OutlinedTextField(
                 value = context.ruleContent,
                 onValueChange = context.onRuleContentChange,
                 modifier = Modifier.fillMaxWidth(),

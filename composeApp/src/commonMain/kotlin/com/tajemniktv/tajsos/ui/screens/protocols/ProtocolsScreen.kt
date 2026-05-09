@@ -4,7 +4,6 @@
 
 package com.tajemniktv.tajsos.ui.screens.protocols
 
-import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -451,7 +450,7 @@ private fun ProtocolLibrarySurface(
         }
 
     Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd)) {
-        TactileOutlinedTextField(
+        OutlinedTextField(
             value = searchQuery,
             onValueChange = onSearchQueryChange,
             modifier = Modifier.fillMaxWidth(),
@@ -916,7 +915,7 @@ private fun ProtocolRunSidebar(
                 color = TajsOSTheme.Text,
                 fontWeight = FontWeight.SemiBold,
             )
-            TactileOutlinedTextField(
+            OutlinedTextField(
                 value = sessionNotes,
                 onValueChange = onSessionNotesChange,
                 modifier = Modifier.fillMaxWidth(),

@@ -51,7 +51,7 @@ fun AlertCard(
         modifier = modifier.fillMaxWidth(),
         color = color.copy(alpha = 0.05f),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),
+        border = BorderStroke(1.dp, color.copy(alpha = 0.3f)),
     ) {
         Row(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
