@@ -1665,8 +1665,17 @@ class AppRepository(
             recentEvents = getRecentLogs(limit = recentEventLimit).first(),
         )
 
+    /**
+     * Imports a comprehensive [ExportBundle] into the database.
+     *
+     * Performance optimization: Utilizes batch operations (e.g., [NodeDao.insertNodes])
+     * for all entity lists to minimize database transactions and significantly improve import speed.
+     *
+     * @param bundle The full bundle containing nodes, relations, tags, etc.
+     * @return An [ImportReport] summarizing the counts of entities inserted.
+     */
     suspend fun importBundle(bundle: ExportBundle): ImportReport {
-        bundle.nodes.forEach { nodeDao.insertNode(it) }
+insertNodes(bundle.nodes)
         relationDao.insertRelations(bundle.relations)
         tagDao.insertTags(bundle.tags)
         templateDao.insertTemplates(bundle.templates)
@@ -1688,8 +1697,17 @@ class AppRepository(
         )
     }
 
+    /**
+     * Imports a list of legacy nodes into the database.
+     *
+     * Performance optimization: Uses a batch insert via [NodeDao.insertNodes] rather than
+     * iterating over individual insertions to prevent transaction overhead.
+     *
+     * @param nodes The legacy nodes to import.
+     * @return The number of nodes imported.
+     */
     suspend fun importLegacyNodes(nodes: List<NodeEntity>): Int {
-        nodes.forEach { nodeDao.insertNode(it) }
+insertNodes(nodes)
         return nodes.size
     }
 }
