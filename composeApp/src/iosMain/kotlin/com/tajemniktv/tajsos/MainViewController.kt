@@ -11,6 +11,13 @@ import com.tajemniktv.tajsos.di.SharedModule
 
 private val sharedModule by lazy { SharedModule(createDatabase(), createDataStore()) }
 
+/**
+* Creates the iOS root [platform.UIKit.UIViewController] hosting the Compose app.
+*
+* The controller uses shared dependencies from a lazily initialized module.
+*
+* `@return` Root Compose-backed UIKit view controller.
+*/
 fun MainViewController(): platform.UIKit.UIViewController {
     val viewModel = sharedModule.createViewModel()
 
