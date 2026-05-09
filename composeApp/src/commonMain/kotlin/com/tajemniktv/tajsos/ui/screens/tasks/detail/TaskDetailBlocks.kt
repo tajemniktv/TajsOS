@@ -4,6 +4,7 @@
 
 package com.tajemniktv.tajsos.ui.screens.tasks.detail
 
+import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -486,10 +487,10 @@ private fun renderTaskSubtasks(context: TaskDetailContext) {
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                OutlinedTextField(
+                TactileOutlinedTextField(
                     value = newChecklistItem,
                     onValueChange = { newChecklistItem = it },
-                    modifier = Modifier.weight(1f),
+                    containerModifier = Modifier.weight(1f),
                     singleLine = true,
                     label = { Text(stringResource(Res.string.detail_tag_new_placeholder)) },
                 )

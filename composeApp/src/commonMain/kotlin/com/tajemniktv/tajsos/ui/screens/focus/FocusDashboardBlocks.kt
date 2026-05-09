@@ -4,6 +4,7 @@
 
 package com.tajemniktv.tajsos.ui.screens.focus
 
+import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -308,7 +309,7 @@ internal fun FocusMainBlock(viewModel: MainViewModel) {
                     color = TajsOSTheme.Text,
                     fontWeight = FontWeight.SemiBold,
                 )
-                OutlinedTextField(
+                TactileOutlinedTextField(
                     value = step,
                     onValueChange = { step = it },
                     modifier = Modifier.fillMaxWidth(),
@@ -379,7 +380,7 @@ internal fun FocusMainBlock(viewModel: MainViewModel) {
                     color = TajsOSTheme.Text,
                     fontWeight = FontWeight.SemiBold,
                 )
-                OutlinedTextField(
+                TactileOutlinedTextField(
                     value = capture,
                     onValueChange = { capture = it },
                     modifier = Modifier.fillMaxWidth(),
