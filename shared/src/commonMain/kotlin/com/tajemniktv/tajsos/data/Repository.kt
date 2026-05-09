@@ -1675,7 +1675,7 @@ class AppRepository(
      * @return An [ImportReport] summarizing the counts of entities inserted.
      */
     suspend fun importBundle(bundle: ExportBundle): ImportReport {
-        nodeDao.insertNodes(bundle.nodes)
+insertNodes(bundle.nodes)
         relationDao.insertRelations(bundle.relations)
         tagDao.insertTags(bundle.tags)
         templateDao.insertTemplates(bundle.templates)
@@ -1707,7 +1707,7 @@ class AppRepository(
      * @return The number of nodes imported.
      */
     suspend fun importLegacyNodes(nodes: List<NodeEntity>): Int {
-        nodeDao.insertNodes(nodes)
+insertNodes(nodes)
         return nodes.size
     }
 }
