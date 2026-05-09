@@ -1672,6 +1672,14 @@ class AppRepository(
             recentEvents = getRecentLogs(limit = recentEventLimit).first(),
         )
 
+    /**
+     * Imports a complete data bundle into the repository.
+     * Uses batch insertion operations (like [insertNodes]) to ensure high performance
+     * and minimize database transaction overhead during large imports.
+     *
+     * @param bundle The [ExportBundle] containing the data to import.
+     * @return An [ImportReport] summarizing the imported entity counts.
+     */
     suspend fun importBundle(bundle: ExportBundle): ImportReport {
         if (bundle.nodes.isNotEmpty()) {
             nodeDao.insertNodes(bundle.nodes)
@@ -1697,6 +1705,13 @@ class AppRepository(
         )
     }
 
+    /**
+     * Imports a list of legacy nodes into the repository.
+     * Utilizes batch insertion via [insertNodes] for optimized performance.
+     *
+     * @param nodes The list of [NodeEntity] legacy nodes to import.
+     * @return The number of nodes successfully imported.
+     */
     suspend fun importLegacyNodes(nodes: List<NodeEntity>): Int {
         if (nodes.isNotEmpty()) {
             nodeDao.insertNodes(nodes)
