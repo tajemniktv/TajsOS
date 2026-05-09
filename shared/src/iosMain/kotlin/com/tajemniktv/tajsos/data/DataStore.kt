@@ -27,7 +27,7 @@ fun createDataStore(): DataStore<Preferences> {
                 create = false,
                 error = null
             )
-            val path = requireNotNull(dir?.path) + "/tajsos.preferences_pb"
+            val path = requireNotNull(dir?.URLByAppendingPathComponent("tajsos.preferences_pb")?.path)
             path.toPath()
         }
     )

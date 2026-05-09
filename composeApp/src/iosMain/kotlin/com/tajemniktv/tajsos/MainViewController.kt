@@ -9,10 +9,9 @@ import com.tajemniktv.tajsos.data.createDatabase
 import com.tajemniktv.tajsos.data.createDataStore
 import com.tajemniktv.tajsos.di.SharedModule
 
+private val sharedModule by lazy { SharedModule(createDatabase(), createDataStore()) }
+
 fun MainViewController(): platform.UIKit.UIViewController {
-    val database = createDatabase()
-    val dataStore = createDataStore()
-    val sharedModule = SharedModule(database, dataStore)
     val viewModel = sharedModule.createViewModel()
 
     return ComposeUIViewController {
