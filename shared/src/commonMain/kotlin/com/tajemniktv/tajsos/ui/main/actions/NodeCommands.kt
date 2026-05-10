@@ -41,6 +41,24 @@ import kotlin.time.Clock
  * It provides safe boundaries around common operations like archiving, state updates,
  * open-loop conversions, subtask splitting, and scheduled sweeps.
  *
+ * Note: As part of the domain modeling boundaries, this class operates primarily on the legacy [NodeEntity]
+ * surface.
+ *
+ * @property repository The main entrypoint for accessing and updating the local SQLite database.
+ * @property scope The CoroutineScope within which all background database writes are launched.
+ * @property currentTodayNodes A lambda supplying the current, explicitly pinned 'Today' nodes.
+ * @property currentAllNodes A lambda supplying the complete set of visible active nodes.
+ * @property parseInternalLinks A lambda invoking wiki-link parsing to establish node relations.
+ * @property setTagOnNode A lambda to safely apply or remove string tags on a target node.
+ * @property defaultNextStepLabel A supplier for fallback text when next steps are blank.
+ * @property defaultUntitledLabel A supplier for fallback text when nodes lack titles.
+ */
+ * A central action dispatcher containing encapsulated commands for mutating the lifecycle,
+ * state, and content of primary life objects (Nodes).
+ *
+ * It provides safe boundaries around common operations like archiving, state updates,
+ * open-loop conversions, subtask splitting, and scheduled sweeps.
+ *
  * @property repository The main entrypoint for accessing and updating the local SQLite database.
  * @property scope The CoroutineScope within which all background database writes are launched.
  * @property currentTodayNodes A lambda supplying the current, explicitly pinned 'Today' nodes.
