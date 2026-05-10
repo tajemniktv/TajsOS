@@ -17,9 +17,6 @@ import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Instant
 
 /**
- * AppRepository is the single source of truth for TajsOS's Room database.
- */
-/**
  * Fallback, no-operation implementation for [InboxEntryDao] used when the actual DAO is unavailable or uninitialized.
  */
 private object NoOpInboxEntryDao : InboxEntryDao {
