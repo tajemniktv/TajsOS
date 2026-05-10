@@ -1692,19 +1692,27 @@ class AppRepository(
             recentEvents = getRecentLogs(limit = recentEventLimit).first(),
         )
 
+    /**
+     * Imports a complete data bundle into the repository.
+     * Uses batch insertion operations (like [insertNodes]) to ensure high performance
+     * and minimize database transaction overhead during large imports.
+     *
+     * @param bundle The [ExportBundle] containing the data to import.
+     * @return An [ImportReport] summarizing the imported entity counts.
+     */
     suspend fun importBundle(bundle: ExportBundle): ImportReport {
-        bundle.nodes.forEach { nodeDao.insertNode(it) }
-        bundle.relations.forEach { relationDao.insertRelation(it) }
-        bundle.tags.forEach { tagDao.insertTag(it) }
-        bundle.templates.forEach { templateDao.insertTemplate(it) }
-        bundle.reviews.forEach { reviewDao.insertReview(it) }
-        bundle.tracks.forEach { trackDao.insertTrackEntry(it) }
-        bundle.sessions.forEach { focusSessionDao.insertSession(it) }
-        bundle.providers.forEach { calendarProviderDao.insertProvider(it) }
+        nodeDao.insertNodes(bundle.nodes)
+        relationDao.insertRelations(bundle.relations)
+        tagDao.insertTags(bundle.tags)
+        templateDao.insertTemplates(bundle.templates)
+        reviewDao.insertReviews(bundle.reviews)
+        trackDao.insertTrackEntries(bundle.tracks)
+        focusSessionDao.insertSessions(bundle.sessions)
+        calendarProviderDao.insertProviders(bundle.providers)
         if (bundle.calendars.isNotEmpty()) {
             calendarEventDao.insertEvents(bundle.calendars)
         }
-        bundle.recentEvents.forEach { eventLogDao.insertLog(it) }
+        eventLogDao.insertLogs(bundle.recentEvents)
 
         return ImportReport(
             nodes = bundle.nodes.size,
@@ -1715,8 +1723,15 @@ class AppRepository(
         )
     }
 
+    /**
+     * Imports a list of legacy nodes into the repository.
+     * Utilizes batch insertion via [insertNodes] for optimized performance.
+     *
+     * @param nodes The list of [NodeEntity] legacy nodes to import.
+     * @return The number of nodes successfully imported.
+     */
     suspend fun importLegacyNodes(nodes: List<NodeEntity>): Int {
-        nodes.forEach { nodeDao.insertNode(it) }
+        nodeDao.insertNodes(nodes)
         return nodes.size
     }
 }

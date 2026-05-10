@@ -366,7 +366,7 @@ private fun AreaCard(
                 ),
             color = TajsOSTheme.CardSurface,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            border = BorderStroke(1.dp, color.copy(alpha = 0.28f)),
+            border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),

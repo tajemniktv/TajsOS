@@ -156,6 +156,9 @@ interface NodeDao {
 
 /**
  * Provides database access for managing deep work and [FocusSessionEntity] focus sessions linked to specific nodes.
+ *
+ * Flow emissions from this DAO provide real-time updates on session state changes.
+ * A session without an `endedAt` value is considered the single globally active session.
  */
 @Dao
 interface FocusSessionDao {
@@ -164,6 +167,12 @@ interface FocusSessionDao {
 
     @Upsert
     suspend fun insertSession(session: FocusSessionEntity): Long
+
+    /**
+     * Inserts or updates multiple focus sessions.
+     */
+    @Upsert
+    suspend fun insertSessions(sessions: List<FocusSessionEntity>)
 
     @Update
     suspend fun updateSession(session: FocusSessionEntity)
@@ -174,6 +183,9 @@ interface FocusSessionDao {
 
 /**
  * Provides database access for [TrackEntryEntity] time tracking logs, capturing continuous effort against system nodes.
+ *
+ * Time tracking records represent daily status snapshots. Queries should generally filter by `date` to retrieve
+ * the state for a specific day or to analyze wellbeing trends over time.
  */
 @Dao
 interface TrackDao {
@@ -182,6 +194,12 @@ interface TrackDao {
 
     @Upsert
     suspend fun insertTrackEntry(entry: TrackEntryEntity): Long
+
+    /**
+     * Inserts or updates multiple track entries.
+     */
+    @Upsert
+    suspend fun insertTrackEntries(entries: List<TrackEntryEntity>)
 
     @Query("SELECT * FROM track_entries WHERE date = :date LIMIT 1")
     suspend fun getTrackEntryByDate(date: String): TrackEntryEntity?
@@ -195,6 +213,10 @@ interface TrackDao {
 
 /**
  * Provides database access for resolving bi-directional [RelationEntity] graph relationships between nodes.
+ *
+ * This DAO manages the graph edges. Note that relationships must always point to existing node IDs.
+ * The `deleteBelongsToRelations` methods are specifically designed to safely unlink items
+ * without necessarily deleting the underlying nodes.
  */
 @Dao
 interface RelationDao {
@@ -244,6 +266,9 @@ interface RelationDao {
 
 /**
  * Provides database access for global classification [TagEntity] tags mapped across system nodes via [NodeTagEntity].
+ *
+ * Tags represent a many-to-many relationship with nodes. This DAO exposes queries to resolve all tags,
+ * as well as transaction-backed queries (`getTagsForNode`) that traverse the join table.
  */
 @Dao
 interface TagDao {
@@ -252,6 +277,12 @@ interface TagDao {
 
     @Upsert
     suspend fun insertTag(tag: TagEntity): Long
+
+    /**
+     * Inserts or updates multiple tags, generating new IDs as necessary.
+     */
+    @Upsert
+    suspend fun insertTags(tags: List<TagEntity>)
 
     @Transaction
     @Query(
@@ -278,6 +309,9 @@ interface TagDao {
 
 /**
  * Provides database access for capturing immutable chronological [EventLogEntity] activity events for system nodes.
+ *
+ * Event logs are meant to act as an append-only audit trail. Updates and deletions should generally be avoided
+ * in favor of inserting new events.
  */
 @Dao
 interface EventLogDao {
@@ -663,6 +697,12 @@ interface ReviewDao {
     @Upsert
     suspend fun insertReview(review: ReviewEntity): Long
 
+    /**
+     * Inserts or updates multiple reviews.
+     */
+    @Upsert
+    suspend fun insertReviews(reviews: List<ReviewEntity>)
+
     @Query("SELECT * FROM reviews WHERE type = :type ORDER BY completedAt DESC LIMIT 1")
     suspend fun getLastReviewByType(type: String): ReviewEntity?
 }
@@ -677,6 +717,12 @@ interface CalendarProviderDao {
 
     @Upsert
     suspend fun insertProvider(provider: CalendarProviderEntity): Long
+
+    /**
+     * Inserts or updates multiple calendar providers.
+     */
+    @Upsert
+    suspend fun insertProviders(providers: List<CalendarProviderEntity>)
 
     @Update
     suspend fun updateProvider(provider: CalendarProviderEntity)

@@ -90,4 +90,44 @@ class DomainLensQueriesTest {
         assertEquals(listOf(maintenanceItem.node.node.id), DomainLensQueries.healthMaintenanceItems(snapshot).map { it.node.node.id })
         assertEquals(listOf(maintenanceItem.node.node.id), DomainLensQueries.healthOverdueItems(snapshot).map { it.node.node.id })
     }
+
+    @Test
+    fun financeQueries_heuristics_edge_cases() {
+        // financeTitleKeywords includes "budget", "paycheck"
+        val titleMatch = createTestNode(id = 1, type = "task", title = "Update monthly budget")
+        val contentMatch = createTestNode(id = 2, type = "task", title = "Task", updatedAt = 1_000L).copy(node = NodeEntity(id = 2, type = "task", title = "Task", content = "Got my paycheck today", updatedAt = 1_000L))
+        val refNoteTitleMatch = createTestNode(id = 3, type = "note", title = "budget", noteType = "reference", updatedAt = 1_000L)
+        val refNoteTagMatch = createTestNode(id = 4, type = "note", title = "Ref", noteType = "reference", tags = listOf("finance"), updatedAt = 1_000L)
+        val nonMatchingRefNote = createTestNode(id = 5, type = "note", title = "General Info", noteType = "reference")
+        val unrelatedTask = createTestNode(id = 6, type = "task", title = "Walk the dog")
+
+        val allNodes = listOf(titleMatch, contentMatch, refNoteTitleMatch, refNoteTagMatch, nonMatchingRefNote, unrelatedTask)
+
+        // Active tasks matching finance heuristics
+        val actionItems = DomainLensQueries.financeActionItems(allNodes).map { it.node.id }
+        assertEquals(listOf(1L, 2L), actionItems)
+
+        // Active knowledge matching finance heuristics
+        val knowledgeItems = DomainLensQueries.financeKnowledgeItems(allNodes).map { it.node.id }
+        assertEquals(listOf(3L, 4L), knowledgeItems.sorted()) // using sorted for stable assertion if updated_at is same
+    }
+
+    @Test
+    fun healthQueries_heuristics_edge_cases() {
+        // healthTitleKeywords includes "doctor", "symptom"
+        val titleMatch = createTestNode(id = 1, type = "task", title = "See the doctor")
+        val contentMatch = createTestNode(id = 2, type = "task", title = "Task", updatedAt = 1_000L).copy(node = NodeEntity(id = 2, type = "task", title = "Task", content = "Feeling a symptom", updatedAt = 1_000L))
+        val reflectionNote = createTestNode(id = 3, type = "note", title = "Daily", noteType = "reflection", updatedAt = 1_000L)
+        val journalNote = createTestNode(id = 4, type = "note", title = "Log", noteType = "journal", updatedAt = 1_000L)
+        val unrelatedTask = createTestNode(id = 5, type = "task", title = "Buy groceries")
+
+        val allNodes = listOf(titleMatch, contentMatch, reflectionNote, journalNote, unrelatedTask)
+
+        val actionItems = DomainLensQueries.healthActionItems(allNodes).map { it.node.id }
+        assertEquals(listOf(1L, 2L), actionItems)
+
+        val knowledgeItems = DomainLensQueries.healthKnowledgeItems(allNodes).map { it.node.id }
+        assertEquals(listOf(3L, 4L), knowledgeItems.sorted())
+    }
+
 }
