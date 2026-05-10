@@ -115,7 +115,9 @@ private val healthTitleKeywords =
  *
  * Currently, heuristic matching queries are only implemented for the `FINANCES` and `HEALTH` domains.
  * `EDUCATION` and `RELATIONSHIPS` (defined in [com.tajemniktv.tajsos.domain.DomainKind])
- * do not yet have dedicated queries in this object.
+ * do not yet have dedicated queries in this object. Adding support for them would require
+ * establishing similar heuristic marker sets (e.g., `educationTagMarkers`, `educationTitleKeywords`,
+ * `relationshipsMaintenanceTypes`) and implementing their respective projection queries.
  */
 object DomainLensQueries {
     /**
