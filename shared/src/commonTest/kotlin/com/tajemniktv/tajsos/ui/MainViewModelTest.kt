@@ -85,7 +85,9 @@ class MainViewModelTest {
 
         override fun getNodesByProject(projectId: Long): Flow<List<NodeEntity>> = flowOf(emptyList())
 
+
         override suspend fun getNodeById(id: Long): NodeEntity? = null
+        override suspend fun getNodesByIds(ids: List<Long>): List<NodeEntity> = emptyList()
 
         override suspend fun insertNode(node: NodeEntity): Long = 0
 
@@ -94,8 +96,10 @@ class MainViewModelTest {
         override suspend fun updateNode(node: NodeEntity) {
         }
 
+
         override suspend fun deleteNode(node: NodeEntity) {
         }
+        override suspend fun updateNodes(nodes: List<NodeEntity>) {}
 
         override suspend fun pinToToday(pin: TodayPinEntity) {
         }

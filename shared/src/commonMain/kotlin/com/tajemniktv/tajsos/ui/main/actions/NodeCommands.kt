@@ -63,14 +63,15 @@ class NodeCommands(
             val nodes = currentAllNodes()
             val staleTasks = calculateStaleTasks(nodes, now, cutoffDays)
 
-            staleTasks.forEach { node ->
-                repository.updateNode(
+            if (staleTasks.isNotEmpty()) {
+                val updatedNodes = staleTasks.map { node ->
                     node.copy(
                         status = TaskState.SOMEDAY.storageKey,
                         postponeCount = node.postponeCount + 1,
-                        updatedAt = Clock.System.now().toEpochMilliseconds(),
-                    ),
-                )
+                        updatedAt = now.toEpochMilliseconds(),
+                    )
+                }
+                repository.updateNodes(updatedNodes)
             }
         }
     }

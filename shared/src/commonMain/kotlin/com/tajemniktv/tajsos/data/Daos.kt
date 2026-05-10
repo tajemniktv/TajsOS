@@ -93,8 +93,12 @@ interface NodeDao {
      * @param id The node's primary key.
      * @return The matching NodeEntity, or `null` if no node with the given id exists.
      */
+
     @Query("SELECT * FROM nodes WHERE id = :id")
     suspend fun getNodeById(id: Long): NodeEntity?
+
+    @Query("SELECT * FROM nodes WHERE id IN (:ids)")
+    suspend fun getNodesByIds(ids: List<Long>): List<NodeEntity>
 
     /**
      * Inserts a new node into the database or replaces an existing one if a conflict occurs.
@@ -116,8 +120,17 @@ interface NodeDao {
      *
      * @param node The [NodeEntity] containing the updated values. Its [NodeEntity.id] must match an existing row.
      */
+
     @Update
     suspend fun updateNode(node: NodeEntity)
+
+    /**
+     * Updates multiple existing nodes in the database.
+     *
+     * @param nodes The list of [NodeEntity] containing the updated values. Their [NodeEntity.id]s must match existing rows.
+     */
+    @Update
+    suspend fun updateNodes(nodes: List<NodeEntity>)
 
     /**
      * Deletes a node from the database.

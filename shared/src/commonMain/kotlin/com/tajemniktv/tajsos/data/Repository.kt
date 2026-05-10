@@ -721,10 +721,35 @@ class AppRepository(
      *
      * @param node The updated node entity to save.
      */
+
+
+
     suspend fun updateNode(node: NodeEntity) {
         val oldNode = nodeDao.getNodeById(node.id) ?: return
         nodeDao.updateNode(node)
+        executeNodeSideEffects(oldNode, node)
+    }
 
+    /**
+     * Updates multiple existing nodes in the database in a batch operation.
+     * Side-effects (like logging, facet syncing, etc.) are executed for each node.
+     *
+     * @param nodes The updated node entities to save.
+     */
+    suspend fun updateNodes(nodes: List<NodeEntity>) {
+        if (nodes.isEmpty()) return
+
+        val oldNodesMap = nodeDao.getNodesByIds(nodes.map { it.id }).associateBy { it.id }
+
+        nodeDao.updateNodes(nodes)
+
+        nodes.forEach { node ->
+            val oldNode = oldNodesMap[node.id] ?: return@forEach
+            executeNodeSideEffects(oldNode, node)
+        }
+    }
+
+    private suspend fun executeNodeSideEffects(oldNode: NodeEntity, node: NodeEntity) {
         if (oldNode.status != node.status) {
             when (node.status)
             {
@@ -752,6 +777,7 @@ class AppRepository(
             recurrenceRule = node.recurringInterval,
         )
     }
+
 
     private suspend fun syncBelongsToRelations(
         nodeId: Long,
