@@ -33,7 +33,7 @@ const title = "PRIVACY";
 <!-- Bento Grid Policy Sections -->
 <section class="grid grid-cols-1 md:grid-cols-12 gap-6 mb-32">
 <!-- Data Encryption Large Card -->
-<div class="md:col-span-8 glass-panel rounded-xl p-8 border border-outline-variant/10 relative overflow-hidden group">
+<div class="md:col-span-8 glass-panel rounded-xl p-8 ring-1 ring-inset ring-outline-variant/10 border-none relative overflow-hidden group">
 <div class="absolute top-0 right-0 p-4 font-mono text-[10px] text-primary/40 uppercase tracking-tighter">Cipher: 0x8F22A</div>
 <div class="mb-12">
 <span class="material-symbols-outlined text-primary text-4xl mb-6" data-icon="lock" style="font-variation-settings: 'FILL' 1;">lock</span>
@@ -43,11 +43,11 @@ const title = "PRIVACY";
                     </p>
 </div>
 <div class="flex flex-wrap gap-4 mt-auto">
-<div class="bg-surface-container-highest px-4 py-2 rounded-lg border border-outline-variant/20 flex items-center gap-3">
+<div class="bg-surface-container-highest px-4 py-2 rounded-lg ring-1 ring-inset ring-outline-variant/20 border-none flex items-center gap-3">
 <div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
 <span class="font-mono text-xs uppercase">ENCRYPTION: ACTIVE</span>
 </div>
-<div class="bg-surface-container-highest px-4 py-2 rounded-lg border border-outline-variant/20">
+<div class="bg-surface-container-highest px-4 py-2 rounded-lg ring-1 ring-inset ring-outline-variant/20 border-none">
 <span class="font-mono text-xs uppercase text-on-surface-variant">Standard: FIPS 140-2</span>
 </div>
 </div>
@@ -73,9 +73,9 @@ const title = "PRIVACY";
 </div>
 </div>
 <!-- Zero-Knowledge Sync -->
-<div class="md:col-span-6 bg-surface-container-low rounded-xl p-8 border border-outline-variant/10 group hover:border-primary/30 transition-colors">
+<div class="md:col-span-6 bg-surface-container-low rounded-xl p-8 ring-1 ring-inset ring-outline-variant/10 border-none group hover:border-primary/30 transition-colors">
 <div class="flex items-start justify-between mb-8">
-<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary border border-outline-variant/20">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary ring-1 ring-inset ring-outline-variant/20 border-none">
 <span class="material-symbols-outlined" data-icon="sync_saved_locally">sync_saved_locally</span>
 </div>
 <span class="font-mono text-[10px] text-on-surface-variant">SYNC_ID: 1024-ALPHA</span>
@@ -89,7 +89,7 @@ const title = "PRIVACY";
 </button>
 </div>
 <!-- Retention Policy -->
-<div class="md:col-span-6 glass-panel rounded-xl p-8 border border-outline-variant/10 overflow-hidden relative">
+<div class="md:col-span-6 glass-panel rounded-xl p-8 ring-1 ring-inset ring-outline-variant/10 border-none overflow-hidden relative">
 <div class="flex items-start gap-6">
 <div class="flex-1">
 <h3 class="font-headline text-2xl font-bold mb-3">Retention Policy</h3>
@@ -115,8 +115,8 @@ const title = "PRIVACY";
 </section>
 <!-- Technical Metadata Overlay Section -->
 <section class="mb-32">
-<div class="bg-surface-container-lowest border border-outline-variant/20 rounded-xl overflow-hidden">
-<div class="bg-surface-container-high px-6 py-3 flex items-center justify-between border-b border-outline-variant/20">
+<div class="bg-surface-container-lowest ring-1 ring-inset ring-outline-variant/20 border-none rounded-xl overflow-hidden">
+<div class="bg-surface-container-high px-6 py-3 flex items-center justify-between shadow-[inset_0_-1px_0_0_rgba(var(--color-outline-variant),0.2)] border-none">
 <div class="flex gap-2">
 <div class="w-2.5 h-2.5 rounded-full bg-error/40"></div>
 <div class="w-2.5 h-2.5 rounded-full bg-primary/40"></div>
@@ -154,13 +154,13 @@ const title = "PRIVACY";
 </div>
 </section>
 <!-- CTA / Footer Transition Section -->
-<section class="text-center py-20 border-t border-outline-variant/10">
+<section class="text-center py-20 shadow-[inset_0_1px_0_0_rgba(var(--color-outline-variant),0.1)] border-none">
 <h2 class="font-headline text-5xl font-bold mb-8">Ready to reclaim your <span class="text-primary">digital ghost?</span></h2>
 <div class="flex flex-col sm:flex-row justify-center gap-6">
 <button class="bg-linear-to-br from-primary to-primary-dim text-on-primary-fixed font-headline font-bold py-4 px-10 rounded-lg hover:scale-105 transition-transform duration-300 flex items-center gap-3 mx-auto sm:mx-0">
                     INITIALIZE INTERFACE <span class="material-symbols-outlined" data-icon="bolt">bolt</span>
 </button>
-<button class="bg-surface-container-highest text-on-surface font-headline font-bold py-4 px-10 rounded-lg border border-outline-variant/30 hover:bg-surface-container-high transition-colors mx-auto sm:mx-0">
+<button class="bg-surface-container-highest text-on-surface font-headline font-bold py-4 px-10 rounded-lg ring-1 ring-inset ring-outline-variant/30 border-none hover:bg-surface-container-high transition-colors mx-auto sm:mx-0">
                     READ THE WHITE PAPER
                 </button>
 </div>
