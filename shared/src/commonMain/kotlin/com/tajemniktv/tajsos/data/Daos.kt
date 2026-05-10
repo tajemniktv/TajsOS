@@ -157,7 +157,7 @@ interface NodeDao {
 /**
  * Provides database access for managing deep work and [FocusSessionEntity] focus sessions linked to specific nodes.
  *
- * Flow emissions from this DAO will trigger updates across active session widgets.
+ * Flow emissions from this DAO provide real-time updates on session state changes.
  * A session without an `endedAt` value is considered the single globally active session.
  */
 @Dao
@@ -178,8 +178,8 @@ interface FocusSessionDao {
 /**
  * Provides database access for [TrackEntryEntity] time tracking logs, capturing continuous effort against system nodes.
  *
- * Time tracking records act as an immutable ledger. Queries should generally filter by `date` to aggregate
- * effort or link it back to specific items.
+ * Time tracking records represent daily status snapshots. Queries should generally filter by `date` to retrieve
+ * the state for a specific day or to analyze wellbeing trends over time.
  */
 @Dao
 interface TrackDao {
