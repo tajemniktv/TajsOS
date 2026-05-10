@@ -26,6 +26,7 @@ class CalendarManagerTest {
     private val fakeNodeSnapshotDao = FakeNodeSnapshotDao()
     private val fakeReviewDao = FakeReviewDao()
     private val fakeCalendarProviderDao = object : CalendarProviderDao {
+        override suspend fun insertProviders(providers: List<CalendarProviderEntity>) { providers.forEach { insertProvider(it) } }
         val providers = mutableListOf<CalendarProviderEntity>()
         override fun getAllProviders() = kotlinx.coroutines.flow.MutableStateFlow(providers)
         override suspend fun insertProvider(provider: CalendarProviderEntity): Long {

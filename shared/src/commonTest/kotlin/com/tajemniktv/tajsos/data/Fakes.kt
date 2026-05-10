@@ -28,6 +28,7 @@ class FakeNodeSnapshotDao : NodeSnapshotDao {
 class FakeReviewDao : ReviewDao {
     private val reviews = mutableListOf<ReviewEntity>()
     override fun getAllReviews(): Flow<List<ReviewEntity>> = MutableStateFlow(reviews.toList())
+    override suspend fun insertReviews(reviews: List<ReviewEntity>) { this.reviews.addAll(reviews) }
     override suspend fun insertReview(review: ReviewEntity): Long {
         reviews.add(review)
         return reviews.size.toLong()
@@ -38,10 +39,13 @@ class FakeReviewDao : ReviewDao {
 }
 
 class FakeCalendarProviderDao : CalendarProviderDao {
+    override suspend fun insertProviders(providers: List<CalendarProviderEntity>) { providers.forEach { insertProvider(it) } }
     override fun getAllProviders(): Flow<List<CalendarProviderEntity>> =
         MutableStateFlow(emptyList())
 
     override suspend fun insertProvider(provider: CalendarProviderEntity): Long = 0
+
+
     override suspend fun updateProvider(provider: CalendarProviderEntity) {}
     override suspend fun deleteProvider(provider: CalendarProviderEntity) {}
     override suspend fun getProviderById(id: Long): CalendarProviderEntity? = null

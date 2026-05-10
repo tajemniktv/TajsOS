@@ -14,6 +14,7 @@ class FakeTrackDao : TrackDao {
         return entriesFlow.map { list -> list.sortedWith(compareByDescending<TrackEntryEntity> { it.date }.thenByDescending { it.createdAt }) }
     }
 
+    override suspend fun insertTrackEntries(entries: List<TrackEntryEntity>) { entries.forEach { insertTrackEntry(it) } }
     override suspend fun insertTrackEntry(entry: TrackEntryEntity): Long {
         val index = entries.indexOfFirst { it.id == entry.id }
         if (index != -1 && entry.id != 0L) {

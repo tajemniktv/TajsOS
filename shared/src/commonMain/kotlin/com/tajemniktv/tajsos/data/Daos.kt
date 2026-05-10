@@ -165,6 +165,9 @@ interface FocusSessionDao {
     @Upsert
     suspend fun insertSession(session: FocusSessionEntity): Long
 
+    @Upsert
+    suspend fun insertSessions(sessions: List<FocusSessionEntity>)
+
     @Update
     suspend fun updateSession(session: FocusSessionEntity)
 
@@ -182,6 +185,9 @@ interface TrackDao {
 
     @Upsert
     suspend fun insertTrackEntry(entry: TrackEntryEntity): Long
+
+    @Upsert
+    suspend fun insertTrackEntries(entries: List<TrackEntryEntity>)
 
     @Query("SELECT * FROM track_entries WHERE date = :date LIMIT 1")
     suspend fun getTrackEntryByDate(date: String): TrackEntryEntity?
@@ -252,6 +258,9 @@ interface TagDao {
 
     @Upsert
     suspend fun insertTag(tag: TagEntity): Long
+
+    @Upsert
+    suspend fun insertTags(tags: List<TagEntity>)
 
     @Transaction
     @Query(
@@ -663,6 +672,9 @@ interface ReviewDao {
     @Upsert
     suspend fun insertReview(review: ReviewEntity): Long
 
+    @Upsert
+    suspend fun insertReviews(reviews: List<ReviewEntity>)
+
     @Query("SELECT * FROM reviews WHERE type = :type ORDER BY completedAt DESC LIMIT 1")
     suspend fun getLastReviewByType(type: String): ReviewEntity?
 }
@@ -677,6 +689,9 @@ interface CalendarProviderDao {
 
     @Upsert
     suspend fun insertProvider(provider: CalendarProviderEntity): Long
+
+    @Upsert
+    suspend fun insertProviders(providers: List<CalendarProviderEntity>)
 
     @Update
     suspend fun updateProvider(provider: CalendarProviderEntity)

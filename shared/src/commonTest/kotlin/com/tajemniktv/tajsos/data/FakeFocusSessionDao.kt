@@ -12,6 +12,7 @@ class FakeFocusSessionDao : FocusSessionDao {
         return sessionsFlow.map { it.sortedByDescending { session -> session.startedAt } }
     }
 
+    override suspend fun insertSessions(sessions: List<FocusSessionEntity>) { sessions.forEach { insertSession(it) } }
     override suspend fun insertSession(session: FocusSessionEntity): Long {
         val newId = (sessions.size + 1).toLong()
         val newSession = session.copy(id = newId)

@@ -89,6 +89,7 @@ class RepositoryDelegationTest {
         override fun getAllSessions(): Flow<List<FocusSessionEntity>> = flowOf(emptyList())
 
         override suspend fun insertSession(session: FocusSessionEntity): Long = 0L
+        override suspend fun insertSessions(sessions: List<FocusSessionEntity>) { sessions.forEach { insertSession(it) } }
 
         override suspend fun updateSession(session: FocusSessionEntity) {
         }
@@ -100,6 +101,7 @@ class RepositoryDelegationTest {
         override fun getAllTrackEntries(): Flow<List<TrackEntryEntity>> = flowOf(emptyList())
 
         override suspend fun insertTrackEntry(entry: TrackEntryEntity): Long = 0
+        override suspend fun insertTrackEntries(entries: List<TrackEntryEntity>) { entries.forEach { insertTrackEntry(it) } }
 
         override suspend fun getTrackEntryByDate(date: String): TrackEntryEntity? = null
 
@@ -148,6 +150,7 @@ class RepositoryDelegationTest {
         override fun getAllTags(): Flow<List<TagEntity>> = flowOf(emptyList())
 
         override suspend fun insertTag(tag: TagEntity): Long = 0L
+        override suspend fun insertTags(tags: List<TagEntity>) { tags.forEach { insertTag(it) } }
 
         override fun getTagsForNode(nodeId: Long): Flow<List<TagEntity>> = flowOf(emptyList())
 
