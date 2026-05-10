@@ -25,14 +25,20 @@ import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
 
 /**
- * A centralized command handler for business logic operations on [NodeEntity]s.
+ * A central action dispatcher containing encapsulated commands for mutating the lifecycle,
+ * state, and content of primary life objects (Nodes).
  *
- * This class encapsulates complex mutations, such as sweeping stale tasks, adding/updating nodes, splitting notes,
- * and managing open loops. It runs operations asynchronously on the provided [scope] and interacts with the underlying
- * [repository].
+ * It provides safe boundaries around common operations like archiving, state updates,
+ * open-loop conversions, subtask splitting, and scheduled sweeps.
  *
- * Note: As part of the domain modeling boundaries, this class operates primarily on the legacy [NodeEntity]
- * surface.
+ * @property repository The main entrypoint for accessing and updating the local SQLite database.
+ * @property scope The CoroutineScope within which all background database writes are launched.
+ * @property currentTodayNodes A lambda supplying the current, explicitly pinned 'Today' nodes.
+ * @property currentAllNodes A lambda supplying the complete set of visible active nodes.
+ * @property parseInternalLinks A lambda invoking wiki-link parsing to establish node relations.
+ * @property setTagOnNode A lambda to safely apply or remove string tags on a target node.
+ * @property defaultNextStepLabel A supplier for fallback text when next steps are blank.
+ * @property defaultUntitledLabel A supplier for fallback text when nodes lack titles.
  */
 class NodeCommands(
     private val repository: AppRepository,
@@ -44,24 +50,37 @@ class NodeCommands(
     private val defaultNextStepLabel: () -> String = { "Next step" },
     private val defaultUntitledLabel: () -> String = { "Untitled" },
 ) {
+    /**
+     * Automatically reviews the inbox and currently active task lists to identify items that have
+     * been ignored or deferred multiple times (based on [cutoffDays]). It sweeps these stale items
+     * back into the general inbox state to force a re-evaluation or triage.
+     *
+     * @param cutoffDays The number of days a task must sit un-updated before being considered stale.
+     */
     fun sweepStaleTasks(cutoffDays: Int = 3) {
         scope.launch {
             val now = Clock.System.now()
             val nodes = currentAllNodes()
             val staleTasks = calculateStaleTasks(nodes, now, cutoffDays)
 
-            staleTasks.forEach { node ->
-                repository.updateNode(
+            if (staleTasks.isNotEmpty()) {
+                val updatedNodes = staleTasks.map { node ->
                     node.copy(
                         status = TaskState.SOMEDAY.storageKey,
                         postponeCount = node.postponeCount + 1,
-                        updatedAt = Clock.System.now().toEpochMilliseconds(),
-                    ),
-                )
+                        updatedAt = now.toEpochMilliseconds(),
+                    )
+                }
+                repository.updateNodes(updatedNodes)
             }
         }
     }
 
+    /**
+     * Constructs and inserts a new Node entity into the database.
+     * Handles establishing initial tags, relations to parents, explicit property assignments
+     * (e.g. decision links), and immediately requests wiki-link parsing on the created content.
+     */
     fun addNode(
         title: String,
         content: String = "",
@@ -287,6 +306,10 @@ class NodeCommands(
         }
     }
 
+    /**
+     * Extracts a portion of a note or unstructured text into its own explicit, actionable
+     * task node, linking it back to its origin via a "NEXT_STEP" relation.
+     */
     fun extractNextStep(nodeId: Long) {
         scope.launch {
             repository.getNodeById(nodeId)?.let { node ->
@@ -313,6 +336,11 @@ class NodeCommands(
         }
     }
 
+    /**
+     * Takes a single large node, usually containing a bulleted or numbered list, and shatters
+     * its content into distinct, granular sub-nodes (like checklist items) bound to a new
+     * parent project node, effectively promoting the original node's intent to a larger scope.
+     */
     fun splitIntoSubtasks(nodeId: Long) {
         scope.launch {
             repository.getNodeById(nodeId)?.let { node ->
@@ -354,6 +382,11 @@ class NodeCommands(
         }
     }
 
+    /**
+     * Captures the current title, content, and metadata of a specific node and saves it
+     * as a historical `NodeSnapshotEntity`. This serves as a lightweight version control
+     * mechanism, allowing users to revert destructive text edits.
+     */
     fun createSnapshot(nodeId: Long) {
         scope.launch {
             repository.getNodeById(nodeId)?.let { node ->
@@ -368,6 +401,10 @@ class NodeCommands(
         }
     }
 
+    /**
+     * Reverts a node's title and content to a previously saved historical snapshot,
+     * effectively undoing subsequent edits.
+     */
     fun restoreSnapshot(snapshot: NodeSnapshotEntity) {
         scope.launch {
             repository.getNodeById(snapshot.nodeId)?.let { node ->
@@ -382,6 +419,10 @@ class NodeCommands(
         }
     }
 
+    /**
+     * Combines the content and relational metadata of two existing nodes into a single, unified node.
+     * The nodes in otherNodeIds are subsequently archived to prevent data duplication.
+     */
     fun mergeNodes(
         primaryNodeId: Long,
         otherNodeIds: List<Long>,
@@ -574,6 +615,10 @@ class NodeCommands(
         )
     }
 
+    /**
+     * Morphs an unstructured "open loop" node into a formal, actionable "task" node,
+     * maintaining a relational paper trail to document the origin of the task.
+     */
     fun convertOpenLoopToTask(nodeId: Long) {
         convertOpenLoop(nodeId, "task") // NON-NLS
     }
@@ -586,6 +631,10 @@ class NodeCommands(
         convertOpenLoop(nodeId, "note") // NON-NLS
     }
 
+    /**
+     * Marks an open loop as fully resolved and removes it from the active inbox state,
+     * optionally appending a final resolution note detailing how the loop was closed.
+     */
     fun resolveOpenLoop(
         nodeId: Long,
         resolutionNote: String? = null,
@@ -608,6 +657,10 @@ class NodeCommands(
         }
     }
 
+    /**
+     * Sweeps the system for all nodes typed as "open_loop" that have been marked as "done",
+     * and transitions them to the "archived" state to declutter the user interface.
+     */
     fun archiveResolvedOpenLoops() {
         scope.launch {
             val now = Clock.System.now().toEpochMilliseconds()
@@ -666,6 +719,11 @@ class NodeCommands(
         updateNode(project.copy(projectStatus = if (active) "active" else "on_hold")) // NON-NLS
     }
 
+    /**
+     * Assigns a fixed, temporary active window (defined in days) to a node, establishing
+     * an implicit deadline. Often used to force action on items that might otherwise
+     * linger indefinitely without explicit due dates.
+     */
     fun setTemporaryFocusPeriod(
         node: NodeEntity,
         days: Int,
@@ -695,6 +753,11 @@ class NodeCommands(
             updateNode(node.copy(startAt = workAt))
         }
 
+    /**
+     * Upgrades or downgrades a standard node to a "seasonal_goal" by applying the appropriate
+     * tags and modifying its internal `noteType`. This dictates how the node is surfaced
+     * in high-level dashboard summaries.
+     */
     fun toggleSeasonalGoal(
         node: NodeEntity,
         enabled: Boolean,
@@ -706,6 +769,11 @@ class NodeCommands(
         }
     }
 
+    /**
+     * Inserts a specialized "period_marker" note, which acts as a temporal milestone in
+     * the system (e.g., "Moved to New City", "Started New Job") to help contextualize
+     * other events surrounding that timeframe.
+     */
     fun addLifePeriodMarker(
         title: String,
         content: String = "",
@@ -724,6 +792,11 @@ class NodeCommands(
         }
     }
 
+    /**
+     * An automated system maintenance routine that unpins all current active items, aggressively
+     * archives old completed tasks (older than 30 days), and drops a reflection marker to
+     * signal the start of a new month.
+     */
     fun runMonthlyReset() {
         scope.launch {
             val now = Clock.System.now().toEpochMilliseconds()

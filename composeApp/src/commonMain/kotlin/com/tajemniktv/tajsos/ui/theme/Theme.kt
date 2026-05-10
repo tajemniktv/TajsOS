@@ -108,10 +108,10 @@ object TajsOSTheme {
     val ScreenCanvas: Color get() = currentColors.surfaceLowest
 
     /** Surface color for standard cards. */
-    val CardSurface: Color get() = currentColors.surface
+    val CardSurface: Color get() = currentColors.surfaceLow
 
     /** Surface color for nested cards. */
-    val CardNestedSurface: Color get() = currentColors.surfaceLow
+    val CardNestedSurface: Color get() = currentColors.surfaceHighest
 
     /** Stroke color for cards. */
     val CardStroke: Color get() = currentColors.ghostBorder.copy(alpha = 0.55f)

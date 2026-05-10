@@ -69,7 +69,7 @@ fun TaskBrief(
                         .background(if (isDone) TajsOSTheme.Primary else Color.Transparent)
                         .border(
                             1.dp,
-                            if (isDone) TajsOSTheme.Primary else TajsOSTheme.Muted,
+                            if (isDone) TajsOSTheme.Primary else TajsOSTheme.GhostBorder,
                             CircleShape,
                         ).clickable { onToggle() },
                 contentAlignment = Alignment.Center,

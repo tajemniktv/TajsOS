@@ -22,6 +22,8 @@ import androidx.datastore.preferences.core.emptyPreferences
 import com.tajemniktv.tajsos.data.DesktopWindowStartupMode
 import com.tajemniktv.tajsos.data.PreferencesRepository
 import com.tajemniktv.tajsos.data.createDatabase
+import com.tajemniktv.tajsos.utils.AppDirs
+
 import com.tajemniktv.tajsos.di.SharedModule
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -47,7 +49,7 @@ fun main() =
         val dataStore =
             PreferenceDataStoreFactory.create(
                 corruptionHandler = ReplaceFileCorruptionHandler { emptyPreferences() },
-                produceFile = { File(System.getProperty("user.home"), "tajsos.preferences_pb") },
+                produceFile = { File(AppDirs.getAppDataDir(), "tajsos.preferences_pb") },
             )
 
         val sharedModule = SharedModule(database, dataStore)

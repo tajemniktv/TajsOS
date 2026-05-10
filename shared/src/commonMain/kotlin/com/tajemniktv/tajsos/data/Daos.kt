@@ -93,8 +93,12 @@ interface NodeDao {
      * @param id The node's primary key.
      * @return The matching NodeEntity, or `null` if no node with the given id exists.
      */
+
     @Query("SELECT * FROM nodes WHERE id = :id")
     suspend fun getNodeById(id: Long): NodeEntity?
+
+    @Query("SELECT * FROM nodes WHERE id IN (:ids)")
+    suspend fun getNodesByIds(ids: List<Long>): List<NodeEntity>
 
     /**
      * Inserts a new node into the database or replaces an existing one if a conflict occurs.
@@ -116,8 +120,17 @@ interface NodeDao {
      *
      * @param node The [NodeEntity] containing the updated values. Its [NodeEntity.id] must match an existing row.
      */
+
     @Update
     suspend fun updateNode(node: NodeEntity)
+
+    /**
+     * Updates multiple existing nodes in the database.
+     *
+     * @param nodes The list of [NodeEntity] containing the updated values. Their [NodeEntity.id]s must match existing rows.
+     */
+    @Update
+    suspend fun updateNodes(nodes: List<NodeEntity>)
 
     /**
      * Deletes a node from the database.
@@ -156,6 +169,9 @@ interface NodeDao {
 
 /**
  * Provides database access for managing deep work and [FocusSessionEntity] focus sessions linked to specific nodes.
+ *
+ * Flow emissions from this DAO provide real-time updates on session state changes.
+ * A session without an `endedAt` value is considered the single globally active session.
  */
 @Dao
 interface FocusSessionDao {
@@ -180,6 +196,9 @@ interface FocusSessionDao {
 
 /**
  * Provides database access for [TrackEntryEntity] time tracking logs, capturing continuous effort against system nodes.
+ *
+ * Time tracking records represent daily status snapshots. Queries should generally filter by `date` to retrieve
+ * the state for a specific day or to analyze wellbeing trends over time.
  */
 @Dao
 interface TrackDao {
@@ -207,6 +226,10 @@ interface TrackDao {
 
 /**
  * Provides database access for resolving bi-directional [RelationEntity] graph relationships between nodes.
+ *
+ * This DAO manages the graph edges. Note that relationships must always point to existing node IDs.
+ * The `deleteBelongsToRelations` methods are specifically designed to safely unlink items
+ * without necessarily deleting the underlying nodes.
  */
 @Dao
 interface RelationDao {
@@ -256,6 +279,9 @@ interface RelationDao {
 
 /**
  * Provides database access for global classification [TagEntity] tags mapped across system nodes via [NodeTagEntity].
+ *
+ * Tags represent a many-to-many relationship with nodes. This DAO exposes queries to resolve all tags,
+ * as well as transaction-backed queries (`getTagsForNode`) that traverse the join table.
  */
 @Dao
 interface TagDao {
@@ -296,6 +322,9 @@ interface TagDao {
 
 /**
  * Provides database access for capturing immutable chronological [EventLogEntity] activity events for system nodes.
+ *
+ * Event logs are meant to act as an append-only audit trail. Updates and deletions should generally be avoided
+ * in favor of inserting new events.
  */
 @Dao
 interface EventLogDao {

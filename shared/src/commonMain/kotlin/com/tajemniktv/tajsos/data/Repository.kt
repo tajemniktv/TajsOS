@@ -17,7 +17,7 @@ import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Instant
 
 /**
- * AppRepository is the single source of truth for TajsOS's Room database.
+ * Fallback, no-operation implementation for [InboxEntryDao] used when the actual DAO is unavailable or uninitialized.
  */
 private object NoOpInboxEntryDao : InboxEntryDao {
     override fun getAllInboxEntries(): Flow<List<InboxEntryEntity>> = flowOf(emptyList())
@@ -31,6 +31,9 @@ private object NoOpInboxEntryDao : InboxEntryDao {
     override suspend fun updateInboxEntry(entry: InboxEntryEntity) = Unit
 }
 
+/**
+ * Fallback, no-operation implementation for [TaskFacetDao] used when the actual DAO is unavailable or uninitialized.
+ */
 private object NoOpTaskFacetDao : TaskFacetDao {
     override fun getAllTaskFacets(): Flow<List<TaskFacetEntity>> = flowOf(emptyList())
 
@@ -43,6 +46,9 @@ private object NoOpTaskFacetDao : TaskFacetDao {
     override suspend fun deleteTaskFacetForItem(itemId: Long) = Unit
 }
 
+/**
+ * Fallback, no-operation implementation for [NoteFacetDao] used when the actual DAO is unavailable or uninitialized.
+ */
 private object NoOpNoteFacetDao : NoteFacetDao {
     override fun getAllNoteFacets(): Flow<List<NoteFacetEntity>> = flowOf(emptyList())
 
@@ -55,6 +61,9 @@ private object NoOpNoteFacetDao : NoteFacetDao {
     override suspend fun deleteNoteFacetForItem(itemId: Long) = Unit
 }
 
+/**
+ * Fallback, no-operation implementation for [ProjectFacetDao] used when the actual DAO is unavailable or uninitialized.
+ */
 private object NoOpProjectFacetDao : ProjectFacetDao {
     override fun getAllProjectFacets(): Flow<List<ProjectFacetEntity>> = flowOf(emptyList())
 
@@ -67,6 +76,9 @@ private object NoOpProjectFacetDao : ProjectFacetDao {
     override suspend fun deleteProjectFacetForItem(itemId: Long) = Unit
 }
 
+/**
+ * Fallback, no-operation implementation for [AreaFacetDao] used when the actual DAO is unavailable or uninitialized.
+ */
 private object NoOpAreaFacetDao : AreaFacetDao {
     override fun getAllAreaFacets(): Flow<List<AreaFacetEntity>> = flowOf(emptyList())
 
@@ -79,6 +91,9 @@ private object NoOpAreaFacetDao : AreaFacetDao {
     override suspend fun deleteAreaFacetForItem(itemId: Long) = Unit
 }
 
+/**
+ * Fallback, no-operation implementation for [RecordFacetDao] used when the actual DAO is unavailable or uninitialized.
+ */
 private object NoOpRecordFacetDao : RecordFacetDao {
     override fun getAllRecordFacets(): Flow<List<RecordFacetEntity>> = flowOf(emptyList())
 
@@ -91,6 +106,9 @@ private object NoOpRecordFacetDao : RecordFacetDao {
     override suspend fun deleteRecordFacetForItem(itemId: Long) = Unit
 }
 
+/**
+ * Fallback, no-operation implementation for [ItemDomainDao] used when the actual DAO is unavailable or uninitialized.
+ */
 private object NoOpItemDomainDao : ItemDomainDao {
     override fun getAllItemDomains(): Flow<List<ItemDomainEntity>> = flowOf(emptyList())
 
@@ -108,6 +126,9 @@ private object NoOpItemDomainDao : ItemDomainDao {
     override suspend fun clearPrimaryFlag(itemId: Long) = Unit
 }
 
+/**
+ * Fallback, no-operation implementation for [RichContentDocumentDao] used when the actual DAO is unavailable or uninitialized.
+ */
 private object NoOpRichContentDocumentDao : RichContentDocumentDao {
     override fun getAllDocuments(): Flow<List<RichContentDocumentEntity>> = flowOf(emptyList())
 
@@ -120,6 +141,9 @@ private object NoOpRichContentDocumentDao : RichContentDocumentDao {
     override suspend fun deleteDocumentForItem(itemId: Long) = Unit
 }
 
+/**
+ * Fallback, no-operation implementation for [ScheduleEntryDao] used when the actual DAO is unavailable or uninitialized.
+ */
 private object NoOpScheduleEntryDao : ScheduleEntryDao {
     override fun getAllScheduleEntries(): Flow<List<ScheduleEntryEntity>> = flowOf(emptyList())
 
@@ -148,6 +172,9 @@ private object NoOpScheduleEntryDao : ScheduleEntryDao {
     override suspend fun insertScheduleEntries(entries: List<ScheduleEntryEntity>) = Unit
 }
 
+/**
+ * Fallback, no-operation implementation for [SavedViewDao] used when the actual DAO is unavailable or uninitialized.
+ */
 private object NoOpSavedViewDao : SavedViewDao {
     override fun getAllSavedViews(): Flow<List<SavedViewEntity>> = flowOf(emptyList())
 
@@ -694,10 +721,35 @@ class AppRepository(
      *
      * @param node The updated node entity to save.
      */
+
+
+
     suspend fun updateNode(node: NodeEntity) {
         val oldNode = nodeDao.getNodeById(node.id) ?: return
         nodeDao.updateNode(node)
+        executeNodeSideEffects(oldNode, node)
+    }
 
+    /**
+     * Updates multiple existing nodes in the database in a batch operation.
+     * Side-effects (like logging, facet syncing, etc.) are executed for each node.
+     *
+     * @param nodes The updated node entities to save.
+     */
+    suspend fun updateNodes(nodes: List<NodeEntity>) {
+        if (nodes.isEmpty()) return
+
+        val oldNodesMap = nodeDao.getNodesByIds(nodes.map { it.id }).associateBy { it.id }
+
+        nodeDao.updateNodes(nodes)
+
+        nodes.forEach { node ->
+            val oldNode = oldNodesMap[node.id] ?: return@forEach
+            executeNodeSideEffects(oldNode, node)
+        }
+    }
+
+    private suspend fun executeNodeSideEffects(oldNode: NodeEntity, node: NodeEntity) {
         if (oldNode.status != node.status) {
             when (node.status)
             {
@@ -725,6 +777,7 @@ class AppRepository(
             recurrenceRule = node.recurringInterval,
         )
     }
+
 
     private suspend fun syncBelongsToRelations(
         nodeId: Long,
@@ -1665,8 +1718,16 @@ class AppRepository(
             recentEvents = getRecentLogs(limit = recentEventLimit).first(),
         )
 
+    /**
+     * Imports a complete data bundle into the repository.
+     * Uses batch insertion operations (like [insertNodes]) to ensure high performance
+     * and minimize database transaction overhead during large imports.
+     *
+     * @param bundle The [ExportBundle] containing the data to import.
+     * @return An [ImportReport] summarizing the imported entity counts.
+     */
     suspend fun importBundle(bundle: ExportBundle): ImportReport {
-        bundle.nodes.forEach { nodeDao.insertNode(it) }
+        nodeDao.insertNodes(bundle.nodes)
         relationDao.insertRelations(bundle.relations)
         tagDao.insertTags(bundle.tags)
         templateDao.insertTemplates(bundle.templates)
@@ -1688,8 +1749,15 @@ class AppRepository(
         )
     }
 
+    /**
+     * Imports a list of legacy nodes into the repository.
+     * Utilizes batch insertion via [insertNodes] for optimized performance.
+     *
+     * @param nodes The list of [NodeEntity] legacy nodes to import.
+     * @return The number of nodes successfully imported.
+     */
     suspend fun importLegacyNodes(nodes: List<NodeEntity>): Int {
-        nodes.forEach { nodeDao.insertNode(it) }
+        nodeDao.insertNodes(nodes)
         return nodes.size
     }
 }
