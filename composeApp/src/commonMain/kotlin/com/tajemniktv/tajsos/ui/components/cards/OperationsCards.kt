@@ -196,7 +196,7 @@ fun OpenLoopCard(
  * @param maintenanceTypes A list of valid maintenance categories (e.g., 'subscription', 'chore').
  * @param onEditNode Callback to open the full editor for the maintenance node.
  * @param onSetType Callback to change the maintenance category.
- * @param onSetRecurring Callback to update or set the recurring schedule string (e.g., '1w', '1m').
+ * @param onSetRecurring Callback to update or set the recurring schedule string (e.g., 'DAILY', 'WEEKLY').
  * @param onSetOverdue Callback to manually override the overdue timestamp, or null to clear.
  * @param onResolve Callback to record a completion event and schedule the next occurrence.
  * @param onArchive Callback to retire the maintenance item.
@@ -322,7 +322,7 @@ fun MaintenanceCard(
  * Displays a summary card for a repeatable protocol or checklist (e.g., Morning Startup).
  * Shows completion progress and provides inline toggle actions for checklist items.
  *
- * @param item The state tracking the protocol's history, run count, and checklist items.
+ * @param item The state tracking the protocol's history, run count, and checklist progress.
  * @param checklistItems A list of pairs representing the current checklist state (isCompleted, label).
  * @param onEditNode Callback to modify the protocol definition.
  * @param onRun Callback to trigger a new run of the protocol, creating a history entry.
@@ -540,7 +540,7 @@ fun CoreShiftCriterionCard(item: CoreLifeOSShiftItem) {
  * @param item The CRM state for the person, tracking days since contact and follow-up schedules.
  * @param viewModel The [MainViewModel] used to dispatch relationship mutation actions (like setting importance or contact dates).
  * @param onEditNode Callback to open the full person node editor.
- * @param groupedSection A `@Composable` lambda to consistently render lists of related nodes (e.g., linked tasks or notes).
+ * @param groupedSection A @Composable lambda to render related nodes. Receives the section title and a list of node titles.
  */
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
