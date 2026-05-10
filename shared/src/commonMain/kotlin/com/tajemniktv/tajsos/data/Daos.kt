@@ -156,6 +156,9 @@ interface NodeDao {
 
 /**
  * Provides database access for managing deep work and [FocusSessionEntity] focus sessions linked to specific nodes.
+ *
+ * Flow emissions from this DAO will trigger updates across active session widgets.
+ * A session without an `endedAt` value is considered the single globally active session.
  */
 @Dao
 interface FocusSessionDao {
@@ -174,6 +177,9 @@ interface FocusSessionDao {
 
 /**
  * Provides database access for [TrackEntryEntity] time tracking logs, capturing continuous effort against system nodes.
+ *
+ * Time tracking records act as an immutable ledger. Queries should generally filter by `date` to aggregate
+ * effort or link it back to specific items.
  */
 @Dao
 interface TrackDao {
@@ -195,6 +201,10 @@ interface TrackDao {
 
 /**
  * Provides database access for resolving bi-directional [RelationEntity] graph relationships between nodes.
+ *
+ * This DAO manages the graph edges. Note that relationships must always point to existing node IDs.
+ * The `deleteBelongsToRelations` methods are specifically designed to safely unlink items
+ * without necessarily deleting the underlying nodes.
  */
 @Dao
 interface RelationDao {
@@ -244,6 +254,9 @@ interface RelationDao {
 
 /**
  * Provides database access for global classification [TagEntity] tags mapped across system nodes via [NodeTagEntity].
+ *
+ * Tags represent a many-to-many relationship with nodes. This DAO exposes queries to resolve all tags,
+ * as well as transaction-backed queries (`getTagsForNode`) that traverse the join table.
  */
 @Dao
 interface TagDao {
@@ -278,6 +291,9 @@ interface TagDao {
 
 /**
  * Provides database access for capturing immutable chronological [EventLogEntity] activity events for system nodes.
+ *
+ * Event logs are meant to act as an append-only audit trail. Updates and deletions should generally be avoided
+ * in favor of inserting new events.
  */
 @Dao
 interface EventLogDao {
