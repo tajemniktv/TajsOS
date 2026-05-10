@@ -41,7 +41,7 @@ class MainSnapshotCalculatorsTest {
     fun calculateAreaHealthSnapshot_computesMetricsCorrectly() {
         val area = defaultNode(10L, type = "area", status = "active")
 
-        val activeTask = createTestNodeWithPin(defaultNode(1L, "task", "active", areaId = 10L))
+        val activeTask = createTestNodeWithPin(defaultNode(1L, "task", "active", areaId = 10L).copy(updatedAt = now))
         val openLoop = createTestNodeWithPin(defaultNode(2L, "open_loop", "active", areaId = 10L))
 
         val now = Clock.System.now().toEpochMilliseconds()
@@ -63,6 +63,6 @@ class MainSnapshotCalculatorsTest {
         assertEquals(2, metrics.deadlines) // overdue, dueSoon
         assertEquals(1, metrics.overdueDeadlines)
         assertEquals(1, metrics.doneThisWeek)
-        assertEquals(0, metrics.recentActivity)
+        assertEquals(1, metrics.recentActivity)
     }
 }

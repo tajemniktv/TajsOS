@@ -45,7 +45,7 @@ class InsightsDataCalculationTest {
     fun calculateInsights_computesBasicMetrics() {
         val now = Clock.System.now().toEpochMilliseconds()
 
-        val node1 = createTestNodeWithPin(defaultNode(1L).copy(createdAt = now))
+        val node1 = createTestNodeWithPin(defaultNode(1L).copy(createdAt = now, projectId = 10L))
         val node2 = createTestNodeWithPin(defaultNode(2L).copy(createdAt = now))
 
         val doneNode = createTestNodeWithPin(defaultNode(3L, status = "done").copy(completedAt = now))
@@ -68,7 +68,7 @@ class InsightsDataCalculationTest {
         // 3600 + 1800 = 5400 seconds = 1.5 hours
         assertEquals(1.5, insights.weeklyFocusHours)
 
-        assertEquals(0, insights.neglectedProjects.size)
+        assertEquals(setOf(10L), insights.neglectedProjects.map { it.id }.toSet())
 
     }
 }
