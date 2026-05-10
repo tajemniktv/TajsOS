@@ -4,6 +4,7 @@
 
 package com.tajemniktv.tajsos.ui.screens.places
 
+import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -164,7 +165,7 @@ internal fun PlacesLayer(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            OutlinedTextField(
+            TactileOutlinedTextField(
                 value = newPlaceTitle,
                 onValueChange = { newPlaceTitle = it },
                 modifier = Modifier.fillMaxWidth(),
@@ -212,13 +213,13 @@ internal fun PlacesLayer(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            OutlinedTextField(
+            TactileOutlinedTextField(
                 value = logisticsTitle,
                 onValueChange = { logisticsTitle = it },
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text(stringResource(Res.string.places_placeholder_list_title)) },
             )
-            OutlinedTextField(
+            TactileOutlinedTextField(
                 value = logisticsContent,
                 onValueChange = { logisticsContent = it },
                 modifier = Modifier.fillMaxWidth(),

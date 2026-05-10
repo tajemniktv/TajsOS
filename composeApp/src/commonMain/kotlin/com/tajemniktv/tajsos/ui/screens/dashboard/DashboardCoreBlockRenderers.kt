@@ -4,6 +4,7 @@
 
 package com.tajemniktv.tajsos.ui.screens.dashboard
 
+import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -325,7 +326,7 @@ internal fun renderTimeArchitectureBlock(context: DashboardBlockContext) {
 
 @Composable
 internal fun renderSearchBlock(context: DashboardBlockContext) {
-    OutlinedTextField(
+    TactileOutlinedTextField(
         value = "",
         onValueChange = {
             context.viewModel.updateSearchQuery(it)
@@ -349,7 +350,7 @@ internal fun renderSearchBlock(context: DashboardBlockContext) {
         colors =
             OutlinedTextFieldDefaults.colors(
                 unfocusedBorderColor = TajsOSTheme.Border,
-                focusedBorderColor = TajsOSTheme.Primary,
+                focusedBorderColor = TajsOSTheme.GhostBorder,
                 unfocusedContainerColor = TajsOSTheme.Surface,
                 focusedContainerColor = TajsOSTheme.Surface,
             ),
