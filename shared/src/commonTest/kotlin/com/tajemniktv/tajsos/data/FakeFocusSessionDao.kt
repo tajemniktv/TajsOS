@@ -20,6 +20,10 @@ class FakeFocusSessionDao : FocusSessionDao {
         return newId
     }
 
+    override suspend fun insertSessions(sessions: List<FocusSessionEntity>) {
+        sessions.forEach { insertSession(it) }
+    }
+
     override suspend fun updateSession(session: FocusSessionEntity) {
         val index = sessions.indexOfFirst { it.id == session.id }
         if (index != -1) {

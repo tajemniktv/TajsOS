@@ -33,6 +33,10 @@ class FakeReviewDao : ReviewDao {
         return reviews.size.toLong()
     }
 
+    override suspend fun insertReviews(reviews: List<ReviewEntity>) {
+        reviews.forEach { insertReview(it) }
+    }
+
     override suspend fun getLastReviewByType(type: String): ReviewEntity? =
         reviews.filter { it.type == type }.maxByOrNull { it.completedAt }
 }
@@ -42,6 +46,10 @@ class FakeCalendarProviderDao : CalendarProviderDao {
         MutableStateFlow(emptyList())
 
     override suspend fun insertProvider(provider: CalendarProviderEntity): Long = 0
+
+    override suspend fun insertProviders(providers: List<CalendarProviderEntity>) {
+        providers.forEach { insertProvider(it) }
+    }
     override suspend fun updateProvider(provider: CalendarProviderEntity) {}
     override suspend fun deleteProvider(provider: CalendarProviderEntity) {}
     override suspend fun getProviderById(id: Long): CalendarProviderEntity? = null

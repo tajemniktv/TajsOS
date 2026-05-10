@@ -1666,18 +1666,36 @@ class AppRepository(
         )
 
     suspend fun importBundle(bundle: ExportBundle): ImportReport {
-        bundle.nodes.forEach { nodeDao.insertNode(it) }
-        bundle.relations.forEach { relationDao.insertRelation(it) }
-        bundle.tags.forEach { tagDao.insertTag(it) }
-        bundle.templates.forEach { templateDao.insertTemplate(it) }
-        bundle.reviews.forEach { reviewDao.insertReview(it) }
-        bundle.tracks.forEach { trackDao.insertTrackEntry(it) }
-        bundle.sessions.forEach { focusSessionDao.insertSession(it) }
-        bundle.providers.forEach { calendarProviderDao.insertProvider(it) }
+        if (bundle.nodes.isNotEmpty()) {
+            nodeDao.insertNodes(bundle.nodes)
+        }
+        if (bundle.relations.isNotEmpty()) {
+            relationDao.insertRelations(bundle.relations)
+        }
+        if (bundle.tags.isNotEmpty()) {
+            tagDao.insertTags(bundle.tags)
+        }
+        if (bundle.templates.isNotEmpty()) {
+            templateDao.insertTemplates(bundle.templates)
+        }
+        if (bundle.reviews.isNotEmpty()) {
+            reviewDao.insertReviews(bundle.reviews)
+        }
+        if (bundle.tracks.isNotEmpty()) {
+            trackDao.insertTrackEntries(bundle.tracks)
+        }
+        if (bundle.sessions.isNotEmpty()) {
+            focusSessionDao.insertSessions(bundle.sessions)
+        }
+        if (bundle.providers.isNotEmpty()) {
+            calendarProviderDao.insertProviders(bundle.providers)
+        }
         if (bundle.calendars.isNotEmpty()) {
             calendarEventDao.insertEvents(bundle.calendars)
         }
-        bundle.recentEvents.forEach { eventLogDao.insertLog(it) }
+        if (bundle.recentEvents.isNotEmpty()) {
+            eventLogDao.insertLogs(bundle.recentEvents)
+        }
 
         return ImportReport(
             nodes = bundle.nodes.size,
@@ -1689,7 +1707,9 @@ class AppRepository(
     }
 
     suspend fun importLegacyNodes(nodes: List<NodeEntity>): Int {
-        nodes.forEach { nodeDao.insertNode(it) }
+        if (nodes.isNotEmpty()) {
+            nodeDao.insertNodes(nodes)
+        }
         return nodes.size
     }
 }

@@ -20,6 +20,10 @@ class FakeTagDao : TagDao {
         return newId
     }
 
+    override suspend fun insertTags(tags: List<TagEntity>) {
+        tags.forEach { insertTag(it) }
+    }
+
     override fun getTagsForNode(nodeId: Long): Flow<List<TagEntity>> {
         return nodeTagsFlow.map { links ->
             val tagIdsForNode = links.filter { it.nodeId == nodeId }.map { it.tagId }

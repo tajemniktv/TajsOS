@@ -33,6 +33,10 @@ class CalendarManagerTest {
             providers.add(provider.copy(id = id))
             return id
         }
+
+        override suspend fun insertProviders(providers: List<CalendarProviderEntity>) {
+            providers.forEach { insertProvider(it) }
+        }
         override suspend fun updateProvider(provider: CalendarProviderEntity) {
             val idx = providers.indexOfFirst { it.id == provider.id }
             if (idx != -1) providers[idx] = provider
