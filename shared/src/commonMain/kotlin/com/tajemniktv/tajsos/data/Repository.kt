@@ -694,6 +694,8 @@ class AppRepository(
      *
      * @param node The updated node entity to save.
      */
+
+
     suspend fun updateNode(node: NodeEntity) {
         val oldNode = nodeDao.getNodeById(node.id) ?: return
         nodeDao.updateNode(node)
@@ -725,6 +727,52 @@ class AppRepository(
             recurrenceRule = node.recurringInterval,
         )
     }
+
+    /**
+     * Updates multiple existing nodes in the database in a batch operation.
+     * Side-effects (like logging, facet syncing, etc.) are executed for each node.
+     *
+     * @param nodes The updated node entities to save.
+     */
+    suspend fun updateNodes(nodes: List<NodeEntity>) {
+        if (nodes.isEmpty()) return
+
+        val oldNodesMap = nodeDao.getNodesByIds(nodes.map { it.id }).associateBy { it.id }
+
+        nodeDao.updateNodes(nodes)
+
+        nodes.forEach { node ->
+            val oldNode = oldNodesMap[node.id] ?: return@forEach
+
+            if (oldNode.status != node.status) {
+                when (node.status)
+                {
+                    "done" -> logEvent("NODE_COMPLETED", node.id)
+                    "archived" -> logEvent("NODE_ARCHIVED", node.id)
+                }
+            }
+
+            if (oldNode.isFrozen != node.isFrozen) {
+                logEvent(if (node.isFrozen) "NODE_FROZEN" else "NODE_UNFROZEN", node.id)
+            }
+
+            if (oldNode.projectId != node.projectId || oldNode.areaId != node.areaId) {
+                syncBelongsToRelations(node.id, node.projectId, node.areaId)
+            }
+
+            syncTypedFacetsFromNode(node)
+            syncDomainsFromNodeMetadata(node)
+            syncDocumentFromNode(node)
+            syncScheduleEntriesForNode(
+                nodeId = node.id,
+                reminderAt = node.reminderAt,
+                startAt = node.startAt,
+                dueAt = node.dueAt,
+                recurrenceRule = node.recurringInterval,
+            )
+        }
+    }
+
 
     private suspend fun syncBelongsToRelations(
         nodeId: Long,

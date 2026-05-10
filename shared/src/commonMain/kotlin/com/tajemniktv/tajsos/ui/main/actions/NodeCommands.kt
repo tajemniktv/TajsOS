@@ -44,23 +44,26 @@ class NodeCommands(
     private val defaultNextStepLabel: () -> String = { "Next step" },
     private val defaultUntitledLabel: () -> String = { "Untitled" },
 ) {
+
     fun sweepStaleTasks(cutoffDays: Int = 3) {
         scope.launch {
             val now = Clock.System.now()
             val nodes = currentAllNodes()
             val staleTasks = calculateStaleTasks(nodes, now, cutoffDays)
 
-            staleTasks.forEach { node ->
-                repository.updateNode(
+            if (staleTasks.isNotEmpty()) {
+                val updatedNodes = staleTasks.map { node ->
                     node.copy(
                         status = TaskState.SOMEDAY.storageKey,
                         postponeCount = node.postponeCount + 1,
                         updatedAt = Clock.System.now().toEpochMilliseconds(),
-                    ),
-                )
+                    )
+                }
+                repository.updateNodes(updatedNodes)
             }
         }
     }
+
 
     fun addNode(
         title: String,

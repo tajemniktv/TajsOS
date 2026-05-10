@@ -58,8 +58,13 @@ class FakeNodeDao : NodeDao {
         return nodesFlow.map { it.filter { node -> node.areaId == areaId && node.type == "project" && node.status != "archived" } }
     }
 
+
     override suspend fun getNodeById(id: Long): NodeEntity? {
         return nodes.find { it.id == id }
+    }
+
+    override suspend fun getNodesByIds(ids: List<Long>): List<NodeEntity> {
+        return nodes.filter { it.id in ids }
     }
 
     override suspend fun insertNode(node: NodeEntity): Long {
@@ -81,10 +86,25 @@ class FakeNodeDao : NodeDao {
         return nodes.map { insertNode(it) }
     }
 
+
     override suspend fun updateNode(node: NodeEntity) {
         val index = nodes.indexOfFirst { it.id == node.id }
         if (index != -1) {
             nodes[index] = node
+            nodesFlow.value = nodes.toList()
+        }
+    }
+
+    override suspend fun updateNodes(updatedNodes: List<NodeEntity>) {
+        var changed = false
+        updatedNodes.forEach { node ->
+            val index = nodes.indexOfFirst { it.id == node.id }
+            if (index != -1) {
+                nodes[index] = node
+                changed = true
+            }
+        }
+        if (changed) {
             nodesFlow.value = nodes.toList()
         }
     }
