@@ -4,6 +4,7 @@
 
 package com.tajemniktv.tajsos.ui.screens.projects
 
+import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -97,7 +98,7 @@ internal fun ProjectsMainBlock(
         )
         Spacer(modifier = Modifier.height(TajsOSTheme.SpacingMd))
 
-        OutlinedTextField(
+        TactileOutlinedTextField(
             value = searchQuery,
             onValueChange = { searchQuery = it },
             modifier = Modifier.fillMaxWidth(),

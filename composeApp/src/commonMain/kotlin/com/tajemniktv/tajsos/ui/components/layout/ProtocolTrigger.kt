@@ -54,7 +54,7 @@ fun ProtocolTrigger(
         modifier = Modifier.width(120.dp),
         color = color.copy(alpha = 0.1f),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, color.copy(alpha = 0.3f)),
+        border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),
     ) {
         Column(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),

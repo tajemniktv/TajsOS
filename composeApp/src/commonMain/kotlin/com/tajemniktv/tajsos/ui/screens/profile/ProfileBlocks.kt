@@ -4,6 +4,7 @@
 
 package com.tajemniktv.tajsos.ui.screens.profile
 
+import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -320,7 +321,7 @@ private fun renderAboutModuleBlock(context: ProfileScreenContext) {
             onValueChange = { context.onEditorChange(context.editor.copy(preferredGreeting = it)) },
             label = stringResource(Res.string.profile_greeting),
         )
-        OutlinedTextField(
+        TactileOutlinedTextField(
             value = context.editor.bio,
             onValueChange = { context.onEditorChange(context.editor.copy(bio = it)) },
             label = { Text(stringResource(Res.string.profile_bio)) },
@@ -469,7 +470,7 @@ private fun ProfileField(
     isError: Boolean = false,
     supportingText: String? = null,
 ) {
-    OutlinedTextField(
+    TactileOutlinedTextField(
         value = value,
         onValueChange = onValueChange,
         label = { Text(label) },

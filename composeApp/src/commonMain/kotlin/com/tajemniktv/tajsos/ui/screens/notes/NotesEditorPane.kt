@@ -4,6 +4,7 @@
 
 package com.tajemniktv.tajsos.ui.screens.notes
 
+import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -113,10 +114,11 @@ fun NotesEditorPane(
                         color = TajsOSTheme.Muted,
                     )
                     Spacer(Modifier.height(8.dp))
-                    OutlinedTextField(
+                    TactileOutlinedTextField(
                         value = note.title,
                         onValueChange = onTitleChange,
-                        modifier = Modifier.fillMaxWidth().focusRequester(titleFocusRequester),
+                        modifier = Modifier.focusRequester(titleFocusRequester),
+                        containerModifier = Modifier.fillMaxWidth(),
                         singleLine = true,
                         textStyle = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.SemiBold),
                         placeholder = { Text("Untitled note") },

@@ -4,6 +4,7 @@
 
 package com.tajemniktv.tajsos.ui.components.layout
 
+import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -326,7 +327,7 @@ private fun HeaderBreadcrumbs(breadcrumbs: List<ScreenHeaderBreadcrumb>) {
  */
 @Composable
 fun GlobalSearchBar(modifier: Modifier = Modifier) {
-    OutlinedTextField(
+    TactileOutlinedTextField(
         value = "",
         onValueChange = {},
         readOnly = true,

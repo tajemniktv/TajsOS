@@ -4,6 +4,7 @@
 
 package com.tajemniktv.tajsos.ui.screens.profile
 
+import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
@@ -208,25 +209,25 @@ private fun AddMedicationDialog(
                         TajsOSTheme.SpacingSm,
                     ),
             ) {
-                OutlinedTextField(
+                TactileOutlinedTextField(
                     value = substance,
                     onValueChange = { substance = it },
                     label = { Text(stringResource(Res.string.med_substance)) },
                     shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                 )
-                OutlinedTextField(
+                TactileOutlinedTextField(
                     value = brands,
                     onValueChange = { brands = it },
                     label = { Text(stringResource(Res.string.med_brand_names)) },
                     shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                 )
-                OutlinedTextField(
+                TactileOutlinedTextField(
                     value = dosage,
                     onValueChange = { dosage = it },
                     label = { Text(stringResource(Res.string.med_dosage)) },
                     shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                 )
-                OutlinedTextField(
+                TactileOutlinedTextField(
                     value = hour,
                     onValueChange = { hour = it },
                     label = { Text(stringResource(Res.string.med_take_at)) },
