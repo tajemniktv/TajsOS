@@ -56,7 +56,7 @@ class NodeCommands(
                     node.copy(
                         status = TaskState.SOMEDAY.storageKey,
                         postponeCount = node.postponeCount + 1,
-                        updatedAt = Clock.System.now().toEpochMilliseconds(),
+                        updatedAt = now.toEpochMilliseconds(),
                     )
                 }
                 repository.updateNodes(updatedNodes)
