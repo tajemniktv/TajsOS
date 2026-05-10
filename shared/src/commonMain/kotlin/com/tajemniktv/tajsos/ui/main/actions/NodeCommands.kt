@@ -430,7 +430,7 @@ class NodeCommands(
 
     /**
      * Combines the content and relational metadata of two existing nodes into a single, unified node.
-     * The `sourceNodeId` is subsequently archived to prevent data duplication.
+     * The nodes in otherNodeIds are subsequently archived to prevent data duplication.
      */
     fun mergeNodes(
         primaryNodeId: Long,
