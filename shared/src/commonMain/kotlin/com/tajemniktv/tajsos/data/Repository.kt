@@ -617,7 +617,7 @@ class AppRepository(
                 isPrimary = index == 0,
             )
         }
-        itemDomainDao.upsertDomains(domainEntities)
+        if (domainEntities.isNotEmpty()) itemDomainDao.upsertDomains(domainEntities)
         if (kind == ItemKind.RECORD) {
             recordFacetDao.upsertRecordFacet(
                 RecordFacetEntity(
@@ -934,7 +934,7 @@ class AppRepository(
                 isPrimary = index == 0,
             )
         }
-        itemDomainDao.upsertDomains(domainEntities)
+        if (domainEntities.isNotEmpty()) itemDomainDao.upsertDomains(domainEntities)
     }
 
     /**
