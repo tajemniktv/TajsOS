@@ -513,7 +513,7 @@ interface ItemDomainDao {
      * Retrieves a stream of domain associations for a specific life object.
      *
      * The results are ordered such that primary domains appear first, followed by
-     * chronologically older assignments.
+     * remaining domains ordered chronologically from oldest to newest assignment.
      *
      * @param itemId The unique identifier of the life object.
      * @return A Flow emitting a list of [ItemDomainEntity] objects associated with the item.
