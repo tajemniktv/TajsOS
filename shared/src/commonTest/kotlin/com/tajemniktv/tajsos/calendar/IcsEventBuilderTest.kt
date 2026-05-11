@@ -129,4 +129,39 @@ class IcsEventBuilderTest {
         builder.processLine("DTSTART:20231024T") // length < 15, parseIsoDate throws IllegalArgumentException
         assertNull(builder.build(1L))
     }
+
+    @Test
+    fun testParseDateInvalidAllDayDateContent() {
+        val builder = IcsEventBuilder()
+        builder.processLine("DTSTART;VALUE=DATE:2023102A")
+        assertNull(builder.build(1L))
+    }
+
+    @Test
+    fun testParseDateInvalidAllDayDateValue() {
+        val builder = IcsEventBuilder()
+        builder.processLine("DTSTART;VALUE=DATE:20231324")
+        assertNull(builder.build(1L))
+    }
+
+    @Test
+    fun testParseDateInvalidIsoDateContent() {
+        val builder = IcsEventBuilder()
+        builder.processLine("DTSTART:20231024T250000Z")
+        assertNull(builder.build(1L))
+    }
+
+    @Test
+    fun testParseDateInvalidIsoDateLength() {
+        val builder = IcsEventBuilder()
+        builder.processLine("DTSTART:20231024T10000")
+        assertNull(builder.build(1L))
+    }
+
+    @Test
+    fun testParseDateInvalidLengthNoT() {
+        val builder = IcsEventBuilder()
+        builder.processLine("DTSTART:2023102")
+        assertNull(builder.build(1L))
+    }
 }
