@@ -95,7 +95,7 @@ fun OpenLoopCard(
         color = TajsOSTheme.CardSurface,
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TajsOSTheme.RadiusMd),
+                .RoundedCornerShape(TajsOSTheme.RadiusXl),
         border = BorderStroke(1.dp, urgencyColor.copy(alpha = 0.25f)),
     ) {
         Column(
@@ -226,7 +226,7 @@ fun MaintenanceCard(
         color = TajsOSTheme.CardSurface,
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TajsOSTheme.RadiusMd),
+                .RoundedCornerShape(TajsOSTheme.RadiusXl),
         border = BorderStroke(1.dp, urgencyColor.copy(alpha = 0.25f)),
     ) {
         Column(
@@ -346,7 +346,7 @@ fun ProtocolCard(
         color = TajsOSTheme.CardSurface,
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TajsOSTheme.RadiusMd),
+                .RoundedCornerShape(TajsOSTheme.RadiusXl),
     ) {
         Column(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -405,7 +405,7 @@ fun DistinctionQuestionCard(item: DistinctionQuestionState) {
         color = TajsOSTheme.CardSurface,
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TajsOSTheme.RadiusMd),
+                .RoundedCornerShape(TajsOSTheme.RadiusXl),
         border =
             BorderStroke(
                 1.dp,
@@ -444,7 +444,7 @@ fun DirectionCommitmentCard(item: DirectionCommitmentStatus) {
         color = TajsOSTheme.CardSurface,
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TajsOSTheme.RadiusMd),
+                .RoundedCornerShape(TajsOSTheme.RadiusXl),
         border =
             BorderStroke(
                 1.dp,
@@ -495,7 +495,7 @@ fun CoreShiftCriterionCard(item: CoreLifeOSShiftItem) {
         color = TajsOSTheme.CardSurface,
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TajsOSTheme.RadiusMd),
+                .RoundedCornerShape(TajsOSTheme.RadiusXl),
         border =
             BorderStroke(
                 1.dp,
@@ -569,7 +569,7 @@ fun PersonRelationshipCard(
         color = TajsOSTheme.CardSurface,
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TajsOSTheme.RadiusMd),
+                .RoundedCornerShape(TajsOSTheme.RadiusXl),
         border =
             BorderStroke(
                 1.dp,

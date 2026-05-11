@@ -31,7 +31,7 @@ fun AreaHealthOverviewCard(
         color = TajsOSTheme.CardSurface,
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TajsOSTheme.RadiusMd),
+                .RoundedCornerShape(TajsOSTheme.RadiusXl),
     ) {
         Column(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),

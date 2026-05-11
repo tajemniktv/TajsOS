@@ -88,7 +88,7 @@ fun NodeCard(
     Surface(
         modifier = modifier.fillMaxWidth(),
         color = Color.Transparent,
-        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
     ) {
         MouseContextMenuHost(
             state = contextMenuState,
@@ -108,7 +108,7 @@ fun NodeCard(
                         .fillMaxWidth()
                         .graphicsLayer(scaleX = animatedScale, scaleY = animatedScale)
                         .glassChrome(
-                            shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+                            shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
                             material = GlassMaterial.REGULAR,
                         ).mouseClickable(
                             onClick = onClick,
@@ -117,7 +117,7 @@ fun NodeCard(
                             middleClickFallbackToPrimary = true,
                         ),
                 color = glassContainerColor(TajsOSTheme.Surface),
-                shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+                shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
                 border =
                     BorderStroke(
                         1.dp,
