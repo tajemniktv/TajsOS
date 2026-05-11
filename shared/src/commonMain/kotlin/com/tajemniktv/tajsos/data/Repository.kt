@@ -110,19 +110,37 @@ private object NoOpRecordFacetDao : RecordFacetDao {
  * Fallback, no-operation implementation for [ItemDomainDao] used when the actual DAO is unavailable or uninitialized.
  */
 private object NoOpItemDomainDao : ItemDomainDao {
+    /**
+     * Fallback implementation that emits an empty list of domain associations.
+     */
     override fun getAllItemDomains(): Flow<List<ItemDomainEntity>> = flowOf(emptyList())
 
+    /**
+     * Fallback implementation that emits an empty list of domains for the requested item.
+     */
     override fun getDomainsForItem(itemId: Long): Flow<List<ItemDomainEntity>> = flowOf(emptyList())
 
+    /**
+     * Fallback, no-operation implementation for upserting a domain.
+     */
     override suspend fun upsertDomain(domain: ItemDomainEntity) = Unit
 
+    /**
+     * Fallback, no-operation implementation for deleting a specific domain association.
+     */
     override suspend fun deleteDomain(
         itemId: Long,
         domainKey: String,
     ) = Unit
 
+    /**
+     * Fallback, no-operation implementation for clearing all domain associations for an item.
+     */
     override suspend fun deleteDomainsForItem(itemId: Long) = Unit
 
+    /**
+     * Fallback, no-operation implementation for clearing the primary domain flag.
+     */
     override suspend fun clearPrimaryFlag(itemId: Long) = Unit
 }
 
