@@ -751,6 +751,23 @@ class AppRepository(
         }
     }
 
+    private suspend fun updateDecisionOptionsBatch(
+        options: List<DecisionOptionEntity>,
+        selectedOptionId: Long?
+    ) {
+        val updatedOptions = options.mapNotNull { option ->
+            val isSelected = option.id == selectedOptionId
+            if (option.isSelected != isSelected) {
+                option.copy(isSelected = isSelected)
+            } else {
+                null
+            }
+        }
+        if (updatedOptions.isNotEmpty()) {
+            decisionDao.updateDecisionOptions(updatedOptions)
+        }
+    }
+
     private suspend fun executeNodeSideEffects(oldNode: NodeEntity, node: NodeEntity) {
         if (oldNode.status != node.status) {
             when (node.status)
@@ -1554,18 +1571,7 @@ class AppRepository(
         val node = nodeDao.getNodeById(nodeId) ?: return
         val options = decisionDao.getOptionsForDecision(nodeId).first()
 
-        val updatedOptions = options.mapNotNull { option ->
-            if (option.id == selectedOptionId && !option.isSelected) {
-                option.copy(isSelected = true)
-            } else if (option.id != selectedOptionId && option.isSelected) {
-                option.copy(isSelected = false)
-            } else {
-                null
-            }
-        }
-        if (updatedOptions.isNotEmpty()) {
-            decisionDao.updateDecisionOptions(updatedOptions)
-        }
+        updateDecisionOptionsBatch(options, selectedOptionId)
 
         nodeDao.updateNode(
             node.copy(
