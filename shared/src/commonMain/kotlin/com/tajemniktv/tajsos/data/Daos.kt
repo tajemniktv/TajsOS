@@ -499,24 +499,67 @@ interface RecordFacetDao {
  */
 @Dao
 interface ItemDomainDao {
+    /**
+     * Retrieves a continuous stream of all domain associations across all life objects.
+     *
+     * This stream emits every domain relation currently stored in the table.
+     *
+     * @return A Flow emitting a list of all [ItemDomainEntity] objects.
+     */
     @Query("SELECT * FROM item_domains")
     fun getAllItemDomains(): Flow<List<ItemDomainEntity>>
 
+    /**
+     * Retrieves a stream of domain associations for a specific life object.
+     *
+     * The results are ordered such that primary domains appear first, followed by
+     * remaining domains ordered chronologically from oldest to newest assignment.
+     *
+     * @param itemId The unique identifier of the life object.
+     * @return A Flow emitting a list of [ItemDomainEntity] objects associated with the item.
+     */
     @Query("SELECT * FROM item_domains WHERE itemId = :itemId ORDER BY isPrimary DESC, assignedAt ASC")
     fun getDomainsForItem(itemId: Long): Flow<List<ItemDomainEntity>>
 
+    /**
+     * Inserts a new domain association or updates an existing one if a conflict occurs.
+     *
+     * @param domain The [ItemDomainEntity] to be inserted or updated.
+     */
     @Upsert
     suspend fun upsertDomain(domain: ItemDomainEntity)
 
+    /**
+     * Deletes a specific domain association for a life object.
+     *
+     * @param itemId The unique identifier of the life object.
+     * @param domainKey The string key of the domain (e.g., "FINANCES") to be removed.
+     */
     @Query("DELETE FROM item_domains WHERE itemId = :itemId AND domainKey = :domainKey")
     suspend fun deleteDomain(
         itemId: Long,
         domainKey: String,
     )
 
+    /**
+     * Removes all explicit domain associations for a specific life object.
+     *
+     * Used primarily when an item is permanently deleted from the system or when clearing all
+     * explicitly assigned domains.
+     *
+     * @param itemId The unique identifier of the life object.
+     */
     @Query("DELETE FROM item_domains WHERE itemId = :itemId")
     suspend fun deleteDomainsForItem(itemId: Long)
 
+    /**
+     * Clears the `isPrimary` flag for all domains associated with a specific life object.
+     *
+     * This ensures no existing domain is marked as primary before assigning a new primary domain,
+     * maintaining the invariant of having at most one primary domain per item.
+     *
+     * @param itemId The unique identifier of the life object.
+     */
     @Query("UPDATE item_domains SET isPrimary = 0 WHERE itemId = :itemId")
     suspend fun clearPrimaryFlag(itemId: Long)
 }
