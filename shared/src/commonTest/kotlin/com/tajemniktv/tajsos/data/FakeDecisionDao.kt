@@ -26,6 +26,10 @@ class FakeDecisionDao : DecisionDao {
         return newId
     }
 
+    override suspend fun updateDecisionOptions(options: List<DecisionOptionEntity>) {
+        options.forEach { updateDecisionOption(it) }
+    }
+
     override suspend fun updateDecisionOption(option: DecisionOptionEntity) {
         optionsFlow.value =
             optionsFlow.value.map {

@@ -115,6 +115,7 @@ private object NoOpItemDomainDao : ItemDomainDao {
     override fun getDomainsForItem(itemId: Long): Flow<List<ItemDomainEntity>> = flowOf(emptyList())
 
     override suspend fun upsertDomain(domain: ItemDomainEntity) = Unit
+    override suspend fun upsertDomains(domains: List<ItemDomainEntity>) = Unit
 
     override suspend fun deleteDomain(
         itemId: Long,
@@ -609,13 +610,14 @@ class AppRepository(
             }
 
         val id = insertNode(node)
-        domains.forEachIndexed { index, domain ->
-            assignDomainToItem(
+        val domainEntities = domains.mapIndexed { index, domain ->
+            ItemDomainEntity(
                 itemId = id,
-                domain = domain,
+                domainKey = domain.name,
                 isPrimary = index == 0,
             )
         }
+        itemDomainDao.upsertDomains(domainEntities)
         if (kind == ItemKind.RECORD) {
             recordFacetDao.upsertRecordFacet(
                 RecordFacetEntity(
@@ -908,15 +910,14 @@ class AppRepository(
     private suspend fun syncDomainsFromNodeMetadata(node: NodeEntity) {
         val associatedDomains = node.areaMetadataOrNull()?.associatedDomains ?: return
         itemDomainDao.deleteDomainsForItem(node.id)
-        associatedDomains.forEachIndexed { index, domain ->
-            itemDomainDao.upsertDomain(
-                ItemDomainEntity(
-                    itemId = node.id,
-                    domainKey = domain.name,
-                    isPrimary = index == 0,
-                ),
+        val domainEntities = associatedDomains.mapIndexed { index, domain ->
+            ItemDomainEntity(
+                itemId = node.id,
+                domainKey = domain.name,
+                isPrimary = index == 0,
             )
         }
+        itemDomainDao.upsertDomains(domainEntities)
     }
 
     /**
@@ -1553,12 +1554,17 @@ class AppRepository(
         val node = nodeDao.getNodeById(nodeId) ?: return
         val options = decisionDao.getOptionsForDecision(nodeId).first()
 
-        options.forEach { option ->
-            if (option.id == selectedOptionId) {
-                decisionDao.updateDecisionOption(option.copy(isSelected = true))
-            } else if (option.isSelected) {
-                decisionDao.updateDecisionOption(option.copy(isSelected = false))
+        val updatedOptions = options.mapNotNull { option ->
+            if (option.id == selectedOptionId && !option.isSelected) {
+                option.copy(isSelected = true)
+            } else if (option.id != selectedOptionId && option.isSelected) {
+                option.copy(isSelected = false)
+            } else {
+                null
             }
+        }
+        if (updatedOptions.isNotEmpty()) {
+            decisionDao.updateDecisionOptions(updatedOptions)
         }
 
         nodeDao.updateNode(

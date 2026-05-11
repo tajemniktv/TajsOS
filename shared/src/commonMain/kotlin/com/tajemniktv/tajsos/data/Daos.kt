@@ -508,6 +508,12 @@ interface ItemDomainDao {
     @Upsert
     suspend fun upsertDomain(domain: ItemDomainEntity)
 
+    /**
+     * Upserts a list of item domains. Useful for batch updating domain metadata for a node.
+     */
+    @Upsert
+    suspend fun upsertDomains(domains: List<ItemDomainEntity>)
+
     @Query("DELETE FROM item_domains WHERE itemId = :itemId AND domainKey = :domainKey")
     suspend fun deleteDomain(
         itemId: Long,
@@ -847,6 +853,12 @@ interface DecisionDao {
 
     @Update
     suspend fun updateDecisionOption(option: DecisionOptionEntity)
+
+    /**
+     * Updates multiple decision options at once. Useful for batch updating option states.
+     */
+    @Update
+    suspend fun updateDecisionOptions(options: List<DecisionOptionEntity>)
 
     @Delete
     suspend fun deleteDecisionOption(option: DecisionOptionEntity)
