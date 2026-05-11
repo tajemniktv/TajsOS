@@ -64,6 +64,17 @@ class IcsEventBuilderTest {
     }
 
     @Test
+    fun testParseIsoDateLocalTimeZone() {
+        val builder = IcsEventBuilder()
+        val prop = IcsDateProperty("20231024T100000", "DTSTART;TZID=Europe/London")
+        val instant = builder.parseIsoDate(prop)
+        // Europe/London is UTC+1 in October (BST) until last Sunday,
+        // 2023-10-24 is Tuesday, so it's UTC+1.
+        // Local 10:00:00 -> UTC 09:00:00
+        assertEquals(Instant.parse("2023-10-24T09:00:00Z"), instant)
+    }
+
+    @Test
     fun testParseIsoDateUtc() {
         val builder = IcsEventBuilder()
         val prop = IcsDateProperty("20231024T100000Z", "DTSTART")
