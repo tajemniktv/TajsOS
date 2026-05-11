@@ -63,6 +63,14 @@ class IcsEventBuilderTest {
         assertEquals(Instant.parse("2023-10-24T00:00:00Z"), instant)
     }
 
+    /**
+     * Regression test verifying that ISO date parsing respects local timezone (Europe/London)
+     * across DST boundaries. This test uses 2023-10-24, which is before the DST shift to GMT
+     * (DST ends on the last Sunday of October). The expected result correctly applies the BST
+     * offset (UTC+1), converting local 10:00:00 BST to 09:00:00 UTC. This guards against
+     * incorrect offset handling that could misapply timezone rules when local timezone parsing
+     * was introduced.
+     */
     @Test
     fun testParseIsoDateLocalTimeZone() {
         val builder = IcsEventBuilder()
