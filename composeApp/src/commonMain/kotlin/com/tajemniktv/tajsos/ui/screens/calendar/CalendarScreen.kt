@@ -250,7 +250,7 @@ fun MonthView(
                                     .weight(1f)
                                     .aspectRatio(1f)
                                     .padding(3.dp)
-                                    .clip(RoundedCornerShape(10.dp))
+                                    .clip(RoundedCornerShape(TajsOSTheme.RadiusMd))
                                     .background(
                                         if (isSelected) {
                                             TajsOSTheme.CalendarSelectedDay
@@ -379,7 +379,7 @@ fun AgendaRow(
 
     Surface(
         onClick = onClick,
-        shape = RoundedCornerShape(14.dp),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
         color = TajsOSTheme.CalendarPanelStrong,
         border =
             androidx.compose.foundation.BorderStroke(
