@@ -349,7 +349,7 @@ fun calculateInsights(
             hasNotes && !hasTasks
         }
 
-    /** Optimally mapped subset containing only Area items */
+    // Area nodes used below to detect neglected areas
     val areas = nodes.mapNotNull { item -> item.node.takeIf { it.isAreaItem() } }
     val neglectedAreas =
         areas.filter { area ->

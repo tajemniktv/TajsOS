@@ -222,7 +222,7 @@ class MainViewModel(
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     /**
-     * Flow of all nodes classified as area items. Uses mapNotNull for optimized filtering and mapping.
+     * Flow of all nodes classified as area items, emitting only nodes where [NodeEntity.isAreaItem] is true.
      */
     val allAreas: StateFlow<List<NodeEntity>> =
         allNodes

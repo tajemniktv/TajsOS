@@ -283,7 +283,7 @@ suspend fun buildDashboardUIState(
         } else {
             emptyList()
         }
-    /** Optimally filtered area IDs for inclusion */
+    // Optimally filtered area IDs for inclusion
     val includedAreaIds = areaFilters.mapNotNull { filter -> filter.areaId.takeIf { filter.include } }
     val excludedAreaIds = areaFilters.mapNotNull { filter -> filter.areaId.takeIf { !filter.include } }
 
