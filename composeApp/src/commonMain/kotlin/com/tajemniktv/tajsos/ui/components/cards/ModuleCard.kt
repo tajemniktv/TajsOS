@@ -57,7 +57,7 @@ fun ModuleCard(
             modifier
                 .graphicsLayer(scaleX = scale, scaleY = scale)
                 .glassChrome(
-                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
                     material = GlassMaterial.REGULAR,
                 ).mouseClickable(
                     interactionSource = interactionSource,
@@ -68,7 +68,7 @@ fun ModuleCard(
                     onSecondaryClick = onClick,
                     middleClickFallbackToPrimary = true,
                 ),
-        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
         color = glassContainerColor(TajsOSTheme.Surface),
         shadowElevation = 2.dp,
     ) {
