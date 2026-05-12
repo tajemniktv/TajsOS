@@ -14,36 +14,24 @@ import kotlin.time.Clock
 @Suppress("TestMethodWithoutAssertion")
 class MainSnapshotCalculatorsMaintenanceTest {
 
-    private fun createMaintenanceNode(
-        id: Long,
-        status: String = "active",
-        maintenanceType: String? = null,
-        dueAt: Long? = null,
-        maintenanceOverdueAt: Long? = null,
-        isRecurring: Boolean = false,
-        maintenanceInterval: String? = null,
-        areaId: Long? = null
-    ): NodeWithPin {
-        val node = NodeEntity(
+    private fun defaultMaintenanceNode(id: Long): NodeEntity {
+        return NodeEntity(
             id = id,
             title = "Test Maintenance Node $id",
             type = "maintenance",
-            status = status,
-            maintenanceType = maintenanceType,
-            dueAt = dueAt,
-            maintenanceOverdueAt = maintenanceOverdueAt,
-            isRecurring = isRecurring,
-            maintenanceInterval = maintenanceInterval,
-            areaId = areaId
+            status = "active"
         )
-        return NodeWithPin(node = node, pin = null, tags = emptyList())
+    }
+
+    private fun NodeEntity.toPin(): NodeWithPin {
+        return NodeWithPin(node = this, pin = null, tags = emptyList())
     }
 
     @Test
     fun calculateMaintenanceSnapshot_excludesNonMaintenanceOrInactive() {
         val now = Clock.System.now().toEpochMilliseconds()
-        val inactiveMaintenance = createMaintenanceNode(1L, status = "done")
-        val activeTask = createMaintenanceNode(2L).copy(node = NodeEntity(id = 2L, type = "task", status = "active", title = ""))
+        val inactiveMaintenance = defaultMaintenanceNode(1L).copy(status = "done").toPin()
+        val activeTask = defaultMaintenanceNode(2L).copy(type = "task", title = "").toPin()
 
         val snapshot = calculateMaintenanceSnapshot(listOf(inactiveMaintenance, activeTask))
 
@@ -60,25 +48,25 @@ class MainSnapshotCalculatorsMaintenanceTest {
         val dayMs = 24 * 60 * 60 * 1000L
 
         // critical: past due
-        val criticalOverdue = createMaintenanceNode(1L, dueAt = now - dayMs)
+        val criticalOverdue = defaultMaintenanceNode(1L).copy(dueAt = now - dayMs).toPin()
 
         // critical: due within 24h
-        val criticalSoon = createMaintenanceNode(2L, dueAt = now + (dayMs / 2))
+        val criticalSoon = defaultMaintenanceNode(2L).copy(dueAt = now + (dayMs / 2)).toPin()
 
         // high: specific type and due within 3 days
-        val highPrescription = createMaintenanceNode(3L, maintenanceType = "prescription", dueAt = now + 2 * dayMs)
+        val highPrescription = defaultMaintenanceNode(3L).copy(maintenanceType = "prescription", dueAt = now + 2 * dayMs).toPin()
 
         // high: due within 3 days (not special type)
-        val highNormal = createMaintenanceNode(4L, dueAt = now + 2 * dayMs)
+        val highNormal = defaultMaintenanceNode(4L).copy(dueAt = now + 2 * dayMs).toPin()
 
         // medium: due within 7 days
-        val mediumNormal = createMaintenanceNode(5L, dueAt = now + 5 * dayMs)
+        val mediumNormal = defaultMaintenanceNode(5L).copy(dueAt = now + 5 * dayMs).toPin()
 
         // low: due after 7 days
-        val lowNormal = createMaintenanceNode(6L, dueAt = now + 10 * dayMs)
+        val lowNormal = defaultMaintenanceNode(6L).copy(dueAt = now + 10 * dayMs).toPin()
 
         // no due date
-        val noDue = createMaintenanceNode(7L)
+        val noDue = defaultMaintenanceNode(7L).toPin()
 
         val snapshot = calculateMaintenanceSnapshot(listOf(
             criticalOverdue, criticalSoon, highPrescription, highNormal, mediumNormal, lowNormal, noDue
@@ -112,9 +100,9 @@ class MainSnapshotCalculatorsMaintenanceTest {
 
     @Test
     fun calculateMaintenanceSnapshot_computesRecurring() {
-        val recurringNode1 = createMaintenanceNode(1L, isRecurring = true)
-        val recurringNode2 = createMaintenanceNode(2L, maintenanceInterval = "weekly")
-        val normalNode = createMaintenanceNode(3L)
+        val recurringNode1 = defaultMaintenanceNode(1L).copy(isRecurring = true).toPin()
+        val recurringNode2 = defaultMaintenanceNode(2L).copy(maintenanceInterval = "weekly").toPin()
+        val normalNode = defaultMaintenanceNode(3L).toPin()
 
         val snapshot = calculateMaintenanceSnapshot(listOf(recurringNode1, recurringNode2, normalNode))
 
@@ -124,10 +112,10 @@ class MainSnapshotCalculatorsMaintenanceTest {
 
     @Test
     fun calculateMaintenanceSnapshot_groupsByTypeAndArea() {
-        val node1 = createMaintenanceNode(1L, maintenanceType = "bill", areaId = 10L)
-        val node2 = createMaintenanceNode(2L, maintenanceType = "bill", areaId = 10L)
-        val node3 = createMaintenanceNode(3L, maintenanceType = "form", areaId = 20L)
-        val node4 = createMaintenanceNode(4L, maintenanceType = null, areaId = null)
+        val node1 = defaultMaintenanceNode(1L).copy(maintenanceType = "bill", areaId = 10L).toPin()
+        val node2 = defaultMaintenanceNode(2L).copy(maintenanceType = "bill", areaId = 10L).toPin()
+        val node3 = defaultMaintenanceNode(3L).copy(maintenanceType = "form", areaId = 20L).toPin()
+        val node4 = defaultMaintenanceNode(4L).copy(maintenanceType = null, areaId = null).toPin()
 
         val snapshot = calculateMaintenanceSnapshot(listOf(node1, node2, node3, node4))
 
