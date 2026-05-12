@@ -349,7 +349,8 @@ fun calculateInsights(
             hasNotes && !hasTasks
         }
 
-    val areas = nodes.filter { it.node.isAreaItem() }.map { it.node }
+    /** Optimally mapped subset containing only Area items */
+    val areas = nodes.mapNotNull { item -> item.node.takeIf { it.isAreaItem() } }
     val neglectedAreas =
         areas.filter { area ->
             val areaNodes = nodes.filter { it.node.areaId == area.id }

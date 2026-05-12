@@ -283,8 +283,9 @@ suspend fun buildDashboardUIState(
         } else {
             emptyList()
         }
-    val includedAreaIds = areaFilters.filter { it.include }.map { it.areaId }
-    val excludedAreaIds = areaFilters.filter { !it.include }.map { it.areaId }
+    /** Optimally filtered area IDs for inclusion */
+    val includedAreaIds = areaFilters.mapNotNull { filter -> filter.areaId.takeIf { filter.include } }
+    val excludedAreaIds = areaFilters.mapNotNull { filter -> filter.areaId.takeIf { !filter.include } }
 
     var filteredNodes = nodes
     if (mode?.key != "ALL")
@@ -304,8 +305,9 @@ suspend fun buildDashboardUIState(
         } else {
             emptyList()
         }
-    val includedTypes = typeFilters.filter { it.include }.map { it.nodeType }
-    val excludedTypes = typeFilters.filter { !it.include }.map { it.nodeType }
+    /** Optimally filtered type configurations for inclusion */
+    val includedTypes = typeFilters.mapNotNull { filter -> filter.nodeType.takeIf { filter.include } }
+    val excludedTypes = typeFilters.mapNotNull { filter -> filter.nodeType.takeIf { !filter.include } }
 
     if (mode?.key != "ALL")
     { // NON-NLS
