@@ -642,7 +642,7 @@ fun ExpandableNavSection(
                                 } else {
                                     Color.Transparent
                                 },
-                            shape = RoundedCornerShape(8.dp),
+                            shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
                             tonalElevation = 0.dp,
                             shadowElevation = 0.dp,
                         ) {

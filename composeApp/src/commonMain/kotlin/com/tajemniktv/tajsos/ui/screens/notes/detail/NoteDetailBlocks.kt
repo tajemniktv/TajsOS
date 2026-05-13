@@ -540,7 +540,7 @@ private fun renderNoteContextGraph(context: NoteDetailContext) {
                                 .size(32.dp)
                                 .background(
                                     TajsOSTheme.Surface,
-                                    RoundedCornerShape(8.dp),
+                                    RoundedCornerShape(TajsOSTheme.RadiusSm),
                                 ),
                         contentAlignment = Alignment.Center,
                     ) {
