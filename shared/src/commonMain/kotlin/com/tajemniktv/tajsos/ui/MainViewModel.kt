@@ -221,9 +221,12 @@ class MainViewModel(
             modes.filter { packs.canUseMode(it.key) }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
+    /**
+     * Flow of all nodes classified as area items, emitting only nodes where [NodeEntity.isAreaItem] is true.
+     */
     val allAreas: StateFlow<List<NodeEntity>> =
         allNodes
-            .map { nodes -> nodes.map { it.node }.filter { it.isAreaItem() } }
+            .map { nodes -> nodes.mapNotNull { item -> item.node.takeIf { it.isAreaItem() } } }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val activeNodes: StateFlow<List<NodeWithPin>> =
@@ -296,9 +299,12 @@ class MainViewModel(
             .getAllMedications()
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
+    /**
+     * Flow of all nodes classified as project items. Uses mapNotNull for optimized filtering and mapping.
+     */
     val allProjects: StateFlow<List<NodeEntity>> =
         allNodes
-            .map { nodes -> nodes.map { it.node }.filter { it.isProjectItem() } }
+            .map { nodes -> nodes.mapNotNull { item -> item.node.takeIf { it.isProjectItem() } } }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val calendarProviders: StateFlow<List<CalendarProviderEntity>> =

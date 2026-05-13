@@ -10,6 +10,7 @@ import android.os.BadParcelableException
 import android.os.Build
 import android.os.Bundle
 import android.os.ParcelFormatException
+import android.content.ActivityNotFoundException
 import android.speech.RecognizerIntent
 import android.util.Log
 import android.security.keystore.KeyGenParameterSpec
@@ -307,7 +308,8 @@ class MainActivity : FragmentActivity() {
             }
         try {
             speechRecognizerLauncher.launch(intent)
-        } catch (e: Exception) {
+        } catch (e: ActivityNotFoundException) {
+            Log.w(TAG, "Speech recognizer not available", e)
             // Speech recognizer not available
         }
     }

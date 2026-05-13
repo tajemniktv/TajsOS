@@ -4,7 +4,6 @@
 
 package com.tajemniktv.tajsos.ui.components.cards
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -50,8 +49,7 @@ fun AlertCard(
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
         color = color.copy(alpha = 0.05f),
-        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
     ) {
         Row(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
