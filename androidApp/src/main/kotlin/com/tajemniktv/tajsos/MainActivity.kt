@@ -220,8 +220,8 @@ class MainActivity : FragmentActivity() {
      * @param intent The new intent that was started for the activity.
      */
     override fun onNewIntent(intent: Intent) {
-        setIntent(intent)
         super.onNewIntent(intent)
+        setIntent(intent)
         handleIntent(intent)
     }
 
