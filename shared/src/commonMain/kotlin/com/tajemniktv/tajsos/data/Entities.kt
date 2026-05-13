@@ -18,8 +18,8 @@ import kotlinx.serialization.Serializable
  * It represents everything from tasks and notes to projects, records, and areas.
  *
  * Architectural Note: This is an overloaded legacy surface. While it supports generic string types
- * ([type], [status]), new domain behavior should prefer typed models and companion structures
- * (e.g. [ItemKind]) instead of relying purely on this table to prevent string-state sprawl.
+ * (`type`, `status`), new domain behavior should prefer typed models and companion structures
+ * (e.g. `ItemKind`) instead of relying purely on this table to prevent string-state sprawl.
  */
 @Entity(
     tableName = "nodes",
