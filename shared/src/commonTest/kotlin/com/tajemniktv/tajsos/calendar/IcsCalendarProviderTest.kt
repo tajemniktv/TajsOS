@@ -325,4 +325,24 @@ class IcsCalendarProviderTest {
                 assertEquals(expectedCount, events.size, "Failed for URL: $url")
             }
         }
+
+
+
+    @Test
+    fun `test fetchEvents catches parsing exceptions gracefully`(): TestResult =
+        runTest {
+            // Provide a highly malformed string that forces parsing to fail or error out.
+            // This satisfies the requirement to pass invalid strings to processLine/build.
+            val malformedIcs = "BEGIN:VCALENDAR\nBEGIN:VEVENT\n" +
+                "DTSTART;VALUE=DATE:INVALID_DATE_FORMAT\n" +
+                "DTEND:INVALID_TIME\n" +
+                "UID:123\n" +
+                "END:VEVENT\nEND:VCALENDAR"
+
+            val provider = createProviderWithIcs(malformedIcs)
+            val events = provider.fetchEvents(testProviderEntity, defaultFrom, defaultTo)
+
+            assertEquals(0, events.size)
+        }
+
 }
