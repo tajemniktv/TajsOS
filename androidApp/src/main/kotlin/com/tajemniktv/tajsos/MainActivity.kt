@@ -493,7 +493,7 @@ class MainActivity : FragmentActivity() {
      * Safely extracts a Parcelable extra from an Intent, handling OS version differences
      * and catching potential unparcelling exceptions (e.g., BadParcelableException).
      */
-    private inline fun <reified T : android.os.Parcelable> Intent.getSafeParcelableExtra(name: String): T? =
+    internal inline fun <reified T : android.os.Parcelable> Intent.getSafeParcelableExtra(name: String): T? =
         try {
             androidx.core.content.IntentCompat.getParcelableExtra(this, name, T::class.java)
         } catch (e: BadParcelableException) {
@@ -507,7 +507,7 @@ class MainActivity : FragmentActivity() {
     /**
      * Safely extracts a Parcelable ArrayList extra from an Intent.
      */
-    private inline fun <reified T : android.os.Parcelable> Intent.getSafeParcelableArrayListExtra(name: String): java.util.ArrayList<T>? =
+    internal inline fun <reified T : android.os.Parcelable> Intent.getSafeParcelableArrayListExtra(name: String): java.util.ArrayList<T>? =
         try {
             androidx.core.content.IntentCompat.getParcelableArrayListExtra(this, name, T::class.java)
         } catch (e: BadParcelableException) {
