@@ -374,6 +374,14 @@ class PreferencesRepository(
     }
 }
 
+/**
+ * A safety extension for handling data store reads.
+ *
+ * It traps [okio.IOException] (or its platform equivalents) which occur when the underlying
+ * data store file is missing, corrupted, or inaccessible. Instead of crashing the stream,
+ * it emits [emptyPreferences] to ensure the application can start using default values.
+ * Other non-IO exceptions are rethrown.
+ */
 private fun Flow<Preferences>.catchIoException(): Flow<Preferences> = catch { e ->
     if (e is IOException) {
         emit(emptyPreferences())
