@@ -82,8 +82,8 @@ class PackRegistryTest {
 
     @Test
     /**
-    * Verifies that [PackRegistry.isOwned] returns true only for packs present in `ownedPackKeys`.
-    */
+     * Verifies that [PackRegistry.isOwned] returns true only for packs present in `ownedPackKeys`.
+     */
     fun packRegistry_reportsOwnedPacks() {
         val registry =
             PackRegistry(
@@ -94,6 +94,28 @@ class PackRegistryTest {
         assertTrue(registry.isOwned(AppPack.CREATOR))
         assertFalse(registry.isOwned(AppPack.FINANCE))
         assertFalse(registry.isOwned(AppPack.MAINTENANCE))
+    }
+
+    @Test
+    fun isDependencySatisfied_returnsTrueWhenNoDependencies() {
+        val registry = PackRegistry(ownedPackKeys = emptySet(), enabledPackKeys = emptySet())
+        assertTrue(registry.isDependencySatisfied(AppPack.STUDENT))
+    }
+
+    @Test
+    fun isDependencySatisfied_returnsTrueWhenDependenciesMet() {
+        val registry =
+            PackRegistry(
+                ownedPackKeys = emptySet(),
+                enabledPackKeys = setOf(AppPack.MAINTENANCE.key),
+            )
+        assertTrue(registry.isDependencySatisfied(AppPack.FINANCE))
+    }
+
+    @Test
+    fun isDependencySatisfied_returnsFalseWhenDependenciesNotMet() {
+        val registry = PackRegistry(ownedPackKeys = emptySet(), enabledPackKeys = emptySet())
+        assertFalse(registry.isDependencySatisfied(AppPack.FINANCE))
     }
 
 }
