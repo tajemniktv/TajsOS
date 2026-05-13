@@ -325,4 +325,50 @@ class IcsCalendarProviderTest {
                 assertEquals(expectedCount, events.size, "Failed for URL: $url")
             }
         }
+
+    @Test
+    fun `test fallback to system default when TZID parameter is malformed`(): TestResult =
+        runTest {
+            val ics =
+                """
+                BEGIN:VCALENDAR
+                BEGIN:VEVENT
+                UID:malformed-tzid
+                SUMMARY:Malformed TZID Event
+                DTSTART;TZID=:20231024T100000
+                END:VEVENT
+                BEGIN:VEVENT
+                UID:missing-tzid
+                SUMMARY:Missing TZID Event
+                DTSTART:20231024T100000
+                END:VEVENT
+                BEGIN:VEVENT
+                UID:valid-tzid
+                SUMMARY:Valid TZID Event
+                DTSTART;TZID=America/New_York:20231024T100000
+                END:VEVENT
+                END:VCALENDAR
+                """.trimIndent()
+
+            val provider = createProviderWithIcs(ics)
+            val events = provider.fetchEvents(testProviderEntity, defaultFrom, defaultTo)
+
+            assertEquals(3, events.size)
+
+            val malformed = events.find { it.externalId == "malformed-tzid" }
+            assertNotNull(malformed)
+            assertEquals("Malformed TZID Event", malformed.title)
+            assertNotNull(malformed.startAt)
+
+            val missing = events.find { it.externalId == "missing-tzid" }
+            assertNotNull(missing)
+            assertEquals("Missing TZID Event", missing.title)
+            assertNotNull(missing.startAt)
+
+            val valid = events.find { it.externalId == "valid-tzid" }
+            assertNotNull(valid)
+            assertEquals("Valid TZID Event", valid.title)
+            assertNotNull(valid.startAt)
+        }
+
 }

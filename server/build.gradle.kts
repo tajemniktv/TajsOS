@@ -15,7 +15,10 @@ application {
     mainClass.set("com.tajemniktv.tajsos.ApplicationKt")
 
     val isDevelopment: Boolean = project.ext.has("development")
-    applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
+    applicationDefaultJvmArgs = listOf(
+        "-Dio.ktor.development=$isDevelopment",
+        "-Dktor.application.version=${project.version}"
+    )
 }
 
 kotlin {

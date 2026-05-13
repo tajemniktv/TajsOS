@@ -116,9 +116,17 @@ class InetAddressParserTest {
         assertNotNull(linkLocalV6)
         assertTrue(linkLocalV6.isPrivateOrLocal())
 
-        val siteLocalV4 = parseIpAddress("192.168.1.1")
-        assertNotNull(siteLocalV4)
-        assertTrue(siteLocalV4.isPrivateOrLocal())
+        val siteLocalV4_10 = parseIpAddress("10.0.0.1")
+        assertNotNull(siteLocalV4_10)
+        assertTrue(siteLocalV4_10.isPrivateOrLocal())
+
+        val siteLocalV4_172 = parseIpAddress("172.16.0.1")
+        assertNotNull(siteLocalV4_172)
+        assertTrue(siteLocalV4_172.isPrivateOrLocal())
+
+        val siteLocalV4_192 = parseIpAddress("192.168.1.1")
+        assertNotNull(siteLocalV4_192)
+        assertTrue(siteLocalV4_192.isPrivateOrLocal())
 
         val siteLocalV6 = parseIpAddress("fd00::1")
         assertNotNull(siteLocalV6)
