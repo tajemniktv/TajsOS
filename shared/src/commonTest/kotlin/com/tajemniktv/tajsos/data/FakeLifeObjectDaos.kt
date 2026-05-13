@@ -197,6 +197,10 @@ class FakeItemDomainDao : ItemDomainDao {
         domainsFlow.value = domains.toList()
     }
 
+    override suspend fun upsertDomains(domains: List<ItemDomainEntity>) {
+        domains.forEach { upsertDomain(it) }
+    }
+
     override suspend fun deleteDomain(
         itemId: Long,
         domainKey: String,
