@@ -334,7 +334,7 @@ fun GlobalSearchBar(modifier: Modifier = Modifier) {
         singleLine = true,
         modifier =
             modifier.glassChrome(
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                 material = GlassMaterial.THIN,
             ),
         textStyle = MaterialTheme.typography.bodyMedium.copy(color = TajsOSTheme.Text),
@@ -359,7 +359,7 @@ fun GlobalSearchBar(modifier: Modifier = Modifier) {
                 tint = TajsOSTheme.Muted,
             )
         },
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
     )
 }
 
@@ -401,10 +401,10 @@ fun HeaderModeSwitcher(
                 Modifier
                     .height(42.dp)
                     .glassChrome(
-                        shape = RoundedCornerShape(12.dp),
+                        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                         material = GlassMaterial.REGULAR,
                     ),
-            shape = RoundedCornerShape(12.dp),
+            shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
             color = glassContainerColor(TajsOSTheme.SurfaceHigh),
             tonalElevation = 0.dp,
             shadowElevation = 0.dp,
@@ -493,10 +493,10 @@ fun NotificationsPopover(
         Surface(
             modifier =
                 Modifier.glassChrome(
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                     material = GlassMaterial.REGULAR,
                 ),
-            shape = RoundedCornerShape(12.dp),
+            shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
             color = glassContainerColor(TajsOSTheme.SurfaceHigh),
             tonalElevation = 0.dp,
             shadowElevation = 0.dp,

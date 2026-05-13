@@ -45,14 +45,17 @@ fun TasksRoute(
         val allProjects by viewModel.allProjects.collectAsState()
         val allAreas by viewModel.allAreas.collectAsState()
 
+        // Active task nodes filtered to non-archived task items
         val activeTasks =
             remember(activeNodes) {
-                activeNodes.map { it.node }.filter { it.isTaskItem() && it.status != "archived" }
+                activeNodes.mapNotNull { item -> item.node.takeIf { it.isTaskItem() && it.status != "archived" } }
             }
+        /** Archived task nodes optimally mapped directly to items */
         val archivedTasks =
-            remember(archivedNodes) { archivedNodes.map { it.node }.filter { it.isTaskItem() } }
+            remember(archivedNodes) { archivedNodes.mapNotNull { item -> item.node.takeIf { it.isTaskItem() } } }
+        /** Set of today's task node IDs, optimally mapped */
         val todayTaskIds =
-            remember(todayNodes) { todayNodes.filter { it.isTaskItem() }.map { it.id }.toSet() }
+            remember(todayNodes) { todayNodes.mapNotNullTo(mutableSetOf()) { item -> item.id.takeIf { item.isTaskItem() } } }
         val projectById = remember(allProjects) { allProjects.associate { it.id to it.title } }
         val areaById = remember(allAreas) { allAreas.associate { it.id to it.title } }
 

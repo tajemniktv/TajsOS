@@ -14,8 +14,12 @@ import androidx.room.Relation
 import kotlinx.serialization.Serializable
 
 /**
- * NodeEntity is the central entity in TajsOS, representing everything from
- * tasks and notes to projects and areas.
+ * NodeEntity is the central polymorphic entity in TajsOS, acting as the primary system object.
+ * It represents everything from tasks and notes to projects, records, and areas.
+ *
+ * Architectural Note: This is an overloaded legacy surface. While it supports generic string types
+ * (`type`, `status`), new domain behavior should prefer typed models and companion structures
+ * (e.g. `ItemKind`) instead of relying purely on this table to prevent string-state sprawl.
  */
 @Entity(
     tableName = "nodes",
@@ -487,7 +491,10 @@ data class TrackMedicationJoinEntity(
 )
 
 /**
- * RelationEntity links items to other items or entities.
+ * Represents a directed relationship graph edge between two nodes.
+ *
+ * This table serves as a first-class capability for creating the LifeOS graph network,
+ * enabling bidirectional relationships, hierarchy representations, and knowledge linking.
  */
 @Entity(
     tableName = "relations",

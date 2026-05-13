@@ -899,6 +899,12 @@ interface DecisionDao {
     @Update
     suspend fun updateDecisionOption(option: DecisionOptionEntity)
 
+    /**
+     * Updates multiple decision options at once. Useful for batch updating option states.
+     */
+    @Update
+    suspend fun updateDecisionOptions(options: List<DecisionOptionEntity>)
+
     @Delete
     suspend fun deleteDecisionOption(option: DecisionOptionEntity)
 }

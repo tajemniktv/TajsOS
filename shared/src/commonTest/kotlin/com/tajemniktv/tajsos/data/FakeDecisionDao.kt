@@ -26,6 +26,17 @@ class FakeDecisionDao : DecisionDao {
         return newId
     }
 
+    override suspend fun updateDecisionOptions(options: List<DecisionOptionEntity>) {
+        val current = optionsFlow.value.toMutableList()
+        options.forEach { option ->
+            val index = current.indexOfFirst { it.id == option.id }
+            if (index >= 0) {
+                current[index] = option
+            }
+        }
+        optionsFlow.value = current
+    }
+
     override suspend fun updateDecisionOption(option: DecisionOptionEntity) {
         optionsFlow.value =
             optionsFlow.value.map {

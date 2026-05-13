@@ -120,7 +120,7 @@ internal fun CalendarMainBlock(
                         modifier = Modifier.weight(1.75f).fillMaxHeight(),
                         shape =
                             androidx.compose.foundation.shape
-                                .RoundedCornerShape(20.dp),
+                                .RoundedCornerShape(TajsOSTheme.RadiusXl),
                         color = TajsOSTheme.CalendarPanel,
                         border =
                             androidx.compose.foundation.BorderStroke(
@@ -164,7 +164,7 @@ internal fun CalendarMainBlock(
                         modifier = Modifier.weight(1f).fillMaxHeight(),
                         shape =
                             androidx.compose.foundation.shape
-                                .RoundedCornerShape(20.dp),
+                                .RoundedCornerShape(TajsOSTheme.RadiusXl),
                         color = TajsOSTheme.CalendarPanelSoft,
                         border =
                             androidx.compose.foundation.BorderStroke(
@@ -284,7 +284,7 @@ internal fun CalendarMainBlock(
                         modifier = Modifier.fillMaxWidth(),
                         shape =
                             androidx.compose.foundation.shape
-                                .RoundedCornerShape(20.dp),
+                                .RoundedCornerShape(TajsOSTheme.RadiusXl),
                         color = TajsOSTheme.CalendarPanel,
                         border =
                             androidx.compose.foundation.BorderStroke(
@@ -328,7 +328,7 @@ internal fun CalendarMainBlock(
                         modifier = Modifier.fillMaxWidth(),
                         shape =
                             androidx.compose.foundation.shape
-                                .RoundedCornerShape(20.dp),
+                                .RoundedCornerShape(TajsOSTheme.RadiusXl),
                         color = TajsOSTheme.CalendarPanelSoft,
                         border =
                             androidx.compose.foundation.BorderStroke(

@@ -4,6 +4,8 @@
 
 package com.tajemniktv.tajsos.data
 
+import com.tajemniktv.tajsos.utils.getDocumentDirectory
+
 import androidx.room.Room
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import platform.Foundation.NSBundle

@@ -204,7 +204,7 @@ class ProtocolCommands(
         areaId: Long? = null,
     ) {
         val cleanLabel = label.trim().ifBlank { return }
-        val cleanChecklist = checklistLines.map { it.trim() }.filter { it.isNotBlank() }
+        val cleanChecklist = checklistLines.mapNotNull { it.trim().ifBlank { null } }
         if (cleanChecklist.isEmpty()) return
         scope.launch {
             val nodeId =
