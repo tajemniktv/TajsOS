@@ -293,6 +293,7 @@ fun buildPlaybookSnapshot(
  * @param modesList The list of available operating modes.
  * @param activeId The ID of the currently active mode, if any.
  * @param areasList The list of all system Area nodes.
+ * @param packs The registry of enabled and owned application packs.
  * @return A fully populated [DashboardUIState] reflecting the entire system's status filtered by the active mode.
  */
 suspend fun buildDashboardUIState(
