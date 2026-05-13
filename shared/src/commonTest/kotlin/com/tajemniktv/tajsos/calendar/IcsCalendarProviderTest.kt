@@ -326,23 +326,49 @@ class IcsCalendarProviderTest {
             }
         }
 
-
-
     @Test
-    fun `test fetchEvents catches parsing exceptions gracefully`(): TestResult =
+    fun `test fallback to system default when TZID parameter is malformed`(): TestResult =
         runTest {
-            // Provide a highly malformed string that forces parsing to fail or error out.
-            // This satisfies the requirement to pass invalid strings to processLine/build.
-            val malformedIcs = "BEGIN:VCALENDAR\nBEGIN:VEVENT\n" +
-                "DTSTART;VALUE=DATE:INVALID_DATE_FORMAT\n" +
-                "DTEND:INVALID_TIME\n" +
-                "UID:123\n" +
-                "END:VEVENT\nEND:VCALENDAR"
+            val ics =
+                """
+                BEGIN:VCALENDAR
+                BEGIN:VEVENT
+                UID:malformed-tzid
+                SUMMARY:Malformed TZID Event
+                DTSTART;TZID=:20231024T100000
+                END:VEVENT
+                BEGIN:VEVENT
+                UID:missing-tzid
+                SUMMARY:Missing TZID Event
+                DTSTART:20231024T100000
+                END:VEVENT
+                BEGIN:VEVENT
+                UID:valid-tzid
+                SUMMARY:Valid TZID Event
+                DTSTART;TZID=America/New_York:20231024T100000
+                END:VEVENT
+                END:VCALENDAR
+                """.trimIndent()
 
-            val provider = createProviderWithIcs(malformedIcs)
+            val provider = createProviderWithIcs(ics)
             val events = provider.fetchEvents(testProviderEntity, defaultFrom, defaultTo)
 
-            assertEquals(0, events.size)
+            assertEquals(3, events.size)
+
+            val malformed = events.find { it.externalId == "malformed-tzid" }
+            assertNotNull(malformed)
+            assertEquals("Malformed TZID Event", malformed.title)
+            assertNotNull(malformed.startAt)
+
+            val missing = events.find { it.externalId == "missing-tzid" }
+            assertNotNull(missing)
+            assertEquals("Missing TZID Event", missing.title)
+            assertNotNull(missing.startAt)
+
+            val valid = events.find { it.externalId == "valid-tzid" }
+            assertNotNull(valid)
+            assertEquals("Valid TZID Event", valid.title)
+            assertNotNull(valid.startAt)
         }
 
 }
