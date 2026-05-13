@@ -32,23 +32,55 @@ class PackRegistryTest {
         assertFalse(noPacks.canUseMode("STUDY"))
         assertTrue(studentPack.canUseMode("STUDY"))
         assertTrue(studentPack.canUseMode("study")) // Case sensitivity
+        assertTrue(studentPack.canUseMode("StUdY"))
 
         // ADMIN
         assertFalse(noPacks.canUseMode("ADMIN"))
         assertTrue(financePack.canUseMode("ADMIN"))
+        assertTrue(financePack.canUseMode("admin"))
         assertTrue(maintenancePack.canUseMode("ADMIN"))
+        assertTrue(maintenancePack.canUseMode("AdMiN"))
 
         // ERRAND
         assertFalse(noPacks.canUseMode("ERRAND"))
         assertTrue(maintenancePack.canUseMode("ERRAND"))
+        assertTrue(maintenancePack.canUseMode("errand"))
 
         // SHUTDOWN
         assertFalse(noPacks.canUseMode("SHUTDOWN"))
         assertTrue(protocolsPack.canUseMode("SHUTDOWN"))
+        assertTrue(protocolsPack.canUseMode("shutdown"))
 
         // Unknown modes
         assertTrue(noPacks.canUseMode("UNKNOWN"))
+        assertTrue(noPacks.canUseMode("unknown"))
         assertTrue(noPacks.canUseMode(""))
+    }
+
+    @Test
+    fun isDependencySatisfied_returnsCorrectStatus() {
+        // AppPack.FINANCE requires "maintenance"
+        val registryWithDep = PackRegistry(
+            ownedPackKeys = emptySet(),
+            enabledPackKeys = setOf(AppPack.MAINTENANCE.key),
+        )
+        val registryWithoutDep = PackRegistry(
+            ownedPackKeys = emptySet(),
+            enabledPackKeys = emptySet(),
+        )
+
+        assertTrue(registryWithDep.isDependencySatisfied(AppPack.FINANCE))
+        assertFalse(registryWithoutDep.isDependencySatisfied(AppPack.FINANCE))
+
+        // AppPack.STUDENT requires nothing
+        assertTrue(registryWithoutDep.isDependencySatisfied(AppPack.STUDENT))
+    }
+
+    @Test
+    fun isOwned_returnsCorrectStatus() {
+        val registry = PackRegistry(setOf(AppPack.STUDENT.key), emptySet())
+        assertTrue(registry.isOwned(AppPack.STUDENT))
+        assertFalse(registry.isOwned(AppPack.FINANCE))
     }
 
     @Test
