@@ -4,6 +4,7 @@
 
 package com.tajemniktv.tajsos.ui.screens.dashboard
 
+import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -337,7 +338,7 @@ private fun RenderDashboardBlock(
         }
 
         "search_capture" -> {
-            OutlinedTextField(
+            TactileOutlinedTextField(
                 value = "",
                 onValueChange = {},
                 modifier = Modifier.fillMaxWidth(),
@@ -442,7 +443,7 @@ private fun RenderDashboardBlock(
                         modifier =
                             Modifier
                                 .clickable { context.onNewEntry() }
-                                .background(TajsOSTheme.Primary, RoundedCornerShape(4.dp))
+                                .background(TajsOSTheme.Primary, RoundedCornerShape(TajsOSTheme.RadiusXs))
                                 .padding(horizontal = 12.dp, vertical = 6.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
@@ -636,7 +637,7 @@ private fun CommandItem(
             key,
             modifier =
                 Modifier
-                    .background(TajsOSTheme.Border, RoundedCornerShape(4.dp))
+                    .background(TajsOSTheme.Border, RoundedCornerShape(TajsOSTheme.RadiusXs))
                     .padding(horizontal = 6.dp, vertical = 2.dp),
             style = MaterialTheme.typography.labelSmall,
             color = TajsOSTheme.Text,

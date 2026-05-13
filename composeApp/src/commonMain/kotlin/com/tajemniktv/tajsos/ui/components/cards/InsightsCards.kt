@@ -64,7 +64,7 @@ fun AutoReviewCard(review: String) {
         color = TajsOSTheme.Primary.copy(alpha = 0.05f),
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TajsOSTheme.RadiusMd),
+                .RoundedCornerShape(TajsOSTheme.RadiusXl),
         border =
             androidx.compose.foundation.BorderStroke(
                 1.dp,
@@ -93,7 +93,7 @@ fun CompletionCard(
         color = TajsOSTheme.CardSurface,
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TajsOSTheme.RadiusMd),
+                .RoundedCornerShape(TajsOSTheme.RadiusXl),
         border =
             androidx.compose.foundation.BorderStroke(
                 1.dp,
@@ -160,7 +160,7 @@ fun FocusInsightCard(
         color = TajsOSTheme.CardSurface,
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TajsOSTheme.RadiusMd),
+                .RoundedCornerShape(TajsOSTheme.RadiusXl),
         border =
             androidx.compose.foundation.BorderStroke(
                 1.dp,
@@ -230,7 +230,7 @@ fun EfficiencyCard(
         color = TajsOSTheme.CardSurface,
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TajsOSTheme.RadiusMd),
+                .RoundedCornerShape(TajsOSTheme.RadiusXl),
         border =
             androidx.compose.foundation.BorderStroke(
                 1.dp,
@@ -315,7 +315,7 @@ fun VaultInsightCard(
         color = TajsOSTheme.CardSurface,
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TajsOSTheme.RadiusMd),
+                .RoundedCornerShape(TajsOSTheme.RadiusXl),
         border =
             androidx.compose.foundation.BorderStroke(
                 1.dp,
@@ -374,7 +374,7 @@ fun AdvancedSystemCard(
         color = TajsOSTheme.CardSurface,
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TajsOSTheme.RadiusMd),
+                .RoundedCornerShape(TajsOSTheme.RadiusXl),
         border =
             androidx.compose.foundation.BorderStroke(
                 1.dp,
@@ -443,7 +443,7 @@ fun StateAveragesCard(
         color = TajsOSTheme.CardSurface,
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TajsOSTheme.RadiusMd),
+                .RoundedCornerShape(TajsOSTheme.RadiusXl),
         border =
             androidx.compose.foundation.BorderStroke(
                 1.dp,
@@ -482,7 +482,7 @@ fun CorrelationsCard(
         color = TajsOSTheme.CardSurface,
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TajsOSTheme.RadiusMd),
+                .RoundedCornerShape(TajsOSTheme.RadiusXl),
         border =
             androidx.compose.foundation.BorderStroke(
                 1.dp,
@@ -600,8 +600,7 @@ fun InsightPatternCard(
         color = color.copy(alpha = 0.05f),
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = androidx.compose.foundation.BorderStroke(1.dp, color.copy(alpha = 0.2f)),
+                .RoundedCornerShape(TajsOSTheme.RadiusXl),
     ) {
         Row(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -633,7 +632,7 @@ fun AreaHealthSystemCard(
         color = TajsOSTheme.CardSurface,
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TajsOSTheme.RadiusMd),
+                .RoundedCornerShape(TajsOSTheme.RadiusXl),
     ) {
         Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
             Text(
@@ -679,7 +678,6 @@ fun AreaHealthInsightCard(area: AreaHealthMetrics) {
         shape =
             androidx.compose.foundation.shape
                 .RoundedCornerShape(TajsOSTheme.RadiusSm),
-        border = androidx.compose.foundation.BorderStroke(1.dp, color.copy(alpha = 0.25f)),
     ) {
         Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
             Text(

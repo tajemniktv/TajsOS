@@ -1,0 +1,11 @@
+---
+import BlogMarkdownContent from 'starlight-blog/overrides/MarkdownContent.astro';
+import VideosMarkdownContent from 'starlight-videos/overrides/MarkdownContent.astro';
+
+const props = Astro.props;
+---
+<VideosMarkdownContent {...props}>
+    <BlogMarkdownContent {...props}>
+        <slot />
+    </BlogMarkdownContent>
+</VideosMarkdownContent>

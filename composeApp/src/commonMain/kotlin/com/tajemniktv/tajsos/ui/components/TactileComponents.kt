@@ -4,6 +4,14 @@
 
 package com.tajemniktv.tajsos.ui.components
 
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -138,7 +146,7 @@ fun TactileSlider(
                                 .blur(8.dp)
                                 .background(
                                     TajsOSTheme.Primary.copy(alpha = 0.5f),
-                                    RoundedCornerShape(4.dp),
+                                    RoundedCornerShape(TajsOSTheme.RadiusXs),
                                 ),
                     )
                     // Core thumb
@@ -146,7 +154,7 @@ fun TactileSlider(
                         modifier =
                             Modifier
                                 .size(16.dp)
-                                .background(TajsOSTheme.Primary, RoundedCornerShape(4.dp)),
+                                .background(TajsOSTheme.Primary, RoundedCornerShape(TajsOSTheme.RadiusXs)),
                     )
                 }
             },
@@ -271,5 +279,82 @@ private fun TactileSliderPreview() {
                 )
             }
         }
+    }
+}
+
+
+@Composable
+fun TactileOutlinedTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    containerModifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    readOnly: Boolean = false,
+    textStyle: TextStyle = LocalTextStyle.current,
+    label: @Composable (() -> Unit)? = null,
+    placeholder: @Composable (() -> Unit)? = null,
+    leadingIcon: @Composable (() -> Unit)? = null,
+    trailingIcon: @Composable (() -> Unit)? = null,
+    prefix: @Composable (() -> Unit)? = null,
+    suffix: @Composable (() -> Unit)? = null,
+    supportingText: @Composable (() -> Unit)? = null,
+    isError: Boolean = false,
+    visualTransformation: androidx.compose.ui.text.input.VisualTransformation = androidx.compose.ui.text.input.VisualTransformation.None,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    singleLine: Boolean = false,
+    maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
+    minLines: Int = 1,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    shape: Shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+    colors: TextFieldColors = OutlinedTextFieldDefaults.colors(
+        focusedContainerColor = TajsOSTheme.SurfaceLowest,
+        unfocusedContainerColor = TajsOSTheme.SurfaceLowest,
+        disabledContainerColor = TajsOSTheme.SurfaceLowest,
+        focusedBorderColor = TajsOSTheme.GhostBorder,
+        unfocusedBorderColor = Color.Transparent,
+        disabledBorderColor = Color.Transparent,
+    )
+) {
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
+    Box(modifier = containerModifier, propagateMinConstraints = true) {
+        if (isFocused) {
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .blur(8.dp)
+                    .background(
+                        TajsOSTheme.Primary.copy(alpha = 0.2f),
+                        shape
+                    )
+            )
+        }
+        OutlinedTextField(
+            value = value,
+            onValueChange = onValueChange,
+            modifier = modifier,
+            enabled = enabled,
+            readOnly = readOnly,
+            textStyle = textStyle,
+            label = label,
+            placeholder = placeholder,
+            leadingIcon = leadingIcon,
+            trailingIcon = trailingIcon,
+            prefix = prefix,
+            suffix = suffix,
+            supportingText = supportingText,
+            isError = isError,
+            visualTransformation = visualTransformation,
+            keyboardOptions = keyboardOptions,
+            keyboardActions = keyboardActions,
+            singleLine = singleLine,
+            maxLines = maxLines,
+            minLines = minLines,
+            interactionSource = interactionSource,
+            shape = shape,
+            colors = colors,
+        )
     }
 }

@@ -4,6 +4,7 @@
 
 package com.tajemniktv.tajsos.ui.components.layout
 
+import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -326,14 +327,14 @@ private fun HeaderBreadcrumbs(breadcrumbs: List<ScreenHeaderBreadcrumb>) {
  */
 @Composable
 fun GlobalSearchBar(modifier: Modifier = Modifier) {
-    OutlinedTextField(
+    TactileOutlinedTextField(
         value = "",
         onValueChange = {},
         readOnly = true,
         singleLine = true,
         modifier =
             modifier.glassChrome(
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                 material = GlassMaterial.THIN,
             ),
         textStyle = MaterialTheme.typography.bodyMedium.copy(color = TajsOSTheme.Text),
@@ -358,7 +359,7 @@ fun GlobalSearchBar(modifier: Modifier = Modifier) {
                 tint = TajsOSTheme.Muted,
             )
         },
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
     )
 }
 
@@ -400,10 +401,10 @@ fun HeaderModeSwitcher(
                 Modifier
                     .height(42.dp)
                     .glassChrome(
-                        shape = RoundedCornerShape(12.dp),
+                        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                         material = GlassMaterial.REGULAR,
                     ),
-            shape = RoundedCornerShape(12.dp),
+            shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
             color = glassContainerColor(TajsOSTheme.SurfaceHigh),
             tonalElevation = 0.dp,
             shadowElevation = 0.dp,
@@ -492,10 +493,10 @@ fun NotificationsPopover(
         Surface(
             modifier =
                 Modifier.glassChrome(
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                     material = GlassMaterial.REGULAR,
                 ),
-            shape = RoundedCornerShape(12.dp),
+            shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
             color = glassContainerColor(TajsOSTheme.SurfaceHigh),
             tonalElevation = 0.dp,
             shadowElevation = 0.dp,

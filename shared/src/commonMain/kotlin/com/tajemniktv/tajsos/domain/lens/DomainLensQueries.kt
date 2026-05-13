@@ -104,8 +104,8 @@ private val healthTitleKeywords =
  * This heuristic-based approach provides a zero-configuration experience, allowing items to be surfaced
  * appropriately even if the user forgets to manually assign the domain.
  *
- * Note: These queries intentionally bypass explicit domain associations (e.g., via `associatedDomains`
- * in `AreaMetadata`) in favor of terminology matching to lower the friction of capturing new data.
+ * Note: These queries intentionally bypass explicit domain associations (e.g., via ItemDomainEntity)
+ * in favor of terminology matching to lower the friction of capturing new data.
  *
  * This object implements a zero-configuration classification strategy. Instead of relying on
  * explicit database associations (like a many-to-many domain relation table), items are
@@ -115,7 +115,9 @@ private val healthTitleKeywords =
  *
  * Currently, heuristic matching queries are only implemented for the `FINANCES` and `HEALTH` domains.
  * `EDUCATION` and `RELATIONSHIPS` (defined in [com.tajemniktv.tajsos.domain.DomainKind])
- * do not yet have dedicated queries in this object.
+ * do not yet have dedicated queries in this object. Adding support for them would require
+ * establishing similar heuristic marker sets (e.g., `educationTagMarkers`, `educationTitleKeywords`,
+ * `relationshipsMaintenanceTypes`) and implementing their respective projection queries.
  */
 object DomainLensQueries {
     /**

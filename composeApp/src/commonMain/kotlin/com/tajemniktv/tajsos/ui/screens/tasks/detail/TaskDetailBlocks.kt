@@ -4,6 +4,7 @@
 
 package com.tajemniktv.tajsos.ui.screens.tasks.detail
 
+import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -111,7 +112,7 @@ import tajsos.composeapp.generated.resources.task_detail_snooze
 import tajsos.composeapp.generated.resources.tasks_detail_updated
 import tajsos.composeapp.generated.resources.track_empty
 
-private val detailPanelShape = RoundedCornerShape(12.dp)
+private val detailPanelShape = RoundedCornerShape(TajsOSTheme.RadiusMd)
 private val detailPanelBorder = TajsOSTheme.GhostBorder.copy(alpha = 0.22f)
 
 private enum class HeaderBadgeTone {
@@ -296,7 +297,7 @@ private fun HeaderTitleEditor(
     onValueChange: (String) -> Unit,
 ) {
     Surface(
-        shape = RoundedCornerShape(10.dp),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         color = TajsOSTheme.SurfaceHighest,
     ) {
         BasicTextField(
@@ -385,7 +386,7 @@ private fun renderTaskDescription(context: TaskDetailContext) {
             SectionTitle(stringResource(Res.string.task_detail_directives_section))
             if (context.isEditing) {
                 Surface(
-                    shape = RoundedCornerShape(10.dp),
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                     color = TajsOSTheme.SurfaceHighest,
                 ) {
                     BasicTextField(
@@ -429,7 +430,7 @@ private fun renderTaskDescription(context: TaskDetailContext) {
                         Surface(
                             shape = RoundedCornerShape(999.dp),
                             color = TajsOSTheme.Primary.copy(alpha = 0.15f),
-                            border = BorderStroke(1.dp, TajsOSTheme.Primary.copy(alpha = 0.35f)),
+                            border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),
                         ) {
                             Text(
                                 text = chip,
@@ -486,10 +487,10 @@ private fun renderTaskSubtasks(context: TaskDetailContext) {
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                OutlinedTextField(
+                TactileOutlinedTextField(
                     value = newChecklistItem,
                     onValueChange = { newChecklistItem = it },
-                    modifier = Modifier.weight(1f),
+                    containerModifier = Modifier.weight(1f),
                     singleLine = true,
                     label = { Text(stringResource(Res.string.detail_tag_new_placeholder)) },
                 )
@@ -571,7 +572,7 @@ private fun SubtaskRow(
 
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(10.dp),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         color = background,
     ) {
         Row(
@@ -1042,7 +1043,7 @@ private fun StatusPill(state: TaskState) {
     Surface(
         shape = RoundedCornerShape(999.dp),
         color = tint.copy(alpha = 0.15f),
-        border = BorderStroke(1.dp, tint.copy(alpha = 0.35f)),
+        border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),
     ) {
         Text(
             text = label,
@@ -1204,7 +1205,7 @@ private fun TaskStateBadge(
     Surface(
         shape = RoundedCornerShape(999.dp),
         color = tint.copy(alpha = 0.16f),
-        border = BorderStroke(1.dp, tint.copy(alpha = 0.35f)),
+        border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),
     ) {
         Text(
             text = label,

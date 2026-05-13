@@ -5,7 +5,6 @@
 package com.tajemniktv.tajsos.ui.components.cards
 
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -68,8 +67,7 @@ fun StickyNoteCard(
         onClick = onClick,
         modifier = modifier.width(200.dp),
         color = TajsOSTheme.Accent.copy(alpha = 0.1f),
-        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.Accent.copy(alpha = 0.3f)),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
     ) {
         Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
             Text(
@@ -412,7 +410,7 @@ fun VaultCard(
         onClick = onClick,
         modifier = modifier,
         color = TajsOSTheme.CardSurface,
-        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
     ) {
         Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
             Icon(

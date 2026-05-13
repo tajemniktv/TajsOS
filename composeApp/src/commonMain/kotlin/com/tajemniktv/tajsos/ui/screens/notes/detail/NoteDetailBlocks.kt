@@ -400,7 +400,7 @@ private fun renderNoteTaskMetadata(context: NoteDetailContext) {
                 modifier = Modifier.fillMaxWidth(),
                 color = TajsOSTheme.Accent.copy(alpha = 0.1f),
                 shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                border = BorderStroke(1.dp, TajsOSTheme.Accent.copy(alpha = 0.3f)),
+                border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),
             ) {
                 Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
                     Text(
@@ -540,7 +540,7 @@ private fun renderNoteContextGraph(context: NoteDetailContext) {
                                 .size(32.dp)
                                 .background(
                                     TajsOSTheme.Surface,
-                                    RoundedCornerShape(8.dp),
+                                    RoundedCornerShape(TajsOSTheme.RadiusSm),
                                 ),
                         contentAlignment = Alignment.Center,
                     ) {

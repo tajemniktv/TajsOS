@@ -69,7 +69,7 @@ fun SuggestionGroup(
                 modifier = Modifier.fillMaxWidth(),
                 color = TajsOSTheme.CardSurface,
                 shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
-                border = BorderStroke(1.dp, color.copy(alpha = 0.2f)),
+                border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),
             ) {
                 Row(
                     modifier = Modifier.padding(TajsOSTheme.SpacingMd),

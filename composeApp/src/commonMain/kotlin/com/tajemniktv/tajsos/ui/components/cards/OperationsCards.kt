@@ -4,6 +4,7 @@
 
 package com.tajemniktv.tajsos.ui.components.cards
 
+import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -52,6 +53,21 @@ import tajsos.composeapp.generated.resources.open_loop_unassigned
 import tajsos.composeapp.generated.resources.open_loop_untyped
 import kotlin.time.Clock
 
+/**
+ * Displays a card for an open loop (unresolved thought, idea, or pending task).
+ * Provides actionable interactions like resolving, archiving, or converting the loop into a concrete task or decision.
+ *
+ * @param item The state data representing the open loop, including its urgency and status.
+ * @param areaName Optional name of the associated area for context rendering.
+ * @param openLoopTypes A list of valid categorization types for open loops.
+ * @param onEditNode Callback triggered when the user opts to open the full node editor.
+ * @param onSetType Callback triggered when a new open loop category is selected.
+ * @param onConvertTask Callback to convert the loop into an actionable task.
+ * @param onConvertDecision Callback to convert the loop into a recorded decision.
+ * @param onConvertNote Callback to convert the loop into a standard note.
+ * @param onResolve Callback to mark the loop as completed or resolved.
+ * @param onArchive Callback to hide the loop from active views without deleting it.
+ */
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
 fun OpenLoopCard(
@@ -79,7 +95,7 @@ fun OpenLoopCard(
         color = TajsOSTheme.CardSurface,
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TajsOSTheme.RadiusMd),
+                .RoundedCornerShape(TajsOSTheme.RadiusXl),
         border = BorderStroke(1.dp, urgencyColor.copy(alpha = 0.25f)),
     ) {
         Column(
@@ -171,6 +187,20 @@ fun OpenLoopCard(
     }
 }
 
+/**
+ * Renders a card for routine or scheduled maintenance tasks (e.g., bills, chores, subscriptions).
+ * Highlights urgency and allows adjusting the schedule or marking the item resolved.
+ *
+ * @param item The state tracking the maintenance task's deadline and completion.
+ * @param areaName Optional name of the associated area for contextual display.
+ * @param maintenanceTypes A list of valid maintenance categories (e.g., 'subscription', 'chore').
+ * @param onEditNode Callback to open the full editor for the maintenance node.
+ * @param onSetType Callback to change the maintenance category.
+ * @param onSetRecurring Callback to update or set the recurring schedule string (e.g., 'DAILY', 'WEEKLY').
+ * @param onSetOverdue Callback to manually override the overdue timestamp, or null to clear.
+ * @param onResolve Callback to record a completion event and schedule the next occurrence.
+ * @param onArchive Callback to retire the maintenance item.
+ */
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
 fun MaintenanceCard(
@@ -196,7 +226,7 @@ fun MaintenanceCard(
         color = TajsOSTheme.CardSurface,
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TajsOSTheme.RadiusMd),
+                .RoundedCornerShape(TajsOSTheme.RadiusXl),
         border = BorderStroke(1.dp, urgencyColor.copy(alpha = 0.25f)),
     ) {
         Column(
@@ -288,6 +318,18 @@ fun MaintenanceCard(
     }
 }
 
+/**
+ * Displays a summary card for a repeatable protocol or checklist (e.g., Morning Startup).
+ * Shows completion progress and provides inline toggle actions for checklist items.
+ *
+ * @param item The state tracking the protocol's history, run count, and checklist progress.
+ * @param checklistItems A list of pairs representing the current checklist state (isCompleted, label).
+ * @param onEditNode Callback to modify the protocol definition.
+ * @param onRun Callback to trigger a new run of the protocol, creating a history entry.
+ * @param onToggleChecklist Callback fired when a checklist item's completion state changes. Receives the index and new boolean state.
+ * @param onArchive Callback to retire the protocol.
+ * @param formatTimestamp A formatting function to render timestamps cleanly.
+ */
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
 fun ProtocolCard(
@@ -304,7 +346,7 @@ fun ProtocolCard(
         color = TajsOSTheme.CardSurface,
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TajsOSTheme.RadiusMd),
+                .RoundedCornerShape(TajsOSTheme.RadiusXl),
     ) {
         Column(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -350,6 +392,12 @@ fun ProtocolCard(
     }
 }
 
+/**
+ * Renders a question card used to clarify distinctions or boundaries within the LifeOS framework.
+ * Visually distinguishes between answered and unanswered states to prompt reflection.
+ *
+ * @param item The state containing the distinction question and the user's recorded answer.
+ */
 @Composable
 fun DistinctionQuestionCard(item: DistinctionQuestionState) {
     Surface(
@@ -357,7 +405,7 @@ fun DistinctionQuestionCard(item: DistinctionQuestionState) {
         color = TajsOSTheme.CardSurface,
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TajsOSTheme.RadiusMd),
+                .RoundedCornerShape(TajsOSTheme.RadiusXl),
         border =
             BorderStroke(
                 1.dp,
@@ -383,6 +431,12 @@ fun DistinctionQuestionCard(item: DistinctionQuestionState) {
     }
 }
 
+/**
+ * Displays a commitment or guiding principle, reflecting whether recent actions align with it.
+ * Uses a traffic-light border pattern to indicate if the commitment is currently satisfied or needs work.
+ *
+ * @param item The state tracking the commitment's text, satisfaction status, and supporting evidence.
+ */
 @Composable
 fun DirectionCommitmentCard(item: DirectionCommitmentStatus) {
     Surface(
@@ -390,7 +444,7 @@ fun DirectionCommitmentCard(item: DirectionCommitmentStatus) {
         color = TajsOSTheme.CardSurface,
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TajsOSTheme.RadiusMd),
+                .RoundedCornerShape(TajsOSTheme.RadiusXl),
         border =
             BorderStroke(
                 1.dp,
@@ -428,6 +482,12 @@ fun DirectionCommitmentCard(item: DirectionCommitmentStatus) {
     }
 }
 
+/**
+ * Renders an evaluation card for a core LifeOS behavior shift (e.g., transitioning from passive logging to active planning).
+ * Similar to [DirectionCommitmentCard], it highlights areas requiring attention.
+ *
+ * @param item The evaluation state containing the criterion, its satisfaction status, and evidence.
+ */
 @Composable
 fun CoreShiftCriterionCard(item: CoreLifeOSShiftItem) {
     Surface(
@@ -435,7 +495,7 @@ fun CoreShiftCriterionCard(item: CoreLifeOSShiftItem) {
         color = TajsOSTheme.CardSurface,
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TajsOSTheme.RadiusMd),
+                .RoundedCornerShape(TajsOSTheme.RadiusXl),
         border =
             BorderStroke(
                 1.dp,
@@ -473,6 +533,15 @@ fun CoreShiftCriterionCard(item: CoreLifeOSShiftItem) {
     }
 }
 
+/**
+ * A comprehensive card managing interactions, context, and follow-ups for a specific person.
+ * Exposes actions for setting contact dates, assigning relationship tiers, creating linked nodes, and storing context notes.
+ *
+ * @param item The CRM state for the person, tracking days since contact and follow-up schedules.
+ * @param viewModel The [MainViewModel] used to dispatch relationship mutation actions (like setting importance or contact dates).
+ * @param onEditNode Callback to open the full person node editor.
+ * @param groupedSection A @Composable lambda to render related nodes. Receives the section title and a list of node titles.
+ */
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
 fun PersonRelationshipCard(
@@ -500,7 +569,7 @@ fun PersonRelationshipCard(
         color = TajsOSTheme.CardSurface,
         shape =
             androidx.compose.foundation.shape
-                .RoundedCornerShape(TajsOSTheme.RadiusMd),
+                .RoundedCornerShape(TajsOSTheme.RadiusXl),
         border =
             BorderStroke(
                 1.dp,
@@ -618,14 +687,14 @@ fun PersonRelationshipCard(
                     label = { Text("OPEN RELATIONSHIP") },
                 )
             }
-            OutlinedTextField(
+            TactileOutlinedTextField(
                 value = socialNotes,
                 onValueChange = { socialNotes = it },
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text("Social energy notes") },
                 minLines = 2,
             )
-            OutlinedTextField(
+            TactileOutlinedTextField(
                 value = relationshipContext,
                 onValueChange = { relationshipContext = it },
                 modifier = Modifier.fillMaxWidth(),

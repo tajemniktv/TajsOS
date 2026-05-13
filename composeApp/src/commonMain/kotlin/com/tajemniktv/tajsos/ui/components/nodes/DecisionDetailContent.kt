@@ -4,6 +4,7 @@
 
 package com.tajemniktv.tajsos.ui.components.nodes
 
+import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -231,7 +232,7 @@ fun DecisionDetailContent(
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
                     color = TajsOSTheme.Background,
-                    shape = RoundedCornerShape(2.dp),
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusXs),
                 ) {
                     Row(
                         modifier = Modifier.padding(TajsOSTheme.SpacingSm),
@@ -344,7 +345,7 @@ fun DecisionDetailContent(
                 onClick = { viewModel.convertDecisionToProject(node.id) },
                 colors = ButtonDefaults.buttonColors(containerColor = TajsOSTheme.Accent),
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(2.dp),
+                shape = RoundedCornerShape(TajsOSTheme.RadiusXs),
             ) {
                 Text(stringResource(Res.string.decision_convert_project))
             }
@@ -352,7 +353,7 @@ fun DecisionDetailContent(
             OutlinedButton(
                 onClick = { viewModel.convertDecisionToTask(node.id) },
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(2.dp),
+                shape = RoundedCornerShape(TajsOSTheme.RadiusXs),
             ) {
                 Text(stringResource(Res.string.decision_convert_task), color = TajsOSTheme.Text)
             }
@@ -361,7 +362,7 @@ fun DecisionDetailContent(
                 onClick = { showDecideDialog = true },
                 colors = ButtonDefaults.buttonColors(containerColor = TajsOSTheme.Primary),
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(2.dp),
+                shape = RoundedCornerShape(TajsOSTheme.RadiusXs),
             ) {
                 Text(stringResource(Res.string.decision_finalize))
             }
@@ -374,7 +375,7 @@ fun DecisionDetailContent(
             onDismissRequest = { showAddOptionDialog = false },
             title = { Text(stringResource(Res.string.decision_add_option_title)) },
             text = {
-                OutlinedTextField(
+                TactileOutlinedTextField(
                     value = optionTitle,
                     onValueChange = { optionTitle = it },
                     label = { Text(stringResource(Res.string.decision_add_option_field)) },
@@ -431,7 +432,7 @@ fun DecisionDetailContent(
                             Text(option.title)
                         }
                     }
-                    OutlinedTextField(
+                    TactileOutlinedTextField(
                         value = outcome,
                         onValueChange = { outcome = it },
                         label = { Text(stringResource(Res.string.decision_outcome_reason)) },

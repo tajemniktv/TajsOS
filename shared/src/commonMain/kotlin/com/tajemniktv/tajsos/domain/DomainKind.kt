@@ -13,6 +13,11 @@ import kotlinx.serialization.Serializable
  * to user-defined Areas. TajsOS utilizes heuristic-based, zero-configuration logic
  * (e.g., implicit keyword matching) for categorizing domains rather than requiring
  * explicit user associations.
+ *
+ * This implicit matching (implemented in [com.tajemniktv.tajsos.domain.lens.DomainLensQueries])
+ * intentionally bypasses explicit assignments like [com.tajemniktv.tajsos.data.ItemDomainEntity]
+ * to provide a seamless user experience, ensuring items surface in appropriate lenses
+ * without requiring the user to constantly curate their metadata.
  */
 @Serializable
 enum class DomainKind {

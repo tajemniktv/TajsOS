@@ -108,10 +108,10 @@ object TajsOSTheme {
     val ScreenCanvas: Color get() = currentColors.surfaceLowest
 
     /** Surface color for standard cards. */
-    val CardSurface: Color get() = currentColors.surface
+    val CardSurface: Color get() = currentColors.surfaceLow
 
     /** Surface color for nested cards. */
-    val CardNestedSurface: Color get() = currentColors.surfaceLow
+    val CardNestedSurface: Color get() = currentColors.surfaceHighest
 
     /** Stroke color for cards. */
     val CardStroke: Color get() = currentColors.ghostBorder.copy(alpha = 0.55f)
@@ -186,16 +186,22 @@ object TajsOSTheme {
     val SidebarWidth = 280.dp
 
     /** Extra small corner radius. */
-    val RadiusXs = 2.dp
+    val RadiusXs = 4.dp
 
     /** Small corner radius. */
-    val RadiusSm = 4.dp
+    val RadiusSm = 8.dp
 
     /** Medium corner radius. */
     val RadiusMd = 12.dp
 
     /** Large corner radius. */
     val RadiusLg = 16.dp
+
+    /** Extra large corner radius. */
+    val RadiusXl = 24.dp
+
+    /** 2x extra large corner radius. */
+    val Radius2Xl = 32.dp
 
     /** Extra small spacing. */
     val SpacingXs = 4.dp

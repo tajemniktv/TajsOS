@@ -17,7 +17,7 @@ import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Instant
 
 /**
- * AppRepository is the single source of truth for TajsOS's Room database.
+ * Fallback, no-operation implementation for [InboxEntryDao] used when the actual DAO is unavailable or uninitialized.
  */
 private object NoOpInboxEntryDao : InboxEntryDao {
     override fun getAllInboxEntries(): Flow<List<InboxEntryEntity>> = flowOf(emptyList())
@@ -31,6 +31,9 @@ private object NoOpInboxEntryDao : InboxEntryDao {
     override suspend fun updateInboxEntry(entry: InboxEntryEntity) = Unit
 }
 
+/**
+ * Fallback, no-operation implementation for [TaskFacetDao] used when the actual DAO is unavailable or uninitialized.
+ */
 private object NoOpTaskFacetDao : TaskFacetDao {
     override fun getAllTaskFacets(): Flow<List<TaskFacetEntity>> = flowOf(emptyList())
 
@@ -43,6 +46,9 @@ private object NoOpTaskFacetDao : TaskFacetDao {
     override suspend fun deleteTaskFacetForItem(itemId: Long) = Unit
 }
 
+/**
+ * Fallback, no-operation implementation for [NoteFacetDao] used when the actual DAO is unavailable or uninitialized.
+ */
 private object NoOpNoteFacetDao : NoteFacetDao {
     override fun getAllNoteFacets(): Flow<List<NoteFacetEntity>> = flowOf(emptyList())
 
@@ -55,6 +61,9 @@ private object NoOpNoteFacetDao : NoteFacetDao {
     override suspend fun deleteNoteFacetForItem(itemId: Long) = Unit
 }
 
+/**
+ * Fallback, no-operation implementation for [ProjectFacetDao] used when the actual DAO is unavailable or uninitialized.
+ */
 private object NoOpProjectFacetDao : ProjectFacetDao {
     override fun getAllProjectFacets(): Flow<List<ProjectFacetEntity>> = flowOf(emptyList())
 
@@ -67,6 +76,9 @@ private object NoOpProjectFacetDao : ProjectFacetDao {
     override suspend fun deleteProjectFacetForItem(itemId: Long) = Unit
 }
 
+/**
+ * Fallback, no-operation implementation for [AreaFacetDao] used when the actual DAO is unavailable or uninitialized.
+ */
 private object NoOpAreaFacetDao : AreaFacetDao {
     override fun getAllAreaFacets(): Flow<List<AreaFacetEntity>> = flowOf(emptyList())
 
@@ -79,6 +91,9 @@ private object NoOpAreaFacetDao : AreaFacetDao {
     override suspend fun deleteAreaFacetForItem(itemId: Long) = Unit
 }
 
+/**
+ * Fallback, no-operation implementation for [RecordFacetDao] used when the actual DAO is unavailable or uninitialized.
+ */
 private object NoOpRecordFacetDao : RecordFacetDao {
     override fun getAllRecordFacets(): Flow<List<RecordFacetEntity>> = flowOf(emptyList())
 
@@ -91,23 +106,48 @@ private object NoOpRecordFacetDao : RecordFacetDao {
     override suspend fun deleteRecordFacetForItem(itemId: Long) = Unit
 }
 
+/**
+ * Fallback, no-operation implementation for [ItemDomainDao] used when the actual DAO is unavailable or uninitialized.
+ */
 private object NoOpItemDomainDao : ItemDomainDao {
+    /**
+     * Fallback implementation that emits an empty list of domain associations.
+     */
     override fun getAllItemDomains(): Flow<List<ItemDomainEntity>> = flowOf(emptyList())
 
+    /**
+     * Fallback implementation that emits an empty list of domains for the requested item.
+     */
     override fun getDomainsForItem(itemId: Long): Flow<List<ItemDomainEntity>> = flowOf(emptyList())
 
+    /**
+     * Fallback, no-operation implementation for upserting a domain.
+     */
     override suspend fun upsertDomain(domain: ItemDomainEntity) = Unit
+    override suspend fun upsertDomains(domains: List<ItemDomainEntity>) = Unit
 
+    /**
+     * Fallback, no-operation implementation for deleting a specific domain association.
+     */
     override suspend fun deleteDomain(
         itemId: Long,
         domainKey: String,
     ) = Unit
 
+    /**
+     * Fallback, no-operation implementation for clearing all domain associations for an item.
+     */
     override suspend fun deleteDomainsForItem(itemId: Long) = Unit
 
+    /**
+     * Fallback, no-operation implementation for clearing the primary domain flag.
+     */
     override suspend fun clearPrimaryFlag(itemId: Long) = Unit
 }
 
+/**
+ * Fallback, no-operation implementation for [RichContentDocumentDao] used when the actual DAO is unavailable or uninitialized.
+ */
 private object NoOpRichContentDocumentDao : RichContentDocumentDao {
     override fun getAllDocuments(): Flow<List<RichContentDocumentEntity>> = flowOf(emptyList())
 
@@ -120,6 +160,9 @@ private object NoOpRichContentDocumentDao : RichContentDocumentDao {
     override suspend fun deleteDocumentForItem(itemId: Long) = Unit
 }
 
+/**
+ * Fallback, no-operation implementation for [ScheduleEntryDao] used when the actual DAO is unavailable or uninitialized.
+ */
 private object NoOpScheduleEntryDao : ScheduleEntryDao {
     override fun getAllScheduleEntries(): Flow<List<ScheduleEntryEntity>> = flowOf(emptyList())
 
@@ -148,6 +191,9 @@ private object NoOpScheduleEntryDao : ScheduleEntryDao {
     override suspend fun insertScheduleEntries(entries: List<ScheduleEntryEntity>) = Unit
 }
 
+/**
+ * Fallback, no-operation implementation for [SavedViewDao] used when the actual DAO is unavailable or uninitialized.
+ */
 private object NoOpSavedViewDao : SavedViewDao {
     override fun getAllSavedViews(): Flow<List<SavedViewEntity>> = flowOf(emptyList())
 
@@ -582,13 +628,14 @@ class AppRepository(
             }
 
         val id = insertNode(node)
-        domains.forEachIndexed { index, domain ->
-            assignDomainToItem(
+        val domainEntities = domains.mapIndexed { index, domain ->
+            ItemDomainEntity(
                 itemId = id,
-                domain = domain,
+                domainKey = domain.name,
                 isPrimary = index == 0,
             )
         }
+        if (domainEntities.isNotEmpty()) itemDomainDao.upsertDomains(domainEntities)
         if (kind == ItemKind.RECORD) {
             recordFacetDao.upsertRecordFacet(
                 RecordFacetEntity(
@@ -694,10 +741,52 @@ class AppRepository(
      *
      * @param node The updated node entity to save.
      */
+
+
+
     suspend fun updateNode(node: NodeEntity) {
         val oldNode = nodeDao.getNodeById(node.id) ?: return
         nodeDao.updateNode(node)
+        executeNodeSideEffects(oldNode, node)
+    }
 
+    /**
+     * Updates multiple existing nodes in the database in a batch operation.
+     * Side-effects (like logging, facet syncing, etc.) are executed for each node.
+     *
+     * @param nodes The updated node entities to save.
+     */
+    suspend fun updateNodes(nodes: List<NodeEntity>) {
+        if (nodes.isEmpty()) return
+
+        val oldNodesMap = nodeDao.getNodesByIds(nodes.map { it.id }).associateBy { it.id }
+
+        nodeDao.updateNodes(nodes)
+
+        nodes.forEach { node ->
+            val oldNode = oldNodesMap[node.id] ?: return@forEach
+            executeNodeSideEffects(oldNode, node)
+        }
+    }
+
+    private suspend fun updateDecisionOptionsBatch(
+        options: List<DecisionOptionEntity>,
+        selectedOptionId: Long?
+    ) {
+        val updatedOptions = options.mapNotNull { option ->
+            val isSelected = option.id == selectedOptionId
+            if (option.isSelected != isSelected) {
+                option.copy(isSelected = isSelected)
+            } else {
+                null
+            }
+        }
+        if (updatedOptions.isNotEmpty()) {
+            decisionDao.updateDecisionOptions(updatedOptions)
+        }
+    }
+
+    private suspend fun executeNodeSideEffects(oldNode: NodeEntity, node: NodeEntity) {
         if (oldNode.status != node.status) {
             when (node.status)
             {
@@ -725,6 +814,7 @@ class AppRepository(
             recurrenceRule = node.recurringInterval,
         )
     }
+
 
     private suspend fun syncBelongsToRelations(
         nodeId: Long,
@@ -855,15 +945,14 @@ class AppRepository(
     private suspend fun syncDomainsFromNodeMetadata(node: NodeEntity) {
         val associatedDomains = node.areaMetadataOrNull()?.associatedDomains ?: return
         itemDomainDao.deleteDomainsForItem(node.id)
-        associatedDomains.forEachIndexed { index, domain ->
-            itemDomainDao.upsertDomain(
-                ItemDomainEntity(
-                    itemId = node.id,
-                    domainKey = domain.name,
-                    isPrimary = index == 0,
-                ),
+        val domainEntities = associatedDomains.mapIndexed { index, domain ->
+            ItemDomainEntity(
+                itemId = node.id,
+                domainKey = domain.name,
+                isPrimary = index == 0,
             )
         }
+        if (domainEntities.isNotEmpty()) itemDomainDao.upsertDomains(domainEntities)
     }
 
     /**
@@ -1500,13 +1589,7 @@ class AppRepository(
         val node = nodeDao.getNodeById(nodeId) ?: return
         val options = decisionDao.getOptionsForDecision(nodeId).first()
 
-        options.forEach { option ->
-            if (option.id == selectedOptionId) {
-                decisionDao.updateDecisionOption(option.copy(isSelected = true))
-            } else if (option.isSelected) {
-                decisionDao.updateDecisionOption(option.copy(isSelected = false))
-            }
-        }
+        updateDecisionOptionsBatch(options, selectedOptionId)
 
         nodeDao.updateNode(
             node.copy(
@@ -1665,8 +1748,16 @@ class AppRepository(
             recentEvents = getRecentLogs(limit = recentEventLimit).first(),
         )
 
+    /**
+     * Imports a complete data bundle into the repository.
+     * Uses batch insertion operations (like [insertNodes]) to ensure high performance
+     * and minimize database transaction overhead during large imports.
+     *
+     * @param bundle The [ExportBundle] containing the data to import.
+     * @return An [ImportReport] summarizing the imported entity counts.
+     */
     suspend fun importBundle(bundle: ExportBundle): ImportReport {
-        bundle.nodes.forEach { nodeDao.insertNode(it) }
+        nodeDao.insertNodes(bundle.nodes)
         relationDao.insertRelations(bundle.relations)
         tagDao.insertTags(bundle.tags)
         templateDao.insertTemplates(bundle.templates)
@@ -1688,8 +1779,15 @@ class AppRepository(
         )
     }
 
+    /**
+     * Imports a list of legacy nodes into the repository.
+     * Utilizes batch insertion via [insertNodes] for optimized performance.
+     *
+     * @param nodes The list of [NodeEntity] legacy nodes to import.
+     * @return The number of nodes successfully imported.
+     */
     suspend fun importLegacyNodes(nodes: List<NodeEntity>): Int {
-        nodes.forEach { nodeDao.insertNode(it) }
+        nodeDao.insertNodes(nodes)
         return nodes.size
     }
 }

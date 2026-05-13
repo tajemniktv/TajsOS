@@ -4,7 +4,6 @@
 
 package com.tajemniktv.tajsos.ui.components.cards
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -30,8 +29,7 @@ fun DashCard(
         onClick = onClick,
         modifier = modifier,
         color = TajsOSTheme.CardSurface,
-        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
         content = content,
     )
 }
@@ -46,8 +44,8 @@ fun TactileCard(
         modifier =
             modifier
                 .fillMaxWidth()
-                .background(TajsOSTheme.CardSurface, RoundedCornerShape(TajsOSTheme.RadiusMd))
-                .border(1.dp, TajsOSTheme.GhostBorder, RoundedCornerShape(TajsOSTheme.RadiusMd))
+                .background(TajsOSTheme.CardSurface, RoundedCornerShape(TajsOSTheme.RadiusXl))
+
                 .then(
                     if (onClick != null) {
                         Modifier.mouseClickable(

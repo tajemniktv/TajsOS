@@ -10,6 +10,7 @@ import android.os.BadParcelableException
 import android.os.Build
 import android.os.Bundle
 import android.os.ParcelFormatException
+import android.content.ActivityNotFoundException
 import android.speech.RecognizerIntent
 import android.util.Log
 import android.security.keystore.KeyGenParameterSpec
@@ -43,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.core.content.IntentCompat
 import androidx.fragment.app.FragmentActivity
 import com.google.firebase.FirebaseApp
 import java.security.KeyStore
@@ -177,7 +179,13 @@ class MainActivity : FragmentActivity() {
                         onVoiceCapture = { triggerVoiceCapture() },
                         voiceCaptureResult = voiceText,
                         onVoiceCaptureConsume = { voiceCaptureResult.value = null },
-                        onPickAvatar = { avatarPickerLauncher.launch("image/*") },
+                        onPickAvatar = {
+                            try {
+                                avatarPickerLauncher.launch("image/*")
+                            } catch (e: ActivityNotFoundException) {
+                                Log.w(TAG, "Image picker not available", e)
+                            }
+                        },
                         avatarPickResult = avatarRef,
                         onAvatarPickConsume = { avatarPickResult.value = null },
                     )
@@ -306,7 +314,8 @@ class MainActivity : FragmentActivity() {
             }
         try {
             speechRecognizerLauncher.launch(intent)
-        } catch (e: Exception) {
+        } catch (e: ActivityNotFoundException) {
+            Log.w(TAG, "Speech recognizer not available", e)
             // Speech recognizer not available
         }
     }

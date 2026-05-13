@@ -557,7 +557,7 @@ private fun BriefingSignalSections(
                 )
             } else {
                 Surface(
-                    shape = RoundedCornerShape(14.dp),
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
                     color = TajsOSTheme.SurfaceHigh.copy(alpha = 0.7f),
                     tonalElevation = 0.dp,
                     shadowElevation = 0.dp,
@@ -601,7 +601,7 @@ private fun BriefingSignalCard(
 ) {
     Surface(
         modifier = modifier,
-        shape = RoundedCornerShape(14.dp),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
         color = TajsOSTheme.SurfaceLow.copy(alpha = 0.55f),
         tonalElevation = 0.dp,
         shadowElevation = 0.dp,
@@ -643,7 +643,7 @@ private fun BriefingSectionLabel(text: String) {
 private fun BriefingActionCard(action: BriefingAction) {
     Surface(
         onClick = action.onClick,
-        shape = RoundedCornerShape(14.dp),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
         color = TajsOSTheme.SurfaceLow.copy(alpha = 0.72f),
         tonalElevation = 0.dp,
         shadowElevation = 0.dp,
@@ -654,7 +654,7 @@ private fun BriefingActionCard(action: BriefingAction) {
             verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
             Surface(
-                shape = RoundedCornerShape(10.dp),
+                shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                 color = TajsOSTheme.Primary.copy(alpha = 0.2f),
                 modifier = Modifier.size(34.dp),
             ) {
@@ -696,7 +696,7 @@ private fun BriefingActionCard(action: BriefingAction) {
 private fun BriefingCaptureField(onClick: () -> Unit) {
     Surface(
         onClick = onClick,
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
         color = TajsOSTheme.SurfaceHighest.copy(alpha = 0.9f),
         modifier = Modifier.widthIn(max = 720.dp).fillMaxWidth().height(58.dp),
         tonalElevation = 0.dp,
@@ -756,7 +756,7 @@ private fun BriefingAtmosphere(modifier: Modifier = Modifier) {
     Box(
         modifier =
             modifier
-                .clip(RoundedCornerShape(20.dp))
+                .clip(RoundedCornerShape(TajsOSTheme.RadiusXl))
                 .hazeSource(state = hazeState),
     ) {
         Box(

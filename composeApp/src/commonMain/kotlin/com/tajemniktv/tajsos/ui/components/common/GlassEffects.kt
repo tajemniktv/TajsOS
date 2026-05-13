@@ -94,7 +94,7 @@ fun isGlassEnabled(): Boolean {
 @OptIn(ExperimentalHazeMaterialsApi::class)
 @Composable
 fun Modifier.glassChrome(
-    shape: Shape = RoundedCornerShape(16.dp),
+    shape: Shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
     material: GlassMaterial = GlassMaterial.REGULAR,
     edgeWidth: Dp = 1.dp,
 ): Modifier {

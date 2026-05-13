@@ -4,6 +4,7 @@
 
 package com.tajemniktv.tajsos.ui.screens.vaults
 
+import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -275,7 +276,7 @@ internal fun VaultsLayer(
         Surface(
             modifier = Modifier.fillMaxWidth(),
             color = TajsOSTheme.VaultShell,
-            shape = RoundedCornerShape(22.dp),
+            shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
             border = BorderStroke(1.dp, TajsOSTheme.VaultBorder),
         ) {
             BoxWithConstraints {
@@ -297,11 +298,11 @@ internal fun VaultsLayer(
                             ).padding(22.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
-                    OutlinedTextField(
+                    TactileOutlinedTextField(
                         value = searchQuery,
                         onValueChange = { searchQuery = it },
                         modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(14.dp),
+                        shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
                         singleLine = true,
                         leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                         label = { Text(stringResource(Res.string.lens_reference_search)) },
@@ -428,7 +429,7 @@ private fun VaultHeroPrimary(modifier: Modifier = Modifier) {
         Surface(
             color = TajsOSTheme.Primary.copy(alpha = 0.14f),
             shape = RoundedCornerShape(999.dp),
-            border = BorderStroke(1.dp, TajsOSTheme.Primary.copy(alpha = 0.35f)),
+            border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),
         ) {
             Text(
                 stringResource(Res.string.dash_module_ready),
@@ -585,7 +586,7 @@ private fun VaultCard(
                     modifier =
                         Modifier
                             .size(34.dp)
-                            .clip(RoundedCornerShape(10.dp))
+                            .clip(RoundedCornerShape(TajsOSTheme.RadiusMd))
                             .background(TajsOSTheme.Primary.copy(alpha = 0.2f)),
                     contentAlignment = Alignment.Center,
                 ) {
@@ -649,7 +650,7 @@ private fun ApplicationStatusCard(
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = TajsOSTheme.VaultSoft),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
         border = BorderStroke(1.dp, TajsOSTheme.VaultBorder),
     ) {
         Column(
@@ -709,7 +710,7 @@ private fun VaultEntryComposer(
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = TajsOSTheme.VaultShell),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
         border = BorderStroke(1.dp, TajsOSTheme.VaultBorder),
     ) {
         Column(
@@ -721,14 +722,14 @@ private fun VaultEntryComposer(
                 style = MaterialTheme.typography.titleSmall,
                 color = TajsOSTheme.VaultTextStrong,
             )
-            OutlinedTextField(
+            TactileOutlinedTextField(
                 value = entryTitle,
                 onValueChange = onEntryTitleChange,
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text(stringResource(Res.string.lens_reference_entry_title)) },
                 singleLine = true,
             )
-            OutlinedTextField(
+            TactileOutlinedTextField(
                 value = entryContent,
                 onValueChange = onEntryContentChange,
                 modifier = Modifier.fillMaxWidth(),
