@@ -80,6 +80,7 @@ class PackRegistryTest {
         assertTrue(missing.size == 1)
     }
 
+    @Test
     /**
      * Verifies that [PackRegistry.isOwned] returns true only for packs present in `ownedPackKeys`.
      */
