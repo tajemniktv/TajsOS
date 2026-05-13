@@ -60,8 +60,14 @@ class PackRegistryTest {
     @Test
     fun isDependencySatisfied_returnsCorrectStatus() {
         // AppPack.FINANCE requires "maintenance"
-        val registryWithDep = PackRegistry(emptySet(), setOf(AppPack.MAINTENANCE.key))
-        val registryWithoutDep = PackRegistry(emptySet(), emptySet())
+        val registryWithDep = PackRegistry(
+            ownedPackKeys = emptySet(),
+            enabledPackKeys = setOf(AppPack.MAINTENANCE.key),
+        )
+        val registryWithoutDep = PackRegistry(
+            ownedPackKeys = emptySet(),
+            enabledPackKeys = emptySet(),
+        )
 
         assertTrue(registryWithDep.isDependencySatisfied(AppPack.FINANCE))
         assertFalse(registryWithoutDep.isDependencySatisfied(AppPack.FINANCE))
