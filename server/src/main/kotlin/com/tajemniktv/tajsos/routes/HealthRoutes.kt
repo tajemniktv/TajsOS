@@ -9,10 +9,13 @@ fun Route.healthRoutes() {
     val startTime = System.currentTimeMillis()
 
     get("/health") {
+        val version = application.environment.config.propertyOrNull("ktor.application.version")?.getString()
+            ?: "unknown"
+
         call.respond(
             HealthResponse(
                 status = "OK",
-                version = "1.0.0", // Hardcoded for now, could be passed from build
+                version = version,
                 uptime = System.currentTimeMillis() - startTime
             )
         )

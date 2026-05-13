@@ -32,7 +32,10 @@ class ApplicationTest {
     @Test
     fun testSyncEndpoint_Unauthorized(): TestResult = testApplication {
         environment {
-            config = io.ktor.server.config.MapApplicationConfig("TAJSOS_SYNC_TOKEN" to "default-dev-token")
+            config = io.ktor.server.config.MapApplicationConfig(
+                "TAJSOS_SYNC_TOKEN" to "default-dev-token",
+                "ktor.application.version" to "1.0.0"
+            )
         }
         application {
             module()
@@ -48,7 +51,10 @@ class ApplicationTest {
     @Test
     fun testRoot(): TestResult = testApplication {
         environment {
-            config = io.ktor.server.config.MapApplicationConfig("TAJSOS_SYNC_TOKEN" to "default-dev-token")
+            config = io.ktor.server.config.MapApplicationConfig(
+                "TAJSOS_SYNC_TOKEN" to "default-dev-token",
+                "ktor.application.version" to "1.0.0"
+            )
         }
         application {
             module()
@@ -61,7 +67,10 @@ class ApplicationTest {
     @Test
     fun testHealthEndpoint(): TestResult = testApplication {
         environment {
-            config = io.ktor.server.config.MapApplicationConfig("TAJSOS_SYNC_TOKEN" to "default-dev-token")
+            config = io.ktor.server.config.MapApplicationConfig(
+                "TAJSOS_SYNC_TOKEN" to "default-dev-token",
+                "ktor.application.version" to "1.2.3"
+            )
         }
         application {
             module()
@@ -82,14 +91,17 @@ class ApplicationTest {
 
         val health = response.body<HealthResponse>()
         assertEquals("OK", health.status)
-        assertEquals("1.0.0", health.version)
+        assertEquals("1.2.3", health.version)
         assertTrue(health.uptime >= 0)
     }
 
     @Test
     fun testSyncEndpoint_HappyPath(): TestResult = testApplication {
         environment {
-            config = io.ktor.server.config.MapApplicationConfig("TAJSOS_SYNC_TOKEN" to "default-dev-token")
+            config = io.ktor.server.config.MapApplicationConfig(
+                "TAJSOS_SYNC_TOKEN" to "default-dev-token",
+                "ktor.application.version" to "1.0.0"
+            )
         }
         application {
             module()
@@ -141,7 +153,10 @@ class ApplicationTest {
     @Test
     fun testSyncEndpoint_BadPayload(): TestResult = testApplication {
         environment {
-            config = io.ktor.server.config.MapApplicationConfig("TAJSOS_SYNC_TOKEN" to "default-dev-token")
+            config = io.ktor.server.config.MapApplicationConfig(
+                "TAJSOS_SYNC_TOKEN" to "default-dev-token",
+                "ktor.application.version" to "1.0.0"
+            )
         }
         application {
             module()
@@ -162,7 +177,10 @@ class ApplicationTest {
     @Test
     fun testSyncEndpoint_returnsDeltaAndConflict(): TestResult = testApplication {
         environment {
-            config = io.ktor.server.config.MapApplicationConfig("TAJSOS_SYNC_TOKEN" to "default-dev-token")
+            config = io.ktor.server.config.MapApplicationConfig(
+                "TAJSOS_SYNC_TOKEN" to "default-dev-token",
+                "ktor.application.version" to "1.0.0"
+            )
         }
         application {
             module()
@@ -234,7 +252,10 @@ class ApplicationTest {
     @Test
     fun testSyncEndpoint_MissingContentType(): TestResult = testApplication {
         environment {
-            config = io.ktor.server.config.MapApplicationConfig("TAJSOS_SYNC_TOKEN" to "default-dev-token")
+            config = io.ktor.server.config.MapApplicationConfig(
+                "TAJSOS_SYNC_TOKEN" to "default-dev-token",
+                "ktor.application.version" to "1.0.0"
+            )
         }
         application {
             module()
