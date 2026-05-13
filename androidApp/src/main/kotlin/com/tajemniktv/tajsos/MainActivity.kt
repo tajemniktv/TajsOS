@@ -69,8 +69,8 @@ import com.tajemniktv.tajsos.ui.MainViewModel
 class MainActivity : FragmentActivity() {
     companion object {
         private const val TAG = "MainActivity"
-        private const val BIOMETRIC_KEY_ALIAS = "tajsos_biometric_key"
-        private const val ANDROID_KEYSTORE = "AndroidKeyStore"
+        const val BIOMETRIC_KEY_ALIAS = "tajsos_biometric_key"
+        const val ANDROID_KEYSTORE = "AndroidKeyStore"
         private const val CIPHER_TRANSFORMATION =
             "${KeyProperties.KEY_ALGORITHM_AES}/${KeyProperties.BLOCK_MODE_GCM}/${KeyProperties.ENCRYPTION_PADDING_NONE}"
     }
@@ -311,8 +311,6 @@ class MainActivity : FragmentActivity() {
                 )
                 putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.voice_speak_now))
             }
-        try {
-            speechRecognizerLauncher.launch(intent)
         try {
             speechRecognizerLauncher.launch(intent)
         } catch (e: android.content.ActivityNotFoundException) {
