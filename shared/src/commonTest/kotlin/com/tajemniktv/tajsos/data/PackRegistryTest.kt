@@ -81,6 +81,9 @@ class PackRegistryTest {
     }
 
     @Test
+    /**
+    * Verifies that [PackRegistry.isOwned] returns true only for packs present in `ownedPackKeys`.
+    */
     fun packRegistry_reportsOwnedPacks() {
         val registry =
             PackRegistry(
