@@ -123,8 +123,8 @@ fun buildProtocolChecklistContent(template: TransitionProtocolTemplate): String 
  */
 fun protocolChecklistProgress(content: String): Pair<Int, Int> {
     val checklistLines =
-        content.lines().map { it.trimStart() }.filter {
-            it.startsWith("- [ ] ") || it.startsWith("- [x] ")
+        content.lines().mapNotNull { line ->
+            line.trimStart().takeIf { it.startsWith("- [ ] ") || it.startsWith("- [x] ") }
         }
     val total = checklistLines.size
     val done = checklistLines.count { it.startsWith("- [x] ") }
