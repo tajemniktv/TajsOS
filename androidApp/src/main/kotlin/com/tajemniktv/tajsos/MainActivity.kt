@@ -179,7 +179,11 @@ class MainActivity : FragmentActivity() {
                         onVoiceCapture = { triggerVoiceCapture() },
                         voiceCaptureResult = voiceText,
                         onVoiceCaptureConsume = { voiceCaptureResult.value = null },
-                        onPickAvatar = { avatarPickerLauncher.launch("image/*") },
+                        onPickAvatar = { try {
+                            avatarPickerLauncher.launch("image/*")
+                        } catch (e: ActivityNotFoundException) {
+                            Log.w(TAG, "Image picker not available", e)
+                        } },
                         avatarPickResult = avatarRef,
                         onAvatarPickConsume = { avatarPickResult.value = null },
                     )
