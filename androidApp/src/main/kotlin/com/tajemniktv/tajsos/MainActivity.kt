@@ -488,7 +488,7 @@ class MainActivity : FragmentActivity() {
      */
     private inline fun <reified T : android.os.Parcelable> Intent.getSafeParcelableExtra(name: String): T? =
         try {
-            IntentCompat.getParcelableExtra(this, name, T::class.java)
+            androidx.core.content.IntentCompat.getParcelableExtra(this, name, T::class.java)
         } catch (e: BadParcelableException) {
             Log.e(TAG, "Failed to read parcelable extra: $name: ${e.javaClass.simpleName}")
             null
@@ -502,7 +502,7 @@ class MainActivity : FragmentActivity() {
      */
     private inline fun <reified T : android.os.Parcelable> Intent.getSafeParcelableArrayListExtra(name: String): java.util.ArrayList<T>? =
         try {
-            IntentCompat.getParcelableArrayListExtra(this, name, T::class.java)
+            androidx.core.content.IntentCompat.getParcelableArrayListExtra(this, name, T::class.java)
         } catch (e: BadParcelableException) {
             Log.e(TAG, "Failed to read parcelable array list extra: $name: ${e.javaClass.simpleName}")
             null
