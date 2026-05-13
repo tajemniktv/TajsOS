@@ -232,7 +232,7 @@ fun DecisionDetailContent(
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
                     color = TajsOSTheme.Background,
-                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusXs),
                 ) {
                     Row(
                         modifier = Modifier.padding(TajsOSTheme.SpacingSm),
@@ -345,7 +345,7 @@ fun DecisionDetailContent(
                 onClick = { viewModel.convertDecisionToProject(node.id) },
                 colors = ButtonDefaults.buttonColors(containerColor = TajsOSTheme.Accent),
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+                shape = RoundedCornerShape(TajsOSTheme.RadiusXs),
             ) {
                 Text(stringResource(Res.string.decision_convert_project))
             }
@@ -353,7 +353,7 @@ fun DecisionDetailContent(
             OutlinedButton(
                 onClick = { viewModel.convertDecisionToTask(node.id) },
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+                shape = RoundedCornerShape(TajsOSTheme.RadiusXs),
             ) {
                 Text(stringResource(Res.string.decision_convert_task), color = TajsOSTheme.Text)
             }
@@ -362,7 +362,7 @@ fun DecisionDetailContent(
                 onClick = { showDecideDialog = true },
                 colors = ButtonDefaults.buttonColors(containerColor = TajsOSTheme.Primary),
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+                shape = RoundedCornerShape(TajsOSTheme.RadiusXs),
             ) {
                 Text(stringResource(Res.string.decision_finalize))
             }
