@@ -325,4 +325,39 @@ class IcsCalendarProviderTest {
                 assertEquals(expectedCount, events.size, "Failed for URL: $url")
             }
         }
+
+    @Test
+    fun `test URL validation rejects malformed strings`(): TestResult =
+        runTest {
+            val ics =
+                """
+                BEGIN:VCALENDAR
+                END:VCALENDAR
+                """.trimIndent()
+
+            val provider = createProviderWithIcs(ics)
+
+            val malformedUrls = listOf(
+                "not-a-url",
+                "http://",
+                "https://",
+                "://example.com",
+                "http:/example.com",
+                "\u0000\u0000",
+                " ",
+                "",
+            )
+
+            for (url in malformedUrls) {
+                val entity =
+                    CalendarProviderEntity(
+                        id = 1,
+                        name = "Test",
+                        type = "ICS",
+                        url = url,
+                    )
+                val events = provider.fetchEvents(entity, defaultFrom, defaultTo)
+                assertEquals(0, events.size, "Failed to reject malformed URL: $url")
+            }
+        }
 }
