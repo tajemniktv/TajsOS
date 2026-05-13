@@ -443,7 +443,7 @@ private fun RenderDashboardBlock(
                         modifier =
                             Modifier
                                 .clickable { context.onNewEntry() }
-                                .background(TajsOSTheme.Primary, RoundedCornerShape(4.dp))
+                                .background(TajsOSTheme.Primary, RoundedCornerShape(TajsOSTheme.RadiusXs))
                                 .padding(horizontal = 12.dp, vertical = 6.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
@@ -637,7 +637,7 @@ private fun CommandItem(
             key,
             modifier =
                 Modifier
-                    .background(TajsOSTheme.Border, RoundedCornerShape(4.dp))
+                    .background(TajsOSTheme.Border, RoundedCornerShape(TajsOSTheme.RadiusXs))
                     .padding(horizontal = 6.dp, vertical = 2.dp),
             style = MaterialTheme.typography.labelSmall,
             color = TajsOSTheme.Text,

@@ -124,6 +124,7 @@ private object NoOpItemDomainDao : ItemDomainDao {
      * Fallback, no-operation implementation for upserting a domain.
      */
     override suspend fun upsertDomain(domain: ItemDomainEntity) = Unit
+    override suspend fun upsertDomains(domains: List<ItemDomainEntity>) = Unit
 
     /**
      * Fallback, no-operation implementation for deleting a specific domain association.
@@ -627,13 +628,14 @@ class AppRepository(
             }
 
         val id = insertNode(node)
-        domains.forEachIndexed { index, domain ->
-            assignDomainToItem(
+        val domainEntities = domains.mapIndexed { index, domain ->
+            ItemDomainEntity(
                 itemId = id,
-                domain = domain,
+                domainKey = domain.name,
                 isPrimary = index == 0,
             )
         }
+        if (domainEntities.isNotEmpty()) itemDomainDao.upsertDomains(domainEntities)
         if (kind == ItemKind.RECORD) {
             recordFacetDao.upsertRecordFacet(
                 RecordFacetEntity(
@@ -764,6 +766,23 @@ class AppRepository(
         nodes.forEach { node ->
             val oldNode = oldNodesMap[node.id] ?: return@forEach
             executeNodeSideEffects(oldNode, node)
+        }
+    }
+
+    private suspend fun updateDecisionOptionsBatch(
+        options: List<DecisionOptionEntity>,
+        selectedOptionId: Long?
+    ) {
+        val updatedOptions = options.mapNotNull { option ->
+            val isSelected = option.id == selectedOptionId
+            if (option.isSelected != isSelected) {
+                option.copy(isSelected = isSelected)
+            } else {
+                null
+            }
+        }
+        if (updatedOptions.isNotEmpty()) {
+            decisionDao.updateDecisionOptions(updatedOptions)
         }
     }
 
@@ -926,15 +945,14 @@ class AppRepository(
     private suspend fun syncDomainsFromNodeMetadata(node: NodeEntity) {
         val associatedDomains = node.areaMetadataOrNull()?.associatedDomains ?: return
         itemDomainDao.deleteDomainsForItem(node.id)
-        associatedDomains.forEachIndexed { index, domain ->
-            itemDomainDao.upsertDomain(
-                ItemDomainEntity(
-                    itemId = node.id,
-                    domainKey = domain.name,
-                    isPrimary = index == 0,
-                ),
+        val domainEntities = associatedDomains.mapIndexed { index, domain ->
+            ItemDomainEntity(
+                itemId = node.id,
+                domainKey = domain.name,
+                isPrimary = index == 0,
             )
         }
+        if (domainEntities.isNotEmpty()) itemDomainDao.upsertDomains(domainEntities)
     }
 
     /**
@@ -1571,13 +1589,7 @@ class AppRepository(
         val node = nodeDao.getNodeById(nodeId) ?: return
         val options = decisionDao.getOptionsForDecision(nodeId).first()
 
-        options.forEach { option ->
-            if (option.id == selectedOptionId) {
-                decisionDao.updateDecisionOption(option.copy(isSelected = true))
-            } else if (option.isSelected) {
-                decisionDao.updateDecisionOption(option.copy(isSelected = false))
-            }
-        }
+        updateDecisionOptionsBatch(options, selectedOptionId)
 
         nodeDao.updateNode(
             node.copy(

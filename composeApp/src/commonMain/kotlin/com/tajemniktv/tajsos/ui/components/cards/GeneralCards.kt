@@ -49,11 +49,11 @@ fun InfoCard(
         onClick = onClick,
         modifier =
             modifier.glassChrome(
-                shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+                shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
                 material = GlassMaterial.REGULAR,
             ),
         color = glassContainerColor(TajsOSTheme.Surface),
-        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
     ) {
         Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
             Row(
@@ -97,11 +97,11 @@ fun StatusCard(
         onClick = onClick,
         modifier =
             modifier.fillMaxWidth().glassChrome(
-                shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+                shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
                 material = GlassMaterial.REGULAR,
             ),
         color = glassContainerColor(TajsOSTheme.Surface),
-        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
     ) {
         Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
             Text(
@@ -138,11 +138,11 @@ fun LinkedNodeItem(
         onClick = onClick,
         modifier =
             modifier.fillMaxWidth().glassChrome(
-                shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+                shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
                 material = GlassMaterial.REGULAR,
             ),
         color = glassContainerColor(TajsOSTheme.Surface),
-        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
     ) {
         Row(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -152,7 +152,7 @@ fun LinkedNodeItem(
                 modifier =
                     Modifier
                         .size(40.dp)
-                        .background(TajsOSTheme.Background, RoundedCornerShape(8.dp)),
+                        .background(TajsOSTheme.Background, RoundedCornerShape(TajsOSTheme.RadiusSm)),
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
@@ -196,11 +196,11 @@ fun ConnectionCard(
         onClick = onClick,
         modifier =
             modifier.fillMaxWidth().glassChrome(
-                shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+                shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
                 material = GlassMaterial.THIN,
             ),
         color = glassContainerColor(Color.Transparent),
-        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
     ) {
         Row(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),

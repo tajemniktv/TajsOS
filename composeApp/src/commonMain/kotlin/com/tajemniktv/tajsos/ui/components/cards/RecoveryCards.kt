@@ -4,7 +4,6 @@
 
 package com.tajemniktv.tajsos.ui.components.cards
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -37,8 +36,7 @@ fun BasicSurvivalCard(
         onClick = onClick,
         modifier = modifier,
         color = TajsOSTheme.CardSurface,
-        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-        border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
     ) {
         Column(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),

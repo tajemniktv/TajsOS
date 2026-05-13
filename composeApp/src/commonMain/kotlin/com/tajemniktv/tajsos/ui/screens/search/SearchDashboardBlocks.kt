@@ -569,7 +569,7 @@ private fun SearchSupportPanel(
         modifier = Modifier.width(284.dp).fillMaxHeight(),
         verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
     ) {
-        Surface(shape = RoundedCornerShape(14.dp), color = TajsOSTheme.SurfaceLow) {
+        Surface(shape = RoundedCornerShape(TajsOSTheme.RadiusLg), color = TajsOSTheme.SurfaceLow) {
             Column(
                 modifier = Modifier.padding(TajsOSTheme.SpacingMd),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -621,7 +621,7 @@ private fun SearchSupportPanel(
             }
         }
 
-        Surface(shape = RoundedCornerShape(14.dp), color = TajsOSTheme.SurfaceLow) {
+        Surface(shape = RoundedCornerShape(TajsOSTheme.RadiusLg), color = TajsOSTheme.SurfaceLow) {
             Column(
                 modifier = Modifier.padding(TajsOSTheme.SpacingMd),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -668,7 +668,7 @@ private fun SearchResultCard(
 
     Surface(
         onClick = onOpen,
-        shape = RoundedCornerShape(14.dp),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
         color = TajsOSTheme.SurfaceLow,
     ) {
         Column(modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd)) {
@@ -686,7 +686,7 @@ private fun SearchResultCard(
                         modifier =
                             Modifier
                                 .size(26.dp)
-                                .clip(RoundedCornerShape(7.dp))
+                                .clip(RoundedCornerShape(TajsOSTheme.RadiusSm))
                                 .background(iconTintForType(node.type).copy(alpha = 0.2f)),
                         contentAlignment = Alignment.Center,
                     ) {
@@ -743,7 +743,7 @@ private fun SearchResultCard(
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     chips.forEach { chip ->
                         Surface(
-                            shape = RoundedCornerShape(6.dp),
+                            shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
                             color = TajsOSTheme.SurfaceHigh,
                         ) {
                             Text(

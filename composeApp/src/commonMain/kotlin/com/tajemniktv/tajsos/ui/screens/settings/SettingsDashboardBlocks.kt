@@ -598,14 +598,14 @@ private fun AppearanceSectionCard(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .glassChrome(shape = RoundedCornerShape(14.dp), material = GlassMaterial.REGULAR)
+                .glassChrome(shape = RoundedCornerShape(TajsOSTheme.RadiusLg), material = GlassMaterial.REGULAR)
                 .background(
                     color = glassContainerColor(TajsOSTheme.SurfaceLow.copy(alpha = 0.55f)),
-                    shape = RoundedCornerShape(14.dp),
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
                 ).border(
                     width = 1.dp,
                     color = TajsOSTheme.Border.copy(alpha = 0.35f),
-                    shape = RoundedCornerShape(14.dp),
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
                 ).padding(TajsOSTheme.SpacingMd),
         verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingMd),
     ) {

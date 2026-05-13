@@ -22,7 +22,7 @@ const title = "Changelog";
 <!-- Vital Graphs -->
 <div class="flex flex-col gap-4">
 <!-- CPU -->
-<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/10 relative overflow-hidden group">
+<div class="bg-surface-container-low p-6 rounded-3xl border border-outline-variant/10 relative overflow-hidden group">
 <div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-3xl rounded-full -mr-16 -mt-16"></div>
 <div class="flex justify-between items-end mb-4">
 <div>
@@ -42,7 +42,7 @@ const title = "Changelog";
 </div>
 </div>
 <!-- Neural Load -->
-<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/10 relative overflow-hidden group">
+<div class="bg-surface-container-low p-6 rounded-3xl border border-outline-variant/10 relative overflow-hidden group">
 <div class="flex justify-between items-end mb-4">
 <div>
 <p class="font-mono text-[10px] text-outline uppercase">Neural Synapse</p>
@@ -60,7 +60,7 @@ const title = "Changelog";
 </div>
 </div>
 <!-- Memory -->
-<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/10">
+<div class="bg-surface-container-low p-6 rounded-3xl border border-outline-variant/10">
 <p class="font-mono text-[10px] text-outline uppercase mb-2">Memory Allocation</p>
 <div class="flex items-center gap-4">
 <div class="relative w-16 h-16">
@@ -114,7 +114,7 @@ const title = "Changelog";
 </aside>
 <!-- Main Center: Terminal Live Activity -->
 <section class="col-span-9 flex flex-col gap-4">
-<div class="bg-surface-container-lowest border border-outline-variant/10 rounded-xl flex flex-col h-[750px] overflow-hidden terminal-glow shadow-2xl">
+<div class="bg-surface-container-lowest border border-outline-variant/10 rounded-3xl flex flex-col h-[750px] overflow-hidden terminal-glow shadow-2xl">
 <!-- Terminal Header -->
 <div class="bg-surface-container-high px-6 py-3 flex justify-between items-center border-b border-outline-variant/5">
 <div class="flex items-center gap-4">
@@ -201,10 +201,10 @@ const title = "Changelog";
 </div>
 </div>
 <!-- Footer Console Input -->
-<div class="w-full h-[1px] bg-outline-variant/10"></div>
-<div class="bg-surface-container-low px-8 py-4 flex items-center gap-4">
+
+<div class="bg-surface-container-low px-8 py-4 flex items-center gap-4 focus-within:ring-1 focus-within:ring-primary focus-within:ring-inset">
 <span class="text-primary font-mono text-sm">tajsos@root:~ $</span>
-<input class="bg-transparent border-none focus:ring-0 w-full text-white font-mono placeholder:text-zinc-700" placeholder="Execute command..." type="text"/>
+<input class="bg-transparent border-none outline-none w-full text-white font-mono placeholder:text-zinc-700" placeholder="Execute command..." type="text"/>
 <div class="flex gap-3">
 <span class="material-symbols-outlined text-zinc-600 cursor-pointer hover:text-white transition-colors">history</span>
 <span class="material-symbols-outlined text-zinc-600 cursor-pointer hover:text-white transition-colors">terminal</span>
@@ -213,7 +213,7 @@ const title = "Changelog";
 </div>
 <!-- Bottom Cards Row -->
 <div class="grid grid-cols-3 gap-6">
-<div class="bg-surface-container-low p-6 rounded-xl border border-transparent flex items-center gap-4 group hover:border-primary/20 transition-all">
+<div class="bg-surface-container-low p-6 rounded-3xl border border-transparent flex items-center gap-4 group hover:border-primary/20 transition-all">
 <div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary border border-outline-variant/10 group-hover:shadow-[0_0_15px_rgba(186,158,255,0.2)]">
 <span class="material-symbols-outlined">analytics</span>
 </div>
@@ -222,7 +222,7 @@ const title = "Changelog";
 <p class="text-xs text-outline font-mono uppercase tracking-tighter">Analyze patterns</p>
 </div>
 </div>
-<div class="bg-surface-container-low p-6 rounded-xl border border-transparent flex items-center gap-4 group hover:border-primary/20 transition-all">
+<div class="bg-surface-container-low p-6 rounded-3xl border border-transparent flex items-center gap-4 group hover:border-primary/20 transition-all">
 <div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center text-secondary border border-outline-variant/10 group-hover:shadow-[0_0_15px_rgba(192,140,247,0.2)]">
 <span class="material-symbols-outlined">dns</span>
 </div>
@@ -231,7 +231,7 @@ const title = "Changelog";
 <p class="text-xs text-outline font-mono uppercase tracking-tighter">12 Active Clusters</p>
 </div>
 </div>
-<div class="bg-surface-container-low p-6 rounded-xl border border-transparent flex items-center gap-4 group hover:border-primary/20 transition-all">
+<div class="bg-surface-container-low p-6 rounded-3xl border border-transparent flex items-center gap-4 group hover:border-primary/20 transition-all">
 <div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center text-tertiary border border-outline-variant/10 group-hover:shadow-[0_0_15px_rgba(255,151,181,0.2)]">
 <span class="material-symbols-outlined">security</span>
 </div>

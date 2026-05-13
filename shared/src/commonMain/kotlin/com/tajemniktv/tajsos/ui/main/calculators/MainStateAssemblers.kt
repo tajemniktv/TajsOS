@@ -37,6 +37,19 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
 
+/**
+ * Merges internal scheduling data with external calendar events into a unified timeline view.
+ *
+ * This function translates system nodes into generic calendar entries, maps explicit schedule
+ * entries directly onto the timeline, and incorporates external synchronization data (e.g., from
+ * Google Calendar or local ICS files) to give the operator a single, comprehensive view of their
+ * day.
+ *
+ * @param nodes A list of system nodes mapped with their today pin context.
+ * @param scheduleEntries Explicit time-boxed entries configured within TajsOS.
+ * @param externalEvents Pre-synchronized read-only events from external calendar providers.
+ * @return A unified, chronologically sortable list of all temporal commitments.
+ */
 fun buildCalendarEntries(
     nodes: List<NodeWithPin>,
     scheduleEntries: List<ScheduleEntryEntity>,
@@ -128,6 +141,15 @@ fun buildCalendarEntries(
     return entries.sortedBy { it.startAt }
 }
 
+/**
+ * Partitions a flat list of nodes into specialized buckets based on their type, status, and timeline position.
+ *
+ * This function acts as the primary triage router, separating actionable tasks from
+ * reference knowledge, reminders, and historical data (done/archived).
+ *
+ * @param list The raw list of active and historic nodes to categorize.
+ * @return A structured [NodeCategorization] split into inbox, archived, and reminder buckets.
+ */
 fun categorizeNodes(list: List<NodeWithPin>): NodeCategorization {
     val now = Clock.System.now().toEpochMilliseconds()
     val inbox = mutableListOf<NodeWithPin>()
@@ -254,13 +276,24 @@ fun buildPlaybookSnapshot(
 }
 
 /**
- * Assembles the comprehensive view state required for the Dashboard.
+ * Aggregates all domain logic, system health indicators, and snapshot calculators into a single
+ * overarching UI state for the main command center.
  *
- * This function orchestrates a complex, non-obvious data flow by combining raw database nodes
- * with current Operating Mode filters (e.g., excluding specific areas/types). It evaluates
- * heuristic rules to calculate critical state projections such as system load, open loop decay,
- * and area health imbalances. It also derives contextual suggestions (like mode or context hints)
- * based on the current time and available tasks.
+ * This massive aggregator relies on specialized snapshot calculators (e.g., [calculateAreaHealthSnapshot],
+ * open-loop decay scoring, etc.) to derive specific subsystem states. It then applies the current
+ * [com.tajemniktv.tajsos.data.ModeQueryProfile] to filter and contextualize the data based on the operator's current active mode
+ * (e.g., "Deep Work", "Evening Wind Down", "Planning").
+ *
+ * The resulting state is the source of truth for the entire dashboard UI, driving what blocks, tasks,
+ * and warnings are currently visible.
+ *
+ * @param repository The central app repository providing primary read sources.
+ * @param nodes The full list of relevant system nodes wrapped with pin context.
+ * @param modesList The list of available operating modes.
+ * @param activeId The ID of the currently active mode, if any.
+ * @param areasList The list of all system Area nodes.
+ * @param packs The pack registry for feature availability checks.
+ * @return A fully populated [DashboardUIState] reflecting the entire system's status filtered by the active mode.
  */
 suspend fun buildDashboardUIState(
     repository: AppRepository,
@@ -283,8 +316,9 @@ suspend fun buildDashboardUIState(
         } else {
             emptyList()
         }
-    val includedAreaIds = areaFilters.filter { it.include }.map { it.areaId }
-    val excludedAreaIds = areaFilters.filter { !it.include }.map { it.areaId }
+    // Optimally filtered area IDs for inclusion
+    val includedAreaIds = areaFilters.mapNotNull { filter -> filter.areaId.takeIf { filter.include } }
+    val excludedAreaIds = areaFilters.mapNotNull { filter -> filter.areaId.takeIf { !filter.include } }
 
     var filteredNodes = nodes
     if (mode?.key != "ALL")
@@ -304,8 +338,9 @@ suspend fun buildDashboardUIState(
         } else {
             emptyList()
         }
-    val includedTypes = typeFilters.filter { it.include }.map { it.nodeType }
-    val excludedTypes = typeFilters.filter { !it.include }.map { it.nodeType }
+    /** Optimally filtered type configurations for inclusion */
+    val includedTypes = typeFilters.mapNotNull { filter -> filter.nodeType.takeIf { filter.include } }
+    val excludedTypes = typeFilters.mapNotNull { filter -> filter.nodeType.takeIf { !filter.include } }
 
     if (mode?.key != "ALL")
     { // NON-NLS

@@ -144,7 +144,7 @@ private fun InboxCaptureCard(
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = TajsOSTheme.CardSurface,
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
