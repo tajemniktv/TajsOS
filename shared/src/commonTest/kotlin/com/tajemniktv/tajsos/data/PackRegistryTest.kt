@@ -79,4 +79,21 @@ class PackRegistryTest {
         assertTrue(missing.contains(expectedError))
         assertTrue(missing.size == 1)
     }
+
+    @Test
+    /**
+    * Verifies that [PackRegistry.isOwned] returns true only for packs present in `ownedPackKeys`.
+    */
+    fun packRegistry_reportsOwnedPacks() {
+        val registry =
+            PackRegistry(
+                ownedPackKeys = setOf(AppPack.STUDENT.key, AppPack.CREATOR.key),
+                enabledPackKeys = emptySet(),
+            )
+        assertTrue(registry.isOwned(AppPack.STUDENT))
+        assertTrue(registry.isOwned(AppPack.CREATOR))
+        assertFalse(registry.isOwned(AppPack.FINANCE))
+        assertFalse(registry.isOwned(AppPack.MAINTENANCE))
+    }
+
 }
