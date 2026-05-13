@@ -179,13 +179,11 @@ class MainActivity : FragmentActivity() {
                         onVoiceCapture = { triggerVoiceCapture() },
                         voiceCaptureResult = voiceText,
                         onVoiceCaptureConsume = { voiceCaptureResult.value = null },
-                        onPickAvatar = {
-                            try {
-                                avatarPickerLauncher.launch("image/*")
-                            } catch (e: ActivityNotFoundException) {
-                                Log.w(TAG, "Image picker not available", e)
-                            }
-                        },
+                        onPickAvatar = { try {
+                            avatarPickerLauncher.launch("image/*")
+                        } catch (e: android.content.ActivityNotFoundException) {
+                            Log.e(TAG, "No image picker available", e)
+                        } },
                         avatarPickResult = avatarRef,
                         onAvatarPickConsume = { avatarPickResult.value = null },
                     )
@@ -224,6 +222,7 @@ class MainActivity : FragmentActivity() {
      */
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        setIntent(intent)
         handleIntent(intent)
     }
 
@@ -314,9 +313,10 @@ class MainActivity : FragmentActivity() {
             }
         try {
             speechRecognizerLauncher.launch(intent)
-        } catch (e: ActivityNotFoundException) {
-            Log.w(TAG, "Speech recognizer not available", e)
-            // Speech recognizer not available
+        try {
+            speechRecognizerLauncher.launch(intent)
+        } catch (e: android.content.ActivityNotFoundException) {
+            Log.w(TAG, "Speech recognizer activity not found", e)
         }
     }
 
