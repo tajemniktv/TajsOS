@@ -145,11 +145,10 @@ fun buildCalendarEntries(
  * Partitions a flat list of nodes into specialized buckets based on their type, status, and timeline position.
  *
  * This function acts as the primary triage router, separating actionable tasks from
- * reference knowledge, reminders, and historical data (done/archived). It also calculates
- * which tasks are actively in progress versus those stuck in the backlog.
+ * reference knowledge, reminders, and historical data (done/archived).
  *
  * @param list The raw list of active and historic nodes to categorize.
- * @return A structured [NodeCategorization] splitting the nodes into logical buckets (inbox, tasks, knowledge, etc.).
+ * @return A structured [NodeCategorization] split into inbox, archived, and reminder buckets.
  */
 fun categorizeNodes(list: List<NodeWithPin>): NodeCategorization {
     val now = Clock.System.now().toEpochMilliseconds()
@@ -281,8 +280,8 @@ fun buildPlaybookSnapshot(
  * overarching UI state for the main command center.
  *
  * This massive aggregator relies on specialized snapshot calculators (e.g., [calculateAreaHealthSnapshot],
- * [calculateOpenLoopsSnapshot], etc.) to derive specific subsystem states. It then applies the current
- * [ModeQueryProfile] to filter and contextualize the data based on the operator's current active mode
+ * open-loop decay scoring, etc.) to derive specific subsystem states. It then applies the current
+ * [com.tajemniktv.tajsos.data.ModeQueryProfile] to filter and contextualize the data based on the operator's current active mode
  * (e.g., "Deep Work", "Evening Wind Down", "Planning").
  *
  * The resulting state is the source of truth for the entire dashboard UI, driving what blocks, tasks,
@@ -293,6 +292,7 @@ fun buildPlaybookSnapshot(
  * @param modesList The list of available operating modes.
  * @param activeId The ID of the currently active mode, if any.
  * @param areasList The list of all system Area nodes.
+ * @param packs The pack registry for feature availability checks.
  * @return A fully populated [DashboardUIState] reflecting the entire system's status filtered by the active mode.
  */
 suspend fun buildDashboardUIState(
