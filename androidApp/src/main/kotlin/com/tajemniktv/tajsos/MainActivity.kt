@@ -10,6 +10,7 @@ import android.os.BadParcelableException
 import android.os.Build
 import android.os.Bundle
 import android.os.ParcelFormatException
+import android.os.Parcelable
 import android.content.ActivityNotFoundException
 import android.speech.RecognizerIntent
 import android.util.Log
@@ -55,6 +56,8 @@ import com.tajemniktv.tajsos.data.createDataStore
 import com.tajemniktv.tajsos.data.createDatabase
 import com.tajemniktv.tajsos.di.SharedModule
 import com.tajemniktv.tajsos.ui.MainViewModel
+
+private const val DEFAULT_LOG_TAG = "MainActivity"
 
 /**
  * Main entry point for the Android application.
@@ -254,7 +257,7 @@ class MainActivity : FragmentActivity() {
                 viewModel.addNode(title = sharedText, type = "note")
             }
         } else if (type.startsWith("image/")) {
-            val imageUri = intent.getSafeParcelableExtra<Uri>(Intent.EXTRA_STREAM)
+            val imageUri = intent.getSafeParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
             imageUri?.let { uri ->
                 val nodeId =
                     viewModel.addNodeForResult(
@@ -274,7 +277,7 @@ class MainActivity : FragmentActivity() {
     private suspend fun handleActionSendMultiple(intent: Intent) {
         val type = intent.type ?: return
         if (type.startsWith("image/")) {
-            val imageUris = intent.getSafeParcelableArrayListExtra<Uri>(Intent.EXTRA_STREAM)
+            val imageUris = intent.getSafeParcelableArrayListExtra(Intent.EXTRA_STREAM, Uri::class.java)
             imageUris?.let { uris ->
                 val nodeId =
                     viewModel.addNodeForResult(
@@ -486,32 +489,41 @@ class MainActivity : FragmentActivity() {
         viewModel.lockApp()
     }
 
-    /**
-     * Safely extracts a Parcelable extra from an Intent, handling OS version differences
-     * and catching potential unparcelling exceptions (e.g., BadParcelableException).
-     */
-    private inline fun <reified T : android.os.Parcelable> Intent.getSafeParcelableExtra(name: String): T? =
-        try {
-            androidx.core.content.IntentCompat.getParcelableExtra(this, name, T::class.java)
-        } catch (e: BadParcelableException) {
-            Log.e(TAG, "Failed to read parcelable extra: $name: ${e.javaClass.simpleName}")
-            null
-        } catch (e: ParcelFormatException) {
-            Log.e(TAG, "Failed to read parcelable extra (bad parcel format): $name: ${e.javaClass.simpleName}")
-            null
-        }
-
-    /**
-     * Safely extracts a Parcelable ArrayList extra from an Intent.
-     */
-    private inline fun <reified T : android.os.Parcelable> Intent.getSafeParcelableArrayListExtra(name: String): java.util.ArrayList<T>? =
-        try {
-            androidx.core.content.IntentCompat.getParcelableArrayListExtra(this, name, T::class.java)
-        } catch (e: BadParcelableException) {
-            Log.e(TAG, "Failed to read parcelable array list extra: $name: ${e.javaClass.simpleName}")
-            null
-        } catch (e: ParcelFormatException) {
-            Log.e(TAG, "Failed to read parcelable array list extra (bad parcel format): $name: ${e.javaClass.simpleName}")
-            null
-        }
 }
+
+/**
+ * Safely extracts a Parcelable extra from an Intent, handling OS version differences
+ * and catching potential unparcelling exceptions (e.g., BadParcelableException).
+ */
+private fun <T : Parcelable> Intent.getSafeParcelableExtra(
+    name: String,
+    clazz: Class<T>,
+    logTag: String = DEFAULT_LOG_TAG,
+): T? =
+    try {
+        IntentCompat.getParcelableExtra(this, name, clazz)
+    } catch (e: BadParcelableException) {
+        Log.e(logTag, "Failed to read parcelable extra: $name: ${e.javaClass.simpleName}")
+        null
+    } catch (e: ParcelFormatException) {
+        Log.e(logTag, "Failed to read parcelable extra (bad parcel format): $name: ${e.javaClass.simpleName}")
+        null
+    }
+
+/**
+ * Safely extracts a Parcelable ArrayList extra from an Intent.
+ */
+private fun <T : Parcelable> Intent.getSafeParcelableArrayListExtra(
+    name: String,
+    clazz: Class<T>,
+    logTag: String = DEFAULT_LOG_TAG,
+): ArrayList<T>? =
+    try {
+        IntentCompat.getParcelableArrayListExtra(this, name, clazz)
+    } catch (e: BadParcelableException) {
+        Log.e(logTag, "Failed to read parcelable array list extra: $name: ${e.javaClass.simpleName}")
+        null
+    } catch (e: ParcelFormatException) {
+        Log.e(logTag, "Failed to read parcelable array list extra (bad parcel format): $name: ${e.javaClass.simpleName}")
+        null
+    }

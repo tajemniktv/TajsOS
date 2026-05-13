@@ -9,6 +9,7 @@ import com.tajemniktv.tajsos.data.CalendarProviderEntity
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
+import kotlinx.datetime.IllegalTimeZoneException
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
@@ -339,7 +340,7 @@ internal class IcsEventBuilder {
             Regex("TZID=([^;:]+)").find(rawKey) ?: return TimeZone.currentSystemDefault()
         return try {
             TimeZone.of(tzidMatch.groupValues[1])
-        } catch (e: Exception) {
+        } catch (e: IllegalTimeZoneException) {
             TimeZone.currentSystemDefault()
         }
     }

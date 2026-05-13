@@ -32,23 +32,55 @@ class PackRegistryTest {
         assertFalse(noPacks.canUseMode("STUDY"))
         assertTrue(studentPack.canUseMode("STUDY"))
         assertTrue(studentPack.canUseMode("study")) // Case sensitivity
+        assertTrue(studentPack.canUseMode("StUdY"))
 
         // ADMIN
         assertFalse(noPacks.canUseMode("ADMIN"))
         assertTrue(financePack.canUseMode("ADMIN"))
+        assertTrue(financePack.canUseMode("admin"))
         assertTrue(maintenancePack.canUseMode("ADMIN"))
+        assertTrue(maintenancePack.canUseMode("AdMiN"))
 
         // ERRAND
         assertFalse(noPacks.canUseMode("ERRAND"))
         assertTrue(maintenancePack.canUseMode("ERRAND"))
+        assertTrue(maintenancePack.canUseMode("errand"))
 
         // SHUTDOWN
         assertFalse(noPacks.canUseMode("SHUTDOWN"))
         assertTrue(protocolsPack.canUseMode("SHUTDOWN"))
+        assertTrue(protocolsPack.canUseMode("shutdown"))
 
         // Unknown modes
         assertTrue(noPacks.canUseMode("UNKNOWN"))
+        assertTrue(noPacks.canUseMode("unknown"))
         assertTrue(noPacks.canUseMode(""))
+    }
+
+    @Test
+    fun isDependencySatisfied_returnsCorrectStatus() {
+        // AppPack.FINANCE requires "maintenance"
+        val registryWithDep = PackRegistry(
+            ownedPackKeys = emptySet(),
+            enabledPackKeys = setOf(AppPack.MAINTENANCE.key),
+        )
+        val registryWithoutDep = PackRegistry(
+            ownedPackKeys = emptySet(),
+            enabledPackKeys = emptySet(),
+        )
+
+        assertTrue(registryWithDep.isDependencySatisfied(AppPack.FINANCE))
+        assertFalse(registryWithoutDep.isDependencySatisfied(AppPack.FINANCE))
+
+        // AppPack.STUDENT requires nothing
+        assertTrue(registryWithoutDep.isDependencySatisfied(AppPack.STUDENT))
+    }
+
+    @Test
+    fun isOwned_returnsCorrectStatus() {
+        val registry = PackRegistry(setOf(AppPack.STUDENT.key), emptySet())
+        assertTrue(registry.isOwned(AppPack.STUDENT))
+        assertFalse(registry.isOwned(AppPack.FINANCE))
     }
 
     @Test
@@ -79,4 +111,43 @@ class PackRegistryTest {
         assertTrue(missing.contains(expectedError))
         assertTrue(missing.size == 1)
     }
+
+    @Test
+    /**
+     * Verifies that [PackRegistry.isOwned] returns true only for packs present in `ownedPackKeys`.
+     */
+    fun packRegistry_reportsOwnedPacks() {
+        val registry =
+            PackRegistry(
+                ownedPackKeys = setOf(AppPack.STUDENT.key, AppPack.CREATOR.key),
+                enabledPackKeys = emptySet(),
+            )
+        assertTrue(registry.isOwned(AppPack.STUDENT))
+        assertTrue(registry.isOwned(AppPack.CREATOR))
+        assertFalse(registry.isOwned(AppPack.FINANCE))
+        assertFalse(registry.isOwned(AppPack.MAINTENANCE))
+    }
+
+    @Test
+    fun isDependencySatisfied_returnsTrueWhenNoDependencies() {
+        val registry = PackRegistry(ownedPackKeys = emptySet(), enabledPackKeys = emptySet())
+        assertTrue(registry.isDependencySatisfied(AppPack.STUDENT))
+    }
+
+    @Test
+    fun isDependencySatisfied_returnsTrueWhenDependenciesMet() {
+        val registry =
+            PackRegistry(
+                ownedPackKeys = emptySet(),
+                enabledPackKeys = setOf(AppPack.MAINTENANCE.key),
+            )
+        assertTrue(registry.isDependencySatisfied(AppPack.FINANCE))
+    }
+
+    @Test
+    fun isDependencySatisfied_returnsFalseWhenDependenciesNotMet() {
+        val registry = PackRegistry(ownedPackKeys = emptySet(), enabledPackKeys = emptySet())
+        assertFalse(registry.isDependencySatisfied(AppPack.FINANCE))
+    }
+
 }

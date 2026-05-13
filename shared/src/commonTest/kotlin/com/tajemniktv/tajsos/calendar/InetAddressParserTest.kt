@@ -97,4 +97,47 @@ class InetAddressParserTest {
         assertNull(parseIpAddress(":::"), "Should reject triple colons or more")
         assertNull(parseIpAddress("1:::2"), "Should reject triple colons or more")
     }
+
+    @Test
+    fun testIsPrivateOrLocal() {
+        val loopbackV4 = parseIpAddress("127.0.0.1")
+        assertNotNull(loopbackV4)
+        assertTrue(loopbackV4.isPrivateOrLocal())
+
+        val loopbackV6 = parseIpAddress("::1")
+        assertNotNull(loopbackV6)
+        assertTrue(loopbackV6.isPrivateOrLocal())
+
+        val linkLocalV4 = parseIpAddress("169.254.1.2")
+        assertNotNull(linkLocalV4)
+        assertTrue(linkLocalV4.isPrivateOrLocal())
+
+        val linkLocalV6 = parseIpAddress("fe80::1")
+        assertNotNull(linkLocalV6)
+        assertTrue(linkLocalV6.isPrivateOrLocal())
+
+        val siteLocalV4_10 = parseIpAddress("10.0.0.1")
+        assertNotNull(siteLocalV4_10)
+        assertTrue(siteLocalV4_10.isPrivateOrLocal())
+
+        val siteLocalV4_172 = parseIpAddress("172.16.0.1")
+        assertNotNull(siteLocalV4_172)
+        assertTrue(siteLocalV4_172.isPrivateOrLocal())
+
+        val siteLocalV4_192 = parseIpAddress("192.168.1.1")
+        assertNotNull(siteLocalV4_192)
+        assertTrue(siteLocalV4_192.isPrivateOrLocal())
+
+        val siteLocalV6 = parseIpAddress("fd00::1")
+        assertNotNull(siteLocalV6)
+        assertTrue(siteLocalV6.isPrivateOrLocal())
+
+        val publicV4 = parseIpAddress("8.8.8.8")
+        assertNotNull(publicV4)
+        assertFalse(publicV4.isPrivateOrLocal())
+
+        val publicV6 = parseIpAddress("2001:4860:4860::8888")
+        assertNotNull(publicV6)
+        assertFalse(publicV6.isPrivateOrLocal())
+    }
 }
