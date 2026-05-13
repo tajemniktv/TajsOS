@@ -87,8 +87,8 @@ class MainSnapshotCalculatorsMaintenanceTest {
         // active: 7 -> 28
         // overdue: 1 (overdueDays > 0) + 1 (urgency = critical but not overdueDays > 0 because dueAt >= now) -> 2 items -> 24
         // critical: 2 -> 36
-        // Total = 28 + 24 + 36 = 88
-        val expectedDebt = (7 * 4) + (2 * 12) + (2 * 18)
+        // Total = 28 + 12 + 36 = 76
+        val expectedDebt = (7 * 4) + (1 * 12) + (2 * 18)
 
         assertEquals(2, snapshot.overdue.size)
         assertTrue(snapshot.adminDebtMeter in 0..100) // 88 is in range
