@@ -312,8 +312,10 @@ class MainActivity : FragmentActivity() {
             }
         try {
             speechRecognizerLauncher.launch(intent)
+        try {
+            speechRecognizerLauncher.launch(intent)
         } catch (e: android.content.ActivityNotFoundException) {
-            // Speech recognizer not available
+            Log.w(TAG, "Speech recognizer activity not found", e)
         }
     }
 
