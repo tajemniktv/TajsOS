@@ -10,7 +10,7 @@ fun Route.healthRoutes() {
 
     get("/health") {
         val version = application.environment.config.propertyOrNull("ktor.application.version")?.getString()
-            ?: "1.0.0"
+            ?: "unknown"
 
         call.respond(
             HealthResponse(
