@@ -79,4 +79,23 @@ class PackRegistryTest {
         assertTrue(missing.contains(expectedError))
         assertTrue(missing.size == 1)
     }
+
+    @Test
+    fun isDependencySatisfied_returnsTrueWhenNoDependencies() {
+        val registry = PackRegistry(emptySet(), emptySet())
+        assertTrue(registry.isDependencySatisfied(AppPack.STUDENT))
+    }
+
+    @Test
+    fun isDependencySatisfied_returnsTrueWhenDependenciesMet() {
+        val registry = PackRegistry(emptySet(), setOf(AppPack.MAINTENANCE.key))
+        assertTrue(registry.isDependencySatisfied(AppPack.FINANCE))
+    }
+
+    @Test
+    fun isDependencySatisfied_returnsFalseWhenDependenciesNotMet() {
+        val registry = PackRegistry(emptySet(), emptySet())
+        assertFalse(registry.isDependencySatisfied(AppPack.FINANCE))
+    }
+
 }
