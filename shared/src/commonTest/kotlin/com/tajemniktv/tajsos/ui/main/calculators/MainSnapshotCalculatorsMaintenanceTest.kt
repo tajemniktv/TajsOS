@@ -87,7 +87,7 @@ class MainSnapshotCalculatorsMaintenanceTest {
         // active: 7 -> 28
         // overdue: 1 (criticalOverdue with dueAt < now) -> 12
         // critical: 2 -> 36
-        // Total = 28 + 24 + 36 = 88
+         // Total = 28 + 12 + 36 = 76
         assertEquals(76, snapshot.adminDebtMeter)
 
         assertEquals(1, snapshot.overdue.size)
