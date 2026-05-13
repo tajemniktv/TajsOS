@@ -447,7 +447,7 @@ fun ExpandableNavSection(
                                 onSecondaryClickAt = { contextMenuState.showAt(it) },
                                 middleClickFallbackToPrimary = true,
                             ),
-                    shape = RoundedCornerShape(10.dp),
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                     color =
                         if (isActiveBranch) {
                             TajsOSTheme.Primary.copy(alpha = 0.17f)
@@ -642,7 +642,7 @@ fun ExpandableNavSection(
                                 } else {
                                     Color.Transparent
                                 },
-                            shape = RoundedCornerShape(8.dp),
+                            shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
                             tonalElevation = 0.dp,
                             shadowElevation = 0.dp,
                         ) {

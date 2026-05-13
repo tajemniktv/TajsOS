@@ -654,7 +654,7 @@ private fun BriefingActionCard(action: BriefingAction) {
             verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
             Surface(
-                shape = RoundedCornerShape(10.dp),
+                shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                 color = TajsOSTheme.Primary.copy(alpha = 0.2f),
                 modifier = Modifier.size(34.dp),
             ) {
@@ -696,7 +696,7 @@ private fun BriefingActionCard(action: BriefingAction) {
 private fun BriefingCaptureField(onClick: () -> Unit) {
     Surface(
         onClick = onClick,
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
         color = TajsOSTheme.SurfaceHighest.copy(alpha = 0.9f),
         modifier = Modifier.widthIn(max = 720.dp).fillMaxWidth().height(58.dp),
         tonalElevation = 0.dp,

@@ -297,7 +297,7 @@ private fun HeaderTitleEditor(
     onValueChange: (String) -> Unit,
 ) {
     Surface(
-        shape = RoundedCornerShape(10.dp),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         color = TajsOSTheme.SurfaceHighest,
     ) {
         BasicTextField(
@@ -386,7 +386,7 @@ private fun renderTaskDescription(context: TaskDetailContext) {
             SectionTitle(stringResource(Res.string.task_detail_directives_section))
             if (context.isEditing) {
                 Surface(
-                    shape = RoundedCornerShape(10.dp),
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                     color = TajsOSTheme.SurfaceHighest,
                 ) {
                     BasicTextField(
@@ -572,7 +572,7 @@ private fun SubtaskRow(
 
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(10.dp),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         color = background,
     ) {
         Row(

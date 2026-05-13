@@ -586,7 +586,7 @@ private fun VaultCard(
                     modifier =
                         Modifier
                             .size(34.dp)
-                            .clip(RoundedCornerShape(10.dp))
+                            .clip(RoundedCornerShape(TajsOSTheme.RadiusMd))
                             .background(TajsOSTheme.Primary.copy(alpha = 0.2f)),
                     contentAlignment = Alignment.Center,
                 ) {
@@ -650,7 +650,7 @@ private fun ApplicationStatusCard(
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = TajsOSTheme.VaultSoft),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
         border = BorderStroke(1.dp, TajsOSTheme.VaultBorder),
     ) {
         Column(
@@ -710,7 +710,7 @@ private fun VaultEntryComposer(
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = TajsOSTheme.VaultShell),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
         border = BorderStroke(1.dp, TajsOSTheme.VaultBorder),
     ) {
         Column(
