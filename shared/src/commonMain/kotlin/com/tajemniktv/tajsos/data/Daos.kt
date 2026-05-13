@@ -530,9 +530,9 @@ interface ItemDomainDao {
     suspend fun upsertDomain(domain: ItemDomainEntity)
 
     /**
-     * Inserts or updates a batch of domain associations.
+     * Batch inserts new domain associations or updates existing ones.
      *
-     * @param domains The [ItemDomainEntity] values to be inserted or updated.
+     * @param domains The list of [ItemDomainEntity] objects to be inserted or updated.
      */
     @Upsert
     suspend fun upsertDomains(domains: List<ItemDomainEntity>)
