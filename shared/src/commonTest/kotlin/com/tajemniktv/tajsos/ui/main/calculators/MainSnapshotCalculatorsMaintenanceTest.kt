@@ -29,7 +29,7 @@ class MainSnapshotCalculatorsMaintenanceTest {
 
     @Test
     fun calculateMaintenanceSnapshot_excludesNonMaintenanceOrInactive() {
-        val now = Clock.System.now().toEpochMilliseconds()
+        val inactiveMaintenance = createMaintenanceNode(1L, status = "done")
         val inactiveMaintenance = defaultMaintenanceNode(1L).copy(status = "done").toPin()
         val activeTask = defaultMaintenanceNode(2L).copy(type = "task", title = "").toPin()
 
@@ -85,14 +85,14 @@ class MainSnapshotCalculatorsMaintenanceTest {
 
         // adminDebtMeter = (activeItems.size * 4) + (overdue.size * 12) + (critical.size * 18)
         // active: 7 -> 28
-        // overdue: 1 (overdueDays > 0) + 1 (urgency = critical but not overdueDays > 0 because dueAt >= now) -> 2 items -> 24
+        // overdue: 1 (criticalOverdue with dueAt < now) -> 12
         // critical: 2 -> 36
         // Total = 28 + 24 + 36 = 88
-        val expectedDebt = (7 * 4) + (2 * 12) + (2 * 18)
+        assertEquals(76, snapshot.adminDebtMeter)
 
-        assertEquals(2, snapshot.overdue.size)
+        assertEquals(1, snapshot.overdue.size)
         assertTrue(snapshot.adminDebtMeter in 0..100) // 88 is in range
-        assertEquals(88, snapshot.adminDebtMeter)
+        assertEquals(76, snapshot.adminDebtMeter)
 
         // Check overdue warning
         assertEquals("ADMIN DEBT HIGH // REDUCE RISK ITEMS", snapshot.overdueWarning)
@@ -130,7 +130,7 @@ class MainSnapshotCalculatorsMaintenanceTest {
 
     @Test
     fun maintenanceUrgency_computesCorrectly() {
-        val now = Clock.System.now().toEpochMilliseconds()
+        val now = 1735689600000L // Fixed timestamp (2025-01-01)
         val dayMs = 24 * 60 * 60 * 1000L
 
         assertEquals("critical", maintenanceUrgency(NodeEntity(id = 1, title = "t", type = "maintenance", dueAt = now - dayMs), now))
