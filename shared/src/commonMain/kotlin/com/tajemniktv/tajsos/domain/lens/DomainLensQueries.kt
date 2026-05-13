@@ -99,7 +99,8 @@ private val healthTitleKeywords =
  * These helpers keep query logic out of UI composables and avoid pushing more orchestration
  * into [com.tajemniktv.tajsos.ui.MainViewModel].
  *
- * Domains (such as finance or health) are categorized implicitly by checking for hardcoded
+ * Domains (such as finance or health) act as product-level lenses over the shared object spine,
+ * rather than acting as hard containers. They are categorized implicitly by checking for hardcoded
  * string markers within node tags, titles, content, `maintenanceType`, and `noteType` fields.
  * This heuristic-based approach provides a zero-configuration experience, allowing items to be surfaced
  * appropriately even if the user forgets to manually assign the domain.
