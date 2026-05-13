@@ -152,7 +152,7 @@ fun LinkedNodeItem(
                 modifier =
                     Modifier
                         .size(40.dp)
-                        .background(TajsOSTheme.Background, RoundedCornerShape(8.dp)),
+                        .background(TajsOSTheme.Background, RoundedCornerShape(TajsOSTheme.RadiusSm)),
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(

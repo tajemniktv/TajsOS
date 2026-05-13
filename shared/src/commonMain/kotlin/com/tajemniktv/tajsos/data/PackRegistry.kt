@@ -28,7 +28,7 @@ enum class AppPack(
 
     companion object {
         val defaultFreePackKeys: Set<String> =
-            entries.filter { it.isFree }.map { it.key }.toSet()
+            entries.mapNotNullTo(mutableSetOf()) { if (it.isFree) it.key else null }
     }
 }
 

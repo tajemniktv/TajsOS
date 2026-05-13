@@ -112,7 +112,7 @@ fun <T> SelectorDialog(
                     }
                     Surface(
                         color = Color.Black.copy(alpha = 0.5f),
-                        shape = RoundedCornerShape(4.dp),
+                        shape = RoundedCornerShape(TajsOSTheme.RadiusXs),
                     ) {
                         Text(
                             "STATUS: READY",

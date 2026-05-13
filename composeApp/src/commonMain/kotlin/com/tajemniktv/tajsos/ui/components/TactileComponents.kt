@@ -146,7 +146,7 @@ fun TactileSlider(
                                 .blur(8.dp)
                                 .background(
                                     TajsOSTheme.Primary.copy(alpha = 0.5f),
-                                    RoundedCornerShape(4.dp),
+                                    RoundedCornerShape(TajsOSTheme.RadiusXs),
                                 ),
                     )
                     // Core thumb
@@ -154,7 +154,7 @@ fun TactileSlider(
                         modifier =
                             Modifier
                                 .size(16.dp)
-                                .background(TajsOSTheme.Primary, RoundedCornerShape(4.dp)),
+                                .background(TajsOSTheme.Primary, RoundedCornerShape(TajsOSTheme.RadiusXs)),
                     )
                 }
             },
