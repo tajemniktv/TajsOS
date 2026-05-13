@@ -124,8 +124,8 @@ fun buildModeQueryProfile(
             ),
         filtering =
             ModeFilterProfile(
-                includeAreaIds = areaFilters.mapNotNull { if (it.include) it.areaId else null }.toSet(),
-                includeTypes = typeFilters.mapNotNull { if (it.include) it.nodeType else null }.toSet(),
+                includeAreaIds = areaFilters.mapNotNullTo(mutableSetOf()) { if (it.include) it.areaId else null },
+                includeTypes = typeFilters.mapNotNullTo(mutableSetOf()) { if (it.include) it.nodeType else null },
                 sortStrategy = preference.sortStrategy,
             ),
         actions = ModeActionProfile(quickActions = actions),
