@@ -148,13 +148,16 @@ class FilterHelperEdgeTest {
         assertEquals(3L, result[2].node.id) // Contains
         assertEquals(4L, result[3].node.id) // Content Match
     }
-
     @Test
     fun testRelevanceScore_tieBreakers() {
+        // Tie breaker 1: updatedAt
+        // Tie breaker 2: id
         val node1 = buildTestNode(1, "title", "content", tags = listOf("exact match"), updatedAt = 100L)
-        val node2 = buildTestNode(2, "prefix exact match", "content", updatedAt = 200L)
+        val node2 = buildTestNode(2, "title", "content", tags = listOf("exact match"), updatedAt = 200L)
+        val node3 = buildTestNode(3, "title", "content", tags = listOf("exact match"), updatedAt = 100L)
+
         val result = FilterHelper.filterAndSortNodes(
-            nodes = listOf(node1, node2),
+            nodes = listOf(node1, node2, node3),
             query = "exact match",
             type = null,
             status = null,
@@ -173,11 +176,14 @@ class FilterHelperEdgeTest {
             relations = emptyList(),
             sortMode = "relevance"
         )
-        assertEquals(2, result.size)
-        // Score is the same, node2 has higher updatedAt so it should be first
+        assertEquals(3, result.size)
+        // Scores are identical.
+        // Order: node2 (highest updatedAt), node3 (same updatedAt, higher id), node1 (lowest id)
         assertEquals(2L, result[0].node.id)
-        assertEquals(1L, result[1].node.id)
+        assertEquals(3L, result[1].node.id)
+        assertEquals(1L, result[2].node.id)
     }
+
 
 
     @Test
@@ -265,36 +271,4 @@ class FilterHelperEdgeTest {
         )
         assertEquals(6, resultInvalid.size)
     }
-
-
-    @Test
-    fun testRelevanceScore_tieBreakers_sameUpdatedAt() {
-        val node1 = buildTestNode(1, "title", "content", tags = listOf("exact match"), updatedAt = 100L)
-        val node2 = buildTestNode(2, "title", "content", tags = listOf("exact match"), updatedAt = 100L)
-        val result = FilterHelper.filterAndSortNodes(
-            nodes = listOf(node1, node2),
-            query = "exact match",
-            type = null,
-            status = null,
-            projectId = null,
-            areaId = null,
-            linkedToId = null,
-            maxMins = null,
-            energy = null,
-            friction = null,
-            locationContext = null,
-            energyContext = null,
-            deviceContext = null,
-            socialContext = null,
-            timeWindowContext = null,
-            timeHorizon = null,
-            relations = emptyList(),
-            sortMode = "relevance"
-        )
-        assertEquals(2, result.size)
-        // Score is the same, updatedAt is the same, node2 has higher id so it should be first
-        assertEquals(2L, result[0].node.id)
-        assertEquals(1L, result[1].node.id)
-    }
-
 }
