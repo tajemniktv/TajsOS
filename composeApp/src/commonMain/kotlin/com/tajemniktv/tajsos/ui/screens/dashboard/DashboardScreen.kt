@@ -151,9 +151,9 @@ private fun DashboardScreen(
     val now = Clock.System.now()
     val localNow = now.toLocalDateTime(TimeZone.currentSystemDefault())
     val todayDateStr = localNow.date.toString()
-    val moodToday = trackEntries.find { it.date == todayDateStr }
+    val moodToday = remember(trackEntries, todayDateStr) { trackEntries.find { it.date == todayDateStr } }
 
-    val lastWeeklyReview = allReviews.find { it.type == "weekly" }
+    val lastWeeklyReview = remember(allReviews) { allReviews.find { it.type == "weekly" } }
     val weekMillis = 7 * 24 * 60 * 60 * 1000L
     val needsWeeklyReview =
         lastWeeklyReview == null || (now.toEpochMilliseconds() - lastWeeklyReview.completedAt) > weekMillis
