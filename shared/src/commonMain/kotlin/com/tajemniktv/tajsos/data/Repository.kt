@@ -124,16 +124,15 @@ private object NoOpItemDomainDao : ItemDomainDao {
      * Fallback, no-operation implementation for upserting a domain.
      */
     override suspend fun upsertDomain(domain: ItemDomainEntity) = Unit
-    override suspend fun upsertDomains(domains: List<ItemDomainEntity>) = Unit
 
-    /**
-     * Fallback, no-operation implementation for deleting a specific domain association.
-     */
     /**
      * Fallback, no-operation implementation for batch upserting domains.
      */
     override suspend fun upsertDomains(domains: List<ItemDomainEntity>) = Unit
 
+    /**
+     * Fallback, no-operation implementation for deleting a specific domain association.
+     */
     override suspend fun deleteDomain(
         itemId: Long,
         domainKey: String,

@@ -5,8 +5,8 @@ import kotlin.test.assertTrue
 
 /** Verifies the platform-specific greeting format returned by [Greeting.greet]. */
 class GreetingTest {
-    /** Ensures greeting includes greeting includes prefix, suffix, and non-empty platform segment. */
-    `@Test`
+    /** Ensures greeting includes prefix, suffix, and non-empty platform segment. */
+    @Test
     fun testGreeting() {
         val greeting = Greeting().greet()
         assertTrue(greeting.startsWith("Hello, "), "Greeting should start with 'Hello, '")
