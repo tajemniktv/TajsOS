@@ -18,6 +18,9 @@ import kotlinx.serialization.Serializable
  * intentionally bypasses explicit assignments like [com.tajemniktv.tajsos.data.ItemDomainEntity]
  * to provide a seamless user experience, ensuring items surface in appropriate lenses
  * without requiring the user to constantly curate their metadata.
+ *
+ * Explicit domain tracking via models like [com.tajemniktv.tajsos.data.ItemDomainEntity] may still exist
+ * in the schema, but is superseded by this heuristic design for low-friction item capture.
  */
 @Serializable
 enum class DomainKind {
