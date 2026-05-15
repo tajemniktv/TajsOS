@@ -125,10 +125,12 @@ fun TaskDetailRoute(
 
             val childSubtasks =
                 nodes
-                    .map { it.node }
-                    .filter { node ->
-                        node.parentNodeId == task.id &&
-                            node.isTaskItem()
+                    /** Optimized to avoid intermediate allocations */
+                    .mapNotNull { item ->
+                        item.node.takeIf { node ->
+                            node.parentNodeId == task.id &&
+                                node.isTaskItem()
+                        }
                     }
 
             val subtaskNodes =

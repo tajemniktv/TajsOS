@@ -548,16 +548,18 @@ suspend fun buildDashboardUIState(
         criticalProjects =
             filteredNodes
                 .filter { it.node.type == "project" && it.node.status == "active" } // NON-NLS
-                .map { it.node }
-                .filter { proj ->
-                    val projectNodes = nodes.filter { it.node.projectId == proj.id }
-                    val hasCritical =
-                        projectNodes.any {
-                            it.node.status == "active" && it.node.isHardDeadline && it.node.dueAt != null && it.node.dueAt < now // NON-NLS
-                        }
-                    val isNeglected =
-                        proj.status == "active" && !proj.isFrozen && projectNodes.none { it.node.updatedAt >= fourteenDaysAgo } // NON-NLS
-                    hasCritical || isNeglected
+                /** Optimized to avoid intermediate allocations */
+                .mapNotNull { item ->
+                    item.node.takeIf { proj ->
+                        val projectNodes = nodes.filter { it.node.projectId == proj.id }
+                        val hasCritical =
+                            projectNodes.any {
+                                it.node.status == "active" && it.node.isHardDeadline && it.node.dueAt != null && it.node.dueAt < now // NON-NLS
+                            }
+                        val isNeglected =
+                            proj.status == "active" && !proj.isFrozen && projectNodes.none { it.node.updatedAt >= fourteenDaysAgo } // NON-NLS
+                        hasCritical || isNeglected
+                    }
                 },
         forgottenWisdom =
             filteredNodes
