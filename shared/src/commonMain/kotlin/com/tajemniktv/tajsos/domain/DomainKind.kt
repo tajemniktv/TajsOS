@@ -19,8 +19,8 @@ import kotlinx.serialization.Serializable
  * to provide a seamless user experience, ensuring items surface in appropriate lenses
  * without requiring the user to constantly curate their metadata.
  *
- * Explicit domain tracking via models like [com.tajemniktv.tajsos.data.ItemDomainEntity] may still exist
- * in the schema, but is superseded by this heuristic design for low-friction item capture.
+ * While explicit tracking models may still exist in the schema, they are superseded
+ * by this heuristic design to ensure low-friction item capture.
  */
 @Serializable
 enum class DomainKind {
