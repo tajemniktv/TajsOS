@@ -126,4 +126,39 @@ class DomainLensQueriesMatchesSignalTest {
         assertEquals(0, healthAction.size)
     }
 
+
+    @Test
+    fun negative_cases_and_substring_boundaries() {
+        // Substring matching: 'billboard' contains 'bill', 'taxation' contains 'tax'.
+        // The current implementation uses simple .contains(), so these WILL match.
+        // These tests assert the current behavior to prevent accidental regression if the implementation changes.
+        val nodeBillboard = createNode(1, "buy billboard space")
+        val nodeTaxation = createNode(2, "taxation is high")
+
+        // Completely unrelated
+        val nodeUnrelated = createNode(3, "just a normal day")
+
+        // Empty fields
+        val nodeEmpty = createNode(4, "", "")
+
+        val result = DomainLensQueries.financeActionItems(listOf(nodeBillboard, nodeTaxation, nodeUnrelated, nodeEmpty))
+        assertDomainQueryResult(listOf(1L, 2L), result)
+    }
+
+    @Test
+    fun redundant_reference_note_logic_path() {
+        // The implementation has:
+        // val referenceFinanceNote = node.node.noteType == "reference" && (mentionsFinanceTitle || hasFinanceTag)
+        // return hasFinanceTag || mentionsFinanceTitle || ... || referenceFinanceNote
+        //
+        // Since referenceFinanceNote requires mentionsFinanceTitle or hasFinanceTag,
+        // and the return statement already ORs those directly, the referenceFinanceNote condition is redundant.
+        // This test ensures that a reference note with finance content (but NO title or tag match)
+        // is still matched via the mentionsFinanceContent OR branch, proving the redundancy.
+
+        val nodeRefContentOnly = createNode(1, "normal title", content = "budget", type = "note", noteType = "reference")
+
+        val result = DomainLensQueries.financeKnowledgeItems(listOf(nodeRefContentOnly))
+        assertDomainQueryResult(listOf(1L), result)
+    }
 }
