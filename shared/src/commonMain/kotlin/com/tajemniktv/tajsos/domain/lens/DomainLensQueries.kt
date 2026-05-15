@@ -105,7 +105,7 @@ private val healthTitleKeywords =
  * This heuristic-based approach provides a zero-configuration experience, allowing items to be surfaced
  * appropriately even if the user forgets to manually assign the domain.
  *
- * Note: These queries intentionally bypass explicit domain associations (e.g., via ItemDomainEntity)
+ * Note: These queries intentionally bypass explicit domain associations (e.g., via [com.tajemniktv.tajsos.data.ItemDomainEntity])
  * in favor of terminology matching to lower the friction of capturing new data.
  *
  * This object implements a zero-configuration classification strategy. Instead of relying on
