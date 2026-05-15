@@ -139,7 +139,7 @@ class DomainLensQueriesMatchesSignalTest {
         val nodeUnrelated = createNode(3, "just a normal day")
 
         // Empty fields
-        val nodeEmpty = createNode(4, "", "", type = "note", noteType = "")
+        val nodeEmpty = createNode(4, "", "")
 
         val result = DomainLensQueries.financeActionItems(listOf(nodeBillboard, nodeTaxation, nodeUnrelated, nodeEmpty))
         assertDomainQueryResult(listOf(1L, 2L), result)
