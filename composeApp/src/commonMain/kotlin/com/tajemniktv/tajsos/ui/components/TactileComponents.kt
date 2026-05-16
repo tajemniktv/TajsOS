@@ -203,8 +203,6 @@ fun TactileTextField(
                 Modifier
                     .fillMaxWidth(),
         ) {
-
-
             Box(
                 modifier =
                     Modifier
@@ -297,7 +295,6 @@ fun TactileOutlinedTextField(
     val isFocused by interactionSource.collectIsFocusedAsState()
 
     Box(modifier = containerModifier, propagateMinConstraints = true) {
-
         OutlinedTextField(
             value = value,
             onValueChange = onValueChange,
