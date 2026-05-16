@@ -201,17 +201,10 @@ class MainProtocolHelpersTest {
 
     @Test
     fun testSuggestPlaybookLabel_edgeCases() {
-        val today =
-            Clock.System
-                .now()
-                .toLocalDateTime(TimeZone.currentSystemDefault())
-                .date
-                .toString()
-        val yesterday =
-            (Clock.System.now() - 1.days)
-                .toLocalDateTime(TimeZone.currentSystemDefault())
-                .date
-                .toString()
+        val now = Clock.System.now()
+        val tz = TimeZone.currentSystemDefault()
+        val today = now.toLocalDateTime(tz).date.toString()
+        val yesterday = (now - 1.days).toLocalDateTime(tz).date.toString()
 
         // Empty entries
         assertNull(suggestPlaybookLabel(null, emptyList()))
