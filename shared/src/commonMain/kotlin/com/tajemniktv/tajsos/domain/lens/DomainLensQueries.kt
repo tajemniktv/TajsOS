@@ -103,7 +103,7 @@ private val healthTitleKeywords =
  * Provides static heuristic queries to categorize active nodes into broader LifeOS domains.
  *
  * This singleton relies heavily on zero-configuration implicit matching—such as tags,
- * keywords within title and content, and specific note types—rather than explicit database
+ * keywords within title and content, maintenance types, and specific note types—rather than explicit database
  * entity associations. This design significantly lowers the friction of capturing new items,
  * ensuring they surface in relevant domains (like Finances or Health) automatically.
  *
