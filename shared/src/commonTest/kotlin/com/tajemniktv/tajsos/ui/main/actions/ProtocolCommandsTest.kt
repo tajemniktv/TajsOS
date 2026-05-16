@@ -64,22 +64,26 @@ class ProtocolCommandsTest {
 
 
 
-    private fun createCommands(
-        repo: AppRepository,
-        scope: TestScope,
-        currentNodes: List<NodeWithPin> = emptyList(),
-        protocolTemplates: List<TransitionProtocolTemplate> = emptyList(),
-        playbookTemplates: List<PlaybookTemplate> = emptyList()
-    ): ProtocolCommands {
+
+    private data class CommandsConfig(
+        val repo: AppRepository,
+        val scope: TestScope,
+        val currentNodes: List<NodeWithPin> = emptyList(),
+        val protocolTemplates: List<TransitionProtocolTemplate> = emptyList(),
+        val playbookTemplates: List<PlaybookTemplate> = emptyList()
+    )
+
+    private fun createCommands(config: CommandsConfig): ProtocolCommands {
         return ProtocolCommands(
-            repository = repo,
-            scope = scope,
-            currentNodes = { currentNodes },
+            repository = config.repo,
+            scope = config.scope,
+            currentNodes = { config.currentNodes },
             currentTags = { emptyList() },
-            protocolTemplates = { protocolTemplates },
-            playbookTemplates = { playbookTemplates }
+            protocolTemplates = { config.protocolTemplates },
+            playbookTemplates = { config.playbookTemplates }
         )
     }
+
 
 
     @Test
@@ -87,7 +91,7 @@ class ProtocolCommandsTest {
         val repo = buildRepository()
         val scope = TestScope(testScheduler)
 
-        val commands = createCommands(repo, scope)
+        val commands = createCommands(CommandsConfig(repo, scope))
 
         commands.triggerProtocol("morning_startup", "test")
 
@@ -115,7 +119,7 @@ class ProtocolCommandsTest {
             checklist = listOf("Wake up", "Drink water")
         )
 
-        val commands = createCommands(repo, scope, protocolTemplates = listOf(template))
+        val commands = createCommands(CommandsConfig(repo, scope, protocolTemplates = listOf(template)))
 
         commands.applyProtocolTemplate("Morning Startup")
         testScheduler.advanceUntilIdle()
@@ -140,7 +144,7 @@ class ProtocolCommandsTest {
             recommendedModeKey = "WORK"
         )
 
-        val commands = createCommands(repo, scope, playbookTemplates = listOf(template))
+        val commands = createCommands(CommandsConfig(repo, scope, playbookTemplates = listOf(template)))
 
         commands.applyPlaybookTemplate("Focus Mode")
         testScheduler.advanceUntilIdle()
@@ -158,7 +162,7 @@ class ProtocolCommandsTest {
         val repo = buildRepository()
         val scope = TestScope(testScheduler)
 
-        val commands = createCommands(repo, scope)
+        val commands = createCommands(CommandsConfig(repo, scope))
 
         val initialContent = """
             ## TRANSITION CHECKLIST
@@ -199,7 +203,7 @@ class ProtocolCommandsTest {
         val repo = buildRepository()
         val scope = TestScope(testScheduler)
 
-        val commands = createCommands(repo, scope)
+        val commands = createCommands(CommandsConfig(repo, scope))
 
         // Invalid inputs
         commands.saveCustomPlaybook("   ", listOf("step 1"))
@@ -234,7 +238,7 @@ class ProtocolCommandsTest {
         val repo = buildRepository()
         val scope = TestScope(testScheduler)
 
-        val commands = createCommands(repo, scope)
+        val commands = createCommands(CommandsConfig(repo, scope))
 
         val protocolNode = NodeEntity(id = 1, type = "protocol", title = "P")
         val taskNode = NodeEntity(id = 2, type = "task", title = "T")
@@ -249,12 +253,12 @@ class ProtocolCommandsTest {
         var updatedProtocol: NodeEntity? = null
         commands.setPlaybookModeLink(protocolNode, "STUDY") { updatedProtocol = it }
         assertNotNull(updatedProtocol)
-        assertEquals("playbook|mode=STUDY", updatedProtocol?.relationshipContext)
+        assertEquals("playbook|mode=STUDY", updatedProtocol.relationshipContext)
 
         var updatedProtocolArea: NodeEntity? = null
         commands.setPlaybookAreaLink(protocolNode, 99L) { updatedProtocolArea = it }
         assertNotNull(updatedProtocolArea)
-        assertEquals(99L, updatedProtocolArea?.areaId)
+        assertEquals(99L, updatedProtocolArea.areaId)
     }
 
 }
