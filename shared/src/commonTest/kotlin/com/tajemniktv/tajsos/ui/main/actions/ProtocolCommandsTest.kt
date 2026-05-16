@@ -34,6 +34,7 @@ import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -202,4 +203,82 @@ class ProtocolCommandsTest {
         val updatedContent2 = savedNodes2.first().node.content
         assertTrue(updatedContent2.contains("- [ ] Step 2"))
     }
+
+    @Test
+    fun saveCustomPlaybook_createsNodeCorrectly() = runTest {
+        val repo = buildRepository()
+        val scope = TestScope(testScheduler)
+
+        val commands = ProtocolCommands(
+            repository = repo,
+            scope = scope,
+            currentNodes = { emptyList() },
+            currentTags = { emptyList() },
+            protocolTemplates = { emptyList() },
+            playbookTemplates = { emptyList() }
+        )
+
+        // Invalid inputs
+        commands.saveCustomPlaybook("   ", listOf("step 1"))
+        commands.saveCustomPlaybook("valid", emptyList())
+        commands.saveCustomPlaybook("valid", listOf("   ", ""))
+        testScheduler.advanceUntilIdle()
+
+        var savedNodes = repo.getAllNodes().first()
+        assertEquals(0, savedNodes.size)
+
+        // Valid inputs
+        commands.saveCustomPlaybook("My Playbook", listOf("Step A", "Step B"), modeKey = "STUDY", areaId = 42L)
+        testScheduler.advanceUntilIdle()
+
+        savedNodes = repo.getAllNodes().first()
+        assertEquals(1, savedNodes.size)
+        val node = savedNodes.first().node
+        assertEquals("protocol", node.type)
+        assertEquals("My Playbook", node.title)
+        assertEquals(42L, node.areaId)
+        assertEquals("playbook|mode=STUDY", node.relationshipContext)
+        assertTrue(node.content.contains("- [ ] Step A"))
+
+        val tagsOnNode = repo.getTagsForNode(node.id).first()
+        assertTrue(tagsOnNode.any { it.normalizedName == "playbook" })
+        assertTrue(tagsOnNode.any { it.normalizedName == "mode_study" })
+    }
+
+
+    @Test
+    fun setPlaybookLinks_updatesNodeCorrectly() = runTest {
+        val repo = buildRepository()
+        val scope = TestScope(testScheduler)
+
+        val commands = ProtocolCommands(
+            repository = repo,
+            scope = scope,
+            currentNodes = { emptyList() },
+            currentTags = { emptyList() },
+            protocolTemplates = { emptyList() },
+            playbookTemplates = { emptyList() }
+        )
+
+        val protocolNode = NodeEntity(id = 1, type = "protocol", title = "P")
+        val taskNode = NodeEntity(id = 2, type = "task", title = "T")
+        repo.insertNode(protocolNode)
+        repo.insertNode(taskNode)
+
+        // Invalid type ignores update
+        var updatedTask: NodeEntity? = null
+        commands.setPlaybookModeLink(taskNode, "STUDY") { updatedTask = it }
+        assertNull(updatedTask)
+
+        var updatedProtocol: NodeEntity? = null
+        commands.setPlaybookModeLink(protocolNode, "STUDY") { updatedProtocol = it }
+        assertNotNull(updatedProtocol)
+        assertEquals("playbook|mode=STUDY", updatedProtocol?.relationshipContext)
+
+        var updatedProtocolArea: NodeEntity? = null
+        commands.setPlaybookAreaLink(protocolNode, 99L) { updatedProtocolArea = it }
+        assertNotNull(updatedProtocolArea)
+        assertEquals(99L, updatedProtocolArea?.areaId)
+    }
+
 }

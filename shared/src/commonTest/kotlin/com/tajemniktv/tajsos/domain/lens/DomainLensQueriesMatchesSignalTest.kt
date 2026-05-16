@@ -161,4 +161,16 @@ class DomainLensQueriesMatchesSignalTest {
         val result = DomainLensQueries.financeKnowledgeItems(listOf(nodeRefContentOnly))
         assertDomainQueryResult(listOf(1L), result)
     }
+
+    @Test
+    fun matchesHealthSignal_redundancy_and_combinations() {
+        // Redundancy in matching: healthNoteType = node.node.noteType in setOf("reflection", "journal")
+        // If it's a journal note with health content, it matches both conditions. Let's make sure journal
+        // with NO health keywords still matches.
+        val nodeJournalOnly = createNode(1, "Daily Entry", "just thoughts", type = "note", noteType = "journal")
+        val nodeReflectionOnly = createNode(2, "End of day", "reflecting", type = "note", noteType = "reflection")
+        val result = DomainLensQueries.healthKnowledgeItems(listOf(nodeJournalOnly, nodeReflectionOnly))
+        assertDomainQueryResult(listOf(1L, 2L), result)
+    }
+
 }
