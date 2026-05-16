@@ -62,21 +62,32 @@ class ProtocolCommandsTest {
         )
     }
 
+
+
+    private fun createCommands(
+        repo: AppRepository,
+        scope: TestScope,
+        currentNodes: List<NodeWithPin> = emptyList(),
+        protocolTemplates: List<TransitionProtocolTemplate> = emptyList(),
+        playbookTemplates: List<PlaybookTemplate> = emptyList()
+    ): ProtocolCommands {
+        return ProtocolCommands(
+            repository = repo,
+            scope = scope,
+            currentNodes = { currentNodes },
+            currentTags = { emptyList() },
+            protocolTemplates = { protocolTemplates },
+            playbookTemplates = { playbookTemplates }
+        )
+    }
+
+
     @Test
     fun testTriggerProtocolCreatesNewNode() = runTest {
         val repo = buildRepository()
         val scope = TestScope(testScheduler)
 
-        var currentNodes = emptyList<NodeWithPin>()
-
-        val commands = ProtocolCommands(
-            repository = repo,
-            scope = scope,
-            currentNodes = { currentNodes },
-            currentTags = { emptyList() },
-            protocolTemplates = { emptyList() },
-            playbookTemplates = { emptyList() }
-        )
+        val commands = createCommands(repo, scope)
 
         commands.triggerProtocol("morning_startup", "test")
 
@@ -104,14 +115,7 @@ class ProtocolCommandsTest {
             checklist = listOf("Wake up", "Drink water")
         )
 
-        val commands = ProtocolCommands(
-            repository = repo,
-            scope = scope,
-            currentNodes = { emptyList() },
-            currentTags = { emptyList() },
-            protocolTemplates = { listOf(template) },
-            playbookTemplates = { emptyList() }
-        )
+        val commands = createCommands(repo, scope, protocolTemplates = listOf(template))
 
         commands.applyProtocolTemplate("Morning Startup")
         testScheduler.advanceUntilIdle()
@@ -136,14 +140,7 @@ class ProtocolCommandsTest {
             recommendedModeKey = "WORK"
         )
 
-        val commands = ProtocolCommands(
-            repository = repo,
-            scope = scope,
-            currentNodes = { emptyList() },
-            currentTags = { emptyList() },
-            protocolTemplates = { emptyList() },
-            playbookTemplates = { listOf(template) }
-        )
+        val commands = createCommands(repo, scope, playbookTemplates = listOf(template))
 
         commands.applyPlaybookTemplate("Focus Mode")
         testScheduler.advanceUntilIdle()
@@ -161,14 +158,7 @@ class ProtocolCommandsTest {
         val repo = buildRepository()
         val scope = TestScope(testScheduler)
 
-        val commands = ProtocolCommands(
-            repository = repo,
-            scope = scope,
-            currentNodes = { emptyList() },
-            currentTags = { emptyList() },
-            protocolTemplates = { emptyList() },
-            playbookTemplates = { emptyList() }
-        )
+        val commands = createCommands(repo, scope)
 
         val initialContent = """
             ## TRANSITION CHECKLIST
@@ -209,14 +199,7 @@ class ProtocolCommandsTest {
         val repo = buildRepository()
         val scope = TestScope(testScheduler)
 
-        val commands = ProtocolCommands(
-            repository = repo,
-            scope = scope,
-            currentNodes = { emptyList() },
-            currentTags = { emptyList() },
-            protocolTemplates = { emptyList() },
-            playbookTemplates = { emptyList() }
-        )
+        val commands = createCommands(repo, scope)
 
         // Invalid inputs
         commands.saveCustomPlaybook("   ", listOf("step 1"))
@@ -251,14 +234,7 @@ class ProtocolCommandsTest {
         val repo = buildRepository()
         val scope = TestScope(testScheduler)
 
-        val commands = ProtocolCommands(
-            repository = repo,
-            scope = scope,
-            currentNodes = { emptyList() },
-            currentTags = { emptyList() },
-            protocolTemplates = { emptyList() },
-            playbookTemplates = { emptyList() }
-        )
+        val commands = createCommands(repo, scope)
 
         val protocolNode = NodeEntity(id = 1, type = "protocol", title = "P")
         val taskNode = NodeEntity(id = 2, type = "task", title = "T")
