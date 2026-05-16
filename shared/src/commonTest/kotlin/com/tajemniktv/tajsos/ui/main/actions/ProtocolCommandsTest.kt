@@ -73,6 +73,32 @@ class ProtocolCommandsTest {
         val playbookTemplates: List<PlaybookTemplate> = emptyList()
     )
 
+
+    private suspend fun assertSingleProtocolNode(repo: AppRepository, expectedTitle: String): NodeEntity {
+        val savedNodes = repo.getAllNodes().first()
+        assertEquals(1, savedNodes.size)
+        val node = savedNodes.first().node
+        assertEquals("protocol", node.type)
+        assertEquals(expectedTitle, node.title)
+        return node
+    }
+
+
+    private fun setupTestEnvironment(
+        scope: TestScope,
+        protocolTemplates: List<TransitionProtocolTemplate> = emptyList(),
+        playbookTemplates: List<PlaybookTemplate> = emptyList()
+    ): Pair<AppRepository, ProtocolCommands> {
+        val repo = buildRepository()
+        val config = CommandsConfig(
+            repo = repo,
+            scope = scope,
+            protocolTemplates = protocolTemplates,
+            playbookTemplates = playbookTemplates
+        )
+        return Pair(repo, createCommands(config))
+    }
+
     private fun createCommands(config: CommandsConfig): ProtocolCommands {
         return ProtocolCommands(
             repository = config.repo,
@@ -88,20 +114,14 @@ class ProtocolCommandsTest {
 
     @Test
     fun testTriggerProtocolCreatesNewNode() = runTest {
-        val repo = buildRepository()
         val scope = TestScope(testScheduler)
-
-        val commands = createCommands(CommandsConfig(repo, scope))
+        val (repo, commands) = setupTestEnvironment(scope)
 
         commands.triggerProtocol("morning_startup", "test")
 
         testScheduler.advanceUntilIdle()
 
-        val savedNodes = repo.getAllNodes().first()
-        assertEquals(1, savedNodes.size)
-        val node = savedNodes.first().node
-        assertEquals("protocol", node.type)
-        assertEquals("morning_startup", node.title)
+        val node = assertSingleProtocolNode(repo, "morning_startup")
 
         val history = repo.getAllProtocolHistory().first()
         assertEquals(setOf(node.id), history.map { it.protocolNodeId }.toSet())
@@ -110,59 +130,43 @@ class ProtocolCommandsTest {
 
     @Test
     fun testApplyProtocolTemplateCreatesNewNode() = runTest {
-        val repo = buildRepository()
         val scope = TestScope(testScheduler)
-
         val template = TransitionProtocolTemplate(
             key = "morning_startup",
             label = "Morning Startup",
             checklist = listOf("Wake up", "Drink water")
         )
-
-        val commands = createCommands(CommandsConfig(repo, scope, protocolTemplates = listOf(template)))
+        val (repo, commands) = setupTestEnvironment(scope, protocolTemplates = listOf(template))
 
         commands.applyProtocolTemplate("Morning Startup")
         testScheduler.advanceUntilIdle()
 
-        val savedNodes = repo.getAllNodes().first()
-        assertEquals(1, savedNodes.size)
-        val node = savedNodes.first().node
-        assertEquals("protocol", node.type)
-        assertEquals("Morning Startup", node.title)
+        val node = assertSingleProtocolNode(repo, "Morning Startup")
         assertTrue(node.content.contains("- [ ] Wake up"))
     }
 
     @Test
     fun testApplyPlaybookTemplateCreatesNodeAndTags() = runTest {
-        val repo = buildRepository()
         val scope = TestScope(testScheduler)
-
         val template = PlaybookTemplate(
             key = "focus_mode",
             label = "Focus Mode",
             checklist = listOf("Clear desk", "Start timer"),
             recommendedModeKey = "WORK"
         )
-
-        val commands = createCommands(CommandsConfig(repo, scope, playbookTemplates = listOf(template)))
+        val (repo, commands) = setupTestEnvironment(scope, playbookTemplates = listOf(template))
 
         commands.applyPlaybookTemplate("Focus Mode")
         testScheduler.advanceUntilIdle()
 
-        val savedNodes = repo.getAllNodes().first()
-        assertEquals(1, savedNodes.size)
-        val node = savedNodes.first().node
-        assertEquals("protocol", node.type)
-        assertEquals("Focus Mode", node.title)
+        val node = assertSingleProtocolNode(repo, "Focus Mode")
         assertEquals("playbook|mode=WORK", node.relationshipContext)
     }
 
     @Test
     fun testToggleProtocolChecklistStep() = runTest {
-        val repo = buildRepository()
         val scope = TestScope(testScheduler)
-
-        val commands = createCommands(CommandsConfig(repo, scope))
+        val (repo, commands) = setupTestEnvironment(scope)
 
         val initialContent = """
             ## TRANSITION CHECKLIST
@@ -200,10 +204,8 @@ class ProtocolCommandsTest {
 
     @Test
     fun saveCustomPlaybook_createsNodeCorrectly() = runTest {
-        val repo = buildRepository()
         val scope = TestScope(testScheduler)
-
-        val commands = createCommands(CommandsConfig(repo, scope))
+        val (repo, commands) = setupTestEnvironment(scope)
 
         // Invalid inputs
         commands.saveCustomPlaybook("   ", listOf("step 1"))
@@ -218,11 +220,7 @@ class ProtocolCommandsTest {
         commands.saveCustomPlaybook("My Playbook", listOf("Step A", "Step B"), modeKey = "STUDY", areaId = 42L)
         testScheduler.advanceUntilIdle()
 
-        savedNodes = repo.getAllNodes().first()
-        assertEquals(1, savedNodes.size)
-        val node = savedNodes.first().node
-        assertEquals("protocol", node.type)
-        assertEquals("My Playbook", node.title)
+        val node = assertSingleProtocolNode(repo, "My Playbook")
         assertEquals(42L, node.areaId)
         assertEquals("playbook|mode=STUDY", node.relationshipContext)
         assertTrue(node.content.contains("- [ ] Step A"))
@@ -235,10 +233,8 @@ class ProtocolCommandsTest {
 
     @Test
     fun setPlaybookLinks_updatesNodeCorrectly() = runTest {
-        val repo = buildRepository()
         val scope = TestScope(testScheduler)
-
-        val commands = createCommands(CommandsConfig(repo, scope))
+        val (repo, commands) = setupTestEnvironment(scope)
 
         val protocolNode = NodeEntity(id = 1, type = "protocol", title = "P")
         val taskNode = NodeEntity(id = 2, type = "task", title = "T")
