@@ -126,8 +126,8 @@ fun NotesWorkspaceDetail(
     val noteItems =
         remember(allNodes) {
             allNodes
-                .map { it.node }
-                .filter { it.isNoteItem() && it.status != "archived" }
+                /** Optimized to avoid intermediate allocations */
+                .mapNotNull { item -> item.node.takeIf { it.isNoteItem() && it.status != "archived" } }
                 .sortedByDescending { it.updatedAt }
         }
 
