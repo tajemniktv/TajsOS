@@ -3,6 +3,7 @@ package com.tajemniktv.tajsos.ui.main.calculators
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
+import kotlin.time.Duration.Companion.days
 
 import kotlin.time.Clock
 import kotlinx.datetime.TimeZone
@@ -197,4 +198,41 @@ class MainProtocolHelpersTest {
         // Not found case
         assertNull(recommendProtocolLabel(emptyList()))
     }
+
+    @Test
+    fun testSuggestPlaybookLabel_edgeCases() {
+        val now = Clock.System.now()
+        val tz = TimeZone.currentSystemDefault()
+        val today = now.toLocalDateTime(tz).date.toString()
+        val yesterday = (now - 1.days).toLocalDateTime(tz).date.toString()
+
+        // Empty entries
+        assertNull(suggestPlaybookLabel(null, emptyList()))
+
+        // Old entries are ignored
+        val oldAnxiety = TrackEntryEntity(id = 1, date = yesterday, anxietyScore = 5, energyScore = 5, moodScore = 5, createdAt = 1000L)
+        assertNull(suggestPlaybookLabel(null, listOf(oldAnxiety)))
+
+        // Multiple entries today, should pick latest by createdAt
+        val earlyCalm = TrackEntryEntity(id = 2, date = today, anxietyScore = 1, energyScore = 5, moodScore = 5, createdAt = 1000L)
+        val laterAnxiety = TrackEntryEntity(id = 3, date = today, anxietyScore = 4, energyScore = 5, moodScore = 5, createdAt = 2000L)
+        val latestCalm = TrackEntryEntity(id = 4, date = today, anxietyScore = 1, energyScore = 5, moodScore = 5, createdAt = 3000L)
+
+        // Latest is calm, so no panic suggested
+        assertNull(suggestPlaybookLabel(null, listOf(earlyCalm, laterAnxiety, latestCalm)))
+
+        // Latest is anxiety, panic suggested
+        assertEquals("Panic-ish day protocol", suggestPlaybookLabel(null, listOf(earlyCalm, latestCalm, laterAnxiety.copy(createdAt = 4000L))))
+
+        // Recovery / Bad Day modes
+        val recoveryMode = ModeEntity(id = 1, key = "RECOVERY", name = "Recovery")
+        assertEquals("Bad day protocol", suggestPlaybookLabel(recoveryMode, emptyList()))
+
+        val lowBatteryMode = ModeEntity(id = 2, key = "LOW_BATTERY", name = "Low Battery")
+        assertEquals("Bad day protocol", suggestPlaybookLabel(lowBatteryMode, emptyList()))
+
+        val cantThinkMode = ModeEntity(id = 3, key = "CANT_THINK", name = "Cant Think")
+        assertEquals("Bad day protocol", suggestPlaybookLabel(cantThinkMode, emptyList()))
+    }
+
 }
