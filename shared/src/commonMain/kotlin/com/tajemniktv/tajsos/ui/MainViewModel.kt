@@ -2724,44 +2724,41 @@ class MainViewModel(
                 nodes.filter { it.node.isResolvedDecisionSupportItem() }
             }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
+    /**
+     * Flow of active decisions that haven't been resolved for at least 7 days.
+     * Uses optimized mapNotNull for filtering and mapping in a single pass without intermediate collections.
+     */
     val stalePendingDecisions: StateFlow<List<DecisionStaleItem>> =
         allNodes
             .map { nodes ->
                 val now = Clock.System.now().toEpochMilliseconds()
                 nodes
-                    .filter {
-                        it.node.isDecisionSupportItem() &&
-                            it.node.taskStateOrNull() == TaskState.ACTIVE &&
-                            !it.node.isResolvedDecisionSupportItem()
-                    }.map { decision ->
-                        val ageDays =
-                            (
-                                (now - decision.node.createdAt).coerceAtLeast(0L) /
-                                    (24 * 60 * 60 * 1000L)
-                                    ).toInt()
-                        DecisionStaleItem(node = decision, ageDays = ageDays)
-                    }.filter { it.ageDays >= 7 }
+                    .mapNotNull { decision ->
+                        if (decision.node.isDecisionSupportItem() &&
+                            decision.node.taskStateOrNull() == TaskState.ACTIVE &&
+                            !decision.node.isResolvedDecisionSupportItem()) {
+                            val ageDays =
+                                ((now - decision.node.createdAt).coerceAtLeast(0L) / (24 * 60 * 60 * 1000L)).toInt()
+                            if (ageDays >= 7) DecisionStaleItem(node = decision, ageDays = ageDays) else null
+                        } else null
+                    }
                     .sortedByDescending { it.ageDays }
             }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
+    /**
+     * Emits a list of person nodes related to a specific decision.
+     * Uses optimized mapNotNull to filter related links and extract person IDs efficiently.
+     */
     fun getRelatedPeopleForDecision(decisionId: Long): Flow<List<NodeWithPin>> =
         combine(allNodes, allRelations) { nodes, relations ->
             val personIds =
                 relations
-                    .filter { relation ->
-                        relation.relationType == "RELATED_PERSON" && // NON-NLS
-                            (
-                                relation.fromNodeId == decisionId ||
-                                    relation.toNodeId == decisionId
-                                    )
-                    }.map { relation ->
-                        if (relation.fromNodeId ==
-                            decisionId
+                    .mapNotNull { relation ->
+                        if (relation.relationType == "RELATED_PERSON" && // NON-NLS
+                            (relation.fromNodeId == decisionId || relation.toNodeId == decisionId)
                         ) {
-                            relation.toNodeId
-                        } else {
-                            relation.fromNodeId
-                        }
+                            if (relation.fromNodeId == decisionId) relation.toNodeId else relation.fromNodeId
+                        } else null
                     }.toSet()
             nodes.filter { it.node.id in personIds && it.node.type == "person" } // NON-NLS
         }
