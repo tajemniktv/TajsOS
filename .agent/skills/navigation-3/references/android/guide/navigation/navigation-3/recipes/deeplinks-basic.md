@@ -140,7 +140,7 @@ class MainActivity : ComponentActivity() {
         // associate the target with the correct backstack key
         val key: NavKey = uri?.let {
             /** STEP 2. Parse requested deeplink */
-            val request = DeepLinkRequest(uri)
+            val request = DeepLinkRequest(intent.action, uri, intent.type)
             /** STEP 3. Compared requested with supported deeplink to find match*/
             val match = deepLinkPatterns.firstNotNullOfOrNull { pattern ->
                 DeepLinkMatcher(request, pattern).match()
@@ -477,7 +477,9 @@ import android.net.Uri
  * @param uri the target deeplink uri to link to
  */
 internal class DeepLinkRequest(
-    val uri: Uri
+    val action: String?,
+    val uri: Uri,
+    val mimeType: String?
 ) {
     /**
      * A list of path segments
@@ -493,7 +495,10 @@ internal class DeepLinkRequest(
         }
     }
 
-    // TODO add parsing for other Uri components, i.e. fragments, mimeType, action
+    /**
+     * The fragment of the URI
+     */
+    val fragment: String? = uri.fragment
 }
 ```
 
@@ -539,7 +544,9 @@ import java.io.Serializable
  */
 internal class DeepLinkPattern<T : NavKey>(
     val serializer: KSerializer<T>,
-    val uriPattern: Uri
+    val uriPattern: Uri,
+    val action: String? = null,
+    val mimeType: String? = null
 ) {
     /**
      * Help differentiate if a path segment is an argument or a static value
@@ -646,10 +653,16 @@ internal class DeepLinkMatcher<T : NavKey>(
     fun match(): DeepLinkMatchResult<T>? {
         if (request.uri.scheme != deepLinkPattern.uriPattern.scheme) return null
         if (!request.uri.authority.equals(deepLinkPattern.uriPattern.authority, ignoreCase = true)) return null
+        if (deepLinkPattern.action != null && request.action != deepLinkPattern.action) return null
+        if (deepLinkPattern.mimeType != null && request.mimeType != deepLinkPattern.mimeType) return null
+        if (deepLinkPattern.uriPattern.fragment != null && request.fragment != deepLinkPattern.uriPattern.fragment) return null
         if (request.pathSegments.size != deepLinkPattern.pathSegments.size) return null
         // exact match (url does not contain any arguments)
-        if (request.uri == deepLinkPattern.uriPattern)
+        if (request.uri == deepLinkPattern.uriPattern &&
+            request.action == deepLinkPattern.action &&
+            request.mimeType == deepLinkPattern.mimeType) {
             return DeepLinkMatchResult(deepLinkPattern.serializer, mapOf())
+        }
 
         val args = mutableMapOf<String, Any>()
         // match the path
