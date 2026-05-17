@@ -81,7 +81,7 @@ fun ActionButton(
             ButtonDefaults.buttonColors(
                 containerColor = if (isPrimary && enabled) Color.Transparent else containerColor,
                 contentColor = if (isPrimary && contentColor == TajsOSTheme.Text) TajsOSTheme.Background else contentColor,
-                disabledContainerColor = TajsOSTheme.SurfaceHighest,
+                disabledContainerColor = if (isGhost) Color.Transparent else TajsOSTheme.SurfaceHighest,
                 disabledContentColor = TajsOSTheme.Muted,
             ),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
