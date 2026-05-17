@@ -13,6 +13,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 import kotlin.test.assertFalse
+import kotlin.time.Instant
 
 class CalendarManagerTest {
     private val fakeNodeDao = FakeNodeDao()
@@ -92,6 +93,76 @@ class CalendarManagerTest {
         userDao = fakeUserDao,
         medicationDao = fakeMedicationDao
     )
+
+
+    @Test
+    fun syncAll_withFakeProvider_deduplicatesByExternalIdAndFallsBackToTitleStartAt() = runTest {
+        val providerEntity = CalendarProviderEntity(
+            id = 1,
+            name = "Test FAKE",
+            type = "FAKE",
+            isEnabled = true
+        )
+        fakeCalendarProviderDao.providers.add(providerEntity)
+
+        val fakeProvider = object : CalendarProvider {
+            override val type: String = "FAKE"
+            override suspend fun fetchEvents(provider: CalendarProviderEntity, from: kotlin.time.Instant, to: kotlin.time.Instant): List<CalendarEventEntity> {
+                return listOf(
+                    CalendarEventEntity(providerId = 1, externalId = "uid1", title = "Event 1", startAt = 100, endAt = 200),
+                    CalendarEventEntity(providerId = 1, externalId = "uid1", title = "Event 1 Duplicate", startAt = 100, endAt = 200),
+                    CalendarEventEntity(providerId = 1, externalId = null, title = "Event 2", startAt = 300, endAt = 400),
+                    CalendarEventEntity(providerId = 1, externalId = null, title = "Event 2", startAt = 300, endAt = 400),
+                )
+            }
+        }
+
+        val mockEngine = MockEngine { respond("", HttpStatusCode.OK) }
+        val httpClient = HttpClient(mockEngine)
+        val manager = CalendarManager(repository, httpClient, listOf(fakeProvider))
+
+        manager.syncAll()
+
+        val events = fakeCalendarEventDao.events
+        assertEquals(2, events.size)
+        assertTrue(events.any { it.externalId == "uid1" && it.title == "Event 1" })
+        assertTrue(events.any { it.externalId == null && it.title == "Event 2" })
+    }
+
+    @Test
+    fun syncAll_clearsOldEventsAndInsertsNewOnesAndUpdatesSyncedAt() = runTest {
+        val providerEntity = CalendarProviderEntity(
+            id = 1,
+            name = "Test FAKE",
+            type = "FAKE",
+            isEnabled = true
+        )
+        fakeCalendarProviderDao.providers.add(providerEntity)
+
+        fakeCalendarEventDao.events.add(CalendarEventEntity(id = 99, providerId = 1, title = "Old Event", startAt = 0, endAt = 0))
+
+        val fakeProvider = object : CalendarProvider {
+            override val type: String = "FAKE"
+            override suspend fun fetchEvents(provider: CalendarProviderEntity, from: kotlin.time.Instant, to: kotlin.time.Instant): List<CalendarEventEntity> {
+                return listOf(
+                    CalendarEventEntity(providerId = 1, externalId = "new1", title = "New Event", startAt = 100, endAt = 200)
+                )
+            }
+        }
+
+        val mockEngine = MockEngine { respond("", HttpStatusCode.OK) }
+        val httpClient = HttpClient(mockEngine)
+        val manager = CalendarManager(repository, httpClient, listOf(fakeProvider))
+
+        manager.syncAll()
+
+        val events = fakeCalendarEventDao.events
+        assertEquals(1, events.size)
+        assertEquals("New Event", events.first().title)
+
+        val updatedProvider = fakeCalendarProviderDao.providers.first()
+        assertNotNull(updatedProvider.lastSyncedAt)
+    }
 
     @Test
     fun syncAll_withEnabledIcsProvider_fetchesAndSavesEvents() = runTest {
