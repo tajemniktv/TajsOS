@@ -68,7 +68,7 @@ class SyncCancellationTest {
         } catch (e: CancellationException) {
             assertTrue(true, "Successfully caught CancellationException")
         } catch (e: Exception) {
-            assertTrue(e.cause is CancellationException || e is CancellationException, "Successfully threw cancellation exception")
+            assertTrue(e.cause is CancellationException, "Successfully threw cancellation exception")
         }
     }
 }
