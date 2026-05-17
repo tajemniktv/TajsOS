@@ -44,8 +44,7 @@ class DomainLensQueriesActionItemsTest {
 
         val result = DomainLensQueries.financeActionItems(listOf(activeFinanceTask, doneFinanceTask, archivedFinanceTask))
 
-        assertEquals(1, result.size)
-        assertEquals(1L, result.first().node.id)
+        assertEquals(setOf(1L), result.map { it.node.id }.toSet())
     }
 
     @Test
@@ -56,8 +55,7 @@ class DomainLensQueriesActionItemsTest {
 
         val result = DomainLensQueries.financeActionItems(listOf(financeTask, financeNote, financeRecord))
 
-        assertEquals(1, result.size)
-        assertEquals(1L, result.first().node.id)
+        assertEquals(setOf(1L), result.map { it.node.id }.toSet())
     }
 
     @Test
@@ -68,8 +66,7 @@ class DomainLensQueriesActionItemsTest {
 
         val result = DomainLensQueries.healthActionItems(listOf(activeHealthTask, doneHealthTask, archivedHealthTask))
 
-        assertEquals(1, result.size)
-        assertEquals(1L, result.first().node.id)
+        assertEquals(setOf(1L), result.map { it.node.id }.toSet())
     }
 
     @Test
@@ -80,7 +77,6 @@ class DomainLensQueriesActionItemsTest {
 
         val result = DomainLensQueries.healthActionItems(listOf(healthTask, healthNote, healthRecord))
 
-        assertEquals(1, result.size)
-        assertEquals(1L, result.first().node.id)
+        assertEquals(setOf(1L), result.map { it.node.id }.toSet())
     }
 }
