@@ -269,4 +269,39 @@ class ApplicationTest {
 
         assertEquals(HttpStatusCode.UnsupportedMediaType, response.status)
     }
+
+    @Test
+    fun testSyncEndpoint_GenericException(): TestResult = testApplication {
+        environment {
+            config = io.ktor.server.config.MapApplicationConfig(
+                "TAJSOS_SYNC_TOKEN" to "default-dev-token",
+                "ktor.application.version" to "1.0.0"
+            )
+        }
+        application {
+            module()
+        }
+        val clientWithNegotiation =
+            createClient {
+                install(ContentNegotiation) {
+                    json(
+                        Json {
+                            ignoreUnknownKeys = true
+                        }
+                    )
+                }
+            }
+
+        // We can trigger an error by sending completely invalid content for JSON serialization
+        val response = clientWithNegotiation.post("/sync") {
+            header(io.ktor.http.HttpHeaders.Authorization, "Bearer default-dev-token")
+            contentType(ContentType.Application.Json)
+            setBody("not-a-json-object-at-all")
+        }
+
+        assertEquals(HttpStatusCode.BadRequest, response.status)
+        val bodyText = response.bodyAsText()
+        assertTrue(bodyText.contains("Invalid sync request payload"))
+    }
+
 }
