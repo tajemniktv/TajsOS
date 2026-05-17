@@ -33,7 +33,11 @@ fun Application.module() {
     SecureRandom().nextBytes(salt)
     val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256")
     val spec = PBEKeySpec(expectedToken.toCharArray(), salt, 65536, 256)
-    val expectedTokenHash = factory.generateSecret(spec).encoded
+    val expectedTokenHash = try {
+        factory.generateSecret(spec).encoded
+    } finally {
+        spec.clearPassword()
+    }
 
     install(Authentication) {
         bearer("sync-auth") {
