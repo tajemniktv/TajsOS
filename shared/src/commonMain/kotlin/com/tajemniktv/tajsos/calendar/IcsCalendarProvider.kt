@@ -72,7 +72,7 @@ class IcsCalendarProvider(
             val parsedUrl = io.ktor.http.Url(url)
             if (!isValidScheme(parsedUrl.protocol.name.lowercase())) return false
             isPublicRoutableHost(parsedUrl.host.lowercase())
-        } catch (e: Exception) {
+        } catch (e: io.ktor.http.URLParserException) {
             false
         }
     }
