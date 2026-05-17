@@ -88,16 +88,15 @@ class DomainLensQueriesEdgeTest {
 
     @Test
     fun healthKnowledgeItems_filters_by_active_status_and_knowledge_type() {
-        val activeJournal = createNode(1, "Health log", status = "active", type = "note", noteType = "journal")
+        val activeJournal = createNode(1, "Health log", type = "note", noteType = "journal")
         val inactiveJournal = createNode(2, "Old log", status = "archived", type = "note", noteType = "journal")
-        val activeTask = createNode(3, "Health task", status = "active", type = "task", content = "see doctor")
-        val unrelatedActiveJournal = createNode(4, "Daily log", status = "active", type = "note", noteType = "reference")
+        val activeTask = createNode(3, "Health task", content = "see doctor")
+        val unrelatedActiveNote = createNode(4, "Daily log", type = "note", noteType = "reference")
 
-        val allNodes = listOf(activeJournal, inactiveJournal, activeTask, unrelatedActiveJournal)
+        val allNodes = listOf(activeJournal, inactiveJournal, activeTask, unrelatedActiveNote)
 
         val result = DomainLensQueries.healthKnowledgeItems(allNodes)
-        assertEquals(1, result.size)
-        assertEquals(1L, result.first().node.id)
+        assertEquals(setOf(1L), result.map { it.node.id }.toSet())
     }
 
     @Test
