@@ -64,7 +64,7 @@ class SyncCancellationTest {
             if (response.status == HttpStatusCode.BadRequest) {
                 fail("Received 400 Bad Request, CancellationException was swallowed by catch (e: Exception) block! Body: ${response.bodyAsText()}")
             }
-            // If it succeeds with something other than 400, the catch block properly rethrew the error.
+            fail("Expected CancellationException to be thrown, but received response: ${response.status}")
         } catch (e: CancellationException) {
             assertTrue(true, "Successfully caught CancellationException")
         } catch (e: Exception) {
