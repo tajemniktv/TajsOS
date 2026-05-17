@@ -39,6 +39,15 @@ fun Application.module() {
         spec.clearPassword()
     }
 
+    fun hashToken(token: String): ByteArray {
+        val tokenSpec = PBEKeySpec(token.toCharArray(), salt, 65536, 256)
+        return try {
+            factory.generateSecret(tokenSpec).encoded
+        } finally {
+            tokenSpec.clearPassword()
+        }
+    }
+
     install(Authentication) {
         bearer("sync-auth") {
             authenticate { tokenCredential ->
