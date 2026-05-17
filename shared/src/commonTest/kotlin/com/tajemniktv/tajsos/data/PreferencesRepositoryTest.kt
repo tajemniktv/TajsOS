@@ -14,6 +14,7 @@ import com.tajemniktv.tajsos.ui.SidebarMode
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import okio.IOException
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
@@ -41,6 +42,28 @@ class PreferencesRepositoryTest {
             awaitComplete()
         }
     }
+
+    @Test
+    fun updateData_throwsIoException_propagatesError() = runTest {
+        val dataStore = object : DataStore<Preferences> {
+            override val data: Flow<Preferences> = flowOf(emptyPreferences())
+
+            override suspend fun updateData(transform: suspend (t: Preferences) -> Preferences): Preferences {
+                throw IOException("Write failed")
+            }
+        }
+        val repository = PreferencesRepository(dataStore)
+
+        var exceptionThrown = false
+        try {
+            repository.updateSidebarMode(SidebarMode.COLLAPSED)
+        } catch (e: IOException) {
+            exceptionThrown = true
+        }
+
+        kotlin.test.assertTrue(exceptionThrown, "Expected IOException to be thrown")
+    }
+
 
 
     private class FakeDataStore : DataStore<Preferences> {
