@@ -205,8 +205,8 @@ data class NodeEntity(
  * @property isBuiltin Whether this mode is a built-in system default or user-created.
  * @property isEnabled Whether this mode is currently active and selectable.
  * @property sortOrder The display order of the mode in lists.
- * @property createdAt Timestamp when the mode was created.
- * @property updatedAt Timestamp when the mode was last updated.
+ * @property createdAt The timestamp (epoch milliseconds) when the mode was created.
+ * @property updatedAt The timestamp (epoch milliseconds) when the mode was last updated.
  */
 @Entity(tableName = "modes")
 @Serializable
