@@ -79,6 +79,7 @@ fun Route.syncRoutes() {
                 // Rethrow cancellation to let coroutines cancel gracefully
                 throw e
             } catch (e: Exception) {
+                call.application.environment.log.error("Failed to process sync request", e)
                 // If it fails to deserialize or handle the request, return a 400 Bad Request
                 call.respond(
                     HttpStatusCode.BadRequest,

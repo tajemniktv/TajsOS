@@ -137,7 +137,7 @@ fun App(
                 } else {
                     TajsOSTheme.Primary
                 }
-            } catch (_: Exception) {
+            } catch (_: IllegalArgumentException) {
                 TajsOSTheme.Primary
             }
         }
