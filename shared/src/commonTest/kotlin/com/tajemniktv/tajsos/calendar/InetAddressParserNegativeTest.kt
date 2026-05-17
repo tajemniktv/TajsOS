@@ -55,5 +55,8 @@ class InetAddressParserNegativeTest {
         assertNull(parseIpAddress("12345::"), "Should reject segment with length > 4 on left")
         assertNull(parseIpAddress("1:2:3:4:5:6:7:8::1"), "Should reject left parsed out of bounds")
         assertNull(parseIpAddress("1::2:3:4:5:6:7:8:9"), "Should reject right parsed out of bounds")
+
+        // newly added negative edge case
+        assertNull(parseIpAddress("0:0:0:0:0:0:0:0:0"), "Should reject >8 segments even if all 0")
     }
 }

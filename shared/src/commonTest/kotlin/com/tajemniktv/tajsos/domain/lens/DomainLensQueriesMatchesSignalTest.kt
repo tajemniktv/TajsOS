@@ -173,4 +173,21 @@ class DomainLensQueriesMatchesSignalTest {
         assertDomainQueryResult(listOf(1L, 2L), result)
     }
 
+    @Test
+    fun financeActionItems_matches_maintenance_or_content_separately() {
+        val node1 = createNode(1, "title", "content bill text", "task")
+        val node2 = createNode(2, "title", "content", "task", maintenanceType = "subscription")
+
+        val result = DomainLensQueries.financeActionItems(listOf(node1, node2))
+        assertDomainQueryResult(listOf(1L, 2L), result)
+    }
+
+    @Test
+    fun healthActionItems_matches_maintenance_or_content_separately() {
+        val node1 = createNode(1, "title", "content prescription here", "task")
+        val node2 = createNode(2, "title", "content", "task", maintenanceType = "med_refill")
+
+        val result = DomainLensQueries.healthActionItems(listOf(node1, node2))
+        assertDomainQueryResult(listOf(1L, 2L), result)
+    }
 }
