@@ -271,7 +271,7 @@ class ApplicationTest {
     }
 
     @Test
-    fun testSyncEndpoint_GenericException() = testApplication {
+    fun testSyncEndpoint_GenericException(): TestResult = testApplication {
         environment {
             config = io.ktor.server.config.MapApplicationConfig(
                 "TAJSOS_SYNC_TOKEN" to "default-dev-token",
