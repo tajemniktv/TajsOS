@@ -134,4 +134,26 @@ class PreferencesRepositoryTest {
             assertEquals(DesktopWindowStartupMode.RESTORE_LAST, awaitItem())
         }
     }
+
+    private class FatalErrorDataStore : DataStore<Preferences> {
+        override val data: Flow<Preferences> = flow {
+            throw IllegalStateException("Database is closed")
+        }
+
+        override suspend fun updateData(transform: suspend (t: Preferences) -> Preferences): Preferences {
+            return emptyPreferences()
+        }
+    }
+
+    @Test
+    fun catchIoException_rethrowsNonIoExceptions() = runTest {
+        val dataStore = FatalErrorDataStore()
+        val repository = PreferencesRepository(dataStore)
+
+        repository.sidebarMode.test {
+            val error = awaitError()
+            assertEquals("Database is closed", error.message)
+            assertEquals(true, error is IllegalStateException)
+        }
+    }
 }
