@@ -280,7 +280,7 @@ internal class IcsEventBuilder {
             } else {
                 null
             }
-        } catch (e: Exception) {
+        } catch (e: IllegalArgumentException) {
             null
         }
 
