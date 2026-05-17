@@ -9,12 +9,14 @@ import com.tajemniktv.tajsos.data.CalendarProviderEntity
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
-import kotlinx.datetime.IllegalTimeZoneException
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
+import kotlinx.io.IOException
+import io.ktor.client.plugins.ResponseException
 import kotlin.time.Clock
 import kotlin.time.Instant
+import kotlin.coroutines.cancellation.CancellationException
 
 /**
  * A calendar provider that fetches and parses standard ICS (iCalendar) files from HTTP(S) sources.
@@ -42,7 +44,7 @@ class IcsCalendarProvider(
     ): List<CalendarEventEntity> {
         val url = provider.url ?: return emptyList()
         if (!isValidHttpUrl(url)) return emptyList()
-        return try {
+        return runCatching {
             val response = client.get(url)
             if (response.status.value in 200..299) {
                 val icsContent = response.bodyAsText()
@@ -51,9 +53,9 @@ class IcsCalendarProvider(
             } else {
                 emptyList()
             }
-        } catch (e: Exception) {
-            emptyList()
-        }
+        }.onFailure { e ->
+            if (e is CancellationException) throw e
+        }.getOrDefault(emptyList())
     }
 
     /**
@@ -73,7 +75,7 @@ class IcsCalendarProvider(
             val parsedUrl = io.ktor.http.Url(url)
             if (!isValidScheme(parsedUrl.protocol.name.lowercase())) return false
             isPublicRoutableHost(parsedUrl.host.lowercase())
-        } catch (e: Exception) {
+        } catch (e: io.ktor.http.URLParserException) {
             false
         }
     }
@@ -281,7 +283,9 @@ internal class IcsEventBuilder {
             } else {
                 null
             }
-        } catch (e: Exception) {
+        } catch (e: IllegalArgumentException) {
+            null
+        } catch (e: IndexOutOfBoundsException) {
             null
         }
 
@@ -340,7 +344,7 @@ internal class IcsEventBuilder {
             Regex("TZID=([^;:]+)").find(rawKey) ?: return TimeZone.currentSystemDefault()
         return try {
             TimeZone.of(tzidMatch.groupValues[1])
-        } catch (e: IllegalTimeZoneException) {
+        } catch (e: IllegalArgumentException) {
             TimeZone.currentSystemDefault()
         }
     }

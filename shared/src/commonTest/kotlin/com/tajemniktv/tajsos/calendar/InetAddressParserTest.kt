@@ -140,4 +140,10 @@ class InetAddressParserTest {
         assertNotNull(publicV6)
         assertFalse(publicV6.isPrivateOrLocal())
     }
+
+    @Test
+    fun testInvalidIpv6EdgeCases() {
+        assertNull(parseIpAddress(":1:2:3:4:5:6:7"), "Should reject starting with single colon")
+        assertNull(parseIpAddress("1:2:3:4:5:6:7:"), "Should reject ending with single colon")
+    }
 }

@@ -86,11 +86,13 @@ internal fun CalendarMainBlock(
     val pendingNodes =
         remember(activeNodes, todayEpoch) {
             activeNodes
-                .map { it.node }
-                .filter { node ->
-                    node.type == "task" &&
-                        node.status == "active" &&
-                        (node.dueAt?.let { it >= todayEpoch } == true)
+                /** Optimized to avoid intermediate allocations */
+                .mapNotNull { item ->
+                    item.node.takeIf { node ->
+                        node.type == "task" &&
+                            node.status == "active" &&
+                            (node.dueAt?.let { it >= todayEpoch } == true)
+                    }
                 }.sortedBy { it.dueAt }
                 .take(6)
         }

@@ -12,11 +12,17 @@ import com.tajemniktv.tajsos.ui.MaintenanceStatusItem
 
 /**
  * Explicit maintenance item types that classify as financial responsibilities.
+ *
+ * This set is used in heuristic matching to implicitly map items with these maintenance
+ * types into the finance domain without requiring an explicit [com.tajemniktv.tajsos.domain.DomainKind] assignment.
  */
 private val financeMaintenanceTypes = setOf("bill", "subscription", "renewal")
 
 /**
  * Explicit maintenance item types that classify as health and medical responsibilities.
+ *
+ * This set is used in heuristic matching to implicitly map items with these maintenance
+ * types into the health domain without requiring an explicit [com.tajemniktv.tajsos.domain.DomainKind] assignment.
  */
 private val healthMaintenanceTypes = setOf("appointment", "prescription", "med_refill")
 
@@ -94,25 +100,12 @@ private val healthTitleKeywords =
     )
 
 /**
- * Shared projection helpers for domain screens.
+ * Provides static heuristic queries to categorize active nodes into broader LifeOS domains.
  *
- * These helpers keep query logic out of UI composables and avoid pushing more orchestration
- * into [com.tajemniktv.tajsos.ui.MainViewModel].
- *
- * Domains (such as finance or health) act as product-level lenses over the shared object spine,
- * rather than acting as hard containers. They are categorized implicitly by checking for hardcoded
- * string markers within node tags, titles, content, `maintenanceType`, and `noteType` fields.
- * This heuristic-based approach provides a zero-configuration experience, allowing items to be surfaced
- * appropriately even if the user forgets to manually assign the domain.
- *
- * Note: These queries intentionally bypass explicit domain associations (e.g., via ItemDomainEntity)
- * in favor of terminology matching to lower the friction of capturing new data.
- *
- * This object implements a zero-configuration classification strategy. Instead of relying on
- * explicit database associations (like a many-to-many domain relation table), items are
- * implicitly categorized into domains via keyword matching in titles, content, tags, and
- * specific maintenance/note types. This decoupling allows items to naturally surface in the
- * right lenses without requiring manual user curation.
+ * This singleton relies heavily on zero-configuration implicit matching—such as tags,
+ * keywords within title and content, maintenance types, and specific note types—rather than explicit database
+ * entity associations. This design significantly lowers the friction of capturing new items,
+ * ensuring they surface in relevant domains (like Finances or Health) automatically.
  *
  * This object evaluates the system's shared nodes (tasks, notes, records) and determines
  * if they implicitly belong to a specific LifeOS domain (like Finance or Health) based on

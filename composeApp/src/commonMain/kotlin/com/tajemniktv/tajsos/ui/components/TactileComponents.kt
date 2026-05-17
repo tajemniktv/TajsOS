@@ -40,7 +40,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontWeight
@@ -138,17 +137,6 @@ fun TactileSlider(
                     modifier = Modifier.size(24.dp),
                     contentAlignment = Alignment.Center,
                 ) {
-                    // Glow effect
-                    Box(
-                        modifier =
-                            Modifier
-                                .size(20.dp)
-                                .blur(8.dp)
-                                .background(
-                                    TajsOSTheme.Primary.copy(alpha = 0.5f),
-                                    RoundedCornerShape(TajsOSTheme.RadiusXs),
-                                ),
-                    )
                     // Core thumb
                     Box(
                         modifier =
@@ -215,19 +203,6 @@ fun TactileTextField(
                 Modifier
                     .fillMaxWidth(),
         ) {
-            if (isFocused) {
-                Box(
-                    modifier =
-                        Modifier
-                            .matchParentSize()
-                            .blur(8.dp)
-                            .background(
-                                TajsOSTheme.Primary.copy(alpha = 0.2f),
-                                RoundedCornerShape(TajsOSTheme.RadiusMd),
-                            ),
-                )
-            }
-
             Box(
                 modifier =
                     Modifier
@@ -320,17 +295,6 @@ fun TactileOutlinedTextField(
     val isFocused by interactionSource.collectIsFocusedAsState()
 
     Box(modifier = containerModifier, propagateMinConstraints = true) {
-        if (isFocused) {
-            Box(
-                modifier = Modifier
-                    .matchParentSize()
-                    .blur(8.dp)
-                    .background(
-                        TajsOSTheme.Primary.copy(alpha = 0.2f),
-                        shape
-                    )
-            )
-        }
         OutlinedTextField(
             value = value,
             onValueChange = onValueChange,

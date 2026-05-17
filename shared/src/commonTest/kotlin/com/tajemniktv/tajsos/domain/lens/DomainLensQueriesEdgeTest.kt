@@ -87,6 +87,29 @@ class DomainLensQueriesEdgeTest {
     }
 
     @Test
+    fun healthKnowledgeItems_filters_by_active_status_and_knowledge_type() {
+        val activeJournal = createNode(1, "Health log", type = "note", noteType = "journal")
+        val inactiveJournal = createNode(2, "Old log", status = "archived", type = "note", noteType = "journal")
+        val activeTask = createNode(3, "Health task", content = "see doctor")
+        val unrelatedActiveNote = createNode(4, "Daily log", type = "note", noteType = "reference")
+
+        val allNodes = listOf(activeJournal, inactiveJournal, activeTask, unrelatedActiveNote)
+
+        val result = DomainLensQueries.healthKnowledgeItems(allNodes)
+        assertEquals(setOf(1L), result.map { it.node.id }.toSet())
+    }
+
+    @Test
+    fun sorting_healthKnowledgeItems_sorts_by_updatedAt_descending() {
+        val oldNote = createNode(1, "Health log", updatedAt = 100L, type = "note", noteType = "journal")
+        val newNote = createNode(2, "Health log", updatedAt = 300L, type = "note", noteType = "journal")
+        val medNote = createNode(3, "Health log", updatedAt = 200L, type = "note", noteType = "journal")
+
+        val result = DomainLensQueries.healthKnowledgeItems(listOf(oldNote, newNote, medNote))
+        assertEquals(listOf(2L, 3L, 1L), result.map { it.node.id })
+    }
+
+    @Test
     fun sorting_financeKnowledgeItems_sorts_by_updatedAt_descending() {
         val oldNote = createNode(1, "Finance rules", updatedAt = 100L, type = "note")
         val newNote = createNode(2, "Finance updates", updatedAt = 300L, type = "note")
@@ -103,6 +126,20 @@ class DomainLensQueriesEdgeTest {
         val unrelatedTask = createNode(3, "Work", "writing code")
 
         val result = DomainLensQueries.healthActionItems(listOf(healthTaskTitle, healthTaskContent, unrelatedTask))
+        assertEquals(2, result.size)
+        assertEquals(setOf(1L, 2L), result.map { it.node.id }.toSet())
+    }
+
+
+    @Test
+    fun financeKnowledgeItems_filters_non_knowledge_and_inactive_items() {
+        val activeNote = createNode(1, "Finance budget", type = "note", status = "active")
+        val activeRecord = createNode(2, "Finance log", type = "record", status = "active")
+        val inactiveNote = createNode(3, "Finance rules", type = "note", status = "archived")
+        val activeTask = createNode(4, "Finance task", type = "task", status = "active")
+
+        val result = DomainLensQueries.financeKnowledgeItems(listOf(activeNote, activeRecord, inactiveNote, activeTask))
+
         assertEquals(2, result.size)
         assertEquals(setOf(1L, 2L), result.map { it.node.id }.toSet())
     }

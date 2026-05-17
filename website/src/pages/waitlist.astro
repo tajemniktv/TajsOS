@@ -39,10 +39,10 @@ const title = "WAITLIST";
 <!-- Waitlist Module -->
 <div class="w-full max-w-lg group relative">
 <div class="absolute -inset-0.5 bg-linear-to-r from-primary to-primary-dim rounded-xl blur opacity-20 transition duration-1000"></div>
-<form id="waitlist-form" class="relative flex items-center bg-surface-container-lowest border border-outline-variant/30 rounded-xl overflow-hidden focus-within:ring-1 focus-within:ring-primary focus-within:border-primary transition-all duration-500">
+<form id="waitlist-form" class="relative flex items-center bg-surface-container-lowest border border-transparent rounded-xl overflow-hidden focus-within:ring-1 focus-within:ring-primary focus-within:ring-inset transition-all duration-500">
 <label for="waitlist-email" class="sr-only">Email address</label>
-<input id="waitlist-email" class="bg-transparent border-none focus:ring-0 text-on-surface placeholder:text-outline font-mono py-5 px-6 w-full text-lg" placeholder="email@example.com" type="email" required autocomplete="email"/>
-<button id="waitlist-submit" type="submit" class="bg-linear-to-br from-primary to-primary-dim text-on-primary-fixed font-headline font-bold px-12 py-6 text-xl hover:shadow-[0_0_50px_rgba(186,158,255,0.4)] transition-all flex items-center gap-2 group/btn relative overflow-hidden">
+<input id="waitlist-email" class="bg-transparent border-transparent text-on-surface placeholder:text-outline font-mono py-5 px-6 w-full text-lg outline-none" placeholder="email@example.com" type="email" required autocomplete="email"/>
+<button id="waitlist-submit" type="submit" class="bg-linear-to-br from-primary to-primary-dim text-on-primary-fixed font-headline font-bold px-12 py-6 text-xl transition-all flex items-center gap-2 group/btn relative overflow-hidden">
                         <span id="waitlist-button-text">JOIN NOW</span>
                         <div id="waitlist-loading" class="hidden absolute inset-0 bg-primary flex items-center justify-center">
                             <span class="material-symbols-outlined text-on-primary animate-spin">progress_activity</span>
@@ -61,21 +61,21 @@ const title = "WAITLIST";
 </div>
 <!-- Status Panels - Bento Style -->
 <div class="mt-24 grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-4xl">
-<div class="bg-surface-container-low/40 neo-blur p-6 rounded-xl border border-outline-variant/10 flex flex-col items-start gap-4">
+<div class="bg-surface-container-low/40 neo-blur p-6 rounded-3xl border border-outline-variant/10 flex flex-col items-start gap-4">
 <span class="material-symbols-outlined text-primary-dim" data-icon="waves">waves</span>
 <div class="text-left">
 <div class="font-label text-[10px] tracking-widest text-outline uppercase mb-1">Sync_Status</div>
 <div class="font-mono text-xl text-on-surface">Local First</div>
 </div>
 </div>
-<div class="bg-surface-container-low/40 neo-blur p-6 rounded-xl border border-outline-variant/10 flex flex-col items-start gap-4">
+<div class="bg-surface-container-low/40 neo-blur p-6 rounded-3xl border border-outline-variant/10 flex flex-col items-start gap-4">
 <span class="material-symbols-outlined text-primary-dim" data-icon="cloud_done">cloud_done</span>
 <div class="text-left">
 <div class="font-label text-[10px] tracking-widest text-outline uppercase mb-1">App_Size</div>
 <div class="font-mono text-xl text-primary">Lightweight</div>
 </div>
 </div>
-<div class="bg-surface-container-low/40 neo-blur p-6 rounded-xl border border-outline-variant/10 flex flex-col items-start gap-4">
+<div class="bg-surface-container-low/40 neo-blur p-6 rounded-3xl border border-outline-variant/10 flex flex-col items-start gap-4">
 <span class="material-symbols-outlined text-primary-dim" data-icon="encrypted">encrypted</span>
 <div class="text-left">
 <div class="font-label text-[10px] tracking-widest text-outline uppercase mb-1">Database</div>
@@ -93,7 +93,7 @@ const title = "WAITLIST";
   const waitlistForm = document.getElementById("waitlist-form");
   const waitlistEmailInput = document.getElementById("waitlist-email");
   const waitlistStatus = document.getElementById("waitlist-status");
-  const waitlistSubmit = document.getElementById("waitlist-submit") as HTMLButtonElement;
+  const waitlistSubmit = document.getElementById("waitlist-submit");
   const waitlistLoading = document.getElementById("waitlist-loading");
   const waitlistButtonText = document.getElementById("waitlist-button-text");
 

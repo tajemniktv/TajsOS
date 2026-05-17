@@ -34,6 +34,7 @@ import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -61,31 +62,66 @@ class ProtocolCommandsTest {
         )
     }
 
+
+
+
+    private data class CommandsConfig(
+        val repo: AppRepository,
+        val scope: TestScope,
+        val currentNodes: List<NodeWithPin> = emptyList(),
+        val protocolTemplates: List<TransitionProtocolTemplate> = emptyList(),
+        val playbookTemplates: List<PlaybookTemplate> = emptyList()
+    )
+
+
+    private suspend fun assertSingleProtocolNode(repo: AppRepository, expectedTitle: String): NodeEntity {
+        val savedNodes = repo.getAllNodes().first()
+        assertEquals(1, savedNodes.size)
+        val node = savedNodes.first().node
+        assertEquals("protocol", node.type)
+        assertEquals(expectedTitle, node.title)
+        return node
+    }
+
+
+    private fun setupTestEnvironment(
+        scope: TestScope,
+        protocolTemplates: List<TransitionProtocolTemplate> = emptyList(),
+        playbookTemplates: List<PlaybookTemplate> = emptyList()
+    ): Pair<AppRepository, ProtocolCommands> {
+        val repo = buildRepository()
+        val config = CommandsConfig(
+            repo = repo,
+            scope = scope,
+            protocolTemplates = protocolTemplates,
+            playbookTemplates = playbookTemplates
+        )
+        return Pair(repo, createCommands(config))
+    }
+
+    private fun createCommands(config: CommandsConfig): ProtocolCommands {
+        return ProtocolCommands(
+            repository = config.repo,
+            scope = config.scope,
+            currentNodes = { config.currentNodes },
+            currentTags = { emptyList() },
+            protocolTemplates = { config.protocolTemplates },
+            playbookTemplates = { config.playbookTemplates }
+        )
+    }
+
+
+
     @Test
     fun testTriggerProtocolCreatesNewNode() = runTest {
-        val repo = buildRepository()
         val scope = TestScope(testScheduler)
-
-        var currentNodes = emptyList<NodeWithPin>()
-
-        val commands = ProtocolCommands(
-            repository = repo,
-            scope = scope,
-            currentNodes = { currentNodes },
-            currentTags = { emptyList() },
-            protocolTemplates = { emptyList() },
-            playbookTemplates = { emptyList() }
-        )
+        val (repo, commands) = setupTestEnvironment(scope)
 
         commands.triggerProtocol("morning_startup", "test")
 
         testScheduler.advanceUntilIdle()
 
-        val savedNodes = repo.getAllNodes().first()
-        assertEquals(1, savedNodes.size)
-        val node = savedNodes.first().node
-        assertEquals("protocol", node.type)
-        assertEquals("morning_startup", node.title)
+        val node = assertSingleProtocolNode(repo, "morning_startup")
 
         val history = repo.getAllProtocolHistory().first()
         assertEquals(setOf(node.id), history.map { it.protocolNodeId }.toSet())
@@ -94,80 +130,43 @@ class ProtocolCommandsTest {
 
     @Test
     fun testApplyProtocolTemplateCreatesNewNode() = runTest {
-        val repo = buildRepository()
         val scope = TestScope(testScheduler)
-
         val template = TransitionProtocolTemplate(
             key = "morning_startup",
             label = "Morning Startup",
             checklist = listOf("Wake up", "Drink water")
         )
-
-        val commands = ProtocolCommands(
-            repository = repo,
-            scope = scope,
-            currentNodes = { emptyList() },
-            currentTags = { emptyList() },
-            protocolTemplates = { listOf(template) },
-            playbookTemplates = { emptyList() }
-        )
+        val (repo, commands) = setupTestEnvironment(scope, protocolTemplates = listOf(template))
 
         commands.applyProtocolTemplate("Morning Startup")
         testScheduler.advanceUntilIdle()
 
-        val savedNodes = repo.getAllNodes().first()
-        assertEquals(1, savedNodes.size)
-        val node = savedNodes.first().node
-        assertEquals("protocol", node.type)
-        assertEquals("Morning Startup", node.title)
+        val node = assertSingleProtocolNode(repo, "Morning Startup")
         assertTrue(node.content.contains("- [ ] Wake up"))
     }
 
     @Test
     fun testApplyPlaybookTemplateCreatesNodeAndTags() = runTest {
-        val repo = buildRepository()
         val scope = TestScope(testScheduler)
-
         val template = PlaybookTemplate(
             key = "focus_mode",
             label = "Focus Mode",
             checklist = listOf("Clear desk", "Start timer"),
             recommendedModeKey = "WORK"
         )
-
-        val commands = ProtocolCommands(
-            repository = repo,
-            scope = scope,
-            currentNodes = { emptyList() },
-            currentTags = { emptyList() },
-            protocolTemplates = { emptyList() },
-            playbookTemplates = { listOf(template) }
-        )
+        val (repo, commands) = setupTestEnvironment(scope, playbookTemplates = listOf(template))
 
         commands.applyPlaybookTemplate("Focus Mode")
         testScheduler.advanceUntilIdle()
 
-        val savedNodes = repo.getAllNodes().first()
-        assertEquals(1, savedNodes.size)
-        val node = savedNodes.first().node
-        assertEquals("protocol", node.type)
-        assertEquals("Focus Mode", node.title)
+        val node = assertSingleProtocolNode(repo, "Focus Mode")
         assertEquals("playbook|mode=WORK", node.relationshipContext)
     }
 
     @Test
     fun testToggleProtocolChecklistStep() = runTest {
-        val repo = buildRepository()
         val scope = TestScope(testScheduler)
-
-        val commands = ProtocolCommands(
-            repository = repo,
-            scope = scope,
-            currentNodes = { emptyList() },
-            currentTags = { emptyList() },
-            protocolTemplates = { emptyList() },
-            playbookTemplates = { emptyList() }
-        )
+        val (repo, commands) = setupTestEnvironment(scope)
 
         val initialContent = """
             ## TRANSITION CHECKLIST
@@ -202,4 +201,60 @@ class ProtocolCommandsTest {
         val updatedContent2 = savedNodes2.first().node.content
         assertTrue(updatedContent2.contains("- [ ] Step 2"))
     }
+
+    @Test
+    fun saveCustomPlaybook_createsNodeCorrectly() = runTest {
+        val scope = TestScope(testScheduler)
+        val (repo, commands) = setupTestEnvironment(scope)
+
+        // Invalid inputs
+        commands.saveCustomPlaybook("   ", listOf("step 1"))
+        commands.saveCustomPlaybook("valid", emptyList())
+        commands.saveCustomPlaybook("valid", listOf("   ", ""))
+        testScheduler.advanceUntilIdle()
+
+        var savedNodes = repo.getAllNodes().first()
+        assertEquals(0, savedNodes.size)
+
+        // Valid inputs
+        commands.saveCustomPlaybook("My Playbook", listOf("Step A", "Step B"), modeKey = "STUDY", areaId = 42L)
+        testScheduler.advanceUntilIdle()
+
+        val node = assertSingleProtocolNode(repo, "My Playbook")
+        assertEquals(42L, node.areaId)
+        assertEquals("playbook|mode=STUDY", node.relationshipContext)
+        assertTrue(node.content.contains("- [ ] Step A"))
+
+        val tagsOnNode = repo.getTagsForNode(node.id).first()
+        assertTrue(tagsOnNode.any { it.normalizedName == "playbook" })
+        assertTrue(tagsOnNode.any { it.normalizedName == "mode_study" })
+    }
+
+
+    @Test
+    fun setPlaybookLinks_updatesNodeCorrectly() = runTest {
+        val scope = TestScope(testScheduler)
+        val (repo, commands) = setupTestEnvironment(scope)
+
+        val protocolNode = NodeEntity(id = 1, type = "protocol", title = "P")
+        val taskNode = NodeEntity(id = 2, type = "task", title = "T")
+        repo.insertNode(protocolNode)
+        repo.insertNode(taskNode)
+
+        // Invalid type ignores update
+        var updatedTask: NodeEntity? = null
+        commands.setPlaybookModeLink(taskNode, "STUDY") { updatedTask = it }
+        assertNull(updatedTask)
+
+        var updatedProtocol: NodeEntity? = null
+        commands.setPlaybookModeLink(protocolNode, "STUDY") { updatedProtocol = it }
+        assertNotNull(updatedProtocol)
+        assertEquals("playbook|mode=STUDY", updatedProtocol.relationshipContext)
+
+        var updatedProtocolArea: NodeEntity? = null
+        commands.setPlaybookAreaLink(protocolNode, 99L) { updatedProtocolArea = it }
+        assertNotNull(updatedProtocolArea)
+        assertEquals(99L, updatedProtocolArea.areaId)
+    }
+
 }
