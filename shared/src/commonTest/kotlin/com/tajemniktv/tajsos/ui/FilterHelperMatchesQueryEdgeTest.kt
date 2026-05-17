@@ -25,6 +25,13 @@ class FilterHelperMatchesQueryEdgeTest {
     }
 
     @Test
+    fun testMatchesQuery_hashtagSearch_empty() {
+        val node1 = buildTestNode(1, "title", "content", tags = listOf("tag1"))
+        assertFalse(FilterHelper.matchesQuery(node1, "#"))
+        assertFalse(FilterHelper.matchesQuery(node1, "#   "))
+    }
+
+    @Test
     fun testMatchesQuery_normalSearch() {
         val nodeTitle = buildTestNode(1, "my title", "content")
         val nodeContent = buildTestNode(2, "other", "my content")
