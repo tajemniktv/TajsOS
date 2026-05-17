@@ -56,7 +56,7 @@ class SyncCancellationTest {
 
         try {
             val response = client.post("/sync") {
-                header(io.ktor.http.HttpHeaders.Authorization, "Bearer token")
+                header(HttpHeaders.Authorization, "Bearer token")
                 contentType(ContentType.Application.Json)
                 setBody("{\"lastSyncTime\": 0, \"items\": []}")
             }
@@ -66,9 +66,8 @@ class SyncCancellationTest {
             }
             fail("Expected CancellationException to be thrown, but received response: ${response.status}")
         } catch (e: CancellationException) {
-            assertTrue(true, "Successfully caught CancellationException")
+            // Test passed - CancellationException was properly propagated
         } catch (e: Exception) {
-            assertTrue(e.cause is CancellationException, "Successfully threw cancellation exception")
-        }
+            fail("Unexpected exception type: ${e::class.simpleName}. Expected CancellationException to be rethrown by SyncRoutes.")
     }
 }
