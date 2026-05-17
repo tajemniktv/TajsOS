@@ -55,7 +55,7 @@ class IcsCalendarProvider(
             }
         }.onFailure { e ->
             if (e is CancellationException) throw e
-            e.printStackTrace()
+            println("ICS fetch failed for providerId=${provider.id}: ${e::class.simpleName}")
         }.getOrDefault(emptyList())
     }
 
