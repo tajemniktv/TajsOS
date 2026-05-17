@@ -28,11 +28,8 @@ import kotlin.time.Duration.Companion.days
 class CalendarManager(
     private val repository: AppRepository,
     httpClient: HttpClient,
+    private val providers: List<CalendarProvider> = listOf(IcsCalendarProvider(httpClient)),
 ) {
-    private val providers =
-        listOf(
-            IcsCalendarProvider(httpClient),
-        )
 
     /**
      * Synchronizes local calendar events for all enabled calendar providers.
