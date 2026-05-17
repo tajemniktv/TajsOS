@@ -195,6 +195,18 @@ data class NodeEntity(
 
 /**
  * ModeEntity defines an Operating Mode profile.
+ *
+ * @property id The unique primary key of the mode.
+ * @property key The unique identifier for the mode (e.g., COMMAND, FOCUS, RECOVERY).
+ * @property name The human-readable name of the mode.
+ * @property description An optional explanation of the mode's purpose.
+ * @property icon An optional string identifier for the mode's icon.
+ * @property themeColor An optional integer representing the theme color for this mode.
+ * @property isBuiltin Whether this mode is a built-in system default or user-created.
+ * @property isEnabled Whether this mode is currently active and selectable.
+ * @property sortOrder The display order of the mode in lists.
+ * @property createdAt Timestamp when the mode was created.
+ * @property updatedAt Timestamp when the mode was last updated.
  */
 @Entity(tableName = "modes")
 @Serializable
@@ -224,6 +236,22 @@ data class ModeEntity(
 
 /**
  * ModePreferenceEntity stores the behavioral configuration for a mode.
+ *
+ * @property id The unique primary key.
+ * @property modeId The ID of the ModeEntity this preference is linked to.
+ * @property showInbox Whether the inbox section is visible in this mode.
+ * @property showStats Whether the statistics section is visible in this mode.
+ * @property showNotes Whether the notes section is visible in this mode.
+ * @property showResources Whether the resources section is visible in this mode.
+ * @property showDeadlines Whether the deadlines section is visible in this mode.
+ * @property showOpenLoops Whether the open loops section is visible in this mode.
+ * @property maxVisibleTasks The maximum number of tasks to display in a list.
+ * @property sortStrategy The identifier indicating how the resulting nodes should be sorted (e.g., "DEFAULT", "URGENCY").
+ * @property quickActionsJson A JSON string defining the available quick actions.
+ * @property defaultQuickActionsJson A JSON string defining the default quick actions for this mode.
+ * @property dashboardBlocksJson A JSON string defining the modular dashboard components to render.
+ * @property filterProfileJson A JSON string storing advanced filter configurations for this mode.
+ * @property suggestionProfileJson A JSON string defining the AI or context-based suggestions relevant to this mode.
  */
 @Entity(tableName = "mode_preferences")
 @Serializable
@@ -371,6 +399,20 @@ data class FocusSessionEntity(
 
 /**
  * TrackEntryEntity handles daily micro check-ins.
+ *
+ * @property id The unique primary key of the track entry.
+ * @property date The date of the track entry in YYYY-MM-DD format.
+ * @property createdAt The timestamp (epoch milliseconds) when the entry was created.
+ * @property moodScore An optional score representing the user's mood.
+ * @property energyScore An optional score representing the user's energy level.
+ * @property focusScore An optional score representing the user's focus level.
+ * @property anxietyScore An optional score representing the user's anxiety level.
+ * @property sleepScore An optional score representing the user's sleep quality.
+ * @property tookMeds Indicates if the user took their tracked medications.
+ * @property symptomNote A text note for any observed symptoms or health details.
+ * @property source The origin of the entry (e.g., manual, inferred, reminder).
+ * @property loadScore LifeOS status tracking representing overall cognitive or physical load (0-100).
+ * @property fragmentationScore LifeOS status tracking representing task or context fragmentation (0-100).
  */
 @Entity(tableName = "track_entries")
 @Serializable
