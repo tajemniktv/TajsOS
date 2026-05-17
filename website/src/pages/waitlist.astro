@@ -12,7 +12,7 @@ const title = "WAITLIST";
   <div class="fixed top-[-10%] right-[-5%] w-[600px] h-[600px] gradient-sphere pointer-events-none -z-10"></div>
   
   <Navbar />
-  <main class="relative pt-32 max-w-[1600px] mx-auto px-8 min-h-screen">
+  <main class="relative pt-32 max-w-[1600px] mx-auto px-8 min-h-dvh">
     
 <!-- Background Spatial Layering Decor -->
 <div class="absolute inset-0 overflow-hidden pointer-events-none">
@@ -118,7 +118,7 @@ const title = "WAITLIST";
     waitlistStatus.textContent = "Submitting...";
     waitlistStatus.classList.remove("hidden");
       waitlistStatus.className = "mt-4 text-sm text-primary font-mono bg-primary/10 px-4 py-2 rounded-lg border border-primary/20";
-    if (waitlistSubmit) waitlistSubmit.disabled = true;
+    if (waitlistSubmit) waitlistSubmit.setAttribute("disabled", "true");
     if (waitlistLoading) waitlistLoading.classList.remove("hidden");
     if (waitlistButtonText) waitlistButtonText.classList.add("invisible");
 
@@ -137,14 +137,14 @@ const title = "WAITLIST";
       waitlistStatus.textContent = "You are on the waitlist. We will contact you soon.";
       waitlistStatus.classList.remove("hidden");
       waitlistStatus.className = "mt-4 text-sm text-primary font-mono bg-primary/10 px-4 py-2 rounded-lg border border-primary/20";
-      if (waitlistSubmit) waitlistSubmit.disabled = false;
+      if (waitlistSubmit) waitlistSubmit.removeAttribute("disabled");
       if (waitlistLoading) waitlistLoading.classList.add("hidden");
       if (waitlistButtonText) waitlistButtonText.classList.remove("invisible");
     } catch {
       waitlistStatus.textContent = "Could not join the waitlist right now. Try again in a moment.";
       waitlistStatus.classList.remove("hidden");
       waitlistStatus.className = "mt-4 text-sm text-error font-mono bg-error/10 px-4 py-2 rounded-lg border border-error/20";
-      if (waitlistSubmit) waitlistSubmit.disabled = false;
+      if (waitlistSubmit) waitlistSubmit.removeAttribute("disabled");
       if (waitlistLoading) waitlistLoading.classList.add("hidden");
       if (waitlistButtonText) waitlistButtonText.classList.remove("invisible");
     }
