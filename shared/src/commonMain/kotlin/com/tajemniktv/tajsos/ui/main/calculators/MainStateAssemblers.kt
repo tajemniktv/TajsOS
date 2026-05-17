@@ -252,12 +252,12 @@ fun buildTransitionProtocolsSnapshot(
  * It aggregates instantiated playbooks, their historical usage metrics, and current daily
  * tracking entries to provide a holistic view of the user's adherence to their defined systems.
  *
- * @param protocolNodes The current list of active protocol nodes (filtered for playbooks).
+ * @param protocolNodes The list of protocol nodes to be evaluated and filtered for playbooks.
  * @param historyItems The formatted history items representing past playbook executions.
  * @param mode The currently active operating mode.
  * @param entries Recent tracking entries for correlating playbook adherence with daily metrics.
  * @param templates The list of available structural templates for bootstrapping new playbooks.
- * @return A [PlaybooksSnapshot] summarizing the user's playbook engagement.
+ * @return A [PlaybookSnapshot] summarizing the user's playbook engagement.
  */
 fun buildPlaybookSnapshot(
     protocolNodes: List<NodeWithPin>,

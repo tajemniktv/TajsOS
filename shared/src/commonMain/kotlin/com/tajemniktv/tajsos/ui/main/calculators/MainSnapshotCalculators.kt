@@ -727,7 +727,7 @@ fun calculateOpenLoopsSnapshot(
  * Calculates a qualitative urgency string for an open loop.
  *
  * It checks the item's deadline and staleness metrics against the current time to classify
- * its urgency (e.g., "high", "medium", "low").
+ * its urgency (e.g., "critical", "high", "medium", "low").
  *
  * @param node The node entity representing the open loop.
  * @param now The current epoch timestamp in milliseconds.
@@ -763,7 +763,7 @@ fun openLoopUrgency(
  *
  * @param node The node entity representing the open loop.
  * @param now The current epoch timestamp in milliseconds.
- * @return An integer representing the decay severity (higher means more stale).
+ * @return An integer from 0 to 100 representing the decay severity (higher means more stale).
  */
 fun openLoopDecayScore(
     node: NodeEntity,
