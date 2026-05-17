@@ -55,6 +55,7 @@ class IcsCalendarProvider(
             }
         }.onFailure { e ->
             if (e is CancellationException) throw e
+            e.printStackTrace()
         }.getOrDefault(emptyList())
     }
 
