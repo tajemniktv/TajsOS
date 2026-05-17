@@ -107,9 +107,20 @@ private val healthTitleKeywords =
  * entity associations. This design significantly lowers the friction of capturing new items,
  * ensuring they surface in relevant domains (like Finances or Health) automatically.
  *
- * Current implementation supports heuristic matching for [com.tajemniktv.tajsos.domain.DomainKind.FINANCES] and
- * [com.tajemniktv.tajsos.domain.DomainKind.HEALTH]. Future implementations may add projection
- * support for other domains defined in [com.tajemniktv.tajsos.domain.DomainKind].
+ * This object evaluates the system's shared nodes (tasks, notes, records) and determines
+ * if they implicitly belong to a specific LifeOS domain (like Finance or Health) based on
+ * explicit markers such as tags, titles, content keywords, maintenance types, or specific
+ * note types (e.g., reflections vs references).
+ *
+ * This zero-configuration design intentionally bypasses strict associative models
+ * (like `ItemDomainEntity`) so users are not forced to explicitly classify every
+ * inbound task to make the lens surfaces function properly.
+ *
+ * Currently, heuristic matching queries are only implemented for the `FINANCES` and `HEALTH` domains.
+ * `EDUCATION` and `RELATIONSHIPS` (defined in [com.tajemniktv.tajsos.domain.DomainKind])
+ * do not yet have dedicated queries in this object. Adding support for them would require
+ * establishing similar heuristic marker sets (e.g., `educationTagMarkers`, `educationTitleKeywords`,
+ * `relationshipsMaintenanceTypes`) and implementing their respective projection queries.
  */
 object DomainLensQueries {
     /**

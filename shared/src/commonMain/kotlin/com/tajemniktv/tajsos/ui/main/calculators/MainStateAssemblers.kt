@@ -176,6 +176,16 @@ fun categorizeNodes(list: List<NodeWithPin>): NodeCategorization {
     return NodeCategorization(inbox, archived, reminders)
 }
 
+/**
+ * Transforms a list of raw protocol history entities into UI-ready protocol history items.
+ *
+ * It joins the historical execution records with their corresponding protocol nodes
+ * to provide display names and context for the UI.
+ *
+ * @param history The raw list of protocol execution records.
+ * @param nodes The current list of active nodes to resolve protocol names.
+ * @return A list of [ProtocolHistoryItem] representing the joined data.
+ */
 fun buildProtocolHistoryItems(
     history: List<ProtocolHistoryEntity>,
     nodes: List<NodeWithPin>,
@@ -192,6 +202,17 @@ fun buildProtocolHistoryItems(
     }
 }
 
+/**
+ * Builds a snapshot of transition protocols combining active instances, history, and available templates.
+ *
+ * This function calculates usage statistics from history and merges instantiated nodes
+ * with available templates to present a complete view of routines available to the user.
+ *
+ * @param protocolNodes The current list of active protocol nodes.
+ * @param historyItems The formatted history items representing past protocol executions.
+ * @param templates The list of available structural templates for bootstrapping new protocols.
+ * @return A [TransitionProtocolsSnapshot] summarizing the current state of transition routines.
+ */
 fun buildTransitionProtocolsSnapshot(
     protocolNodes: List<NodeWithPin>,
     historyItems: List<ProtocolHistoryItem>,
@@ -225,6 +246,19 @@ fun buildTransitionProtocolsSnapshot(
     )
 }
 
+/**
+ * Builds a snapshot representing the user's active behavioral playbooks.
+ *
+ * It aggregates instantiated playbooks, their historical usage metrics, and current daily
+ * tracking entries to provide a holistic view of the user's adherence to their defined systems.
+ *
+ * @param protocolNodes The list of protocol nodes to be evaluated and filtered for playbooks.
+ * @param historyItems The formatted history items representing past playbook executions.
+ * @param mode The currently active operating mode.
+ * @param entries Recent tracking entries for correlating playbook adherence with daily metrics.
+ * @param templates The list of available structural templates for bootstrapping new playbooks.
+ * @return A [PlaybookSnapshot] summarizing the user's playbook engagement.
+ */
 fun buildPlaybookSnapshot(
     protocolNodes: List<NodeWithPin>,
     historyItems: List<ProtocolHistoryItem>,
