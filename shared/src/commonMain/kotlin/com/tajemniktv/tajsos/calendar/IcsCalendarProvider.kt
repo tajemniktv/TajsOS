@@ -12,12 +12,11 @@ import io.ktor.client.statement.bodyAsText
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
+import kotlinx.io.IOException
+import io.ktor.client.plugins.ResponseException
 import kotlin.time.Clock
 import kotlin.time.Instant
 import kotlin.coroutines.cancellation.CancellationException
-import io.ktor.client.plugins.ClientRequestException
-import io.ktor.client.plugins.ServerResponseException
-import kotlinx.io.IOException
 
 /**
  * A calendar provider that fetches and parses standard ICS (iCalendar) files from HTTP(S) sources.
@@ -56,11 +55,11 @@ class IcsCalendarProvider(
             }
         } catch (e: CancellationException) {
             throw e
+        } catch (e: ResponseException) {
+            emptyList()
         } catch (e: IOException) {
             emptyList()
-        } catch (e: ClientRequestException) {
-            emptyList()
-        } catch (e: ServerResponseException) {
+        } catch (e: IllegalArgumentException) {
             emptyList()
         }
     }
@@ -82,7 +81,7 @@ class IcsCalendarProvider(
             val parsedUrl = io.ktor.http.Url(url)
             if (!isValidScheme(parsedUrl.protocol.name.lowercase())) return false
             isPublicRoutableHost(parsedUrl.host.lowercase())
-        } catch (e: Exception) {
+        } catch (e: io.ktor.http.URLParserException) {
             false
         }
     }
@@ -290,7 +289,9 @@ internal class IcsEventBuilder {
             } else {
                 null
             }
-        } catch (e: Exception) {
+        } catch (e: IllegalArgumentException) {
+            null
+        } catch (e: IndexOutOfBoundsException) {
             null
         }
 
