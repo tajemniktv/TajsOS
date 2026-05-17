@@ -14,6 +14,10 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import kotlin.time.Clock
 import kotlin.time.Instant
+import kotlin.coroutines.cancellation.CancellationException
+import io.ktor.client.plugins.ClientRequestException
+import io.ktor.client.plugins.ServerResponseException
+import kotlinx.io.IOException
 
 /**
  * A calendar provider that fetches and parses standard ICS (iCalendar) files from HTTP(S) sources.
@@ -50,7 +54,13 @@ class IcsCalendarProvider(
             } else {
                 emptyList()
             }
-        } catch (e: Exception) {
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: IOException) {
+            emptyList()
+        } catch (e: ClientRequestException) {
+            emptyList()
+        } catch (e: ServerResponseException) {
             emptyList()
         }
     }
