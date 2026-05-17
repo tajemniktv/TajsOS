@@ -6,7 +6,6 @@ import com.tajemniktv.tajsos.data.TagEntity
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
-import kotlin.test.assertFalse
 
 class DomainLensQueriesMatchesSignalTest {
     private fun createNode(
@@ -175,7 +174,7 @@ class DomainLensQueriesMatchesSignalTest {
     }
 
     @Test
-    fun financeActionItems_matches_maintenance_and_content() {
+    fun financeActionItems_matches_maintenance_or_content_separately() {
         val node1 = createNode(1, "title", "content bill text", "task")
         val node2 = createNode(2, "title", "content", "task", maintenanceType = "subscription")
 
@@ -184,7 +183,7 @@ class DomainLensQueriesMatchesSignalTest {
     }
 
     @Test
-    fun healthActionItems_matches_maintenance_and_content() {
+    fun healthActionItems_matches_maintenance_or_content_separately() {
         val node1 = createNode(1, "title", "content prescription here", "task")
         val node2 = createNode(2, "title", "content", "task", maintenanceType = "med_refill")
 
