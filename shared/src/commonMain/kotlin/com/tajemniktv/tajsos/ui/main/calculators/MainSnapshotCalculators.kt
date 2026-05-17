@@ -340,9 +340,10 @@ fun calculateInsights(
             null
         }
 
+    val nodesByProjectIdForInsights = nodes.groupBy { it.node.projectId }
     val projectsWithoutTasks =
         projects.filter { project ->
-            val projectNodes = nodes.filter { it.node.projectId == project.id }
+            val projectNodes = nodesByProjectIdForInsights[project.id] ?: emptyList()
             val hasNotes = projectNodes.any { it.node.isKnowledgeItem() }
             val hasTasks =
                 projectNodes.any { it.node.isTaskItem() && it.node.taskStateOrNull() == TaskState.ACTIVE }
@@ -351,9 +352,10 @@ fun calculateInsights(
 
     // Area nodes used below to detect neglected areas
     val areas = nodes.mapNotNull { item -> item.node.takeIf { it.isAreaItem() } }
+    val nodesByAreaId = nodes.groupBy { it.node.areaId }
     val neglectedAreas =
         areas.filter { area ->
-            val areaNodes = nodes.filter { it.node.areaId == area.id }
+            val areaNodes = nodesByAreaId[area.id] ?: emptyList()
             val hasRecentActivity = areaNodes.any { it.node.updatedAt >= sevenDaysAgo }
             !hasRecentActivity
         }
@@ -362,7 +364,7 @@ fun calculateInsights(
     val projectEntropy =
         projects.associate { project ->
             val projectNodes =
-                nodes.filter { it.node.projectId == project.id && it.node.status == "active" }
+                (nodesByProjectIdForInsights[project.id] ?: emptyList()).filter { it.node.status == "active" }
             if (projectNodes.isEmpty()) {
                 project.id to 0.0
             } else {
