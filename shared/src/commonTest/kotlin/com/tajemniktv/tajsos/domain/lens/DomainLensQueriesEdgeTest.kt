@@ -107,4 +107,18 @@ class DomainLensQueriesEdgeTest {
         assertEquals(setOf(1L, 2L), result.map { it.node.id }.toSet())
     }
 
+
+    @Test
+    fun financeKnowledgeItems_filters_non_knowledge_and_inactive_items() {
+        val activeNote = createNode(1, "Finance budget", type = "note", status = "active")
+        val activeRecord = createNode(2, "Finance log", type = "record", status = "active")
+        val inactiveNote = createNode(3, "Finance rules", type = "note", status = "archived")
+        val activeTask = createNode(4, "Finance task", type = "task", status = "active")
+
+        val result = DomainLensQueries.financeKnowledgeItems(listOf(activeNote, activeRecord, inactiveNote, activeTask))
+
+        assertEquals(2, result.size)
+        assertEquals(setOf(1L, 2L), result.map { it.node.id }.toSet())
+    }
+
 }
