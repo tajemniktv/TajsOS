@@ -29,6 +29,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.data.NodeWithPin
@@ -159,12 +160,15 @@ fun TemplateQuickActionsCard(
     onSemesterChange: (String) -> Unit,
     onCreate: (TemplateEntity, String) -> Unit,
 ) {
-    val lectureTemplate =
+    val lectureTemplate = remember(templates) {
         templates.firstOrNull { it.name.equals("Lecture Note Template", ignoreCase = true) }
-    val readingTemplate =
+    }
+    val readingTemplate = remember(templates) {
         templates.firstOrNull { it.name.equals("Reading Note Template", ignoreCase = true) }
-    val paperTemplate =
+    }
+    val paperTemplate = remember(templates) {
         templates.firstOrNull { it.name.equals("Paper Summary Template", ignoreCase = true) }
+    }
 
     Card(colors = CardDefaults.cardColors(containerColor = TajsOSTheme.CardSurface)) {
         Column(

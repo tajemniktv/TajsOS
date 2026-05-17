@@ -136,7 +136,7 @@ class PreferencesRepository(
             val modeStr = preferences[PreferencesKeys.SIDEBAR_MODE]
             try {
                 if (modeStr != null) SidebarMode.valueOf(modeStr) else SidebarMode.EXPANDED
-            } catch (e: Exception) {
+            } catch (_: IllegalArgumentException) {
                 SidebarMode.EXPANDED
             }
         }
