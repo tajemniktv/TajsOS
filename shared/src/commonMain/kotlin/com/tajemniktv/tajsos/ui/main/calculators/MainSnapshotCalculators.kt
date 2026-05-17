@@ -50,6 +50,7 @@ fun calculateInsights(
     tracks: List<TrackEntryEntity>,
     projects: List<NodeEntity>,
 ): InsightsData {
+    // Cached system timezone for performance during iterations
     val sysZone = TimeZone.currentSystemDefault()
     val now = Clock.System.now().toEpochMilliseconds()
     val sevenDaysAgo = now - (7 * 24 * 60 * 60 * 1000L)
