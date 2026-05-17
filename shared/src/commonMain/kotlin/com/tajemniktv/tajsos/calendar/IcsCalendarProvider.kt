@@ -339,7 +339,7 @@ internal class IcsEventBuilder {
             Regex("TZID=([^;:]+)").find(rawKey) ?: return TimeZone.currentSystemDefault()
         return try {
             TimeZone.of(tzidMatch.groupValues[1])
-        } catch (e: Exception) {
+        } catch (e: IllegalArgumentException) {
             TimeZone.currentSystemDefault()
         }
     }
