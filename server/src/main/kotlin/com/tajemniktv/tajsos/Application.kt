@@ -39,7 +39,11 @@ fun Application.module() {
         bearer("sync-auth") {
             authenticate { tokenCredential ->
                 val providedSpec = PBEKeySpec(tokenCredential.token.toCharArray(), salt, 65536, 256)
-                val providedTokenHash = factory.generateSecret(providedSpec).encoded
+                val providedTokenHash = try {
+                    factory.generateSecret(providedSpec).encoded
+                } finally {
+                    providedSpec.clearPassword()
+                }
 
                 if (MessageDigest.isEqual(providedTokenHash, expectedTokenHash)) {
                     UserIdPrincipal("sync-client")
