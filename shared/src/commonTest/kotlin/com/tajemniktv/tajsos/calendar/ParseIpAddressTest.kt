@@ -10,7 +10,7 @@ class ParseIpAddressTest {
     @Test
     fun testParseIpAddressValid() {
         // Basic IPv4
-        assertNotNull(parseIpAddress("192.168.1.1"))
+        assertEquals(IpAddress.Ipv4(0xC0A80101L), parseIpAddress("192.168.1.1"))
 
         // Basic IPv6
         assertNotNull(parseIpAddress("2001:db8::1"))
@@ -53,7 +53,7 @@ class ParseIpAddressTest {
         assertNull(parseIpAddress("[[2001:db8::1]]"))
 
         // Brackets with spaces inside them
-        // " [ 2001:db8::1 ] " -> trimmed to "[ 2001:db8::1 ]" -> "[ 2001:db8::1 ]"
+        // " [ 2001:db8::1 ] " -> trimmed to "[ 2001:db8::1 ]" -> brackets removed to " 2001:db8::1 "
         // Wait, removePrefix/Suffix removes them, but the inner spaces remain.
         // The implementation does a second `.trim()`:
         // host.trim().removePrefix("[").removeSuffix("]").trim()
