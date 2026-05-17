@@ -723,6 +723,16 @@ fun calculateOpenLoopsSnapshot(
     )
 }
 
+/**
+ * Calculates a qualitative urgency string for an open loop.
+ *
+ * It checks the item's deadline and staleness metrics against the current time to classify
+ * its urgency (e.g., "high", "medium", "low").
+ *
+ * @param node The node entity representing the open loop.
+ * @param now The current epoch timestamp in milliseconds.
+ * @return A string identifier representing the calculated urgency level.
+ */
 fun openLoopUrgency(
     node: NodeEntity,
     now: Long,
@@ -745,6 +755,16 @@ fun openLoopUrgency(
         }
 }
 
+/**
+ * Calculates a numerical decay score for an open loop based on staleness.
+ *
+ * Items that have not been updated or explicitly marked as fresh recently will accumulate
+ * a higher decay score, signaling that they require review or culling.
+ *
+ * @param node The node entity representing the open loop.
+ * @param now The current epoch timestamp in milliseconds.
+ * @return An integer representing the decay severity (higher means more stale).
+ */
 fun openLoopDecayScore(
     node: NodeEntity,
     now: Long,
@@ -885,6 +905,16 @@ fun calculateMaintenanceSnapshot(nodes: List<NodeWithPin>): com.tajemniktv.tajso
     )
 }
 
+/**
+ * Calculates a qualitative urgency string for a maintenance item.
+ *
+ * Evaluates the item's deadline or overdue timestamp against the current time,
+ * combined with its specific maintenance type, to classify its urgency.
+ *
+ * @param node The node entity representing the maintenance task.
+ * @param now The current epoch timestamp in milliseconds.
+ * @return A string identifier representing the calculated urgency level.
+ */
 fun maintenanceUrgency(
     node: NodeEntity,
     now: Long,

@@ -114,6 +114,15 @@ private val healthTitleKeywords =
  * specific maintenance/note types. This decoupling allows items to naturally surface in the
  * right lenses without requiring manual user curation.
  *
+ * This object evaluates the system's shared nodes (tasks, notes, records) and determines
+ * if they implicitly belong to a specific LifeOS domain (like Finance or Health) based on
+ * explicit markers such as tags, titles, content keywords, maintenance types, or specific
+ * note types (e.g., reflections vs references).
+ *
+ * This zero-configuration design intentionally bypasses strict associative models
+ * (like `ItemDomainEntity`) so users are not forced to explicitly classify every
+ * inbound task to make the lens surfaces function properly.
+ *
  * Currently, heuristic matching queries are only implemented for the `FINANCES` and `HEALTH` domains.
  * `EDUCATION` and `RELATIONSHIPS` (defined in [com.tajemniktv.tajsos.domain.DomainKind])
  * do not yet have dedicated queries in this object. Adding support for them would require
