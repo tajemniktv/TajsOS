@@ -50,9 +50,11 @@ fun calculateInsights(
     tracks: List<TrackEntryEntity>,
     projects: List<NodeEntity>,
 ): InsightsData {
+    val sysZone = TimeZone.currentSystemDefault()
     val now = Clock.System.now().toEpochMilliseconds()
     val sevenDaysAgo = now - (7 * 24 * 60 * 60 * 1000L)
 
+    /** Cached system timezone for performance during iterations */
     val recentNodes = nodes.filter { it.node.createdAt >= sevenDaysAgo }
     val recentCompletions =
         nodes.filter {
@@ -73,7 +75,7 @@ fun calculateInsights(
         val hour =
             Instant
                 .fromEpochMilliseconds(it.startedAt)
-                .toLocalDateTime(TimeZone.currentSystemDefault())
+                .toLocalDateTime(sysZone)
                 .hour
         hourlyDistribution[hour]++
     }
@@ -85,7 +87,7 @@ fun calculateInsights(
         val hour =
             Instant
                 .fromEpochMilliseconds(it.node.completedAt ?: 0)
-                .toLocalDateTime(TimeZone.currentSystemDefault())
+                .toLocalDateTime(sysZone)
                 .hour
         completionHourlyDist[hour]++
     }
@@ -95,7 +97,7 @@ fun calculateInsights(
     val sevenDaysAgoDate =
         Instant
             .fromEpochMilliseconds(sevenDaysAgo)
-            .toLocalDateTime(TimeZone.currentSystemDefault())
+            .toLocalDateTime(sysZone)
             .date
     val recentTracks = tracks.filter { it.date >= sevenDaysAgoDate.toString() }
 
@@ -157,7 +159,7 @@ fun calculateInsights(
             .groupBy {
                 Instant
                     .fromEpochMilliseconds(it.startedAt)
-                    .toLocalDateTime(TimeZone.currentSystemDefault())
+                    .toLocalDateTime(sysZone)
                     .date
             }.mapValues {
                 it.value
@@ -175,7 +177,7 @@ fun calculateInsights(
             .groupBy {
                 Instant
                     .fromEpochMilliseconds(it.node.completedAt ?: 0)
-                    .toLocalDateTime(TimeZone.currentSystemDefault())
+                    .toLocalDateTime(sysZone)
                     .date
                     .toString()
             }.mapValues { it.value.size }
@@ -185,7 +187,7 @@ fun calculateInsights(
             .groupBy {
                 Instant
                     .fromEpochMilliseconds(it.node.createdAt)
-                    .toLocalDateTime(TimeZone.currentSystemDefault())
+                    .toLocalDateTime(sysZone)
                     .date
                     .toString()
             }.mapValues { it.value.size }
@@ -195,7 +197,7 @@ fun calculateInsights(
             .groupBy {
                 Instant
                     .fromEpochMilliseconds(it.startedAt)
-                    .toLocalDateTime(TimeZone.currentSystemDefault())
+                    .toLocalDateTime(sysZone)
                     .date
                     .toString()
             }.mapValues { it.value.sumOf { s -> s.durationSec } / 3600.0 }
@@ -271,7 +273,7 @@ fun calculateInsights(
                             val d =
                                 Instant
                                     .fromEpochMilliseconds(it.node.updatedAt)
-                                    .toLocalDateTime(TimeZone.currentSystemDefault())
+                                    .toLocalDateTime(sysZone)
                                     .date
                                     .toString()
                             d == track.date && it.node.postponeCount > 0
@@ -318,7 +320,7 @@ fun calculateInsights(
             .map {
                 Instant
                     .fromEpochMilliseconds(it.node.createdAt)
-                    .toLocalDateTime(TimeZone.currentSystemDefault())
+                    .toLocalDateTime(sysZone)
                     .hour
             }
 
