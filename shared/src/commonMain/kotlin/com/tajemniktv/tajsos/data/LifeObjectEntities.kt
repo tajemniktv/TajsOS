@@ -18,6 +18,7 @@ private fun currentEpochMillis(): Long =
  * Raw capture inbox entry stored before the system commits to a semantic item type.
  *
  * This is the primary "capture fast, structure later" primitive for the new LifeOS model.
+ * Represents a raw capture entry inside the inbox before being structured or triaged.
  */
 @Entity(
     tableName = "inbox_entries",
@@ -131,6 +132,11 @@ data class RecordFacetEntity(
         Index(value = ["domainKey"]),
     ],
 )
+/**
+ * Represents the cross-cutting assignment of a shared item to a first-class LifeOS domain.
+ * NOTE: Current design prefers implicit categorization via `DomainLensQueries`,
+ * but explicit database associations are preserved here for overrides and future expansion.
+ */
 @Serializable
 data class ItemDomainEntity(
     val itemId: Long,
@@ -148,6 +154,10 @@ data class ItemDomainEntity(
     tableName = "rich_content_documents",
     indices = [Index(value = ["updatedAt"])],
 )
+/**
+ * Stores long-form structured content (such as markdown bodies or embedded objects)
+ * alongside a parent Node without bloating the primary generic node table.
+ */
 @Serializable
 data class RichContentDocumentEntity(
     @PrimaryKey val itemId: Long,
