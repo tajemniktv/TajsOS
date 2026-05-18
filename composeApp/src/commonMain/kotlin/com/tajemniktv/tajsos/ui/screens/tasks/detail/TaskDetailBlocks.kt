@@ -940,7 +940,13 @@ private fun RenderTaskMetadataProperties(
                 TaskPropertyOption(TaskDuePreset.Tomorrow.name, "Tomorrow"),
                 TaskPropertyOption(TaskDuePreset.InSevenDays.name, "In 7 days"),
             ),
-        onSelect = { value -> context.onDuePresetChange(TaskDuePreset.valueOf(value)) },
+        onSelect = { value ->
+            try {
+                context.onDuePresetChange(TaskDuePreset.valueOf(value))
+            } catch (e: IllegalArgumentException) {
+                // Ignore invalid values to prevent crashes
+            }
+        },
     )
     TaskEditablePropertyRow(
         icon = Icons.Default.Schedule,
@@ -1151,9 +1157,13 @@ private fun SectionTitle(title: String) {
     )
 }
 
+private object RegexCache {
+    val HASHTAG_REGEX = "#([A-Za-z0-9_\\-]+)".toRegex()
+    val MENTION_REGEX = "@([A-Za-z0-9_\\-]+)".toRegex()
+}
 private fun extractDescriptionChips(text: String): List<String> {
-    val hashTags = "#([A-Za-z0-9_\\-]+)".toRegex().findAll(text).map { "#${it.groupValues[1]}" }
-    val mentions = "@([A-Za-z0-9_\\-]+)".toRegex().findAll(text).map { "@${it.groupValues[1]}" }
+    val hashTags = RegexCache.HASHTAG_REGEX.findAll(text).map { "#${it.groupValues[1]}" }
+    val mentions = RegexCache.MENTION_REGEX.findAll(text).map { "@${it.groupValues[1]}" }
     return (hashTags + mentions).distinct().take(8).toList()
 }
 
