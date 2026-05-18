@@ -30,6 +30,12 @@ class MainNodeSupport(
     private val currentNodes: () -> List<NodeWithPin>,
     private val currentTags: () -> List<TagEntity>
 ) {
+
+    companion object {
+        /** Cached regex for parsing wiki-style internal links to prevent recompilation. */
+        private val internalLinkRegex = Regex("\\[\\[(.*?)\\]\\]")
+    }
+
     /**
      * Inspects a node's primary content field, parses out explicitly defined internal links
      * structured like `[[Target Title]]` or `[[Target Title|Display Text]]`, and attempts
@@ -40,9 +46,8 @@ class MainNodeSupport(
     fun parseInternalLinks(nodeId: Long) {
         scope.launch {
             repository.getNodeById(nodeId)?.let { node ->
-                val regex = Regex("\\[\\[(.*?)\\]\\]")
                 val matches =
-                    regex
+                    internalLinkRegex
                         .findAll(node.content)
                         .map { match ->
                             val fullMatch = match.groupValues[1]
