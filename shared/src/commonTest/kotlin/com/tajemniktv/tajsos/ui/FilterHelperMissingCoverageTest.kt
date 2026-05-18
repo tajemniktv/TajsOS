@@ -5,6 +5,7 @@ import kotlin.test.assertEquals
 import com.tajemniktv.tajsos.data.RelationEntity
 import com.tajemniktv.tajsos.data.NodeWithPin
 
+@OptIn(kotlin.time.ExperimentalTime::class)
 class FilterHelperMissingCoverageTest {
 
 
