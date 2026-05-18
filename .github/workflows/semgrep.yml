@@ -22,5 +22,6 @@ jobs:
     container:
       image: semgrep/semgrep
     steps:
-    - uses: actions/checkout@v6
+    # Pinned to the commit SHA for actions/checkout@v6 to prevent supply-chain attacks.
+    - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608
     - run: semgrep ci
