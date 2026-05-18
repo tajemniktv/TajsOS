@@ -7,29 +7,33 @@ import com.tajemniktv.tajsos.data.NodeWithPin
 
 class FilterHelperMissingCoverageTest {
 
-    private fun filter(
-        nodes: List<NodeWithPin>,
-        projectId: Long? = null,
-        areaId: Long? = null,
-        linkedToId: Long? = null,
-        maxMins: Int? = null,
-        energy: Int? = null,
-        locationContext: String? = null,
-        energyContext: String? = null,
-        deviceContext: String? = null,
-        socialContext: String? = null,
-        timeWindowContext: String? = null,
-        timeHorizon: String? = null,
-        relations: List<RelationEntity> = emptyList()
-    ): List<NodeWithPin> {
+
+    private data class FilterConfig(
+        val nodes: List<NodeWithPin>,
+        val projectId: Long? = null,
+        val areaId: Long? = null,
+        val linkedToId: Long? = null,
+        val maxMins: Int? = null,
+        val energy: Int? = null,
+        val locationContext: String? = null,
+        val energyContext: String? = null,
+        val deviceContext: String? = null,
+        val socialContext: String? = null,
+        val timeWindowContext: String? = null,
+        val timeHorizon: String? = null,
+        val relations: List<RelationEntity> = emptyList()
+    )
+
+    private fun filter(config: FilterConfig): List<NodeWithPin> {
         return FilterHelper.filterAndSortNodes(
-            nodes = nodes, query = "", type = null, status = null, projectId = projectId, areaId = areaId,
-            linkedToId = linkedToId, maxMins = maxMins, energy = energy, friction = null,
-            locationContext = locationContext, energyContext = energyContext, deviceContext = deviceContext,
-            socialContext = socialContext, timeWindowContext = timeWindowContext, timeHorizon = timeHorizon,
-            relations = relations, sortMode = "relevance"
+            nodes = config.nodes, query = "", type = null, status = null, projectId = config.projectId, areaId = config.areaId,
+            linkedToId = config.linkedToId, maxMins = config.maxMins, energy = config.energy, friction = null,
+            locationContext = config.locationContext, energyContext = config.energyContext, deviceContext = config.deviceContext,
+            socialContext = config.socialContext, timeWindowContext = config.timeWindowContext, timeHorizon = config.timeHorizon,
+            relations = config.relations, sortMode = "relevance"
         )
     }
+
 
 
     @Test
@@ -55,7 +59,7 @@ class FilterHelperMissingCoverageTest {
         )
 
         // Test filtering by all these missing branches explicitly
-        val result = filter(nodes = listOf(node1, node2), locationContext = "home", energyContext = "high", deviceContext = "laptop", socialContext = "solo", timeWindowContext = "evening")
+        val result = filter(FilterConfig(nodes = listOf(node1, node2), locationContext = "home", energyContext = "high", deviceContext = "laptop", socialContext = "solo", timeWindowContext = "evening"))
 
         assertEquals(1, result.size)
         assertEquals(2L, result[0].node.id)
@@ -67,28 +71,28 @@ class FilterHelperMissingCoverageTest {
         val nodeProjectMismatch = buildTestNode(1, "title").copy(
             node = buildTestNode(1, "title").node.copy(projectId = 999L)
         )
-        val resultProject = filter(nodes = listOf(nodeProjectMismatch), projectId = 1L)
+        val resultProject = filter(FilterConfig(nodes = listOf(nodeProjectMismatch), projectId = 1L))
         assertEquals(0, resultProject.size)
 
         // areaId NOT null but doesn't match
         val nodeAreaMismatch = buildTestNode(2, "title").copy(
             node = buildTestNode(2, "title").node.copy(areaId = 999L)
         )
-        val resultArea = filter(nodes = listOf(nodeAreaMismatch), areaId = 1L)
+        val resultArea = filter(FilterConfig(nodes = listOf(nodeAreaMismatch), areaId = 1L))
         assertEquals(0, resultArea.size)
 
         // maxMins NOT null but doesn't match
         val nodeMinsMismatch = buildTestNode(3, "title").copy(
             node = buildTestNode(3, "title").node.copy(estimatedMinutes = 60)
         )
-        val resultMins = filter(nodes = listOf(nodeMinsMismatch), maxMins = 30)
+        val resultMins = filter(FilterConfig(nodes = listOf(nodeMinsMismatch), maxMins = 30))
         assertEquals(0, resultMins.size)
 
         // energy NOT null but doesn't match
         val nodeEnergyMismatch = buildTestNode(4, "title").copy(
             node = buildTestNode(4, "title").node.copy(energyLevel = 3)
         )
-        val resultEnergy = filter(nodes = listOf(nodeEnergyMismatch), energy = 1)
+        val resultEnergy = filter(FilterConfig(nodes = listOf(nodeEnergyMismatch), energy = 1))
         assertEquals(0, resultEnergy.size)
     }
 
@@ -104,19 +108,19 @@ class FilterHelperMissingCoverageTest {
         )
 
         // Fail on energy context
-        val result1 = filter(nodes = listOf(node1), energyContext = "low")
+        val result1 = filter(FilterConfig(nodes = listOf(node1), energyContext = "low"))
         assertEquals(0, result1.size)
 
         // Fail on device context
-        val result2 = filter(nodes = listOf(node1), deviceContext = "phone")
+        val result2 = filter(FilterConfig(nodes = listOf(node1), deviceContext = "phone"))
         assertEquals(0, result2.size)
 
         // Fail on social context
-        val result3 = filter(nodes = listOf(node1), socialContext = "pair")
+        val result3 = filter(FilterConfig(nodes = listOf(node1), socialContext = "pair"))
         assertEquals(0, result3.size)
 
         // Fail on time window context
-        val result4 = filter(nodes = listOf(node1), timeWindowContext = "morning")
+        val result4 = filter(FilterConfig(nodes = listOf(node1), timeWindowContext = "morning"))
         assertEquals(0, result4.size)
     }
 
@@ -126,7 +130,7 @@ class FilterHelperMissingCoverageTest {
 
         // All should fail since dueAt is null
         listOf("today", "week", "month", "semester", "short").forEach { horizon ->
-            val result = filter(nodes = listOf(nodeNullDue), timeHorizon = horizon)
+            val result = filter(FilterConfig(nodes = listOf(nodeNullDue), timeHorizon = horizon))
             assertEquals(0, result.size)
         }
     }
@@ -140,11 +144,11 @@ class FilterHelperMissingCoverageTest {
         )
 
         // Matches where fromNodeId == node.id and toNodeId == linkedToId
-        val result1 = filter(nodes = listOf(node1), linkedToId = 2L, relations = relations)
+        val result1 = filter(FilterConfig(nodes = listOf(node1), linkedToId = 2L, relations = relations))
         assertEquals(1, result1.size)
 
         // Non match
-        val result2 = filter(nodes = listOf(node1), linkedToId = 4L, relations = relations)
+        val result2 = filter(FilterConfig(nodes = listOf(node1), linkedToId = 4L, relations = relations))
         assertEquals(0, result2.size)
     }
 
@@ -159,7 +163,7 @@ class FilterHelperMissingCoverageTest {
             )
         )
         // Providing non-null id arguments but node has null ids
-        val result1 = filter(nodes = listOf(node1), projectId = 100L, areaId = 200L, maxMins = 30, energy = 3)
+        val result1 = filter(FilterConfig(nodes = listOf(node1), projectId = 100L, areaId = 200L, maxMins = 30, energy = 3))
         assertEquals(0, result1.size)
 
         // Testing relations where `it.fromNodeId == node.id` is false and `it.fromNodeId == linkedToId` is false
@@ -167,10 +171,10 @@ class FilterHelperMissingCoverageTest {
             RelationEntity(id = 1, fromNodeId = 999, toNodeId = 1000, relationType = "RELATED"),
             RelationEntity(id = 2, fromNodeId = 2000, toNodeId = 999, relationType = "RELATED")
         )
-        val result2 = filter(nodes = listOf(node1), linkedToId = 1000L, relations = relations)
+        val result2 = filter(FilterConfig(nodes = listOf(node1), linkedToId = 1000L, relations = relations))
         assertEquals(0, result2.size)
 
-        val result3 = filter(nodes = listOf(node1), linkedToId = 2000L, relations = relations)
+        val result3 = filter(FilterConfig(nodes = listOf(node1), linkedToId = 2000L, relations = relations))
         assertEquals(0, result3.size)
     }
 
@@ -186,7 +190,7 @@ class FilterHelperMissingCoverageTest {
         )
         // Here we provide the required ids, so the left side `id == null` is false and it evaluates right side
         // we'll pass matching values so right side is true
-        val result1 = filter(nodes = listOf(node1), projectId = 100L, areaId = 200L, maxMins = 30, energy = 3)
+        val result1 = filter(FilterConfig(nodes = listOf(node1), projectId = 100L, areaId = 200L, maxMins = 30, energy = 3))
         assertEquals(1, result1.size)
 
         // Let's test the other branch of `relations.any`
@@ -196,11 +200,11 @@ class FilterHelperMissingCoverageTest {
         )
 
         // This exercises `it.fromNodeId == node.id && it.toNodeId == linkedToId` (first relation matches)
-        val result2 = filter(nodes = listOf(node1), linkedToId = 1000L, relations = relations)
+        val result2 = filter(FilterConfig(nodes = listOf(node1), linkedToId = 1000L, relations = relations))
         assertEquals(1, result2.size)
 
         // This exercises `it.fromNodeId == linkedToId && it.toNodeId == node.id` (second relation matches)
-        val result3 = filter(nodes = listOf(node1), linkedToId = 2000L, relations = relations)
+        val result3 = filter(FilterConfig(nodes = listOf(node1), linkedToId = 2000L, relations = relations))
         assertEquals(1, result3.size)
     }
 
@@ -213,7 +217,7 @@ class FilterHelperMissingCoverageTest {
         val nodeWayPast = buildTestNode(2, "way past", dueAt = now - 100L * 24 * 60 * 60 * 1000L)
 
         listOf("today", "week", "month", "semester", "short").forEach { horizon ->
-            val result = filter(nodes = listOf(nodePast, nodeWayPast), timeHorizon = horizon)
+            val result = filter(FilterConfig(nodes = listOf(nodePast, nodeWayPast), timeHorizon = horizon))
             assertEquals(0, result.size)
         }
     }
@@ -223,18 +227,18 @@ class FilterHelperMissingCoverageTest {
         val node1 = buildTestNode(1, "title") // projectId null, areaId null, maxMins null, energy null
 
         // Pass on projectId (both null)
-        val result1 = filter(nodes = listOf(node1))
+        val result1 = filter(FilterConfig(nodes = listOf(node1)))
         assertEquals(1, result1.size)
 
         // timeHorizon null due
         val nodeNullDue = buildTestNode(2, "title")
-        val result2 = filter(nodes = listOf(nodeNullDue), timeHorizon = "today")
+        val result2 = filter(FilterConfig(nodes = listOf(nodeNullDue), timeHorizon = "today"))
         assertEquals(0, result2.size)
 
         // timeHorizon not null due but wrong
         val nodeFutureDue = buildTestNode(3, "title", dueAt = kotlin.time.Clock.System.now().toEpochMilliseconds() + 300L * 24 * 60 * 60 * 1000L)
         listOf("today", "week", "month", "semester", "short").forEach { horizon ->
-            val result = filter(nodes = listOf(nodeFutureDue), timeHorizon = horizon)
+            val result = filter(FilterConfig(nodes = listOf(nodeFutureDue), timeHorizon = horizon))
             assertEquals(0, result.size)
         }
 
@@ -242,7 +246,7 @@ class FilterHelperMissingCoverageTest {
         val relations = listOf(
             RelationEntity(id = 1, fromNodeId = 100, toNodeId = 1, relationType = "RELATED")
         )
-        val result3 = filter(nodes = listOf(node1), linkedToId = 100L, relations = relations)
+        val result3 = filter(FilterConfig(nodes = listOf(node1), linkedToId = 100L, relations = relations))
         assertEquals(1, result3.size)
     }
 }
