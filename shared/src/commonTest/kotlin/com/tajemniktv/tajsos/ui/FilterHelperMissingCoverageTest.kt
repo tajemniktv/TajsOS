@@ -39,8 +39,9 @@ class FilterHelperMissingCoverageTest {
 
     @Test
     fun testContextFilteringMissedBranches() {
-        val node1 = buildTestNode(1, "title", "content", type = "task").copy(
-            node = buildTestNode(1, "title", "content", type = "task").node.copy(
+        val node1Base = buildTestNode(1, "title", "content", type = "task")
+        val node1 = node1Base.copy(
+            node = node1Base.node.copy(
                 locationContext = "office",
                 energyContext = "low",
                 deviceContext = "phone",
@@ -49,8 +50,9 @@ class FilterHelperMissingCoverageTest {
             )
         )
 
-        val node2 = buildTestNode(2, "title", "content", type = "task").copy(
-            node = buildTestNode(2, "title", "content", type = "task").node.copy(
+        val node2Base = buildTestNode(2, "title", "content", type = "task")
+        val node2 = node2Base.copy(
+            node = node2Base.node.copy(
                 locationContext = "home",
                 energyContext = "high",
                 deviceContext = "laptop",
@@ -69,8 +71,9 @@ class FilterHelperMissingCoverageTest {
     @Test
     fun testProjectAndAreaAndMinsAndEnergyMismatches() {
         // We want to test where projectId is NOT null but doesn't match
-        val nodeProjectMismatch = buildTestNode(1, "title").copy(
-            node = buildTestNode(1, "title").node.copy(projectId = 999L)
+        val nodeProjectMismatchBase = buildTestNode(1, "title")
+        val nodeProjectMismatch = nodeProjectMismatchBase.copy(
+            node = nodeProjectMismatchBase.node.copy(projectId = 999L)
         )
         val resultProject = filter(FilterConfig(nodes = listOf(nodeProjectMismatch), projectId = 1L))
         assertEquals(0, resultProject.size)
@@ -130,7 +133,7 @@ class FilterHelperMissingCoverageTest {
         val nodeNullDue = buildTestNode(1, "title", "content", type = "task", dueAt = null)
 
         // All should fail since dueAt is null
-        listOf("today", "week", "month", "semester", "short").forEach { horizon ->
+        listOf("today", "week", "month", "semester", "short", "long").forEach { horizon ->
             val result = filter(FilterConfig(nodes = listOf(nodeNullDue), timeHorizon = horizon))
             assertEquals(0, result.size)
         }
@@ -217,7 +220,7 @@ class FilterHelperMissingCoverageTest {
         val nodePast = buildTestNode(1, "past", dueAt = now - 1000L)
         val nodeWayPast = buildTestNode(2, "way past", dueAt = now - 100L * 24 * 60 * 60 * 1000L)
 
-        listOf("today", "week", "month", "semester", "short").forEach { horizon ->
+        listOf("today", "week", "month", "semester", "short", "long").forEach { horizon ->
             val result = filter(FilterConfig(nodes = listOf(nodePast, nodeWayPast), timeHorizon = horizon))
             assertEquals(0, result.size)
         }
