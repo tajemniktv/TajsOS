@@ -41,6 +41,12 @@ class ProtocolCommands(
     private val protocolTemplates: () -> List<TransitionProtocolTemplate>,
     private val playbookTemplates: () -> List<PlaybookTemplate>,
 ) {
+
+    companion object {
+        /** Cached regex for replacing non-alphanumeric characters with underscores to prevent recompilation. */
+        private val nonAlphaNumericUnderscoreRegex = Regex("[^a-z0-9]+")
+    }
+
     /**
      * Executes or instantiates a specific transition protocol based on its label.
      *
@@ -218,7 +224,7 @@ class ProtocolCommands(
                                     key =
                                         cleanLabel
                                             .lowercase()
-                                            .replace(Regex("[^a-z0-9]+"), "_")
+                                            .replace(nonAlphaNumericUnderscoreRegex, "_")
                                             .trim('_'),
                                     label = cleanLabel,
                                     checklist = cleanChecklist,

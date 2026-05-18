@@ -50,6 +50,12 @@ class NodeCommands(
     private val defaultNextStepLabel: () -> String = { "Next step" },
     private val defaultUntitledLabel: () -> String = { "Untitled" },
 ) {
+
+    companion object {
+        /** Cached regex for splitting markdown content by top-level headings to prevent recompilation. */
+        private val headingSplitRegex = Regex("(?=^# )", RegexOption.MULTILINE)
+    }
+
     /**
      * Automatically reviews the inbox and currently active task lists to identify items that have
      * been ignored or deferred multiple times (based on [cutoffDays]). It sweeps these stale items
@@ -472,7 +478,7 @@ class NodeCommands(
             repository.getNodeById(nodeId)?.let { node ->
                 val sections =
                     node.content
-                        .split(Regex("(?=^# )", RegexOption.MULTILINE))
+                        .split(headingSplitRegex)
                         .filter { it.isNotBlank() }
 
                 if (sections.size > 1) {

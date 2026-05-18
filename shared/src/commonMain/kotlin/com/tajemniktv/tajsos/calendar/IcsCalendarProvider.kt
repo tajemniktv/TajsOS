@@ -190,6 +190,12 @@ internal data class IcsDateProperty(
  * by processing lines within a `BEGIN:VEVENT` and `END:VEVENT` block.
  */
 internal class IcsEventBuilder {
+
+    companion object {
+        /** Cached regex for extracting timezone ID from ICS properties to prevent recompilation. */
+        private val tzidRegex = Regex("TZID=([^;:]+)")
+    }
+
     internal var uid: String? = null
     internal var summary: String = "No Title"
     internal var description: String? = null
@@ -342,7 +348,7 @@ internal class IcsEventBuilder {
      */
     internal fun extractTimeZone(rawKey: String): TimeZone {
         val tzidMatch =
-            Regex("TZID=([^;:]+)").find(rawKey) ?: return TimeZone.currentSystemDefault()
+            tzidRegex.find(rawKey) ?: return TimeZone.currentSystemDefault()
         return try {
             TimeZone.of(tzidMatch.groupValues[1])
         } catch (e: IllegalArgumentException) {

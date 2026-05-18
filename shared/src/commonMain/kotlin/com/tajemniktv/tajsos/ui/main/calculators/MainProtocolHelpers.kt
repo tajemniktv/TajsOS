@@ -16,6 +16,9 @@ import kotlin.time.Clock
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Instant
 
+/** Cached regex for replacing non-alphanumeric characters with spaces to prevent recompilation. */
+private val nonAlphaNumericRegex = Regex("[^a-z0-9]+")
+
 /**
  * Normalizes a protocol or playbook label by converting it to lowercase,
  * replacing all non-alphanumeric characters with spaces, and trimming the result.
@@ -28,7 +31,7 @@ fun normalizeProtocolLabel(label: String): String =
     label
         .trim()
         .lowercase()
-        .replace(Regex("[^a-z0-9]+"), " ")
+        .replace(nonAlphaNumericRegex, " ")
         .trim()
 
 /**
