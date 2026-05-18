@@ -62,7 +62,6 @@
 @layer utilities {
     .glass-panel {
         background: color-mix(in srgb, var(--color-surface-container-high) 60%, transparent);
-        backdrop-filter: blur(40px);
         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
     }
     .instrument-glow {
@@ -77,6 +76,5 @@
     }
     .gradient-sphere {
         background: radial-gradient(circle, rgba(186, 158, 255, 0.15) 0%, transparent 70%);
-        filter: blur(60px);
     }
 }
