@@ -304,7 +304,7 @@ fun calculateInsights(
             0.0
         }
 
-    // Insight Cards Logic (Roadmap Section 7)
+    // Insight Cards Logic
     val mostPostponedAreaId =
         nodes
             .mapNotNull { item ->
@@ -363,7 +363,7 @@ fun calculateInsights(
             !hasRecentActivity
         }
 
-    // Advanced Insight Concepts (Roadmap Section 7)
+    // Advanced Insight Concepts
     val projectEntropy =
         projects.associate { project ->
             val projectNodes =
@@ -729,16 +729,6 @@ fun calculateOpenLoopsSnapshot(
 }
 
 /**
- * Calculates a qualitative urgency string for an open loop.
- *
- * It checks the item's deadline and staleness metrics against the current time to classify
- * its urgency (e.g., "critical", "high", "medium", "low").
- *
- * @param node The node entity representing the open loop.
- * @param now The current epoch timestamp in milliseconds.
- * @return A string identifier representing the calculated urgency level.
- */
-/**
  * Calculates the urgency identifier for an open loop based on due dates and staleness.
  * Assumes items are more urgent if due within the next 24 hours or stale for 14+ days.
  *
@@ -802,13 +792,6 @@ fun openLoopDecayScore(
     ).coerceIn(0, 100)
 }
 
-/**
- * Evaluates active tasks tagged with maintenance parameters (e.g., "recurring", "chore")
- * and calculates their specific due dates and overdue statuses to generate a [MaintenanceSnapshot].
- *
- * @param tasks A comprehensive list of all non-archived task nodes.
- * @return A [MaintenanceSnapshot] summarizing the user's administrative and routine debt.
- */
 /**
  * Evaluates all active maintenance nodes (chores, administration, subscriptions)
  * and calculates their specific due dates and overdue statuses to generate a [MaintenanceSnapshot].
@@ -925,16 +908,6 @@ fun calculateMaintenanceSnapshot(nodes: List<NodeWithPin>): com.tajemniktv.tajso
     )
 }
 
-/**
- * Calculates a qualitative urgency string for a maintenance item.
- *
- * Evaluates the item's deadline or overdue timestamp against the current time,
- * combined with its specific maintenance type, to classify its urgency.
- *
- * @param node The node entity representing the maintenance task.
- * @param now The current epoch timestamp in milliseconds.
- * @return A string identifier representing the calculated urgency level.
- */
 /**
  * Determines the string-based urgency level for a given maintenance item.
  * Uses predefined "criticalTypes" such as bills or prescriptions to escalate urgency compared to routine chores.
