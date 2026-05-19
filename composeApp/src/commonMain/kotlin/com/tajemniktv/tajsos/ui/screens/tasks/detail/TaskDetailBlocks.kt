@@ -620,7 +620,7 @@ private fun SubtaskRow(
                 color = tint,
             )
             if (subtask.source == TaskSubtaskSource.InlineChecklist && onRemove != null) {
-                IconButton(onClick = onRemove) {
+                IconButton(onClick = onRemove, modifier = Modifier.size(48.dp)) {
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = null,
@@ -704,7 +704,7 @@ private fun AttachmentRow(
                 )
             }
         }
-        IconButton(onClick = onRemove) {
+        IconButton(onClick = onRemove, modifier = Modifier.size(48.dp)) {
             Icon(Icons.Default.Delete, contentDescription = null, tint = TajsOSTheme.Muted)
         }
     }

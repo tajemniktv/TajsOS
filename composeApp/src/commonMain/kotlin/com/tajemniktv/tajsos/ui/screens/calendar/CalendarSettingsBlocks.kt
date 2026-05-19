@@ -58,7 +58,7 @@ private fun renderCalendarSettingsHeader(context: CalendarSettingsContext) {
             style = MaterialTheme.typography.displaySmall,
             color = TajsOSTheme.Text,
         )
-        IconButton(onClick = context.onShowAddDialog) {
+        IconButton(onClick = context.onShowAddDialog, modifier = Modifier.size(48.dp)) {
             Icon(
                 Icons.Default.Add,
                 contentDescription = stringResource(Res.string.cal_settings_add),
@@ -123,7 +123,7 @@ private fun ProviderRow(
                     )
                 }
             }
-            IconButton(onClick = onDelete) {
+            IconButton(onClick = onDelete, modifier = Modifier.size(48.dp)) {
                 Icon(
                     Icons.Default.Delete,
                     contentDescription = stringResource(Res.string.archive_delete),

@@ -214,7 +214,7 @@ fun NotesRoute(
                             modifier = Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            IconButton(onClick = { mobileInDetail = false }) {
+                            IconButton(onClick = { mobileInDetail = false }, modifier = Modifier.size(48.dp)) {
                                 Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
                             }
                         }

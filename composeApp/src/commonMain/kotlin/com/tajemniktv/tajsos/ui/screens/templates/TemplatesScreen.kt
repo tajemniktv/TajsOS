@@ -68,7 +68,7 @@ fun TemplatesScreen(
         )
 
     val actions: @Composable RowScope.() -> Unit = {
-        IconButton(onClick = { showAddDialog = true }) {
+        IconButton(onClick = { showAddDialog = true }, modifier = Modifier.size(48.dp)) {
             Icon(
                 Icons.Default.Add,
                 contentDescription = stringResource(Res.string.templates_add_desc),

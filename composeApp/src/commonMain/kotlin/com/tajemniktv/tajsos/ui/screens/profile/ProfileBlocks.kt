@@ -390,7 +390,7 @@ private fun renderMedicationsModuleBlock(context: ProfileScreenContext) {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             ModuleTitle(title = stringResource(Res.string.profile_medications))
-            IconButton(onClick = context.onOpenAddMedication) {
+            IconButton(onClick = context.onOpenAddMedication, modifier = Modifier.size(48.dp)) {
                 Icon(
                     Icons.Default.Add,
                     contentDescription = null,
@@ -589,7 +589,7 @@ private fun MedicationItem(
                     color = TajsOSTheme.Primary,
                 )
             }
-            IconButton(onClick = onDelete) {
+            IconButton(onClick = onDelete, modifier = Modifier.size(48.dp)) {
                 Icon(Icons.Default.Delete, contentDescription = "Delete", tint = TajsOSTheme.Error)
             }
         }

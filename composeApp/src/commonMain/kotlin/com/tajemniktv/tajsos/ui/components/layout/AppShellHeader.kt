@@ -136,7 +136,7 @@ fun AppShellHeader(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 if (!isDesktop && onMenuClick != null) {
-                    IconButton(onClick = onMenuClick) {
+                    IconButton(onClick = onMenuClick, modifier = Modifier.size(48.dp)) {
                         Icon(
                             imageVector = Icons.Default.Menu,
                             contentDescription = stringResource(Res.string.header_menu),

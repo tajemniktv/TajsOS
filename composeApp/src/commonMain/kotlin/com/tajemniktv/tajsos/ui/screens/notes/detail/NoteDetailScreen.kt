@@ -244,7 +244,7 @@ fun NoteDetailScreen(
                 modifier = Modifier.size(18.dp),
             )
         }
-        IconButton(onClick = { showMoreDialog = true }) {
+        IconButton(onClick = { showMoreDialog = true }, modifier = Modifier.size(48.dp)) {
             Icon(
                 Icons.Default.MoreVert,
                 contentDescription = null,

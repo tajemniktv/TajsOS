@@ -195,24 +195,24 @@ fun NotesEditorHeaderActions(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Row {
-            IconButton(onClick = onToggleFavorite) {
+            IconButton(onClick = onToggleFavorite, modifier = Modifier.size(48.dp)) {
                 Icon(
                     imageVector = if (favorite) Icons.Default.Star else Icons.Default.StarBorder,
                     contentDescription = null,
                     tint = if (favorite) TajsOSTheme.Primary else TajsOSTheme.Text,
                 )
             }
-            IconButton(onClick = onArchive) {
+            IconButton(onClick = onArchive, modifier = Modifier.size(48.dp)) {
                 Icon(Icons.Default.Archive, contentDescription = null, tint = TajsOSTheme.Text)
             }
-            IconButton(onClick = onToggleFocusMode) {
+            IconButton(onClick = onToggleFocusMode, modifier = Modifier.size(48.dp)) {
                 Icon(
                     Icons.Default.CenterFocusStrong,
                     contentDescription = null,
                     tint = if (focusMode) TajsOSTheme.Primary else TajsOSTheme.Text,
                 )
             }
-            IconButton(onClick = onToggleContextPanel) {
+            IconButton(onClick = onToggleContextPanel, modifier = Modifier.size(48.dp)) {
                 Icon(
                     Icons.Default.Info,
                     contentDescription = null,
@@ -221,7 +221,7 @@ fun NotesEditorHeaderActions(
             }
         }
         Box {
-            IconButton(onClick = { menuOpen = true }) {
+            IconButton(onClick = { menuOpen = true }, modifier = Modifier.size(48.dp)) {
                 Icon(Icons.Default.MoreVert, contentDescription = null)
             }
             DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {

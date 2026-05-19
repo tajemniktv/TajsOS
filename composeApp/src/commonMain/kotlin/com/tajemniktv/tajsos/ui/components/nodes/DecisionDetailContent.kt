@@ -286,7 +286,7 @@ fun DecisionDetailContent(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             SectionTitle(stringResource(Res.string.decision_options_label))
-            IconButton(onClick = { showAddOptionDialog = true }) {
+            IconButton(onClick = { showAddOptionDialog = true }, modifier = Modifier.size(48.dp)) {
                 Icon(
                     Icons.Default.Add,
                     contentDescription = stringResource(Res.string.cd_add_option),
