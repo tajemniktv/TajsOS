@@ -1940,7 +1940,15 @@ fun calculateCapacitySnapshot(
  *
  * @param modes All available modes.
  * @param areaHealth Calculated area health snapshot.
- * @param relations Relational mapping data.
+ * @param openLoops The calculated open loops snapshot.
+ * @param pendingDecisions A list of pending decisions.
+ * @param maintenance The calculated maintenance snapshot.
+ * @param relationships The calculated relationship snapshot.
+ * @param vaults The calculated vaults snapshot.
+ * @param capacity The calculated capacity snapshot.
+ * @param playbooks The calculated playbook snapshot.
+ * @param currentMode The currently active focus mode.
+ * @param trackEntries A list of track entries.
  * @param nodes The complete list of active nodes in the system.
  * @return A compiled [LifeOSSignatureSnapshot] detailing system coherence.
  */
@@ -2080,6 +2088,16 @@ fun calculateLifeOSSignatureSnapshot(
  *
  * @param nodes The complete list of active nodes in the system.
  * @param relations Relational mapping data.
+ * @param dashboard The current dashboard UI state.
+ * @param areaHealth The calculated area health snapshot.
+ * @param openLoops The calculated open loops snapshot.
+ * @param maintenance The calculated maintenance snapshot.
+ * @param capacity The calculated capacity snapshot.
+ * @param protocols The calculated transition protocols snapshot.
+ * @param playbooks The calculated playbook snapshot.
+ * @param currentMode The currently active focus mode.
+ * @param signature The calculated lifeOS signature.
+ * @param vaults The calculated vaults snapshot.
  * @return A compiled [LifeOSSecondBrainSnapshot] representing knowledge capture health.
  */
 fun calculateLifeOSSecondBrainSnapshot(
@@ -2296,9 +2314,13 @@ fun calculateLifeOSSecondBrainSnapshot(
  *
  * @param distinction The calculated second brain snapshot.
  * @param signature The calculated lifeOS signature.
- * @param nodes The complete list of active nodes in the system.
- * @param projects A curated list of projects.
- * @param areas A curated list of areas.
+ * @param dashboard The current dashboard UI state.
+ * @param logistics The calculated physical logistics snapshot.
+ * @param capacity The calculated capacity snapshot.
+ * @param relationships The calculated relationship snapshot.
+ * @param protocols The calculated transition protocols snapshot.
+ * @param maintenance The calculated maintenance snapshot.
+ * @param openLoops The calculated open loops snapshot.
  * @return A compiled [CombinedDirectionSnapshot] summarizing the user's vector.
  */
 fun calculateCombinedDirectionSnapshot(
@@ -2431,8 +2453,15 @@ fun calculateCombinedDirectionSnapshot(
  *
  * @param distinction The calculated second brain snapshot.
  * @param signature The calculated lifeOS signature.
- * @param nodes The complete list of active nodes in the system.
- * @param relations Relational mapping data.
+ * @param direction The calculated combined direction snapshot.
+ * @param dashboard The current dashboard UI state.
+ * @param time The calculated time architecture snapshot.
+ * @param areaHealth The calculated area health snapshot.
+ * @param openLoops The calculated open loops snapshot.
+ * @param maintenance The calculated maintenance snapshot.
+ * @param protocols The calculated transition protocols snapshot.
+ * @param capacity The calculated capacity snapshot.
+ * @param currentMode The currently active focus mode.
  * @return A compiled [CoreLifeOSShiftSnapshot] highlighting pivotal changes.
  */
 fun calculateCoreLifeOSShiftSnapshot(
