@@ -125,7 +125,7 @@ private fun renderSearchInput(context: SearchDashboardContext) {
                     unfocusedContainerColor = TajsOSTheme.Surface,
                 ),
         )
-        IconButton(onClick = context.onToggleFilters) {
+        IconButton(onClick = context.onToggleFilters, modifier = Modifier.size(48.dp)) {
             Icon(
                 Icons.Default.FilterList,
                 contentDescription = "Toggle filters",

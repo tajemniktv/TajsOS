@@ -286,7 +286,7 @@ fun CaptureSheet(
                 )
 
                 if (onVoiceCaptureClick != null) {
-                    IconButton(onClick = onVoiceCaptureClick) {
+                    IconButton(onClick = onVoiceCaptureClick, modifier = Modifier.size(48.dp)) {
                         Icon(
                             imageVector = Icons.Default.Mic,
                             contentDescription = stringResource(Res.string.capture_voice),

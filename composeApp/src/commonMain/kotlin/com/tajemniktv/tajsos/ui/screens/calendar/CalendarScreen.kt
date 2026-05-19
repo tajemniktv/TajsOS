@@ -153,7 +153,7 @@ fun CalendarHeader(
                     color = TajsOSTheme.Primary,
                 )
             }
-            IconButton(onClick = onSyncClick) {
+            IconButton(onClick = onSyncClick, modifier = Modifier.size(48.dp)) {
                 Icon(
                     Icons.Default.Refresh,
                     contentDescription = stringResource(Res.string.cal_sync),
@@ -161,13 +161,13 @@ fun CalendarHeader(
                     modifier = Modifier.size(20.dp),
                 )
             }
-            IconButton(onClick = onPreviousMonth) {
+            IconButton(onClick = onPreviousMonth, modifier = Modifier.size(48.dp)) {
                 Icon(
                     Icons.Default.ChevronLeft,
                     contentDescription = stringResource(Res.string.cal_previous),
                 )
             }
-            IconButton(onClick = onNextMonth) {
+            IconButton(onClick = onNextMonth, modifier = Modifier.size(48.dp)) {
                 Icon(
                     Icons.Default.ChevronRight,
                     contentDescription = stringResource(Res.string.cal_next),

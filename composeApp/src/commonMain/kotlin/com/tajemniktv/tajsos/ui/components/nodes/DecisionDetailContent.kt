@@ -6,6 +6,7 @@ package com.tajemniktv.tajsos.ui.components.nodes
 
 import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -286,7 +287,7 @@ fun DecisionDetailContent(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             SectionTitle(stringResource(Res.string.decision_options_label))
-            IconButton(onClick = { showAddOptionDialog = true }) {
+            IconButton(onClick = { showAddOptionDialog = true }, modifier = Modifier.size(48.dp)) {
                 Icon(
                     Icons.Default.Add,
                     contentDescription = stringResource(Res.string.cd_add_option),

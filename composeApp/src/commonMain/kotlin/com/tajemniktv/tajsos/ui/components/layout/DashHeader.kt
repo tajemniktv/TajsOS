@@ -117,7 +117,7 @@ fun DashHeader(
                 }
             }
             Spacer(Modifier.width(12.dp))
-            IconButton(onClick = onSettingsClick) {
+            IconButton(onClick = onSettingsClick, modifier = Modifier.size(48.dp)) {
                 Icon(Icons.Default.Settings, contentDescription = null, tint = TajsOSTheme.Muted)
             }
         }

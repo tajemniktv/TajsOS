@@ -5,6 +5,7 @@
 package com.tajemniktv.tajsos.ui.components.nodes
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -186,7 +187,7 @@ fun TaskRow(
                     }
                 }
                 if (isDone) {
-                    IconButton(onClick = onArchive) {
+                    IconButton(onClick = onArchive, modifier = Modifier.size(48.dp)) {
                         Icon(
                             imageVector = Icons.Default.Delete,
                             contentDescription = stringResource(Res.string.detail_archive),
@@ -194,7 +195,7 @@ fun TaskRow(
                         )
                     }
                 }
-                IconButton(onClick = onUnpin) {
+                IconButton(onClick = onUnpin, modifier = Modifier.size(48.dp)) {
                     Icon(
                         Icons.Default.Close,
                         contentDescription = stringResource(Res.string.task_row_unpin_desc),

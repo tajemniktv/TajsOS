@@ -267,7 +267,7 @@ fun NodeCard(
                         }
                     }
                     if (isDone) {
-                        IconButton(onClick = onArchive) {
+                        IconButton(onClick = onArchive, modifier = Modifier.size(48.dp)) {
                             Icon(
                                 imageVector = Icons.Default.Delete,
                                 contentDescription = stringResource(Res.string.detail_archive),
