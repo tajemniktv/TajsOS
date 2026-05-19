@@ -252,10 +252,15 @@ fun NotesEditorHeaderActions(
     }
 }
 
+/**
+ * Cached regex for splitting text into words by whitespace to avoid repeated instantiations during typing.
+ */
+private val WHITESPACE_REGEX = Regex("\\s+")
+
 private fun wordCount(content: String): Int =
     content
         .trim()
-        .split(Regex("\\s+"))
+        .split(WHITESPACE_REGEX)
         .filter { it.isNotBlank() }
         .size
         .let { max(0, it) }
