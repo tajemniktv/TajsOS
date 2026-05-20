@@ -38,31 +38,11 @@ import kotlin.test.assertTrue
 @OptIn(ExperimentalCoroutinesApi::class)
 class StudentCommandsTest {
 
-    private fun buildRepository(): AppRepository {
-        return AppRepository(
-            nodeDao = FakeNodeDao(),
-            nodeSnapshotDao = FakeNodeSnapshotDao(),
-            tagDao = FakeTagDao(),
-            relationDao = FakeRelationDao(),
-            attachmentDao = FakeAttachmentDao(),
-            trackDao = FakeTrackDao(),
-            eventLogDao = FakeEventLogDao(),
-            templateDao = FakeTemplateDao(),
-            modeDao = FakeModeDao(),
-            userDao = FakeUserDao(),
-            reviewDao = FakeReviewDao(),
-            calendarProviderDao = FakeCalendarProviderDao(),
-            calendarEventDao = FakeCalendarEventDao(),
-            decisionDao = FakeDecisionDao(),
-            protocolDao = FakeProtocolDao(),
-            medicationDao = FakeMedicationDao(),
-            focusSessionDao = FakeFocusSessionDao(),
-        )
-    }
+
 
     @Test
     fun testSetReadingProgress_clampsValues() = runTest {
-        val repo = buildRepository()
+        val repo = buildTestRepository()
         val scope = TestScope(testScheduler)
 
         val node = NodeEntity(id = 1, type = "reading", title = "Book")
@@ -104,7 +84,7 @@ class StudentCommandsTest {
 
     @Test
     fun testSetTopicMastery_clampsValuesAndSetsTopic() = runTest {
-        val repo = buildRepository()
+        val repo = buildTestRepository()
         val scope = TestScope(testScheduler)
 
         val node = NodeEntity(id = 1, type = "topic", title = "Math")
@@ -141,7 +121,7 @@ class StudentCommandsTest {
 
     @Test
     fun testSetStudentCourse() = runTest {
-        val repo = buildRepository()
+        val repo = buildTestRepository()
         val scope = TestScope(testScheduler)
 
         val node = NodeEntity(id = 1, type = "assignment", title = "Homework")
@@ -175,7 +155,7 @@ class StudentCommandsTest {
 
     @Test
     fun testToggleFlashcardCandidate() = runTest {
-        val repo = buildRepository()
+        val repo = buildTestRepository()
         val scope = TestScope(testScheduler)
 
         val node = NodeEntity(id = 1, type = "note", title = "Biology Note")
@@ -217,7 +197,7 @@ class StudentCommandsTest {
 
     @Test
     fun testToggleRevisitBeforeExam() = runTest {
-        val repo = buildRepository()
+        val repo = buildTestRepository()
         val scope = TestScope(testScheduler)
 
         val node = NodeEntity(id = 1, type = "note", title = "History Note")

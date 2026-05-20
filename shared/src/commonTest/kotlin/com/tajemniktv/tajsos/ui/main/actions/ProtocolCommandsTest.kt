@@ -40,27 +40,7 @@ import kotlin.test.assertTrue
 @OptIn(ExperimentalCoroutinesApi::class)
 class ProtocolCommandsTest {
 
-    private fun buildRepository(): AppRepository {
-        return AppRepository(
-            nodeDao = FakeNodeDao(),
-            nodeSnapshotDao = FakeNodeSnapshotDao(),
-            tagDao = FakeTagDao(),
-            relationDao = FakeRelationDao(),
-            attachmentDao = FakeAttachmentDao(),
-            trackDao = FakeTrackDao(),
-            eventLogDao = FakeEventLogDao(),
-            templateDao = FakeTemplateDao(),
-            modeDao = FakeModeDao(),
-            userDao = FakeUserDao(),
-            reviewDao = FakeReviewDao(),
-            calendarProviderDao = FakeCalendarProviderDao(),
-            calendarEventDao = FakeCalendarEventDao(),
-            decisionDao = FakeDecisionDao(),
-            protocolDao = FakeProtocolDao(),
-            medicationDao = FakeMedicationDao(),
-            focusSessionDao = FakeFocusSessionDao(),
-        )
-    }
+
 
 
 
@@ -89,7 +69,7 @@ class ProtocolCommandsTest {
         protocolTemplates: List<TransitionProtocolTemplate> = emptyList(),
         playbookTemplates: List<PlaybookTemplate> = emptyList()
     ): Pair<AppRepository, ProtocolCommands> {
-        val repo = buildRepository()
+        val repo = buildTestRepository()
         val config = CommandsConfig(
             repo = repo,
             scope = scope,

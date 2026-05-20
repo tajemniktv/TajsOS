@@ -37,27 +37,7 @@ import kotlin.test.assertNotNull
 @OptIn(ExperimentalCoroutinesApi::class)
 class RelationshipCommandsTest {
 
-    private fun buildRepository(): AppRepository {
-        return AppRepository(
-            nodeDao = FakeNodeDao(),
-            focusSessionDao = FakeFocusSessionDao(),
-            trackDao = FakeTrackDao(),
-            relationDao = FakeRelationDao(),
-            tagDao = FakeTagDao(),
-            eventLogDao = FakeEventLogDao(),
-            attachmentDao = FakeAttachmentDao(),
-            templateDao = FakeTemplateDao(),
-            nodeSnapshotDao = FakeNodeSnapshotDao(),
-            reviewDao = FakeReviewDao(),
-            calendarProviderDao = FakeCalendarProviderDao(),
-            calendarEventDao = FakeCalendarEventDao(),
-            modeDao = FakeModeDao(),
-            protocolDao = FakeProtocolDao(),
-            decisionDao = FakeDecisionDao(),
-            userDao = FakeUserDao(),
-            medicationDao = FakeMedicationDao(),
-        )
-    }
+
 
     private fun setupCommands(
         scope: TestScope,
@@ -101,7 +81,7 @@ class RelationshipCommandsTest {
     @Test
     fun testSetPersonLastContactNow() = runTest {
         val scope = TestScope(testScheduler)
-        val repo = buildRepository()
+        val repo = buildTestRepository()
         val commands = setupCommands(scope, repo)
 
         val personNode = NodeEntity(type = "person", title = "Alice")
@@ -118,7 +98,7 @@ class RelationshipCommandsTest {
     @Test
     fun testSetPersonFollowUpInDays() = runTest {
         val scope = TestScope(testScheduler)
-        val repo = buildRepository()
+        val repo = buildTestRepository()
         val commands = setupCommands(scope, repo)
 
         val personNode = NodeEntity(type = "person", title = "Alice")
@@ -135,7 +115,7 @@ class RelationshipCommandsTest {
     @Test
     fun testCreateReplyNeededForPerson() = runTest {
         val scope = TestScope(testScheduler)
-        val repo = buildRepository()
+        val repo = buildTestRepository()
         val commands = setupCommands(scope, repo)
 
         val personNode = NodeEntity(id = 1L, type = "person", title = "Bob")
@@ -150,14 +130,14 @@ class RelationshipCommandsTest {
 
         val relations = repo.getRelationsForNode(1L).first()
         val relation = relations.firstOrNull { it.fromNodeId == 1L && it.relationType == "RELATED_PERSON" }
-        assertNotNull(relation)
-        assertEquals(replyNodes.first().node.id, relation!!.toNodeId)
+        assertTrue(relation != null)
+        assertEquals(replyNodes.first().node.id, relation.toNodeId)
     }
 
     @Test
     fun testAddPlace() = runTest {
         val scope = TestScope(testScheduler)
-        val repo = buildRepository()
+        val repo = buildTestRepository()
         val commands = setupCommands(scope, repo)
 
         commands.addPlace("Coffee Shop", campus = false, home = false)
@@ -173,7 +153,7 @@ class RelationshipCommandsTest {
     @Test
     fun testCreateLeaveHomeChecklist() = runTest {
         val scope = TestScope(testScheduler)
-        val repo = buildRepository()
+        val repo = buildTestRepository()
         val commands = setupCommands(scope, repo)
 
         commands.createLeaveHomeChecklist()
@@ -187,7 +167,7 @@ class RelationshipCommandsTest {
     @Test
     fun testAddVaultEntry() = runTest {
         val scope = TestScope(testScheduler)
-        val repo = buildRepository()
+        val repo = buildTestRepository()
         val commands = setupCommands(scope, repo)
 
         commands.addVaultEntry("receipt", "Laptop receipt", asType = "note")
