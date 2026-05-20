@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.first
 import okio.IOException
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
@@ -299,43 +300,37 @@ class PreferencesRepositoryTest {
         val customPack = AppPack.STUDENT
         val freePack = AppPack.MAINTENANCE
 
-        repository.enabledPacks.test {
-            val defaultRegistry = awaitItem()
-            assertEquals(AppPack.defaultFreePackKeys, defaultRegistry.ownedPackKeys)
-            assertEquals(AppPack.defaultFreePackKeys, defaultRegistry.enabledPackKeys)
+        val defaultRegistry = repository.enabledPacks.first()
+        assertEquals(AppPack.defaultFreePackKeys, defaultRegistry.ownedPackKeys)
+        assertEquals(AppPack.defaultFreePackKeys, defaultRegistry.enabledPackKeys)
 
-            // Buy a premium pack
-            repository.setPackOwned(customPack, true)
-            val updatedOwned = awaitItem()
-            kotlin.test.assertTrue(updatedOwned.ownedPackKeys.contains(customPack.key))
+        // Buy a premium pack
+        repository.setPackOwned(customPack, true)
+        val updatedOwned = repository.enabledPacks.first()
+        kotlin.test.assertTrue(updatedOwned.ownedPackKeys.contains(customPack.key))
 
-            // Enable it
-            repository.setPackEnabled(customPack, true)
-            val updatedEnabled = awaitItem()
-            kotlin.test.assertTrue(updatedEnabled.enabledPackKeys.contains(customPack.key))
+        // Enable it
+        repository.setPackEnabled(customPack, true)
+        val updatedEnabled = repository.enabledPacks.first()
+        kotlin.test.assertTrue(updatedEnabled.enabledPackKeys.contains(customPack.key))
 
-            // Disable it
-            repository.setPackEnabled(customPack, false)
-            val updatedDisabled = awaitItem()
-            kotlin.test.assertFalse(updatedDisabled.enabledPackKeys.contains(customPack.key))
+        // Disable it
+        repository.setPackEnabled(customPack, false)
+        val updatedDisabled = repository.enabledPacks.first()
+        kotlin.test.assertFalse(updatedDisabled.enabledPackKeys.contains(customPack.key))
 
-            // Un-own it (which should also disable it if it were enabled)
-            repository.setPackEnabled(customPack, true)
-            awaitItem()
-            repository.setPackOwned(customPack, false)
-            val unowned = awaitItem()
-            kotlin.test.assertFalse(unowned.ownedPackKeys.contains(customPack.key))
-            kotlin.test.assertFalse(unowned.enabledPackKeys.contains(customPack.key))
+        // Un-own it (which should also disable it if it were enabled)
+        repository.setPackEnabled(customPack, true)
+        repository.setPackOwned(customPack, false)
+        val unowned = repository.enabledPacks.first()
+        kotlin.test.assertFalse(unowned.ownedPackKeys.contains(customPack.key))
+        kotlin.test.assertFalse(unowned.enabledPackKeys.contains(customPack.key))
 
-            // Test free pack logic
-            repository.setPackOwned(freePack, true)
-            // No emission because it is already owned by default
-            repository.setPackOwned(freePack, false)
-            // No emission because free packs cannot be unowned
-
-            // Just ensure we complete successfully
-            cancelAndIgnoreRemainingEvents()
-        }
+        // Test free pack logic
+        repository.setPackOwned(freePack, true)
+        repository.setPackOwned(freePack, false)
+        val afterFreeUnown = repository.enabledPacks.first()
+        kotlin.test.assertTrue(afterFreeUnown.ownedPackKeys.contains(freePack.key))
     }
 
     @Test
@@ -344,7 +339,6 @@ class PreferencesRepositoryTest {
         val repository = PreferencesRepository(dataStore)
 
         // Clear everything first to simulate missing defaults
-        val emptyPack = AppPack.MAINTENANCE // Not used, just placeholder
         dataStore.updateData { prefs ->
             val mutablePrefs = prefs.toMutablePreferences()
             mutablePrefs.remove(androidx.datastore.preferences.core.stringSetPreferencesKey("owned_packs"))
@@ -352,15 +346,11 @@ class PreferencesRepositoryTest {
             mutablePrefs
         }
 
-        repository.enabledPacks.test {
-            // First emit from the updateData
-            awaitItem()
+        repository.ensureDefaultPackAccess()
+        val result = repository.enabledPacks.first()
 
-            repository.ensureDefaultPackAccess()
-            val result = awaitItem()
-
-            assertEquals(AppPack.defaultFreePackKeys, result.ownedPackKeys)
-            assertEquals(AppPack.defaultFreePackKeys, result.enabledPackKeys)
-        }
+        assertEquals(AppPack.defaultFreePackKeys, result.ownedPackKeys)
+        assertEquals(AppPack.defaultFreePackKeys, result.enabledPackKeys)
     }
+
 }
