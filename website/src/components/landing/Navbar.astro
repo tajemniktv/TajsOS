@@ -23,7 +23,7 @@ import { SITE, NAV_LINKS } from '../../data/site';
     <div class="hidden md:flex gap-12">
       {NAV_LINKS.map(link => (
         <a
-          class="font-mono text-[10px] tracking-widest uppercase font-bold text-on-surface-variant hover:text-on-surface transition-colors"
+          class="font-mono text-[10px] tracking-widest uppercase font-bold text-on-surface-variant hover:text-on-surface transition-colors min-h-[48px] flex items-center px-2"
           href={`${import.meta.env.BASE_URL}${link.href}`}>{link.label}</a
         >
       ))}
@@ -31,16 +31,16 @@ import { SITE, NAV_LINKS } from '../../data/site';
     <div class="flex items-center gap-6">
       <div class="flex gap-4">
         <span
-          class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer transition-colors"
+          class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer transition-colors min-h-[48px] min-w-[48px] flex items-center justify-center"
           data-icon="settings">settings</span
         >
         <span
-          class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer transition-colors"
+          class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer transition-colors min-h-[48px] min-w-[48px] flex items-center justify-center"
           data-icon="account_circle">account_circle</span
         >
       </div>
       <a href={`${import.meta.env.BASE_URL}${SITE.waitlistUrl}`} aria-label="Join Waitlist"
-        class="bg-linear-to-br from-primary to-primary-dim text-on-primary-fixed font-mono font-bold px-6 py-2 rounded-xl text-[10px] tracking-widest uppercase hover:opacity-90 transition-all"
+        class="bg-linear-to-br from-primary to-primary-dim text-on-primary-fixed font-mono font-bold px-6 min-h-[48px] flex items-center justify-center rounded-xl text-[10px] tracking-widest uppercase hover:opacity-90 transition-all"
         >JOIN WAITLIST</a
       >
     </div>
