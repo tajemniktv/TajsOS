@@ -40,22 +40,22 @@ class RelationshipCommandsTest {
     private fun buildRepository(): AppRepository {
         return AppRepository(
             nodeDao = FakeNodeDao(),
-            nodeSnapshotDao = FakeNodeSnapshotDao(),
-            tagDao = FakeTagDao(),
-            relationDao = FakeRelationDao(),
-            attachmentDao = FakeAttachmentDao(),
+            focusSessionDao = FakeFocusSessionDao(),
             trackDao = FakeTrackDao(),
+            relationDao = FakeRelationDao(),
+            tagDao = FakeTagDao(),
             eventLogDao = FakeEventLogDao(),
+            attachmentDao = FakeAttachmentDao(),
             templateDao = FakeTemplateDao(),
-            modeDao = FakeModeDao(),
-            userDao = FakeUserDao(),
+            nodeSnapshotDao = FakeNodeSnapshotDao(),
             reviewDao = FakeReviewDao(),
             calendarProviderDao = FakeCalendarProviderDao(),
             calendarEventDao = FakeCalendarEventDao(),
-            decisionDao = FakeDecisionDao(),
+            modeDao = FakeModeDao(),
             protocolDao = FakeProtocolDao(),
+            decisionDao = FakeDecisionDao(),
+            userDao = FakeUserDao(),
             medicationDao = FakeMedicationDao(),
-            focusSessionDao = FakeFocusSessionDao(),
         )
     }
 
@@ -92,7 +92,7 @@ class RelationshipCommandsTest {
             setTagOnNode = { nodeId, tagName, _ ->
                 scope.launch {
                     val tagId = repo.insertTag(TagEntity(name = tagName, normalizedName = tagName.lowercase()))
-                    repo.attachTagToNode(nodeId = nodeId, tagId = tagId)
+                    repo.attachTagToNode(nodeId, tagId)
                 }
             }
         )
@@ -148,7 +148,7 @@ class RelationshipCommandsTest {
         val replyNodes = nodes.filter { it.node.type == "open_loop" && it.node.title.contains("Bob") }
         assertEquals(1, replyNodes.size, "Should create exactly 1 reply needed node")
 
-        val relations = repo.getAllRelations().first()
+        val relations = repo.getRelationsForNode(1L).first()
         val relation = relations.firstOrNull { it.fromNodeId == 1L && it.relationType == "RELATED_PERSON" }
         assertNotNull(relation)
         assertEquals(replyNodes.first().node.id, relation!!.toNodeId)
