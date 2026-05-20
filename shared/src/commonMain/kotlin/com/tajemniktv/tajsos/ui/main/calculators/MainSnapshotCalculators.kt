@@ -304,7 +304,7 @@ fun calculateInsights(
             0.0
         }
 
-    // Insight Cards Logic (Roadmap Section 7)
+    // Insight Cards Logic
     val mostPostponedAreaId =
         nodes
             .mapNotNull { item ->
@@ -363,7 +363,7 @@ fun calculateInsights(
             !hasRecentActivity
         }
 
-    // Advanced Insight Concepts (Roadmap Section 7)
+    // Advanced Insight Concepts
     val projectEntropy =
         projects.associate { project ->
             val projectNodes =
@@ -729,12 +729,10 @@ fun calculateOpenLoopsSnapshot(
 }
 
 /**
- * Calculates a qualitative urgency string for an open loop.
+ * Calculates the urgency identifier for an open loop based on due dates and staleness.
+ * Assumes items are more urgent if due within the next 24 hours or stale for 14+ days.
  *
- * It checks the item's deadline and staleness metrics against the current time to classify
- * its urgency (e.g., "critical", "high", "medium", "low").
- *
- * @param node The node entity representing the open loop.
+ * @param node The [NodeEntity] representing the open loop.
  * @param now The current epoch timestamp in milliseconds.
  * @return A string identifier representing the calculated urgency level.
  */
@@ -795,10 +793,10 @@ fun openLoopDecayScore(
 }
 
 /**
- * Evaluates active tasks tagged with maintenance parameters (e.g., "recurring", "chore")
+ * Evaluates all active maintenance nodes (chores, administration, subscriptions)
  * and calculates their specific due dates and overdue statuses to generate a [MaintenanceSnapshot].
  *
- * @param tasks A comprehensive list of all non-archived task nodes.
+ * @param nodes The complete list of active nodes in the system.
  * @return A [MaintenanceSnapshot] summarizing the user's administrative and routine debt.
  */
 fun calculateMaintenanceSnapshot(nodes: List<NodeWithPin>): com.tajemniktv.tajsos.ui.MaintenanceSnapshot {
@@ -911,14 +909,12 @@ fun calculateMaintenanceSnapshot(nodes: List<NodeWithPin>): com.tajemniktv.tajso
 }
 
 /**
- * Calculates a qualitative urgency string for a maintenance item.
+ * Determines the string-based urgency level for a given maintenance item.
+ * Uses predefined "criticalTypes" such as bills or prescriptions to escalate urgency compared to routine chores.
  *
- * Evaluates the item's deadline or overdue timestamp against the current time,
- * combined with its specific maintenance type, to classify its urgency.
- *
- * @param node The node entity representing the maintenance task.
+ * @param node The [NodeEntity] representing the maintenance chore.
  * @param now The current epoch timestamp in milliseconds.
- * @return A string identifier representing the calculated urgency level.
+ * @return A string identifier indicating the calculated urgency level.
  */
 fun maintenanceUrgency(
     node: NodeEntity,
@@ -1065,6 +1061,12 @@ fun calculateTimeArchitectureSnapshot(
     )
 }
 
+/**
+ * Computes the string representation (YYYY-MM-DD) of the first day of the following calendar month,
+ * used for monthly resets and long-term planning horizons.
+ *
+ * @return The calculated next monthly reset date.
+ */
 fun nextMonthlyResetDate(): String {
     val now = Clock.System.now()
     val zone = TimeZone.currentSystemDefault()
@@ -1073,6 +1075,14 @@ fun nextMonthlyResetDate(): String {
     return nextReset.toString()
 }
 
+/**
+ * Evaluates all person-anchored nodes and their explicitly assigned relational events
+ * to generate a [RelationshipSnapshot]. Assesses when someone was last contacted and calculates follow-up pressure.
+ *
+ * @param nodes The complete list of active nodes in the system.
+ * @param relations The complete list of relational edges tying nodes together.
+ * @return A structured [RelationshipSnapshot] describing the health of active tracked relationships.
+ */
 fun calculateRelationshipSnapshot(
     nodes: List<NodeWithPin>,
     relations: List<RelationEntity>,
@@ -1248,6 +1258,15 @@ fun calculateRelationshipSnapshot(
     )
 }
 
+/**
+ * Evaluates all tasks and entities tied to physical locations (e.g., errands, travel, local chores).
+ * Maps tasks to places to generate a [PhysicalLogisticsSnapshot] enabling batched execution.
+ *
+ * @param nodes The complete list of active nodes in the system.
+ * @param relations Relational edges to map tasks to their location nodes.
+ * @param templates A list of system templates (e.g., packing lists, trip templates).
+ * @return A [PhysicalLogisticsSnapshot] categorizing tasks and items by physical place.
+ */
 fun calculatePhysicalLogisticsSnapshot(
     nodes: List<NodeWithPin>,
     relations: List<RelationEntity>,
@@ -1476,6 +1495,14 @@ fun calculatePhysicalLogisticsSnapshot(
     )
 }
 
+/**
+ * Aggregates all knowledge nodes marked as operating principles, rules, or core philosophies
+ * to generate a [PersonalRulesSnapshot].
+ *
+ * @param nodes The complete list of active nodes in the system.
+ * @param relations Relational edges linking rules to specific protocols or playbooks.
+ * @return A structured [PersonalRulesSnapshot].
+ */
 fun calculatePersonalRulesSnapshot(
     nodes: List<NodeWithPin>,
     relations: List<RelationEntity>,
@@ -1545,6 +1572,13 @@ fun calculatePersonalRulesSnapshot(
     )
 }
 
+/**
+ * Separates long-term, read-later, or specific informational nodes into curated "Vaults".
+ * Identifies quotes, incubations, highlights, and forgotten notes to form a [VaultsSnapshot].
+ *
+ * @param nodes The complete list of active nodes in the system.
+ * @return A [VaultsSnapshot] organizing knowledge items into distinct collections.
+ */
 fun calculateVaultsSnapshot(nodes: List<NodeWithPin>): VaultsSnapshot {
     val active = nodes.filter { it.node.status == "active" }
 
@@ -1873,6 +1907,24 @@ fun calculateCapacitySnapshot(
     )
 }
 
+/**
+ * Aggregates core behavioral metrics, area balances, and key habits to compute a user's
+ * "LifeOS Signature", representing their overarching systemic operational health.
+ *
+ * @param modes All available modes.
+ * @param areaHealth Calculated area health snapshot.
+ * @param openLoops The calculated open loops snapshot.
+ * @param pendingDecisions A list of pending decisions.
+ * @param maintenance The calculated maintenance snapshot.
+ * @param relationships The calculated relationship snapshot.
+ * @param vaults The calculated vaults snapshot.
+ * @param capacity The calculated capacity snapshot.
+ * @param playbooks The calculated playbook snapshot.
+ * @param currentMode The currently active focus mode.
+ * @param trackEntries A list of track entries.
+ * @param nodes The complete list of active nodes in the system.
+ * @return A compiled [LifeOSSignatureSnapshot] detailing system coherence.
+ */
 fun calculateLifeOSSignatureSnapshot(
     modes: List<ModeEntity>,
     areaHealth: com.tajemniktv.tajsos.ui.AreaHealthSnapshot,
@@ -2003,6 +2055,24 @@ fun calculateLifeOSSignatureSnapshot(
     )
 }
 
+/**
+ * Evaluates the user's "Second Brain" knowledge layer, summarizing their captured notes,
+ * highlights, and resources.
+ *
+ * @param nodes The complete list of active nodes in the system.
+ * @param relations Relational mapping data.
+ * @param dashboard The current dashboard UI state.
+ * @param areaHealth The calculated area health snapshot.
+ * @param openLoops The calculated open loops snapshot.
+ * @param maintenance The calculated maintenance snapshot.
+ * @param capacity The calculated capacity snapshot.
+ * @param protocols The calculated transition protocols snapshot.
+ * @param playbooks The calculated playbook snapshot.
+ * @param currentMode The currently active focus mode.
+ * @param signature The calculated lifeOS signature.
+ * @param vaults The calculated vaults snapshot.
+ * @return A compiled [LifeOSSecondBrainSnapshot] representing knowledge capture health.
+ */
 fun calculateLifeOSSecondBrainSnapshot(
     nodes: List<NodeWithPin>,
     relations: List<RelationEntity>,
@@ -2211,6 +2281,21 @@ fun calculateLifeOSSecondBrainSnapshot(
     )
 }
 
+/**
+ * Combines active projects, time architectures, and structural commitments into a unified view
+ * of the user's forward-looking direction and trajectory.
+ *
+ * @param distinction The calculated second brain snapshot.
+ * @param signature The calculated lifeOS signature.
+ * @param dashboard The current dashboard UI state.
+ * @param logistics The calculated physical logistics snapshot.
+ * @param capacity The calculated capacity snapshot.
+ * @param relationships The calculated relationship snapshot.
+ * @param protocols The calculated transition protocols snapshot.
+ * @param maintenance The calculated maintenance snapshot.
+ * @param openLoops The calculated open loops snapshot.
+ * @return A compiled [CombinedDirectionSnapshot] summarizing the user's vector.
+ */
 fun calculateCombinedDirectionSnapshot(
     distinction: LifeOSSecondBrainSnapshot,
     signature: LifeOSSignatureSnapshot,
@@ -2335,6 +2420,23 @@ fun calculateCombinedDirectionSnapshot(
     )
 }
 
+/**
+ * Evaluates major life shifts or transitions by assessing critical path nodes, significant events,
+ * and recent large-scale accomplishments.
+ *
+ * @param distinction The calculated second brain snapshot.
+ * @param signature The calculated lifeOS signature.
+ * @param direction The calculated combined direction snapshot.
+ * @param dashboard The current dashboard UI state.
+ * @param time The calculated time architecture snapshot.
+ * @param areaHealth The calculated area health snapshot.
+ * @param openLoops The calculated open loops snapshot.
+ * @param maintenance The calculated maintenance snapshot.
+ * @param protocols The calculated transition protocols snapshot.
+ * @param capacity The calculated capacity snapshot.
+ * @param currentMode The currently active focus mode.
+ * @return A compiled [CoreLifeOSShiftSnapshot] highlighting pivotal changes.
+ */
 fun calculateCoreLifeOSShiftSnapshot(
     distinction: LifeOSSecondBrainSnapshot,
     signature: LifeOSSignatureSnapshot,

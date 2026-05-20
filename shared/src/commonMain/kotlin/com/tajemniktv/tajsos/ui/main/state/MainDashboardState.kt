@@ -169,7 +169,7 @@ data class AreaHealthSnapshot(
 )
 
 /**
- * A data class representing a specific unresolved work item and its calculated urgency.
+ * Represents the current status and calculated urgency of an unresolved open loop item.
  *
  * @param node The [NodeWithPin] wrapper for the unresolved item.
  * @param urgency A calculated string representing how critical the loop is (e.g., "high", "low").
@@ -215,7 +215,7 @@ data class OpenLoopsSnapshot(
 )
 
 /**
- * A data class representing a routine or maintenance task, tracking its recurrence and overdue status.
+ * Represents a routine maintenance chore alongside its specific recurrence and urgency state.
  *
  * @param node The [NodeWithPin] wrapper for the maintenance task.
  * @param urgency A string representing how critical it is to complete the task (e.g., "critical").
@@ -259,7 +259,7 @@ data class MaintenanceSnapshot(
 )
 
 /**
- * A data class representing a node (often an event or deadline) mapped to a specific future countdown.
+ * Represents an upcoming event or deadline specifically mapped for countdown visualization.
  *
  * @param node The [NodeWithPin] wrapper.
  * @param daysLeft The calculated number of days remaining until the node's target date.
@@ -270,7 +270,7 @@ data class TimeCountdownItem(
 )
 
 /**
- * A data class describing the current phase of an active project.
+ * Represents a structural project combined with its active temporal or strategic phase.
  *
  * @param project The parent [NodeEntity] representing the project.
  * @param isActivePhase True if the project is currently in an active execution phase.
