@@ -39,50 +39,13 @@ class RelationshipCommandsTest {
 
 
 
-    private fun setupCommands(
-        scope: TestScope,
-        repo: AppRepository,
-        currentTemplates: List<TemplateEntity> = emptyList()
-    ): RelationshipCommands {
-        return RelationshipCommands(
-            repository = repo,
-            scope = scope,
-            currentTemplates = { currentTemplates },
-            addNodeForResult = { title, content, type, projectId, areaId, inboxState ->
-                val node = NodeEntity(
-                    type = type,
-                    title = title,
-                    content = content,
-                    projectId = projectId,
-                    areaId = areaId,
-                    inboxState = inboxState ?: false
-                )
-                repo.insertNode(node)
-            },
-            addRelation = { from, to, type ->
-                scope.launch {
-                    repo.insertRelation(RelationEntity(fromNodeId = from, toNodeId = to, relationType = type))
-                }
-            },
-            updateNode = { node ->
-                scope.launch {
-                    repo.updateNode(node)
-                }
-            },
-            setTagOnNode = { nodeId, tagName, _ ->
-                scope.launch {
-                    val tagId = repo.insertTag(TagEntity(name = tagName, normalizedName = tagName.lowercase()))
-                    repo.attachTagToNode(nodeId, tagId)
-                }
-            }
-        )
-    }
+
 
     @Test
     fun testSetPersonLastContactNow() = runTest {
         val scope = TestScope(testScheduler)
         val repo = buildTestRepository()
-        val commands = setupCommands(scope, repo)
+        val commands = setupTestRelationshipCommands(scope, repo)
 
         val personNode = NodeEntity(type = "person", title = "Alice")
         val nodeId = repo.insertNode(personNode)
@@ -99,7 +62,7 @@ class RelationshipCommandsTest {
     fun testSetPersonFollowUpInDays() = runTest {
         val scope = TestScope(testScheduler)
         val repo = buildTestRepository()
-        val commands = setupCommands(scope, repo)
+        val commands = setupTestRelationshipCommands(scope, repo)
 
         val personNode = NodeEntity(type = "person", title = "Alice")
         val nodeId = repo.insertNode(personNode)
@@ -116,7 +79,7 @@ class RelationshipCommandsTest {
     fun testCreateReplyNeededForPerson() = runTest {
         val scope = TestScope(testScheduler)
         val repo = buildTestRepository()
-        val commands = setupCommands(scope, repo)
+        val commands = setupTestRelationshipCommands(scope, repo)
 
         val personNode = NodeEntity(id = 1L, type = "person", title = "Bob")
         repo.insertNode(personNode)
@@ -138,7 +101,7 @@ class RelationshipCommandsTest {
     fun testAddPlace() = runTest {
         val scope = TestScope(testScheduler)
         val repo = buildTestRepository()
-        val commands = setupCommands(scope, repo)
+        val commands = setupTestRelationshipCommands(scope, repo)
 
         commands.addPlace("Coffee Shop", campus = false, home = false)
         testScheduler.advanceUntilIdle()
@@ -154,7 +117,7 @@ class RelationshipCommandsTest {
     fun testCreateLeaveHomeChecklist() = runTest {
         val scope = TestScope(testScheduler)
         val repo = buildTestRepository()
-        val commands = setupCommands(scope, repo)
+        val commands = setupTestRelationshipCommands(scope, repo)
 
         commands.createLeaveHomeChecklist()
         testScheduler.advanceUntilIdle()
@@ -168,7 +131,7 @@ class RelationshipCommandsTest {
     fun testAddVaultEntry() = runTest {
         val scope = TestScope(testScheduler)
         val repo = buildTestRepository()
-        val commands = setupCommands(scope, repo)
+        val commands = setupTestRelationshipCommands(scope, repo)
 
         commands.addVaultEntry("receipt", "Laptop receipt", asType = "note")
         testScheduler.advanceUntilIdle()
@@ -180,4 +143,45 @@ class RelationshipCommandsTest {
         assertEquals("reference", vaultNodes.first().node.noteType)
     }
 
+}
+
+
+
+internal fun setupTestRelationshipCommands(
+    scope: TestScope,
+    repo: AppRepository,
+    currentTemplates: List<TemplateEntity> = emptyList()
+): RelationshipCommands {
+    return RelationshipCommands(
+        repository = repo,
+        scope = scope,
+        currentTemplates = { currentTemplates },
+        addNodeForResult = { title, content, type, projectId, areaId, inboxState ->
+            val node = NodeEntity(
+                type = type,
+                title = title,
+                content = content,
+                projectId = projectId,
+                areaId = areaId,
+                inboxState = inboxState ?: false
+            )
+            repo.insertNode(node)
+        },
+        addRelation = { from, to, type ->
+            scope.launch {
+                repo.insertRelation(RelationEntity(fromNodeId = from, toNodeId = to, relationType = type))
+            }
+        },
+        updateNode = { node ->
+            scope.launch {
+                repo.updateNode(node)
+            }
+        },
+        setTagOnNode = { nodeId, tagName, _ ->
+            scope.launch {
+                val tagId = repo.insertTag(TagEntity(name = tagName, normalizedName = tagName.lowercase()))
+                repo.attachTagToNode(nodeId, tagId)
+            }
+        }
+    )
 }
