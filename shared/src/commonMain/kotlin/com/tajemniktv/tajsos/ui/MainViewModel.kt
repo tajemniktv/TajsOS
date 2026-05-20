@@ -4,6 +4,8 @@
 
 package com.tajemniktv.tajsos.ui
 
+import kotlin.coroutines.cancellation.CancellationException
+
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -2682,7 +2684,8 @@ class MainViewModel(
             val bundleResult =
                 runCatching {
                     Json.decodeFromString<ExportBundle>(content)
-                }.getOrNull()
+                }
+                    .onFailure { if (it is CancellationException) throw it }.getOrNull()
             if (bundleResult != null) {
                 val report = repository.importBundle(bundleResult)
                 return@withContext "Imported bundle: ${report.nodes} nodes, ${report.relations} relations, ${report.events} events."
@@ -2691,7 +2694,8 @@ class MainViewModel(
             val legacyResult =
                 runCatching {
                     Json.decodeFromString<ExportData>(content)
-                }.getOrNull()
+                }
+                    .onFailure { if (it is CancellationException) throw it }.getOrNull()
             if (legacyResult != null) {
                 val count = repository.importLegacyNodes(legacyResult.nodes)
                 return@withContext "Imported legacy export: $count nodes."
