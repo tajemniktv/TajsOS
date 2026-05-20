@@ -2681,21 +2681,25 @@ class MainViewModel(
             val content = payload.trim()
             if (content.isBlank()) return@withContext "Import failed: empty payload."
 
-            val bundleResult =
-                runCatching {
-                    Json.decodeFromString<ExportBundle>(content)
-                }
-                    .onFailure { if (it is CancellationException) throw it }.getOrNull()
+            val bundleResult = try {
+                Json.decodeFromString<ExportBundle>(content)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                null
+            }
             if (bundleResult != null) {
                 val report = repository.importBundle(bundleResult)
                 return@withContext "Imported bundle: ${report.nodes} nodes, ${report.relations} relations, ${report.events} events."
             }
 
-            val legacyResult =
-                runCatching {
-                    Json.decodeFromString<ExportData>(content)
-                }
-                    .onFailure { if (it is CancellationException) throw it }.getOrNull()
+            val legacyResult = try {
+                Json.decodeFromString<ExportData>(content)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                null
+            }
             if (legacyResult != null) {
                 val count = repository.importLegacyNodes(legacyResult.nodes)
                 return@withContext "Imported legacy export: $count nodes."
