@@ -5,6 +5,12 @@
 package com.tajemniktv.tajsos.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.draw.scale
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -47,6 +53,10 @@ fun ActionButton(
     contentColor: Color = TajsOSTheme.Text,
     icon: ImageVector? = null,
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val scale by animateFloatAsState(if (isPressed) 0.98f else 1f)
+
     val isPrimary = containerColor == TajsOSTheme.Primary
     val isGhost = containerColor == Color.Transparent
     val buttonBorder =
@@ -57,7 +67,8 @@ fun ActionButton(
         }
 
     val finalModifier =
-        modifier.height(48.dp).then(
+        modifier.scale(scale).height(48.dp).then(
+
             if (isPrimary && enabled) {
                 Modifier.background(
                     brush =
@@ -86,6 +97,7 @@ fun ActionButton(
             ),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         border = buttonBorder,
+        interactionSource = interactionSource,
         contentPadding = PaddingValues(horizontal = 16.dp),
     ) {
         if (icon != null) {
