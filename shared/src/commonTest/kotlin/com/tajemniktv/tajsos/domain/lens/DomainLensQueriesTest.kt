@@ -83,11 +83,12 @@ class DomainLensQueriesTest {
             )
 
         val allNodes = listOf(healthTask, healthRecord, unrelatedNote)
-        val snapshot = MaintenanceSnapshot(active = listOf(maintenanceItem), overdue = listOf(maintenanceItem))
+        val snapshot = MaintenanceSnapshot(active = listOf(maintenanceItem), recurring = listOf(maintenanceItem), overdue = listOf(maintenanceItem))
 
         assertEquals(listOf(healthTask.node.id), DomainLensQueries.healthActionItems(allNodes).map { it.node.id })
         assertEquals(listOf(healthRecord.node.id), DomainLensQueries.healthKnowledgeItems(allNodes).map { it.node.id })
         assertEquals(listOf(maintenanceItem.node.node.id), DomainLensQueries.healthMaintenanceItems(snapshot).map { it.node.node.id })
+        assertEquals(listOf(maintenanceItem.node.node.id), DomainLensQueries.healthRecurringItems(snapshot).map { it.node.node.id })
         assertEquals(listOf(maintenanceItem.node.node.id), DomainLensQueries.healthOverdueItems(snapshot).map { it.node.node.id })
     }
 
