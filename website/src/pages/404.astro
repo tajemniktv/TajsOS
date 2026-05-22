@@ -1,0 +1,31 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/landing/Navbar.astro";
+import Footer from "../components/landing/Footer.astro";
+---
+
+<Layout title="404: Not Found">
+  <div class="fixed inset-0 noise-bg pointer-events-none z-50"></div>
+  <div class="fixed top-[-10%] right-[-5%] w-150 h-150 gradient-sphere pointer-events-none -z-10"></div>
+  <div class="fixed bottom-[10%] left-[-10%] w-200 h-200 gradient-sphere pointer-events-none -z-10 opacity-50"></div>
+
+  <Navbar />
+  <main class="relative pt-32 max-w-400 mx-auto px-8 pb-32 min-h-[70vh] flex flex-col items-center justify-center">
+    <div class="text-center z-10">
+      <h1 class="font-headline text-[clamp(6rem,20vw,15rem)] leading-none font-bold tracking-tighter text-on-surface mb-8">
+        404
+      </h1>
+      <p class="font-mono text-xl text-primary tracking-widest uppercase mb-16">
+        Node_Not_Found
+      </p>
+      <p class="text-on-surface-variant text-xl max-w-2xl mx-auto font-light leading-relaxed mb-16">
+        The system could not locate the requested sector. It may have been archived, moved to another quadrant, or never existed.
+      </p>
+      <a href={`${import.meta.env.BASE_URL}`} class="inline-flex items-center gap-4 font-mono font-bold uppercase tracking-[0.3em] text-[12px] text-on-surface-variant hover:text-primary transition-colors bg-surface-container-low px-8 py-4 rounded-xl group">
+        <span class="material-symbols-outlined group-hover:-translate-x-2 transition-transform" aria-hidden="true">arrow_left_alt</span>
+        RETURN_TO_CORE
+      </a>
+    </div>
+  </main>
+  <Footer />
+</Layout>
