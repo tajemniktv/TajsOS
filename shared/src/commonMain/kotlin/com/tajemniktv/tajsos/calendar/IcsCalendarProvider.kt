@@ -37,6 +37,14 @@ class IcsCalendarProvider(
      * @param to The end of the time range (inclusive).
      * @return A list of valid, parsed [CalendarEventEntity] instances falling within the range.
      */
+    private inline fun <T> safeExecute(block: () -> T): Result<T> = try {
+        Result.success(block())
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
+
     override suspend fun fetchEvents(
         provider: CalendarProviderEntity,
         from: Instant,
@@ -44,7 +52,7 @@ class IcsCalendarProvider(
     ): List<CalendarEventEntity> {
         val url = provider.url ?: return emptyList()
         if (!isValidHttpUrl(url)) return emptyList()
-        return runCatching {
+        return safeExecute {
             val response = client.get(url)
             if (response.status.value in 200..299) {
                 val icsContent = response.bodyAsText()
@@ -54,7 +62,6 @@ class IcsCalendarProvider(
                 emptyList()
             }
         }.onFailure { e ->
-            if (e is CancellationException) throw e
             println("ICS fetch failed for providerId=${provider.id}: $e")
         }.getOrDefault(emptyList())
     }
