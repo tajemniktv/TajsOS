@@ -4,7 +4,12 @@
 
 package com.tajemniktv.tajsos.ui.components
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -12,26 +17,23 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.graphicsLayer
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 /**
@@ -62,43 +64,16 @@ fun ActionButton(
     )
     val isPrimary = containerColor == TajsOSTheme.Primary
     val isGhost = containerColor == Color.Transparent
-    val buttonBorder =
-        if (!isPrimary && !isGhost) {
-            androidx.compose.foundation.BorderStroke(1.dp, TajsOSTheme.GhostBorder)
-        } else {
-            null
-        }
 
-    val finalModifier =
-        modifier
-            .graphicsLayer(scaleX = scale, scaleY = scale)
-            .height(48.dp).then(
-            if (isPrimary && enabled) {
-                Modifier.background(
-                    brush =
-                        Brush.linearGradient(
-                            colors = listOf(TajsOSTheme.Primary, TajsOSTheme.PrimaryDim),
-                            start = Offset(0f, 0f),
-                            end = Offset.Infinite,
-                        ),
-                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                )
-            } else {
-                Modifier
-            },
-        )
+    val finalModifier = resolveButtonModifier(modifier, scale, isPrimary, enabled)
+    val buttonColors = resolveButtonColors(isPrimary, enabled, containerColor, contentColor, isGhost)
+    val buttonBorder = resolveButtonBorder(isPrimary, isGhost)
 
     Button(
         onClick = onClick,
         enabled = enabled,
         modifier = finalModifier,
-        colors =
-            ButtonDefaults.buttonColors(
-                containerColor = if (isPrimary && enabled) Color.Transparent else containerColor,
-                contentColor = if (isPrimary && contentColor == TajsOSTheme.Text) TajsOSTheme.Background else contentColor,
-                disabledContainerColor = if (isGhost) Color.Transparent else TajsOSTheme.SurfaceHighest,
-                disabledContentColor = TajsOSTheme.Muted,
-            ),
+        colors = buttonColors,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         border = buttonBorder,
         contentPadding = PaddingValues(horizontal = 16.dp),
@@ -114,5 +89,55 @@ fun ActionButton(
             fontWeight = FontWeight.Bold,
             letterSpacing = 1.sp,
         )
+    }
+}
+
+@Composable
+private fun resolveButtonModifier(
+    modifier: Modifier,
+    scale: Float,
+    isPrimary: Boolean,
+    enabled: Boolean,
+): Modifier {
+    val baseModifier = modifier
+        .graphicsLayer(scaleX = scale, scaleY = scale)
+        .height(48.dp)
+
+    return if (isPrimary && enabled) {
+        baseModifier.background(
+            brush = Brush.linearGradient(
+                colors = listOf(TajsOSTheme.Primary, TajsOSTheme.PrimaryDim),
+                start = Offset(0f, 0f),
+                end = Offset.Infinite,
+            ),
+            shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+        )
+    } else {
+        baseModifier
+    }
+}
+
+@Composable
+private fun resolveButtonColors(
+    isPrimary: Boolean,
+    enabled: Boolean,
+    containerColor: Color,
+    contentColor: Color,
+    isGhost: Boolean,
+): ButtonColors {
+    return ButtonDefaults.buttonColors(
+        containerColor = if (isPrimary && enabled) Color.Transparent else containerColor,
+        contentColor = if (isPrimary && contentColor == TajsOSTheme.Text) TajsOSTheme.Background else contentColor,
+        disabledContainerColor = if (isGhost) Color.Transparent else TajsOSTheme.SurfaceHighest,
+        disabledContentColor = TajsOSTheme.Muted,
+    )
+}
+
+@Composable
+private fun resolveButtonBorder(isPrimary: Boolean, isGhost: Boolean): BorderStroke? {
+    return if (!isPrimary && !isGhost) {
+        BorderStroke(1.dp, TajsOSTheme.GhostBorder)
+    } else {
+        null
     }
 }
