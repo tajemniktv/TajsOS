@@ -1796,6 +1796,15 @@ class AppRepository(
     }
 }
 
+/**
+ * A summary report detailing the number of entities successfully imported.
+ *
+ * @property nodes The total number of nodes imported.
+ * @property relations The total number of relations imported.
+ * @property tracks The total number of tracks imported.
+ * @property sessions The total number of sessions imported.
+ * @property events The total number of events imported.
+ */
 data class ImportReport(
     val nodes: Int,
     val relations: Int,

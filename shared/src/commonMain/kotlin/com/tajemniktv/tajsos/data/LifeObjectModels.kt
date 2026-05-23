@@ -579,16 +579,34 @@ fun NodeEntity.isResolvedDecisionSupportItem(): Boolean =
  */
 fun NodeWithPin.itemKindOrNull(): ItemKind? = node.itemKindOrNull()
 
+/**
+ * Checks if the node is a task item.
+ */
 fun NodeWithPin.isTaskItem(): Boolean = node.isTaskItem()
 
+/**
+ * Checks if the node is a knowledge item.
+ */
 fun NodeWithPin.isKnowledgeItem(): Boolean = node.isKnowledgeItem()
 
+/**
+ * Checks if the node is an area item.
+ */
 fun NodeWithPin.isAreaItem(): Boolean = node.isAreaItem()
 
+/**
+ * Checks if the node is a relationship anchor.
+ */
 fun NodeWithPin.isRelationshipAnchor(): Boolean = node.isRelationshipAnchor()
 
+/**
+ * Checks if the node is a place anchor.
+ */
 fun NodeWithPin.isPlaceAnchor(): Boolean = node.isPlaceAnchor()
 
+/**
+ * Checks if the node is a decision support item.
+ */
 fun NodeWithPin.isDecisionSupportItem(): Boolean = node.isDecisionSupportItem()
 
 private fun NodeEntity.tagsHintContainsRelationship(): Boolean =
