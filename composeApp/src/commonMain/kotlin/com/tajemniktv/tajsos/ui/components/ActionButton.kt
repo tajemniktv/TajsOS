@@ -22,6 +22,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.runtime.remember
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -47,6 +49,7 @@ fun ActionButton(
     contentColor: Color = TajsOSTheme.Text,
     icon: ImageVector? = null,
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
     val isPrimary = containerColor == TajsOSTheme.Primary
     val isGhost = containerColor == Color.Transparent
     val buttonBorder =
@@ -57,7 +60,7 @@ fun ActionButton(
         }
 
     val finalModifier =
-        modifier.height(48.dp).then(
+        modifier.height(48.dp).tactileScale(interactionSource).then(
             if (isPrimary && enabled) {
                 Modifier.background(
                     brush =
@@ -87,6 +90,7 @@ fun ActionButton(
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         border = buttonBorder,
         contentPadding = PaddingValues(horizontal = 16.dp),
+        interactionSource = interactionSource,
     ) {
         if (icon != null) {
             Icon(icon, contentDescription = null, modifier = Modifier.size(18.dp))

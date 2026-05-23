@@ -43,6 +43,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.foundation.interaction.InteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -320,5 +325,22 @@ fun TactileOutlinedTextField(
             shape = shape,
             colors = colors,
         )
+    }
+}
+
+@Composable
+fun Modifier.tactileScale(
+    interactionSource: InteractionSource,
+    minScale: Float = 0.98f,
+): Modifier {
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val scale by animateFloatAsState(
+        targetValue = if (isPressed) minScale else 1f,
+        animationSpec = spring(stiffness = 180f, dampingRatio = 0.8f),
+        label = "tactile_scale_animation"
+    )
+    return this.graphicsLayer {
+        scaleX = scale
+        scaleY = scale
     }
 }
