@@ -44,7 +44,7 @@ class IcsCalendarProvider(
     ): List<CalendarEventEntity> {
         val url = provider.url ?: return emptyList()
         if (!isValidHttpUrl(url)) return emptyList()
-        return runCatching {
+        return safeFetch(provider.id) {
             val response = client.get(url)
             if (response.status.value in 200..299) {
                 val icsContent = response.bodyAsText()
@@ -53,11 +53,18 @@ class IcsCalendarProvider(
             } else {
                 emptyList()
             }
-        }.onFailure { e ->
-            if (e is CancellationException) throw e
-            println("ICS fetch failed for providerId=${provider.id}: $e")
-        }.getOrDefault(emptyList())
+        }
     }
+
+    private inline fun safeFetch(providerId: Long, block: () -> List<CalendarEventEntity>): List<CalendarEventEntity> =
+        try {
+            block()
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            println("ICS fetch failed for providerId=$providerId: $e")
+            emptyList()
+        }
 
     /**
      * Validates that a string is an HTTP/HTTPS URL and blocks internal or private network hosts
