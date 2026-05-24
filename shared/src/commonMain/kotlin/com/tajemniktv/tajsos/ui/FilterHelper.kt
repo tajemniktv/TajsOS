@@ -71,6 +71,8 @@ object FilterHelper {
                 .toEpochMilliseconds()
         val dayMs = 24 * 60 * 60 * 1000L
 
+        val allowedStatuses = status?.split(",")?.map { it.trim() }?.toSet()
+
         val filtered =
             nodes
                 .filter { nodeWithPin ->
@@ -81,7 +83,7 @@ object FilterHelper {
 
                     // Allow mode/status filtering logic (comma separated status like "active,on_hold")
                     val matchesStatus =
-                        status == null || status.split(",").map { it.trim() }.contains(node.status)
+                        allowedStatuses == null || allowedStatuses.contains(node.status)
 
                     val matchesProject = projectId == null || node.projectId == projectId
                     val matchesArea = areaId == null || node.areaId == areaId
