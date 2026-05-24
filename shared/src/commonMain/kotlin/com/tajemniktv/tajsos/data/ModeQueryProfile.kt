@@ -145,6 +145,9 @@ fun buildModeQueryProfile(
  */
 private fun decodeStringList(raw: String?): List<String> {
     if (raw.isNullOrBlank()) return emptyList()
-    return runCatching { modeProfileJson.decodeFromString<List<String>>(raw) }
-        .getOrElse { emptyList() }
+    return try {
+        modeProfileJson.decodeFromString<List<String>>(raw)
+    } catch (e: Exception) {
+        emptyList()
+    }
 }

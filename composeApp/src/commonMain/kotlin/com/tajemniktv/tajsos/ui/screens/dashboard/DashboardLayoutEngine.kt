@@ -445,19 +445,23 @@ private fun normalizeBlocks(
 
 private fun parseLegacyBlockList(raw: String?): List<String> {
     if (raw.isNullOrBlank()) return emptyList()
-    return runCatching {
+    return try {
         dashboardJson.decodeFromString<List<String>>(
             raw,
         )
-    }.getOrElse { emptyList() }
+    } catch (e: Exception) {
+        emptyList()
+    }
 }
 
 private fun parseVersionedLayout(raw: String?): DashboardLayoutJsonV1? {
     if (raw.isNullOrBlank()) return null
-    return runCatching {
+    return try {
         dashboardJson
             .decodeFromString<DashboardLayoutJsonV1>(
                 raw,
             )
-    }.getOrNull()
+    } catch (e: Exception) {
+        null
+    }
 }

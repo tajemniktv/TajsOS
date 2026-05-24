@@ -92,5 +92,9 @@ fun buildStudyDashboardPlan(
 
 private fun parseStructured(raw: String?): StudyLayoutJsonV1? {
     if (raw.isNullOrBlank()) return null
-    return runCatching { studyLayoutJson.decodeFromString<StudyLayoutJsonV1>(raw) }.getOrNull()
+    return try {
+        studyLayoutJson.decodeFromString<StudyLayoutJsonV1>(raw)
+    } catch (e: Exception) {
+        null
+    }
 }

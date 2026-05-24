@@ -547,9 +547,11 @@ private fun formatTime(epochMillis: Long): String {
 }
 
 private fun parseAttachmentMetadata(payload: String): Map<String, String> =
-    runCatching {
+    try {
         Json.parseToJsonElement(payload).jsonObject.mapValues { (_, value) -> value.jsonPrimitive.content }
-    }.getOrDefault(emptyMap())
+    } catch (e: Exception) {
+        emptyMap()
+    }
 
 private fun formatBytes(bytes: Long): String {
     if (bytes <= 0) return "0 B"

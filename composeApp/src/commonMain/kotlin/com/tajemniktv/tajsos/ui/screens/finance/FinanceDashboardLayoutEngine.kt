@@ -102,10 +102,12 @@ fun buildFinanceDashboardPlan(
 
 private fun parseStructured(raw: String?): FinanceLayoutJsonV1? {
     if (raw.isNullOrBlank()) return null
-    return runCatching {
+    return try {
         financeLayoutJson
             .decodeFromString<FinanceLayoutJsonV1>(
                 raw,
             )
-    }.getOrNull()
+    } catch (e: Exception) {
+        null
+    }
 }

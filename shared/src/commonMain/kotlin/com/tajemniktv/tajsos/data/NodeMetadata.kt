@@ -103,9 +103,11 @@ data class AreaMetadata(
  */
 fun NodeEntity.metadataEnvelopeOrNull(): NodeMetadataEnvelope? =
     metadataJson?.takeIf { it.isNotBlank() }?.let {
-        runCatching {
+        try {
             nodeMetadataJson.decodeFromString<NodeMetadataEnvelope>(it)
-        }.getOrNull()
+        } catch (e: Exception) {
+            null
+        }
     }
 
 /**
