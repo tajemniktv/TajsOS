@@ -30,13 +30,15 @@ import { SITE, NAV_LINKS } from '../../data/site';
     </div>
     <div class="flex items-center gap-6">
       <div class="flex gap-4">
-        <span
+        <button
           class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer transition-colors"
-          data-icon="settings">settings</span
+          aria-label="Settings"
+          data-icon="settings">settings</button
         >
-        <span
+        <button
           class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer transition-colors"
-          data-icon="account_circle">account_circle</span
+          aria-label="Account"
+          data-icon="account_circle">account_circle</button
         >
       </div>
       <a href={`${import.meta.env.BASE_URL}${SITE.waitlistUrl}`} aria-label="Join Waitlist"
