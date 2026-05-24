@@ -16,6 +16,51 @@ import kotlin.test.assertTrue
 
 class FilterHelperTest {
 
+    private data class FilterConfig(
+        val nodes: List<NodeWithPin>,
+        val query: String = "",
+        val type: String? = null,
+        val status: String? = null,
+        val projectId: Long? = null,
+        val areaId: Long? = null,
+        val linkedToId: Long? = null,
+        val maxMins: Int? = null,
+        val energy: Int? = null,
+        val friction: String? = null,
+        val locationContext: String? = null,
+        val energyContext: String? = null,
+        val deviceContext: String? = null,
+        val socialContext: String? = null,
+        val timeWindowContext: String? = null,
+        val timeHorizon: String? = null,
+        val relations: List<RelationEntity> = emptyList(),
+        val sortMode: String = "relevance"
+    )
+
+    private fun filter(config: FilterConfig): List<NodeWithPin> {
+        return FilterHelper.filterAndSortNodes(
+            nodes = config.nodes,
+            query = config.query,
+            type = config.type,
+            status = config.status,
+            projectId = config.projectId,
+            areaId = config.areaId,
+            linkedToId = config.linkedToId,
+            maxMins = config.maxMins,
+            energy = config.energy,
+            friction = config.friction,
+            locationContext = config.locationContext,
+            energyContext = config.energyContext,
+            deviceContext = config.deviceContext,
+            socialContext = config.socialContext,
+            timeWindowContext = config.timeWindowContext,
+            timeHorizon = config.timeHorizon,
+            relations = config.relations,
+            sortMode = config.sortMode
+        )
+    }
+
+
     @Test
     fun testRelevanceSortOrder_pinnedAndActive() {
         // Pinned (8 pts) vs Active (5 pts) vs Both (13 pts)
@@ -27,15 +72,7 @@ class FilterHelperTest {
         )
 
         val nodes = listOf(nodePinned, nodeActive, nodeBoth)
-        val sortedNodes = FilterHelper.filterAndSortNodes(
-            nodes = nodes,
-            query = "apple",
-            type = null, status = null, projectId = null, areaId = null, linkedToId = null,
-            maxMins = null, energy = null, friction = null, locationContext = null,
-            energyContext = null, deviceContext = null, socialContext = null,
-            timeWindowContext = null, timeHorizon = null, relations = emptyList(),
-            sortMode = "relevance"
-        )
+        val sortedNodes = filter(FilterConfig(nodes = nodes, query = "apple", sortMode = "relevance"))
 
         assertEquals(3, sortedNodes.size)
         // Order should be Both (190 + 13 = 203) > Pinned (190 + 8 = 198) > Active (190 + 5 = 195)
@@ -70,15 +107,7 @@ class FilterHelperTest {
         val node1 = createTestNode(1, "apple").copy(node = NodeEntity(id = 1, type = "task", title = "apple", updatedAt = 100))
         val node2 = createTestNode(2, "apple juice").copy(node = NodeEntity(id = 2, type = "task", title = "apple juice", updatedAt = 200))
 
-        val sortedNodes = FilterHelper.filterAndSortNodes(
-            nodes = listOf(node1, node2),
-            query = "apple",
-            type = null, status = null, projectId = null, areaId = null, linkedToId = null,
-            maxMins = null, energy = null, friction = null, locationContext = null,
-            energyContext = null, deviceContext = null, socialContext = null,
-            timeWindowContext = null, timeHorizon = null, relations = emptyList(),
-            sortMode = "UNKNOWN_SORT_MODE" // should fallback to relevance
-        )
+        val sortedNodes = filter(FilterConfig(nodes = listOf(node1, node2), query = "apple", sortMode = "UNKNOWN_SORT_MODE"))
 
         // relevance: node1 (190) > node2 (90)
         assertEquals(1L, sortedNodes[0].node.id)
@@ -236,25 +265,7 @@ class FilterHelperTest {
 
         // Empty query returns all, sorted by updatedAt descending
         val sortedNodes =
-            FilterHelper.filterAndSortNodes(
-                nodes = nodes,
-                query = "  ",
-                type = null,
-                status = null,
-                projectId = null,
-                areaId = null,
-                linkedToId = null,
-                maxMins = null,
-                energy = null,
-                friction = null,
-                locationContext = null,
-                energyContext = null,
-                deviceContext = null,
-                socialContext = null,
-                timeWindowContext = null,
-                timeHorizon = null,
-                relations = emptyList(),
-            )
+            filter(FilterConfig(nodes = nodes, query = "  "))
 
         assertEquals(3, sortedNodes.size)
         assertEquals(2, sortedNodes[0].node.id)
@@ -263,25 +274,7 @@ class FilterHelperTest {
 
         // Query filtering
         val filteredNodes =
-            FilterHelper.filterAndSortNodes(
-                nodes = nodes,
-                query = "second",
-                type = null,
-                status = null,
-                projectId = null,
-                areaId = null,
-                linkedToId = null,
-                maxMins = null,
-                energy = null,
-                friction = null,
-                locationContext = null,
-                energyContext = null,
-                deviceContext = null,
-                socialContext = null,
-                timeWindowContext = null,
-                timeHorizon = null,
-                relations = emptyList(),
-            )
+            filter(FilterConfig(nodes = nodes, query = "second"))
 
         assertEquals(1, filteredNodes.size)
         assertEquals(2, filteredNodes[0].node.id)
@@ -298,26 +291,7 @@ class FilterHelperTest {
         val nodes = listOf(contentMatch, startMatch, containsMatch, exactMatch, tagMatchExact)
 
         val sortedNodes =
-            FilterHelper.filterAndSortNodes(
-                nodes = nodes,
-                query = "search",
-                type = null,
-                status = null,
-                projectId = null,
-                areaId = null,
-                linkedToId = null,
-                maxMins = null,
-                energy = null,
-                friction = null,
-                locationContext = null,
-                energyContext = null,
-                deviceContext = null,
-                socialContext = null,
-                timeWindowContext = null,
-                timeHorizon = null,
-                relations = emptyList(),
-                sortMode = "relevance",
-            )
+            filter(FilterConfig(nodes = nodes, query = "search", sortMode = "relevance"))
 
         val ids = sortedNodes.map { it.node.id }
         // exact (195) -> start (95) -> tag exact (35) -> contains (35) -> content (20)
@@ -332,26 +306,7 @@ class FilterHelperTest {
         val newer = createTestNode(2, "Task Two", updatedAt = 200)
 
         val sorted =
-            FilterHelper.filterAndSortNodes(
-                nodes = listOf(older, newer),
-                query = "",
-                type = null,
-                status = null,
-                projectId = null,
-                areaId = null,
-                linkedToId = null,
-                maxMins = null,
-                energy = null,
-                friction = null,
-                locationContext = null,
-                energyContext = null,
-                deviceContext = null,
-                socialContext = null,
-                timeWindowContext = null,
-                timeHorizon = null,
-                relations = emptyList(),
-                sortMode = "updated",
-            )
+            filter(FilterConfig(nodes = listOf(older, newer), query = "", sortMode = "updated"))
 
         assertEquals(listOf(2L, 1L), sorted.map { it.node.id })
     }
@@ -373,25 +328,7 @@ class FilterHelperTest {
             )
 
         val sorted =
-            FilterHelper.filterAndSortNodes(
-                nodes = listOf(looseMatch, pinnedExact),
-                query = "alpha",
-                type = null,
-                status = null,
-                projectId = null,
-                areaId = null,
-                linkedToId = null,
-                maxMins = null,
-                energy = null,
-                friction = null,
-                locationContext = null,
-                energyContext = null,
-                deviceContext = null,
-                socialContext = null,
-                timeWindowContext = null,
-                timeHorizon = null,
-                relations = emptyList(),
-            )
+            filter(FilterConfig(nodes = listOf(looseMatch, pinnedExact), query = "alpha"))
 
         assertEquals(1L, sorted.first().node.id)
     }
@@ -405,25 +342,7 @@ class FilterHelperTest {
         val nodes = listOf(nodeActive, nodeOnHold, nodeArchived)
 
         val filteredNodes =
-            FilterHelper.filterAndSortNodes(
-                nodes = nodes,
-                query = "",
-                type = null,
-                status = "active, on_hold",
-                projectId = null,
-                areaId = null,
-                linkedToId = null,
-                maxMins = null,
-                energy = null,
-                friction = null,
-                locationContext = null,
-                energyContext = null,
-                deviceContext = null,
-                socialContext = null,
-                timeWindowContext = null,
-                timeHorizon = null,
-                relations = emptyList(),
-            )
+            filter(FilterConfig(nodes = nodes, status = "active, on_hold"))
 
         assertEquals(2, filteredNodes.size)
         assertTrue(filteredNodes.any { it.node.id == 1L })
@@ -465,25 +384,7 @@ class FilterHelperTest {
         friction: String? = null,
     ) {
         val filtered =
-            FilterHelper.filterAndSortNodes(
-                nodes = nodes,
-                query = "",
-                type = null,
-                status = null,
-                projectId = projectId,
-                areaId = areaId,
-                linkedToId = null,
-                maxMins = maxMins,
-                energy = energy,
-                friction = friction,
-                locationContext = null,
-                energyContext = null,
-                deviceContext = null,
-                socialContext = null,
-                timeWindowContext = null,
-                timeHorizon = null,
-                relations = emptyList(),
-            )
+            filter(FilterConfig(nodes = nodes, projectId = projectId, areaId = areaId, maxMins = maxMins, energy = energy, friction = friction))
         assertEquals(expectedCount, filtered.size)
         if (expectedFirstId != null) {
             assertEquals(expectedFirstId, filtered[0].node.id)
@@ -523,25 +424,7 @@ class FilterHelperTest {
             )
 
         val filtered =
-            FilterHelper.filterAndSortNodes(
-                nodes = listOf(node1, node2, node3),
-                query = "",
-                type = null,
-                status = null,
-                projectId = null,
-                areaId = null,
-                linkedToId = 100L,
-                maxMins = null,
-                energy = null,
-                friction = null,
-                locationContext = null,
-                energyContext = null,
-                deviceContext = null,
-                socialContext = null,
-                timeWindowContext = null,
-                timeHorizon = null,
-                relations = relations,
-            )
+            filter(FilterConfig(nodes = listOf(node1, node2, node3), linkedToId = 100L, relations = relations))
 
         assertEquals(2, filtered.size)
         assertTrue(filtered.any { it.node.id == 1L })
@@ -583,25 +466,7 @@ class FilterHelperTest {
         val nodes = listOf(nodeToday, nodeWeek, nodeMonth, nodeLong, nodeNoDue)
 
         fun filterWithHorizon(horizon: String): List<NodeWithPin> =
-            FilterHelper.filterAndSortNodes(
-                nodes = nodes,
-                query = "",
-                type = null,
-                status = null,
-                projectId = null,
-                areaId = null,
-                linkedToId = null,
-                maxMins = null,
-                energy = null,
-                friction = null,
-                locationContext = null,
-                energyContext = null,
-                deviceContext = null,
-                socialContext = null,
-                timeWindowContext = null,
-                timeHorizon = horizon,
-                relations = emptyList(),
-            )
+            filter(FilterConfig(nodes = nodes, timeHorizon = horizon))
 
         // "today" includes only nodeToday
         val todayNodes = filterWithHorizon("today")
@@ -645,25 +510,7 @@ class FilterHelperTest {
             listOf(nodeToday, nodeWeek, nodeMonth, nodeSemester, nodeLong, nodeNoDue)
 
         fun filterWithHorizonExtended(horizon: String): List<NodeWithPin> =
-            FilterHelper.filterAndSortNodes(
-                nodes = nodesWithSemester,
-                query = "",
-                type = null,
-                status = null,
-                projectId = null,
-                areaId = null,
-                linkedToId = null,
-                maxMins = null,
-                energy = null,
-                friction = null,
-                locationContext = null,
-                energyContext = null,
-                deviceContext = null,
-                socialContext = null,
-                timeWindowContext = null,
-                timeHorizon = horizon,
-                relations = emptyList(),
-            )
+            filter(FilterConfig(nodes = nodesWithSemester, timeHorizon = horizon))
 
         // "month" includes today, week, and month (due <= 30 days)
         val monthNodes = filterWithHorizonExtended("month")
@@ -725,25 +572,7 @@ class FilterHelperTest {
         val nodes = listOf(taskNodeMatch, taskNodeMismatch, noteNode)
 
         val filtered =
-            FilterHelper.filterAndSortNodes(
-                nodes = nodes,
-                query = "",
-                type = null,
-                status = null,
-                projectId = null,
-                areaId = null,
-                linkedToId = null,
-                maxMins = null,
-                energy = null,
-                friction = null,
-                locationContext = "home",
-                energyContext = null,
-                deviceContext = null,
-                socialContext = null,
-                timeWindowContext = null,
-                timeHorizon = null,
-                relations = emptyList(),
-            )
+            filter(FilterConfig(nodes = nodes, locationContext = "home"))
 
         // Note is excluded because type != "task" when anyContextFilter is true
         // Mismatch task is excluded because location doesn't match
@@ -760,25 +589,7 @@ class FilterHelperTest {
             locationContext = "home", // Assign a context
         )
 
-        val filtered = FilterHelper.filterAndSortNodes(
-            nodes = listOf(noteNode),
-            query = "",
-            type = null,
-            status = null,
-            projectId = null,
-            areaId = null,
-            linkedToId = null,
-            maxMins = null,
-            energy = null,
-            friction = null,
-            locationContext = "home", // Active context filter
-            energyContext = null,
-            deviceContext = null,
-            socialContext = null,
-            timeWindowContext = null,
-            timeHorizon = null,
-            relations = emptyList(),
-        )
+        val filtered = filter(FilterConfig(nodes = listOf(noteNode), locationContext = "home"))
 
         assertEquals(0, filtered.size)
     }
@@ -828,25 +639,7 @@ class FilterHelperTest {
 
         val nodes = listOf(taskNodeMatch, taskNodeMismatchDevice, taskNodeMismatchSocial, taskNodeMismatchTime)
 
-        val filtered = FilterHelper.filterAndSortNodes(
-            nodes = nodes,
-            query = "",
-            type = null,
-            status = null,
-            projectId = null,
-            areaId = null,
-            linkedToId = null,
-            maxMins = null,
-            energy = null,
-            friction = null,
-            locationContext = "home",
-            energyContext = "high",
-            deviceContext = "laptop",
-            socialContext = "solo",
-            timeWindowContext = "morning",
-            timeHorizon = null,
-            relations = emptyList(),
-        )
+        val filtered = filter(FilterConfig(nodes = nodes, locationContext = "home", energyContext = "high", deviceContext = "laptop", socialContext = "solo", timeWindowContext = "morning"))
 
         assertEquals(1, filtered.size)
         assertEquals(1L, filtered[0].node.id)
@@ -858,41 +651,25 @@ class FilterHelperTest {
         val nodeProjectMismatch = nodeProjectMismatchBase.copy(
             node = nodeProjectMismatchBase.node.copy(projectId = 999L)
         )
-        val resultProject = FilterHelper.filterAndSortNodes(
-            nodes = listOf(nodeProjectMismatch), query = "", type = null, status = null, projectId = 1L, areaId = null,
-            linkedToId = null, maxMins = null, energy = null, friction = null, locationContext = null, energyContext = null,
-            deviceContext = null, socialContext = null, timeWindowContext = null, timeHorizon = null, relations = emptyList()
-        )
+        val resultProject = filter(FilterConfig(nodes = listOf(nodeProjectMismatch), projectId = 1L))
         assertEquals(0, resultProject.size)
 
         val nodeAreaMismatch = createTestNode(2, "title").copy(
             node = createTestNode(2, "title").node.copy(areaId = 999L)
         )
-        val resultArea = FilterHelper.filterAndSortNodes(
-            nodes = listOf(nodeAreaMismatch), query = "", type = null, status = null, projectId = null, areaId = 1L,
-            linkedToId = null, maxMins = null, energy = null, friction = null, locationContext = null, energyContext = null,
-            deviceContext = null, socialContext = null, timeWindowContext = null, timeHorizon = null, relations = emptyList()
-        )
+        val resultArea = filter(FilterConfig(nodes = listOf(nodeAreaMismatch), areaId = 1L))
         assertEquals(0, resultArea.size)
 
         val nodeMinsMismatch = createTestNode(3, "title").copy(
             node = createTestNode(3, "title").node.copy(estimatedMinutes = 60)
         )
-        val resultMins = FilterHelper.filterAndSortNodes(
-            nodes = listOf(nodeMinsMismatch), query = "", type = null, status = null, projectId = null, areaId = null,
-            linkedToId = null, maxMins = 30, energy = null, friction = null, locationContext = null, energyContext = null,
-            deviceContext = null, socialContext = null, timeWindowContext = null, timeHorizon = null, relations = emptyList()
-        )
+        val resultMins = filter(FilterConfig(nodes = listOf(nodeMinsMismatch), maxMins = 30))
         assertEquals(0, resultMins.size)
 
         val nodeEnergyMismatch = createTestNode(4, "title").copy(
             node = createTestNode(4, "title").node.copy(energyLevel = 3)
         )
-        val resultEnergy = FilterHelper.filterAndSortNodes(
-            nodes = listOf(nodeEnergyMismatch), query = "", type = null, status = null, projectId = null, areaId = null,
-            linkedToId = null, maxMins = null, energy = 1, friction = null, locationContext = null, energyContext = null,
-            deviceContext = null, socialContext = null, timeWindowContext = null, timeHorizon = null, relations = emptyList()
-        )
+        val resultEnergy = filter(FilterConfig(nodes = listOf(nodeEnergyMismatch), energy = 1))
         assertEquals(0, resultEnergy.size)
     }
 
@@ -907,32 +684,16 @@ class FilterHelperTest {
             )
         )
 
-        val result1 = FilterHelper.filterAndSortNodes(
-            nodes = listOf(node1), query = "", type = null, status = null, projectId = null, areaId = null,
-            linkedToId = null, maxMins = null, energy = null, friction = null, locationContext = null, energyContext = "low",
-            deviceContext = null, socialContext = null, timeWindowContext = null, timeHorizon = null, relations = emptyList()
-        )
+        val result1 = filter(FilterConfig(nodes = listOf(node1), energyContext = "low"))
         assertEquals(0, result1.size)
 
-        val result2 = FilterHelper.filterAndSortNodes(
-            nodes = listOf(node1), query = "", type = null, status = null, projectId = null, areaId = null,
-            linkedToId = null, maxMins = null, energy = null, friction = null, locationContext = null, energyContext = null,
-            deviceContext = "phone", socialContext = null, timeWindowContext = null, timeHorizon = null, relations = emptyList()
-        )
+        val result2 = filter(FilterConfig(nodes = listOf(node1), deviceContext = "phone"))
         assertEquals(0, result2.size)
 
-        val result3 = FilterHelper.filterAndSortNodes(
-            nodes = listOf(node1), query = "", type = null, status = null, projectId = null, areaId = null,
-            linkedToId = null, maxMins = null, energy = null, friction = null, locationContext = null, energyContext = null,
-            deviceContext = null, socialContext = "pair", timeWindowContext = null, timeHorizon = null, relations = emptyList()
-        )
+        val result3 = filter(FilterConfig(nodes = listOf(node1), socialContext = "pair"))
         assertEquals(0, result3.size)
 
-        val result4 = FilterHelper.filterAndSortNodes(
-            nodes = listOf(node1), query = "", type = null, status = null, projectId = null, areaId = null,
-            linkedToId = null, maxMins = null, energy = null, friction = null, locationContext = null, energyContext = null,
-            deviceContext = null, socialContext = null, timeWindowContext = "morning", timeHorizon = null, relations = emptyList()
-        )
+        val result4 = filter(FilterConfig(nodes = listOf(node1), timeWindowContext = "morning"))
         assertEquals(0, result4.size)
     }
 
@@ -941,11 +702,7 @@ class FilterHelperTest {
         val nodeNullDue = createTestNode(1, "title", type = "task", dueAt = null)
 
         listOf("today", "week", "month", "semester", "short", "long").forEach { horizon ->
-            val result = FilterHelper.filterAndSortNodes(
-                nodes = listOf(nodeNullDue), query = "", type = null, status = null, projectId = null, areaId = null,
-                linkedToId = null, maxMins = null, energy = null, friction = null, locationContext = null, energyContext = null,
-                deviceContext = null, socialContext = null, timeWindowContext = null, timeHorizon = horizon, relations = emptyList()
-            )
+            val result = filter(FilterConfig(nodes = listOf(nodeNullDue), timeHorizon = horizon))
             assertEquals(0, result.size)
         }
     }
@@ -958,18 +715,10 @@ class FilterHelperTest {
             RelationEntity(id = 2, fromNodeId = 3, toNodeId = 4, relationType = "RELATED")
         )
 
-        val result1 = FilterHelper.filterAndSortNodes(
-            nodes = listOf(node1), query = "", type = null, status = null, projectId = null, areaId = null,
-            linkedToId = 2L, maxMins = null, energy = null, friction = null, locationContext = null, energyContext = null,
-            deviceContext = null, socialContext = null, timeWindowContext = null, timeHorizon = null, relations = relations
-        )
+        val result1 = filter(FilterConfig(nodes = listOf(node1), linkedToId = 2L, relations = relations))
         assertEquals(1, result1.size)
 
-        val result2 = FilterHelper.filterAndSortNodes(
-            nodes = listOf(node1), query = "", type = null, status = null, projectId = null, areaId = null,
-            linkedToId = 4L, maxMins = null, energy = null, friction = null, locationContext = null, energyContext = null,
-            deviceContext = null, socialContext = null, timeWindowContext = null, timeHorizon = null, relations = relations
-        )
+        val result2 = filter(FilterConfig(nodes = listOf(node1), linkedToId = 4L, relations = relations))
         assertEquals(0, result2.size)
     }
 
@@ -983,29 +732,17 @@ class FilterHelperTest {
                 energyLevel = null
             )
         )
-        val result1 = FilterHelper.filterAndSortNodes(
-            nodes = listOf(node1), query = "", type = null, status = null, projectId = 100L, areaId = 200L,
-            linkedToId = null, maxMins = 30, energy = 3, friction = null, locationContext = null, energyContext = null,
-            deviceContext = null, socialContext = null, timeWindowContext = null, timeHorizon = null, relations = emptyList()
-        )
+        val result1 = filter(FilterConfig(nodes = listOf(node1), projectId = 100L, areaId = 200L, maxMins = 30, energy = 3))
         assertEquals(0, result1.size)
 
         val relations = listOf(
             RelationEntity(id = 1, fromNodeId = 999, toNodeId = 1000, relationType = "RELATED"),
             RelationEntity(id = 2, fromNodeId = 2000, toNodeId = 999, relationType = "RELATED")
         )
-        val result2 = FilterHelper.filterAndSortNodes(
-            nodes = listOf(node1), query = "", type = null, status = null, projectId = null, areaId = null,
-            linkedToId = 1000L, maxMins = null, energy = null, friction = null, locationContext = null, energyContext = null,
-            deviceContext = null, socialContext = null, timeWindowContext = null, timeHorizon = null, relations = relations
-        )
+        val result2 = filter(FilterConfig(nodes = listOf(node1), linkedToId = 1000L, relations = relations))
         assertEquals(0, result2.size)
 
-        val result3 = FilterHelper.filterAndSortNodes(
-            nodes = listOf(node1), query = "", type = null, status = null, projectId = null, areaId = null,
-            linkedToId = 2000L, maxMins = null, energy = null, friction = null, locationContext = null, energyContext = null,
-            deviceContext = null, socialContext = null, timeWindowContext = null, timeHorizon = null, relations = relations
-        )
+        val result3 = filter(FilterConfig(nodes = listOf(node1), linkedToId = 2000L, relations = relations))
         assertEquals(0, result3.size)
     }
 
@@ -1019,11 +756,7 @@ class FilterHelperTest {
                 energyLevel = 3
             )
         )
-        val result1 = FilterHelper.filterAndSortNodes(
-            nodes = listOf(node1), query = "", type = null, status = null, projectId = 100L, areaId = 200L,
-            linkedToId = null, maxMins = 30, energy = 3, friction = null, locationContext = null, energyContext = null,
-            deviceContext = null, socialContext = null, timeWindowContext = null, timeHorizon = null, relations = emptyList()
-        )
+        val result1 = filter(FilterConfig(nodes = listOf(node1), projectId = 100L, areaId = 200L, maxMins = 30, energy = 3))
         assertEquals(1, result1.size)
 
         val relations = listOf(
@@ -1031,18 +764,10 @@ class FilterHelperTest {
             RelationEntity(id = 2, fromNodeId = 2000, toNodeId = 1, relationType = "RELATED")
         )
 
-        val result2 = FilterHelper.filterAndSortNodes(
-            nodes = listOf(node1), query = "", type = null, status = null, projectId = null, areaId = null,
-            linkedToId = 1000L, maxMins = null, energy = null, friction = null, locationContext = null, energyContext = null,
-            deviceContext = null, socialContext = null, timeWindowContext = null, timeHorizon = null, relations = relations
-        )
+        val result2 = filter(FilterConfig(nodes = listOf(node1), linkedToId = 1000L, relations = relations))
         assertEquals(1, result2.size)
 
-        val result3 = FilterHelper.filterAndSortNodes(
-            nodes = listOf(node1), query = "", type = null, status = null, projectId = null, areaId = null,
-            linkedToId = 2000L, maxMins = null, energy = null, friction = null, locationContext = null, energyContext = null,
-            deviceContext = null, socialContext = null, timeWindowContext = null, timeHorizon = null, relations = relations
-        )
+        val result3 = filter(FilterConfig(nodes = listOf(node1), linkedToId = 2000L, relations = relations))
         assertEquals(1, result3.size)
     }
 
@@ -1053,11 +778,7 @@ class FilterHelperTest {
         val nodeWayPast = createTestNode(2, "way past", dueAt = now - 100L * 24 * 60 * 60 * 1000L)
 
         listOf("today", "week", "month", "semester", "short", "long").forEach { horizon ->
-            val result = FilterHelper.filterAndSortNodes(
-                nodes = listOf(nodePast, nodeWayPast), query = "", type = null, status = null, projectId = null, areaId = null,
-                linkedToId = null, maxMins = null, energy = null, friction = null, locationContext = null, energyContext = null,
-                deviceContext = null, socialContext = null, timeWindowContext = null, timeHorizon = horizon, relations = emptyList()
-            )
+            val result = filter(FilterConfig(nodes = listOf(nodePast, nodeWayPast), timeHorizon = horizon))
             assertEquals(0, result.size)
         }
     }
@@ -1066,39 +787,23 @@ class FilterHelperTest {
     fun testShortCircuitForBasicFields() {
         val node1 = createTestNode(1, "title") // projectId null, areaId null, maxMins null, energy null
 
-        val result1 = FilterHelper.filterAndSortNodes(
-            nodes = listOf(node1), query = "", type = null, status = null, projectId = null, areaId = null,
-            linkedToId = null, maxMins = null, energy = null, friction = null, locationContext = null, energyContext = null,
-            deviceContext = null, socialContext = null, timeWindowContext = null, timeHorizon = null, relations = emptyList()
-        )
+        val result1 = filter(FilterConfig(nodes = listOf(node1)))
         assertEquals(1, result1.size)
 
         val nodeNullDue = createTestNode(2, "title")
-        val result2 = FilterHelper.filterAndSortNodes(
-            nodes = listOf(nodeNullDue), query = "", type = null, status = null, projectId = null, areaId = null,
-            linkedToId = null, maxMins = null, energy = null, friction = null, locationContext = null, energyContext = null,
-            deviceContext = null, socialContext = null, timeWindowContext = null, timeHorizon = "today", relations = emptyList()
-        )
+        val result2 = filter(FilterConfig(nodes = listOf(nodeNullDue), timeHorizon = "today"))
         assertEquals(0, result2.size)
 
         val nodeFutureDue = createTestNode(3, "title", dueAt = kotlin.time.Clock.System.now().toEpochMilliseconds() + 300L * 24 * 60 * 60 * 1000L)
         listOf("today", "week", "month", "semester", "short").forEach { horizon ->
-            val result = FilterHelper.filterAndSortNodes(
-                nodes = listOf(nodeFutureDue), query = "", type = null, status = null, projectId = null, areaId = null,
-                linkedToId = null, maxMins = null, energy = null, friction = null, locationContext = null, energyContext = null,
-                deviceContext = null, socialContext = null, timeWindowContext = null, timeHorizon = horizon, relations = emptyList()
-            )
+            val result = filter(FilterConfig(nodes = listOf(nodeFutureDue), timeHorizon = horizon))
             assertEquals(0, result.size)
         }
 
         val relations = listOf(
             RelationEntity(id = 1, fromNodeId = 100, toNodeId = 1, relationType = "RELATED")
         )
-        val result3 = FilterHelper.filterAndSortNodes(
-            nodes = listOf(node1), query = "", type = null, status = null, projectId = null, areaId = null,
-            linkedToId = 100L, maxMins = null, energy = null, friction = null, locationContext = null, energyContext = null,
-            deviceContext = null, socialContext = null, timeWindowContext = null, timeHorizon = null, relations = relations
-        )
+        val result3 = filter(FilterConfig(nodes = listOf(node1), linkedToId = 100L, relations = relations))
         assertEquals(1, result3.size)
     }
 }
