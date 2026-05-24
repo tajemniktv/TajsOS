@@ -416,72 +416,6 @@ class MainViewModel(
     }
 
     /**
-
-     * Switches the global UI context to the specified mode, provided the mode's required pack is unlocked.
-
-     * Updates the active mode preference in the underlying repository.
-
-     *
-
-     * @param modeId The unique identifier of the target mode.
-
-     */
-
-    /**
-
-     * Switches the global UI context to the specified mode, provided the mode's required pack is unlocked.
-
-     * Updates the active mode preference in the underlying repository.
-
-     *
-
-     * @param modeId The unique identifier of the target mode.
-
-     */
-
-    /**
-
-     * Switches the global UI context to the specified mode, provided the mode's required pack is unlocked.
-
-     * Updates the active mode preference in the underlying repository.
-
-     *
-
-     * @param modeId The unique identifier of the target mode.
-
-     */
-
-    /**
-
-     * Switches the global UI context to the specified mode, provided the mode's required pack is unlocked.
-
-     * Updates the active mode preference in the underlying repository.
-
-     *
-
-     * @param modeId The unique identifier of the target mode.
-
-     */
-
-    /**
-     * Switches the global UI context to the specified mode, provided the mode's required pack is unlocked.
-     * Updates the active mode preference in the underlying repository.
-     *
-     * @param modeId The unique identifier of the target mode.
-     */
-    /**
-     * Switches the global UI context to the specified mode, provided the mode's required pack is unlocked.
-     * Updates the active mode preference in the underlying repository.
-     *
-     * @param modeId The unique identifier of the target mode.
-     */
-    /**
-     * Switches the global UI context to the specified mode, provided the mode's required pack is unlocked.
-     * Updates the active mode preference in the underlying repository.
-     *
-     * @param modeId The unique identifier of the target mode.
-     */
-    /**
      * Switches the global UI context to the specified mode, provided the mode's required pack is unlocked.
      * Updates the active mode preference in the underlying repository.
      *
@@ -1128,70 +1062,10 @@ class MainViewModel(
     }
 
     /**
-
-     * Delegates to [protocolCommands] to launch a guided sequential workflow or checklist.
-
-     *
-
-     * @param protocolLabel The normalized identifier for the requested protocol.
-
-     * @param source The origin surface triggering the protocol (e.g., \"dashboard\").
-
-     */
-
-    /**
-
-     * Delegates to [protocolCommands] to launch a guided sequential workflow or checklist.
-
-     *
-
-     * @param protocolLabel The normalized identifier for the requested protocol.
-
-     * @param source The origin surface triggering the protocol (e.g., \"dashboard\").
-
-     */
-
-    /**
-
-     * Delegates to [protocolCommands] to launch a guided sequential workflow or checklist.
-
-     *
-
-     * @param protocolLabel The normalized identifier for the requested protocol.
-
-     * @param source The origin surface triggering the protocol (e.g., \"dashboard\").
-
-     */
-
-    /**
-
-     * Delegates to [protocolCommands] to launch a guided sequential workflow or checklist.
-
-     *
-
-     * @param protocolLabel The normalized identifier for the requested protocol.
-
-     * @param source The origin surface triggering the protocol (e.g., \"dashboard\").
-
-     */
-
-    /**
-     * Delegates to [protocolCommands] to launch a guided sequential workflow or checklist.
-     *
-     * @param protocolLabel The normalized identifier for the requested protocol.
-     * @param source The origin surface triggering the protocol (e.g., \"dashboard\").
-     */
-    /**
      * Delegates to [protocolCommands] to launch a guided sequential workflow or checklist.
      *
      * @param protocolLabel The normalized identifier for the requested protocol.
      * @param source The origin surface triggering the protocol (e.g., "dashboard").
-     */
-    /**
-     * Delegates to [protocolCommands] to launch a guided sequential workflow or checklist.
-     *
-     * @param protocolLabel The normalized identifier for the requested protocol.
-     * @param source The origin surface triggering the protocol (e.g., \"dashboard\").
      */
     fun triggerProtocol(
         protocolLabel: String,
@@ -1585,66 +1459,6 @@ class MainViewModel(
     }
 
     /**
-
-     * Triages a raw open loop into a structured, actionable task.
-
-     * Applies default task metadata (e.g., active status) via [nodeCommands].
-
-     *
-
-     * @param nodeId The unique identifier of the open loop node to convert.
-
-     */
-
-    /**
-
-     * Triages a raw open loop into a structured, actionable task.
-
-     * Applies default task metadata (e.g., active status) via [nodeCommands].
-
-     *
-
-     * @param nodeId The unique identifier of the open loop node to convert.
-
-     */
-
-    /**
-
-     * Triages a raw open loop into a structured, actionable task.
-
-     * Applies default task metadata (e.g., active status) via [nodeCommands].
-
-     *
-
-     * @param nodeId The unique identifier of the open loop node to convert.
-
-     */
-
-    /**
-
-     * Triages a raw open loop into a structured, actionable task.
-
-     * Applies default task metadata (e.g., active status) via [nodeCommands].
-
-     *
-
-     * @param nodeId The unique identifier of the open loop node to convert.
-
-     */
-
-    /**
-     * Triages a raw open loop into a structured, actionable task.
-     * Applies default task metadata (e.g., active status) via [nodeCommands].
-     *
-     * @param nodeId The unique identifier of the open loop node to convert.
-     */
-    /**
-     * Triages a raw open loop into a structured, actionable task.
-     * Applies default task metadata (e.g., active status) via [nodeCommands].
-     *
-     * @param nodeId The unique identifier of the open loop node to convert.
-     */
-    /**
      * Triages a raw open loop into a structured, actionable task.
      * Applies default task metadata (e.g., active status) via [nodeCommands].
      *
@@ -1654,66 +1468,6 @@ class MainViewModel(
         nodeCommands.convertOpenLoopToTask(nodeId)
     }
 
-    /**
-
-     * Triages a raw open loop into a structured decision matrix.
-
-     * Updates the node type and initializes decision metadata via [nodeCommands].
-
-     *
-
-     * @param nodeId The unique identifier of the open loop node to convert.
-
-     */
-
-    /**
-
-     * Triages a raw open loop into a structured decision matrix.
-
-     * Updates the node type and initializes decision metadata via [nodeCommands].
-
-     *
-
-     * @param nodeId The unique identifier of the open loop node to convert.
-
-     */
-
-    /**
-
-     * Triages a raw open loop into a structured decision matrix.
-
-     * Updates the node type and initializes decision metadata via [nodeCommands].
-
-     *
-
-     * @param nodeId The unique identifier of the open loop node to convert.
-
-     */
-
-    /**
-
-     * Triages a raw open loop into a structured decision matrix.
-
-     * Updates the node type and initializes decision metadata via [nodeCommands].
-
-     *
-
-     * @param nodeId The unique identifier of the open loop node to convert.
-
-     */
-
-    /**
-     * Triages a raw open loop into a structured decision matrix.
-     * Updates the node type and initializes decision metadata via [nodeCommands].
-     *
-     * @param nodeId The unique identifier of the open loop node to convert.
-     */
-    /**
-     * Triages a raw open loop into a structured decision matrix.
-     * Updates the node type and initializes decision metadata via [nodeCommands].
-     *
-     * @param nodeId The unique identifier of the open loop node to convert.
-     */
     /**
      * Triages a raw open loop into a structured decision matrix.
      * Updates the node type and initializes decision metadata via [nodeCommands].
@@ -1725,66 +1479,6 @@ class MainViewModel(
     }
 
     /**
-
-     * Triages a raw open loop into a persistent knowledge note.
-
-     * Updates the node type and strips transient triage metadata via [nodeCommands].
-
-     *
-
-     * @param nodeId The unique identifier of the open loop node to convert.
-
-     */
-
-    /**
-
-     * Triages a raw open loop into a persistent knowledge note.
-
-     * Updates the node type and strips transient triage metadata via [nodeCommands].
-
-     *
-
-     * @param nodeId The unique identifier of the open loop node to convert.
-
-     */
-
-    /**
-
-     * Triages a raw open loop into a persistent knowledge note.
-
-     * Updates the node type and strips transient triage metadata via [nodeCommands].
-
-     *
-
-     * @param nodeId The unique identifier of the open loop node to convert.
-
-     */
-
-    /**
-
-     * Triages a raw open loop into a persistent knowledge note.
-
-     * Updates the node type and strips transient triage metadata via [nodeCommands].
-
-     *
-
-     * @param nodeId The unique identifier of the open loop node to convert.
-
-     */
-
-    /**
-     * Triages a raw open loop into a persistent knowledge note.
-     * Updates the node type and strips transient triage metadata via [nodeCommands].
-     *
-     * @param nodeId The unique identifier of the open loop node to convert.
-     */
-    /**
-     * Triages a raw open loop into a persistent knowledge note.
-     * Updates the node type and strips transient triage metadata via [nodeCommands].
-     *
-     * @param nodeId The unique identifier of the open loop node to convert.
-     */
-    /**
      * Triages a raw open loop into a persistent knowledge note.
      * Updates the node type and strips transient triage metadata via [nodeCommands].
      *
@@ -1794,76 +1488,6 @@ class MainViewModel(
         nodeCommands.convertOpenLoopToNote(nodeId)
     }
 
-    /**
-
-     * Closes an unprocessed captured item, optionally attaching a resolution note.
-
-     * Marks the loop as processed to remove it from triage surfaces.
-
-     *
-
-     * @param nodeId The unique identifier of the open loop node.
-
-     * @param resolutionNote Optional text explaining how or why the loop was resolved.
-
-     */
-
-    /**
-
-     * Closes an unprocessed captured item, optionally attaching a resolution note.
-
-     * Marks the loop as processed to remove it from triage surfaces.
-
-     *
-
-     * @param nodeId The unique identifier of the open loop node.
-
-     * @param resolutionNote Optional text explaining how or why the loop was resolved.
-
-     */
-
-    /**
-
-     * Closes an unprocessed captured item, optionally attaching a resolution note.
-
-     * Marks the loop as processed to remove it from triage surfaces.
-
-     *
-
-     * @param nodeId The unique identifier of the open loop node.
-
-     * @param resolutionNote Optional text explaining how or why the loop was resolved.
-
-     */
-
-    /**
-
-     * Closes an unprocessed captured item, optionally attaching a resolution note.
-
-     * Marks the loop as processed to remove it from triage surfaces.
-
-     *
-
-     * @param nodeId The unique identifier of the open loop node.
-
-     * @param resolutionNote Optional text explaining how or why the loop was resolved.
-
-     */
-
-    /**
-     * Closes an unprocessed captured item, optionally attaching a resolution note.
-     * Marks the loop as processed to remove it from triage surfaces.
-     *
-     * @param nodeId The unique identifier of the open loop node.
-     * @param resolutionNote Optional text explaining how or why the loop was resolved.
-     */
-    /**
-     * Closes an unprocessed captured item, optionally attaching a resolution note.
-     * Marks the loop as processed to remove it from triage surfaces.
-     *
-     * @param nodeId The unique identifier of the open loop node.
-     * @param resolutionNote Optional text explaining how or why the loop was resolved.
-     */
     /**
      * Closes an unprocessed captured item, optionally attaching a resolution note.
      * Marks the loop as processed to remove it from triage surfaces.
@@ -2155,46 +1779,6 @@ class MainViewModel(
     }
 
     /**
-
-     * Executes end-of-month system maintenance scripts via [nodeCommands].
-
-     * This typically archives stale items, resets repeating structures, and generates monthly reflections.
-
-     */
-
-    /**
-
-     * Executes end-of-month system maintenance scripts via [nodeCommands].
-
-     * This typically archives stale items, resets repeating structures, and generates monthly reflections.
-
-     */
-
-    /**
-
-     * Executes end-of-month system maintenance scripts via [nodeCommands].
-
-     * This typically archives stale items, resets repeating structures, and generates monthly reflections.
-
-     */
-
-    /**
-
-     * Executes end-of-month system maintenance scripts via [nodeCommands].
-
-     * This typically archives stale items, resets repeating structures, and generates monthly reflections.
-
-     */
-
-    /**
-     * Executes end-of-month system maintenance scripts via [nodeCommands].
-     * This typically archives stale items, resets repeating structures, and generates monthly reflections.
-     */
-    /**
-     * Executes end-of-month system maintenance scripts via [nodeCommands].
-     * This typically archives stale items, resets repeating structures, and generates monthly reflections.
-     */
-    /**
      * Executes end-of-month system maintenance scripts via [nodeCommands].
      * This typically archives stale items, resets repeating structures, and generates monthly reflections.
      */
@@ -2344,66 +1928,6 @@ class MainViewModel(
 
     fun getMedicationsForEntry(trackEntryId: Long): Flow<List<TrackMedicationJoinEntity>> = repository.getTrackMedications(trackEntryId)
 
-    /**
-
-     * Initiates a tracked deep-work session for the specified node.
-
-     * Creates and persists a new [FocusSessionEntity] to track duration and interruptions.
-
-     *
-
-     * @param nodeId The unique identifier of the node being focused on.
-
-     */
-
-    /**
-
-     * Initiates a tracked deep-work session for the specified node.
-
-     * Creates and persists a new [FocusSessionEntity] to track duration and interruptions.
-
-     *
-
-     * @param nodeId The unique identifier of the node being focused on.
-
-     */
-
-    /**
-
-     * Initiates a tracked deep-work session for the specified node.
-
-     * Creates and persists a new [FocusSessionEntity] to track duration and interruptions.
-
-     *
-
-     * @param nodeId The unique identifier of the node being focused on.
-
-     */
-
-    /**
-
-     * Initiates a tracked deep-work session for the specified node.
-
-     * Creates and persists a new [FocusSessionEntity] to track duration and interruptions.
-
-     *
-
-     * @param nodeId The unique identifier of the node being focused on.
-
-     */
-
-    /**
-     * Initiates a tracked deep-work session for the specified node.
-     * Creates and persists a new [FocusSessionEntity] to track duration and interruptions.
-     *
-     * @param nodeId The unique identifier of the node being focused on.
-     */
-    /**
-     * Initiates a tracked deep-work session for the specified node.
-     * Creates and persists a new [FocusSessionEntity] to track duration and interruptions.
-     *
-     * @param nodeId The unique identifier of the node being focused on.
-     */
     /**
      * Initiates a tracked deep-work session for the specified node.
      * Creates and persists a new [FocusSessionEntity] to track duration and interruptions.
