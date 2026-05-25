@@ -66,22 +66,7 @@ fun ActionButton(
             null
         }
 
-    val finalModifier =
-        modifier.height(48.dp).then(
-            if (isPrimary && enabled) {
-                Modifier.background(
-                    brush =
-                        Brush.linearGradient(
-                            colors = listOf(TajsOSTheme.Primary, TajsOSTheme.PrimaryDim),
-                            start = Offset(0f, 0f),
-                            end = Offset.Infinite,
-                        ),
-                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                )
-            } else {
-                Modifier
-            },
-        )
+    val finalModifier = resolveActionButtonModifier(modifier, isPrimary, enabled)
 
     Button(
         onClick = onClick,
@@ -89,11 +74,12 @@ fun ActionButton(
         interactionSource = interactionSource,
         modifier = finalModifier.graphicsLayer(scaleX = scale, scaleY = scale),
         colors =
-            ButtonDefaults.buttonColors(
-                containerColor = if (isPrimary && enabled) Color.Transparent else containerColor,
-                contentColor = if (isPrimary && contentColor == TajsOSTheme.Text) TajsOSTheme.Background else contentColor,
-                disabledContainerColor = if (isGhost) Color.Transparent else TajsOSTheme.SurfaceHighest,
-                disabledContentColor = TajsOSTheme.Muted,
+            resolveActionButtonColors(
+                isPrimary = isPrimary,
+                enabled = enabled,
+                isGhost = isGhost,
+                containerColor = containerColor,
+                contentColor = contentColor,
             ),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         border = buttonBorder,
@@ -110,4 +96,43 @@ fun ActionButton(
             letterSpacing = 1.sp,
         )
     }
+}
+
+@Composable
+private fun resolveActionButtonColors(
+    isPrimary: Boolean,
+    enabled: Boolean,
+    isGhost: Boolean,
+    containerColor: Color,
+    contentColor: Color,
+): androidx.compose.material3.ButtonColors {
+    return ButtonDefaults.buttonColors(
+        containerColor = if (isPrimary && enabled) Color.Transparent else containerColor,
+        contentColor = if (isPrimary && contentColor == TajsOSTheme.Text) TajsOSTheme.Background else contentColor,
+        disabledContainerColor = if (isGhost) Color.Transparent else TajsOSTheme.SurfaceHighest,
+        disabledContentColor = TajsOSTheme.Muted,
+    )
+}
+
+@Composable
+private fun resolveActionButtonModifier(
+    modifier: Modifier,
+    isPrimary: Boolean,
+    enabled: Boolean,
+): Modifier {
+    return modifier.height(48.dp).then(
+        if (isPrimary && enabled) {
+            Modifier.background(
+                brush =
+                    Brush.linearGradient(
+                        colors = listOf(TajsOSTheme.Primary, TajsOSTheme.PrimaryDim),
+                        start = Offset(0f, 0f),
+                        end = Offset.Infinite,
+                    ),
+                shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+            )
+        } else {
+            Modifier
+        },
+    )
 }
