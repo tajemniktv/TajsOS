@@ -417,9 +417,12 @@ class MainActivity : FragmentActivity() {
                     override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                         super.onAuthenticationSucceeded(result)
                         val authCipher = result.cryptoObject?.cipher ?: return
-                        runCatching { authCipher.doFinal("auth".toByteArray()) }
-                            .onSuccess { viewModel.setAuthenticated(true) }
-                            .onFailure { Log.e(TAG, "Biometric crypto operation failed: ${it.javaClass.simpleName}") }
+                        try {
+                            authCipher.doFinal("auth".toByteArray())
+                            viewModel.setAuthenticated(true)
+                        } catch (e: Exception) {
+                            Log.e(TAG, "Biometric crypto operation failed: ${e.javaClass.simpleName}")
+                        }
                     }
 
                     override fun onAuthenticationError(
