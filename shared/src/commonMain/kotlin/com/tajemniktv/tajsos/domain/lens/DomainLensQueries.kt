@@ -254,30 +254,47 @@ object DomainLensQueries {
             .sortedByDescending { it.node.updatedAt }
 
     /**
-     * Common heuristic matching logic to avoid code duplication.
+     * Configuration class to group matching heuristics. This avoids having functions with many string/collection
+     * arguments, which can trigger code health violations.
      */
-    private fun matchesDomainSignal(
-        node: NodeWithPin,
-        maintenanceTypes: Set<String>,
-        tagMarkers: Set<String>,
-        titleKeywords: List<String>,
-        validNoteTypes: Set<String> = emptySet()
-    ): Boolean {
-        if (node.node.maintenanceType in maintenanceTypes) return true
+    private class DomainMatcher(
+        val maintenanceTypes: Set<String>,
+        val tagMarkers: Set<String>,
+        val titleKeywords: List<String>,
+        val validNoteTypes: Set<String> = emptySet()
+    ) {
+        fun matches(node: NodeWithPin): Boolean {
+            if (node.node.maintenanceType in maintenanceTypes) return true
 
-        val noteType = node.node.noteType
-        if (noteType != null && noteType in validNoteTypes) return true
+            val noteType = node.node.noteType
+            if (noteType != null && noteType in validNoteTypes) return true
 
-        if (node.tags.any { it.normalizedName in tagMarkers }) return true
+            if (node.tags.any { it.normalizedName in tagMarkers }) return true
 
-        val title = node.node.title.lowercase()
-        if (titleKeywords.any { keyword -> title.contains(keyword) }) return true
+            val title = node.node.title.lowercase()
+            if (titleKeywords.any { keyword -> title.contains(keyword) }) return true
 
-        val content = node.node.content.lowercase()
-        if (titleKeywords.any { keyword -> content.contains(keyword) }) return true
+            val content = node.node.content.lowercase()
+            if (titleKeywords.any { keyword -> content.contains(keyword) }) return true
 
-        return false
+            return false
+        }
     }
+
+    private val financeMatcher = DomainMatcher(
+        maintenanceTypes = financeMaintenanceTypes,
+        tagMarkers = financeTagMarkers,
+        titleKeywords = financeTitleKeywords
+    )
+
+    private val healthNoteTypes = setOf("reflection", "journal")
+
+    private val healthMatcher = DomainMatcher(
+        maintenanceTypes = healthMaintenanceTypes,
+        tagMarkers = healthTagMarkers,
+        titleKeywords = healthTitleKeywords,
+        validNoteTypes = healthNoteTypes
+    )
 
     /**
      * Determines whether a node implicitly belongs to the finance domain based on tags,
@@ -291,10 +308,7 @@ object DomainLensQueries {
      * if the user forgets to manually assign the finance domain. This heuristic-based logic
      * relies on implicit keyword matching to decouple domain categorization from explicit user action.
      */
-    private fun matchesFinanceSignal(node: NodeWithPin): Boolean =
-        matchesDomainSignal(node, financeMaintenanceTypes, financeTagMarkers, financeTitleKeywords)
-
-    private val healthNoteTypes = setOf("reflection", "journal")
+    private fun matchesFinanceSignal(node: NodeWithPin): Boolean = financeMatcher.matches(node)
 
     /**
      * Determines whether a node implicitly belongs to the health domain based on tags,
@@ -308,6 +322,5 @@ object DomainLensQueries {
      * if the user forgets to manually assign the health domain. This heuristic-based logic
      * relies on implicit keyword matching to decouple domain categorization from explicit user action.
      */
-    private fun matchesHealthSignal(node: NodeWithPin): Boolean =
-        matchesDomainSignal(node, healthMaintenanceTypes, healthTagMarkers, healthTitleKeywords, healthNoteTypes)
+    private fun matchesHealthSignal(node: NodeWithPin): Boolean = healthMatcher.matches(node)
 }
