@@ -16,6 +16,12 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -47,6 +53,10 @@ fun ActionButton(
     contentColor: Color = TajsOSTheme.Text,
     icon: ImageVector? = null,
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val scale by animateFloatAsState(targetValue = if (isPressed) 0.98f else 1f, label = "button_scale")
+
     val isPrimary = containerColor == TajsOSTheme.Primary
     val isGhost = containerColor == Color.Transparent
     val buttonBorder =
@@ -76,7 +86,8 @@ fun ActionButton(
     Button(
         onClick = onClick,
         enabled = enabled,
-        modifier = finalModifier,
+        interactionSource = interactionSource,
+        modifier = finalModifier.graphicsLayer(scaleX = scale, scaleY = scale),
         colors =
             ButtonDefaults.buttonColors(
                 containerColor = if (isPrimary && enabled) Color.Transparent else containerColor,

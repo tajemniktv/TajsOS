@@ -53,6 +53,12 @@ import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -721,6 +727,10 @@ fun NewEntryButton(
     expanded: Boolean,
     onClick: () -> Unit,
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val scale by animateFloatAsState(targetValue = if (isPressed) 0.98f else 1f, label = "button_scale")
+
     val label = stringResource(Res.string.sidebar_new_entry)
     SidebarTooltip(enabled = !expanded, text = label) {
         Surface(
@@ -734,7 +744,8 @@ fun NewEntryButton(
                     .mouseButtons(
                         onSecondaryClick = onClick,
                         onMiddleClick = onClick,
-                    ),
+                    ).graphicsLayer(scaleX = scale, scaleY = scale),
+            interactionSource = interactionSource,
             tonalElevation = 0.dp,
             shadowElevation = 0.dp,
         ) {
