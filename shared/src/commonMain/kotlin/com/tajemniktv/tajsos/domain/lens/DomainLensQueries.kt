@@ -258,8 +258,7 @@ object DomainLensQueries {
      * keywords in title/content, maintenance type, or note type (e.g., reference notes).
      *
      * Classification uses hardcoded marker constants ([financeTagMarkers],
-     * [financeTitleKeywords], and [financeMaintenanceTypes]) plus non-constant node-state
-     * checks such as reference-note matching (`noteType == "reference"`).
+     * [financeTitleKeywords], and [financeMaintenanceTypes]).
      *
      * Note: This intentionally bypasses explicit `ItemDomainEntity` database associations
      * to provide a zero-configuration experience, ensuring finance items are surfaced even
@@ -267,17 +266,19 @@ object DomainLensQueries {
      * relies on implicit keyword matching to decouple domain categorization from explicit user action.
      */
     private fun matchesFinanceSignal(node: NodeWithPin): Boolean {
+        if (node.node.maintenanceType in financeMaintenanceTypes) return true
+        if (node.tags.any { it.normalizedName in financeTagMarkers }) return true
+
         val title = node.node.title.lowercase()
+        if (financeTitleKeywords.any { keyword -> title.contains(keyword) }) return true
+
         val content = node.node.content.lowercase()
-        val hasFinanceTag = node.tags.any { it.normalizedName in financeTagMarkers }
-        val mentionsFinanceTitle = financeTitleKeywords.any { keyword -> title.contains(keyword) }
-        val mentionsFinanceContent =
-            financeTitleKeywords.any { keyword -> content.contains(keyword) }
-        val financeMaintenance = node.node.maintenanceType in financeMaintenanceTypes
-        val referenceFinanceNote =
-            node.node.noteType == "reference" && (mentionsFinanceTitle || hasFinanceTag)
-        return hasFinanceTag || mentionsFinanceTitle || mentionsFinanceContent || financeMaintenance || referenceFinanceNote
+        if (financeTitleKeywords.any { keyword -> content.contains(keyword) }) return true
+
+        return false
     }
+
+    private val healthNoteTypes = setOf("reflection", "journal")
 
     /**
      * Determines whether a node implicitly belongs to the health domain based on tags,
@@ -292,13 +293,16 @@ object DomainLensQueries {
      * relies on implicit keyword matching to decouple domain categorization from explicit user action.
      */
     private fun matchesHealthSignal(node: NodeWithPin): Boolean {
+        if (node.node.maintenanceType in healthMaintenanceTypes) return true
+        if (node.node.noteType in healthNoteTypes) return true
+        if (node.tags.any { it.normalizedName in healthTagMarkers }) return true
+
         val title = node.node.title.lowercase()
+        if (healthTitleKeywords.any { keyword -> title.contains(keyword) }) return true
+
         val content = node.node.content.lowercase()
-        val hasHealthTag = node.tags.any { it.normalizedName in healthTagMarkers }
-        val mentionsHealthTitle = healthTitleKeywords.any { keyword -> title.contains(keyword) }
-        val mentionsHealthContent = healthTitleKeywords.any { keyword -> content.contains(keyword) }
-        val healthNoteType = node.node.noteType in setOf("reflection", "journal")
-        val healthMaintenance = node.node.maintenanceType in healthMaintenanceTypes
-        return hasHealthTag || mentionsHealthTitle || mentionsHealthContent || healthMaintenance || healthNoteType
+        if (healthTitleKeywords.any { keyword -> content.contains(keyword) }) return true
+
+        return false
     }
 }
