@@ -138,6 +138,8 @@ jobs:
         run: |
           ./gradlew \
             -Pandroid.builder.sdkDownload=true \
+            --no-build-cache \
+            clean \
             :shared:compileKotlinJvm \
             :composeApp:compileKotlinJvm \
             :server:classes \
