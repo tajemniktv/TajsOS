@@ -4,7 +4,7 @@
 
 package com.tajemniktv.tajsos.ui.screens.dashboard
 
-import com.tajemniktv.tajsos.data.safeDecode
+import kotlin.coroutines.cancellation.CancellationException
 import com.tajemniktv.tajsos.data.AppPack
 import com.tajemniktv.tajsos.data.PackRegistry
 import com.tajemniktv.tajsos.ui.DashboardUIState

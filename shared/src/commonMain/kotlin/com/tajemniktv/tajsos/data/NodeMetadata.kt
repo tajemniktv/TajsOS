@@ -102,7 +102,7 @@ data class AreaMetadata(
  * returning null if the payload is malformed or empty. This ensures that corrupt metadata
  * does not crash the UI. This design prevents a single broken node from taking down the entire list view.
  */
-inline fun <T> safeDecode(block: () -> T): T? =
+private inline fun <T> safeDecode(block: () -> T): T? =
     try {
         block()
     } catch (e: CancellationException) {
