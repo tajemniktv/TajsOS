@@ -4,6 +4,8 @@
 
 package com.tajemniktv.tajsos.ui.components.common
 
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Indication
 import androidx.compose.foundation.LocalIndication
@@ -211,7 +213,7 @@ fun Modifier.mouseClickable(
                     indication = indication ?: LocalIndication.current,
                     onClick = { onClick?.invoke() },
                     onLongClick = onLongClick,
-                )
+                ).pointerHoverIcon(PointerIcon.Hand)
             } else {
                 this
             }
