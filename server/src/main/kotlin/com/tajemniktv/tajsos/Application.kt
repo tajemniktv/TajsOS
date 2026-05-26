@@ -26,12 +26,12 @@ fun Application.module() {
         ?: System.getenv("TAJSOS_SYNC_TOKEN")
         ?: error("TAJSOS_SYNC_TOKEN environment variable must be set")
 
-    val expectedTokenBytes = expectedToken.toByteArray(Charsets.UTF_8)
+    val expectedTokenHash = MessageDigest.getInstance("SHA-256").digest(expectedToken.toByteArray(Charsets.UTF_8))
 
     install(Authentication) {
         bearer("sync-auth") {
             authenticate { tokenCredential ->
-                if (MessageDigest.isEqual(tokenCredential.token.toByteArray(Charsets.UTF_8), expectedToken.toByteArray(Charsets.UTF_8))) {
+                val providedTokenHash = MessageDigest.getInstance("SHA-256").digest(tokenCredential.token.toByteArray(Charsets.UTF_8))
 
                 if (MessageDigest.isEqual(providedTokenHash, expectedTokenHash)) {
                     UserIdPrincipal("sync-client")
