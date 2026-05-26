@@ -36,5 +36,8 @@
   },
   "overrides": {
     "vite": "$vite"
+  },
+  "devDependencies": {
+    "prettier-plugin-astro": "^0.14.1"
   }
 }

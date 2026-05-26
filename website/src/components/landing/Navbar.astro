@@ -1,11 +1,9 @@
 ---
 // src/components/landing/Navbar.astro
-import { SITE, NAV_LINKS } from '../../data/site';
+import { SITE, NAV_LINKS } from "../../data/site";
 ---
 
-<nav
-  class="fixed top-0 w-full z-100 bg-surface-container-low/60"
->
+<nav class="fixed top-0 w-full z-100 bg-surface-container-low/60">
   <div
     class="flex justify-between items-center w-full px-8 py-4 max-w-400 mx-auto"
   >
@@ -21,12 +19,16 @@ import { SITE, NAV_LINKS } from '../../data/site';
       >
     </a>
     <div class="hidden md:flex gap-12">
-      {NAV_LINKS.map(link => (
-        <a
-          class="font-mono text-[10px] tracking-widest uppercase font-bold text-on-surface-variant hover:text-on-surface transition-colors min-h-[48px] flex items-center px-2"
-          href={`${import.meta.env.BASE_URL}${link.href}`}>{link.label}</a
-        >
-      ))}
+      {
+        NAV_LINKS.map((link) => (
+          <a
+            class="font-mono text-[10px] tracking-widest uppercase font-bold text-on-surface-variant hover:text-on-surface transition-colors min-h-[48px] flex items-center px-2"
+            href={`${import.meta.env.BASE_URL}${link.href}`}
+          >
+            {link.label}
+          </a>
+        ))
+      }
     </div>
     <div class="flex items-center gap-6">
       <div class="flex gap-4">
@@ -42,7 +44,9 @@ import { SITE, NAV_LINKS } from '../../data/site';
           data-icon="account_circle">account_circle</button
         >
       </div>
-      <a href={`${import.meta.env.BASE_URL}${SITE.waitlistUrl}`} aria-label="Join Waitlist"
+      <a
+        href={`${import.meta.env.BASE_URL}${SITE.waitlistUrl}`}
+        aria-label="Join Waitlist"
         class="bg-linear-to-br from-primary to-primary-dim text-on-primary-fixed font-mono font-bold px-6 min-h-[48px] flex items-center justify-center rounded-xl text-[10px] tracking-widest uppercase hover:opacity-90 transition-all"
         >JOIN WAITLIST</a
       >

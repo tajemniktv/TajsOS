@@ -1,6 +1,6 @@
 ---
 // src/components/landing/Hero.astro
-import { SITE } from '../../data/site';
+import { SITE } from "../../data/site";
 ---
 
 <section class="relative min-h-dvh flex items-start mb-64">
@@ -10,7 +10,6 @@ import { SITE } from '../../data/site';
         class="font-mono text-[10px] tracking-[0.5em] text-primary bg-surface-container-highest px-4 py-2 rounded-full shadow-[0_0_40px_rgba(186,158,255,0.1)] uppercase"
         >LOCAL_FIRST</span
       >
-
     </div>
     <h1
       class="font-headline text-[clamp(5rem,15vw,12rem)] leading-[0.8] font-bold tracking-tighter uppercase text-on-surface"
@@ -30,12 +29,14 @@ import { SITE } from '../../data/site';
         Bridge the gap between biological thought and digital execution.
       </p>
       <div class="flex flex-col gap-6 pt-4">
-        <a href={`${import.meta.env.BASE_URL}${SITE.waitlistUrl}`}
+        <a
+          href={`${import.meta.env.BASE_URL}${SITE.waitlistUrl}`}
           class="w-fit bg-linear-to-br from-primary to-primary-dim text-on-primary-fixed font-mono font-bold px-10 py-6 rounded-xl text-sm uppercase tracking-[0.2em] hover:opacity-90 transition-all"
         >
           [ Join_Waitlist ]
         </a>
-        <a href={`${import.meta.env.BASE_URL}architecture`}
+        <a
+          href={`${import.meta.env.BASE_URL}architecture`}
           class="w-fit font-mono font-bold uppercase tracking-widest text-[11px] text-on-surface-variant/60 hover:text-primary transition-colors bg-surface-container-low px-4 py-2 min-h-[48px] flex items-center justify-center rounded-xl"
         >
           Architecture

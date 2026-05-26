@@ -1,11 +1,12 @@
 ---
-import BlogMarkdownContent from 'starlight-blog/components/MarkdownContent.astro';
-import VideosMarkdownContent from 'starlight-videos/components/MarkdownContent.astro';
+import BlogMarkdownContent from "starlight-blog/components/MarkdownContent.astro";
+import VideosMarkdownContent from "starlight-videos/components/MarkdownContent.astro";
 
 const props = Astro.props;
 ---
+
 <VideosMarkdownContent {...props}>
-    <BlogMarkdownContent {...props}>
-        <slot />
-    </BlogMarkdownContent>
+  <BlogMarkdownContent {...props}>
+    <slot />
+  </BlogMarkdownContent>
 </VideosMarkdownContent>

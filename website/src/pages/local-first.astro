@@ -1,53 +1,79 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Navbar from '../components/landing/Navbar.astro';
-import Footer from '../components/landing/Footer.astro';
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/landing/Navbar.astro";
+import Footer from "../components/landing/Footer.astro";
 
 const title = "LOCAL-FIRST";
 ---
 
 <Layout title={title}>
   <div class="fixed inset-0 noise-bg pointer-events-none z-50"></div>
-  <div class="fixed top-[-10%] right-[-5%] w-[600px] h-[600px] gradient-sphere pointer-events-none -z-10"></div>
+  <div
+    class="fixed top-[-10%] right-[-5%] w-[600px] h-[600px] gradient-sphere pointer-events-none -z-10"
+  >
+  </div>
 
   <Navbar />
   <main class="relative pt-32 max-w-[1600px] mx-auto px-8 min-h-dvh">
-
-<!-- Top Header Section -->
-<header class="mb-16 flex justify-between items-start">
-<div class="max-w-3xl">
-<h1 class="font-headline font-bold text-7xl lg:text-8xl tracking-tighter leading-none mb-2 text-on-surface">
+    <!-- Top Header Section -->
+    <header class="mb-16 flex justify-between items-start">
+      <div class="max-w-3xl">
+        <h1
+          class="font-headline font-bold text-7xl lg:text-8xl tracking-tighter leading-none mb-2 text-on-surface"
+        >
           LOCAL <span class="text-primary">FIRST</span>
         </h1>
-<p class="font-mono text-primary tracking-widest text-sm ml-2">
+        <p class="font-mono text-primary tracking-widest text-sm ml-2">
           &gt; FAST, RELIABLE, PRIVATE
         </p>
-</div>
-<div class="flex flex-wrap gap-2 justify-end max-w-xs">
-<div class="px-3 py-1 bg-primary/10 border border-primary/30 rounded-full flex items-center gap-2">
-<div class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></div>
-<span class="font-mono text-[10px] text-primary">SQLITE_READY</span>
-</div>
-</div>
-</header>
+      </div>
+      <div class="flex flex-wrap gap-2 justify-end max-w-xs">
+        <div
+          class="px-3 py-1 bg-primary/10 border border-primary/30 rounded-full flex items-center gap-2"
+        >
+          <div class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></div>
+          <span class="font-mono text-[10px] text-primary">SQLITE_READY</span>
+        </div>
+      </div>
+    </header>
 
-<section class="max-w-4xl text-lg text-on-surface-variant leading-relaxed space-y-6">
-  <p>
-    TajsOS is built on a fundamental principle: your life's operating system shouldn't depend on an internet connection or a slow cloud service. It must be fast, private, and always available.
-  </p>
-  <p>
-    The local model keeps a compatibility `NodeEntity` spine for the current app shell, while moving deeper behavior into typed companion tables instead of growing one giant nullable row. This keeps the ontology small, typed, and local-first while leaving room for rich integrations.
-  </p>
+    <section
+      class="max-w-4xl text-lg text-on-surface-variant leading-relaxed space-y-6"
+    >
+      <p>
+        TajsOS is built on a fundamental principle: your life's operating system
+        shouldn't depend on an internet connection or a slow cloud service. It
+        must be fast, private, and always available.
+      </p>
+      <p>
+        The local model keeps a compatibility `NodeEntity` spine for the current
+        app shell, while moving deeper behavior into typed companion tables
+        instead of growing one giant nullable row. This keeps the ontology
+        small, typed, and local-first while leaving room for rich integrations.
+      </p>
 
-  <h2 class="text-3xl font-bold font-headline mt-12 mb-6 text-on-surface">Data Architecture</h2>
-  <ul class="list-disc pl-6 space-y-4">
-    <li><strong class="text-on-surface">InboxEntryEntity:</strong> Stores raw capture before triage.</li>
-    <li><strong class="text-on-surface">NodeEntity:</strong> The shared local identity row for task/note/record/project/area items.</li>
-    <li><strong class="text-on-surface">Typed Companion Tables:</strong> `TaskFacet`, `NoteFacet`, `RecordFacet`, etc., hold object-specific state.</li>
-    <li><strong class="text-on-surface">RelationEntity & Tags:</strong> Shared layers across the system, keeping everything cross-cutting and first-class.</li>
-  </ul>
-</section>
-
+      <h2 class="text-3xl font-bold font-headline mt-12 mb-6 text-on-surface">
+        Data Architecture
+      </h2>
+      <ul class="list-disc pl-6 space-y-4">
+        <li>
+          <strong class="text-on-surface">InboxEntryEntity:</strong> Stores raw capture
+          before triage.
+        </li>
+        <li>
+          <strong class="text-on-surface">NodeEntity:</strong> The shared local identity
+          row for task/note/record/project/area items.
+        </li>
+        <li>
+          <strong class="text-on-surface">Typed Companion Tables:</strong> `TaskFacet`,
+          `NoteFacet`, `RecordFacet`, etc., hold object-specific state.
+        </li>
+        <li>
+          <strong class="text-on-surface">RelationEntity & Tags:</strong> Shared layers
+          across the system, keeping everything cross-cutting and first-class.
+        </li>
+      </ul>
+    </section>
   </main>
   <Footer />
 </Layout>

@@ -1,268 +1,475 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Navbar from '../components/landing/Navbar.astro';
-import Footer from '../components/landing/Footer.astro';
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/landing/Navbar.astro";
+import Footer from "../components/landing/Footer.astro";
 
 const title = "SYSTEM STATUS";
 ---
 
 <Layout title={title}>
   <div class="fixed inset-0 noise-bg pointer-events-none z-50"></div>
-  <div class="fixed top-[-10%] right-[-5%] w-[600px] h-[600px] gradient-sphere pointer-events-none -z-10"></div>
-  
+  <div
+    class="fixed top-[-10%] right-[-5%] w-[600px] h-[600px] gradient-sphere pointer-events-none -z-10"
+  >
+  </div>
+
   <Navbar />
   <main class="relative pt-32 max-w-[1600px] mx-auto px-8 min-h-dvh">
-    
-<!-- Header Status Indicator -->
-<header class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
-<div class="space-y-2">
-<div class="flex items-center gap-3 px-4 py-1.5 bg-surface-container-low rounded-full border border-outline-variant/10 w-fit">
-<span class="relative flex h-3 w-3">
-<span class="status-pulse absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-<span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
-</span>
-<span class="font-mono text-[10px] tracking-[0.2em] text-emerald-400 uppercase font-bold">System // Operational</span>
-</div>
-<h1 class="text-5xl md:text-7xl font-headline font-bold tracking-tighter text-on-surface">
-                    System <br/><span class="text-primary">Status</span>
-</h1>
-</div>
-<div class="text-right hidden md:block">
-<p class="font-mono text-xs text-on-surface-variant uppercase tracking-widest">Last Checked</p>
-<p class="font-mono text-sm text-primary">2024-05-24 14:02:11 UTC</p>
-</div>
-</header>
-<!-- Hero: Uptime Stats -->
-<section class="grid grid-cols-1 md:grid-cols-3 gap-6">
-<div class="md:col-span-2 glass-panel p-10 rounded-3xl border border-outline-variant/10 relative overflow-hidden group">
-<div class="absolute -right-20 -top-20 w-64 h-64 bg-primary/5 rounded-full group-hover:bg-primary/10 transition-colors"></div>
-<p class="font-mono text-xs text-on-surface-variant uppercase tracking-[0.3em] mb-4">Cumulative System Uptime</p>
-<div class="flex items-baseline gap-4">
-<span class="text-8xl md:text-9xl font-headline font-bold tracking-tighter">99.98<span class="text-primary text-5xl md:text-7xl">%</span></span>
-</div>
-<div class="mt-8 flex gap-2 overflow-hidden h-1">
-<div class="flex-1 bg-emerald-500/80 rounded-full"></div>
-<div class="flex-1 bg-emerald-500/80 rounded-full"></div>
-<div class="flex-1 bg-emerald-500/80 rounded-full"></div>
-<div class="flex-1 bg-emerald-500/80 rounded-full"></div>
-<div class="flex-1 bg-error/80 rounded-full"></div>
-<div class="flex-1 bg-emerald-500/80 rounded-full"></div>
-<div class="flex-1 bg-emerald-500/80 rounded-full"></div>
-</div>
-<p class="mt-4 font-mono text-[10px] text-on-surface-variant/60">Service reliability measured over the last 90 days.</p>
-</div>
-<div class="bg-surface-container-highest p-10 rounded-3xl border border-outline-variant/10 flex flex-col justify-between">
-<div>
-<span class="material-symbols-outlined text-primary mb-4" style="font-variation-settings: 'FILL' 1;">analytics</span>
-<p class="font-mono text-xs text-on-surface-variant uppercase tracking-widest">Active Requests</p>
-<p class="text-4xl font-headline font-bold mt-2">1.2M <span class="text-sm font-normal text-on-surface-variant/60">/sec</span></p>
-</div>
-<div class="w-full h-[1px] bg-outline-variant/10 mb-8"></div>
-<div class="pt-8">
-<p class="font-mono text-xs text-on-surface-variant uppercase tracking-widest">Global Latency</p>
-<p class="text-4xl font-headline font-bold mt-2 text-secondary">24<span class="text-sm font-normal text-on-surface-variant/60">ms</span></p>
-</div>
-</div>
-</section>
-<!-- Status Grid -->
-<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-<!-- Auth Service -->
-<div class="bg-surface-container-highest p-6 rounded-3xl transition-all cursor-default">
-<div class="flex justify-between items-start mb-6">
-<h3 class="font-headline font-bold text-lg">Auth Service</h3>
-<span class="text-[10px] font-mono text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded uppercase">Operational</span>
-</div>
-<div class="flex items-center gap-4 mb-4">
-<div class="flex-1 h-8 flex items-end gap-1">
-<div class="w-1 bg-primary/20 h-3 rounded-full"></div>
-<div class="w-1 bg-primary/40 h-5 rounded-full"></div>
-<div class="w-1 bg-primary/20 h-4 rounded-full"></div>
-<div class="w-1 bg-primary/60 h-6 rounded-full"></div>
-<div class="w-1 bg-primary h-8 rounded-full"></div>
-<div class="w-1 bg-primary/40 h-5 rounded-full"></div>
-<div class="w-1 bg-primary/20 h-3 rounded-full"></div>
-</div>
-<div class="text-right">
-<p class="font-mono text-xs text-on-surface-variant">Latency</p>
-<p class="font-mono text-sm font-bold">12ms</p>
-</div>
-</div>
-</div>
-<!-- Database Cluster -->
-<div class="bg-surface-container-highest p-6 rounded-3xl transition-all cursor-default">
-<div class="flex justify-between items-start mb-6">
-<h3 class="font-headline font-bold text-lg">Database Cluster</h3>
-<span class="text-[10px] font-mono text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded uppercase">Operational</span>
-</div>
-<div class="flex items-center gap-4 mb-4">
-<div class="flex-1 h-8 flex items-end gap-1">
-<div class="w-1 bg-primary/20 h-4 rounded-full"></div>
-<div class="w-1 bg-primary/40 h-4 rounded-full"></div>
-<div class="w-1 bg-primary/60 h-7 rounded-full"></div>
-<div class="w-1 bg-primary h-5 rounded-full"></div>
-<div class="w-1 bg-primary/60 h-6 rounded-full"></div>
-<div class="w-1 bg-primary/40 h-4 rounded-full"></div>
-<div class="w-1 bg-primary/20 h-5 rounded-full"></div>
-</div>
-<div class="text-right">
-<p class="font-mono text-xs text-on-surface-variant">Latency</p>
-<p class="font-mono text-sm font-bold">48ms</p>
-</div>
-</div>
-</div>
-<!-- Backend Sync API -->
-<div class="bg-surface-container-highest p-6 rounded-3xl transition-all cursor-default">
-<div class="flex justify-between items-start mb-6">
-<h3 class="font-headline font-bold text-lg">Backend Sync API</h3>
-<span class="text-[10px] font-mono text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded uppercase">Operational</span>
-</div>
-<div class="flex items-center gap-4 mb-4">
-<div class="flex-1 h-8 flex items-end gap-1">
-<div class="w-1 bg-primary/40 h-2 rounded-full"></div>
-<div class="w-1 bg-primary/60 h-4 rounded-full"></div>
-<div class="w-1 bg-primary/20 h-3 rounded-full"></div>
-<div class="w-1 bg-primary h-5 rounded-full"></div>
-<div class="w-1 bg-primary/60 h-8 rounded-full"></div>
-<div class="w-1 bg-primary/40 h-6 rounded-full"></div>
-<div class="w-1 bg-primary/20 h-4 rounded-full"></div>
-</div>
-<div class="text-right">
-<p class="font-mono text-xs text-on-surface-variant">Latency</p>
-<p class="font-mono text-sm font-bold">142ms</p>
-</div>
-</div>
-</div>
-<!-- CDN -->
-<div class="bg-surface-container-highest p-6 rounded-3xl transition-all cursor-default">
-<div class="flex justify-between items-start mb-6">
-<h3 class="font-headline font-bold text-lg">CDN</h3>
-<span class="text-[10px] font-mono text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded uppercase">Operational</span>
-</div>
-<div class="flex items-center gap-4 mb-4">
-<div class="flex-1 h-8 flex items-end gap-1">
-<div class="w-1 bg-primary/20 h-3 rounded-full"></div>
-<div class="w-1 bg-primary/40 h-5 rounded-full"></div>
-<div class="w-1 bg-primary/60 h-4 rounded-full"></div>
-<div class="w-1 bg-primary h-6 rounded-full"></div>
-<div class="w-1 bg-primary/60 h-7 rounded-full"></div>
-<div class="w-1 bg-primary/40 h-5 rounded-full"></div>
-<div class="w-1 bg-primary/20 h-4 rounded-full"></div>
-</div>
-<div class="text-right">
-<p class="font-mono text-xs text-on-surface-variant">Latency</p>
-<p class="font-mono text-sm font-bold">8ms</p>
-</div>
-</div>
-</div>
-</section>
-<!-- Latency Graph Section -->
-<section class="space-y-6">
-<div class="flex items-center justify-between">
-<h2 class="font-headline font-bold text-2xl tracking-tight">Latency Response (24H)</h2>
-<div class="flex gap-4">
-<div class="flex items-center gap-2">
-<div class="w-3 h-3 rounded-full bg-primary"></div>
-<span class="font-mono text-[10px] text-on-surface-variant uppercase">P99 Metric</span>
-</div>
-<div class="flex items-center gap-2">
-<div class="w-3 h-3 rounded-full bg-surface-container-highest"></div>
-<span class="font-mono text-[10px] text-on-surface-variant uppercase">Average</span>
-</div>
-</div>
-</div>
-<div class="bg-surface-container-low p-8 rounded-3xl h-64 relative overflow-hidden flex items-end gap-1">
-<!-- Abstract Graph bars -->
-<div class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[20%] rounded-t-sm"></div>
-<div class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[25%] rounded-t-sm"></div>
-<div class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[15%] rounded-t-sm"></div>
-<div class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[30%] rounded-t-sm"></div>
-<div class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[45%] rounded-t-sm"></div>
-<div class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[20%] rounded-t-sm"></div>
-<div class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[10%] rounded-t-sm"></div>
-<div class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[35%] rounded-t-sm"></div>
-<div class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[60%] rounded-t-sm"></div>
-<div class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[80%] rounded-t-sm"></div>
-<div class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[40%] rounded-t-sm"></div>
-<div class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[30%] rounded-t-sm"></div>
-<div class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[20%] rounded-t-sm"></div>
-<div class="flex-1 bg-primary h-[15%] rounded-t-sm"></div>
-<div class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[18%] rounded-t-sm"></div>
-<div class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[22%] rounded-t-sm"></div>
-<div class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[28%] rounded-t-sm"></div>
-<div class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[32%] rounded-t-sm"></div>
-<div class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[25%] rounded-t-sm"></div>
-<div class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[20%] rounded-t-sm"></div>
-<div class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[15%] rounded-t-sm"></div>
-<div class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[12%] rounded-t-sm"></div>
-<div class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[10%] rounded-t-sm"></div>
-<div class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[8%] rounded-t-sm"></div>
-<div class="absolute inset-x-0 bottom-0 h-[1px] bg-primary/40"></div>
-<!-- Grid Lines -->
-<div class="absolute inset-0 flex flex-col justify-between py-8 opacity-10 pointer-events-none">
-<div class="bg-on-surface-variant h-[1px] w-full"></div>
-<div class="bg-on-surface-variant h-[1px] w-full"></div>
-<div class="bg-on-surface-variant h-[1px] w-full"></div>
-</div>
-</div>
-<div class="flex justify-between px-2">
-<span class="font-mono text-[9px] text-on-surface-variant">24H AGO</span>
-<span class="font-mono text-[9px] text-on-surface-variant">12H AGO</span>
-<span class="font-mono text-[9px] text-on-surface-variant">PRESENT</span>
-</div>
-</section>
-<!-- Incident History -->
-<section class="space-y-6">
-<h2 class="font-headline font-bold text-2xl tracking-tight">Incident History</h2>
-<div class="bg-surface-container-lowest rounded-3xl overflow-hidden">
-<div class="bg-surface-container-high px-6 py-3 flex items-center justify-between">
-<span class="font-mono text-xs uppercase tracking-widest text-on-surface-variant">Changelog // May 2024</span>
-<span class="font-mono text-xs text-emerald-400">STATUS: NOMINAL</span>
-</div>
-<div class="w-full h-[1px] bg-outline-variant/10"></div>
-<div class="p-0 divide-y divide-outline-variant/5">
-<!-- Log Item -->
-<div class="p-6 flex gap-8 items-start hover:bg-surface-container-low transition-colors group">
-<div class="font-mono text-sm text-on-surface-variant shrink-0 mt-1">MAY 22</div>
-<div class="space-y-2">
-<h4 class="font-bold text-on-surface flex items-center gap-2 group-hover:text-primary transition-colors">
-<span class="material-symbols-outlined text-sm">check_circle</span>
-                                No Incidents Reported
-                            </h4>
-<p class="text-sm text-on-surface-variant leading-relaxed">All services remained within performance thresholds. Auto-scaling protocols handled traffic peaks in the US-EAST-1 cluster.</p>
-</div>
-</div>
-<!-- Log Item -->
-<div class="p-6 flex gap-8 items-start hover:bg-surface-container-low transition-colors group">
-<div class="font-mono text-sm text-on-surface-variant shrink-0 mt-1">MAY 21</div>
-<div class="space-y-2">
-<h4 class="font-bold text-on-surface flex items-center gap-2 group-hover:text-primary transition-colors">
-<span class="material-symbols-outlined text-sm">check_circle</span>
-                                System Maintenance
-                            </h4>
-<p class="text-sm text-on-surface-variant leading-relaxed">Completed scheduled database maintenance in the EU-CENTRAL-1 region. Zero downtime recorded.</p>
-</div>
-</div>
-<!-- Log Item -->
-<div class="p-6 flex gap-8 items-start hover:bg-surface-container-low transition-colors group opacity-60">
-<div class="font-mono text-sm text-on-surface-variant shrink-0 mt-1">MAY 20</div>
-<div class="space-y-2">
-<h4 class="font-bold text-on-surface flex items-center gap-2">
-<span class="material-symbols-outlined text-sm">warning</span>
-                                Minor Latency Spike
-                            </h4>
-<p class="text-sm text-on-surface-variant leading-relaxed font-mono">CODE: 0x4492. Resolved: CDN cache invalidation delay. Impact: &lt;5 minutes.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="flex justify-center pt-4">
-<button  class="font-label text-xs uppercase tracking-widest text-primary hover:text-on-surface transition-colors flex items-center gap-2 group min-h-[48px]">
-                    View Archive 
-                    <span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_right_alt</span>
-</button>
-</div>
-</section>
-
+    <!-- Header Status Indicator -->
+    <header
+      class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6"
+    >
+      <div class="space-y-2">
+        <div
+          class="flex items-center gap-3 px-4 py-1.5 bg-surface-container-low rounded-full border border-outline-variant/10 w-fit"
+        >
+          <span class="relative flex h-3 w-3">
+            <span
+              class="status-pulse absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"
+            ></span>
+            <span
+              class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"
+            ></span>
+          </span>
+          <span
+            class="font-mono text-[10px] tracking-[0.2em] text-emerald-400 uppercase font-bold"
+            >System // Operational</span
+          >
+        </div>
+        <h1
+          class="text-5xl md:text-7xl font-headline font-bold tracking-tighter text-on-surface"
+        >
+          System <br /><span class="text-primary">Status</span>
+        </h1>
+      </div>
+      <div class="text-right hidden md:block">
+        <p
+          class="font-mono text-xs text-on-surface-variant uppercase tracking-widest"
+        >
+          Last Checked
+        </p>
+        <p class="font-mono text-sm text-primary">2024-05-24 14:02:11 UTC</p>
+      </div>
+    </header>
+    <!-- Hero: Uptime Stats -->
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div
+        class="md:col-span-2 glass-panel p-10 rounded-3xl border border-outline-variant/10 relative overflow-hidden group"
+      >
+        <div
+          class="absolute -right-20 -top-20 w-64 h-64 bg-primary/5 rounded-full group-hover:bg-primary/10 transition-colors"
+        >
+        </div>
+        <p
+          class="font-mono text-xs text-on-surface-variant uppercase tracking-[0.3em] mb-4"
+        >
+          Cumulative System Uptime
+        </p>
+        <div class="flex items-baseline gap-4">
+          <span
+            class="text-8xl md:text-9xl font-headline font-bold tracking-tighter"
+            >99.98<span class="text-primary text-5xl md:text-7xl">%</span></span
+          >
+        </div>
+        <div class="mt-8 flex gap-2 overflow-hidden h-1">
+          <div class="flex-1 bg-emerald-500/80 rounded-full"></div>
+          <div class="flex-1 bg-emerald-500/80 rounded-full"></div>
+          <div class="flex-1 bg-emerald-500/80 rounded-full"></div>
+          <div class="flex-1 bg-emerald-500/80 rounded-full"></div>
+          <div class="flex-1 bg-error/80 rounded-full"></div>
+          <div class="flex-1 bg-emerald-500/80 rounded-full"></div>
+          <div class="flex-1 bg-emerald-500/80 rounded-full"></div>
+        </div>
+        <p class="mt-4 font-mono text-[10px] text-on-surface-variant/60">
+          Service reliability measured over the last 90 days.
+        </p>
+      </div>
+      <div
+        class="bg-surface-container-highest p-10 rounded-3xl border border-outline-variant/10 flex flex-col justify-between"
+      >
+        <div>
+          <span
+            class="material-symbols-outlined text-primary mb-4"
+            style="font-variation-settings: 'FILL' 1;">analytics</span
+          >
+          <p
+            class="font-mono text-xs text-on-surface-variant uppercase tracking-widest"
+          >
+            Active Requests
+          </p>
+          <p class="text-4xl font-headline font-bold mt-2">
+            1.2M <span class="text-sm font-normal text-on-surface-variant/60"
+              >/sec</span>
+          </p>
+        </div>
+        <div class="w-full h-[1px] bg-outline-variant/10 mb-8"></div>
+        <div class="pt-8">
+          <p
+            class="font-mono text-xs text-on-surface-variant uppercase tracking-widest"
+          >
+            Global Latency
+          </p>
+          <p class="text-4xl font-headline font-bold mt-2 text-secondary">
+            24<span class="text-sm font-normal text-on-surface-variant/60"
+              >ms</span>
+          </p>
+        </div>
+      </div>
+    </section>
+    <!-- Status Grid -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- Auth Service -->
+      <div
+        class="bg-surface-container-highest p-6 rounded-3xl transition-all cursor-default"
+      >
+        <div class="flex justify-between items-start mb-6">
+          <h3 class="font-headline font-bold text-lg">Auth Service</h3>
+          <span
+            class="text-[10px] font-mono text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded uppercase"
+            >Operational</span
+          >
+        </div>
+        <div class="flex items-center gap-4 mb-4">
+          <div class="flex-1 h-8 flex items-end gap-1">
+            <div class="w-1 bg-primary/20 h-3 rounded-full"></div>
+            <div class="w-1 bg-primary/40 h-5 rounded-full"></div>
+            <div class="w-1 bg-primary/20 h-4 rounded-full"></div>
+            <div class="w-1 bg-primary/60 h-6 rounded-full"></div>
+            <div class="w-1 bg-primary h-8 rounded-full"></div>
+            <div class="w-1 bg-primary/40 h-5 rounded-full"></div>
+            <div class="w-1 bg-primary/20 h-3 rounded-full"></div>
+          </div>
+          <div class="text-right">
+            <p class="font-mono text-xs text-on-surface-variant">Latency</p>
+            <p class="font-mono text-sm font-bold">12ms</p>
+          </div>
+        </div>
+      </div>
+      <!-- Database Cluster -->
+      <div
+        class="bg-surface-container-highest p-6 rounded-3xl transition-all cursor-default"
+      >
+        <div class="flex justify-between items-start mb-6">
+          <h3 class="font-headline font-bold text-lg">Database Cluster</h3>
+          <span
+            class="text-[10px] font-mono text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded uppercase"
+            >Operational</span
+          >
+        </div>
+        <div class="flex items-center gap-4 mb-4">
+          <div class="flex-1 h-8 flex items-end gap-1">
+            <div class="w-1 bg-primary/20 h-4 rounded-full"></div>
+            <div class="w-1 bg-primary/40 h-4 rounded-full"></div>
+            <div class="w-1 bg-primary/60 h-7 rounded-full"></div>
+            <div class="w-1 bg-primary h-5 rounded-full"></div>
+            <div class="w-1 bg-primary/60 h-6 rounded-full"></div>
+            <div class="w-1 bg-primary/40 h-4 rounded-full"></div>
+            <div class="w-1 bg-primary/20 h-5 rounded-full"></div>
+          </div>
+          <div class="text-right">
+            <p class="font-mono text-xs text-on-surface-variant">Latency</p>
+            <p class="font-mono text-sm font-bold">48ms</p>
+          </div>
+        </div>
+      </div>
+      <!-- Backend Sync API -->
+      <div
+        class="bg-surface-container-highest p-6 rounded-3xl transition-all cursor-default"
+      >
+        <div class="flex justify-between items-start mb-6">
+          <h3 class="font-headline font-bold text-lg">Backend Sync API</h3>
+          <span
+            class="text-[10px] font-mono text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded uppercase"
+            >Operational</span
+          >
+        </div>
+        <div class="flex items-center gap-4 mb-4">
+          <div class="flex-1 h-8 flex items-end gap-1">
+            <div class="w-1 bg-primary/40 h-2 rounded-full"></div>
+            <div class="w-1 bg-primary/60 h-4 rounded-full"></div>
+            <div class="w-1 bg-primary/20 h-3 rounded-full"></div>
+            <div class="w-1 bg-primary h-5 rounded-full"></div>
+            <div class="w-1 bg-primary/60 h-8 rounded-full"></div>
+            <div class="w-1 bg-primary/40 h-6 rounded-full"></div>
+            <div class="w-1 bg-primary/20 h-4 rounded-full"></div>
+          </div>
+          <div class="text-right">
+            <p class="font-mono text-xs text-on-surface-variant">Latency</p>
+            <p class="font-mono text-sm font-bold">142ms</p>
+          </div>
+        </div>
+      </div>
+      <!-- CDN -->
+      <div
+        class="bg-surface-container-highest p-6 rounded-3xl transition-all cursor-default"
+      >
+        <div class="flex justify-between items-start mb-6">
+          <h3 class="font-headline font-bold text-lg">CDN</h3>
+          <span
+            class="text-[10px] font-mono text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded uppercase"
+            >Operational</span
+          >
+        </div>
+        <div class="flex items-center gap-4 mb-4">
+          <div class="flex-1 h-8 flex items-end gap-1">
+            <div class="w-1 bg-primary/20 h-3 rounded-full"></div>
+            <div class="w-1 bg-primary/40 h-5 rounded-full"></div>
+            <div class="w-1 bg-primary/60 h-4 rounded-full"></div>
+            <div class="w-1 bg-primary h-6 rounded-full"></div>
+            <div class="w-1 bg-primary/60 h-7 rounded-full"></div>
+            <div class="w-1 bg-primary/40 h-5 rounded-full"></div>
+            <div class="w-1 bg-primary/20 h-4 rounded-full"></div>
+          </div>
+          <div class="text-right">
+            <p class="font-mono text-xs text-on-surface-variant">Latency</p>
+            <p class="font-mono text-sm font-bold">8ms</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Latency Graph Section -->
+    <section class="space-y-6">
+      <div class="flex items-center justify-between">
+        <h2 class="font-headline font-bold text-2xl tracking-tight">
+          Latency Response (24H)
+        </h2>
+        <div class="flex gap-4">
+          <div class="flex items-center gap-2">
+            <div class="w-3 h-3 rounded-full bg-primary"></div>
+            <span
+              class="font-mono text-[10px] text-on-surface-variant uppercase"
+              >P99 Metric</span
+            >
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="w-3 h-3 rounded-full bg-surface-container-highest">
+            </div>
+            <span
+              class="font-mono text-[10px] text-on-surface-variant uppercase"
+              >Average</span
+            >
+          </div>
+        </div>
+      </div>
+      <div
+        class="bg-surface-container-low p-8 rounded-3xl h-64 relative overflow-hidden flex items-end gap-1"
+      >
+        <!-- Abstract Graph bars -->
+        <div
+          class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[20%] rounded-t-sm"
+        >
+        </div>
+        <div
+          class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[25%] rounded-t-sm"
+        >
+        </div>
+        <div
+          class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[15%] rounded-t-sm"
+        >
+        </div>
+        <div
+          class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[30%] rounded-t-sm"
+        >
+        </div>
+        <div
+          class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[45%] rounded-t-sm"
+        >
+        </div>
+        <div
+          class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[20%] rounded-t-sm"
+        >
+        </div>
+        <div
+          class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[10%] rounded-t-sm"
+        >
+        </div>
+        <div
+          class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[35%] rounded-t-sm"
+        >
+        </div>
+        <div
+          class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[60%] rounded-t-sm"
+        >
+        </div>
+        <div
+          class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[80%] rounded-t-sm"
+        >
+        </div>
+        <div
+          class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[40%] rounded-t-sm"
+        >
+        </div>
+        <div
+          class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[30%] rounded-t-sm"
+        >
+        </div>
+        <div
+          class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[20%] rounded-t-sm"
+        >
+        </div>
+        <div class="flex-1 bg-primary h-[15%] rounded-t-sm"></div>
+        <div
+          class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[18%] rounded-t-sm"
+        >
+        </div>
+        <div
+          class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[22%] rounded-t-sm"
+        >
+        </div>
+        <div
+          class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[28%] rounded-t-sm"
+        >
+        </div>
+        <div
+          class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[32%] rounded-t-sm"
+        >
+        </div>
+        <div
+          class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[25%] rounded-t-sm"
+        >
+        </div>
+        <div
+          class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[20%] rounded-t-sm"
+        >
+        </div>
+        <div
+          class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[15%] rounded-t-sm"
+        >
+        </div>
+        <div
+          class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[12%] rounded-t-sm"
+        >
+        </div>
+        <div
+          class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[10%] rounded-t-sm"
+        >
+        </div>
+        <div
+          class="flex-1 bg-primary/20 hover:bg-primary transition-colors h-[8%] rounded-t-sm"
+        >
+        </div>
+        <div class="absolute inset-x-0 bottom-0 h-[1px] bg-primary/40"></div>
+        <!-- Grid Lines -->
+        <div
+          class="absolute inset-0 flex flex-col justify-between py-8 opacity-10 pointer-events-none"
+        >
+          <div class="bg-on-surface-variant h-[1px] w-full"></div>
+          <div class="bg-on-surface-variant h-[1px] w-full"></div>
+          <div class="bg-on-surface-variant h-[1px] w-full"></div>
+        </div>
+      </div>
+      <div class="flex justify-between px-2">
+        <span class="font-mono text-[9px] text-on-surface-variant">24H AGO</span
+        >
+        <span class="font-mono text-[9px] text-on-surface-variant">12H AGO</span
+        >
+        <span class="font-mono text-[9px] text-on-surface-variant">PRESENT</span
+        >
+      </div>
+    </section>
+    <!-- Incident History -->
+    <section class="space-y-6">
+      <h2 class="font-headline font-bold text-2xl tracking-tight">
+        Incident History
+      </h2>
+      <div class="bg-surface-container-lowest rounded-3xl overflow-hidden">
+        <div
+          class="bg-surface-container-high px-6 py-3 flex items-center justify-between"
+        >
+          <span
+            class="font-mono text-xs uppercase tracking-widest text-on-surface-variant"
+            >Changelog // May 2024</span
+          >
+          <span class="font-mono text-xs text-emerald-400">STATUS: NOMINAL</span
+          >
+        </div>
+        <div class="w-full h-[1px] bg-outline-variant/10"></div>
+        <div class="p-0 divide-y divide-outline-variant/5">
+          <!-- Log Item -->
+          <div
+            class="p-6 flex gap-8 items-start hover:bg-surface-container-low transition-colors group"
+          >
+            <div
+              class="font-mono text-sm text-on-surface-variant shrink-0 mt-1"
+            >
+              MAY 22
+            </div>
+            <div class="space-y-2">
+              <h4
+                class="font-bold text-on-surface flex items-center gap-2 group-hover:text-primary transition-colors"
+              >
+                <span class="material-symbols-outlined text-sm"
+                  >check_circle</span
+                >
+                No Incidents Reported
+              </h4>
+              <p class="text-sm text-on-surface-variant leading-relaxed">
+                All services remained within performance thresholds.
+                Auto-scaling protocols handled traffic peaks in the US-EAST-1
+                cluster.
+              </p>
+            </div>
+          </div>
+          <!-- Log Item -->
+          <div
+            class="p-6 flex gap-8 items-start hover:bg-surface-container-low transition-colors group"
+          >
+            <div
+              class="font-mono text-sm text-on-surface-variant shrink-0 mt-1"
+            >
+              MAY 21
+            </div>
+            <div class="space-y-2">
+              <h4
+                class="font-bold text-on-surface flex items-center gap-2 group-hover:text-primary transition-colors"
+              >
+                <span class="material-symbols-outlined text-sm"
+                  >check_circle</span
+                >
+                System Maintenance
+              </h4>
+              <p class="text-sm text-on-surface-variant leading-relaxed">
+                Completed scheduled database maintenance in the EU-CENTRAL-1
+                region. Zero downtime recorded.
+              </p>
+            </div>
+          </div>
+          <!-- Log Item -->
+          <div
+            class="p-6 flex gap-8 items-start hover:bg-surface-container-low transition-colors group opacity-60"
+          >
+            <div
+              class="font-mono text-sm text-on-surface-variant shrink-0 mt-1"
+            >
+              MAY 20
+            </div>
+            <div class="space-y-2">
+              <h4 class="font-bold text-on-surface flex items-center gap-2">
+                <span class="material-symbols-outlined text-sm">warning</span>
+                Minor Latency Spike
+              </h4>
+              <p
+                class="text-sm text-on-surface-variant leading-relaxed font-mono"
+              >
+                CODE: 0x4492. Resolved: CDN cache invalidation delay. Impact:
+                &lt;5 minutes.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flex justify-center pt-4">
+        <button
+          class="font-label text-xs uppercase tracking-widest text-primary hover:text-on-surface transition-colors flex items-center gap-2 group min-h-[48px]"
+        >
+          View Archive
+          <span
+            class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform"
+            >arrow_right_alt</span
+          >
+        </button>
+      </div>
+    </section>
   </main>
   <Footer />
 </Layout>

@@ -1,90 +1,177 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Navbar from '../components/landing/Navbar.astro';
-import Footer from '../components/landing/Footer.astro';
-import { SITE } from '../data/site';
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/landing/Navbar.astro";
+import Footer from "../components/landing/Footer.astro";
+import { SITE } from "../data/site";
 
 const title = "WAITLIST";
 ---
 
 <Layout title={title}>
   <div class="fixed inset-0 noise-bg pointer-events-none z-50"></div>
-  <div class="fixed top-[-10%] right-[-5%] w-[600px] h-[600px] gradient-sphere pointer-events-none -z-10"></div>
-  
+  <div
+    class="fixed top-[-10%] right-[-5%] w-[600px] h-[600px] gradient-sphere pointer-events-none -z-10"
+  >
+  </div>
+
   <Navbar />
   <main class="relative pt-32 max-w-[1600px] mx-auto px-8 min-h-dvh">
-    
-<!-- Background Spatial Layering Decor -->
-<div class="absolute inset-0 overflow-hidden pointer-events-none">
-<div class="absolute top-[20%] left-[10%] w-[40rem] h-[40rem] bg-primary/5 rounded-full"></div>
-<div class="absolute bottom-[10%] right-[5%] w-[30rem] h-[30rem] bg-secondary/5 rounded-full"></div>
-</div>
-<!-- Hero Content -->
-<div class="relative z-10 w-full max-w-5xl flex flex-col items-center text-center">
-<!-- Technical Indicator -->
-<div class="mb-8 flex items-center gap-3 bg-surface-container-low/50 px-4 py-1.5 rounded-full border border-outline-variant/20">
-<span class="flex h-2 w-2 relative">
-<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-<span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-</span>
-<span class="font-mono text-[10px] tracking-[0.3em] text-primary uppercase">{SITE.statusText}</span>
-</div>
-<!-- Main Headline -->
-<h1 class="font-headline font-bold text-6xl md:text-8xl lg:text-9xl tracking-tighter text-on-surface glow-text mb-4 leading-none">
-                JOIN WAITLIST
-            </h1>
-<p class="font-body text-on-surface-variant max-w-xl text-lg mb-16 leading-relaxed">
-                Join the waitlist for TajsOS. Secure early access to the local-first personal operating system.
-            </p>
-<!-- Waitlist Module -->
-<div class="w-full max-w-lg group relative">
-<div class="absolute -inset-0.5 bg-linear-to-r from-primary to-primary-dim rounded-xl blur opacity-20 transition duration-1000"></div>
-<form id="waitlist-form" class="relative flex items-center bg-surface-container-lowest border border-transparent rounded-xl overflow-hidden focus-within:ring-1 focus-within:ring-primary focus-within:ring-inset transition-all duration-500">
-<label for="waitlist-email" class="sr-only">Email address</label>
-<input id="waitlist-email" class="bg-transparent border-transparent text-on-surface placeholder:text-outline font-mono py-5 px-6 w-full text-lg outline-none" placeholder="email@example.com" type="email" required autocomplete="email"/>
-<button  id="waitlist-submit" type="submit" class="bg-linear-to-br from-primary to-primary-dim text-on-primary-fixed font-headline font-bold px-12 py-6 text-xl transition-all flex items-center gap-2 group/btn relative overflow-hidden min-h-[48px]">
-                        <span id="waitlist-button-text">JOIN NOW</span>
-                        <div id="waitlist-loading" class="hidden absolute inset-0 bg-primary flex items-center justify-center">
-                            <span class="material-symbols-outlined text-on-primary animate-spin">progress_activity</span>
-                        </div>
-                        <span class="material-symbols-outlined text-xl transition-transform group-hover/btn:translate-x-1" data-icon="arrow_forward">arrow_forward</span>
-</button>
-</form>
-<p id="waitlist-status" class="hidden" role="status" aria-live="polite"></p>
-</div>
-<!-- Countdown Timer -->
-<div class="mt-16 flex flex-col items-center">
-<span class="font-label text-[10px] tracking-[0.4em] text-outline uppercase mb-4">Time to Early Access</span>
-<div class="font-mono text-4xl md:text-5xl tracking-widest text-on-surface-variant tabular-nums">
-                    <span id="countdown-days">04</span><span class="text-primary animate-pulse">:</span><span id="countdown-hours">12</span><span class="text-primary animate-pulse">:</span><span id="countdown-minutes">09</span><span class="text-primary animate-pulse">:</span><span id="countdown-seconds">55</span>
-                </div>
-</div>
-<!-- Status Panels - Bento Style -->
-<div class="mt-24 grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-4xl">
-<div class="bg-surface-container-low/40 p-6 rounded-3xl border border-outline-variant/10 flex flex-col items-start gap-4">
-<span class="material-symbols-outlined text-primary-dim" data-icon="waves">waves</span>
-<div class="text-left">
-<div class="font-label text-[10px] tracking-widest text-outline uppercase mb-1">Sync_Status</div>
-<div class="font-mono text-xl text-on-surface">Local First</div>
-</div>
-</div>
-<div class="bg-surface-container-low/40 p-6 rounded-3xl border border-outline-variant/10 flex flex-col items-start gap-4">
-<span class="material-symbols-outlined text-primary-dim" data-icon="cloud_done">cloud_done</span>
-<div class="text-left">
-<div class="font-label text-[10px] tracking-widest text-outline uppercase mb-1">App_Size</div>
-<div class="font-mono text-xl text-primary">Lightweight</div>
-</div>
-</div>
-<div class="bg-surface-container-low/40 p-6 rounded-3xl border border-outline-variant/10 flex flex-col items-start gap-4">
-<span class="material-symbols-outlined text-primary-dim" data-icon="encrypted">encrypted</span>
-<div class="text-left">
-<div class="font-label text-[10px] tracking-widest text-outline uppercase mb-1">Database</div>
-<div class="font-mono text-xl text-on-surface">SQLite</div>
-</div>
-</div>
-</div>
-</div>
-
+    <!-- Background Spatial Layering Decor -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+      <div
+        class="absolute top-[20%] left-[10%] w-[40rem] h-[40rem] bg-primary/5 rounded-full"
+      >
+      </div>
+      <div
+        class="absolute bottom-[10%] right-[5%] w-[30rem] h-[30rem] bg-secondary/5 rounded-full"
+      >
+      </div>
+    </div>
+    <!-- Hero Content -->
+    <div
+      class="relative z-10 w-full max-w-5xl flex flex-col items-center text-center"
+    >
+      <!-- Technical Indicator -->
+      <div
+        class="mb-8 flex items-center gap-3 bg-surface-container-low/50 px-4 py-1.5 rounded-full border border-outline-variant/20"
+      >
+        <span class="flex h-2 w-2 relative">
+          <span
+            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"
+          ></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"
+          ></span>
+        </span>
+        <span
+          class="font-mono text-[10px] tracking-[0.3em] text-primary uppercase"
+          >{SITE.statusText}</span
+        >
+      </div>
+      <!-- Main Headline -->
+      <h1
+        class="font-headline font-bold text-6xl md:text-8xl lg:text-9xl tracking-tighter text-on-surface glow-text mb-4 leading-none"
+      >
+        JOIN WAITLIST
+      </h1>
+      <p
+        class="font-body text-on-surface-variant max-w-xl text-lg mb-16 leading-relaxed"
+      >
+        Join the waitlist for TajsOS. Secure early access to the local-first
+        personal operating system.
+      </p>
+      <!-- Waitlist Module -->
+      <div class="w-full max-w-lg group relative">
+        <div
+          class="absolute -inset-0.5 bg-linear-to-r from-primary to-primary-dim rounded-xl blur opacity-20 transition duration-1000"
+        >
+        </div>
+        <form
+          id="waitlist-form"
+          class="relative flex items-center bg-surface-container-lowest border border-transparent rounded-xl overflow-hidden focus-within:ring-1 focus-within:ring-primary focus-within:ring-inset transition-all duration-500"
+        >
+          <label for="waitlist-email" class="sr-only">Email address</label>
+          <input
+            id="waitlist-email"
+            class="bg-transparent border-transparent text-on-surface placeholder:text-outline font-mono py-5 px-6 w-full text-lg outline-none"
+            placeholder="email@example.com"
+            type="email"
+            required
+            autocomplete="email"
+          />
+          <button
+            id="waitlist-submit"
+            type="submit"
+            class="bg-linear-to-br from-primary to-primary-dim text-on-primary-fixed font-headline font-bold px-12 py-6 text-xl transition-all flex items-center gap-2 group/btn relative overflow-hidden min-h-[48px]"
+          >
+            <span id="waitlist-button-text">JOIN NOW</span>
+            <div
+              id="waitlist-loading"
+              class="hidden absolute inset-0 bg-primary flex items-center justify-center"
+            >
+              <span
+                class="material-symbols-outlined text-on-primary animate-spin"
+                >progress_activity</span
+              >
+            </div>
+            <span
+              class="material-symbols-outlined text-xl transition-transform group-hover/btn:translate-x-1"
+              data-icon="arrow_forward">arrow_forward</span
+            >
+          </button>
+        </form>
+        <p id="waitlist-status" class="hidden" role="status" aria-live="polite">
+        </p>
+      </div>
+      <!-- Countdown Timer -->
+      <div class="mt-16 flex flex-col items-center">
+        <span
+          class="font-label text-[10px] tracking-[0.4em] text-outline uppercase mb-4"
+          >Time to Early Access</span
+        >
+        <div
+          class="font-mono text-4xl md:text-5xl tracking-widest text-on-surface-variant tabular-nums"
+        >
+          <span id="countdown-days">04</span><span
+            class="text-primary animate-pulse">:</span
+          ><span id="countdown-hours">12</span><span
+            class="text-primary animate-pulse">:</span
+          ><span id="countdown-minutes">09</span><span
+            class="text-primary animate-pulse">:</span
+          ><span id="countdown-seconds">55</span>
+        </div>
+      </div>
+      <!-- Status Panels - Bento Style -->
+      <div class="mt-24 grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-4xl">
+        <div
+          class="bg-surface-container-low/40 p-6 rounded-3xl border border-outline-variant/10 flex flex-col items-start gap-4"
+        >
+          <span
+            class="material-symbols-outlined text-primary-dim"
+            data-icon="waves">waves</span
+          >
+          <div class="text-left">
+            <div
+              class="font-label text-[10px] tracking-widest text-outline uppercase mb-1"
+            >
+              Sync_Status
+            </div>
+            <div class="font-mono text-xl text-on-surface">Local First</div>
+          </div>
+        </div>
+        <div
+          class="bg-surface-container-low/40 p-6 rounded-3xl border border-outline-variant/10 flex flex-col items-start gap-4"
+        >
+          <span
+            class="material-symbols-outlined text-primary-dim"
+            data-icon="cloud_done">cloud_done</span
+          >
+          <div class="text-left">
+            <div
+              class="font-label text-[10px] tracking-widest text-outline uppercase mb-1"
+            >
+              App_Size
+            </div>
+            <div class="font-mono text-xl text-primary">Lightweight</div>
+          </div>
+        </div>
+        <div
+          class="bg-surface-container-low/40 p-6 rounded-3xl border border-outline-variant/10 flex flex-col items-start gap-4"
+        >
+          <span
+            class="material-symbols-outlined text-primary-dim"
+            data-icon="encrypted">encrypted</span
+          >
+          <div class="text-left">
+            <div
+              class="font-label text-[10px] tracking-widest text-outline uppercase mb-1"
+            >
+              Database
+            </div>
+            <div class="font-mono text-xl text-on-surface">SQLite</div>
+          </div>
+        </div>
+      </div>
+    </div>
   </main>
   <Footer />
 </Layout>
@@ -100,7 +187,10 @@ const title = "WAITLIST";
   waitlistForm?.addEventListener("submit", async (event) => {
     event.preventDefault();
 
-    if (!(waitlistEmailInput instanceof HTMLInputElement) || !(waitlistStatus instanceof HTMLElement)) {
+    if (
+      !(waitlistEmailInput instanceof HTMLInputElement) ||
+      !(waitlistStatus instanceof HTMLElement)
+    ) {
       return;
     }
 
@@ -110,14 +200,16 @@ const title = "WAITLIST";
     if (!emailPattern.test(email)) {
       waitlistStatus.textContent = "Please enter a valid email address.";
       waitlistStatus.classList.remove("hidden");
-      waitlistStatus.className = "mt-4 text-sm text-error font-mono bg-error/10 px-4 py-2 rounded-lg border border-error/20";
+      waitlistStatus.className =
+        "mt-4 text-sm text-error font-mono bg-error/10 px-4 py-2 rounded-lg border border-error/20";
       waitlistEmailInput.focus();
       return;
     }
 
     waitlistStatus.textContent = "Submitting...";
     waitlistStatus.classList.remove("hidden");
-      waitlistStatus.className = "mt-4 text-sm text-primary font-mono bg-primary/10 px-4 py-2 rounded-lg border border-primary/20";
+    waitlistStatus.className =
+      "mt-4 text-sm text-primary font-mono bg-primary/10 px-4 py-2 rounded-lg border border-primary/20";
     if (waitlistSubmit) waitlistSubmit.setAttribute("disabled", "true");
     if (waitlistLoading) waitlistLoading.classList.remove("hidden");
     if (waitlistButtonText) waitlistButtonText.classList.add("invisible");
@@ -134,23 +226,26 @@ const title = "WAITLIST";
       }
 
       if (waitlistForm instanceof HTMLFormElement) waitlistForm.reset();
-      waitlistStatus.textContent = "You are on the waitlist. We will contact you soon.";
+      waitlistStatus.textContent =
+        "You are on the waitlist. We will contact you soon.";
       waitlistStatus.classList.remove("hidden");
-      waitlistStatus.className = "mt-4 text-sm text-primary font-mono bg-primary/10 px-4 py-2 rounded-lg border border-primary/20";
+      waitlistStatus.className =
+        "mt-4 text-sm text-primary font-mono bg-primary/10 px-4 py-2 rounded-lg border border-primary/20";
       if (waitlistSubmit) waitlistSubmit.removeAttribute("disabled");
       if (waitlistLoading) waitlistLoading.classList.add("hidden");
       if (waitlistButtonText) waitlistButtonText.classList.remove("invisible");
     } catch {
-      waitlistStatus.textContent = "Could not join the waitlist right now. Try again in a moment.";
+      waitlistStatus.textContent =
+        "Could not join the waitlist right now. Try again in a moment.";
       waitlistStatus.classList.remove("hidden");
-      waitlistStatus.className = "mt-4 text-sm text-error font-mono bg-error/10 px-4 py-2 rounded-lg border border-error/20";
+      waitlistStatus.className =
+        "mt-4 text-sm text-error font-mono bg-error/10 px-4 py-2 rounded-lg border border-error/20";
       if (waitlistSubmit) waitlistSubmit.removeAttribute("disabled");
       if (waitlistLoading) waitlistLoading.classList.add("hidden");
       if (waitlistButtonText) waitlistButtonText.classList.remove("invisible");
     }
   });
 </script>
-
 
 <script>
   // Countdown Timer
@@ -166,7 +261,9 @@ const title = "WAITLIST";
     }
 
     const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const hours = Math.floor(
+      (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+    );
     const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
