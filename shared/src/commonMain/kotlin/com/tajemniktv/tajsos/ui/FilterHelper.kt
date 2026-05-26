@@ -41,7 +41,7 @@ object FilterHelper {
      * @param timeHorizon A string determining the required temporal scope relative to the current time (e.g., "today", "week", "month", "semester", "short", "long").
      * @param relations The complete list of relationship entities used to evaluate bidirectional links for the `linkedToId` filter.
      * @param sortMode The sorting mode to apply: "updated" (descending update time and ID) or "relevance" (relevance score, then update time and ID). Defaults to "relevance".
-     * @return A list containing only the matching `NodeWithPin` elements, sorted according to the specified `sortMode`.
+     * @return A list containing only the matching `NodeWithPin` elements, sorted according to the specified `sortMode`. Performance is optimized by hoisting status string splitting outside of the O(N) evaluation block.
      */
     fun filterAndSortNodes(
         nodes: List<NodeWithPin>,
@@ -70,6 +70,7 @@ object FilterHelper {
                 .now()
                 .toEpochMilliseconds()
         val dayMs = 24 * 60 * 60 * 1000L
+        val statusSet = status?.split(",")?.map { it.trim() }?.toSet()
 
         val filtered =
             nodes
@@ -81,7 +82,7 @@ object FilterHelper {
 
                     // Allow mode/status filtering logic (comma separated status like "active,on_hold")
                     val matchesStatus =
-                        status == null || status.split(",").map { it.trim() }.contains(node.status)
+                        statusSet == null || (node.status != null && node.status in statusSet)
 
                     val matchesProject = projectId == null || node.projectId == projectId
                     val matchesArea = areaId == null || node.areaId == areaId
@@ -105,28 +106,8 @@ object FilterHelper {
                         socialContext == null || node.socialContext == socialContext
                     val matchesTimeWindowContext =
                         timeWindowContext == null || node.timeWindowContext == timeWindowContext
-                    val matchesTimeHorizon =
-                        if (timeHorizon == null) {
-                            true
-                        } else {
-                            val due = node.dueAt
-                            when (timeHorizon)
-                            {
-                                "today" -> due != null && due in now..(now + dayMs)
-                                "week" -> due != null && due in now..(now + 7 * dayMs)
-                                "month" -> due != null && due in now..(now + 30 * dayMs)
-                                "semester" -> due != null && due in now..(now + 120 * dayMs)
-                                "short" -> due != null && due in now..(now + 7 * dayMs)
-                                "long" -> due != null && due > (now + 30 * dayMs)
-                                else -> true
-                            }
-                        }
-                    val matchesLinkedTo =
-                        linkedToId == null ||
-                            relations.any {
-                                (it.fromNodeId == node.id && it.toNodeId == linkedToId) ||
-                                    (it.fromNodeId == linkedToId && it.toNodeId == node.id)
-                            }
+                    val matchesTimeHorizon = matchesTimeHorizon(timeHorizon, node.dueAt, now, dayMs)
+                    val matchesLinkedTo = matchesLinkedTo(node.id, linkedToId, relations)
                     matchesQuery &&
                         matchesType &&
                         matchesStatus &&
@@ -161,6 +142,36 @@ object FilterHelper {
                         .thenByDescending { it.node.id },
                 )
             }
+        }
+    }
+
+    private fun matchesLinkedTo(
+        nodeId: Long,
+        linkedToId: Long?,
+        relations: List<RelationEntity>,
+    ): Boolean {
+        if (linkedToId == null) return true
+        return relations.any {
+            (it.fromNodeId == nodeId && it.toNodeId == linkedToId) ||
+                (it.fromNodeId == linkedToId && it.toNodeId == nodeId)
+        }
+    }
+
+    private fun matchesTimeHorizon(
+        timeHorizon: String?,
+        due: Long?,
+        now: Long,
+        dayMs: Long,
+    ): Boolean {
+        if (timeHorizon == null) return true
+        return when (timeHorizon) {
+            "today" -> due != null && due in now..(now + dayMs)
+            "week" -> due != null && due in now..(now + 7 * dayMs)
+            "month" -> due != null && due in now..(now + 30 * dayMs)
+            "semester" -> due != null && due in now..(now + 120 * dayMs)
+            "short" -> due != null && due in now..(now + 7 * dayMs)
+            "long" -> due != null && due > (now + 30 * dayMs)
+            else -> true
         }
     }
 
@@ -204,10 +215,11 @@ object FilterHelper {
      *
      * The score is determined by factors such as exact title match, title prefix match,
      * title inclusion, content inclusion, tag matches, and whether the node is pinned
-     * or currently active.
+     * or currently active. Performance is optimized by using case-insensitive string operations
+     * rather than allocating new strings via `lowercase()`.
      *
      * @param nodeWithPin The wrapper object containing the node entity and its associated tags.
-     * @param query The query string to evaluate against (will be trimmed and lowercased).
+     * @param query The raw query string to evaluate against (will be trimmed but case-insensitive).
      * @return An integer score representing the node's relevance. Higher is better.
      */
     private fun relevanceScore(
@@ -216,19 +228,19 @@ object FilterHelper {
     ): Int
     {
         if (query.isBlank()) return 0
-        val cleanQuery = query.trim().lowercase()
+        val cleanQuery = query.trim()
             val node = nodeWithPin.node
-            val title = node.title.lowercase()
-            val content = node.content.lowercase()
-            val tags = nodeWithPin.tags.map { it.name.lowercase() }
+            val title = node.title
+            val content = node.content
+            val tags = nodeWithPin.tags
 
             var score = 0
-            if (title == cleanQuery) score += 100
-            if (title.startsWith(cleanQuery)) score += 60
-            if (title.contains(cleanQuery)) score += 30
-            if (content.contains(cleanQuery)) score += 15
-            if (tags.any { it == cleanQuery }) score += 20
-            if (tags.any { it.contains(cleanQuery) }) score += 10
+            if (title.equals(cleanQuery, ignoreCase = true)) score += 100
+            if (title.startsWith(cleanQuery, ignoreCase = true)) score += 60
+            if (title.contains(cleanQuery, ignoreCase = true)) score += 30
+            if (content.contains(cleanQuery, ignoreCase = true)) score += 15
+            if (tags.any { it.name.equals(cleanQuery, ignoreCase = true) }) score += 20
+            if (tags.any { it.name.contains(cleanQuery, ignoreCase = true) }) score += 10
             if (nodeWithPin.isPinnedToToday) score += 8
             if (node.status == "active") score += 5
         return score
