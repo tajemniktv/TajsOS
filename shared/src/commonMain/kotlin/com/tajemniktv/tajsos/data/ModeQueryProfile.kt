@@ -143,8 +143,14 @@ fun buildModeQueryProfile(
  * @param raw The raw JSON string to decode (e.g., `["ITEM1", "ITEM2"]`).
  * @return A valid `List<String>`, or an empty list if parsing fails.
  */
+private inline fun <T> safeDecode(block: () -> T): T? =
+    try {
+        block()
+    } catch (e: Exception) {
+        null
+    }
+
 private fun decodeStringList(raw: String?): List<String> {
     if (raw.isNullOrBlank()) return emptyList()
-    return runCatching { modeProfileJson.decodeFromString<List<String>>(raw) }
-        .getOrElse { emptyList() }
+    return safeDecode { modeProfileJson.decodeFromString<List<String>>(raw) } ?: emptyList()
 }
