@@ -4,7 +4,7 @@
 
 package com.tajemniktv.tajsos.ui.screens.study
 
-import kotlin.coroutines.cancellation.CancellationException
+import com.tajemniktv.tajsos.data.safeDecode
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 

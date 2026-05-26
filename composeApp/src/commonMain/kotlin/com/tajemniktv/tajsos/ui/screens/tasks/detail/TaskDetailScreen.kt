@@ -4,7 +4,7 @@
 
 package com.tajemniktv.tajsos.ui.screens.tasks.detail
 
-import kotlin.coroutines.cancellation.CancellationException
+import com.tajemniktv.tajsos.data.safeDecode
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
