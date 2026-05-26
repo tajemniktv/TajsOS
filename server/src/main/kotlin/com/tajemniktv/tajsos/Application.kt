@@ -31,7 +31,7 @@ fun Application.module() {
     install(Authentication) {
         bearer("sync-auth") {
             authenticate { tokenCredential ->
-                val providedTokenHash = MessageDigest.getInstance("SHA-256").digest(tokenCredential.token.toByteArray(Charsets.UTF_8))
+                if (MessageDigest.isEqual(tokenCredential.token.toByteArray(Charsets.UTF_8), expectedToken.toByteArray(Charsets.UTF_8))) {
 
                 if (MessageDigest.isEqual(providedTokenHash, expectedTokenHash)) {
                     UserIdPrincipal("sync-client")
