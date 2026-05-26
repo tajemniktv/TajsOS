@@ -415,6 +415,12 @@ class MainViewModel(
         syncCalendars()
     }
 
+    /**
+     * Switches the global UI context to the specified mode, provided the mode's required pack is unlocked.
+     * Updates the active mode preference in the underlying repository.
+     *
+     * @param modeId The unique identifier of the target mode.
+     */
     fun switchMode(modeId: Long) {
         viewModelScope.launch {
             val mode = allModesRaw.value.find { it.id == modeId } ?: return@launch
@@ -1055,6 +1061,12 @@ class MainViewModel(
         }
     }
 
+    /**
+     * Delegates to [ProtocolCommands] to launch a guided sequential workflow or checklist.
+     *
+     * @param protocolLabel The normalized identifier for the requested protocol.
+     * @param source The origin surface triggering the protocol (e.g., "dashboard").
+     */
     fun triggerProtocol(
         protocolLabel: String,
         source: String = "dashboard", // NON-NLS
@@ -1446,18 +1458,43 @@ class MainViewModel(
         nodeCommands.updateOpenLoopType(node, openLoopType)
     }
 
+    /**
+     * Triages a raw open loop into a structured, actionable task.
+     * Applies default task metadata (e.g., active status) via [NodeCommands].
+     *
+     * @param nodeId The unique identifier of the open loop node to convert.
+     */
     fun convertOpenLoopToTask(nodeId: Long) {
         nodeCommands.convertOpenLoopToTask(nodeId)
     }
 
+    /**
+     * Triages a raw open loop into a structured decision matrix.
+     * Updates the node type and initializes decision metadata via [NodeCommands].
+     *
+     * @param nodeId The unique identifier of the open loop node to convert.
+     */
     fun convertOpenLoopToDecision(nodeId: Long) {
         nodeCommands.convertOpenLoopToDecision(nodeId)
     }
 
+    /**
+     * Triages a raw open loop into a persistent knowledge note.
+     * Updates the node type and strips transient triage metadata via [NodeCommands].
+     *
+     * @param nodeId The unique identifier of the open loop node to convert.
+     */
     fun convertOpenLoopToNote(nodeId: Long) {
         nodeCommands.convertOpenLoopToNote(nodeId)
     }
 
+    /**
+     * Closes an unprocessed captured item, optionally attaching a resolution note.
+     * Marks the loop as processed to remove it from triage surfaces.
+     *
+     * @param nodeId The unique identifier of the open loop node.
+     * @param resolutionNote Optional text explaining how or why the loop was resolved.
+     */
     fun resolveOpenLoop(
         nodeId: Long,
         resolutionNote: String? = null,
@@ -1741,6 +1778,10 @@ class MainViewModel(
         relationshipCommands.markMustFindLater(node, enabled)
     }
 
+    /**
+     * Executes end-of-month system maintenance scripts via [NodeCommands].
+     * This typically archives stale items, resets repeating structures, and generates monthly reflections.
+     */
     fun runMonthlyReset() {
         nodeCommands.runMonthlyReset()
     }
@@ -1887,6 +1928,12 @@ class MainViewModel(
 
     fun getMedicationsForEntry(trackEntryId: Long): Flow<List<TrackMedicationJoinEntity>> = repository.getTrackMedications(trackEntryId)
 
+    /**
+     * Initiates a tracked deep-work session for the specified node.
+     * Creates and persists a new [FocusSessionEntity] to track duration and interruptions.
+     *
+     * @param nodeId The unique identifier of the node being focused on.
+     */
     fun startFocusSession(nodeId: Long) {
         viewModelScope.launch {
             if (activeSession.value == null) {

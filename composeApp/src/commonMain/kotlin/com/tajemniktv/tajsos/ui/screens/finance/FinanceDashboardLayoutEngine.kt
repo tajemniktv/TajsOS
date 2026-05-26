@@ -100,12 +100,14 @@ fun buildFinanceDashboardPlan(
     }
 }
 
+private inline fun <T> safeDecode(block: () -> T): T? =
+    try {
+        block()
+    } catch (e: Exception) {
+        null
+    }
+
 private fun parseStructured(raw: String?): FinanceLayoutJsonV1? {
     if (raw.isNullOrBlank()) return null
-    return runCatching {
-        financeLayoutJson
-            .decodeFromString<FinanceLayoutJsonV1>(
-                raw,
-            )
-    }.getOrNull()
+    return safeDecode { financeLayoutJson.decodeFromString<FinanceLayoutJsonV1>(raw) }
 }
