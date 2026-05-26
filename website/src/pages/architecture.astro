@@ -1,72 +1,95 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Navbar from '../components/landing/Navbar.astro';
-import Footer from '../components/landing/Footer.astro';
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/landing/Navbar.astro";
+import Footer from "../components/landing/Footer.astro";
 
 const title = "ARCHITECTURE";
 ---
 
 <Layout title={title}>
   <div class="fixed inset-0 noise-bg pointer-events-none z-50"></div>
-  <div class="fixed top-[-10%] right-[-5%] w-[600px] h-[600px] gradient-sphere pointer-events-none -z-10"></div>
+  <div
+    class="fixed top-[-10%] right-[-5%] w-[600px] h-[600px] gradient-sphere pointer-events-none -z-10"
+  >
+  </div>
 
   <Navbar />
   <main class="relative pt-32 max-w-[1600px] mx-auto px-8 min-h-dvh">
+    <!-- Section 1: Header -->
+    <header
+      class="relative flex flex-col md:flex-row justify-between items-end border-b border-outline-variant/20 pb-8"
+    >
+      <div class="space-y-2">
+        <div
+          class="flex items-center space-x-3 text-primary font-mono text-sm tracking-widest uppercase"
+        >
+          <span class="w-2 h-2 bg-primary rounded-full animate-pulse"></span>
+          <span>Tech Stack</span>
+        </div>
+        <h1
+          class="font-headline text-6xl font-bold tracking-tighter uppercase leading-none"
+        >
+          ARCHITECTURE <span
+            class="text-outline-variant tracking-normal font-light">//</span
+          > OVERVIEW
+        </h1>
+      </div>
+    </header>
 
-<!-- Section 1: Header -->
-<header class="relative flex flex-col md:flex-row justify-between items-end border-b border-outline-variant/20 pb-8">
-<div class="space-y-2">
-<div class="flex items-center space-x-3 text-primary font-mono text-sm tracking-widest uppercase">
-<span class="w-2 h-2 bg-primary rounded-full animate-pulse"></span>
-<span>Tech Stack</span>
-</div>
-<h1 class="font-headline text-6xl font-bold tracking-tighter uppercase leading-none">
-                    ARCHITECTURE <span class="text-outline-variant tracking-normal font-light">//</span> OVERVIEW
-                </h1>
-</div>
-</header>
+    <section
+      class="max-w-4xl text-lg text-on-surface-variant leading-relaxed space-y-6 mt-16"
+    >
+      <h2 class="text-3xl font-bold font-headline mb-6 text-on-surface">
+        The Tech Stack
+      </h2>
+      <p>
+        TajsOS is built using modern Kotlin Multiplatform (KMP) tools, designed
+        for high performance, local-first capabilities, and cross-platform
+        consistency.
+      </p>
 
-<section class="max-w-4xl text-lg text-on-surface-variant leading-relaxed space-y-6 mt-16">
-  <h2 class="text-3xl font-bold font-headline mb-6 text-on-surface">The Tech Stack</h2>
-  <p>
-    TajsOS is built using modern Kotlin Multiplatform (KMP) tools, designed for high performance, local-first capabilities, and cross-platform consistency.
-  </p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+        <div
+          class="bg-surface-container-low p-6 rounded-3xl border border-outline-variant/10"
+        >
+          <h3 class="font-bold text-xl text-on-surface mb-2">Frontend / UI</h3>
+          <ul class="list-disc pl-4 space-y-2">
+            <li>Compose Multiplatform</li>
+            <li>Jetpack Compose (Android)</li>
+          </ul>
+        </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
-    <div class="bg-surface-container-low p-6 rounded-3xl border border-outline-variant/10">
-      <h3 class="font-bold text-xl text-on-surface mb-2">Frontend / UI</h3>
-      <ul class="list-disc pl-4 space-y-2">
-        <li>Compose Multiplatform</li>
-        <li>Jetpack Compose (Android)</li>
-      </ul>
-    </div>
+        <div
+          class="bg-surface-container-low p-6 rounded-3xl border border-outline-variant/10"
+        >
+          <h3 class="font-bold text-xl text-on-surface mb-2">Backend / Sync</h3>
+          <ul class="list-disc pl-4 space-y-2">
+            <li>Ktor Server</li>
+            <li>Kotlin Coroutines & Flow</li>
+          </ul>
+        </div>
 
-    <div class="bg-surface-container-low p-6 rounded-3xl border border-outline-variant/10">
-      <h3 class="font-bold text-xl text-on-surface mb-2">Backend / Sync</h3>
-      <ul class="list-disc pl-4 space-y-2">
-        <li>Ktor Server</li>
-        <li>Kotlin Coroutines & Flow</li>
-      </ul>
-    </div>
+        <div
+          class="bg-surface-container-low p-6 rounded-3xl border border-outline-variant/10"
+        >
+          <h3 class="font-bold text-xl text-on-surface mb-2">Database Layer</h3>
+          <ul class="list-disc pl-4 space-y-2">
+            <li>SQLite</li>
+            <li>Room Database (Local Persistence)</li>
+          </ul>
+        </div>
 
-    <div class="bg-surface-container-low p-6 rounded-3xl border border-outline-variant/10">
-      <h3 class="font-bold text-xl text-on-surface mb-2">Database Layer</h3>
-      <ul class="list-disc pl-4 space-y-2">
-        <li>SQLite</li>
-        <li>Room Database (Local Persistence)</li>
-      </ul>
-    </div>
-
-    <div class="bg-surface-container-low p-6 rounded-3xl border border-outline-variant/10">
-      <h3 class="font-bold text-xl text-on-surface mb-2">Core Logic</h3>
-      <ul class="list-disc pl-4 space-y-2">
-        <li>Kotlin Multiplatform (Shared library)</li>
-        <li>MVVM / Clean Architecture</li>
-      </ul>
-    </div>
-  </div>
-</section>
-
+        <div
+          class="bg-surface-container-low p-6 rounded-3xl border border-outline-variant/10"
+        >
+          <h3 class="font-bold text-xl text-on-surface mb-2">Core Logic</h3>
+          <ul class="list-disc pl-4 space-y-2">
+            <li>Kotlin Multiplatform (Shared library)</li>
+            <li>MVVM / Clean Architecture</li>
+          </ul>
+        </div>
+      </div>
+    </section>
   </main>
   <Footer />
 </Layout>

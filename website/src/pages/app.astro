@@ -1,43 +1,66 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Navbar from '../components/landing/Navbar.astro';
-import Footer from '../components/landing/Footer.astro';
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/landing/Navbar.astro";
+import Footer from "../components/landing/Footer.astro";
 
 const title = "APP";
 ---
 
 <Layout title={title}>
   <div class="fixed inset-0 noise-bg pointer-events-none z-50"></div>
-  <div class="fixed top-[-10%] right-[-5%] w-[600px] h-[600px] gradient-sphere pointer-events-none -z-10"></div>
+  <div
+    class="fixed top-[-10%] right-[-5%] w-[600px] h-[600px] gradient-sphere pointer-events-none -z-10"
+  >
+  </div>
 
   <Navbar />
   <main class="relative pt-32 max-w-[1600px] mx-auto px-8 min-h-dvh">
+    <!-- Header Section -->
+    <header class="py-16 md:py-24 text-left relative overflow-hidden">
+      <div
+        class="absolute -left-24 top-0 w-96 h-96 bg-primary-dim/10 rounded-full"
+      >
+      </div>
+      <h1
+        class="font-headline text-5xl md:text-8xl font-bold tracking-tighter uppercase leading-none neon-glow-primary"
+      >
+        APP<br /><span class="text-primary-dim">OVERVIEW</span>
+      </h1>
+      <div
+        class="mt-8 flex flex-col md:flex-row md:items-end justify-between gap-6"
+      >
+        <p
+          class="font-body text-on-surface-variant max-w-xl text-lg leading-relaxed"
+        >
+          TajsOS offers a unified dashboard bringing your tasks, notes,
+          projects, and areas into one cohesive environment designed for
+          execution and insight.
+        </p>
+        <div class="flex gap-4">
+          <div
+            class="px-4 py-2 bg-surface-container-high border border-outline-variant/20 rounded-lg flex items-center gap-3"
+          >
+            <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+            <span
+              class="font-mono text-[10px] uppercase tracking-widest text-primary"
+              >UI V1.0</span
+            >
+          </div>
+        </div>
+      </div>
+    </header>
 
-<!-- Header Section -->
-<header class="py-16 md:py-24 text-left relative overflow-hidden">
-<div class="absolute -left-24 top-0 w-96 h-96 bg-primary-dim/10 rounded-full"></div>
-<h1 class="font-headline text-5xl md:text-8xl font-bold tracking-tighter uppercase leading-none neon-glow-primary">
-                APP<br/><span class="text-primary-dim">OVERVIEW</span>
-</h1>
-<div class="mt-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
-<p class="font-body text-on-surface-variant max-w-xl text-lg leading-relaxed">
-                    TajsOS offers a unified dashboard bringing your tasks, notes, projects, and areas into one cohesive environment designed for execution and insight.
-                </p>
-<div class="flex gap-4">
-<div class="px-4 py-2 bg-surface-container-high border border-outline-variant/20 rounded-lg flex items-center gap-3">
-<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-<span class="font-mono text-[10px] uppercase tracking-widest text-primary">UI V1.0</span>
-</div>
-</div>
-</div>
-</header>
-
-<section class="mb-32">
-  <div class="w-full aspect-[16/9] bg-surface-container-low rounded-2xl overflow-hidden border border-outline-variant/10 relative">
-    <img src={`${import.meta.env.BASE_URL}images/app-screenshot.png`} alt="TajsOS Dashboard" class="w-full h-full object-cover">
-  </div>
-</section>
-
+    <section class="mb-32">
+      <div
+        class="w-full aspect-[16/9] bg-surface-container-low rounded-2xl overflow-hidden border border-outline-variant/10 relative"
+      >
+        <img
+          src={`${import.meta.env.BASE_URL}images/app-screenshot.png`}
+          alt="TajsOS Dashboard"
+          class="w-full h-full object-cover"
+        />
+      </div>
+    </section>
   </main>
   <Footer />
 </Layout>
