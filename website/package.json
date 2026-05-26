@@ -21,9 +21,9 @@
     "@astrojs/starlight": "^0.39.2",
     "@biomejs/biome": "^2.4.15",
     "@tailwindcss/vite": "^4.3.0",
-    "@types/react": "^19.2.14",
+    "@types/react": "^19.2.15",
     "@types/react-dom": "^19.2.3",
-    "astro": "^6.3.5",
+    "astro": "^6.3.7",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "starlight-blog": "^0.26.1",
@@ -32,7 +32,7 @@
     "starlight-videos": "^0.4.0",
     "tailwindcss": "^4.2.4",
     "typescript": "^6.0.3",
-    "vite": "^8.0.13"
+    "vite": "^8.0.14"
   },
   "overrides": {
     "vite": "$vite"

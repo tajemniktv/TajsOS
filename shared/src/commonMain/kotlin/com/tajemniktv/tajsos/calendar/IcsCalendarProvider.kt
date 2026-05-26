@@ -63,7 +63,8 @@ private suspend inline fun <T> safeExecute(block: suspend () -> T): Result<T> = 
             }
         }.onFailure { e ->
             println("ICS fetch failed for providerId=${provider.id}: $e")
-        }.getOrDefault(emptyList())
+            emptyList()
+        }
     }
 
     /**
