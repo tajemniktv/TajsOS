@@ -1062,7 +1062,7 @@ class MainViewModel(
     }
 
     /**
-     * Delegates to [protocolCommands] to launch a guided sequential workflow or checklist.
+     * Delegates to [ProtocolCommands] to launch a guided sequential workflow or checklist.
      *
      * @param protocolLabel The normalized identifier for the requested protocol.
      * @param source The origin surface triggering the protocol (e.g., "dashboard").
@@ -1460,7 +1460,7 @@ class MainViewModel(
 
     /**
      * Triages a raw open loop into a structured, actionable task.
-     * Applies default task metadata (e.g., active status) via [nodeCommands].
+     * Applies default task metadata (e.g., active status) via [NodeCommands].
      *
      * @param nodeId The unique identifier of the open loop node to convert.
      */
@@ -1470,7 +1470,7 @@ class MainViewModel(
 
     /**
      * Triages a raw open loop into a structured decision matrix.
-     * Updates the node type and initializes decision metadata via [nodeCommands].
+     * Updates the node type and initializes decision metadata via [NodeCommands].
      *
      * @param nodeId The unique identifier of the open loop node to convert.
      */
@@ -1480,7 +1480,7 @@ class MainViewModel(
 
     /**
      * Triages a raw open loop into a persistent knowledge note.
-     * Updates the node type and strips transient triage metadata via [nodeCommands].
+     * Updates the node type and strips transient triage metadata via [NodeCommands].
      *
      * @param nodeId The unique identifier of the open loop node to convert.
      */
@@ -1779,7 +1779,7 @@ class MainViewModel(
     }
 
     /**
-     * Executes end-of-month system maintenance scripts via [nodeCommands].
+     * Executes end-of-month system maintenance scripts via [NodeCommands].
      * This typically archives stale items, resets repeating structures, and generates monthly reflections.
      */
     fun runMonthlyReset() {
