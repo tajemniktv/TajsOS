@@ -43,7 +43,7 @@ class RelationshipCommandsTest {
 
     @Test
     fun testSetPersonLastContactNow() = runTest {
-        val scope = TestScope(testScheduler)
+        val scope = this
         val repo = buildTestRepository()
         val commands = setupTestRelationshipCommands(scope, repo)
 
@@ -81,18 +81,19 @@ class RelationshipCommandsTest {
         val repo = buildTestRepository()
         val commands = setupTestRelationshipCommands(scope, repo)
 
-        val personNode = NodeEntity(id = 1L, type = "person", title = "Bob")
-        repo.insertNode(personNode)
+        val personId = repo.insertNode(NodeEntity(type = "person", title = "Bob"))
 
-        commands.createReplyNeededForPerson(1L, "Bob")
+        commands.createReplyNeededForPerson(personId, "Bob")
         testScheduler.advanceUntilIdle()
 
         val nodes = repo.getAllNodes().first()
         val replyNodes = nodes.filter { it.node.type == "open_loop" && it.node.title.contains("Bob") }
         assertEquals(1, replyNodes.size, "Should create exactly 1 reply needed node")
+        assertEquals("reply_needed", replyNodes.first().node.openLoopType)
 
         val relations = repo.getRelationsForNode(1L).first()
-        val relation = relations.firstOrNull { it.fromNodeId == 1L && it.relationType == "RELATED_PERSON" }
+        val relatedPersonIds = relations.filter { it.relationType == "RELATED_PERSON" }.map { it.fromNodeId }.toSet()
+        assertEquals(setOf(personId), relatedPersonIds)
         assertTrue(relation != null)
         assertEquals(replyNodes.first().node.id, relation.toNodeId)
     }
