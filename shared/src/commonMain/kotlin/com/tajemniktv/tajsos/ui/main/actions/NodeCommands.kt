@@ -727,7 +727,7 @@ class NodeCommands(
      *
      * Validates that the node is of type "maintenance" before updating. If a non-null
      * interval is provided, the node is marked as recurring and the interval strings
-     * (`recurringInterval` and `maintenanceInterval`) are populated. If null, recurrency is disabled.
+     * (recurringInterval and maintenanceInterval) are populated. If null, recurrence is disabled.
      *
      * @param node The node entity to modify.
      * @param interval The recurring interval definition (e.g., "1w", "1m"), or null to disable.
@@ -748,7 +748,7 @@ class NodeCommands(
     }
 
     /**
-     * Toggles a project node's execution status between active pursuit and a paused state.
+     * Sets a project node's execution status between active pursuit and a paused state.
      *
      * Validates that the node is of type "project" before updating. This primarily dictates
      * if the project surfaces in daily actionable views ("active") or is deferred for later review ("on_hold").
