@@ -647,7 +647,7 @@ suspend fun buildDashboardUIState(
             nodes
                 .filter { it.node.status == "done" && it.node.completedAt != null && it.node.completedAt >= sevenDaysAgo } // NON-NLS
                 .take(5),
-        shoppingList = nodes.filter { it.node.status == "active" && it.tags.any { t -> t.name.lowercase() == "shopping" } }, // NON-NLS
+        shoppingList = nodes.filter { it.node.status == "active" && it.tags.any { t -> t.name.equals("shopping", ignoreCase = true) } }, // NON-NLS
         unresolvedBureaucracy =
             nodes.filter {
                 it.node.type == "maintenance" &&
