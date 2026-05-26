@@ -579,16 +579,34 @@ fun NodeEntity.isResolvedDecisionSupportItem(): Boolean =
  */
 fun NodeWithPin.itemKindOrNull(): ItemKind? = node.itemKindOrNull()
 
+/**
+ * Returns true when the node represents task-shaped work in the new model.
+ */
 fun NodeWithPin.isTaskItem(): Boolean = node.isTaskItem()
 
+/**
+ * Returns true when the node belongs to the Knowledge lens.
+ */
 fun NodeWithPin.isKnowledgeItem(): Boolean = node.isKnowledgeItem()
 
+/**
+ * Returns true when the node represents an enduring area of responsibility.
+ */
 fun NodeWithPin.isAreaItem(): Boolean = node.isAreaItem()
 
+/**
+ * Returns true when the node behaves as a tracked relationship anchor.
+ */
 fun NodeWithPin.isRelationshipAnchor(): Boolean = node.isRelationshipAnchor()
 
+/**
+ * Returns true when the node behaves as a physical context or place anchor.
+ */
 fun NodeWithPin.isPlaceAnchor(): Boolean = node.isPlaceAnchor()
 
+/**
+ * Returns true when task-shaped work is specifically about making or revisiting a decision.
+ */
 fun NodeWithPin.isDecisionSupportItem(): Boolean = node.isDecisionSupportItem()
 
 private fun NodeEntity.tagsHintContainsRelationship(): Boolean =
