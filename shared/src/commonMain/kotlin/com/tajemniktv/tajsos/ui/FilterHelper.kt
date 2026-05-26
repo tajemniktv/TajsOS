@@ -106,28 +106,8 @@ object FilterHelper {
                         socialContext == null || node.socialContext == socialContext
                     val matchesTimeWindowContext =
                         timeWindowContext == null || node.timeWindowContext == timeWindowContext
-                    val matchesTimeHorizon =
-                        if (timeHorizon == null) {
-                            true
-                        } else {
-                            val due = node.dueAt
-                            when (timeHorizon)
-                            {
-                                "today" -> due != null && due in now..(now + dayMs)
-                                "week" -> due != null && due in now..(now + 7 * dayMs)
-                                "month" -> due != null && due in now..(now + 30 * dayMs)
-                                "semester" -> due != null && due in now..(now + 120 * dayMs)
-                                "short" -> due != null && due in now..(now + 7 * dayMs)
-                                "long" -> due != null && due > (now + 30 * dayMs)
-                                else -> true
-                            }
-                        }
-                    val matchesLinkedTo =
-                        linkedToId == null ||
-                            relations.any {
-                                (it.fromNodeId == node.id && it.toNodeId == linkedToId) ||
-                                    (it.fromNodeId == linkedToId && it.toNodeId == node.id)
-                            }
+                    val matchesTimeHorizon = matchesTimeHorizon(timeHorizon, node.dueAt, now, dayMs)
+                    val matchesLinkedTo = matchesLinkedTo(node.id, linkedToId, relations)
                     matchesQuery &&
                         matchesType &&
                         matchesStatus &&
@@ -162,6 +142,36 @@ object FilterHelper {
                         .thenByDescending { it.node.id },
                 )
             }
+        }
+    }
+
+    private fun matchesLinkedTo(
+        nodeId: Long,
+        linkedToId: Long?,
+        relations: List<RelationEntity>,
+    ): Boolean {
+        if (linkedToId == null) return true
+        return relations.any {
+            (it.fromNodeId == nodeId && it.toNodeId == linkedToId) ||
+                (it.fromNodeId == linkedToId && it.toNodeId == nodeId)
+        }
+    }
+
+    private fun matchesTimeHorizon(
+        timeHorizon: String?,
+        due: Long?,
+        now: Long,
+        dayMs: Long,
+    ): Boolean {
+        if (timeHorizon == null) return true
+        return when (timeHorizon) {
+            "today" -> due != null && due in now..(now + dayMs)
+            "week" -> due != null && due in now..(now + 7 * dayMs)
+            "month" -> due != null && due in now..(now + 30 * dayMs)
+            "semester" -> due != null && due in now..(now + 120 * dayMs)
+            "short" -> due != null && due in now..(now + 7 * dayMs)
+            "long" -> due != null && due > (now + 30 * dayMs)
+            else -> true
         }
     }
 
