@@ -901,12 +901,12 @@ data class SavedViewDefinition(
  * @property record Optional record-specific details if the object is a record.
  * @property project Optional project-specific details if the object is a project.
  * @property area Optional area-specific details if the object is an area.
- * @property schedule Associated scheduling entries for this item.
+ * @property schedule The list of scheduling entries associated with this item.
  * @property document Optional rich content document linked to this item.
- * @property domains List of domain assignments mapped to this item.
- * @property tags List of tag entities applied to this item.
- * @property attachments List of file attachments associated with this item.
- * @property relations List of relational links to other items.
+ * @property domains The list of domain assignments mapped to this item.
+ * @property tags The list of tag entities applied to this item.
+ * @property attachments The list of file attachments associated with this item.
+ * @property relations The list of relational links to other items.
  */
 @Serializable
 data class LifeObjectAggregate(
