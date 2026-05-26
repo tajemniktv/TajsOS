@@ -741,7 +741,10 @@ fun NewEntryButton(
                     .mouseButtons(
                         onSecondaryClick = onClick,
                         onMiddleClick = onClick,
-                    ).graphicsLayer(scaleX = scale, scaleY = scale),
+                    ).graphicsLayer {
+                        scaleX = scale
+                        scaleY = scale
+                    },
             interactionSource = interactionSource,
             tonalElevation = 0.dp,
             shadowElevation = 0.dp,
