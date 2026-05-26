@@ -303,7 +303,7 @@ class MainStateAssemblersDashboardTest {
         val now = Clock.System.now().toEpochMilliseconds()
 
         // Critical project
-        val projectNodeBase = defaultNode(100, "project", "active").copy(projectId = null)
+        val projectNodeBase = defaultNode(100, "project", "active")
         val projectNode = createTestNodeWithPin(projectNodeBase)
 
         val criticalTaskBase = defaultNode(101, "task", "active").copy(
