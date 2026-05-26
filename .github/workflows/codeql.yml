@@ -145,7 +145,6 @@ jobs:
             :server:classes \
             :androidApp:assembleDebug \
             --stacktrace \
-            --no-daemon
 
       - name: Perform CodeQL Analysis (java-kotlin)
         uses: github/codeql-action/analyze@7211b7c8077ea37d8641b6271f6a365a22a5fbfa # v4
