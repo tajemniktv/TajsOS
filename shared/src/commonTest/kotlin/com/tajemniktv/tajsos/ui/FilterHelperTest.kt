@@ -675,13 +675,14 @@ class FilterHelperTest {
 
     @Test
     fun testShortCircuitAnds() {
-        val node1 = createTestNode(1, "title", type = "task").copy(
-            node = createTestNode(1, "title", type = "task").node.copy(
-                energyContext = "high",
-                deviceContext = "laptop",
-                socialContext = "solo",
-                timeWindowContext = "evening"
-            )
+        val node1 = createTestNode(
+            id = 1,
+            title = "title",
+            type = "task",
+            energyContext = "high",
+            deviceContext = "laptop",
+            socialContext = "solo",
+            timeWindowContext = "evening"
         )
 
         val result1 = filter(listOf(node1)) { energyContext = "low" }
@@ -748,13 +749,13 @@ class FilterHelperTest {
 
     @Test
     fun testShortCircuitLeftSides() {
-        val node1 = createTestNode(1, "title").copy(
-            node = createTestNode(1, "title").node.copy(
-                projectId = 100L,
-                areaId = 200L,
-                estimatedMinutes = 30,
-                energyLevel = 3
-            )
+        val node1 = createTestNode(
+            id = 1,
+            title = "title",
+            projectId = 100L,
+            areaId = 200L,
+            estimatedMinutes = 30,
+            energyLevel = 3
         )
         val result1 = filter(listOf(node1)) { projectId = 100L; areaId = 200L; maxMins = 30; energy = 3 }
         assertEquals(1, result1.size)
