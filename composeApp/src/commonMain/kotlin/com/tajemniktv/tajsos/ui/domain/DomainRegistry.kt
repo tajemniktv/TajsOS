@@ -10,7 +10,7 @@ import com.tajemniktv.tajsos.ui.Screen
 import org.jetbrains.compose.resources.StringResource
 
 /**
- * Defines a built-in domain definition used by navigation and domain modules.
+ * Represents a built-in domain used by navigation and domain modules.
  * This class represents a product-level lens over shared system data,
  * providing the required metadata (route, label, icon) for UI presentation.
  *
@@ -78,7 +78,7 @@ object DomainRegistry {
      * Retrieves the [DomainDefinition] whose base route matches the provided route string.
      * Extracts the base route from the given string by stripping out sub-paths and query parameters.
      *
-     * @param route The full navigation route string.
+     * @param route The full navigation route string, or null.
      * @return The matching [DomainDefinition], or null if the route does not match any domain.
      */
     fun byRoute(route: String?): DomainDefinition? {
