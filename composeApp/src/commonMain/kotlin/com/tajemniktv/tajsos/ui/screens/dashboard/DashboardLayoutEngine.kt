@@ -443,21 +443,19 @@ private fun normalizeBlocks(
         }.distinctBy { it.id }
 }
 
+private inline fun <T> safeDecode(block: () -> T): T? =
+    try {
+        block()
+    } catch (e: Exception) {
+        null
+    }
+
 private fun parseLegacyBlockList(raw: String?): List<String> {
     if (raw.isNullOrBlank()) return emptyList()
-    return runCatching {
-        dashboardJson.decodeFromString<List<String>>(
-            raw,
-        )
-    }.getOrElse { emptyList() }
+    return safeDecode { dashboardJson.decodeFromString<List<String>>(raw) } ?: emptyList()
 }
 
 private fun parseVersionedLayout(raw: String?): DashboardLayoutJsonV1? {
     if (raw.isNullOrBlank()) return null
-    return runCatching {
-        dashboardJson
-            .decodeFromString<DashboardLayoutJsonV1>(
-                raw,
-            )
-    }.getOrNull()
+    return safeDecode { dashboardJson.decodeFromString<DashboardLayoutJsonV1>(raw) }
 }

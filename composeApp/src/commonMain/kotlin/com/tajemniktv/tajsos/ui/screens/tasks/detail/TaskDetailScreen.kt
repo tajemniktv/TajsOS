@@ -546,10 +546,17 @@ private fun formatTime(epochMillis: Long): String {
     return "$hour:$minute"
 }
 
+private inline fun <T> safeDecode(block: () -> T): T? =
+    try {
+        block()
+    } catch (e: Exception) {
+        null
+    }
+
 private fun parseAttachmentMetadata(payload: String): Map<String, String> =
-    runCatching {
+    safeDecode {
         Json.parseToJsonElement(payload).jsonObject.mapValues { (_, value) -> value.jsonPrimitive.content }
-    }.getOrDefault(emptyMap())
+    } ?: emptyMap()
 
 private fun formatBytes(bytes: Long): String {
     if (bytes <= 0) return "0 B"
