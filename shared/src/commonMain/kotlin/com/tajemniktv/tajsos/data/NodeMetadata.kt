@@ -101,16 +101,11 @@ data class AreaMetadata(
  * returning null if the payload is malformed or empty. This ensures that corrupt metadata
  * does not crash the UI. This design prevents a single broken node from taking down the entire list view.
  */
-private inline fun <T> safeDecode(block: () -> T): T? =
-    try {
-        block()
-    } catch (e: Exception) {
-        null
-    }
-
 fun NodeEntity.metadataEnvelopeOrNull(): NodeMetadataEnvelope? =
     metadataJson?.takeIf { it.isNotBlank() }?.let {
-        safeDecode { nodeMetadataJson.decodeFromString<NodeMetadataEnvelope>(it) }
+        runCatching {
+            nodeMetadataJson.decodeFromString<NodeMetadataEnvelope>(it)
+        }.getOrNull()
     }
 
 /**

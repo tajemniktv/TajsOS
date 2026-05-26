@@ -16,12 +16,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -53,10 +47,6 @@ fun ActionButton(
     contentColor: Color = TajsOSTheme.Text,
     icon: ImageVector? = null,
 ) {
-    val interactionSource = remember { MutableInteractionSource() }
-    val isPressed by interactionSource.collectIsPressedAsState()
-    val scale by animateFloatAsState(targetValue = if (isPressed) 0.98f else 1f, label = "button_scale")
-
     val isPrimary = containerColor == TajsOSTheme.Primary
     val isGhost = containerColor == Color.Transparent
     val buttonBorder =
@@ -66,20 +56,33 @@ fun ActionButton(
             null
         }
 
-    val finalModifier = resolveActionButtonModifier(modifier, isPrimary, enabled)
+    val finalModifier =
+        modifier.height(48.dp).then(
+            if (isPrimary && enabled) {
+                Modifier.background(
+                    brush =
+                        Brush.linearGradient(
+                            colors = listOf(TajsOSTheme.Primary, TajsOSTheme.PrimaryDim),
+                            start = Offset(0f, 0f),
+                            end = Offset.Infinite,
+                        ),
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+                )
+            } else {
+                Modifier
+            },
+        )
 
     Button(
         onClick = onClick,
         enabled = enabled,
-        interactionSource = interactionSource,
-        modifier = finalModifier.graphicsLayer(scaleX = scale, scaleY = scale),
+        modifier = finalModifier,
         colors =
-            resolveActionButtonColors(
-                isPrimary = isPrimary,
-                enabled = enabled,
-                isGhost = isGhost,
-                containerColor = containerColor,
-                contentColor = contentColor,
+            ButtonDefaults.buttonColors(
+                containerColor = if (isPrimary && enabled) Color.Transparent else containerColor,
+                contentColor = if (isPrimary && contentColor == TajsOSTheme.Text) TajsOSTheme.Background else contentColor,
+                disabledContainerColor = if (isGhost) Color.Transparent else TajsOSTheme.SurfaceHighest,
+                disabledContentColor = TajsOSTheme.Muted,
             ),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         border = buttonBorder,
@@ -96,43 +99,4 @@ fun ActionButton(
             letterSpacing = 1.sp,
         )
     }
-}
-
-@Composable
-private fun resolveActionButtonColors(
-    isPrimary: Boolean,
-    enabled: Boolean,
-    isGhost: Boolean,
-    containerColor: Color,
-    contentColor: Color,
-): androidx.compose.material3.ButtonColors {
-    return ButtonDefaults.buttonColors(
-        containerColor = if (isPrimary && enabled) Color.Transparent else containerColor,
-        contentColor = if (isPrimary && contentColor == TajsOSTheme.Text) TajsOSTheme.Background else contentColor,
-        disabledContainerColor = if (isGhost) Color.Transparent else TajsOSTheme.SurfaceHighest,
-        disabledContentColor = TajsOSTheme.Muted,
-    )
-}
-
-@Composable
-private fun resolveActionButtonModifier(
-    modifier: Modifier,
-    isPrimary: Boolean,
-    enabled: Boolean,
-): Modifier {
-    return modifier.height(48.dp).then(
-        if (isPrimary && enabled) {
-            Modifier.background(
-                brush =
-                    Brush.linearGradient(
-                        colors = listOf(TajsOSTheme.Primary, TajsOSTheme.PrimaryDim),
-                        start = Offset(0f, 0f),
-                        end = Offset.Infinite,
-                    ),
-                shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            )
-        } else {
-            Modifier
-        },
-    )
 }

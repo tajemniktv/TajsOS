@@ -90,14 +90,7 @@ fun buildStudyDashboardPlan(
     }
 }
 
-private inline fun <T> safeDecode(block: () -> T): T? =
-    try {
-        block()
-    } catch (e: Exception) {
-        null
-    }
-
 private fun parseStructured(raw: String?): StudyLayoutJsonV1? {
     if (raw.isNullOrBlank()) return null
-    return safeDecode { studyLayoutJson.decodeFromString<StudyLayoutJsonV1>(raw) }
+    return runCatching { studyLayoutJson.decodeFromString<StudyLayoutJsonV1>(raw) }.getOrNull()
 }

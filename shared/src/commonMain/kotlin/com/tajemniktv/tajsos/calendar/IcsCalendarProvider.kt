@@ -37,7 +37,7 @@ class IcsCalendarProvider(
      * @param to The end of the time range (inclusive).
      * @return A list of valid, parsed [CalendarEventEntity] instances falling within the range.
      */
-private suspend inline fun <T> safeExecute(block: suspend () -> T): Result<T> = try {
+    private inline fun <T> safeExecute(block: () -> T): Result<T> = try {
         Result.success(block())
     } catch (e: CancellationException) {
         throw e
@@ -63,8 +63,7 @@ private suspend inline fun <T> safeExecute(block: suspend () -> T): Result<T> = 
             }
         }.onFailure { e ->
             println("ICS fetch failed for providerId=${provider.id}: $e")
-            emptyList()
-        }
+        }.getOrDefault(emptyList())
     }
 
     /**

@@ -579,34 +579,16 @@ fun NodeEntity.isResolvedDecisionSupportItem(): Boolean =
  */
 fun NodeWithPin.itemKindOrNull(): ItemKind? = node.itemKindOrNull()
 
-/**
- * Returns true when the node represents task-shaped work in the new model.
- */
 fun NodeWithPin.isTaskItem(): Boolean = node.isTaskItem()
 
-/**
- * Returns true when the node belongs to the Knowledge lens.
- */
 fun NodeWithPin.isKnowledgeItem(): Boolean = node.isKnowledgeItem()
 
-/**
- * Returns true when the node represents an enduring area of responsibility.
- */
 fun NodeWithPin.isAreaItem(): Boolean = node.isAreaItem()
 
-/**
- * Returns true when the node behaves as a tracked relationship anchor.
- */
 fun NodeWithPin.isRelationshipAnchor(): Boolean = node.isRelationshipAnchor()
 
-/**
- * Returns true when the node behaves as a physical context or place anchor.
- */
 fun NodeWithPin.isPlaceAnchor(): Boolean = node.isPlaceAnchor()
 
-/**
- * Returns true when task-shaped work is specifically about making or revisiting a decision.
- */
 fun NodeWithPin.isDecisionSupportItem(): Boolean = node.isDecisionSupportItem()
 
 private fun NodeEntity.tagsHintContainsRelationship(): Boolean =
@@ -784,18 +766,6 @@ data class AreaFacet(
 
 /**
  * Typed schedule entry returned by repository read models.
- *
- * @property id The unique identifier of this schedule entry.
- * @property itemId The identifier of the associated LifeOS item.
- * @property kind The specific kind of schedule entry (e.g., REMINDER, EVENT).
- * @property scheduledAt The epoch timestamp in milliseconds when this entry is scheduled.
- * @property localDateEpochDay Optional local date represented as epoch day.
- * @property timezoneId Optional timezone identifier string.
- * @property isAllDay Indicates if the scheduled entry is an all-day event.
- * @property endAt Optional epoch timestamp in milliseconds when the entry ends.
- * @property recurrenceRule Optional recurrence rule string (e.g., RRULE).
- * @property note Optional note or description for this schedule entry.
- * @property completedAt Optional epoch timestamp in milliseconds when this entry was completed.
  */
 @Serializable
 data class ScheduleEntry(
@@ -814,10 +784,6 @@ data class ScheduleEntry(
 
 /**
  * Typed domain assignment returned by repository read models.
- *
- * @property domain The specific domain kind assigned to the item.
- * @property isPrimary Indicates if this domain is the primary domain for the item.
- * @property assignedAt The epoch timestamp in milliseconds when the assignment was made.
  */
 @Serializable
 data class DomainAssignment(
@@ -828,13 +794,6 @@ data class DomainAssignment(
 
 /**
  * Typed rich-content document returned by repository read models.
- *
- * @property itemId The identifier of the LifeOS item owning this document.
- * @property format The format type of the rich content.
- * @property body The raw textual body of the document.
- * @property structuredContentJson Optional JSON string representing the structured layout.
- * @property schemaVersion The version of the content schema used.
- * @property updatedAt The epoch timestamp in milliseconds when the document was last updated.
  */
 @Serializable
 data class RichContentDocument(
@@ -848,11 +807,6 @@ data class RichContentDocument(
 
 /**
  * Typed saved-view filter returned by repository read models.
- *
- * @property fieldKey The field being filtered.
- * @property operator The condition operator used for filtering.
- * @property value Optional string value to filter against.
- * @property valueType The type of the filter value.
  */
 @Serializable
 data class SavedViewFilter(
@@ -864,9 +818,6 @@ data class SavedViewFilter(
 
 /**
  * Typed saved-view sort returned by repository read models.
- *
- * @property fieldKey The field used for sorting.
- * @property direction The sorting direction (ascending or descending).
  */
 @Serializable
 data class SavedViewSort(
@@ -876,21 +827,6 @@ data class SavedViewSort(
 
 /**
  * Typed saved-view definition returned by repository read models.
- *
- * @property id The unique identifier of this view.
- * @property name The display name of the view.
- * @property description Optional textual description of the view's purpose.
- * @property lens The primary lens associated with this view.
- * @property layout The layout presentation style for this view.
- * @property sourceKinds The set of item kinds included in this view.
- * @property filters The list of filters applied to this view.
- * @property sorts The list of sorting rules applied to this view.
- * @property visibleFields The list of fields visible in the view layout.
- * @property rowDimension Optional field defining the row dimension for grid/matrix layouts.
- * @property columnDimension Optional field defining the column dimension for grid/matrix layouts.
- * @property measure Optional measure field for aggregation or reporting views.
- * @property createdAt The epoch timestamp in milliseconds when this view was created.
- * @property updatedAt The epoch timestamp in milliseconds when this view was last updated.
  */
 @Serializable
 data class SavedViewDefinition(
@@ -912,19 +848,6 @@ data class SavedViewDefinition(
 
 /**
  * Aggregated local read model for a typed life object.
- *
- * @property node The base entity containing common node properties.
- * @property task Optional task-specific details if the object is a task.
- * @property note Optional note-specific details if the object is a note.
- * @property record Optional record-specific details if the object is a record.
- * @property project Optional project-specific details if the object is a project.
- * @property area Optional area-specific details if the object is an area.
- * @property schedule The list of scheduling entries associated with this item.
- * @property document Optional rich content document linked to this item.
- * @property domains The list of domain assignments mapped to this item.
- * @property tags The list of tag entities applied to this item.
- * @property attachments The list of file attachments associated with this item.
- * @property relations The list of relational links to other items.
  */
 @Serializable
 data class LifeObjectAggregate(
