@@ -8,7 +8,18 @@ class LifeObjectMappingsFallbackTest {
     @Test
     fun testSavedViewEntityToDefinition_invalid() {
         // Contains invalid keys for enum mapping
-        val entity = SavedViewEntity(id = 1, name = "View", description = "Desc", lens = "invalid_lens", layout = "invalid_layout", rowDimension = "invalid_row", columnDimension = "invalid_col", measure = "invalid_measure", createdAt = 1000L, updatedAt = 2000L)
+        val entity = SavedViewEntity(
+            id = 1,
+            name = "View",
+            description = "Desc",
+            lens = "invalid_lens",
+            layout = "invalid_layout",
+            rowDimension = "invalid_row",
+            columnDimension = "invalid_col",
+            measure = "invalid_measure",
+            createdAt = 1000L,
+            updatedAt = 2000L
+        )
         val sourceKinds = listOf(SavedViewSourceKindEntity(viewId = 1, itemKind = "invalid_kind"))
         val filters = listOf(SavedViewFilterEntity(viewId = 1, fieldKey = "invalid_field", operatorKey = "invalid_op", value = "val", valueType = "invalid_type", position = 0))
         val sorts = listOf(SavedViewSortEntity(viewId = 1, fieldKey = "invalid_field", direction = "invalid_dir", position = 0))
