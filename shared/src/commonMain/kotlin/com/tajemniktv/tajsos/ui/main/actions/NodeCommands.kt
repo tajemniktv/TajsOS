@@ -684,6 +684,16 @@ class NodeCommands(
         }
     }
 
+    /**
+     * Updates the maintenance type classification for a maintenance node.
+     *
+     * Validates that the node is of type "maintenance" before applying the update.
+     * This classification drives how the item is surfaced in specific domain lenses
+     * (e.g., categorizing an item as "bill" routes it to the Finance lens).
+     *
+     * @param node The node entity to modify.
+     * @param maintenanceType The new maintenance type string (e.g., "bill", "appointment").
+     */
     fun updateMaintenanceType(
         node: NodeEntity,
         maintenanceType: String,
@@ -693,6 +703,16 @@ class NodeCommands(
             updateNode(node.copy(maintenanceType = maintenanceType))
         }
 
+    /**
+     * Manually overrides or sets the overdue timestamp for a maintenance node.
+     *
+     * Validates that the node is of type "maintenance" before applying the update.
+     * If set, this timestamp allows the system to determine when a scheduled
+     * recurring or one-off maintenance task requires urgent attention.
+     *
+     * @param node The node entity to modify.
+     * @param timestamp The explicit epoch timestamp when the item becomes overdue, or null to clear it.
+     */
     fun setMaintenanceOverdueAt(
         node: NodeEntity,
         timestamp: Long?,
@@ -702,6 +722,16 @@ class NodeCommands(
             updateNode(node.copy(maintenanceOverdueAt = timestamp))
         }
 
+    /**
+     * Configures a maintenance node as recurring by setting its scheduling interval.
+     *
+     * Validates that the node is of type "maintenance" before updating. If a non-null
+     * interval is provided, the node is marked as recurring and the interval strings
+     * (recurringInterval and maintenanceInterval) are populated. If null, recurrence is disabled.
+     *
+     * @param node The node entity to modify.
+     * @param interval The recurring interval definition (e.g., "1w", "1m"), or null to disable.
+     */
     fun setMaintenanceRecurring(
         node: NodeEntity,
         interval: String?,
@@ -717,6 +747,15 @@ class NodeCommands(
         )
     }
 
+    /**
+     * Sets a project node's execution status between active pursuit and a paused state.
+     *
+     * Validates that the node is of type "project" before updating. This primarily dictates
+     * if the project surfaces in daily actionable views ("active") or is deferred for later review ("on_hold").
+     *
+     * @param project The project node entity to modify.
+     * @param active True to set the project status to "active", false for "on_hold".
+     */
     fun setProjectActivePhase(
         project: NodeEntity,
         active: Boolean,
@@ -750,6 +789,16 @@ class NodeCommands(
         updateNode(node.copy(startAt = null))
     }
 
+    /**
+     * Schedules or reschedules the specific starting execution date for a task node.
+     *
+     * Validates that the node is of type "task" before updating. This defines when the
+     * task officially becomes active or available for execution, preventing it from
+     * surfacing prematurely.
+     *
+     * @param node The task node entity to modify.
+     * @param workAt The epoch timestamp indicating when the task should begin, or null to clear.
+     */
     fun setWorkDate(
         node: NodeEntity,
         workAt: Long?,
