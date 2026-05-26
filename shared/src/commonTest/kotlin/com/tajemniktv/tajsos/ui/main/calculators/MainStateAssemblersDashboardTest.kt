@@ -296,4 +296,57 @@ class MainStateAssemblersDashboardTest {
 
         assertEquals(1, state.foundationalNotes.size)
     }
+
+    @Test
+    fun `buildDashboardUIState missing coverage for various nodes`() = runTest {
+        val repo = createRepo()
+        val now = Clock.System.now().toEpochMilliseconds()
+
+        // Critical project
+        val projectNodeBase = defaultNode(100, "project", "active").copy(projectId = null)
+        val projectNode = createTestNodeWithPin(projectNodeBase)
+
+        val criticalTaskBase = defaultNode(101, "task", "active").copy(
+            projectId = 100L,
+            isHardDeadline = true,
+            dueAt = now - 1000L
+        )
+        val criticalTask = createTestNodeWithPin(criticalTaskBase)
+
+        val neglectedTaskBase = defaultNode(102, "task", "active").copy(
+            projectId = 100L,
+            updatedAt = now - 15L * 24 * 60 * 60 * 1000L
+        )
+        val neglectedTask = createTestNodeWithPin(neglectedTaskBase)
+
+        // Archived this week
+        val archivedNodeBase = defaultNode(103, "task", "archived").copy(
+            archivedAt = now - 2 * 24 * 60 * 60 * 1000L
+        )
+        val archivedNode = createTestNodeWithPin(archivedNodeBase)
+
+        // Unresolved bureaucracy
+        val maintenanceNodeBase = defaultNode(104, "maintenance", "active").copy(
+            createdAt = now - 10 * 24 * 60 * 60 * 1000L
+        )
+        val maintenanceNode = createTestNodeWithPin(maintenanceNodeBase)
+
+        // Tiny victories
+        val doneNodeBase = defaultNode(105, "task", "done").copy(
+            completedAt = now - 1 * 24 * 60 * 60 * 1000L
+        )
+        val doneNode = createTestNodeWithPin(doneNodeBase)
+
+        val nodes = listOf(
+            projectNode, criticalTask, neglectedTask,
+            archivedNode, maintenanceNode, doneNode
+        )
+
+        val state = assembleState(repo, nodes)
+
+        assertEquals(1, state.criticalProjects.size)
+        assertEquals(1, state.archivedThisWeek.size)
+        assertEquals(1, state.unresolvedBureaucracy.size)
+        assertEquals(1, state.tinyVictories.size)
+    }
 }
