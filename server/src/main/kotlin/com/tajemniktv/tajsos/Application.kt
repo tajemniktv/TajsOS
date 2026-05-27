@@ -1,9 +1,6 @@
 package com.tajemniktv.tajsos
 
 import java.security.MessageDigest
-import javax.crypto.SecretKeyFactory
-import javax.crypto.spec.PBEKeySpec
-import java.security.SecureRandom
 
 import com.tajemniktv.tajsos.routes.healthRoutes
 import com.tajemniktv.tajsos.routes.syncRoutes
@@ -28,27 +25,14 @@ fun Application.module() {
     val expectedToken = environment.config.propertyOrNull("TAJSOS_SYNC_TOKEN")?.getString()
         ?: System.getenv("TAJSOS_SYNC_TOKEN")
         ?: error("TAJSOS_SYNC_TOKEN environment variable must be set")
-
-    val salt = ByteArray(16)
-    SecureRandom().nextBytes(salt)
-    val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256")
-    val spec = PBEKeySpec(expectedToken.toCharArray(), salt, 65536, 256)
-    val expectedTokenHash = try {
-        factory.generateSecret(spec).encoded
-    } finally {
-        spec.clearPassword()
-    }
+    val expectedTokenBytes = expectedToken.toByteArray(Charsets.UTF_8)
+    val expectedTokenHash = MessageDigest.getInstance("SHA-256").digest(expectedTokenBytes)
 
     install(Authentication) {
         bearer("sync-auth") {
             authenticate { tokenCredential ->
-                val providedSpec = PBEKeySpec(tokenCredential.token.toCharArray(), salt, 65536, 256)
-                val providedTokenHash = try {
-                    factory.generateSecret(providedSpec).encoded
-                } finally {
-                    providedSpec.clearPassword()
-                }
 
+                val providedTokenHash = MessageDigest.getInstance("SHA-256").digest(tokenCredential.token.toByteArray(Charsets.UTF_8))
                 if (MessageDigest.isEqual(providedTokenHash, expectedTokenHash)) {
                     UserIdPrincipal("sync-client")
                 } else {
