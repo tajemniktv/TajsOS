@@ -6,6 +6,7 @@ description: The mindset behind TajsOS.
 TajsOS aims to replace overwhelming lists with a mechanical, satisfying control center that makes task capture and execution feel like operating heavy machinery.
 
 It is designed to be a cohesive system for:
+
 - Capture
 - Execution
 - Knowledge

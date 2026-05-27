@@ -60,21 +60,31 @@
 }
 
 @layer utilities {
-    .glass-panel {
-        background: color-mix(in srgb, var(--color-surface-container-high) 60%, transparent);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-    }
-    .instrument-glow {
-        box-shadow: 0 0 50px rgba(186, 158, 255, 0.08), inset 0 0 30px rgba(186, 158, 255, 0.03);
-    }
-    .text-glow {
-        text-shadow: 0 0 30px rgba(186, 158, 255, 0.7);
-    }
-    .noise-bg {
-        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-        opacity: 0.04;
-    }
-    .gradient-sphere {
-        background: radial-gradient(circle, rgba(186, 158, 255, 0.15) 0%, transparent 70%);
-    }
+  .glass-panel {
+    background: color-mix(
+      in srgb,
+      var(--color-surface-container-high) 60%,
+      transparent
+    );
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  }
+  .instrument-glow {
+    box-shadow:
+      0 0 50px rgba(186, 158, 255, 0.08),
+      inset 0 0 30px rgba(186, 158, 255, 0.03);
+  }
+  .text-glow {
+    text-shadow: 0 0 30px rgba(186, 158, 255, 0.7);
+  }
+  .noise-bg {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.04;
+  }
+  .gradient-sphere {
+    background: radial-gradient(
+      circle,
+      rgba(186, 158, 255, 0.15) 0%,
+      transparent 70%
+    );
+  }
 }

@@ -6,6 +6,7 @@ description: Data persistence and structural boundaries.
 ## Core Architectural Stance
 
 TajsOS is:
+
 - Local-first
 - Multiplatform
 - Opinionated

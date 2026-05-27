@@ -12,8 +12,10 @@ TajsOS is moving toward a cohesive local-first system for capture, execution, kn
 ## Platform Focus
 
 **Primary:**
+
 - Android
 - Desktop
 
 **Secondary:**
+
 - iOS/Web/Sync (to be explored later)

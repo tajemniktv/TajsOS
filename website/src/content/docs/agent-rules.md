@@ -12,6 +12,7 @@ You are working on TajsOS, a Kotlin Multiplatform + Compose Multiplatform app.
 Use the format: `<type>(OptionalScope): <ShortDescription>`
 
 **Types:**
+
 - `feat` - new user-facing or developer-facing capability
 - `fix` - bug fix
 - `refactor` - structural/code cleanup without behavior change
