@@ -953,6 +953,13 @@ fun maintenanceUrgency(
  * @param projects A curated list of nodes strictly identified as "project" entities.
  * @return A [TimeArchitectureSnapshot] organizing nodes into layers (e.g., today, week, semester).
  */
+/**
+ * Calculates the hierarchical time and project phases structure to populate the Time shell.
+ *
+ * To preserve UI performance and minimize garbage collection pauses on slower devices,
+ * string sorting uses `compareTo(..., ignoreCase = true)` rather than `.lowercase()`
+ * allocations.
+ */
 fun calculateTimeArchitectureSnapshot(
     nodes: List<NodeWithPin>,
     todayLayerNodes: List<NodeEntity>,
@@ -1041,7 +1048,7 @@ fun calculateTimeArchitectureSnapshot(
                     isActivePhase = isActive,
                     phaseLabel = if (isActive) "active_phase" else "inactive_phase",
                 )
-            }.sortedBy { it.project.title.lowercase() }
+            }.sortedWith { a, b -> a.project.title.compareTo(b.project.title, ignoreCase = true) }
 
     return com.tajemniktv.tajsos.ui.TimeArchitectureSnapshot(
         todayLayer = todayLayer,
@@ -1079,6 +1086,10 @@ fun nextMonthlyResetDate(): String {
  * Evaluates all person-anchored nodes and their explicitly assigned relational events
  * to generate a [RelationshipSnapshot]. Assesses when someone was last contacted and calculates follow-up pressure.
  *
+ * To preserve UI performance and minimize garbage collection pauses on slower devices,
+ * string sorting uses `compareTo(..., ignoreCase = true)` rather than `.lowercase()`
+ * allocations.
+ *
  * @param nodes The complete list of active nodes in the system.
  * @param relations The complete list of relational edges tying nodes together.
  * @return A structured [RelationshipSnapshot] describing the health of active tracked relationships.
@@ -1094,7 +1105,7 @@ fun calculateRelationshipSnapshot(
     val people =
         nodes
             .filter { it.node.isRelationshipAnchor() && it.node.status == "active" }
-            .sortedBy { it.node.title.lowercase() }
+            .sortedWith { a, b -> a.node.title.compareTo(b.node.title, ignoreCase = true) }
 
     /**
      * Filters the global node list to extract all tasks or notes explicitly mentioning or linked to a specific person.
@@ -1216,26 +1227,17 @@ fun calculateRelationshipSnapshot(
     val importantRelationships =
         peopleItems
             .filter { it.isImportant }
-            .sortedBy {
-                it.person.node.title
-                    .lowercase()
-            }
+            .sortedWith { a, b -> a.person.node.title.compareTo(b.person.node.title, ignoreCase = true) }
 
     val professors =
         peopleItems
             .filter { it.relationshipType == "professor" }
-            .sortedBy {
-                it.person.node.title
-                    .lowercase()
-            }
+            .sortedWith { a, b -> a.person.node.title.compareTo(b.person.node.title, ignoreCase = true) }
 
     val friendsAndFamily =
         peopleItems
             .filter { it.relationshipType == "friend" || it.relationshipType == "family" }
-            .sortedBy {
-                it.person.node.title
-                    .lowercase()
-            }
+            .sortedWith { a, b -> a.person.node.title.compareTo(b.person.node.title, ignoreCase = true) }
 
     val gentlePrompt =
         when
@@ -2733,7 +2735,7 @@ fun calculateStudentBoardState(
                             null
                         },
                 )
-            }.sortedBy { it.courseName.lowercase() }
+            }.sortedWith { a, b -> a.courseName.compareTo(b.courseName, ignoreCase = true) }
 
     val bySemester =
         activeNodes
@@ -2774,7 +2776,7 @@ fun calculateStudentBoardState(
                     upcomingExams = upcomingExams,
                     dueSoon = dueSoon,
                 )
-            }.sortedBy { it.semester.lowercase() }
+            }.sortedWith { a, b -> a.semester.compareTo(b.semester, ignoreCase = true) }
 
     val topicToNoteLinks =
         relations.count {

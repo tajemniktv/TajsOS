@@ -256,6 +256,9 @@ object DomainLensQueries {
     /**
      * Configuration class to group matching heuristics. This avoids having functions with many string/collection
      * arguments, which can trigger code health violations.
+     *
+     * Memory allocations during matching (such as repeated `.lowercase()` calls) are avoided
+     * by using Kotlin's built-in `ignoreCase = true` string evaluation operations where possible.
      */
     private class DomainMatcher(
         val maintenanceTypes: Set<String>,
@@ -271,11 +274,11 @@ object DomainLensQueries {
 
             if (node.tags.any { it.normalizedName in tagMarkers }) return true
 
-            val title = node.node.title.lowercase()
-            if (titleKeywords.any { keyword -> title.contains(keyword) }) return true
+            val title = node.node.title
+            if (titleKeywords.any { keyword -> title.contains(keyword, ignoreCase = true) }) return true
 
-            val content = node.node.content.lowercase()
-            if (titleKeywords.any { keyword -> content.contains(keyword) }) return true
+            val content = node.node.content
+            if (titleKeywords.any { keyword -> content.contains(keyword, ignoreCase = true) }) return true
 
             return false
         }
