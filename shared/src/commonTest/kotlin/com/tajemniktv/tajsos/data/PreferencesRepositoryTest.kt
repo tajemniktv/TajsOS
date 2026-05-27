@@ -341,8 +341,8 @@ class PreferencesRepositoryTest {
         // Clear everything first to simulate missing defaults
         dataStore.updateData { prefs ->
             val mutablePrefs = prefs.toMutablePreferences()
-            mutablePrefs.remove(stringSetPreferencesKey("owned_packs"))
-            mutablePrefs.remove(stringSetPreferencesKey("enabled_packs"))
+            mutablePrefs.remove(androidx.datastore.preferences.core.stringSetPreferencesKey("owned_packs"))
+            mutablePrefs.remove(androidx.datastore.preferences.core.stringSetPreferencesKey("enabled_packs"))
             mutablePrefs
         }
 
