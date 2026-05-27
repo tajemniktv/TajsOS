@@ -96,6 +96,8 @@ import tajsos.composeapp.generated.resources.detail_start_writing
 import tajsos.composeapp.generated.resources.note_detail_connect_node
 import tajsos.composeapp.generated.resources.note_detail_linked_context
 import tajsos.composeapp.generated.resources.note_detail_new_node
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 object NoteDetailBlocks {
     private val renderers: Map<String, NoteDetailBlockRenderer> =
@@ -296,7 +298,7 @@ private fun renderNoteTaskMetadata(context: NoteDetailContext) {
                         modifier =
                             Modifier.weight(1f).clickable {
                                 context.onShowEnergyDialog()
-                            },
+                            }.pointerHoverIcon(PointerIcon.Hand),
                     ) {
                         Text(
                             "ENERGY",
@@ -326,7 +328,7 @@ private fun renderNoteTaskMetadata(context: NoteDetailContext) {
                         modifier =
                             Modifier.weight(1f).clickable {
                                 context.onShowFrictionDialog()
-                            },
+                            }.pointerHoverIcon(PointerIcon.Hand),
                     ) {
                         Text(
                             "FRICTION",
@@ -354,7 +356,7 @@ private fun renderNoteTaskMetadata(context: NoteDetailContext) {
                         modifier =
                             Modifier
                                 .weight(1f)
-                                .clickable { context.onShowEstimateDialog() },
+                                .clickable { context.onShowEstimateDialog() }.pointerHoverIcon(PointerIcon.Hand),
                     ) {
                         Text(
                             "ESTIMATE",
@@ -457,7 +459,7 @@ private fun renderNoteResourceMetadata(context: NoteDetailContext) {
                         modifier =
                             Modifier
                                 .weight(1f)
-                                .clickable { context.onShowMediaTypeDialog() },
+                                .clickable { context.onShowMediaTypeDialog() }.pointerHoverIcon(PointerIcon.Hand),
                     ) {
                         Text(
                             "MEDIA TYPE",
@@ -475,7 +477,7 @@ private fun renderNoteResourceMetadata(context: NoteDetailContext) {
                         modifier =
                             Modifier
                                 .weight(1f)
-                                .clickable { context.onShowRatingDialog() },
+                                .clickable { context.onShowRatingDialog() }.pointerHoverIcon(PointerIcon.Hand),
                     ) {
                         Text(
                             "RATING",
@@ -599,7 +601,7 @@ private fun renderNoteContextGraph(context: NoteDetailContext) {
                                             noteId,
                                             tag.id,
                                         )
-                                    },
+                                    }.pointerHoverIcon(PointerIcon.Hand),
                             )
                         },
                         colors =
@@ -816,7 +818,7 @@ private fun renderNoteOrganization(context: NoteDetailContext) {
                     modifier =
                         Modifier
                             .weight(1f)
-                            .clickable { context.onShowAreaDialog() },
+                            .clickable { context.onShowAreaDialog() }.pointerHoverIcon(PointerIcon.Hand),
                 ) {
                     Text(
                         "AREA",
@@ -834,7 +836,7 @@ private fun renderNoteOrganization(context: NoteDetailContext) {
                     modifier =
                         Modifier
                             .weight(1f)
-                            .clickable { context.onShowProjectDialog() },
+                            .clickable { context.onShowProjectDialog() }.pointerHoverIcon(PointerIcon.Hand),
                 ) {
                     Text(
                         "PROJECT",
@@ -904,7 +906,7 @@ private fun renderNoteKnowledgeConfig(context: NoteDetailContext) {
                         modifier =
                             Modifier
                                 .weight(1f)
-                                .clickable { context.onShowNoteTypeDialog() },
+                                .clickable { context.onShowNoteTypeDialog() }.pointerHoverIcon(PointerIcon.Hand),
                     ) {
                         Text(
                             "NOTE TYPE",
@@ -922,7 +924,7 @@ private fun renderNoteKnowledgeConfig(context: NoteDetailContext) {
                         modifier =
                             Modifier
                                 .weight(1f)
-                                .clickable { context.onShowNoteStateDialog() },
+                                .clickable { context.onShowNoteStateDialog() }.pointerHoverIcon(PointerIcon.Hand),
                     ) {
                         Text(
                             "STATE",

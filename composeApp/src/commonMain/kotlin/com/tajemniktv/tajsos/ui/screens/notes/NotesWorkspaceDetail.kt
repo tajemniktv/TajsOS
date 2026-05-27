@@ -89,6 +89,8 @@ import tajsos.composeapp.generated.resources.screen_history
 import tajsos.composeapp.generated.resources.tasks_context_title
 import tajsos.composeapp.generated.resources.view_all
 import kotlin.time.Instant
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 /**
  * Notes-first desktop workspace with separated reading/editing modes and contextual side panels.
@@ -247,7 +249,7 @@ fun NotesWorkspaceDetail(
                             modifier =
                                 Modifier
                                     .fillMaxWidth()
-                                    .clickable { onNavigateToNode(item.id) },
+                                    .clickable { onNavigateToNode(item.id) }.pointerHoverIcon(PointerIcon.Hand),
                             shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
                             color =
                                 if (item.id ==
@@ -419,7 +421,7 @@ fun NotesWorkspaceDetail(
                         val linkedNode = nodesById[id]?.node ?: return@forEach
                         Text(
                             "• ${linkedNode.title}",
-                            modifier = Modifier.clickable { onNavigateToNode(linkedNode.id) },
+                            modifier = Modifier.clickable { onNavigateToNode(linkedNode.id) }.pointerHoverIcon(PointerIcon.Hand),
                             color = TajsOSTheme.Text,
                         )
                     }

@@ -35,6 +35,8 @@ import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.common_system_online
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 /**
  * Renders the dashboard header with a left menu badge and status block and a right-side system indicator with a settings button.
@@ -58,7 +60,7 @@ fun DashHeader(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.clickable { onMenuClick() },
+            modifier = Modifier.clickable { onMenuClick() }.pointerHoverIcon(PointerIcon.Hand),
         ) {
             Box(
                 modifier =

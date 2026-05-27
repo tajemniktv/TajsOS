@@ -33,6 +33,8 @@ import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.track_dosage_confirmed
 import tajsos.composeapp.generated.resources.track_medication_synk
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 @Composable
 fun MedicationSyncCard(
@@ -86,7 +88,7 @@ fun MedicationSyncCard(
                         modifier =
                             Modifier
                                 .fillMaxWidth()
-                                .clickable { onToggleMed(med.id) }
+                                .clickable { onToggleMed(med.id) }.pointerHoverIcon(PointerIcon.Hand)
                                 .padding(vertical = 4.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {

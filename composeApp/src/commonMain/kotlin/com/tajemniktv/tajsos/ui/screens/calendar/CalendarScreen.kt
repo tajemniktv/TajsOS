@@ -62,6 +62,8 @@ import tajsos.composeapp.generated.resources.cal_sync
 import tajsos.composeapp.generated.resources.cal_today
 import kotlin.time.Clock
 import kotlin.time.Instant
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 /**
  * Central calendar entry point that collects system state and coordinates layout.
@@ -259,7 +261,7 @@ fun MonthView(
                                         } else {
                                             TajsOSTheme.CalendarIdleDay
                                         },
-                                    ).clickable { onDateSelected(date) },
+                                    ).clickable { onDateSelected(date) }.pointerHoverIcon(PointerIcon.Hand),
                             contentAlignment = Alignment.Center,
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
