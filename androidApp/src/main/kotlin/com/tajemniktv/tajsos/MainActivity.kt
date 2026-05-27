@@ -4,6 +4,7 @@
 
 package com.tajemniktv.tajsos
 
+import kotlin.coroutines.cancellation.CancellationException
 import android.content.Intent
 import android.net.Uri
 import android.os.BadParcelableException
@@ -420,6 +421,8 @@ class MainActivity : FragmentActivity() {
                         try {
                             authCipher.doFinal("auth".toByteArray())
                             viewModel.setAuthenticated(true)
+                        } catch (e: CancellationException) {
+                            throw e
                         } catch (e: Exception) {
                             Log.e(TAG, "Biometric crypto operation failed: ${e.javaClass.simpleName}")
                         }

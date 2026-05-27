@@ -4,6 +4,7 @@
 
 package com.tajemniktv.tajsos.ui.screens.dashboard
 
+import kotlin.coroutines.cancellation.CancellationException
 import com.tajemniktv.tajsos.data.AppPack
 import com.tajemniktv.tajsos.data.PackRegistry
 import com.tajemniktv.tajsos.ui.DashboardUIState
@@ -446,6 +447,8 @@ private fun normalizeBlocks(
 private inline fun <T> safeDecode(block: () -> T): T? =
     try {
         block()
+    } catch (e: CancellationException) {
+        throw e
     } catch (e: Exception) {
         null
     }

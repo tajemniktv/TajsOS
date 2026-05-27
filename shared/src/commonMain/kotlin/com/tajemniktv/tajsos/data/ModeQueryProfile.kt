@@ -4,6 +4,8 @@
 
 package com.tajemniktv.tajsos.data
 
+import kotlin.coroutines.cancellation.CancellationException
+
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
@@ -146,6 +148,8 @@ fun buildModeQueryProfile(
 private inline fun <T> safeDecode(block: () -> T): T? =
     try {
         block()
+    } catch (e: CancellationException) {
+        throw e
     } catch (e: Exception) {
         null
     }

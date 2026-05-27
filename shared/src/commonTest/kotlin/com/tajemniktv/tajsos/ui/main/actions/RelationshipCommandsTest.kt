@@ -94,8 +94,8 @@ class RelationshipCommandsTest {
         val relations = repo.getRelationsForNode(1L).first()
         val relatedPersonIds = relations.filter { it.relationType == "RELATED_PERSON" }.map { it.fromNodeId }.toSet()
         assertEquals(setOf(personId), relatedPersonIds)
-        assertTrue(relation != null)
-        assertEquals(replyNodes.first().node.id, relation.toNodeId)
+        assertTrue(relations.isNotEmpty())
+        assertEquals(replyNodes.first().node.id, relations.first().toNodeId)
     }
 
     @Test

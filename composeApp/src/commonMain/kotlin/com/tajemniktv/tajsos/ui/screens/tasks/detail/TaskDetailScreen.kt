@@ -4,6 +4,7 @@
 
 package com.tajemniktv.tajsos.ui.screens.tasks.detail
 
+import kotlin.coroutines.cancellation.CancellationException
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -549,6 +550,8 @@ private fun formatTime(epochMillis: Long): String {
 private inline fun <T> safeDecode(block: () -> T): T? =
     try {
         block()
+    } catch (e: CancellationException) {
+        throw e
     } catch (e: Exception) {
         null
     }
