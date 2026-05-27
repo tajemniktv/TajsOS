@@ -263,6 +263,10 @@ object DomainLensQueries {
         val titleKeywords: List<String>,
         val validNoteTypes: Set<String> = emptySet()
     ) {
+        /**
+         * Evaluates whether the given [node] matches this domain's configuration based on
+         * explicit maintenance types, valid note types, tags, or title/content keywords.
+         */
         fun matches(node: NodeWithPin): Boolean {
             if (node.node.maintenanceType in maintenanceTypes) return true
 
