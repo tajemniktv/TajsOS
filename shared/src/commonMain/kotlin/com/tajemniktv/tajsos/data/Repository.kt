@@ -654,25 +654,50 @@ class AppRepository(
     // ... existing methods ...
 
     // Calendar
+    /**
+     * Observes all configured [com.tajemniktv.tajsos.data.CalendarProviderEntity] records.
+     */
     fun getAllCalendarProviders() = calendarProviderDao.getAllProviders()
 
+    /**
+     * Inserts a new calendar provider configuration.
+     * @return The ID of the newly inserted provider.
+     */
     suspend fun insertCalendarProvider(provider: CalendarProviderEntity): Long {
         var id = calendarProviderDao.insertProvider(provider)
         if (id == -1L) id = provider.id
         return id
     }
 
+    /**
+     * Updates an existing calendar provider configuration.
+     */
     suspend fun updateCalendarProvider(provider: CalendarProviderEntity) = calendarProviderDao.updateProvider(provider)
 
+    /**
+     * Deletes a calendar provider configuration.
+     */
     suspend fun deleteCalendarProvider(provider: CalendarProviderEntity) = calendarProviderDao.deleteProvider(provider)
 
+    /**
+     * Observes calendar events falling within the specified time range.
+     *
+     * @param from The start of the range (epoch milliseconds, inclusive).
+     * @param to The end of the range (epoch milliseconds, inclusive).
+     */
     fun getCalendarEventsInRange(
         from: Long,
         to: Long,
     ) = calendarEventDao.getEventsInRange(from, to)
 
+    /**
+     * Inserts a batch of synced calendar events.
+     */
     suspend fun insertCalendarEvents(events: List<CalendarEventEntity>) = calendarEventDao.insertEvents(events)
 
+    /**
+     * Deletes all cached calendar events associated with a specific provider.
+     */
     suspend fun deleteCalendarEventsByProvider(providerId: Long) = calendarEventDao.deleteEventsByProvider(providerId)
 
     /**
