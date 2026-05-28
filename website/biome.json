@@ -29,6 +29,6 @@
     }
   },
   "files": {
-    "includes": ["**/*", "!**/dist", "!**/*.css", "!**/*.astro"]
+    "ignore": ["**/dist/**", "**/*.css", "**/*.astro"]
   }
 }
