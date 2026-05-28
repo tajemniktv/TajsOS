@@ -91,11 +91,9 @@ class RelationshipCommandsTest {
         assertEquals(1, replyNodes.size, "Should create exactly 1 reply needed node")
         assertEquals("reply_needed", replyNodes.first().node.openLoopType)
 
-        val relations = repo.getRelationsForNode(1L).first()
+        val relations = repo.getRelationsForNode(replyNodes.first().node.id).first()
         val relatedPersonIds = relations.filter { it.relationType == "RELATED_PERSON" }.map { it.fromNodeId }.toSet()
         assertEquals(setOf(personId), relatedPersonIds)
-        assertTrue(relation != null)
-        assertEquals(replyNodes.first().node.id, relation.toNodeId)
     }
 
     @Test
