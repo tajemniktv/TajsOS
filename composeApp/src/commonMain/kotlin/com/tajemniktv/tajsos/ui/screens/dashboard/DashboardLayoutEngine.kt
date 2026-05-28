@@ -9,6 +9,7 @@ import com.tajemniktv.tajsos.data.PackRegistry
 import com.tajemniktv.tajsos.ui.DashboardUIState
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlin.coroutines.cancellation.CancellationException
 
 /**
  * Defines supported dashboard surfaces for layout planning.
@@ -446,6 +447,8 @@ private fun normalizeBlocks(
 private inline fun <T> safeDecode(block: () -> T): T? =
     try {
         block()
+    } catch (e: CancellationException) {
+        throw e
     } catch (e: Exception) {
         null
     }

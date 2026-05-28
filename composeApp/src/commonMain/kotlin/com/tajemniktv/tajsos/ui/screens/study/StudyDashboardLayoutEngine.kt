@@ -6,6 +6,7 @@ package com.tajemniktv.tajsos.ui.screens.study
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlin.coroutines.cancellation.CancellationException
 
 @Serializable
 private data class StudyLayoutJsonV1(
@@ -93,6 +94,8 @@ fun buildStudyDashboardPlan(
 private inline fun <T> safeDecode(block: () -> T): T? =
     try {
         block()
+    } catch (e: CancellationException) {
+        throw e
     } catch (e: Exception) {
         null
     }

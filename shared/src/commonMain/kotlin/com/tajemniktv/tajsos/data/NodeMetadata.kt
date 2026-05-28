@@ -7,6 +7,7 @@ package com.tajemniktv.tajsos.data
 import com.tajemniktv.tajsos.domain.DomainKind
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlin.coroutines.cancellation.CancellationException
 
 private val nodeMetadataJson =
     Json {
@@ -104,6 +105,8 @@ data class AreaMetadata(
 private inline fun <T> safeDecode(block: () -> T): T? =
     try {
         block()
+    } catch (e: CancellationException) {
+        throw e
     } catch (e: Exception) {
         null
     }

@@ -46,6 +46,7 @@ import tajsos.composeapp.generated.resources.tasks_no_results
 import kotlin.math.roundToInt
 import kotlin.time.Clock
 import kotlin.time.Instant
+import kotlin.coroutines.cancellation.CancellationException
 
 private const val TaskDetailWideLayoutBreakpoint = 1120
 private const val OneDayMillis = 24L * 60L * 60L * 1000L
@@ -549,6 +550,8 @@ private fun formatTime(epochMillis: Long): String {
 private inline fun <T> safeDecode(block: () -> T): T? =
     try {
         block()
+    } catch (e: CancellationException) {
+        throw e
     } catch (e: Exception) {
         null
     }

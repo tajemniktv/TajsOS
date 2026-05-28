@@ -6,6 +6,7 @@ package com.tajemniktv.tajsos.data
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlin.coroutines.cancellation.CancellationException
 
 private val modeProfileJson =
     Json {
@@ -146,6 +147,8 @@ fun buildModeQueryProfile(
 private inline fun <T> safeDecode(block: () -> T): T? =
     try {
         block()
+    } catch (e: CancellationException) {
+        throw e
     } catch (e: Exception) {
         null
     }
