@@ -1042,7 +1042,7 @@ private fun buildLibraryItems(
 
     return items.sortedWith(
         compareByDescending<ProtocolLibraryItem> { it.lastRunAt ?: 0L }
-            .thenComparator { a, b -> a.title.compareTo(b.title, ignoreCase = true) },
+            .then { a, b -> a.title.compareTo(b.title, ignoreCase = true) },
     )
 }
 
