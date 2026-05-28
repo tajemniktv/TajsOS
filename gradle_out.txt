@@ -1,0 +1,626 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.5.1/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build
+Reusing configuration cache.
+> Task :androidApp:preBuild UP-TO-DATE
+> Task :androidApp:preDebugBuild UP-TO-DATE
+> Task :androidApp:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :androidApp:injectCrashlyticsVersionControlInfoDebug UP-TO-DATE
+> Task :composeApp:androidPreBuild UP-TO-DATE
+> Task :androidApp:processDebugGoogleServices UP-TO-DATE
+> Task :shared:androidPreBuild UP-TO-DATE
+> Task :shared:preAndroidMainBuild UP-TO-DATE
+> Task :androidApp:injectCrashlyticsMappingFileIdDebug UP-TO-DATE
+> Task :composeApp:preAndroidMainBuild UP-TO-DATE
+> Task :androidApp:generateDebugResources UP-TO-DATE
+> Task :shared:generateAndroidMainEmptyResourceFiles UP-TO-DATE
+> Task :composeApp:generateAndroidMainEmptyResourceFiles UP-TO-DATE
+> Task :composeApp:kmpPartiallyResolvedDependenciesChecker
+> Task :composeApp:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :composeApp:copyNonXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :composeApp:convertXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :composeApp:convertXmlValueResourcesForCommonMain UP-TO-DATE
+> Task :androidApp:packageDebugResources UP-TO-DATE
+> Task :composeApp:prepareComposeResourcesTaskForAndroidMain NO-SOURCE
+> Task :composeApp:generateComposeResClass UP-TO-DATE
+> Task :composeApp:generateExpectResourceCollectorsForCommonMain UP-TO-DATE
+> Task :composeApp:generateResourceAccessorsForAndroidMain NO-SOURCE
+> Task :shared:kmpPartiallyResolvedDependenciesChecker
+> Task :shared:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :shared:preAndroidHostTestBuild UP-TO-DATE
+> Task :shared:writeAndroidMainAarMetadata UP-TO-DATE
+> Task :composeApp:copyNonXmlValueResourcesForCommonMain UP-TO-DATE
+> Task :composeApp:prepareComposeResourcesTaskForCommonMain UP-TO-DATE
+> Task :composeApp:generateResourceAccessorsForCommonMain UP-TO-DATE
+> Task :composeApp:generateActualResourceCollectorsForAndroidMain UP-TO-DATE
+> Task :composeApp:copyAndroidMainComposeResourcesToAndroidAssets UP-TO-DATE
+> Task :composeApp:packageAndroidMainResources UP-TO-DATE
+> Task :composeApp:parseAndroidMainLocalResources UP-TO-DATE
+> Task :composeApp:generateAndroidMainRFile UP-TO-DATE
+> Task :shared:mapAndroidHostTestSourceSetPaths UP-TO-DATE
+> Task :shared:generateAndroidHostTestResources UP-TO-DATE
+> Task :shared:mergeAndroidHostTestResources UP-TO-DATE
+> Task :shared:checkAndroidHostTestAarMetadata UP-TO-DATE
+> Task :shared:kspAndroidMain UP-TO-DATE
+> Task :shared:processAndroidMainManifest UP-TO-DATE
+> Task :shared:processAndroidHostTestManifest UP-TO-DATE
+> Task :shared:transformCommonMainDependenciesMetadata UP-TO-DATE
+> Task :shared:kspCommonMainKotlinMetadata SKIPPED
+> Task :shared:compileAndroidMain FROM-CACHE
+> Task :shared:bundleAndroidMainClassesToCompileJar UP-TO-DATE
+> Task :shared:downloadKotlinNativeDistribution UP-TO-DATE
+> Task :shared:kspKotlinJvm UP-TO-DATE
+> Task :shared:processAndroidHostTestResources UP-TO-DATE
+> Task :shared:kspAndroidHostTest SKIPPED
+> Task :shared:iosArm64ProcessResources NO-SOURCE
+> Task :shared:iosSimulatorArm64ProcessResources NO-SOURCE
+> Task :shared:compileKotlinJvm UP-TO-DATE
+> Task :shared:compileJvmMainJava NO-SOURCE
+> Task :shared:jvmProcessResources NO-SOURCE
+> Task :shared:processJvmMainResources SKIPPED
+> Task :shared:jvmMainClasses UP-TO-DATE
+> Task :shared:kspTestKotlinJvm SKIPPED
+> Task :androidApp:processDebugNavigationResources UP-TO-DATE
+> Task :androidApp:parseDebugLocalResources UP-TO-DATE
+> Task :androidApp:generateDebugRFile UP-TO-DATE
+> Task :androidApp:javaPreCompileDebug UP-TO-DATE
+> Task :androidApp:generateDebugAssets UP-TO-DATE
+> Task :composeApp:generateAndroidMainAssets UP-TO-DATE
+> Task :composeApp:mergeAndroidMainAssets UP-TO-DATE
+> Task :shared:kspKotlinIosArm64 UP-TO-DATE
+> Task :shared:kspKotlinIosSimulatorArm64 UP-TO-DATE
+> Task :shared:compileKotlinIosSimulatorArm64 UP-TO-DATE
+> Task :shared:iosSimulatorArm64MainKlibrary UP-TO-DATE
+> Task :shared:kspTestKotlinIosSimulatorArm64 SKIPPED
+> Task :shared:compileKotlinIosArm64 UP-TO-DATE
+> Task :androidApp:generateDebugGlobalSynthetics UP-TO-DATE
+> Task :shared:iosArm64MainKlibrary UP-TO-DATE
+> Task :shared:kspTestKotlinIosArm64 SKIPPED
+> Task :shared:copyRoomSchemas NO-SOURCE
+> Task :shared:processAndroidMainJavaRes UP-TO-DATE
+> Task :androidApp:desugarDebugFileDependencies UP-TO-DATE
+> Task :shared:bundleAndroidMainClassesToRuntimeJar UP-TO-DATE
+> Task :androidApp:mergeDebugAssets UP-TO-DATE
+> Task :androidApp:compressDebugAssets UP-TO-DATE
+> Task :composeApp:writeAndroidMainAarMetadata UP-TO-DATE
+> Task :androidApp:mapDebugSourceSetPaths UP-TO-DATE
+> Task :androidApp:compileDebugNavigationResources UP-TO-DATE
+> Task :composeApp:compileAndroidMain UP-TO-DATE
+> Task :composeApp:bundleAndroidMainClassesToCompileJar UP-TO-DATE
+> Task :androidApp:checkDebugAarMetadata UP-TO-DATE
+> Task :androidApp:mergeDebugResources UP-TO-DATE
+> Task :composeApp:bundleAndroidMainClassesToRuntimeJar UP-TO-DATE
+> Task :composeApp:processAndroidMainJavaRes UP-TO-DATE
+> Task :androidApp:extractDeepLinksDebug UP-TO-DATE
+> Task :androidApp:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :composeApp:mapAndroidMainSourceSetPaths UP-TO-DATE
+> Task :composeApp:processAndroidMainManifest UP-TO-DATE
+> Task :composeApp:compileAndroidMainLibraryResources UP-TO-DATE
+> Task :androidApp:mergeDebugJniLibFolders UP-TO-DATE
+> Task :composeApp:mergeAndroidMainJniLibFolders UP-TO-DATE
+> Task :composeApp:mergeAndroidMainNativeLibs NO-SOURCE
+> Task :androidApp:checkDebugDuplicateClasses UP-TO-DATE
+> Task :composeApp:copyAndroidMainJniLibsProjectOnly UP-TO-DATE
+> Task :androidApp:compileDebugKotlin UP-TO-DATE
+> Task :androidApp:processDebugJavaRes UP-TO-DATE
+> Task :androidApp:compileDebugJavaWithJavac NO-SOURCE
+> Task :androidApp:mergeLibDexDebug UP-TO-DATE
+> Task :shared:mergeAndroidMainJniLibFolders UP-TO-DATE
+> Task :shared:mergeAndroidMainNativeLibs NO-SOURCE
+> Task :shared:copyAndroidMainJniLibsProjectOnly UP-TO-DATE
+> Task :androidApp:processDebugMainManifest UP-TO-DATE
+> Task :androidApp:mergeDebugJavaResource UP-TO-DATE
+> Task :androidApp:processDebugManifest UP-TO-DATE
+> Task :androidApp:validateSigningDebug UP-TO-DATE
+> Task :androidApp:processDebugManifestForPackage UP-TO-DATE
+> Task :androidApp:writeDebugAppMetadata UP-TO-DATE
+> Task :androidApp:writeDebugSigningConfigVersions UP-TO-DATE
+> Task :androidApp:preReleaseBuild UP-TO-DATE
+> Task :androidApp:mergeReleaseJniLibFolders UP-TO-DATE
+> Task :androidApp:mergeReleaseNativeLibs UP-TO-DATE
+> Task :androidApp:mergeDebugNativeLibs UP-TO-DATE
+> Task :androidApp:stripReleaseDebugSymbols UP-TO-DATE
+> Task :androidApp:stripDebugDebugSymbols UP-TO-DATE
+> Task :androidApp:extractReleaseNativeSymbolTables UP-TO-DATE
+> Task :androidApp:mergeReleaseNativeDebugMetadata NO-SOURCE
+> Task :androidApp:checkReleaseDuplicateClasses UP-TO-DATE
+> Task :androidApp:injectCrashlyticsMappingFileIdRelease UP-TO-DATE
+> Task :androidApp:generateReleaseResources UP-TO-DATE
+> Task :androidApp:processReleaseGoogleServices UP-TO-DATE
+> Task :androidApp:processReleaseNavigationResources UP-TO-DATE
+> Task :androidApp:javaPreCompileRelease UP-TO-DATE
+> Task :androidApp:checkReleaseAarMetadata UP-TO-DATE
+> Task :androidApp:createReleaseCompatibleScreenManifests UP-TO-DATE
+> Task :androidApp:desugarReleaseFileDependencies UP-TO-DATE
+> Task :androidApp:mergeReleaseStartupProfile UP-TO-DATE
+> Task :androidApp:processDebugResources UP-TO-DATE
+> Task :androidApp:extractReleaseVersionControlInfo
+> Task :androidApp:transformDebugClassesWithAsm UP-TO-DATE
+> Task :androidApp:dexBuilderDebug UP-TO-DATE
+> Task :androidApp:mergeProjectDexDebug UP-TO-DATE
+> Task :androidApp:injectCrashlyticsVersionControlInfoRelease
+> Task :composeApp:prepareAndroidMainArtProfile UP-TO-DATE
+> Task :androidApp:mapReleaseSourceSetPaths UP-TO-DATE
+> Task :androidApp:compileReleaseNavigationResources UP-TO-DATE
+> Task :androidApp:packageReleaseResources
+> Task :androidApp:mergeExtDexDebug UP-TO-DATE
+> Task :androidApp:packageDebug UP-TO-DATE
+> Task :androidApp:createDebugApkListingFileRedirect UP-TO-DATE
+> Task :androidApp:assembleDebug UP-TO-DATE
+> Task :androidApp:extractDeepLinksRelease UP-TO-DATE
+> Task :androidApp:mergeExtDexRelease UP-TO-DATE
+> Task :shared:prepareAndroidMainArtProfile UP-TO-DATE
+> Task :androidApp:processReleaseMainManifest UP-TO-DATE
+> Task :androidApp:processReleaseManifest UP-TO-DATE
+> Task :androidApp:processReleaseManifestForPackage UP-TO-DATE
+> Task :androidApp:generateReleaseAssets UP-TO-DATE
+> Task :androidApp:mergeReleaseAssets UP-TO-DATE
+> Task :androidApp:compressReleaseAssets UP-TO-DATE
+> Task :androidApp:extractProguardFiles UP-TO-DATE
+> Task :composeApp:createFullJarAndroidMain UP-TO-DATE
+> Task :composeApp:prepareLintJarForPublish UP-TO-DATE
+> Task :shared:createFullJarAndroidMain UP-TO-DATE
+> Task :shared:prepareLintJarForPublish UP-TO-DATE
+> Task :androidApp:parseReleaseLocalResources
+> Task :androidApp:generateReleaseRFile UP-TO-DATE
+> Task :composeApp:checkAndroidMainAarMetadata UP-TO-DATE
+> Task :androidApp:compileReleaseKotlin UP-TO-DATE
+> Task :androidApp:compileReleaseJavaWithJavac NO-SOURCE
+> Task :androidApp:mergeReleaseArtProfile UP-TO-DATE
+> Task :composeApp:mergeAndroidMainJavaResource UP-TO-DATE
+> Task :shared:checkAndroidMainAarMetadata UP-TO-DATE
+> Task :composeApp:extractAndroidMainAnnotations UP-TO-DATE
+> Task :composeApp:syncAndroidMainLibJars UP-TO-DATE
+> Task :shared:extractAndroidMainAnnotations UP-TO-DATE
+> Task :composeApp:bundleAndroidMainLocalLintAar UP-TO-DATE
+> Task :shared:mergeAndroidMainJavaResource UP-TO-DATE
+> Task :androidApp:processReleaseJavaRes UP-TO-DATE
+> Task :shared:syncAndroidMainLibJars UP-TO-DATE
+> Task :shared:bundleAndroidMainLocalLintAar UP-TO-DATE
+> Task :androidApp:mergeReleaseJavaResource UP-TO-DATE
+> Task :androidApp:collectReleaseDependencies UP-TO-DATE
+> Task :androidApp:sdkReleaseDependencyData UP-TO-DATE
+> Task :androidApp:validateSigningRelease UP-TO-DATE
+> Task :androidApp:writeReleaseAppMetadata UP-TO-DATE
+> Task :androidApp:writeReleaseSigningConfigVersions UP-TO-DATE
+> Task :androidApp:bundleDebugClassesToRuntimeJar UP-TO-DATE
+> Task :androidApp:bundleDebugClassesToCompileJar UP-TO-DATE
+> Task :androidApp:preDebugUnitTestBuild UP-TO-DATE
+> Task :androidApp:compileDebugUnitTestKotlin NO-SOURCE
+> Task :androidApp:javaPreCompileDebugUnitTest UP-TO-DATE
+> Task :androidApp:compileDebugUnitTestJavaWithJavac NO-SOURCE
+> Task :androidApp:koverFindJar UP-TO-DATE
+> Task :androidApp:processDebugUnitTestJavaRes NO-SOURCE
+> Task :androidApp:testDebugUnitTest NO-SOURCE
+> Task :androidApp:koverGenerateArtifactDebug UP-TO-DATE
+> Task :androidApp:koverGenerateArtifactRelease UP-TO-DATE
+> Task :androidApp:koverGenerateArtifact UP-TO-DATE
+> Task :androidApp:koverCachedVerify UP-TO-DATE
+> Task :androidApp:koverVerify
+> Task :androidApp:preDebugAndroidTestBuild SKIPPED
+> Task :androidApp:generateDebugAndroidTestLintModel UP-TO-DATE
+> Task :androidApp:generateDebugLintReportModel UP-TO-DATE
+> Task :androidApp:generateDebugUnitTestLintModel UP-TO-DATE
+> Task :androidApp:lintAnalyzeDebug UP-TO-DATE
+> Task :androidApp:lintAnalyzeDebugAndroidTest UP-TO-DATE
+> Task :androidApp:lintAnalyzeDebugUnitTest UP-TO-DATE
+> Task :composeApp:convertXmlValueResourcesForAndroidHostTest NO-SOURCE
+> Task :composeApp:copyNonXmlValueResourcesForAndroidHostTest NO-SOURCE
+> Task :composeApp:prepareComposeResourcesTaskForAndroidHostTest NO-SOURCE
+> Task :composeApp:generateResourceAccessorsForAndroidHostTest NO-SOURCE
+> Task :composeApp:convertXmlValueResourcesForAppleMain NO-SOURCE
+> Task :composeApp:copyNonXmlValueResourcesForAppleMain NO-SOURCE
+> Task :composeApp:prepareComposeResourcesTaskForAppleMain NO-SOURCE
+> Task :composeApp:generateResourceAccessorsForAppleMain NO-SOURCE
+> Task :androidApp:generateReleaseLintVitalReportModel
+> Task :composeApp:convertXmlValueResourcesForAppleTest NO-SOURCE
+> Task :composeApp:convertXmlValueResourcesForCommonTest NO-SOURCE
+> Task :composeApp:copyNonXmlValueResourcesForAppleTest NO-SOURCE
+> Task :composeApp:copyNonXmlValueResourcesForCommonTest NO-SOURCE
+> Task :composeApp:prepareComposeResourcesTaskForAppleTest NO-SOURCE
+> Task :composeApp:generateResourceAccessorsForAppleTest NO-SOURCE
+> Task :composeApp:prepareComposeResourcesTaskForCommonTest NO-SOURCE
+> Task :composeApp:generateResourceAccessorsForCommonTest NO-SOURCE
+> Task :composeApp:convertXmlValueResourcesForIosArm64Main NO-SOURCE
+> Task :composeApp:copyNonXmlValueResourcesForIosArm64Main NO-SOURCE
+> Task :composeApp:convertXmlValueResourcesForIosArm64Test NO-SOURCE
+> Task :composeApp:prepareComposeResourcesTaskForIosArm64Main NO-SOURCE
+> Task :composeApp:copyNonXmlValueResourcesForIosArm64Test NO-SOURCE
+> Task :composeApp:generateResourceAccessorsForIosArm64Main NO-SOURCE
+> Task :composeApp:convertXmlValueResourcesForIosMain NO-SOURCE
+> Task :composeApp:copyNonXmlValueResourcesForIosMain NO-SOURCE
+> Task :composeApp:prepareComposeResourcesTaskForIosArm64Test NO-SOURCE
+> Task :composeApp:prepareComposeResourcesTaskForIosMain NO-SOURCE
+> Task :composeApp:generateResourceAccessorsForIosArm64Test NO-SOURCE
+> Task :composeApp:generateResourceAccessorsForIosMain NO-SOURCE
+> Task :composeApp:convertXmlValueResourcesForIosSimulatorArm64Main NO-SOURCE
+> Task :composeApp:convertXmlValueResourcesForIosSimulatorArm64Test NO-SOURCE
+> Task :composeApp:copyNonXmlValueResourcesForIosSimulatorArm64Main NO-SOURCE
+> Task :composeApp:prepareComposeResourcesTaskForIosSimulatorArm64Main NO-SOURCE
+> Task :composeApp:copyNonXmlValueResourcesForIosSimulatorArm64Test NO-SOURCE
+> Task :composeApp:generateResourceAccessorsForIosSimulatorArm64Main NO-SOURCE
+> Task :composeApp:prepareComposeResourcesTaskForIosSimulatorArm64Test NO-SOURCE
+> Task :composeApp:convertXmlValueResourcesForIosTest NO-SOURCE
+> Task :composeApp:generateResourceAccessorsForIosSimulatorArm64Test NO-SOURCE
+> Task :composeApp:copyNonXmlValueResourcesForIosTest NO-SOURCE
+> Task :composeApp:convertXmlValueResourcesForJvmDev NO-SOURCE
+> Task :composeApp:prepareComposeResourcesTaskForIosTest NO-SOURCE
+> Task :composeApp:copyNonXmlValueResourcesForJvmDev NO-SOURCE
+> Task :composeApp:generateResourceAccessorsForIosTest NO-SOURCE
+> Task :composeApp:prepareComposeResourcesTaskForJvmDev NO-SOURCE
+> Task :composeApp:convertXmlValueResourcesForJvmMain NO-SOURCE
+> Task :composeApp:generateResourceAccessorsForJvmDev NO-SOURCE
+> Task :composeApp:copyNonXmlValueResourcesForJvmMain NO-SOURCE
+> Task :composeApp:convertXmlValueResourcesForJvmTest NO-SOURCE
+> Task :composeApp:prepareComposeResourcesTaskForJvmMain NO-SOURCE
+> Task :composeApp:copyNonXmlValueResourcesForJvmTest NO-SOURCE
+> Task :composeApp:generateResourceAccessorsForJvmMain NO-SOURCE
+> Task :composeApp:prepareComposeResourcesTaskForJvmTest NO-SOURCE
+> Task :composeApp:convertXmlValueResourcesForNativeMain NO-SOURCE
+> Task :composeApp:generateResourceAccessorsForJvmTest NO-SOURCE
+> Task :composeApp:copyNonXmlValueResourcesForNativeMain NO-SOURCE
+> Task :composeApp:convertXmlValueResourcesForNativeTest NO-SOURCE
+> Task :composeApp:copyNonXmlValueResourcesForNativeTest NO-SOURCE
+> Task :composeApp:prepareComposeResourcesTaskForNativeMain NO-SOURCE
+> Task :composeApp:prepareComposeResourcesTaskForNativeTest NO-SOURCE
+> Task :composeApp:generateResourceAccessorsForNativeMain NO-SOURCE
+> Task :composeApp:preAndroidHostTestBuild UP-TO-DATE
+> Task :composeApp:generateResourceAccessorsForNativeTest NO-SOURCE
+> Task :shared:generateAndroidHostTestLintModel
+> Task :composeApp:generateAndroidHostTestLintModel UP-TO-DATE
+> Task :androidApp:test UP-TO-DATE
+> Task :composeApp:lintAnalyzeAndroidHostTest UP-TO-DATE
+> Task :shared:compileCommonMainKotlinMetadata UP-TO-DATE
+> Task :shared:generateProjectStructureMetadata UP-TO-DATE
+> Task :shared:metadataCommonMainProcessResources NO-SOURCE
+> Task :shared:metadataCommonMainClasses UP-TO-DATE
+> Task :shared:allMetadataJar UP-TO-DATE
+> Task :shared:commonizeNativeDistribution UP-TO-DATE
+> Task :shared:transformNativeMainDependenciesMetadata UP-TO-DATE
+> Task :shared:compileNativeMainKotlinMetadata NO-SOURCE
+> Task :shared:metadataNativeMainProcessResources NO-SOURCE
+> Task :shared:metadataNativeMainClasses UP-TO-DATE
+> Task :shared:transformAppleMainDependenciesMetadata UP-TO-DATE
+> Task :shared:compileAppleMainKotlinMetadata NO-SOURCE
+> Task :shared:metadataAppleMainProcessResources NO-SOURCE
+> Task :shared:metadataAppleMainClasses UP-TO-DATE
+> Task :shared:transformIosMainDependenciesMetadata UP-TO-DATE
+> Task :shared:compileIosMainKotlinMetadata UP-TO-DATE
+> Task :shared:metadataIosMainProcessResources NO-SOURCE
+> Task :shared:metadataIosMainClasses UP-TO-DATE
+> Task :shared:exportCommonSourceSetsMetadataLocationsForMetadataApiElements UP-TO-DATE
+> Task :shared:iosArm64MetadataElements UP-TO-DATE
+> Task :shared:iosSimulatorArm64MetadataElements UP-TO-DATE
+> Task :composeApp:transformCommonMainDependenciesMetadata UP-TO-DATE
+> Task :composeApp:compileCommonMainKotlinMetadata UP-TO-DATE
+> Task :shared:exportRootPublicationCoordinatesForMetadataApiElements UP-TO-DATE
+> Task :composeApp:generateProjectStructureMetadata UP-TO-DATE
+> Task :composeApp:metadataCommonMainProcessResources NO-SOURCE
+> Task :composeApp:metadataCommonMainClasses UP-TO-DATE
+> Task :composeApp:allMetadataJar UP-TO-DATE
+> Task :composeApp:bundleAndroidMainAar UP-TO-DATE
+> Task :composeApp:assembleAndroidMain UP-TO-DATE
+> Task :composeApp:commonizeNativeDistribution UP-TO-DATE
+> Task :composeApp:transformNativeMainDependenciesMetadata UP-TO-DATE
+> Task :composeApp:compileNativeMainKotlinMetadata NO-SOURCE
+> Task :composeApp:metadataNativeMainProcessResources NO-SOURCE
+> Task :composeApp:metadataNativeMainClasses UP-TO-DATE
+> Task :composeApp:transformAppleMainDependenciesMetadata UP-TO-DATE
+> Task :composeApp:compileAppleMainKotlinMetadata NO-SOURCE
+> Task :composeApp:metadataAppleMainProcessResources NO-SOURCE
+> Task :composeApp:metadataAppleMainClasses UP-TO-DATE
+> Task :composeApp:transformIosMainDependenciesMetadata UP-TO-DATE
+> Task :composeApp:compileIosMainKotlinMetadata UP-TO-DATE
+
+> Task :composeApp:checkIosArm64MainComposeLibrariesCompatibility
+w: Compose Multiplatform runtime dependencies' versions don't match with plugin version.
+    expected: 'org.jetbrains.compose.foundation:foundation:1.11.0'
+    actual:   'org.jetbrains.compose.foundation:foundation:1.12.0-alpha01'
+
+    expected: 'org.jetbrains.compose.ui:ui:1.11.0'
+    actual:   'org.jetbrains.compose.ui:ui:1.12.0-alpha01'
+
+This may lead to compilation errors or unexpected behavior at runtime.
+Such version mismatch might be caused by dependency constraints in one of the included libraries.
+You can inspect resulted dependencies tree via `./gradlew :composeApp:dependencies  --configuration iosArm64CompileKlibraries`.
+See more details in Gradle documentation: https://docs.gradle.org/current/userguide/viewing_debugging_dependencies.html#sec:listing-dependencies
+
+Please update Compose Multiplatform Gradle plugin's version or align dependencies' versions to match the current plugin version.
+
+
+> Task :composeApp:downloadKotlinNativeDistribution UP-TO-DATE
+> Task :composeApp:generateActualResourceCollectorsForIosArm64Main UP-TO-DATE
+> Task :shared:exportCrossCompilationMetadataForIosArm64ApiElements UP-TO-DATE
+> Task :composeApp:compileKotlinIosArm64 UP-TO-DATE
+
+> Task :composeApp:checkIosSimulatorArm64MainComposeLibrariesCompatibility
+w: Compose Multiplatform runtime dependencies' versions don't match with plugin version.
+    expected: 'org.jetbrains.compose.foundation:foundation:1.11.0'
+    actual:   'org.jetbrains.compose.foundation:foundation:1.12.0-alpha01'
+
+    expected: 'org.jetbrains.compose.ui:ui:1.11.0'
+    actual:   'org.jetbrains.compose.ui:ui:1.12.0-alpha01'
+
+This may lead to compilation errors or unexpected behavior at runtime.
+Such version mismatch might be caused by dependency constraints in one of the included libraries.
+You can inspect resulted dependencies tree via `./gradlew :composeApp:dependencies  --configuration iosSimulatorArm64CompileKlibraries`.
+See more details in Gradle documentation: https://docs.gradle.org/current/userguide/viewing_debugging_dependencies.html#sec:listing-dependencies
+
+Please update Compose Multiplatform Gradle plugin's version or align dependencies' versions to match the current plugin version.
+
+
+> Task :composeApp:generateActualResourceCollectorsForIosSimulatorArm64Main UP-TO-DATE
+> Task :shared:exportCrossCompilationMetadataForIosSimulatorArm64ApiElements UP-TO-DATE
+> Task :composeApp:compileKotlinIosSimulatorArm64 UP-TO-DATE
+
+> Task :composeApp:checkIosArm64TestComposeLibrariesCompatibility
+w: Compose Multiplatform runtime dependencies' versions don't match with plugin version.
+    expected: 'org.jetbrains.compose.foundation:foundation:1.11.0'
+    actual:   'org.jetbrains.compose.foundation:foundation:1.12.0-alpha01'
+
+    expected: 'org.jetbrains.compose.ui:ui:1.11.0'
+    actual:   'org.jetbrains.compose.ui:ui:1.12.0-alpha01'
+
+This may lead to compilation errors or unexpected behavior at runtime.
+Such version mismatch might be caused by dependency constraints in one of the included libraries.
+You can inspect resulted dependencies tree via `./gradlew :composeApp:dependencies  --configuration iosArm64TestCompileKlibraries`.
+See more details in Gradle documentation: https://docs.gradle.org/current/userguide/viewing_debugging_dependencies.html#sec:listing-dependencies
+
+Please update Compose Multiplatform Gradle plugin's version or align dependencies' versions to match the current plugin version.
+
+
+> Task :composeApp:iosArm64ResolveResourcesFromDependencies UP-TO-DATE
+> Task :composeApp:assembleIosArm64MainResources UP-TO-DATE
+> Task :composeApp:iosArm64ResolveSelfResourcesCopyHierarchicalMultiplatformResources UP-TO-DATE
+> Task :composeApp:iosArm64AggregateResources UP-TO-DATE
+> Task :composeApp:iosArm64ProcessResources UP-TO-DATE
+> Task :composeApp:iosArm64MainKlibrary UP-TO-DATE
+> Task :composeApp:compileTestKotlinIosArm64 UP-TO-DATE
+
+> Task :composeApp:checkIosSimulatorArm64TestComposeLibrariesCompatibility
+w: Compose Multiplatform runtime dependencies' versions don't match with plugin version.
+    expected: 'org.jetbrains.compose.foundation:foundation:1.11.0'
+    actual:   'org.jetbrains.compose.foundation:foundation:1.12.0-alpha01'
+
+    expected: 'org.jetbrains.compose.ui:ui:1.11.0'
+    actual:   'org.jetbrains.compose.ui:ui:1.12.0-alpha01'
+
+This may lead to compilation errors or unexpected behavior at runtime.
+Such version mismatch might be caused by dependency constraints in one of the included libraries.
+You can inspect resulted dependencies tree via `./gradlew :composeApp:dependencies  --configuration iosSimulatorArm64TestCompileKlibraries`.
+See more details in Gradle documentation: https://docs.gradle.org/current/userguide/viewing_debugging_dependencies.html#sec:listing-dependencies
+
+Please update Compose Multiplatform Gradle plugin's version or align dependencies' versions to match the current plugin version.
+
+
+> Task :composeApp:iosSimulatorArm64ResolveResourcesFromDependencies UP-TO-DATE
+> Task :composeApp:assembleIosSimulatorArm64MainResources UP-TO-DATE
+> Task :composeApp:iosSimulatorArm64ResolveSelfResourcesCopyHierarchicalMultiplatformResources UP-TO-DATE
+> Task :composeApp:iosSimulatorArm64AggregateResources UP-TO-DATE
+> Task :composeApp:iosSimulatorArm64ProcessResources UP-TO-DATE
+> Task :composeApp:iosSimulatorArm64MainKlibrary UP-TO-DATE
+> Task :composeApp:compileTestKotlinIosSimulatorArm64 UP-TO-DATE
+> Task :composeApp:metadataIosMainProcessResources NO-SOURCE
+> Task :composeApp:metadataIosMainClasses UP-TO-DATE
+> Task :composeApp:iosArm64MetadataElements UP-TO-DATE
+> Task :composeApp:iosSimulatorArm64MetadataElements UP-TO-DATE
+
+> Task :composeApp:checkJvmMainComposeLibrariesCompatibility
+w: Compose Multiplatform runtime dependencies' versions don't match with plugin version.
+    expected: 'org.jetbrains.compose.foundation:foundation:1.11.0'
+    actual:   'org.jetbrains.compose.foundation:foundation:1.12.0-alpha01'
+
+    expected: 'org.jetbrains.compose.ui:ui:1.11.0'
+    actual:   'org.jetbrains.compose.ui:ui:1.12.0-alpha01'
+
+This may lead to compilation errors or unexpected behavior at runtime.
+Such version mismatch might be caused by dependency constraints in one of the included libraries.
+You can inspect resulted dependencies tree via `./gradlew :composeApp:dependencies  --configuration jvmRuntimeClasspath`.
+See more details in Gradle documentation: https://docs.gradle.org/current/userguide/viewing_debugging_dependencies.html#sec:listing-dependencies
+
+Please update Compose Multiplatform Gradle plugin's version or align dependencies' versions to match the current plugin version.
+
+
+> Task :composeApp:generateActualResourceCollectorsForJvmMain UP-TO-DATE
+> Task :shared:jvmJar UP-TO-DATE
+> Task :composeApp:compileKotlinJvm UP-TO-DATE
+> Task :composeApp:compileJvmMainJava NO-SOURCE
+> Task :composeApp:assembleJvmMainResources UP-TO-DATE
+> Task :composeApp:jvmProcessResources UP-TO-DATE
+> Task :composeApp:processJvmMainResources SKIPPED
+> Task :composeApp:jvmMainClasses UP-TO-DATE
+> Task :composeApp:jvmJar UP-TO-DATE
+> Task :composeApp:linkDebugFrameworkIosArm64 SKIPPED
+> Task :composeApp:linkDebugFrameworkIosSimulatorArm64 SKIPPED
+> Task :composeApp:linkReleaseFrameworkIosArm64 SKIPPED
+> Task :composeApp:linkReleaseFrameworkIosSimulatorArm64 SKIPPED
+> Task :composeApp:assemble UP-TO-DATE
+> Task :composeApp:assembleIosSimulatorArm64TestResources UP-TO-DATE
+> Task :composeApp:copyTestComposeResourcesForIosSimulatorArm64 UP-TO-DATE
+> Task :composeApp:linkDebugTestIosSimulatorArm64 SKIPPED
+> Task :composeApp:iosSimulatorArm64Test SKIPPED
+
+> Task :composeApp:checkJvmTestComposeLibrariesCompatibility
+w: Compose Multiplatform runtime dependencies' versions don't match with plugin version.
+    expected: 'org.jetbrains.compose.foundation:foundation:1.11.0'
+    actual:   'org.jetbrains.compose.foundation:foundation:1.12.0-alpha01'
+
+    expected: 'org.jetbrains.compose.ui:ui:1.11.0'
+    actual:   'org.jetbrains.compose.ui:ui:1.12.0-alpha01'
+
+This may lead to compilation errors or unexpected behavior at runtime.
+Such version mismatch might be caused by dependency constraints in one of the included libraries.
+You can inspect resulted dependencies tree via `./gradlew :composeApp:dependencies  --configuration jvmTestRuntimeClasspath`.
+See more details in Gradle documentation: https://docs.gradle.org/current/userguide/viewing_debugging_dependencies.html#sec:listing-dependencies
+
+Please update Compose Multiplatform Gradle plugin's version or align dependencies' versions to match the current plugin version.
+
+
+> Task :composeApp:compileTestKotlinJvm UP-TO-DATE
+> Task :composeApp:compileJvmTestJava NO-SOURCE
+> Task :composeApp:assembleJvmTestResources UP-TO-DATE
+> Task :composeApp:jvmTestProcessResources UP-TO-DATE
+> Task :composeApp:processJvmTestResources SKIPPED
+> Task :composeApp:jvmTestClasses UP-TO-DATE
+> Task :composeApp:koverFindJar UP-TO-DATE
+> Task :composeApp:jvmTest UP-TO-DATE
+> Task :composeApp:androidJar UP-TO-DATE
+> Task :composeApp:generateAndroidHostTestAssets UP-TO-DATE
+> Task :composeApp:mergeAndroidHostTestAssets UP-TO-DATE
+> Task :composeApp:checkAndroidHostTestAarMetadata UP-TO-DATE
+> Task :composeApp:mapAndroidHostTestSourceSetPaths UP-TO-DATE
+> Task :composeApp:generateAndroidHostTestResources UP-TO-DATE
+> Task :composeApp:mergeAndroidHostTestResources UP-TO-DATE
+> Task :composeApp:processAndroidHostTestManifest UP-TO-DATE
+> Task :composeApp:processAndroidHostTestResources UP-TO-DATE
+> Task :composeApp:packageAndroidHostTestForUnitTest UP-TO-DATE
+> Task :composeApp:generateAndroidHostTestConfig UP-TO-DATE
+> Task :composeApp:compileAndroidHostTest UP-TO-DATE
+> Task :composeApp:processAndroidHostTestJavaRes NO-SOURCE
+> Task :composeApp:testAndroidHostTest UP-TO-DATE
+> Task :composeApp:allTests UP-TO-DATE
+
+> Task :composeApp:androidMainStabilityCheck
+ℹ️  No composables found in :composeApp, skipping stability check
+
+> Task :composeApp:koverGenerateArtifactAndroid UP-TO-DATE
+
+> Task :composeApp:checkJvmDevComposeLibrariesCompatibility
+w: Compose Multiplatform runtime dependencies' versions don't match with plugin version.
+    expected: 'org.jetbrains.compose.foundation:foundation:1.11.0'
+    actual:   'org.jetbrains.compose.foundation:foundation:1.12.0-alpha01'
+
+    expected: 'org.jetbrains.compose.ui:ui:1.11.0'
+    actual:   'org.jetbrains.compose.ui:ui:1.12.0-alpha01'
+
+This may lead to compilation errors or unexpected behavior at runtime.
+Such version mismatch might be caused by dependency constraints in one of the included libraries.
+You can inspect resulted dependencies tree via `./gradlew :composeApp:dependencies  --configuration jvmDevRuntimeClasspath`.
+See more details in Gradle documentation: https://docs.gradle.org/current/userguide/viewing_debugging_dependencies.html#sec:listing-dependencies
+
+Please update Compose Multiplatform Gradle plugin's version or align dependencies' versions to match the current plugin version.
+
+
+> Task :composeApp:compileDevKotlinJvm NO-SOURCE
+> Task :composeApp:compileJvmDevJava NO-SOURCE
+> Task :composeApp:koverGenerateArtifactJvm UP-TO-DATE
+> Task :composeApp:koverGenerateArtifact UP-TO-DATE
+> Task :composeApp:koverCachedVerify UP-TO-DATE
+> Task :composeApp:koverVerify
+> Task :composeApp:testAndroid UP-TO-DATE
+> Task :composeApp:check
+> Task :composeApp:build
+> Task :server:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :server:compileKotlin UP-TO-DATE
+> Task :server:compileJava NO-SOURCE
+> Task :server:processResources UP-TO-DATE
+> Task :server:classes UP-TO-DATE
+> Task :server:jar UP-TO-DATE
+> Task :server:startScripts UP-TO-DATE
+> Task :server:distTar UP-TO-DATE
+> Task :server:distZip UP-TO-DATE
+> Task :server:shadowJar UP-TO-DATE
+> Task :server:startShadowScripts UP-TO-DATE
+> Task :server:shadowDistTar UP-TO-DATE
+> Task :server:shadowDistZip UP-TO-DATE
+> Task :server:assemble UP-TO-DATE
+> Task :server:compileTestKotlin UP-TO-DATE
+> Task :server:compileTestJava NO-SOURCE
+> Task :server:koverFindJar UP-TO-DATE
+> Task :server:processTestResources NO-SOURCE
+> Task :server:testClasses UP-TO-DATE
+> Task :server:test UP-TO-DATE
+> Task :server:koverGenerateArtifactJvm UP-TO-DATE
+> Task :server:koverGenerateArtifact UP-TO-DATE
+> Task :server:koverCachedVerify UP-TO-DATE
+> Task :server:koverVerify
+> Task :server:check
+> Task :server:build
+> Task :shared:bundleAndroidMainAar UP-TO-DATE
+> Task :shared:assembleAndroidMain UP-TO-DATE
+> Task :androidApp:mergeReleaseResources
+> Task :androidApp:processReleaseResources
+> Task :androidApp:transformReleaseClassesWithAsm UP-TO-DATE
+> Task :androidApp:dexBuilderRelease UP-TO-DATE
+> Task :androidApp:mergeDexRelease UP-TO-DATE
+> Task :androidApp:mergeReleaseGlobalSynthetics UP-TO-DATE
+> Task :androidApp:compileReleaseArtProfile UP-TO-DATE
+> Task :androidApp:optimizeReleaseResources
+> Task :androidApp:lintVitalAnalyzeRelease
+> Task :androidApp:lintVitalReportRelease SKIPPED
+> Task :androidApp:lintVitalRelease SKIPPED
+> Task :shared:lintAnalyzeAndroidHostTest
+> Task :shared:compileTestKotlinIosArm64
+> Task :androidApp:packageRelease
+> Task :androidApp:createReleaseApkListingFileRedirect UP-TO-DATE
+> Task :androidApp:assembleRelease
+> Task :androidApp:assemble
+> Task :shared:compileTestKotlinIosSimulatorArm64
+w: file:///app/shared/src/commonTest/kotlin/com/tajemniktv/tajsos/data/FakeNodeDao.kt:98:38 The corresponding parameter in the supertype 'NodeDao' is named 'nodes'. This may cause problems when calling this function with named arguments.
+w: file:///app/shared/src/commonTest/kotlin/com/tajemniktv/tajsos/ui/main/calculators/MainStateAssemblersDashboardTest.kt:153:41 Unnecessary non-null assertion (!!) on a non-null receiver of type 'String'.
+w: file:///app/shared/src/commonTest/kotlin/com/tajemniktv/tajsos/ui/main/calculators/MainStateAssemblersDashboardTest.kt:164:41 Unnecessary non-null assertion (!!) on a non-null receiver of type 'String'.
+w: file:///app/shared/src/commonTest/kotlin/com/tajemniktv/tajsos/ui/main/calculators/MainStateAssemblersDashboardTest.kt:178:50 Unnecessary non-null assertion (!!) on a non-null receiver of type 'String'.
+
+> Task :shared:linkDebugTestIosSimulatorArm64 SKIPPED
+> Task :shared:iosSimulatorArm64Test SKIPPED
+> Task :shared:jvmTestProcessResources NO-SOURCE
+> Task :shared:processJvmTestResources SKIPPED
+> Task :shared:koverFindJar UP-TO-DATE
+> Task :shared:androidJar UP-TO-DATE
+> Task :shared:generateAndroidHostTestAssets UP-TO-DATE
+
+> Task :shared:compileTestKotlinIosArm64
+w: file:///app/shared/src/commonTest/kotlin/com/tajemniktv/tajsos/data/FakeNodeDao.kt:98:38 The corresponding parameter in the supertype 'NodeDao' is named 'nodes'. This may cause problems when calling this function with named arguments.
+w: file:///app/shared/src/commonTest/kotlin/com/tajemniktv/tajsos/ui/main/calculators/MainStateAssemblersDashboardTest.kt:153:41 Unnecessary non-null assertion (!!) on a non-null receiver of type 'String'.
+w: file:///app/shared/src/commonTest/kotlin/com/tajemniktv/tajsos/ui/main/calculators/MainStateAssemblersDashboardTest.kt:164:41 Unnecessary non-null assertion (!!) on a non-null receiver of type 'String'.
+w: file:///app/shared/src/commonTest/kotlin/com/tajemniktv/tajsos/ui/main/calculators/MainStateAssemblersDashboardTest.kt:178:50 Unnecessary non-null assertion (!!) on a non-null receiver of type 'String'.
+
+> Task :shared:assemble
+> Task :shared:processAndroidHostTestJavaRes NO-SOURCE
+
+> Task :shared:androidMainStabilityCheck
+ℹ️  No composables found in :shared, skipping stability check
+
+> Task :shared:mergeAndroidHostTestAssets UP-TO-DATE
+> Task :shared:packageAndroidHostTestForUnitTest UP-TO-DATE
+> Task :shared:generateAndroidHostTestConfig UP-TO-DATE
+> Task :shared:compileTestKotlinJvm
+> Task :shared:compileAndroidHostTest
+w: file:///app/shared/src/commonTest/kotlin/com/tajemniktv/tajsos/data/FakeNodeDao.kt:98:38 The corresponding parameter in the supertype 'NodeDao' is named 'nodes'. This may cause problems when calling this function with named arguments.
+
+> Task :shared:compileTestKotlinJvm
+w: file:///app/shared/src/commonTest/kotlin/com/tajemniktv/tajsos/data/FakeNodeDao.kt:98:38 The corresponding parameter in the supertype 'NodeDao' is named 'nodes'. This may cause problems when calling this function with named arguments.
+w: file:///app/shared/src/commonTest/kotlin/com/tajemniktv/tajsos/ui/main/calculators/MainStateAssemblersDashboardTest.kt:153:41 Unnecessary non-null assertion (!!) on a non-null receiver of type 'String'.
+w: file:///app/shared/src/commonTest/kotlin/com/tajemniktv/tajsos/ui/main/calculators/MainStateAssemblersDashboardTest.kt:164:41 Unnecessary non-null assertion (!!) on a non-null receiver of type 'String'.
+w: file:///app/shared/src/commonTest/kotlin/com/tajemniktv/tajsos/ui/main/calculators/MainStateAssemblersDashboardTest.kt:178:50 Unnecessary non-null assertion (!!) on a non-null receiver of type 'String'.
+
+> Task :shared:compileAndroidHostTest
+w: file:///app/shared/src/commonTest/kotlin/com/tajemniktv/tajsos/ui/main/calculators/MainStateAssemblersDashboardTest.kt:153:41 Unnecessary non-null assertion (!!) on a non-null receiver of type 'String'.
+w: file:///app/shared/src/commonTest/kotlin/com/tajemniktv/tajsos/ui/main/calculators/MainStateAssemblersDashboardTest.kt:164:41 Unnecessary non-null assertion (!!) on a non-null receiver of type 'String'.
+w: file:///app/shared/src/commonTest/kotlin/com/tajemniktv/tajsos/ui/main/calculators/MainStateAssemblersDashboardTest.kt:178:50 Unnecessary non-null assertion (!!) on a non-null receiver of type 'String'.
+
+> Task :shared:compileJvmTestJava NO-SOURCE
+> Task :shared:jvmTestClasses
+> Task :androidApp:lintReportDebug UP-TO-DATE
+> Task :androidApp:lintDebug
+> Task :androidApp:lint
+> Task :androidApp:check
+> Task :androidApp:build
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::arrayBaseOffset has been called by androidx.datastore.preferences.protobuf.UnsafeUtil$MemoryAccessor (file:/home/jules/.gradle/caches/modules-2/files-2.1/androidx.datastore/datastore-preferences-external-protobuf/1.2.1/200a891fd29602b4bcff8e197d243a372fb026d5/datastore-preferences-external-protobuf-1.2.1.jar)
+WARNING: Please consider reporting this to the maintainers of class androidx.datastore.preferences.protobuf.UnsafeUtil$MemoryAccessor
+WARNING: sun.misc.Unsafe::arrayBaseOffset will be removed in a future release
+> Task :shared:testAndroidHostTest
+> Task :shared:testAndroid
+> Task :shared:koverGenerateArtifactAndroid
+> Task :shared:jvmTest
+> Task :shared:koverGenerateArtifactJvm
+> Task :shared:koverGenerateArtifact
+> Task :shared:allTests
+> Task :shared:koverCachedVerify
+> Task :shared:koverVerify
+> Task :shared:check
+> Task :shared:build
+
+BUILD SUCCESSFUL in 2m 30s
+294 actionable tasks: 39 executed, 1 from cache, 254 up-to-date
+Configuration cache entry reused.

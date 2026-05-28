@@ -40,3 +40,12 @@ dependencies {
     testImplementation(libs.kotlin.testJunit)
     testImplementation(libs.ktor.client.content.negotiation)
 }
+
+
+tasks.withType<Tar> {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+tasks.withType<Zip> {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
