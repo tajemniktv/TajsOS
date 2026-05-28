@@ -70,7 +70,13 @@ object FilterHelper {
                 .now()
                 .toEpochMilliseconds()
         val dayMs = 24 * 60 * 60 * 1000L
-        val statusSet = status?.split(",")?.map { it.trim() }?.toSet()
+        val statusSet =
+            status
+                ?.splitToSequence(",")
+                ?.map { it.trim() }
+                ?.filter { it.isNotEmpty() }
+                ?.toSet()
+                ?.takeIf { it.isNotEmpty() }
 
         val filtered =
             nodes

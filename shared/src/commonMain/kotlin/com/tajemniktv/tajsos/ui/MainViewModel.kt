@@ -4,8 +4,6 @@
 
 package com.tajemniktv.tajsos.ui
 
-import kotlin.coroutines.cancellation.CancellationException
-
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -32,6 +30,7 @@ import com.tajemniktv.tajsos.data.ProtocolHistoryEntity
 import com.tajemniktv.tajsos.data.RecordKind
 import com.tajemniktv.tajsos.data.RelationEntity
 import com.tajemniktv.tajsos.data.ReviewEntity
+import com.tajemniktv.tajsos.data.safeDecode
 import com.tajemniktv.tajsos.data.TagEntity
 import com.tajemniktv.tajsos.data.TaskState
 import com.tajemniktv.tajsos.data.TemplateEntity
@@ -2862,12 +2861,3 @@ class MainViewModel(
         decisionCommands.convertDecisionToTask(nodeId)
     }
 }
-
-private inline fun <T> safeDecode(block: () -> T): T? =
-    try {
-        block()
-    } catch (e: CancellationException) {
-        throw e
-    } catch (e: Exception) {
-        null
-    }
