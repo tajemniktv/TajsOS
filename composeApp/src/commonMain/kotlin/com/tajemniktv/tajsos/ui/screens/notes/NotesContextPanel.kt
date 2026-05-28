@@ -45,8 +45,6 @@ import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.note_select_inspect_context
 import kotlin.time.Instant
-import androidx.compose.ui.input.pointer.PointerIcon
-import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 /**
  * Collapsible right rail with note metadata, graph context, and history sections.
@@ -139,7 +137,6 @@ fun NotesContextPanel(
                                     Modifier
                                         .fillMaxWidth()
                                         .clickable { onOpenNode(task.id) }
-                                        .pointerHoverIcon(PointerIcon.Hand)
                                         .padding(vertical = 2.dp),
                             )
                         }
@@ -164,7 +161,6 @@ fun NotesContextPanel(
                                     Modifier
                                         .fillMaxWidth()
                                         .clickable { onOpenNode(note.id) }
-                                        .pointerHoverIcon(PointerIcon.Hand)
                                         .padding(vertical = 2.dp),
                             )
                         }

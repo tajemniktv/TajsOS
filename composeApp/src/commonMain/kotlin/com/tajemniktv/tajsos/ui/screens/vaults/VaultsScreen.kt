@@ -261,11 +261,11 @@ internal fun VaultsLayer(
 
     val filteredSections =
         remember(snapshot, searchQuery) {
-            val query = searchQuery.trim()
+            val query = searchQuery.trim().lowercase()
             buildSectionModels(snapshot).filter { section ->
                 query.isBlank() ||
-                    section.title.contains(query, ignoreCase = true) ||
-                    section.items.any { it.contains(query, ignoreCase = true) }
+                    section.title.lowercase().contains(query) ||
+                    section.items.any { it.lowercase().contains(query) }
             }
         }
 

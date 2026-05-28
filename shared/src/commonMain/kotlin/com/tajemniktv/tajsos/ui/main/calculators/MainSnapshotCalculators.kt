@@ -949,9 +949,6 @@ fun maintenanceUrgency(
  * Scans all node entities evaluating explicit due dates, implicit horizons,
  * and project phase assignments to build a [TimeArchitectureSnapshot] stratifying tasks by timeline.
  *
- * To preserve UI performance and minimize garbage collection pauses, string sorting uses
- * `compareTo(..., ignoreCase = true)` rather than allocating lowercase copies.
- *
  * @param nodes The complete list of active nodes in the system.
  * @param projects A curated list of nodes strictly identified as "project" entities.
  * @return A [TimeArchitectureSnapshot] organizing nodes into layers (e.g., today, week, semester).
@@ -1044,7 +1041,7 @@ fun calculateTimeArchitectureSnapshot(
                     isActivePhase = isActive,
                     phaseLabel = if (isActive) "active_phase" else "inactive_phase",
                 )
-            }.sortedWith { a, b -> a.project.title.compareTo(b.project.title, ignoreCase = true) }
+            }.sortedBy { it.project.title.lowercase() }
 
     return com.tajemniktv.tajsos.ui.TimeArchitectureSnapshot(
         todayLayer = todayLayer,
@@ -1097,7 +1094,7 @@ fun calculateRelationshipSnapshot(
     val people =
         nodes
             .filter { it.node.isRelationshipAnchor() && it.node.status == "active" }
-            .sortedWith { a, b -> a.node.title.compareTo(b.node.title, ignoreCase = true) }
+            .sortedBy { it.node.title.lowercase() }
 
     /**
      * Filters the global node list to extract all tasks or notes explicitly mentioning or linked to a specific person.
@@ -1219,17 +1216,26 @@ fun calculateRelationshipSnapshot(
     val importantRelationships =
         peopleItems
             .filter { it.isImportant }
-            .sortedWith { a, b -> a.person.node.title.compareTo(b.person.node.title, ignoreCase = true) }
+            .sortedBy {
+                it.person.node.title
+                    .lowercase()
+            }
 
     val professors =
         peopleItems
             .filter { it.relationshipType == "professor" }
-            .sortedWith { a, b -> a.person.node.title.compareTo(b.person.node.title, ignoreCase = true) }
+            .sortedBy {
+                it.person.node.title
+                    .lowercase()
+            }
 
     val friendsAndFamily =
         peopleItems
             .filter { it.relationshipType == "friend" || it.relationshipType == "family" }
-            .sortedWith { a, b -> a.person.node.title.compareTo(b.person.node.title, ignoreCase = true) }
+            .sortedBy {
+                it.person.node.title
+                    .lowercase()
+            }
 
     val gentlePrompt =
         when
@@ -2727,7 +2733,7 @@ fun calculateStudentBoardState(
                             null
                         },
                 )
-            }.sortedWith { a, b -> a.courseName.compareTo(b.courseName, ignoreCase = true) }
+            }.sortedBy { it.courseName.lowercase() }
 
     val bySemester =
         activeNodes
@@ -2768,7 +2774,7 @@ fun calculateStudentBoardState(
                     upcomingExams = upcomingExams,
                     dueSoon = dueSoon,
                 )
-            }.sortedWith { a, b -> a.semester.compareTo(b.semester, ignoreCase = true) }
+            }.sortedBy { it.semester.lowercase() }
 
     val topicToNoteLinks =
         relations.count {

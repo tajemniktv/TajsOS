@@ -97,8 +97,6 @@ import tajsos.composeapp.generated.resources.type_area
 import tajsos.composeapp.generated.resources.type_note
 import tajsos.composeapp.generated.resources.type_record
 import kotlin.math.roundToInt
-import androidx.compose.ui.input.pointer.PointerIcon
-import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 object ProjectDetailBlockRegistry {
     private val renderers: Map<String, ProjectDetailBlockRenderer> =
@@ -495,8 +493,7 @@ private fun renderProjectSidebar(context: ProjectDetailContext) {
                         modifier =
                             Modifier
                                 .fillMaxWidth()
-                                .clickable { context.onEditNode(node.id) }
-                                .pointerHoverIcon(PointerIcon.Hand),
+                                .clickable { context.onEditNode(node.id) },
                     )
                 }
             }

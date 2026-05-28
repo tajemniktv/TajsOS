@@ -78,8 +78,6 @@ import tajsos.composeapp.generated.resources.screen_inbox
 import tajsos.composeapp.generated.resources.screen_project
 import tajsos.composeapp.generated.resources.screen_today
 import kotlin.time.Clock
-import androidx.compose.ui.input.pointer.PointerIcon
-import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 /**
  * Central dashboard entry point that collects system state and coordinates layout.
@@ -445,7 +443,6 @@ private fun RenderDashboardBlock(
                         modifier =
                             Modifier
                                 .clickable { context.onNewEntry() }
-                                .pointerHoverIcon(PointerIcon.Hand)
                                 .background(TajsOSTheme.Primary, RoundedCornerShape(TajsOSTheme.RadiusXs))
                                 .padding(horizontal = 12.dp, vertical = 6.dp),
                         verticalAlignment = Alignment.CenterVertically,
@@ -608,8 +605,7 @@ private fun DashboardOperationsOverview(
                                 TajsOSTheme.Border,
                                 RoundedCornerShape(TajsOSTheme.RadiusMd),
                             ).clickable { onNavigate(module.screen.route) }
-                                .pointerHoverIcon(PointerIcon.Hand)
-                              .padding(TajsOSTheme.SpacingMd),
+                            .padding(TajsOSTheme.SpacingMd),
                     verticalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
                     Text(

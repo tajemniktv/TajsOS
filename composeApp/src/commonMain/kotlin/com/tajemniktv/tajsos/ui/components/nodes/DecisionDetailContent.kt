@@ -96,8 +96,6 @@ import tajsos.composeapp.generated.resources.decision_tap_to_add
 import tajsos.composeapp.generated.resources.detail_none
 import tajsos.composeapp.generated.resources.identity_clear
 import kotlin.time.Clock
-import androidx.compose.ui.input.pointer.PointerIcon
-import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 /**
  * Renders a detailed UI for viewing and editing a single decision node.
@@ -426,8 +424,7 @@ fun DecisionDetailContent(
                             modifier =
                                 Modifier
                                     .fillMaxWidth()
-                                    .clickable { selectedOptionId = option.id }
-                                    .pointerHoverIcon(PointerIcon.Hand),
+                                    .clickable { selectedOptionId = option.id },
                         ) {
                             RadioButton(
                                 selected = selectedOptionId == option.id,

@@ -440,12 +440,12 @@ private fun ProtocolLibrarySurface(
             items.filter { item ->
                 val categoryMatches =
                     selectedCategory == ProtocolCategory.All || item.category == selectedCategory
-                val query = searchQuery.trim()
+                val query = searchQuery.trim().lowercase()
                 val queryMatches =
                     query.isBlank() ||
-                        item.title.contains(query, ignoreCase = true) ||
-                        item.purpose.contains(query, ignoreCase = true) ||
-                        item.useWhen.contains(query, ignoreCase = true)
+                        item.title.lowercase().contains(query) ||
+                        item.purpose.lowercase().contains(query) ||
+                        item.useWhen.lowercase().contains(query)
                 categoryMatches && queryMatches
             }
         }
@@ -1042,7 +1042,7 @@ private fun buildLibraryItems(
 
     return items.sortedWith(
         compareByDescending<ProtocolLibraryItem> { it.lastRunAt ?: 0L }
-            .then { a, b -> a.title.compareTo(b.title, ignoreCase = true) },
+            .thenBy { it.title.lowercase() },
     )
 }
 

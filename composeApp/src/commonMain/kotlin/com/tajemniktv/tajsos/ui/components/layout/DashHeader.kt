@@ -32,8 +32,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
-import androidx.compose.ui.input.pointer.PointerIcon
-import androidx.compose.ui.input.pointer.pointerHoverIcon
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.common_system_online
@@ -60,7 +58,7 @@ fun DashHeader(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.clickable { onMenuClick() }.pointerHoverIcon(PointerIcon.Hand),
+            modifier = Modifier.clickable { onMenuClick() },
         ) {
             Box(
                 modifier =

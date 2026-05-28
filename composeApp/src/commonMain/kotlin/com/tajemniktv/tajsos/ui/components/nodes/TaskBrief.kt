@@ -30,8 +30,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
-import androidx.compose.ui.input.pointer.PointerIcon
-import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 /**
  * Renders a clickable task row with a circular completion indicator and title.
@@ -73,7 +71,7 @@ fun TaskBrief(
                             1.dp,
                             if (isDone) TajsOSTheme.Primary else TajsOSTheme.GhostBorder,
                             CircleShape,
-                        ).clickable { onToggle() }.pointerHoverIcon(PointerIcon.Hand),
+                        ).clickable { onToggle() },
                 contentAlignment = Alignment.Center,
             ) {
                 if (isDone) {

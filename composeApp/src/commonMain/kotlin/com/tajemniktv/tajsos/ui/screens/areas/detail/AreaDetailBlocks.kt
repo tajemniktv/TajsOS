@@ -81,8 +81,6 @@ import tajsos.composeapp.generated.resources.project_detail_linked_notes
 import tajsos.composeapp.generated.resources.project_detail_status
 import tajsos.composeapp.generated.resources.type_note
 import tajsos.composeapp.generated.resources.type_record
-import androidx.compose.ui.input.pointer.PointerIcon
-import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 object AreaDetailBlocks {
     private val renderers: Map<String, AreaDetailBlockRenderer> =
@@ -413,11 +411,7 @@ private fun renderAreaSidebar(context: AreaDetailContext) {
                 Text(
                     "• ${node.title}",
                     color = TajsOSTheme.Text,
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .clickable { context.onEditNode(node.id) }
-                            .pointerHoverIcon(PointerIcon.Hand),
+                    modifier = Modifier.fillMaxWidth().clickable { },
                 )
             }
         }

@@ -6,7 +6,6 @@ package com.tajemniktv.tajsos.ui.screens.dashboard
 
 import com.tajemniktv.tajsos.data.AppPack
 import com.tajemniktv.tajsos.data.PackRegistry
-import com.tajemniktv.tajsos.data.safeDecode
 import com.tajemniktv.tajsos.ui.DashboardUIState
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -443,6 +442,13 @@ private fun normalizeBlocks(
             )
         }.distinctBy { it.id }
 }
+
+private inline fun <T> safeDecode(block: () -> T): T? =
+    try {
+        block()
+    } catch (e: Exception) {
+        null
+    }
 
 private fun parseLegacyBlockList(raw: String?): List<String> {
     if (raw.isNullOrBlank()) return emptyList()

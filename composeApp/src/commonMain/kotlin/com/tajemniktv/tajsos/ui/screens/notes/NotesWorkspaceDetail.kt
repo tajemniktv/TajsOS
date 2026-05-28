@@ -89,8 +89,6 @@ import tajsos.composeapp.generated.resources.screen_history
 import tajsos.composeapp.generated.resources.tasks_context_title
 import tajsos.composeapp.generated.resources.view_all
 import kotlin.time.Instant
-import androidx.compose.ui.input.pointer.PointerIcon
-import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 /**
  * Notes-first desktop workspace with separated reading/editing modes and contextual side panels.
@@ -157,13 +155,15 @@ fun NotesWorkspaceDetail(
 
     val filtered =
         remember(noteItems, query, selectedType) {
-            val q = query.trim()
+            val q = query.trim().lowercase()
             noteItems.filter {
                 (selectedType == null || it.noteType == selectedType) &&
                     (
                         q.isBlank() ||
-                            it.title.contains(q, ignoreCase = true) ||
-                            it.content.contains(q, ignoreCase = true)
+                            it.title.lowercase().contains(q) ||
+                            it.content
+                                .lowercase()
+                                .contains(q)
                     )
             }
         }
@@ -247,8 +247,7 @@ fun NotesWorkspaceDetail(
                             modifier =
                                 Modifier
                                     .fillMaxWidth()
-                                    .clickable { onNavigateToNode(item.id) }
-                                    .pointerHoverIcon(PointerIcon.Hand),
+                                    .clickable { onNavigateToNode(item.id) },
                             shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
                             color =
                                 if (item.id ==
@@ -420,10 +419,7 @@ fun NotesWorkspaceDetail(
                         val linkedNode = nodesById[id]?.node ?: return@forEach
                         Text(
                             "• ${linkedNode.title}",
-                            modifier =
-                                Modifier
-                                    .clickable { onNavigateToNode(linkedNode.id) }
-                                    .pointerHoverIcon(PointerIcon.Hand),
+                            modifier = Modifier.clickable { onNavigateToNode(linkedNode.id) },
                             color = TajsOSTheme.Text,
                         )
                     }

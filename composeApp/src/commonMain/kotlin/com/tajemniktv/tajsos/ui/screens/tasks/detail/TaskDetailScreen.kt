@@ -25,7 +25,6 @@ import com.tajemniktv.tajsos.data.EventLogEntity
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.data.TaskState
 import com.tajemniktv.tajsos.data.isTaskItem
-import com.tajemniktv.tajsos.data.safeDecode
 import com.tajemniktv.tajsos.data.taskStateOrNull
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
@@ -546,6 +545,13 @@ private fun formatTime(epochMillis: Long): String {
             .padStart(2, '0')
     return "$hour:$minute"
 }
+
+private inline fun <T> safeDecode(block: () -> T): T? =
+    try {
+        block()
+    } catch (e: Exception) {
+        null
+    }
 
 private fun parseAttachmentMetadata(payload: String): Map<String, String> =
     safeDecode {
