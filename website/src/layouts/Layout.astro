@@ -1,12 +1,15 @@
 ---
 import "../styles/global.css";
+import { SITE } from "../data/site";
 
 interface Props {
   title?: string;
+  description?: string;
 }
 
-const { title } = Astro.props as Props;
-const pageTitle = title ? `TajsOS | ${title}` : "TajsOS | The Neural Interface";
+const { title, description } = Astro.props as Props;
+const pageTitle = title ? `${SITE.title} | ${title}` : `${SITE.title} | The Neural Interface`;
+const pageDescription = description || SITE.description;
 ---
 
 <!doctype html>
@@ -21,7 +24,10 @@ const pageTitle = title ? `TajsOS | ${title}` : "TajsOS | The Neural Interface";
     />
     <meta name="generator" content={Astro.generator} />
     <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
 
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet"

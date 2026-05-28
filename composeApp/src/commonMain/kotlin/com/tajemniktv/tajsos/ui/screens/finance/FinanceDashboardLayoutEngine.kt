@@ -4,6 +4,7 @@
 
 package com.tajemniktv.tajsos.ui.screens.finance
 
+import com.tajemniktv.tajsos.data.safeDecode
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
@@ -99,13 +100,6 @@ fun buildFinanceDashboardPlan(
         }
     }
 }
-
-private inline fun <T> safeDecode(block: () -> T): T? =
-    try {
-        block()
-    } catch (e: Exception) {
-        null
-    }
 
 private fun parseStructured(raw: String?): FinanceLayoutJsonV1? {
     if (raw.isNullOrBlank()) return null

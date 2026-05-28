@@ -18,6 +18,7 @@ import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.security.keystore.KeyPermanentlyInvalidatedException
 import java.security.GeneralSecurityException
+import kotlin.coroutines.cancellation.CancellationException
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -420,6 +421,8 @@ class MainActivity : FragmentActivity() {
                         try {
                             authCipher.doFinal("auth".toByteArray())
                             viewModel.setAuthenticated(true)
+                        } catch (e: CancellationException) {
+                            throw e
                         } catch (e: Exception) {
                             Log.e(TAG, "Biometric crypto operation failed: ${e.javaClass.simpleName}")
                         }

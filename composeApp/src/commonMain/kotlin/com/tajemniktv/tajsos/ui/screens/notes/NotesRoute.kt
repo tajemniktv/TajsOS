@@ -109,12 +109,12 @@ fun NotesRoute(
             allNotes
                 .asSequence()
                 .filter { note ->
-                    val query = searchQuery.trim().lowercase()
+                    val query = searchQuery.trim()
                     val matchesQuery =
                         query.isBlank() ||
-                            note.title.lowercase().contains(query) ||
-                            note.content.lowercase().contains(query) ||
-                            note.tags.any { it.lowercase().contains(query) }
+                            note.title.contains(query, ignoreCase = true) ||
+                            note.content.contains(query, ignoreCase = true) ||
+                            note.tags.any { it.contains(query, ignoreCase = true) }
                     val matchesFilter =
                         when (listFilter) {
                             NotesListFilter.ALL -> !note.isArchived
@@ -129,7 +129,7 @@ fun NotesRoute(
                     when (sortOrder) {
                         NotesSortOrder.UPDATED -> compareByDescending<NotesWorkspaceItem> { it.updatedAt }
                         NotesSortOrder.CREATED -> compareByDescending<NotesWorkspaceItem> { it.createdAt }
-                        NotesSortOrder.ALPHABETICAL -> compareBy { it.title.lowercase() }
+                        NotesSortOrder.ALPHABETICAL -> Comparator { a, b -> a.title.compareTo(b.title, ignoreCase = true) }
                     },
                 ).toList()
         }

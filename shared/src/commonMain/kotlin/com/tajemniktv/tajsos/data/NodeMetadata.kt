@@ -5,6 +5,7 @@
 package com.tajemniktv.tajsos.data
 
 import com.tajemniktv.tajsos.domain.DomainKind
+import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
@@ -95,15 +96,16 @@ data class AreaMetadata(
 )
 
 /**
- * Safely deserializes the `metadataJson` field into a [NodeMetadataEnvelope].
+ * Executes [block] and returns its decoded value, or `null` when a non-cancellation exception is thrown.
  *
- * It silently ignores parsing errors or unknown keys (via [nodeMetadataJson] configuration),
- * returning null if the payload is malformed or empty. This ensures that corrupt metadata
- * does not crash the UI. This design prevents a single broken node from taking down the entire list view.
+ * This helper is intended for resilient parsing paths where malformed payloads should not crash the app.
+ * [CancellationException] is always rethrown so coroutine cancellation is propagated and not swallowed.
  */
-private inline fun <T> safeDecode(block: () -> T): T? =
+inline fun <T> safeDecode(block: () -> T): T? =
     try {
         block()
+    } catch (e: CancellationException) {
+        throw e
     } catch (e: Exception) {
         null
     }
