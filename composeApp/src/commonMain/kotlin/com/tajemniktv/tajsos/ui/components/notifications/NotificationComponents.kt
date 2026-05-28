@@ -5,6 +5,8 @@
 package com.tajemniktv.tajsos.ui.components.notifications
 
 import androidx.compose.foundation.background
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -69,7 +71,7 @@ fun TajsNotificationCard(
             modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(TajsOSTheme.RadiusMd))
-                .clickable { notification.onClick() },
+                .clickable { notification.onClick() }.pointerHoverIcon(PointerIcon.Hand),
         color = TajsOSTheme.SurfaceLow,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
     ) {

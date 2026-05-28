@@ -7,6 +7,8 @@ package com.tajemniktv.tajsos.ui.screens.notes
 import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.size
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -247,7 +249,7 @@ fun NotesWorkspaceDetail(
                             modifier =
                                 Modifier
                                     .fillMaxWidth()
-                                    .clickable { onNavigateToNode(item.id) },
+                                    .clickable { onNavigateToNode(item.id) }.pointerHoverIcon(PointerIcon.Hand),
                             shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
                             color =
                                 if (item.id ==
@@ -419,7 +421,7 @@ fun NotesWorkspaceDetail(
                         val linkedNode = nodesById[id]?.node ?: return@forEach
                         Text(
                             "• ${linkedNode.title}",
-                            modifier = Modifier.clickable { onNavigateToNode(linkedNode.id) },
+                            modifier = Modifier.clickable { onNavigateToNode(linkedNode.id) }.pointerHoverIcon(PointerIcon.Hand),
                             color = TajsOSTheme.Text,
                         )
                     }

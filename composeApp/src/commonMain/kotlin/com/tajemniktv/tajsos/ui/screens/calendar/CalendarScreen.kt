@@ -5,6 +5,8 @@
 package com.tajemniktv.tajsos.ui.screens.calendar
 
 import androidx.compose.foundation.background
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -259,7 +261,7 @@ fun MonthView(
                                         } else {
                                             TajsOSTheme.CalendarIdleDay
                                         },
-                                    ).clickable { onDateSelected(date) },
+                                    ).clickable { onDateSelected(date) }.pointerHoverIcon(PointerIcon.Hand),
                             contentAlignment = Alignment.Center,
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {

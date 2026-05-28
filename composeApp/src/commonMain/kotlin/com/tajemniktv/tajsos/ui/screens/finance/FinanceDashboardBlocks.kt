@@ -7,6 +7,8 @@
 package com.tajemniktv.tajsos.ui.screens.finance
 
 import androidx.compose.foundation.background
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -214,7 +216,7 @@ internal fun renderFinanceActivityBlock(context: FinanceDashboardContext) {
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .clickable { context.onEditNode(item.node.id) }
+                            .clickable { context.onEditNode(item.node.id) }.pointerHoverIcon(PointerIcon.Hand)
                             .padding(vertical = 4.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,

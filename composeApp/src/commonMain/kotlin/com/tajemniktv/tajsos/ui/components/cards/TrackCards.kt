@@ -4,6 +4,8 @@
 
 package com.tajemniktv.tajsos.ui.components.cards
 
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -86,7 +88,7 @@ fun MedicationSyncCard(
                         modifier =
                             Modifier
                                 .fillMaxWidth()
-                                .clickable { onToggleMed(med.id) }
+                                .clickable { onToggleMed(med.id) }.pointerHoverIcon(PointerIcon.Hand)
                                 .padding(vertical = 4.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {

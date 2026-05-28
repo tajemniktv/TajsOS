@@ -7,6 +7,8 @@ package com.tajemniktv.tajsos.ui.screens.dashboard
 import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -442,7 +444,7 @@ private fun RenderDashboardBlock(
                     Row(
                         modifier =
                             Modifier
-                                .clickable { context.onNewEntry() }
+                                .clickable { context.onNewEntry() }.pointerHoverIcon(PointerIcon.Hand)
                                 .background(TajsOSTheme.Primary, RoundedCornerShape(TajsOSTheme.RadiusXs))
                                 .padding(horizontal = 12.dp, vertical = 6.dp),
                         verticalAlignment = Alignment.CenterVertically,
@@ -604,7 +606,7 @@ private fun DashboardOperationsOverview(
                                 1.dp,
                                 TajsOSTheme.Border,
                                 RoundedCornerShape(TajsOSTheme.RadiusMd),
-                            ).clickable { onNavigate(module.screen.route) }
+                            ).clickable { onNavigate(module.screen.route) }.pointerHoverIcon(PointerIcon.Hand)
                             .padding(TajsOSTheme.SpacingMd),
                     verticalArrangement = Arrangement.spacedBy(6.dp),
                 ) {

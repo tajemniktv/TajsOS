@@ -4,6 +4,8 @@
 
 package com.tajemniktv.tajsos.ui.screens.notes
 
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -136,7 +138,7 @@ fun NotesContextPanel(
                                 modifier =
                                     Modifier
                                         .fillMaxWidth()
-                                        .clickable { onOpenNode(task.id) }
+                                        .clickable { onOpenNode(task.id) }.pointerHoverIcon(PointerIcon.Hand)
                                         .padding(vertical = 2.dp),
                             )
                         }
@@ -160,7 +162,7 @@ fun NotesContextPanel(
                                 modifier =
                                     Modifier
                                         .fillMaxWidth()
-                                        .clickable { onOpenNode(note.id) }
+                                        .clickable { onOpenNode(note.id) }.pointerHoverIcon(PointerIcon.Hand)
                                         .padding(vertical = 2.dp),
                             )
                         }

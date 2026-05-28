@@ -4,6 +4,8 @@
 
 package com.tajemniktv.tajsos.ui.screens.areas.detail
 
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -411,7 +413,7 @@ private fun renderAreaSidebar(context: AreaDetailContext) {
                 Text(
                     "• ${node.title}",
                     color = TajsOSTheme.Text,
-                    modifier = Modifier.fillMaxWidth().clickable { },
+                    modifier = Modifier.fillMaxWidth().clickable { }.pointerHoverIcon(PointerIcon.Hand),
                 )
             }
         }

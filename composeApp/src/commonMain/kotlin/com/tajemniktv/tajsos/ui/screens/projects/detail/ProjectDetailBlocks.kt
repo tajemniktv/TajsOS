@@ -5,6 +5,8 @@
 package com.tajemniktv.tajsos.ui.screens.projects.detail
 
 import androidx.compose.foundation.background
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -493,7 +495,7 @@ private fun renderProjectSidebar(context: ProjectDetailContext) {
                         modifier =
                             Modifier
                                 .fillMaxWidth()
-                                .clickable { context.onEditNode(node.id) },
+                                .clickable { context.onEditNode(node.id) }.pointerHoverIcon(PointerIcon.Hand),
                     )
                 }
             }
