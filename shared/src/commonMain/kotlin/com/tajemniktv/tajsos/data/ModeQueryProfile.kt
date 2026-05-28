@@ -7,6 +7,11 @@ package com.tajemniktv.tajsos.data
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
+/**
+ * A shared JSON configuration instance used for safely decoding and encoding
+ * string lists associated with mode preferences (e.g., quick actions, dashboard blocks).
+ * It is configured to ignore unknown keys for forward compatibility.
+ */
 private val modeProfileJson =
     Json {
         ignoreUnknownKeys = true

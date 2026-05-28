@@ -12,22 +12,21 @@ import com.tajemniktv.tajsos.ui.MaintenanceStatusItem
 
 /**
  * Explicit maintenance item types that classify as financial responsibilities.
- *
- * This set is used in heuristic matching to implicitly map items with these maintenance
- * types into the finance domain without requiring an explicit [com.tajemniktv.tajsos.domain.DomainKind] assignment.
+ * Used in heuristic matching to implicitly map items with these maintenance
+ * types into the finance domain without requiring an explicit domain assignment.
  */
 private val financeMaintenanceTypes = setOf("bill", "subscription", "renewal")
 
 /**
  * Explicit maintenance item types that classify as health and medical responsibilities.
- *
- * This set is used in heuristic matching to implicitly map items with these maintenance
- * types into the health domain without requiring an explicit [com.tajemniktv.tajsos.domain.DomainKind] assignment.
+ * Used in heuristic matching to implicitly map items with these maintenance
+ * types into the health domain without requiring an explicit domain assignment.
  */
 private val healthMaintenanceTypes = setOf("appointment", "prescription", "med_refill")
 
 /**
- * Set of normalized tag names used to heuristically detect finance-related items.
+ * A set of specific tag strings used to detect if an item relates to finance.
+ * Matching tags implicitly associate nodes with the finance domain.
  */
 private val financeTagMarkers =
     setOf(
@@ -48,7 +47,7 @@ private val financeTagMarkers =
     )
 
 /**
- * List of substring keywords used to search titles and content for financial context.
+ * Keywords that trigger financial categorization when found in node titles or contents.
  */
 private val financeTitleKeywords =
     listOf(
@@ -70,7 +69,8 @@ private val financeTitleKeywords =
     )
 
 /**
- * Set of normalized tag names used to heuristically detect health-related items.
+ * A set of specific tag strings used to detect if an item relates to health.
+ * Matching tags implicitly associate nodes with the health domain.
  */
 private val healthTagMarkers =
     setOf(
@@ -85,7 +85,7 @@ private val healthTagMarkers =
     )
 
 /**
- * List of substring keywords used to search titles and content for health and medical context.
+ * Keywords that trigger health categorization when found in node titles or contents.
  */
 private val healthTitleKeywords =
     listOf(
@@ -281,6 +281,9 @@ object DomainLensQueries {
         }
     }
 
+    /**
+     * Domain matcher configuration for the finance lens, containing hardcoded matching rules.
+     */
     private val financeMatcher = DomainMatcher(
         maintenanceTypes = financeMaintenanceTypes,
         tagMarkers = financeTagMarkers,
@@ -289,6 +292,9 @@ object DomainLensQueries {
 
     private val healthNoteTypes = setOf("reflection", "journal")
 
+    /**
+     * Domain matcher configuration for the health lens, containing hardcoded matching rules.
+     */
     private val healthMatcher = DomainMatcher(
         maintenanceTypes = healthMaintenanceTypes,
         tagMarkers = healthTagMarkers,
