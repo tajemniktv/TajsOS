@@ -9,6 +9,10 @@ internal sealed class IpAddress {
     abstract fun isLinkLocal(): Boolean
     abstract fun isSiteLocal(): Boolean
 
+    /**
+     * Returns true if the IP address is a loopback, link-local, or site-local address.
+     * Useful for safely validating external endpoints against SSRF.
+     */
     fun isPrivateOrLocal(): Boolean = isLoopback() || isLinkLocal() || isSiteLocal()
 
     /**
