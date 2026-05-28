@@ -157,15 +157,13 @@ fun NotesWorkspaceDetail(
 
     val filtered =
         remember(noteItems, query, selectedType) {
-            val q = query.trim().lowercase()
+            val q = query.trim()
             noteItems.filter {
                 (selectedType == null || it.noteType == selectedType) &&
                     (
                         q.isBlank() ||
-                            it.title.lowercase().contains(q) ||
-                            it.content
-                                .lowercase()
-                                .contains(q)
+                            it.title.contains(q, ignoreCase = true) ||
+                            it.content.contains(q, ignoreCase = true)
                     )
             }
         }
