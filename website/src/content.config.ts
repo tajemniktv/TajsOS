@@ -6,15 +6,15 @@ import { blogSchema } from "starlight-blog/schema";
 import { videosSchema } from "starlight-videos/schemas";
 
 export const collections = {
-	docs: defineCollection({
-		loader: docsLoader(),
-		schema: docsSchema({
-			extend: (context) => {
-				return z.object({
-					...blogSchema(context).shape,
-					...videosSchema.shape,
-				});
-			},
-		}),
-	}),
+  docs: defineCollection({
+    loader: docsLoader(),
+    schema: docsSchema({
+      extend: (context) => {
+        return z.object({
+          ...blogSchema(context).shape,
+          ...videosSchema.shape,
+        });
+      },
+    }),
+  }),
 };
