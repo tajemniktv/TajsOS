@@ -110,6 +110,11 @@ inline fun <T> safeDecode(block: () -> T): T? =
         null
     }
 
+/**
+ * Safely decodes the underlying JSON string (`metadataJson`) into a typed [NodeMetadataEnvelope].
+ *
+ * Returns `null` if the string is empty, malformed, or if parsing fails.
+ */
 fun NodeEntity.metadataEnvelopeOrNull(): NodeMetadataEnvelope? =
     metadataJson?.takeIf { it.isNotBlank() }?.let {
         safeDecode { nodeMetadataJson.decodeFromString<NodeMetadataEnvelope>(it) }
