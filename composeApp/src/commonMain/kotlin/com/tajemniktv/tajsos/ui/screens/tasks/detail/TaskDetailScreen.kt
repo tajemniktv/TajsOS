@@ -105,10 +105,12 @@ fun TaskDetailRoute(
     val attachments by viewModel.getAttachmentsForNode(taskId).collectAsState(initial = emptyList())
 
     val allNodeById = remember(nodes) { nodes.associateBy { it.node.id } }
+    // Optimized case-insensitive sorting to avoid string allocations
     val areaOptions =
-        remember(areas) { areas.map { it.id to it.title }.sortedBy { it.second.lowercase() } }
+        remember(areas) { areas.map { it.id to it.title }.sortedWith { a, b -> a.second.compareTo(b.second, ignoreCase = true) } }
+    // Optimized case-insensitive sorting to avoid string allocations
     val projectOptions =
-        remember(projects) { projects.map { it.id to it.title }.sortedBy { it.second.lowercase() } }
+        remember(projects) { projects.map { it.id to it.title }.sortedWith { a, b -> a.second.compareTo(b.second, ignoreCase = true) } }
     val areaById = remember(areas) { areas.associate { it.id to it.title } }
     val projectById = remember(projects) { projects.associate { it.id to it.title } }
 

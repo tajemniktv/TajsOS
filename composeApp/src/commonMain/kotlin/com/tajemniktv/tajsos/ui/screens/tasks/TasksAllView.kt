@@ -137,7 +137,8 @@ internal fun TasksAllView(
                 }
 
                 TaskSort.TITLE -> {
-                    filtered.sortedBy { it.title.lowercase() }
+                    // Optimized case-insensitive sorting to avoid string allocations
+                    filtered.sortedWith { a, b -> a.title.compareTo(b.title, ignoreCase = true) }
                 }
             }
         }
