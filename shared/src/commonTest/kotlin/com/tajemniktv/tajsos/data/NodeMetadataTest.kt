@@ -5,12 +5,14 @@
 package com.tajemniktv.tajsos.data
 
 import com.tajemniktv.tajsos.domain.DomainKind
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
+import kotlin.test.assertFailsWith
 
 class NodeMetadataTest {
     @Test
@@ -70,5 +72,19 @@ class NodeMetadataTest {
 
         val withoutDomain = withDomain.withoutAssociatedDomain(DomainKind.HEALTH)
         assertFalse(withoutDomain.isAssociatedWithDomain(DomainKind.HEALTH))
+    }
+
+    @Test
+    fun safeDecode_catchesGenericExceptions() {
+        val result = safeDecode<String> { throw IllegalArgumentException("Parse failed") }
+        assertNull(result, "safeDecode should swallow generic exceptions and return null")
+    }
+
+    @Test
+    fun safeDecode_rethrowsCancellationException() {
+        assertFailsWith<CancellationException>(
+            message = "safeDecode must rethrow CancellationException to avoid breaking coroutines",
+            block = { safeDecode<String> { throw CancellationException() } }
+        )
     }
 }
