@@ -39,7 +39,6 @@ import tajsos.composeapp.generated.resources.tasks_inbox_subtitle
 import tajsos.composeapp.generated.resources.tasks_inbox_tasks_title
 import tajsos.composeapp.generated.resources.tasks_inbox_title
 import tajsos.composeapp.generated.resources.tasks_inbox_triage_task
-import tajsos.composeapp.generated.resources.tasks_open_action
 
 @Composable
 internal fun TasksInboxView(
@@ -72,7 +71,7 @@ internal fun TasksInboxView(
             color = TajsOSTheme.CardSurface,
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
+                modifier = Modifier.fillMaxWidth().padding(vertical = TajsOSTheme.SpacingMd),
                 verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
             ) {
                 Text(
@@ -134,13 +133,14 @@ internal fun TasksInboxView(
             color = TajsOSTheme.CardSurface,
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
+                modifier = Modifier.fillMaxWidth().padding(vertical = TajsOSTheme.SpacingMd),
                 verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
             ) {
                 Text(
                     stringResource(Res.string.tasks_inbox_tasks_title),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.padding(horizontal = TajsOSTheme.SpacingMd),
                 )
                 if (inboxTasks.isEmpty()) {
                     EmptyState(
@@ -148,52 +148,27 @@ internal fun TasksInboxView(
                         description = null,
                         fillParent = false,
                         showContainer = false,
-                        modifier = Modifier.padding(vertical = TajsOSTheme.SpacingLg),
+                        modifier =
+                            Modifier
+                                .padding(vertical = TajsOSTheme.SpacingLg)
+                                .padding(horizontal = TajsOSTheme.SpacingMd),
                     )
                 } else {
-                    inboxTasks.forEach { task ->
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    task.title,
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    color = TajsOSTheme.Text,
-                                )
-                                val context =
-                                    listOfNotNull(
-                                        task.projectId?.let { projectById[it] },
-                                        task.areaId?.let { areaById[it] },
-                                    ).joinToString(" • ")
-                                if (context.isNotBlank()) {
-                                    Text(
-                                        context,
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = TajsOSTheme.Muted,
-                                    )
-                                }
-                            }
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
-                            ) {
-                                OutlinedButton(onClick = { onOpen(task.id) }) {
-                                    Text(
-                                        stringResource(
-                                            Res.string.tasks_open_action,
-                                        ),
-                                    )
-                                }
+                    inboxTasks.forEachIndexed { index, task ->
+                        TasksScreenComponents.StandardTaskRow(
+                            task = task,
+                            projectById = projectById,
+                            areaById = areaById,
+                            onClick = { onOpen(task.id) },
+                            trailingActions = {
                                 OutlinedButton(onClick = { onMarkProcessed(task) }) {
-                                    Text(
-                                        stringResource(Res.string.tasks_inbox_mark_processed),
-                                    )
+                                    Text(stringResource(Res.string.tasks_inbox_mark_processed))
                                 }
-                            }
+                            },
+                        )
+                        if (index < inboxTasks.size - 1) {
+                            HorizontalDivider(color = TajsOSTheme.Border)
                         }
-                        HorizontalDivider(color = TajsOSTheme.GhostBorder)
                     }
                 }
             }

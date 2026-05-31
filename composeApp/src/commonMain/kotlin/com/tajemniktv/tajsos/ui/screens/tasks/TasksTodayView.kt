@@ -6,23 +6,19 @@ package com.tajemniktv.tajsos.ui.screens.tasks
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import com.tajemniktv.tajsos.data.NodeEntity
@@ -31,7 +27,6 @@ import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.tasks_no_results
-import tajsos.composeapp.generated.resources.tasks_open_action
 import tajsos.composeapp.generated.resources.tasks_start_focus_action
 import tajsos.composeapp.generated.resources.tasks_today_due_soon
 import tajsos.composeapp.generated.resources.tasks_today_empty
@@ -134,13 +129,14 @@ private fun TodaySection(
         color = TajsOSTheme.CardSurface,
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
+            modifier = Modifier.fillMaxWidth().padding(top = TajsOSTheme.SpacingMd, bottom = TajsOSTheme.SpacingSm),
             verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
         ) {
             Text(
                 title,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.padding(horizontal = TajsOSTheme.SpacingMd),
             )
             if (tasks.isEmpty()) {
                 EmptyState(
@@ -148,60 +144,29 @@ private fun TodaySection(
                     description = null,
                     fillParent = false,
                     showContainer = false,
+                    modifier = Modifier.padding(horizontal = TajsOSTheme.SpacingMd),
                 )
             } else {
-                tasks.take(8).forEach { task ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                task.title,
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = TajsOSTheme.Text,
-                            )
-                            val context =
-                                listOfNotNull(
-                                    task.projectId?.let { projectById[it] },
-                                    task.areaId?.let { areaById[it] },
-                                    task.dueAt?.let(::shortDate),
-                                ).joinToString(" • ")
-                            if (context.isNotBlank()) {
-                                Text(
-                                    context,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = TajsOSTheme.Muted,
-                                )
+                val visibleTasks = tasks.take(8)
+                visibleTasks.forEachIndexed { index, task ->
+                    TasksScreenComponents.StandardTaskRow(
+                        task = task,
+                        projectById = projectById,
+                        areaById = areaById,
+                        onClick = { onOpen(task.id) },
+                        onToggleDone = { if (it) onDone(task) },
+                        trailingActions = {
+                            OutlinedButton(onClick = { onStartFocus(task) }) {
+                                Text(stringResource(Res.string.tasks_start_focus_action))
                             }
-                        }
-                        Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
-                            OutlinedButton(onClick = {
-                                onStartFocus(task)
-                            }) { Text(stringResource(Res.string.tasks_start_focus_action)) }
-                            OutlinedButton(onClick = {
-                                onOpen(task.id)
-                            }) { Text(stringResource(Res.string.tasks_open_action)) }
-                            OutlinedButton(onClick = {
-                                onSetTodayPayload(task, task.id !in todayTaskIds)
-                            }) {
+                            OutlinedButton(onClick = { onSetTodayPayload(task, task.id !in todayTaskIds) }) {
                                 Icon(Icons.Default.Star, null)
-                                Text(
-                                    if (task.id in todayTaskIds) {
-                                        " Remove Today"
-                                    } else {
-                                        " Add Today"
-                                    },
-                                )
+                                Text(if (task.id in todayTaskIds) " Remove Today" else " Add Today")
                             }
-                            IconButton(onClick = { onDone(task) }) {
-                                Icon(
-                                    Icons.Default.Check,
-                                    null,
-                                )
-                            }
-                        }
+                        },
+                    )
+                    if (index < visibleTasks.size - 1) {
+                        HorizontalDivider(color = TajsOSTheme.Border)
                     }
                 }
             }

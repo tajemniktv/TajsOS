@@ -6,7 +6,6 @@ package com.tajemniktv.tajsos.ui.screens.tasks
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -21,7 +20,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import com.tajemniktv.tajsos.data.NodeEntity
@@ -32,7 +30,6 @@ import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.archive_empty
 import tajsos.composeapp.generated.resources.tasks_archive_subtitle
 import tajsos.composeapp.generated.resources.tasks_archive_title
-import tajsos.composeapp.generated.resources.tasks_open_action
 import tajsos.composeapp.generated.resources.tasks_restore_action
 
 @Composable
@@ -67,34 +64,14 @@ internal fun TasksArchiveView(
             color = TajsOSTheme.CardSurface,
         ) {
             Column {
-                archivedTasks.forEach { task ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                task.title,
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = TajsOSTheme.Text,
-                            )
-                            val context =
-                                listOfNotNull(
-                                    task.projectId?.let { projectById[it] },
-                                    task.areaId?.let { areaById[it] },
-                                    task.archivedAt?.let(::shortDate),
-                                ).joinToString(" • ")
-                            if (context.isNotBlank()) {
-                                Text(
-                                    context,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = TajsOSTheme.Muted,
-                                )
-                            }
-                        }
-                        Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
-                            OutlinedButton(onClick = { onOpen(task.id) }) { Text(stringResource(Res.string.tasks_open_action)) }
+                archivedTasks.forEachIndexed { index, task ->
+                    TasksScreenComponents.StandardTaskRow(
+                        task = task,
+                        projectById = projectById,
+                        areaById = areaById,
+                        onClick = { onOpen(task.id) },
+                        showStatusPill = true,
+                        trailingActions = {
                             OutlinedButton(onClick = { onRestore(task) }) { Text(stringResource(Res.string.tasks_restore_action)) }
                             IconButton(onClick = { onDelete(task) }) {
                                 Icon(
@@ -103,9 +80,11 @@ internal fun TasksArchiveView(
                                     tint = TajsOSTheme.Error,
                                 )
                             }
-                        }
+                        },
+                    )
+                    if (index < archivedTasks.size - 1) {
+                        HorizontalDivider(color = TajsOSTheme.Border)
                     }
-                    HorizontalDivider(color = TajsOSTheme.GhostBorder)
                 }
             }
         }

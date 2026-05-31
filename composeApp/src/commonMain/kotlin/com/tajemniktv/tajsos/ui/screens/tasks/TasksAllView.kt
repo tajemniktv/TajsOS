@@ -26,7 +26,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,7 +35,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeEntity
@@ -48,10 +46,6 @@ import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.tasks_all_title
 import tajsos.composeapp.generated.resources.tasks_archive_action
-import tajsos.composeapp.generated.resources.tasks_column_context
-import tajsos.composeapp.generated.resources.tasks_column_due
-import tajsos.composeapp.generated.resources.tasks_column_status
-import tajsos.composeapp.generated.resources.tasks_column_task
 import tajsos.composeapp.generated.resources.tasks_delete_action
 import tajsos.composeapp.generated.resources.tasks_detail_area
 import tajsos.composeapp.generated.resources.tasks_detail_due
@@ -120,7 +114,7 @@ internal fun TasksAllView(
             when (sort) {
                 TaskSort.PRIORITY -> {
                     filtered.sortedByDescending {
-                        scoreTask(
+                        TaskScoring.scoreTask(
                             it,
                             Clock.System.now().toEpochMilliseconds(),
                             emptySet(),
@@ -275,88 +269,20 @@ private fun TaskTable(
         return
     }
     Column(modifier = Modifier.fillMaxWidth()) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            Text(
-                stringResource(Res.string.tasks_column_task),
-                style = MaterialTheme.typography.labelMedium,
-                color = TajsOSTheme.Muted,
-            )
-            Text(
-                stringResource(Res.string.tasks_column_context),
-                style = MaterialTheme.typography.labelMedium,
-                color = TajsOSTheme.Muted,
-            )
-            Text(
-                stringResource(Res.string.tasks_column_due),
-                style = MaterialTheme.typography.labelMedium,
-                color = TajsOSTheme.Muted,
-            )
-            Text(
-                stringResource(Res.string.tasks_column_status),
-                style = MaterialTheme.typography.labelMedium,
-                color = TajsOSTheme.Muted,
-            )
-        }
-        HorizontalDivider(color = TajsOSTheme.GhostBorder)
         Column {
-            tasks.forEach { task ->
+            tasks.forEachIndexed { index, task ->
                 val selected = task.id == selectedId
-                Row(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .background(
-                                if (selected) {
-                                    TajsOSTheme.Primary.copy(
-                                        alpha = 0.1f,
-                                    )
-                                } else {
-                                    Color.Transparent
-                                },
-                            ).padding(TajsOSTheme.SpacingMd),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Column(modifier = Modifier.weight(1.2f)) {
-                        Text(
-                            task.title,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = TajsOSTheme.Text,
-                            fontWeight = FontWeight.SemiBold,
-                        )
-                        task.nextSmallestStep?.takeIf { it.isNotBlank() }?.let {
-                            Text(
-                                it,
-                                style = MaterialTheme.typography.bodySmall,
-                                color = TajsOSTheme.Muted,
-                            )
-                        }
-                    }
-                    Text(
-                        listOfNotNull(
-                            task.projectId?.let { projectById[it] },
-                            task.areaId?.let { areaById[it] },
-                        ).joinToString(" • ").ifBlank { "-" },
-                        modifier = Modifier.weight(1f),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = TajsOSTheme.Muted,
-                    )
-                    Text(
-                        task.dueAt?.let(::shortDate) ?: "-",
-                        modifier = Modifier.weight(0.8f),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = TajsOSTheme.Muted,
-                    )
-                    StatusPill(task.taskStateOrNull() ?: TaskState.ACTIVE)
-                }
-                OutlinedButton(
+                TasksScreenComponents.StandardTaskRow(
+                    task = task,
+                    projectById = projectById,
+                    areaById = areaById,
                     onClick = { onSelect(task.id) },
-                    modifier = Modifier.padding(horizontal = TajsOSTheme.SpacingMd),
-                ) { Text(stringResource(Res.string.tasks_open_action)) }
-                HorizontalDivider(color = TajsOSTheme.GhostBorder)
+                    selected = selected,
+                    showStatusPill = true,
+                )
+                if (index < tasks.size - 1) {
+                    HorizontalDivider(color = TajsOSTheme.Border)
+                }
             }
         }
     }

@@ -26,7 +26,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -89,7 +88,7 @@ internal fun TasksCommandView(
         remember(tasks, todayTaskIds) {
             tasks
                 .sortedByDescending {
-                    scoreTask(
+                    TaskScoring.scoreTask(
                         it,
                         now,
                         todayTaskIds,
@@ -202,6 +201,11 @@ internal fun TasksCommandView(
                         onStartFocus,
                         onDone,
                         onSetTodayPayload,
+                    )
+                    Text(
+                        stringResource(Res.string.tasks_queue_title),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = TajsOSTheme.Text,
                     )
                     QueueList(queue, projectById, areaById, onOpen, onStartFocus, onDone)
                 }
@@ -339,39 +343,20 @@ private fun QueueList(
         color = TajsOSTheme.CardSurface,
     ) {
         Column {
-            tasks.forEach { task ->
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            task.title,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = TajsOSTheme.Text,
-                        )
-                        val context =
-                            listOfNotNull(
-                                task.projectId?.let { projectById[it] },
-                                task.areaId?.let { areaById[it] },
-                                task.dueAt?.let(::shortDate),
-                            ).joinToString(" • ")
-                        if (context.isNotBlank()) {
-                            Text(
-                                context,
-                                style = MaterialTheme.typography.bodySmall,
-                                color = TajsOSTheme.Muted,
-                            )
-                        }
-                    }
-                    Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
+            tasks.forEachIndexed { index, task ->
+                TasksScreenComponents.StandardTaskRow(
+                    task = task,
+                    projectById = projectById,
+                    areaById = areaById,
+                    onClick = { onOpen(task.id) },
+                    onToggleDone = { if (it) onDone(task) },
+                    trailingActions = {
                         OutlinedButton(onClick = { onDoNow(task) }) { Text(stringResource(Res.string.tasks_start_focus_action)) }
-                        OutlinedButton(onClick = { onOpen(task.id) }) { Text(stringResource(Res.string.tasks_open_action)) }
-                        IconButton(onClick = { onDone(task) }) { Icon(Icons.Default.Check, null) }
-                    }
+                    },
+                )
+                if (index < tasks.size - 1) {
+                    HorizontalDivider(color = TajsOSTheme.Border)
                 }
-                HorizontalDivider(color = TajsOSTheme.GhostBorder)
             }
         }
     }
