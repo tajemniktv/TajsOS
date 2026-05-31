@@ -1,14 +1,15 @@
 // @ts-check
-import { defineConfig } from "astro/config";
+
+import mdx from "@astrojs/mdx";
+import partytown from "@astrojs/partytown";
+import react from "@astrojs/react";
+import sitemap from "@astrojs/sitemap";
 import starlight from "@astrojs/starlight";
 import tailwindcss from "@tailwindcss/vite";
-import sitemap from "@astrojs/sitemap";
-import mdx from "@astrojs/mdx";
-import react from "@astrojs/react";
-import partytown from "@astrojs/partytown";
+import { defineConfig } from "astro/config";
 import starlightBlog from "starlight-blog";
-import starlightLinksValidator from "starlight-links-validator";
 import starlightImageZoom from "starlight-image-zoom";
+import starlightLinksValidator from "starlight-links-validator";
 import starlightVideos from "starlight-videos";
 
 // https://astro.build/config
@@ -21,7 +22,7 @@ export default defineConfig({
       description: "TajsOS Documentation",
 
       components: {
-        MarkdownContent: './src/components/MarkdownContent.astro',
+        MarkdownContent: "./src/components/MarkdownContent.astro",
       },
 
       sidebar: [
