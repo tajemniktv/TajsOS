@@ -72,7 +72,7 @@ fun ActionButton(
         onClick = onClick,
         enabled = enabled,
         interactionSource = interactionSource,
-        modifier = finalModifier.graphicsLayer(scaleX = scale, scaleY = scale),
+        modifier = finalModifier.graphicsLayer { scaleX = scale; scaleY = scale },
         colors =
             resolveActionButtonColors(
                 isPrimary = isPrimary,

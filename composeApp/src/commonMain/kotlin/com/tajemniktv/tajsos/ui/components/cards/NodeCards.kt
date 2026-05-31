@@ -106,7 +106,7 @@ fun NodeCard(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .graphicsLayer(scaleX = animatedScale, scaleY = animatedScale)
+                        .graphicsLayer { scaleX = animatedScale; scaleY = animatedScale }
                         .glassChrome(
                             shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
                             material = GlassMaterial.REGULAR,

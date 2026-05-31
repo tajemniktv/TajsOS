@@ -55,7 +55,7 @@ fun ModuleCard(
     Surface(
         modifier =
             modifier
-                .graphicsLayer(scaleX = scale, scaleY = scale)
+                .graphicsLayer { scaleX = scale; scaleY = scale }
                 .glassChrome(
                     shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
                     material = GlassMaterial.REGULAR,
