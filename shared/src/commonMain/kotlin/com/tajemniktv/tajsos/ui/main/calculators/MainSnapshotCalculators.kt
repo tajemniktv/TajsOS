@@ -1256,6 +1256,9 @@ fun calculateRelationshipSnapshot(
  * Evaluates all tasks and entities tied to physical locations (e.g., errands, travel, local chores).
  * Maps tasks to places to generate a [PhysicalLogisticsSnapshot] enabling batched execution.
  *
+ * Performance is optimized by leveraging `compareTo` with `ignoreCase = true` during sorting
+ * to prevent unnecessary string instantiations.
+ *
  * @param nodes The complete list of active nodes in the system.
  * @param relations Relational edges to map tasks to their location nodes.
  * @param templates A list of system templates (e.g., packing lists, trip templates).
@@ -1321,10 +1324,7 @@ fun calculatePhysicalLogisticsSnapshot(
                     relatedTasks = relatedTasks,
                     remindersCount = relatedTasks.count { it.node.reminderAt != null },
                 )
-            }.sortedBy {
-                it.place.node.title
-                    .lowercase()
-            }
+            }.sortedWith { a, b -> a.place.node.title.compareTo(b.place.node.title, ignoreCase = true) }
 
     val campusLocations =
         placeItems.filter {
@@ -2549,8 +2549,13 @@ fun calculateCoreLifeOSShiftSnapshot(
  * Evaluates nodes structurally bound to academic templates or metadata to generate
  * a specialized [StudentBoardState] dashboard payload for studying.
  *
+ * Performance is optimized by evaluating strings case-insensitively and preventing
+ * duplicate string instantiations within filtering logic.
+ *
  * @param nodes The complete list of active nodes in the system.
  * @param relations The complete list of formal database links between nodes.
+ * @param sessions A list of recorded [FocusSessionEntity] records tracking deep work time.
+ * @param templates A list of [TemplateEntity] to identify missing components or configurations.
  * @return A [StudentBoardState] snapshot tracking course progress, mastery levels, and exams.
  */
 fun calculateStudentBoardState(
@@ -2564,7 +2569,7 @@ fun calculateStudentBoardState(
     val activeNodes = nodes.filter { it.node.status == "active" }
     activeNodes.associateBy { it.node.id }
 
-    fun NodeWithPin.hasTag(tag: String): Boolean = tags.any { it.normalizedName == tag.lowercase() }
+    fun NodeWithPin.hasTag(tag: String): Boolean = tags.any { it.normalizedName.equals(tag, ignoreCase = true) }
 
     fun NodeWithPin.student(): StudentMetadata? = node.metadataEnvelopeOrNull()?.student
 
@@ -2811,11 +2816,11 @@ fun calculateStudentBoardState(
             .sumOf { if (it.durationSec > 0) it.durationSec else ((now - it.startedAt) / 1000).toInt() }
             .div(60)
 
-    val templateNames = templates.map { it.name.trim().lowercase() }.toSet()
+    val templateNames = templates.map { it.name.trim() }
     return StudentBoardState(
-        lectureTemplateReady = templateNames.contains("lecture note template"),
-        readingTemplateReady = templateNames.contains("reading note template"),
-        paperSummaryTemplateReady = templateNames.contains("paper summary template"),
+        lectureTemplateReady = templateNames.any { it.equals("lecture note template", ignoreCase = true) },
+        readingTemplateReady = templateNames.any { it.equals("reading note template", ignoreCase = true) },
+        paperSummaryTemplateReady = templateNames.any { it.equals("paper summary template", ignoreCase = true) },
         assignmentTracker = assignmentTracker,
         examPrepBoard = examPrepBoard,
         psychologyConceptMaps = psychologyConceptMaps,
