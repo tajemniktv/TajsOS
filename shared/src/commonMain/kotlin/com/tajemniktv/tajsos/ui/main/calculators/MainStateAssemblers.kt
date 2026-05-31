@@ -233,10 +233,10 @@ fun buildTransitionProtocolsSnapshot(
                 )
             }.sortedWith(
                 compareByDescending<TransitionProtocolItem> { it.lastTriggeredAt ?: 0L }
-                    .thenBy {
-                        it.node.node.title
-                            .lowercase()
-                    },
+                    .then(
+                        // Avoid lowercase() allocation during O(N log N) sorting
+                        Comparator { a, b -> a.node.node.title.compareTo(b.node.node.title, ignoreCase = true) }
+                    ),
             )
 
     return TransitionProtocolsSnapshot(
@@ -297,10 +297,10 @@ fun buildPlaybookSnapshot(
                 )
             }.sortedWith(
                 compareByDescending<PlaybookItem> { it.triggerCount }
-                    .thenBy {
-                        it.node.node.title
-                            .lowercase()
-                    },
+                    .then(
+                        // Avoid lowercase() allocation during O(N log N) sorting
+                        Comparator { a, b -> a.node.node.title.compareTo(b.node.node.title, ignoreCase = true) }
+                    ),
             )
 
     return PlaybookSnapshot(
