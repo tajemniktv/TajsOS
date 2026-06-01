@@ -146,4 +146,29 @@ class InetAddressParserTest {
         assertNull(parseIpAddress(":1:2:3:4:5:6:7"), "Should reject starting with single colon")
         assertNull(parseIpAddress("1:2:3:4:5:6:7:"), "Should reject ending with single colon")
     }
+
+    @Test
+    fun testBoundaryIps() {
+        val zeroV4 = parseIpAddress("0.0.0.0")
+        assertNotNull(zeroV4)
+        assertTrue(zeroV4 is IpAddress.Ipv4)
+        kotlin.test.assertEquals(0L, (zeroV4 as IpAddress.Ipv4).address)
+
+        val maxV4 = parseIpAddress("255.255.255.255")
+        assertNotNull(maxV4)
+        assertTrue(maxV4 is IpAddress.Ipv4)
+        kotlin.test.assertEquals(0xFFFFFFFFL, (maxV4 as IpAddress.Ipv4).address)
+
+        val zeroV6 = parseIpAddress("::")
+        assertNotNull(zeroV6)
+        assertTrue(zeroV6 is IpAddress.Ipv6)
+        val expectedWords = LongArray(4) { 0L }
+        kotlin.test.assertEquals(IpAddress.Ipv6(expectedWords), zeroV6)
+
+        val maxV6 = parseIpAddress("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff")
+        assertNotNull(maxV6)
+        assertTrue(maxV6 is IpAddress.Ipv6)
+        val expectedMaxWords = LongArray(4) { 0xFFFFFFFFL }
+        kotlin.test.assertEquals(IpAddress.Ipv6(expectedMaxWords), maxV6)
+    }
 }
