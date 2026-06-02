@@ -382,8 +382,11 @@ class RelationshipCommands(
         content: String = "",
         categoryTag: String,
     ) {
-        val validPrefix = categoryTag.trim().lowercase()
-        if (!validPrefix.startsWith("rule_")) return
+        /**
+         * Verifies if the category tag matches the expected personal rule prefix, avoiding reallocation.
+         */
+        val validPrefix = categoryTag.trim()
+        if (!validPrefix.startsWith("rule_", ignoreCase = true)) return
         scope.launch {
             val nodeId =
                 addNodeForResult(
@@ -451,11 +454,14 @@ class RelationshipCommands(
     ) {
         scope.launch {
             val cleanTag = categoryTag.trim().lowercase()
+            /**
+             * Determines the target node type based on a case-insensitive match, avoiding reallocation.
+             */
+            val cleanAsType = asType.trim()
             val type =
-                when (asType.trim().lowercase())
-                {
-                    "record" -> "record"
-                    "task", "maintenance" -> "task"
+                when {
+                    cleanAsType.equals("record", ignoreCase = true) -> "record"
+                    cleanAsType.equals("task", ignoreCase = true) || cleanAsType.equals("maintenance", ignoreCase = true) -> "task"
                     else -> "note"
                 }
             val nodeId =

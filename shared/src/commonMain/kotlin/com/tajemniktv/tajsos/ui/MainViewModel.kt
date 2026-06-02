@@ -2610,26 +2610,20 @@ class MainViewModel(
         content: String? = null,
     )
     {
+        /**
+         * Resolves the normalized domain type based on user input.
+         * Case-insensitive matching is performed without string reallocation.
+         */
+        val cleanType = type.trim()
         val normalizedType =
-            when (type.trim().lowercase())
-            {
-                "record"                                           -> "record"
-
-                // NON-NLS
-                "project"                                          -> "project"
-
-                // NON-NLS
-                    "area"                                             -> "area"
-
-                // NON-NLS
-                    "idea", "resource", "vault", "document" -> "note"
-
-                    // NON-NLS
-                    "maintenance", "open_loop", "decision", "protocol" -> "task"
-
-                    // NON-NLS
-                    else -> "task" // NON-NLS
-                }
+            when {
+                cleanType.equals("record", ignoreCase = true) -> "record"
+                cleanType.equals("project", ignoreCase = true) -> "project" // NON-NLS
+                cleanType.equals("area", ignoreCase = true) -> "area" // NON-NLS
+                cleanType.equals("idea", ignoreCase = true) || cleanType.equals("resource", ignoreCase = true) || cleanType.equals("vault", ignoreCase = true) || cleanType.equals("document", ignoreCase = true) -> "note" // NON-NLS
+                cleanType.equals("maintenance", ignoreCase = true) || cleanType.equals("open_loop", ignoreCase = true) || cleanType.equals("decision", ignoreCase = true) || cleanType.equals("protocol", ignoreCase = true) -> "task" // NON-NLS
+                else -> "task" // NON-NLS
+            }
             viewModelScope.launch {
                 repository.insertTemplate(
                     TemplateEntity(
