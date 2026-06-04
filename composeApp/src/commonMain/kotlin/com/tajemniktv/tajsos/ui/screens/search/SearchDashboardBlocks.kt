@@ -788,21 +788,33 @@ private fun SearchResultCard(
     }
 }
 
+/**
+ * Resolves the corresponding Material icon vector based on the normalized item type.
+ *
+ * @param type The raw string type to evaluate.
+ * @return The resolved [ImageVector] for the item type.
+ */
 private fun iconForType(type: String): ImageVector =
-    when (type.lowercase()) {
-        "task" -> Icons.Default.TaskAlt
-        "project" -> Icons.Default.Folder
-        "note" -> Icons.Default.Description
-        "record" -> Icons.AutoMirrored.Filled.InsertDriveFile
+    when {
+        type.equals("task", ignoreCase = true) -> Icons.Default.TaskAlt
+        type.equals("project", ignoreCase = true) -> Icons.Default.Folder
+        type.equals("note", ignoreCase = true) -> Icons.Default.Description
+        type.equals("record", ignoreCase = true) -> Icons.AutoMirrored.Filled.InsertDriveFile
         else -> Icons.Default.Search
     }
 
+/**
+ * Resolves the primary accent tint color based on the normalized item type.
+ *
+ * @param type The raw string type to evaluate.
+ * @return The [Color] corresponding to the item type.
+ */
 private fun iconTintForType(type: String): Color =
-    when (type.lowercase()) {
-        "task" -> TajsOSTheme.AccentRed
-        "project" -> TajsOSTheme.Primary
-        "note" -> TajsOSTheme.AccentBlue
-        "record" -> TajsOSTheme.AccentCyan
+    when {
+        type.equals("task", ignoreCase = true) -> TajsOSTheme.AccentRed
+        type.equals("project", ignoreCase = true) -> TajsOSTheme.Primary
+        type.equals("note", ignoreCase = true) -> TajsOSTheme.AccentBlue
+        type.equals("record", ignoreCase = true) -> TajsOSTheme.AccentCyan
         else -> TajsOSTheme.Primary
     }
 
