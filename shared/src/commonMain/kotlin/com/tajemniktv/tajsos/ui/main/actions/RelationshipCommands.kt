@@ -107,13 +107,21 @@ class RelationshipCommands(
         }
     }
 
+    /**
+     * Sets the relationship type for a person node.
+     * Evaluates the type using case-insensitive equality to avoid allocating a new lowercased string if it is not supported.
+     *
+     * @param person The person node.
+     * @param type The type to set.
+     */
     fun setPersonRelationshipType(
         person: NodeEntity,
         type: String?,
     ) {
         if (person.type != "person") return
         val supported = setOf("professor", "friend", "family")
-        val normalized = type?.trim()?.lowercase()?.takeIf { it in supported }
+        val cleanType = type?.trim()
+        val normalized = cleanType?.takeIf { t -> supported.any { it.equals(t, ignoreCase = true) } }?.lowercase()
         scope.launch {
             supported.forEach { tag -> setTagOnNode(person.id, tag, false) }
             if (normalized != null) setTagOnNode(person.id, normalized, true)
@@ -442,6 +450,17 @@ class RelationshipCommands(
         }
     }
 
+    /**
+     * Adds a vault entry to the repository.
+     * Uses case-insensitive comparison on asType to avoid allocating a new lowercased string.
+     * The categoryTag is still lowercased for long-term storage normalization.
+     *
+     * @param categoryTag The category tag.
+     * @param title The entry title.
+     * @param content The entry content.
+     * @param asType The type of the entry.
+     * @param dueAt An optional due date.
+     */
     fun addVaultEntry(
         categoryTag: String,
         title: String,
@@ -450,12 +469,13 @@ class RelationshipCommands(
         dueAt: Long? = null,
     ) {
         scope.launch {
-            val cleanTag = categoryTag.trim().lowercase()
+            val cleanTag = categoryTag.trim().lowercase() // Needs to be lowercased for tag normalization / storage
+            val cleanType = asType.trim()
             val type =
-                when (asType.trim().lowercase())
+                when
                 {
-                    "record" -> "record"
-                    "task", "maintenance" -> "task"
+                    cleanType.equals("record", ignoreCase = true) -> "record"
+                    cleanType.equals("task", ignoreCase = true) || cleanType.equals("maintenance", ignoreCase = true) -> "task"
                     else -> "note"
                 }
             val nodeId =
