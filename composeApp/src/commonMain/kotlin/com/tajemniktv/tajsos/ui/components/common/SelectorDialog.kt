@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import com.tajemniktv.tajsos.ui.components.ActionButton
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -212,22 +213,11 @@ fun <T> SelectorDialog(
                             fontWeight = FontWeight.Bold,
                         )
                     }
-                    Button(
+                    ActionButton(
+                        text = "CANCEL SESSION",
                         onClick = onDismiss,
-                        colors =
-                            ButtonDefaults.buttonColors(
-                                containerColor = TajsOSTheme.CardSurface,
-                                contentColor = TajsOSTheme.Text,
-                            ),
-                        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                        modifier = Modifier.height(48.dp),
-                    ) {
-                        Text(
-                            "CANCEL SESSION",
-                            style = MaterialTheme.typography.labelSmall,
-                            fontWeight = FontWeight.Bold,
-                        )
-                    }
+                        containerColor = TajsOSTheme.CardSurface,
+                    )
                 }
             }
         }
