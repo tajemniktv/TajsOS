@@ -17,10 +17,20 @@ import kotlinx.coroutines.flow.Flow
  */
 @Dao
 interface NodeDao {
+    /**
+     * Retrieves all nodes joined with their active 'today' pin state, ordered by creation time.
+     * This composite entity (NodeWithPin) enables the UI to instantly display pin status without N+1 queries.
+     */
     @Transaction
     @Query("SELECT * FROM nodes ORDER BY createdAt DESC")
     fun getAllNodesWithPins(): Flow<List<NodeWithPin>>
 
+    /**
+     * Fetches only active nodes explicitly pinned to the user's "Today" focus list for a specific date.
+     * Sorting is driven by the pin's manual position index rather than temporal attributes.
+     *
+     * @param date The exact ISO date string (YYYY-MM-DD) to query active pins against.
+     */
     @Query(
         """
         SELECT nodes.* FROM nodes 
