@@ -24,6 +24,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import com.tajemniktv.tajsos.ui.components.common.TactileIconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -368,7 +369,7 @@ private fun QueueList(
                     Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                         OutlinedButton(onClick = { onDoNow(task) }) { Text(stringResource(Res.string.tasks_start_focus_action)) }
                         OutlinedButton(onClick = { onOpen(task.id) }) { Text(stringResource(Res.string.tasks_open_action)) }
-                        IconButton(onClick = { onDone(task) }) { Icon(Icons.Default.Check, null) }
+                        TactileIconButton(onClick = { onDone(task) }) { Icon(Icons.Default.Check, null) }
                     }
                 }
                 HorizontalDivider(color = TajsOSTheme.GhostBorder)

@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import com.tajemniktv.tajsos.ui.components.common.TactileIconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -155,7 +156,7 @@ fun CalendarHeader(
                     color = TajsOSTheme.Primary,
                 )
             }
-            IconButton(onClick = onSyncClick, modifier = Modifier.size(48.dp)) {
+            TactileIconButton(onClick = onSyncClick, modifier = Modifier.size(48.dp)) {
                 Icon(
                     Icons.Default.Refresh,
                     contentDescription = stringResource(Res.string.cal_sync),
@@ -163,13 +164,13 @@ fun CalendarHeader(
                     modifier = Modifier.size(20.dp),
                 )
             }
-            IconButton(onClick = onPreviousMonth, modifier = Modifier.size(48.dp)) {
+            TactileIconButton(onClick = onPreviousMonth, modifier = Modifier.size(48.dp)) {
                 Icon(
                     Icons.Default.ChevronLeft,
                     contentDescription = stringResource(Res.string.cal_previous),
                 )
             }
-            IconButton(onClick = onNextMonth, modifier = Modifier.size(48.dp)) {
+            TactileIconButton(onClick = onNextMonth, modifier = Modifier.size(48.dp)) {
                 Icon(
                     Icons.Default.ChevronRight,
                     contentDescription = stringResource(Res.string.cal_next),

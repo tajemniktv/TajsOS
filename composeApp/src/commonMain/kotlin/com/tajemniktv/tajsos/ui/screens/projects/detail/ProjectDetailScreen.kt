@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import com.tajemniktv.tajsos.ui.components.common.TactileIconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -316,13 +317,13 @@ fun ProjectDetailScreen(
 ) {
     val project = context.project
     val actions: @Composable RowScope.() -> Unit = {
-        IconButton(onClick = { context.onStatusClick() }) {
+        TactileIconButton(onClick = { context.onStatusClick() }) {
             Icon(Icons.Default.Tune, contentDescription = null, modifier = Modifier.size(18.dp))
         }
-        IconButton(onClick = { context.onEditNode(project.id) }) {
+        TactileIconButton(onClick = { context.onEditNode(project.id) }) {
             Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(18.dp))
         }
-        IconButton(onClick = { context.viewModel.updateNode(project.copy(isFrozen = !project.isFrozen)) }) {
+        TactileIconButton(onClick = { context.viewModel.updateNode(project.copy(isFrozen = !project.isFrozen)) }) {
             Icon(
                 if (project.isFrozen) Icons.Default.WbSunny else Icons.Default.Schedule,
                 contentDescription = null,
@@ -330,7 +331,7 @@ fun ProjectDetailScreen(
                 modifier = Modifier.size(18.dp),
             )
         }
-        IconButton(
+        TactileIconButton(
             onClick = {
                 context.viewModel.archiveNode(project)
                 onBack()

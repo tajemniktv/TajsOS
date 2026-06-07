@@ -33,6 +33,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import com.tajemniktv.tajsos.ui.components.common.TactileIconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Switch
@@ -286,7 +287,7 @@ fun CaptureSheet(
                 )
 
                 if (onVoiceCaptureClick != null) {
-                    IconButton(onClick = onVoiceCaptureClick, modifier = Modifier.size(48.dp)) {
+                    TactileIconButton(onClick = onVoiceCaptureClick, modifier = Modifier.size(48.dp)) {
                         Icon(
                             imageVector = Icons.Default.Mic,
                             contentDescription = stringResource(Res.string.capture_voice),
@@ -451,7 +452,7 @@ fun CaptureSheet(
                             modifier = Modifier.weight(1f),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            IconButton(
+                            TactileIconButton(
                                 onClick = {
                                     reminderTime =
                                         if (reminderTime == null) {

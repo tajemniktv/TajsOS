@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import com.tajemniktv.tajsos.ui.components.common.TactileIconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
@@ -199,7 +200,7 @@ private fun renderReviewFlow(context: ReviewDashboardContext) {
                                 ListItem(
                                     headlineContent = { Text(item.node.title) },
                                     trailingContent = {
-                                        IconButton(onClick = { viewModel.archiveNode(item.node) }) {
+                                        TactileIconButton(onClick = { viewModel.archiveNode(item.node) }) {
                                             Icon(
                                                 Icons.Default.Delete,
                                                 contentDescription = stringResource(Res.string.detail_archive),

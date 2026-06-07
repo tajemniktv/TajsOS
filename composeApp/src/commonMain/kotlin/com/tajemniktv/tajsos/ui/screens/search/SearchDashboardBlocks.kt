@@ -35,6 +35,7 @@ import androidx.compose.material.icons.filled.TaskAlt
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import com.tajemniktv.tajsos.ui.components.common.TactileIconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -111,7 +112,7 @@ private fun renderSearchInput(context: SearchDashboardContext) {
             leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
             trailingIcon = {
                 if (context.searchQuery.isNotEmpty()) {
-                    IconButton(onClick = { viewModel.updateSearchQuery("") }) {
+                    TactileIconButton(onClick = { viewModel.updateSearchQuery("") }) {
                         Icon(
                             Icons.Default.Clear,
                             contentDescription = stringResource(Res.string.search_clear),
@@ -125,7 +126,7 @@ private fun renderSearchInput(context: SearchDashboardContext) {
                     unfocusedContainerColor = TajsOSTheme.Surface,
                 ),
         )
-        IconButton(onClick = context.onToggleFilters, modifier = Modifier.size(48.dp)) {
+        TactileIconButton(onClick = context.onToggleFilters, modifier = Modifier.size(48.dp)) {
             Icon(
                 Icons.Default.FilterList,
                 contentDescription = "Toggle filters",

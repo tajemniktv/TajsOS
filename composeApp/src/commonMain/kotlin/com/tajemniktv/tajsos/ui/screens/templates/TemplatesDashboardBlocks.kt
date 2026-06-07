@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import com.tajemniktv.tajsos.ui.components.common.TactileIconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.Text
@@ -73,7 +74,7 @@ private fun renderTemplatesList(context: TemplatesDashboardContext) {
                         Text(typeLabel.uppercase())
                     },
                     trailingContent = {
-                        IconButton(onClick = { context.onDeleteTemplate(template) }) {
+                        TactileIconButton(onClick = { context.onDeleteTemplate(template) }) {
                             Icon(
                                 Icons.Default.Delete,
                                 contentDescription = stringResource(Res.string.archive_delete),

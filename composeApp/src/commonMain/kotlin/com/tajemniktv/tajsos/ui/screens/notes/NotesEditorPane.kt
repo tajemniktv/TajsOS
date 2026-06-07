@@ -30,6 +30,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import com.tajemniktv.tajsos.ui.components.common.TactileIconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -196,24 +197,24 @@ fun NotesEditorHeaderActions(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Row {
-            IconButton(onClick = onToggleFavorite, modifier = Modifier.size(48.dp)) {
+            TactileIconButton(onClick = onToggleFavorite, modifier = Modifier.size(48.dp)) {
                 Icon(
                     imageVector = if (favorite) Icons.Default.Star else Icons.Default.StarBorder,
                     contentDescription = null,
                     tint = if (favorite) TajsOSTheme.Primary else TajsOSTheme.Text,
                 )
             }
-            IconButton(onClick = onArchive, modifier = Modifier.size(48.dp)) {
+            TactileIconButton(onClick = onArchive, modifier = Modifier.size(48.dp)) {
                 Icon(Icons.Default.Archive, contentDescription = null, tint = TajsOSTheme.Text)
             }
-            IconButton(onClick = onToggleFocusMode, modifier = Modifier.size(48.dp)) {
+            TactileIconButton(onClick = onToggleFocusMode, modifier = Modifier.size(48.dp)) {
                 Icon(
                     Icons.Default.CenterFocusStrong,
                     contentDescription = null,
                     tint = if (focusMode) TajsOSTheme.Primary else TajsOSTheme.Text,
                 )
             }
-            IconButton(onClick = onToggleContextPanel, modifier = Modifier.size(48.dp)) {
+            TactileIconButton(onClick = onToggleContextPanel, modifier = Modifier.size(48.dp)) {
                 Icon(
                     Icons.Default.Info,
                     contentDescription = null,
@@ -222,7 +223,7 @@ fun NotesEditorHeaderActions(
             }
         }
         Box {
-            IconButton(onClick = { menuOpen = true }, modifier = Modifier.size(48.dp)) {
+            TactileIconButton(onClick = { menuOpen = true }, modifier = Modifier.size(48.dp)) {
                 Icon(Icons.Default.MoreVert, contentDescription = null)
             }
             DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {

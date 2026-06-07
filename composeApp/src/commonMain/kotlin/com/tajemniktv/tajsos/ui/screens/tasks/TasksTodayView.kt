@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import com.tajemniktv.tajsos.ui.components.common.TactileIconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
@@ -195,7 +196,7 @@ private fun TodaySection(
                                     },
                                 )
                             }
-                            IconButton(onClick = { onDone(task) }) {
+                            TactileIconButton(onClick = { onDone(task) }) {
                                 Icon(
                                     Icons.Default.Check,
                                     null,

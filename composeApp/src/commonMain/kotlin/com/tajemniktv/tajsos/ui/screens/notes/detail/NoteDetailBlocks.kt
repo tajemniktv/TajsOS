@@ -47,6 +47,7 @@ import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import com.tajemniktv.tajsos.ui.components.common.TactileIconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
@@ -615,7 +616,7 @@ private fun renderNoteContextGraph(context: NoteDetailContext) {
                         shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
                     )
                 }
-                IconButton(
+                TactileIconButton(
                     onClick = context.onShowTagDialog,
                     modifier = Modifier.size(32.dp),
                 ) {

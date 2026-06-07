@@ -22,6 +22,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import com.tajemniktv.tajsos.ui.components.common.TactileIconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -70,7 +71,7 @@ fun TemplatesScreen(
         )
 
     val actions: @Composable RowScope.() -> Unit = {
-        IconButton(onClick = { showAddDialog = true }, modifier = Modifier.size(48.dp)) {
+        TactileIconButton(onClick = { showAddDialog = true }, modifier = Modifier.size(48.dp)) {
             Icon(
                 Icons.Default.Add,
                 contentDescription = stringResource(Res.string.templates_add_desc),

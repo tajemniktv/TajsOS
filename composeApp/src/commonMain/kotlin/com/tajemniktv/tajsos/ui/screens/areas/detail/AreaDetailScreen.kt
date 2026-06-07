@@ -18,6 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import com.tajemniktv.tajsos.ui.components.common.TactileIconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -235,7 +236,7 @@ fun AreaDetailScreen(
 ) {
     val area = context.area
     val actions: @Composable RowScope.() -> Unit = {
-        IconButton(onClick = {
+        TactileIconButton(onClick = {
             context.viewModel.archiveNode(area)
             onBack()
         }) {
