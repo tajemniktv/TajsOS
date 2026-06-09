@@ -26,105 +26,75 @@ class NodeCommandsEdgeTest {
         )
     }
 
-    private suspend fun TestScope.withTestEnv(
-        block: suspend (AppRepository, NodeCommands) -> Unit
-    ) {
+    private fun testEdgeCase(
+        nodeType: String,
+        action: NodeCommands.(NodeEntity) -> Unit,
+        verify: (NodeEntity?) -> Unit
+    ) = runTest {
         val testDispatcher = StandardTestDispatcher(testScheduler)
         val scope = TestScope(testDispatcher)
         val repo = buildTestRepository()
         val commands = createCommands(repo, scope)
-        block(repo, commands)
+
+        val node = NodeEntity(id = 1L, type = nodeType, title = "Test Node")
+        repo.insertNode(node)
+
+        commands.action(node)
+        advanceUntilIdle()
+
+        verify(repo.getNodeById(1L))
     }
 
     @Test
-    fun testUpdateMaintenanceTypeIgnoresNonMaintenanceNodes() = runTest {
-        withTestEnv { repo, commands ->
-            val taskNode = NodeEntity(id = 1L, type = "task", title = "A task")
-            repo.insertNode(taskNode)
-
-            commands.updateMaintenanceType(taskNode, "vehicle")
-            advanceUntilIdle()
-
-            val updatedNode = repo.getNodeById(1L)
-            assertNull(updatedNode?.maintenanceType)
-        }
-    }
+    fun testUpdateMaintenanceTypeIgnoresNonMaintenanceNodes() = testEdgeCase(
+        nodeType = "task",
+        action = { updateMaintenanceType(it, "vehicle") },
+        verify = { assertNull(it?.maintenanceType) }
+    )
 
     @Test
-    fun testSetMaintenanceOverdueAtIgnoresNonMaintenanceNodes() = runTest {
-        withTestEnv { repo, commands ->
-            val noteNode = NodeEntity(id = 1L, type = "note", title = "A note")
-            repo.insertNode(noteNode)
-
-            commands.setMaintenanceOverdueAt(noteNode, 123456L)
-            advanceUntilIdle()
-
-            val updatedNode = repo.getNodeById(1L)
-            assertNull(updatedNode?.maintenanceOverdueAt)
-        }
-    }
+    fun testSetMaintenanceOverdueAtIgnoresNonMaintenanceNodes() = testEdgeCase(
+        nodeType = "note",
+        action = { setMaintenanceOverdueAt(it, 123456L) },
+        verify = { assertNull(it?.maintenanceOverdueAt) }
+    )
 
     @Test
-    fun testSetMaintenanceRecurringIgnoresNonMaintenanceNodes() = runTest {
-        withTestEnv { repo, commands ->
-            val projectNode = NodeEntity(id = 1L, type = "project", title = "A project")
-            repo.insertNode(projectNode)
-
-            commands.setMaintenanceRecurring(projectNode, "1w")
-            advanceUntilIdle()
-
-            val updatedNode = repo.getNodeById(1L)
-            assertEquals(false, updatedNode?.isRecurring)
-            assertNull(updatedNode?.recurringInterval)
-            assertNull(updatedNode?.maintenanceInterval)
+    fun testSetMaintenanceRecurringIgnoresNonMaintenanceNodes() = testEdgeCase(
+        nodeType = "project",
+        action = { setMaintenanceRecurring(it, "1w") },
+        verify = {
+            assertEquals(false, it?.isRecurring)
+            assertNull(it?.recurringInterval)
+            assertNull(it?.maintenanceInterval)
         }
-    }
+    )
 
     @Test
-    fun testSetProjectActivePhaseIgnoresNonProjectNodes() = runTest {
-        withTestEnv { repo, commands ->
-            val recordNode = NodeEntity(id = 1L, type = "record", title = "A record")
-            repo.insertNode(recordNode)
-
-            commands.setProjectActivePhase(recordNode, true)
-            advanceUntilIdle()
-
-            val updatedNode = repo.getNodeById(1L)
-            assertNull(updatedNode?.projectStatus)
-        }
-    }
+    fun testSetProjectActivePhaseIgnoresNonProjectNodes() = testEdgeCase(
+        nodeType = "record",
+        action = { setProjectActivePhase(it, true) },
+        verify = { assertNull(it?.projectStatus) }
+    )
 
     @Test
-    fun testSetWorkDateIgnoresNonTaskNodes() = runTest {
-        withTestEnv { repo, commands ->
-            val noteNode = NodeEntity(id = 1L, type = "note", title = "A note")
-            repo.insertNode(noteNode)
-
-            commands.setWorkDate(noteNode, 123456L)
-            advanceUntilIdle()
-
-            val updatedNode = repo.getNodeById(1L)
-            assertNull(updatedNode?.startAt)
-        }
-    }
+    fun testSetWorkDateIgnoresNonTaskNodes() = testEdgeCase(
+        nodeType = "note",
+        action = { setWorkDate(it, 123456L) },
+        verify = { assertNull(it?.startAt) }
+    )
 
     @Test
-    fun testSetTemporaryFocusPeriodCoercesDaysToValidRange() = runTest {
-        withTestEnv { repo, commands ->
-            val taskNode = NodeEntity(id = 1L, type = "task", title = "A task")
-            repo.insertNode(taskNode)
+    fun testSetTemporaryFocusPeriodCoercesNegativeDays() = testEdgeCase(
+        nodeType = "task",
+        action = { setTemporaryFocusPeriod(it, -5) },
+        verify = { assertEquals("active", it?.status) }
+    )
 
-            commands.setTemporaryFocusPeriod(taskNode, -5)
-            advanceUntilIdle()
-
-            var updatedNode = repo.getNodeById(1L)
-            assertEquals("active", updatedNode?.status)
-
-            commands.setTemporaryFocusPeriod(taskNode, 100)
-            advanceUntilIdle()
-
-            updatedNode = repo.getNodeById(1L)
-            assertEquals("active", updatedNode?.status)
-        }
-    }
+    @Test
+    fun testSetTemporaryFocusPeriodCoercesLargeDays() = testEdgeCase(
+        nodeType = "task",
+        action = { setTemporaryFocusPeriod(it, 100) },
+        verify = { assertEquals("active", it?.status) }
+    )
 }
