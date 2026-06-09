@@ -451,11 +451,11 @@ class RelationshipCommands(
     ) {
         scope.launch {
             val cleanTag = categoryTag.trim().lowercase()
+            val cleanAsType = asType.trim()
             val type =
-                when (asType.trim().lowercase())
-                {
-                    "record" -> "record"
-                    "task", "maintenance" -> "task"
+                when {
+                    cleanAsType.equals("record", ignoreCase = true) -> "record"
+                    cleanAsType.equals("task", ignoreCase = true) || cleanAsType.equals("maintenance", ignoreCase = true) -> "task"
                     else -> "note"
                 }
             val nodeId =

@@ -788,21 +788,29 @@ private fun SearchResultCard(
     }
 }
 
+/**
+ * Resolves the appropriate icon for a given node type.
+ * Uses case-insensitive comparison to avoid string allocations during UI rendering.
+ */
 private fun iconForType(type: String): ImageVector =
-    when (type.lowercase()) {
-        "task" -> Icons.Default.TaskAlt
-        "project" -> Icons.Default.Folder
-        "note" -> Icons.Default.Description
-        "record" -> Icons.AutoMirrored.Filled.InsertDriveFile
+    when {
+        type.equals("task", ignoreCase = true) -> Icons.Default.TaskAlt
+        type.equals("project", ignoreCase = true) -> Icons.Default.Folder
+        type.equals("note", ignoreCase = true) -> Icons.Default.Description
+        type.equals("record", ignoreCase = true) -> Icons.AutoMirrored.Filled.InsertDriveFile
         else -> Icons.Default.Search
     }
 
+/**
+ * Resolves the appropriate tint color for a given node type.
+ * Uses case-insensitive comparison to avoid string allocations during UI rendering.
+ */
 private fun iconTintForType(type: String): Color =
-    when (type.lowercase()) {
-        "task" -> TajsOSTheme.AccentRed
-        "project" -> TajsOSTheme.Primary
-        "note" -> TajsOSTheme.AccentBlue
-        "record" -> TajsOSTheme.AccentCyan
+    when {
+        type.equals("task", ignoreCase = true) -> TajsOSTheme.AccentRed
+        type.equals("project", ignoreCase = true) -> TajsOSTheme.Primary
+        type.equals("note", ignoreCase = true) -> TajsOSTheme.AccentBlue
+        type.equals("record", ignoreCase = true) -> TajsOSTheme.AccentCyan
         else -> TajsOSTheme.Primary
     }
 
