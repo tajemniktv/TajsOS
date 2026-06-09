@@ -256,6 +256,11 @@ object DomainLensQueries {
     /**
      * Configuration class to group matching heuristics. This avoids having functions with many string/collection
      * arguments, which can trigger code health violations.
+     *
+     * @property maintenanceTypes A set of explicit maintenance types that classify an item into this domain.
+     * @property tagMarkers A set of specific tag strings used to implicitly associate nodes with this domain.
+     * @property titleKeywords A list of keywords that trigger this domain's categorization when found in a node's title or content.
+     * @property validNoteTypes A set of specific note types that automatically qualify an item for this domain.
      */
     private class DomainMatcher(
         val maintenanceTypes: Set<String>,
