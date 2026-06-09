@@ -24,6 +24,8 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
@@ -66,6 +68,7 @@ fun AbortSlider(onAbort: () -> Unit) {
                     .offset { IntOffset(offset.roundToInt(), 0) }
                     .size(56.dp)
                     .background(TajsOSTheme.Error, RoundedCornerShape(TajsOSTheme.RadiusMd))
+                    .pointerHoverIcon(PointerIcon.Hand)
                     .draggable(
                         orientation = Orientation.Horizontal,
                         state =

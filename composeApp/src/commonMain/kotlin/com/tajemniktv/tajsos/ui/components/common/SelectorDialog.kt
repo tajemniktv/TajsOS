@@ -27,6 +27,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -139,7 +141,7 @@ fun <T> SelectorDialog(
                             onClick = { onSelect(option) },
                             color = if (isSelected) TajsOSTheme.Primary else TajsOSTheme.Surface,
                             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                            modifier = Modifier.height(140.dp),
+                            modifier = Modifier.height(140.dp).pointerHoverIcon(PointerIcon.Hand),
                             border =
                                 if (isSelected) {
                                     null
@@ -220,7 +222,7 @@ fun <T> SelectorDialog(
                                 contentColor = TajsOSTheme.Text,
                             ),
                         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                        modifier = Modifier.height(48.dp),
+                        modifier = Modifier.height(48.dp).pointerHoverIcon(PointerIcon.Hand),
                     ) {
                         Text(
                             "CANCEL SESSION",
