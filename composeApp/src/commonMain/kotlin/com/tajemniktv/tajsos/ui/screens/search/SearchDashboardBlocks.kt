@@ -84,8 +84,6 @@ import tajsos.composeapp.generated.resources.type_record
 import tajsos.composeapp.generated.resources.type_task
 import kotlin.math.max
 import kotlin.math.min
-import androidx.compose.ui.input.pointer.PointerIcon
-import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 object SearchDashboardBlocks {
     private val renderers: Map<String, SearchDashboardBlockRenderer> =
@@ -433,6 +431,7 @@ private fun renderSearchResultsList(context: SearchDashboardContext) {
         ) {
             items(context.searchResults, key = { it.node.id }) { nodeWithPin ->
                 SearchResultCard(
+                    config = SearchResultCardConfig(
                     nodeWithPin = nodeWithPin,
                     projectName = context.projectsById[nodeWithPin.node.projectId]?.title,
                     areaName = context.areasById[nodeWithPin.node.areaId]?.title,
@@ -451,6 +450,7 @@ private fun renderSearchResultsList(context: SearchDashboardContext) {
                         )
                     },
                     onArchive = { context.viewModel.archiveNode(nodeWithPin.node) },
+                ),
                 )
             }
         }
@@ -488,7 +488,6 @@ private fun RecentQueriesRow(
         LazyRow(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
             items(queries.distinct(), key = { it }) { query ->
                 Surface(
-                    modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
                     shape = RoundedCornerShape(999.dp),
                     color = TajsOSTheme.SurfaceHigh,
                     onClick = { onQueryClick(query) },
@@ -648,17 +647,29 @@ private fun SearchSupportPanel(
 /**
  * Renders one search result row with title, metadata, excerpt, and quick actions.
  */
+
+data class SearchResultCardConfig(
+    val nodeWithPin: NodeWithPin,
+    val projectName: String?,
+    val areaName: String?,
+    val nowMs: Long,
+    val onOpen: () -> Unit,
+    val onToggleDone: (String) -> Unit,
+    val onTogglePin: (Boolean) -> Unit,
+    val onArchive: () -> Unit,
+)
 @Composable
 private fun SearchResultCard(
-    nodeWithPin: NodeWithPin,
-    projectName: String?,
-    areaName: String?,
-    nowMs: Long,
-    onOpen: () -> Unit,
-    onToggleDone: (String) -> Unit,
-    onTogglePin: (Boolean) -> Unit,
-    onArchive: () -> Unit,
+    config: SearchResultCardConfig,
 ) {
+    val nodeWithPin = config.nodeWithPin
+    val projectName = config.projectName
+    val areaName = config.areaName
+    val nowMs = config.nowMs
+    val onOpen = config.onOpen
+    val onToggleDone = config.onToggleDone
+    val onTogglePin = config.onTogglePin
+    val onArchive = config.onArchive
     val node = nodeWithPin.node
     val subtitle =
         buildString {
@@ -670,7 +681,6 @@ private fun SearchResultCard(
         }
 
     Surface(
-        modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
         onClick = onOpen,
         shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
         color = TajsOSTheme.SurfaceLow,
