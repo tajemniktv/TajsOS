@@ -84,6 +84,8 @@ import tajsos.composeapp.generated.resources.type_record
 import tajsos.composeapp.generated.resources.type_task
 import kotlin.math.max
 import kotlin.math.min
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 object SearchDashboardBlocks {
     private val renderers: Map<String, SearchDashboardBlockRenderer> =
@@ -681,6 +683,7 @@ private fun SearchResultCard(
         }
 
     Surface(
+        modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
         onClick = onOpen,
         shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
         color = TajsOSTheme.SurfaceLow,
