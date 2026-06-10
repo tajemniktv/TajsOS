@@ -490,6 +490,7 @@ private fun RecentQueriesRow(
         LazyRow(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
             items(queries.distinct(), key = { it }) { query ->
                 Surface(
+                    modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
                     shape = RoundedCornerShape(999.dp),
                     color = TajsOSTheme.SurfaceHigh,
                     onClick = { onQueryClick(query) },
