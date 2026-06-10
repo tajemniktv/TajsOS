@@ -186,36 +186,6 @@ class FilterHelperEdgeTest {
 
 
 
-    @Test
-    fun testFilterStatus_commaSeparated() {
-        val nodeActive = buildTestNode(1, "title", status = "active")
-        val nodeOnHold = buildTestNode(2, "title", status = "on_hold")
-        val nodeArchived = buildTestNode(3, "title", status = "archived")
-
-        val result = FilterHelper.filterAndSortNodes(
-            nodes = listOf(nodeActive, nodeOnHold, nodeArchived),
-            query = "",
-            type = null,
-            status = "active, on_hold",
-            projectId = null,
-            areaId = null,
-            linkedToId = null,
-            maxMins = null,
-            energy = null,
-            friction = null,
-            locationContext = null,
-            energyContext = null,
-            deviceContext = null,
-            socialContext = null,
-            timeWindowContext = null,
-            timeHorizon = null,
-            relations = emptyList(),
-            sortMode = "relevance"
-        )
-
-        assertEquals(2, result.size)
-        assertEquals(listOf(1L, 2L), result.map { it.node.id }.sorted())
-    }
 
 
     @Test
@@ -272,16 +242,17 @@ class FilterHelperEdgeTest {
         assertEquals(6, resultInvalid.size)
     }
 
-    @Test
-    fun testFilterStatus_blankAndEmptyValues() {
+
+    private fun testFilterStatus(statusFilter: String, expectedIds: List<Long>) {
         val nodeActive = buildTestNode(1, "title", status = "active")
         val nodeOnHold = buildTestNode(2, "title", status = "on_hold")
+        val nodeArchived = buildTestNode(3, "title", status = "archived")
 
-        val resultBlank = FilterHelper.filterAndSortNodes(
-            nodes = listOf(nodeActive, nodeOnHold),
+        val result = FilterHelper.filterAndSortNodes(
+            nodes = listOf(nodeActive, nodeOnHold, nodeArchived),
             query = "",
             type = null,
-            status = "   , ,, ",
+            status = statusFilter,
             projectId = null,
             areaId = null,
             linkedToId = null,
@@ -298,6 +269,18 @@ class FilterHelperEdgeTest {
             sortMode = "updated"
         )
 
-        assertEquals(2, resultBlank.size)
+        assertEquals(expectedIds.size, result.size)
+        assertEquals(expectedIds, result.map { it.node.id }.sorted())
     }
+
+    @Test
+    fun testFilterStatus_commaSeparated() {
+        testFilterStatus("active, on_hold", listOf(1L, 2L))
+    }
+
+    @Test
+    fun testFilterStatus_blankAndEmptyValues() {
+        testFilterStatus("   , ,, ", listOf(1L, 2L, 3L))
+    }
+
 }
