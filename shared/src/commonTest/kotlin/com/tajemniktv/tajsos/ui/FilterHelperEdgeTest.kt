@@ -271,4 +271,33 @@ class FilterHelperEdgeTest {
         )
         assertEquals(6, resultInvalid.size)
     }
+
+    @Test
+    fun testFilterStatus_blankAndEmptyValues() {
+        val nodeActive = buildTestNode(1, "title", status = "active")
+        val nodeOnHold = buildTestNode(2, "title", status = "on_hold")
+
+        val resultBlank = FilterHelper.filterAndSortNodes(
+            nodes = listOf(nodeActive, nodeOnHold),
+            query = "",
+            type = null,
+            status = "   , ,, ",
+            projectId = null,
+            areaId = null,
+            linkedToId = null,
+            maxMins = null,
+            energy = null,
+            friction = null,
+            locationContext = null,
+            energyContext = null,
+            deviceContext = null,
+            socialContext = null,
+            timeWindowContext = null,
+            timeHorizon = null,
+            relations = emptyList(),
+            sortMode = "updated"
+        )
+
+        assertEquals(2, resultBlank.size)
+    }
 }
