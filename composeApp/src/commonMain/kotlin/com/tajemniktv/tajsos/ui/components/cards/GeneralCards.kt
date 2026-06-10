@@ -35,6 +35,8 @@ import com.tajemniktv.tajsos.ui.components.common.GlassMaterial
 import com.tajemniktv.tajsos.ui.components.common.glassChrome
 import com.tajemniktv.tajsos.ui.components.common.glassContainerColor
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 @Composable
 fun InfoCard(
@@ -51,7 +53,7 @@ fun InfoCard(
             modifier.glassChrome(
                 shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
                 material = GlassMaterial.REGULAR,
-            ),
+            ).pointerHoverIcon(PointerIcon.Hand),
         color = glassContainerColor(TajsOSTheme.Surface),
         shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
     ) {
@@ -99,7 +101,7 @@ fun StatusCard(
             modifier.fillMaxWidth().glassChrome(
                 shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
                 material = GlassMaterial.REGULAR,
-            ),
+            ).pointerHoverIcon(PointerIcon.Hand),
         color = glassContainerColor(TajsOSTheme.Surface),
         shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
     ) {
@@ -140,7 +142,7 @@ fun LinkedNodeItem(
             modifier.fillMaxWidth().glassChrome(
                 shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
                 material = GlassMaterial.REGULAR,
-            ),
+            ).pointerHoverIcon(PointerIcon.Hand),
         color = glassContainerColor(TajsOSTheme.Surface),
         shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
     ) {
@@ -198,7 +200,7 @@ fun ConnectionCard(
             modifier.fillMaxWidth().glassChrome(
                 shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
                 material = GlassMaterial.THIN,
-            ),
+            ).pointerHoverIcon(PointerIcon.Hand),
         color = glassContainerColor(Color.Transparent),
         shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
     ) {

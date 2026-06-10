@@ -71,8 +71,8 @@ fun TajsNotificationCard(
             modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(TajsOSTheme.RadiusMd))
-                .clickable { notification.onClick() }
-                .pointerHoverIcon(PointerIcon.Hand),
+                .clickable { notification.onClick() }.pointerHoverIcon(PointerIcon.Hand)
+                ,
         color = TajsOSTheme.SurfaceLow,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
     ) {

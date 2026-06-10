@@ -41,6 +41,8 @@ import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.insights_needs_attention
 import kotlin.time.Instant
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 /**
  * Central insights entry point that collects system state and coordinates layout.
@@ -118,7 +120,7 @@ fun ProjectEntropyItem(
     onClick: () -> Unit,
 ) {
     Surface(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().pointerHoverIcon(PointerIcon.Hand),
         color = TajsOSTheme.CardSurface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
         border =
@@ -217,7 +219,7 @@ fun NeglectedProjectItem(
     onClick: () -> Unit,
 ) {
     Surface(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().pointerHoverIcon(PointerIcon.Hand),
         color = TajsOSTheme.CardSurface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
         border =

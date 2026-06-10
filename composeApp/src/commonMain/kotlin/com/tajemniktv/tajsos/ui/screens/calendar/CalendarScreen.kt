@@ -261,8 +261,8 @@ fun MonthView(
                                         } else {
                                             TajsOSTheme.CalendarIdleDay
                                         },
-                                    ).clickable { onDateSelected(date) }
-                                        .pointerHoverIcon(PointerIcon.Hand),
+                                    ).clickable { onDateSelected(date) }.pointerHoverIcon(PointerIcon.Hand)
+                                        ,
                             contentAlignment = Alignment.Center,
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -389,7 +389,7 @@ fun AgendaRow(
                 1.dp,
                 TajsOSTheme.GhostBorder.copy(alpha = 0.15f),
             ),
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().pointerHoverIcon(PointerIcon.Hand),
     ) {
         Row(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),

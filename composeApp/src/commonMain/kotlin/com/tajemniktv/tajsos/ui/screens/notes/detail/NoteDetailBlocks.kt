@@ -356,8 +356,8 @@ private fun renderNoteTaskMetadata(context: NoteDetailContext) {
                         modifier =
                             Modifier
                                 .weight(1f)
-                                .clickable { context.onShowEstimateDialog() }
-                                .pointerHoverIcon(PointerIcon.Hand),
+                                .clickable { context.onShowEstimateDialog() }.pointerHoverIcon(PointerIcon.Hand)
+                                ,
                     ) {
                         Text(
                             "ESTIMATE",
@@ -460,8 +460,8 @@ private fun renderNoteResourceMetadata(context: NoteDetailContext) {
                         modifier =
                             Modifier
                                 .weight(1f)
-                                .clickable { context.onShowMediaTypeDialog() }
-                                .pointerHoverIcon(PointerIcon.Hand),
+                                .clickable { context.onShowMediaTypeDialog() }.pointerHoverIcon(PointerIcon.Hand)
+                                ,
                     ) {
                         Text(
                             "MEDIA TYPE",
@@ -479,8 +479,8 @@ private fun renderNoteResourceMetadata(context: NoteDetailContext) {
                         modifier =
                             Modifier
                                 .weight(1f)
-                                .clickable { context.onShowRatingDialog() }
-                                .pointerHoverIcon(PointerIcon.Hand),
+                                .clickable { context.onShowRatingDialog() }.pointerHoverIcon(PointerIcon.Hand)
+                                ,
                     ) {
                         Text(
                             "RATING",
@@ -821,8 +821,8 @@ private fun renderNoteOrganization(context: NoteDetailContext) {
                     modifier =
                         Modifier
                             .weight(1f)
-                            .clickable { context.onShowAreaDialog() }
-                            .pointerHoverIcon(PointerIcon.Hand),
+                            .clickable { context.onShowAreaDialog() }.pointerHoverIcon(PointerIcon.Hand)
+                            ,
                 ) {
                     Text(
                         "AREA",
@@ -840,8 +840,8 @@ private fun renderNoteOrganization(context: NoteDetailContext) {
                     modifier =
                         Modifier
                             .weight(1f)
-                            .clickable { context.onShowProjectDialog() }
-                            .pointerHoverIcon(PointerIcon.Hand),
+                            .clickable { context.onShowProjectDialog() }.pointerHoverIcon(PointerIcon.Hand)
+                            ,
                 ) {
                     Text(
                         "PROJECT",
@@ -911,8 +911,8 @@ private fun renderNoteKnowledgeConfig(context: NoteDetailContext) {
                         modifier =
                             Modifier
                                 .weight(1f)
-                                .clickable { context.onShowNoteTypeDialog() }
-                                .pointerHoverIcon(PointerIcon.Hand),
+                                .clickable { context.onShowNoteTypeDialog() }.pointerHoverIcon(PointerIcon.Hand)
+                                ,
                     ) {
                         Text(
                             "NOTE TYPE",
@@ -930,8 +930,8 @@ private fun renderNoteKnowledgeConfig(context: NoteDetailContext) {
                         modifier =
                             Modifier
                                 .weight(1f)
-                                .clickable { context.onShowNoteStateDialog() }
-                                .pointerHoverIcon(PointerIcon.Hand),
+                                .clickable { context.onShowNoteStateDialog() }.pointerHoverIcon(PointerIcon.Hand)
+                                ,
                     ) {
                         Text(
                             "STATE",

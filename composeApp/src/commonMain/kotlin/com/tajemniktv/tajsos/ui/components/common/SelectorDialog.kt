@@ -36,6 +36,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 /**
  * Displays a full-screen selector dialog presenting a grid of selectable options.
@@ -139,7 +141,7 @@ fun <T> SelectorDialog(
                             onClick = { onSelect(option) },
                             color = if (isSelected) TajsOSTheme.Primary else TajsOSTheme.Surface,
                             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                            modifier = Modifier.height(140.dp),
+                            modifier = Modifier.height(140.dp).pointerHoverIcon(PointerIcon.Hand),
                             border =
                                 if (isSelected) {
                                     null

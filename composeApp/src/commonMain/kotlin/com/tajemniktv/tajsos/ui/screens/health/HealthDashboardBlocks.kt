@@ -23,6 +23,8 @@ import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.screens.GroupedOpenLoopSection
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 object HealthDashboardBlockRegistry {
     private val renderers: Map<String, HealthDashboardBlockRenderer> =
@@ -114,7 +116,7 @@ internal fun HealthMainBlock(
         Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
             healthQueue.forEach { item ->
                 Surface(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().pointerHoverIcon(PointerIcon.Hand),
                     color = TajsOSTheme.CardSurface,
                     shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
                     onClick = { onEditNode(item.node.node.id) },

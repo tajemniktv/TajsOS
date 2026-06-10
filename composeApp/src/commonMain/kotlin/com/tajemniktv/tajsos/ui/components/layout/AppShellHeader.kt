@@ -69,6 +69,8 @@ import tajsos.composeapp.generated.resources.header_mode_label
 import tajsos.composeapp.generated.resources.header_notifications
 import tajsos.composeapp.generated.resources.header_notifications_title
 import tajsos.composeapp.generated.resources.header_search_placeholder
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 /**
  * Mode option model shown by the header mode switcher.
@@ -403,7 +405,7 @@ fun HeaderModeSwitcher(
                     .glassChrome(
                         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                         material = GlassMaterial.REGULAR,
-                    ),
+                    ).pointerHoverIcon(PointerIcon.Hand),
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
             color = glassContainerColor(TajsOSTheme.SurfaceHigh),
             tonalElevation = 0.dp,

@@ -28,6 +28,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 /**
  * Renders a titled suggestion section displaying up to two clickable node entries with an optional description.
@@ -66,7 +68,7 @@ fun SuggestionGroup(
         nodes.take(2).forEach { nodeWithPin ->
             Surface(
                 onClick = { onEditNode(nodeWithPin.node.id) },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().pointerHoverIcon(PointerIcon.Hand),
                 color = TajsOSTheme.CardSurface,
                 shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
                 border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),

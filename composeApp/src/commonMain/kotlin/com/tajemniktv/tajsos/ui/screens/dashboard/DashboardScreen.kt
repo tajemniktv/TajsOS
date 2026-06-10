@@ -444,8 +444,8 @@ private fun RenderDashboardBlock(
                     Row(
                         modifier =
                             Modifier
-                                .clickable { context.onNewEntry() }
-                                .pointerHoverIcon(PointerIcon.Hand)
+                                .clickable { context.onNewEntry() }.pointerHoverIcon(PointerIcon.Hand)
+
                                 .background(TajsOSTheme.Primary, RoundedCornerShape(TajsOSTheme.RadiusXs))
                                 .padding(horizontal = 12.dp, vertical = 6.dp),
                         verticalAlignment = Alignment.CenterVertically,
@@ -607,8 +607,8 @@ private fun DashboardOperationsOverview(
                                 1.dp,
                                 TajsOSTheme.Border,
                                 RoundedCornerShape(TajsOSTheme.RadiusMd),
-                            ).clickable { onNavigate(module.screen.route) }
-                                .pointerHoverIcon(PointerIcon.Hand)
+                            ).clickable { onNavigate(module.screen.route) }.pointerHoverIcon(PointerIcon.Hand)
+
                               .padding(TajsOSTheme.SpacingMd),
                     verticalArrangement = Arrangement.spacedBy(6.dp),
                 ) {

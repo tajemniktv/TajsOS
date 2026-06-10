@@ -416,8 +416,8 @@ private fun renderAreaSidebar(context: AreaDetailContext) {
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .clickable { context.onEditNode(node.id) }
-                            .pointerHoverIcon(PointerIcon.Hand),
+                            .clickable { context.onEditNode(node.id) }.pointerHoverIcon(PointerIcon.Hand)
+                            ,
                 )
             }
         }

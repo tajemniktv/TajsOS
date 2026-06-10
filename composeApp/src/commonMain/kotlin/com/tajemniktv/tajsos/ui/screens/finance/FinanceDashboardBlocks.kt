@@ -216,8 +216,8 @@ internal fun renderFinanceActivityBlock(context: FinanceDashboardContext) {
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .clickable { context.onEditNode(item.node.id) }
-                            .pointerHoverIcon(PointerIcon.Hand)
+                            .clickable { context.onEditNode(item.node.id) }.pointerHoverIcon(PointerIcon.Hand)
+
                             .padding(vertical = 4.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,

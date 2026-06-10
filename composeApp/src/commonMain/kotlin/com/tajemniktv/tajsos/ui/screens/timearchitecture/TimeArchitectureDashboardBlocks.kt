@@ -62,6 +62,8 @@ import tajsos.composeapp.generated.resources.time_architecture_temporal_anchors
 import tajsos.composeapp.generated.resources.time_architecture_title
 import tajsos.composeapp.generated.resources.time_architecture_weekly_alignment
 import tajsos.composeapp.generated.resources.time_architecture_weekly_detail
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 object TimeArchitectureDashboardBlocks {
     private val renderers: Map<String, TimeArchitectureDashboardBlockRenderer> =
@@ -610,7 +612,7 @@ private fun HorizonQueueRow(
                     onClick = onOpen,
                     onSecondaryClick = onOpen,
                     middleClickFallbackToPrimary = true,
-                ),
+                ).pointerHoverIcon(PointerIcon.Hand),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 10.dp),

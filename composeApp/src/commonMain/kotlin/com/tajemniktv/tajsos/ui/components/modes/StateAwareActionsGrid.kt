@@ -27,6 +27,8 @@ import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.Screen
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 /**
  * Renders a horizontal row of three equally sized actionable cards that apply preset search filters and navigate to the Search screen.
@@ -73,7 +75,7 @@ fun StateAwareActionsGrid(
                     }
                     onNavigateTo(Screen.Search)
                 },
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f).pointerHoverIcon(PointerIcon.Hand),
                 color = TajsOSTheme.CardSurface,
                 shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
             ) {

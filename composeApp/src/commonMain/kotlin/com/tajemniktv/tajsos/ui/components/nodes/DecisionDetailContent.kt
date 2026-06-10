@@ -426,8 +426,8 @@ fun DecisionDetailContent(
                             modifier =
                                 Modifier
                                     .fillMaxWidth()
-                                    .clickable { selectedOptionId = option.id }
-                                    .pointerHoverIcon(PointerIcon.Hand),
+                                    .clickable { selectedOptionId = option.id }.pointerHoverIcon(PointerIcon.Hand)
+                                    ,
                         ) {
                             RadioButton(
                                 selected = selectedOptionId == option.id,

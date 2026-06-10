@@ -84,6 +84,8 @@ import tajsos.composeapp.generated.resources.areas_recent_activity
 import tajsos.composeapp.generated.resources.areas_title
 import tajsos.composeapp.generated.resources.areas_upcoming_deadlines
 import tajsos.composeapp.generated.resources.common_open
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 object AreasDashboardBlocks {
     private val renderers: Map<String, AreasDashboardBlockRenderer> =
@@ -363,7 +365,7 @@ private fun AreaCard(
                     onClick = onClick,
                     onSecondaryClickAt = { contextMenuState.showAt(it) },
                     middleClickFallbackToPrimary = true,
-                ),
+                ).pointerHoverIcon(PointerIcon.Hand),
             color = TajsOSTheme.CardSurface,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
             border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),
