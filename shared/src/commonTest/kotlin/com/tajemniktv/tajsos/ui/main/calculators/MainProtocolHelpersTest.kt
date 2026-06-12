@@ -8,6 +8,9 @@ import kotlin.time.Duration.Companion.days
 import kotlin.time.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import com.tajemniktv.tajsos.ui.buildTestNode
+import kotlin.test.assertTrue
+import kotlin.test.assertFalse
 import com.tajemniktv.tajsos.data.ModeEntity
 import com.tajemniktv.tajsos.data.TrackEntryEntity
 
@@ -235,4 +238,15 @@ class MainProtocolHelpersTest {
         assertEquals("Bad day protocol", suggestPlaybookLabel(cantThinkMode, emptyList()))
     }
 
+
+    @Test
+    fun testMatchesQuery_proxy() {
+        val node1 = buildTestNode(1, "my target title", "some content")
+
+        // Match found
+        assertTrue(matchesQuery(node1, "target"))
+
+        // No match found
+        assertFalse(matchesQuery(node1, "missing"))
+    }
 }
