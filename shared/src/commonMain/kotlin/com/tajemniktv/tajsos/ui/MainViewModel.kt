@@ -2603,6 +2603,10 @@ class MainViewModel(
             calculateStudentBoardState(nodes, relations, sessions, templates)
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), StudentBoardState())
 
+    /**
+     * Adds a new template, avoiding unnecessary string allocations by using case-insensitive
+     * string comparisons for determining normalized template types.
+     */
     fun addTemplate(
         name: String,
         type: String,
@@ -2611,25 +2615,28 @@ class MainViewModel(
     )
     {
         val normalizedType =
-            when (type.trim().lowercase())
-            {
-                "record"                                           -> "record"
-
-                // NON-NLS
-                "project"                                          -> "project"
-
-                // NON-NLS
-                    "area"                                             -> "area"
-
-                // NON-NLS
-                    "idea", "resource", "vault", "document" -> "note"
+            with(type.trim()) {
+                when {
+                    equals("record", ignoreCase = true) -> "record"
 
                     // NON-NLS
-                    "maintenance", "open_loop", "decision", "protocol" -> "task"
+                    equals("project", ignoreCase = true) -> "project"
+
+                    // NON-NLS
+                    equals("area", ignoreCase = true) -> "area"
+
+                    // NON-NLS
+                    equals("idea", ignoreCase = true) || equals("resource", ignoreCase = true) ||
+                    equals("vault", ignoreCase = true) || equals("document", ignoreCase = true) -> "note"
+
+                    // NON-NLS
+                    equals("maintenance", ignoreCase = true) || equals("open_loop", ignoreCase = true) ||
+                    equals("decision", ignoreCase = true) || equals("protocol", ignoreCase = true) -> "task"
 
                     // NON-NLS
                     else -> "task" // NON-NLS
                 }
+            }
             viewModelScope.launch {
                 repository.insertTemplate(
                     TemplateEntity(
