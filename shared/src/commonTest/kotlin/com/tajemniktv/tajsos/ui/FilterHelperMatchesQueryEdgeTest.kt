@@ -43,4 +43,32 @@ class FilterHelperMatchesQueryEdgeTest {
         assertTrue(FilterHelper.matchesQuery(nodeTag, "tag"))
         assertFalse(FilterHelper.matchesQuery(nodeNone, "title"))
     }
+
+    @Test
+    fun testMatchesQuery_caseInsensitiveAndWhitespace() {
+        val nodeTitle = buildTestNode(1, "My Title", "content")
+        val nodeContent = buildTestNode(2, "other", "My Content")
+        val nodeTag = buildTestNode(3, "other", "other", tags = listOf("My Tag"))
+
+        // Case insensitivity
+        assertTrue(FilterHelper.matchesQuery(nodeTitle, "MY TITLE"))
+        assertTrue(FilterHelper.matchesQuery(nodeContent, "MY CONTENT"))
+        assertTrue(FilterHelper.matchesQuery(nodeTag, "MY TAG"))
+
+        // Whitespace trimming
+        assertTrue(FilterHelper.matchesQuery(nodeTitle, "  my title  "))
+        assertTrue(FilterHelper.matchesQuery(nodeContent, "  my content  "))
+        assertTrue(FilterHelper.matchesQuery(nodeTag, "  my tag  "))
+    }
+
+    @Test
+    fun testMatchesQuery_partialWordMatch() {
+        val nodeTitle = buildTestNode(1, "supercalifragilistic", "content")
+        val nodeContent = buildTestNode(2, "other", "expialidocious")
+        val nodeTag = buildTestNode(3, "other", "other", tags = listOf("unbelievable"))
+
+        assertTrue(FilterHelper.matchesQuery(nodeTitle, "califrag"))
+        assertTrue(FilterHelper.matchesQuery(nodeContent, "piali"))
+        assertTrue(FilterHelper.matchesQuery(nodeTag, "believ"))
+    }
 }
