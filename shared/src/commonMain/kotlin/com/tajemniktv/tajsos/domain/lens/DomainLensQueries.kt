@@ -256,6 +256,14 @@ object DomainLensQueries {
     /**
      * Configuration class to group matching heuristics. This avoids having functions with many string/collection
      * arguments, which can trigger code health violations.
+     *
+     * By centralizing these heuristic collections, domains can be evaluated consistently. Adding a new domain
+     * requires defining parallel sets of these properties to feed into a new instance of this matcher.
+     *
+     * @property maintenanceTypes Specific `maintenanceType` strings (e.g. "bill", "appointment") that map to this domain.
+     * @property tagMarkers Explicit tag strings whose presence assigns a node to this domain.
+     * @property titleKeywords Case-insensitive substrings which, if found in the title or content, assign a node to this domain.
+     * @property validNoteTypes Specific `noteType` classifications (e.g. "reflection") that map to this domain.
      */
     private class DomainMatcher(
         val maintenanceTypes: Set<String>,
