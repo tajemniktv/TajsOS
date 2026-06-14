@@ -20,6 +20,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.graphicsLayer
@@ -35,7 +37,7 @@ fun DashCard(
 ) {
     Surface(
         onClick = onClick,
-        modifier = modifier,
+        modifier = modifier.pointerHoverIcon(PointerIcon.Hand),
         color = TajsOSTheme.CardSurface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
         content = content,
@@ -72,7 +74,7 @@ fun TactileCard(
                             onSecondaryClick = onClick,
                             middleClickFallbackToPrimary = true,
                             interactionSource = interactionSource,
-                        )
+                        ).pointerHoverIcon(PointerIcon.Hand)
                     } else {
                         Modifier
                     },

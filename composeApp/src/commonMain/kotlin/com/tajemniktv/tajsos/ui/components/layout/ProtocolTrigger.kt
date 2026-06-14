@@ -19,6 +19,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -51,7 +53,7 @@ fun ProtocolTrigger(
 ) {
     Surface(
         onClick = onClick,
-        modifier = Modifier.width(120.dp),
+        modifier = Modifier.width(120.dp).pointerHoverIcon(PointerIcon.Hand),
         color = color.copy(alpha = 0.1f),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),
