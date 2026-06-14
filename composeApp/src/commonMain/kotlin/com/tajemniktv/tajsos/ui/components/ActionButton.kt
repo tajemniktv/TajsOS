@@ -31,6 +31,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 
 /**
@@ -72,7 +74,7 @@ fun ActionButton(
         onClick = onClick,
         enabled = enabled,
         interactionSource = interactionSource,
-        modifier = finalModifier.graphicsLayer { scaleX = scale; scaleY = scale },
+        modifier = finalModifier.graphicsLayer { scaleX = scale; scaleY = scale }.pointerHoverIcon(PointerIcon.Hand),
         colors =
             resolveActionButtonColors(
                 isPrimary = isPrimary,
