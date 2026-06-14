@@ -150,4 +150,38 @@ class LifeObjectModelsTest {
         assertFalse(taskWithLocation.isPlaceAnchor())
         assertEquals(ItemKind.TASK, taskWithLocation.itemKindOrNull())
     }
+
+    @Test
+    fun matchesItemFilter_handles_all_cases_including_null_and_unknown() {
+        val taskNode = NodeEntity(type = "task", title = "T")
+        val projectNode = NodeEntity(type = "project", title = "P")
+        val areaNode = NodeEntity(type = "area", title = "A")
+        val unknownNode = NodeEntity(type = "unknown_type", title = "U")
+
+        assertTrue(taskNode.matchesItemFilter(null))
+        assertTrue(projectNode.matchesItemFilter("project"))
+        assertTrue(areaNode.matchesItemFilter("area"))
+        assertTrue(unknownNode.matchesItemFilter("unknown_type"))
+        assertFalse(unknownNode.matchesItemFilter("task"))
+    }
+
+    @Test
+    fun projectStateFromNodeStatus_handles_archived_and_other_states() {
+        assertEquals(ProjectState.ARCHIVED, projectStateFromNodeStatus("archived"))
+        assertEquals(ProjectState.COMPLETED, projectStateFromNodeStatus("done"))
+        assertEquals(ProjectState.COMPLETED, projectStateFromNodeStatus("completed"))
+        assertEquals(ProjectState.ACTIVE, projectStateFromNodeStatus("active"))
+        assertEquals(null, projectStateFromNodeStatus(null as String?))
+    }
+
+    @Test
+    fun taskStateOrNull_handles_non_task_items() {
+        val nonTaskNode = NodeEntity(type = "note", title = "N", status = "active")
+        val taskNodeNullStatus = NodeEntity(type = "task", title = "T", status = "some_random")
+        val taskNodeNoneStatus = NodeEntity(type = "task", title = "T", status = "null")
+
+        assertEquals(null, nonTaskNode.taskStateOrNull())
+        assertEquals(null, taskNodeNullStatus.taskStateOrNull())
+        assertEquals(null, taskNodeNoneStatus.taskStateOrNull())
+    }
 }
