@@ -80,6 +80,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import com.tajemniktv.tajsos.ui.components.common.TactileIconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -203,7 +204,7 @@ fun NoteDetailScreen(
         }
 
     val actions: @Composable RowScope.() -> Unit = {
-        IconButton(onClick = { viewModel.togglePermanentPin(node) }) {
+        TactileIconButton(onClick = { viewModel.togglePermanentPin(node) }) {
             Icon(
                 if (node.isPinned) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                 contentDescription = null,
@@ -211,7 +212,7 @@ fun NoteDetailScreen(
                 modifier = Modifier.size(18.dp),
             )
         }
-        IconButton(
+        TactileIconButton(
             onClick = {
                 scope.launch {
                     viewModel.getNodeById(noteId)?.let { original ->
@@ -232,7 +233,7 @@ fun NoteDetailScreen(
                 modifier = Modifier.size(18.dp),
             )
         }
-        IconButton(
+        TactileIconButton(
             onClick = {
                 viewModel.archiveNode(node)
                 onBack()
@@ -244,7 +245,7 @@ fun NoteDetailScreen(
                 modifier = Modifier.size(18.dp),
             )
         }
-        IconButton(onClick = { showMoreDialog = true }, modifier = Modifier.size(48.dp)) {
+        TactileIconButton(onClick = { showMoreDialog = true }, modifier = Modifier.size(48.dp)) {
             Icon(
                 Icons.Default.MoreVert,
                 contentDescription = null,

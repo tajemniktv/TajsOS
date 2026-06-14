@@ -26,6 +26,7 @@ import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import com.tajemniktv.tajsos.ui.components.common.TactileIconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -267,7 +268,7 @@ fun NodeCard(
                         }
                     }
                     if (isDone) {
-                        IconButton(onClick = onArchive, modifier = Modifier.size(48.dp)) {
+                        TactileIconButton(onClick = onArchive, modifier = Modifier.size(48.dp)) {
                             Icon(
                                 imageVector = Icons.Default.Delete,
                                 contentDescription = stringResource(Res.string.detail_archive),
@@ -275,7 +276,7 @@ fun NodeCard(
                             )
                         }
                     }
-                    IconButton(onClick = { onTogglePin(!isPinnedToToday) }) {
+                    TactileIconButton(onClick = { onTogglePin(!isPinnedToToday) }) {
                         Icon(
                             imageVector = Icons.Default.Star,
                             contentDescription = stringResource(Res.string.node_pin_today_desc),

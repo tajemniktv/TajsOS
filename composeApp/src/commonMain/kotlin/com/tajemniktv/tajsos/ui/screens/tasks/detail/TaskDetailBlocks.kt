@@ -45,6 +45,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import com.tajemniktv.tajsos.ui.components.common.TactileIconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -620,7 +621,7 @@ private fun SubtaskRow(
                 color = tint,
             )
             if (subtask.source == TaskSubtaskSource.InlineChecklist && onRemove != null) {
-                IconButton(onClick = onRemove, modifier = Modifier.size(48.dp)) {
+                TactileIconButton(onClick = onRemove, modifier = Modifier.size(48.dp)) {
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = null,
@@ -704,7 +705,7 @@ private fun AttachmentRow(
                 )
             }
         }
-        IconButton(onClick = onRemove, modifier = Modifier.size(48.dp)) {
+        TactileIconButton(onClick = onRemove, modifier = Modifier.size(48.dp)) {
             Icon(Icons.Default.Delete, contentDescription = null, tint = TajsOSTheme.Muted)
         }
     }

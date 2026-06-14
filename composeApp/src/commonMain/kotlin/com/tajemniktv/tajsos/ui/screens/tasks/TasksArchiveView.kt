@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import com.tajemniktv.tajsos.ui.components.common.TactileIconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
@@ -96,7 +97,7 @@ internal fun TasksArchiveView(
                         Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                             OutlinedButton(onClick = { onOpen(task.id) }) { Text(stringResource(Res.string.tasks_open_action)) }
                             OutlinedButton(onClick = { onRestore(task) }) { Text(stringResource(Res.string.tasks_restore_action)) }
-                            IconButton(onClick = { onDelete(task) }) {
+                            TactileIconButton(onClick = { onDelete(task) }) {
                                 Icon(
                                     Icons.Default.Delete,
                                     null,

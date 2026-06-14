@@ -17,6 +17,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import com.tajemniktv.tajsos.ui.components.common.TactileIconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
@@ -111,7 +112,7 @@ internal fun ArchiveMainBlock(
                             },
                             trailingContent = {
                                 Row {
-                                    IconButton(
+                                    TactileIconButton(
                                         onClick = {
                                             viewModel.updateNodeStatus(
                                                 nodeWithPin.node,
@@ -125,7 +126,7 @@ internal fun ArchiveMainBlock(
                                             tint = TajsOSTheme.Primary,
                                         )
                                     }
-                                    IconButton(onClick = {
+                                    TactileIconButton(onClick = {
                                         viewModel.deleteNodePermanently(
                                             nodeWithPin.node,
                                         )

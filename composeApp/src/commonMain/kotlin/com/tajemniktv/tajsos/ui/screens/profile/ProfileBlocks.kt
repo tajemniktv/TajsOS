@@ -25,6 +25,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import com.tajemniktv.tajsos.ui.components.common.TactileIconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -390,7 +391,7 @@ private fun renderMedicationsModuleBlock(context: ProfileScreenContext) {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             ModuleTitle(title = stringResource(Res.string.profile_medications))
-            IconButton(onClick = context.onOpenAddMedication, modifier = Modifier.size(48.dp)) {
+            TactileIconButton(onClick = context.onOpenAddMedication, modifier = Modifier.size(48.dp)) {
                 Icon(
                     Icons.Default.Add,
                     contentDescription = null,
@@ -589,7 +590,7 @@ private fun MedicationItem(
                     color = TajsOSTheme.Primary,
                 )
             }
-            IconButton(onClick = onDelete, modifier = Modifier.size(48.dp)) {
+            TactileIconButton(onClick = onDelete, modifier = Modifier.size(48.dp)) {
                 Icon(Icons.Default.Delete, contentDescription = "Delete", tint = TajsOSTheme.Error)
             }
         }

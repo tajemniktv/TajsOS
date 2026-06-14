@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import com.tajemniktv.tajsos.ui.components.common.TactileIconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
@@ -115,7 +116,7 @@ internal fun TasksInboxView(
                                         stringResource(Res.string.tasks_inbox_triage_task),
                                     )
                                 }
-                                IconButton(onClick = { onDismiss(entry) }) {
+                                TactileIconButton(onClick = { onDismiss(entry) }) {
                                     Icon(
                                         Icons.Default.Delete,
                                         stringResource(Res.string.tasks_inbox_dismiss),

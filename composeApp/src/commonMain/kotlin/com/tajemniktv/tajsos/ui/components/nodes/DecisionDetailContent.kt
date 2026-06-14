@@ -29,6 +29,7 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import com.tajemniktv.tajsos.ui.components.common.TactileIconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -289,7 +290,7 @@ fun DecisionDetailContent(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             SectionTitle(stringResource(Res.string.decision_options_label))
-            IconButton(onClick = { showAddOptionDialog = true }, modifier = Modifier.size(48.dp)) {
+            TactileIconButton(onClick = { showAddOptionDialog = true }, modifier = Modifier.size(48.dp)) {
                 Icon(
                     Icons.Default.Add,
                     contentDescription = stringResource(Res.string.cd_add_option),

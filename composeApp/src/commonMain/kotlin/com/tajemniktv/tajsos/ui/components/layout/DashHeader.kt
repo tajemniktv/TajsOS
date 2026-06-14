@@ -20,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import com.tajemniktv.tajsos.ui.components.common.TactileIconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -119,7 +120,7 @@ fun DashHeader(
                 }
             }
             Spacer(Modifier.width(12.dp))
-            IconButton(onClick = onSettingsClick, modifier = Modifier.size(48.dp)) {
+            TactileIconButton(onClick = onSettingsClick, modifier = Modifier.size(48.dp)) {
                 Icon(Icons.Default.Settings, contentDescription = null, tint = TajsOSTheme.Muted)
             }
         }

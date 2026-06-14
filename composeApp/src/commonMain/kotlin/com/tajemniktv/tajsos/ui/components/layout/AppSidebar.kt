@@ -45,6 +45,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import com.tajemniktv.tajsos.ui.components.common.TactileIconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Surface
@@ -512,7 +513,7 @@ fun ExpandableNavSection(
                                     overflow = TextOverflow.Ellipsis,
                                 )
                                 if (expandable) {
-                                    IconButton(
+                                    TactileIconButton(
                                         onClick = onRootExpandToggle,
                                         modifier = Modifier.size(28.dp),
                                     ) {

@@ -35,6 +35,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import com.tajemniktv.tajsos.ui.components.common.TactileIconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -136,7 +137,7 @@ fun AppShellHeader(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 if (!isDesktop && onMenuClick != null) {
-                    IconButton(onClick = onMenuClick, modifier = Modifier.size(48.dp)) {
+                    TactileIconButton(onClick = onMenuClick, modifier = Modifier.size(48.dp)) {
                         Icon(
                             imageVector = Icons.Default.Menu,
                             contentDescription = stringResource(Res.string.header_menu),
@@ -502,7 +503,7 @@ fun NotificationsPopover(
             shadowElevation = 0.dp,
         ) {
             Box {
-                IconButton(
+                TactileIconButton(
                     onClick = { onExpandedChange(!expanded) },
                     modifier = Modifier.size(42.dp),
                 ) {
