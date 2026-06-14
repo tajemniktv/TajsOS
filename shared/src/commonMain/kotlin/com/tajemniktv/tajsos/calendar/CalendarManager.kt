@@ -39,6 +39,9 @@ class CalendarManager(
      * (falling back to `"${title}_${startAt}"` when `externalId` is null), replaces that
      * provider's local events with the deduplicated set, and updates the provider's
      * `lastSyncedAt` timestamp.
+     *
+     * Note: This process is designed to run silently in the background, fully decoupled from
+     * user interface blocking, to adhere to TajsOS's strict local-first caching principles.
      */
     suspend fun syncAll() =
         coroutineScope {
