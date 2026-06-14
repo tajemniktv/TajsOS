@@ -19,6 +19,18 @@ private fun currentEpochMillis(): Long =
  *
  * This is the primary "capture fast, structure later" primitive for the new LifeOS model.
  * Represents a raw capture entry inside the inbox before being structured or triaged.
+ *
+ * @property id The unique auto-generated database ID.
+ * @property rawText The raw, unprocessed text captured by the user.
+ * @property source The origin of the capture (e.g., 'manual').
+ * @property suggestedKind An optional suggested node kind (e.g., task, note) for future processing.
+ * @property homeAreaId An optional area ID this capture might belong to.
+ * @property activeProjectId An optional active project ID this capture might belong to.
+ * @property contextScreen An optional string recording what screen the user was on during capture.
+ * @property capturedAt The epoch timestamp in milliseconds when this entry was captured.
+ * @property processedAt An optional epoch timestamp in milliseconds when this entry was processed.
+ * @property dismissedAt An optional epoch timestamp in milliseconds when this entry was dismissed.
+ * @property triagedItemId The ID of the resulting node item after this capture was triaged.
  */
 @Entity(
     tableName = "inbox_entries",
@@ -48,6 +60,17 @@ data class InboxEntryEntity(
 
 /**
  * Task-specific execution and recurrence data associated with an item row.
+ *
+ * @property itemId The ID of the associated shared LifeOS item.
+ * @property state The execution state of the task (e.g., ACTIVE, COMPLETED).
+ * @property energyLevel An optional integer representing the estimated energy required.
+ * @property friction An optional string identifying potential blockers or friction points.
+ * @property nextStep An optional description of the immediate next action.
+ * @property estimatedMinutes An optional estimated time to completion in minutes.
+ * @property completionNote An optional note or reflection added when the task was completed.
+ * @property completedAt An optional epoch timestamp in milliseconds when the task was completed.
+ * @property isRecurring Boolean flag indicating if this task is a recurring template.
+ * @property recurringInterval The recurrence rule/interval string if the task is recurring.
  */
 @Entity(tableName = "task_facets")
 @Serializable
@@ -66,6 +89,13 @@ data class TaskFacetEntity(
 
 /**
  * Note-specific semantics stored beside the shared item row.
+ *
+ * @property itemId The ID of the associated shared LifeOS item.
+ * @property kind The specific category of the note (e.g., GENERAL).
+ * @property state The lifecycle state of the note.
+ * @property sourceTitle An optional string storing the title of referenced source material.
+ * @property sourceAuthor An optional string storing the author of referenced source material.
+ * @property lastReviewedAt An optional epoch timestamp in milliseconds when the note was last reviewed.
  */
 @Entity(tableName = "note_facets")
 @Serializable
@@ -80,6 +110,11 @@ data class NoteFacetEntity(
 
 /**
  * Project-specific coordination state stored separately from the shared item row.
+ *
+ * @property itemId The ID of the associated shared LifeOS item.
+ * @property state The execution state of the project (e.g., ACTIVE, COMPLETED).
+ * @property purpose An optional description of the project's goal or desired outcome.
+ * @property isFrozen Boolean flag indicating if the project is currently suspended or on hold.
  */
 @Entity(tableName = "project_facets")
 @Serializable
@@ -92,6 +127,11 @@ data class ProjectFacetEntity(
 
 /**
  * Area-specific stewardship data kept out of the shared node table.
+ *
+ * @property itemId The ID of the associated shared LifeOS item.
+ * @property healthStatus The current health status of the area (e.g., STABLE, ATTENTION_NEEDED).
+ * @property standardOfCare An optional description defining what "good" looks like for this area.
+ * @property vision An optional long-term vision or desired state for this area.
  */
 @Entity(tableName = "area_facets")
 @Serializable
@@ -104,6 +144,10 @@ data class AreaFacetEntity(
 
 /**
  * Record-specific chronological data attached to an item row.
+ *
+ * @property itemId The ID of the associated shared LifeOS item.
+ * @property kind The specific category of the record (e.g., GENERAL, HEALTH).
+ * @property occurredAt The epoch timestamp in milliseconds when the recorded event occurred.
  */
 @Entity(tableName = "record_facets")
 @Serializable
@@ -136,6 +180,11 @@ data class RecordFacetEntity(
  * Represents the cross-cutting assignment of a shared item to a first-class LifeOS domain.
  * NOTE: Current design prefers implicit categorization via `DomainLensQueries`,
  * but explicit database associations are preserved here for overrides and future expansion.
+ *
+ * @property itemId The ID of the associated shared LifeOS item.
+ * @property domainKey The specific domain key assigned to the item.
+ * @property isPrimary Boolean flag indicating if this domain is the primary domain for the item.
+ * @property assignedAt The epoch timestamp in milliseconds when the assignment was made.
  */
 @Serializable
 data class ItemDomainEntity(
@@ -157,6 +206,13 @@ data class ItemDomainEntity(
 /**
  * Stores long-form structured content (such as markdown bodies or embedded objects)
  * alongside a parent Node without bloating the primary generic node table.
+ *
+ * @property itemId The ID of the LifeOS item owning this document.
+ * @property format The format type of the rich content (e.g., Markdown).
+ * @property body The raw textual body of the document.
+ * @property structuredContentJson An optional JSON string representing a structured layout.
+ * @property schemaVersion The version of the content schema used.
+ * @property updatedAt The epoch timestamp in milliseconds when the document was last updated.
  */
 @Serializable
 data class RichContentDocumentEntity(
