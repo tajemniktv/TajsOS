@@ -256,6 +256,13 @@ object DomainLensQueries {
     /**
      * Configuration class to group matching heuristics. This avoids having functions with many string/collection
      * arguments, which can trigger code health violations.
+     *
+     * @property maintenanceTypes A set of specific maintenance item types (e.g., "bill", "appointment") that
+     *                            automatically categorize a node into this domain.
+     * @property tagMarkers A set of specific tags (e.g., "finance", "health") that explicitly flag a node
+     *                      as belonging to this domain.
+     * @property titleKeywords A list of substring keywords that trigger categorization if found in the node's title or content.
+     * @property validNoteTypes An optional set of note types (e.g., "reflection") that imply this domain.
      */
     private class DomainMatcher(
         val maintenanceTypes: Set<String>,
@@ -266,6 +273,9 @@ object DomainLensQueries {
         /**
          * Evaluates whether the given [node] matches this domain's configuration based on
          * explicit maintenance types, valid note types, tags, or title/content keywords.
+         *
+         * @param node The [NodeWithPin] wrapper representing the node to evaluate.
+         * @return `true` if the node matches any of the heuristics, `false` otherwise.
          */
         fun matches(node: NodeWithPin): Boolean {
             if (node.node.maintenanceType in maintenanceTypes) return true
