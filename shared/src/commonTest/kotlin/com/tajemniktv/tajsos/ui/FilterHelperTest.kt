@@ -671,6 +671,12 @@ class FilterHelperTest {
         )
         val resultEnergy = filter(listOf(nodeEnergyMismatch)) { energy = 1 }
         assertEquals(0, resultEnergy.size)
+
+        val nodeFrictionMismatch = createTestNode(5, "title").copy(
+            node = createTestNode(5, "title").node.copy(friction = "high")
+        )
+        val resultFriction = filter(listOf(nodeFrictionMismatch)) { friction = "low" }
+        assertEquals(0, resultFriction.size)
     }
 
     @Test

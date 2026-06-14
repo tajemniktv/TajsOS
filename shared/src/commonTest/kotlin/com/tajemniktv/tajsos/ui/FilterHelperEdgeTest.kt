@@ -271,4 +271,28 @@ class FilterHelperEdgeTest {
         )
         assertEquals(6, resultInvalid.size)
     }
+    @Test
+    fun testShortCircuitFriction() {
+        val nodeHighFriction = buildTestNode(1, "title", friction = "high")
+        val nodeLowFriction = buildTestNode(2, "title", friction = "low")
+        val nodeNullFriction = buildTestNode(3, "title") // friction is null
+
+        val nodes = listOf(nodeHighFriction, nodeLowFriction, nodeNullFriction)
+
+        val resultHigh = FilterHelper.filterAndSortNodes(
+            nodes = nodes, query = "", type = null, status = null, projectId = null, areaId = null, linkedToId = null,
+            maxMins = null, energy = null, friction = "high", locationContext = null, energyContext = null, deviceContext = null, socialContext = null,
+            timeWindowContext = null, timeHorizon = null, relations = emptyList(), sortMode = "updated"
+        )
+        assertEquals(1, resultHigh.size)
+        assertEquals(1L, resultHigh[0].node.id)
+
+        val resultLow = FilterHelper.filterAndSortNodes(
+            nodes = nodes, query = "", type = null, status = null, projectId = null, areaId = null, linkedToId = null,
+            maxMins = null, energy = null, friction = "low", locationContext = null, energyContext = null, deviceContext = null, socialContext = null,
+            timeWindowContext = null, timeHorizon = null, relations = emptyList(), sortMode = "updated"
+        )
+        assertEquals(1, resultLow.size)
+        assertEquals(2L, resultLow[0].node.id)
+    }
 }
