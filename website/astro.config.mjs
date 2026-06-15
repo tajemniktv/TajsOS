@@ -19,6 +19,7 @@ export default defineConfig({
   integrations: [
     starlight({
       title: "Docs",
+      disable404Route: true,
       description: "TajsOS Documentation",
 
       components: {
