@@ -3,6 +3,8 @@ package com.tajemniktv.tajsos.ui.main.calculators
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
+import kotlin.test.assertFalse
 import kotlin.time.Duration.Companion.days
 
 import kotlin.time.Clock
@@ -235,4 +237,14 @@ class MainProtocolHelpersTest {
         assertEquals("Bad day protocol", suggestPlaybookLabel(cantThinkMode, emptyList()))
     }
 
+
+    @Test
+    fun testMatchesQuery_delegatesToFilterHelper() {
+        val node = com.tajemniktv.tajsos.ui.buildTestNode(id = 1, title = "Find This", content = "Hidden")
+
+        assertTrue(matchesQuery(node, "Find This"))
+        assertTrue(matchesQuery(node, "Hidden"))
+        assertFalse(matchesQuery(node, "Missing"))
+        assertFalse(matchesQuery(node, ""))
+    }
 }
