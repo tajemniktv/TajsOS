@@ -49,12 +49,12 @@ class RelationshipCommandsTest {
 
         val personNode = NodeEntity(type = "person", title = "Alice")
         val nodeId = repo.insertNode(personNode)
-        val initialNode = repo.getNodeById(nodeId)!!
+        val initialNode = requireNotNull(repo.getNodeById(nodeId))
 
         commands.setPersonLastContactNow(initialNode)
         testScheduler.advanceUntilIdle()
 
-        val updatedNode = repo.getNodeById(nodeId)!!
+        val updatedNode = requireNotNull(repo.getNodeById(nodeId))
         assertNotNull(updatedNode.lastContactAt)
     }
 
@@ -66,12 +66,12 @@ class RelationshipCommandsTest {
 
         val personNode = NodeEntity(type = "person", title = "Alice")
         val nodeId = repo.insertNode(personNode)
-        val initialNode = repo.getNodeById(nodeId)!!
+        val initialNode = requireNotNull(repo.getNodeById(nodeId))
 
         commands.setPersonFollowUpInDays(initialNode, 7)
         testScheduler.advanceUntilIdle()
 
-        val updatedNode = repo.getNodeById(nodeId)!!
+        val updatedNode = requireNotNull(repo.getNodeById(nodeId))
         assertNotNull(updatedNode.dueAt)
     }
 
