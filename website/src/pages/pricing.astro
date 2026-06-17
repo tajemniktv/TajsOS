@@ -21,6 +21,13 @@ const title = "PRICING";
         class="absolute -top-24 -left-24 w-96 h-96 bg-primary/10 rounded-full"
       >
       </div>
+      <div class="absolute right-0 top-0 flex items-center gap-4 bg-surface-container-low p-2 rounded-full border border-outline-variant/20 z-20">
+        <span class="text-xs font-mono uppercase tracking-widest text-on-surface-variant transition-opacity" id="billing-monthly">Monthly</span>
+        <button id="billing-toggle" class="relative w-12 h-6 bg-surface-container-highest rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary">
+          <div id="billing-knob" class="absolute left-1 top-1 w-4 h-4 bg-primary rounded-full transition-transform duration-300"></div>
+        </button>
+        <span class="text-xs font-mono uppercase tracking-widest text-on-surface-variant opacity-50 transition-opacity" id="billing-annual">Annual</span>
+      </div>
       <div
         class="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-8"
       >
@@ -131,11 +138,11 @@ const title = "PRICING";
         </div>
         <div class="mb-12">
           <div class="flex items-baseline gap-2">
-            <span class="text-5xl font-headline font-bold text-on-surface"
+            <span class="text-5xl font-headline font-bold text-on-surface" id="price-pro"
               >$24</span
             >
             <span
-              class="text-on-surface-variant font-mono text-xs uppercase tracking-widest"
+              class="text-on-surface-variant font-mono text-xs uppercase tracking-widest" id="cycle-pro"
               >/ Monthly Cycle</span
             >
           </div>
@@ -370,3 +377,34 @@ const title = "PRICING";
   </main>
   <Footer />
 </Layout>
+
+<script>
+  const toggle = document.getElementById('billing-toggle');
+  const knob = document.getElementById('billing-knob');
+  const labelMonthly = document.getElementById('billing-monthly');
+  const labelAnnual = document.getElementById('billing-annual');
+  const pricePro = document.getElementById('price-pro');
+  const cyclePro = document.getElementById('cycle-pro');
+
+  let isAnnual = false;
+
+  toggle?.addEventListener('click', () => {
+    isAnnual = !isAnnual;
+
+    if (isAnnual) {
+      knob?.classList.add('translate-x-6');
+      labelMonthly?.classList.add('opacity-50');
+      labelAnnual?.classList.remove('opacity-50');
+
+      if (pricePro) pricePro.textContent = '$19';
+      if (cyclePro) cyclePro.textContent = '/ Annual Cycle';
+    } else {
+      knob?.classList.remove('translate-x-6');
+      labelMonthly?.classList.remove('opacity-50');
+      labelAnnual?.classList.add('opacity-50');
+
+      if (pricePro) pricePro.textContent = '$24';
+      if (cyclePro) cyclePro.textContent = '/ Monthly Cycle';
+    }
+  });
+</script>
