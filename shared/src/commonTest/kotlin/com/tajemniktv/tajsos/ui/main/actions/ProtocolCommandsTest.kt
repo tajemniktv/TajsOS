@@ -165,7 +165,7 @@ class ProtocolCommandsTest {
         val nodeId = repo.insertNode(node)
         testScheduler.advanceUntilIdle()
 
-        val insertedNode = repo.getNodeById(nodeId)!!
+        val insertedNode = requireNotNull(repo.getNodeById(nodeId))
         commands.toggleProtocolChecklistStep(insertedNode, 0, true)
         testScheduler.advanceUntilIdle()
 
