@@ -33,6 +33,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -65,7 +67,7 @@ fun StickyNoteCard(
 ) {
     Surface(
         onClick = onClick,
-        modifier = modifier.width(200.dp),
+        modifier = modifier.width(200.dp).pointerHoverIcon(PointerIcon.Hand),
         color = TajsOSTheme.Accent.copy(alpha = 0.1f),
         shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
     ) {
@@ -107,7 +109,7 @@ fun TodayPulseCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    DashCard(modifier = modifier, onClick = onClick) {
+    DashCard(modifier = modifier.pointerHoverIcon(PointerIcon.Hand), onClick = onClick) {
         Column(modifier = Modifier.padding(TajsOSTheme.SpacingLg)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -186,7 +188,7 @@ fun FocusCard(
         }
     }
 
-    DashCard(modifier = modifier, onClick = onClick) {
+    DashCard(modifier = modifier.pointerHoverIcon(PointerIcon.Hand), onClick = onClick) {
         Column(modifier = Modifier.padding(TajsOSTheme.SpacingLg)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -268,7 +270,7 @@ fun LifeSummaryCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    DashCard(modifier = modifier, onClick = onClick) {
+    DashCard(modifier = modifier.pointerHoverIcon(PointerIcon.Hand), onClick = onClick) {
         Column(modifier = Modifier.padding(TajsOSTheme.SpacingLg)) {
             Text(
                 "LIFE SUMMARY",
@@ -349,7 +351,7 @@ fun MetricCard(
     iconColor: Color,
     onClick: () -> Unit,
 ) {
-    DashCard(modifier = modifier, onClick = onClick) {
+    DashCard(modifier = modifier.pointerHoverIcon(PointerIcon.Hand), onClick = onClick) {
         Column(modifier = Modifier.padding(TajsOSTheme.SpacingLg)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -408,7 +410,7 @@ fun VaultCard(
 ) {
     Surface(
         onClick = onClick,
-        modifier = modifier,
+        modifier = modifier.pointerHoverIcon(PointerIcon.Hand),
         color = TajsOSTheme.CardSurface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
     ) {
