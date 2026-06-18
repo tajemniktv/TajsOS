@@ -17,6 +17,7 @@ export const NAV_LINKS = [
   { label: "LOCAL-FIRST", href: "local-first" },
   { label: "FEATURES", href: "features" },
   { label: "ARCHITECTURE", href: "architecture" },
+  { label: "PRICING", href: "pricing" },
 ] as const;
 
 export const FOOTER_LINKS = {
