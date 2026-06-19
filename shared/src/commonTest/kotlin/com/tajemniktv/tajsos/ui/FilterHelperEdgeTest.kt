@@ -271,4 +271,66 @@ class FilterHelperEdgeTest {
         )
         assertEquals(6, resultInvalid.size)
     }
+
+    @Test
+    fun testFilterFriction_exactMatch() {
+        val nodeEasy = buildTestNode(1, "title").copy(node = buildTestNode(1, "title").node.copy(friction = "easy"))
+        val nodeHard = buildTestNode(2, "title").copy(node = buildTestNode(2, "title").node.copy(friction = "hard"))
+        val nodeNullFriction = buildTestNode(3, "title")
+
+        val resultEasy = FilterHelper.filterAndSortNodes(
+            nodes = listOf(nodeEasy, nodeHard, nodeNullFriction),
+            query = "", type = null, status = null, projectId = null, areaId = null, linkedToId = null,
+            maxMins = null, energy = null, friction = "easy", locationContext = null,
+            energyContext = null, deviceContext = null, socialContext = null,
+            timeWindowContext = null, timeHorizon = null, relations = emptyList(), sortMode = "updated"
+        )
+        assertEquals(1, resultEasy.size)
+        assertEquals(1L, resultEasy[0].node.id)
+
+        val resultHard = FilterHelper.filterAndSortNodes(
+            nodes = listOf(nodeEasy, nodeHard, nodeNullFriction),
+            query = "", type = null, status = null, projectId = null, areaId = null, linkedToId = null,
+            maxMins = null, energy = null, friction = "hard", locationContext = null,
+            energyContext = null, deviceContext = null, socialContext = null,
+            timeWindowContext = null, timeHorizon = null, relations = emptyList(), sortMode = "updated"
+        )
+        assertEquals(1, resultHard.size)
+        assertEquals(2L, resultHard[0].node.id)
+
+        val resultNullFrictionFilter = FilterHelper.filterAndSortNodes(
+            nodes = listOf(nodeEasy, nodeHard, nodeNullFriction),
+            query = "", type = null, status = null, projectId = null, areaId = null, linkedToId = null,
+            maxMins = null, energy = null, friction = null, locationContext = null,
+            energyContext = null, deviceContext = null, socialContext = null,
+            timeWindowContext = null, timeHorizon = null, relations = emptyList(), sortMode = "updated"
+        )
+        assertEquals(3, resultNullFrictionFilter.size)
+    }
+
+    @Test
+    fun testRelevanceScore_partialTitleAndExactTag() {
+        // Tie breaker situation where tag matching and contains match should be compared against another configuration
+        // Node 1: Exact tag match (20 points) + Contains title match (30 points) = 50 points
+        val mixedNode = buildTestNode(1, "my query exact content", "content", tags = listOf("query exact"))
+        // Node 2: Exact title match = 100 points
+        val exactTitleNode = buildTestNode(2, "query exact", "content")
+        // Node 3: Contains tag match (10 points) + Contains title match (30 points) = 40 points
+        val weakerMixedNode = buildTestNode(3, "my query exact content", "content", tags = listOf("query exact suffix"))
+
+        val result = FilterHelper.filterAndSortNodes(
+            nodes = listOf(mixedNode, exactTitleNode, weakerMixedNode),
+            query = "query exact",
+            type = null, status = null, projectId = null, areaId = null, linkedToId = null,
+            maxMins = null, energy = null, friction = null, locationContext = null,
+            energyContext = null, deviceContext = null, socialContext = null,
+            timeWindowContext = null, timeHorizon = null, relations = emptyList(), sortMode = "relevance"
+        )
+
+        assertEquals(3, result.size)
+        // Order should be exactTitleNode (100), mixedNode (50), weakerMixedNode (40)
+        assertEquals(2L, result[0].node.id)
+        assertEquals(1L, result[1].node.id)
+        assertEquals(3L, result[2].node.id)
+    }
 }
