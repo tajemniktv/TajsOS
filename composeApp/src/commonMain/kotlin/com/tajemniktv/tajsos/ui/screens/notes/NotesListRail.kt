@@ -296,9 +296,7 @@ fun NotesListItem(
                     overflow = TextOverflow.Ellipsis,
                 )
                 Text(
-                    text = "${
-                        note.domain.name.lowercase().replaceFirstChar(Char::titlecase)
-                    } • ${relativeDateLabel(note.updatedAt)}",
+                    text = "${note.domain.displayName} • ${relativeDateLabel(note.updatedAt)}",
                     style = MaterialTheme.typography.labelSmall,
                     color = TajsOSTheme.Muted,
                     maxLines = 1,

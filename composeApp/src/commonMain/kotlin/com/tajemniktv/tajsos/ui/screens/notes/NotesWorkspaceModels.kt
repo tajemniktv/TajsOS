@@ -11,12 +11,15 @@ import com.tajemniktv.tajsos.data.isTaskItem
 
 /**
  * Local domain grouping used by the Notes workspace left-rail filters.
+ *
+ * @property displayName Pre-computed capitalized string representation used for UI rendering,
+ * avoiding dynamic string allocations during Compose recompositions.
  */
-enum class NotesDomain {
-    PERSONAL,
-    STUDY,
-    WORK,
-    HEALTH,
+enum class NotesDomain(val displayName: String) {
+    PERSONAL("Personal"),
+    STUDY("Study"),
+    WORK("Work"),
+    HEALTH("Health"),
 }
 
 /**

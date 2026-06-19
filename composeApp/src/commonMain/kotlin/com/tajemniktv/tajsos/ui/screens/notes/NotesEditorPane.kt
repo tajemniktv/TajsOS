@@ -108,9 +108,7 @@ fun NotesEditorPane(
             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                 Column(modifier = Modifier.fillMaxWidth().widthIn(max = 880.dp)) {
                     Text(
-                        text = "NOTES > ${
-                            note.domain.name.lowercase().replaceFirstChar(Char::titlecase)
-                        }",
+                        text = "NOTES > ${note.domain.displayName}",
                         style = MaterialTheme.typography.labelSmall,
                         color = TajsOSTheme.Muted,
                     )
