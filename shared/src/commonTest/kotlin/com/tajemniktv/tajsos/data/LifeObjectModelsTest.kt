@@ -150,4 +150,17 @@ class LifeObjectModelsTest {
         assertFalse(taskWithLocation.isPlaceAnchor())
         assertEquals(ItemKind.TASK, taskWithLocation.itemKindOrNull())
     }
+
+    @Test
+    fun matchesItemFilter_handlesNullFilter() {
+        val node = NodeEntity(type = "some_type", title = "Test")
+        assertTrue(node.matchesItemFilter(null))
+    }
+
+    @Test
+    fun matchesItemFilter_handlesUnknownFilterAndExactMatch() {
+        val node = NodeEntity(type = "custom_type", title = "Test")
+        assertTrue(node.matchesItemFilter("custom_type"))
+        assertFalse(node.matchesItemFilter("other_type"))
+    }
 }
