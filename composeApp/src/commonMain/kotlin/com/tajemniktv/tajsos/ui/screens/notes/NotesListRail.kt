@@ -297,7 +297,7 @@ fun NotesListItem(
                 )
                 Text(
                     text = "${
-                        note.domain.name.lowercase().replaceFirstChar(Char::titlecase)
+                        note.domain.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
                     } • ${relativeDateLabel(note.updatedAt)}",
                     style = MaterialTheme.typography.labelSmall,
                     color = TajsOSTheme.Muted,
