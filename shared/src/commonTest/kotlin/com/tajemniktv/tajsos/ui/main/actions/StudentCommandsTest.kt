@@ -66,19 +66,19 @@ class StudentCommandsTest {
         // Test normal value
         commands.setReadingProgress(node, 50)
         testScheduler.advanceUntilIdle()
-        var updatedNode = repo.getNodeById(1)!!
+        var updatedNode = requireNotNull(repo.getNodeById(1))
         assertEquals(50, updatedNode.metadataEnvelopeOrNull()?.student?.readingProgressPercent)
 
         // Test below 0 clamping
         commands.setReadingProgress(updatedNode, -10)
         testScheduler.advanceUntilIdle()
-        updatedNode = repo.getNodeById(1)!!
+        updatedNode = requireNotNull(repo.getNodeById(1))
         assertEquals(0, updatedNode.metadataEnvelopeOrNull()?.student?.readingProgressPercent)
 
         // Test above 100 clamping
         commands.setReadingProgress(updatedNode, 150)
         testScheduler.advanceUntilIdle()
-        updatedNode = repo.getNodeById(1)!!
+        updatedNode = requireNotNull(repo.getNodeById(1))
         assertEquals(100, updatedNode.metadataEnvelopeOrNull()?.student?.readingProgressPercent)
     }
 
@@ -107,14 +107,14 @@ class StudentCommandsTest {
 
         commands.setTopicMastery(node, "Calculus", 75)
         testScheduler.advanceUntilIdle()
-        var updatedNode = repo.getNodeById(1)!!
+        var updatedNode = requireNotNull(repo.getNodeById(1))
         assertEquals("Calculus", updatedNode.metadataEnvelopeOrNull()?.student?.topic)
         assertEquals(75, updatedNode.metadataEnvelopeOrNull()?.student?.masteryPercent)
 
         // Clamping and blank topic to null
         commands.setTopicMastery(updatedNode, "   ", 120)
         testScheduler.advanceUntilIdle()
-        updatedNode = repo.getNodeById(1)!!
+        updatedNode = requireNotNull(repo.getNodeById(1))
         assertEquals(null, updatedNode.metadataEnvelopeOrNull()?.student?.topic)
         assertEquals(100, updatedNode.metadataEnvelopeOrNull()?.student?.masteryPercent)
     }
@@ -145,7 +145,7 @@ class StudentCommandsTest {
         commands.setStudentCourse(node, "CS101", "Intro to CS", "Fall2026", "Essay")
         testScheduler.advanceUntilIdle()
 
-        val updatedNode = repo.getNodeById(1)!!
+        val updatedNode = requireNotNull(repo.getNodeById(1))
         val studentMeta = updatedNode.metadataEnvelopeOrNull()?.student
         assertEquals("CS101", studentMeta?.courseId)
         assertEquals("Intro to CS", studentMeta?.courseName)
@@ -179,7 +179,7 @@ class StudentCommandsTest {
         commands.toggleFlashcardCandidate(node, true)
         testScheduler.advanceUntilIdle()
 
-        var updatedNode = repo.getNodeById(1)!!
+        var updatedNode = requireNotNull(repo.getNodeById(1))
         assertEquals(true, updatedNode.metadataEnvelopeOrNull()?.student?.flashcardCandidate)
 
         val tagsOnNode = repo.getTagsForNode(1).first()
@@ -188,7 +188,7 @@ class StudentCommandsTest {
         commands.toggleFlashcardCandidate(updatedNode, false)
         testScheduler.advanceUntilIdle()
 
-        updatedNode = repo.getNodeById(1)!!
+        updatedNode = requireNotNull(repo.getNodeById(1))
         assertEquals(false, updatedNode.metadataEnvelopeOrNull()?.student?.flashcardCandidate)
 
         val tagsOnNodeAfter = repo.getTagsForNode(1).first()
@@ -221,7 +221,7 @@ class StudentCommandsTest {
         commands.toggleRevisitBeforeExam(node, true)
         testScheduler.advanceUntilIdle()
 
-        var updatedNode = repo.getNodeById(1)!!
+        var updatedNode = requireNotNull(repo.getNodeById(1))
         assertEquals(true, updatedNode.metadataEnvelopeOrNull()?.student?.revisitBeforeExam)
 
         val tagsOnNode = repo.getTagsForNode(1).first()
@@ -230,7 +230,7 @@ class StudentCommandsTest {
         commands.toggleRevisitBeforeExam(updatedNode, false)
         testScheduler.advanceUntilIdle()
 
-        updatedNode = repo.getNodeById(1)!!
+        updatedNode = requireNotNull(repo.getNodeById(1))
         assertEquals(false, updatedNode.metadataEnvelopeOrNull()?.student?.revisitBeforeExam)
 
         val tagsOnNodeAfter = repo.getTagsForNode(1).first()
