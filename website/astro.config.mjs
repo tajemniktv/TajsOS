@@ -25,6 +25,8 @@ export default defineConfig({
         MarkdownContent: "./src/components/MarkdownContent.astro",
       },
 
+      disable404Route: true,
+
       sidebar: [
         {
           label: "Introduction",

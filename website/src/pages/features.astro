@@ -32,9 +32,9 @@ const title = "FEATURES";
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-32">
       {
         FEATURES.map((feature) => (
-          <div class="bg-surface-container-low p-8 rounded-3xl border border-transparent hover:border-primary/30 transition-all group">
+          <div class="bg-surface-container-low p-8 rounded-3xl border border-transparent hover:border-primary/30 hover:shadow-[0_0_30px_rgba(186,158,255,0.1)] transition-all duration-300 group hover:-translate-y-1">
             <span
-              class="material-symbols-outlined text-4xl text-primary mb-6"
+              class="material-symbols-outlined text-4xl text-primary mb-6 group-hover:scale-110 transition-transform duration-300"
               style="font-variation-settings: 'FILL' 1;"
             >
               {feature.icon}
