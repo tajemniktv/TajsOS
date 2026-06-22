@@ -23,24 +23,24 @@ import kotlinx.serialization.Serializable
  * by this heuristic design to ensure low-friction item capture.
  */
 @Serializable
-enum class DomainKind {
+enum class DomainKind(val displayName: String) {
     /**
      * Domain relating to financial responsibilities, tracking expenses, budgeting, and bills.
      */
-    FINANCES,
+    FINANCES("Finances"),
 
     /**
      * Domain relating to medical responsibilities, health tracking, appointments, and general wellbeing.
      */
-    HEALTH,
+    HEALTH("Health"),
 
     /**
      * Domain relating to learning, studies, classes, assignments, and educational resources.
      */
-    EDUCATION,
+    EDUCATION("Education"),
 
     /**
      * Domain relating to tracking social connections, context around individuals, and maintaining relationships.
      */
-    RELATIONSHIPS,
+    RELATIONSHIPS("Relationships"),
 }
