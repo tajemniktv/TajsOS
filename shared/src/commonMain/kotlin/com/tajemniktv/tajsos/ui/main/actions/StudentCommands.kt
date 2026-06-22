@@ -86,6 +86,18 @@ class StudentCommands(
         }
     }
 
+    /**
+     * Assigns course and academic context details to a student-focused node.
+     *
+     * This safely deserializes, mutates, and re-serializes the `StudentMetadata`
+     * embedded within the node's JSON envelope, applying the provided course identifiers.
+     *
+     * @param node The node entity representing the academic item being modified.
+     * @param courseId The formal course identifier or code (e.g., "CS101").
+     * @param courseName The human-readable name of the course.
+     * @param semester The academic term during which the course is taken.
+     * @param assignmentType An optional string defining the structural type of the assignment.
+     */
     fun setStudentCourse(
         node: NodeEntity,
         courseId: String?,
@@ -103,6 +115,22 @@ class StudentCommands(
         }
     }
 
+    /**
+     * Creates a new academic note node with attached student metadata context.
+     *
+     * This orchestrates the creation of a standard note node, then packages the provided
+     * academic identifiers (course code, name, semester, and topic) into a `NodeMetadataEnvelope`.
+     * The serialized envelope is embedded in the note's metadata JSON, cementing its
+     * role within the student module.
+     *
+     * @param title The primary heading or subject of the note.
+     * @param content The internal text contents or markdown payload of the note.
+     * @param noteType The structural classification (e.g., "lecture", "reading").
+     * @param courseId The formal identifier for the related course.
+     * @param courseName The readable name of the course.
+     * @param semester The academic term context.
+     * @param topic A specific conceptual subject the note covers.
+     */
     fun addStudentNote(
         title: String,
         content: String,
