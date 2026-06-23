@@ -16,6 +16,9 @@ fun createDatabase(): AppDatabase {
             name = dbFile.absolutePath,
             factory = AppDatabaseConstructor::initialize,
         ).setDriver(BundledSQLiteDriver())
+        // Enables destructive migration as a pre-alpha safety posture.
+        // Any schema growth during this phase is high-risk but acceptable without strict migrations.
+        // Replace this with proper migrations once the architecture matures.
         .fallbackToDestructiveMigration(true)
         .build()
 }

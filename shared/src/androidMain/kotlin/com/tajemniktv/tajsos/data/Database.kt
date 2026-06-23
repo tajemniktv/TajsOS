@@ -14,6 +14,10 @@ fun createDatabase(context: Context): AppDatabase {
             context = context,
             name = dbFile.absolutePath,
             factory = AppDatabaseConstructor::initialize,
-        ).fallbackToDestructiveMigration(true)
+        )
+        // Enables destructive migration as a pre-alpha safety posture.
+        // Any schema growth during this phase is high-risk but acceptable without strict migrations.
+        // Replace this with proper migrations once the architecture matures.
+        .fallbackToDestructiveMigration(true)
         .build()
 }
