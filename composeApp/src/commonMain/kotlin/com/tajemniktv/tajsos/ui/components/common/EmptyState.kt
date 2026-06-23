@@ -62,7 +62,7 @@ fun EmptyState(
     description: String? = stringResource(Res.string.empty_state_default_desc),
     fillParent: Boolean = true,
     showContainer: Boolean = true,
-    pulseIcon: Boolean = showContainer,
+    pulseIcon: Boolean = false,
     content: @Composable ColumnScope.() -> Unit = {},
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "EmptyStatePulse")
