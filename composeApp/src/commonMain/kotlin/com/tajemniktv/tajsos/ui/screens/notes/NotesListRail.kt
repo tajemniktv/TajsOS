@@ -176,10 +176,10 @@ private fun NotesDomainRow(
     ) {
         listOf(
             null to "Any",
-            NotesDomain.PERSONAL to "Personal",
-            NotesDomain.STUDY to "Study",
-            NotesDomain.WORK to "Work",
-            NotesDomain.HEALTH to "Health",
+            NotesDomain.PERSONAL to NotesDomain.PERSONAL.displayName,
+            NotesDomain.STUDY to NotesDomain.STUDY.displayName,
+            NotesDomain.WORK to NotesDomain.WORK.displayName,
+            NotesDomain.HEALTH to NotesDomain.HEALTH.displayName,
         ).forEach { (domain, label) ->
             NotesTokenButton(
                 label = label,
@@ -297,7 +297,7 @@ fun NotesListItem(
                 )
                 Text(
                     text = "${
-                        note.domain.name.lowercase().replaceFirstChar(Char::titlecase)
+                        note.domain.displayName
                     } • ${relativeDateLabel(note.updatedAt)}",
                     style = MaterialTheme.typography.labelSmall,
                     color = TajsOSTheme.Muted,

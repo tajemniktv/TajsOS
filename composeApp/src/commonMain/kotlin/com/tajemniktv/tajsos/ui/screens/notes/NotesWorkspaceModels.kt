@@ -12,11 +12,17 @@ import com.tajemniktv.tajsos.data.isTaskItem
 /**
  * Local domain grouping used by the Notes workspace left-rail filters.
  */
-enum class NotesDomain {
-    PERSONAL,
-    STUDY,
-    WORK,
-    HEALTH,
+enum class NotesDomain(
+    /**
+     * Pre-computed, UI-ready display name for the domain.
+     * Prevents unnecessary string allocations during recomposition.
+     */
+    val displayName: String,
+) {
+    PERSONAL("Personal"),
+    STUDY("Study"),
+    WORK("Work"),
+    HEALTH("Health"),
 }
 
 /**
