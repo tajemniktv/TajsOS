@@ -12,10 +12,10 @@ import { SITE } from "../../data/site";
       >
     </div>
     <h1
-      class="font-headline text-[clamp(5rem,15vw,12rem)] leading-[0.8] font-bold tracking-tighter uppercase text-on-surface"
+      class="font-headline text-[clamp(5rem,15vw,12rem)] leading-[0.8] font-bold tracking-tighter uppercase text-on-surface group cursor-default"
     >
-      {SITE.titlePrimary}<br />
-      <span class="text-primary text-glow">{SITE.titleHighlight}</span>
+      <span class="inline-block group-hover:-translate-y-2 transition-transform duration-500">{SITE.titlePrimary}</span><br />
+      <span class="text-primary text-glow inline-block group-hover:translate-x-4 transition-transform duration-500">{SITE.titleHighlight}</span>
     </h1>
     <div class="mt-8">
       <span
