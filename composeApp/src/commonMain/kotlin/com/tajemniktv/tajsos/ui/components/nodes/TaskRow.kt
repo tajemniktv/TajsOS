@@ -33,6 +33,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeEntity
+import com.tajemniktv.tajsos.data.TaskState
 import com.tajemniktv.tajsos.ui.components.common.MouseContextMenuHost
 import com.tajemniktv.tajsos.ui.components.common.mouseClickable
 import com.tajemniktv.tajsos.ui.components.common.rememberMouseContextMenuState
@@ -169,7 +170,7 @@ fun TaskRow(
                                     else -> TajsOSTheme.Primary
                                 }
                             Text(
-                                text = node.status.uppercase().replace("_", " "),
+                                text = TaskState.fromStorageKey(node.status)?.displayName ?: node.status.uppercase().replace("_", " "),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = statusColor,
                             )

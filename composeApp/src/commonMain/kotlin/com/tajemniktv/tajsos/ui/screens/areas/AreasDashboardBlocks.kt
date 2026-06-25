@@ -384,7 +384,7 @@ private fun AreaCard(
                         fontWeight = FontWeight.Bold,
                     )
                     Text(
-                        status.replace("_", " ").uppercase(),
+                        com.tajemniktv.tajsos.data.AreaHealthStatus.fromStorageKey(status)?.displayName ?: status.replace("_", " ").uppercase(),
                         style = MaterialTheme.typography.labelSmall,
                         color = color,
                         fontWeight = FontWeight.Bold,
