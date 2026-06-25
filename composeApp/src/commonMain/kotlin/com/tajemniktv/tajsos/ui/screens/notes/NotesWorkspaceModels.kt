@@ -16,7 +16,10 @@ enum class NotesDomain {
     PERSONAL,
     STUDY,
     WORK,
-    HEALTH,
+    HEALTH;
+
+    val displayName: String
+        get() = name.lowercase().replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
 }
 
 /**
