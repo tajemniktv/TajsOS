@@ -1,6 +1,8 @@
 package com.tajemniktv.tajsos.ui
 
 import com.tajemniktv.tajsos.data.TodayPinEntity
+import com.tajemniktv.tajsos.data.RelationEntity
+import kotlin.test.assertTrue
 import kotlin.test.Test
 import kotlin.test.assertEquals
 @OptIn(kotlin.time.ExperimentalTime::class)
@@ -271,4 +273,101 @@ class FilterHelperEdgeTest {
         )
         assertEquals(6, resultInvalid.size)
     }
+    @Test
+    fun testRelevanceScore_caseInsensitivity() {
+        val targetNode = buildTestNode(1, "TARGET ITEM", "SOME CONTENT TARGET", tags = listOf("MyTarget"))
+
+        val result = FilterHelper.filterAndSortNodes(
+            nodes = listOf(targetNode),
+            query = "target",
+            type = null, status = null, projectId = null, areaId = null, linkedToId = null,
+            maxMins = null, energy = null, friction = null, locationContext = null,
+            energyContext = null, deviceContext = null, socialContext = null,
+            timeWindowContext = null, timeHorizon = null, relations = emptyList(),
+            sortMode = "relevance"
+        )
+
+        assertEquals(1, result.size)
+        // Check sorting to ensure score is correctly calculated via ignoreCase = true
+        val betterNode = buildTestNode(2, "target", "content") // exact (100) + start (60) + contains (30) = 190
+
+        val result2 = FilterHelper.filterAndSortNodes(
+            nodes = listOf(targetNode, betterNode),
+            query = "target",
+            type = null, status = null, projectId = null, areaId = null, linkedToId = null,
+            maxMins = null, energy = null, friction = null, locationContext = null,
+            energyContext = null, deviceContext = null, socialContext = null,
+            timeWindowContext = null, timeHorizon = null, relations = emptyList(),
+            sortMode = "relevance"
+        )
+
+        assertEquals(2, result2.size)
+        assertEquals(2L, result2[0].node.id) // betterNode has higher score
+        assertEquals(1L, result2[1].node.id) // targetNode has lower score
+    }
+
+    @Test
+    fun testMatchesTimeHorizon_missingDueAt() {
+        // If dueAt is null, it only matches if timeHorizon is null or "all" (which is the else branch)
+        val nodeNullDue = buildTestNode(1, "null due", dueAt = null)
+
+        val horizons = listOf("today", "week", "month", "semester", "short", "long")
+        for (horizon in horizons) {
+            val result = FilterHelper.filterAndSortNodes(
+                nodes = listOf(nodeNullDue),
+                query = "",
+                type = null, status = null, projectId = null, areaId = null, linkedToId = null,
+                maxMins = null, energy = null, friction = null, locationContext = null,
+                energyContext = null, deviceContext = null, socialContext = null,
+                timeWindowContext = null, timeHorizon = horizon, relations = emptyList(),
+                sortMode = "updated"
+            )
+            assertEquals(0, result.size, "Failed for horizon: $horizon")
+        }
+
+        val resultElse = FilterHelper.filterAndSortNodes(
+            nodes = listOf(nodeNullDue),
+            query = "",
+            type = null, status = null, projectId = null, areaId = null, linkedToId = null,
+            maxMins = null, energy = null, friction = null, locationContext = null,
+            energyContext = null, deviceContext = null, socialContext = null,
+            timeWindowContext = null, timeHorizon = "unknown_horizon", relations = emptyList(),
+            sortMode = "updated"
+        )
+        assertEquals(1, resultElse.size)
+    }
+
+    @Test
+    fun testFilterStatus_emptyAndWhitespaces() {
+        val nodeActive = buildTestNode(1, "title", status = "active")
+        val nodeOnHold = buildTestNode(2, "title", status = "on_hold")
+
+        val result = FilterHelper.filterAndSortNodes(
+            nodes = listOf(nodeActive, nodeOnHold),
+            query = "",
+            type = null,
+            status = "  ,  ,,", // Should be filtered out by filter { it.isNotEmpty() } and become null
+            projectId = null,
+            areaId = null,
+            linkedToId = null,
+            maxMins = null,
+            energy = null,
+            friction = null,
+            locationContext = null,
+            energyContext = null,
+            deviceContext = null,
+            socialContext = null,
+            timeWindowContext = null,
+            timeHorizon = null,
+            relations = emptyList(),
+            sortMode = "relevance"
+        )
+
+        // statusSet will be null, so it should return all nodes
+        assertEquals(2, result.size)
+    }
+
+
+
+
 }
