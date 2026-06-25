@@ -19,6 +19,18 @@ private fun currentEpochMillis(): Long =
  *
  * This is the primary "capture fast, structure later" primitive for the new LifeOS model.
  * Represents a raw capture entry inside the inbox before being structured or triaged.
+ *
+ * @property id The unique identifier for this inbox entry.
+ * @property rawText The unprocessed text captured by the user.
+ * @property source The origin of this capture (e.g., manual, widget, external_intent).
+ * @property suggestedKind An optional heuristic guess at what item kind this should become.
+ * @property homeAreaId An optional area ID inferred during capture to pre-fill triage.
+ * @property activeProjectId An optional project ID inferred during capture to pre-fill triage.
+ * @property contextScreen An optional identifier of the UI screen where the capture occurred.
+ * @property capturedAt The epoch timestamp when this entry was initially recorded.
+ * @property processedAt The epoch timestamp when a user actively started triaging this entry.
+ * @property dismissedAt The epoch timestamp when this entry was discarded without being structured.
+ * @property triagedItemId The ID of the fully structured node created from this capture, if successful.
  */
 @Entity(
     tableName = "inbox_entries",
@@ -48,6 +60,17 @@ data class InboxEntryEntity(
 
 /**
  * Task-specific execution and recurrence data associated with an item row.
+ *
+ * @property itemId The foreign key linking this facet to the shared node entity.
+ * @property state The execution lifecycle state (e.g., active, done). Maps to [TaskState].
+ * @property energyLevel Optional self-reported rating of energy required to complete the task.
+ * @property friction Optional descriptor of the cognitive or emotional friction involved.
+ * @property nextStep An optional concrete description of the immediate next physical action.
+ * @property estimatedMinutes An optional estimated time duration in minutes.
+ * @property completionNote An optional reflection or takeaway added when marking the task as done.
+ * @property completedAt Optional epoch timestamp recording when the task transitioned to a done state.
+ * @property isRecurring Indicates whether this task spawns new instances upon completion.
+ * @property recurringInterval Optional schedule definition (e.g., cron or simple interval) for recurring tasks.
  */
 @Entity(tableName = "task_facets")
 @Serializable
@@ -66,6 +89,13 @@ data class TaskFacetEntity(
 
 /**
  * Note-specific semantics stored beside the shared item row.
+ *
+ * @property itemId The foreign key linking this facet to the shared node entity.
+ * @property kind The categorical flavor of the note (e.g., general, reference). Maps to [NoteKind].
+ * @property state The maturity state of the knowledge item (e.g., raw, distilled). Maps to [NoteState].
+ * @property sourceTitle Optional title of an external source (e.g., book or article name) this note references.
+ * @property sourceAuthor Optional author of the external source.
+ * @property lastReviewedAt Optional epoch timestamp of the last time this note was surfaced for review.
  */
 @Entity(tableName = "note_facets")
 @Serializable
@@ -80,6 +110,11 @@ data class NoteFacetEntity(
 
 /**
  * Project-specific coordination state stored separately from the shared item row.
+ *
+ * @property itemId The foreign key linking this facet to the shared node entity.
+ * @property state The lifecycle state of the project (e.g., active, on_hold). Maps to [ProjectState].
+ * @property purpose An optional high-level statement detailing why this project matters or its desired outcome.
+ * @property isFrozen Indicates if the project and its children are temporarily suspended from active UI lenses.
  */
 @Entity(tableName = "project_facets")
 @Serializable
@@ -92,6 +127,11 @@ data class ProjectFacetEntity(
 
 /**
  * Area-specific stewardship data kept out of the shared node table.
+ *
+ * @property itemId The foreign key linking this facet to the shared node entity.
+ * @property healthStatus The subjective status of the area's maintenance (e.g., stable, overloaded). Maps to [AreaHealthStatus].
+ * @property standardOfCare An optional definition of what "good" looks like for this area.
+ * @property vision An optional aspirational description of the desired long-term state for this area.
  */
 @Entity(tableName = "area_facets")
 @Serializable
@@ -104,6 +144,12 @@ data class AreaFacetEntity(
 
 /**
  * Record-specific chronological data attached to an item row.
+ *
+ * @property itemId The foreign key linking this facet to the shared node entity.
+ * @property kind The category of the record (e.g., journal, health_log). Maps to [RecordKind].
+ * @property intensity An optional subjective numeric score rating the intensity of the recorded event.
+ * @property eventStartedAt Optional epoch timestamp of when the recorded event actually started, distinct from when it was logged.
+ * @property eventEndedAt Optional epoch timestamp of when the recorded event ended.
  */
 @Entity(tableName = "record_facets")
 @Serializable
@@ -136,6 +182,11 @@ data class RecordFacetEntity(
  * Represents the cross-cutting assignment of a shared item to a first-class LifeOS domain.
  * NOTE: Current design prefers implicit categorization via `DomainLensQueries`,
  * but explicit database associations are preserved here for overrides and future expansion.
+ *
+ * @property itemId The foreign key linking this domain assignment to the shared node entity.
+ * @property domainKey The string identifier of the domain (e.g., FINANCES, HEALTH). Maps to [com.tajemniktv.tajsos.domain.DomainKind].
+ * @property isPrimary Indicates if this domain should take precedence when multiple domains apply.
+ * @property assignedAt The epoch timestamp when this domain was explicitly assigned.
  */
 @Serializable
 data class ItemDomainEntity(
