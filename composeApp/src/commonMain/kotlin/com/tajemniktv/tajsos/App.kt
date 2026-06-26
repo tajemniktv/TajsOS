@@ -119,10 +119,10 @@ fun App(
      *
      * @param it The route string to evaluate.
      */
-    fun isForwardNavigable(it: String?): Boolean =
-        !it.isNullOrBlank() &&
-            !it.contains('{') &&
-            it != Screen.Dashboard.route
+    fun isForwardNavigable(route: String): Boolean =
+        route.isNotBlank() &&
+            !route.contains('{') &&
+            route != Screen.Dashboard.route
 
     val accentColor =
         remember(accentColorHex) {
@@ -238,8 +238,8 @@ fun App(
                                 val currentRoute = currentDestination?.route
                                 val canPop = navController.previousBackStackEntry != null
                                 if (!canPop) return@mouseButtons
-                                if (isForwardNavigable(currentRoute)) {
-                                    mouseForwardRoutes.addLast(currentRoute!!)
+                                if (currentRoute != null && isForwardNavigable(currentRoute)) {
+                                    mouseForwardRoutes.addLast(currentRoute)
                                 }
                                 navController.popBackStack()
                             },
