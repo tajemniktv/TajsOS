@@ -28,6 +28,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -72,7 +74,7 @@ fun ActionButton(
         onClick = onClick,
         enabled = enabled,
         interactionSource = interactionSource,
-        modifier = finalModifier.graphicsLayer { scaleX = scale; scaleY = scale },
+        modifier = finalModifier.graphicsLayer { scaleX = scale; scaleY = scale }.pointerHoverIcon(if (enabled) PointerIcon.Hand else PointerIcon.Default),
         colors =
             resolveActionButtonColors(
                 isPrimary = isPrimary,
