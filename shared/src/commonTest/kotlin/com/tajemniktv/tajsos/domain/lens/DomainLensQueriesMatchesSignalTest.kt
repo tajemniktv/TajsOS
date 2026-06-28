@@ -190,4 +190,13 @@ class DomainLensQueriesMatchesSignalTest {
         val result = DomainLensQueries.healthActionItems(listOf(node1, node2))
         assertDomainQueryResult(listOf(1L, 2L), result)
     }
+
+    @Test
+    fun matchesHealthSignal_with_title_and_content_keywords() {
+        val titleMatch = createNode(1, "my health is good", type = "note", noteType = "other")
+        val contentMatch = createNode(2, "diary", "need mental_health check", type = "note", noteType = "other")
+        val result = DomainLensQueries.healthKnowledgeItems(listOf(titleMatch, contentMatch))
+        assertDomainQueryResult(listOf(1L, 2L), result)
+    }
+
 }
