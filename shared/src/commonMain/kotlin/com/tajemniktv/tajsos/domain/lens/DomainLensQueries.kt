@@ -100,17 +100,12 @@ private val healthTitleKeywords =
     )
 
 /**
- * Provides static heuristic queries to categorize active nodes into broader LifeOS domains.
+ * Provides heuristic-based query functions to categorize un-typed [NodeWithPin] and [MaintenanceStatusItem]
+ * entities into specific top-level domains (e.g., Finance, Health) for the UI.
  *
- * This singleton relies heavily on zero-configuration implicit matching—such as tags,
- * keywords within title and content, maintenance types, and specific note types—rather than explicit database
- * entity associations. This design significantly lowers the friction of capturing new items,
- * ensuring they surface in relevant domains (like Finances or Health) automatically.
- *
- * This object evaluates the system's shared nodes (tasks, notes, records) and determines
- * if they implicitly belong to a specific LifeOS domain (like Finance or Health) based on
- * explicit markers such as tags, titles, content keywords, maintenance types, or specific
- * note types (e.g., reflections vs references).
+ * This object implements the zero-configuration domain strategy described in [com.tajemniktv.tajsos.domain.DomainKind].
+ * Instead of querying explicit database relations (like ItemDomainEntity), it filters lists in-memory
+ * by examining node metadata: tags, keywords, maintenance types, and note types.
  *
  * This zero-configuration design intentionally bypasses strict associative models
  * (like `ItemDomainEntity`) so users are not forced to explicitly classify every

@@ -911,6 +911,9 @@ interface DecisionDao {
 
 /**
  * Provides database access for retrieving the primary application [UserEntity] identity profile.
+ *
+ * The application currently operates on a single-user model, so queries generally
+ * target a unified profile singleton (e.g., `id = 1`).
  */
 @Dao
 interface UserDao {
