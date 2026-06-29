@@ -60,6 +60,7 @@ export default defineConfig({
         src: "./src/assets/logo.png",
         alt: "TajsOS Logo",
       },
+      disable404Route: true,
       plugins: [
         starlightBlog(),
         starlightLinksValidator(),
