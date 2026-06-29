@@ -4,6 +4,8 @@
 
 package com.tajemniktv.tajsos.ui.components.layout
 
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -136,7 +138,7 @@ fun AppShellHeader(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 if (!isDesktop && onMenuClick != null) {
-                    IconButton(onClick = onMenuClick, modifier = Modifier.size(48.dp)) {
+                    IconButton(onClick = onMenuClick, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
                         Icon(
                             imageVector = Icons.Default.Menu,
                             contentDescription = stringResource(Res.string.header_menu),

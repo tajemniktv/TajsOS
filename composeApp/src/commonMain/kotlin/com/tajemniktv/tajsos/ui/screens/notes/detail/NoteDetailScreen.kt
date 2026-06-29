@@ -4,6 +4,8 @@
 
 package com.tajemniktv.tajsos.ui.screens.notes.detail
 
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -244,7 +246,7 @@ fun NoteDetailScreen(
                 modifier = Modifier.size(18.dp),
             )
         }
-        IconButton(onClick = { showMoreDialog = true }, modifier = Modifier.size(48.dp)) {
+        IconButton(onClick = { showMoreDialog = true }, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
             Icon(
                 Icons.Default.MoreVert,
                 contentDescription = null,

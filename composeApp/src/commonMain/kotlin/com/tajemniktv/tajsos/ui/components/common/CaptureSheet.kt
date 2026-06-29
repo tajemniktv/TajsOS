@@ -4,6 +4,8 @@
 
 package com.tajemniktv.tajsos.ui.components.common
 
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -286,7 +288,7 @@ fun CaptureSheet(
                 )
 
                 if (onVoiceCaptureClick != null) {
-                    IconButton(onClick = onVoiceCaptureClick, modifier = Modifier.size(48.dp)) {
+                    IconButton(onClick = onVoiceCaptureClick, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
                         Icon(
                             imageVector = Icons.Default.Mic,
                             contentDescription = stringResource(Res.string.capture_voice),

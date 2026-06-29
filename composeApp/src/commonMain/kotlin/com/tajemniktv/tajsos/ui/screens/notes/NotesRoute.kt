@@ -4,6 +4,8 @@
 
 package com.tajemniktv.tajsos.ui.screens.notes
 
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -215,7 +217,7 @@ fun NotesRoute(
                             modifier = Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            IconButton(onClick = { mobileInDetail = false }, modifier = Modifier.size(48.dp)) {
+                            IconButton(onClick = { mobileInDetail = false }, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
                                 Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
                             }
                         }

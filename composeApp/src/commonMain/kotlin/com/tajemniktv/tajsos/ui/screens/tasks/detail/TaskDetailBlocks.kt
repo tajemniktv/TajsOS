@@ -4,6 +4,8 @@
 
 package com.tajemniktv.tajsos.ui.screens.tasks.detail
 
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -620,7 +622,7 @@ private fun SubtaskRow(
                 color = tint,
             )
             if (subtask.source == TaskSubtaskSource.InlineChecklist && onRemove != null) {
-                IconButton(onClick = onRemove, modifier = Modifier.size(48.dp)) {
+                IconButton(onClick = onRemove, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = null,
@@ -704,7 +706,7 @@ private fun AttachmentRow(
                 )
             }
         }
-        IconButton(onClick = onRemove, modifier = Modifier.size(48.dp)) {
+        IconButton(onClick = onRemove, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
             Icon(Icons.Default.Delete, contentDescription = null, tint = TajsOSTheme.Muted)
         }
     }
