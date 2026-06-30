@@ -274,6 +274,9 @@ class PreferencesRepository(
         }
     }
 
+    /**
+     * Persists the dark theme preference.
+     */
     suspend fun updateDarkThemeEnabled(enabled: Boolean) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.DARK_THEME_ENABLED] = enabled
@@ -309,6 +312,11 @@ class PreferencesRepository(
         }
     }
 
+    /**
+     * Enables or disables a specific pack in the user's preferences.
+     *
+     * Note: A pack can only be enabled if it is currently owned by the user.
+     */
     suspend fun setPackEnabled(
         pack: AppPack,
         enabled: Boolean,
@@ -326,6 +334,11 @@ class PreferencesRepository(
         }
     }
 
+    /**
+     * Updates the ownership status of a specific pack.
+     *
+     * If ownership is revoked for a non-free pack, it is also automatically disabled.
+     */
     suspend fun setPackOwned(
         pack: AppPack,
         owned: Boolean,
@@ -351,6 +364,11 @@ class PreferencesRepository(
         }
     }
 
+    /**
+     * Verifies that the user has ownership and enabled status for all default free packs.
+     *
+     * If any default free packs are missing from the user's preferences, they will be automatically added.
+     */
     suspend fun ensureDefaultPackAccess() {
         dataStore.edit { preferences ->
             val owned = (preferences[PreferencesKeys.OWNED_PACKS] ?: emptySet()).toMutableSet()
