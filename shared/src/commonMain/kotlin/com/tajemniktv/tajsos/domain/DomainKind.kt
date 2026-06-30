@@ -47,5 +47,6 @@ enum class DomainKind {
     /**
      * Pre-computed display name for UI presentation to avoid dynamic formatting allocations during recomposition.
      */
-    val displayName: String = name.lowercase().replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+    val displayName: String
+        get() = name.lowercase().replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
 }
