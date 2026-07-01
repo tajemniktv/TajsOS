@@ -83,7 +83,7 @@ class FilterHelperTest {
 
     @Test
     fun testMatchesQueryEdgeCases() {
-        val node = createTestNode(1, "Title content", tags = listOf("MyTag"))
+        val node = createTestNode(1, "Title content", content = "body text", tags = listOf("MyTag"))
 
         // Blank queries return false
         assertFalse(FilterHelper.matchesQuery(node, " "))
@@ -93,13 +93,24 @@ class FilterHelperTest {
         assertFalse(FilterHelper.matchesQuery(node, "# "))
         assertFalse(FilterHelper.matchesQuery(node, " # "))
 
-        // Normal matches
-        assertTrue(FilterHelper.matchesQuery(node, "content"))
-        assertTrue(FilterHelper.matchesQuery(node, "#MyTag"))
+        // Tag matching
         assertTrue(FilterHelper.matchesQuery(node, "#mytag"))
+        assertTrue(FilterHelper.matchesQuery(node, "#MyTag"))
+        assertTrue(FilterHelper.matchesQuery(node, " #MyTag "))
 
-        // Match against tag when not using hashtag
+        // Non-tag exact and partial matches
+        assertTrue(FilterHelper.matchesQuery(node, "Title"))
+        assertTrue(FilterHelper.matchesQuery(node, "content"))
+        assertTrue(FilterHelper.matchesQuery(node, "body"))
+        assertTrue(FilterHelper.matchesQuery(node, "text"))
+
+        // Tags can also match without #
+        assertTrue(FilterHelper.matchesQuery(node, "MyTag"))
         assertTrue(FilterHelper.matchesQuery(node, "mytag"))
+
+        // Non-matching
+        assertFalse(FilterHelper.matchesQuery(node, "#notatag"))
+        assertFalse(FilterHelper.matchesQuery(node, "notatitle"))
     }
 
     @Test
@@ -114,6 +125,31 @@ class FilterHelperTest {
         assertEquals(2L, sortedNodes[1].node.id)
     }
 
+
+    @Test
+    fun testRelevanceScore_VariousWeights() {
+        val nodeTitleExact = createTestNode(1, "apple")
+        val nodeTitleStart = createTestNode(2, "apple juice")
+        val nodeTitleContain = createTestNode(3, "my apple juice")
+        val nodeContent = createTestNode(4, "banana", content = "apple")
+        val nodeTagExact = createTestNode(5, "pear", tags = listOf("apple"))
+        val nodeTagContains = createTestNode(6, "peach", tags = listOf("apples"))
+
+        val sortedNodes = filter(listOf(
+            nodeTitleExact, nodeTitleStart, nodeTitleContain, nodeContent, nodeTagExact, nodeTagContains
+        )) { query = "apple"; sortMode = "relevance" }
+
+        val ids = sortedNodes.map { it.node.id }
+
+        // Exact match (100) + starts with (60) + contains (30) = 190
+        // Starts with (60) + contains (30) = 90
+        // Contains (30)
+        // Tag Exact (20) + contains (10) = 30
+        // Content contains (15)
+        // Tag contains (10)
+        // Therefore, node 3 (30) and node 5 (30) tie on relevance, broken by id desc (5 > 3)
+        assertEquals(listOf(1L, 2L, 5L, 3L, 4L, 6L), ids)
+    }
 
     @Test
     fun testRelevanceSortOrder() {
