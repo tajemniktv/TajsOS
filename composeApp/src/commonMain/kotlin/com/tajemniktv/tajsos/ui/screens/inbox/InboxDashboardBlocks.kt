@@ -27,6 +27,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.InboxEntryEntity
 import com.tajemniktv.tajsos.data.ItemKind
@@ -122,7 +124,7 @@ internal fun InboxMainBlock(
                             onArchive = { viewModel.archiveNode(nodeWithPin.node) },
                         )
 
-                        IconButton(onClick = { viewModel.markAsProcessed(nodeWithPin.node.id) }) {
+                        IconButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { viewModel.markAsProcessed(nodeWithPin.node.id) }) {
                             Icon(
                                 imageVector = Icons.Default.Check,
                                 contentDescription = stringResource(Res.string.inbox_process),
@@ -180,7 +182,7 @@ private fun InboxCaptureCard(
                     onClick = { viewModel.triageInboxEntry(entry.id, ItemKind.PROJECT) },
                     label = { Text(stringResource(Res.string.type_project).uppercase()) },
                 )
-                IconButton(onClick = { viewModel.dismissInboxEntry(entry) }) {
+                IconButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { viewModel.dismissInboxEntry(entry) }) {
                     Icon(
                         imageVector = Icons.Default.Close,
                         contentDescription = "Dismiss capture",

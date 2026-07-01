@@ -28,6 +28,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import com.tajemniktv.tajsos.data.CalendarProviderEntity
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
@@ -60,7 +62,7 @@ private fun renderCalendarSettingsHeader(context: CalendarSettingsContext) {
             style = MaterialTheme.typography.displaySmall,
             color = TajsOSTheme.Text,
         )
-        IconButton(onClick = context.onShowAddDialog, modifier = Modifier.size(48.dp)) {
+        IconButton(onClick = context.onShowAddDialog, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
             Icon(
                 Icons.Default.Add,
                 contentDescription = stringResource(Res.string.cal_settings_add),
@@ -75,7 +77,7 @@ private fun renderCalendarSettingsList(context: CalendarSettingsContext) {
     if (context.providers.isEmpty()) {
         EmptyState(message = stringResource(Res.string.cal_settings_empty)) {
             Spacer(modifier = Modifier.height(TajsOSTheme.SpacingMd))
-            Button(onClick = context.onShowAddDialog) {
+            Button(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = context.onShowAddDialog) {
                 Text(stringResource(Res.string.cal_settings_add))
             }
         }
@@ -125,7 +127,7 @@ private fun ProviderRow(
                     )
                 }
             }
-            IconButton(onClick = onDelete, modifier = Modifier.size(48.dp)) {
+            IconButton(onClick = onDelete, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
                 Icon(
                     Icons.Default.Delete,
                     contentDescription = stringResource(Res.string.archive_delete),

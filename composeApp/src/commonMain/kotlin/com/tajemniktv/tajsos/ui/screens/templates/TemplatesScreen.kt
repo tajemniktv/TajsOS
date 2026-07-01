@@ -32,6 +32,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import com.tajemniktv.tajsos.ui.MainViewModel
 import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
 import com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior
@@ -70,7 +72,7 @@ fun TemplatesScreen(
         )
 
     val actions: @Composable RowScope.() -> Unit = {
-        IconButton(onClick = { showAddDialog = true }, modifier = Modifier.size(48.dp)) {
+        IconButton(onClick = { showAddDialog = true }, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
             Icon(
                 Icons.Default.Add,
                 contentDescription = stringResource(Res.string.templates_add_desc),
@@ -142,7 +144,7 @@ fun TemplatesScreen(
                 ) { Text(stringResource(Res.string.templates_dialog_create)) }
             },
             dismissButton = {
-                TextButton(onClick = { showAddDialog = false }) {
+                TextButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { showAddDialog = false }) {
                     Text(
                         stringResource(
                             Res.string.templates_dialog_cancel,

@@ -119,7 +119,7 @@ fun DashHeader(
                 }
             }
             Spacer(Modifier.width(12.dp))
-            IconButton(onClick = onSettingsClick, modifier = Modifier.size(48.dp)) {
+            IconButton(onClick = onSettingsClick, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
                 Icon(Icons.Default.Settings, contentDescription = null, tint = TajsOSTheme.Muted)
             }
         }

@@ -33,6 +33,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.isNoteItem
 import com.tajemniktv.tajsos.ui.MainViewModel
@@ -215,7 +217,7 @@ fun NotesRoute(
                             modifier = Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            IconButton(onClick = { mobileInDetail = false }, modifier = Modifier.size(48.dp)) {
+                            IconButton(onClick = { mobileInDetail = false }, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
                                 Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
                             }
                         }

@@ -23,6 +23,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.font.FontWeight
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
@@ -96,7 +98,7 @@ internal fun TasksArchiveView(
                         Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                             OutlinedButton(onClick = { onOpen(task.id) }) { Text(stringResource(Res.string.tasks_open_action)) }
                             OutlinedButton(onClick = { onRestore(task) }) { Text(stringResource(Res.string.tasks_restore_action)) }
-                            IconButton(onClick = { onDelete(task) }) {
+                            IconButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { onDelete(task) }) {
                                 Icon(
                                     Icons.Default.Delete,
                                     null,

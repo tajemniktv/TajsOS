@@ -24,6 +24,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.font.FontWeight
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
@@ -195,7 +197,7 @@ private fun TodaySection(
                                     },
                                 )
                             }
-                            IconButton(onClick = { onDone(task) }) {
+                            IconButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { onDone(task) }) {
                                 Icon(
                                     Icons.Default.Check,
                                     null,

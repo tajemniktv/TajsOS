@@ -34,6 +34,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.font.FontWeight
@@ -390,7 +392,7 @@ private fun renderMedicationsModuleBlock(context: ProfileScreenContext) {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             ModuleTitle(title = stringResource(Res.string.profile_medications))
-            IconButton(onClick = context.onOpenAddMedication, modifier = Modifier.size(48.dp)) {
+            IconButton(onClick = context.onOpenAddMedication, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
                 Icon(
                     Icons.Default.Add,
                     contentDescription = null,
@@ -589,7 +591,7 @@ private fun MedicationItem(
                     color = TajsOSTheme.Primary,
                 )
             }
-            IconButton(onClick = onDelete, modifier = Modifier.size(48.dp)) {
+            IconButton(onClick = onDelete, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
                 Icon(Icons.Default.Delete, contentDescription = "Delete", tint = TajsOSTheme.Error)
             }
         }

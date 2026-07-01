@@ -226,7 +226,7 @@ fun DecisionDetailContent(
                 style = MaterialTheme.typography.bodySmall,
                 color = TajsOSTheme.Muted,
             )
-            TextButton(onClick = { showPeopleDialog = true }) {
+            TextButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { showPeopleDialog = true }) {
                 Text(stringResource(Res.string.decision_action_link_person))
             }
         }
@@ -289,7 +289,7 @@ fun DecisionDetailContent(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             SectionTitle(stringResource(Res.string.decision_options_label))
-            IconButton(onClick = { showAddOptionDialog = true }, modifier = Modifier.size(48.dp)) {
+            IconButton(onClick = { showAddOptionDialog = true }, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
                 Icon(
                     Icons.Default.Add,
                     contentDescription = stringResource(Res.string.cd_add_option),
@@ -490,7 +490,7 @@ fun DecisionDetailContent(
                 }
             },
             confirmButton = {
-                TextButton(onClick = { showPeopleDialog = false }) {
+                TextButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { showPeopleDialog = false }) {
                     Text(stringResource(Res.string.common_close))
                 }
             },

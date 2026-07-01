@@ -31,6 +31,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.components.common.SelectorDialog
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
@@ -199,7 +201,7 @@ private fun renderReviewFlow(context: ReviewDashboardContext) {
                                 ListItem(
                                     headlineContent = { Text(item.node.title) },
                                     trailingContent = {
-                                        IconButton(onClick = { viewModel.archiveNode(item.node) }) {
+                                        IconButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { viewModel.archiveNode(item.node) }) {
                                             Icon(
                                                 Icons.Default.Delete,
                                                 contentDescription = stringResource(Res.string.detail_archive),
@@ -234,7 +236,7 @@ private fun renderReviewFlow(context: ReviewDashboardContext) {
             horizontalArrangement = Arrangement.End,
         ) {
             if (currentStep < steps.size - 1) {
-                Button(onClick = context.onNext) {
+                Button(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = context.onNext) {
                     Text(stringResource(Res.string.review_next))
                 }
             } else {
