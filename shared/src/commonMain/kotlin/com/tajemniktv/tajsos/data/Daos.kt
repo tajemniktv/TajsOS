@@ -17,10 +17,21 @@ import kotlinx.coroutines.flow.Flow
  */
 @Dao
 interface NodeDao {
+    /**
+     * Retrieves all nodes along with their today-pin information, ordered by creation time descending.
+     *
+     * @return A Flow emitting lists of NodeWithPin for all nodes.
+     */
     @Transaction
     @Query("SELECT * FROM nodes ORDER BY createdAt DESC")
     fun getAllNodesWithPins(): Flow<List<NodeWithPin>>
 
+    /**
+     * Retrieves active nodes pinned for the given date, ordered by their pinned position.
+     *
+     * @param date The date string to filter pins by.
+     * @return A Flow emitting lists of active NodeEntity objects pinned for the specified date.
+     */
     @Query(
         """
         SELECT nodes.* FROM nodes 
@@ -97,6 +108,12 @@ interface NodeDao {
     @Query("SELECT * FROM nodes WHERE id = :id")
     suspend fun getNodeById(id: Long): NodeEntity?
 
+    /**
+     * Fetches nodes matching the given list of primary keys.
+     *
+     * @param ids A list of node primary keys.
+     * @return A list of matching NodeEntity objects.
+     */
     @Query("SELECT * FROM nodes WHERE id IN (:ids)")
     suspend fun getNodesByIds(ids: List<Long>): List<NodeEntity>
 
@@ -111,6 +128,9 @@ interface NodeDao {
 
     /**
      * Inserts multiple nodes, returning their generated or existing identifiers.
+     *
+     * @param nodes The list of [NodeEntity] to insert.
+     * @return A list of generated or existing primary key IDs of the inserted nodes.
      */
     @Upsert
     suspend fun insertNodes(nodes: List<NodeEntity>): List<Long>
