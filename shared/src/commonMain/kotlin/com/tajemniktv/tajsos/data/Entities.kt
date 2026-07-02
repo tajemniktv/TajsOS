@@ -340,7 +340,9 @@ data class ModePreferenceEntity(
 )
 
 /**
- * ModeAreaFilterEntity filters which areas are visible in a mode.
+ * Represents an area filtering constraint attached to a Focus Mode.
+ *
+ * If a mode has area filters, only items belonging to the specified `areaId`s are visible.
  */
 @Entity(
     tableName = "mode_area_filters",
@@ -354,7 +356,9 @@ data class ModeAreaFilterEntity(
 )
 
 /**
- * ModeTypeFilterEntity filters which node types are visible in a mode.
+ * Represents a semantic type filtering constraint attached to a Focus Mode.
+ *
+ * If a mode has type filters, only items of the specified `itemType` (e.g., 'task', 'note') are visible.
  */
 @Entity(
     tableName = "mode_type_filters",
@@ -584,7 +588,9 @@ data class MedicationEntity(
 )
 
 /**
- * TrackMedicationJoinEntity tracks whether a specific medication was taken for a specific track entry.
+ * A many-to-many join entity associating a [TrackEntryEntity] with a [MedicationEntity].
+ *
+ * Represents the act of logging the intake of a specific medication during a specific health check-in.
  */
 @Entity(
     tableName = "track_medications",
@@ -643,7 +649,7 @@ data class TagEntity(
 )
 
 /**
- * ItemTagEntity is a join table for items and tags.
+ * A many-to-many join entity associating a node with a tag.
  */
 @Entity(
     tableName = "node_tags",
@@ -678,7 +684,9 @@ data class EventLogEntity(
 )
 
 /**
- * AttachmentEntity stores links or references to assets.
+ * Represents a file or external resource linked to a specific node.
+ *
+ * The `uri` or `path` specifies where the binary data lives, outside the database.
  */
 @Entity(
     tableName = "attachments",

@@ -1223,6 +1223,9 @@ class AppRepository(
         }
     }
 
+    /**
+     * Returns a reactive flow of all health/habit track entries.
+     */
     fun getAllTrackEntries(): Flow<List<TrackEntryEntity>> = trackDao.getAllTrackEntries()
 
     suspend fun insertTrackEntry(entry: TrackEntryEntity): Long {
@@ -1233,8 +1236,14 @@ class AppRepository(
     }
 
     // Relations
+    /**
+     * Returns a reactive flow of all relations (edges) currently in the knowledge graph.
+     */
     fun getAllRelations() = relationDao.getAllRelations()
 
+    /**
+     * Retrieves all incoming and outgoing relations for a specific node.
+     */
     fun getRelationsForNode(nodeId: Long) = relationDao.getRelationsForNode(nodeId)
 
     suspend fun insertRelation(relation: RelationEntity) {
@@ -1299,6 +1308,10 @@ class AppRepository(
     suspend fun deleteAttachment(attachment: AttachmentEntity) = attachmentDao.deleteAttachment(attachment)
 
     // Domains
+    /**
+     * Reconstructs the domain assignments (areas/projects) for a given item by combining its facets.
+     * It returns a list of [DomainAssignment] containing the loaded entity models.
+     */
     fun getDomainsForItem(itemId: Long): Flow<List<DomainAssignment>> =
         itemDomainDao.getDomainsForItem(itemId).map { domains ->
             domains.mapNotNull { it.toModel() }
@@ -1327,6 +1340,10 @@ class AppRepository(
     ) = itemDomainDao.deleteDomain(itemId, domain.name)
 
     // Documents
+    /**
+     * Retrieves the [RichContentDocument] data model containing rich text blocks
+     * for a specific item, or null if the item has no document attached.
+     */
     fun getDocumentForItem(itemId: Long): Flow<RichContentDocument?> =
         richContentDocumentDao.observeDocumentForItem(itemId).map { document ->
             document?.toModel()
@@ -1370,6 +1387,10 @@ class AppRepository(
     suspend fun deleteDocumentForItem(itemId: Long) = richContentDocumentDao.deleteDocumentForItem(itemId)
 
     // Saved views
+    /**
+     * Builds and returns a reactive flow of all [SavedViewDefinition]s,
+     * which combine the core [SavedViewEntity] with its filters, sorts, and visible fields.
+     */
     fun getSavedViews(): Flow<List<SavedViewDefinition>> =
         combine(
             savedViewDao.getAllSavedViews(),
@@ -1501,6 +1522,9 @@ class AppRepository(
     suspend fun deleteTemplate(template: TemplateEntity) = templateDao.deleteTemplate(template)
 
     // Snapshots
+    /**
+     * Retrieves all historical [NodeSnapshotEntity] records for a specific node.
+     */
     fun getSnapshotsForNode(nodeId: Long) = nodeSnapshotDao.getSnapshotsForNode(nodeId)
 
     suspend fun insertSnapshot(snapshot: NodeSnapshotEntity) = nodeSnapshotDao.insertSnapshot(snapshot)
@@ -1554,6 +1578,11 @@ class AppRepository(
         timestamp: Long,
     ) = modeDao.deactivateLog(id, timestamp)
 
+    /**
+     * Constructs a [ModeQueryProfile] for a focus mode, which aggregates
+     * the mode's entity alongside its configured area and type filters.
+     * Useful for passing a fully loaded mode configuration into view models.
+     */
     fun getModeQueryProfile(modeId: Long): Flow<ModeQueryProfile?> =
         getPreferencesForMode(modeId).map { preference ->
             if (preference == null) return@map null
@@ -1715,6 +1744,9 @@ class AppRepository(
 
     suspend fun deleteDecisionOption(option: DecisionOptionEntity) = decisionDao.deleteDecisionOption(option)
 
+    /**
+     * Returns the singleton [UserEntity] representing the current app owner's profile.
+     */
     fun getUser(): Flow<UserEntity?> = userDao.getUser()
 
     suspend fun insertUser(user: UserEntity) = userDao.insertUser(user)
@@ -1737,6 +1769,9 @@ class AppRepository(
         userDao.insertUser(profile.toEntity(existing))
     }
 
+    /**
+     * Returns a reactive flow of all available [MedicationEntity] definitions.
+     */
     fun getAllMedications(): Flow<List<MedicationEntity>> = medicationDao.getAllMedications()
 
     suspend fun insertMedication(medication: MedicationEntity): Long {

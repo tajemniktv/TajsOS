@@ -171,6 +171,10 @@ data class RichContentDocumentEntity(
 /**
  * Attach-able schedule layer for any item.
  *
+ * Provides the explicit database fields (e.g. `scheduledAt`, `isAllDay`, `recurrenceRule`)
+ * to define when a particular item happens without coupling the temporal data directly
+ * to the primary node schema.
+ *
  * Existing node time fields remain mirrored for legacy UI compatibility, but new code should
  * prefer this explicit table.
  */
@@ -194,7 +198,10 @@ data class ScheduleEntryEntity(
 )
 
 /**
- * Saved projection over shared life objects.
+ * Represents a configured projection ("view") over life objects in the database.
+ *
+ * Stores layout preferences (`lens`, `layout`), dimensional groupings, and metadata.
+ * It acts as the anchor table for a view's configurations (like filters, sorts).
  *
  * The view describes how to slice typed data without inventing a competing ontology.
  */
@@ -217,7 +224,7 @@ data class SavedViewEntity(
 )
 
 /**
- * Source object kinds targeted by a saved view.
+ * Join table defining which core object kinds (e.g., tasks, notes) are targeted by a [SavedViewEntity].
  */
 @Entity(
     tableName = "saved_view_source_kinds",
@@ -231,7 +238,10 @@ data class SavedViewSourceKindEntity(
 )
 
 /**
- * Persisted filters for a saved view.
+ * Represents a specific filter rule for a [SavedViewEntity].
+ *
+ * Defines logic (via `fieldKey`, `operatorKey`, `value`) to restrict items matching the view.
+ * Ordered sequentially by the `position` field.
  */
 @Entity(
     tableName = "saved_view_filters",
@@ -249,7 +259,9 @@ data class SavedViewFilterEntity(
 )
 
 /**
- * Persisted sort instructions for a saved view.
+ * Defines the sorting order rules for a [SavedViewEntity].
+ *
+ * Applies sorting by a specific `fieldKey` in either ascending or descending `direction`.
  */
 @Entity(
     tableName = "saved_view_sorts",
@@ -265,7 +277,7 @@ data class SavedViewSortEntity(
 )
 
 /**
- * Persisted visible-column configuration for a saved view.
+ * Declares which columns or fields are actively visible in a [SavedViewEntity] layout (like a table).
  */
 @Entity(
     tableName = "saved_view_visible_fields",
