@@ -425,7 +425,7 @@ suspend fun buildDashboardUIState(
             )
         }
     val openLoopsDecayAverage =
-        if (openLoopDecayScores.isNotEmpty()) openLoopDecayScores.average().toInt() else 0
+        openLoopDecayScores.takeIf { it.isNotEmpty() }?.average()?.toInt() ?: 0
     val openLoopsOverloadWarning =
         when
             {

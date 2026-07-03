@@ -65,11 +65,7 @@ fun calculateInsights(
     val recentSessions = sessions.filter { it.startedAt >= sevenDaysAgo && it.endedAt != null }
     val weeklyFocusSec = recentSessions.sumOf { it.durationSec.toLong() }
     val avgSessionMin =
-        if (recentSessions.isNotEmpty()) {
-            (recentSessions.map { it.durationSec }.average() / 60).toInt()
-        } else {
-            0
-        }
+        recentSessions.map { it.durationSec }.takeIf { it.isNotEmpty() }?.average()?.let { (it / 60).toInt() } ?: 0
 
     val hourlyDistribution = IntArray(24)
     sessions.filter { it.endedAt != null }.forEach {
@@ -169,7 +165,7 @@ fun calculateInsights(
                     .size
             }
     val contextSwitchingRate =
-        if (uniqueContextsPerDay.isNotEmpty()) uniqueContextsPerDay.values.average() else 0.0
+        uniqueContextsPerDay.values.takeIf { it.isNotEmpty() }?.average() ?: 0.0
 
     // Light Manual Statistics (Roadmap Section 7)
     // Correlating track entries with activity
@@ -210,14 +206,14 @@ fun calculateInsights(
                     .filter { (dailyCompletions[it.date] ?: 0) >= 3 }
                     .mapNotNull { it.moodScore }
                     .takeIf { it.isNotEmpty() }
-                    ?.average() ?: Double.NaN
+                    ?.average()
             val moodOnSlowDays =
                 recentTracks
                     .filter { (dailyCompletions[it.date] ?: 0) == 0 }
                     .mapNotNull { it.moodScore }
                     .takeIf { it.isNotEmpty() }
-                    ?.average() ?: Double.NaN
-            if (!moodOnBusyDays.isNaN() && !moodOnSlowDays.isNaN()) moodOnBusyDays - moodOnSlowDays else 0.0
+                    ?.average()
+            if (moodOnBusyDays != null && moodOnSlowDays != null) moodOnBusyDays - moodOnSlowDays else 0.0
         } else {
             0.0
         }
@@ -230,15 +226,13 @@ fun calculateInsights(
                     .map { dailyFocus[it.date] ?: 0.0 }
                     .takeIf { it.isNotEmpty() }
                     ?.average()
-                    ?: Double.NaN
             val focusOnBadSleep =
                 recentTracks
                     .filter { (it.sleepScore ?: 0f) < 7f }
                     .map { dailyFocus[it.date] ?: 0.0 }
                     .takeIf { it.isNotEmpty() }
                     ?.average()
-                    ?: Double.NaN
-            if (!focusOnGoodSleep.isNaN() && !focusOnBadSleep.isNaN()) focusOnGoodSleep - focusOnBadSleep else 0.0
+            if (focusOnGoodSleep != null && focusOnBadSleep != null) focusOnGoodSleep - focusOnBadSleep else 0.0
         } else {
             0.0
         }
@@ -251,15 +245,13 @@ fun calculateInsights(
                     .map { dailyCaptures[it.date] ?: 0 }
                     .takeIf { it.isNotEmpty() }
                     ?.average()
-                    ?: Double.NaN
             val capturesOnLowEnergy =
                 recentTracks
                     .filter { (it.energyScore ?: 0) <= 2 }
                     .map { dailyCaptures[it.date] ?: 0 }
                     .takeIf { it.isNotEmpty() }
                     ?.average()
-                    ?: Double.NaN
-            if (!capturesOnHighEnergy.isNaN() && !capturesOnLowEnergy.isNaN()) capturesOnHighEnergy - capturesOnLowEnergy else 0.0
+            if (capturesOnHighEnergy != null && capturesOnLowEnergy != null) capturesOnHighEnergy - capturesOnLowEnergy else 0.0
         } else {
             0.0
         }
@@ -292,14 +284,14 @@ fun calculateInsights(
                     .filter { it.tookMeds }
                     .mapNotNull { it.focusScore }
                     .takeIf { it.isNotEmpty() }
-                    ?.average() ?: Double.NaN
+                    ?.average()
             val focusWithoutMeds =
                 recentTracks
                     .filter { !it.tookMeds }
                     .mapNotNull { it.focusScore }
                     .takeIf { it.isNotEmpty() }
-                    ?.average() ?: Double.NaN
-            if (!focusWithMeds.isNaN() && !focusWithoutMeds.isNaN()) focusWithMeds - focusWithoutMeds else 0.0
+                    ?.average()
+            if (focusWithMeds != null && focusWithoutMeds != null) focusWithMeds - focusWithoutMeds else 0.0
         } else {
             0.0
         }
@@ -577,17 +569,9 @@ fun calculateAreaHealthSnapshot(
         computed.filter { it.isDisappearing }.mapTo(mutableSetOf()) { it.areaId }
 
     val avgLoad =
-        if (computed.isNotEmpty()) {
-            computed.map { it.stressLoad }.average()
-        } else {
-            0.0
-        }
+        computed.map { it.stressLoad }.takeIf { it.isNotEmpty() }?.average() ?: 0.0
     val variance =
-        if (computed.size > 1) {
-            computed.map { (it.stressLoad - avgLoad) * (it.stressLoad - avgLoad) }.average()
-        } else {
-            0.0
-        }
+        computed.map { (it.stressLoad - avgLoad) * (it.stressLoad - avgLoad) }.takeIf { it.isNotEmpty() }?.average() ?: 0.0
     val imbalanceScore = (sqrt(variance) * 2).toInt().coerceIn(0, 100)
     val imbalanceLabel =
         when
@@ -699,7 +683,7 @@ fun calculateOpenLoopsSnapshot(
         ).filterValues { it.isNotEmpty() }
 
     val averageDecayScore =
-        if (active.isNotEmpty()) active.map { it.decayScore }.average().toInt() else 0
+        active.map { it.decayScore }.takeIf { it.isNotEmpty() }?.average()?.toInt() ?: 0
     val overloadWarning =
         when
             {
