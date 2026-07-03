@@ -4,6 +4,8 @@
 
 package com.tajemniktv.tajsos.ui.screens.tasks
 
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.input.pointer.PointerIcon
 import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -368,7 +370,7 @@ private fun QueueList(
                     Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                         OutlinedButton(onClick = { onDoNow(task) }) { Text(stringResource(Res.string.tasks_start_focus_action)) }
                         OutlinedButton(onClick = { onOpen(task.id) }) { Text(stringResource(Res.string.tasks_open_action)) }
-                        IconButton(onClick = { onDone(task) }) { Icon(Icons.Default.Check, null) }
+                        IconButton(onClick = { onDone(task) }, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) { Icon(Icons.Default.Check, null) }
                     }
                 }
                 HorizontalDivider(color = TajsOSTheme.GhostBorder)

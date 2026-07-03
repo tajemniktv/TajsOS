@@ -4,6 +4,8 @@
 
 package com.tajemniktv.tajsos.ui.screens.search
 
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -111,7 +113,7 @@ private fun renderSearchInput(context: SearchDashboardContext) {
             leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
             trailingIcon = {
                 if (context.searchQuery.isNotEmpty()) {
-                    IconButton(onClick = { viewModel.updateSearchQuery("") }) {
+                    IconButton(onClick = { viewModel.updateSearchQuery("") }, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
                         Icon(
                             Icons.Default.Clear,
                             contentDescription = stringResource(Res.string.search_clear),
@@ -125,7 +127,7 @@ private fun renderSearchInput(context: SearchDashboardContext) {
                     unfocusedContainerColor = TajsOSTheme.Surface,
                 ),
         )
-        IconButton(onClick = context.onToggleFilters, modifier = Modifier.size(48.dp)) {
+        IconButton(onClick = context.onToggleFilters, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
             Icon(
                 Icons.Default.FilterList,
                 contentDescription = "Toggle filters",

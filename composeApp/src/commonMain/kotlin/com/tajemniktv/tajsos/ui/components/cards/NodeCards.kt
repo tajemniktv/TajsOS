@@ -4,6 +4,8 @@
 
 package com.tajemniktv.tajsos.ui.components.cards
 
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -267,7 +269,7 @@ fun NodeCard(
                         }
                     }
                     if (isDone) {
-                        IconButton(onClick = onArchive, modifier = Modifier.size(48.dp)) {
+                        IconButton(onClick = onArchive, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
                             Icon(
                                 imageVector = Icons.Default.Delete,
                                 contentDescription = stringResource(Res.string.detail_archive),
@@ -275,7 +277,7 @@ fun NodeCard(
                             )
                         }
                     }
-                    IconButton(onClick = { onTogglePin(!isPinnedToToday) }) {
+                    IconButton(onClick = { onTogglePin(!isPinnedToToday) }, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
                         Icon(
                             imageVector = Icons.Default.Star,
                             contentDescription = stringResource(Res.string.node_pin_today_desc),

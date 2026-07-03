@@ -4,6 +4,8 @@
 
 package com.tajemniktv.tajsos.ui.screens.profile
 
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.input.pointer.PointerIcon
 import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -390,7 +392,7 @@ private fun renderMedicationsModuleBlock(context: ProfileScreenContext) {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             ModuleTitle(title = stringResource(Res.string.profile_medications))
-            IconButton(onClick = context.onOpenAddMedication, modifier = Modifier.size(48.dp)) {
+            IconButton(onClick = context.onOpenAddMedication, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
                 Icon(
                     Icons.Default.Add,
                     contentDescription = null,
@@ -589,7 +591,7 @@ private fun MedicationItem(
                     color = TajsOSTheme.Primary,
                 )
             }
-            IconButton(onClick = onDelete, modifier = Modifier.size(48.dp)) {
+            IconButton(onClick = onDelete, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
                 Icon(Icons.Default.Delete, contentDescription = "Delete", tint = TajsOSTheme.Error)
             }
         }

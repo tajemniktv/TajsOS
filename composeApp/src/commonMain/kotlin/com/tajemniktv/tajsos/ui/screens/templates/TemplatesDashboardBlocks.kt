@@ -4,6 +4,8 @@
 
 package com.tajemniktv.tajsos.ui.screens.templates
 
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -73,7 +75,7 @@ private fun renderTemplatesList(context: TemplatesDashboardContext) {
                         Text(typeLabel.uppercase())
                     },
                     trailingContent = {
-                        IconButton(onClick = { context.onDeleteTemplate(template) }) {
+                        IconButton(onClick = { context.onDeleteTemplate(template) }, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
                             Icon(
                                 Icons.Default.Delete,
                                 contentDescription = stringResource(Res.string.archive_delete),

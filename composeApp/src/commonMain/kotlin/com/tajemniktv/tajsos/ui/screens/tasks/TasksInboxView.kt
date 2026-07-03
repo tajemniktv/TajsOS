@@ -4,6 +4,8 @@
 
 package com.tajemniktv.tajsos.ui.screens.tasks
 
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -115,7 +117,7 @@ internal fun TasksInboxView(
                                         stringResource(Res.string.tasks_inbox_triage_task),
                                     )
                                 }
-                                IconButton(onClick = { onDismiss(entry) }) {
+                                IconButton(onClick = { onDismiss(entry) }, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
                                     Icon(
                                         Icons.Default.Delete,
                                         stringResource(Res.string.tasks_inbox_dismiss),

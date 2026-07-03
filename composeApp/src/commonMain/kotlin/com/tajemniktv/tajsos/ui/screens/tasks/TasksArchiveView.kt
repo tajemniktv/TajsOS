@@ -4,6 +4,8 @@
 
 package com.tajemniktv.tajsos.ui.screens.tasks
 
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -96,7 +98,7 @@ internal fun TasksArchiveView(
                         Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                             OutlinedButton(onClick = { onOpen(task.id) }) { Text(stringResource(Res.string.tasks_open_action)) }
                             OutlinedButton(onClick = { onRestore(task) }) { Text(stringResource(Res.string.tasks_restore_action)) }
-                            IconButton(onClick = { onDelete(task) }) {
+                            IconButton(onClick = { onDelete(task) }, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
                                 Icon(
                                     Icons.Default.Delete,
                                     null,

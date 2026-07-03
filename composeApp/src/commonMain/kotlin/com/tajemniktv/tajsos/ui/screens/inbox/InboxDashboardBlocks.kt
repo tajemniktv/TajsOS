@@ -4,6 +4,8 @@
 
 package com.tajemniktv.tajsos.ui.screens.inbox
 
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -122,7 +124,7 @@ internal fun InboxMainBlock(
                             onArchive = { viewModel.archiveNode(nodeWithPin.node) },
                         )
 
-                        IconButton(onClick = { viewModel.markAsProcessed(nodeWithPin.node.id) }) {
+                        IconButton(onClick = { viewModel.markAsProcessed(nodeWithPin.node.id) }, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
                             Icon(
                                 imageVector = Icons.Default.Check,
                                 contentDescription = stringResource(Res.string.inbox_process),
@@ -180,7 +182,7 @@ private fun InboxCaptureCard(
                     onClick = { viewModel.triageInboxEntry(entry.id, ItemKind.PROJECT) },
                     label = { Text(stringResource(Res.string.type_project).uppercase()) },
                 )
-                IconButton(onClick = { viewModel.dismissInboxEntry(entry) }) {
+                IconButton(onClick = { viewModel.dismissInboxEntry(entry) }, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
                     Icon(
                         imageVector = Icons.Default.Close,
                         contentDescription = "Dismiss capture",

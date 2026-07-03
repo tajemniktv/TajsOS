@@ -4,6 +4,8 @@
 
 package com.tajemniktv.tajsos.ui.screens.tasks
 
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -195,7 +197,7 @@ private fun TodaySection(
                                     },
                                 )
                             }
-                            IconButton(onClick = { onDone(task) }) {
+                            IconButton(onClick = { onDone(task) }, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
                                 Icon(
                                     Icons.Default.Check,
                                     null,
