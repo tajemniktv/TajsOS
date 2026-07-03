@@ -12,19 +12,22 @@ import kotlinx.datetime.toLocalDateTime
 
 class MainSnapshotCalculatorsTimeArchitectureTest {
 
-    private fun createTestNodeWithPin(
-        id: Long,
-        dueAt: Long? = null,
-        type: String = "task",
-        status: String = "active",
-        noteType: String? = null,
-        tags: List<String> = emptyList(),
-        startAt: Long? = null,
-        title: String = "Test $id",
-        updatedAt: Long = 0
-    ): NodeWithPin {
-        val node = NodeEntity(id = id, title = title, type = type, status = status, dueAt = dueAt, noteType = noteType, startAt = startAt, updatedAt = updatedAt)
-        return NodeWithPin(node = node, pin = null, tags = tags.map { TagEntity(id = 0, name = it, normalizedName = it.lowercase()) })
+    data class TestNodeConfig(
+        val id: Long,
+        val dueAt: Long? = null,
+        val type: String = "task",
+        val status: String = "active",
+        val noteType: String? = null,
+        val tags: List<String> = emptyList(),
+        val startAt: Long? = null,
+        val title: String? = null,
+        val updatedAt: Long = 0
+    )
+
+    private fun createTestNodeWithPin(config: TestNodeConfig): NodeWithPin {
+        val nodeTitle = config.title ?: "Test ${config.id}"
+        val node = NodeEntity(id = config.id, title = nodeTitle, type = config.type, status = config.status, dueAt = config.dueAt, noteType = config.noteType, startAt = config.startAt, updatedAt = config.updatedAt)
+        return NodeWithPin(node = node, pin = null, tags = config.tags.map { TagEntity(id = 0, name = it, normalizedName = it.lowercase()) })
     }
 
     @Test
@@ -32,13 +35,13 @@ class MainSnapshotCalculatorsTimeArchitectureTest {
         val now = kotlin.time.Clock.System.now().toEpochMilliseconds()
         val dayMs = 24 * 60 * 60 * 1000L
 
-        val pastDue = createTestNodeWithPin(1, dueAt = now - dayMs)
-        val todayNode = createTestNodeWithPin(2, dueAt = now + (dayMs / 2))
-        val weekNode = createTestNodeWithPin(3, dueAt = now + 3 * dayMs)
-        val monthNode = createTestNodeWithPin(4, dueAt = now + 15 * dayMs)
-        val semesterNode = createTestNodeWithPin(5, dueAt = now + 60 * dayMs)
-        val farFutureNode = createTestNodeWithPin(6, dueAt = now + 150 * dayMs)
-        val noDueNode = createTestNodeWithPin(7, dueAt = null)
+        val pastDue = createTestNodeWithPin(TestNodeConfig(id = 1, dueAt = now - dayMs))
+        val todayNode = createTestNodeWithPin(TestNodeConfig(id = 2, dueAt = now + (dayMs / 2)))
+        val weekNode = createTestNodeWithPin(TestNodeConfig(id = 3, dueAt = now + 3 * dayMs))
+        val monthNode = createTestNodeWithPin(TestNodeConfig(id = 4, dueAt = now + 15 * dayMs))
+        val semesterNode = createTestNodeWithPin(TestNodeConfig(id = 5, dueAt = now + 60 * dayMs))
+        val farFutureNode = createTestNodeWithPin(TestNodeConfig(id = 6, dueAt = now + 150 * dayMs))
+        val noDueNode = createTestNodeWithPin(TestNodeConfig(id = 7, dueAt = null))
 
         val nodes = listOf(pastDue, todayNode, weekNode, monthNode, semesterNode, farFutureNode, noDueNode)
 
@@ -63,18 +66,18 @@ class MainSnapshotCalculatorsTimeArchitectureTest {
         val now = kotlin.time.Clock.System.now().toEpochMilliseconds()
         val dayMs = 24 * 60 * 60 * 1000L
 
-        val seasonalGoalNote = createTestNodeWithPin(1, noteType = "goal_seasonal")
-        val seasonalGoalTag = createTestNodeWithPin(2, tags = listOf("seasonal_goal"))
-        val notSeasonalGoal = createTestNodeWithPin(3)
-        val inactiveSeasonalGoal = createTestNodeWithPin(4, noteType = "goal_seasonal", status = "done")
+        val seasonalGoalNote = createTestNodeWithPin(TestNodeConfig(id = 1, noteType = "goal_seasonal"))
+        val seasonalGoalTag = createTestNodeWithPin(TestNodeConfig(id = 2, tags = listOf("seasonal_goal")))
+        val notSeasonalGoal = createTestNodeWithPin(TestNodeConfig(id = 3))
+        val inactiveSeasonalGoal = createTestNodeWithPin(TestNodeConfig(id = 4, noteType = "goal_seasonal", status = "done"))
 
-        val temporaryFocus = createTestNodeWithPin(5, startAt = now, dueAt = now + 10 * dayMs)
-        val notTemporaryFocus = createTestNodeWithPin(6, startAt = now, dueAt = now + 20 * dayMs)
-        val inactiveTemporaryFocus = createTestNodeWithPin(7, startAt = now, dueAt = now + 10 * dayMs, status = "done")
+        val temporaryFocus = createTestNodeWithPin(TestNodeConfig(id = 5, startAt = now, dueAt = now + 10 * dayMs))
+        val notTemporaryFocus = createTestNodeWithPin(TestNodeConfig(id = 6, startAt = now, dueAt = now + 20 * dayMs))
+        val inactiveTemporaryFocus = createTestNodeWithPin(TestNodeConfig(id = 7, startAt = now, dueAt = now + 10 * dayMs, status = "done"))
 
-        val lifePeriodMarkerNote = createTestNodeWithPin(8, noteType = "period_marker", updatedAt = now + 100)
-        val lifePeriodMarkerTag = createTestNodeWithPin(9, tags = listOf("life_period_marker"), updatedAt = now)
-        val inactiveLifePeriodMarkerNote = createTestNodeWithPin(10, noteType = "period_marker", status = "done", updatedAt = now + 50)
+        val lifePeriodMarkerNote = createTestNodeWithPin(TestNodeConfig(id = 8, noteType = "period_marker", updatedAt = now + 100))
+        val lifePeriodMarkerTag = createTestNodeWithPin(TestNodeConfig(id = 9, tags = listOf("life_period_marker"), updatedAt = now))
+        val inactiveLifePeriodMarkerNote = createTestNodeWithPin(TestNodeConfig(id = 10, noteType = "period_marker", status = "done", updatedAt = now + 50))
 
         val nodes = listOf(
             seasonalGoalNote, seasonalGoalTag, notSeasonalGoal, inactiveSeasonalGoal,
@@ -105,22 +108,22 @@ class MainSnapshotCalculatorsTimeArchitectureTest {
         val dayMs = 24 * 60 * 60 * 1000L
 
         // Due in 15 days, title contains "exam" -> should trigger
-        val examSoonTitle = createTestNodeWithPin(1, dueAt = now + 15 * dayMs, title = "Final Exam")
+        val examSoonTitle = createTestNodeWithPin(TestNodeConfig(id = 1, dueAt = now + 15 * dayMs, title = "Final Exam"))
         val snapshot1 = calculateTimeArchitectureSnapshot(listOf(examSoonTitle), emptyList(), emptyList())
         assertTrue(snapshot1.examPeriodMode)
 
         // Due in 15 days, tag contains "exam" -> should trigger
-        val examSoonTag = createTestNodeWithPin(2, dueAt = now + 15 * dayMs, tags = listOf("midterm_exam"))
+        val examSoonTag = createTestNodeWithPin(TestNodeConfig(id = 2, dueAt = now + 15 * dayMs, tags = listOf("midterm_exam")))
         val snapshot2 = calculateTimeArchitectureSnapshot(listOf(examSoonTag), emptyList(), emptyList())
         assertTrue(snapshot2.examPeriodMode)
 
         // Due in 45 days, title contains "exam" -> should NOT trigger (daysLeft > 30)
-        val examFar = createTestNodeWithPin(3, dueAt = now + 45 * dayMs, title = "Final Exam")
+        val examFar = createTestNodeWithPin(TestNodeConfig(id = 3, dueAt = now + 45 * dayMs, title = "Final Exam"))
         val snapshot3 = calculateTimeArchitectureSnapshot(listOf(examFar), emptyList(), emptyList())
         assertFalse(snapshot3.examPeriodMode)
 
         // Due in 15 days, title DOES NOT contain "exam" -> should NOT trigger
-        val notExamSoon = createTestNodeWithPin(4, dueAt = now + 15 * dayMs, title = "Regular Task")
+        val notExamSoon = createTestNodeWithPin(TestNodeConfig(id = 4, dueAt = now + 15 * dayMs, title = "Regular Task"))
         val snapshot4 = calculateTimeArchitectureSnapshot(listOf(notExamSoon), emptyList(), emptyList())
         assertFalse(snapshot4.examPeriodMode)
     }
@@ -131,10 +134,10 @@ class MainSnapshotCalculatorsTimeArchitectureTest {
         val dayMs = 24 * 60 * 60 * 1000L
 
         // Tasks due within the week horizon
-        val task1 = createTestNodeWithPin(1, dueAt = now + dayMs)
-        val task2 = createTestNodeWithPin(2, dueAt = now + 2 * dayMs)
-        val task3 = createTestNodeWithPin(3, dueAt = now + 2 * dayMs)
-        val task4 = createTestNodeWithPin(4, dueAt = now + 8 * dayMs) // Outside week
+        val task1 = createTestNodeWithPin(TestNodeConfig(id = 1, dueAt = now + dayMs))
+        val task2 = createTestNodeWithPin(TestNodeConfig(id = 2, dueAt = now + 2 * dayMs))
+        val task3 = createTestNodeWithPin(TestNodeConfig(id = 3, dueAt = now + 2 * dayMs))
+        val task4 = createTestNodeWithPin(TestNodeConfig(id = 4, dueAt = now + 8 * dayMs)) // Outside week
 
         val nodes = listOf(task1, task2, task3, task4)
         val snapshot = calculateTimeArchitectureSnapshot(nodes, emptyList(), emptyList())
