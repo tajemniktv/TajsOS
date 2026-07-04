@@ -329,6 +329,8 @@ fun buildPlaybookSnapshot(
  * @param areasList The list of all system Area nodes.
  * @param packs The registry of enabled and owned application packs.
  * @return A fully populated [DashboardUIState] reflecting the entire system's status filtered by the active mode.
+ *
+ * Performance note: uses distinctBy instead of groupBy when only unique sizes are needed.
  */
 suspend fun buildDashboardUIState(
     repository: AppRepository,
@@ -443,7 +445,8 @@ suspend fun buildDashboardUIState(
     val areaHealthMetrics = areaSnapshot.areas.associateBy { it.areaId }
 
     val loadScore = (activeTasks.size * 2) + (openLoops.size * 3) + (overdue.size * 5)
-    val fragmentation = activeTasks.groupBy { it.node.projectId }.size * 5
+    // Optimized from groupBy to distinctBy for performance
+    val fragmentation = activeTasks.distinctBy { it.node.projectId }.size * 5
     val capWarning =
         when
             {

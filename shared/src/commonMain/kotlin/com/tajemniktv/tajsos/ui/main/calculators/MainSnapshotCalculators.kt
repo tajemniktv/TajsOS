@@ -1708,6 +1708,8 @@ fun calculateVaultsSnapshot(nodes: List<NodeWithPin>): VaultsSnapshot {
  *
  * @param inputs A bundled dataset providing current node volumes, maintenance debt, and open loops.
  * @return A [CapacitySnapshot] identifying execution pressure and potential burnout risks.
+ *
+ * Performance note: uses distinctBy instead of groupBy when only unique sizes are needed.
  */
 fun calculateCapacitySnapshot(
     nodes: List<NodeWithPin>,
@@ -1734,11 +1736,12 @@ fun calculateCapacitySnapshot(
                 (maintenance.overdue.size * 4) +
                 (overdueCount * 5)
         ).coerceIn(0, 100)
+    // Optimized from groupBy to distinctBy for performance
     val fragmentationScore =
         (
-                activeTasks.groupBy { it.node.projectId }.size *
+                activeTasks.distinctBy { it.node.projectId }.size *
                         7 +
-                        activeTasks.groupBy { it.node.areaId }.size *
+                        activeTasks.distinctBy { it.node.areaId }.size *
                         4
         ).coerceIn(0, 100)
 
@@ -1761,8 +1764,9 @@ fun calculateCapacitySnapshot(
         nodes.count { it.node.status == "done" && (it.node.completedAt ?: 0L) >= now - weekMs }
     val unrealisticWeekSignal =
         if (weeklyCreatedActive > weeklyDone * 2 + 5) "THIS WEEK IS UNREALISTIC // INTAKE OUTPACES EXECUTION" else null
+    // Optimized from groupBy to distinctBy for performance
     val tooManyActiveFrontsIndicator =
-        if (activeTasks.groupBy { it.node.areaId }.size >= 6) "TOO MANY ACTIVE FRONTS" else null
+        if (activeTasks.distinctBy { it.node.areaId }.size >= 6) "TOO MANY ACTIVE FRONTS" else null
     val attentionFragmentedIndicator =
         if (fragmentationScore >= 55) "ATTENTION IS TOO FRAGMENTED" else null
     val weeklyStructuralOverloadWarning =
