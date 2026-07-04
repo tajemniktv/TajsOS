@@ -121,6 +121,10 @@ private val healthTitleKeywords =
  * do not yet have dedicated queries in this object. Adding support for them would require
  * establishing similar heuristic marker sets (e.g., `educationTagMarkers`, `educationTitleKeywords`,
  * `relationshipsMaintenanceTypes`) and implementing their respective projection queries.
+ *
+ * This object provides functions to filter and group `NodeWithPin` and `MaintenanceStatusItem`
+ * objects into specific domains based on implicit keyword, tag, and structural heuristics,
+ * bypassing the need for manual explicit domain assignments.
  */
 object DomainLensQueries {
     /**
