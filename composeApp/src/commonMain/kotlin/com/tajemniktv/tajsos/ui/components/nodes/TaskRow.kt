@@ -26,6 +26,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.drawBehind
@@ -187,7 +189,7 @@ fun TaskRow(
                     }
                 }
                 if (isDone) {
-                    IconButton(onClick = onArchive, modifier = Modifier.size(48.dp)) {
+                    IconButton(onClick = onArchive, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
                         Icon(
                             imageVector = Icons.Default.Delete,
                             contentDescription = stringResource(Res.string.detail_archive),
@@ -195,7 +197,7 @@ fun TaskRow(
                         )
                     }
                 }
-                IconButton(onClick = onUnpin, modifier = Modifier.size(48.dp)) {
+                IconButton(onClick = onUnpin, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
                     Icon(
                         Icons.Default.Close,
                         contentDescription = stringResource(Res.string.task_row_unpin_desc),

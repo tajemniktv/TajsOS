@@ -213,7 +213,7 @@ fun Modifier.mouseClickable(
                     indication = indication ?: LocalIndication.current,
                     onClick = { onClick?.invoke() },
                     onLongClick = onLongClick,
-                ).pointerHoverIcon(PointerIcon.Hand)
+                ).pointerHoverIcon(if (enabled) PointerIcon.Hand else PointerIcon.Default)
             } else {
                 this
             }

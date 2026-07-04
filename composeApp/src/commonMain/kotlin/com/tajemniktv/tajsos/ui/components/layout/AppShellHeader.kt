@@ -42,6 +42,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
@@ -136,7 +138,7 @@ fun AppShellHeader(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 if (!isDesktop && onMenuClick != null) {
-                    IconButton(onClick = onMenuClick, modifier = Modifier.size(48.dp)) {
+                    IconButton(onClick = onMenuClick, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
                         Icon(
                             imageVector = Icons.Default.Menu,
                             contentDescription = stringResource(Res.string.header_menu),
@@ -504,7 +506,7 @@ fun NotificationsPopover(
             Box {
                 IconButton(
                     onClick = { onExpandedChange(!expanded) },
-                    modifier = Modifier.size(42.dp),
+                    modifier = Modifier.size(42.dp).pointerHoverIcon(PointerIcon.Hand),
                 ) {
                     Icon(
                         imageVector = Icons.Default.Notifications,

@@ -64,6 +64,8 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
@@ -514,7 +516,7 @@ fun ExpandableNavSection(
                                 if (expandable) {
                                     IconButton(
                                         onClick = onRootExpandToggle,
-                                        modifier = Modifier.size(28.dp),
+                                        modifier = Modifier.size(28.dp).pointerHoverIcon(PointerIcon.Hand),
                                     ) {
                                         Icon(
                                             imageVector =
