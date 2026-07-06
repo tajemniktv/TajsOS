@@ -27,6 +27,9 @@ import kotlinx.coroutines.flow.first
  *
  * It generates default entities such as focus modes, academic templates, logistical systems,
  * and base user data if the local storage is detected as entirely empty.
+ *
+ * @property repository The main application repository for database interactions.
+ * @property preferencesRepository The repository for managing user preferences and system settings.
  */
 class AppBootstrapper(
     /** The main application repository for database interactions. */

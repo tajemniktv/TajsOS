@@ -258,6 +258,27 @@ private data class LifeObjectFacetSnapshot(
  * core LifeOS entities (`NodeEntity`) alongside their typed extension states (`TaskFacetEntity`,
  * `NoteFacetEntity`, etc.). This pattern avoids maintaining a single massive nullable row
  * and safely orchestrates creation, updates, and complex queries across related database tables.
+ *
+ * @property nodeDao Data access object for the primary 'nodes' table.
+ * @property focusSessionDao Data access object for study/focus sessions.
+ * @property trackDao Data access object for time-tracking entries.
+ * @property relationDao Data access object for bidirectional inter-node relationships.
+ * @property tagDao Data access object for plain-text string tags.
+ * @property eventLogDao Data access object for system event tracking.
+ * @property attachmentDao Data access object for file attachments linked to nodes.
+ * @property templateDao Data access object for reusable node templates.
+ * @property nodeSnapshotDao Data access object for historical node revisions.
+ * @property reviewDao Data access object for recurring review schedules.
+ * @property calendarProviderDao Data access object for external calendar configuration.
+ * @property calendarEventDao Data access object for cached external events.
+ * @property modeDao Data access object for application mode definitions.
+ * @property protocolDao Data access object for workflow protocols.
+ * @property decisionDao Data access object for discrete choices linked to decisions.
+ * @property userDao Data access object for core user identity.
+ * @property medicationDao Data access object for health logs and prescriptions.
+ * @property inboxEntryDao Data access object for external quick-capture items.
+ * @property taskFacetDao Data access object for task-specific metadata (deadlines, states).
+ * @property noteFacetDao Data access object for standard note metadata.
  */
 class AppRepository(
     private val nodeDao: NodeDao,

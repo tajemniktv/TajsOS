@@ -127,11 +127,19 @@ import kotlinx.serialization.json.Json
 import kotlin.time.Clock
 
 /**
- * Global orchestrator for the application shell.
+ * The primary ViewModel acting as the state-holder and orchestrator for the entire application UI.
  *
  * Handles shell-level state (including modes, sync status, application locking, and sidebar state).
- * It delegates feature-heavy orchestration to internal command handlers (e.g., [NodeCommands])
- * but acts as the root provider of core app state.
+ * This class bridges the gap between the underlying data layer ([AppRepository], [PreferencesRepository])
+ * and the presentation layer, exposing a reactive stream of application state (e.g., nodes, tags, domains).
+ * It dynamically filters data based on active modes or user contexts, and delegates complex state mutations
+ * to specialized command classes (e.g., [NodeCommands], [ProtocolCommands]).
+ *
+ * @property repository Central source of truth for all database operations.
+ * @property preferencesRepository Source of truth for application configuration and environment state.
+ * @property calendarManager Unified interface for handling platform-specific calendar integrations.
+ * @property nextStepFallbackLabel Fallback label used when a next step description is empty.
+ * @property untitledFallbackLabel Fallback label used when a node's title is empty.
  */
 @Stable
 class MainViewModel(
