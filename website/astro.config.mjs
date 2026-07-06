@@ -21,6 +21,7 @@ export default defineConfig({
       title: "Docs",
       description: "TajsOS Documentation",
 
+      disable404Route: true,
       components: {
         MarkdownContent: "./src/components/MarkdownContent.astro",
       },
