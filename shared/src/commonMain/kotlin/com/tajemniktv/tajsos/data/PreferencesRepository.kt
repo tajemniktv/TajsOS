@@ -36,6 +36,8 @@ enum class DesktopWindowStartupMode {
  *
  * All properties are exposed as [Flow] streams that emit the current value,
  * and automatically handle [IOException]s by emitting [emptyPreferences] as a fallback.
+ *
+ * @param dataStore The multiplatform data store managing preference persistence.
  */
 class PreferencesRepository(
     private val dataStore: DataStore<Preferences>,

@@ -258,6 +258,12 @@ private data class LifeObjectFacetSnapshot(
  * core LifeOS entities (`NodeEntity`) alongside their typed extension states (`TaskFacetEntity`,
  * `NoteFacetEntity`, etc.). This pattern avoids maintaining a single massive nullable row
  * and safely orchestrates creation, updates, and complex queries across related database tables.
+ *
+ * @param nodeDao Provides methods for accessing the core "Node" entities.
+ * @param focusSessionDao Provides methods for tracking focused work sessions against items.
+ * @param trackDao Provides methods for recording daily tracking entries (energy, mood, sleep).
+ * @param relationDao Provides methods for mapping bidirectional graph connections between nodes.
+ * @param tagDao Provides methods for applying and querying categorical tags on items.
  */
 class AppRepository(
     private val nodeDao: NodeDao,
