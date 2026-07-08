@@ -11,37 +11,24 @@ import kotlin.test.assertTrue
 
 class FilterHelperQueryTest {
 
-    private fun createTestNode(
-        id: Long,
-        title: String,
-        content: String = "",
-        type: String = "task",
-        status: String = "active",
-    ): NodeWithPin {
-        val nodeEntity = NodeEntity(
-            id = id,
-            title = title,
-            content = content,
-            type = type,
-            status = status,
-            createdAt = 0L,
-            updatedAt = 0L
-        )
+
+    private fun createTestNode(id: Long, title: String): NodeWithPin {
         return NodeWithPin(
-            node = nodeEntity,
+            node = NodeEntity(id = id, title = title, content = "", type = "task", status = "active", createdAt = 0L, updatedAt = 0L),
             pin = null,
             tags = emptyList(),
         )
     }
 
+
     @Test
     fun testRelevanceScoreOrdering() {
         val helper = FilterHelper
-        val node1 = createTestNode(id = 1, title = "Exact Title Match", status = "inactive")
-        val node2 = createTestNode(id = 2, title = "Exact Title Not Match", content = "Exact Title Match", status = "active")
-        val node3 = createTestNode(id = 3, title = "Exact Prefix", content = "Something", status = "inactive")
-        val node4 = createTestNode(id = 4, title = "Something", content = "Something", status = "inactive")
-        val node5 = createTestNode(id = 5, title = "Another one", content = "Something", status = "inactive")
+        val node1 = createTestNode(id = 1, title = "Exact Title Match").let { it.copy(node = it.node.copy(status = "inactive")) }
+        val node2 = createTestNode(id = 2, title = "Exact Title Not Match").let { it.copy(node = it.node.copy(content = "Exact Title Match", status = "active")) }
+        val node3 = createTestNode(id = 3, title = "Exact Prefix").let { it.copy(node = it.node.copy(content = "Something", status = "inactive")) }
+        val node4 = createTestNode(id = 4, title = "Something").let { it.copy(node = it.node.copy(content = "Something", status = "inactive")) }
+        val node5 = createTestNode(id = 5, title = "Another one").let { it.copy(node = it.node.copy(content = "Something", status = "inactive")) }
 
         val nodeWithPin1 = node1.copy(pin = TodayPinEntity(1, 1, "2024-01-01", 0)) // score + 8
         val nodeWithPin2 = node2 // score + 5 (active)
@@ -60,7 +47,7 @@ class FilterHelperQueryTest {
     @Test
     fun testMatchesQueryAndRelevanceScore() {
         val helper = FilterHelper
-        val node1 = createTestNode(id = 1, title = "Apple", content = "Banana")
+        val node1 = createTestNode(id = 1, title = "Apple").let { it.copy(node = it.node.copy(content = "Banana")) }
         val nodeWithPin1 = node1.copy(tags = listOf(TagEntity(1, "fruit", "fruit")))
 
         assertTrue(helper.matchesQuery(nodeWithPin1, "Apple"))
@@ -75,8 +62,8 @@ class FilterHelperQueryTest {
         assertFalse(helper.matchesQuery(nodeWithPin1, "#"))
         assertFalse(helper.matchesQuery(nodeWithPin1, "#   "))
 
-        val node2 = createTestNode(id = 2, title = "PrefixApple", content = "something")
-        val node3 = createTestNode(id = 3, title = "Not exactly", content = "Apple")
+        val node2 = createTestNode(id = 2, title = "PrefixApple").let { it.copy(node = it.node.copy(content = "something")) }
+        val node3 = createTestNode(id = 3, title = "Not exactly").let { it.copy(node = it.node.copy(content = "Apple")) }
         val nodes = listOf(node3, node2, node1)
 
         val sorted = helper.filterAndSortNodes(nodes = nodes, query = "Apple", type = null, status = null, projectId = null, areaId = null, linkedToId = null, maxMins = null, energy = null, friction = null, locationContext = null, energyContext = null, deviceContext = null, socialContext = null, timeWindowContext = null, timeHorizon = null, relations = emptyList(), sortMode = "relevance")
