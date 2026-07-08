@@ -16,6 +16,71 @@ import kotlin.test.assertTrue
 
 class FilterHelperTest {
 
+
+
+
+    @Test
+    fun testRelevanceScoreOrdering() {
+        val helper = FilterHelper
+        val node1 = createTestNode(id = 1, title = "Exact Title Match", status = "inactive")
+        val node2 = createTestNode(id = 2, title = "Exact Title Not Match", content = "Exact Title Match", status = "active")
+        val node3 = createTestNode(id = 3, title = "Exact Prefix", content = "Something", status = "inactive")
+        val node4 = createTestNode(id = 4, title = "Something", content = "Something", status = "inactive")
+        val node5 = createTestNode(id = 5, title = "Another one", content = "Something", status = "inactive")
+
+        val nodeWithPin1 = node1.copy(pin = TodayPinEntity(1, 1, "2024-01-01", 0)) // score + 8
+        val nodeWithPin2 = node2 // score + 5 (active)
+        val nodeWithPin3 = node3.copy(tags = listOf(TagEntity(id = 1, name = "Exact Title Match", normalizedName = "exact title match"))) // score + 20
+        val nodeWithPin4 = node4.copy(tags = listOf(TagEntity(id = 2, name = "Title Match", normalizedName = "title match"))) // score + 10
+
+        // Exact Title Match (100) + Pinned (8) = 108
+        // Title contains Exact (30) + Content contains Exact Title Match (15) + active (5) = 50
+
+        val nodes = listOf(nodeWithPin2, nodeWithPin1, nodeWithPin3, nodeWithPin4, node5)
+        val sorted = filter(nodes) { query = "Exact Title Match"; sortMode = "relevance" }
+
+        // Exact Title Match
+        assertEquals(1L, sorted[0].node.id)
+
+        // Prefix test
+        val sortedPrefix = filter(nodes) { query = "Exact P"; sortMode = "relevance" }
+        assertEquals(3L, sortedPrefix[0].node.id) // Exact Prefix
+    }
+
+    @Test
+    fun testMatchesQueryAndRelevanceScore() {
+        val helper = FilterHelper
+        val node1 = createTestNode(id = 1, title = "Apple", content = "Banana")
+        val nodeWithPin1 = node1.copy(tags = listOf(TagEntity(1, "fruit", "fruit")))
+
+        // matchesQuery
+        assertTrue(helper.matchesQuery(nodeWithPin1, "Apple"))
+        assertTrue(helper.matchesQuery(nodeWithPin1, "Banana"))
+        assertTrue(helper.matchesQuery(nodeWithPin1, "fruit"))
+        assertTrue(helper.matchesQuery(nodeWithPin1, "#fruit"))
+
+        assertFalse(helper.matchesQuery(nodeWithPin1, "Orange"))
+        assertFalse(helper.matchesQuery(nodeWithPin1, "#Orange"))
+        assertFalse(helper.matchesQuery(nodeWithPin1, ""))
+        assertFalse(helper.matchesQuery(nodeWithPin1, "   "))
+        assertFalse(helper.matchesQuery(nodeWithPin1, "#"))
+        assertFalse(helper.matchesQuery(nodeWithPin1, "#   "))
+
+        // relevanceScore via reflection or test sorting
+        val node2 = createTestNode(id = 2, title = "PrefixApple", content = "something")
+        val node3 = createTestNode(id = 3, title = "Not exactly", content = "Apple")
+        val nodes = listOf(node3, node2, node1)
+
+        // Exact title match (Apple) > Title contains (PrefixApple) > Content contains (Apple)
+        val sorted = helper.filterAndSortNodes(nodes = nodes, query = "Apple", type = null, status = null, projectId = null, areaId = null, linkedToId = null, maxMins = null, energy = null, friction = null, locationContext = null, energyContext = null, deviceContext = null, socialContext = null, timeWindowContext = null, timeHorizon = null, relations = emptyList(), sortMode = "relevance")
+
+        assertEquals(3, sorted.size)
+        assertEquals(1L, sorted[0].node.id) // Exact match (Apple)
+        assertEquals(2L, sorted[1].node.id) // Title contains
+        assertEquals(3L, sorted[2].node.id) // Content contains
+    }
+
+
     class FilterConfig(val nodes: List<NodeWithPin>) {
         var query: String = ""
         var type: String? = null
