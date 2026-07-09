@@ -12,19 +12,23 @@ class FilterHelperRelevanceScoreTest {
     // We can't access private fun relevanceScore directly, so we test it via filterAndSortNodes
     // sorting by relevance mode.
 
-    private fun createNode(
-        id: Long,
-        title: String,
-        content: String = "",
-        tags: List<String> = emptyList(),
-        isPinned: Boolean = false,
-        status: String = "active"
-    ): NodeWithPin {
-        return NodeWithPin(
-            node = NodeEntity(id = id, title = title, content = content, status = status, type = "note"),
-            pin = if (isPinned) com.tajemniktv.tajsos.data.TodayPinEntity(id = id, nodeId = id, date = "2024-01-01", position = 0) else null,
-            tags = tags.mapIndexed { index, tag -> TagEntity(id = index.toLong(), name = tag, normalizedName = tag.lowercase()) }
-        )
+    private class NodeBuilder(val id: Long, val title: String) {
+        var content: String = ""
+        var tags: List<String> = emptyList()
+        var isPinned: Boolean = false
+        var status: String = "active"
+
+        fun build(): NodeWithPin {
+            return NodeWithPin(
+                node = NodeEntity(id = id, title = title, content = content, status = status, type = "note"),
+                pin = if (isPinned) com.tajemniktv.tajsos.data.TodayPinEntity(id = id, nodeId = id, date = "2024-01-01", position = 0) else null,
+                tags = tags.mapIndexed { index, tag -> TagEntity(id = index.toLong(), name = tag, normalizedName = tag.lowercase()) }
+            )
+        }
+    }
+
+    private fun buildNode(id: Long, title: String, block: NodeBuilder.() -> Unit = {}): NodeWithPin {
+        return NodeBuilder(id, title).apply(block).build()
     }
 
     @Test
@@ -32,28 +36,28 @@ class FilterHelperRelevanceScoreTest {
         val query = "query"
 
         // Exact match -> +100, starts with -> +60, contains -> +30 = 190
-        val exactMatch = createNode(1, "query", status = "inactive")
+        val exactMatch = buildNode(1, "query") { status = "inactive" }
 
         // Starts with -> +60, contains -> +30 = 90
-        val startsWith = createNode(2, "query is good", status = "inactive")
+        val startsWith = buildNode(2, "query is good") { status = "inactive" }
 
         // Contains -> +30
-        val containsTitle = createNode(3, "this is a query", status = "inactive")
+        val containsTitle = buildNode(3, "this is a query") { status = "inactive" }
 
         // Content contains -> +15
-        val containsContent = createNode(4, "title", content = "this has a query", status = "inactive")
+        val containsContent = buildNode(4, "title") { content = "this has a query"; status = "inactive" }
 
         // Tag exact match -> +20, Tag contains match -> +10 = 30
-        val tagExactMatch = createNode(5, "title", tags = listOf("query"), status = "inactive")
+        val tagExactMatch = buildNode(5, "title") { tags = listOf("query"); status = "inactive" }
 
         // Tag contains match -> +10
-        val tagContainsMatch = createNode(6, "title", tags = listOf("myquery"), status = "inactive")
+        val tagContainsMatch = buildNode(6, "title") { tags = listOf("myquery"); status = "inactive" }
 
         // Pinned -> +8 (on top of content match) -> 15 + 8 = 23
-        val pinnedContent = createNode(7, "title", content = "query", isPinned = true, status = "inactive")
+        val pinnedContent = buildNode(7, "title") { content = "query"; isPinned = true; status = "inactive" }
 
         // Active status -> +5 (on top of content match) -> 15 + 5 = 20
-        val activeContent = createNode(8, "title", content = "query", status = "active")
+        val activeContent = buildNode(8, "title") { content = "query"; status = "active" }
 
         val nodes = listOf(exactMatch, startsWith, containsTitle, containsContent, tagExactMatch, tagContainsMatch, pinnedContent, activeContent).shuffled()
 
@@ -98,8 +102,8 @@ class FilterHelperRelevanceScoreTest {
 
     @Test
     fun testRelevanceScore_emptyQueryReturnsZero() {
-        val node1 = createNode(1, "query", isPinned = true, status = "active")
-        val node2 = createNode(2, "other")
+        val node1 = buildNode(1, "query") { isPinned = true; status = "active" }
+        val node2 = buildNode(2, "other")
 
         // Blank query defaults to filterAndSortNodes fallback boolean logic instead of checking relevance?
         // Let's test with a blank query on filterAndSortNodes (should maintain standard order or relevance score 0 for both)
