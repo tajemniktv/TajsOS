@@ -66,7 +66,7 @@ fun calculateInsights(
     val weeklyFocusSec = recentSessions.sumOf { it.durationSec.toLong() }
     val avgSessionMin =
         if (recentSessions.isNotEmpty()) {
-            (recentSessions.map { it.durationSec }.average() / 60).toInt()
+            ((recentSessions.map { it.durationSec }.average().takeIf { !it.isNaN() } ?: 0.0) / 60).toInt()
         } else {
             0
         }
@@ -103,11 +103,11 @@ fun calculateInsights(
     val recentTracks = tracks.filter { it.date >= sevenDaysAgoDate.toString() }
 
     val avgMood =
-        recentTracks.mapNotNull { it.moodScore }.takeIf { it.isNotEmpty() }?.average() ?: 0.0
+        recentTracks.mapNotNull { it.moodScore }.takeIf { it.isNotEmpty() }?.average()?.takeIf { !it.isNaN() } ?: 0.0
     val avgEnergy =
-        recentTracks.mapNotNull { it.energyScore }.takeIf { it.isNotEmpty() }?.average() ?: 0.0
+        recentTracks.mapNotNull { it.energyScore }.takeIf { it.isNotEmpty() }?.average()?.takeIf { !it.isNaN() } ?: 0.0
     val avgFocus =
-        recentTracks.mapNotNull { it.focusScore }.takeIf { it.isNotEmpty() }?.average() ?: 0.0
+        recentTracks.mapNotNull { it.focusScore }.takeIf { it.isNotEmpty() }?.average()?.takeIf { !it.isNaN() } ?: 0.0
 
     val nodesByProjectId = nodes.groupBy { it.node.projectId }
     val neglectedProjects =
@@ -128,13 +128,13 @@ fun calculateInsights(
     val completionsByArea =
         recentCompletions
             .mapNotNull { item -> item.node.areaId?.let { it to item } }
-            .groupBy({ it.first }, { it.second })
-            .mapValues { it.value.size }
+            .groupingBy { it.first }
+            .eachCount()
     val completionsByProject =
         recentCompletions
             .mapNotNull { item -> item.node.projectId?.let { it to item } }
-            .groupBy({ it.first }, { it.second })
-            .mapValues { it.value.size }
+            .groupingBy { it.first }
+            .eachCount()
 
     val inboxGrowth = recentNodes.count { it.node.inboxState }
     val archivedCount =
@@ -169,29 +169,29 @@ fun calculateInsights(
                     .size
             }
     val contextSwitchingRate =
-        if (uniqueContextsPerDay.isNotEmpty()) uniqueContextsPerDay.values.average() else 0.0
+        if (uniqueContextsPerDay.isNotEmpty()) uniqueContextsPerDay.values.average().takeIf { !it.isNaN() } ?: 0.0 else 0.0
 
     // Light Manual Statistics (Roadmap Section 7)
     // Correlating track entries with activity
     val dailyCompletions =
         recentCompletions
-            .groupBy {
+            .groupingBy {
                 Instant
                     .fromEpochMilliseconds(it.node.completedAt ?: 0)
                     .toLocalDateTime(sysZone)
                     .date
                     .toString()
-            }.mapValues { it.value.size }
+            }.eachCount()
 
     val dailyCaptures =
         recentNodes
-            .groupBy {
+            .groupingBy {
                 Instant
                     .fromEpochMilliseconds(it.node.createdAt)
                     .toLocalDateTime(sysZone)
                     .date
                     .toString()
-            }.mapValues { it.value.size }
+            }.eachCount()
 
     val dailyFocus =
         recentSessions
@@ -210,13 +210,13 @@ fun calculateInsights(
                     .filter { (dailyCompletions[it.date] ?: 0) >= 3 }
                     .mapNotNull { it.moodScore }
                     .takeIf { it.isNotEmpty() }
-                    ?.average() ?: Double.NaN
+                    ?.average()?.takeIf { !it.isNaN() } ?: Double.NaN
             val moodOnSlowDays =
                 recentTracks
                     .filter { (dailyCompletions[it.date] ?: 0) == 0 }
                     .mapNotNull { it.moodScore }
                     .takeIf { it.isNotEmpty() }
-                    ?.average() ?: Double.NaN
+                    ?.average()?.takeIf { !it.isNaN() } ?: Double.NaN
             if (!moodOnBusyDays.isNaN() && !moodOnSlowDays.isNaN()) moodOnBusyDays - moodOnSlowDays else 0.0
         } else {
             0.0
@@ -229,14 +229,14 @@ fun calculateInsights(
                     .filter { (it.sleepScore ?: 0f) >= 7f }
                     .map { dailyFocus[it.date] ?: 0.0 }
                     .takeIf { it.isNotEmpty() }
-                    ?.average()
+                    ?.average()?.takeIf { !it.isNaN() }
                     ?: Double.NaN
             val focusOnBadSleep =
                 recentTracks
                     .filter { (it.sleepScore ?: 0f) < 7f }
                     .map { dailyFocus[it.date] ?: 0.0 }
                     .takeIf { it.isNotEmpty() }
-                    ?.average()
+                    ?.average()?.takeIf { !it.isNaN() }
                     ?: Double.NaN
             if (!focusOnGoodSleep.isNaN() && !focusOnBadSleep.isNaN()) focusOnGoodSleep - focusOnBadSleep else 0.0
         } else {
@@ -250,14 +250,14 @@ fun calculateInsights(
                     .filter { (it.energyScore ?: 0) >= 4 }
                     .map { dailyCaptures[it.date] ?: 0 }
                     .takeIf { it.isNotEmpty() }
-                    ?.average()
+                    ?.average()?.takeIf { !it.isNaN() }
                     ?: Double.NaN
             val capturesOnLowEnergy =
                 recentTracks
                     .filter { (it.energyScore ?: 0) <= 2 }
                     .map { dailyCaptures[it.date] ?: 0 }
                     .takeIf { it.isNotEmpty() }
-                    ?.average()
+                    ?.average()?.takeIf { !it.isNaN() }
                     ?: Double.NaN
             if (!capturesOnHighEnergy.isNaN() && !capturesOnLowEnergy.isNaN()) capturesOnHighEnergy - capturesOnLowEnergy else 0.0
         } else {
@@ -292,13 +292,13 @@ fun calculateInsights(
                     .filter { it.tookMeds }
                     .mapNotNull { it.focusScore }
                     .takeIf { it.isNotEmpty() }
-                    ?.average() ?: Double.NaN
+                    ?.average()?.takeIf { !it.isNaN() } ?: Double.NaN
             val focusWithoutMeds =
                 recentTracks
                     .filter { !it.tookMeds }
                     .mapNotNull { it.focusScore }
                     .takeIf { it.isNotEmpty() }
-                    ?.average() ?: Double.NaN
+                    ?.average()?.takeIf { !it.isNaN() } ?: Double.NaN
             if (!focusWithMeds.isNaN() && !focusWithoutMeds.isNaN()) focusWithMeds - focusWithoutMeds else 0.0
         } else {
             0.0
@@ -578,13 +578,13 @@ fun calculateAreaHealthSnapshot(
 
     val avgLoad =
         if (computed.isNotEmpty()) {
-            computed.map { it.stressLoad }.average()
+            computed.map { it.stressLoad }.average().takeIf { !it.isNaN() } ?: 0.0
         } else {
             0.0
         }
     val variance =
         if (computed.size > 1) {
-            computed.map { (it.stressLoad - avgLoad) * (it.stressLoad - avgLoad) }.average()
+            computed.map { (it.stressLoad - avgLoad) * (it.stressLoad - avgLoad) }.average().takeIf { !it.isNaN() } ?: 0.0
         } else {
             0.0
         }
@@ -699,7 +699,7 @@ fun calculateOpenLoopsSnapshot(
         ).filterValues { it.isNotEmpty() }
 
     val averageDecayScore =
-        if (active.isNotEmpty()) active.map { it.decayScore }.average().toInt() else 0
+        if (active.isNotEmpty()) active.map { it.decayScore }.average().takeIf { !it.isNaN() }?.toInt() ?: 0 else 0
     val overloadWarning =
         when
             {
@@ -2727,7 +2727,7 @@ fun calculateStudentBoardState(
                         if (masteryValues.isNotEmpty()) {
                             masteryValues
                                 .average()
-                                .toInt()
+                                .takeIf { !it.isNaN() }?.toInt() ?: 0
                         } else {
                             null
                         },
