@@ -389,7 +389,7 @@ fun AgendaRow(
                 1.dp,
                 TajsOSTheme.GhostBorder.copy(alpha = 0.15f),
             ),
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().pointerHoverIcon(PointerIcon.Hand),
     ) {
         Row(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
