@@ -488,7 +488,7 @@ private fun RecentQueriesRow(
         LazyRow(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
             items(queries.distinct(), key = { it }) { query ->
                 Surface(
-        modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
+            modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
                     shape = RoundedCornerShape(999.dp),
                     color = TajsOSTheme.SurfaceHigh,
                     onClick = { onQueryClick(query) },
@@ -670,63 +670,13 @@ private fun SearchResultCard(
         }
 
     Surface(
-        modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
+            modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
         onClick = onOpen,
         shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
         color = TajsOSTheme.SurfaceLow,
     ) {
         Column(modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Top,
-            ) {
-                Row(
-                    modifier = Modifier.weight(1f),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    verticalAlignment = Alignment.Top,
-                ) {
-                    Box(
-                        modifier =
-                            Modifier
-                                .size(26.dp)
-                                .clip(RoundedCornerShape(TajsOSTheme.RadiusSm))
-                                .background(iconTintForType(node.type).copy(alpha = 0.2f)),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Icon(
-                            iconForType(node.type),
-                            contentDescription = null,
-                            tint = iconTintForType(node.type),
-                            modifier = Modifier.size(15.dp),
-                        )
-                    }
-                    Column {
-                        Text(
-                            text = node.title,
-                            style = MaterialTheme.typography.titleMedium,
-                            color = TajsOSTheme.Text,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                        Text(
-                            text = subtitle,
-                            style = MaterialTheme.typography.labelSmall,
-                            color = TajsOSTheme.Primary,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    }
-                }
-
-                Column(horizontalAlignment = Alignment.End) {
-                    Text(
-                        text = "UPDATED ${formatRelativeTime(node.updatedAt, nowMs)}",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = TajsOSTheme.Muted,
-                    )
-                }
-            }
+            SearchResultCardHeader(node = node, subtitle = subtitle, nowMs = nowMs)
 
             Spacer(modifier = Modifier.height(TajsOSTheme.SpacingSm))
             Text(
@@ -822,5 +772,65 @@ private fun formatRelativeTime(
         minutes < 1_440 -> "${minutes / 60}H AGO"
         minutes < 10_080 -> "${minutes / 1_440}D AGO"
         else -> "${minutes / 10_080}W AGO"
+    }
+}
+
+
+@Composable
+private fun SearchResultCardHeader(
+    node: com.tajemniktv.tajsos.data.NodeEntity,
+    subtitle: String,
+    nowMs: Long
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.Top,
+    ) {
+        Row(
+            modifier = Modifier.weight(1f),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.Top,
+        ) {
+            Box(
+                modifier =
+                    Modifier
+                        .size(26.dp)
+                        .clip(RoundedCornerShape(TajsOSTheme.RadiusSm))
+                        .background(iconTintForType(node.type).copy(alpha = 0.2f)),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    iconForType(node.type),
+                    contentDescription = null,
+                    tint = iconTintForType(node.type),
+                    modifier = Modifier.size(15.dp),
+                )
+            }
+            Column {
+                Text(
+                    text = node.title,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = TajsOSTheme.Text,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TajsOSTheme.Primary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+        }
+
+        Column(horizontalAlignment = Alignment.End) {
+            Text(
+                text = "UPDATED ${formatRelativeTime(node.updatedAt, nowMs)}",
+                style = MaterialTheme.typography.labelSmall,
+                color = TajsOSTheme.Muted,
+            )
+        }
     }
 }

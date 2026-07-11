@@ -64,7 +64,7 @@ fun ModeSwitcherHeader(
                 val isSelected = mode.id == currentMode?.id
                 val color = mode.themeColor?.let { Color(it) } ?: TajsOSTheme.Primary
                 Surface(
-        modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
+            modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
                     onClick = { onModeSelect(mode.id) },
                     color = if (isSelected) color.copy(alpha = 0.15f) else Color.Transparent,
                     shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
