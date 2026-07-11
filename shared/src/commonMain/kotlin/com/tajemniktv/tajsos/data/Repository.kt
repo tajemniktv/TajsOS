@@ -1233,6 +1233,9 @@ class AppRepository(
     }
 
     // Relations
+    /**
+     * Retrieves a stream of all relation entities.
+     */
     fun getAllRelations() = relationDao.getAllRelations()
 
     fun getRelationsForNode(nodeId: Long) = relationDao.getRelationsForNode(nodeId)
@@ -1252,6 +1255,9 @@ class AppRepository(
     suspend fun deleteRelation(relation: RelationEntity) = relationDao.deleteRelation(relation)
 
     // Tags
+    /**
+     * Retrieves a stream of all tag entities.
+     */
     fun getAllTags() = tagDao.getAllTags()
 
     fun getTagsForNode(nodeId: Long) = tagDao.getTagsForNode(nodeId)
@@ -1273,6 +1279,9 @@ class AppRepository(
     ) = tagDao.detachTagFromNode(nodeId, tagId)
 
     // Log
+    /**
+     * Retrieves a stream of the most recent event logs, constrained by the specified limit.
+     */
     fun getRecentLogs(limit: Int = 100) = eventLogDao.getRecentLogs(limit)
 
     fun getLogsForNode(nodeId: Long) = eventLogDao.getLogsForNode(nodeId)
@@ -1292,6 +1301,9 @@ class AppRepository(
     }
 
     // Attachments
+    /**
+     * Retrieves a stream of all attachment entities belonging to the specified node ID.
+     */
     fun getAttachmentsForNode(nodeId: Long) = attachmentDao.getAttachmentsForNode(nodeId)
 
     suspend fun insertAttachment(attachment: AttachmentEntity) = attachmentDao.insertAttachment(attachment)
@@ -1299,6 +1311,9 @@ class AppRepository(
     suspend fun deleteAttachment(attachment: AttachmentEntity) = attachmentDao.deleteAttachment(attachment)
 
     // Domains
+    /**
+     * Retrieves a stream of mapped domain assignments for a given item ID.
+     */
     fun getDomainsForItem(itemId: Long): Flow<List<DomainAssignment>> =
         itemDomainDao.getDomainsForItem(itemId).map { domains ->
             domains.mapNotNull { it.toModel() }
@@ -1327,6 +1342,9 @@ class AppRepository(
     ) = itemDomainDao.deleteDomain(itemId, domain.name)
 
     // Documents
+    /**
+     * Retrieves a stream of the rich content document associated with a specific item ID, or null if none exists.
+     */
     fun getDocumentForItem(itemId: Long): Flow<RichContentDocument?> =
         richContentDocumentDao.observeDocumentForItem(itemId).map { document ->
             document?.toModel()
@@ -1370,6 +1388,9 @@ class AppRepository(
     suspend fun deleteDocumentForItem(itemId: Long) = richContentDocumentDao.deleteDocumentForItem(itemId)
 
     // Saved views
+    /**
+     * Retrieves a stream of all fully mapped saved view definitions, including their filters, sorts, source kinds, and visible fields.
+     */
     fun getSavedViews(): Flow<List<SavedViewDefinition>> =
         combine(
             savedViewDao.getAllSavedViews(),
@@ -1490,6 +1511,9 @@ class AppRepository(
     }
 
     // Templates
+    /**
+     * Retrieves a stream of all node template entities.
+     */
     fun getAllTemplates() = templateDao.getAllTemplates()
 
     suspend fun insertTemplate(template: TemplateEntity) = templateDao.insertTemplate(template)
@@ -1501,6 +1525,9 @@ class AppRepository(
     suspend fun deleteTemplate(template: TemplateEntity) = templateDao.deleteTemplate(template)
 
     // Snapshots
+    /**
+     * Retrieves a stream of all historical node snapshot entities for a given node ID.
+     */
     fun getSnapshotsForNode(nodeId: Long) = nodeSnapshotDao.getSnapshotsForNode(nodeId)
 
     suspend fun insertSnapshot(snapshot: NodeSnapshotEntity) = nodeSnapshotDao.insertSnapshot(snapshot)
@@ -1508,6 +1535,9 @@ class AppRepository(
     suspend fun deleteSnapshot(snapshot: NodeSnapshotEntity) = nodeSnapshotDao.deleteSnapshot(snapshot)
 
     // Reviews
+    /**
+     * Retrieves a stream of all review entities.
+     */
     fun getAllReviews() = reviewDao.getAllReviews()
 
     suspend fun insertReview(review: ReviewEntity): Long {
@@ -1519,6 +1549,9 @@ class AppRepository(
     suspend fun getLastReviewByType(type: String) = reviewDao.getLastReviewByType(type)
 
     // Operating Modes
+    /**
+     * Retrieves a stream of all mode entities.
+     */
     fun getAllModes() = modeDao.getAllModes()
 
     suspend fun insertMode(mode: ModeEntity): Long {
@@ -1567,6 +1600,9 @@ class AppRepository(
         }
 
     // Protocols
+    /**
+     * Retrieves a stream of all protocol history entities.
+     */
     fun getAllProtocolHistory() = protocolDao.getAllProtocolHistory()
 
     suspend fun insertProtocolHistory(history: ProtocolHistoryEntity): Long {
