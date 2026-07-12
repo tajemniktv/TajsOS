@@ -22,6 +22,8 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.font.FontWeight
 import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.ui.components.cards.ProgressControlCard
@@ -244,7 +246,7 @@ internal fun renderFlashcardCandidatesBlock(context: StudyDashboardContext) {
                         color = TajsOSTheme.Muted,
                     )
                 }
-                OutlinedButton(onClick = {
+                OutlinedButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = {
                     context.viewModel.toggleFlashcardCandidate(
                         item.node,
                         false,
@@ -268,7 +270,7 @@ internal fun renderLinksGraphBlock(context: StudyDashboardContext) {
                 style = MaterialTheme.typography.bodySmall,
             )
             Spacer(Modifier.height(TajsOSTheme.SpacingSm))
-            Button(onClick = context.onOpenTopicLink) {
+            Button(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = context.onOpenTopicLink) {
                 Icon(Icons.Default.Link, contentDescription = null)
                 Text("Create Topic Link")
             }
@@ -283,7 +285,7 @@ internal fun renderLinksGraphBlock(context: StudyDashboardContext) {
                 style = MaterialTheme.typography.bodySmall,
             )
             Spacer(Modifier.height(TajsOSTheme.SpacingSm))
-            Button(onClick = context.onOpenPaperLink) {
+            Button(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = context.onOpenPaperLink) {
                 Icon(Icons.Default.Link, contentDescription = null)
                 Text("Create Paper Link")
             }

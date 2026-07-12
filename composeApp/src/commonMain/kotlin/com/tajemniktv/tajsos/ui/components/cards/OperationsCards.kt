@@ -27,6 +27,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.MainViewModel
@@ -180,7 +182,7 @@ fun OpenLoopCard(
                         label = { Text(stringResource(Res.string.open_loop_action_convert_note)) },
                     )
                 } else {
-                    Button(onClick = onArchive) { Text(stringResource(Res.string.open_loop_action_archive)) }
+                    Button(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = onArchive) { Text(stringResource(Res.string.open_loop_action_archive)) }
                 }
             }
         }
@@ -311,7 +313,7 @@ fun MaintenanceCard(
                         label = { Text("RESOLVE") },
                     )
                 } else {
-                    Button(onClick = onArchive) { Text("ARCHIVE") }
+                    Button(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = onArchive) { Text("ARCHIVE") }
                 }
             }
         }
@@ -386,7 +388,7 @@ fun ProtocolCard(
             ) {
                 AssistChip(onClick = { onEditNode(item.node.node.id) }, label = { Text("OPEN") })
                 AssistChip(onClick = onRun, label = { Text("RUN") })
-                Button(onClick = onArchive) { Text("ARCHIVE") }
+                Button(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = onArchive) { Text("ARCHIVE") }
             }
         }
     }

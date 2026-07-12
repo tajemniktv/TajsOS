@@ -46,6 +46,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.input.ImeAction
@@ -286,7 +288,7 @@ fun CaptureSheet(
                 )
 
                 if (onVoiceCaptureClick != null) {
-                    IconButton(onClick = onVoiceCaptureClick, modifier = Modifier.size(48.dp)) {
+                    IconButton(onClick = onVoiceCaptureClick, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand).size(48.dp)) {
                         Icon(
                             imageVector = Icons.Default.Mic,
                             contentDescription = stringResource(Res.string.capture_voice),

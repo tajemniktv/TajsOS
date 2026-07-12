@@ -36,6 +36,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeEntity
@@ -294,7 +296,7 @@ private fun PriorityTaskCard(
                 horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Button(onClick = { onStartFocus(task) }, modifier = Modifier.weight(1f)) {
+                Button(onClick = { onStartFocus(task) }, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand).weight(1f)) {
                     Icon(Icons.Default.PlayArrow, null)
                     Spacer(Modifier.width(6.dp))
                     Text(stringResource(Res.string.tasks_start_focus_action))
@@ -315,7 +317,7 @@ private fun PriorityTaskCard(
                         },
                     )
                 }
-                OutlinedButton(onClick = { onDone(task) }, modifier = Modifier.weight(1f)) {
+                OutlinedButton(onClick = { onDone(task) }, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand).weight(1f)) {
                     Icon(Icons.Default.Check, null)
                     Spacer(Modifier.width(4.dp))
                     Text(stringResource(Res.string.tasks_done_action))
@@ -366,9 +368,9 @@ private fun QueueList(
                         }
                     }
                     Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
-                        OutlinedButton(onClick = { onDoNow(task) }) { Text(stringResource(Res.string.tasks_start_focus_action)) }
-                        OutlinedButton(onClick = { onOpen(task.id) }) { Text(stringResource(Res.string.tasks_open_action)) }
-                        IconButton(onClick = { onDone(task) }) { Icon(Icons.Default.Check, null) }
+                        OutlinedButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { onDoNow(task) }) { Text(stringResource(Res.string.tasks_start_focus_action)) }
+                        OutlinedButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { onOpen(task.id) }) { Text(stringResource(Res.string.tasks_open_action)) }
+                        IconButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { onDone(task) }) { Icon(Icons.Default.Check, null) }
                     }
                 }
                 HorizontalDivider(color = TajsOSTheme.GhostBorder)
@@ -414,7 +416,7 @@ private fun CommandSidebar(
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = { Text(stringResource(Res.string.tasks_quick_add_hint)) },
             )
-            Button(onClick = onQuickAdd, modifier = Modifier.fillMaxWidth()) {
+            Button(onClick = onQuickAdd, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand).fillMaxWidth()) {
                 Text(
                     stringResource(
                         Res.string.tasks_quick_add_action,
@@ -433,7 +435,7 @@ private fun CommandSidebar(
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = { Text(stringResource(Res.string.tasks_quick_capture_hint)) },
             )
-            OutlinedButton(onClick = onCapture, modifier = Modifier.fillMaxWidth()) {
+            OutlinedButton(onClick = onCapture, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand).fillMaxWidth()) {
                 Text(
                     stringResource(Res.string.tasks_quick_capture_action),
                 )

@@ -58,6 +58,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -219,7 +221,7 @@ internal fun renderOperationalBlock(context: DashboardBlockContext) {
                 letterSpacing = 2.sp,
             )
 
-            TextButton(onClick = { context.onNavigateTo(Screen.OpenLoops) }) {
+            TextButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { context.onNavigateTo(Screen.OpenLoops) }) {
                 Text(
                     text = stringResource(Res.string.dashboard_open_loops_action),
                     style = MaterialTheme.typography.labelSmall,

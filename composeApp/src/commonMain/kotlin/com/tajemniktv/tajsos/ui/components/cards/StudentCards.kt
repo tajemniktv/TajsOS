@@ -31,6 +31,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.data.TemplateEntity
@@ -310,13 +312,13 @@ fun ProgressControlCard(
             Text(title, style = MaterialTheme.typography.titleSmall)
             Text("$value%", style = MaterialTheme.typography.bodySmall, color = TajsOSTheme.Accent)
             Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
-                OutlinedButton(onClick = onDecrease) { Text("-10") }
-                OutlinedButton(onClick = onIncrease) { Text("+10") }
-                OutlinedButton(onClick = onOpen) { Text(stringResource(Res.string.common_open)) }
+                OutlinedButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = onDecrease) { Text("-10") }
+                OutlinedButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = onIncrease) { Text("+10") }
+                OutlinedButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = onOpen) { Text(stringResource(Res.string.common_open)) }
             }
             Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
-                OutlinedButton(onClick = onOpen) { Text(stringResource(Res.string.student_action_details)) }
-                OutlinedButton(onClick = {}) {
+                OutlinedButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = onOpen) { Text(stringResource(Res.string.student_action_details)) }
+                OutlinedButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = {}) {
                     Text(
                         stringResource(
                             Res.string.student_id_label,
@@ -355,7 +357,7 @@ fun StudentNodeCard(
         modifier = Modifier.fillMaxWidth().padding(bottom = TajsOSTheme.SpacingSm),
         horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
     ) {
-        OutlinedButton(onClick = {
+        OutlinedButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = {
             viewModel.toggleFlashcardCandidate(
                 node.node,
                 enabled = true,
@@ -363,7 +365,7 @@ fun StudentNodeCard(
         }) {
             Text(stringResource(Res.string.common_flashcard))
         }
-        OutlinedButton(onClick = { viewModel.toggleRevisitBeforeExam(node.node, enabled = true) }) {
+        OutlinedButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { viewModel.toggleRevisitBeforeExam(node.node, enabled = true) }) {
             Text(stringResource(Res.string.common_revisit))
         }
     }

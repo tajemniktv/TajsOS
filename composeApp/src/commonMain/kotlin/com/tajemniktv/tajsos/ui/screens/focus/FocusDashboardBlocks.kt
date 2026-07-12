@@ -44,6 +44,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -402,7 +404,7 @@ internal fun FocusMainBlock(viewModel: MainViewModel) {
                         )
                         capture = ""
                     }
-                }, modifier = Modifier.fillMaxWidth()) {
+                }, modifier = Modifier.fillMaxWidth().pointerHoverIcon(PointerIcon.Hand)) {
                     Icon(Icons.Default.Inbox, null)
                     Spacer(Modifier.size(6.dp))
                     Text(

@@ -20,6 +20,8 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
@@ -48,7 +50,7 @@ private fun renderTemplatesList(context: TemplatesDashboardContext) {
     if (templates.isEmpty()) {
         EmptyState(message = stringResource(Res.string.templates_empty)) {
             Spacer(modifier = Modifier.height(TajsOSTheme.SpacingMd))
-            Button(onClick = context.onShowAddDialog) {
+            Button(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = context.onShowAddDialog) {
                 Text(stringResource(Res.string.templates_add_desc))
             }
         }
@@ -73,7 +75,7 @@ private fun renderTemplatesList(context: TemplatesDashboardContext) {
                         Text(typeLabel.uppercase())
                     },
                     trailingContent = {
-                        IconButton(onClick = { context.onDeleteTemplate(template) }) {
+                        IconButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { context.onDeleteTemplate(template) }) {
                             Icon(
                                 Icons.Default.Delete,
                                 contentDescription = stringResource(Res.string.archive_delete),

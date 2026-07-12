@@ -48,6 +48,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
@@ -123,7 +125,7 @@ internal fun AreasMainBlock(
                 color = TajsOSTheme.Text,
             )
             Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
-                OutlinedButton(onClick = { showAddDialog = true }) {
+                OutlinedButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { showAddDialog = true }) {
                     Text(stringResource(Res.string.areas_new))
                 }
             }
@@ -132,7 +134,7 @@ internal fun AreasMainBlock(
         if (areas.isEmpty()) {
             EmptyState(message = stringResource(Res.string.areas_empty)) {
                 Spacer(modifier = Modifier.height(TajsOSTheme.SpacingMd))
-                Button(onClick = { showAddDialog = true }) {
+                Button(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { showAddDialog = true }) {
                     Text(stringResource(Res.string.areas_create_first))
                 }
             }
@@ -418,7 +420,7 @@ private fun AreaCard(
                     "${metrics?.neglectedDays ?: 0}d",
                 )
                 Spacer(modifier = Modifier.height(4.dp))
-                OutlinedButton(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
+                OutlinedButton(onClick = onClick, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand).fillMaxWidth()) {
                     Text(stringResource(Res.string.areas_enter))
                 }
             }
@@ -470,12 +472,12 @@ fun AddAreaDialog(
             )
         },
         confirmButton = {
-            Button(onClick = { onConfirm(name) }, enabled = name.isNotBlank()) {
+            Button(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { onConfirm(name) }, enabled = name.isNotBlank()) {
                 Text(stringResource(Res.string.areas_dialog_create))
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(Res.string.areas_dialog_cancel)) }
+            TextButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = onDismiss) { Text(stringResource(Res.string.areas_dialog_cancel)) }
         },
     )
 }

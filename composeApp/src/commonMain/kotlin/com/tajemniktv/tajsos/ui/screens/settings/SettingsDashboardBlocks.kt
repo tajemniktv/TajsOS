@@ -39,6 +39,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.AppPack
@@ -721,7 +723,7 @@ private fun SettingsMedicationItem(
             color = TajsOSTheme.Muted,
         )
         Spacer(Modifier.height(TajsOSTheme.SpacingSm))
-        TextButton(onClick = onDelete) {
+        TextButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = onDelete) {
             Text(stringResource(Res.string.med_delete))
         }
     }
@@ -792,7 +794,7 @@ private fun SettingsAddMedicationDialog(
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
+            TextButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = onDismiss) {
                 Text(stringResource(Res.string.common_back))
             }
         },

@@ -36,6 +36,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -561,7 +563,7 @@ private fun ProtocolLibraryCard(
                 color = TajsOSTheme.Muted,
             )
             Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
-                Button(onClick = onRun) {
+                Button(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = onRun) {
                     Text(stringResource(Res.string.protocols_action_run))
                 }
                 AssistChip(

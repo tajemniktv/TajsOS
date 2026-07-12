@@ -36,6 +36,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -433,19 +435,19 @@ private fun TaskDetails(
             horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
             modifier = Modifier.fillMaxWidth(),
         ) {
-            OutlinedButton(onClick = { onOpen(task.id) }, modifier = Modifier.weight(1f)) {
+            OutlinedButton(onClick = { onOpen(task.id) }, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand).weight(1f)) {
                 Text(
                     stringResource(Res.string.tasks_open_action),
                 )
             }
             if (task.taskStateOrNull() == TaskState.DONE) {
-                OutlinedButton(onClick = { onRestore(task) }, modifier = Modifier.weight(1f)) {
+                OutlinedButton(onClick = { onRestore(task) }, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand).weight(1f)) {
                     Icon(Icons.Default.Refresh, null)
                     Spacer(Modifier.width(4.dp))
                     Text(stringResource(Res.string.tasks_restore_action))
                 }
             } else {
-                OutlinedButton(onClick = { onDone(task) }, modifier = Modifier.weight(1f)) {
+                OutlinedButton(onClick = { onDone(task) }, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand).weight(1f)) {
                     Text(
                         stringResource(Res.string.tasks_done_action),
                     )
@@ -456,12 +458,12 @@ private fun TaskDetails(
             horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
             modifier = Modifier.fillMaxWidth(),
         ) {
-            OutlinedButton(onClick = { onArchive(task) }, modifier = Modifier.weight(1f)) {
+            OutlinedButton(onClick = { onArchive(task) }, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand).weight(1f)) {
                 Icon(Icons.Default.Archive, null)
                 Spacer(Modifier.width(4.dp))
                 Text(stringResource(Res.string.tasks_archive_action))
             }
-            OutlinedButton(onClick = { onDelete(task) }, modifier = Modifier.weight(1f)) {
+            OutlinedButton(onClick = { onDelete(task) }, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand).weight(1f)) {
                 Icon(Icons.Default.Delete, null, tint = TajsOSTheme.Error)
                 Spacer(Modifier.width(4.dp))
                 Text(stringResource(Res.string.tasks_delete_action), color = TajsOSTheme.Error)

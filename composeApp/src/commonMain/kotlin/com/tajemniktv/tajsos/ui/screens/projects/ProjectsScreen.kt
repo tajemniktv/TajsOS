@@ -24,6 +24,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.data.NodeWithPin
@@ -163,7 +165,7 @@ fun AddProjectDialog(
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
+            TextButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = onDismiss) {
                 Text(stringResource(Res.string.projects_dialog_cancel))
             }
         },
@@ -197,7 +199,7 @@ fun ProjectListContent(
             message = stringResource(Res.string.projects_empty),
         ) {
             Spacer(modifier = Modifier.height(TajsOSTheme.SpacingMd))
-            Button(onClick = onShowAddDialog) {
+            Button(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = onShowAddDialog) {
                 Text(stringResource(Res.string.projects_create_first))
             }
         }

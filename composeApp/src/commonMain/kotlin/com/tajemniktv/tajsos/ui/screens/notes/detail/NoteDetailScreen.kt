@@ -90,6 +90,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.data.ItemKind
 import com.tajemniktv.tajsos.data.isNoteItem
@@ -203,7 +205,7 @@ fun NoteDetailScreen(
         }
 
     val actions: @Composable RowScope.() -> Unit = {
-        IconButton(onClick = { viewModel.togglePermanentPin(node) }) {
+        IconButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { viewModel.togglePermanentPin(node) }) {
             Icon(
                 if (node.isPinned) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                 contentDescription = null,
@@ -244,7 +246,7 @@ fun NoteDetailScreen(
                 modifier = Modifier.size(18.dp),
             )
         }
-        IconButton(onClick = { showMoreDialog = true }, modifier = Modifier.size(48.dp)) {
+        IconButton(onClick = { showMoreDialog = true }, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand).size(48.dp)) {
             Icon(
                 Icons.Default.MoreVert,
                 contentDescription = null,

@@ -9,6 +9,9 @@ import androidx.compose.material.icons.filled.Gavel
 import androidx.compose.material.icons.filled.School
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -98,7 +101,7 @@ internal fun renderStudyModuleBlock(
         nodes = studyNodes.take(5),
         onEditNode = context.onEditNode,
     )
-    TextButton(onClick = { context.onNavigateTo(Screen.Education) }) {
+    TextButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { context.onNavigateTo(Screen.Education) }) {
         Text(stringResource(Res.string.dash_action_open_study))
     }
 }
