@@ -86,6 +86,16 @@ class StudentCommands(
         }
     }
 
+    /**
+     * Updates an academic node with formal course registration details.
+     * This modifies the internal `StudentMetadata` embedded in the node's JSON structure.
+     *
+     * @param node The [NodeEntity] being updated.
+     * @param courseId The formal code for the course (e.g., 'CS101').
+     * @param courseName The human-readable name of the course.
+     * @param semester The semester or term identifier (e.g., 'Fall 2026').
+     * @param assignmentType An optional classification if this node represents coursework.
+     */
     fun setStudentCourse(
         node: NodeEntity,
         courseId: String?,
@@ -103,6 +113,18 @@ class StudentCommands(
         }
     }
 
+    /**
+     * Creates a new general note specifically pre-populated with academic context.
+     * It wraps the created node with `StudentMetadata` to track course and topic assignments.
+     *
+     * @param title The title of the note.
+     * @param content The body text of the note.
+     * @param noteType The categorization (e.g., 'lecture_note', 'reading_summary').
+     * @param courseId The optional course identifier.
+     * @param courseName The optional full course name.
+     * @param semester The optional semester context.
+     * @param topic The optional subject matter topic.
+     */
     fun addStudentNote(
         title: String,
         content: String,
@@ -166,6 +188,10 @@ class StudentCommands(
         addRelation(topicNodeId, noteNodeId, "TOPIC_LINK")
     }
 
+    /**
+     * Establishes a formal "PAPER_REFERENCE" relation between a research paper node and a standard note.
+     * Used for structuring literature reviews or connecting citations to insights.
+     */
     fun linkPaperToNote(
         paperNodeId: Long,
         noteNodeId: Long,

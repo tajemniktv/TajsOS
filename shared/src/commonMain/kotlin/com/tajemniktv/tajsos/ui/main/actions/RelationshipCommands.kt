@@ -39,10 +39,10 @@ class RelationshipCommands(
     private val setTagOnNode: suspend (Long, String, Boolean) -> Unit,
 ) {
     /**
-     * Marks the current moment as the last point of contact for a specific person.
-     * Silently fails if the node is not of type "person".
+     * Records the current timestamp as the last known contact point for a person node.
+     * This is crucial for CRM-style features to identify dormant relationships.
      *
-     * @param person The [NodeEntity] representing the person.
+     * @param person The person node.
      */
     fun setPersonLastContactNow(person: NodeEntity) {
         if (person.type != "person") return
@@ -73,6 +73,10 @@ class RelationshipCommands(
         updateNode(person.copy(dueAt = followUpAt))
     }
 
+    /**
+     * Marks a specific date/event as important for a person (e.g., birthday, anniversary).
+     * This embeds the data into the `PersonMetadata` JSON envelope on the node.
+     */
     fun setPersonImportantDate(
         person: NodeEntity,
         timestamp: Long?,
@@ -377,6 +381,10 @@ class RelationshipCommands(
         }
     }
 
+    /**
+     * Upgrades an informal note into a "personal rule" or operating principle.
+     * Enforces the `rule_` prefix convention on category tags to power heuristic dashboard lenses.
+     */
     fun addPersonalRule(
         title: String,
         content: String = "",
@@ -442,6 +450,10 @@ class RelationshipCommands(
         }
     }
 
+    /**
+     * Logs an entry in the structured 'Vault', a secure mental drawer for long-term reference material
+     * (e.g., medical records, vehicle info, lease agreements).
+     */
     fun addVaultEntry(
         categoryTag: String,
         title: String,

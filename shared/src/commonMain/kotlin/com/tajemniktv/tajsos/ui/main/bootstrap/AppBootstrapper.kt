@@ -450,13 +450,6 @@ class AppBootstrapper(
      * @param preference The default preference set to link with the new mode.
      * @return The unique database identifier of the newly created mode.
      */
-    /**
-     * Persists a new system mode along with its corresponding preference configuration.
-     *
-     * @param mode The mode entity to persist.
-     * @param preference The default preference set to link with the new mode.
-     * @return The unique database identifier of the newly created mode.
-     */
 
     /**
      * Helper to insert a mode and its corresponding preference record.

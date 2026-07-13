@@ -48,13 +48,11 @@ class ProtocolCommands(
     }
 
     /**
-     * Executes or instantiates a specific transition protocol based on its label.
+     * Executes or triggers a system protocol by its label.
+     * If the protocol is derived from a playbook template, it applies the checklist and creates a log entry.
      *
-     * If the protocol node does not exist, a new protocol node is created from the best-matching [TransitionProtocolTemplate].
-     * If the node already exists, a history row is recorded for the new trigger without altering the existing node metadata or content.
-     *
-     * @param protocolLabel The string identifier or title of the protocol to trigger.
-     * @param source The structural context or UI location where the trigger originated (defaults to "dashboard").
+     * @param protocolLabel The normalized identifier or label of the protocol to execute.
+     * @param source The origin of the trigger (e.g., 'ui', 'shortcut') used for auditing in the protocol history.
      */
     fun triggerProtocol(
         protocolLabel: String,
@@ -141,6 +139,14 @@ class ProtocolCommands(
         }
     }
 
+    /**
+     * Finds an existing playbook template by label and applies its checklist content to a new or existing protocol node.
+     * Upgrades the node into a full playbook structure, optionally overriding its default mode or area context.
+     *
+     * @param playbookLabel The unique string label of the target playbook template.
+     * @param modeKey The system mode key to bind this playbook to (overrides template default if provided).
+     * @param areaId The area context to assign this playbook to.
+     */
     fun applyPlaybookTemplate(
         playbookLabel: String,
         modeKey: String? = null,
@@ -258,6 +264,15 @@ class ProtocolCommands(
         updateNode(playbookNode.copy(areaId = areaId))
     }
 
+    /**
+     * Toggles a specific markdown checklist step within a protocol node's content body.
+     * This parses the textual content, identifies lines starting with `- [ ]` or `- [x]`, and flips the state
+     * at the specified index.
+     *
+     * @param protocolNode The node representing the protocol/checklist.
+     * @param checklistIndex The zero-based index of the actionable checklist item within the text.
+     * @param checked True to mark the item as done (`- [x]`), false for pending (`- [ ]`).
+     */
     fun toggleProtocolChecklistStep(
         protocolNode: NodeEntity,
         checklistIndex: Int,
