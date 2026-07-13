@@ -72,7 +72,13 @@ class IcsCalendarProvider(
             block()
         } catch (e: CancellationException) {
             throw e
-        } catch (e: Exception) {
+        } catch (e: ResponseException) {
+            println("ICS fetch failed for providerId=$providerId: $e")
+            null
+        } catch (e: IOException) {
+            println("ICS fetch failed for providerId=$providerId: $e")
+            null
+        } catch (e: IllegalArgumentException) {
             println("ICS fetch failed for providerId=$providerId: $e")
             null
         }
@@ -394,7 +400,9 @@ internal class IcsEventBuilder {
             tzidRegex.find(rawKey) ?: return TimeZone.currentSystemDefault()
         return try {
             TimeZone.of(tzidMatch.groupValues[1])
-        } catch (e: IllegalArgumentException) {
+        } catch (e: Exception) {
+            // catch Exception instead of IllegalArgumentException
+            // kotlinx-datetime TimeZone.of throws IllegalTimeZoneException, which inherits from RuntimeException
             TimeZone.currentSystemDefault()
         }
     }

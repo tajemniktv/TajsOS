@@ -78,9 +78,18 @@ fun Route.syncRoutes() {
             } catch (e: CancellationException) {
                 // Rethrow cancellation to let coroutines cancel gracefully
                 throw e
-            } catch (e: Exception) {
+            } catch (e: io.ktor.server.plugins.BadRequestException) {
                 call.application.environment.log.error("Failed to process sync request", e)
                 // If it fails to deserialize or handle the request, return a 400 Bad Request
+                call.respond(
+                    HttpStatusCode.BadRequest,
+                    ErrorResponse(
+                        error = "Invalid sync request payload",
+                        details = "The request could not be processed due to a malformed payload",
+                    ),
+                )
+            } catch (e: kotlinx.serialization.SerializationException) {
+                call.application.environment.log.error("Failed to process sync request", e)
                 call.respond(
                     HttpStatusCode.BadRequest,
                     ErrorResponse(

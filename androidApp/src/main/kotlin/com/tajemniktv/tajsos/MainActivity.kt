@@ -423,7 +423,7 @@ class MainActivity : FragmentActivity() {
                             viewModel.setAuthenticated(true)
                         } catch (e: CancellationException) {
                             throw e
-                        } catch (e: Exception) {
+                        } catch (e: java.security.GeneralSecurityException) {
                             Log.e(TAG, "Biometric crypto operation failed: ${e.javaClass.simpleName}")
                         }
                     }

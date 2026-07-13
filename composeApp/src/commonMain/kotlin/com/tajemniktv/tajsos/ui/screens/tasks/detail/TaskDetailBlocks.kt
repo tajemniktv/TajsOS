@@ -941,10 +941,9 @@ private fun RenderTaskMetadataProperties(
                 TaskPropertyOption(TaskDuePreset.InSevenDays.name, "In 7 days"),
             ),
         onSelect = { value ->
-            try {
-                context.onDuePresetChange(TaskDuePreset.valueOf(value))
-            } catch (e: IllegalArgumentException) {
-                // Ignore invalid values to prevent crashes
+            val preset = TaskDuePreset.entries.find { it.name == value }
+            if (preset != null) {
+                context.onDuePresetChange(preset)
             }
         },
     )
