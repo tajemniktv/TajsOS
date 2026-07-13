@@ -21,6 +21,10 @@ export default defineConfig({
       title: "Docs",
       description: "TajsOS Documentation",
 
+
+      // Disable default 404 route to prevent collision with custom src/pages/404.astro
+      disable404Route: true,
+
       components: {
         MarkdownContent: "./src/components/MarkdownContent.astro",
       },
