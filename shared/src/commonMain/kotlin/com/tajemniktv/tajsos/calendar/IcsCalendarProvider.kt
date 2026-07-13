@@ -12,8 +12,6 @@ import io.ktor.client.statement.bodyAsText
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
-import kotlinx.io.IOException
-import io.ktor.client.plugins.ResponseException
 import kotlin.time.Clock
 import kotlin.time.Instant
 import kotlin.coroutines.cancellation.CancellationException
@@ -72,13 +70,7 @@ class IcsCalendarProvider(
             block()
         } catch (e: CancellationException) {
             throw e
-        } catch (e: ResponseException) {
-            println("ICS fetch failed for providerId=$providerId: $e")
-            null
-        } catch (e: IOException) {
-            println("ICS fetch failed for providerId=$providerId: $e")
-            null
-        } catch (e: IllegalArgumentException) {
+        } catch (e: Exception) {
             println("ICS fetch failed for providerId=$providerId: $e")
             null
         }
