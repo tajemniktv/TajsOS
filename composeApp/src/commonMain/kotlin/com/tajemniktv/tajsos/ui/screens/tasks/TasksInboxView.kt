@@ -40,6 +40,8 @@ import tajsos.composeapp.generated.resources.tasks_inbox_tasks_title
 import tajsos.composeapp.generated.resources.tasks_inbox_title
 import tajsos.composeapp.generated.resources.tasks_inbox_triage_task
 import tajsos.composeapp.generated.resources.tasks_open_action
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.input.pointer.PointerIcon
 
 @Composable
 internal fun TasksInboxView(
@@ -115,7 +117,7 @@ internal fun TasksInboxView(
                                         stringResource(Res.string.tasks_inbox_triage_task),
                                     )
                                 }
-                                IconButton(onClick = { onDismiss(entry) }) {
+                                IconButton(onClick = { onDismiss(entry) }, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
                                     Icon(
                                         Icons.Default.Delete,
                                         stringResource(Res.string.tasks_inbox_dismiss),

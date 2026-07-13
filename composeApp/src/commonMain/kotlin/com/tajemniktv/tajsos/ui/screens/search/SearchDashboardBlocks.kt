@@ -84,6 +84,8 @@ import tajsos.composeapp.generated.resources.type_record
 import tajsos.composeapp.generated.resources.type_task
 import kotlin.math.max
 import kotlin.math.min
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.input.pointer.PointerIcon
 
 object SearchDashboardBlocks {
     private val renderers: Map<String, SearchDashboardBlockRenderer> =
@@ -111,7 +113,7 @@ private fun renderSearchInput(context: SearchDashboardContext) {
             leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
             trailingIcon = {
                 if (context.searchQuery.isNotEmpty()) {
-                    IconButton(onClick = { viewModel.updateSearchQuery("") }) {
+                    IconButton(onClick = { viewModel.updateSearchQuery("") }, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
                         Icon(
                             Icons.Default.Clear,
                             contentDescription = stringResource(Res.string.search_clear),
@@ -125,7 +127,7 @@ private fun renderSearchInput(context: SearchDashboardContext) {
                     unfocusedContainerColor = TajsOSTheme.Surface,
                 ),
         )
-        IconButton(onClick = context.onToggleFilters, modifier = Modifier.size(48.dp)) {
+        IconButton(onClick = context.onToggleFilters, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand).size(48.dp)) {
             Icon(
                 Icons.Default.FilterList,
                 contentDescription = "Toggle filters",

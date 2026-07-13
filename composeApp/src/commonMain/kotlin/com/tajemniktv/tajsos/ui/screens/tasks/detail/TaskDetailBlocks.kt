@@ -111,6 +111,8 @@ import tajsos.composeapp.generated.resources.task_detail_queued
 import tajsos.composeapp.generated.resources.task_detail_snooze
 import tajsos.composeapp.generated.resources.tasks_detail_updated
 import tajsos.composeapp.generated.resources.track_empty
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.input.pointer.PointerIcon
 
 private val detailPanelShape = RoundedCornerShape(TajsOSTheme.RadiusMd)
 private val detailPanelBorder = TajsOSTheme.GhostBorder.copy(alpha = 0.22f)
@@ -620,7 +622,7 @@ private fun SubtaskRow(
                 color = tint,
             )
             if (subtask.source == TaskSubtaskSource.InlineChecklist && onRemove != null) {
-                IconButton(onClick = onRemove, modifier = Modifier.size(48.dp)) {
+                IconButton(onClick = onRemove, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand).size(48.dp)) {
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = null,
@@ -704,7 +706,7 @@ private fun AttachmentRow(
                 )
             }
         }
-        IconButton(onClick = onRemove, modifier = Modifier.size(48.dp)) {
+        IconButton(onClick = onRemove, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand).size(48.dp)) {
             Icon(Icons.Default.Delete, contentDescription = null, tint = TajsOSTheme.Muted)
         }
     }

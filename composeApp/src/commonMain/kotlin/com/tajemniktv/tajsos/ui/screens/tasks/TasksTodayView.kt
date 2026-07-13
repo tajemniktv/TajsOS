@@ -40,6 +40,8 @@ import tajsos.composeapp.generated.resources.tasks_today_pinned
 import tajsos.composeapp.generated.resources.tasks_today_subtitle
 import tajsos.composeapp.generated.resources.tasks_today_title
 import kotlin.time.Clock
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.input.pointer.PointerIcon
 
 @Composable
 internal fun TasksTodayView(
@@ -195,7 +197,7 @@ private fun TodaySection(
                                     },
                                 )
                             }
-                            IconButton(onClick = { onDone(task) }) {
+                            IconButton(onClick = { onDone(task) }, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
                                 Icon(
                                     Icons.Default.Check,
                                     null,

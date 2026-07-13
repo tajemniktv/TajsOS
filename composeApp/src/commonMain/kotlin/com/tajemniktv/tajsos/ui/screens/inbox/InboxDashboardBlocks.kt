@@ -43,6 +43,8 @@ import tajsos.composeapp.generated.resources.type_note
 import tajsos.composeapp.generated.resources.type_project
 import tajsos.composeapp.generated.resources.type_record
 import tajsos.composeapp.generated.resources.type_task
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.input.pointer.PointerIcon
 
 object InboxDashboardBlockRegistry {
     private val renderers: Map<String, InboxDashboardBlockRenderer> =
@@ -122,7 +124,7 @@ internal fun InboxMainBlock(
                             onArchive = { viewModel.archiveNode(nodeWithPin.node) },
                         )
 
-                        IconButton(onClick = { viewModel.markAsProcessed(nodeWithPin.node.id) }) {
+                        IconButton(onClick = { viewModel.markAsProcessed(nodeWithPin.node.id) }, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
                             Icon(
                                 imageVector = Icons.Default.Check,
                                 contentDescription = stringResource(Res.string.inbox_process),
@@ -180,7 +182,7 @@ private fun InboxCaptureCard(
                     onClick = { viewModel.triageInboxEntry(entry.id, ItemKind.PROJECT) },
                     label = { Text(stringResource(Res.string.type_project).uppercase()) },
                 )
-                IconButton(onClick = { viewModel.dismissInboxEntry(entry) }) {
+                IconButton(onClick = { viewModel.dismissInboxEntry(entry) }, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
                     Icon(
                         imageVector = Icons.Default.Close,
                         contentDescription = "Dismiss capture",

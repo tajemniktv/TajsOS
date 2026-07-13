@@ -68,6 +68,8 @@ import tajsos.composeapp.generated.resources.project_health_neglected
 import tajsos.composeapp.generated.resources.project_health_on_hold
 import tajsos.composeapp.generated.resources.project_set_status
 import tajsos.composeapp.generated.resources.screen_project
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.input.pointer.PointerIcon
 
 /**
  * Project mission-control detail route that collects state and coordinates interactions.
@@ -316,13 +318,13 @@ fun ProjectDetailScreen(
 ) {
     val project = context.project
     val actions: @Composable RowScope.() -> Unit = {
-        IconButton(onClick = { context.onStatusClick() }) {
+        IconButton(onClick = { context.onStatusClick() }, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
             Icon(Icons.Default.Tune, contentDescription = null, modifier = Modifier.size(18.dp))
         }
-        IconButton(onClick = { context.onEditNode(project.id) }) {
+        IconButton(onClick = { context.onEditNode(project.id) }, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
             Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(18.dp))
         }
-        IconButton(onClick = { context.viewModel.updateNode(project.copy(isFrozen = !project.isFrozen)) }) {
+        IconButton(onClick = { context.viewModel.updateNode(project.copy(isFrozen = !project.isFrozen)) }, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
             Icon(
                 if (project.isFrozen) Icons.Default.WbSunny else Icons.Default.Schedule,
                 contentDescription = null,

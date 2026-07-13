@@ -59,6 +59,8 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlin.math.max
 import kotlin.time.Instant
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.input.pointer.PointerIcon
 
 /**
  * Primary note viewer/editor pane with metadata and action row.
@@ -196,24 +198,24 @@ fun NotesEditorHeaderActions(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Row {
-            IconButton(onClick = onToggleFavorite, modifier = Modifier.size(48.dp)) {
+            IconButton(onClick = onToggleFavorite, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand).size(48.dp)) {
                 Icon(
                     imageVector = if (favorite) Icons.Default.Star else Icons.Default.StarBorder,
                     contentDescription = null,
                     tint = if (favorite) TajsOSTheme.Primary else TajsOSTheme.Text,
                 )
             }
-            IconButton(onClick = onArchive, modifier = Modifier.size(48.dp)) {
+            IconButton(onClick = onArchive, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand).size(48.dp)) {
                 Icon(Icons.Default.Archive, contentDescription = null, tint = TajsOSTheme.Text)
             }
-            IconButton(onClick = onToggleFocusMode, modifier = Modifier.size(48.dp)) {
+            IconButton(onClick = onToggleFocusMode, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand).size(48.dp)) {
                 Icon(
                     Icons.Default.CenterFocusStrong,
                     contentDescription = null,
                     tint = if (focusMode) TajsOSTheme.Primary else TajsOSTheme.Text,
                 )
             }
-            IconButton(onClick = onToggleContextPanel, modifier = Modifier.size(48.dp)) {
+            IconButton(onClick = onToggleContextPanel, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand).size(48.dp)) {
                 Icon(
                     Icons.Default.Info,
                     contentDescription = null,
@@ -222,7 +224,7 @@ fun NotesEditorHeaderActions(
             }
         }
         Box {
-            IconButton(onClick = { menuOpen = true }, modifier = Modifier.size(48.dp)) {
+            IconButton(onClick = { menuOpen = true }, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand).size(48.dp)) {
                 Icon(Icons.Default.MoreVert, contentDescription = null)
             }
             DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {

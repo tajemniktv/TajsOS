@@ -76,6 +76,8 @@ import tajsos.composeapp.generated.resources.profile_select_avatar
 import tajsos.composeapp.generated.resources.profile_time_zone
 import tajsos.composeapp.generated.resources.profile_unsaved
 import tajsos.composeapp.generated.resources.profile_website
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.input.pointer.PointerIcon
 
 private val profileBlockRenderers: Map<String, ProfileDashboardBlockRenderer> =
     mapOf(
@@ -390,7 +392,7 @@ private fun renderMedicationsModuleBlock(context: ProfileScreenContext) {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             ModuleTitle(title = stringResource(Res.string.profile_medications))
-            IconButton(onClick = context.onOpenAddMedication, modifier = Modifier.size(48.dp)) {
+            IconButton(onClick = context.onOpenAddMedication, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand).size(48.dp)) {
                 Icon(
                     Icons.Default.Add,
                     contentDescription = null,
@@ -589,7 +591,7 @@ private fun MedicationItem(
                     color = TajsOSTheme.Primary,
                 )
             }
-            IconButton(onClick = onDelete, modifier = Modifier.size(48.dp)) {
+            IconButton(onClick = onDelete, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand).size(48.dp)) {
                 Icon(Icons.Default.Delete, contentDescription = "Delete", tint = TajsOSTheme.Error)
             }
         }

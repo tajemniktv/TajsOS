@@ -61,6 +61,8 @@ import tajsos.composeapp.generated.resources.review_step_plan
 import tajsos.composeapp.generated.resources.review_step_stats
 import tajsos.composeapp.generated.resources.review_step_wins
 import tajsos.composeapp.generated.resources.review_weekly
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.input.pointer.PointerIcon
 
 object ReviewDashboardBlocks {
     private val renderers: Map<String, ReviewDashboardBlockRenderer> =
@@ -199,7 +201,7 @@ private fun renderReviewFlow(context: ReviewDashboardContext) {
                                 ListItem(
                                     headlineContent = { Text(item.node.title) },
                                     trailingContent = {
-                                        IconButton(onClick = { viewModel.archiveNode(item.node) }) {
+                                        IconButton(onClick = { viewModel.archiveNode(item.node) }, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
                                             Icon(
                                                 Icons.Default.Delete,
                                                 contentDescription = stringResource(Res.string.detail_archive),

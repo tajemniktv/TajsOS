@@ -87,6 +87,8 @@ import tajsos.composeapp.generated.resources.type_note
 import tajsos.composeapp.generated.resources.type_project
 import tajsos.composeapp.generated.resources.type_record
 import tajsos.composeapp.generated.resources.type_task
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.input.pointer.PointerIcon
 
 /**
  * Renders a modal bottom sheet that collects capture text and related metadata, then submits it via the provided callback.
@@ -286,7 +288,7 @@ fun CaptureSheet(
                 )
 
                 if (onVoiceCaptureClick != null) {
-                    IconButton(onClick = onVoiceCaptureClick, modifier = Modifier.size(48.dp)) {
+                    IconButton(onClick = onVoiceCaptureClick, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand).size(48.dp)) {
                         Icon(
                             imageVector = Icons.Default.Mic,
                             contentDescription = stringResource(Res.string.capture_voice),

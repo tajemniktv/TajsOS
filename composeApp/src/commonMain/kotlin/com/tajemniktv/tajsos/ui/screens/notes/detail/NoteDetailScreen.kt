@@ -114,6 +114,8 @@ import tajsos.composeapp.generated.resources.type_note
 import tajsos.composeapp.generated.resources.type_project
 import tajsos.composeapp.generated.resources.type_record
 import tajsos.composeapp.generated.resources.type_task
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.input.pointer.PointerIcon
 
 /**
  * Detailed view for a single node (Note, Idea, Task, etc.)
@@ -203,7 +205,7 @@ fun NoteDetailScreen(
         }
 
     val actions: @Composable RowScope.() -> Unit = {
-        IconButton(onClick = { viewModel.togglePermanentPin(node) }) {
+        IconButton(onClick = { viewModel.togglePermanentPin(node) }, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
             Icon(
                 if (node.isPinned) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                 contentDescription = null,
@@ -244,7 +246,7 @@ fun NoteDetailScreen(
                 modifier = Modifier.size(18.dp),
             )
         }
-        IconButton(onClick = { showMoreDialog = true }, modifier = Modifier.size(48.dp)) {
+        IconButton(onClick = { showMoreDialog = true }, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand).size(48.dp)) {
             Icon(
                 Icons.Default.MoreVert,
                 contentDescription = null,

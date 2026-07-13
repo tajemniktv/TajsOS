@@ -32,6 +32,8 @@ import tajsos.composeapp.generated.resources.type_note
 import tajsos.composeapp.generated.resources.type_project
 import tajsos.composeapp.generated.resources.type_record
 import tajsos.composeapp.generated.resources.type_task
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.input.pointer.PointerIcon
 
 object TemplatesDashboardBlocks {
     private val renderers: Map<String, TemplatesDashboardBlockRenderer> =
@@ -73,7 +75,7 @@ private fun renderTemplatesList(context: TemplatesDashboardContext) {
                         Text(typeLabel.uppercase())
                     },
                     trailingContent = {
-                        IconButton(onClick = { context.onDeleteTemplate(template) }) {
+                        IconButton(onClick = { context.onDeleteTemplate(template) }, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
                             Icon(
                                 Icons.Default.Delete,
                                 contentDescription = stringResource(Res.string.archive_delete),

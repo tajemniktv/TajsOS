@@ -68,6 +68,8 @@ import tajsos.composeapp.generated.resources.tasks_quick_capture_hint
 import tajsos.composeapp.generated.resources.tasks_quick_capture_title
 import tajsos.composeapp.generated.resources.tasks_start_focus_action
 import kotlin.time.Clock
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.input.pointer.PointerIcon
 
 @Composable
 internal fun TasksCommandView(
@@ -368,7 +370,7 @@ private fun QueueList(
                     Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                         OutlinedButton(onClick = { onDoNow(task) }) { Text(stringResource(Res.string.tasks_start_focus_action)) }
                         OutlinedButton(onClick = { onOpen(task.id) }) { Text(stringResource(Res.string.tasks_open_action)) }
-                        IconButton(onClick = { onDone(task) }) { Icon(Icons.Default.Check, null) }
+                        IconButton(onClick = { onDone(task) }, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) { Icon(Icons.Default.Check, null) }
                     }
                 }
                 HorizontalDivider(color = TajsOSTheme.GhostBorder)
