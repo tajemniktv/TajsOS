@@ -324,7 +324,7 @@ class NodeCommands(
                     if (lines.isNotEmpty()) {
                         val firstLine =
                             lines
-                                .first()
+                                .firstOrNull().orEmpty()
                                 .trim()
                                 .removePrefix("-")
                                 .removePrefix("*")
@@ -486,7 +486,7 @@ class NodeCommands(
                         val lines = section.lines()
                         val title =
                             lines
-                                .first()
+                                .firstOrNull().orEmpty()
                                 .removePrefix("# ")
                                 .trim()
                                 .ifBlank { defaultUntitledLabel() }
