@@ -7,6 +7,9 @@ package com.tajemniktv.tajsos.ui
 import com.tajemniktv.tajsos.data.NodeWithPin
 import com.tajemniktv.tajsos.data.RelationEntity
 import com.tajemniktv.tajsos.data.isTaskItem
+
+import com.tajemniktv.tajsos.data.ModeEntity
+import com.tajemniktv.tajsos.data.isAreaItem
 import com.tajemniktv.tajsos.data.matchesItemFilter
 
 /**
@@ -250,5 +253,48 @@ object FilterHelper {
             if (nodeWithPin.isPinnedToToday) score += 8
             if (node.status == "active") score += 5
         return score
+    }
+
+    fun applyModeFilters(
+        nodes: List<NodeWithPin>,
+        mode: ModeEntity?,
+        includedAreaIds: List<Long>,
+        excludedAreaIds: List<Long>,
+        includedTypes: List<String>,
+        excludedTypes: List<String>
+    ): List<NodeWithPin> {
+        var filtered = nodes
+        if (mode?.key != "ALL") {
+            if (includedAreaIds.isNotEmpty()) {
+                filtered = filtered.filter { it.node.areaId in includedAreaIds || it.node.isAreaItem() }
+            }
+            if (excludedAreaIds.isNotEmpty()) {
+                filtered = filtered.filter { it.node.areaId !in excludedAreaIds }
+            }
+            if (includedTypes.isNotEmpty()) {
+                filtered = filtered.filter { it.node.type in includedTypes }
+            }
+            if (excludedTypes.isNotEmpty()) {
+                filtered = filtered.filter { it.node.type !in excludedTypes }
+            }
+        }
+
+        if (mode?.key == "RECOVERY" || mode?.key == "LOW_BATTERY" || mode?.key == "CANT_THINK") {
+            filtered = filtered.filter {
+                it.node.type != "task" || (it.node.energyLevel == 1 && it.node.friction == "easy")
+            }
+        }
+        return filtered
+    }
+
+    fun calculateSystemLoadWarning(
+        loadScore: Int,
+        fragmentation: Int,
+    ): String? {
+        return when {
+            loadScore > 100 -> "SYSTEM OVERLOADED // REDUCE INTAKE"
+            fragmentation > 40 -> "ATTENTION FRAGMENTED // FOCUS ON ONE AREA"
+            else -> null
+        }
     }
 }

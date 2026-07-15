@@ -4,6 +4,8 @@
 
 package com.tajemniktv.tajsos.ui.main.calculators
 
+import com.tajemniktv.tajsos.ui.FilterHelper
+
 import com.tajemniktv.tajsos.data.AppRepository
 import com.tajemniktv.tajsos.data.CalendarEventEntity
 import com.tajemniktv.tajsos.data.ModeEntity
@@ -330,52 +332,6 @@ fun buildPlaybookSnapshot(
  * @param packs The registry of enabled and owned application packs.
  * @return A fully populated [DashboardUIState] reflecting the entire system's status filtered by the active mode.
  */
-
-
-private fun applyModeFilters(
-    nodes: List<NodeWithPin>,
-    mode: ModeEntity?,
-    includedAreaIds: List<Long>,
-    excludedAreaIds: List<Long>,
-    includedTypes: List<String>,
-    excludedTypes: List<String>
-): List<NodeWithPin> {
-    var filtered = nodes
-    if (mode?.key != "ALL") {
-        if (includedAreaIds.isNotEmpty()) {
-            filtered = filtered.filter { it.node.areaId in includedAreaIds || it.node.isAreaItem() }
-        }
-        if (excludedAreaIds.isNotEmpty()) {
-            filtered = filtered.filter { it.node.areaId !in excludedAreaIds }
-        }
-        if (includedTypes.isNotEmpty()) {
-            filtered = filtered.filter { it.node.type in includedTypes }
-        }
-        if (excludedTypes.isNotEmpty()) {
-            filtered = filtered.filter { it.node.type !in excludedTypes }
-        }
-    }
-
-    if (mode?.key == "RECOVERY" || mode?.key == "LOW_BATTERY" || mode?.key == "CANT_THINK") {
-        filtered = filtered.filter {
-            it.node.type != "task" || (it.node.energyLevel == 1 && it.node.friction == "easy")
-        }
-    }
-    return filtered
-}
-
-private fun calculateSystemLoadWarning(
-    loadScore: Int,
-    fragmentation: Int,
-): String? {
-    return when {
-        loadScore > 100 -> "SYSTEM OVERLOADED // REDUCE INTAKE"
-        fragmentation > 40 -> "ATTENTION FRAGMENTED // FOCUS ON ONE AREA"
-        else -> null
-    }
-}
-
-
 suspend fun buildDashboardUIState(
     repository: AppRepository,
     nodes: List<NodeWithPin>,
@@ -411,7 +367,7 @@ suspend fun buildDashboardUIState(
     val includedTypes = typeFilters.mapNotNull { filter -> filter.nodeType.takeIf { filter.include } }
     val excludedTypes = typeFilters.mapNotNull { filter -> filter.nodeType.takeIf { !filter.include } }
 
-    val filteredNodes = applyModeFilters(
+    val filteredNodes = FilterHelper.applyModeFilters(
         nodes,
         mode,
         includedAreaIds,
@@ -470,7 +426,7 @@ suspend fun buildDashboardUIState(
 
     val loadScore = (activeTasks.size * 2) + (openLoops.size * 3) + (overdue.size * 5)
     val fragmentation = activeTasks.groupBy { it.node.projectId }.size * 5
-    val capWarning = calculateSystemLoadWarning(loadScore, fragmentation)
+    val capWarning = FilterHelper.calculateSystemLoadWarning(loadScore, fragmentation)
 
     val contexts =
         filteredNodes
