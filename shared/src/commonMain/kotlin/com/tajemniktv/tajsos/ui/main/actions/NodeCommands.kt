@@ -589,6 +589,13 @@ class NodeCommands(
         }
     }
 
+    /**
+     * Creates a new project node in the system.
+     *
+     * @param name The primary title of the new project.
+     * @param description An optional detailed description or initial content for the project.
+     * @param areaId The optional unique ID of a parent area to which this project belongs.
+     */
     fun addProject(
         name: String,
         description: String = "",
@@ -598,10 +605,24 @@ class NodeCommands(
         addNode(title = name, content = description, type = "project", areaId = areaId) // NON-NLS
         }
 
+    /**
+     * Creates a new top-level area node in the system.
+     *
+     * @param name The primary title of the new area.
+     */
     fun addArea(name: String) {
         addNode(title = name, type = "area") // NON-NLS
     }
 
+    /**
+     * Updates the specific open loop subtype (e.g., "idea", "maybe") of an existing open loop node.
+     * Also resets its staleness timer.
+     *
+     * This method silently fails if the target node is not of type "open_loop".
+     *
+     * @param node The [NodeEntity] representing the open loop to update.
+     * @param openLoopType The new specific type classification to apply.
+     */
     fun updateOpenLoopType(
         node: NodeEntity,
         openLoopType: String,
@@ -629,10 +650,20 @@ class NodeCommands(
         convertOpenLoop(nodeId, "task") // NON-NLS
     }
 
+    /**
+     * Morphs an unstructured "open loop" node into a formal "decision" node.
+     *
+     * @param nodeId The unique numeric ID of the open loop node to convert.
+     */
     fun convertOpenLoopToDecision(nodeId: Long) {
         convertOpenLoop(nodeId, "decision") // NON-NLS
     }
 
+    /**
+     * Morphs an unstructured "open loop" node into a static "note" node.
+     *
+     * @param nodeId The unique numeric ID of the open loop node to convert.
+     */
     fun convertOpenLoopToNote(nodeId: Long) {
         convertOpenLoop(nodeId, "note") // NON-NLS
     }
