@@ -6,6 +6,8 @@ package com.tajemniktv.tajsos.ui.screens.tasks
 
 import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.background
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -433,19 +435,19 @@ private fun TaskDetails(
             horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
             modifier = Modifier.fillMaxWidth(),
         ) {
-            OutlinedButton(onClick = { onOpen(task.id) }, modifier = Modifier.weight(1f)) {
+            OutlinedButton(onClick = { onOpen(task.id) }, modifier = Modifier.weight(1f).pointerHoverIcon(PointerIcon.Hand)) {
                 Text(
                     stringResource(Res.string.tasks_open_action),
                 )
             }
             if (task.taskStateOrNull() == TaskState.DONE) {
-                OutlinedButton(onClick = { onRestore(task) }, modifier = Modifier.weight(1f)) {
+                OutlinedButton(onClick = { onRestore(task) }, modifier = Modifier.weight(1f).pointerHoverIcon(PointerIcon.Hand)) {
                     Icon(Icons.Default.Refresh, null)
                     Spacer(Modifier.width(4.dp))
                     Text(stringResource(Res.string.tasks_restore_action))
                 }
             } else {
-                OutlinedButton(onClick = { onDone(task) }, modifier = Modifier.weight(1f)) {
+                OutlinedButton(onClick = { onDone(task) }, modifier = Modifier.weight(1f).pointerHoverIcon(PointerIcon.Hand)) {
                     Text(
                         stringResource(Res.string.tasks_done_action),
                     )
@@ -456,12 +458,12 @@ private fun TaskDetails(
             horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
             modifier = Modifier.fillMaxWidth(),
         ) {
-            OutlinedButton(onClick = { onArchive(task) }, modifier = Modifier.weight(1f)) {
+            OutlinedButton(onClick = { onArchive(task) }, modifier = Modifier.weight(1f).pointerHoverIcon(PointerIcon.Hand)) {
                 Icon(Icons.Default.Archive, null)
                 Spacer(Modifier.width(4.dp))
                 Text(stringResource(Res.string.tasks_archive_action))
             }
-            OutlinedButton(onClick = { onDelete(task) }, modifier = Modifier.weight(1f)) {
+            OutlinedButton(onClick = { onDelete(task) }, modifier = Modifier.weight(1f).pointerHoverIcon(PointerIcon.Hand)) {
                 Icon(Icons.Default.Delete, null, tint = TajsOSTheme.Error)
                 Spacer(Modifier.width(4.dp))
                 Text(stringResource(Res.string.tasks_delete_action), color = TajsOSTheme.Error)

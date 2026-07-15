@@ -6,6 +6,8 @@ package com.tajemniktv.tajsos.ui.screens.settings
 
 import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.background
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -721,7 +723,7 @@ private fun SettingsMedicationItem(
             color = TajsOSTheme.Muted,
         )
         Spacer(Modifier.height(TajsOSTheme.SpacingSm))
-        TextButton(onClick = onDelete) {
+        TextButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = onDelete) {
             Text(stringResource(Res.string.med_delete))
         }
     }
@@ -792,7 +794,7 @@ private fun SettingsAddMedicationDialog(
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
+            TextButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = onDismiss) {
                 Text(stringResource(Res.string.common_back))
             }
         },

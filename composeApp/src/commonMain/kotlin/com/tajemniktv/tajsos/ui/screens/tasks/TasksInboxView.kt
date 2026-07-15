@@ -5,6 +5,8 @@
 package com.tajemniktv.tajsos.ui.screens.tasks
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -110,12 +112,12 @@ internal fun TasksInboxView(
                             Row(
                                 horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
                             ) {
-                                OutlinedButton(onClick = { onTriageTask(entry) }) {
+                                OutlinedButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { onTriageTask(entry) }) {
                                     Text(
                                         stringResource(Res.string.tasks_inbox_triage_task),
                                     )
                                 }
-                                IconButton(onClick = { onDismiss(entry) }) {
+                                IconButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { onDismiss(entry) }) {
                                     Icon(
                                         Icons.Default.Delete,
                                         stringResource(Res.string.tasks_inbox_dismiss),
@@ -179,14 +181,14 @@ internal fun TasksInboxView(
                             Row(
                                 horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
                             ) {
-                                OutlinedButton(onClick = { onOpen(task.id) }) {
+                                OutlinedButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { onOpen(task.id) }) {
                                     Text(
                                         stringResource(
                                             Res.string.tasks_open_action,
                                         ),
                                     )
                                 }
-                                OutlinedButton(onClick = { onMarkProcessed(task) }) {
+                                OutlinedButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { onMarkProcessed(task) }) {
                                     Text(
                                         stringResource(Res.string.tasks_inbox_mark_processed),
                                     )

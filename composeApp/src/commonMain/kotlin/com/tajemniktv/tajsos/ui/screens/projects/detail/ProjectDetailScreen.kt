@@ -5,6 +5,8 @@
 package com.tajemniktv.tajsos.ui.screens.projects.detail
 
 import androidx.compose.foundation.background
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -316,13 +318,13 @@ fun ProjectDetailScreen(
 ) {
     val project = context.project
     val actions: @Composable RowScope.() -> Unit = {
-        IconButton(onClick = { context.onStatusClick() }) {
+        IconButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { context.onStatusClick() }) {
             Icon(Icons.Default.Tune, contentDescription = null, modifier = Modifier.size(18.dp))
         }
-        IconButton(onClick = { context.onEditNode(project.id) }) {
+        IconButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { context.onEditNode(project.id) }) {
             Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(18.dp))
         }
-        IconButton(onClick = { context.viewModel.updateNode(project.copy(isFrozen = !project.isFrozen)) }) {
+        IconButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { context.viewModel.updateNode(project.copy(isFrozen = !project.isFrozen)) }) {
             Icon(
                 if (project.isFrozen) Icons.Default.WbSunny else Icons.Default.Schedule,
                 contentDescription = null,

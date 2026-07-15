@@ -6,6 +6,8 @@ package com.tajemniktv.tajsos.ui.screens.notes
 
 import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.background
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -99,7 +101,7 @@ fun NotesListRail(
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                 trailingIcon = {
                     if (searchQuery.isNotEmpty()) {
-                        IconButton(onClick = { onSearchChange("") }) {
+                        IconButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { onSearchChange("") }) {
                             Icon(Icons.Default.Close, contentDescription = "Clear search")
                         }
                     }

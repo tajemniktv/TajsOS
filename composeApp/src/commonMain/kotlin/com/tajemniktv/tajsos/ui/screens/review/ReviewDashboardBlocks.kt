@@ -5,6 +5,8 @@
 package com.tajemniktv.tajsos.ui.screens.review
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -199,7 +201,7 @@ private fun renderReviewFlow(context: ReviewDashboardContext) {
                                 ListItem(
                                     headlineContent = { Text(item.node.title) },
                                     trailingContent = {
-                                        IconButton(onClick = { viewModel.archiveNode(item.node) }) {
+                                        IconButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { viewModel.archiveNode(item.node) }) {
                                             Icon(
                                                 Icons.Default.Delete,
                                                 contentDescription = stringResource(Res.string.detail_archive),

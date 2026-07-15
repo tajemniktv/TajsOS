@@ -5,6 +5,8 @@
 package com.tajemniktv.tajsos.ui.screens.archive
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -125,7 +127,7 @@ internal fun ArchiveMainBlock(
                                             tint = TajsOSTheme.Primary,
                                         )
                                     }
-                                    IconButton(onClick = {
+                                    IconButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = {
                                         viewModel.deleteNodePermanently(
                                             nodeWithPin.node,
                                         )

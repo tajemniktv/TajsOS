@@ -155,9 +155,9 @@ private fun renderAreaHero(context: AreaDetailContext) {
                 trackColor = TajsOSTheme.SurfaceLow,
             )
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                FilledTonalButton(onClick = {}) { Text(stringResource(Res.string.area_detail_tab_work)) }
-                FilledTonalButton(onClick = {}) { Text(stringResource(Res.string.area_detail_tab_notes)) }
-                FilledTonalButton(onClick = {}) { Text(stringResource(Res.string.area_detail_tab_projects)) }
+                FilledTonalButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = {}) { Text(stringResource(Res.string.area_detail_tab_work)) }
+                FilledTonalButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = {}) { Text(stringResource(Res.string.area_detail_tab_notes)) }
+                FilledTonalButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = {}) { Text(stringResource(Res.string.area_detail_tab_projects)) }
             }
         }
     }

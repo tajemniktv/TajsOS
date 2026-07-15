@@ -5,6 +5,8 @@
 package com.tajemniktv.tajsos.ui.screens.calendar
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.AlertDialog
@@ -146,7 +148,7 @@ private fun AddCalendarDialog(
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
+            TextButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = onDismiss) {
                 Text(stringResource(Res.string.cal_settings_dialog_cancel))
             }
         },

@@ -5,6 +5,8 @@
 package com.tajemniktv.tajsos.ui.screens.areas.detail
 
 import androidx.compose.foundation.background
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -235,7 +237,7 @@ fun AreaDetailScreen(
 ) {
     val area = context.area
     val actions: @Composable RowScope.() -> Unit = {
-        IconButton(onClick = {
+        IconButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = {
             context.viewModel.archiveNode(area)
             onBack()
         }) {

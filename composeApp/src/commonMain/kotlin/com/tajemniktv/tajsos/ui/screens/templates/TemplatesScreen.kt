@@ -5,6 +5,8 @@
 package com.tajemniktv.tajsos.ui.screens.templates
 
 import androidx.compose.foundation.background
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.Arrangement
@@ -70,7 +72,7 @@ fun TemplatesScreen(
         )
 
     val actions: @Composable RowScope.() -> Unit = {
-        IconButton(onClick = { showAddDialog = true }, modifier = Modifier.size(48.dp)) {
+        IconButton(onClick = { showAddDialog = true }, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
             Icon(
                 Icons.Default.Add,
                 contentDescription = stringResource(Res.string.templates_add_desc),
@@ -142,7 +144,7 @@ fun TemplatesScreen(
                 ) { Text(stringResource(Res.string.templates_dialog_create)) }
             },
             dismissButton = {
-                TextButton(onClick = { showAddDialog = false }) {
+                TextButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { showAddDialog = false }) {
                     Text(
                         stringResource(
                             Res.string.templates_dialog_cancel,

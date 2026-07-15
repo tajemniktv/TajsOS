@@ -5,6 +5,8 @@
 package com.tajemniktv.tajsos.ui.screens.areas
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -123,7 +125,7 @@ internal fun AreasMainBlock(
                 color = TajsOSTheme.Text,
             )
             Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
-                OutlinedButton(onClick = { showAddDialog = true }) {
+                OutlinedButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { showAddDialog = true }) {
                     Text(stringResource(Res.string.areas_new))
                 }
             }
@@ -418,7 +420,7 @@ private fun AreaCard(
                     "${metrics?.neglectedDays ?: 0}d",
                 )
                 Spacer(modifier = Modifier.height(4.dp))
-                OutlinedButton(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
+                OutlinedButton(onClick = onClick, modifier = Modifier.fillMaxWidth().pointerHoverIcon(PointerIcon.Hand)) {
                     Text(stringResource(Res.string.areas_enter))
                 }
             }
@@ -475,7 +477,7 @@ fun AddAreaDialog(
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(Res.string.areas_dialog_cancel)) }
+            TextButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = onDismiss) { Text(stringResource(Res.string.areas_dialog_cancel)) }
         },
     )
 }

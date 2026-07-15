@@ -6,6 +6,8 @@ package com.tajemniktv.tajsos.ui.screens.dashboard
 
 import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -219,7 +221,7 @@ internal fun renderOperationalBlock(context: DashboardBlockContext) {
                 letterSpacing = 2.sp,
             )
 
-            TextButton(onClick = { context.onNavigateTo(Screen.OpenLoops) }) {
+            TextButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { context.onNavigateTo(Screen.OpenLoops) }) {
                 Text(
                     text = stringResource(Res.string.dashboard_open_loops_action),
                     style = MaterialTheme.typography.labelSmall,

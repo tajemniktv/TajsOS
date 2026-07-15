@@ -5,6 +5,8 @@
 package com.tajemniktv.tajsos.ui.screens.tasks
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -177,13 +179,13 @@ private fun TodaySection(
                             }
                         }
                         Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
-                            OutlinedButton(onClick = {
+                            OutlinedButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = {
                                 onStartFocus(task)
                             }) { Text(stringResource(Res.string.tasks_start_focus_action)) }
-                            OutlinedButton(onClick = {
+                            OutlinedButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = {
                                 onOpen(task.id)
                             }) { Text(stringResource(Res.string.tasks_open_action)) }
-                            OutlinedButton(onClick = {
+                            OutlinedButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = {
                                 onSetTodayPayload(task, task.id !in todayTaskIds)
                             }) {
                                 Icon(Icons.Default.Star, null)
@@ -195,7 +197,7 @@ private fun TodaySection(
                                     },
                                 )
                             }
-                            IconButton(onClick = { onDone(task) }) {
+                            IconButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { onDone(task) }) {
                                 Icon(
                                     Icons.Default.Check,
                                     null,

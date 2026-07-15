@@ -6,6 +6,8 @@ package com.tajemniktv.tajsos.ui.screens.notes
 
 import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.background
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -196,24 +198,24 @@ fun NotesEditorHeaderActions(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Row {
-            IconButton(onClick = onToggleFavorite, modifier = Modifier.size(48.dp)) {
+            IconButton(onClick = onToggleFavorite, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
                 Icon(
                     imageVector = if (favorite) Icons.Default.Star else Icons.Default.StarBorder,
                     contentDescription = null,
                     tint = if (favorite) TajsOSTheme.Primary else TajsOSTheme.Text,
                 )
             }
-            IconButton(onClick = onArchive, modifier = Modifier.size(48.dp)) {
+            IconButton(onClick = onArchive, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
                 Icon(Icons.Default.Archive, contentDescription = null, tint = TajsOSTheme.Text)
             }
-            IconButton(onClick = onToggleFocusMode, modifier = Modifier.size(48.dp)) {
+            IconButton(onClick = onToggleFocusMode, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
                 Icon(
                     Icons.Default.CenterFocusStrong,
                     contentDescription = null,
                     tint = if (focusMode) TajsOSTheme.Primary else TajsOSTheme.Text,
                 )
             }
-            IconButton(onClick = onToggleContextPanel, modifier = Modifier.size(48.dp)) {
+            IconButton(onClick = onToggleContextPanel, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
                 Icon(
                     Icons.Default.Info,
                     contentDescription = null,
@@ -222,7 +224,7 @@ fun NotesEditorHeaderActions(
             }
         }
         Box {
-            IconButton(onClick = { menuOpen = true }, modifier = Modifier.size(48.dp)) {
+            IconButton(onClick = { menuOpen = true }, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
                 Icon(Icons.Default.MoreVert, contentDescription = null)
             }
             DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {

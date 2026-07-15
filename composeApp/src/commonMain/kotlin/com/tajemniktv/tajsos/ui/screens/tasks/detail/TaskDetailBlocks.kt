@@ -6,6 +6,8 @@ package com.tajemniktv.tajsos.ui.screens.tasks.detail
 
 import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -327,7 +329,7 @@ private fun TaskActionBar(
     ) {
         if (isEditing) {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedButton(onClick = onCancel) {
+                OutlinedButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = onCancel) {
                     Text(stringResource(Res.string.common_cancel))
                 }
                 Button(onClick = onSave) {
@@ -336,12 +338,12 @@ private fun TaskActionBar(
             }
         } else {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedButton(onClick = onToggleEdit) {
+                OutlinedButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = onToggleEdit) {
                     Icon(Icons.Default.Edit, contentDescription = null)
                     Spacer(Modifier.width(6.dp))
                     Text(stringResource(Res.string.common_edit))
                 }
-                OutlinedButton(onClick = onSnooze) {
+                OutlinedButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = onSnooze) {
                     Icon(Icons.Default.AccessTime, contentDescription = null)
                     Spacer(Modifier.width(6.dp))
                     Text(stringResource(Res.string.task_detail_snooze))
@@ -478,7 +480,7 @@ private fun renderTaskSubtasks(context: TaskDetailContext) {
                 }
             }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedButton(onClick = context.onSplitIntoSubtasks) {
+                OutlinedButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = context.onSplitIntoSubtasks) {
                     Text(stringResource(Res.string.detail_split_subtasks))
                 }
             }
@@ -620,7 +622,7 @@ private fun SubtaskRow(
                 color = tint,
             )
             if (subtask.source == TaskSubtaskSource.InlineChecklist && onRemove != null) {
-                IconButton(onClick = onRemove, modifier = Modifier.size(48.dp)) {
+                IconButton(onClick = onRemove, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = null,
@@ -704,7 +706,7 @@ private fun AttachmentRow(
                 )
             }
         }
-        IconButton(onClick = onRemove, modifier = Modifier.size(48.dp)) {
+        IconButton(onClick = onRemove, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
             Icon(Icons.Default.Delete, contentDescription = null, tint = TajsOSTheme.Muted)
         }
     }
@@ -1130,7 +1132,7 @@ private fun TaskEditablePropertyRow(
             )
         }
         Box {
-            TextButton(onClick = { expanded = true }) {
+            TextButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { expanded = true }) {
                 Text(selected)
             }
             DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {

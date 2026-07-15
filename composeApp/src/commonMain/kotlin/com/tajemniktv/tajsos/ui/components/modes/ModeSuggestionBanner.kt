@@ -5,6 +5,8 @@
 package com.tajemniktv.tajsos.ui.components.modes
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -83,7 +85,7 @@ fun ModeSuggestionBanner(
                 }
             }
             Row {
-                TextButton(onClick = onDismiss) {
+                TextButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = onDismiss) {
                     Text(
                         "IGNORE",
                         style = MaterialTheme.typography.labelSmall,

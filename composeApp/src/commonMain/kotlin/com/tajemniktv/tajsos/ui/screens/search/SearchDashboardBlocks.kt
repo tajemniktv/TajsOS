@@ -5,6 +5,8 @@
 package com.tajemniktv.tajsos.ui.screens.search
 
 import androidx.compose.foundation.background
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -111,7 +113,7 @@ private fun renderSearchInput(context: SearchDashboardContext) {
             leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
             trailingIcon = {
                 if (context.searchQuery.isNotEmpty()) {
-                    IconButton(onClick = { viewModel.updateSearchQuery("") }) {
+                    IconButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { viewModel.updateSearchQuery("") }) {
                         Icon(
                             Icons.Default.Clear,
                             contentDescription = stringResource(Res.string.search_clear),
@@ -125,7 +127,7 @@ private fun renderSearchInput(context: SearchDashboardContext) {
                     unfocusedContainerColor = TajsOSTheme.Surface,
                 ),
         )
-        IconButton(onClick = context.onToggleFilters, modifier = Modifier.size(48.dp)) {
+        IconButton(onClick = context.onToggleFilters, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
             Icon(
                 Icons.Default.FilterList,
                 contentDescription = "Toggle filters",
@@ -183,7 +185,7 @@ private fun renderSearchFilters(context: SearchDashboardContext) {
                 style = MaterialTheme.typography.labelSmall,
                 color = TajsOSTheme.Muted,
             )
-            TextButton(onClick = { viewModel.clearSearchFilters() }) {
+            TextButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { viewModel.clearSearchFilters() }) {
                 Text(stringResource(Res.string.search_reset_filters))
             }
         }
@@ -531,13 +533,13 @@ private fun SearchResultsHeader(
             )
         }
         Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-            TextButton(onClick = onToggleFilters) {
+            TextButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = onToggleFilters) {
                 Text(
                     "FILTER",
                     style = MaterialTheme.typography.labelSmall,
                 )
             }
-            TextButton(onClick = onToggleSort) {
+            TextButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = onToggleSort) {
                 Text(
                     if (sortMode == "relevance") "RELEVANCE" else "UPDATED",
                     style = MaterialTheme.typography.labelSmall,
@@ -759,25 +761,25 @@ private fun SearchResultCard(
 
             Spacer(modifier = Modifier.height(TajsOSTheme.SpacingSm))
             Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                TextButton(onClick = onOpen) {
+                TextButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = onOpen) {
                     Text(
                         "OPEN",
                         style = MaterialTheme.typography.labelSmall,
                     )
                 }
-                TextButton(onClick = { onToggleDone(if (node.status == "done") "active" else "done") }) {
+                TextButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { onToggleDone(if (node.status == "done") "active" else "done") }) {
                     Text(
                         if (node.status == "done") "ACTIVATE" else "DONE",
                         style = MaterialTheme.typography.labelSmall,
                     )
                 }
-                TextButton(onClick = { onTogglePin(!nodeWithPin.isPinnedToToday) }) {
+                TextButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { onTogglePin(!nodeWithPin.isPinnedToToday) }) {
                     Text(
                         if (nodeWithPin.isPinnedToToday) "REMOVE TODAY" else "ADD TODAY",
                         style = MaterialTheme.typography.labelSmall,
                     )
                 }
-                TextButton(onClick = onArchive) {
+                TextButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = onArchive) {
                     Text(
                         "ARCHIVE",
                         style = MaterialTheme.typography.labelSmall,

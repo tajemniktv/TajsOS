@@ -5,6 +5,8 @@
 package com.tajemniktv.tajsos.ui.components.cards
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -51,7 +53,7 @@ fun OptionCard(
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
                 )
-                IconButton(onClick = { onDelete(option) }) {
+                IconButton(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { onDelete(option) }) {
                     Icon(
                         Icons.Default.Delete,
                         contentDescription = stringResource(Res.string.cd_delete_option),

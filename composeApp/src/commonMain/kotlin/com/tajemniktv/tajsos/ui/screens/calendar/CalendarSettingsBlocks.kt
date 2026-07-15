@@ -5,6 +5,8 @@
 package com.tajemniktv.tajsos.ui.screens.calendar
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.Column
@@ -60,7 +62,7 @@ private fun renderCalendarSettingsHeader(context: CalendarSettingsContext) {
             style = MaterialTheme.typography.displaySmall,
             color = TajsOSTheme.Text,
         )
-        IconButton(onClick = context.onShowAddDialog, modifier = Modifier.size(48.dp)) {
+        IconButton(onClick = context.onShowAddDialog, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
             Icon(
                 Icons.Default.Add,
                 contentDescription = stringResource(Res.string.cal_settings_add),
@@ -125,7 +127,7 @@ private fun ProviderRow(
                     )
                 }
             }
-            IconButton(onClick = onDelete, modifier = Modifier.size(48.dp)) {
+            IconButton(onClick = onDelete, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
                 Icon(
                     Icons.Default.Delete,
                     contentDescription = stringResource(Res.string.archive_delete),
