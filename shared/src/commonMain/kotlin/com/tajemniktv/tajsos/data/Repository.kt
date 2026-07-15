@@ -8,6 +8,7 @@ import com.tajemniktv.tajsos.domain.DomainKind
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.LocalDate
@@ -387,7 +388,7 @@ class AppRepository(
     /**
      * Loads the current typed local aggregate for a single life object.
      */
-    suspend fun getLifeObject(id: Long): LifeObjectAggregate? = observeLifeObject(id).first()
+    suspend fun getLifeObject(id: Long): LifeObjectAggregate? = observeLifeObject(id).firstOrNull()
 
     /**
      * Observes raw inbox captures that still need semantic triage.

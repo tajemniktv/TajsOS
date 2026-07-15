@@ -8,7 +8,7 @@ import com.tajemniktv.tajsos.data.AppRepository
 import com.tajemniktv.tajsos.data.NodeEntity
 import com.tajemniktv.tajsos.data.TemplateEntity
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.TimeZone
@@ -133,7 +133,7 @@ class RelationshipCommands(
     ) {
         scope.launch {
             val relation =
-                repository.getRelationsForNode(personId).first().firstOrNull {
+                (repository.getRelationsForNode(personId).firstOrNull() ?: emptyList()).firstOrNull {
                     it.relationType == "RELATED_PERSON" &&
                         (
                             (it.fromNodeId == personId && it.toNodeId == nodeId) ||
@@ -262,7 +262,7 @@ class RelationshipCommands(
     ) {
         scope.launch {
             val relation =
-                repository.getRelationsForNode(placeId).first().firstOrNull {
+                (repository.getRelationsForNode(placeId).firstOrNull() ?: emptyList()).firstOrNull {
                     it.relationType == "PLACE_CONTEXT" &&
                         (
                             (it.fromNodeId == placeId && it.toNodeId == nodeId) ||
@@ -427,7 +427,7 @@ class RelationshipCommands(
     ) {
         scope.launch {
             val relation =
-                repository.getRelationsForNode(principleId).first().firstOrNull {
+                (repository.getRelationsForNode(principleId).firstOrNull() ?: emptyList()).firstOrNull {
                     it.relationType in
                         setOf(
                             "PRINCIPLE_FOR_PLAYBOOK",

@@ -16,6 +16,8 @@ import com.tajemniktv.tajsos.ui.main.calculators.calculateStaleTasks
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.DateTimeUnit
@@ -324,7 +326,7 @@ class NodeCommands(
                     if (lines.isNotEmpty()) {
                         val firstLine =
                             lines
-                                .first()
+                                .firstOrNull().orEmpty()
                                 .trim()
                                 .removePrefix("-")
                                 .removePrefix("*")
@@ -441,7 +443,7 @@ class NodeCommands(
                 repository.getNodeById(otherId)?.let { other ->
                     mergedContent += "\n\n--- MERGED FROM ${other.title} ---\n${other.content}"
                     archiveNodeInternal(other)
-                    val relations = repository.getRelationsForNode(otherId).first()
+                    val relations = repository.getRelationsForNode(otherId).firstOrNull() ?: emptyList()
                     relations.forEach { rel ->
                         if (rel.fromNodeId == otherId) {
                             repository.insertRelation(
@@ -486,7 +488,7 @@ class NodeCommands(
                         val lines = section.lines()
                         val title =
                             lines
-                                .first()
+                                .firstOrNull().orEmpty()
                                 .removePrefix("# ")
                                 .trim()
                                 .ifBlank { defaultUntitledLabel() }

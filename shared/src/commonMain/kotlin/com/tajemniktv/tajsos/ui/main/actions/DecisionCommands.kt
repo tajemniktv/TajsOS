@@ -8,7 +8,7 @@ import com.tajemniktv.tajsos.data.AppRepository
 import com.tajemniktv.tajsos.data.DecisionOptionEntity
 import com.tajemniktv.tajsos.data.NodeEntity
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
 /**
@@ -53,7 +53,7 @@ class DecisionCommands(
     ) {
         scope.launch {
             val relation =
-                repository.getRelationsForNode(decisionId).first().firstOrNull {
+                (repository.getRelationsForNode(decisionId).firstOrNull() ?: emptyList()).firstOrNull {
                     it.relationType == "RELATED_PERSON" && // NON-NLS
                         (
                             (it.fromNodeId == decisionId && it.toNodeId == personId) ||

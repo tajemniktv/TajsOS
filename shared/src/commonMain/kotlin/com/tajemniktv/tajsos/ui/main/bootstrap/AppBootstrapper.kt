@@ -20,6 +20,7 @@ import com.tajemniktv.tajsos.data.UserEntity
 import com.tajemniktv.tajsos.data.toNodeStatus
 import com.tajemniktv.tajsos.domain.DomainKind
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 
 /**
  * A utility class responsible for initializing and populating the local database with core operational data
@@ -46,7 +47,7 @@ class AppBootstrapper(
         seedStudentTemplates()
         seedLifeLogisticsTemplates()
         seedUserData()
-        if (repository.getAllNodes().first().isEmpty()) {
+        if ((repository.getAllNodes().firstOrNull() ?: emptyList()).isEmpty()) {
             seedOnboardingData()
         }
     }
@@ -55,7 +56,7 @@ class AppBootstrapper(
      * Creates the baseline [UserEntity] if it doesn't already exist.
      */
     private suspend fun seedUserData() {
-        if (repository.getUser().first() == null) {
+        if (repository.getUser().firstOrNull() == null) {
             repository.insertUser(UserEntity())
         }
     }
@@ -69,7 +70,7 @@ class AppBootstrapper(
      * decisions, and open loops.
      */
     private suspend fun seedOnboardingData() {
-        if (repository.getAllNodes().first().isNotEmpty()) return
+        if ((repository.getAllNodes().firstOrNull() ?: emptyList()).isNotEmpty()) return
 
         seedDefaultModes()
 
@@ -428,7 +429,7 @@ class AppBootstrapper(
      * alongside their associated [ModePreferenceEntity] configurations if they are missing.
      */
     private suspend fun seedDefaultModes() {
-        val existingModes = repository.getAllModes().first()
+        val existingModes = repository.getAllModes().firstOrNull() ?: emptyList()
         val existingKeys = existingModes.map { it.key }.toSet()
 
         val defaultModes = getDefaultModes()
@@ -436,7 +437,7 @@ class AppBootstrapper(
         for (def in defaultModes) {
             if (def.mode.key !in existingKeys) {
                 val modeId = insertModeWithPreferences(def.mode, def.prefs)
-                if (def.mode.key == "COMMAND" && preferencesRepository.activeModeId.first() == null) {
+                if (def.mode.key == "COMMAND" && preferencesRepository.activeModeId.firstOrNull() == null) {
                     preferencesRepository.updateActiveModeId(modeId)
                 }
             }

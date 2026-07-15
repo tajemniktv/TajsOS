@@ -32,7 +32,7 @@ import com.tajemniktv.tajsos.ui.main.state.ProtocolHistoryItem
 import com.tajemniktv.tajsos.ui.main.state.TransitionProtocolItem
 import com.tajemniktv.tajsos.ui.main.state.TransitionProtocolTemplate
 import com.tajemniktv.tajsos.ui.main.state.TransitionProtocolsSnapshot
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
@@ -344,10 +344,10 @@ suspend fun buildDashboardUIState(
     val sevenDaysAgo = now - (7 * 24 * 60 * 60 * 1000L)
     val fourteenDaysAgo = now - (14 * 24 * 60 * 60 * 1000L)
 
-    val prefs = if (mode != null) repository.getPreferencesForMode(mode.id).first() else null
+    val prefs = if (mode != null) repository.getPreferencesForMode(mode.id).firstOrNull() else null
     val areaFilters =
         if (mode != null && mode.key != "ALL") { // NON-NLS
-            repository.getAreaFiltersForMode(mode.id).first()
+            repository.getAreaFiltersForMode(mode.id).firstOrNull() ?: emptyList()
         } else {
             emptyList()
         }
@@ -369,7 +369,7 @@ suspend fun buildDashboardUIState(
 
     val typeFilters =
         if (mode != null && mode.key != "ALL") { // NON-NLS
-            repository.getTypeFiltersForMode(mode.id).first()
+            repository.getTypeFiltersForMode(mode.id).firstOrNull() ?: emptyList()
         } else {
             emptyList()
         }

@@ -686,9 +686,9 @@ sealed class Screen(
             val currentRouteBase =
                 route
                     .split("/")
-                    .first()
-                    .split("?")
-                    .first()
+                    .firstOrNull()
+                    ?.split("?")
+                    ?.firstOrNull()
             if (currentRouteBase == StudyLegacy.route) return Education
 
             // Try exact match first (for Sub screens with query params)
@@ -709,7 +709,7 @@ sealed class Screen(
 
             // Try base route match, ensuring we don't accidentally match sub-screens that share a base
             // unless they are explicitly the root screen.
-            return rootScreens.find { it.route.split("/").first() == currentRouteBase }
+            return rootScreens.find { it.route.split("/").firstOrNull() == currentRouteBase }
         }
 
         /**

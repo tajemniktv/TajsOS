@@ -9,7 +9,7 @@ import com.tajemniktv.tajsos.data.CalendarEventEntity
 import com.tajemniktv.tajsos.data.CalendarProviderEntity
 import io.ktor.client.HttpClient
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.days
 
@@ -42,7 +42,7 @@ class CalendarManager(
      */
     suspend fun syncAll() =
         coroutineScope {
-            val allProviders = repository.getAllCalendarProviders().first().orEmpty()
+            val allProviders = repository.getAllCalendarProviders().firstOrNull().orEmpty()
             val now = Clock.System.now()
             val from = now.minus(30.days)
             val to = now.plus(90.days)
