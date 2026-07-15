@@ -34,6 +34,10 @@ fun Application.module() {
         ?: System.getenv("TAJSOS_SYNC_TOKEN")
         ?: error("TAJSOS_SYNC_TOKEN environment variable must be set")
 
+    require(expectedToken.length >= 16) {
+        "TAJSOS_SYNC_TOKEN must be at least 16 characters long to ensure adequate security entropy."
+    }
+
     val expectedTokenHash =
         MessageDigest
             .getInstance("SHA-256")
