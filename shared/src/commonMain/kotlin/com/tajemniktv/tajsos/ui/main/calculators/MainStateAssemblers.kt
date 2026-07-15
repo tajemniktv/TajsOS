@@ -367,14 +367,14 @@ suspend fun buildDashboardUIState(
     val includedTypes = typeFilters.mapNotNull { filter -> filter.nodeType.takeIf { filter.include } }
     val excludedTypes = typeFilters.mapNotNull { filter -> filter.nodeType.takeIf { !filter.include } }
 
-    val filteredNodes = FilterHelper.applyModeFilters(
-        nodes,
-        mode,
-        includedAreaIds,
-        excludedAreaIds,
-        includedTypes,
-        excludedTypes
+    val filterConfig = FilterHelper.ModeFilterConfig(
+        mode = mode,
+        includedAreaIds = includedAreaIds,
+        excludedAreaIds = excludedAreaIds,
+        includedTypes = includedTypes,
+        excludedTypes = excludedTypes
     )
+    val filteredNodes = FilterHelper.applyModeFilters(nodes, filterConfig)
 
     val activeTasks =
         filteredNodes.filter { it.node.isTaskItem() && it.node.taskStateOrNull() == TaskState.ACTIVE }

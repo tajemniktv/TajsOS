@@ -255,36 +255,54 @@ object FilterHelper {
         return score
     }
 
+    data class ModeFilterConfig(
+        val mode: ModeEntity?,
+        val includedAreaIds: List<Long>,
+        val excludedAreaIds: List<Long>,
+        val includedTypes: List<String>,
+        val excludedTypes: List<String>
+    )
+
     fun applyModeFilters(
         nodes: List<NodeWithPin>,
-        mode: ModeEntity?,
-        includedAreaIds: List<Long>,
-        excludedAreaIds: List<Long>,
-        includedTypes: List<String>,
-        excludedTypes: List<String>
+        config: ModeFilterConfig
     ): List<NodeWithPin> {
         var filtered = nodes
-        if (mode?.key != "ALL") {
-            if (includedAreaIds.isNotEmpty()) {
-                filtered = filtered.filter { it.node.areaId in includedAreaIds || it.node.isAreaItem() }
-            }
-            if (excludedAreaIds.isNotEmpty()) {
-                filtered = filtered.filter { it.node.areaId !in excludedAreaIds }
-            }
-            if (includedTypes.isNotEmpty()) {
-                filtered = filtered.filter { it.node.type in includedTypes }
-            }
-            if (excludedTypes.isNotEmpty()) {
-                filtered = filtered.filter { it.node.type !in excludedTypes }
-            }
+        if (config.mode?.key != "ALL") {
+            filtered = applyAreaAndTypeFilters(filtered, config)
         }
+        filtered = applyEnergyFilters(filtered, config.mode?.key)
+        return filtered
+    }
 
-        if (mode?.key == "RECOVERY" || mode?.key == "LOW_BATTERY" || mode?.key == "CANT_THINK") {
-            filtered = filtered.filter {
+    private fun applyAreaAndTypeFilters(nodes: List<NodeWithPin>, config: ModeFilterConfig): List<NodeWithPin> {
+        var filtered = nodes
+        if (config.includedAreaIds.isNotEmpty()) {
+            filtered = filtered.filter { it.node.areaId in config.includedAreaIds || it.node.isAreaItem() }
+        }
+        if (config.excludedAreaIds.isNotEmpty()) {
+            filtered = filtered.filter { it.node.areaId !in config.excludedAreaIds }
+        }
+        if (config.includedTypes.isNotEmpty()) {
+            filtered = filtered.filter { it.node.type in config.includedTypes }
+        }
+        if (config.excludedTypes.isNotEmpty()) {
+            filtered = filtered.filter { it.node.type !in config.excludedTypes }
+        }
+        return filtered
+    }
+
+    private fun applyEnergyFilters(nodes: List<NodeWithPin>, modeKey: String?): List<NodeWithPin> {
+        if (isLowEnergyMode(modeKey)) {
+            return nodes.filter {
                 it.node.type != "task" || (it.node.energyLevel == 1 && it.node.friction == "easy")
             }
         }
-        return filtered
+        return nodes
+    }
+
+    private fun isLowEnergyMode(modeKey: String?): Boolean {
+        return modeKey == "RECOVERY" || modeKey == "LOW_BATTERY" || modeKey == "CANT_THINK"
     }
 
     fun calculateSystemLoadWarning(
