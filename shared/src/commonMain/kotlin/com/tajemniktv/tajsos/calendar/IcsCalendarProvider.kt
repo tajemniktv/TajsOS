@@ -112,7 +112,7 @@ class IcsCalendarProvider(
         // At this point, it must be a valid domain name.
         // Reject known metadata and internal infrastructure domains.
         if (host in BLOCKED_METADATA_HOSTS) return false
-        if (host.endsWith(".localhost") || host.endsWith(".local") || host.endsWith(".internal")) return false
+        if (BLOCKED_LOCAL_SUFFIXES.any { host.endsWith(it) }) return false
 
         // Enforce that hostnames have at least one dot (excluding trailing dots).
         val cleanHost = host.trimEnd('.')
@@ -141,6 +141,12 @@ class IcsCalendarProvider(
             "localhost",
             "metadata.google.internal",
             "169.254.169.254"
+        )
+
+        private val BLOCKED_LOCAL_SUFFIXES = listOf(
+            ".localhost",
+            ".local",
+            ".internal"
         )
     }
 
