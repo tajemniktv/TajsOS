@@ -330,6 +330,52 @@ fun buildPlaybookSnapshot(
  * @param packs The registry of enabled and owned application packs.
  * @return A fully populated [DashboardUIState] reflecting the entire system's status filtered by the active mode.
  */
+
+
+private fun applyModeFilters(
+    nodes: List<NodeWithPin>,
+    mode: ModeEntity?,
+    includedAreaIds: List<Long>,
+    excludedAreaIds: List<Long>,
+    includedTypes: List<String>,
+    excludedTypes: List<String>
+): List<NodeWithPin> {
+    var filtered = nodes
+    if (mode?.key != "ALL") {
+        if (includedAreaIds.isNotEmpty()) {
+            filtered = filtered.filter { it.node.areaId in includedAreaIds || it.node.isAreaItem() }
+        }
+        if (excludedAreaIds.isNotEmpty()) {
+            filtered = filtered.filter { it.node.areaId !in excludedAreaIds }
+        }
+        if (includedTypes.isNotEmpty()) {
+            filtered = filtered.filter { it.node.type in includedTypes }
+        }
+        if (excludedTypes.isNotEmpty()) {
+            filtered = filtered.filter { it.node.type !in excludedTypes }
+        }
+    }
+
+    if (mode?.key == "RECOVERY" || mode?.key == "LOW_BATTERY" || mode?.key == "CANT_THINK") {
+        filtered = filtered.filter {
+            it.node.type != "task" || (it.node.energyLevel == 1 && it.node.friction == "easy")
+        }
+    }
+    return filtered
+}
+
+private fun calculateSystemLoadWarning(
+    loadScore: Int,
+    fragmentation: Int,
+): String? {
+    return when {
+        loadScore > 100 -> "SYSTEM OVERLOADED // REDUCE INTAKE"
+        fragmentation > 40 -> "ATTENTION FRAGMENTED // FOCUS ON ONE AREA"
+        else -> null
+    }
+}
+
+
 suspend fun buildDashboardUIState(
     repository: AppRepository,
     nodes: List<NodeWithPin>,
@@ -355,18 +401,6 @@ suspend fun buildDashboardUIState(
     val includedAreaIds = areaFilters.mapNotNull { filter -> filter.areaId.takeIf { filter.include } }
     val excludedAreaIds = areaFilters.mapNotNull { filter -> filter.areaId.takeIf { !filter.include } }
 
-    var filteredNodes = nodes
-    if (mode?.key != "ALL")
-    { // NON-NLS
-        if (includedAreaIds.isNotEmpty()) {
-                filteredNodes =
-                filteredNodes.filter { it.node.areaId in includedAreaIds || it.node.isAreaItem() }
-        }
-        if (excludedAreaIds.isNotEmpty()) {
-            filteredNodes = filteredNodes.filter { it.node.areaId !in excludedAreaIds }
-        }
-    }
-
     val typeFilters =
         if (mode != null && mode.key != "ALL") { // NON-NLS
             repository.getTypeFiltersForMode(mode.id).firstOrNull() ?: emptyList()
@@ -377,22 +411,14 @@ suspend fun buildDashboardUIState(
     val includedTypes = typeFilters.mapNotNull { filter -> filter.nodeType.takeIf { filter.include } }
     val excludedTypes = typeFilters.mapNotNull { filter -> filter.nodeType.takeIf { !filter.include } }
 
-    if (mode?.key != "ALL")
-    { // NON-NLS
-        if (includedTypes.isNotEmpty()) {
-                filteredNodes = filteredNodes.filter { it.node.type in includedTypes }
-        }
-        if (excludedTypes.isNotEmpty()) {
-            filteredNodes = filteredNodes.filter { it.node.type !in excludedTypes }
-        }
-    }
-
-    if (mode?.key == "RECOVERY" || mode?.key == "LOW_BATTERY" || mode?.key == "CANT_THINK") { // NON-NLS
-        filteredNodes =
-            filteredNodes.filter {
-                it.node.type != "task" || (it.node.energyLevel == 1 && it.node.friction == "easy") // NON-NLS
-            }
-    }
+    val filteredNodes = applyModeFilters(
+        nodes,
+        mode,
+        includedAreaIds,
+        excludedAreaIds,
+        includedTypes,
+        excludedTypes
+    )
 
     val activeTasks =
         filteredNodes.filter { it.node.isTaskItem() && it.node.taskStateOrNull() == TaskState.ACTIVE }
@@ -444,13 +470,7 @@ suspend fun buildDashboardUIState(
 
     val loadScore = (activeTasks.size * 2) + (openLoops.size * 3) + (overdue.size * 5)
     val fragmentation = activeTasks.groupBy { it.node.projectId }.size * 5
-    val capWarning =
-        when
-            {
-                loadScore > 100 -> "SYSTEM OVERLOADED // REDUCE INTAKE"
-                fragmentation > 40 -> "ATTENTION FRAGMENTED // FOCUS ON ONE AREA"
-                else -> null
-            }
+    val capWarning = calculateSystemLoadWarning(loadScore, fragmentation)
 
     val contexts =
         filteredNodes
