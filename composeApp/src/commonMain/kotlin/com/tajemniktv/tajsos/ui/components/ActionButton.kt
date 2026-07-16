@@ -4,6 +4,9 @@
 
 package com.tajemniktv.tajsos.ui.components
 
+
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -72,7 +75,7 @@ fun ActionButton(
         onClick = onClick,
         enabled = enabled,
         interactionSource = interactionSource,
-        modifier = finalModifier.graphicsLayer { scaleX = scale; scaleY = scale },
+        modifier = finalModifier.graphicsLayer { scaleX = scale; scaleY = scale }.pointerHoverIcon(if (enabled) PointerIcon.Hand else PointerIcon.Default),
         colors =
             resolveActionButtonColors(
                 isPrimary = isPrimary,

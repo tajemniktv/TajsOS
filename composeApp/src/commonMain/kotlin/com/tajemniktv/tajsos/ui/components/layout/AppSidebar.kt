@@ -4,6 +4,9 @@
 
 package com.tajemniktv.tajsos.ui.components.layout
 
+
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.fadeIn
@@ -744,7 +747,7 @@ fun NewEntryButton(
                     ).graphicsLayer {
                         scaleX = scale
                         scaleY = scale
-                    },
+                    }.pointerHoverIcon(PointerIcon.Hand),
             interactionSource = interactionSource,
             tonalElevation = 0.dp,
             shadowElevation = 0.dp,
@@ -797,7 +800,7 @@ fun UserProfileSidebarSection(
                 Modifier.fillMaxWidth().mouseButtons(
                     onSecondaryClick = onClick,
                     onMiddleClick = onClick,
-                ),
+                ).pointerHoverIcon(PointerIcon.Hand),
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
             color = TajsOSTheme.CardNestedSurface,
             tonalElevation = 0.dp,
