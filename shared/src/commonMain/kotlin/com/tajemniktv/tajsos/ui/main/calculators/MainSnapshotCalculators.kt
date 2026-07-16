@@ -44,6 +44,10 @@ import kotlin.time.Instant
  * @param projects A curated list of nodes strictly identified as "project" entities.
  * @return An analytical [InsightsData] snapshot summarizing the user's historical performance.
  */
+/**
+ * Calculates insights metrics.
+ * Optimized using .groupingBy {}.eachCount() instead of .groupBy {}.mapValues { it.value.size } to reduce intermediate collection allocations.
+ */
 fun calculateInsights(
     nodes: List<NodeWithPin>,
     sessions: List<FocusSessionEntity>,
@@ -128,13 +132,13 @@ fun calculateInsights(
     val completionsByArea =
         recentCompletions
             .mapNotNull { item -> item.node.areaId?.let { it to item } }
-            .groupBy({ it.first }, { it.second })
-            .mapValues { it.value.size }
+            .groupingBy { it.first }
+            .eachCount()
     val completionsByProject =
         recentCompletions
             .mapNotNull { item -> item.node.projectId?.let { it to item } }
-            .groupBy({ it.first }, { it.second })
-            .mapValues { it.value.size }
+            .groupingBy { it.first }
+            .eachCount()
 
     val inboxGrowth = recentNodes.count { it.node.inboxState }
     val archivedCount =
@@ -175,23 +179,23 @@ fun calculateInsights(
     // Correlating track entries with activity
     val dailyCompletions =
         recentCompletions
-            .groupBy {
+            .groupingBy {
                 Instant
                     .fromEpochMilliseconds(it.node.completedAt ?: 0)
                     .toLocalDateTime(sysZone)
                     .date
                     .toString()
-            }.mapValues { it.value.size }
+            }.eachCount()
 
     val dailyCaptures =
         recentNodes
-            .groupBy {
+            .groupingBy {
                 Instant
                     .fromEpochMilliseconds(it.node.createdAt)
                     .toLocalDateTime(sysZone)
                     .date
                     .toString()
-            }.mapValues { it.value.size }
+            }.eachCount()
 
     val dailyFocus =
         recentSessions
@@ -1709,6 +1713,10 @@ fun calculateVaultsSnapshot(nodes: List<NodeWithPin>): VaultsSnapshot {
  * @param inputs A bundled dataset providing current node volumes, maintenance debt, and open loops.
  * @return A [CapacitySnapshot] identifying execution pressure and potential burnout risks.
  */
+/**
+ * Calculates the capacity snapshot.
+ * Optimized using .distinctBy {}.size instead of .groupBy {}.size to avoid unnecessary intermediate map and list allocations.
+ */
 fun calculateCapacitySnapshot(
     nodes: List<NodeWithPin>,
     projects: List<NodeEntity>,
@@ -1736,9 +1744,9 @@ fun calculateCapacitySnapshot(
         ).coerceIn(0, 100)
     val fragmentationScore =
         (
-                activeTasks.groupBy { it.node.projectId }.size *
+                activeTasks.distinctBy { it.node.projectId }.size *
                         7 +
-                        activeTasks.groupBy { it.node.areaId }.size *
+                        activeTasks.distinctBy { it.node.areaId }.size *
                         4
         ).coerceIn(0, 100)
 
@@ -1762,7 +1770,7 @@ fun calculateCapacitySnapshot(
     val unrealisticWeekSignal =
         if (weeklyCreatedActive > weeklyDone * 2 + 5) "THIS WEEK IS UNREALISTIC // INTAKE OUTPACES EXECUTION" else null
     val tooManyActiveFrontsIndicator =
-        if (activeTasks.groupBy { it.node.areaId }.size >= 6) "TOO MANY ACTIVE FRONTS" else null
+        if (activeTasks.distinctBy { it.node.areaId }.size >= 6) "TOO MANY ACTIVE FRONTS" else null
     val attentionFragmentedIndicator =
         if (fragmentationScore >= 55) "ATTENTION IS TOO FRAGMENTED" else null
     val weeklyStructuralOverloadWarning =

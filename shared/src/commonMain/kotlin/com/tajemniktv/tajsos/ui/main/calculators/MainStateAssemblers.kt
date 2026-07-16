@@ -330,6 +330,10 @@ fun buildPlaybookSnapshot(
  * @param packs The registry of enabled and owned application packs.
  * @return A fully populated [DashboardUIState] reflecting the entire system's status filtered by the active mode.
  */
+/**
+ * Builds the dashboard UI state.
+ * Optimized using .distinctBy {}.size to performantly count unique items without generating intermediate maps.
+ */
 suspend fun buildDashboardUIState(
     repository: AppRepository,
     nodes: List<NodeWithPin>,
@@ -443,7 +447,7 @@ suspend fun buildDashboardUIState(
     val areaHealthMetrics = areaSnapshot.areas.associateBy { it.areaId }
 
     val loadScore = (activeTasks.size * 2) + (openLoops.size * 3) + (overdue.size * 5)
-    val fragmentation = activeTasks.groupBy { it.node.projectId }.size * 5
+    val fragmentation = activeTasks.distinctBy { it.node.projectId }.size * 5
     val capWarning =
         when
             {
