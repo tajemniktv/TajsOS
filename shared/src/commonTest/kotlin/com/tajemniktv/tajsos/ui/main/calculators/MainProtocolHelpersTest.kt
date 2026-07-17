@@ -19,7 +19,8 @@ class MainProtocolHelpersTest {
         assertEquals("hello world", normalizeProtocolLabel("  Hello... World  "))
         assertEquals("hello 123", normalizeProtocolLabel("Hello 123"))
         assertEquals("", normalizeProtocolLabel("   !!!   "))
-    }
+
+}
 
     @Test
     fun testBuildPlaybookRelationshipContext() {
@@ -233,6 +234,27 @@ class MainProtocolHelpersTest {
 
         val cantThinkMode = ModeEntity(id = 3, key = "CANT_THINK", name = "Cant Think")
         assertEquals("Bad day protocol", suggestPlaybookLabel(cantThinkMode, emptyList()))
+    }
+
+
+    @Test
+    fun testMatchesQuery() {
+        val nodeWithPin = com.tajemniktv.tajsos.data.NodeWithPin(
+            node = com.tajemniktv.tajsos.data.NodeEntity(id = 1, title = "title", content = "content", type = "task"),
+            pin = null,
+            tags = listOf(com.tajemniktv.tajsos.data.TagEntity(id = 1, name = "tag1", normalizedName = "tag1"))
+        )
+
+        // Exact matches
+        kotlin.test.assertTrue(matchesQuery(nodeWithPin, "title"))
+        kotlin.test.assertTrue(matchesQuery(nodeWithPin, "content"))
+        kotlin.test.assertTrue(matchesQuery(nodeWithPin, "tag1"))
+
+        // Negative match
+        kotlin.test.assertFalse(matchesQuery(nodeWithPin, "nothing"))
+
+        // Blank search delegates properly
+        kotlin.test.assertFalse(matchesQuery(nodeWithPin, ""))
     }
 
 }
