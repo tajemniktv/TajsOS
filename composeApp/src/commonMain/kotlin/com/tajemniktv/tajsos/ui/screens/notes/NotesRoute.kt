@@ -42,6 +42,8 @@ import com.tajemniktv.tajsos.ui.components.screen.ScreenScaffold
 import com.tajemniktv.tajsos.ui.components.screen.ScreenScrollBehavior
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.coroutines.launch
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 /**
  * Responsive route for the notes workspace.
@@ -215,7 +217,7 @@ fun NotesRoute(
                             modifier = Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            IconButton(onClick = { mobileInDetail = false }, modifier = Modifier.size(48.dp)) {
+                            IconButton(onClick = { mobileInDetail = false }, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
                                 Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
                             }
                         }

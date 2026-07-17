@@ -34,6 +34,8 @@ import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.education_desc
 import tajsos.composeapp.generated.resources.education_title
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 @Composable
 internal fun renderStudyHeaderBlock(context: StudyDashboardContext) {
@@ -268,7 +270,7 @@ internal fun renderLinksGraphBlock(context: StudyDashboardContext) {
                 style = MaterialTheme.typography.bodySmall,
             )
             Spacer(Modifier.height(TajsOSTheme.SpacingSm))
-            Button(onClick = context.onOpenTopicLink) {
+            Button(onClick = context.onOpenTopicLink, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
                 Icon(Icons.Default.Link, contentDescription = null)
                 Text("Create Topic Link")
             }
@@ -283,7 +285,7 @@ internal fun renderLinksGraphBlock(context: StudyDashboardContext) {
                 style = MaterialTheme.typography.bodySmall,
             )
             Spacer(Modifier.height(TajsOSTheme.SpacingSm))
-            Button(onClick = context.onOpenPaperLink) {
+            Button(onClick = context.onOpenPaperLink, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
                 Icon(Icons.Default.Link, contentDescription = null)
                 Text("Create Paper Link")
             }

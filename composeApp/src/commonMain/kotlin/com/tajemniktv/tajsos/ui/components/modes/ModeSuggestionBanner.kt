@@ -31,6 +31,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 /**
  * Renders a themed banner suggesting a mode change and exposes actions to accept or dismiss it.
@@ -83,7 +85,7 @@ fun ModeSuggestionBanner(
                 }
             }
             Row {
-                TextButton(onClick = onDismiss) {
+                TextButton(onClick = onDismiss, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
                     Text(
                         "IGNORE",
                         style = MaterialTheme.typography.labelSmall,

@@ -48,6 +48,8 @@ import tajsos.composeapp.generated.resources.type_note
 import tajsos.composeapp.generated.resources.type_project
 import tajsos.composeapp.generated.resources.type_record
 import tajsos.composeapp.generated.resources.type_task
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -70,7 +72,7 @@ fun TemplatesScreen(
         )
 
     val actions: @Composable RowScope.() -> Unit = {
-        IconButton(onClick = { showAddDialog = true }, modifier = Modifier.size(48.dp)) {
+        IconButton(onClick = { showAddDialog = true }, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
             Icon(
                 Icons.Default.Add,
                 contentDescription = stringResource(Res.string.templates_add_desc),
@@ -142,7 +144,7 @@ fun TemplatesScreen(
                 ) { Text(stringResource(Res.string.templates_dialog_create)) }
             },
             dismissButton = {
-                TextButton(onClick = { showAddDialog = false }) {
+                TextButton(onClick = { showAddDialog = false }, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
                     Text(
                         stringResource(
                             Res.string.templates_dialog_cancel,

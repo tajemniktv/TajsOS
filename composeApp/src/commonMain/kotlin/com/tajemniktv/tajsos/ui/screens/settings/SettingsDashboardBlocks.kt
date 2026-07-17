@@ -87,6 +87,8 @@ import tajsos.composeapp.generated.resources.settings_window_startup_mode
 import tajsos.composeapp.generated.resources.settings_window_startup_mode_desc
 import tajsos.composeapp.generated.resources.settings_window_startup_restore_last
 import tajsos.composeapp.generated.resources.settings_window_startup_title
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 object SettingsDashboardBlocks {
     private val renderers: Map<String, SettingsDashboardBlockRenderer> =
@@ -721,7 +723,7 @@ private fun SettingsMedicationItem(
             color = TajsOSTheme.Muted,
         )
         Spacer(Modifier.height(TajsOSTheme.SpacingSm))
-        TextButton(onClick = onDelete) {
+        TextButton(onClick = onDelete, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
             Text(stringResource(Res.string.med_delete))
         }
     }
@@ -792,7 +794,7 @@ private fun SettingsAddMedicationDialog(
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
+            TextButton(onClick = onDismiss, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
                 Text(stringResource(Res.string.common_back))
             }
         },

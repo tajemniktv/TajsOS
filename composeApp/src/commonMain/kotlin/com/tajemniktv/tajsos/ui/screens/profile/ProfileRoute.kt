@@ -44,6 +44,8 @@ import tajsos.composeapp.generated.resources.med_save
 import tajsos.composeapp.generated.resources.med_substance
 import tajsos.composeapp.generated.resources.med_take_at
 import tajsos.composeapp.generated.resources.profile_add_med
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 /**
  * Profile feature route that owns state orchestration and delegates visual sections to block
@@ -255,7 +257,7 @@ private fun AddMedicationDialog(
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
+            TextButton(onClick = onDismiss, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
                 Text(stringResource(Res.string.common_back))
             }
         },

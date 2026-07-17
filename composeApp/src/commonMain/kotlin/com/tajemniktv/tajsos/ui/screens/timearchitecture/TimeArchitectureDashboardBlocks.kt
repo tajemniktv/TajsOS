@@ -62,6 +62,8 @@ import tajsos.composeapp.generated.resources.time_architecture_temporal_anchors
 import tajsos.composeapp.generated.resources.time_architecture_title
 import tajsos.composeapp.generated.resources.time_architecture_weekly_alignment
 import tajsos.composeapp.generated.resources.time_architecture_weekly_detail
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 object TimeArchitectureDashboardBlocks {
     private val renderers: Map<String, TimeArchitectureDashboardBlockRenderer> =
@@ -347,7 +349,7 @@ private fun TimeArchitectureCadenceCard(
                     ),
                 status = "Pending",
             )
-            Button(onClick = onRunMonthlyReset) {
+            Button(onClick = onRunMonthlyReset, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
                 Text(stringResource(Res.string.time_architecture_run_monthly_reset))
             }
         }

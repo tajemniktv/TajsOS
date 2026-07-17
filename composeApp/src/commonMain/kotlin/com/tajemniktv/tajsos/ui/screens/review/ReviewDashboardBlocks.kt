@@ -61,6 +61,8 @@ import tajsos.composeapp.generated.resources.review_step_plan
 import tajsos.composeapp.generated.resources.review_step_stats
 import tajsos.composeapp.generated.resources.review_step_wins
 import tajsos.composeapp.generated.resources.review_weekly
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 object ReviewDashboardBlocks {
     private val renderers: Map<String, ReviewDashboardBlockRenderer> =
@@ -234,7 +236,7 @@ private fun renderReviewFlow(context: ReviewDashboardContext) {
             horizontalArrangement = Arrangement.End,
         ) {
             if (currentStep < steps.size - 1) {
-                Button(onClick = context.onNext) {
+                Button(onClick = context.onNext, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
                     Text(stringResource(Res.string.review_next))
                 }
             } else {

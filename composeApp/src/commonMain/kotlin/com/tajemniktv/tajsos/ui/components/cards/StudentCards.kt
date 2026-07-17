@@ -64,6 +64,8 @@ import tajsos.composeapp.generated.resources.study_label_assignments
 import tajsos.composeapp.generated.resources.study_label_flashcards
 import tajsos.composeapp.generated.resources.study_label_study_time
 import tajsos.composeapp.generated.resources.templates_title
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 /**
  * Student summary card
@@ -310,13 +312,13 @@ fun ProgressControlCard(
             Text(title, style = MaterialTheme.typography.titleSmall)
             Text("$value%", style = MaterialTheme.typography.bodySmall, color = TajsOSTheme.Accent)
             Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
-                OutlinedButton(onClick = onDecrease) { Text("-10") }
-                OutlinedButton(onClick = onIncrease) { Text("+10") }
-                OutlinedButton(onClick = onOpen) { Text(stringResource(Res.string.common_open)) }
+                OutlinedButton(onClick = onDecrease, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) { Text("-10") }
+                OutlinedButton(onClick = onIncrease, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) { Text("+10") }
+                OutlinedButton(onClick = onOpen, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) { Text(stringResource(Res.string.common_open)) }
             }
             Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
-                OutlinedButton(onClick = onOpen) { Text(stringResource(Res.string.student_action_details)) }
-                OutlinedButton(onClick = {}) {
+                OutlinedButton(onClick = onOpen, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) { Text(stringResource(Res.string.student_action_details)) }
+                OutlinedButton(onClick = {}, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
                     Text(
                         stringResource(
                             Res.string.student_id_label,

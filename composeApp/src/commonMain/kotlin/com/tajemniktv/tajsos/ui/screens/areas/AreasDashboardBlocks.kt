@@ -84,6 +84,8 @@ import tajsos.composeapp.generated.resources.areas_recent_activity
 import tajsos.composeapp.generated.resources.areas_title
 import tajsos.composeapp.generated.resources.areas_upcoming_deadlines
 import tajsos.composeapp.generated.resources.common_open
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 object AreasDashboardBlocks {
     private val renderers: Map<String, AreasDashboardBlockRenderer> =
@@ -123,7 +125,7 @@ internal fun AreasMainBlock(
                 color = TajsOSTheme.Text,
             )
             Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
-                OutlinedButton(onClick = { showAddDialog = true }) {
+                OutlinedButton(onClick = { showAddDialog = true }, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
                     Text(stringResource(Res.string.areas_new))
                 }
             }
@@ -132,7 +134,7 @@ internal fun AreasMainBlock(
         if (areas.isEmpty()) {
             EmptyState(message = stringResource(Res.string.areas_empty)) {
                 Spacer(modifier = Modifier.height(TajsOSTheme.SpacingMd))
-                Button(onClick = { showAddDialog = true }) {
+                Button(onClick = { showAddDialog = true }, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
                     Text(stringResource(Res.string.areas_create_first))
                 }
             }
@@ -475,7 +477,7 @@ fun AddAreaDialog(
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(Res.string.areas_dialog_cancel)) }
+            TextButton(onClick = onDismiss, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) { Text(stringResource(Res.string.areas_dialog_cancel)) }
         },
     )
 }

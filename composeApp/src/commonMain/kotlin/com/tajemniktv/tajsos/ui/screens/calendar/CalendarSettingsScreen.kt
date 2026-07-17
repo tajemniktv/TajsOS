@@ -31,6 +31,8 @@ import tajsos.composeapp.generated.resources.cal_settings_dialog_cancel
 import tajsos.composeapp.generated.resources.cal_settings_dialog_name
 import tajsos.composeapp.generated.resources.cal_settings_dialog_title
 import tajsos.composeapp.generated.resources.cal_settings_dialog_url
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 /**
  * Central calendar settings entry point that collects system state and coordinates layout.
@@ -146,7 +148,7 @@ private fun AddCalendarDialog(
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
+            TextButton(onClick = onDismiss, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
                 Text(stringResource(Res.string.cal_settings_dialog_cancel))
             }
         },

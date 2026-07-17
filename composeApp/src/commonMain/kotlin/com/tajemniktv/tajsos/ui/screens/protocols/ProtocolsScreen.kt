@@ -101,6 +101,8 @@ import tajsos.composeapp.generated.resources.protocols_placeholder_search
 import tajsos.composeapp.generated.resources.protocols_session_notes
 import tajsos.composeapp.generated.resources.screen_protocols
 import kotlin.math.max
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 /**
  * Central protocols entry point that collects system state and coordinates layout.
@@ -561,7 +563,7 @@ private fun ProtocolLibraryCard(
                 color = TajsOSTheme.Muted,
             )
             Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
-                Button(onClick = onRun) {
+                Button(onClick = onRun, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
                     Text(stringResource(Res.string.protocols_action_run))
                 }
                 AssistChip(

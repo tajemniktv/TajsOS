@@ -214,12 +214,12 @@ private fun renderProjectHero(context: ProjectDetailContext) {
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                FilledTonalButton(onClick = context.onStatusClick) {
+                FilledTonalButton(onClick = context.onStatusClick, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
                     Icon(Icons.Default.Tune, null)
                     Spacer(Modifier.width(6.dp))
                     Text(stringResource(Res.string.project_detail_set_status))
                 }
-                FilledTonalButton(onClick = {}) {
+                FilledTonalButton(onClick = {}, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
                     Icon(Icons.Default.FolderOpen, null)
                     Spacer(Modifier.width(6.dp))
                     Text(context.areaName ?: stringResource(Res.string.detail_unassign))

@@ -148,14 +148,14 @@ fun CalendarHeader(
             )
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
-            TextButton(onClick = onTodayClick) {
+            TextButton(onClick = onTodayClick, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
                 Text(
                     stringResource(Res.string.cal_today),
                     style = MaterialTheme.typography.labelSmall,
                     color = TajsOSTheme.Primary,
                 )
             }
-            IconButton(onClick = onSyncClick, modifier = Modifier.size(48.dp)) {
+            IconButton(onClick = onSyncClick, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
                 Icon(
                     Icons.Default.Refresh,
                     contentDescription = stringResource(Res.string.cal_sync),
@@ -163,13 +163,13 @@ fun CalendarHeader(
                     modifier = Modifier.size(20.dp),
                 )
             }
-            IconButton(onClick = onPreviousMonth, modifier = Modifier.size(48.dp)) {
+            IconButton(onClick = onPreviousMonth, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
                 Icon(
                     Icons.Default.ChevronLeft,
                     contentDescription = stringResource(Res.string.cal_previous),
                 )
             }
-            IconButton(onClick = onNextMonth, modifier = Modifier.size(48.dp)) {
+            IconButton(onClick = onNextMonth, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
                 Icon(
                     Icons.Default.ChevronRight,
                     contentDescription = stringResource(Res.string.cal_next),

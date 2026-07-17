@@ -84,6 +84,8 @@ import tajsos.composeapp.generated.resources.type_record
 import tajsos.composeapp.generated.resources.type_task
 import kotlin.math.max
 import kotlin.math.min
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 object SearchDashboardBlocks {
     private val renderers: Map<String, SearchDashboardBlockRenderer> =
@@ -125,7 +127,7 @@ private fun renderSearchInput(context: SearchDashboardContext) {
                     unfocusedContainerColor = TajsOSTheme.Surface,
                 ),
         )
-        IconButton(onClick = context.onToggleFilters, modifier = Modifier.size(48.dp)) {
+        IconButton(onClick = context.onToggleFilters, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
             Icon(
                 Icons.Default.FilterList,
                 contentDescription = "Toggle filters",
@@ -531,13 +533,13 @@ private fun SearchResultsHeader(
             )
         }
         Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-            TextButton(onClick = onToggleFilters) {
+            TextButton(onClick = onToggleFilters, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
                 Text(
                     "FILTER",
                     style = MaterialTheme.typography.labelSmall,
                 )
             }
-            TextButton(onClick = onToggleSort) {
+            TextButton(onClick = onToggleSort, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
                 Text(
                     if (sortMode == "relevance") "RELEVANCE" else "UPDATED",
                     style = MaterialTheme.typography.labelSmall,
@@ -759,7 +761,7 @@ private fun SearchResultCard(
 
             Spacer(modifier = Modifier.height(TajsOSTheme.SpacingSm))
             Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                TextButton(onClick = onOpen) {
+                TextButton(onClick = onOpen, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
                     Text(
                         "OPEN",
                         style = MaterialTheme.typography.labelSmall,
@@ -777,7 +779,7 @@ private fun SearchResultCard(
                         style = MaterialTheme.typography.labelSmall,
                     )
                 }
-                TextButton(onClick = onArchive) {
+                TextButton(onClick = onArchive, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
                     Text(
                         "ARCHIVE",
                         style = MaterialTheme.typography.labelSmall,

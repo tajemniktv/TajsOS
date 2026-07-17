@@ -45,6 +45,8 @@ import tajsos.composeapp.generated.resources.projects_dialog_new
 import tajsos.composeapp.generated.resources.projects_empty
 import tajsos.composeapp.generated.resources.projects_filter_active
 import tajsos.composeapp.generated.resources.projects_filter_someday
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 /**
  * Central projects entry point that collects system state and coordinates layout.
@@ -163,7 +165,7 @@ fun AddProjectDialog(
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
+            TextButton(onClick = onDismiss, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
                 Text(stringResource(Res.string.projects_dialog_cancel))
             }
         },
@@ -197,7 +199,7 @@ fun ProjectListContent(
             message = stringResource(Res.string.projects_empty),
         ) {
             Spacer(modifier = Modifier.height(TajsOSTheme.SpacingMd))
-            Button(onClick = onShowAddDialog) {
+            Button(onClick = onShowAddDialog, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
                 Text(stringResource(Res.string.projects_create_first))
             }
         }

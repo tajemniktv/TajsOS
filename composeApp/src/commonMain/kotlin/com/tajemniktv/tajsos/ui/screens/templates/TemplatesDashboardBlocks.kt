@@ -32,6 +32,8 @@ import tajsos.composeapp.generated.resources.type_note
 import tajsos.composeapp.generated.resources.type_project
 import tajsos.composeapp.generated.resources.type_record
 import tajsos.composeapp.generated.resources.type_task
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 object TemplatesDashboardBlocks {
     private val renderers: Map<String, TemplatesDashboardBlockRenderer> =
@@ -48,7 +50,7 @@ private fun renderTemplatesList(context: TemplatesDashboardContext) {
     if (templates.isEmpty()) {
         EmptyState(message = stringResource(Res.string.templates_empty)) {
             Spacer(modifier = Modifier.height(TajsOSTheme.SpacingMd))
-            Button(onClick = context.onShowAddDialog) {
+            Button(onClick = context.onShowAddDialog, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
                 Text(stringResource(Res.string.templates_add_desc))
             }
         }

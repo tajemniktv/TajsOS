@@ -52,6 +52,8 @@ import tajsos.composeapp.generated.resources.open_loop_none
 import tajsos.composeapp.generated.resources.open_loop_unassigned
 import tajsos.composeapp.generated.resources.open_loop_untyped
 import kotlin.time.Clock
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 /**
  * Displays a card for an open loop (unresolved thought, idea, or pending task).
@@ -180,7 +182,7 @@ fun OpenLoopCard(
                         label = { Text(stringResource(Res.string.open_loop_action_convert_note)) },
                     )
                 } else {
-                    Button(onClick = onArchive) { Text(stringResource(Res.string.open_loop_action_archive)) }
+                    Button(onClick = onArchive, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) { Text(stringResource(Res.string.open_loop_action_archive)) }
                 }
             }
         }
@@ -311,7 +313,7 @@ fun MaintenanceCard(
                         label = { Text("RESOLVE") },
                     )
                 } else {
-                    Button(onClick = onArchive) { Text("ARCHIVE") }
+                    Button(onClick = onArchive, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) { Text("ARCHIVE") }
                 }
             }
         }
@@ -386,7 +388,7 @@ fun ProtocolCard(
             ) {
                 AssistChip(onClick = { onEditNode(item.node.node.id) }, label = { Text("OPEN") })
                 AssistChip(onClick = onRun, label = { Text("RUN") })
-                Button(onClick = onArchive) { Text("ARCHIVE") }
+                Button(onClick = onArchive, modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) { Text("ARCHIVE") }
             }
         }
     }
