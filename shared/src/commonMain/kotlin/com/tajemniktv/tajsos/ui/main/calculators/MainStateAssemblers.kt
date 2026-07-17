@@ -443,7 +443,10 @@ suspend fun buildDashboardUIState(
     val areaHealthMetrics = areaSnapshot.areas.associateBy { it.areaId }
 
     val loadScore = (activeTasks.size * 2) + (openLoops.size * 3) + (overdue.size * 5)
-    val fragmentation = activeTasks.groupBy { it.node.projectId }.size * 5
+    /**
+     * Uses [distinctBy] to performantly count unique projects without creating a map of lists.
+     */
+    val fragmentation = activeTasks.distinctBy { it.node.projectId }.size * 5
     val capWarning =
         when
             {

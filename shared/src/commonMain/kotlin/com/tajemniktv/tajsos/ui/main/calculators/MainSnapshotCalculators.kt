@@ -125,16 +125,19 @@ fun calculateInsights(
             hasActiveItems && !hasRecentCompletions
         }
 
+    /**
+     * Uses [groupingBy] and [eachCount] instead of groupBy.mapValues to avoid creating intermediate maps.
+     */
     val completionsByArea =
         recentCompletions
-            .mapNotNull { item -> item.node.areaId?.let { it to item } }
-            .groupBy({ it.first }, { it.second })
-            .mapValues { it.value.size }
+            .mapNotNull { it.node.areaId }
+            .groupingBy { it }
+            .eachCount()
     val completionsByProject =
         recentCompletions
-            .mapNotNull { item -> item.node.projectId?.let { it to item } }
-            .groupBy({ it.first }, { it.second })
-            .mapValues { it.value.size }
+            .mapNotNull { it.node.projectId }
+            .groupingBy { it }
+            .eachCount()
 
     val inboxGrowth = recentNodes.count { it.node.inboxState }
     val archivedCount =
@@ -173,25 +176,28 @@ fun calculateInsights(
 
     // Light Manual Statistics (Roadmap Section 7)
     // Correlating track entries with activity
+    /**
+     * Grouping counts by day performantly without creating intermediate collection maps.
+     */
     val dailyCompletions =
         recentCompletions
-            .groupBy {
+            .groupingBy {
                 Instant
                     .fromEpochMilliseconds(it.node.completedAt ?: 0)
                     .toLocalDateTime(sysZone)
                     .date
                     .toString()
-            }.mapValues { it.value.size }
+            }.eachCount()
 
     val dailyCaptures =
         recentNodes
-            .groupBy {
+            .groupingBy {
                 Instant
                     .fromEpochMilliseconds(it.node.createdAt)
                     .toLocalDateTime(sysZone)
                     .date
                     .toString()
-            }.mapValues { it.value.size }
+            }.eachCount()
 
     val dailyFocus =
         recentSessions
@@ -1734,11 +1740,14 @@ fun calculateCapacitySnapshot(
                 (maintenance.overdue.size * 4) +
                 (overdueCount * 5)
         ).coerceIn(0, 100)
+    /**
+     * Uses [distinctBy] instead of groupBy for calculating sizes to prevent allocating lists for each group.
+     */
     val fragmentationScore =
         (
-                activeTasks.groupBy { it.node.projectId }.size *
+                activeTasks.distinctBy { it.node.projectId }.size *
                         7 +
-                        activeTasks.groupBy { it.node.areaId }.size *
+                        activeTasks.distinctBy { it.node.areaId }.size *
                         4
         ).coerceIn(0, 100)
 
@@ -1762,7 +1771,7 @@ fun calculateCapacitySnapshot(
     val unrealisticWeekSignal =
         if (weeklyCreatedActive > weeklyDone * 2 + 5) "THIS WEEK IS UNREALISTIC // INTAKE OUTPACES EXECUTION" else null
     val tooManyActiveFrontsIndicator =
-        if (activeTasks.groupBy { it.node.areaId }.size >= 6) "TOO MANY ACTIVE FRONTS" else null
+        if (activeTasks.distinctBy { it.node.areaId }.size >= 6) "TOO MANY ACTIVE FRONTS" else null
     val attentionFragmentedIndicator =
         if (fragmentationScore >= 55) "ATTENTION IS TOO FRAGMENTED" else null
     val weeklyStructuralOverloadWarning =
@@ -1863,7 +1872,7 @@ fun calculateCapacitySnapshot(
                 val fallbackFrag =
                     nodes
                         .filter { it.node.status == "active" && it.node.createdAt <= bucketEnd }
-                        .groupBy { it.node.projectId }
+                        .distinctBy { it.node.projectId }
                         .size
                         .times(8)
                         .coerceIn(0, 100)
