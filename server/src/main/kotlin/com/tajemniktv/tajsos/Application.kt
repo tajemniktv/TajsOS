@@ -15,6 +15,12 @@ import io.ktor.server.auth.*
 
 import kotlinx.serialization.json.Json
 
+/**
+ * Application entry point.
+ *
+ * Configures and starts the embedded Netty server. The server listens on the host specified by the
+ * `SERVER_HOST` environment variable (defaulting to 127.0.0.1) and the port defined by `SERVER_PORT`.
+ */
 fun main() {
     val host = System.getenv("SERVER_HOST") ?: "127.0.0.1"
     embeddedServer(Netty, port = SERVER_PORT, host = host, module = Application::module)
