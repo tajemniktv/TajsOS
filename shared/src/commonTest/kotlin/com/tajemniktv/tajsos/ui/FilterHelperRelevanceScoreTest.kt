@@ -1,33 +1,9 @@
 package com.tajemniktv.tajsos.ui
 
-import com.tajemniktv.tajsos.data.NodeEntity
-import com.tajemniktv.tajsos.data.NodeWithPin
-import com.tajemniktv.tajsos.data.TagEntity
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class FilterHelperRelevanceScoreTest {
-
-    private fun buildTestNode(
-        id: Long,
-        title: String,
-        content: String = "",
-        tags: List<String> = emptyList(),
-        status: String = "active"
-    ): NodeWithPin {
-        return NodeWithPin(
-            node = NodeEntity(
-                id = id,
-                title = title,
-                content = content,
-                type = "task",
-                status = status,
-                updatedAt = 0L
-            ),
-            pin = null,
-            tags = tags.mapIndexed { index, tag -> TagEntity(id = index.toLong(), name = tag, normalizedName = tag.lowercase()) }
-        )
-    }
 
     @Test
     fun testRelevanceScore_variousMatches() {
