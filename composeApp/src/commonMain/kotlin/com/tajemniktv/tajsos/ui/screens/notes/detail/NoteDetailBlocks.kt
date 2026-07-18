@@ -617,7 +617,7 @@ private fun renderNoteContextGraph(context: NoteDetailContext) {
                 }
                 IconButton(
                     onClick = context.onShowTagDialog,
-                    modifier = Modifier.size(32.dp),
+                    modifier = Modifier.size(32.dp).pointerHoverIcon(PointerIcon.Hand),
                 ) {
                     Icon(Icons.Default.Add, null, tint = TajsOSTheme.Primary)
                 }

@@ -37,6 +37,8 @@ import tajsos.composeapp.generated.resources.archive_delete
 import tajsos.composeapp.generated.resources.cal_settings_add
 import tajsos.composeapp.generated.resources.cal_settings_empty
 import tajsos.composeapp.generated.resources.cal_settings_title
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 object CalendarSettingsBlockRegistry {
     private val renderers: Map<String, CalendarSettingsBlockRenderer> =
@@ -60,7 +62,7 @@ private fun renderCalendarSettingsHeader(context: CalendarSettingsContext) {
             style = MaterialTheme.typography.displaySmall,
             color = TajsOSTheme.Text,
         )
-        IconButton(onClick = context.onShowAddDialog, modifier = Modifier.size(48.dp)) {
+        IconButton(onClick = context.onShowAddDialog, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
             Icon(
                 Icons.Default.Add,
                 contentDescription = stringResource(Res.string.cal_settings_add),
@@ -125,7 +127,7 @@ private fun ProviderRow(
                     )
                 }
             }
-            IconButton(onClick = onDelete, modifier = Modifier.size(48.dp)) {
+            IconButton(onClick = onDelete, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
                 Icon(
                     Icons.Default.Delete,
                     contentDescription = stringResource(Res.string.archive_delete),

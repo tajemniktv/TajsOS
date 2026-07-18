@@ -95,6 +95,8 @@ import tajsos.composeapp.generated.resources.common_open
 import tajsos.composeapp.generated.resources.sidebar_brand
 import tajsos.composeapp.generated.resources.sidebar_new_entry
 import kotlin.math.roundToInt
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 private const val MinExpandedSidebarWidthDp = 220f
 private const val MaxExpandedSidebarWidthDp = 360f
@@ -514,7 +516,7 @@ fun ExpandableNavSection(
                                 if (expandable) {
                                     IconButton(
                                         onClick = onRootExpandToggle,
-                                        modifier = Modifier.size(28.dp),
+                                        modifier = Modifier.size(28.dp).pointerHoverIcon(PointerIcon.Hand),
                                     ) {
                                         Icon(
                                             imageVector =

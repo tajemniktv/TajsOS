@@ -34,6 +34,8 @@ import tajsos.composeapp.generated.resources.tasks_archive_subtitle
 import tajsos.composeapp.generated.resources.tasks_archive_title
 import tajsos.composeapp.generated.resources.tasks_open_action
 import tajsos.composeapp.generated.resources.tasks_restore_action
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 @Composable
 internal fun TasksArchiveView(
@@ -96,7 +98,8 @@ internal fun TasksArchiveView(
                         Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                             OutlinedButton(onClick = { onOpen(task.id) }) { Text(stringResource(Res.string.tasks_open_action)) }
                             OutlinedButton(onClick = { onRestore(task) }) { Text(stringResource(Res.string.tasks_restore_action)) }
-                            IconButton(onClick = { onDelete(task) }) {
+                            IconButton(
+                                modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { onDelete(task) }) {
                                 Icon(
                                     Icons.Default.Delete,
                                     null,

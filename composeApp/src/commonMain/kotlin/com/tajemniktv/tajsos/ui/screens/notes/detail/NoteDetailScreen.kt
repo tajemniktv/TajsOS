@@ -114,6 +114,8 @@ import tajsos.composeapp.generated.resources.type_note
 import tajsos.composeapp.generated.resources.type_project
 import tajsos.composeapp.generated.resources.type_record
 import tajsos.composeapp.generated.resources.type_task
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 /**
  * Detailed view for a single node (Note, Idea, Task, etc.)
@@ -203,7 +205,9 @@ fun NoteDetailScreen(
         }
 
     val actions: @Composable RowScope.() -> Unit = {
-        IconButton(onClick = { viewModel.togglePermanentPin(node) }) {
+        IconButton(
+            modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
+            onClick = { viewModel.togglePermanentPin(node) }) {
             Icon(
                 if (node.isPinned) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                 contentDescription = null,
@@ -212,6 +216,7 @@ fun NoteDetailScreen(
             )
         }
         IconButton(
+            modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
             onClick = {
                 scope.launch {
                     viewModel.getNodeById(noteId)?.let { original ->
@@ -233,6 +238,7 @@ fun NoteDetailScreen(
             )
         }
         IconButton(
+            modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
             onClick = {
                 viewModel.archiveNode(node)
                 onBack()
@@ -244,7 +250,7 @@ fun NoteDetailScreen(
                 modifier = Modifier.size(18.dp),
             )
         }
-        IconButton(onClick = { showMoreDialog = true }, modifier = Modifier.size(48.dp)) {
+        IconButton(onClick = { showMoreDialog = true }, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
             Icon(
                 Icons.Default.MoreVert,
                 contentDescription = null,

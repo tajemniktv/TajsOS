@@ -28,6 +28,8 @@ import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.cd_delete_option
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 @Composable
 fun OptionCard(
@@ -51,7 +53,8 @@ fun OptionCard(
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
                 )
-                IconButton(onClick = { onDelete(option) }) {
+                IconButton(
+                    modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { onDelete(option) }) {
                     Icon(
                         Icons.Default.Delete,
                         contentDescription = stringResource(Res.string.cd_delete_option),

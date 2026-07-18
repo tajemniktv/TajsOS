@@ -63,6 +63,8 @@ import tajsos.composeapp.generated.resources.type_project
 import tajsos.composeapp.generated.resources.type_record
 import tajsos.composeapp.generated.resources.type_task
 import kotlin.time.Clock
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 @Composable
 fun NodeCard(
@@ -267,7 +269,7 @@ fun NodeCard(
                         }
                     }
                     if (isDone) {
-                        IconButton(onClick = onArchive, modifier = Modifier.size(48.dp)) {
+                        IconButton(onClick = onArchive, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
                             Icon(
                                 imageVector = Icons.Default.Delete,
                                 contentDescription = stringResource(Res.string.detail_archive),
@@ -275,7 +277,8 @@ fun NodeCard(
                             )
                         }
                     }
-                    IconButton(onClick = { onTogglePin(!isPinnedToToday) }) {
+                    IconButton(
+                        modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { onTogglePin(!isPinnedToToday) }) {
                         Icon(
                             imageVector = Icons.Default.Star,
                             contentDescription = stringResource(Res.string.node_pin_today_desc),

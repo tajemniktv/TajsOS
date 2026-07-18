@@ -69,6 +69,8 @@ import tajsos.composeapp.generated.resources.header_mode_label
 import tajsos.composeapp.generated.resources.header_notifications
 import tajsos.composeapp.generated.resources.header_notifications_title
 import tajsos.composeapp.generated.resources.header_search_placeholder
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 /**
  * Mode option model shown by the header mode switcher.
@@ -136,7 +138,7 @@ fun AppShellHeader(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 if (!isDesktop && onMenuClick != null) {
-                    IconButton(onClick = onMenuClick, modifier = Modifier.size(48.dp)) {
+                    IconButton(onClick = onMenuClick, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
                         Icon(
                             imageVector = Icons.Default.Menu,
                             contentDescription = stringResource(Res.string.header_menu),
@@ -504,7 +506,7 @@ fun NotificationsPopover(
             Box {
                 IconButton(
                     onClick = { onExpandedChange(!expanded) },
-                    modifier = Modifier.size(42.dp),
+                    modifier = Modifier.size(42.dp).pointerHoverIcon(PointerIcon.Hand),
                 ) {
                     Icon(
                         imageVector = Icons.Default.Notifications,

@@ -53,6 +53,8 @@ import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.common_open
 import kotlin.time.Instant
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 /**
  * Notes workspace left rail with creation, search, filtering, sorting, and note list navigation.
@@ -99,7 +101,8 @@ fun NotesListRail(
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                 trailingIcon = {
                     if (searchQuery.isNotEmpty()) {
-                        IconButton(onClick = { onSearchChange("") }) {
+                        IconButton(
+                            modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = { onSearchChange("") }) {
                             Icon(Icons.Default.Close, contentDescription = "Clear search")
                         }
                     }

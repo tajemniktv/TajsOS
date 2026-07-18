@@ -44,6 +44,8 @@ import tajsos.composeapp.generated.resources.type_idea
 import tajsos.composeapp.generated.resources.type_note
 import tajsos.composeapp.generated.resources.type_project
 import tajsos.composeapp.generated.resources.type_task
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 object ArchiveDashboardBlocks {
     private val renderers: Map<String, ArchiveDashboardBlockRenderer> =
@@ -112,6 +114,7 @@ internal fun ArchiveMainBlock(
                             trailingContent = {
                                 Row {
                                     IconButton(
+                                        modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
                                         onClick = {
                                             viewModel.updateNodeStatus(
                                                 nodeWithPin.node,
@@ -125,7 +128,8 @@ internal fun ArchiveMainBlock(
                                             tint = TajsOSTheme.Primary,
                                         )
                                     }
-                                    IconButton(onClick = {
+                                    IconButton(
+                                        modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), onClick = {
                                         viewModel.deleteNodePermanently(
                                             nodeWithPin.node,
                                         )

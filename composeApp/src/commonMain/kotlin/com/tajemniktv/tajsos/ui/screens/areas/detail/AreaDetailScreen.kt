@@ -53,6 +53,8 @@ import tajsos.composeapp.generated.resources.area_detail_not_found
 import tajsos.composeapp.generated.resources.area_detail_responsibility_fallback
 import tajsos.composeapp.generated.resources.detail_unassign
 import kotlin.time.Clock
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 /**
  * Area detail route that collects system state and coordinates interactions.
@@ -235,7 +237,9 @@ fun AreaDetailScreen(
 ) {
     val area = context.area
     val actions: @Composable RowScope.() -> Unit = {
-        IconButton(onClick = {
+        IconButton(
+            modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
+            onClick = {
             context.viewModel.archiveNode(area)
             onBack()
         }) {
