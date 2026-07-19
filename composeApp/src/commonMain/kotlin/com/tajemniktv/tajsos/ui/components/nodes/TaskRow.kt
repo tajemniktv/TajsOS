@@ -45,6 +45,8 @@ import tajsos.composeapp.generated.resources.dash_heavy
 import tajsos.composeapp.generated.resources.dash_unclear
 import tajsos.composeapp.generated.resources.detail_archive
 import tajsos.composeapp.generated.resources.task_row_unpin_desc
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.input.pointer.PointerIcon
 
 /**
  * Renders a single task row for the given node, showing its title, metadata and action controls.
@@ -187,7 +189,7 @@ fun TaskRow(
                     }
                 }
                 if (isDone) {
-                    IconButton(onClick = onArchive, modifier = Modifier.size(48.dp)) {
+                    IconButton(onClick = onArchive, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
                         Icon(
                             imageVector = Icons.Default.Delete,
                             contentDescription = stringResource(Res.string.detail_archive),
@@ -195,7 +197,7 @@ fun TaskRow(
                         )
                     }
                 }
-                IconButton(onClick = onUnpin, modifier = Modifier.size(48.dp)) {
+                IconButton(onClick = onUnpin, modifier = Modifier.size(48.dp).pointerHoverIcon(PointerIcon.Hand)) {
                     Icon(
                         Icons.Default.Close,
                         contentDescription = stringResource(Res.string.task_row_unpin_desc),
