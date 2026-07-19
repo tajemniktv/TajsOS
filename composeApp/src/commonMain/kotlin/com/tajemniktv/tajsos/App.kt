@@ -239,7 +239,7 @@ fun App(
                                 val canPop = navController.previousBackStackEntry != null
                                 if (!canPop) return@mouseButtons
                                 if (isForwardNavigable(currentRoute)) {
-                                    mouseForwardRoutes.addLast(currentRoute!!)
+                                    currentRoute?.let { mouseForwardRoutes.addLast(it) }
                                 }
                                 navController.popBackStack()
                             },
