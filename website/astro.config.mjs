@@ -20,6 +20,8 @@ export default defineConfig({
     starlight({
       title: "Docs",
       description: "TajsOS Documentation",
+      // Disabling default 404 route because a custom src/pages/404.astro exists
+      disable404Route: true,
 
       components: {
         MarkdownContent: "./src/components/MarkdownContent.astro",
