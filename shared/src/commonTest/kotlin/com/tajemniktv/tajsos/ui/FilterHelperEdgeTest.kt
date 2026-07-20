@@ -271,4 +271,27 @@ class FilterHelperEdgeTest {
         )
         assertEquals(6, resultInvalid.size)
     }
+
+    @Test
+    fun testFilterLinkedToId() {
+        val node1 = buildTestNode(1, "Node 1")
+        val node2 = buildTestNode(2, "Node 2")
+        val node3 = buildTestNode(3, "Node 3")
+
+        val relation1 = com.tajemniktv.tajsos.data.RelationEntity(id = 1, fromNodeId = 1, toNodeId = 2, relationType = "blocks", createdAt = 0)
+        val relation2 = com.tajemniktv.tajsos.data.RelationEntity(id = 2, fromNodeId = 3, toNodeId = 1, relationType = "relates", createdAt = 0)
+
+        val result1 = FilterHelper.filterAndSortNodes(
+            nodes = listOf(node1, node2, node3),
+            query = "", type = null, status = null, projectId = null, areaId = null, linkedToId = 1L,
+            maxMins = null, energy = null, friction = null, locationContext = null, energyContext = null, deviceContext = null, socialContext = null,
+            timeWindowContext = null, timeHorizon = null, relations = listOf(relation1, relation2), sortMode = "updated"
+        )
+        // Node 1 is linked to 2 and 3. So when searching for linkedToId = 1:
+        // Node 2 should match because relation1.fromNodeId = 1, relation1.toNodeId = 2
+        // Node 3 should match because relation2.fromNodeId = 3, relation2.toNodeId = 1
+        assertEquals(2, result1.size)
+        assertEquals(setOf(2L, 3L), result1.map { it.node.id }.toSet())
+    }
+
 }

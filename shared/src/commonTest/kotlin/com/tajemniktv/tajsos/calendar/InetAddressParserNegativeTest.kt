@@ -62,5 +62,7 @@ class InetAddressParserNegativeTest {
         assertNull(parseIpAddress("1:2:3::4:5:6:7:8:9"), "Should reject left and right parsed out of bounds combined")
         assertNull(parseIpAddress("1:2:3:4::5:6:7:8"), "Should reject when leftParsed + rightParsed > 7")
 
+        assertNull(parseIpAddress("1::+2"), "Should reject positive values with plus sign in abbreviated form")
+        assertNull(parseIpAddress("1::-2"), "Should reject negative values in abbreviated form")
     }
 }
