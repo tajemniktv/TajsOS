@@ -86,4 +86,29 @@ class DecisionCommandsTest {
 
         assertEquals(1000L, updatedNode?.decisionRevisitAt, "Expected decisionRevisitAt to be updated")
     }
+
+    @Test
+    fun linkDecisionToPerson_addsRelation() {
+        var addedFrom = -1L
+        var addedTo = -1L
+        var addedType = ""
+        val commands =
+            DecisionCommands(
+                repository = createFakeRepo(),
+                scope = TestScope(),
+                addRelation = { from, to, type ->
+                    addedFrom = from
+                    addedTo = to
+                    addedType = type
+                },
+                updateNode = { },
+            )
+
+        commands.linkDecisionToPerson(1L, 2L)
+
+        assertEquals(1L, addedFrom)
+        assertEquals(2L, addedTo)
+        assertEquals("RELATED_PERSON", addedType)
+    }
+
 }
