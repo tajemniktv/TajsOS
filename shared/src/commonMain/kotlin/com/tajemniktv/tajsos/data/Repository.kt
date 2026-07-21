@@ -1223,6 +1223,9 @@ class AppRepository(
         }
     }
 
+    /**
+     * Returns a Flow emitting all track entries (e.g. measurements, habit completions).
+     */
     fun getAllTrackEntries(): Flow<List<TrackEntryEntity>> = trackDao.getAllTrackEntries()
 
     suspend fun insertTrackEntry(entry: TrackEntryEntity): Long {
@@ -1233,8 +1236,14 @@ class AppRepository(
     }
 
     // Relations
+    /**
+     * Returns a Flow emitting the complete relation graph containing all edges.
+     */
     fun getAllRelations() = relationDao.getAllRelations()
 
+    /**
+     * Returns a Flow emitting all relation edges connected to the specified node.
+     */
     fun getRelationsForNode(nodeId: Long) = relationDao.getRelationsForNode(nodeId)
 
     suspend fun insertRelation(relation: RelationEntity) {
@@ -1252,8 +1261,14 @@ class AppRepository(
     suspend fun deleteRelation(relation: RelationEntity) = relationDao.deleteRelation(relation)
 
     // Tags
+    /**
+     * Returns a Flow emitting all tag entities used in the system.
+     */
     fun getAllTags() = tagDao.getAllTags()
 
+    /**
+     * Returns a Flow emitting all tags assigned to the specified node.
+     */
     fun getTagsForNode(nodeId: Long) = tagDao.getTagsForNode(nodeId)
 
     suspend fun insertTag(tag: TagEntity): Long {
@@ -1273,8 +1288,14 @@ class AppRepository(
     ) = tagDao.detachTagFromNode(nodeId, tagId)
 
     // Log
+    /**
+     * Returns a Flow emitting the most recent event logs up to the specified limit.
+     */
     fun getRecentLogs(limit: Int = 100) = eventLogDao.getRecentLogs(limit)
 
+    /**
+     * Returns a Flow emitting all event logs associated with the specified node.
+     */
     fun getLogsForNode(nodeId: Long) = eventLogDao.getLogsForNode(nodeId)
 
     private suspend fun logEvent(
@@ -1292,6 +1313,9 @@ class AppRepository(
     }
 
     // Attachments
+    /**
+     * Returns a Flow emitting all attachments (e.g. files, images) linked to the specified node.
+     */
     fun getAttachmentsForNode(nodeId: Long) = attachmentDao.getAttachmentsForNode(nodeId)
 
     suspend fun insertAttachment(attachment: AttachmentEntity) = attachmentDao.insertAttachment(attachment)
@@ -1299,6 +1323,9 @@ class AppRepository(
     suspend fun deleteAttachment(attachment: AttachmentEntity) = attachmentDao.deleteAttachment(attachment)
 
     // Domains
+    /**
+     * Returns a Flow emitting all domain assignments associated with the specified item.
+     */
     fun getDomainsForItem(itemId: Long): Flow<List<DomainAssignment>> =
         itemDomainDao.getDomainsForItem(itemId).map { domains ->
             domains.mapNotNull { it.toModel() }
@@ -1327,6 +1354,9 @@ class AppRepository(
     ) = itemDomainDao.deleteDomain(itemId, domain.name)
 
     // Documents
+    /**
+     * Returns a Flow emitting the rich content document associated with the specified item, if any.
+     */
     fun getDocumentForItem(itemId: Long): Flow<RichContentDocument?> =
         richContentDocumentDao.observeDocumentForItem(itemId).map { document ->
             document?.toModel()
@@ -1370,6 +1400,9 @@ class AppRepository(
     suspend fun deleteDocumentForItem(itemId: Long) = richContentDocumentDao.deleteDocumentForItem(itemId)
 
     // Saved views
+    /**
+     * Returns a Flow emitting all user-defined saved views and their configurations.
+     */
     fun getSavedViews(): Flow<List<SavedViewDefinition>> =
         combine(
             savedViewDao.getAllSavedViews(),
@@ -1490,6 +1523,9 @@ class AppRepository(
     }
 
     // Templates
+    /**
+     * Returns a Flow emitting all templates available for creating new nodes.
+     */
     fun getAllTemplates() = templateDao.getAllTemplates()
 
     suspend fun insertTemplate(template: TemplateEntity) = templateDao.insertTemplate(template)
@@ -1501,6 +1537,9 @@ class AppRepository(
     suspend fun deleteTemplate(template: TemplateEntity) = templateDao.deleteTemplate(template)
 
     // Snapshots
+    /**
+     * Returns a Flow emitting point-in-time snapshots of the specified node.
+     */
     fun getSnapshotsForNode(nodeId: Long) = nodeSnapshotDao.getSnapshotsForNode(nodeId)
 
     suspend fun insertSnapshot(snapshot: NodeSnapshotEntity) = nodeSnapshotDao.insertSnapshot(snapshot)
@@ -1508,6 +1547,9 @@ class AppRepository(
     suspend fun deleteSnapshot(snapshot: NodeSnapshotEntity) = nodeSnapshotDao.deleteSnapshot(snapshot)
 
     // Reviews
+    /**
+     * Returns a Flow emitting all review sessions.
+     */
     fun getAllReviews() = reviewDao.getAllReviews()
 
     suspend fun insertReview(review: ReviewEntity): Long {
@@ -1519,6 +1561,9 @@ class AppRepository(
     suspend fun getLastReviewByType(type: String) = reviewDao.getLastReviewByType(type)
 
     // Operating Modes
+    /**
+     * Returns a Flow emitting all modes (e.g. Work, Personal) configured in the system.
+     */
     fun getAllModes() = modeDao.getAllModes()
 
     suspend fun insertMode(mode: ModeEntity): Long {
