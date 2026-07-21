@@ -35,13 +35,18 @@ import kotlin.time.Duration.Companion.days
 import kotlin.time.Instant
 
 /**
- * Aggregates analytical tracking data to compute a comprehensive [InsightsData] payload
- * detailing focus hours, completion rates, backlog pressure, and identified chaotic patterns.
+ * Calculates insights and metrics from the user's active graph, history, and completions.
  *
- * @param nodes The complete list of active nodes in the system.
- * @param sessions A list of recorded [FocusSessionEntity] records tracking deep work time.
- * @param tracks A list of recorded [TrackEntryEntity] records detailing mood, energy, and sleep.
+ * Performance note: This heavily relies on collections operations. To optimize memory usage,
+ * size aggregation over grouped sequences relies on `groupingBy { ... }.eachCount()` rather than
+ * intermediate lists from `groupBy { ... }.mapValues { ... }`.
+ *
+ * @param nodes List of all nodes currently tracked.
+ * @param sessions Focus sessions to calculate unique contexts per day.
+ * @param tracks Items being tracked (mood/metrics).
+ * @param history Track entries corresponding to completed tasks.
  * @param projects A curated list of nodes strictly identified as "project" entities.
+ * @param sysZone TimeZone used for daily/date based grouping.
  * @return An analytical [InsightsData] snapshot summarizing the user's historical performance.
  */
 fun calculateInsights(
@@ -127,14 +132,12 @@ fun calculateInsights(
 
     val completionsByArea =
         recentCompletions
-            .mapNotNull { item -> item.node.areaId?.let { it to item } }
-            .groupBy({ it.first }, { it.second })
-            .mapValues { it.value.size }
+            .mapNotNull { item -> item.node.areaId }
+            .groupingBy { it }.eachCount()
     val completionsByProject =
         recentCompletions
-            .mapNotNull { item -> item.node.projectId?.let { it to item } }
-            .groupBy({ it.first }, { it.second })
-            .mapValues { it.value.size }
+            .mapNotNull { item -> item.node.projectId }
+            .groupingBy { it }.eachCount()
 
     val inboxGrowth = recentNodes.count { it.node.inboxState }
     val archivedCount =
@@ -175,23 +178,23 @@ fun calculateInsights(
     // Correlating track entries with activity
     val dailyCompletions =
         recentCompletions
-            .groupBy {
+            .groupingBy {
                 Instant
                     .fromEpochMilliseconds(it.node.completedAt ?: 0)
                     .toLocalDateTime(sysZone)
                     .date
                     .toString()
-            }.mapValues { it.value.size }
+            }.eachCount()
 
     val dailyCaptures =
         recentNodes
-            .groupBy {
+            .groupingBy {
                 Instant
                     .fromEpochMilliseconds(it.node.createdAt)
                     .toLocalDateTime(sysZone)
                     .date
                     .toString()
-            }.mapValues { it.value.size }
+            }.eachCount()
 
     val dailyFocus =
         recentSessions
