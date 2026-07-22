@@ -1223,6 +1223,9 @@ class AppRepository(
         }
     }
 
+    /**
+     * Returns a reactive stream of all daily tracking entries.
+     */
     fun getAllTrackEntries(): Flow<List<TrackEntryEntity>> = trackDao.getAllTrackEntries()
 
     suspend fun insertTrackEntry(entry: TrackEntryEntity): Long {
@@ -1233,8 +1236,14 @@ class AppRepository(
     }
 
     // Relations
+    /**
+     * Returns a reactive stream of all edges (relations) within the LifeOS graph.
+     */
     fun getAllRelations() = relationDao.getAllRelations()
 
+    /**
+     * Returns a reactive stream of all outbound and inbound relationships tied to a specific node.
+     */
     fun getRelationsForNode(nodeId: Long) = relationDao.getRelationsForNode(nodeId)
 
     suspend fun insertRelation(relation: RelationEntity) {
@@ -1252,8 +1261,14 @@ class AppRepository(
     suspend fun deleteRelation(relation: RelationEntity) = relationDao.deleteRelation(relation)
 
     // Tags
+    /**
+     * Returns a reactive stream of all uniquely registered tags in the system.
+     */
     fun getAllTags() = tagDao.getAllTags()
 
+    /**
+     * Returns a reactive stream of tags explicitly applied to a specific node.
+     */
     fun getTagsForNode(nodeId: Long) = tagDao.getTagsForNode(nodeId)
 
     suspend fun insertTag(tag: TagEntity): Long {
@@ -1273,8 +1288,14 @@ class AppRepository(
     ) = tagDao.detachTagFromNode(nodeId, tagId)
 
     // Log
+    /**
+     * Returns a reactive stream of the most recent system event logs, bounded by [limit].
+     */
     fun getRecentLogs(limit: Int = 100) = eventLogDao.getRecentLogs(limit)
 
+    /**
+     * Returns a reactive stream of all system event logs historically tied to a specific node.
+     */
     fun getLogsForNode(nodeId: Long) = eventLogDao.getLogsForNode(nodeId)
 
     private suspend fun logEvent(
@@ -1292,6 +1313,9 @@ class AppRepository(
     }
 
     // Attachments
+    /**
+     * Returns a reactive stream of external assets (files/URLs) bound to a specific node.
+     */
     fun getAttachmentsForNode(nodeId: Long) = attachmentDao.getAttachmentsForNode(nodeId)
 
     suspend fun insertAttachment(attachment: AttachmentEntity) = attachmentDao.insertAttachment(attachment)
@@ -1299,6 +1323,10 @@ class AppRepository(
     suspend fun deleteAttachment(attachment: AttachmentEntity) = attachmentDao.deleteAttachment(attachment)
 
     // Domains
+    /**
+     * Resolves and returns a stream of [DomainAssignment]s for a given item by matching
+     * the item's properties against the heuristic rules defined in [com.tajemniktv.tajsos.domain.lens.DomainLensQueries].
+     */
     fun getDomainsForItem(itemId: Long): Flow<List<DomainAssignment>> =
         itemDomainDao.getDomainsForItem(itemId).map { domains ->
             domains.mapNotNull { it.toModel() }
@@ -1327,6 +1355,10 @@ class AppRepository(
     ) = itemDomainDao.deleteDomain(itemId, domain.name)
 
     // Documents
+    /**
+     * Returns a reactive stream providing the rich-text document content for a specific node.
+     * Typically used for note-taking interfaces linked directly to standard items.
+     */
     fun getDocumentForItem(itemId: Long): Flow<RichContentDocument?> =
         richContentDocumentDao.observeDocumentForItem(itemId).map { document ->
             document?.toModel()
@@ -1370,6 +1402,10 @@ class AppRepository(
     suspend fun deleteDocumentForItem(itemId: Long) = richContentDocumentDao.deleteDocumentForItem(itemId)
 
     // Saved views
+    /**
+     * Returns a reactive stream of all custom saved view configurations (queries and layouts)
+     * created by the user for advanced UI filtering.
+     */
     fun getSavedViews(): Flow<List<SavedViewDefinition>> =
         combine(
             savedViewDao.getAllSavedViews(),
@@ -1490,6 +1526,9 @@ class AppRepository(
     }
 
     // Templates
+    /**
+     * Returns a reactive stream of all reusable node templates.
+     */
     fun getAllTemplates() = templateDao.getAllTemplates()
 
     suspend fun insertTemplate(template: TemplateEntity) = templateDao.insertTemplate(template)
@@ -1501,6 +1540,9 @@ class AppRepository(
     suspend fun deleteTemplate(template: TemplateEntity) = templateDao.deleteTemplate(template)
 
     // Snapshots
+    /**
+     * Returns a reactive stream of historical content revisions (snapshots) for a specific node.
+     */
     fun getSnapshotsForNode(nodeId: Long) = nodeSnapshotDao.getSnapshotsForNode(nodeId)
 
     suspend fun insertSnapshot(snapshot: NodeSnapshotEntity) = nodeSnapshotDao.insertSnapshot(snapshot)
@@ -1508,6 +1550,9 @@ class AppRepository(
     suspend fun deleteSnapshot(snapshot: NodeSnapshotEntity) = nodeSnapshotDao.deleteSnapshot(snapshot)
 
     // Reviews
+    /**
+     * Returns a reactive stream of all scheduled or historical LifeOS review sessions.
+     */
     fun getAllReviews() = reviewDao.getAllReviews()
 
     suspend fun insertReview(review: ReviewEntity): Long {
@@ -1519,6 +1564,9 @@ class AppRepository(
     suspend fun getLastReviewByType(type: String) = reviewDao.getLastReviewByType(type)
 
     // Operating Modes
+    /**
+     * Returns a reactive stream of all predefined and custom LifeOS execution Modes.
+     */
     fun getAllModes() = modeDao.getAllModes()
 
     suspend fun insertMode(mode: ModeEntity): Long {
@@ -1529,18 +1577,30 @@ class AppRepository(
 
     suspend fun updateMode(mode: ModeEntity) = modeDao.updateMode(mode)
 
+    /**
+     * Returns a reactive stream emitting the layout and UI preferences specifically bound to a mode.
+     */
     fun getPreferencesForMode(modeId: Long) = modeDao.getPreferencesForMode(modeId)
 
     suspend fun insertPreference(preference: ModePreferenceEntity) = modeDao.insertPreference(preference)
 
+    /**
+     * Returns a reactive stream of Area mappings detailing which areas are visible under a given mode.
+     */
     fun getAreaFiltersForMode(modeId: Long) = modeDao.getAreaFiltersForMode(modeId)
 
     suspend fun insertAreaFilter(filter: ModeAreaFilterEntity) = modeDao.insertAreaFilter(filter)
 
+    /**
+     * Returns a reactive stream of node type mappings detailing which data kinds are visible under a given mode.
+     */
     fun getTypeFiltersForMode(modeId: Long) = modeDao.getTypeFiltersForMode(modeId)
 
     suspend fun insertTypeFilter(filter: ModeTypeFilterEntity) = modeDao.insertTypeFilter(filter)
 
+    /**
+     * Returns a reactive stream of historical mode transitions, used for tracking context shifts.
+     */
     fun getAllModeUsageLogs() = modeDao.getAllUsageLogs()
 
     suspend fun insertModeUsageLog(log: ModeUsageLogEntity): Long {
@@ -1554,6 +1614,10 @@ class AppRepository(
         timestamp: Long,
     ) = modeDao.deactivateLog(id, timestamp)
 
+    /**
+     * Resolves and returns a reactive stream emitting a highly-optimized, pre-compiled query profile
+     * for a given mode, combining layout preferences, area filters, and type rules into a single state.
+     */
     fun getModeQueryProfile(modeId: Long): Flow<ModeQueryProfile?> =
         getPreferencesForMode(modeId).map { preference ->
             if (preference == null) return@map null
@@ -1567,6 +1631,9 @@ class AppRepository(
         }
 
     // Protocols
+    /**
+     * Returns a reactive stream of historical executions for automated protocols or scripts.
+     */
     fun getAllProtocolHistory() = protocolDao.getAllProtocolHistory()
 
     suspend fun insertProtocolHistory(history: ProtocolHistoryEntity): Long {
@@ -1703,6 +1770,9 @@ class AppRepository(
         return taskId
     }
 
+    /**
+     * Returns a reactive stream of explicit choice options bound to a specific Decision node.
+     */
     fun getOptionsForDecision(nodeId: Long) = decisionDao.getOptionsForDecision(nodeId)
 
     suspend fun insertDecisionOption(option: DecisionOptionEntity): Long {
@@ -1715,6 +1785,9 @@ class AppRepository(
 
     suspend fun deleteDecisionOption(option: DecisionOptionEntity) = decisionDao.deleteDecisionOption(option)
 
+    /**
+     * Returns a reactive stream emitting the current root user profile.
+     */
     fun getUser(): Flow<UserEntity?> = userDao.getUser()
 
     suspend fun insertUser(user: UserEntity) = userDao.insertUser(user)
@@ -1737,6 +1810,9 @@ class AppRepository(
         userDao.insertUser(profile.toEntity(existing))
     }
 
+    /**
+     * Returns a reactive stream of all tracked medications or supplements registered in the system.
+     */
     fun getAllMedications(): Flow<List<MedicationEntity>> = medicationDao.getAllMedications()
 
     suspend fun insertMedication(medication: MedicationEntity): Long {
@@ -1753,6 +1829,9 @@ class AppRepository(
 
     suspend fun insertTrackMedication(join: TrackMedicationJoinEntity) = trackDao.insertTrackMedication(join)
 
+    /**
+     * Returns a reactive stream of medication administration records bound to a specific daily tracking entry.
+     */
     fun getTrackMedications(trackEntryId: Long): Flow<List<TrackMedicationJoinEntity>> = trackDao.getTrackMedications(trackEntryId)
 
     suspend fun buildExportBundle(

@@ -346,6 +346,10 @@ data class ModePreferenceEntity(
     tableName = "mode_area_filters",
     primaryKeys = ["modeId", "areaId"],
 )
+/**
+ * Maps specific user Areas to a LifeOS Mode, defining which explicit areas of responsibility
+ * are visible when the mode is active.
+ */
 @Serializable
 data class ModeAreaFilterEntity(
     val modeId: Long,
@@ -360,6 +364,10 @@ data class ModeAreaFilterEntity(
     tableName = "mode_type_filters",
     primaryKeys = ["modeId", "nodeType"],
 )
+/**
+ * Defines which base node kinds (e.g., tasks, notes, records) are explicitly visible
+ * when a specific LifeOS Mode is active, ensuring proper UI filtering.
+ */
 @Serializable
 data class ModeTypeFilterEntity(
     val modeId: Long,
@@ -591,6 +599,10 @@ data class MedicationEntity(
     primaryKeys = ["trackEntryId", "medicationId"],
     indices = [Index(value = ["trackEntryId"]), Index(value = ["medicationId"])],
 )
+/**
+ * Join table tracking which specific medications were taken or recorded during a discrete
+ * daily health tracking entry.
+ */
 @Serializable
 data class TrackMedicationJoinEntity(
     val trackEntryId: Long,
@@ -613,6 +625,12 @@ data class TrackMedicationJoinEntity(
         Index(value = ["fromNodeId", "toNodeId", "relationType"], unique = true),
     ],
 )
+/**
+ * Represents a directed relationship graph edge between two nodes.
+ *
+ * This table serves as a first-class capability for creating the LifeOS graph network,
+ * enabling bidirectional relationships, hierarchy representations, and knowledge linking.
+ */
 @Serializable
 data class RelationEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
@@ -650,6 +668,9 @@ data class TagEntity(
     primaryKeys = ["nodeId", "tagId"],
     indices = [Index(value = ["tagId"])],
 )
+/**
+ * Join table linking core graph nodes to arbitrary string tags for non-hierarchical categorization.
+ */
 @Serializable
 data class NodeTagEntity(
     val nodeId: Long,
@@ -684,6 +705,9 @@ data class EventLogEntity(
     tableName = "attachments",
     indices = [Index(value = ["nodeId"])],
 )
+/**
+ * Represents an external binary asset, file, or URL permanently associated with a specific graph node.
+ */
 @Serializable
 data class AttachmentEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
@@ -801,6 +825,10 @@ data class CalendarEventEntity(
     tableName = "node_snapshots",
     indices = [Index(value = ["nodeId"])],
 )
+/**
+ * Stores immutable historical versions of a node's content, enabling revision history,
+ * undo capabilities, and tracking semantic drift over time.
+ */
 @Serializable
 @Immutable
 data class NodeSnapshotEntity(
