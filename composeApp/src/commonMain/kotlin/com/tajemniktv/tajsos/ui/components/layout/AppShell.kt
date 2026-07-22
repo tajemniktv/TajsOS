@@ -158,6 +158,7 @@ fun AppShell(
                             isDesktop = true,
                             onModeSelect = onModeSelect,
                             screenHeader = screenHeader,
+                            onSearchClick = { onNavigate(Screen.Search) },
                             modifier = Modifier.padding(bottom = 2.dp),
                         )
 
@@ -222,6 +223,7 @@ fun AppShell(
                             onModeSelect = onModeSelect,
                             onMenuClick = { scope.launch { drawerState.open() } },
                             screenHeader = screenHeader,
+                            onSearchClick = { onNavigate(Screen.Search) },
                         )
                         Box(modifier = Modifier.fillMaxSize()) {
                             content()

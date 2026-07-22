@@ -109,6 +109,7 @@ fun AppShellHeader(
     isDesktop: Boolean,
     onModeSelect: (Long) -> Unit,
     screenHeader: ScreenHeaderModel,
+    onSearchClick: () -> Unit = {},
     modifier: Modifier = Modifier,
     onMenuClick: (() -> Unit)? = null,
 ) {
@@ -154,7 +155,7 @@ fun AppShellHeader(
 
                 if (isDesktop) {
                     Spacer(Modifier.width(24.dp))
-                    GlobalSearchBar(modifier = Modifier.weight(1f))
+                    GlobalSearchBar(modifier = Modifier.weight(1f), onClick = onSearchClick)
                     Spacer(Modifier.width(24.dp))
                     HeaderScreenContext(
                         model = screenHeader,
@@ -326,14 +327,15 @@ private fun HeaderBreadcrumbs(breadcrumbs: List<ScreenHeaderBreadcrumb>) {
  * Header search entry placeholder prepared as a global shell search point.
  */
 @Composable
-fun GlobalSearchBar(modifier: Modifier = Modifier) {
+fun GlobalSearchBar(modifier: Modifier = Modifier, onClick: () -> Unit = {}) {
     TactileOutlinedTextField(
         value = "",
         onValueChange = {},
         readOnly = true,
         singleLine = true,
         modifier =
-            modifier.glassChrome(
+            modifier.mouseClickable(onClick = onClick)
+                .glassChrome(
                 shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                 material = GlassMaterial.THIN,
             ),
