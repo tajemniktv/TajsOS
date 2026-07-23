@@ -683,12 +683,15 @@ sealed class Screen(
          */
         fun fromRoute(route: String?): Screen? {
             if (route == null) return null
-            val currentRouteBase =
+            val baseSplit =
                 route
                     .split("/")
-                    .first()
-                    .split("?")
-                    .first()
+                    .firstOrNull()
+                    ?: route
+
+            val currentRouteBase = baseSplit.split("?")
+                    .firstOrNull()
+                    ?: baseSplit
             if (currentRouteBase == StudyLegacy.route) return Education
 
             // Try exact match first (for Sub screens with query params)
@@ -709,7 +712,7 @@ sealed class Screen(
 
             // Try base route match, ensuring we don't accidentally match sub-screens that share a base
             // unless they are explicitly the root screen.
-            return rootScreens.find { it.route.split("/").first() == currentRouteBase }
+            return rootScreens.find { it.route.split("/").firstOrNull() == currentRouteBase }
         }
 
         /**
