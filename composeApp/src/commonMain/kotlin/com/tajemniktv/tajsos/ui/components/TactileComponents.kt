@@ -257,7 +257,6 @@ private fun TactileSliderPreview() {
     }
 }
 
-
 @Composable
 fun TactileOutlinedTextField(
     value: String,

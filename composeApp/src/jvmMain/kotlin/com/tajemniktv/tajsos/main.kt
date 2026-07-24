@@ -166,7 +166,6 @@ private fun Dp.toPersistedDpOrNull(): Int? {
     }
 }
 
-
 /**
  * Resolves [WindowPlacement] based on startup mode and persistence.
  */
