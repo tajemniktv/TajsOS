@@ -709,7 +709,7 @@ sealed class Screen(
 
             // Try base route match, ensuring we don't accidentally match sub-screens that share a base
             // unless they are explicitly the root screen.
-            return rootScreens.find { it.route.split("/").first() == currentRouteBase }
+            return rootScreens.find { it.route.split("/").firstOrNull() == currentRouteBase }
         }
 
         /**

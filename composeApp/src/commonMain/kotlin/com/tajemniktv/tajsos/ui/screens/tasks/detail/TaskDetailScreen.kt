@@ -490,7 +490,7 @@ private fun replaceInlineChecklist(
             }.toMutableList()
 
     if (updatedChecklist.isNotEmpty()) {
-        if (baseLines.isNotEmpty() && baseLines.last().isNotBlank()) {
+        if (baseLines.isNotEmpty() && baseLines.lastOrNull()?.isNotBlank() == true) {
             baseLines.add("")
         }
         baseLines.addAll(

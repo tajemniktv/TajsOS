@@ -323,13 +323,7 @@ class NodeCommands(
                     val lines = node.content.lines().filter { it.isNotBlank() }
                     if (lines.isNotEmpty()) {
                         val firstLine =
-                            lines
-                                .first()
-                                .trim()
-                                .removePrefix("-")
-                                .removePrefix("*")
-                                .trim()
-                                .ifBlank { defaultNextStepLabel() }
+                            lines.firstOrNull()?.trim()?.removePrefix("-")?.removePrefix("*")?.trim()?.ifBlank { defaultNextStepLabel() } ?: defaultNextStepLabel()
                         repository.updateNode(
                             node.copy(
                                 nextSmallestStep = firstLine,
@@ -485,11 +479,7 @@ class NodeCommands(
                     for (section in sections) {
                         val lines = section.lines()
                         val title =
-                            lines
-                                .first()
-                                .removePrefix("# ")
-                                .trim()
-                                .ifBlank { defaultUntitledLabel() }
+                            lines.firstOrNull()?.removePrefix("# ")?.trim()?.ifBlank { defaultUntitledLabel() } ?: defaultUntitledLabel()
                         val content = lines.drop(1).joinToString("\n").trim()
 
                         repository.insertNode(
