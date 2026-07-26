@@ -1734,11 +1734,15 @@ fun calculateCapacitySnapshot(
                 (maintenance.overdue.size * 4) +
                 (overdueCount * 5)
         ).coerceIn(0, 100)
+    /**
+     * Calculates a combined fragmentation score weighted by distinct projects and areas.
+     * Optimization: Uses `distinctBy { ... }.size` instead of `groupBy { ... }.size` to avoid unnecessary list allocations.
+     */
     val fragmentationScore =
         (
-                activeTasks.groupBy { it.node.projectId }.size *
+                activeTasks.distinctBy { it.node.projectId }.size *
                         7 +
-                        activeTasks.groupBy { it.node.areaId }.size *
+                        activeTasks.distinctBy { it.node.areaId }.size *
                         4
         ).coerceIn(0, 100)
 
@@ -1761,8 +1765,12 @@ fun calculateCapacitySnapshot(
         nodes.count { it.node.status == "done" && (it.node.completedAt ?: 0L) >= now - weekMs }
     val unrealisticWeekSignal =
         if (weeklyCreatedActive > weeklyDone * 2 + 5) "THIS WEEK IS UNREALISTIC // INTAKE OUTPACES EXECUTION" else null
+    /**
+     * Indicator warning when tasks are spread across too many distinct areas.
+     * Optimization: Uses `distinctBy { ... }.size` instead of `groupBy { ... }.size` to minimize memory allocation.
+     */
     val tooManyActiveFrontsIndicator =
-        if (activeTasks.groupBy { it.node.areaId }.size >= 6) "TOO MANY ACTIVE FRONTS" else null
+        if (activeTasks.distinctBy { it.node.areaId }.size >= 6) "TOO MANY ACTIVE FRONTS" else null
     val attentionFragmentedIndicator =
         if (fragmentationScore >= 55) "ATTENTION IS TOO FRAGMENTED" else null
     val weeklyStructuralOverloadWarning =
