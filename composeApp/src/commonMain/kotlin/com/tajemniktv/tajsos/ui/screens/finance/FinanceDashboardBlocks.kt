@@ -7,7 +7,7 @@
 package com.tajemniktv.tajsos.ui.screens.finance
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import com.tajemniktv.tajsos.ui.components.common.mouseClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -216,7 +216,7 @@ internal fun renderFinanceActivityBlock(context: FinanceDashboardContext) {
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .clickable { context.onEditNode(item.node.id) }
+                            .mouseClickable(onClick = { context.onEditNode(item.node.id) })
                             .pointerHoverIcon(PointerIcon.Hand)
                             .padding(vertical = 4.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,

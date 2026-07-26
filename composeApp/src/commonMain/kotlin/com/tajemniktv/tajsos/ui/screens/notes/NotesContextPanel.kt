@@ -4,7 +4,7 @@
 
 package com.tajemniktv.tajsos.ui.screens.notes
 
-import androidx.compose.foundation.clickable
+import com.tajemniktv.tajsos.ui.components.common.mouseClickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -138,7 +138,7 @@ fun NotesContextPanel(
                                 modifier =
                                     Modifier
                                         .fillMaxWidth()
-                                        .clickable { onOpenNode(task.id) }
+                                        .mouseClickable(onClick = { onOpenNode(task.id) })
                                         .pointerHoverIcon(PointerIcon.Hand)
                                         .padding(vertical = 2.dp),
                             )
@@ -163,7 +163,7 @@ fun NotesContextPanel(
                                 modifier =
                                     Modifier
                                         .fillMaxWidth()
-                                        .clickable { onOpenNode(note.id) }
+                                        .mouseClickable(onClick = { onOpenNode(note.id) })
                                         .pointerHoverIcon(PointerIcon.Hand)
                                         .padding(vertical = 2.dp),
                             )
