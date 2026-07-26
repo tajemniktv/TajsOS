@@ -128,13 +128,11 @@ fun calculateInsights(
     val completionsByArea =
         recentCompletions
             .mapNotNull { item -> item.node.areaId?.let { it to item } }
-            .groupBy({ it.first }, { it.second })
-            .mapValues { it.value.size }
+            .groupingBy { it.first }.eachCount()
     val completionsByProject =
         recentCompletions
             .mapNotNull { item -> item.node.projectId?.let { it to item } }
-            .groupBy({ it.first }, { it.second })
-            .mapValues { it.value.size }
+            .groupingBy { it.first }.eachCount()
 
     val inboxGrowth = recentNodes.count { it.node.inboxState }
     val archivedCount =
@@ -1736,9 +1734,9 @@ fun calculateCapacitySnapshot(
         ).coerceIn(0, 100)
     val fragmentationScore =
         (
-                activeTasks.groupBy { it.node.projectId }.size *
+                activeTasks.distinctBy { it.node.projectId }.size *
                         7 +
-                        activeTasks.groupBy { it.node.areaId }.size *
+                        activeTasks.distinctBy { it.node.areaId }.size *
                         4
         ).coerceIn(0, 100)
 
@@ -1762,7 +1760,7 @@ fun calculateCapacitySnapshot(
     val unrealisticWeekSignal =
         if (weeklyCreatedActive > weeklyDone * 2 + 5) "THIS WEEK IS UNREALISTIC // INTAKE OUTPACES EXECUTION" else null
     val tooManyActiveFrontsIndicator =
-        if (activeTasks.groupBy { it.node.areaId }.size >= 6) "TOO MANY ACTIVE FRONTS" else null
+        if (activeTasks.distinctBy { it.node.areaId }.size >= 6) "TOO MANY ACTIVE FRONTS" else null
     val attentionFragmentedIndicator =
         if (fragmentationScore >= 55) "ATTENTION IS TOO FRAGMENTED" else null
     val weeklyStructuralOverloadWarning =
@@ -1863,8 +1861,7 @@ fun calculateCapacitySnapshot(
                 val fallbackFrag =
                     nodes
                         .filter { it.node.status == "active" && it.node.createdAt <= bucketEnd }
-                        .groupBy { it.node.projectId }
-                        .size
+                        .distinctBy { it.node.projectId }.size
                         .times(8)
                         .coerceIn(0, 100)
                 LoadTrendPoint(
