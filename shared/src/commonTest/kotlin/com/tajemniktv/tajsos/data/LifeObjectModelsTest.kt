@@ -150,4 +150,10 @@ class LifeObjectModelsTest {
         assertFalse(taskWithLocation.isPlaceAnchor())
         assertEquals(ItemKind.TASK, taskWithLocation.itemKindOrNull())
     }
+
+    @Test
+    fun matchesItemFilter_nullInput_returnsTrue() {
+        val taskNode = NodeEntity(type = "task", title = "Task")
+        assertTrue(taskNode.matchesItemFilter(null))
+    }
 }

@@ -43,4 +43,11 @@ class FilterHelperMatchesQueryEdgeTest {
         assertTrue(FilterHelper.matchesQuery(nodeTag, "tag"))
         assertFalse(FilterHelper.matchesQuery(nodeNone, "title"))
     }
+
+    @Test
+    fun testMatchesQuery_normalSearch_withTags() {
+        val node1 = buildTestNode(1, "title", "content", tags = listOf("my special tag"))
+        assertTrue(FilterHelper.matchesQuery(node1, "special"))
+        assertFalse(FilterHelper.matchesQuery(node1, "other"))
+    }
 }
