@@ -1736,9 +1736,11 @@ fun calculateCapacitySnapshot(
         ).coerceIn(0, 100)
     val fragmentationScore =
         (
-                activeTasks.groupBy { it.node.projectId }.size *
+                // Optimization: distinctBy {...}.size avoids allocating lists compared to groupBy {...}.size
+                activeTasks.distinctBy { it.node.projectId }.size *
                         7 +
-                        activeTasks.groupBy { it.node.areaId }.size *
+                        // Optimization: distinctBy {...}.size avoids allocating lists compared to groupBy {...}.size
+                        activeTasks.distinctBy { it.node.areaId }.size *
                         4
         ).coerceIn(0, 100)
 
@@ -1762,7 +1764,8 @@ fun calculateCapacitySnapshot(
     val unrealisticWeekSignal =
         if (weeklyCreatedActive > weeklyDone * 2 + 5) "THIS WEEK IS UNREALISTIC // INTAKE OUTPACES EXECUTION" else null
     val tooManyActiveFrontsIndicator =
-        if (activeTasks.groupBy { it.node.areaId }.size >= 6) "TOO MANY ACTIVE FRONTS" else null
+        // Optimization: distinctBy {...}.size avoids allocating lists compared to groupBy {...}.size
+        if (activeTasks.distinctBy { it.node.areaId }.size >= 6) "TOO MANY ACTIVE FRONTS" else null
     val attentionFragmentedIndicator =
         if (fragmentationScore >= 55) "ATTENTION IS TOO FRAGMENTED" else null
     val weeklyStructuralOverloadWarning =
