@@ -5,7 +5,7 @@
 package com.tajemniktv.tajsos.ui.components.layout
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -37,6 +37,7 @@ import androidx.compose.ui.input.pointer.pointerHoverIcon
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.common_system_online
+import com.tajemniktv.tajsos.ui.components.common.mouseClickable
 
 /**
  * Renders the dashboard header with a left menu badge and status block and a right-side system indicator with a settings button.
@@ -60,7 +61,7 @@ fun DashHeader(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.clickable { onMenuClick() }.pointerHoverIcon(PointerIcon.Hand),
+            modifier = Modifier.mouseClickable(onClick = { onMenuClick() }),
         ) {
             Box(
                 modifier =

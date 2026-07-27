@@ -6,7 +6,7 @@ package com.tajemniktv.tajsos.ui.components.nodes
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
+import com.tajemniktv.tajsos.ui.components.common.mouseClickable
 
 /**
  * Renders a clickable task row with a circular completion indicator and title.
@@ -73,7 +74,7 @@ fun TaskBrief(
                             1.dp,
                             if (isDone) TajsOSTheme.Primary else TajsOSTheme.GhostBorder,
                             CircleShape,
-                        ).clickable { onToggle() }.pointerHoverIcon(PointerIcon.Hand),
+                        ).mouseClickable(onClick = { onToggle() }),
                 contentAlignment = Alignment.Center,
             ) {
                 if (isDone) {
