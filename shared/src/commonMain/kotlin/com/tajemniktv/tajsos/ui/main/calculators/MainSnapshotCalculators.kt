@@ -44,6 +44,10 @@ import kotlin.time.Instant
  * @param projects A curated list of nodes strictly identified as "project" entities.
  * @return An analytical [InsightsData] snapshot summarizing the user's historical performance.
  */
+/**
+ * Calculates various insights based on recent app activity.
+ * Optimizations include using groupingBy and eachCount for memory-efficient aggregations.
+ */
 fun calculateInsights(
     nodes: List<NodeWithPin>,
     sessions: List<FocusSessionEntity>,
@@ -127,14 +131,14 @@ fun calculateInsights(
 
     val completionsByArea =
         recentCompletions
-            .mapNotNull { item -> item.node.areaId?.let { it to item } }
-            .groupBy({ it.first }, { it.second })
-            .mapValues { it.value.size }
+            .mapNotNull { item -> item.node.areaId }
+            .groupingBy { it }
+            .eachCount()
     val completionsByProject =
         recentCompletions
-            .mapNotNull { item -> item.node.projectId?.let { it to item } }
-            .groupBy({ it.first }, { it.second })
-            .mapValues { it.value.size }
+            .mapNotNull { item -> item.node.projectId }
+            .groupingBy { it }
+            .eachCount()
 
     val inboxGrowth = recentNodes.count { it.node.inboxState }
     val archivedCount =
@@ -175,23 +179,23 @@ fun calculateInsights(
     // Correlating track entries with activity
     val dailyCompletions =
         recentCompletions
-            .groupBy {
+            .groupingBy {
                 Instant
                     .fromEpochMilliseconds(it.node.completedAt ?: 0)
                     .toLocalDateTime(sysZone)
                     .date
                     .toString()
-            }.mapValues { it.value.size }
+            }.eachCount()
 
     val dailyCaptures =
         recentNodes
-            .groupBy {
+            .groupingBy {
                 Instant
                     .fromEpochMilliseconds(it.node.createdAt)
                     .toLocalDateTime(sysZone)
                     .date
                     .toString()
-            }.mapValues { it.value.size }
+            }.eachCount()
 
     val dailyFocus =
         recentSessions
@@ -1709,6 +1713,10 @@ fun calculateVaultsSnapshot(nodes: List<NodeWithPin>): VaultsSnapshot {
  * @param inputs A bundled dataset providing current node volumes, maintenance debt, and open loops.
  * @return A [CapacitySnapshot] identifying execution pressure and potential burnout risks.
  */
+/**
+ * Calculates the capacity snapshot, which includes metrics on current load and fragmentation.
+ * Optimizations include using distinctBy to count unique projects/areas without allocating lists.
+ */
 fun calculateCapacitySnapshot(
     nodes: List<NodeWithPin>,
     projects: List<NodeEntity>,
@@ -1736,9 +1744,9 @@ fun calculateCapacitySnapshot(
         ).coerceIn(0, 100)
     val fragmentationScore =
         (
-                activeTasks.groupBy { it.node.projectId }.size *
+                activeTasks.distinctBy { it.node.projectId }.size *
                         7 +
-                        activeTasks.groupBy { it.node.areaId }.size *
+                        activeTasks.distinctBy { it.node.areaId }.size *
                         4
         ).coerceIn(0, 100)
 
@@ -1762,7 +1770,7 @@ fun calculateCapacitySnapshot(
     val unrealisticWeekSignal =
         if (weeklyCreatedActive > weeklyDone * 2 + 5) "THIS WEEK IS UNREALISTIC // INTAKE OUTPACES EXECUTION" else null
     val tooManyActiveFrontsIndicator =
-        if (activeTasks.groupBy { it.node.areaId }.size >= 6) "TOO MANY ACTIVE FRONTS" else null
+        if (activeTasks.distinctBy { it.node.areaId }.size >= 6) "TOO MANY ACTIVE FRONTS" else null
     val attentionFragmentedIndicator =
         if (fragmentationScore >= 55) "ATTENTION IS TOO FRAGMENTED" else null
     val weeklyStructuralOverloadWarning =
@@ -1863,7 +1871,7 @@ fun calculateCapacitySnapshot(
                 val fallbackFrag =
                     nodes
                         .filter { it.node.status == "active" && it.node.createdAt <= bucketEnd }
-                        .groupBy { it.node.projectId }
+                        .distinctBy { it.node.projectId }
                         .size
                         .times(8)
                         .coerceIn(0, 100)
