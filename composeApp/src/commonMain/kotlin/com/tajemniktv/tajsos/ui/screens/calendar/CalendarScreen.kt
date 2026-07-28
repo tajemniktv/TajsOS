@@ -5,7 +5,6 @@
 package com.tajemniktv.tajsos.ui.screens.calendar
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -64,6 +63,7 @@ import kotlin.time.Clock
 import kotlin.time.Instant
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
+import com.tajemniktv.tajsos.ui.components.common.mouseClickable
 
 /**
  * Central calendar entry point that collects system state and coordinates layout.
@@ -261,8 +261,7 @@ fun MonthView(
                                         } else {
                                             TajsOSTheme.CalendarIdleDay
                                         },
-                                    ).clickable { onDateSelected(date) }
-                                        .pointerHoverIcon(PointerIcon.Hand),
+                                    ).mouseClickable(onClick = { onDateSelected(date) }),
                             contentAlignment = Alignment.Center,
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {

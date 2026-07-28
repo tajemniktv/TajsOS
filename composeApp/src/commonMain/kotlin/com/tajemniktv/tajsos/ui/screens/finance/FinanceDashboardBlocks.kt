@@ -7,7 +7,6 @@
 package com.tajemniktv.tajsos.ui.screens.finance
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -62,6 +61,7 @@ import kotlin.math.abs
 import kotlin.math.roundToInt
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
+import com.tajemniktv.tajsos.ui.components.common.mouseClickable
 
 /**
  * Renders the finance dashboard header shell with high-level status chips and dataset volume context.
@@ -216,8 +216,8 @@ internal fun renderFinanceActivityBlock(context: FinanceDashboardContext) {
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .clickable { context.onEditNode(item.node.id) }
-                            .pointerHoverIcon(PointerIcon.Hand)
+                            .mouseClickable(onClick = { context.onEditNode(item.node.id) })
+
                             .padding(vertical = 4.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,

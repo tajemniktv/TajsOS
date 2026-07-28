@@ -4,7 +4,6 @@
 
 package com.tajemniktv.tajsos.ui.screens.areas.detail
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -83,6 +82,7 @@ import tajsos.composeapp.generated.resources.type_note
 import tajsos.composeapp.generated.resources.type_record
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
+import com.tajemniktv.tajsos.ui.components.common.mouseClickable
 
 object AreaDetailBlocks {
     private val renderers: Map<String, AreaDetailBlockRenderer> =
@@ -416,8 +416,7 @@ private fun renderAreaSidebar(context: AreaDetailContext) {
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .clickable { context.onEditNode(node.id) }
-                            .pointerHoverIcon(PointerIcon.Hand),
+                            .mouseClickable(onClick = { context.onEditNode(node.id) }),
                 )
             }
         }
