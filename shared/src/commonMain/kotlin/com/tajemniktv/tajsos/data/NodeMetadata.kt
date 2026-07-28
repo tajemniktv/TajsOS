@@ -27,10 +27,15 @@ private val nodeMetadataJson =
 @Serializable
 data class NodeMetadataEnvelope(
     val schemaVersion: Int = 1,
+    /** Student domain metadata if the user has the Student pack enabled. */
     val student: StudentMetadata? = null,
+    /** Financial domain metadata if the user has the Finance pack enabled. */
     val finance: FinanceMetadata? = null,
+    /** People domain metadata if the user has the People pack enabled. */
     val people: PeopleMetadata? = null,
+    /** Creator domain metadata if the user has the Creator pack enabled. */
     val creator: CreatorMetadata? = null,
+    /** Area domain associations for aggregation and filtering. */
     val area: AreaMetadata? = null,
 )
 
