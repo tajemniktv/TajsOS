@@ -56,6 +56,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.tajemniktv.tajsos.ui.components.common.mouseClickable
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -247,8 +248,7 @@ fun NotesWorkspaceDetail(
                             modifier =
                                 Modifier
                                     .fillMaxWidth()
-                                    .clickable { onNavigateToNode(item.id) }
-                                    .pointerHoverIcon(PointerIcon.Hand),
+                                    .mouseClickable(onClick = { onNavigateToNode(item.id) }),
                             shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
                             color =
                                 if (item.id ==
@@ -422,8 +422,7 @@ fun NotesWorkspaceDetail(
                             "• ${linkedNode.title}",
                             modifier =
                                 Modifier
-                                    .clickable { onNavigateToNode(linkedNode.id) }
-                                    .pointerHoverIcon(PointerIcon.Hand),
+                                    .mouseClickable(onClick = { onNavigateToNode(linkedNode.id) }),
                             color = TajsOSTheme.Text,
                         )
                     }

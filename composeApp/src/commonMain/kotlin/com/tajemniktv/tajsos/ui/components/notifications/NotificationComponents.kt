@@ -34,6 +34,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.tajemniktv.tajsos.ui.components.common.mouseClickable
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -71,8 +72,7 @@ fun TajsNotificationCard(
             modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(TajsOSTheme.RadiusMd))
-                .clickable { notification.onClick() }
-                .pointerHoverIcon(PointerIcon.Hand),
+                .mouseClickable(onClick = { notification.onClick() }),
         color = TajsOSTheme.SurfaceLow,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
     ) {

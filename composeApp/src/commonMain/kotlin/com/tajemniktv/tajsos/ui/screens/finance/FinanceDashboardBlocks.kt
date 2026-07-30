@@ -33,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.tajemniktv.tajsos.ui.components.common.mouseClickable
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -216,8 +217,7 @@ internal fun renderFinanceActivityBlock(context: FinanceDashboardContext) {
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .clickable { context.onEditNode(item.node.id) }
-                            .pointerHoverIcon(PointerIcon.Hand)
+                            .mouseClickable(onClick = { context.onEditNode(item.node.id) })
                             .padding(vertical = 4.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,

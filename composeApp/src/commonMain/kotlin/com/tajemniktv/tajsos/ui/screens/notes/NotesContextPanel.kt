@@ -30,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.tajemniktv.tajsos.ui.components.common.mouseClickable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -138,8 +139,7 @@ fun NotesContextPanel(
                                 modifier =
                                     Modifier
                                         .fillMaxWidth()
-                                        .clickable { onOpenNode(task.id) }
-                                        .pointerHoverIcon(PointerIcon.Hand)
+                                        .mouseClickable(onClick = { onOpenNode(task.id) })
                                         .padding(vertical = 2.dp),
                             )
                         }
@@ -163,8 +163,7 @@ fun NotesContextPanel(
                                 modifier =
                                     Modifier
                                         .fillMaxWidth()
-                                        .clickable { onOpenNode(note.id) }
-                                        .pointerHoverIcon(PointerIcon.Hand)
+                                        .mouseClickable(onClick = { onOpenNode(note.id) })
                                         .padding(vertical = 2.dp),
                             )
                         }

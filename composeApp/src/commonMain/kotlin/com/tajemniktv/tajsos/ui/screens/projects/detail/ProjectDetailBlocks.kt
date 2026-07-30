@@ -47,6 +47,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.tajemniktv.tajsos.ui.components.common.mouseClickable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
@@ -495,8 +496,7 @@ private fun renderProjectSidebar(context: ProjectDetailContext) {
                         modifier =
                             Modifier
                                 .fillMaxWidth()
-                                .clickable { context.onEditNode(node.id) }
-                                .pointerHoverIcon(PointerIcon.Hand),
+                                .mouseClickable(onClick = { context.onEditNode(node.id) }),
                     )
                 }
             }

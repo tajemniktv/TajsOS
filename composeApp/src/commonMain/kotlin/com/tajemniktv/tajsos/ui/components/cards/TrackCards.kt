@@ -25,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.tajemniktv.tajsos.ui.components.common.mouseClickable
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.data.MedicationEntity
@@ -88,8 +89,7 @@ fun MedicationSyncCard(
                         modifier =
                             Modifier
                                 .fillMaxWidth()
-                                .clickable { onToggleMed(med.id) }
-                                .pointerHoverIcon(PointerIcon.Hand)
+                                .mouseClickable(onClick = { onToggleMed(med.id) })
                                 .padding(vertical = 4.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {

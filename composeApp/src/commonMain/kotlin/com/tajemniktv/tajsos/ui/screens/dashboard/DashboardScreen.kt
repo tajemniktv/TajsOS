@@ -43,6 +43,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.tajemniktv.tajsos.ui.components.common.mouseClickable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -444,8 +445,7 @@ private fun RenderDashboardBlock(
                     Row(
                         modifier =
                             Modifier
-                                .clickable { context.onNewEntry() }
-                                .pointerHoverIcon(PointerIcon.Hand)
+                                .mouseClickable(onClick = { context.onNewEntry() })
                                 .background(TajsOSTheme.Primary, RoundedCornerShape(TajsOSTheme.RadiusXs))
                                 .padding(horizontal = 12.dp, vertical = 6.dp),
                         verticalAlignment = Alignment.CenterVertically,
@@ -607,8 +607,7 @@ private fun DashboardOperationsOverview(
                                 1.dp,
                                 TajsOSTheme.Border,
                                 RoundedCornerShape(TajsOSTheme.RadiusMd),
-                            ).clickable { onNavigate(module.screen.route) }
-                                .pointerHoverIcon(PointerIcon.Hand)
+                            ).mouseClickable(onClick = { onNavigate(module.screen.route) })
                               .padding(TajsOSTheme.SpacingMd),
                     verticalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
