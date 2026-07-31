@@ -184,6 +184,9 @@ class PreferencesRepository(
             }
         }
 
+    /**
+     * Represents the currently enabled app packs, ensuring that only owned packs can be enabled.
+     */
     val enabledPacks: Flow<PackRegistry> =
         safeData
             .map { preferences ->
@@ -195,12 +198,21 @@ class PreferencesRepository(
             )
         }
 
+    /**
+     * Represents the set of keys for all currently owned app packs.
+     * If uninitialized, it falls back to the default free packs.
+     */
     val ownedPacks: Flow<Set<String>> =
         safeData
             .map { preferences ->
             preferences[PreferencesKeys.OWNED_PACKS] ?: AppPack.defaultFreePackKeys
         }
 
+    /**
+     * Updates the preference for biometric authentication.
+     *
+     * @param enabled True if biometrics should be used, false otherwise.
+     */
     suspend fun updateBiometricEnabled(enabled: Boolean) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.BIOMETRIC_ENABLED] = enabled
