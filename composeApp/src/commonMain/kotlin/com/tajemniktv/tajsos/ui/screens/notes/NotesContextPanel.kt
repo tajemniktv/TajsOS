@@ -4,7 +4,7 @@
 
 package com.tajemniktv.tajsos.ui.screens.notes
 
-import androidx.compose.foundation.clickable
+import com.tajemniktv.tajsos.ui.components.common.mouseClickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -45,8 +45,6 @@ import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.note_select_inspect_context
 import kotlin.time.Instant
-import androidx.compose.ui.input.pointer.PointerIcon
-import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 /**
  * Collapsible right rail with note metadata, graph context, and history sections.
@@ -138,8 +136,8 @@ fun NotesContextPanel(
                                 modifier =
                                     Modifier
                                         .fillMaxWidth()
-                                        .clickable { onOpenNode(task.id) }
-                                        .pointerHoverIcon(PointerIcon.Hand)
+                                        .mouseClickable(onClick = { onOpenNode(task.id) })
+
                                         .padding(vertical = 2.dp),
                             )
                         }
@@ -163,8 +161,8 @@ fun NotesContextPanel(
                                 modifier =
                                     Modifier
                                         .fillMaxWidth()
-                                        .clickable { onOpenNode(note.id) }
-                                        .pointerHoverIcon(PointerIcon.Hand)
+                                        .mouseClickable(onClick = { onOpenNode(note.id) })
+
                                         .padding(vertical = 2.dp),
                             )
                         }

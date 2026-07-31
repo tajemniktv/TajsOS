@@ -7,7 +7,7 @@ package com.tajemniktv.tajsos.ui.screens.dashboard
 import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import com.tajemniktv.tajsos.ui.components.common.mouseClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -78,8 +78,6 @@ import tajsos.composeapp.generated.resources.screen_inbox
 import tajsos.composeapp.generated.resources.screen_project
 import tajsos.composeapp.generated.resources.screen_today
 import kotlin.time.Clock
-import androidx.compose.ui.input.pointer.PointerIcon
-import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 /**
  * Central dashboard entry point that collects system state and coordinates layout.
@@ -444,8 +442,8 @@ private fun RenderDashboardBlock(
                     Row(
                         modifier =
                             Modifier
-                                .clickable { context.onNewEntry() }
-                                .pointerHoverIcon(PointerIcon.Hand)
+                                .mouseClickable(onClick = { context.onNewEntry() })
+
                                 .background(TajsOSTheme.Primary, RoundedCornerShape(TajsOSTheme.RadiusXs))
                                 .padding(horizontal = 12.dp, vertical = 6.dp),
                         verticalAlignment = Alignment.CenterVertically,
@@ -607,8 +605,8 @@ private fun DashboardOperationsOverview(
                                 1.dp,
                                 TajsOSTheme.Border,
                                 RoundedCornerShape(TajsOSTheme.RadiusMd),
-                            ).clickable { onNavigate(module.screen.route) }
-                                .pointerHoverIcon(PointerIcon.Hand)
+                            ).mouseClickable(onClick = { onNavigate(module.screen.route) })
+
                               .padding(TajsOSTheme.SpacingMd),
                     verticalArrangement = Arrangement.spacedBy(6.dp),
                 ) {

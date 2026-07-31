@@ -7,7 +7,7 @@ package com.tajemniktv.tajsos.ui.screens.notes.detail
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import com.tajemniktv.tajsos.ui.components.common.mouseClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -96,8 +96,6 @@ import tajsos.composeapp.generated.resources.detail_start_writing
 import tajsos.composeapp.generated.resources.note_detail_connect_node
 import tajsos.composeapp.generated.resources.note_detail_linked_context
 import tajsos.composeapp.generated.resources.note_detail_new_node
-import androidx.compose.ui.input.pointer.PointerIcon
-import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 object NoteDetailBlocks {
     private val renderers: Map<String, NoteDetailBlockRenderer> =
@@ -296,9 +294,9 @@ private fun renderNoteTaskMetadata(context: NoteDetailContext) {
                 ) {
                     Column(
                         modifier =
-                            Modifier.weight(1f).clickable {
+                            Modifier.weight(1f).mouseClickable(onClick = {
                                 context.onShowEnergyDialog()
-                            }.pointerHoverIcon(PointerIcon.Hand),
+                            }),
                     ) {
                         Text(
                             "ENERGY",
@@ -326,9 +324,9 @@ private fun renderNoteTaskMetadata(context: NoteDetailContext) {
                     }
                     Column(
                         modifier =
-                            Modifier.weight(1f).clickable {
+                            Modifier.weight(1f).mouseClickable(onClick = {
                                 context.onShowFrictionDialog()
-                            }.pointerHoverIcon(PointerIcon.Hand),
+                            }),
                     ) {
                         Text(
                             "FRICTION",
@@ -356,8 +354,8 @@ private fun renderNoteTaskMetadata(context: NoteDetailContext) {
                         modifier =
                             Modifier
                                 .weight(1f)
-                                .clickable { context.onShowEstimateDialog() }
-                                .pointerHoverIcon(PointerIcon.Hand),
+                                .mouseClickable(onClick = { context.onShowEstimateDialog() })
+                                ,
                     ) {
                         Text(
                             "ESTIMATE",
@@ -460,8 +458,8 @@ private fun renderNoteResourceMetadata(context: NoteDetailContext) {
                         modifier =
                             Modifier
                                 .weight(1f)
-                                .clickable { context.onShowMediaTypeDialog() }
-                                .pointerHoverIcon(PointerIcon.Hand),
+                                .mouseClickable(onClick = { context.onShowMediaTypeDialog() })
+                                ,
                     ) {
                         Text(
                             "MEDIA TYPE",
@@ -479,8 +477,8 @@ private fun renderNoteResourceMetadata(context: NoteDetailContext) {
                         modifier =
                             Modifier
                                 .weight(1f)
-                                .clickable { context.onShowRatingDialog() }
-                                .pointerHoverIcon(PointerIcon.Hand),
+                                .mouseClickable(onClick = { context.onShowRatingDialog() })
+                                ,
                     ) {
                         Text(
                             "RATING",
@@ -599,12 +597,12 @@ private fun renderNoteContextGraph(context: NoteDetailContext) {
                                 Icons.Default.Close,
                                 null,
                                 modifier =
-                                    Modifier.size(14.dp).clickable {
+                                    Modifier.size(14.dp).mouseClickable(onClick = {
                                         viewModel.detachTagFromNode(
                                             noteId,
                                             tag.id,
                                         )
-                                    }.pointerHoverIcon(PointerIcon.Hand),
+                                    }),
                             )
                         },
                         colors =
@@ -821,8 +819,8 @@ private fun renderNoteOrganization(context: NoteDetailContext) {
                     modifier =
                         Modifier
                             .weight(1f)
-                            .clickable { context.onShowAreaDialog() }
-                            .pointerHoverIcon(PointerIcon.Hand),
+                            .mouseClickable(onClick = { context.onShowAreaDialog() })
+                            ,
                 ) {
                     Text(
                         "AREA",
@@ -840,8 +838,8 @@ private fun renderNoteOrganization(context: NoteDetailContext) {
                     modifier =
                         Modifier
                             .weight(1f)
-                            .clickable { context.onShowProjectDialog() }
-                            .pointerHoverIcon(PointerIcon.Hand),
+                            .mouseClickable(onClick = { context.onShowProjectDialog() })
+                            ,
                 ) {
                     Text(
                         "PROJECT",
@@ -911,8 +909,8 @@ private fun renderNoteKnowledgeConfig(context: NoteDetailContext) {
                         modifier =
                             Modifier
                                 .weight(1f)
-                                .clickable { context.onShowNoteTypeDialog() }
-                                .pointerHoverIcon(PointerIcon.Hand),
+                                .mouseClickable(onClick = { context.onShowNoteTypeDialog() })
+                                ,
                     ) {
                         Text(
                             "NOTE TYPE",
@@ -930,8 +928,8 @@ private fun renderNoteKnowledgeConfig(context: NoteDetailContext) {
                         modifier =
                             Modifier
                                 .weight(1f)
-                                .clickable { context.onShowNoteStateDialog() }
-                                .pointerHoverIcon(PointerIcon.Hand),
+                                .mouseClickable(onClick = { context.onShowNoteStateDialog() })
+                                ,
                     ) {
                         Text(
                             "STATE",

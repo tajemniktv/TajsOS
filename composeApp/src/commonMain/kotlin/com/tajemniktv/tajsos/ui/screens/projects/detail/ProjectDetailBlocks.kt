@@ -5,7 +5,7 @@
 package com.tajemniktv.tajsos.ui.screens.projects.detail
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import com.tajemniktv.tajsos.ui.components.common.mouseClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -97,8 +97,6 @@ import tajsos.composeapp.generated.resources.type_area
 import tajsos.composeapp.generated.resources.type_note
 import tajsos.composeapp.generated.resources.type_record
 import kotlin.math.roundToInt
-import androidx.compose.ui.input.pointer.PointerIcon
-import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 object ProjectDetailBlockRegistry {
     private val renderers: Map<String, ProjectDetailBlockRenderer> =
@@ -495,8 +493,8 @@ private fun renderProjectSidebar(context: ProjectDetailContext) {
                         modifier =
                             Modifier
                                 .fillMaxWidth()
-                                .clickable { context.onEditNode(node.id) }
-                                .pointerHoverIcon(PointerIcon.Hand),
+                                .mouseClickable(onClick = { context.onEditNode(node.id) })
+                                ,
                     )
                 }
             }
