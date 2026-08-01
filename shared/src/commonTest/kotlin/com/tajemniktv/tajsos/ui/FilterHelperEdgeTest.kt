@@ -1,34 +1,34 @@
 package com.tajemniktv.tajsos.ui
 
 import com.tajemniktv.tajsos.data.TodayPinEntity
+import com.tajemniktv.tajsos.data.NodeWithPin
 import kotlin.test.Test
 import kotlin.test.assertEquals
 @OptIn(kotlin.time.ExperimentalTime::class)
 
 class FilterHelperEdgeTest {
+
+    private fun filterNodes(
+        nodes: List<NodeWithPin>,
+        query: String = "",
+        status: String? = null,
+        timeHorizon: String? = null,
+        sortMode: String = "relevance"
+    ): List<NodeWithPin> {
+        return FilterHelper.filterAndSortNodes(
+            nodes = nodes,
+            query = query,
+            type = null, status = status, projectId = null, areaId = null, linkedToId = null,
+            maxMins = null, energy = null, friction = null, locationContext = null,
+            energyContext = null, deviceContext = null, socialContext = null,
+            timeWindowContext = null, timeHorizon = timeHorizon, relations = emptyList(),
+            sortMode = sortMode
+        )
+    }
     @Test
     fun testRelevanceScore_emptyQuery() {
         val node = buildTestNode(1, "Test Node")
-        val result = FilterHelper.filterAndSortNodes(
-            nodes = listOf(node),
-            query = "",
-            type = null,
-            status = null,
-            projectId = null,
-            areaId = null,
-            linkedToId = null,
-            maxMins = null,
-            energy = null,
-            friction = null,
-            locationContext = null,
-            energyContext = null,
-            deviceContext = null,
-            socialContext = null,
-            timeWindowContext = null,
-            timeHorizon = null,
-            relations = emptyList(),
-            sortMode = "relevance"
-        )
+        val result = filterNodes(nodes = listOf(node), query = "", sortMode = "relevance")
         // Ensure that with empty query it still returns nodes and sort mode works without error
         assertEquals(1, result.size)
     }
@@ -44,26 +44,7 @@ class FilterHelperEdgeTest {
 
         val nodes = listOf(exactMatchNode, startsWithNode, containsTitleNode, containsContentNode, exactTagMatchNode, containsTagMatchNode)
 
-        val result = FilterHelper.filterAndSortNodes(
-            nodes = nodes,
-            query = "exact match",
-            type = null,
-            status = null,
-            projectId = null,
-            areaId = null,
-            linkedToId = null,
-            maxMins = null,
-            energy = null,
-            friction = null,
-            locationContext = null,
-            energyContext = null,
-            deviceContext = null,
-            socialContext = null,
-            timeWindowContext = null,
-            timeHorizon = null,
-            relations = emptyList(),
-            sortMode = "relevance"
-        )
+        val result = filterNodes(nodes = nodes, query = "exact match", sortMode = "relevance")
 
         assertEquals(6, result.size)
 
@@ -86,15 +67,7 @@ class FilterHelperEdgeTest {
         val activeNode = buildTestNode(2, "query exact", "content", status = "active")
         val inactiveNode = buildTestNode(3, "query exact", "content", status = "on_hold")
 
-        val result = FilterHelper.filterAndSortNodes(
-            nodes = listOf(inactiveNode, activeNode, activePinnedNode),
-            query = "query exact",
-            type = null, status = null, projectId = null, areaId = null, linkedToId = null,
-            maxMins = null, energy = null, friction = null, locationContext = null,
-            energyContext = null, deviceContext = null, socialContext = null,
-            timeWindowContext = null, timeHorizon = null, relations = emptyList(),
-            sortMode = "relevance"
-        )
+        val result = filterNodes(nodes = listOf(inactiveNode, activeNode, activePinnedNode), query = "query exact", sortMode = "relevance")
 
         assertEquals(3, result.size)
         // Score order: activePinnedNode (1), activeNode (2), inactiveNode (3)
@@ -109,15 +82,7 @@ class FilterHelperEdgeTest {
         val containsTagMatch = buildTestNode(2, "title", "content", tags = listOf("prefix query exact suffix"))
         val noTagMatch = buildTestNode(3, "title", "content", tags = listOf("other"))
 
-        val result = FilterHelper.filterAndSortNodes(
-            nodes = listOf(noTagMatch, containsTagMatch, exactTagMatch),
-            query = "query exact",
-            type = null, status = null, projectId = null, areaId = null, linkedToId = null,
-            maxMins = null, energy = null, friction = null, locationContext = null,
-            energyContext = null, deviceContext = null, socialContext = null,
-            timeWindowContext = null, timeHorizon = null, relations = emptyList(),
-            sortMode = "relevance"
-        )
+        val result = filterNodes(nodes = listOf(noTagMatch, containsTagMatch, exactTagMatch), query = "query exact", sortMode = "relevance")
 
         assertEquals(2, result.size) // noTagMatch shouldn't match the query
         // Score order: exactTagMatch (1), containsTagMatch (2)
@@ -132,15 +97,7 @@ class FilterHelperEdgeTest {
         val containsMatch = buildTestNode(3, "prefix query exact", "content")
         val contentMatch = buildTestNode(4, "other title", "content query exact")
 
-        val result = FilterHelper.filterAndSortNodes(
-            nodes = listOf(contentMatch, containsMatch, startsWithMatch, exactMatch),
-            query = "query exact",
-            type = null, status = null, projectId = null, areaId = null, linkedToId = null,
-            maxMins = null, energy = null, friction = null, locationContext = null,
-            energyContext = null, deviceContext = null, socialContext = null,
-            timeWindowContext = null, timeHorizon = null, relations = emptyList(),
-            sortMode = "relevance"
-        )
+        val result = filterNodes(nodes = listOf(contentMatch, containsMatch, startsWithMatch, exactMatch), query = "query exact", sortMode = "relevance")
 
         assertEquals(4, result.size)
         assertEquals(1L, result[0].node.id) // Exact
@@ -156,26 +113,7 @@ class FilterHelperEdgeTest {
         val node2 = buildTestNode(2, "title", "content", tags = listOf("exact match"), updatedAt = 200L)
         val node3 = buildTestNode(3, "title", "content", tags = listOf("exact match"), updatedAt = 100L)
 
-        val result = FilterHelper.filterAndSortNodes(
-            nodes = listOf(node1, node2, node3),
-            query = "exact match",
-            type = null,
-            status = null,
-            projectId = null,
-            areaId = null,
-            linkedToId = null,
-            maxMins = null,
-            energy = null,
-            friction = null,
-            locationContext = null,
-            energyContext = null,
-            deviceContext = null,
-            socialContext = null,
-            timeWindowContext = null,
-            timeHorizon = null,
-            relations = emptyList(),
-            sortMode = "relevance"
-        )
+        val result = filterNodes(nodes = listOf(node1, node2, node3), query = "exact match", sortMode = "relevance")
         assertEquals(3, result.size)
         // Scores are identical.
         // Order: node2 (highest updatedAt), node3 (same updatedAt, higher id), node1 (lowest id)
@@ -192,26 +130,7 @@ class FilterHelperEdgeTest {
         val nodeOnHold = buildTestNode(2, "title", status = "on_hold")
         val nodeArchived = buildTestNode(3, "title", status = "archived")
 
-        val result = FilterHelper.filterAndSortNodes(
-            nodes = listOf(nodeActive, nodeOnHold, nodeArchived),
-            query = "",
-            type = null,
-            status = "active, on_hold",
-            projectId = null,
-            areaId = null,
-            linkedToId = null,
-            maxMins = null,
-            energy = null,
-            friction = null,
-            locationContext = null,
-            energyContext = null,
-            deviceContext = null,
-            socialContext = null,
-            timeWindowContext = null,
-            timeHorizon = null,
-            relations = emptyList(),
-            sortMode = "relevance"
-        )
+        val result = filterNodes(nodes = listOf(nodeActive, nodeOnHold, nodeArchived), query = "", status = "active, on_hold", sortMode = "relevance")
 
         assertEquals(2, result.size)
         assertEquals(listOf(1L, 2L), result.map { it.node.id }.sorted())
@@ -232,43 +151,23 @@ class FilterHelperEdgeTest {
 
         val nodes = listOf(nodeToday, nodeWeek, nodeMonth, nodeSemester, nodeLong, nodeNullDue)
 
-        val resultToday = FilterHelper.filterAndSortNodes(
-            nodes = nodes, query = "", type = null, status = null, projectId = null, areaId = null, linkedToId = null,
-            maxMins = null, energy = null, friction = null, locationContext = null, energyContext = null, deviceContext = null, socialContext = null,
-            timeWindowContext = null, timeHorizon = "today", relations = emptyList(), sortMode = "updated"
-        )
+        val resultToday = filterNodes(nodes = nodes, query = "", timeHorizon = "today", sortMode = "updated")
         assertEquals(1, resultToday.size)
         assertEquals(1L, resultToday[0].node.id)
 
-        val resultWeek = FilterHelper.filterAndSortNodes(
-            nodes = nodes, query = "", type = null, status = null, projectId = null, areaId = null, linkedToId = null,
-            maxMins = null, energy = null, friction = null, locationContext = null, energyContext = null, deviceContext = null, socialContext = null,
-            timeWindowContext = null, timeHorizon = "week", relations = emptyList(), sortMode = "updated"
-        )
+        val resultWeek = filterNodes(nodes = nodes, query = "", timeHorizon = "week", sortMode = "updated")
         assertEquals(2, resultWeek.size)
         assertEquals(setOf(1L, 2L), resultWeek.map { it.node.id }.toSet())
 
-        val resultLong = FilterHelper.filterAndSortNodes(
-            nodes = nodes, query = "", type = null, status = null, projectId = null, areaId = null, linkedToId = null,
-            maxMins = null, energy = null, friction = null, locationContext = null, energyContext = null, deviceContext = null, socialContext = null,
-            timeWindowContext = null, timeHorizon = "long", relations = emptyList(), sortMode = "updated"
-        )
+        val resultLong = filterNodes(nodes = nodes, query = "", timeHorizon = "long", sortMode = "updated")
         assertEquals(2, resultLong.size)
         assertEquals(setOf(4L, 5L), resultLong.map { it.node.id }.toSet())
 
-        val resultShort = FilterHelper.filterAndSortNodes(
-            nodes = nodes, query = "", type = null, status = null, projectId = null, areaId = null, linkedToId = null,
-            maxMins = null, energy = null, friction = null, locationContext = null, energyContext = null, deviceContext = null, socialContext = null,
-            timeWindowContext = null, timeHorizon = "short", relations = emptyList(), sortMode = "updated"
-        )
+        val resultShort = filterNodes(nodes = nodes, query = "", timeHorizon = "short", sortMode = "updated")
         assertEquals(2, resultShort.size)
         assertEquals(setOf(1L, 2L), resultShort.map { it.node.id }.toSet())
 
-        val resultInvalid = FilterHelper.filterAndSortNodes(
-            nodes = nodes, query = "", type = null, status = null, projectId = null, areaId = null, linkedToId = null,
-            maxMins = null, energy = null, friction = null, locationContext = null, energyContext = null, deviceContext = null, socialContext = null,
-            timeWindowContext = null, timeHorizon = "invalid_horizon", relations = emptyList(), sortMode = "updated"
-        )
+        val resultInvalid = filterNodes(nodes = nodes, query = "", timeHorizon = "invalid_horizon", sortMode = "updated")
         assertEquals(6, resultInvalid.size)
     }
 
@@ -296,15 +195,7 @@ class FilterHelperEdgeTest {
         val node1 = buildTestNode(1, "title", "content", updatedAt = 100L)
         val node2 = buildTestNode(2, "title", "content", updatedAt = 200L)
 
-        val result = FilterHelper.filterAndSortNodes(
-            nodes = listOf(node1, node2),
-            query = "   ",
-            type = null, status = null, projectId = null, areaId = null, linkedToId = null,
-            maxMins = null, energy = null, friction = null, locationContext = null,
-            energyContext = null, deviceContext = null, socialContext = null,
-            timeWindowContext = null, timeHorizon = null, relations = emptyList(),
-            sortMode = "relevance"
-        )
+        val result = filterNodes(nodes = listOf(node1, node2), query = "   ", sortMode = "relevance")
 
         assertEquals(2, result.size)
         assertEquals(2L, result[0].node.id)
