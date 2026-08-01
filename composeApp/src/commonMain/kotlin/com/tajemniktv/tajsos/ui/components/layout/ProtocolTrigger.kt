@@ -4,6 +4,8 @@
 
 package com.tajemniktv.tajsos.ui.components.layout
 
+import com.tajemniktv.tajsos.ui.components.common.mouseClickable
+
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -50,8 +52,7 @@ fun ProtocolTrigger(
     onClick: () -> Unit,
 ) {
     Surface(
-        onClick = onClick,
-        modifier = Modifier.width(120.dp),
+        modifier = Modifier.width(120.dp).mouseClickable(onClick = onClick),
         color = color.copy(alpha = 0.1f),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),

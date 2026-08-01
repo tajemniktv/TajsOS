@@ -4,6 +4,8 @@
 
 package com.tajemniktv.tajsos.ui.components.nodes
 
+import com.tajemniktv.tajsos.ui.components.common.mouseClickable
+
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -65,8 +67,7 @@ fun SuggestionGroup(
         }
         nodes.take(2).forEach { nodeWithPin ->
             Surface(
-                onClick = { onEditNode(nodeWithPin.node.id) },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().mouseClickable(onClick = { onEditNode(nodeWithPin.node.id) }),
                 color = TajsOSTheme.CardSurface,
                 shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
                 border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),

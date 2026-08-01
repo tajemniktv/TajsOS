@@ -4,6 +4,8 @@
 
 package com.tajemniktv.tajsos.ui.screens.insights
 
+import com.tajemniktv.tajsos.ui.components.common.mouseClickable
+
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -118,7 +120,7 @@ fun ProjectEntropyItem(
     onClick: () -> Unit,
 ) {
     Surface(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().mouseClickable(onClick = onClick),
         color = TajsOSTheme.CardSurface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
         border =
@@ -126,7 +128,6 @@ fun ProjectEntropyItem(
                 1.dp,
                 TajsOSTheme.Muted.copy(alpha = 0.1f),
             ),
-        onClick = onClick,
     ) {
         Row(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
@@ -217,7 +218,7 @@ fun NeglectedProjectItem(
     onClick: () -> Unit,
 ) {
     Surface(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().mouseClickable(onClick = onClick),
         color = TajsOSTheme.CardSurface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
         border =
@@ -225,7 +226,6 @@ fun NeglectedProjectItem(
                 1.dp,
                 TajsOSTheme.Error.copy(alpha = 0.3f),
             ),
-        onClick = onClick,
     ) {
         Row(
             modifier = Modifier.padding(TajsOSTheme.SpacingMd),
