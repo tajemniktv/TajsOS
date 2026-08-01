@@ -271,4 +271,43 @@ class FilterHelperEdgeTest {
         )
         assertEquals(6, resultInvalid.size)
     }
+
+    @Test
+    fun testFilterAndSortNodes_defaultSortMode() {
+        val exactMatch = buildTestNode(1, "exact", "content")
+        val partialMatch = buildTestNode(2, "exact partial", "content")
+
+        val result = FilterHelper.filterAndSortNodes(
+            nodes = listOf(partialMatch, exactMatch),
+            query = "exact",
+            type = null, status = null, projectId = null, areaId = null, linkedToId = null,
+            maxMins = null, energy = null, friction = null, locationContext = null,
+            energyContext = null, deviceContext = null, socialContext = null,
+            timeWindowContext = null, timeHorizon = null, relations = emptyList()
+        )
+
+        assertEquals(2, result.size)
+        assertEquals(1L, result[0].node.id)
+        assertEquals(2L, result[1].node.id)
+    }
+
+    @Test
+    fun testRelevanceScore_blankQueryReturnsZero() {
+        val node1 = buildTestNode(1, "title", "content", updatedAt = 100L)
+        val node2 = buildTestNode(2, "title", "content", updatedAt = 200L)
+
+        val result = FilterHelper.filterAndSortNodes(
+            nodes = listOf(node1, node2),
+            query = "   ",
+            type = null, status = null, projectId = null, areaId = null, linkedToId = null,
+            maxMins = null, energy = null, friction = null, locationContext = null,
+            energyContext = null, deviceContext = null, socialContext = null,
+            timeWindowContext = null, timeHorizon = null, relations = emptyList(),
+            sortMode = "relevance"
+        )
+
+        assertEquals(2, result.size)
+        assertEquals(2L, result[0].node.id)
+        assertEquals(1L, result[1].node.id)
+    }
 }
