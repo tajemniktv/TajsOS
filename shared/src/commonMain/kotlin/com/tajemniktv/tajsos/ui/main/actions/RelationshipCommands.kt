@@ -73,6 +73,13 @@ class RelationshipCommands(
         updateNode(person.copy(dueAt = followUpAt))
     }
 
+    /**
+     * Sets or clears a scheduled important date (e.g., a birthday or anniversary) for a person.
+     * Silently fails if the node is not of type "person".
+     *
+     * @param person The [NodeEntity] representing the person.
+     * @param timestamp The epoch millisecond timestamp of the important date, or null to clear it.
+     */
     fun setPersonImportantDate(
         person: NodeEntity,
         timestamp: Long?,
@@ -81,6 +88,13 @@ class RelationshipCommands(
         updateNode(person.copy(dueAt = timestamp))
     }
 
+    /**
+     * Updates the private social energy notes associated with a relationship.
+     * Silently fails if the node is not of type "person".
+     *
+     * @param person The [NodeEntity] representing the person.
+     * @param notes A freeform string describing the emotional or cognitive toll/boost of interacting with this person.
+     */
     fun setPersonSocialEnergyNotes(
         person: NodeEntity,
         notes: String?,
@@ -89,6 +103,13 @@ class RelationshipCommands(
         updateNode(person.copy(socialEnergyNotes = notes?.trim()?.ifBlank { null }))
     }
 
+    /**
+     * Updates the context string describing how or where the user knows a person.
+     * Silently fails if the node is not of type "person".
+     *
+     * @param person The [NodeEntity] representing the person.
+     * @param context A freeform string describing the relationship context (e.g., "college friend").
+     */
     fun setPersonRelationshipContext(
         person: NodeEntity,
         context: String?,
@@ -97,6 +118,14 @@ class RelationshipCommands(
         updateNode(person.copy(relationshipContext = context?.trim()?.ifBlank { null }))
     }
 
+    /**
+     * Flags or unflags a person as an important, high-priority relationship.
+     * This orchestrates a tag modification (`important_relationship`) behind the scenes.
+     * Silently fails if the node is not of type "person".
+     *
+     * @param person The [NodeEntity] representing the person.
+     * @param important `true` to flag as important, `false` to remove the flag.
+     */
     fun markImportantRelationship(
         person: NodeEntity,
         important: Boolean,
@@ -107,6 +136,14 @@ class RelationshipCommands(
         }
     }
 
+    /**
+     * Sets a formalized relationship type for a person, mutually excluding other supported types.
+     * Behind the scenes, this manages a set of exclusive tags ("professor", "friend", "family").
+     * Silently fails if the node is not of type "person".
+     *
+     * @param person The [NodeEntity] representing the person.
+     * @param type The type to set, which will be normalized. Supported values include "professor", "friend", "family".
+     */
     fun setPersonRelationshipType(
         person: NodeEntity,
         type: String?,

@@ -86,6 +86,18 @@ class StudentCommands(
         }
     }
 
+    /**
+     * Updates the academic course metadata for a specific node (e.g., assigning a task or note to a specific class).
+     *
+     * This modifies the underlying JSON `StudentMetadata` structure tied to the node. Blank strings
+     * are sanitized to `null` before persistence to prevent empty string state bloat.
+     *
+     * @param node The [NodeEntity] to update.
+     * @param courseId The unique identifier of the course (e.g., "CS101").
+     * @param courseName The human-readable name of the course (e.g., "Introduction to Computer Science").
+     * @param semester The semester or term identifier (e.g., "Fall 2026").
+     * @param assignmentType An optional categorization string for the type of work (e.g., "homework", "exam").
+     */
     fun setStudentCourse(
         node: NodeEntity,
         courseId: String?,
@@ -103,6 +115,20 @@ class StudentCommands(
         }
     }
 
+    /**
+     * Creates and persists a new academic note, immediately embedding the provided course and topic metadata.
+     *
+     * This avoids a two-step "create then update" flow from the UI by structuring the `NodeMetadataEnvelope`
+     * during the initial insertion transaction.
+     *
+     * @param title The primary title of the new note.
+     * @param content The main textual body of the new note.
+     * @param noteType The specific category of knowledge item (e.g., "lecture_note", "reading_note").
+     * @param courseId The unique identifier of the associated course, if applicable.
+     * @param courseName The human-readable name of the associated course, if applicable.
+     * @param semester The semester or term identifier, if applicable.
+     * @param topic The overarching concept or topic this note belongs to, if applicable.
+     */
     fun addStudentNote(
         title: String,
         content: String,
@@ -135,6 +161,13 @@ class StudentCommands(
         }
     }
 
+    /**
+     * Toggles whether an academic node is marked as a candidate for flashcard creation.
+     * This orchestrates a tag modification (`flashcard_candidate`) and updates the embedded `StudentMetadata`.
+     *
+     * @param node The [NodeEntity] to update.
+     * @param enabled `true` to flag as a candidate, `false` otherwise.
+     */
     fun toggleFlashcardCandidate(
         node: NodeEntity,
         enabled: Boolean,
@@ -147,6 +180,13 @@ class StudentCommands(
         }
     }
 
+    /**
+     * Toggles whether an academic node needs to be revisited before an exam.
+     * This orchestrates a tag modification (`revisit_before_exam`) and updates the embedded `StudentMetadata`.
+     *
+     * @param node The [NodeEntity] to update.
+     * @param enabled `true` to flag for revisiting, `false` otherwise.
+     */
     fun toggleRevisitBeforeExam(
         node: NodeEntity,
         enabled: Boolean,
