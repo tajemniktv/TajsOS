@@ -109,12 +109,31 @@ class IcsCalendarProvider(
             return !ipLiteral.isPrivateOrLocal()
         }
 
-        // For non-literal hostnames, we cannot perform synchronous blocking DNS resolution
-        // in commonMain without breaking KMP asynchronous patterns or introducing heavy dependencies.
-        // Therefore, we fall back to blocking known critical local infrastructure names.
-        // Deep DNS rebinding and IP-resolution validation should ideally be configured at the
+        // At this point, it must be a valid domain name.
+        // Reject known metadata and internal infrastructure domains.
+        if (host in BLOCKED_METADATA_HOSTS) return false
+        if (BLOCKED_LOCAL_SUFFIXES.any { host.endsWith(it) }) return false
+
+        // Enforce that hostnames have at least one dot (excluding trailing dots).
+        val cleanHost = host.trimEnd('.')
+        val lastDotIndex = cleanHost.lastIndexOf('.')
+        if (lastDotIndex == -1) {
+            // No dot means it's a single-label hostname (like "localhost" or an integer IP "2130706433").
+            // Public ICS URLs should practically always have a valid TLD.
+            return false
+        }
+
+        // The TLD (everything after the last dot) must contain at least one alphabetic character.
+        // This effectively blocks all obfuscated IPv4 formats (e.g. "127.1", "0x7f.1", "0177.0.0.1")
+        // because an IP address representation will never have a letter in its final segment.
+        val tld = cleanHost.substring(lastDotIndex + 1)
+        if (!tld.any { it.isLetter() }) {
+            return false
+        }
+
+        // Deep DNS rebinding validation should ideally be configured at the
         // Ktor Engine or system network proxy level.
-        return host !in BLOCKED_METADATA_HOSTS
+        return true
     }
 
     companion object {
@@ -122,6 +141,12 @@ class IcsCalendarProvider(
             "localhost",
             "metadata.google.internal",
             "169.254.169.254"
+        )
+
+        private val BLOCKED_LOCAL_SUFFIXES = listOf(
+            ".localhost",
+            ".local",
+            ".internal"
         )
     }
 
