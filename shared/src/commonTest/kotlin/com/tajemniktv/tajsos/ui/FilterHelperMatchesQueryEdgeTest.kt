@@ -106,4 +106,11 @@ class FilterHelperMatchesQueryEdgeTest {
         // Starts title (60+30=90) should be second
         assertEquals(startsTitle, sorted[1])
     }
+
+    @Test
+    fun testMatchesQuery_normalSearch_withTags() {
+        val node1 = buildTestNode(1, "title", "content", tags = listOf("my special tag"))
+        assertTrue(FilterHelper.matchesQuery(node1, "special"))
+        assertFalse(FilterHelper.matchesQuery(node1, "other"))
+    }
 }
