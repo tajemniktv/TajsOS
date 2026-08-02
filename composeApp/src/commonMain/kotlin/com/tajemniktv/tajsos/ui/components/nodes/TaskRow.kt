@@ -45,6 +45,8 @@ import tajsos.composeapp.generated.resources.dash_heavy
 import tajsos.composeapp.generated.resources.dash_unclear
 import tajsos.composeapp.generated.resources.detail_archive
 import tajsos.composeapp.generated.resources.task_row_unpin_desc
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 /**
  * Renders a single task row for the given node, showing its title, metadata and action controls.
@@ -106,7 +108,7 @@ fun TaskRow(
                         onLongClick = onLongClick,
                         onSecondaryClickAt = { contextMenuState.showAt(it) },
                         middleClickFallbackToPrimary = true,
-                    ),
+                    ).pointerHoverIcon(PointerIcon.Hand),
             color = TajsOSTheme.CardSurface,
         ) {
             Row(

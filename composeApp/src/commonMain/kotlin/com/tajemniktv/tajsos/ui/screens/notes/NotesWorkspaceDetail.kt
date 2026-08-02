@@ -247,8 +247,8 @@ fun NotesWorkspaceDetail(
                             modifier =
                                 Modifier
                                     .fillMaxWidth()
-                                    .clickable { onNavigateToNode(item.id) }
-                                    .pointerHoverIcon(PointerIcon.Hand),
+                                    .clickable { onNavigateToNode(item.id) }.pointerHoverIcon(PointerIcon.Hand)
+                                    ,
                             shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
                             color =
                                 if (item.id ==
@@ -422,8 +422,8 @@ fun NotesWorkspaceDetail(
                             "• ${linkedNode.title}",
                             modifier =
                                 Modifier
-                                    .clickable { onNavigateToNode(linkedNode.id) }
-                                    .pointerHoverIcon(PointerIcon.Hand),
+                                    .clickable { onNavigateToNode(linkedNode.id) }.pointerHoverIcon(PointerIcon.Hand)
+                                    ,
                             color = TajsOSTheme.Text,
                         )
                     }

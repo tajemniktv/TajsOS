@@ -138,8 +138,8 @@ fun NotesContextPanel(
                                 modifier =
                                     Modifier
                                         .fillMaxWidth()
-                                        .clickable { onOpenNode(task.id) }
-                                        .pointerHoverIcon(PointerIcon.Hand)
+                                        .clickable { onOpenNode(task.id) }.pointerHoverIcon(PointerIcon.Hand)
+
                                         .padding(vertical = 2.dp),
                             )
                         }
@@ -163,8 +163,8 @@ fun NotesContextPanel(
                                 modifier =
                                     Modifier
                                         .fillMaxWidth()
-                                        .clickable { onOpenNode(note.id) }
-                                        .pointerHoverIcon(PointerIcon.Hand)
+                                        .clickable { onOpenNode(note.id) }.pointerHoverIcon(PointerIcon.Hand)
+
                                         .padding(vertical = 2.dp),
                             )
                         }

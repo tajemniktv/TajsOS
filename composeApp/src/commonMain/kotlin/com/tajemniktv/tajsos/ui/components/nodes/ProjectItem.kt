@@ -29,6 +29,8 @@ import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.common_open
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 /**
  * Renders a clickable project card for a NodeEntity, optionally showing a percentage and a thin progress bar.
@@ -70,7 +72,7 @@ fun ProjectItem(
                         onLongClick = onLongClick,
                         onSecondaryClickAt = { contextMenuState.showAt(it) },
                         middleClickFallbackToPrimary = true,
-                    ),
+                    ).pointerHoverIcon(PointerIcon.Hand),
             color = TajsOSTheme.CardSurface,
             shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
             border =

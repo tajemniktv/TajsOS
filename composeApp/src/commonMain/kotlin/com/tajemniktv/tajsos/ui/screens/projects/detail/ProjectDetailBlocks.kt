@@ -495,8 +495,8 @@ private fun renderProjectSidebar(context: ProjectDetailContext) {
                         modifier =
                             Modifier
                                 .fillMaxWidth()
-                                .clickable { context.onEditNode(node.id) }
-                                .pointerHoverIcon(PointerIcon.Hand),
+                                .clickable { context.onEditNode(node.id) }.pointerHoverIcon(PointerIcon.Hand)
+                                ,
                     )
                 }
             }

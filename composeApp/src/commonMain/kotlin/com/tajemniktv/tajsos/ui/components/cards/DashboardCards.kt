@@ -47,6 +47,8 @@ import com.tajemniktv.tajsos.ui.components.nodes.TaskBrief
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import kotlinx.coroutines.delay
 import kotlin.time.Clock
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 /**
  * A sticky note style card for quick information.
@@ -65,7 +67,7 @@ fun StickyNoteCard(
 ) {
     Surface(
         onClick = onClick,
-        modifier = modifier.width(200.dp),
+        modifier = modifier.width(200.dp).pointerHoverIcon(PointerIcon.Hand),
         color = TajsOSTheme.Accent.copy(alpha = 0.1f),
         shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
     ) {
@@ -408,7 +410,7 @@ fun VaultCard(
 ) {
     Surface(
         onClick = onClick,
-        modifier = modifier,
+        modifier = modifier.pointerHoverIcon(PointerIcon.Hand),
         color = TajsOSTheme.CardSurface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
     ) {

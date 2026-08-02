@@ -63,6 +63,8 @@ import tajsos.composeapp.generated.resources.type_project
 import tajsos.composeapp.generated.resources.type_record
 import tajsos.composeapp.generated.resources.type_task
 import kotlin.time.Clock
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 @Composable
 fun NodeCard(
@@ -115,7 +117,7 @@ fun NodeCard(
                             onLongClick = onLongClick,
                             onSecondaryClickAt = { contextMenuState.showAt(it) },
                             middleClickFallbackToPrimary = true,
-                        ),
+                        ).pointerHoverIcon(PointerIcon.Hand),
                 color = glassContainerColor(TajsOSTheme.Surface),
                 shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
                 border =

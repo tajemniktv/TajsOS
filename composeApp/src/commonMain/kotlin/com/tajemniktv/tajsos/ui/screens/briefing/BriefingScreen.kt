@@ -94,6 +94,8 @@ import tajsos.composeapp.generated.resources.briefing_resume_hint
 import tajsos.composeapp.generated.resources.briefing_upcoming
 import kotlin.time.Clock
 import kotlin.time.Instant
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 /**
  * Calm, desktop-first orientation screen showing a lightweight daily briefing.
@@ -647,7 +649,7 @@ private fun BriefingActionCard(action: BriefingAction) {
         color = TajsOSTheme.SurfaceLow.copy(alpha = 0.72f),
         tonalElevation = 0.dp,
         shadowElevation = 0.dp,
-        modifier = Modifier.width(188.dp).height(144.dp),
+        modifier = Modifier.width(188.dp).height(144.dp).pointerHoverIcon(PointerIcon.Hand),
     ) {
         Column(
             modifier = Modifier.fillMaxSize().padding(16.dp),
@@ -698,7 +700,7 @@ private fun BriefingCaptureField(onClick: () -> Unit) {
         onClick = onClick,
         shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
         color = TajsOSTheme.SurfaceHighest.copy(alpha = 0.9f),
-        modifier = Modifier.widthIn(max = 720.dp).fillMaxWidth().height(58.dp),
+        modifier = Modifier.widthIn(max = 720.dp).fillMaxWidth().height(58.dp).pointerHoverIcon(PointerIcon.Hand),
         tonalElevation = 0.dp,
         shadowElevation = 0.dp,
     ) {

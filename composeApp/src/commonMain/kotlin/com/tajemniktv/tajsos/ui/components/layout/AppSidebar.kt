@@ -95,6 +95,8 @@ import tajsos.composeapp.generated.resources.common_open
 import tajsos.composeapp.generated.resources.sidebar_brand
 import tajsos.composeapp.generated.resources.sidebar_new_entry
 import kotlin.math.roundToInt
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 private const val MinExpandedSidebarWidthDp = 220f
 private const val MaxExpandedSidebarWidthDp = 360f
@@ -449,7 +451,7 @@ fun ExpandableNavSection(
                                 onClick = rootClickAction,
                                 onSecondaryClickAt = { contextMenuState.showAt(it) },
                                 middleClickFallbackToPrimary = true,
-                            ),
+                            ).pointerHoverIcon(PointerIcon.Hand),
                     shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                     color =
                         if (isActiveBranch) {
@@ -638,7 +640,7 @@ fun ExpandableNavSection(
                                         onClick = { onChildNavigate(child) },
                                         onSecondaryClickAt = { childContextMenuState.showAt(it) },
                                         middleClickFallbackToPrimary = true,
-                                    ),
+                                    ).pointerHoverIcon(PointerIcon.Hand),
                             color =
                                 if (isActiveChild) {
                                     TajsOSTheme.Primary.copy(alpha = 0.12f)
@@ -744,7 +746,7 @@ fun NewEntryButton(
                     ).graphicsLayer {
                         scaleX = scale
                         scaleY = scale
-                    },
+                    }.pointerHoverIcon(PointerIcon.Hand),
             interactionSource = interactionSource,
             tonalElevation = 0.dp,
             shadowElevation = 0.dp,
@@ -797,7 +799,7 @@ fun UserProfileSidebarSection(
                 Modifier.fillMaxWidth().mouseButtons(
                     onSecondaryClick = onClick,
                     onMiddleClick = onClick,
-                ),
+                ).pointerHoverIcon(PointerIcon.Hand),
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
             color = TajsOSTheme.CardNestedSurface,
             tonalElevation = 0.dp,

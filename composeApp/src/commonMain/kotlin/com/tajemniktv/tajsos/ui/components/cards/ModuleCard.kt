@@ -37,6 +37,8 @@ import com.tajemniktv.tajsos.ui.components.common.glassChrome
 import com.tajemniktv.tajsos.ui.components.common.glassContainerColor
 import com.tajemniktv.tajsos.ui.components.common.mouseClickable
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 @Composable
 fun ModuleCard(
@@ -67,7 +69,7 @@ fun ModuleCard(
                     },
                     onSecondaryClick = onClick,
                     middleClickFallbackToPrimary = true,
-                ),
+                ).pointerHoverIcon(PointerIcon.Hand),
         shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
         color = glassContainerColor(TajsOSTheme.Surface),
         shadowElevation = 2.dp,

@@ -88,8 +88,8 @@ fun MedicationSyncCard(
                         modifier =
                             Modifier
                                 .fillMaxWidth()
-                                .clickable { onToggleMed(med.id) }
-                                .pointerHoverIcon(PointerIcon.Hand)
+                                .clickable { onToggleMed(med.id) }.pointerHoverIcon(PointerIcon.Hand)
+
                                 .padding(vertical = 4.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {

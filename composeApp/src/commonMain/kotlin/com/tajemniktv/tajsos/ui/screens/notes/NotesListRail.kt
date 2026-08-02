@@ -53,6 +53,8 @@ import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.common_open
 import kotlin.time.Instant
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 /**
  * Notes workspace left rail with creation, search, filtering, sorting, and note list navigation.
@@ -253,7 +255,7 @@ fun NotesListItem(
                         onClick = onClick,
                         onSecondaryClickAt = { contextMenuState.showAt(it) },
                         middleClickFallbackToPrimary = true,
-                    ),
+                    ).pointerHoverIcon(PointerIcon.Hand),
             color = surfaceColor,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         ) {

@@ -26,6 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.data.ModeEntity
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 /**
  * Renders a header labeled "OPERATING MODE" with a horizontally scrollable row of selectable mode chips.
@@ -62,6 +64,7 @@ fun ModeSwitcherHeader(
                 val isSelected = mode.id == currentMode?.id
                 val color = mode.themeColor?.let { Color(it) } ?: TajsOSTheme.Primary
                 Surface(
+                    modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
                     onClick = { onModeSelect(mode.id) },
                     color = if (isSelected) color.copy(alpha = 0.15f) else Color.Transparent,
                     shape = RoundedCornerShape(TajsOSTheme.RadiusSm),

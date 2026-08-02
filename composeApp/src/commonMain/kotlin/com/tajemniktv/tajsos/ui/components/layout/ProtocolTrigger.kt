@@ -26,6 +26,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 /**
  * Displays a fixed-width clickable card containing an icon above an uppercase label,
@@ -51,7 +53,7 @@ fun ProtocolTrigger(
 ) {
     Surface(
         onClick = onClick,
-        modifier = Modifier.width(120.dp),
+        modifier = Modifier.width(120.dp).pointerHoverIcon(PointerIcon.Hand),
         color = color.copy(alpha = 0.1f),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         border = BorderStroke(1.dp, TajsOSTheme.GhostBorder),

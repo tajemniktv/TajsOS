@@ -38,6 +38,8 @@ import tajsos.composeapp.generated.resources.dash_capacity
 import tajsos.composeapp.generated.resources.dash_fragmentation
 import tajsos.composeapp.generated.resources.dash_load
 import tajsos.composeapp.generated.resources.dash_system_status
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 @Composable
 fun SystemStatusCard(
@@ -49,7 +51,7 @@ fun SystemStatusCard(
 ) {
     Surface(
         onClick = onClick,
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth().pointerHoverIcon(PointerIcon.Hand),
         color = if (warning != null) TajsOSTheme.Error.copy(alpha = 0.05f) else TajsOSTheme.Surface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
         border =
@@ -163,7 +165,7 @@ fun AreaHealthCard(
 
     Surface(
         onClick = onClick,
-        modifier = modifier.width(190.dp),
+        modifier = modifier.width(190.dp).pointerHoverIcon(PointerIcon.Hand),
         color = TajsOSTheme.CardSurface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
     ) {
