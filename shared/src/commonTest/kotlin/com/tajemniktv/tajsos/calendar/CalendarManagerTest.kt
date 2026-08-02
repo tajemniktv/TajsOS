@@ -262,7 +262,7 @@ class CalendarManagerTest {
         assertTrue(events.isNotEmpty(), "Should have saved at least one event")
 
         // Group by external ID, every group should have size 1
-        val duplicates = events.groupBy { it.externalId }.filter { it.value.size > 1 }
+        val duplicates = events.groupingBy { it.externalId }.eachCount().filter { it.value > 1 }
         assertTrue(duplicates.isEmpty(), "Should deduplicate events to a single event per externalId")
     }
 
