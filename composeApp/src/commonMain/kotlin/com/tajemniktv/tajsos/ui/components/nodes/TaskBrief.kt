@@ -6,7 +6,7 @@ package com.tajemniktv.tajsos.ui.components.nodes
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import com.tajemniktv.tajsos.ui.components.common.mouseClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -73,7 +73,7 @@ fun TaskBrief(
                             1.dp,
                             if (isDone) TajsOSTheme.Primary else TajsOSTheme.GhostBorder,
                             CircleShape,
-                        ).clickable { onToggle() }.pointerHoverIcon(PointerIcon.Hand),
+                        ).mouseClickable(onClick = { onToggle() }),
                 contentAlignment = Alignment.Center,
             ) {
                 if (isDone) {

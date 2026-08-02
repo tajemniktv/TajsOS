@@ -5,7 +5,7 @@
 package com.tajemniktv.tajsos.ui.components.layout
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import com.tajemniktv.tajsos.ui.components.common.mouseClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -60,7 +60,7 @@ fun DashHeader(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.clickable { onMenuClick() }.pointerHoverIcon(PointerIcon.Hand),
+            modifier = Modifier.mouseClickable(onClick = { onMenuClick() }),
         ) {
             Box(
                 modifier =
