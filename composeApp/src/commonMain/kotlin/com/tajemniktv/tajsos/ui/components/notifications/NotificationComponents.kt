@@ -44,10 +44,9 @@ import androidx.compose.ui.unit.sp
 import com.tajemniktv.tajsos.ui.components.common.EmptyState
 import com.tajemniktv.tajsos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
-import androidx.compose.ui.input.pointer.PointerIcon
-import androidx.compose.ui.input.pointer.pointerHoverIcon
 import tajsos.composeapp.generated.resources.Res
 import tajsos.composeapp.generated.resources.no_active_system_alerts
+import com.tajemniktv.tajsos.ui.components.common.mouseClickable
 
 /**
  * Premium "system-monitor" notification card with futuristic aesthetics.
@@ -71,8 +70,7 @@ fun TajsNotificationCard(
             modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(TajsOSTheme.RadiusMd))
-                .clickable { notification.onClick() }
-                .pointerHoverIcon(PointerIcon.Hand),
+                .mouseClickable(onClick = { notification.onClick() }),
         color = TajsOSTheme.SurfaceLow,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
     ) {
