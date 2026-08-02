@@ -17,10 +17,19 @@ import kotlinx.coroutines.flow.Flow
  */
 @Dao
 interface NodeDao {
+    /**
+     * Returns a reactive flow of all nodes in the system, ordered from newest to oldest.
+     * It joins with the [TodayPinEntity] table to include the `isPinned` status.
+     */
     @Transaction
     @Query("SELECT * FROM nodes ORDER BY createdAt DESC")
     fun getAllNodesWithPins(): Flow<List<NodeWithPin>>
 
+    /**
+     * Returns nodes explicitly pinned to the specified date (e.g. "today").
+     *
+     * @param date The date string to filter by.
+     */
     @Query(
         """
         SELECT nodes.* FROM nodes 
