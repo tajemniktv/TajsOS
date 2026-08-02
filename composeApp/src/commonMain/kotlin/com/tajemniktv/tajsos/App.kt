@@ -126,19 +126,25 @@ fun App(
 
     val accentColor =
         remember(accentColorHex) {
-            try {
+            run {
                 val hex = accentColorHex.removePrefix("#")
                 if (hex.length == 6) {
-                    androidx.compose.ui.graphics.Color(
-                        red = hex.substring(0, 2).toInt(16),
-                        green = hex.substring(2, 4).toInt(16),
-                        blue = hex.substring(4, 6).toInt(16),
-                    )
+                    val red = hex.substring(0, 2).toIntOrNull(16)
+                    val green = hex.substring(2, 4).toIntOrNull(16)
+                    val blue = hex.substring(4, 6).toIntOrNull(16)
+
+                    if (red != null && green != null && blue != null) {
+                        androidx.compose.ui.graphics.Color(
+                            red = red,
+                            green = green,
+                            blue = blue,
+                        )
+                    } else {
+                        TajsOSTheme.Primary
+                    }
                 } else {
                     TajsOSTheme.Primary
                 }
-            } catch (_: IllegalArgumentException) {
-                TajsOSTheme.Primary
             }
         }
 

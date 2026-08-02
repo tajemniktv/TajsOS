@@ -134,11 +134,7 @@ class PreferencesRepository(
         safeData
             .map { preferences ->
             val modeStr = preferences[PreferencesKeys.SIDEBAR_MODE]
-            try {
-                if (modeStr != null) SidebarMode.valueOf(modeStr) else SidebarMode.EXPANDED
-            } catch (_: IllegalArgumentException) {
-                SidebarMode.EXPANDED
-            }
+            SidebarMode.entries.find { it.name == modeStr } ?: SidebarMode.EXPANDED
         }
 
     /**
@@ -173,15 +169,7 @@ class PreferencesRepository(
         safeData
             .map { preferences ->
             val rawValue = preferences[PreferencesKeys.DESKTOP_WINDOW_STARTUP_MODE]
-            try {
-                if (rawValue != null) {
-                    DesktopWindowStartupMode.valueOf(rawValue)
-                } else {
-                    DesktopWindowStartupMode.RESTORE_LAST
-                }
-            } catch (_: IllegalArgumentException) {
-                DesktopWindowStartupMode.RESTORE_LAST
-            }
+            DesktopWindowStartupMode.entries.find { it.name == rawValue } ?: DesktopWindowStartupMode.RESTORE_LAST
         }
 
     val enabledPacks: Flow<PackRegistry> =

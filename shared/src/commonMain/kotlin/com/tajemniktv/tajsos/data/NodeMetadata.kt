@@ -106,7 +106,9 @@ inline fun <T> safeDecode(block: () -> T): T? =
         block()
     } catch (e: CancellationException) {
         throw e
-    } catch (e: Exception) {
+    } catch (e: kotlinx.serialization.SerializationException) {
+        null
+    } catch (e: IllegalArgumentException) {
         null
     }
 

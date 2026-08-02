@@ -12,8 +12,6 @@ import io.ktor.client.statement.bodyAsText
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
-import kotlinx.io.IOException
-import io.ktor.client.plugins.ResponseException
 import kotlin.time.Clock
 import kotlin.time.Instant
 import kotlin.coroutines.cancellation.CancellationException
@@ -394,7 +392,9 @@ internal class IcsEventBuilder {
             tzidRegex.find(rawKey) ?: return TimeZone.currentSystemDefault()
         return try {
             TimeZone.of(tzidMatch.groupValues[1])
-        } catch (e: IllegalArgumentException) {
+        } catch (e: Exception) {
+            // catch Exception instead of IllegalArgumentException
+            // kotlinx-datetime TimeZone.of throws IllegalTimeZoneException, which inherits from RuntimeException
             TimeZone.currentSystemDefault()
         }
     }
