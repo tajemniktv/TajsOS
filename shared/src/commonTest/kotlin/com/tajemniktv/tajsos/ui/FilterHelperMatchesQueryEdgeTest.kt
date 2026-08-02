@@ -113,4 +113,15 @@ class FilterHelperMatchesQueryEdgeTest {
         assertTrue(FilterHelper.matchesQuery(node1, "special"))
         assertFalse(FilterHelper.matchesQuery(node1, "other"))
     }
+
+    @Test
+    fun testMatchesQuery_emptyFields() {
+        val nodeNullContent = buildTestNode(1, "my title", "")
+        assertTrue(FilterHelper.matchesQuery(nodeNullContent, "title"))
+        assertFalse(FilterHelper.matchesQuery(nodeNullContent, "content"))
+
+        val nodeNullTitle = buildTestNode(2, "", "my content")
+        assertTrue(FilterHelper.matchesQuery(nodeNullTitle, "content"))
+        assertFalse(FilterHelper.matchesQuery(nodeNullTitle, "title"))
+    }
 }
