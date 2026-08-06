@@ -51,11 +51,17 @@ enum class ItemKind(
 enum class TaskState(
     val storageKey: String,
 ) {
+    /** Task is actively being worked on or is ready to be worked on. */
     ACTIVE("active"), // NON-NLS
+    /** Task has been completed successfully. */
     DONE("done"), // NON-NLS
+    /** Task is paused, waiting on external dependencies or further clarification. */
     ON_HOLD("on_hold"), // NON-NLS
+    /** Task is logged for future consideration without immediate commitment. */
     SOMEDAY("someday"), // NON-NLS
+    /** Task execution is currently prevented by an impediment. */
     BLOCKED("blocked"), // NON-NLS
+    /** Task is no longer relevant and has been removed from active view. */
     ARCHIVED("archived"), // NON-NLS
     ;
 
@@ -74,10 +80,15 @@ enum class TaskState(
 enum class ProjectState(
     val storageKey: String,
 ) {
+    /** Project is currently in progress and actively being worked on. */
     ACTIVE("active"), // NON-NLS
+    /** Project is temporarily paused or suspended. */
     ON_HOLD("on_hold"), // NON-NLS
+    /** Project is a potential future endeavor with no active commitment. */
     SOMEDAY("someday"), // NON-NLS
+    /** Project's outcome has been successfully achieved. */
     COMPLETED("completed"), // NON-NLS
+    /** Project is closed, cancelled, or no longer relevant. */
     ARCHIVED("archived"), // NON-NLS
     ;
 
@@ -96,15 +107,25 @@ enum class ProjectState(
 enum class NoteKind(
     val storageKey: String,
 ) {
+    /** A generic note with no specific structural constraints. */
     GENERAL("general"), // NON-NLS
+    /** A synthesized piece of durable understanding. */
     KNOWLEDGE("knowledge"), // NON-NLS
+    /** Factual information, documentation, or links to be recalled later. */
     REFERENCE("reference"), // NON-NLS
+    /** Personal thoughts, observations, and introspection. */
     REFLECTION("reflection"), // NON-NLS
+    /** Chronological entries capturing day-to-day life and context. */
     JOURNAL("journal"), // NON-NLS
+    /** Practical planning, itineraries, or operational details. */
     LOGISTICS("logistics"), // NON-NLS
+    /** An abstract idea or unfinished mental model. */
     CONCEPT("concept"), // NON-NLS
+    /** Notes, minutes, or action items derived from a gathering or call. */
     MEETING("meeting"), // NON-NLS
+    /** Highlights, takeaways, or annotations from literature or media. */
     READING("reading"), // NON-NLS
+    /** A mature, refined piece of knowledge that stands on its own. */
     EVERGREEN("evergreen"), // NON-NLS
     ;
 
@@ -123,10 +144,15 @@ enum class NoteKind(
 enum class NoteState(
     val storageKey: String,
 ) {
+    /** Note is currently being drafted or actively referenced. */
     ACTIVE("active"), // NON-NLS
+    /** Unprocessed, freshly captured thoughts or unstructured clippings. */
     RAW("raw"), // NON-NLS
+    /** Source material that has been reviewed with key sections marked. */
     HIGHLIGHTED("highlighted"), // NON-NLS
+    /** Information that has been condensed into core concepts. */
     DISTILLED("distilled"), // NON-NLS
+    /** A final, actionable insight extracted from the note. */
     TAKEAWAY("takeaway"), // NON-NLS
     ;
 
@@ -145,13 +171,21 @@ enum class NoteState(
 enum class RecordKind(
     val storageKey: String,
 ) {
+    /** A generic timestamped entry with no specific structural constraints. */
     GENERAL("general"), // NON-NLS
+    /** A personal, subjective daily entry or diary log. */
     JOURNAL("journal"), // NON-NLS
+    /** A structured look backward evaluating past actions or states. */
     REFLECTION("reflection"), // NON-NLS
+    /** A record of physical or mental health metrics (e.g., weight, sleep, mood). */
     HEALTH_LOG("health_log"), // NON-NLS
+    /** A record of an interaction, meeting, or communication with a person. */
     CONTACT_LOG("contact_log"), // NON-NLS
+    /** A record of a focused block of time spent on a specific activity (e.g., pomodoro). */
     SESSION_LOG("session_log"), // NON-NLS
+    /** An objective record that something occurred in the real world. */
     EVENT_LOG("event_log"), // NON-NLS
+    /** A specific medical or health observation tracking a subjective symptom over time. */
     SYMPTOM_LOG("symptom_log"), // NON-NLS
     ;
 
@@ -170,10 +204,15 @@ enum class RecordKind(
 enum class AreaHealthStatus(
     val storageKey: String,
 ) {
+    /** Area is actively being maintained or improved. */
     ACTIVE("active"), // NON-NLS
+    /** Area is in a good state and requires minimal intervention. */
     STABLE("stable"), // NON-NLS
+    /** Area has been ignored and requires attention to prevent decline. */
     NEGLECTED("neglected"), // NON-NLS
+    /** Area is causing stress or taking up disproportionate resources. */
     OVERLOADED("overloaded"), // NON-NLS
+    /** Area is in a critical state demanding immediate, urgent intervention. */
     ON_FIRE("on_fire"), // NON-NLS
     ;
 
@@ -192,9 +231,13 @@ enum class AreaHealthStatus(
 enum class ScheduleEntryKind(
     val storageKey: String,
 ) {
+    /** Indicates when work on the item should begin. */
     START("start"), // NON-NLS
+    /** Indicates the deadline or target completion date for the item. */
     DUE("due"), // NON-NLS
+    /** A passive notification point in time. */
     REMINDER("reminder"), // NON-NLS
+    /** A blocked duration of time on a calendar. */
     EVENT("event"), // NON-NLS
     ;
 
@@ -213,8 +256,11 @@ enum class ScheduleEntryKind(
 enum class RichContentFormat(
     val storageKey: String,
 ) {
+    /** Standard Markdown text format. */
     MARKDOWN("markdown"), // NON-NLS
+    /** Unformatted raw text. */
     PLAIN_TEXT("plain_text"), // NON-NLS
+    /** A structured JSON representation for block-based editors (e.g., Notion style). */
     BLOCKS_JSON("blocks_json"), // NON-NLS
     ;
 
