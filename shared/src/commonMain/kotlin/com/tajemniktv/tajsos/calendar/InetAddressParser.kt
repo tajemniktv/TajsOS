@@ -3,6 +3,8 @@ package com.tajemniktv.tajsos.calendar
 /**
  * A lightweight pure-Kotlin IP address parser to safely validate external endpoints against SSRF
  * without relying on platform-specific DNS resolution (which varies across KMP targets) or naive string prefixing.
+ *
+ * Represents an IP address, supporting both IPv4 and IPv6.
  */
 internal sealed class IpAddress {
     abstract fun isLoopback(): Boolean

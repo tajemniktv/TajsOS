@@ -15,6 +15,14 @@ import androidx.room.RoomDatabaseConstructor
  * This database stores the core life-object graph, including nodes, facets,
  * relations, and various system logs and preferences.
  */
+/**
+ * The main Room database for TajsOS.
+ *
+ * This database stores the core life-object graph, including nodes, facets,
+ * relations, system logs, preferences, views, scheduling facets, and relational graphs
+ * across all multiplatform targets, acting as the single source of truth for all structured
+ * and unstructured life objects.
+ */
 @Database(
     entities =
         [
