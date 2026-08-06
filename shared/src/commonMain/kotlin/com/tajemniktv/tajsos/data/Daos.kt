@@ -17,6 +17,9 @@ import kotlinx.coroutines.flow.Flow
  */
 @Dao
 interface NodeDao {
+    /**
+     * Retrieves a reactive stream of all nodes wrapped with their today-pin status.
+     */
     @Transaction
     @Query("SELECT * FROM nodes ORDER BY createdAt DESC")
     fun getAllNodesWithPins(): Flow<List<NodeWithPin>>
@@ -175,6 +178,9 @@ interface NodeDao {
  */
 @Dao
 interface FocusSessionDao {
+    /**
+     * Retrieves a reactive stream of all focus session entities.
+     */
     @Query("SELECT * FROM focus_sessions ORDER BY startedAt DESC")
     fun getAllSessions(): Flow<List<FocusSessionEntity>>
 
@@ -202,6 +208,9 @@ interface FocusSessionDao {
  */
 @Dao
 interface TrackDao {
+    /**
+     * Retrieves a reactive stream of all time track entry entities.
+     */
     @Query("SELECT * FROM track_entries ORDER BY date DESC, createdAt DESC")
     fun getAllTrackEntries(): Flow<List<TrackEntryEntity>>
 
@@ -233,6 +242,9 @@ interface TrackDao {
  */
 @Dao
 interface RelationDao {
+    /**
+     * Retrieves a reactive stream of all relations connected to a specific node (either as subject or object).
+     */
     @Query("SELECT * FROM relations WHERE fromNodeId = :nodeId OR toNodeId = :nodeId")
     fun getRelationsForNode(nodeId: Long): Flow<List<RelationEntity>>
 
@@ -285,6 +297,9 @@ interface RelationDao {
  */
 @Dao
 interface TagDao {
+    /**
+     * Retrieves a reactive stream of all tag entities.
+     */
     @Query("SELECT * FROM tags")
     fun getAllTags(): Flow<List<TagEntity>>
 
@@ -328,6 +343,9 @@ interface TagDao {
  */
 @Dao
 interface EventLogDao {
+    /**
+     * Retrieves a reactive stream of the most recent event logs, constrained by a limit.
+     */
     @Query("SELECT * FROM event_log ORDER BY timestamp DESC LIMIT :limit")
     fun getRecentLogs(limit: Int = 100): Flow<List<EventLogEntity>>
 
@@ -346,6 +364,9 @@ interface EventLogDao {
  */
 @Dao
 interface AttachmentDao {
+    /**
+     * Retrieves a reactive stream of all attachment entities.
+     */
     @Query("SELECT * FROM attachments")
     fun getAllAttachments(): Flow<List<AttachmentEntity>>
 
@@ -367,6 +388,9 @@ interface AttachmentDao {
  */
 @Dao
 interface InboxEntryDao {
+    /**
+     * Retrieves a reactive stream of all raw inbox entry captures.
+     */
     @Query("SELECT * FROM inbox_entries ORDER BY capturedAt DESC")
     fun getAllInboxEntries(): Flow<List<InboxEntryEntity>>
 
@@ -394,6 +418,9 @@ interface InboxEntryDao {
  */
 @Dao
 interface TaskFacetDao {
+    /**
+     * Retrieves a reactive stream of all task facet extensions.
+     */
     @Query("SELECT * FROM task_facets")
     fun getAllTaskFacets(): Flow<List<TaskFacetEntity>>
 
@@ -415,6 +442,9 @@ interface TaskFacetDao {
  */
 @Dao
 interface NoteFacetDao {
+    /**
+     * Retrieves a reactive stream of all note facet extensions.
+     */
     @Query("SELECT * FROM note_facets")
     fun getAllNoteFacets(): Flow<List<NoteFacetEntity>>
 
@@ -436,6 +466,9 @@ interface NoteFacetDao {
  */
 @Dao
 interface ProjectFacetDao {
+    /**
+     * Retrieves a reactive stream of all project facet extensions.
+     */
     @Query("SELECT * FROM project_facets")
     fun getAllProjectFacets(): Flow<List<ProjectFacetEntity>>
 
@@ -457,6 +490,9 @@ interface ProjectFacetDao {
  */
 @Dao
 interface AreaFacetDao {
+    /**
+     * Retrieves a reactive stream of all area facet extensions.
+     */
     @Query("SELECT * FROM area_facets")
     fun getAllAreaFacets(): Flow<List<AreaFacetEntity>>
 
@@ -478,6 +514,9 @@ interface AreaFacetDao {
  */
 @Dao
 interface RecordFacetDao {
+    /**
+     * Retrieves a reactive stream of all record facet extensions.
+     */
     @Query("SELECT * FROM record_facets")
     fun getAllRecordFacets(): Flow<List<RecordFacetEntity>>
 
@@ -577,6 +616,9 @@ interface ItemDomainDao {
  */
 @Dao
 interface RichContentDocumentDao {
+    /**
+     * Retrieves a reactive stream of all rich content documents.
+     */
     @Query("SELECT * FROM rich_content_documents ORDER BY updatedAt DESC")
     fun getAllDocuments(): Flow<List<RichContentDocumentEntity>>
 
@@ -598,6 +640,9 @@ interface RichContentDocumentDao {
  */
 @Dao
 interface ScheduleEntryDao {
+    /**
+     * Retrieves a reactive stream of all schedule entry occurrences.
+     */
     @Query("SELECT * FROM schedule_entries ORDER BY scheduledAt ASC")
     fun getAllScheduleEntries(): Flow<List<ScheduleEntryEntity>>
 
@@ -647,6 +692,9 @@ interface ScheduleEntryDao {
  */
 @Dao
 interface SavedViewDao {
+    /**
+     * Retrieves a reactive stream of all core saved view entity rows.
+     */
     @Query("SELECT * FROM saved_views ORDER BY updatedAt DESC")
     fun getAllSavedViews(): Flow<List<SavedViewEntity>>
 
@@ -716,6 +764,9 @@ interface SavedViewDao {
  */
 @Dao
 interface TemplateDao {
+    /**
+     * Retrieves a reactive stream of all node template blueprints.
+     */
     @Query("SELECT * FROM templates")
     fun getAllTemplates(): Flow<List<TemplateEntity>>
 
@@ -737,6 +788,9 @@ interface TemplateDao {
  */
 @Dao
 interface NodeSnapshotDao {
+    /**
+     * Retrieves a reactive stream of historical snapshots for a specific node ID.
+     */
     @Query("SELECT * FROM node_snapshots WHERE nodeId = :nodeId ORDER BY timestamp DESC")
     fun getSnapshotsForNode(nodeId: Long): Flow<List<NodeSnapshotEntity>>
 
@@ -755,6 +809,9 @@ interface NodeSnapshotDao {
  */
 @Dao
 interface ReviewDao {
+    /**
+     * Retrieves a reactive stream of all scheduled or completed review instances.
+     */
     @Query("SELECT * FROM reviews ORDER BY completedAt DESC")
     fun getAllReviews(): Flow<List<ReviewEntity>>
 
@@ -776,6 +833,9 @@ interface ReviewDao {
  */
 @Dao
 interface CalendarProviderDao {
+    /**
+     * Retrieves a reactive stream of all configured calendar providers.
+     */
     @Query("SELECT * FROM calendar_providers")
     fun getAllProviders(): Flow<List<CalendarProviderEntity>>
 
@@ -803,6 +863,9 @@ interface CalendarProviderDao {
  */
 @Dao
 interface CalendarEventDao {
+    /**
+     * Retrieves a reactive stream of all calendar events falling within the specified time range.
+     */
     @Query("SELECT * FROM calendar_events WHERE startAt >= :from AND startAt <= :to")
     fun getEventsInRange(
         from: Long,
@@ -830,6 +893,9 @@ interface CalendarEventDao {
  */
 @Dao
 interface ModeDao {
+    /**
+     * Retrieves a reactive stream of all operational mode profiles.
+     */
     @Query("SELECT * FROM modes ORDER BY sortOrder ASC")
     fun getAllModes(): Flow<List<ModeEntity>>
 
@@ -878,6 +944,9 @@ interface ModeDao {
  */
 @Dao
 interface ProtocolDao {
+    /**
+     * Retrieves a reactive stream of all protocol execution histories.
+     */
     @Query("SELECT * FROM protocol_history ORDER BY executedAt DESC")
     fun getAllProtocolHistory(): Flow<List<ProtocolHistoryEntity>>
 
@@ -890,6 +959,9 @@ interface ProtocolDao {
  */
 @Dao
 interface DecisionDao {
+    /**
+     * Retrieves a reactive stream of options related to a specific decision node ID.
+     */
     @Query("SELECT * FROM decision_options WHERE decisionNodeId = :nodeId")
     fun getOptionsForDecision(nodeId: Long): Flow<List<DecisionOptionEntity>>
 
@@ -914,6 +986,9 @@ interface DecisionDao {
  */
 @Dao
 interface UserDao {
+    /**
+     * Retrieves a reactive stream containing the single local user profile, or null if none exists.
+     */
     @Query("SELECT * FROM users WHERE id = 1 LIMIT 1")
     fun getUser(): Flow<UserEntity?>
 
@@ -929,6 +1004,9 @@ interface UserDao {
  */
 @Dao
 interface MedicationDao {
+    /**
+     * Retrieves a reactive stream of all tracked medication regimens.
+     */
     @Query("SELECT * FROM medications WHERE isEnabled = 1")
     fun getAllMedications(): Flow<List<MedicationEntity>>
 
