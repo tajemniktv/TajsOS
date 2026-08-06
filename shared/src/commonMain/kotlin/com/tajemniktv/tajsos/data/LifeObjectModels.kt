@@ -233,7 +233,7 @@ enum class ScheduleEntryKind(
 ) {
     /** Indicates when work on the item should begin. */
     START("start"), // NON-NLS
-    /** Indicates the hard deadline by which the item must be completed. */
+    /** Indicates the deadline or target completion date for the item. */
     DUE("due"), // NON-NLS
     /** A passive notification point in time. */
     REMINDER("reminder"), // NON-NLS
