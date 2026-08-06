@@ -1524,7 +1524,7 @@ class AppRepository(
 
     // Templates
     /**
-     * Returns a Flow emitting all templates available for creating new nodes.
+     * Returns a Flow emitting all stored templates.
      */
     fun getAllTemplates() = templateDao.getAllTemplates()
 
@@ -1562,7 +1562,7 @@ class AppRepository(
 
     // Operating Modes
     /**
-     * Returns a Flow emitting all modes (e.g. Work, Personal) configured in the system.
+     * Returns a Flow emitting all modes (e.g. COMMAND, FOCUS, RECOVERY) configured in the system.
      */
     fun getAllModes() = modeDao.getAllModes()
 
