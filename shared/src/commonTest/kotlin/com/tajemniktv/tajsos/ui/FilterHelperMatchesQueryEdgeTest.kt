@@ -124,4 +124,14 @@ class FilterHelperMatchesQueryEdgeTest {
         assertTrue(FilterHelper.matchesQuery(nodeNullTitle, "content"))
         assertFalse(FilterHelper.matchesQuery(nodeNullTitle, "title"))
     }
+
+    @Test
+    fun testMatchesQuery_multipleNormalSearchTerms() {
+        // We only check if the entire query matches the text (so a multi-word query acts like a phrase)
+        val nodeTitle = buildTestNode(1, "my specific phrase", "content")
+        val nodeTitleMismatch = buildTestNode(2, "my phrase specific", "content")
+
+        assertTrue(FilterHelper.matchesQuery(nodeTitle, "specific phrase"))
+        assertFalse(FilterHelper.matchesQuery(nodeTitleMismatch, "specific phrase"))
+    }
 }

@@ -807,4 +807,41 @@ class FilterHelperTest {
         val result3 = filter(listOf(node1)) { linkedToId = 100L; this.relations = relations }
         assertEquals(1, result3.size)
     }
+
+    @Test
+    fun testRelevanceScore_emptyQueryReturnsZeroScoreForEveryone() {
+        val node1 = createTestNode(1, "title", "content", updatedAt = 100L)
+        val node2 = createTestNode(2, "title", "content", updatedAt = 200L)
+
+        val nodes = listOf(node1, node2)
+
+        // Given an empty query, filterAndSortNodes with "relevance"
+        // will assign 0 to all and fallback to updatedAt descending
+        val result = filter(nodes) { query = "   "; sortMode = "relevance" }
+
+        assertEquals(2, result.size)
+        // Tie breaks by highest updatedAt -> node2 then node1
+        assertEquals(2L, result[0].node.id)
+        assertEquals(1L, result[1].node.id)
+    }
+
+    @Test
+    fun testMatchesLinkedTo_bidirectionalEdgeCases() {
+        val node1 = createTestNode(1, "title")
+        val node2 = createTestNode(2, "title")
+        val node3 = createTestNode(3, "title")
+
+        // node1 -> 100, 100 -> node2
+        val relations = listOf(
+            RelationEntity(id = 1, fromNodeId = 1, toNodeId = 100, relationType = "RELATED"),
+            RelationEntity(id = 2, fromNodeId = 100, toNodeId = 2, relationType = "RELATED"),
+            RelationEntity(id = 3, fromNodeId = 3, toNodeId = 200, relationType = "RELATED")
+        )
+
+        val result1 = filter(listOf(node1, node2, node3)) { linkedToId = 100L; this.relations = relations }
+        assertEquals(2, result1.size)
+        assertTrue(result1.any { it.node.id == 1L })
+        assertTrue(result1.any { it.node.id == 2L })
+    }
+
 }
