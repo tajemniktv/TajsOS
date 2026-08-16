@@ -42,5 +42,10 @@ enum class DomainKind {
     /**
      * Domain relating to tracking social connections, context around individuals, and maintaining relationships.
      */
-    RELATIONSHIPS,
+    RELATIONSHIPS;
+
+    /**
+     * Pre-computed display name for UI components to avoid dynamic string formatting during recomposition.
+     */
+    val displayName: String = name.lowercase().replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
 }
