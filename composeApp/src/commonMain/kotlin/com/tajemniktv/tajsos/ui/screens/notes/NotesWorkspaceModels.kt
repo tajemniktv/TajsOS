@@ -92,6 +92,7 @@ fun NodeWithPin.toNotesWorkspaceItem(
 
 /**
  * Infers a lightweight domain for the notes workspace based on available metadata.
+ * Performs case-insensitive matching without allocating full lowercased copies of the search text.
  */
 fun inferNotesDomain(node: NodeWithPin): NotesDomain {
     val searchable =
@@ -101,17 +102,17 @@ fun inferNotesDomain(node: NodeWithPin): NotesDomain {
             append(node.node.content.take(180))
             append(' ')
             append(node.tags.joinToString(" ") { it.name })
-        }.lowercase()
+        }
     return when {
-        searchable.contains("study") || searchable.contains("exam") || searchable.contains("course") -> {
+        searchable.contains("study", ignoreCase = true) || searchable.contains("exam", ignoreCase = true) || searchable.contains("course", ignoreCase = true) -> {
             NotesDomain.STUDY
         }
 
-        searchable.contains("work") || searchable.contains("client") || searchable.contains("meeting") -> {
+        searchable.contains("work", ignoreCase = true) || searchable.contains("client", ignoreCase = true) || searchable.contains("meeting", ignoreCase = true) -> {
             NotesDomain.WORK
         }
 
-        searchable.contains("health") || searchable.contains("med") || searchable.contains("symptom") -> {
+        searchable.contains("health", ignoreCase = true) || searchable.contains("med", ignoreCase = true) || searchable.contains("symptom", ignoreCase = true) -> {
             NotesDomain.HEALTH
         }
 
