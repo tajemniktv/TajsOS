@@ -807,4 +807,29 @@ class FilterHelperTest {
         val result3 = filter(listOf(node1)) { linkedToId = 100L; this.relations = relations }
         assertEquals(1, result3.size)
     }
+
+    @Test
+    fun testFrictionFilter() {
+        val node1 = createTestNode(1, "Low Friction", friction = "low")
+        val node2 = createTestNode(2, "High Friction", friction = "high")
+
+        val filtered = filter(listOf(node1, node2)) { friction = "low" }
+
+        assertEquals(1, filtered.size)
+        assertEquals(1L, filtered[0].node.id)
+    }
+
+    @Test
+    fun testStatusFilterCommaSeparated() {
+        val node1 = createTestNode(1, "Node 1", status = "active")
+        val node2 = createTestNode(2, "Node 2", status = "on_hold")
+        val node3 = createTestNode(3, "Node 3", status = "completed")
+
+        val filtered = filter(listOf(node1, node2, node3)) { status = "active, on_hold" }
+
+        assertEquals(2, filtered.size)
+        val sortedIds = filtered.map { it.node.id }.sorted()
+        assertEquals(listOf(1L, 2L), sortedIds)
+    }
+
 }
