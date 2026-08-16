@@ -57,12 +57,22 @@ internal sealed class IpAddress {
 /**
  * Attempts to parse a host string into an [IpAddress].
  * Returns null if the string is not a valid IPv4 or IPv6 literal.
+ *
+ * @param host The string representing the IP address to parse.
+ * @return The parsed [IpAddress] or null if the format is invalid.
  */
 internal fun parseIpAddress(host: String): IpAddress? {
     val cleanHost = host.trim().removePrefix("[").removeSuffix("]").trim()
     return parseIpv4(cleanHost) ?: parseIpv6(cleanHost)
 }
 
+/**
+ * Parses an IPv4 address string into an [IpAddress.Ipv4].
+ * Validates that the address consists of exactly 4 numeric segments between 0 and 255.
+ *
+ * @param host The cleaned IPv4 string to parse.
+ * @return An [IpAddress.Ipv4] instance, or null if the string is malformed or out of range.
+ */
 private fun parseIpv4(host: String): IpAddress.Ipv4? {
     val parts = host.split(".")
     if (parts.size != 4) return null
@@ -81,6 +91,14 @@ private fun parseIpv4(host: String): IpAddress.Ipv4? {
     return IpAddress.Ipv4(address)
 }
 
+/**
+ * Validates the basic structural constraints of an IPv6 host string.
+ * Checks for the presence of colons and ensures that the double-colon `::` abbreviation
+ * is used at most once.
+ *
+ * @param host The raw IPv6 string to validate.
+ * @return True if the structure passes basic validation, false otherwise.
+ */
 private fun validateIpv6Host(host: String): Boolean {
     if (!host.contains(":")) return false
     if (host.startsWith(":") && !host.startsWith("::")) return false
@@ -94,6 +112,13 @@ private fun validateIpv6Host(host: String): Boolean {
     return true
 }
 
+/**
+ * Parses an IPv6 address string into an [IpAddress.Ipv6].
+ * Handles both fully expanded addresses and those using the double-colon `::` abbreviation.
+ *
+ * @param host The cleaned IPv6 string to parse.
+ * @return An [IpAddress.Ipv6] instance containing the 8 16-bit segments, or null if invalid.
+ */
 private fun parseIpv6(host: String): IpAddress.Ipv6? {
     if (!validateIpv6Host(host)) return null
 
@@ -112,6 +137,15 @@ private fun parseIpv6(host: String): IpAddress.Ipv6? {
     return IpAddress.Ipv6(packIpv6LongArray(values))
 }
 
+/**
+ * Parses an abbreviated IPv6 address (containing `::`) by populating the left and right segments
+ * around the abbreviation index.
+ *
+ * @param rawParts The split segments of the IPv6 address.
+ * @param values The array to populate with the parsed 16-bit values.
+ * @param doubleColonIdx The index where the `::` abbreviation occurs in [rawParts].
+ * @return True if parsing succeeded and the segments fit within the 8-word limit, false otherwise.
+ */
 private fun parseIpv6Abbreviated(rawParts: List<String>, values: LongArray, doubleColonIdx: Int): Boolean {
     val leftParsed = populateIpv6Values(rawParts, 0 until doubleColonIdx, values, 0, 1)
     if (leftParsed == -1) return false
@@ -122,6 +156,13 @@ private fun parseIpv6Abbreviated(rawParts: List<String>, values: LongArray, doub
     return leftParsed <= (7 - rightParsed)
 }
 
+/**
+ * Parses a single 16-bit hexadecimal segment of an IPv6 address.
+ * Rejects segments with a negative sign, plus sign, or length greater than 4.
+ *
+ * @param part The segment string to parse.
+ * @return The segment value as a Long between 0 and 0xFFFF, or null if invalid.
+ */
 private fun parseIpv6Segment(part: String): Long? {
     if (part.length > 4) return null
     if (part.startsWith("-") || part.startsWith("+")) return null
@@ -130,6 +171,17 @@ private fun parseIpv6Segment(part: String): Long? {
     return v
 }
 
+/**
+ * Populates the [values] array with parsed IPv6 segments extracted from [rawParts]
+ * by iterating over [indices]. Handles inserting values in a specified [direction].
+ *
+ * @param rawParts The split segments of the IPv6 address.
+ * @param indices The progression of indices in [rawParts] to process.
+ * @param values The target array to store parsed segments.
+ * @param startOutputIndex The index in [values] to begin storing results.
+ * @param direction The step value (e.g., 1 or -1) to increment the output index.
+ * @return The number of segments parsed, or -1 if an error occurred.
+ */
 private fun populateIpv6Values(
     rawParts: List<String>,
     indices: IntProgression,
@@ -156,6 +208,13 @@ private fun populateIpv6Values(
     return count
 }
 
+/**
+ * Parses a fully expanded IPv6 address (containing exactly 8 segments without `::`).
+ *
+ * @param rawParts The split segments of the IPv6 address, expected to have a size of 8.
+ * @param values The target array to store the parsed 16-bit values.
+ * @return True if all 8 segments were parsed successfully, false otherwise.
+ */
 private fun parseIpv6Full(rawParts: List<String>, values: LongArray): Boolean {
     if (rawParts.size != 8) return false
     for (i in 0..7) {
@@ -165,6 +224,12 @@ private fun parseIpv6Full(rawParts: List<String>, values: LongArray): Boolean {
     return true
 }
 
+/**
+ * Packs an array of 8 16-bit IPv6 segment values into an array of 4 32-bit values (represented as Long).
+ *
+ * @param values The 8 parsed 16-bit values.
+ * @return A 4-element LongArray where each element combines two 16-bit segments.
+ */
 private fun packIpv6LongArray(values: LongArray): LongArray {
     val finalWords = LongArray(4)
     finalWords[0] = (values[0] shl 16) or values[1]
