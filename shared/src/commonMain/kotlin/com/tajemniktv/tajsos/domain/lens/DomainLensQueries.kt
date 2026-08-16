@@ -271,6 +271,13 @@ object DomainLensQueries {
         /**
          * Evaluates whether the given [node] matches this domain's configuration based on
          * explicit maintenance types, valid note types, tags, or title/content keywords.
+         *
+         * Evaluation Order / Precedence:
+         * 1. Maintenance Type (e.g., 'bill' for finance)
+         * 2. Note Type (e.g., 'reflection' for health)
+         * 3. Tags (e.g., '#finance', '#health')
+         * 4. Title Keywords
+         * 5. Content Keywords
          */
         fun matches(node: NodeWithPin): Boolean {
             if (node.node.maintenanceType in maintenanceTypes) return true

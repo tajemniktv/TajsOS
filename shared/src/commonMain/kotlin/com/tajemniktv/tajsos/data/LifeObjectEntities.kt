@@ -134,8 +134,12 @@ data class RecordFacetEntity(
 )
 /**
  * Represents the cross-cutting assignment of a shared item to a first-class LifeOS domain.
- * NOTE: Current design prefers implicit categorization via `DomainLensQueries`,
- * but explicit database associations are preserved here for overrides and future expansion.
+ *
+ * NOTE: The system employs 'zero-configuration implicit categorization' through heuristic
+ * matching (using tags, keywords, and maintenance types via `DomainLensQueries`) rather
+ * than strict, explicit database associations like `ItemDomainEntity`. Explicitly assigning
+ * a domain via this entity is essentially a legacy/override fallback that is largely bypassed
+ * by the primary UI lenses to lower the friction of capturing new items.
  */
 @Serializable
 data class ItemDomainEntity(
