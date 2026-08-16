@@ -890,6 +890,10 @@ class NodeCommands(
         }
     }
 
+    /**
+     * Executes the conversion from a vague 'open loop' entity to a concrete target type (e.g., task, decision).
+     * This duplicates the content with a derivation note and archives the original.
+     */
     private fun convertOpenLoop(
         nodeId: Long,
         targetType: String,

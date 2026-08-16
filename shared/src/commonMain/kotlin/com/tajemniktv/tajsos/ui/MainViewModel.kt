@@ -2593,6 +2593,11 @@ class MainViewModel(
             .getAllTemplates()
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
+    /**
+     * A comprehensive state flow summarizing academic progress.
+     * Computes real-time statistics by combining active nodes, relations, tracking sessions, and templates,
+     * surfacing only the relevant 'student' slice of the database to the UI.
+     */
     val studentBoardState: StateFlow<StudentBoardState> =
         combine(
             allNodes,
@@ -2708,6 +2713,10 @@ class MainViewModel(
 
     suspend fun getLastReviewByType(type: String) = repository.getLastReviewByType(type)
 
+    /**
+     * Fully exports the user's data as a standardized JSON payload.
+     * Currently utilizes an updated `version = 2` schema format ensuring robust backup capability.
+     */
     suspend fun exportDataJson(): String =
         withContext(Dispatchers.Default) {
             val nodes = allNodes.value.map { it.node }
@@ -2722,6 +2731,13 @@ class MainViewModel(
             Json.encodeToString(bundle)
         }
 
+    /**
+     * Imports data from a JSON payload string.
+     * Capable of handling both modern [ExportBundle] schemas and legacy [ExportData] schemas.
+     *
+     * @param payload The raw string contents of the backup JSON file.
+     * @return A human-readable status string detailing the import outcome.
+     */
     suspend fun importDataJson(payload: String): String =
         withContext(Dispatchers.Default) {
             val content = payload.trim()
@@ -2749,6 +2765,10 @@ class MainViewModel(
                 nodes.filter { it.node.isDecisionSupportItem() && it.node.inboxState }
             }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
+    /**
+     * Emits a list of pending decision nodes, excluding those sitting in the inbox triage state.
+     * Decisions here require active deliberation and outcome selection.
+     */
     val allPendingDecisions: StateFlow<List<NodeWithPin>> =
         allNodes
             .map { nodes ->
