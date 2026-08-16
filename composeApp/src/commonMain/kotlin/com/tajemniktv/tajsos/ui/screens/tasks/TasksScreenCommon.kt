@@ -59,7 +59,7 @@ internal fun StatusPill(state: TaskState) {
                 .padding(horizontal = 8.dp, vertical = 4.dp),
     ) {
         Text(
-            state.storageKey.replace("_", " ").uppercase(),
+            state.displayName,
             style = MaterialTheme.typography.labelSmall,
             color = color,
         )

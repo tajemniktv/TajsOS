@@ -114,9 +114,7 @@ fun NotesContextPanel(
             item {
                 ContextSection(title = "Domain", icon = Icons.Default.Category) {
                     Text(
-                        selectedNote.domain.name
-                            .lowercase()
-                            .replaceFirstChar(Char::titlecase),
+                        selectedNote.domain.displayName,
                         color = TajsOSTheme.Text,
                     )
                 }

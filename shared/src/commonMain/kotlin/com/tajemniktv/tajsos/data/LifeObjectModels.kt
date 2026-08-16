@@ -32,6 +32,8 @@ enum class ItemKind(
     AREA("area"), // NON-NLS
     ;
 
+    val displayName: String = storageKey.replace("_", " ").uppercase()
+
     companion object {
         /**
          * Resolves a persisted storage key into an [ItemKind].
@@ -65,6 +67,8 @@ enum class TaskState(
     ARCHIVED("archived"), // NON-NLS
     ;
 
+    val displayName: String = storageKey.replace("_", " ").uppercase()
+
     companion object {
         /**
          * Resolves a persisted storage key into a [TaskState].
@@ -91,6 +95,8 @@ enum class ProjectState(
     /** Project is closed, cancelled, or no longer relevant. */
     ARCHIVED("archived"), // NON-NLS
     ;
+
+    val displayName: String = storageKey.replace("_", " ").uppercase()
 
     companion object {
         /**
@@ -129,6 +135,8 @@ enum class NoteKind(
     EVERGREEN("evergreen"), // NON-NLS
     ;
 
+    val displayName: String = storageKey.replace("_", " ").uppercase()
+
     companion object {
         /**
          * Resolves a persisted storage key into a [NoteKind].
@@ -155,6 +163,8 @@ enum class NoteState(
     /** A final, actionable insight extracted from the note. */
     TAKEAWAY("takeaway"), // NON-NLS
     ;
+
+    val displayName: String = storageKey.replace("_", " ").uppercase()
 
     companion object {
         /**
@@ -189,6 +199,8 @@ enum class RecordKind(
     SYMPTOM_LOG("symptom_log"), // NON-NLS
     ;
 
+    val displayName: String = storageKey.replace("_", " ").uppercase()
+
     companion object {
         /**
          * Resolves a persisted storage key into a [RecordKind].
@@ -216,6 +228,8 @@ enum class AreaHealthStatus(
     ON_FIRE("on_fire"), // NON-NLS
     ;
 
+    val displayName: String = storageKey.replace("_", " ").uppercase()
+
     companion object {
         /**
          * Resolves a persisted storage key into an [AreaHealthStatus].
@@ -241,6 +255,8 @@ enum class ScheduleEntryKind(
     EVENT("event"), // NON-NLS
     ;
 
+    val displayName: String = storageKey.replace("_", " ").uppercase()
+
     companion object {
         /**
          * Resolves a persisted storage key into a [ScheduleEntryKind].
@@ -263,6 +279,8 @@ enum class RichContentFormat(
     /** A structured JSON representation for block-based editors (e.g., Notion style). */
     BLOCKS_JSON("blocks_json"), // NON-NLS
     ;
+
+    val displayName: String = storageKey.replace("_", " ").uppercase()
 
     companion object {
         /**
@@ -292,6 +310,8 @@ enum class RelationKind(
     PAPER_REFERENCE("PAPER_REFERENCE"), // NON-NLS
     ;
 
+    val displayName: String = storageKey.replace("_", " ").uppercase()
+
     companion object {
         /**
          * Resolves a persisted storage key into a [RelationKind].
@@ -319,6 +339,8 @@ enum class SavedViewLens(
     REVIEW("review"), // NON-NLS
     ;
 
+    val displayName: String = storageKey.replace("_", " ").uppercase()
+
     companion object {
         /**
          * Resolves a persisted storage key into a [SavedViewLens].
@@ -343,6 +365,8 @@ enum class SavedViewLayout(
     /** Displays items in a multi-dimensional matrix, often used for cross-referencing metrics. */
     MATRIX("matrix"), // NON-NLS
     ;
+
+    val displayName: String = storageKey.replace("_", " ").uppercase()
 
     companion object {
         /**
@@ -387,6 +411,8 @@ enum class SavedViewFieldKey(
     PINNED("pinned"), // NON-NLS
     ;
 
+    val displayName: String = storageKey.replace("_", " ").uppercase()
+
     companion object {
         /**
          * Resolves a persisted storage key into a [SavedViewFieldKey].
@@ -409,6 +435,8 @@ enum class SavedViewMeasure(
     /** The count of items that have reached a completed state. */
     COMPLETED_COUNT("completed_count"), // NON-NLS
     ;
+
+    val displayName: String = storageKey.replace("_", " ").uppercase()
 
     companion object {
         /**
@@ -447,6 +475,8 @@ enum class SavedViewFilterOperator(
     IS_NOT_NULL("is_not_null"), // NON-NLS
     ;
 
+    val displayName: String = storageKey.replace("_", " ").uppercase()
+
     companion object {
         /**
          * Resolves a persisted storage key into a [SavedViewFilterOperator].
@@ -476,6 +506,8 @@ enum class SavedViewValueType(
     REFERENCE("reference"), // NON-NLS
     ;
 
+    val displayName: String = storageKey.replace("_", " ").uppercase()
+
     companion object {
         /**
          * Resolves a persisted storage key into a [SavedViewValueType].
@@ -496,6 +528,8 @@ enum class SavedViewSortDirection(
     /** Sorts from highest to lowest, or alphabetically Z to A. */
     DESCENDING("desc"), // NON-NLS
     ;
+
+    val displayName: String = storageKey.replace("_", " ").uppercase()
 
     companion object {
         /**
