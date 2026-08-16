@@ -16,7 +16,13 @@ enum class NotesDomain {
     PERSONAL,
     STUDY,
     WORK,
-    HEALTH,
+    HEALTH;
+
+    /**
+     * Pre-computed, UI-ready display name for the domain.
+     * Prevents unnecessary string allocations during recomposition.
+     */
+    val displayName: String = name.lowercase().replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
 }
 
 /**
