@@ -2610,26 +2610,36 @@ class MainViewModel(
         content: String? = null,
     )
     {
+        /**
+         * Match the type string case-insensitively without allocating a new lowercase string.
+         * The result is always a standardized, lowercase string literal.
+         */
+        val cleanType = type.trim()
         val normalizedType =
-            when (type.trim().lowercase())
-            {
-                "record"                                           -> "record"
+            when {
+                cleanType.equals("record", ignoreCase = true) -> "record"
 
                 // NON-NLS
-                "project"                                          -> "project"
+                cleanType.equals("project", ignoreCase = true) -> "project"
 
                 // NON-NLS
-                    "area"                                             -> "area"
+                cleanType.equals("area", ignoreCase = true) -> "area"
 
                 // NON-NLS
-                    "idea", "resource", "vault", "document" -> "note"
+                cleanType.equals("idea", ignoreCase = true) ||
+                    cleanType.equals("resource", ignoreCase = true) ||
+                    cleanType.equals("vault", ignoreCase = true) ||
+                    cleanType.equals("document", ignoreCase = true) -> "note"
 
-                    // NON-NLS
-                    "maintenance", "open_loop", "decision", "protocol" -> "task"
+                // NON-NLS
+                cleanType.equals("maintenance", ignoreCase = true) ||
+                    cleanType.equals("open_loop", ignoreCase = true) ||
+                    cleanType.equals("decision", ignoreCase = true) ||
+                    cleanType.equals("protocol", ignoreCase = true) -> "task"
 
-                    // NON-NLS
-                    else -> "task" // NON-NLS
-                }
+                // NON-NLS
+                else -> "task" // NON-NLS
+            }
             viewModelScope.launch {
                 repository.insertTemplate(
                     TemplateEntity(
