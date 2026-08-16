@@ -36,6 +36,8 @@ enum class DesktopWindowStartupMode {
  *
  * All properties are exposed as [Flow] streams that emit the current value,
  * and automatically handle [IOException]s by emitting [emptyPreferences] as a fallback.
+ *
+ * @property dataStore The Jetpack DataStore instance managing preferences.
  */
 class PreferencesRepository(
     private val dataStore: DataStore<Preferences>,

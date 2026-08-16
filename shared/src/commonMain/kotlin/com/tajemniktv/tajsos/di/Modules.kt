@@ -17,7 +17,14 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
 /**
- * Simple manual DI module.
+ * Core manual Dependency Injection (DI) module for shared multiplatform dependencies.
+ *
+ * It manages the lifecycle and initialization of core infrastructure components such as
+ * the database instance, Ktor HTTP client, and various repositories. It provides these
+ * singletons to platform-specific application entry points.
+ *
+ * @property database The cross-platform SQLite database implementation.
+ * @property dataStore The multiplatform Jetpack DataStore instance for user preferences.
  */
 class SharedModule(
     private val database: AppDatabase,
