@@ -280,6 +280,59 @@ class FilterHelperTest {
         assertEquals(2, filteredNodes[0].node.id)
     }
 
+
+    @Test
+    fun testRelevanceScore_emptyQuery() {
+        // We know empty query returns 0.
+        // We also know sortMode uses relevance score.
+        // If query is blank ("   "), it is filtered early if type, etc don't match
+        // Or if we call filterAndSortNodes with empty query and relevance, it returns 0 for all and sorts by updatedAt.
+
+        val older = createTestNode(1, "Task One", updatedAt = 100)
+        val newer = createTestNode(2, "Task Two", updatedAt = 200)
+
+        // Using "  " as query should result in relevanceScore = 0 and sort by updatedAt desc
+        val sortedNodes =
+            filter(listOf(older, newer)) { query = "  "; sortMode = "relevance" }
+
+        assertEquals(listOf(2L, 1L), sortedNodes.map { it.node.id })
+    }
+
+
+    @Test
+    fun testRelevanceScore_emptyQueryDirectly() {
+        // relevanceScore is private, but we can call it through filterAndSortNodes with blank queries
+        val node1 = createTestNode(1, "apple", updatedAt = 100)
+        val sortedNodes = FilterHelper.filterAndSortNodes(
+            nodes = listOf(node1),
+            query = "   ", // Blank query
+            type = null,
+            status = null,
+            projectId = null,
+            areaId = null,
+            linkedToId = null,
+            maxMins = null,
+            energy = null,
+            friction = null,
+            locationContext = null,
+            energyContext = null,
+            deviceContext = null,
+            socialContext = null,
+            timeWindowContext = null,
+            timeHorizon = null,
+            relations = emptyList(),
+            sortMode = "relevance"
+        )
+        // Should return all nodes
+        assertEquals(1, sortedNodes.size)
+    }
+
+    @Test
+    fun testMatchesQuery_withEmptyQuery() {
+        val node1 = createTestNode(1, "apple", tags = listOf("apple"))
+        assertFalse(FilterHelper.matchesQuery(node1, "   "))
+    }
+
     @Test
     fun testRelevanceSortingOrder() {
         val exactMatch = createTestNode(1, "search", updatedAt = 100)
@@ -409,6 +462,97 @@ class FilterHelperTest {
 
         // By Friction
         assertFilterResult(nodes, friction = "easy", expectedCount = 1, expectedFirstId = 1L)
+    }
+
+
+    @Test
+    fun testTimeHorizon_unknownValue() {
+        // timeHorizon else branch returns true
+        val now = kotlin.time.Clock.System.now().toEpochMilliseconds()
+
+        val node1 = createTestNode(1, "title", type = "task", dueAt = now + 1000)
+
+        val result = filter(listOf(node1)) { timeHorizon = "unknown_horizon" }
+        assertEquals(1, result.size)
+    }
+
+    @Test
+    fun testMatchesLinkedTo_nullLinkedToId() {
+        val node1 = createTestNode(1, "title")
+        // linkedToId = null is tested implicitly in short circuits, but we test here specifically
+        val result = filter(listOf(node1)) { linkedToId = null }
+        assertEquals(1, result.size)
+    }
+
+
+    @Test
+    fun testRelevanceScore_tagPartialMatch() {
+        val exactMatch = createTestNode(1, "title", tags = listOf("apple")) // 20 pts
+        val partialMatch = createTestNode(2, "title", tags = listOf("apples")) // 10 pts
+
+        val nodes = listOf(exactMatch, partialMatch)
+
+        // relevance score test
+        val sortedNodes = FilterHelper.filterAndSortNodes(
+            nodes = nodes,
+            query = "apple",
+            type = null,
+            status = null,
+            projectId = null,
+            areaId = null,
+            linkedToId = null,
+            maxMins = null,
+            energy = null,
+            friction = null,
+            locationContext = null,
+            energyContext = null,
+            deviceContext = null,
+            socialContext = null,
+            timeWindowContext = null,
+            timeHorizon = null,
+            relations = emptyList(),
+            sortMode = "relevance"
+        )
+
+        assertEquals(2, sortedNodes.size)
+        // exact tag match (20 pts) should be higher than partial tag match (10 pts)
+        assertEquals(1L, sortedNodes[0].node.id)
+        assertEquals(2L, sortedNodes[1].node.id)
+    }
+
+
+    @Test
+    fun testRelevanceScore_tagPartialMatch_caseInsensitive() {
+        val exactMatch = createTestNode(1, "title", tags = listOf("APPLE")) // 20 pts
+        val partialMatch = createTestNode(2, "title", tags = listOf("APPLES")) // 10 pts
+
+        val nodes = listOf(exactMatch, partialMatch)
+
+        // relevance score test
+        val sortedNodes = filter(nodes) { query = "apple"; sortMode = "relevance" }
+
+        assertEquals(2, sortedNodes.size)
+        // exact tag match (20 pts) should be higher than partial tag match (10 pts)
+        assertEquals(1L, sortedNodes[0].node.id)
+        assertEquals(2L, sortedNodes[1].node.id)
+    }
+
+    @Test
+    fun testRelevanceScore_titlePartialMatch_caseInsensitive() {
+        val exactMatch = createTestNode(1, "APPLE") // 100 pts
+        val startMatch = createTestNode(2, "APPLE JUICE") // 60 pts
+        val containsMatch = createTestNode(3, "MY APPLE") // 30 pts
+
+        val nodes = listOf(containsMatch, exactMatch, startMatch)
+
+        // relevance score test
+        val sortedNodes = filter(nodes) { query = "apple"; sortMode = "relevance" }
+
+        assertEquals(3, sortedNodes.size)
+        // exact (100) > start (60) > contains (30)
+        assertEquals(1L, sortedNodes[0].node.id)
+        assertEquals(2L, sortedNodes[1].node.id)
+        assertEquals(3L, sortedNodes[2].node.id)
     }
 
     @Test
