@@ -330,6 +330,9 @@ class MainViewModel(
             buildCalendarEntries(nodes, schedules, externalEvents)
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
+    /**
+     * Registers a new external calendar provider (e.g., ICS url) for synchronization.
+     */
     fun addCalendarProvider(
         name: String,
         type: String,
@@ -342,12 +345,18 @@ class MainViewModel(
         }
     }
 
+    /**
+     * Removes a calendar provider and inherently purges its synced events from the local state.
+     */
     fun deleteCalendarProvider(provider: CalendarProviderEntity) {
         viewModelScope.launch {
             repository.deleteCalendarProvider(provider)
         }
     }
 
+    /**
+     * Triggers an immediate remote fetch and synchronization across all configured calendar providers.
+     */
     fun syncCalendars() {
         viewModelScope.launch {
             calendarManager.syncAll()
@@ -955,20 +964,32 @@ class MainViewModel(
     private val _isAuthenticated = MutableStateFlow(false)
     val isAuthenticated: StateFlow<Boolean> = _isAuthenticated.asStateFlow()
 
+    /**
+     * Updates the internal state indicating whether the device supports biometric authentication.
+     */
     fun setBiometricHardwareAvailable(available: Boolean) {
         _isBiometricHardwareAvailable.value = available
     }
 
+    /**
+     * Updates the active authentication session state, typically upon successful biometric resolution.
+     */
     fun setAuthenticated(authenticated: Boolean) {
         _isAuthenticated.value = authenticated
     }
 
+    /**
+     * Explicitly revokes the active authentication session if biometrics are strictly enabled.
+     */
     fun lockApp() {
         if (isBiometricEnabled.value == true) {
             _isAuthenticated.value = false
         }
     }
 
+    /**
+     * Persists the user preference regarding whether the app should demand biometric authentication upon launch.
+     */
     fun setBiometricEnabled(enabled: Boolean) {
         viewModelScope.launch {
             preferencesRepository.updateBiometricEnabled(enabled)

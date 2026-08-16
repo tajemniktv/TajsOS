@@ -106,6 +106,9 @@ class ProtocolCommands(
         }
     }
 
+    /**
+     * Materializes a transition protocol template into an active checklist instance node.
+     */
     fun applyProtocolTemplate(protocolLabel: String) {
         scope.launch {
             val template = findProtocolTemplate(protocolTemplates(), protocolLabel) ?: return@launch
@@ -141,6 +144,9 @@ class ProtocolCommands(
         }
     }
 
+    /**
+     * Materializes a behavioral playbook template into an active node.
+     */
     fun applyPlaybookTemplate(
         playbookLabel: String,
         modeKey: String? = null,
@@ -203,6 +209,9 @@ class ProtocolCommands(
         }
     }
 
+    /**
+     * Records a newly constructed custom playbook with optional linked boundaries and contexts.
+     */
     fun saveCustomPlaybook(
         label: String,
         checklistLines: List<String>,
@@ -240,6 +249,9 @@ class ProtocolCommands(
         }
     }
 
+    /**
+     * Sets the overarching system mode (e.g., focus, relaxed) linked to a specific playbook.
+     */
     fun setPlaybookModeLink(
         playbookNode: NodeEntity,
         modeKey: String?,
@@ -249,6 +261,9 @@ class ProtocolCommands(
         updateNode(playbookNode.copy(relationshipContext = buildPlaybookRelationshipContext(modeKey)))
     }
 
+    /**
+     * Links a behavioral playbook to a specific life area (e.g., Health, Work).
+     */
     fun setPlaybookAreaLink(
         playbookNode: NodeEntity,
         areaId: Long?,
@@ -258,6 +273,9 @@ class ProtocolCommands(
         updateNode(playbookNode.copy(areaId = areaId))
     }
 
+    /**
+     * Mutates the content string of a protocol node to toggle a markdown checklist step on or off.
+     */
     fun toggleProtocolChecklistStep(
         protocolNode: NodeEntity,
         checklistIndex: Int,

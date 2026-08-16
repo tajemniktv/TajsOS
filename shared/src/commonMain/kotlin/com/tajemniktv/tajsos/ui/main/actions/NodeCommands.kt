@@ -291,6 +291,9 @@ class NodeCommands(
             }
         }
 
+    /**
+     * Replaces the node entity with new details and updates its timestamp.
+     */
     fun updateNode(node: NodeEntity) {
         scope.launch {
             val oldNode = repository.getNodeById(node.id)
@@ -473,6 +476,9 @@ class NodeCommands(
         }
     }
 
+    /**
+     * Splits a long note node into multiple smaller notes based on markdown headings.
+     */
     fun splitNote(nodeId: Long) {
         scope.launch {
             repository.getNodeById(nodeId)?.let { node ->
@@ -508,6 +514,9 @@ class NodeCommands(
         }
     }
 
+    /**
+     * Updates the status string for a node (e.g., active, completed).
+     */
     fun updateNodeStatus(
         node: NodeEntity,
         status: String,
@@ -541,16 +550,25 @@ class NodeCommands(
         }
     }
 
+    /**
+     * Soft-deletes a node by setting its status to archived.
+     */
     fun archiveNode(node: NodeEntity) {
         scope.launch { archiveNodeInternal(node) }
     }
 
+    /**
+     * Hard-deletes a node permanently from the database.
+     */
     fun deleteNodePermanently(node: NodeEntity) {
         scope.launch {
             repository.deleteNode(node)
         }
     }
 
+    /**
+     * Toggles the temporary pin status of a node.
+     */
     fun togglePin(
         node: NodeEntity,
         isPinned: Boolean,
@@ -565,6 +583,9 @@ class NodeCommands(
         }
     }
 
+    /**
+     * Toggles the permanent pin status of a node.
+     */
     fun togglePermanentPin(node: NodeEntity) {
         scope.launch {
             repository.updateNode(
@@ -576,6 +597,9 @@ class NodeCommands(
         }
     }
 
+    /**
+     * Removes the node from the inbox state, marking it as processed.
+     */
     fun markAsProcessed(nodeId: Long) {
         scope.launch {
             repository.getNodeById(nodeId)?.let { node ->
@@ -589,6 +613,9 @@ class NodeCommands(
         }
     }
 
+    /**
+     * Creates a new project node and optional linkages to an area.
+     */
     fun addProject(
         name: String,
         description: String = "",
@@ -598,10 +625,16 @@ class NodeCommands(
         addNode(title = name, content = description, type = "project", areaId = areaId) // NON-NLS
         }
 
+    /**
+     * Creates a new top-level area node.
+     */
     fun addArea(name: String) {
         addNode(title = name, type = "area") // NON-NLS
     }
 
+    /**
+     * Modifies the explicit subtype for an open loop (e.g., actionable, somday/maybe).
+     */
     fun updateOpenLoopType(
         node: NodeEntity,
         openLoopType: String,
@@ -629,10 +662,16 @@ class NodeCommands(
         convertOpenLoop(nodeId, "task") // NON-NLS
     }
 
+    /**
+     * Converts an open loop into a structured decision-making node.
+     */
     fun convertOpenLoopToDecision(nodeId: Long) {
         convertOpenLoop(nodeId, "decision") // NON-NLS
     }
 
+    /**
+     * Converts an open loop into a free-form reference note.
+     */
     fun convertOpenLoopToNote(nodeId: Long) {
         convertOpenLoop(nodeId, "note") // NON-NLS
     }
@@ -785,6 +824,9 @@ class NodeCommands(
         )
     }
 
+    /**
+     * Clears any temporary focus start period from a node.
+     */
     fun clearTemporaryFocusPeriod(node: NodeEntity) {
         updateNode(node.copy(startAt = null))
     }

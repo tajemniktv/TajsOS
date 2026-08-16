@@ -86,6 +86,9 @@ class StudentCommands(
         }
     }
 
+    /**
+     * Creates or updates a root-level course node representing a university subject.
+     */
     fun setStudentCourse(
         node: NodeEntity,
         courseId: String?,
@@ -103,6 +106,9 @@ class StudentCommands(
         }
     }
 
+    /**
+     * Captures an academic note and associates it with a target course.
+     */
     fun addStudentNote(
         title: String,
         content: String,
@@ -135,6 +141,9 @@ class StudentCommands(
         }
     }
 
+    /**
+     * Flags or unflags an academic note as a candidate for external flashcard processing.
+     */
     fun toggleFlashcardCandidate(
         node: NodeEntity,
         enabled: Boolean,
@@ -147,6 +156,9 @@ class StudentCommands(
         }
     }
 
+    /**
+     * Flags or unflags an academic note as crucial for pre-exam review workflows.
+     */
     fun toggleRevisitBeforeExam(
         node: NodeEntity,
         enabled: Boolean,
@@ -159,6 +171,9 @@ class StudentCommands(
         }
     }
 
+    /**
+     * Links an overarching academic topic to a specific study note.
+     */
     fun linkTopicToNote(
         topicNodeId: Long,
         noteNodeId: Long,
@@ -166,6 +181,9 @@ class StudentCommands(
         addRelation(topicNodeId, noteNodeId, "TOPIC_LINK")
     }
 
+    /**
+     * Associates a specific external academic paper or citation to a study note.
+     */
     fun linkPaperToNote(
         paperNodeId: Long,
         noteNodeId: Long,
