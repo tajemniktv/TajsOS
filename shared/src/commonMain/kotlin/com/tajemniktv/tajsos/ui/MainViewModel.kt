@@ -2603,6 +2603,15 @@ class MainViewModel(
             calculateStudentBoardState(nodes, relations, sessions, templates)
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), StudentBoardState())
 
+    /**
+     * Adds a new user-defined template to the database.
+     * Uses case-insensitive comparison on the type parameter to avoid unnecessary string allocations.
+     *
+     * @param name The display name of the template.
+     * @param type The raw type string provided by the user.
+     * @param title An optional default title to apply when the template is used.
+     * @param content An optional default content body to apply when the template is used.
+     */
     fun addTemplate(
         name: String,
         type: String,
@@ -2610,26 +2619,22 @@ class MainViewModel(
         content: String? = null,
     )
     {
+        val cleanType = type.trim()
         val normalizedType =
-            when (type.trim().lowercase())
-            {
-                "record"                                           -> "record"
-
-                // NON-NLS
-                "project"                                          -> "project"
-
-                // NON-NLS
-                    "area"                                             -> "area"
-
-                // NON-NLS
-                    "idea", "resource", "vault", "document" -> "note"
-
-                    // NON-NLS
-                    "maintenance", "open_loop", "decision", "protocol" -> "task"
-
-                    // NON-NLS
-                    else -> "task" // NON-NLS
-                }
+            when {
+                cleanType.equals("record", ignoreCase = true) -> "record"
+                cleanType.equals("project", ignoreCase = true) -> "project"
+                cleanType.equals("area", ignoreCase = true) -> "area"
+                cleanType.equals("idea", ignoreCase = true) ||
+                    cleanType.equals("resource", ignoreCase = true) ||
+                    cleanType.equals("vault", ignoreCase = true) ||
+                    cleanType.equals("document", ignoreCase = true) -> "note"
+                cleanType.equals("maintenance", ignoreCase = true) ||
+                    cleanType.equals("open_loop", ignoreCase = true) ||
+                    cleanType.equals("decision", ignoreCase = true) ||
+                    cleanType.equals("protocol", ignoreCase = true) -> "task"
+                else -> "task"
+            }
             viewModelScope.launch {
                 repository.insertTemplate(
                     TemplateEntity(

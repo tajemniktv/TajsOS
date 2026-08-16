@@ -442,6 +442,16 @@ class RelationshipCommands(
         }
     }
 
+    /**
+     * Adds a new vault entry and tags it with the specified category.
+     * Uses case-insensitive comparison on the type parameter to avoid unnecessary string allocations.
+     *
+     * @param categoryTag The raw category tag string to attach.
+     * @param title The title of the vault entry.
+     * @param content The optional content body.
+     * @param asType The raw string representation of the target node type.
+     * @param dueAt An optional due date epoch timestamp.
+     */
     fun addVaultEntry(
         categoryTag: String,
         title: String,
@@ -451,11 +461,12 @@ class RelationshipCommands(
     ) {
         scope.launch {
             val cleanTag = categoryTag.trim().lowercase()
+            val cleanAsType = asType.trim()
             val type =
-                when (asType.trim().lowercase())
-                {
-                    "record" -> "record"
-                    "task", "maintenance" -> "task"
+                when {
+                    cleanAsType.equals("record", ignoreCase = true) -> "record"
+                    cleanAsType.equals("task", ignoreCase = true) ||
+                        cleanAsType.equals("maintenance", ignoreCase = true) -> "task"
                     else -> "note"
                 }
             val nodeId =
