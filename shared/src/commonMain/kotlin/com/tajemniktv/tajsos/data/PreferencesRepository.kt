@@ -172,6 +172,10 @@ class PreferencesRepository(
             DesktopWindowStartupMode.entries.find { it.name == rawValue } ?: DesktopWindowStartupMode.RESTORE_LAST
         }
 
+    /**
+     * The registry of all currently available packs, combining owned and actively enabled packs.
+     * Evaluated against [AppPack.defaultFreePackKeys] to ensure baseline pack availability.
+     */
     val enabledPacks: Flow<PackRegistry> =
         safeData
             .map { preferences ->
@@ -183,12 +187,18 @@ class PreferencesRepository(
             )
         }
 
+    /**
+     * A flow emitting the set of pack keys explicitly owned by the user, incorporating defaults.
+     */
     val ownedPacks: Flow<Set<String>> =
         safeData
             .map { preferences ->
             preferences[PreferencesKeys.OWNED_PACKS] ?: AppPack.defaultFreePackKeys
         }
 
+    /**
+     * Updates the biometric authentication requirement flag.
+     */
     suspend fun updateBiometricEnabled(enabled: Boolean) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.BIOMETRIC_ENABLED] = enabled
@@ -262,6 +272,9 @@ class PreferencesRepository(
         }
     }
 
+    /**
+     * Persists the user's preference for dark theme mode.
+     */
     suspend fun updateDarkThemeEnabled(enabled: Boolean) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.DARK_THEME_ENABLED] = enabled
@@ -297,6 +310,13 @@ class PreferencesRepository(
         }
     }
 
+    /**
+     * Toggles whether a specific pack is actively enabled in the app shell.
+     * Prevents enabling packs that are not currently owned by the user.
+     *
+     * @param pack The target application pack.
+     * @param enabled Whether to enable or disable the pack.
+     */
     suspend fun setPackEnabled(
         pack: AppPack,
         enabled: Boolean,
@@ -314,6 +334,13 @@ class PreferencesRepository(
         }
     }
 
+    /**
+     * Marks a pack as owned or unowned. Disabling ownership of non-free packs also removes
+     * them from the currently enabled set.
+     *
+     * @param pack The target application pack.
+     * @param owned Whether the pack is owned.
+     */
     suspend fun setPackOwned(
         pack: AppPack,
         owned: Boolean,
@@ -339,6 +366,10 @@ class PreferencesRepository(
         }
     }
 
+    /**
+     * Validates and ensures that the baseline default packs (defined in [AppPack.defaultFreePackKeys])
+     * are present in both the owned and enabled preference sets. Usually invoked during app initialization.
+     */
     suspend fun ensureDefaultPackAccess() {
         dataStore.edit { preferences ->
             val owned = (preferences[PreferencesKeys.OWNED_PACKS] ?: emptySet()).toMutableSet()
