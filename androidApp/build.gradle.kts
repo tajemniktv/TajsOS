@@ -57,7 +57,12 @@ android {
     }
     buildTypes {
         getByName("release") {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
             // Firebase App Distribution configuration for release builds
             configure<com.google.firebase.appdistribution.gradle.AppDistributionExtension> {
                 artifactType = "APK"
