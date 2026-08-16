@@ -146,4 +146,43 @@ class InetAddressParserTest {
         assertNull(parseIpAddress(":1:2:3:4:5:6:7"), "Should reject starting with single colon")
         assertNull(parseIpAddress("1:2:3:4:5:6:7:"), "Should reject ending with single colon")
     }
+
+    @Test
+    fun testIpv4SiteLocalBoundaries() {
+        // 10.x.x.x
+        assertTrue(parseIpAddress("10.0.0.0")!!.isSiteLocal())
+        assertTrue(parseIpAddress("10.255.255.255")!!.isSiteLocal())
+        assertFalse(parseIpAddress("9.255.255.255")!!.isSiteLocal())
+        assertFalse(parseIpAddress("11.0.0.0")!!.isSiteLocal())
+
+        // 172.16.x.x - 172.31.x.x
+        assertTrue(parseIpAddress("172.16.0.0")!!.isSiteLocal())
+        assertTrue(parseIpAddress("172.31.255.255")!!.isSiteLocal())
+        assertFalse(parseIpAddress("172.15.255.255")!!.isSiteLocal())
+        assertFalse(parseIpAddress("172.32.0.0")!!.isSiteLocal())
+
+        // 192.168.x.x
+        assertTrue(parseIpAddress("192.168.0.0")!!.isSiteLocal())
+        assertTrue(parseIpAddress("192.168.255.255")!!.isSiteLocal())
+        assertFalse(parseIpAddress("192.167.255.255")!!.isSiteLocal())
+        assertFalse(parseIpAddress("192.169.0.0")!!.isSiteLocal())
+    }
+
+    @Test
+    fun testIpv6SiteLocalBoundaries() {
+        // fc00::/7 => fc00 to fdff
+        assertTrue(parseIpAddress("fc00::")!!.isSiteLocal())
+        assertTrue(parseIpAddress("fdff:ffff:ffff:ffff:ffff:ffff:ffff:ffff")!!.isSiteLocal())
+        assertFalse(parseIpAddress("fbff:ffff:ffff:ffff:ffff:ffff:ffff:ffff")!!.isSiteLocal())
+        assertFalse(parseIpAddress("fe00::")!!.isSiteLocal())
+    }
+
+    @Test
+    fun testIpv6LinkLocalBoundaries() {
+        // fe80::/10 => fe80 to febf
+        assertTrue(parseIpAddress("fe80::")!!.isLinkLocal())
+        assertTrue(parseIpAddress("febf:ffff:ffff:ffff:ffff:ffff:ffff:ffff")!!.isLinkLocal())
+        assertFalse(parseIpAddress("fe7f:ffff:ffff:ffff:ffff:ffff:ffff:ffff")!!.isLinkLocal())
+        assertFalse(parseIpAddress("fec0::")!!.isLinkLocal())
+    }
 }
