@@ -6,7 +6,21 @@ package com.tajemniktv.tajsos.utils
 
 import java.io.File
 
+/**
+ * Provides access to standard platform-specific directories for storing application data.
+ *
+ * Used primarily for locating database storage and configuration files outside the project working
+ * directory to ensure user data persists across updates.
+ */
 object AppDirs {
+    /**
+     * Resolves and creates (if absent) the canonical TajsOS application data directory based on the host OS.
+     *
+     * Implementations logic:
+     * - Windows: Uses %APPDATA% or defaults to `AppData/Roaming`.
+     * - macOS: Uses `~/Library/Application Support`.
+     * - Linux/Other: Follows XDG Base Directory specs (`$XDG_DATA_HOME` or defaults to `~/.local/share`).
+     */
     fun getAppDataDir(): File {
         val os = System.getProperty("os.name").lowercase()
         val userHome = System.getProperty("user.home")
