@@ -12,8 +12,11 @@ import com.tajemniktv.tajsos.ui.MaintenanceStatusItem
 
 /**
  * Explicit maintenance item types that classify as financial responsibilities.
- * Used in heuristic matching to implicitly map items with these maintenance
- * types into the finance domain without requiring an explicit domain assignment.
+ *
+ * **Zero-Configuration Heuristic:**
+ * This constant is part of the heuristic matching engine that implicitly maps items
+ * into the finance domain. It intentionally bypasses explicit assignments (like `ItemDomainEntity`)
+ * to lower the friction of capturing tasks.
  */
 private val financeMaintenanceTypes = setOf("bill", "subscription", "renewal")
 
