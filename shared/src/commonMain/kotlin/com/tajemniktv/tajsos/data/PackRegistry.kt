@@ -10,20 +10,22 @@ import androidx.compose.runtime.Immutable
  * Represents the available feature packs in TajsOS.
  *
  * @property key The unique identifier string for the pack.
+ * @property displayName Pre-computed localized or display-ready label for UI performance.
  * @property isFree Indicates whether the pack is available for free or requires purchase/subscription.
  * @property dependencies A set of pack keys that must be enabled for this pack to function. Defaults to an empty set.
  */
 enum class AppPack(
     val key: String,
+    val displayName: String,
     val isFree: Boolean,
     val dependencies: Set<String> = emptySet(),
 ) {
-    STUDENT("student", isFree = false),
-    CREATOR("creator", isFree = false),
-    FINANCE("finance", isFree = false, dependencies = setOf("maintenance")),
-    PEOPLE("people", isFree = false),
-    MAINTENANCE("maintenance", isFree = true),
-    PROTOCOLS("protocols", isFree = true),
+    STUDENT("student", "Student", isFree = false),
+    CREATOR("creator", "Creator", isFree = false),
+    FINANCE("finance", "Finance", isFree = false, dependencies = setOf("maintenance")),
+    PEOPLE("people", "People", isFree = false),
+    MAINTENANCE("maintenance", "Maintenance", isFree = true),
+    PROTOCOLS("protocols", "Protocols", isFree = true),
     ;
 
     companion object {

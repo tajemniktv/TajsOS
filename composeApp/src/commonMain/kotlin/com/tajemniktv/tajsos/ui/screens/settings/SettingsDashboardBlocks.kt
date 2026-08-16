@@ -189,7 +189,7 @@ private fun renderSettingsFeaturePacks(context: SettingsDashboardContext) {
                     Text(
                         text =
                             buildString {
-                                append(pack.key.replaceFirstChar { it.uppercase() })
+                                append(pack.displayName)
                                 append(if (pack.isFree) " (Free)" else " (Premium)")
                             },
                         style = MaterialTheme.typography.bodyLarge,
