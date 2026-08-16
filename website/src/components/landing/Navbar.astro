@@ -3,7 +3,7 @@
 import { SITE, NAV_LINKS } from "../../data/site";
 ---
 
-<nav class="fixed top-0 w-full z-100 bg-surface-container-low/60">
+<nav class="fixed top-0 w-full z-100 bg-surface-container-low/60 backdrop-blur-md border-b border-surface-container-highest/30">
   <div
     class="flex justify-between items-center w-full px-8 py-4 max-w-400 mx-auto"
   >
@@ -18,11 +18,12 @@ import { SITE, NAV_LINKS } from "../../data/site";
         >{SITE.title}</span
       >
     </a>
-    <div class="hidden md:flex gap-12">
+    <!-- Desktop Navigation -->
+    <div class="hidden lg:flex gap-12">
       {
         NAV_LINKS.map((link) => (
           <a
-            class="font-mono text-[10px] tracking-widest uppercase font-bold text-on-surface-variant hover:text-on-surface transition-colors min-h-[48px] flex items-center px-2"
+            class="font-mono text-[10px] tracking-widest uppercase font-bold text-on-surface-variant hover:text-on-surface hover:text-shadow-sm transition-all min-h-[48px] flex items-center px-2"
             href={`${import.meta.env.BASE_URL}${link.href}`}
           >
             {link.label}
@@ -30,8 +31,9 @@ import { SITE, NAV_LINKS } from "../../data/site";
         ))
       }
     </div>
-    <div class="flex items-center gap-6">
-      <div class="flex gap-4">
+    <!-- Actions -->
+    <div class="flex items-center gap-4 lg:gap-6">
+      <div class="hidden md:flex gap-4">
         <button
           type="button"
           class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer transition-colors"
@@ -39,6 +41,7 @@ import { SITE, NAV_LINKS } from "../../data/site";
           data-icon="settings" aria-hidden="true">settings</button
         >
         <button
+          type="button"
           class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer transition-colors"
           aria-label="Account"
           data-icon="account_circle" aria-hidden="true">account_circle</button
@@ -47,9 +50,47 @@ import { SITE, NAV_LINKS } from "../../data/site";
       <a
         href={`${import.meta.env.BASE_URL}${SITE.waitlistUrl}`}
         aria-label="Join Waitlist"
-        class="bg-linear-to-br from-primary to-primary-dim text-on-primary-fixed font-mono font-bold px-6 min-h-[48px] flex items-center justify-center rounded-xl text-[10px] tracking-widest uppercase hover:opacity-90 transition-all"
+        class="bg-linear-to-br from-primary to-primary-dim text-on-primary-fixed font-mono font-bold px-4 lg:px-6 min-h-[48px] flex items-center justify-center rounded-xl text-[10px] tracking-widest uppercase hover:opacity-90 hover:scale-105 hover:shadow-[0_0_20px_rgba(186,158,255,0.3)] transition-all"
         >JOIN WAITLIST</a
       >
+      <!-- Mobile Menu Button -->
+      <button
+        id="mobile-menu-btn"
+        type="button"
+        class="lg:hidden material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer transition-colors"
+        aria-label="Menu"
+      >menu</button>
     </div>
   </div>
+
+  <!-- Mobile Menu Panel -->
+  <div
+    id="mobile-menu"
+    class="hidden lg:hidden flex-col bg-surface-container-low border-b border-surface-container-highest/50 px-8 py-4 gap-4"
+  >
+    {
+      NAV_LINKS.map((link) => (
+        <a
+          class="font-mono text-[12px] tracking-widest uppercase font-bold text-on-surface-variant hover:text-primary transition-colors py-3 border-b border-surface-container-highest/30 last:border-0"
+          href={`${import.meta.env.BASE_URL}${link.href}`}
+        >
+          {link.label}
+        </a>
+      ))
+    }
+  </div>
 </nav>
+
+<script>
+  const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+
+  if (mobileMenuBtn && mobileMenu) {
+    mobileMenuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+      mobileMenu.classList.toggle('flex');
+      const isExpanded = !mobileMenu.classList.contains('hidden');
+      mobileMenuBtn.textContent = isExpanded ? 'close' : 'menu';
+    });
+  }
+</script>
