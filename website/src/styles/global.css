@@ -63,6 +63,8 @@
     .glass-panel {
         background: color-mix(in srgb, var(--color-surface-container-high) 60%, transparent);
         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
     }
     .instrument-glow {
         box-shadow: 0 0 50px rgba(186, 158, 255, 0.08), inset 0 0 30px rgba(186, 158, 255, 0.03);
