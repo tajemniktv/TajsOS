@@ -57,11 +57,19 @@ class NodeCommands(
     }
 
     /**
-     * Automatically reviews the inbox and currently active task lists to identify items that have
-     * been ignored or deferred multiple times (based on [cutoffDays]). It sweeps these stale items
-     * back into the general inbox state to force a re-evaluation or triage.
+     * Automatically identifies and sweeps stale tasks out of the user's active view to prevent inbox clutter.
      *
-     * @param cutoffDays The number of days a task must sit un-updated before being considered stale.
+     * This function queries the active tasks against a time threshold (delegating the filtering logic
+     * to `calculateStaleTasks`). For every task identified as stale (i.e., overdue beyond the `cutoffDays`
+     * and not protected by pins or recurring rules), it applies the following state mutations:
+     * - The task's `status` is downgraded to `SOMEDAY`, effectively removing it from the active inbox.
+     * - The `postponeCount` is incremented to track that the system had to intervene.
+     * - The `updatedAt` timestamp is refreshed to the current time.
+     *
+     * Note: Swept tasks will no longer appear in standard active task lists and will require manual
+     * review (e.g., from a "Someday" or "Stale" view) to be reactivated.
+     *
+     * @param cutoffDays The number of days a task's due date must be past due before the system intervenes.
      */
     fun sweepStaleTasks(cutoffDays: Int = 3) {
         scope.launch {

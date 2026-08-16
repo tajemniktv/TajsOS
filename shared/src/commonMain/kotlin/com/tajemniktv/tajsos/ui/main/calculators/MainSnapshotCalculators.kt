@@ -2848,12 +2848,23 @@ fun calculateStudentBoardState(
 }
 
 /**
- * Calculates a list of stale tasks that are overdue by more than the threshold.
- * Excludes completed, archived, already someday, pinned, and recurring tasks.
+ * Calculates a list of stale tasks that have been ignored or overdue for an extended period.
+ *
+ * A task is considered "stale" if all of the following conditions are met:
+ * 1. It is a valid task item (`isTaskItem() == true`).
+ * 2. It is currently active (`status == "active"` and `taskStateOrNull() == TaskState.ACTIVE`).
+ * 3. It is **not** explicitly pinned to the user's immediate attention.
+ * 4. It is **not** a recurring task (these have their own lifecycle rules).
+ * 5. It has an explicit due date (`dueAt != null`).
+ * 6. That due date is older than the calculated `cutoffThreshold` (which is exactly `now` minus `cutoffDays`).
+ *
+ * By excluding completed, archived, 'someday', pinned, and recurring tasks, this function
+ * isolates standard, scheduled tasks that have slipped past their due dates without being addressed,
+ * ensuring they can be automatically swept away to reduce inbox clutter.
  *
  * @param nodes The complete list of nodes in the system.
- * @param now The current time to use for calculations.
- * @param cutoffDays The threshold in days before a task is considered stale.
+ * @param now The current time to use as the baseline for the cutoff calculation.
+ * @param cutoffDays The threshold in days before a task's due date is considered critically overdue and stale.
  */
 fun calculateStaleTasks(
     nodes: List<NodeEntity>,
