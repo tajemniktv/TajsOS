@@ -56,4 +56,29 @@ class InetAddressParserEdgeTest {
         assertEquals(ipv6A, ipv6B)
         assertEquals(ipv6A!!.hashCode(), ipv6B!!.hashCode())
     }
+
+    @Test
+    fun testIpv4LoopbackEdges() {
+        assertTrue(parseIpAddress("127.0.0.0")!!.isLoopback())
+        assertTrue(parseIpAddress("127.255.255.255")!!.isLoopback())
+        assertFalse(parseIpAddress("128.0.0.0")!!.isLoopback())
+        assertFalse(parseIpAddress("126.255.255.255")!!.isLoopback())
+    }
+
+    @Test
+    fun testIpv4LinkLocalEdges() {
+        assertTrue(parseIpAddress("169.254.0.0")!!.isLinkLocal())
+        assertTrue(parseIpAddress("169.254.255.255")!!.isLinkLocal())
+        assertFalse(parseIpAddress("169.253.255.255")!!.isLinkLocal())
+        assertFalse(parseIpAddress("169.255.0.0")!!.isLinkLocal())
+    }
+
+    @Test
+    fun testIpv6LoopbackEdges() {
+        assertTrue(parseIpAddress("::1")!!.isLoopback())
+        assertTrue(parseIpAddress("0:0:0:0:0:0:0:1")!!.isLoopback())
+        assertFalse(parseIpAddress("::2")!!.isLoopback())
+        assertFalse(parseIpAddress("::0")?.isLoopback() == true) // ::0 is unspecified, not loopback.
+        assertFalse(parseIpAddress("1::1")!!.isLoopback())
+    }
 }
