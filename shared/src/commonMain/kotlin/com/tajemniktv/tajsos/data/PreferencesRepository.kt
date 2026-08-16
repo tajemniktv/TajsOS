@@ -82,18 +82,32 @@ class PreferencesRepository(
         val ENABLED_PACKS = stringSetPreferencesKey("enabled_packs")
     }
 
+    /**
+     * Indicates whether biometric authentication (e.g., fingerprint, face ID)
+     * is required to unlock the app upon launch or resume.
+     * Defaults to false.
+     */
     val isBiometricEnabled: Flow<Boolean> =
         safeData
             .map { preferences ->
                 preferences[PreferencesKeys.BIOMETRIC_ENABLED] ?: false
             }
 
+    /**
+     * Emits the ID of the currently active LifeOS Mode, if any.
+     * Modes alter the visual appearance and feature availability (e.g., hiding certain packs)
+     * to reduce cognitive load during specific contexts like "Work" or "Evening".
+     */
     val activeModeId: Flow<Long?> =
         safeData
             .map { preferences ->
                 preferences[PreferencesKeys.ACTIVE_MODE_ID]
             }
 
+    /**
+     * Controls the application-wide dark mode setting.
+     * Defaults to true (dark theme).
+     */
     val isDarkThemeEnabled: Flow<Boolean> =
         safeData
             .map { preferences ->
