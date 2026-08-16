@@ -17,7 +17,10 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
 /**
- * Simple manual DI module.
+ * Simple manual DI module to handle shared dependencies across multiplatform targets.
+ *
+ * @param database The instantiated SQLite application database.
+ * @param dataStore The instantiated multiplatform preferences data store.
  */
 class SharedModule(
     private val database: AppDatabase,

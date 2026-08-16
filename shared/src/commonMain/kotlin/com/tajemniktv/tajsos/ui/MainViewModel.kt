@@ -132,6 +132,12 @@ import kotlin.time.Clock
  * Handles shell-level state (including modes, sync status, application locking, and sidebar state).
  * It delegates feature-heavy orchestration to internal command handlers (e.g., [NodeCommands])
  * but acts as the root provider of core app state.
+ *
+ * @param repository The central data repository for reading and writing to the local SQLite database.
+ * @param preferencesRepository The data store manager for user configuration and app state preferences.
+ * @param calendarManager The orchestrator responsible for syncing and querying external calendar events.
+ * @param nextStepFallbackLabel Fallback string to use when a task has an empty next step.
+ * @param untitledFallbackLabel Fallback string to use when an item has an empty title.
  */
 @Stable
 class MainViewModel(
