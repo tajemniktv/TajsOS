@@ -20,6 +20,7 @@ export default defineConfig({
     starlight({
       disable404Route: true,
       title: "Docs",
+      disable404Route: true,
       description: "TajsOS Documentation",
       disable404Route: true,
 
