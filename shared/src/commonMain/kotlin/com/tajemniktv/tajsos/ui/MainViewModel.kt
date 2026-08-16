@@ -2610,22 +2610,23 @@ class MainViewModel(
         content: String? = null,
     )
     {
+        val cleanType = type.trim()
         val normalizedType =
-            when (type.trim().lowercase())
+            when
             {
-                "record"                                           -> "record"
+                cleanType.equals("record", ignoreCase = true)                                           -> "record"
 
                 // NON-NLS
-                "project"                                          -> "project"
+                cleanType.equals("project", ignoreCase = true)                                          -> "project"
 
                 // NON-NLS
-                    "area"                                             -> "area"
+                    cleanType.equals("area", ignoreCase = true)                                             -> "area"
 
                 // NON-NLS
-                    "idea", "resource", "vault", "document" -> "note"
+                    cleanType.equals("idea", ignoreCase = true) || cleanType.equals("resource", ignoreCase = true) || cleanType.equals("vault", ignoreCase = true) || cleanType.equals("document", ignoreCase = true) -> "note"
 
                     // NON-NLS
-                    "maintenance", "open_loop", "decision", "protocol" -> "task"
+                    cleanType.equals("maintenance", ignoreCase = true) || cleanType.equals("open_loop", ignoreCase = true) || cleanType.equals("decision", ignoreCase = true) || cleanType.equals("protocol", ignoreCase = true) -> "task"
 
                     // NON-NLS
                     else -> "task" // NON-NLS
