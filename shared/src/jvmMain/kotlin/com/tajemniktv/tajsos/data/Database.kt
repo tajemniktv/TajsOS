@@ -9,6 +9,13 @@ import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import java.io.File
 import com.tajemniktv.tajsos.utils.AppDirs
 
+/**
+ * Creates and configures the Room database instance.
+ *
+ * Note: The database is currently configured with `fallbackToDestructiveMigration(true)`
+ * as a pre-alpha safety posture. This permits rapid schema iteration without enforcing
+ * strict migrations, but will wipe local data if the schema version changes.
+ */
 fun createDatabase(): AppDatabase {
     val dbFile = File(AppDirs.getAppDataDir(), "tajsos.db")
     return Room
