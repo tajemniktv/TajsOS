@@ -2603,6 +2603,10 @@ class MainViewModel(
             calculateStudentBoardState(nodes, relations, sessions, templates)
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), StudentBoardState())
 
+    /**
+     * Adds a new template with the given [name] and [type].
+     * Normalizes the [type] using case-insensitive string matching for efficient memory allocation.
+     */
     fun addTemplate(
         name: String,
         type: String,
@@ -2611,25 +2615,27 @@ class MainViewModel(
     )
     {
         val normalizedType =
-            when (type.trim().lowercase())
+            with(type.trim())
             {
-                "record"                                           -> "record"
+                when {
+                    equals("record", ignoreCase = true) -> "record"
 
                 // NON-NLS
-                "project"                                          -> "project"
+                equals("project", ignoreCase = true) -> "project"
 
                 // NON-NLS
-                    "area"                                             -> "area"
+                    equals("area", ignoreCase = true) -> "area"
 
                 // NON-NLS
-                    "idea", "resource", "vault", "document" -> "note"
+                    equals("idea", ignoreCase = true) || equals("resource", ignoreCase = true) || equals("vault", ignoreCase = true) || equals("document", ignoreCase = true) -> "note"
 
                     // NON-NLS
-                    "maintenance", "open_loop", "decision", "protocol" -> "task"
+                    equals("maintenance", ignoreCase = true) || equals("open_loop", ignoreCase = true) || equals("decision", ignoreCase = true) || equals("protocol", ignoreCase = true) -> "task"
 
                     // NON-NLS
                     else -> "task" // NON-NLS
                 }
+            }
             viewModelScope.launch {
                 repository.insertTemplate(
                     TemplateEntity(
