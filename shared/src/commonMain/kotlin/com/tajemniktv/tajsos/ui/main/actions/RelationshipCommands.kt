@@ -442,6 +442,10 @@ class RelationshipCommands(
         }
     }
 
+    /**
+     * Adds a new vault entry and tags it. Replaces the type lowercase calculation with
+     * an inline check to reduce unnecessary string allocations in frequently executed code paths.
+     */
     fun addVaultEntry(
         categoryTag: String,
         title: String,
@@ -452,11 +456,12 @@ class RelationshipCommands(
         scope.launch {
             val cleanTag = categoryTag.trim().lowercase()
             val type =
-                when (asType.trim().lowercase())
-                {
-                    "record" -> "record"
-                    "task", "maintenance" -> "task"
-                    else -> "note"
+                with(asType.trim()) {
+                    when {
+                        equals("record", ignoreCase = true) -> "record"
+                        equals("task", ignoreCase = true) || equals("maintenance", ignoreCase = true) -> "task"
+                        else -> "note"
+                    }
                 }
             val nodeId =
                 addNodeForResult(
