@@ -150,7 +150,7 @@ class MainStateAssemblersDashboardTest {
         val state = assembleState(repo, nodes)
 
         assertNotNull(state.capacityWarning)
-        assertTrue(state.capacityWarning!!.contains("SYSTEM OVERLOADED"))
+        assertTrue(requireNotNull(state.capacityWarning).contains("SYSTEM OVERLOADED"))
     }
 
     @Test
@@ -161,7 +161,7 @@ class MainStateAssemblersDashboardTest {
         val state = assembleState(repo, nodes)
 
         assertNotNull(state.capacityWarning)
-        assertTrue(state.capacityWarning!!.contains("ATTENTION FRAGMENTED"))
+        assertTrue(requireNotNull(state.capacityWarning).contains("ATTENTION FRAGMENTED"))
     }
 
     @Test
@@ -175,7 +175,7 @@ class MainStateAssemblersDashboardTest {
 
         assertEquals(12, state.openLoops.size)
         assertNotNull(state.openLoopsOverloadWarning)
-        assertTrue(state.openLoopsOverloadWarning!!.contains("OPEN LOOPS OVERLOAD"))
+        assertTrue(requireNotNull(state.openLoopsOverloadWarning).contains("OPEN LOOPS OVERLOAD"))
     }
 
     @Test
