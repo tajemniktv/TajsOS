@@ -43,6 +43,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -147,6 +149,11 @@ fun CaptureSheet(
     var isSticky by remember { mutableStateOf(false) }
 
     var multiCaptureMode by remember { mutableStateOf(false) }
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
     var brainDumpMode by remember { mutableStateOf(false) }
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -221,6 +228,7 @@ fun CaptureSheet(
                     onValueChange = { text = it },
                     modifier =
                         Modifier
+                            .focusRequester(focusRequester)
                             .weight(1f)
                             .padding(vertical = TajsOSTheme.SpacingMd),
                     textStyle =
