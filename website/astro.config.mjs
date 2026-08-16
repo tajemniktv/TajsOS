@@ -26,6 +26,7 @@ export default defineConfig({
       components: {
         MarkdownContent: "./src/components/MarkdownContent.astro",
       },
+      disable404Route: true,
 
       sidebar: [
         {
