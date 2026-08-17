@@ -127,7 +127,7 @@ jobs:
           JSON
 
       - name: Initialize CodeQL (java-kotlin)
-        uses: github/codeql-action/init@5595ccaf912efad79be6eef63a5619ff05969be3 # v4
+        uses: github/codeql-action/init@ff2f1c621b7f889edc0d3c761ac2e6a3f8cdb0dd # v4
         with:
           languages: java-kotlin
           build-mode: manual
@@ -147,7 +147,7 @@ jobs:
             --stacktrace \
 
       - name: Perform CodeQL Analysis (java-kotlin)
-        uses: github/codeql-action/analyze@5595ccaf912efad79be6eef63a5619ff05969be3 # v4
+        uses: github/codeql-action/analyze@ff2f1c621b7f889edc0d3c761ac2e6a3f8cdb0dd # v4
         with:
           category: /language:java-kotlin
 
@@ -161,14 +161,14 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
 
       - name: Initialize CodeQL (actions)
-        uses: github/codeql-action/init@5595ccaf912efad79be6eef63a5619ff05969be3 # v4
+        uses: github/codeql-action/init@ff2f1c621b7f889edc0d3c761ac2e6a3f8cdb0dd # v4
         with:
           languages: actions
           build-mode: none
           queries: security-extended
 
       - name: Perform CodeQL Analysis (actions)
-        uses: github/codeql-action/analyze@5595ccaf912efad79be6eef63a5619ff05969be3 # v4
+        uses: github/codeql-action/analyze@ff2f1c621b7f889edc0d3c761ac2e6a3f8cdb0dd # v4
         with:
           category: /language:actions
 
@@ -182,14 +182,14 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
 
       - name: Initialize CodeQL (javascript-typescript)
-        uses: github/codeql-action/init@5595ccaf912efad79be6eef63a5619ff05969be3 # v4
+        uses: github/codeql-action/init@ff2f1c621b7f889edc0d3c761ac2e6a3f8cdb0dd # v4
         with:
           languages: javascript-typescript
           build-mode: none
           queries: security-extended
 
       - name: Perform CodeQL Analysis (javascript-typescript)
-        uses: github/codeql-action/analyze@5595ccaf912efad79be6eef63a5619ff05969be3 # v4
+        uses: github/codeql-action/analyze@ff2f1c621b7f889edc0d3c761ac2e6a3f8cdb0dd # v4
         with:
           category: /language:javascript-typescript
 
