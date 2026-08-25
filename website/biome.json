@@ -6,7 +6,11 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": ["**", "!**/dist", "!**/*.css", "!**/*.astro"]
+    "ignore": [
+      "**/dist",
+      "**/*.css",
+      "**/*.astro"
+    ]
   },
   "formatter": {
     "enabled": true,
