@@ -442,6 +442,10 @@ class RelationshipCommands(
         }
     }
 
+    /**
+     * Adds a new vault entry to the database.
+     * Performance optimization: uses case-insensitive comparison to avoid string allocations when parsing type.
+     */
     fun addVaultEntry(
         categoryTag: String,
         title: String,
@@ -451,11 +455,12 @@ class RelationshipCommands(
     ) {
         scope.launch {
             val cleanTag = categoryTag.trim().lowercase()
+            val cleanAsType = asType.trim()
             val type =
-                when (asType.trim().lowercase())
+                when
                 {
-                    "record" -> "record"
-                    "task", "maintenance" -> "task"
+                    cleanAsType.equals("record", ignoreCase = true) -> "record"
+                    cleanAsType.equals("task", ignoreCase = true) || cleanAsType.equals("maintenance", ignoreCase = true) -> "task"
                     else -> "note"
                 }
             val nodeId =
