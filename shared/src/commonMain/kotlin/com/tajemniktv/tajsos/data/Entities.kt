@@ -99,6 +99,17 @@ import kotlinx.serialization.Serializable
  * @property timeWindowContext Optional duration requirement string (e.g., 10_minute).
  * @property areaHealthStatus Optional health descriptor for an area (e.g., stable, overloaded).
  * @property metadataJson Optional serialized envelope for extended typed facets and domain mappings.
+ *
+ * Core polymorphic entity representing primary system objects in TajsOS.
+ *
+ * This table stores the shared attributes (such as title, content, status, due dates) for all
+ * major life objects including tasks, notes, projects, records, and areas. It serves as the
+ * fundamental element in the relational graph.
+ *
+ * The [type] field maps directly to the [com.tajemniktv.tajsos.data.ItemKind] enum.
+ * Domain-specific data beyond these shared attributes is stored either in [metadataJson] or in
+ * typed companion facet tables (e.g., `TaskFacetEntity`, `ProjectFacetEntity`), ensuring the core schema
+ * remains slim and strictly typed.
  */
 data class NodeEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,

@@ -24,6 +24,7 @@ import kotlin.time.Duration.Companion.days
  *
  * @param repository The central data repository providing database operations for calendar objects.
  * @param httpClient The configured HTTP client to perform external API queries.
+ * @param providers A list of available [CalendarProvider] implementations to handle specific protocol synchronizations.
  */
 class CalendarManager(
     private val repository: AppRepository,

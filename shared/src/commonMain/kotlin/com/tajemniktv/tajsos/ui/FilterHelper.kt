@@ -25,8 +25,8 @@ object FilterHelper {
      *
      * @param nodes The initial list of nodes with associated pins and tags to filter.
      * @param query A text query for partial-matching against titles, content, or tags (prefix with # to search tags only).
-     * @param type The specific type of node to include (e.g., "task", "project").
-     * @param status A comma-separated string of statuses to include (e.g., "active,on_hold").
+     * @param type The specific type of node to include based on [com.tajemniktv.tajsos.data.ItemKind] storage keys (e.g., "task", "project").
+     * @param status A comma-separated string of statuses to include. Evaluated as an OR condition against the node's status field (e.g., "active,on_hold").
      * @param projectId The ID of the project the node must belong to.
      * @param areaId The ID of the area the node must belong to.
      * @param linkedToId The ID of another node that this node must have a bidirectional relationship with.
