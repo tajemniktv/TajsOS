@@ -442,6 +442,15 @@ class RelationshipCommands(
         }
     }
 
+    /**
+     * Adds an entry to the vault with the specified parameters, normalizing its tag and base type.
+     *
+     * @param categoryTag The tag to apply to the vault entry.
+     * @param title The title of the vault entry.
+     * @param content The content of the vault entry.
+     * @param asType The raw base type of the vault entry, to be normalized.
+     * @param dueAt The optional due date timestamp.
+     */
     fun addVaultEntry(
         categoryTag: String,
         title: String,
@@ -452,11 +461,12 @@ class RelationshipCommands(
         scope.launch {
             val cleanTag = categoryTag.trim().lowercase()
             val type =
-                when (asType.trim().lowercase())
-                {
-                    "record" -> "record"
-                    "task", "maintenance" -> "task"
-                    else -> "note"
+                with(asType.trim()) {
+                    when {
+                        equals("record", ignoreCase = true) -> "record"
+                        equals("task", ignoreCase = true) || equals("maintenance", ignoreCase = true) -> "task"
+                        else -> "note"
+                    }
                 }
             val nodeId =
                 addNodeForResult(
