@@ -9,6 +9,10 @@ import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import java.io.File
 import com.tajemniktv.tajsos.utils.AppDirs
 
+/**
+ * Opens the local desktop database. During pre-alpha, a missing schema migration path
+ * triggers destructive recreation and loss of local data; this is not a backup mechanism.
+ */
 fun createDatabase(): AppDatabase {
     val dbFile = File(AppDirs.getAppDataDir(), "tajsos.db")
     return Room
