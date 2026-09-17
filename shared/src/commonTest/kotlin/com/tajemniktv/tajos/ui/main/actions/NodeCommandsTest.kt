@@ -229,6 +229,37 @@ class NodeCommandsTest {
     }
 
     @Test
+    fun `mergeNodes preserves requested order and ignores missing repeated and primary sources`() = runTest {
+        val repo = buildTestRepository()
+        val commands = setupTestCommands(this, repo)
+        repo.insertNode(NodeEntity(id = 1, type = "note", title = "Primary", content = "P"))
+        repo.insertNode(NodeEntity(id = 2, type = "note", title = "Second", content = "B"))
+        repo.insertNode(NodeEntity(id = 3, type = "note", title = "Third", content = "C"))
+
+        commands.mergeNodes(1, listOf(3, 999, 1, 2, 3))
+        testScheduler.advanceUntilIdle()
+
+        val primary = assertNotNull(repo.getNodeById(1))
+        assertEquals("P\n\n--- MERGED FROM Third ---\nC\n\n--- MERGED FROM Second ---\nB", primary.content)
+        assertFalse(primary.status == "archived")
+        assertEquals("archived", repo.getNodeById(2)?.status)
+        assertEquals("archived", repo.getNodeById(3)?.status)
+    }
+
+    @Test
+    fun `mergeNodes missing primary leaves sources unchanged`() = runTest {
+        val repo = buildTestRepository()
+        val commands = setupTestCommands(this, repo)
+        val id = repo.insertNode(NodeEntity(type = "note", title = "Source", content = "Keep"))
+        val before = repo.getNodeById(id)
+
+        commands.mergeNodes(999, listOf(id))
+        testScheduler.advanceUntilIdle()
+
+        assertEquals(before, repo.getNodeById(id))
+    }
+
+    @Test
     fun `temporary focus clamps both boundaries in local calendar days`() = runTest {
         val repo = buildTestRepository()
         val commands = setupTestCommands(this, repo)

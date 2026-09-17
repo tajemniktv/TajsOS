@@ -426,19 +426,23 @@ class NodeCommands(
     }
 
     /**
-     * Combines the content and relational metadata of two existing nodes into a single, unified node.
-     * The nodes in otherNodeIds are subsequently archived to prevent data duplication.
+     * Combines existing source nodes into the primary node in caller-supplied order.
+     * Sources are fetched in batches, then archived through the existing mutation path.
+     * Missing sources, repeated IDs, and the primary ID in the source list are ignored.
      */
     fun mergeNodes(
         primaryNodeId: Long,
         otherNodeIds: List<Long>,
     ) {
         scope.launch {
-            val primary = repository.getNodeById(primaryNodeId) ?: return@launch
+            val sourceIds = otherNodeIds.distinct().filter { it != primaryNodeId }
+            if (sourceIds.isEmpty()) return@launch
+            val nodesById = repository.getNodesByIds(sourceIds + primaryNodeId).associateBy { it.id }
+            val primary = nodesById[primaryNodeId] ?: return@launch
             var mergedContent = primary.content
 
-            for (otherId in otherNodeIds) {
-                repository.getNodeById(otherId)?.let { other ->
+            for (otherId in sourceIds) {
+                nodesById[otherId]?.let { other ->
                     mergedContent += "\n\n--- MERGED FROM ${other.title} ---\n${other.content}"
                     archiveNodeInternal(other)
                     val relations = repository.getRelationsForNode(otherId).first()

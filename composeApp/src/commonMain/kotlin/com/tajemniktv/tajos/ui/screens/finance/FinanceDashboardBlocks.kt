@@ -31,6 +31,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -388,6 +389,7 @@ internal fun renderFinanceQueueControlsBlock(context: FinanceDashboardContext) {
     }
 }
 
+/** Resolves area labels once per area-list change rather than scanning for each queue item. */
 @Composable
 internal fun renderFinanceQueueListBlock(context: FinanceDashboardContext) {
     if (context.itemsInView.isEmpty()) {
@@ -400,10 +402,11 @@ internal fun renderFinanceQueueListBlock(context: FinanceDashboardContext) {
         )
         return
     }
+    val areasById = remember(context.allAreas) { context.allAreas.associateBy { it.id } }
     for (item in context.itemsInView) {
         MaintenanceCard(
             item = item,
-            areaName = context.allAreas.find { it.id == item.node.node.areaId }?.title,
+            areaName = areasById[item.node.node.areaId]?.title,
             maintenanceTypes = maintenanceTypes,
             onEditNode = context.onEditNode,
             onSetType = { type -> context.viewModel.updateMaintenanceType(item.node.node, type) },

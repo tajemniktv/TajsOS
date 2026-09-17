@@ -60,6 +60,7 @@ jobs:
           FILTER_DOCS: ${{ steps.filter.outputs.docs }}
           FILTER_WEBSITE: ${{ steps.filter.outputs.website }}
           FILTER_KMP: ${{ steps.filter.outputs.kmp }}
+          EVENT_NAME: ${{ github.event_name }}
         run: |
           docs_only=false
           website_only=false
@@ -74,13 +75,11 @@ jobs:
             website_only=true
           fi
 
-          if [[ "${FILTER_KMP}" == "true" ]]; then
+          if [[ "${FILTER_KMP}" == "true" || "${EVENT_NAME}" == "workflow_dispatch" ]]; then
             run_gradle=true
           fi
 
-          if [[ "${FILTER_WEBSITE}" == "true" ]]; then
-            run_website=true
-          fi
+          # The legacy website is being replaced and is intentionally excluded from CI builds.
 
           {
             echo "docs_only=${docs_only}"

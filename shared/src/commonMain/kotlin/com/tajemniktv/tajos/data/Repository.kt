@@ -319,6 +319,13 @@ class AppRepository(
     suspend fun getNodeById(id: Long): NodeEntity? = nodeDao.getNodeById(id)
 
     /**
+     * Retrieves existing nodes in batches below SQLite's bind-parameter limit.
+     * Missing IDs are omitted and result order is unspecified.
+     */
+    suspend fun getNodesByIds(ids: List<Long>): List<NodeEntity> =
+        ids.distinct().chunked(900).flatMap { nodeDao.getNodesByIds(it) }
+
+    /**
      * Observes a typed local aggregate for a specific life object.
      *
      * This read model keeps the core node spine intact while joining typed facets,
