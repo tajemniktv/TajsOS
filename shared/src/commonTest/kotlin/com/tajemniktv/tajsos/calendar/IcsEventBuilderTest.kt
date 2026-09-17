@@ -109,6 +109,18 @@ class IcsEventBuilderTest {
         )
     }
 
+    /** Malformed provider parameters must not abort a calendar import. */
+    @Test
+    fun testExtractTimeZoneMalformedAndMultipleParameters() {
+        val builder = IcsEventBuilder()
+        val fallback = kotlinx.datetime.TimeZone.currentSystemDefault().id
+        for (key in listOf("DTSTART;TZID=", "DTSTART;VALUE=DATE", "DTSTART;TZID=  Europe/Paris  ", "DTSTART;TZIDEurope/Paris")) {
+            assertEquals(fallback, builder.extractTimeZone(key).id, key)
+        }
+        assertEquals("Europe/Paris", builder.extractTimeZone("DTSTART;TZID=Europe/Paris;TZID=Europe/London").id)
+        assertEquals("Europe/London", builder.extractTimeZone("DTSTART;TZID=Europe/London;VALUE=DATE-TIME").id)
+    }
+
     @Test
     fun testBuildMissingDtStart() {
         val builder = IcsEventBuilder()

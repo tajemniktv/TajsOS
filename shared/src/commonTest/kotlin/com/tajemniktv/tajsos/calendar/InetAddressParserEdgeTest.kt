@@ -9,11 +9,40 @@ import kotlin.test.assertEquals
 
 class InetAddressParserEdgeTest {
 
+    /** Protects network address classification at both ends of restricted IPv4 ranges. */
+    @Test
+    fun testIpv4LoopbackAndLinkLocalBoundaries() {
+        for (host in listOf("127.0.0.0", "127.255.255.255")) {
+            assertTrue(assertNotNull(parseIpAddress(host)).isLoopback(), host)
+        }
+        for (host in listOf("126.255.255.255", "128.0.0.0")) {
+            assertFalse(assertNotNull(parseIpAddress(host)).isLoopback(), host)
+        }
+        for (host in listOf("169.254.0.0", "169.254.255.255")) {
+            assertTrue(assertNotNull(parseIpAddress(host)).isLinkLocal(), host)
+        }
+        for (host in listOf("169.253.255.255", "169.255.0.0")) {
+            assertFalse(assertNotNull(parseIpAddress(host)).isLinkLocal(), host)
+        }
+    }
+
+    @Test
+    fun testIpv6LoopbackBoundaries() {
+        for (host in listOf("::1", "0:0:0:0:0:0:0:1")) {
+            assertTrue(assertNotNull(parseIpAddress(host)).isLoopback(), host)
+        }
+        for (host in listOf("::", "::2", "1::1")) {
+            assertFalse(assertNotNull(parseIpAddress(host)).isLoopback(), host)
+        }
+    }
+
     @Test
     fun testIpv4SiteLocalEdges() {
         // 10.x.x.x boundary
         assertTrue(parseIpAddress("10.0.0.0")!!.isSiteLocal())
         assertTrue(parseIpAddress("10.255.255.255")!!.isSiteLocal())
+        assertFalse(assertNotNull(parseIpAddress("9.255.255.255")).isSiteLocal())
+        assertFalse(assertNotNull(parseIpAddress("11.0.0.0")).isSiteLocal())
 
         // 172.16.x.x - 172.31.x.x boundaries
         assertTrue(parseIpAddress("172.16.0.0")!!.isSiteLocal())
@@ -25,6 +54,7 @@ class InetAddressParserEdgeTest {
         assertTrue(parseIpAddress("192.168.0.0")!!.isSiteLocal())
         assertTrue(parseIpAddress("192.168.255.255")!!.isSiteLocal())
         assertFalse(parseIpAddress("192.167.255.255")!!.isSiteLocal())
+        assertFalse(assertNotNull(parseIpAddress("192.169.0.0")).isSiteLocal())
     }
 
     @Test
