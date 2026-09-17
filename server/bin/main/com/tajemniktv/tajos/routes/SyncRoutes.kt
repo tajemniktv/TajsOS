@@ -2,12 +2,12 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
-package com.tajemniktv.tajsos.routes
+package com.tajemniktv.tajos.routes
 
-import com.tajemniktv.tajsos.dto.ErrorResponse
-import com.tajemniktv.tajsos.dto.SyncItem
-import com.tajemniktv.tajsos.dto.SyncRequest
-import com.tajemniktv.tajsos.dto.SyncResponse
+import com.tajemniktv.tajos.dto.ErrorResponse
+import com.tajemniktv.tajos.dto.SyncItem
+import com.tajemniktv.tajos.dto.SyncRequest
+import com.tajemniktv.tajos.dto.SyncResponse
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*

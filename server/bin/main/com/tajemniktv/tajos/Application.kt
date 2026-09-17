@@ -1,9 +1,9 @@
-package com.tajemniktv.tajsos
+package com.tajemniktv.tajos
 
 import java.security.MessageDigest
 
-import com.tajemniktv.tajsos.routes.healthRoutes
-import com.tajemniktv.tajsos.routes.syncRoutes
+import com.tajemniktv.tajos.routes.healthRoutes
+import com.tajemniktv.tajos.routes.syncRoutes
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*

@@ -2,13 +2,13 @@
  * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
  */
 
-package com.tajemniktv.tajsos
+package com.tajemniktv.tajos
 
 import io.ktor.client.request.header
-import com.tajemniktv.tajsos.dto.HealthResponse
-import com.tajemniktv.tajsos.dto.SyncItem
-import com.tajemniktv.tajsos.dto.SyncRequest
-import com.tajemniktv.tajsos.dto.SyncResponse
+import com.tajemniktv.tajos.dto.HealthResponse
+import com.tajemniktv.tajos.dto.SyncItem
+import com.tajemniktv.tajos.dto.SyncRequest
+import com.tajemniktv.tajos.dto.SyncResponse
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get

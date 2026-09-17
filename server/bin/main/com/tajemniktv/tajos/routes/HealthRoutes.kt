@@ -1,6 +1,6 @@
-package com.tajemniktv.tajsos.routes
+package com.tajemniktv.tajos.routes
 
-import com.tajemniktv.tajsos.dto.HealthResponse
+import com.tajemniktv.tajos.dto.HealthResponse
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
