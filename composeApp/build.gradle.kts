@@ -125,6 +125,9 @@ compose.desktop {
             )
 
         nativeDistributions {
+            // Dependency analysis requires these beyond Compose's default runtime modules.
+            // In particular, packaged startup needs jdk.unsupported for sun.misc.Unsafe.
+            modules("java.instrument", "java.management", "jdk.unsupported")
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "com.tajemniktv.tajsos"
             packageVersion = "1.0.0"
