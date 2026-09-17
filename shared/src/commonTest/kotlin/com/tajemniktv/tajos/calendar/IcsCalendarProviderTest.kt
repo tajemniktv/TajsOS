@@ -1,0 +1,380 @@
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
+package com.tajemniktv.tajos.calendar
+
+import com.tajemniktv.tajos.data.CalendarProviderEntity
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.mock.MockEngine
+import io.ktor.client.engine.mock.respond
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.headersOf
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestResult
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
+import kotlin.time.Instant
+
+@OptIn(ExperimentalCoroutinesApi::class)
+@Suppress("TestMethodWithoutAssertion")
+class IcsCalendarProviderTest {
+    private val testDispatcher = UnconfinedTestDispatcher()
+
+    @BeforeTest
+    fun setup() {
+        Dispatchers.setMain(testDispatcher)
+    }
+
+    @AfterTest
+    fun tearDown() {
+        Dispatchers.resetMain()
+    }
+
+    private fun createProviderWithIcs(icsContent: String): IcsCalendarProvider {
+        val mockEngine =
+            MockEngine { request ->
+                respond(
+                    content = icsContent,
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "text/calendar"),
+                )
+            }
+        val client = HttpClient(mockEngine)
+        return IcsCalendarProvider(client)
+    }
+
+    private val testProviderEntity =
+        CalendarProviderEntity(
+            id = 1,
+            name = "Test Provider",
+            type = "ICS",
+            url = "https://example.com/calendar.ics",
+        )
+
+    // Some arbitrary large range for tests where we just want all events
+    private val defaultFrom = Instant.fromEpochMilliseconds(0)
+    private val defaultTo = Instant.fromEpochMilliseconds(4102444800000) // year 2100
+
+    @Test
+    fun `test basic event parsing`(): TestResult =
+        runTest {
+            val ics =
+                """
+                BEGIN:VCALENDAR
+                BEGIN:VEVENT
+                UID:12345
+                SUMMARY:Test Event
+                DESCRIPTION:This is a test\nwith newlines
+                LOCATION:Home
+                DTSTART:20231024T100000Z
+                DTEND:20231024T110000Z
+                END:VEVENT
+                END:VCALENDAR
+                """.trimIndent()
+
+            val provider = createProviderWithIcs(ics)
+            val events = provider.fetchEvents(testProviderEntity, defaultFrom, defaultTo)
+
+            assertEquals(1, events.size)
+            val event = events[0]
+            assertEquals("12345", event.externalId)
+            assertEquals("Test Event", event.title)
+            assertEquals("This is a test\nwith newlines", event.description)
+            assertEquals("Home", event.location)
+            assertEquals(
+                Instant
+                    .parse("2023-10-24T10:00:00Z")
+                    .toEpochMilliseconds(),
+                event.startAt,
+            )
+            assertEquals(
+                Instant
+                    .parse("2023-10-24T11:00:00Z")
+                    .toEpochMilliseconds(),
+                event.endAt,
+            )
+            assertEquals(false, event.isAllDay)
+        }
+
+    @Test
+    fun `test all day event parsing`(): TestResult =
+        runTest {
+            val ics =
+                """
+                BEGIN:VCALENDAR
+                BEGIN:VEVENT
+                UID:allday
+                SUMMARY:All Day Event
+                DTSTART;VALUE=DATE:20231025
+                DTEND;VALUE=DATE:20231026
+                END:VEVENT
+                END:VCALENDAR
+                """.trimIndent()
+
+            val provider = createProviderWithIcs(ics)
+            val events = provider.fetchEvents(testProviderEntity, defaultFrom, defaultTo)
+
+            assertEquals(1, events.size)
+            val event = events[0]
+            assertEquals("All Day Event", event.title)
+            assertTrue(event.isAllDay)
+            assertEquals(
+                Instant
+                    .parse("2023-10-25T00:00:00Z")
+                    .toEpochMilliseconds(),
+                event.startAt,
+            )
+            assertEquals(
+                Instant
+                    .parse("2023-10-26T00:00:00Z")
+                    .toEpochMilliseconds(),
+                event.endAt,
+            )
+        }
+
+    @Test
+    fun `test event with folded lines and escaped chars`(): TestResult =
+        runTest {
+            val ics =
+                """
+                BEGIN:VCALENDAR
+                BEGIN:VEVENT
+                UID:folded
+                SUMMARY:Folded Event\, with comma
+                DESCRIPTION:Line 1
+                  Line 2
+                  Line 3\\
+                DTSTART:20231024T100000Z
+                END:VEVENT
+                END:VCALENDAR
+                """.trimIndent()
+
+            val provider = createProviderWithIcs(ics)
+            val events = provider.fetchEvents(testProviderEntity, defaultFrom, defaultTo)
+
+            assertEquals(1, events.size)
+            val event = events[0]
+            assertEquals("Folded Event, with comma", event.title)
+            assertEquals("Line 1 Line 2 Line 3\\", event.description)
+        }
+
+    @Test
+    fun `test filtering by date range`(): TestResult =
+        runTest {
+            val ics =
+                """
+                BEGIN:VCALENDAR
+                BEGIN:VEVENT
+                UID:1
+                SUMMARY:Early Event
+                DTSTART:20230101T100000Z
+                DTEND:20230101T110000Z
+                END:VEVENT
+                BEGIN:VEVENT
+                UID:2
+                SUMMARY:Late Event
+                DTSTART:20240101T100000Z
+                DTEND:20240101T110000Z
+                END:VEVENT
+                END:VCALENDAR
+                """.trimIndent()
+
+            val provider = createProviderWithIcs(ics)
+
+            // Filter out Late Event
+            val from = Instant.parse("2022-12-01T00:00:00Z")
+            val to = Instant.parse("2023-12-31T00:00:00Z")
+
+            val events = provider.fetchEvents(testProviderEntity, from, to)
+
+            assertEquals(1, events.size)
+            assertEquals("Early Event", events[0].title)
+        }
+
+    @Test
+    fun `test fallback to system default when TZID is invalid`(): TestResult =
+        runTest {
+            val ics =
+                """
+                BEGIN:VCALENDAR
+                BEGIN:VEVENT
+                UID:tz
+                SUMMARY:TZ Event
+                DTSTART;TZID=Invalid/Timezone:20231024T100000
+                END:VEVENT
+                END:VCALENDAR
+                """.trimIndent()
+
+            val provider = createProviderWithIcs(ics)
+            val events = provider.fetchEvents(testProviderEntity, defaultFrom, defaultTo)
+
+            assertEquals(1, events.size)
+            val event = events[0]
+            assertEquals("TZ Event", event.title)
+            // Ensure it doesn't crash and actually parses something
+            assertNotNull(event.startAt)
+        }
+
+    @Test
+    fun `test gracefully skip malformed dates`(): TestResult =
+        runTest {
+            val ics =
+                """
+                BEGIN:VCALENDAR
+                BEGIN:VEVENT
+                UID:1
+                SUMMARY:Malformed All Day
+                DTSTART;VALUE=DATE:2023
+                END:VEVENT
+                BEGIN:VEVENT
+                UID:2
+                SUMMARY:Malformed Iso Date
+                DTSTART:20231024T10
+                END:VEVENT
+                END:VCALENDAR
+                """.trimIndent()
+
+            val provider = createProviderWithIcs(ics)
+            val events = provider.fetchEvents(testProviderEntity, defaultFrom, defaultTo)
+
+            // The parser should skip events with malformed dates instead of throwing StringIndexOutOfBoundsException
+            assertEquals(0, events.size)
+        }
+
+    @Test
+    fun `test skip invalid date values`(): TestResult =
+        runTest {
+            val ics =
+                """
+                BEGIN:VCALENDAR
+                BEGIN:VEVENT
+                UID:invalid-month
+                SUMMARY:Invalid Month
+                DTSTART;VALUE=DATE:20231301
+                END:VEVENT
+                BEGIN:VEVENT
+                UID:non-numeric
+                SUMMARY:Non Numeric
+                DTSTART;VALUE=DATE:202310XX
+                END:VEVENT
+                BEGIN:VEVENT
+                UID:invalid-iso
+                SUMMARY:Invalid ISO
+                DTSTART:20231024T256060Z
+                END:VEVENT
+                END:VCALENDAR
+                """.trimIndent()
+
+            val provider = createProviderWithIcs(ics)
+            val events = provider.fetchEvents(testProviderEntity, defaultFrom, defaultTo)
+
+            // The parser should catch exceptions during date conversion and skip those events
+            assertEquals(0, events.size)
+        }
+
+    @Test
+    fun `test SSRF validation blocks dangerous URLs`(): TestResult =
+        runTest {
+            val ics =
+                """
+                BEGIN:VCALENDAR
+                BEGIN:VEVENT
+                UID:123
+                SUMMARY:Test
+                DTSTART:20231024T100000Z
+                END:VEVENT
+                END:VCALENDAR
+                """.trimIndent()
+
+            val provider = createProviderWithIcs(ics)
+
+            val testCases =
+                listOf(
+                    "file:///etc/passwd" to 0,
+                    "ftp://example.com/test.ics" to 0,
+                    "http://localhost:8080/test.ics" to 0,
+                    "http://127.0.0.1/test.ics" to 0,
+                    "http://127.1/test.ics" to 0,
+                    "http://2130706433/test.ics" to 0,
+                    "http://0177.0.0.1/test.ics" to 0,
+                    "http://0x7f000001/test.ics" to 0,
+                    "http://169.254.169.254/latest/meta-data" to 0,
+                    "http://metadata.google.internal/computeMetadata/v1/" to 0,
+                    "http://example.internal/test.ics" to 0,
+                    "http://service.local/test.ics" to 0,
+                    "http://10.0.0.1/test.ics" to 0,
+                    "http://192.168.1.1/test.ics" to 0,
+                    "https://example.com/test.ics" to 1,
+                    "http://public-ip.com/test.ics" to 1,
+                )
+
+            for ((url, expectedCount) in testCases) {
+                val entity =
+                    CalendarProviderEntity(
+                        id = 1,
+                        name = "Test",
+                        type = "ICS",
+                        url = url,
+                    )
+                val events = provider.fetchEvents(entity, defaultFrom, defaultTo)
+                assertEquals(expectedCount, events.size, "Failed for URL: $url")
+            }
+        }
+
+    @Test
+    fun `test fallback to system default when TZID parameter is malformed`(): TestResult =
+        runTest {
+            val ics =
+                """
+                BEGIN:VCALENDAR
+                BEGIN:VEVENT
+                UID:malformed-tzid
+                SUMMARY:Malformed TZID Event
+                DTSTART;TZID=:20231024T100000
+                END:VEVENT
+                BEGIN:VEVENT
+                UID:missing-tzid
+                SUMMARY:Missing TZID Event
+                DTSTART:20231024T100000
+                END:VEVENT
+                BEGIN:VEVENT
+                UID:valid-tzid
+                SUMMARY:Valid TZID Event
+                DTSTART;TZID=America/New_York:20231024T100000
+                END:VEVENT
+                END:VCALENDAR
+                """.trimIndent()
+
+            val provider = createProviderWithIcs(ics)
+            val events = provider.fetchEvents(testProviderEntity, defaultFrom, defaultTo)
+
+            assertEquals(3, events.size)
+
+            val malformed = events.find { it.externalId == "malformed-tzid" }
+            assertNotNull(malformed)
+            assertEquals("Malformed TZID Event", malformed.title)
+            assertNotNull(malformed.startAt)
+
+            val missing = events.find { it.externalId == "missing-tzid" }
+            assertNotNull(missing)
+            assertEquals("Missing TZID Event", missing.title)
+            assertNotNull(missing.startAt)
+
+            val valid = events.find { it.externalId == "valid-tzid" }
+            assertNotNull(valid)
+            assertEquals("Valid TZID Event", valid.title)
+            assertNotNull(valid.startAt)
+        }
+
+}

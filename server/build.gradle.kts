@@ -9,10 +9,10 @@ plugins {
     application
 }
 
-group = "com.tajemniktv.tajsos"
+group = "com.tajemniktv.tajos"
 version = "1.0.0"
 application {
-    mainClass.set("com.tajemniktv.tajsos.ApplicationKt")
+    mainClass.set("com.tajemniktv.tajos.ApplicationKt")
 
     val isDevelopment: Boolean = project.ext.has("development")
     applicationDefaultJvmArgs = listOf(

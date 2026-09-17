@@ -1,0 +1,33 @@
+package com.tajemniktv.tajos.ui
+
+import com.tajemniktv.tajos.data.NodeEntity
+import com.tajemniktv.tajos.data.NodeWithPin
+import com.tajemniktv.tajos.data.TagEntity
+
+internal fun buildTestNode(
+    id: Long,
+    title: String,
+    content: String = "",
+    type: String = "task",
+    status: String = "active",
+    tags: List<String> = emptyList(),
+    updatedAt: Long = 0L,
+    dueAt: Long? = null,
+): NodeWithPin =
+    NodeWithPin(
+        node =
+            NodeEntity(
+                id = id,
+                title = title,
+                content = content,
+                type = type,
+                status = status,
+                updatedAt = updatedAt,
+                dueAt = dueAt,
+            ),
+        pin = null,
+        tags =
+            tags.mapIndexed { index, tag ->
+                TagEntity(id = index.toLong(), name = tag, normalizedName = tag.lowercase())
+            },
+    )

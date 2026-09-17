@@ -21,7 +21,7 @@ android {
         create("release") {
         }
     }
-    namespace = "com.tajemniktv.tajsos"
+    namespace = "com.tajemniktv.tajos"
     compileSdk {
         version =
             release(
@@ -37,7 +37,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.tajemniktv.tajsos"
+        applicationId = "com.tajemniktv.tajos"
         minSdk =
             libs.versions.android.minSdk
                 .get()

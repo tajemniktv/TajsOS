@@ -1,0 +1,26 @@
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
+package com.tajemniktv.tajos.ui.screens.openloops
+
+import androidx.compose.runtime.Composable
+import com.tajemniktv.tajos.ui.MainViewModel
+
+enum class OpenLoopsDashboardSurface { MOBILE, DESKTOP }
+
+data class OpenLoopsDashboardBlock(
+    val id: String,
+)
+
+data class OpenLoopsDashboardPlan(
+    val primary: List<OpenLoopsDashboardBlock>,
+    val secondary: List<OpenLoopsDashboardBlock> = emptyList(),
+)
+
+data class OpenLoopsDashboardContext(
+    val viewModel: MainViewModel,
+    val onEditNode: (Long) -> Unit,
+)
+
+typealias OpenLoopsDashboardBlockRenderer = @Composable (OpenLoopsDashboardContext) -> Unit

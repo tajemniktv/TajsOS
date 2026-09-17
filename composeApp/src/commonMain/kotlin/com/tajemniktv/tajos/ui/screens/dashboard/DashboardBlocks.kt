@@ -1,0 +1,104 @@
+/*
+ * Copyright (c) Grzegorz Kaczmarski (TajemnikTV) 2026. All rights reserved.
+ */
+
+package com.tajemniktv.tajos.ui.screens.dashboard
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CenterFocusStrong
+import androidx.compose.material.icons.filled.EmojiEvents
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import com.tajemniktv.tajos.data.NodeWithPin
+import com.tajemniktv.tajos.ui.components.cards.AlertCard
+import com.tajemniktv.tajos.ui.components.cards.DashCard
+import com.tajemniktv.tajos.ui.components.nodes.SuggestionGroup
+import com.tajemniktv.tajos.ui.theme.TajsOSTheme
+
+/**
+ * Renders the current focused task area or an empty-state alert when no active task is set.
+ *
+ * When `activeTask` is null, displays an alert prompting the user to assign a task. When non-null,
+ * displays a "CURRENT FOCUS" header and a tappable card showing the task title and, if present,
+ * its next smallest step.
+ *
+ * @param activeTask The currently active task to display, or `null` to show the empty-state alert.
+ * @param onEdit Callback invoked with the task's id when the task card is tapped.
+ */
+@Composable
+fun CurrentTaskBlock(
+    activeTask: NodeWithPin?,
+    onEdit: (Long) -> Unit,
+) {
+    if (activeTask == null) {
+        AlertCard(
+            title = "NO ACTIVE TASK",
+            description = "Assign a task to focus on.",
+            icon = Icons.Default.Info,
+            color = TajsOSTheme.Muted,
+            onClick = {},
+        )
+    } else {
+        Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
+            com.tajemniktv.tajos.ui.components.common.DetailSectionHeader(
+                title = "CURRENT FOCUS",
+                icon = Icons.Default.CenterFocusStrong,
+            )
+            DashCard(onClick = { onEdit(activeTask.node.id) }) {
+                Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
+                    Text(
+                        activeTask.node.title,
+                        style = MaterialTheme.typography.titleLarge,
+                        color = TajsOSTheme.Primary,
+                    )
+                    if (activeTask.node.nextSmallestStep != null) {
+                        Text(
+                            "NEXT: ${activeTask.node.nextSmallestStep}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = TajsOSTheme.Accent,
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ErrandListBlock(
+    errands: List<NodeWithPin>,
+    onEdit: (Long) -> Unit,
+) {
+    if (errands.isNotEmpty()) {
+        SuggestionGroup(
+            title = "ERRANDS // OUT AND ABOUT",
+            icon = Icons.Default.ShoppingCart,
+            color = TajsOSTheme.AccentCyan,
+            nodes = errands,
+            onEditNode = onEdit,
+        )
+    }
+}
+
+@Composable
+fun TinyVictoriesBlock(
+    victories: List<NodeWithPin>,
+    onEdit: (Long) -> Unit,
+) {
+    if (victories.isNotEmpty()) {
+        SuggestionGroup(
+            title = "TINY VICTORIES // RECENT",
+            icon = Icons.Default.EmojiEvents,
+            color = TajsOSTheme.AccentAmber,
+            nodes = victories,
+            onEditNode = onEdit,
+        )
+    }
+}

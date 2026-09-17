@@ -6,6 +6,15 @@
 insight. It is not necessarily for ADHD brains, but it is designed with neurodivergent brains in
 mind.
 
+### Application identity
+
+The application ID and source package root are `com.tajemniktv.tajos`.
+Android treats this as a separate app from the previous ID; existing Android app data is not
+automatically transferred. Desktop data remains in the existing TajsOS data directory.
+Firebase builds require a `google-services.json` downloaded for the new Android registration,
+including the `GOOGLE_SERVICES_JSON` repository secret when configured. Do not relabel the old
+Firebase client configuration. The public CI placeholder is only for build checks.
+
 ### Features
 
 - a **command center** for what matters now,

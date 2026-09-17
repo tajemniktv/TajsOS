@@ -19,7 +19,7 @@ kotlin {
     jvmToolchain(25)
     // Android target configured via androidLibrary block (replaces androidTarget + android{})
     android {
-        namespace = "com.tajemniktv.tajsos.shared"
+        namespace = "com.tajemniktv.tajos.shared"
         compileSdk {
             version =
                 release(

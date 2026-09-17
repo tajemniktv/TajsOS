@@ -25,7 +25,7 @@ kotlin {
     jvmToolchain(25)
     // Android target configured via android block (replaces androidTarget + android{}) (Earlier: androidLibrary)
     android {
-        namespace = "com.tajemniktv.tajsos.composeapp"
+        namespace = "com.tajemniktv.tajos.composeapp"
         compileSdk {
             version =
                 release(
@@ -117,7 +117,7 @@ kotlin {
 
 compose.desktop {
     application {
-        mainClass = "com.tajemniktv.tajsos.MainKt"
+        mainClass = "com.tajemniktv.tajos.MainKt"
         jvmArgs +=
             listOf(
                 "--enable-native-access=ALL-UNNAMED",
@@ -129,7 +129,7 @@ compose.desktop {
             // In particular, packaged startup needs jdk.unsupported for sun.misc.Unsafe.
             modules("java.instrument", "java.management", "jdk.unsupported")
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.tajemniktv.tajsos"
+            packageName = "com.tajemniktv.tajos"
             packageVersion = "1.0.0"
             windows {
                 iconFile.set(project.file("desktop-icons/tajsos-icon.ico"))
