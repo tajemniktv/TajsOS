@@ -73,6 +73,8 @@ Desktop surfaces now use a shared mouse interaction model:
 - Right click: context menu on major navigable shell/list/card items.
 - Middle click: mirrors primary activation on navigable surfaces.
 - Mouse back/forward buttons: wired into app navigation.
+- The desktop header search entry opens global search by click or keyboard activation;
+  compact layouts expose the same destination through a search icon.
 
 Current limits:
 

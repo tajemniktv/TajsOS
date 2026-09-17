@@ -4,7 +4,6 @@
 
 package com.tajemniktv.tajsos.ui.components.layout
 
-import com.tajemniktv.tajsos.ui.components.TactileOutlinedTextField
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -36,7 +35,6 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -69,6 +67,7 @@ import tajsos.composeapp.generated.resources.header_mode_label
 import tajsos.composeapp.generated.resources.header_notifications
 import tajsos.composeapp.generated.resources.header_notifications_title
 import tajsos.composeapp.generated.resources.header_search_placeholder
+import tajsos.composeapp.generated.resources.screen_search
 
 /**
  * Mode option model shown by the header mode switcher.
@@ -96,6 +95,7 @@ data class ShellModeOption(
  * @param shellState The current UI state of the app shell components.
  * @param isDesktop Whether the current environment is a desktop layout.
  * @param onModeSelect Callback when a mode is selected from the switcher.
+ * @param onSearchClick Opens the shell's canonical search destination.
  * @param modifier The modifier to be applied to the layout.
  */
 @Composable
@@ -109,6 +109,7 @@ fun AppShellHeader(
     isDesktop: Boolean,
     onModeSelect: (Long) -> Unit,
     screenHeader: ScreenHeaderModel,
+    onSearchClick: () -> Unit,
     modifier: Modifier = Modifier,
     onMenuClick: (() -> Unit)? = null,
 ) {
@@ -154,7 +155,7 @@ fun AppShellHeader(
 
                 if (isDesktop) {
                     Spacer(Modifier.width(24.dp))
-                    GlobalSearchBar(modifier = Modifier.weight(1f))
+                    GlobalSearchBar(onClick = onSearchClick, modifier = Modifier.weight(1f))
                     Spacer(Modifier.width(24.dp))
                     HeaderScreenContext(
                         model = screenHeader,
@@ -170,6 +171,13 @@ fun AppShellHeader(
                     }
                 } else {
                     Spacer(Modifier.width(12.dp))
+                    IconButton(onClick = onSearchClick, modifier = Modifier.size(48.dp)) {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = stringResource(Res.string.screen_search),
+                            tint = TajsOSTheme.Text,
+                        )
+                    }
                     if (screenHeader.actions != null) {
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -323,44 +331,43 @@ private fun HeaderBreadcrumbs(breadcrumbs: List<ScreenHeaderBreadcrumb>) {
 }
 
 /**
- * Header search entry placeholder prepared as a global shell search point.
+ * Global search navigation entry, not an editable field. The shared click modifier provides
+ * keyboard and accessibility activation without a text field consuming pointer events.
+ *
+ * @param onClick Opens global search when the entry is activated.
  */
 @Composable
-fun GlobalSearchBar(modifier: Modifier = Modifier) {
-    TactileOutlinedTextField(
-        value = "",
-        onValueChange = {},
-        readOnly = true,
-        singleLine = true,
+fun GlobalSearchBar(onClick: () -> Unit, modifier: Modifier = Modifier) {
+    Surface(
         modifier =
-            modifier.glassChrome(
-                shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                material = GlassMaterial.THIN,
-            ),
-        textStyle = MaterialTheme.typography.bodyMedium.copy(color = TajsOSTheme.Text),
-        colors =
-            androidx.compose.material3.OutlinedTextFieldDefaults.colors(
-                unfocusedContainerColor = glassContainerColor(TajsOSTheme.SurfaceHigh.copy(alpha = 0.5f)),
-                focusedContainerColor = glassContainerColor(TajsOSTheme.SurfaceHighest.copy(alpha = 0.7f)),
-                unfocusedBorderColor = Color.Transparent,
-                focusedBorderColor = TajsOSTheme.GhostBorder,
-            ),
-        placeholder = {
-            Text(
-                text = stringResource(Res.string.header_search_placeholder),
-                style = MaterialTheme.typography.bodyMedium,
-                color = TajsOSTheme.Muted,
-            )
-        },
-        leadingIcon = {
+            modifier
+                .glassChrome(
+                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+                    material = GlassMaterial.THIN,
+                )
+                .mouseClickable(onClick = onClick, role = Role.Button, middleClickFallbackToPrimary = true),
+        color = glassContainerColor(TajsOSTheme.SurfaceHigh.copy(alpha = 0.5f)),
+        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
+    ) {
+        Row(
+            modifier = Modifier.height(56.dp).padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
             Icon(
                 imageVector = Icons.Default.Search,
                 contentDescription = null,
                 tint = TajsOSTheme.Muted,
             )
-        },
-        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-    )
+            Text(
+                text = stringResource(Res.string.header_search_placeholder),
+                style = MaterialTheme.typography.bodyMedium,
+                color = TajsOSTheme.Muted,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+    }
 }
 
 /**
