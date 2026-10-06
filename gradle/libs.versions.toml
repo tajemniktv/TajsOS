@@ -1,7 +1,7 @@
 [versions]
-agp = "9.4.0"
+agp = "9.4.1"
 android-compileSdk = "37"
-android-compileSdkMinor = "0"
+android-compileSdkMinor = "2"
 android-buildTools = "37.0.0"
 android-minSdk = "24"
 # Targeting Android 17 (API 37) intentionally opts into Android 17 behavior changes.

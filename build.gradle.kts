@@ -21,6 +21,7 @@ plugins {
     alias(libs.plugins.composeStabilityAnalyzer) apply false
 }
 
+
 kover {
     reports {
         total {

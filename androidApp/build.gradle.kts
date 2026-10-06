@@ -23,17 +23,9 @@ android {
     }
     namespace = "com.tajemniktv.tajos"
     compileSdk {
-        version =
-            release(
-                libs.versions.android.compileSdk
-                    .get()
-                    .toInt(),
-            ) {
-                minorApiLevel =
-                    libs.versions.android.compileSdkMinor
-                        .get()
-                        .toInt()
-            }
+        version = release(37) {
+            minorApiLevel = 2
+        }
     }
 
     defaultConfig {
@@ -70,9 +62,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_25
         targetCompatibility = JavaVersion.VERSION_25
     }
-    buildToolsVersion =
-        libs.versions.android.buildTools
-            .get()
+
 }
 
 kotlin {

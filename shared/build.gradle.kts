@@ -20,6 +20,7 @@ kotlin {
     // Android target configured via androidLibrary block (replaces androidTarget + android{})
     android {
         namespace = "com.tajemniktv.tajos.shared"
+        testNamespace = "com.tajemniktv.tajos.shared.test"
         compileSdk {
             version =
                 release(
@@ -33,9 +34,6 @@ kotlin {
                             .toInt()
                 }
         }
-        buildToolsVersion =
-            libs.versions.android.buildTools
-                .get()
         minSdk =
             libs.versions.android.minSdk
                 .get()
@@ -45,10 +43,7 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_25)
         }
 
-        withHostTest {
-            isIncludeAndroidResources = true
-            isReturnDefaultValues = true
-        }
+
     }
 
     iosArm64()

@@ -26,6 +26,7 @@ kotlin {
     // Android target configured via android block (replaces androidTarget + android{}) (Earlier: androidLibrary)
     android {
         namespace = "com.tajemniktv.tajos.composeapp"
+        testNamespace = "com.tajemniktv.tajos.composeapp.test"
         compileSdk {
             version =
                 release(
@@ -39,9 +40,6 @@ kotlin {
                             .toInt()
                 }
         }
-        buildToolsVersion =
-            libs.versions.android.buildTools
-                .get()
         minSdk =
             libs.versions.android.minSdk
                 .get()
@@ -56,10 +54,7 @@ kotlin {
             enable = true
         }
 
-        withHostTest {
-            isIncludeAndroidResources = true
-            isReturnDefaultValues = true
-        }
+
     }
 
     listOf(
