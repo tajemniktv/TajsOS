@@ -23,10 +23,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajos.ui.theme.TajsOSTheme
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
-import dev.chrisbanes.haze.materials.CupertinoMaterials
-import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
+import dev.chrisbanes.haze.HazeInput
+import dev.chrisbanes.haze.blur.HazeColorEffect
+import dev.chrisbanes.haze.blur.hazeBlur
+import dev.chrisbanes.haze.blur.materials.CupertinoMaterials
 
 /**
  * Global glass rendering configuration.
@@ -89,9 +89,9 @@ fun isGlassEnabled(): Boolean {
 }
 
 /**
- * Shared glass-style chrome for shell and reusable cards.
+ * Shared glass-style chrome using source-backed Haze blur for shell and reusable cards.
+ * Disabled glass bypasses the effect entirely; styles preserve the preset blur and theme tints.
  */
-@OptIn(ExperimentalHazeMaterialsApi::class)
 @Composable
 fun Modifier.glassChrome(
     shape: Shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
@@ -116,19 +116,19 @@ fun Modifier.glassChrome(
         }
 
     val hazeModifier =
-        Modifier.hazeEffect(
-            state = hazeState,
-            style = style,
-            block = {
-                noiseFactor = 0.22f
-                tints =
+        Modifier.hazeBlur(
+            input = HazeInput.Sources(hazeState),
+            style = style.then {
+                noiseFactor(0.22f)
+                colorEffects(
                     listOf(
-                        HazeTint(
+                        HazeColorEffect.tint(
                             TajsOSTheme.Text.copy(alpha = 0.08f),
                             blendMode = BlendMode.Screen,
                         ),
-                        HazeTint(TajsOSTheme.SurfaceHigh.copy(alpha = 0.18f)),
-                    )
+                        HazeColorEffect.tint(TajsOSTheme.SurfaceHigh.copy(alpha = 0.18f)),
+                    ),
+                )
             },
         )
 

@@ -8,47 +8,42 @@ android-minSdk = "24"
 android-targetSdk = "37"
 androidx-activity = "1.13.0"
 androidx-appcompat = "1.8.0"
-androidx-core = "1.19.0"
+androidx-core = "1.19.1"
 androidx-espresso = "3.7.0"
 androidx-lifecycle = "2.11.0"
 androidx-biometric = "1.4.0-alpha07"
 androidx-testExt = "1.3.0"
 androidx-room = "2.8.5"
 androidx-datastore = "1.2.1"
-androidx-navigation = "2.9.2"
-androidx-sqlite = "2.7.0"
+androidx-navigation = "2.10.0-rc01"
+androidx-sqlite = "2.7.1"
 kotlinx-datetime = "0.8.0"
-kotlinx-serialization = "1.11.0"
+kotlinx-serialization = "1.12.0-RC"
 composeHotReload = "1.2.0"
-composeMultiplatform = "1.12.0"
+composeMultiplatform = "1.12.1"
 compose-icons = "1.7.3"
 junit = "4.13.2"
 # Keep the compiler within the Kotlin range supported by the CI CodeQL extractor.
-kotlin = "2.4.10"
+kotlin = "2.4.21"
 kotlinx-coroutines = "1.11.0"
 turbine = "1.2.1"
 mockk = "1.14.11"
-ktor = "3.5.2"
-logback = "1.6.3"
+ktor = "3.6.0"
+logback = "1.6.5"
 material = "1.14.0"
+# Latest Material 3 on the stable Compose 1.12 runtime; 1.13 alphas require an alpha runtime.
 material3 = "1.12.0-alpha03"
-slf4j-android = "2.0.17-0"
-kover = "0.9.9"
+slf4j-android = "2.0.20-0"
+kover = "0.9.11"
 ksp = "2.3.12"
 google-services = "4.5.0"
-firebase-auth-native = "24.2.0"
-firebase-firestore-native = "26.6.0"
-firebase-analytics-native = "23.2.0"
-firebase-common-native = "22.2.1"
-firebase-crashlytics-native = "20.1.1"
-firebase-perf-native = "22.0.6"
-firebase-config-native = "23.1.0"
-firebase-bom = "34.19.0"
+# Firebase SDK versions are aligned by this BOM in each Android consumer.
+firebase-bom = "35.0.0"
 firebase-crashlytics-gradle = "3.0.8"
 firebase-app-distribution-gradle = "5.3.0"
 firebase-perf-gradle = "2.0.2"
-haze = "1.7.3"
-compose-stability = "0.13.0"
+haze = "2.0.1"
+compose-stability = "0.15.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -98,16 +93,17 @@ ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "kto
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
-firebase-auth-native = { module = "com.google.firebase:firebase-auth", version.ref = "firebase-auth-native" }
-firebase-firestore-native = { module = "com.google.firebase:firebase-firestore", version.ref = "firebase-firestore-native" }
-firebase-analytics-native = { module = "com.google.firebase:firebase-analytics", version.ref = "firebase-analytics-native" }
-firebase-common-native = { module = "com.google.firebase:firebase-common", version.ref = "firebase-common-native" }
-firebase-crashlytics-native = { module = "com.google.firebase:firebase-crashlytics", version.ref = "firebase-crashlytics-native" }
-firebase-perf-native = { module = "com.google.firebase:firebase-perf", version.ref = "firebase-perf-native" }
-firebase-config-native = { module = "com.google.firebase:firebase-config", version.ref = "firebase-config-native" }
+firebase-auth-native = { module = "com.google.firebase:firebase-auth" }
+firebase-firestore-native = { module = "com.google.firebase:firebase-firestore" }
+firebase-analytics-native = { module = "com.google.firebase:firebase-analytics" }
+firebase-common-native = { module = "com.google.firebase:firebase-common" }
+firebase-crashlytics-native = { module = "com.google.firebase:firebase-crashlytics" }
+firebase-perf-native = { module = "com.google.firebase:firebase-perf" }
+firebase-config-native = { module = "com.google.firebase:firebase-config" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
 haze-core = { module = "dev.chrisbanes.haze:haze", version.ref = "haze" }
-haze-materials = { module = "dev.chrisbanes.haze:haze-materials", version.ref = "haze" }
+haze-blur = { module = "dev.chrisbanes.haze:haze-blur", version.ref = "haze" }
+haze-materials = { module = "dev.chrisbanes.haze:haze-blur-materials", version.ref = "haze" }
 composeStabilityRuntime = { module = "com.github.skydoves:compose-stability-runtime", version.ref = "compose-stability" }
 
 [plugins]

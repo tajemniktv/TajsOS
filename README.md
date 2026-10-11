@@ -119,6 +119,30 @@ Current limits:
 - **Backend:** Ktor (for sync / remote features)
 - **Build system:** Gradle Kotlin DSL
 
+### Dependency updates and local validation
+
+Gradle dependencies are centralized in `gradle/libs.versions.toml`, and the wrapper is pinned with
+a distribution SHA-256 checksum. Prefer the latest stable toolchain and persistence releases;
+release candidates are acceptable when compatible with the selected Kotlin compiler and runtime.
+Material 3 remains on the Compose 1.12-compatible alpha line rather than pulling the Compose 1.13
+alpha runtime into an otherwise stable UI stack.
+
+Firebase SDK versions come from the same BOM in both Android consumers (`androidApp` and the
+Android source set of `composeApp`). Do not add independent SDK pins that can drift from the BOM.
+Haze blur uses the Haze 2 `haze-blur` and `haze-blur-materials` modules, immutable styles, and explicit
+source inputs; disabling shell glass bypasses its source capture and blur modifiers.
+
+Validate shared logic, desktop UI logic, server behavior, Android lint, and Android packaging with:
+
+```powershell
+.\gradlew.bat :shared:jvmTest :composeApp:jvmTest :server:test :androidApp:lintDebug :androidApp:assembleDebug :koverXmlReport
+.\gradlew.bat :composeApp:createDistributable
+```
+
+Website dependencies and their lockfile are maintained separately. Run `npm ci`, `npm run check`,
+and `npm run build` from `website/` after updates. See its README for compatibility constraints.
+These checks do not establish device acceptance, visual correctness, or iOS compatibility.
+
 ### UI layering
 
 The Compose app now separates UI composition into three explicit layers:

@@ -54,7 +54,9 @@ import com.tajemniktv.tajos.ui.Screen
 import com.tajemniktv.tajos.ui.components.screen.ScreenScaffold
 import com.tajemniktv.tajos.ui.components.screen.ScreenScrollBehavior
 import com.tajemniktv.tajos.ui.theme.TajsOSTheme
-import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.HazeInput
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.hazeBlur
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -734,7 +736,7 @@ private fun BriefingCaptureField(onClick: () -> Unit) {
 }
 
 /**
- * Draws a rounded container with a subtle radial gradient used as the briefing background.
+ * Draws a rounded radial-gradient background with a source-backed Haze blur overlay.
  *
  * @param modifier Modifier applied to the container (e.g., sizing, padding, or layout adjustments).
  */
@@ -769,10 +771,10 @@ private fun BriefingAtmosphere(modifier: Modifier = Modifier) {
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .hazeEffect(
-                        state = hazeState,
-                        block = {
-                            noiseFactor = 0.25f
+                    .hazeBlur(
+                        input = HazeInput.Sources(hazeState),
+                        style = HazeBlurStyle {
+                            noiseFactor(0.25f)
                         },
                     ),
         )

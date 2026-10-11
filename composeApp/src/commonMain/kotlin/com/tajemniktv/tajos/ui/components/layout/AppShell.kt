@@ -109,7 +109,7 @@ fun AppShell(
             ?: stringResource(Res.string.shell_protocol_state_standby)
     val modeOptions = rememberModeOptions(allModes)
     val standbyLabel = stringResource(Res.string.shell_mode_standby)
-    val hazeState = rememberHazeState(blurEnabled = isGlassmorphismEnabled)
+    val hazeState = rememberHazeState()
     ProvideGlassSystem(
         enabled = isGlassmorphismEnabled,
         hazeState = hazeState,

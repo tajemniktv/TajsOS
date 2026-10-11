@@ -86,6 +86,7 @@ kotlin {
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.haze.core)
+            implementation(libs.haze.blur)
             implementation(libs.haze.materials)
             implementation(libs.composeStabilityRuntime)
             implementation(projects.shared)
@@ -101,6 +102,7 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
+                implementation(project.dependencies.platform(libs.firebase.bom))
                 implementation(libs.firebase.auth.native)
                 implementation(libs.firebase.firestore.native)
                 implementation(libs.firebase.analytics.native)
