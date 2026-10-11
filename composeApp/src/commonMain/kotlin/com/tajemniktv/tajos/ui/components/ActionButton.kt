@@ -117,7 +117,6 @@ private fun resolveActionButtonColors(
     )
 }
 
-@Composable
 private fun resolveActionButtonModifier(
     modifier: Modifier,
     isPrimary: Boolean,

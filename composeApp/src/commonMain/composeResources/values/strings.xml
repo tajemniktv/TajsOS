@@ -1260,6 +1260,31 @@
     <string name="voice_speak_now">Speak now...</string>
     <string name="intent_shared_image">Shared Image</string>
     <string name="intent_shared_images">Shared Images</string>
+    <string name="detail_frequency">Frequency</string>
+    <string name="detail_effort">Effort</string>
+    <string name="detail_automation">Automation</string>
+    <string name="detail_priority">Priority</string>
+    <string name="detail_unscoped">UNSCOPED</string>
+    <string name="detail_subtask_matrix">Subtask Matrix</string>
+    <string name="detail_subtask_done">Done</string>
+    <string name="detail_subtask_in_progress">In Progress</string>
+    <string name="detail_subtask_queued">Queued</string>
+    <string name="detail_due_tomorrow">Tomorrow</string>
+    <string name="detail_due_in_seven_days">In 7 days</string>
+    <string name="detail_recurring">Recurring</string>
+    <string name="detail_automation_active">Active</string>
+    <string name="detail_automation_off">Off</string>
+    <string name="detail_priority_critical">Critical</string>
+    <string name="detail_priority_standard">Standard</string>
+    <string name="detail_priority_high_intensity">High intensity</string>
+    <string name="detail_priority_high_friction">High friction</string>
+    <string name="detail_priority_overdue">Overdue</string>
+    <string name="detail_badge_active">ACTIVE</string>
+    <string name="detail_badge_done">DONE</string>
+    <string name="detail_badge_blocked">BLOCKED</string>
+    <string name="detail_badge_on_hold">ON HOLD</string>
+    <string name="detail_badge_queued">QUEUED</string>
+    <string name="detail_badge_archived">ARCHIVED</string>
 </resources>
 
 

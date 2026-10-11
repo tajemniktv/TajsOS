@@ -7,8 +7,7 @@ package com.tajemniktv.tajos.ui.components.common
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Indication
-import androidx.compose.foundation.LocalIndication
+import androidx.compose.foundation.IndicationNodeFactory
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -23,7 +22,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.AwaitPointerEventScope
 import androidx.compose.ui.input.pointer.changedToDownIgnoreConsumed
@@ -185,6 +183,7 @@ private suspend fun AwaitPointerEventScope.handleMouseButtonPress(
  * Unified clickable modifier with optional long-click and explicit mouse button handlers.
  *
  * Primary/touch/keyboard activation remains handled by [combinedClickable].
+ * Uses Foundation's node-backed modifier; a null [indication] uses the theme default lazily.
  */
 @OptIn(ExperimentalFoundationApi::class)
 fun Modifier.mouseClickable(
@@ -193,7 +192,7 @@ fun Modifier.mouseClickable(
     onLongClick: (() -> Unit)? = null,
     role: Role? = null,
     interactionSource: MutableInteractionSource? = null,
-    indication: Indication? = null,
+    indication: IndicationNodeFactory? = null,
     onSecondaryClick: (() -> Unit)? = null,
     onSecondaryClickAt: ((Offset) -> Unit)? = null,
     onMiddleClick: (() -> Unit)? = null,
@@ -201,19 +200,28 @@ fun Modifier.mouseClickable(
     onForwardClick: (() -> Unit)? = null,
     middleClickFallbackToPrimary: Boolean = false,
 ): Modifier =
-    composed {
+    run {
         val clickableModifier =
             if (onClick != null || onLongClick != null) {
-                this.combinedClickable(
-                    enabled = enabled,
-                    role = role,
-                    interactionSource =
-                        interactionSource
-                            ?: remember { MutableInteractionSource() },
-                    indication = indication ?: LocalIndication.current,
-                    onClick = { onClick?.invoke() },
-                    onLongClick = onLongClick,
-                ).pointerHoverIcon(PointerIcon.Hand)
+                val clickable = if (indication == null) {
+                    combinedClickable(
+                        enabled = enabled,
+                        role = role,
+                        interactionSource = interactionSource,
+                        onClick = { onClick?.invoke() },
+                        onLongClick = onLongClick,
+                    )
+                } else {
+                    combinedClickable(
+                        enabled = enabled,
+                        role = role,
+                        interactionSource = interactionSource,
+                        indication = indication,
+                        onClick = { onClick?.invoke() },
+                        onLongClick = onLongClick,
+                    )
+                }
+                clickable.pointerHoverIcon(PointerIcon.Hand)
             } else {
                 this
             }

@@ -878,8 +878,12 @@ private fun SidebarTooltip(
     text: String,
     content: @Composable () -> Unit,
 ) {
+    val latestContent by androidx.compose.runtime.rememberUpdatedState(content)
+    val persistentContent = androidx.compose.runtime.remember {
+        androidx.compose.runtime.movableContentOf { latestContent() }
+    }
     if (!enabled) {
-        content()
+        persistentContent()
         return
     }
 
@@ -892,7 +896,7 @@ private fun SidebarTooltip(
         },
         state = rememberTooltipState(),
     ) {
-        content()
+        persistentContent()
     }
 }
 

@@ -334,8 +334,7 @@ fun NotesWorkspaceDetail(
                     TactileOutlinedTextField(
                         value = contentDraft,
                         onValueChange = { contentDraft = it },
-                        modifier = Modifier.fillMaxWidth(),
-                        containerModifier = Modifier.weight(1f),
+                        modifier = Modifier.weight(1f).fillMaxWidth(),
                         label = { Text(stringResource(Res.string.detail_content)) },
                     )
                 } else {

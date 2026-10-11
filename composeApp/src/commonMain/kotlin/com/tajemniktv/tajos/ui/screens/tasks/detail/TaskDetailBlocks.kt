@@ -84,6 +84,31 @@ import tajsos.composeapp.generated.resources.detail_area
 import tajsos.composeapp.generated.resources.detail_attachments
 import tajsos.composeapp.generated.resources.detail_due_at
 import tajsos.composeapp.generated.resources.detail_estimate_mins
+import tajsos.composeapp.generated.resources.detail_frequency
+import tajsos.composeapp.generated.resources.detail_effort
+import tajsos.composeapp.generated.resources.detail_automation
+import tajsos.composeapp.generated.resources.detail_priority
+import tajsos.composeapp.generated.resources.detail_unscoped
+import tajsos.composeapp.generated.resources.detail_subtask_matrix
+import tajsos.composeapp.generated.resources.detail_subtask_done
+import tajsos.composeapp.generated.resources.detail_subtask_in_progress
+import tajsos.composeapp.generated.resources.detail_subtask_queued
+import tajsos.composeapp.generated.resources.detail_due_tomorrow
+import tajsos.composeapp.generated.resources.detail_due_in_seven_days
+import tajsos.composeapp.generated.resources.detail_recurring
+import tajsos.composeapp.generated.resources.detail_automation_active
+import tajsos.composeapp.generated.resources.detail_automation_off
+import tajsos.composeapp.generated.resources.detail_priority_critical
+import tajsos.composeapp.generated.resources.detail_priority_standard
+import tajsos.composeapp.generated.resources.detail_priority_high_intensity
+import tajsos.composeapp.generated.resources.detail_priority_high_friction
+import tajsos.composeapp.generated.resources.detail_priority_overdue
+import tajsos.composeapp.generated.resources.detail_badge_active
+import tajsos.composeapp.generated.resources.detail_badge_done
+import tajsos.composeapp.generated.resources.detail_badge_blocked
+import tajsos.composeapp.generated.resources.detail_badge_on_hold
+import tajsos.composeapp.generated.resources.detail_badge_queued
+import tajsos.composeapp.generated.resources.detail_badge_archived
 import tajsos.composeapp.generated.resources.detail_no_due_date
 import tajsos.composeapp.generated.resources.detail_not_set
 import tajsos.composeapp.generated.resources.detail_one_time
@@ -269,7 +294,7 @@ private fun TaskPathRow(
             modifier = Modifier.size(12.dp),
         )
         Text(
-            text = areaName ?: "UNSCOPED",
+            text = areaName ?: stringResource(Res.string.detail_unscoped),
             style = MaterialTheme.typography.labelSmall,
             color = TajsOSTheme.Primary,
         )
@@ -463,7 +488,7 @@ private fun renderTaskSubtasks(context: TaskDetailContext) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                SectionTitle("Subtask Matrix")
+                SectionTitle(stringResource(Res.string.detail_subtask_matrix))
                 if (context.totalSubtasksCount > 0) {
                     Text(
                         text =
@@ -490,7 +515,7 @@ private fun renderTaskSubtasks(context: TaskDetailContext) {
                 TactileOutlinedTextField(
                     value = newChecklistItem,
                     onValueChange = { newChecklistItem = it },
-                    containerModifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f),
                     singleLine = true,
                     label = { Text(stringResource(Res.string.detail_tag_new_placeholder)) },
                 )
@@ -612,9 +637,9 @@ private fun SubtaskRow(
             Text(
                 text =
                     when (subtask.state) {
-                        TaskSubtaskState.COMPLETE -> "Done"
-                        TaskSubtaskState.ACTIVE -> "In Progress"
-                        TaskSubtaskState.QUEUED -> "Queued"
+                        TaskSubtaskState.COMPLETE -> stringResource(Res.string.detail_subtask_done)
+                        TaskSubtaskState.ACTIVE -> stringResource(Res.string.detail_subtask_in_progress)
+                        TaskSubtaskState.QUEUED -> stringResource(Res.string.detail_subtask_queued)
                     },
                 style = MaterialTheme.typography.labelSmall,
                 color = tint,
@@ -937,8 +962,8 @@ private fun RenderTaskMetadataProperties(
                     TaskDuePreset.Today.name,
                     stringResource(Res.string.screen_today),
                 ),
-                TaskPropertyOption(TaskDuePreset.Tomorrow.name, "Tomorrow"),
-                TaskPropertyOption(TaskDuePreset.InSevenDays.name, "In 7 days"),
+                TaskPropertyOption(TaskDuePreset.Tomorrow.name, stringResource(Res.string.detail_due_tomorrow)),
+                TaskPropertyOption(TaskDuePreset.InSevenDays.name, stringResource(Res.string.detail_due_in_seven_days)),
             ),
         onSelect = { value ->
             val preset = TaskDuePreset.entries.find { it.name == value }
@@ -949,10 +974,16 @@ private fun RenderTaskMetadataProperties(
     )
     TaskEditablePropertyRow(
         icon = Icons.Default.Schedule,
-        label = "Frequency",
+        label = stringResource(Res.string.detail_frequency),
         selected =
             if (task.isRecurring) {
-                task.recurringInterval?.replace("_", " ")?.uppercase() ?: "Recurring"
+                when (task.recurringInterval) {
+                    "daily" -> stringResource(Res.string.capture_interval_daily)
+                    "weekly" -> stringResource(Res.string.capture_interval_weekly)
+                    "monthly" -> stringResource(Res.string.capture_interval_monthly)
+                    else -> task.recurringInterval?.replace("_", " ")?.uppercase()
+                        ?: stringResource(Res.string.detail_recurring)
+                }
             } else {
                 stringResource(Res.string.detail_one_time)
             },
@@ -978,12 +1009,12 @@ private fun RenderTaskMetadataProperties(
     )
     TaskEditablePropertyRow(
         icon = Icons.Default.HourglassBottom,
-        label = "Effort",
+        label = stringResource(Res.string.detail_effort),
         selected =
             task.estimatedMinutes?.let {
                 stringResource(
                     Res.string.detail_estimate_mins,
-                    it.toString(),
+                    it,
                 )
             } ?: stringResource(Res.string.detail_not_set),
         options =
@@ -991,19 +1022,19 @@ private fun RenderTaskMetadataProperties(
                 TaskPropertyOption("__none__", stringResource(Res.string.detail_not_set)),
                 TaskPropertyOption(
                     "15",
-                    stringResource(Res.string.detail_estimate_mins, "15"),
+                    stringResource(Res.string.detail_estimate_mins, 15),
                 ),
                 TaskPropertyOption(
                     "30",
-                    stringResource(Res.string.detail_estimate_mins, "30"),
+                    stringResource(Res.string.detail_estimate_mins, 30),
                 ),
                 TaskPropertyOption(
                     "60",
-                    stringResource(Res.string.detail_estimate_mins, "60"),
+                    stringResource(Res.string.detail_estimate_mins, 60),
                 ),
                 TaskPropertyOption(
                     "120",
-                    stringResource(Res.string.detail_estimate_mins, "120"),
+                    stringResource(Res.string.detail_estimate_mins, 120),
                 ),
             ),
         onSelect = { value ->
@@ -1012,17 +1043,17 @@ private fun RenderTaskMetadataProperties(
     )
     TaskPropertyRow(
         icon = Icons.Default.AlarmOn,
-        label = "Automation",
-        value = if (task.isRecurring) "Active" else "Off",
+        label = stringResource(Res.string.detail_automation),
+        value = stringResource(if (task.isRecurring) Res.string.detail_automation_active else Res.string.detail_automation_off),
     )
     TaskEditablePropertyRow(
         icon = Icons.Default.RadioButtonChecked,
-        label = "Priority",
-        selected = if (task.isHardDeadline) "Critical" else derivePriorityLabel(task),
+        label = stringResource(Res.string.detail_priority),
+        selected = derivePriorityLabel(task),
         options =
             listOf(
-                TaskPropertyOption("false", "Standard"),
-                TaskPropertyOption("true", "Critical"),
+                TaskPropertyOption("false", stringResource(Res.string.detail_priority_standard)),
+                TaskPropertyOption("true", stringResource(Res.string.detail_priority_critical)),
             ),
         onSelect = { value -> context.onCriticalityChange(value == "true") },
     )
@@ -1037,12 +1068,12 @@ private data class TaskPropertyOption(
 private fun StatusPill(state: TaskState) {
     val (label, tint) =
         when (state) {
-            TaskState.ACTIVE -> "ACTIVE" to TajsOSTheme.AccentBlue
-            TaskState.DONE -> "DONE" to TajsOSTheme.AccentGreen
-            TaskState.BLOCKED -> "BLOCKED" to TajsOSTheme.Error
-            TaskState.ON_HOLD -> "ON HOLD" to TajsOSTheme.AccentAmber
-            TaskState.SOMEDAY -> "QUEUED" to TajsOSTheme.Muted
-            TaskState.ARCHIVED -> "ARCHIVED" to TajsOSTheme.Muted
+            TaskState.ACTIVE -> stringResource(Res.string.detail_badge_active) to TajsOSTheme.AccentBlue
+            TaskState.DONE -> stringResource(Res.string.detail_badge_done) to TajsOSTheme.AccentGreen
+            TaskState.BLOCKED -> stringResource(Res.string.detail_badge_blocked) to TajsOSTheme.Error
+            TaskState.ON_HOLD -> stringResource(Res.string.detail_badge_on_hold) to TajsOSTheme.AccentAmber
+            TaskState.SOMEDAY -> stringResource(Res.string.detail_badge_queued) to TajsOSTheme.Muted
+            TaskState.ARCHIVED -> stringResource(Res.string.detail_badge_archived) to TajsOSTheme.Muted
         }
 
     Surface(
@@ -1164,10 +1195,12 @@ private fun extractDescriptionChips(text: String): List<String> {
     return (hashTags + mentions).distinct().take(8).toList()
 }
 
+/** Resolves derived priority hints through the same localized resource contract as the editor. */
+@Composable
 private fun derivePriorityLabel(task: com.tajemniktv.tajos.data.NodeEntity): String {
-    if (task.isHardDeadline) return "Critical"
-    if (task.energyLevel == 3) return "High intensity"
-    if (task.friction == "mentally_heavy") return "High friction"
+    if (task.isHardDeadline) return stringResource(Res.string.detail_priority_critical)
+    if (task.energyLevel == 3) return stringResource(Res.string.detail_priority_high_intensity)
+    if (task.friction == "mentally_heavy") return stringResource(Res.string.detail_priority_high_friction)
     val dueAt = task.dueAt
     if (dueAt != null &&
         dueAt <
@@ -1175,9 +1208,9 @@ private fun derivePriorityLabel(task: com.tajemniktv.tajos.data.NodeEntity): Str
             .now()
             .toEpochMilliseconds()
     ) {
-        return "Overdue"
+        return stringResource(Res.string.detail_priority_overdue)
     }
-    return "Standard"
+    return stringResource(Res.string.detail_priority_standard)
 }
 
 private fun formatDateTime(epochMillis: Long): String {

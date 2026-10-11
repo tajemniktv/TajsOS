@@ -14,6 +14,7 @@ import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -100,6 +101,10 @@ fun AppShell(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
+    val latestContent by androidx.compose.runtime.rememberUpdatedState(content)
+    val persistentContent = androidx.compose.runtime.remember {
+        androidx.compose.runtime.movableContentOf { latestContent() }
+    }
     val currentScreen = Screen.fromRoute(currentDestination?.route)
     val currentRoot = currentScreen?.sidebarContextRoot
     val userName = userProfile.resolveDisplayName()
@@ -163,7 +168,7 @@ fun AppShell(
                         )
 
                         Box(modifier = Modifier.fillMaxSize()) {
-                            content()
+                            persistentContent()
                         }
                     }
                 }
@@ -226,7 +231,7 @@ fun AppShell(
                             onSearchClick = { onNavigate(Screen.Search) },
                         )
                         Box(modifier = Modifier.fillMaxSize()) {
-                            content()
+                            persistentContent()
                         }
                     }
                 }

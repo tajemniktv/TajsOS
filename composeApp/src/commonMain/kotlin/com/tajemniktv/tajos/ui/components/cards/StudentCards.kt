@@ -238,14 +238,14 @@ fun TemplateQuickActionsCard(
             }
             Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
                 TactileOutlinedTextField(
-                    containerModifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f),
                     value = courseId,
                     onValueChange = onCourseIdChange,
                     label = { Text(stringResource(Res.string.student_course_id)) },
                     singleLine = true,
                 )
                 TactileOutlinedTextField(
-                    containerModifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f),
                     value = semester,
                     onValueChange = onSemesterChange,
                     label = { Text(stringResource(Res.string.student_semester)) },

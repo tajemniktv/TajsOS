@@ -258,12 +258,13 @@ private fun TactileSliderPreview() {
 }
 
 
+/** A decorated text field whose [modifier] controls its root and [fieldModifier] its input. */
 @Composable
 fun TactileOutlinedTextField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    containerModifier: Modifier = Modifier,
+    fieldModifier: Modifier = Modifier,
     enabled: Boolean = true,
     readOnly: Boolean = false,
     textStyle: TextStyle = LocalTextStyle.current,
@@ -294,11 +295,11 @@ fun TactileOutlinedTextField(
 ) {
     val isFocused by interactionSource.collectIsFocusedAsState()
 
-    Box(modifier = containerModifier, propagateMinConstraints = true) {
+    Box(modifier = modifier, propagateMinConstraints = true) {
         OutlinedTextField(
             value = value,
             onValueChange = onValueChange,
-            modifier = modifier,
+            modifier = fieldModifier,
             enabled = enabled,
             readOnly = readOnly,
             textStyle = textStyle,

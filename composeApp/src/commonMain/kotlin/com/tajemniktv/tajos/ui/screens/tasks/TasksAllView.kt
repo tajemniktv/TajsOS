@@ -162,7 +162,7 @@ internal fun TasksAllView(
             TactileOutlinedTextField(
                 value = query,
                 onValueChange = { query = it },
-                containerModifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f),
                 placeholder = { Text(stringResource(Res.string.tasks_search_placeholder)) },
                 leadingIcon = { Icon(Icons.Default.Search, null) },
                 singleLine = true,

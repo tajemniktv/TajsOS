@@ -118,8 +118,8 @@ fun NotesEditorPane(
                     TactileOutlinedTextField(
                         value = note.title,
                         onValueChange = onTitleChange,
-                        modifier = Modifier.focusRequester(titleFocusRequester),
-                        containerModifier = Modifier.fillMaxWidth(),
+                        fieldModifier = Modifier.focusRequester(titleFocusRequester),
+                        modifier = Modifier.fillMaxWidth(),
                         singleLine = true,
                         textStyle = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.SemiBold),
                         placeholder = { Text("Untitled note") },
