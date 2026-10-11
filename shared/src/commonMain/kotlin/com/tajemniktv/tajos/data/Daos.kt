@@ -890,6 +890,10 @@ interface ProtocolDao {
  */
 @Dao
 interface DecisionDao {
+    /** Reads options on the aggregate writer connection without starting a reactive query. */
+    @Query("SELECT * FROM decision_options WHERE decisionNodeId = :nodeId")
+    suspend fun getOptionsSnapshot(nodeId: Long): List<DecisionOptionEntity>
+
     @Query("SELECT * FROM decision_options WHERE decisionNodeId = :nodeId")
     fun getOptionsForDecision(nodeId: Long): Flow<List<DecisionOptionEntity>>
 

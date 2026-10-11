@@ -16,6 +16,72 @@ import kotlin.test.assertFalse
 import kotlin.time.Instant
 
 class CalendarManagerTest {
+    @Test
+    fun failedRefreshesPreserveCachedEventsAndLastSuccess() = runTest {
+        val provider = CalendarProviderEntity(
+            id = 1, name = "ICS", type = "ICS",
+            url = "https://example.com/calendar.ics", lastSyncedAt = 42,
+        )
+        val cached = CalendarEventEntity(
+            id = 99, providerId = 1, title = "Cached", startAt = 0, endAt = 1,
+        )
+        fakeCalendarProviderDao.providers.add(provider)
+        fakeCalendarEventDao.events.add(cached)
+        val engines = listOf(
+            MockEngine { respond("unavailable", HttpStatusCode.ServiceUnavailable) },
+            MockEngine { throw IllegalStateException("network unavailable") },
+            MockEngine { respond("<html>not a calendar</html>", HttpStatusCode.OK) },
+        )
+        for (engine in engines) {
+            val client = HttpClient(engine)
+            try {
+                CalendarManager(repository, client).syncAll()
+                assertEquals(listOf(cached), fakeCalendarEventDao.events)
+                assertEquals(42, fakeCalendarProviderDao.providers.single().lastSyncedAt)
+            } finally {
+                client.close()
+            }
+        }
+    }
+
+    @Test
+    fun successfulEmptyRefreshClearsEventsAndAdvancesLastSuccess() = runTest {
+        fakeCalendarProviderDao.providers.add(CalendarProviderEntity(
+            id = 1, name = "ICS", type = "ICS",
+            url = "https://example.com/calendar.ics", lastSyncedAt = 42,
+        ))
+        fakeCalendarEventDao.events.add(CalendarEventEntity(
+            id = 99, providerId = 1, title = "Old", startAt = 0, endAt = 1,
+        ))
+        val client = HttpClient(MockEngine {
+            respond("BEGIN:VCALENDAR\nVERSION:2.0\nEND:VCALENDAR", HttpStatusCode.OK)
+        })
+        try {
+            CalendarManager(repository, client).syncAll()
+            assertTrue(fakeCalendarEventDao.events.isEmpty())
+            assertTrue(fakeCalendarProviderDao.providers.single().lastSyncedAt!! > 42)
+        } finally {
+            client.close()
+        }
+    }
+
+    @Test
+    fun cancellationIsNotConvertedIntoSuccessfulEmptyRefresh() = runTest {
+        val provider = CalendarProviderEntity(
+            id = 1, name = "ICS", type = "ICS", url = "https://example.com/calendar.ics",
+        )
+        val client = HttpClient(MockEngine {
+            throw kotlin.coroutines.cancellation.CancellationException("cancelled")
+        })
+        try {
+            kotlin.test.assertFailsWith<kotlin.coroutines.cancellation.CancellationException> {
+                IcsCalendarProvider(client).sync(provider, Instant.fromEpochMilliseconds(0), Instant.fromEpochMilliseconds(1))
+            }
+        } finally {
+            client.close()
+        }
+    }
+
     private val fakeNodeDao = FakeNodeDao()
     private val fakeFocusSessionDao = FakeFocusSessionDao()
     private val fakeTrackDao = FakeTrackDao()

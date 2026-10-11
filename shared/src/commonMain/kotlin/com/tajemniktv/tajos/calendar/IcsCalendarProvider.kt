@@ -14,7 +14,6 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import kotlin.time.Clock
 import kotlin.time.Instant
-import kotlin.coroutines.cancellation.CancellationException
 
 /**
  * A calendar provider that fetches and parses standard ICS (iCalendar) files from HTTP(S) sources.
@@ -34,46 +33,26 @@ class IcsCalendarProvider(
      * @param from The start of the time range (inclusive).
      * @param to The end of the time range (inclusive).
      * @return A list of valid, parsed [CalendarEventEntity] instances falling within the range.
+     * @throws CalendarFetchException When the source is invalid, unavailable over HTTP, or not ICS.
+     * Network errors propagate to [CalendarProvider.sync], which preserves their failure status.
      */
     override suspend fun fetchEvents(
         provider: CalendarProviderEntity,
         from: Instant,
         to: Instant,
     ): List<CalendarEventEntity> {
-        val url = provider.url ?: return emptyList()
-        if (!isValidHttpUrl(url)) return emptyList()
-        return safeFetch(provider.id) {
-            val response = client.get(url)
-            if (response.status.value in 200..299) {
-                val icsContent = response.bodyAsText()
-                val events = parseIcs(icsContent, provider.id)
-                events.filter { it.startAt <= to.toEpochMilliseconds() && it.endAt >= from.toEpochMilliseconds() }
-            } else {
-                emptyList()
-            }
-        } ?: emptyList()
-    }
-
-    /**
-     * Executes [block] to fetch calendar events for [providerId], rethrowing [CancellationException]
-     * while logging and swallowing other exceptions.
-     *
-     * @param providerId The calendar provider ID used for error context.
-     * @param block Suspendable fetch operation returning calendar events.
-     * @return The fetched events, or null when a non-cancellation exception occurs.
-     */
-    private suspend inline fun <T> safeFetch(
-        providerId: Long,
-        block: suspend () -> T,
-    ): T? =
-        try {
-            block()
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Exception) {
-            println("ICS fetch failed for providerId=$providerId: $e")
-            null
+        val url = provider.url ?: throw CalendarFetchException(CalendarSyncFailure.INVALID_SOURCE)
+        if (!isValidHttpUrl(url)) throw CalendarFetchException(CalendarSyncFailure.INVALID_SOURCE)
+        val response = client.get(url)
+        if (response.status.value !in 200..299) throw CalendarFetchException(CalendarSyncFailure.HTTP_ERROR)
+        val icsContent = response.bodyAsText()
+        val lines = icsContent.lineSequence().map { it.trim().uppercase() }.toList()
+        if ("BEGIN:VCALENDAR" !in lines || "END:VCALENDAR" !in lines) {
+            throw CalendarFetchException(CalendarSyncFailure.INVALID_FEED)
         }
+        val events = parseIcs(icsContent, provider.id)
+        return events.filter { it.startAt <= to.toEpochMilliseconds() && it.endAt >= from.toEpochMilliseconds() }
+    }
 
     /**
      * Validates that a string is an HTTP/HTTPS URL and blocks internal or private network hosts

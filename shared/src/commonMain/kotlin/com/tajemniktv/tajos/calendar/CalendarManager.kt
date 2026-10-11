@@ -38,7 +38,8 @@ class CalendarManager(
      * (from 30 days ago to 90 days from now), deduplicates fetched events by `externalId`
      * (falling back to `"${title}_${startAt}"` when `externalId` is null), replaces that
      * provider's local events with the deduplicated set, and updates the provider's
-     * `lastSyncedAt` timestamp.
+     * `lastSyncedAt` timestamp atomically. Failed fetches preserve both cached events
+     * and the previous successful-sync timestamp.
      */
     suspend fun syncAll() =
         coroutineScope {
@@ -51,15 +52,19 @@ class CalendarManager(
                 if (providerEntity.isEnabled) {
                     val provider = providers.find { it.type == providerEntity.type }
                     if (provider != null) {
-                        val events = provider.sync(providerEntity, from, to)
+                        val result = provider.sync(providerEntity, from, to)
+                        if (result !is CalendarSyncResult.Success) return@forEach
+                        val events = result.events
 
                         // Deduplicate events by externalId to ensure no duplicates from malformed sources
                         val deduplicatedEvents =
                             events.distinctBy { it.externalId ?: "${it.title}_${it.startAt}" }
 
-                        repository.deleteCalendarEventsByProvider(providerEntity.id)
-                        repository.insertCalendarEvents(deduplicatedEvents)
-                        repository.updateCalendarProvider(providerEntity.copy(lastSyncedAt = now.toEpochMilliseconds()))
+                        repository.replaceCalendarEvents(
+                            providerEntity,
+                            deduplicatedEvents,
+                            now.toEpochMilliseconds(),
+                        )
                     }
                 }
             }

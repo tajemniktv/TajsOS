@@ -9,6 +9,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 
 class FakeDecisionDao : DecisionDao {
+    override suspend fun getOptionsSnapshot(nodeId: Long): List<DecisionOptionEntity> =
+        optionsFlow.value.filter { it.decisionNodeId == nodeId }
+
     private val optionsFlow = MutableStateFlow<List<DecisionOptionEntity>>(emptyList())
     private var nextId = 1L
 

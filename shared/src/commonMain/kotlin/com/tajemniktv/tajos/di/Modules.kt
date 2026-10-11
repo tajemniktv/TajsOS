@@ -41,35 +41,7 @@ class SharedModule(
      * life objects (nodes, facets, relations) and app state (preferences, modes).
      */
     val repository: AppRepository by lazy {
-        AppRepository(
-            database.nodeDao(),
-            database.focusSessionDao(),
-            database.trackDao(),
-            database.relationDao(),
-            database.tagDao(),
-            database.eventLogDao(),
-            database.attachmentDao(),
-            database.templateDao(),
-            database.nodeSnapshotDao(),
-            database.reviewDao(),
-            database.calendarProviderDao(),
-            database.calendarEventDao(),
-            database.modeDao(),
-            database.protocolDao(),
-            database.decisionDao(),
-            database.userDao(),
-            database.medicationDao(),
-            database.inboxEntryDao(),
-            database.taskFacetDao(),
-            database.noteFacetDao(),
-            database.projectFacetDao(),
-            database.areaFacetDao(),
-            database.recordFacetDao(),
-            database.itemDomainDao(),
-            database.richContentDocumentDao(),
-            database.scheduleEntryDao(),
-            database.savedViewDao(),
-        )
+        AppRepository(database)
     }
 
     /**

@@ -258,8 +258,10 @@ private data class LifeObjectFacetSnapshot(
  * core LifeOS entities (`NodeEntity`) alongside their typed extension states (`TaskFacetEntity`,
  * `NoteFacetEntity`, etc.). This pattern avoids maintaining a single massive nullable row
  * and safely orchestrates creation, updates, and complex queries across related database tables.
+ * Production callers construct it from [AppDatabase], so aggregate commands share a writer
+ * transaction. Full-table backup ownership belongs to [BackupDao], not reactive UI queries.
  */
-class AppRepository(
+class AppRepository internal constructor(
     private val nodeDao: NodeDao,
     private val focusSessionDao: FocusSessionDao,
     private val trackDao: TrackDao,
@@ -287,7 +289,47 @@ class AppRepository(
     private val richContentDocumentDao: RichContentDocumentDao = NoOpRichContentDocumentDao,
     private val scheduleEntryDao: ScheduleEntryDao = NoOpScheduleEntryDao,
     private val savedViewDao: SavedViewDao = NoOpSavedViewDao,
+    private val transactions: RepositoryTransactions = DirectRepositoryTransactions,
+    private val backupDao: BackupDao? = null,
 ) {
+    /** Production construction always wires real companion DAOs, backups, and transactions. */
+    constructor(
+        database: AppDatabase,
+        nodeDao: NodeDao = database.nodeDao(),
+        calendarEventDao: CalendarEventDao = database.calendarEventDao(),
+        savedViewDao: SavedViewDao = database.savedViewDao(),
+    ) : this(
+        nodeDao,
+        database.focusSessionDao(),
+        database.trackDao(),
+        database.relationDao(),
+        database.tagDao(),
+        database.eventLogDao(),
+        database.attachmentDao(),
+        database.templateDao(),
+        database.nodeSnapshotDao(),
+        database.reviewDao(),
+        database.calendarProviderDao(),
+        calendarEventDao,
+        database.modeDao(),
+        database.protocolDao(),
+        database.decisionDao(),
+        database.userDao(),
+        database.medicationDao(),
+        database.inboxEntryDao(),
+        database.taskFacetDao(),
+        database.noteFacetDao(),
+        database.projectFacetDao(),
+        database.areaFacetDao(),
+        database.recordFacetDao(),
+        database.itemDomainDao(),
+        database.richContentDocumentDao(),
+        database.scheduleEntryDao(),
+        savedViewDao,
+        RoomRepositoryTransactions(database),
+        database.backupDao(),
+    )
+
     /**
      * Retrieves a stream of all nodes stored in the database, including their today-pin status.
      *
@@ -419,9 +461,9 @@ class AppRepository(
         homeAreaId: Long? = null,
         activeProjectId: Long? = null,
         contextScreen: String? = null,
-    ): Long {
+    ): Long = transactions.write {
         val trimmed = rawText.trim()
-        if (trimmed.isBlank()) return 0L
+        if (trimmed.isBlank()) return@write 0L
         val entryId =
             inboxEntryDao.insertInboxEntry(
                 InboxEntryEntity(
@@ -434,7 +476,7 @@ class AppRepository(
                 ),
             )
         logEvent("INBOX_CAPTURED")
-        return entryId
+        return@write entryId
     }
 
     /**
@@ -475,10 +517,10 @@ class AppRepository(
     suspend fun triageInboxEntry(
         entryId: Long,
         kind: ItemKind,
-    ): Long {
-        val entry = inboxEntryDao.getInboxEntryById(entryId) ?: return 0L
+    ): Long = transactions.write {
+        val entry = inboxEntryDao.getInboxEntryById(entryId) ?: return@write 0L
         val parsed = parseCapturedText(entry.rawText)
-        if (parsed.title.isBlank()) return 0L
+        if (parsed.title.isBlank()) return@write 0L
 
         val createdId =
             insertLifeItem(
@@ -501,7 +543,7 @@ class AppRepository(
             ),
         )
         logEvent("INBOX_TRIAGED", createdId)
-        return createdId
+        return@write createdId
     }
 
     /**
@@ -554,7 +596,7 @@ class AppRepository(
         isSticky: Boolean = false,
         domains: Set<DomainKind> = emptySet(),
         purpose: String? = null,
-    ): Long {
+    ): Long = transactions.write {
         val node =
             when (kind)
             {
@@ -655,7 +697,7 @@ class AppRepository(
                 ),
             )
         }
-        return id
+        return@write id
     }
 
     // ... existing methods ...
@@ -707,6 +749,18 @@ class AppRepository(
      */
     suspend fun deleteCalendarEventsByProvider(providerId: Long) = calendarEventDao.deleteEventsByProvider(providerId)
 
+    /** Commits a successful refresh atomically; callers must never pass failed fetches here. */
+    suspend fun replaceCalendarEvents(
+        provider: CalendarProviderEntity,
+        events: List<CalendarEventEntity>,
+        syncedAt: Long,
+    ): Unit = transactions.write {
+        require(events.all { it.providerId == provider.id }) { "Calendar event provider mismatch" }
+        calendarEventDao.deleteEventsByProvider(provider.id)
+        calendarEventDao.insertEvents(events)
+        calendarProviderDao.updateProvider(provider.copy(lastSyncedAt = syncedAt))
+    }
+
     /**
      * Observes all attached schedule entries across the local system.
      */
@@ -743,7 +797,7 @@ class AppRepository(
      * @param node The node entity to insert.
      * @return The auto-generated ID of the newly inserted node, or the existing ID if updated.
      */
-    suspend fun insertNode(node: NodeEntity): Long {
+    suspend fun insertNode(node: NodeEntity): Long = transactions.write {
         var id = nodeDao.insertNode(node)
         if (id == -1L) id = node.id
         logEvent("NODE_CREATED", id)
@@ -758,13 +812,14 @@ class AppRepository(
             dueAt = node.dueAt,
             recurrenceRule = node.recurringInterval,
         )
-        return id
+        return@write id
     }
 
     /**
      * Inserts multiple nodes while preserving the same side effects as [insertNode].
      */
-    suspend fun insertNodes(nodes: List<NodeEntity>): List<Long> = nodes.map { insertNode(it) }
+    suspend fun insertNodes(nodes: List<NodeEntity>): List<Long> =
+        transactions.write { nodes.map { insertNode(it) } }
 
     /**
      * Updates an existing node in the database.
@@ -780,20 +835,21 @@ class AppRepository(
 
 
 
-    suspend fun updateNode(node: NodeEntity) {
-        val oldNode = nodeDao.getNodeById(node.id) ?: return
+    suspend fun updateNode(node: NodeEntity): Unit = transactions.write {
+        val oldNode = nodeDao.getNodeById(node.id) ?: return@write
         nodeDao.updateNode(node)
         executeNodeSideEffects(oldNode, node)
     }
 
     /**
      * Updates multiple existing nodes in the database in a batch operation.
-     * Side-effects (like logging, facet syncing, etc.) are executed for each node.
+     * Side-effects (like logging, facet syncing, etc.) are executed for each node in the
+     * same transaction as the batch write.
      *
      * @param nodes The updated node entities to save.
      */
-    suspend fun updateNodes(nodes: List<NodeEntity>) {
-        if (nodes.isEmpty()) return
+    suspend fun updateNodes(nodes: List<NodeEntity>): Unit = transactions.write {
+        if (nodes.isEmpty()) return@write
 
         val oldNodesMap = nodeDao.getNodesByIds(nodes.map { it.id }).associateBy { it.id }
 
@@ -885,21 +941,21 @@ class AppRepository(
         when (node.itemKindOrNull())
         {
             ItemKind.TASK -> {
-                val existing = taskFacetDao.getTaskFacetByItemId(node.id)
+                // Node updates are complete values: null clears a field, it is not "unchanged".
                 taskFacetDao.upsertTaskFacet(
                     TaskFacetEntity(
                         itemId = node.id,
                         state =
                             TaskState.fromStorageKey(node.status)?.storageKey
                                 ?: TaskState.ACTIVE.storageKey,
-                        energyLevel = node.energyLevel ?: existing?.energyLevel,
-                        friction = node.friction ?: existing?.friction,
-                        nextStep = node.nextSmallestStep ?: existing?.nextStep,
-                        estimatedMinutes = node.estimatedMinutes ?: existing?.estimatedMinutes,
-                        completionNote = node.completionNote ?: existing?.completionNote,
-                        completedAt = node.completedAt ?: existing?.completedAt,
+                        energyLevel = node.energyLevel,
+                        friction = node.friction,
+                        nextStep = node.nextSmallestStep,
+                        estimatedMinutes = node.estimatedMinutes,
+                        completionNote = node.completionNote,
+                        completedAt = node.completedAt,
                         isRecurring = node.isRecurring,
-                        recurringInterval = node.recurringInterval ?: existing?.recurringInterval,
+                        recurringInterval = node.recurringInterval,
                     ),
                 )
             }
@@ -1105,7 +1161,7 @@ class AppRepository(
      *
      * @param node The node to delete.
      */
-    suspend fun deleteNode(node: NodeEntity) {
+    suspend fun deleteNode(node: NodeEntity): Unit = transactions.write {
         relationDao.deleteRelationsForNode(node.id)
         tagDao.detachAllTagsFromNode(node.id)
         attachmentDao.deleteAttachmentsForNode(node.id)
@@ -1128,7 +1184,7 @@ class AppRepository(
      *
      * @param nodeId The ID of the node to pin.
      */
-    suspend fun pinToToday(nodeId: Long) {
+    suspend fun pinToToday(nodeId: Long): Unit = transactions.write {
         val today =
             kotlin.time.Clock.System
                 .now()
@@ -1216,14 +1272,14 @@ class AppRepository(
      */
     fun getActiveSession(): Flow<FocusSessionEntity?> = focusSessionDao.getActiveSession()
 
-    suspend fun insertSession(session: FocusSessionEntity): Long {
+    suspend fun insertSession(session: FocusSessionEntity): Long = transactions.write {
         var id = focusSessionDao.insertSession(session)
         if (id == -1L) id = session.id
         logEvent("SESSION_STARTED", session.nodeId)
-        return id
+        return@write id
     }
 
-    suspend fun updateSession(session: FocusSessionEntity) {
+    suspend fun updateSession(session: FocusSessionEntity): Unit = transactions.write {
         focusSessionDao.updateSession(session)
         if (session.endedAt != null) {
             logEvent("SESSION_ENDED", session.nodeId)
@@ -1235,11 +1291,11 @@ class AppRepository(
      */
     fun getAllTrackEntries(): Flow<List<TrackEntryEntity>> = trackDao.getAllTrackEntries()
 
-    suspend fun insertTrackEntry(entry: TrackEntryEntity): Long {
+    suspend fun insertTrackEntry(entry: TrackEntryEntity): Long = transactions.write {
         var id = trackDao.insertTrackEntry(entry)
         if (id == -1L) id = entry.id
         logEvent("CHECKIN_CREATED")
-        return id
+        return@write id
     }
 
     // Relations
@@ -1253,7 +1309,7 @@ class AppRepository(
      */
     fun getRelationsForNode(nodeId: Long) = relationDao.getRelationsForNode(nodeId)
 
-    suspend fun insertRelation(relation: RelationEntity) {
+    suspend fun insertRelation(relation: RelationEntity): Unit = transactions.write {
         if (!relationDao.anyRelationExists(
                 relation.fromNodeId,
                 relation.toNodeId,
@@ -1278,10 +1334,10 @@ class AppRepository(
      */
     fun getTagsForNode(nodeId: Long) = tagDao.getTagsForNode(nodeId)
 
-    suspend fun insertTag(tag: TagEntity): Long {
+    suspend fun insertTag(tag: TagEntity): Long = transactions.write {
         var id = tagDao.insertTag(tag)
         if (id == -1L) id = tag.id
-        return id
+        return@write id
     }
 
     suspend fun attachTagToNode(
@@ -1342,7 +1398,7 @@ class AppRepository(
         itemId: Long,
         domain: DomainKind,
         isPrimary: Boolean = false,
-    ) {
+    ): Unit = transactions.write {
         if (isPrimary) {
             itemDomainDao.clearPrimaryFlag(itemId)
         }
@@ -1374,7 +1430,7 @@ class AppRepository(
         body: String,
         format: RichContentFormat = RichContentFormat.MARKDOWN,
         structuredContentJson: String? = null,
-    ) {
+    ): Unit = transactions.write {
         val existing = richContentDocumentDao.getDocumentForItem(itemId)
         richContentDocumentDao.upsertDocument(
             RichContentDocumentEntity(
@@ -1438,7 +1494,7 @@ class AppRepository(
         )
     }
 
-    suspend fun saveSavedView(definition: SavedViewDefinition): Long {
+    suspend fun saveSavedView(definition: SavedViewDefinition): Long = transactions.write {
         val now =
             kotlin.time.Clock.System
                 .now()
@@ -1517,11 +1573,11 @@ class AppRepository(
                 },
             )
         }
-        return viewId
+        return@write viewId
     }
 
-    suspend fun deleteSavedView(id: Long) {
-        val existing = savedViewDao.getSavedViewById(id) ?: return
+    suspend fun deleteSavedView(id: Long): Unit = transactions.write {
+        val existing = savedViewDao.getSavedViewById(id) ?: return@write
         savedViewDao.deleteSourceKindsForView(id)
         savedViewDao.deleteFiltersForView(id)
         savedViewDao.deleteSortsForView(id)
@@ -1559,10 +1615,10 @@ class AppRepository(
      */
     fun getAllReviews() = reviewDao.getAllReviews()
 
-    suspend fun insertReview(review: ReviewEntity): Long {
+    suspend fun insertReview(review: ReviewEntity): Long = transactions.write {
         var id = reviewDao.insertReview(review)
         if (id == -1L) id = review.id
-        return id
+        return@write id
     }
 
     suspend fun getLastReviewByType(type: String) = reviewDao.getLastReviewByType(type)
@@ -1666,13 +1722,13 @@ class AppRepository(
         nodeId: Long,
         outcome: String,
         selectedOptionId: Long? = null,
-    ) {
-        val node = nodeDao.getNodeById(nodeId) ?: return
-        val options = decisionDao.getOptionsForDecision(nodeId).first()
+    ): Unit = transactions.write {
+        val node = nodeDao.getNodeById(nodeId) ?: return@write
+        val options = decisionDao.getOptionsSnapshot(nodeId)
 
         updateDecisionOptionsBatch(options, selectedOptionId)
 
-        nodeDao.updateNode(
+        updateNode(
             node.copy(
                 decisionStatus = "decided",
                 decisionOutcome = outcome,
@@ -1700,8 +1756,8 @@ class AppRepository(
      * @param nodeId The ID of the parent decision node.
      * @return The ID of the newly created project node, or -1 if the parent decision was not found.
      */
-    suspend fun convertDecisionToProject(nodeId: Long): Long {
-        val node = nodeDao.getNodeById(nodeId) ?: return -1
+    suspend fun convertDecisionToProject(nodeId: Long): Long = transactions.write {
+        val node = nodeDao.getNodeById(nodeId) ?: return@write -1
         val newProject =
             NodeEntity(
                 type = "project",
@@ -1709,7 +1765,7 @@ class AppRepository(
                 content = "Derived from decision: ${node.decisionOutcome ?: node.content}",
                 areaId = node.areaId,
             )
-        val projectId = nodeDao.insertNode(newProject)
+        val projectId = insertNode(newProject)
 
         insertRelation(
             RelationEntity(
@@ -1719,7 +1775,7 @@ class AppRepository(
             ),
         )
 
-        return projectId
+        return@write projectId
     }
 
     /**
@@ -1732,8 +1788,8 @@ class AppRepository(
      * @param nodeId The ID of the parent decision node.
      * @return The ID of the newly created task node, or -1 if the parent decision was not found.
      */
-    suspend fun convertDecisionToTask(nodeId: Long): Long {
-        val node = nodeDao.getNodeById(nodeId) ?: return -1
+    suspend fun convertDecisionToTask(nodeId: Long): Long = transactions.write {
+        val node = nodeDao.getNodeById(nodeId) ?: return@write -1
         val newTask =
             NodeEntity(
                 type = "task",
@@ -1742,7 +1798,7 @@ class AppRepository(
                 areaId = node.areaId,
                 projectId = node.projectId,
             )
-        val taskId = nodeDao.insertNode(newTask)
+        val taskId = insertNode(newTask)
 
         insertRelation(
             RelationEntity(
@@ -1752,15 +1808,15 @@ class AppRepository(
             ),
         )
 
-        return taskId
+        return@write taskId
     }
 
     fun getOptionsForDecision(nodeId: Long) = decisionDao.getOptionsForDecision(nodeId)
 
-    suspend fun insertDecisionOption(option: DecisionOptionEntity): Long {
+    suspend fun insertDecisionOption(option: DecisionOptionEntity): Long = transactions.write {
         var id = decisionDao.insertDecisionOption(option)
         if (id == -1L) id = option.id
-        return id
+        return@write id
     }
 
     suspend fun updateDecisionOption(option: DecisionOptionEntity) = decisionDao.updateDecisionOption(option)
@@ -1791,10 +1847,10 @@ class AppRepository(
 
     fun getAllMedications(): Flow<List<MedicationEntity>> = medicationDao.getAllMedications()
 
-    suspend fun insertMedication(medication: MedicationEntity): Long {
+    suspend fun insertMedication(medication: MedicationEntity): Long = transactions.write {
         var id = medicationDao.insertMedication(medication)
         if (id == -1L) id = medication.id
-        return id
+        return@write id
     }
 
     suspend fun updateMedication(medication: MedicationEntity) = medicationDao.updateMedication(medication)
@@ -1807,51 +1863,37 @@ class AppRepository(
 
     fun getTrackMedications(trackEntryId: Long): Flow<List<TrackMedicationJoinEntity>> = trackDao.getTrackMedications(trackEntryId)
 
-    suspend fun buildExportBundle(
-        enabledPacks: Set<String> = emptySet(),
-        recentEventLimit: Int = 500,
-    ): ExportBundle =
-        ExportBundle(
-            exportedAt =
-                kotlin.time.Clock.System
-                    .now()
-                    .toEpochMilliseconds(),
-            enabledPacks = enabledPacks,
-            nodes = getAllNodes().first().map { it.node },
-            relations = getAllRelations().first(),
-            tags = getAllTags().first(),
-            templates = getAllTemplates().first(),
-            reviews = getAllReviews().first(),
-            tracks = getAllTrackEntries().first(),
-            sessions = getAllSessions().first(),
-            calendars = calendarEventDao.getEventsInRange(0, Long.MAX_VALUE).first(),
-            providers = getAllCalendarProviders().first(),
-            recentEvents = getRecentLogs(limit = recentEventLimit).first(),
-        )
+    /** Captures the complete Room backup contract; DAO-only fakes cannot produce full backups. */
+    suspend fun buildExportBundle(enabledPacks: Set<String> = emptySet()): ExportBundle =
+        checkNotNull(backupDao) { "Full backups require the database backup DAO" }.snapshot(enabledPacks)
 
     /**
-     * Imports a complete data bundle into the repository.
-     * Uses batch insertion operations (like [insertNodes]) to ensure high performance
-     * and minimize database transaction overhead during large imports.
-     *
-     * @param bundle The [ExportBundle] containing the data to import.
-     * @return An [ImportReport] summarizing the imported entity counts.
+     * Atomically merges a backup. Older formats hydrate node-derived state without action logs;
+     * current backups restore authoritative companion rows instead of regenerating them.
      */
-    suspend fun importBundle(bundle: ExportBundle): ImportReport {
-        nodeDao.insertNodes(bundle.nodes)
-        relationDao.insertRelations(bundle.relations)
-        tagDao.insertTags(bundle.tags)
-        templateDao.insertTemplates(bundle.templates)
-        reviewDao.insertReviews(bundle.reviews)
-        trackDao.insertTrackEntries(bundle.tracks)
-        focusSessionDao.insertSessions(bundle.sessions)
-        calendarProviderDao.insertProviders(bundle.providers)
-        if (bundle.calendars.isNotEmpty()) {
+    suspend fun importBundle(bundle: ExportBundle): ImportReport = transactions.write {
+        require(bundle.schemaVersion in 1..EXPORT_SCHEMA_VERSION) { "Unsupported backup schema" }
+        if (bundle.schemaVersion == EXPORT_SCHEMA_VERSION) {
+            checkNotNull(backupDao) { "Full restore requires the database backup DAO" }.restore(bundle)
+        } else {
+            // Restore relation identity, not just unique logical edges. Room upsert cannot
+            // replace an edge whose unique (from, to, type) key has a different primary ID.
+            bundle.nodes.forEach { relationDao.deleteRelationsForNode(it.id) }
+            importLegacyNodes(bundle.nodes)
+            bundle.relations.filter { it.relationType == "BELONGS_TO" }
+                .map { it.fromNodeId }.distinct()
+                .forEach { relationDao.deleteBelongsToRelations(it) }
+            relationDao.insertRelations(bundle.relations)
+            tagDao.insertTags(bundle.tags)
+            templateDao.insertTemplates(bundle.templates)
+            reviewDao.insertReviews(bundle.reviews)
+            trackDao.insertTrackEntries(bundle.tracks)
+            focusSessionDao.insertSessions(bundle.sessions)
+            calendarProviderDao.insertProviders(bundle.providers)
             calendarEventDao.insertEvents(bundle.calendars)
+            eventLogDao.insertLogs(bundle.recentEvents)
         }
-        eventLogDao.insertLogs(bundle.recentEvents)
-
-        return ImportReport(
+        ImportReport(
             nodes = bundle.nodes.size,
             relations = bundle.relations.size,
             tracks = bundle.tracks.size,
@@ -1860,16 +1902,24 @@ class AppRepository(
         )
     }
 
-    /**
-     * Imports a list of legacy nodes into the repository.
-     * Utilizes batch insertion via [insertNodes] for optimized performance.
-     *
-     * @param nodes The list of [NodeEntity] legacy nodes to import.
-     * @return The number of nodes successfully imported.
-     */
-    suspend fun importLegacyNodes(nodes: List<NodeEntity>): Int {
-        nodeDao.insertNodes(nodes)
-        return nodes.size
+    /** Imports old node-only backups and rebuilds all node-derived tables without creation logs. */
+    suspend fun importLegacyNodes(nodes: List<NodeEntity>): Int = transactions.write {
+        nodes.forEach { node ->
+            val insertedId = nodeDao.insertNode(node)
+            val restored = node.copy(id = if (insertedId == -1L) node.id else insertedId)
+            syncBelongsToRelations(restored.id, restored.projectId, restored.areaId)
+            syncTypedFacetsFromNode(restored)
+            syncDomainsFromNodeMetadata(restored)
+            syncDocumentFromNode(restored)
+            syncScheduleEntriesForNode(
+                nodeId = restored.id,
+                reminderAt = restored.reminderAt,
+                startAt = restored.startAt,
+                dueAt = restored.dueAt,
+                recurrenceRule = restored.recurringInterval,
+            )
+        }
+        nodes.size
     }
 }
 

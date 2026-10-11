@@ -143,6 +143,34 @@ Website dependencies and their lockfile are maintained separately. Run `npm ci`,
 and `npm run build` from `website/` after updates. See its README for compatibility constraints.
 These checks do not establish device acceptance, visual correctness, or iOS compatibility.
 
+### Database backups and aggregate writes
+
+Full JSON backups use the versioned `ExportBundle` contract. Schema 4 snapshots every Room table
+inside one transaction, including typed facets, schedules, inbox captures, tag assignments, pins,
+saved-view children, modes, profile data, attachment references, and history. Snapshot suspend
+queries use the transaction connection instead of combining independently observed UI flows.
+
+Restoring a full backup atomically merges rows by persisted identity and replaces owned companion
+state for imported objects; roots absent from the file remain untouched. IDs are not remapped, so
+imports are intended for recovery of the same data set, not combining unrelated databases.
+Older bundle schemas and node-only exports rebuild node-derived typed state without inventing
+creation activity. Unsupported schema versions fail before writes. Fields absent from an old
+backup cannot be recovered by hydration.
+
+This is a **database backup**, not a portable archive of external files: attachment paths/URLs are
+preserved, but file bytes, Android URI permissions, device-local DataStore settings, and ownership
+entitlements are not embedded. Enabled pack keys are informational metadata. Backups can contain
+private profile data and calendar credentials. Exports are unencrypted; keep the files private.
+
+Production repository construction from `AppDatabase` wires a shared Room writer transaction for
+aggregate commands, including node side effects, saved-view replacement, triage, and imports.
+Network calendar fetching happens before the transaction. Only successful results replace cached
+events and advance `lastSyncedAt`; unavailable sources leave the local cache and timestamp intact.
+A successful empty calendar intentionally clears its previous events.
+
+Regression tests use real in-memory Room databases for backup round trips and induced write
+failures. DAO-only fake repositories cannot claim to produce complete database backups.
+
 ### UI layering
 
 The Compose app now separates UI composition into three explicit layers:

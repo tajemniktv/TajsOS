@@ -327,8 +327,13 @@ class IcsCalendarProviderTest {
                         type = "ICS",
                         url = url,
                     )
-                val events = provider.fetchEvents(entity, defaultFrom, defaultTo)
-                assertEquals(expectedCount, events.size, "Failed for URL: $url")
+                val result = provider.sync(entity, defaultFrom, defaultTo)
+                if (expectedCount == 0) {
+                    assertEquals(CalendarSyncResult.Failure(CalendarSyncFailure.INVALID_SOURCE), result, url)
+                } else {
+                    assertTrue(result is CalendarSyncResult.Success, url)
+                    assertEquals(expectedCount, result.events.size, url)
+                }
             }
         }
 

@@ -14,6 +14,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
+import kotlin.test.assertFailsWith
 
 class AppRepositoryTest {
     private val fakeNodeDao = FakeNodeDao()
@@ -696,18 +697,14 @@ class AppRepositoryTest {
         }
 
     @Test
-    fun testBuildExportBundle_includesSchemaAndPacks(): TestResult =
+    fun testFullBackup_rejectsDaoOnlyRepository(): TestResult =
         runTest {
             fakeNodeDao.insertNode(NodeEntity(type = "task", title = "Export me"))
 
-            val bundle =
+            assertFailsWith<IllegalStateException> {
                 repository.buildExportBundle(
                     enabledPacks = setOf(AppPack.STUDENT.key, AppPack.CREATOR.key),
                 )
-
-            assertEquals(EXPORT_SCHEMA_VERSION, bundle.schemaVersion)
-            assertTrue(bundle.nodes.isNotEmpty())
-            assertTrue(bundle.enabledPacks.contains(AppPack.STUDENT.key))
-            assertTrue(bundle.enabledPacks.contains(AppPack.CREATOR.key))
+            }
         }
 }

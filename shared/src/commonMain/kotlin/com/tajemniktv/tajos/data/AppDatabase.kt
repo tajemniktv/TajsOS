@@ -69,6 +69,9 @@ import androidx.room.RoomDatabaseConstructor
 )
 @ConstructedBy(AppDatabaseConstructor::class)
 abstract class AppDatabase : RoomDatabase() {
+    /** Consistent full-table snapshots and atomic backup restoration. */
+    abstract fun backupDao(): BackupDao
+
     /** Data Access Object for managing core life-objects (Nodes). */
     abstract fun nodeDao(): NodeDao
 
