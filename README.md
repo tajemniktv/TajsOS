@@ -143,6 +143,13 @@ Website dependencies and their lockfile are maintained separately. Run `npm ci`,
 and `npm run build` from `website/` after updates. See its README for compatibility constraints.
 These checks do not establish device acceptance, visual correctness, or iOS compatibility.
 
+Gradle and Kotlin compiler daemons retain their build heaps between invocations. Their idle
+timeouts are capped at five minutes in `gradle.properties`, while keeping the heap capacity needed
+for KMP compilation. A build after that idle period pays the daemon startup cost again.
+Run `.\gradlew.bat --stop` to release the current Gradle version's daemon immediately; its Kotlin
+compiler daemon also exits once its clients disconnect. After a toolchain update, older versions'
+daemons may remain until their original idle timeout or a stop command using that Gradle version.
+
 ### Database backups and aggregate writes
 
 Full JSON backups use the versioned `ExportBundle` contract. Schema 4 snapshots every Room table
