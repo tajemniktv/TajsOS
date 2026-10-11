@@ -32,7 +32,7 @@ ktor = "3.6.0"
 logback = "1.6.5"
 material = "1.14.0"
 # Latest Material 3 on the stable Compose 1.12 runtime; 1.13 alphas require an alpha runtime.
-material3 = "1.12.0-alpha03"
+material3 = "1.13.0-alpha02"
 slf4j-android = "2.0.20-0"
 kover = "0.9.11"
 ksp = "2.3.12"
