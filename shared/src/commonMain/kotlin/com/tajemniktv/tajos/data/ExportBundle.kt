@@ -81,27 +81,30 @@ data class ExportBundle(
 )
 
 /**
- * Keeps portable calendar configuration while excluding reusable authorization credentials.
- * Credential-bearing portable copies are disabled; imports may retain matching local authorization.
+ * Keeps calendar configuration while excluding the access/refresh token columns.
+ * Private feed URLs may themselves grant access and remain part of this private recovery file.
+ * Token-bearing portable copies are disabled; imports may retain matching local authorization.
  * This returns a copy; creating a backup never changes the live provider or its cached events.
  */
-internal fun CalendarProviderEntity.withoutBackupCredentials(): CalendarProviderEntity =
+internal fun CalendarProviderEntity.withoutBackupTokens(): CalendarProviderEntity =
     copy(
         accessToken = null,
         refreshToken = null,
-        isEnabled = isEnabled && accessToken == null && refreshToken == null,
+        isEnabled = isEnabled && !hasAuthorizationTokens,
     )
 
 /**
  * Imports configuration without trusting payload credentials or erasing matching local authorization.
+ * New or changed source identities are disabled until locally enabled, including token-free feeds.
  * Local tokens and enablement belong to this device. A credential-bearing ID collision with a
  * different account/type/URL rejects restore rather than attaching secrets to another identity.
  */
 internal fun CalendarProviderEntity.forBackupImport(local: CalendarProviderEntity?): CalendarProviderEntity {
-    val sanitized = withoutBackupCredentials()
-    if (local == null || (local.accessToken == null && local.refreshToken == null)) return sanitized
-    require(id == local.id && type == local.type && accountEmail == local.accountEmail && url == local.url) {
-        "Backup calendar provider identity conflicts with local authorization"
+    val sanitized = withoutBackupTokens().copy(isEnabled = false)
+    if (local == null) return sanitized
+    if (backupIdentity() != local.backupIdentity()) {
+        require(!local.hasAuthorizationTokens) { "Backup calendar provider identity conflicts with local authorization" }
+        return sanitized
     }
     return sanitized.copy(
         accessToken = local.accessToken,
@@ -109,3 +112,13 @@ internal fun CalendarProviderEntity.forBackupImport(local: CalendarProviderEntit
         isEnabled = local.isEnabled,
     )
 }
+
+/** Token presence controls credential-bearing identity protection, not whether a feed URL is public. */
+private val CalendarProviderEntity.hasAuthorizationTokens: Boolean
+    get() = accessToken != null || refreshToken != null
+
+/** Stable source identity excludes display metadata and device-local authorization. */
+private data class CalendarBackupIdentity(val id: Long, val type: String, val account: String?, val url: String?)
+
+/** Compares identities without relying on a compound nullable-field condition. */
+private fun CalendarProviderEntity.backupIdentity() = CalendarBackupIdentity(id, type, accountEmail, url)

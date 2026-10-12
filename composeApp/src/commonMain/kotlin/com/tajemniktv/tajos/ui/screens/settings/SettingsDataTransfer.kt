@@ -20,8 +20,11 @@ data class SettingsDataTransferState(
 
 /** UI feedback that does not expose raw exception details or imported secrets. */
 sealed interface DataTransferFeedback {
+    /** A typed import result is available for localized feedback without retaining rendered text. */
     data class Imported(val result: DataImportResult) : DataTransferFeedback
+    /** The explicit copy operation completed for the full retained JSON payload. */
     data object Copied : DataTransferFeedback
+    /** The requested operation failed; diagnostic details and secrets are intentionally omitted. */
     data object Failed : DataTransferFeedback
 }
 
@@ -33,6 +36,7 @@ class SettingsDataTransfer(
     private val copyJson: suspend (String) -> Unit,
 ) {
     private val mutableState = MutableStateFlow(SettingsDataTransferState())
+    /** Read-only observation of the current operation, in-memory export, and typed feedback. */
     val state: StateFlow<SettingsDataTransferState> = mutableState.asStateFlow()
 
     /** Replaces prior JSON before exporting, so failure cannot offer an obsolete snapshot for copy. */

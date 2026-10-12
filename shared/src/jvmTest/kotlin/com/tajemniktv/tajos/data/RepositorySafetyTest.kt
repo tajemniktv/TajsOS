@@ -186,9 +186,16 @@ class RepositorySafetyTest {
             ))
             val before = repository.buildExportBundle().copy(exportedAt = 0)
             db.useWriterConnection { connection ->
-                connection.usePrepared("CREATE TRIGGER reject_pin BEFORE INSERT ON today_pins BEGIN SELECT RAISE(ABORT, 'synthetic failure'); END") { it.step() }
+                connection.usePrepared("""
+                    CREATE TRIGGER reject_pin BEFORE INSERT ON today_pins BEGIN
+                        SELECT CASE WHEN EXISTS(SELECT 1 FROM today_pins)
+                            THEN RAISE(ABORT, 'cleanup was skipped') END;
+                        SELECT RAISE(ABORT, 'synthetic post-cleanup failure');
+                    END
+                """.trimIndent()) { it.step() }
             }
-            assertFailsWith<androidx.sqlite.SQLiteException> { repository.pinToDate(id, date) }
+            val failure = assertFailsWith<androidx.sqlite.SQLiteException> { repository.pinToDate(id, date) }
+            assertTrue(failure.message.orEmpty().contains("synthetic post-cleanup failure"))
             assertEquals(before, repository.buildExportBundle().copy(exportedAt = 0))
         }
     }
@@ -258,6 +265,10 @@ class RepositorySafetyTest {
             assertEquals(archived, repository.getNodeById(id))
             assertEquals(2, db.backupDao().readNodes().size)
             assertEquals(1, db.backupDao().readRecentEvents().count { it.eventType == "NODE_ARCHIVED" })
+
+            val beforeStaleCompletion = repository.buildExportBundle().copy(exportedAt = 0)
+            changeStatus(repository, stale, TaskState.DONE.storageKey)
+            assertEquals(beforeStaleCompletion, repository.buildExportBundle().copy(exportedAt = 0))
 
             changeStatus(repository, stale, TaskState.ACTIVE.storageKey)
             val reopened = assertNotNull(repository.getNodeById(id))

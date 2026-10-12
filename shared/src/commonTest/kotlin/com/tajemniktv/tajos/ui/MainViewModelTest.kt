@@ -245,94 +245,62 @@ class MainViewModelTest {
     }
 
     @Test
-    fun exportDataJson_readsRepositoryBeforeInitialUiEmission() =
-        runTest {
-            val testNodes =
-                listOf(
-                    NodeWithPin(
-                        node =
-                            NodeEntity(
-                                id = 1,
-                                type = "task",
-                                title = "Task 1",
-                                content = "Content 1",
-                                inboxState = false,
-                            ),
-                        pin = null,
-                    ),
-                    NodeWithPin(
-                        node =
-                            NodeEntity(
-                                id = 2,
-                                type = "note",
-                                title = "Note 1",
-                                content = "Content 2",
-                                status = "archived",
-                            ),
-                        pin = null,
-                    ),
-                )
-
-            val pendingUiEmission = CompletableDeferred<Unit>()
-            var firstSubscription = true
-            val nodesFlow = flow {
-                if (firstSubscription) {
-                    firstSubscription = false
-                    pendingUiEmission.await()
-                }
-                emit(testNodes)
+    fun exportDataJson_readsRepositoryBeforeInitialUiEmission() = runTest {
+        val expected = exportFixtureNodes()
+        val pendingUiEmission = CompletableDeferred<Unit>()
+        var firstSubscription = true
+        val nodesFlow = flow {
+            if (firstSubscription) {
+                firstSubscription = false
+                pendingUiEmission.await()
             }
-
-            val testRepo =
-                AppRepository(
-                    nodeDao = TestNodeDao(nodesFlow),
-                    focusSessionDao = StubFocusSessionDao(),
-                    trackDao = StubTrackDao(),
-                    relationDao = StubRelationDao(),
-                    tagDao = StubTagDao(),
-                    eventLogDao = StubEventLogDao(),
-                    attachmentDao = StubAttachmentDao(),
-                    templateDao = StubTemplateDao(),
-                    nodeSnapshotDao = FakeNodeSnapshotDao(),
-                    reviewDao = FakeReviewDao(),
-                    calendarProviderDao = FakeCalendarProviderDao(),
-                    calendarEventDao = FakeCalendarEventDao(),
-                    modeDao = FakeModeDao(),
-                    protocolDao = FakeProtocolDao(),
-                    decisionDao = FakeDecisionDao(),
-                    userDao = FakeUserDao(),
-                    medicationDao = FakeMedicationDao(),
-                )
-
-            val fakeDataStore = FakeDataStore()
-            val testPrefs = PreferencesRepository(fakeDataStore)
-            val mockEngine =
-                io.ktor.client.engine.mock.MockEngine {
-                    respond("", io.ktor.http.HttpStatusCode.OK)
-                }
-            val client = io.ktor.client.HttpClient(mockEngine)
-            val calendarManager =
-                com.tajemniktv.tajos.calendar
-                    .CalendarManager(testRepo, client)
-
-            val viewModel = MainViewModel(testRepo, testPrefs, calendarManager)
-
+            emit(expected)
+        }
+        val repository = exportRepository(nodesFlow)
+        val client = io.ktor.client.HttpClient(io.ktor.client.engine.mock.MockEngine {
+            respond("", io.ktor.http.HttpStatusCode.OK)
+        })
+        try {
+            val viewModel = MainViewModel(repository, PreferencesRepository(FakeDataStore()),
+                com.tajemniktv.tajos.calendar.CalendarManager(repository, client))
             assertTrue(viewModel.allNodes.value.isEmpty(), "The initial UI emission is deliberately delayed")
-
             val exportJson = viewModel.exportDataJson()
+            assertTrue(exportJson.isNotEmpty(), "Export JSON should not be empty")
+            val parsed = Json.decodeFromString<ExportData>(exportJson)
+            assertEquals(com.tajemniktv.tajos.data.LEGACY_EXPORT_VERSION, parsed.version)
+            assertEquals(expected.map { it.node }, parsed.nodes)
+        } finally {
             pendingUiEmission.complete(Unit)
             client.close()
-
-            assertTrue(exportJson.isNotEmpty(), "Export JSON should not be empty")
-
-            val parsedData = Json.decodeFromString<ExportData>(exportJson)
-            assertEquals(2, parsedData.version, "ExportData version should be 2")
-            assertEquals(2, parsedData.nodes.size, "ExportData should contain 2 nodes")
-
-            assertEquals(1, parsedData.nodes[0].id)
-            assertEquals("Task 1", parsedData.nodes[0].title)
-
-            assertEquals(2, parsedData.nodes[1].id)
-            assertEquals("Note 1", parsedData.nodes[1].title)
         }
+    }
+
+    /** Stable timestamps keep full-row comparisons independent of serializer default evaluation. */
+    private fun exportFixtureNodes(): List<NodeWithPin> = listOf(
+        NodeWithPin(NodeEntity(id = 1, type = "task", title = "Task 1", content = "Content 1",
+            inboxState = false, createdAt = 1, updatedAt = 1), pin = null),
+        NodeWithPin(NodeEntity(id = 2, type = "note", title = "Note 1", content = "Content 2",
+            status = "archived", createdAt = 1, updatedAt = 1), pin = null),
+    )
+
+    /** Wires existing fake DAO seams without placing their construction inside behavior assertions. */
+    private fun exportRepository(nodes: Flow<List<NodeWithPin>>): AppRepository = AppRepository(
+        nodeDao = TestNodeDao(nodes),
+        focusSessionDao = StubFocusSessionDao(),
+        trackDao = StubTrackDao(),
+        relationDao = StubRelationDao(),
+        tagDao = StubTagDao(),
+        eventLogDao = StubEventLogDao(),
+        attachmentDao = StubAttachmentDao(),
+        templateDao = StubTemplateDao(),
+        nodeSnapshotDao = FakeNodeSnapshotDao(),
+        reviewDao = FakeReviewDao(),
+        calendarProviderDao = FakeCalendarProviderDao(),
+        calendarEventDao = FakeCalendarEventDao(),
+        modeDao = FakeModeDao(),
+        protocolDao = FakeProtocolDao(),
+        decisionDao = FakeDecisionDao(),
+        userDao = FakeUserDao(),
+        medicationDao = FakeMedicationDao(),
+    )
 }

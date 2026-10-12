@@ -12,9 +12,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.daysUntil
 import kotlinx.datetime.toLocalDateTime
-import kotlin.time.Instant
 
 /**
  * Fallback, no-operation implementation for [InboxEntryDao] used when the actual DAO is unavailable or uninitialized.
@@ -486,7 +484,9 @@ class AppRepository internal constructor(
      */
     suspend fun dismissInboxEntry(entry: InboxEntryEntity): Unit = transactions.write {
         val current = inboxEntryDao.getInboxEntryById(entry.id) ?: return@write
-        if (current.processedAt != null || current.triagedItemId != null || current.dismissedAt != null) return@write
+        if (current.triagedItemId != null) return@write
+        if (current.processedAt != null) return@write
+        if (current.dismissedAt != null) return@write
         inboxEntryDao.updateInboxEntry(
             current.copy(
                 dismissedAt =
@@ -852,40 +852,20 @@ class AppRepository internal constructor(
      * Applies a lifecycle transition to the current persisted node, preserving unrelated edits.
      * Repeating the current status is a no-op. Completion and a recurring successor share one
      * transaction. Archiving retains completion history; reopening clears completion metadata
-     * and permits a new completion transition.
+     * and permits a new completion transition. Archived nodes reject completion until reopened.
      * Recurrence retains the existing fixed-duration interval policy.
      */
-    suspend fun updateNodeStatus(nodeId: Long, status: String): Unit = transactions.write {
+    suspend fun updateNodeStatus(nodeId: Long, status: TaskState): Unit = transactions.write {
         val current = nodeDao.getNodeById(nodeId) ?: return@write
-        if (current.status == status) return@write
+        if (!current.canTransitionTo(status)) return@write
         val now = kotlin.time.Clock.System.now().toEpochMilliseconds()
-        updateNode(
-            current.copy(
-                status = status,
-                updatedAt = now,
-                completedAt = when (status) {
-                    TaskState.DONE.storageKey -> now
-                    TaskState.ARCHIVED.storageKey -> current.completedAt
-                    else -> null
-                },
-                archivedAt = if (status == TaskState.ARCHIVED.storageKey) now else null,
-            ),
-        )
-        if (status == TaskState.DONE.storageKey && current.isRecurring && current.recurringInterval != null) {
-            insertNode(
-                current.copy(
-                    id = 0,
-                    status = TaskState.ACTIVE.storageKey,
-                    createdAt = now,
-                    updatedAt = now,
-                    completedAt = null,
-                    archivedAt = null,
-                    dueAt = nextRecurringDueAt(current.dueAt ?: now, current.recurringInterval),
-                    inboxState = false,
-                ),
-            )
-        }
+        updateNode(current.withLifecycleState(status, now))
+        current.recurringSuccessor(status, now)?.let { insertNode(it) }
     }
+
+    /** Validates legacy string callers before any write; typed callers use [TaskState] directly. */
+    suspend fun updateNodeStatus(nodeId: Long, status: String): Unit =
+        updateNodeStatus(nodeId, requireNotNull(TaskState.fromStorageKey(status)) { "Unsupported node lifecycle state" })
 
     /**
      * Updates multiple existing nodes in the database in a batch operation.
@@ -1121,30 +1101,21 @@ class AppRepository internal constructor(
      */
     private suspend fun syncChangedScheduleEntries(oldNode: NodeEntity, node: NodeEntity) {
         val recurrenceChanged = oldNode.recurringInterval != node.recurringInterval
-        for ((kind, previous, next) in listOf(
-            Triple(ScheduleEntryKind.START, oldNode.startAt, node.startAt),
-            Triple(ScheduleEntryKind.DUE, oldNode.dueAt, node.dueAt),
-            Triple(ScheduleEntryKind.REMINDER, oldNode.reminderAt, node.reminderAt),
-        )) {
-            if (previous == next && !recurrenceChanged) continue
-            val entries = scheduleEntryDao.getScheduleEntriesByKind(node.id, kind.storageKey)
-            val mirrored = entries.filter { previous != null && it.scheduledAt == previous }.minByOrNull { it.id }
-            if (previous == next && mirrored == null) continue
-            val replacement = next?.let { timestamp ->
-                val timezone = if (previous == next) null else mirrored?.timezoneId?.let(TimeZone::of) ?: TimeZone.currentSystemDefault()
-                (mirrored ?: ScheduleEntryEntity(itemId = node.id, kind = kind.storageKey, scheduledAt = timestamp)).copy(
-                    scheduledAt = timestamp,
-                    localDateEpochDay = if (previous == next) mirrored?.localDateEpochDay else epochDayFromInstant(timestamp, checkNotNull(timezone)),
-                    timezoneId = if (mirrored == null) timezone?.id else mirrored.timezoneId,
-                    endAt = mirrored?.endAt?.let { it + (timestamp - mirrored.scheduledAt) },
-                    recurrenceRule = if (recurrenceChanged || mirrored == null) node.recurringInterval else mirrored.recurrenceRule,
-                )
-            }
-            if (replacement != null) {
-                scheduleEntryDao.insertScheduleEntry(replacement)
-            } else if (mirrored != null) {
-                scheduleEntryDao.deleteScheduleEntry(mirrored.id)
-            }
+        for (change in node.legacyScheduleChanges(oldNode)) {
+            if (change.timeChanged || recurrenceChanged) reconcileScheduleEntry(node, change, recurrenceChanged)
+        }
+    }
+
+    /** Writes one scalar-backed replacement or deletion inside the caller's aggregate transaction. */
+    private suspend fun reconcileScheduleEntry(node: NodeEntity, change: LegacyScheduleChange, recurrenceChanged: Boolean) {
+        val entries = scheduleEntryDao.getScheduleEntriesByKind(node.id, change.kind.storageKey)
+        val mirrored = change.mirroredEntry(entries)
+        if (!change.timeChanged && mirrored == null) return
+        val replacement = change.replacement(node.id, mirrored, node.recurringInterval, recurrenceChanged)
+        if (replacement != null) {
+            scheduleEntryDao.insertScheduleEntry(replacement)
+        } else {
+            mirrored?.let { scheduleEntryDao.deleteScheduleEntry(it.id) }
         }
     }
 
@@ -1220,17 +1191,6 @@ class AppRepository internal constructor(
             scheduleEntryDao.insertScheduleEntries(entries)
         }
     }
-
-    private fun epochDayFromInstant(
-        timestamp: Long,
-        timezone: TimeZone,
-    ): Int =
-        LocalDate(1970, 1, 1).daysUntil(
-            Instant
-                .fromEpochMilliseconds(timestamp)
-                .toLocalDateTime(timezone)
-                .date,
-        )
 
     /**
      * Permanently deletes a node from the database.

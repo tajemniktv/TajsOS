@@ -57,7 +57,39 @@ class DataImportTest {
             val futureVersion = EXPORT_SCHEMA_VERSION + 1
             val futurePayload = """{"schemaVersion":$futureVersion,"futureField":{"synthetic":true}}"""
             assertEquals(DataImportResult.UnsupportedSchema(futureVersion), repository.importJson(futurePayload))
+            for (version in listOf(-1, 0, 3, 999)) {
+                val unsupportedLegacy = Json.encodeToString(ExportData(version = version, nodes = emptyList()))
+                assertEquals(DataImportResult.UnsupportedSchema(version), repository.importJson(unsupportedLegacy))
+            }
             assertEquals(before, repository.buildExportBundle().copy(exportedAt = 0))
+        }
+    }
+
+    @Test
+    fun versionProbeSkipsLargeNestedFieldsAndKeepsSupportedDecodingStrict() = runBlocking {
+        withRepository { repository ->
+            repository.insertLifeItem(ItemKind.NOTE, "Keep existing synthetic note")
+            val before = repository.buildExportBundle().copy(exportedAt = 0)
+            val ignored = "Synthetic unknown value ".repeat(100_000)
+            val nested = """{"schemaVersion":1,"version":1,"content":"$ignored"}"""
+            val futureVersion = EXPORT_SCHEMA_VERSION + 1
+            val future = """{"unknown":$nested,"schemaVersion":$futureVersion}"""
+            assertEquals(DataImportResult.UnsupportedSchema(futureVersion), repository.importJson(future))
+            val supportedWithUnknown = """{"exportedAt":0,"unknown":$nested,"schemaVersion":$EXPORT_SCHEMA_VERSION}"""
+            assertEquals(DataImportResult.InvalidFormat, repository.importJson(supportedWithUnknown))
+            assertEquals(before, repository.buildExportBundle().copy(exportedAt = 0))
+        }
+    }
+
+    @Test
+    fun supportedLegacyVersionsStillRestoreTheirNodes() = runBlocking {
+        for (version in 1..LEGACY_EXPORT_VERSION) {
+            withRepository { repository ->
+                val node = NodeEntity(id = 1, type = ItemKind.NOTE.storageKey, title = "Historical synthetic note", createdAt = 1, updatedAt = 1)
+                val payload = Json.encodeToString(ExportData(version, listOf(node)))
+                assertEquals(DataImportResult.Legacy(1), repository.importJson(payload))
+                assertEquals(node, repository.getNodeById(node.id))
+            }
         }
     }
 }

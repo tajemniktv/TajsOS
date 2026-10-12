@@ -45,35 +45,48 @@ class RepositoryAdversarialReviewTest {
     @Test
     fun everySupportedSchemaPreservesLocalAuthorizationAndIgnoresImportedTokens() = runBlocking {
         for (version in 1..EXPORT_SCHEMA_VERSION) {
-            for (enabled in listOf(true, false)) {
-                withDatabase { db, repository ->
-                    val local = localProvider(enabled)
-                    repository.insertCalendarProvider(local)
-                    val incoming = local.copy(
-                        name = "Restored display name", color = 123,
-                        accessToken = "UNTRUSTED_ACCESS", refreshToken = "UNTRUSTED_REFRESH", isEnabled = !enabled,
-                    )
-                    val bundle = repository.buildExportBundle().copy(schemaVersion = version, providers = listOf(incoming))
-                    repository.importBundle(Json.decodeFromString<ExportBundle>(Json.encodeToString(bundle)))
-                    assertEquals(incoming.copy(
-                        accessToken = local.accessToken, refreshToken = local.refreshToken, isEnabled = local.isEnabled,
-                    ), db.calendarProviderDao().getProviderById(local.id))
-                    for (format in listOf(Json, Json { encodeDefaults = true })) {
-                        val json = format.encodeToString(repository.buildExportBundle())
-                        for (secret in listOf("LOCAL_ACCESS_SENTINEL", "LOCAL_REFRESH_SENTINEL", "UNTRUSTED_ACCESS", "UNTRUSTED_REFRESH")) {
-                            assertFalse(secret in json)
-                        }
-                    }
-                    withDatabase { empty, destination ->
-                        destination.importBundle(bundle)
-                        val restored = assertNotNull(empty.calendarProviderDao().getProviderById(local.id))
-                        assertNull(restored.accessToken)
-                        assertNull(restored.refreshToken)
-                        assertFalse(restored.isEnabled)
-                    }
-                }
-            }
+            verifyProviderRestore(version, enabled = true)
+            verifyProviderRestore(version, enabled = false)
         }
+    }
+
+    /** Checks one device-authorization case independently from encoding and new-profile policy. */
+    private suspend fun verifyProviderRestore(version: Int, enabled: Boolean) = withDatabase { db, repository ->
+        val local = localProvider(enabled)
+        repository.insertCalendarProvider(local)
+        val incoming = local.copy(
+            name = "Restored display name", color = 123,
+            accessToken = "UNTRUSTED_ACCESS", refreshToken = "UNTRUSTED_REFRESH", isEnabled = !enabled,
+        )
+        val bundle = repository.buildExportBundle().copy(schemaVersion = version, providers = listOf(incoming))
+        repository.importBundle(Json.decodeFromString<ExportBundle>(Json.encodeToString(bundle)))
+        assertEquals(incoming.copy(
+            accessToken = local.accessToken, refreshToken = local.refreshToken, isEnabled = local.isEnabled,
+        ), db.calendarProviderDao().getProviderById(local.id))
+        assertBackupRedaction(repository)
+        assertNewProfileSourceDisabled(bundle, local.id)
+    }
+
+    /** Both default and explicit-default encoders must omit every synthetic token sentinel. */
+    private suspend fun assertBackupRedaction(repository: AppRepository) {
+        val bundle = repository.buildExportBundle()
+        for (format in listOf(Json, Json { encodeDefaults = true })) assertRedactedJson(format.encodeToString(bundle))
+    }
+
+    /** Tests token absence without deep nesting inside the database fixture matrix. */
+    private fun assertRedactedJson(json: String) {
+        for (secret in listOf("LOCAL_ACCESS_SENTINEL", "LOCAL_REFRESH_SENTINEL", "UNTRUSTED_ACCESS", "UNTRUSTED_REFRESH")) {
+            assertFalse(secret in json)
+        }
+    }
+
+    /** Imported authorization and enablement are never granted to an unconfigured destination. */
+    private suspend fun assertNewProfileSourceDisabled(bundle: ExportBundle, providerId: Long) = withDatabase { db, repository ->
+        repository.importBundle(bundle)
+        val restored = assertNotNull(db.calendarProviderDao().getProviderById(providerId))
+        assertNull(restored.accessToken)
+        assertNull(restored.refreshToken)
+        assertFalse(restored.isEnabled)
     }
 
     @Test

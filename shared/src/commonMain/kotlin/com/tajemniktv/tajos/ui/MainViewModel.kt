@@ -19,6 +19,7 @@ import com.tajemniktv.tajos.data.importJson
 import com.tajemniktv.tajos.data.FocusSessionEntity
 import com.tajemniktv.tajos.data.InboxEntryEntity
 import com.tajemniktv.tajos.data.ItemKind
+import com.tajemniktv.tajos.data.LEGACY_EXPORT_VERSION
 import com.tajemniktv.tajos.data.MedicationEntity
 import com.tajemniktv.tajos.data.ModeEntity
 import com.tajemniktv.tajos.data.ModeUsageLogEntity
@@ -2712,7 +2713,7 @@ class MainViewModel(
     suspend fun exportDataJson(): String =
         withContext(Dispatchers.Default) {
             val nodes = repository.getAllNodes().first().map { it.node }
-            val data = ExportData(version = 2, nodes = nodes)
+            val data = ExportData(version = LEGACY_EXPORT_VERSION, nodes = nodes)
             Json.encodeToString(data)
         }
 
