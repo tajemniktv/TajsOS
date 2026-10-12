@@ -22,6 +22,7 @@ data class NodeCategorization(
 
 /**
  * Source-compatible alias for the unchanged legacy JSON contract now owned by the data layer.
+ * This emits no runtime class at the old name; Java and binary consumers must update and rebuild.
  */
 typealias ExportData = com.tajemniktv.tajos.data.ExportData
 

@@ -2724,7 +2724,10 @@ class MainViewModel(
             Json.encodeToString(bundle)
         }
 
-    /** Imports supported local JSON and returns typed feedback for the settings surface. */
+    /**
+     * Imports supported local JSON and returns typed feedback for the settings surface.
+     * This intentionally replaces the pre-alpha rendered String result; callers must localize it.
+     */
     suspend fun importDataJson(payload: String): DataImportResult =
         withContext(Dispatchers.Default) { repository.importJson(payload) }
 

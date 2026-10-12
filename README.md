@@ -164,6 +164,12 @@ Version checks decode only top-level metadata and skip unknown data without reta
 Supported payloads still undergo strict decoding. Unsupported bundle and node-only versions fail
 before writes. The pasted string and decoded entities still consume memory; imports are not streamed.
 
+The transfer API deliberately changes during pre-alpha: `MainViewModel.importDataJson` returns
+`DataImportResult` instead of a rendered `String`, so callers must localize typed results.
+`ExportData` now lives in the data layer. Its old Kotlin name is a source alias, not a runtime class
+or binary compatibility bridge; Java and previously compiled consumers must update and rebuild.
+The serialized node-only JSON shape remains unchanged.
+
 Full JSON backups use the versioned `ExportBundle` contract. Schema 4 snapshots every Room table
 inside one transaction, including typed facets, schedules, inbox captures, tag assignments, pins,
 saved-view children, modes, profile data, attachment references, and history. Snapshot suspend
