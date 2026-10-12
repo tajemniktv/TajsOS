@@ -3,16 +3,16 @@ package com.tajemniktv.tajos.data
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 
-class FakeNodeDao : NodeDao {
+/** Observes node and pin storage through separate fake DAO ownership boundaries. */
+class FakeNodeDao(private val todayPins: FakeTodayPinDao = FakeTodayPinDao()) : NodeDao, TodayPinDao by todayPins {
     private val nodes = mutableListOf<NodeEntity>()
-    private val pins = mutableListOf<TodayPinEntity>()
 
     private val nodesFlow = MutableStateFlow<List<NodeEntity>>(emptyList())
-    private val pinsFlow = MutableStateFlow<List<TodayPinEntity>>(emptyList())
 
     override fun getAllNodesWithPins(): Flow<List<NodeWithPin>> {
-        return nodesFlow.map { nodesList ->
+        return combine(nodesFlow, todayPins.rows) { nodesList, pins ->
             nodesList.map { node ->
                 val pin = pins.find { it.nodeId == node.id }
                 NodeWithPin(node, pin)
@@ -21,7 +21,7 @@ class FakeNodeDao : NodeDao {
     }
 
     override fun getTodayNodes(date: String): Flow<List<NodeEntity>> {
-        return nodesFlow.map { nodesList ->
+        return combine(nodesFlow, todayPins.rows) { nodesList, pins ->
             nodesList.filter { node ->
                 node.status == "active" && pins.any { it.nodeId == node.id && it.date == date }
             }
@@ -37,7 +37,7 @@ class FakeNodeDao : NodeDao {
     }
 
     override fun getNodesByProjectWithPins(projectId: Long): Flow<List<NodeWithPin>> {
-        return nodesFlow.map { nodesList ->
+        return combine(nodesFlow, todayPins.rows) { nodesList, pins ->
             nodesList.filter { node -> node.projectId == projectId && node.status != "archived" }
                 .map { node -> NodeWithPin(node, pins.find { it.nodeId == node.id }) }
         }
@@ -48,7 +48,7 @@ class FakeNodeDao : NodeDao {
     }
 
     override fun getNodesByAreaWithPins(areaId: Long): Flow<List<NodeWithPin>> {
-        return nodesFlow.map { nodesList ->
+        return combine(nodesFlow, todayPins.rows) { nodesList, pins ->
             nodesList.filter { node -> node.areaId == areaId && node.status != "archived" }
                 .map { node -> NodeWithPin(node, pins.find { it.nodeId == node.id }) }
         }
@@ -114,20 +114,4 @@ class FakeNodeDao : NodeDao {
         nodesFlow.value = nodes.toList()
     }
 
-    override suspend fun pinToToday(pin: TodayPinEntity) {
-        val newId = (pins.size + 1).toLong()
-        val newPin = pin.copy(id = newId)
-        pins.removeAll { it.nodeId == pin.nodeId }
-        pins.add(newPin)
-        pinsFlow.value = pins.toList()
-    }
-
-    override suspend fun unpinFromToday(nodeId: Long) {
-        pins.removeAll { it.nodeId == nodeId }
-        pinsFlow.value = pins.toList()
-    }
-
-    override fun isPinnedToToday(nodeId: Long): Flow<Boolean> {
-        return pinsFlow.map { pinsList -> pinsList.any { it.nodeId == nodeId } }
-    }
 }

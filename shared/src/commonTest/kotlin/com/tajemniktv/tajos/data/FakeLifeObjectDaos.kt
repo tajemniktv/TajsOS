@@ -305,8 +305,14 @@ class FakeScheduleEntryDao : ScheduleEntryDao {
         entriesFlow.value = entries.toList()
     }
 
+    override suspend fun deleteScheduleEntry(id: Long) {
+        entries.removeAll { it.id == id }
+        entriesFlow.value = entries.toList()
+    }
+
     override suspend fun insertScheduleEntry(entry: ScheduleEntryEntity): Long {
-        val id = (entries.size + 1).toLong()
+        val id = if (entry.id != 0L) entry.id else (entries.maxOfOrNull { it.id } ?: 0L) + 1L
+        entries.removeAll { it.id == id }
         entries += entry.copy(id = id)
         entriesFlow.value = entries.toList()
         return id

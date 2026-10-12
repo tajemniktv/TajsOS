@@ -319,7 +319,7 @@ class RepositoryPersistenceTest {
         tracks = listOf(TrackEntryEntity(id = 1, date = "2026-10-11", createdAt = 1)),
         sessions = listOf(FocusSessionEntity(id = 1, nodeId = 1, startedAt = 1)),
         calendars = listOf(CalendarEventEntity(id = 1, providerId = 1, title = "Event", startAt = 1, endAt = 2, createdAt = 1, updatedAt = 1)),
-        providers = listOf(CalendarProviderEntity(id = 1, name = "ICS", type = "ICS", url = "https://example.com/feed.ics", lastSyncedAt = 1)),
+        providers = listOf(CalendarProviderEntity(id = 1, name = "ICS", type = "ICS", url = "https://example.com/feed.ics", lastSyncedAt = 1, isEnabled = false)),
         recentEvents = listOf(EventLogEntity(id = 1, eventType = "NODE_CREATED", nodeId = 1, timestamp = 1)),
         nodeTags = listOf(NodeTagEntity(nodeId = 1, tagId = 1)),
         pins = listOf(TodayPinEntity(id = 1, nodeId = 1, date = "2026-10-11", position = 0, selectedAt = 1)),

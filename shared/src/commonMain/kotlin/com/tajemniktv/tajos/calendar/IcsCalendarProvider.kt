@@ -55,15 +55,16 @@ class IcsCalendarProvider(
     }
 
     /**
-     * Validates that a string is an HTTP/HTTPS URL and blocks internal or private network hosts
-     * to prevent Server-Side Request Forgery (SSRF).
+     * Validates HTTP/HTTPS URLs and rejects known internal hostnames and private IP literals.
+     * This lexical check does not validate DNS answers or redirect destinations; it does not
+     * provide a complete SSRF boundary. Network-engine policy must handle those cases.
      *
      * It parses the URL and explicitly rejects loopback addresses (e.g., 127.0.0.1, ::1),
      * link-local addresses (169.254.x.x), private RFC1918 ranges (10.x.x.x, 172.16.x.x, 192.168.x.x),
      * unique-local IPv6 addresses, and known metadata hosts (e.g., "localhost", "metadata.google.internal").
      *
      * @param url The raw URL string to validate.
-     * @return `true` if the URL has a valid scheme and an external routable host, `false` otherwise
+     * @return `true` if the URL passes scheme and lexical host checks, `false` otherwise
      *         (or if parsing throws an exception).
      */
     private fun isValidHttpUrl(url: String): Boolean {

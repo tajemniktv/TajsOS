@@ -1117,6 +1117,19 @@
     <string name="voice_speak_now">Mów teraz...</string>
     <string name="intent_shared_image">Udostępniony obraz</string>
     <string name="intent_shared_images">Udostępnione obrazy</string>
+    <string name="settings_data_desc">Eksportuj lub importuj dane systemu lokalnie.</string>
+    <string name="settings_transfer_export_ready">Eksport gotowy</string>
+    <string name="settings_transfer_private">Ten JSON zawiera dane osobiste i może zawierać prywatne adresy kanałów kalendarza. Zachowaj go w prywatnym miejscu.</string>
+    <string name="settings_transfer_preview">Podgląd (limit znaków: %1$d; cały eksport: %2$d). Kopiowanie JSON obejmuje cały eksport.</string>
+    <string name="settings_transfer_copy">Kopiuj JSON</string>
+    <string name="settings_transfer_copied">Cały JSON skopiowano do schowka.</string>
+    <string name="settings_transfer_failed">Przenoszenie danych nie powiodło się. Wprowadzony tekst jest nadal dostępny; spróbuj ponownie.</string>
+    <string name="settings_transfer_busy">Przetwarzanie…</string>
+    <string name="settings_transfer_bundle_imported">Zaimportowano pakiet. Obiekty: %1$d; relacje: %2$d; zdarzenia: %3$d.</string>
+    <string name="settings_transfer_legacy_imported">Zaimportowano starszy eksport. Obiekty: %1$d.</string>
+    <string name="settings_transfer_empty">Wklej eksport przed importowaniem.</string>
+    <string name="settings_transfer_invalid">Nierozpoznany format eksportu JSON.</string>
+    <string name="settings_transfer_unsupported">Schemat kopii %1$d nie jest obsługiwany. Nie zaimportowano danych.</string>
 </resources>
 
 

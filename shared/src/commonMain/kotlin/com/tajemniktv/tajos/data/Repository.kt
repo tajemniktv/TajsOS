@@ -12,9 +12,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.daysUntil
 import kotlinx.datetime.toLocalDateTime
-import kotlin.time.Instant
 
 /**
  * Fallback, no-operation implementation for [InboxEntryDao] used when the actual DAO is unavailable or uninitialized.
@@ -190,6 +188,8 @@ private object NoOpScheduleEntryDao : ScheduleEntryDao {
 
     override suspend fun deleteScheduleEntriesForItem(itemId: Long) = Unit
 
+    override suspend fun deleteScheduleEntry(id: Long) = Unit
+
     override suspend fun insertScheduleEntry(entry: ScheduleEntryEntity): Long = 0L
 
     override suspend fun insertScheduleEntries(entries: List<ScheduleEntryEntity>) = Unit
@@ -335,7 +335,7 @@ class AppRepository internal constructor(
      *
      * @return A Flow emitting a list of [NodeWithPin] objects.
      */
-    fun getAllNodes(): Flow<List<NodeWithPin>> = nodeDao.getAllNodesWithPins()
+    fun getAllNodes(): Flow<List<NodeWithPin>> = nodeDao.getAllNodesWithPins().withLocalTodayPins(nodeDao)
 
     /**
      * Retrieves a stream of active nodes that are assigned to the current local date.
@@ -480,11 +480,15 @@ class AppRepository internal constructor(
     }
 
     /**
-     * Marks a raw inbox capture as intentionally dismissed without creating an item.
+     * Dismisses a pending capture using its current row. Stale dismissal cannot unlink triage.
      */
-    suspend fun dismissInboxEntry(entry: InboxEntryEntity) {
+    suspend fun dismissInboxEntry(entry: InboxEntryEntity): Unit = transactions.write {
+        val current = inboxEntryDao.getInboxEntryById(entry.id) ?: return@write
+        if (current.triagedItemId != null) return@write
+        if (current.processedAt != null) return@write
+        if (current.dismissedAt != null) return@write
         inboxEntryDao.updateInboxEntry(
-            entry.copy(
+            current.copy(
                 dismissedAt =
                     kotlin.time.Clock.System
                         .now()
@@ -512,13 +516,16 @@ class AppRepository internal constructor(
      *
      * @param entryId The unique ID of the raw pending inbox entry to triage.
      * @param kind The explicit system [ItemKind] to convert the raw capture into.
-     * @return The generated ID of the newly inserted item, or `0L` if the entry could not be found or the parsed title is blank.
+     * @return The new or previously triaged item ID. Returns `0L` for missing, dismissed,
+     * processed-but-unlinked, or blank captures. Retries never recreate a deleted target.
      */
     suspend fun triageInboxEntry(
         entryId: Long,
         kind: ItemKind,
     ): Long = transactions.write {
         val entry = inboxEntryDao.getInboxEntryById(entryId) ?: return@write 0L
+        entry.triagedItemId?.let { return@write it }
+        if (entry.processedAt != null || entry.dismissedAt != null) return@write 0L
         val parsed = parseCapturedText(entry.rawText)
         if (parsed.title.isBlank()) return@write 0L
 
@@ -842,20 +849,41 @@ class AppRepository internal constructor(
     }
 
     /**
+     * Applies a lifecycle transition to the current persisted node, preserving unrelated edits.
+     * Repeating the current status is a no-op. Completion and a recurring successor share one
+     * transaction. Archiving retains completion history; reopening clears completion metadata
+     * and permits a new completion transition. Archived nodes reject completion until reopened.
+     * Recurrence retains the existing fixed-duration interval policy.
+     */
+    suspend fun updateNodeStatus(nodeId: Long, status: TaskState): Unit = transactions.write {
+        val current = nodeDao.getNodeById(nodeId) ?: return@write
+        if (!current.canTransitionTo(status)) return@write
+        val now = kotlin.time.Clock.System.now().toEpochMilliseconds()
+        updateNode(current.withLifecycleState(status, now))
+        current.recurringSuccessor(status, now)?.let { insertNode(it) }
+    }
+
+    /** Validates legacy string callers before any write; typed callers use [TaskState] directly. */
+    suspend fun updateNodeStatus(nodeId: Long, status: String): Unit =
+        updateNodeStatus(nodeId, requireNotNull(TaskState.fromStorageKey(status)) { "Unsupported node lifecycle state" })
+
+    /**
      * Updates multiple existing nodes in the database in a batch operation.
      * Side-effects (like logging, facet syncing, etc.) are executed for each node in the
-     * same transaction as the batch write.
+     * same transaction as the batch write. Repeated IDs retain the last supplied value and
+     * reconcile side effects once, matching the final row rather than intermediate updates.
      *
      * @param nodes The updated node entities to save.
      */
     suspend fun updateNodes(nodes: List<NodeEntity>): Unit = transactions.write {
         if (nodes.isEmpty()) return@write
+        val updates = nodes.associateBy { it.id }.values.toList()
 
-        val oldNodesMap = nodeDao.getNodesByIds(nodes.map { it.id }).associateBy { it.id }
+        val oldNodesMap = nodeDao.getNodesByIds(updates.map { it.id }).associateBy { it.id }
 
-        nodeDao.updateNodes(nodes)
+        nodeDao.updateNodes(updates)
 
-        nodes.forEach { node ->
+        updates.forEach { node ->
             val oldNode = oldNodesMap[node.id] ?: return@forEach
             executeNodeSideEffects(oldNode, node)
         }
@@ -898,13 +926,7 @@ class AppRepository internal constructor(
         syncTypedFacetsFromNode(node)
         syncDomainsFromNodeMetadata(node)
         syncDocumentFromNode(node)
-        syncScheduleEntriesForNode(
-            nodeId = node.id,
-            reminderAt = node.reminderAt,
-            startAt = node.startAt,
-            dueAt = node.dueAt,
-            recurrenceRule = node.recurringInterval,
-        )
+        syncChangedScheduleEntries(oldNode, node)
     }
 
 
@@ -1071,8 +1093,33 @@ class AppRepository internal constructor(
     }
 
     /**
-     * Persists attach-able schedule state while current UI still reads mirrored node time fields.
+     * Reconciles only changed legacy schedule fields, preserving schedule-only rows and detail.
+     * A scalar edit targets the row matching its previous instant; additional same-kind entries
+     * remain independent. Time edits retain an existing end's duration and explicit timezone.
+     * Recurrence edits update only scalar-backed rows. Creates and legacy
+     * imports use [syncScheduleEntriesForNode] to initialize their compatibility schedule.
      */
+    private suspend fun syncChangedScheduleEntries(oldNode: NodeEntity, node: NodeEntity) {
+        val recurrenceChanged = oldNode.recurringInterval != node.recurringInterval
+        for (change in node.legacyScheduleChanges(oldNode)) {
+            if (change.timeChanged || recurrenceChanged) reconcileScheduleEntry(node, change, recurrenceChanged)
+        }
+    }
+
+    /** Writes one scalar-backed replacement or deletion inside the caller's aggregate transaction. */
+    private suspend fun reconcileScheduleEntry(node: NodeEntity, change: LegacyScheduleChange, recurrenceChanged: Boolean) {
+        val entries = scheduleEntryDao.getScheduleEntriesByKind(node.id, change.kind.storageKey)
+        val mirrored = change.mirroredEntry(entries)
+        if (!change.timeChanged && mirrored == null) return
+        val replacement = change.replacement(node.id, mirrored, node.recurringInterval, recurrenceChanged)
+        if (replacement != null) {
+            scheduleEntryDao.insertScheduleEntry(replacement)
+        } else {
+            mirrored?.let { scheduleEntryDao.deleteScheduleEntry(it.id) }
+        }
+    }
+
+    /** Initializes scalar-backed schedule rows for new nodes and legacy imports. */
     private suspend fun syncScheduleEntriesForNode(
         nodeId: Long,
         reminderAt: Long?,
@@ -1145,19 +1192,9 @@ class AppRepository internal constructor(
         }
     }
 
-    private fun epochDayFromInstant(
-        timestamp: Long,
-        timezone: TimeZone,
-    ): Int =
-        LocalDate(1970, 1, 1).daysUntil(
-            Instant
-                .fromEpochMilliseconds(timestamp)
-                .toLocalDateTime(timezone)
-                .date,
-        )
-
     /**
      * Permanently deletes a node from the database.
+     * Its Today pins are removed in the same transaction, including assignments on other dates.
      *
      * @param node The node to delete.
      */
@@ -1173,26 +1210,39 @@ class AppRepository internal constructor(
         itemDomainDao.deleteDomainsForItem(node.id)
         richContentDocumentDao.deleteDocumentForItem(node.id)
         scheduleEntryDao.deleteScheduleEntriesForItem(node.id)
+        nodeDao.unpinFromToday(node.id)
         nodeDao.deleteNode(node)
     }
 
     /**
-     * Pins a node to the current day ("Today" view) by creating a [TodayPinEntity].
+     * Pins a node to the current local day, retaining one row per node/date across retries.
+     * Historical duplicates for that pair are collapsed; other dates remain untouched.
+     * Missing/deleted targets are ignored so stale callbacks cannot create orphan pins.
      *
      * **Side effects:**
-     * - Logs a "TODAY_ASSIGNED" event.
+     * - Logs a "TODAY_ASSIGNED" event only when no pin exists for that pair.
      *
      * @param nodeId The ID of the node to pin.
      */
-    suspend fun pinToToday(nodeId: Long): Unit = transactions.write {
-        val today =
+    suspend fun pinToToday(nodeId: Long): Unit =
+        pinToDate(
+            nodeId,
             kotlin.time.Clock.System
                 .now()
                 .toLocalDateTime(TimeZone.currentSystemDefault())
-                .date
-                .toString()
-        nodeDao.pinToToday(TodayPinEntity(nodeId = nodeId, date = today, position = 0))
-        logEvent("TODAY_ASSIGNED", nodeId)
+                .date,
+        )
+
+    /** Applies pin deduplication and rollback for an explicit local date, including fixed-date fixtures. */
+    internal suspend fun pinToDate(nodeId: Long, date: LocalDate): Unit = transactions.write {
+        if (nodeDao.getNodeById(nodeId) == null) return@write
+        val dateKey = date.toString()
+        val existing = nodeDao.getPinsForNodeOnDate(nodeId, dateKey)
+        val keeper = existing.minByOrNull { it.id }
+        if (existing.size == 1 && keeper?.position == 0) return@write
+        nodeDao.unpinFromDate(nodeId, dateKey)
+        nodeDao.pinToToday(keeper?.copy(position = 0) ?: TodayPinEntity(nodeId = nodeId, date = dateKey, position = 0))
+        if (keeper == null) logEvent("TODAY_ASSIGNED", nodeId)
     }
 
     /**
@@ -1208,7 +1258,7 @@ class AppRepository internal constructor(
      * @param nodeId The ID of the node to check.
      * @return A Flow emitting true if the node is pinned to today, false otherwise.
      */
-    fun isPinnedToToday(nodeId: Long): Flow<Boolean> = nodeDao.isPinnedToToday(nodeId)
+    fun isPinnedToToday(nodeId: Long): Flow<Boolean> = nodeDao.isPinnedOnDate(nodeId, currentLocalDate().toString())
 
     /**
      * Retrieves nodes filtered by their type.
@@ -1232,7 +1282,8 @@ class AppRepository internal constructor(
      * @param projectId The id of the project whose nodes should be returned.
      * @return Lists of `NodeWithPin` representing nodes in the project along with their today-pin data.
      */
-    fun getNodesByProjectWithPins(projectId: Long): Flow<List<NodeWithPin>> = nodeDao.getNodesByProjectWithPins(projectId)
+    fun getNodesByProjectWithPins(projectId: Long): Flow<List<NodeWithPin>> =
+        nodeDao.getNodesByProjectWithPins(projectId).withLocalTodayPins(nodeDao)
 
     /**
      * Retrieve nodes that belong to a specific area.
@@ -1248,7 +1299,8 @@ class AppRepository internal constructor(
      * @param areaId ID of the area whose nodes should be returned.
      * @return A list of nodes in the given area paired with their today-pin information.
      */
-    fun getNodesByAreaWithPins(areaId: Long): Flow<List<NodeWithPin>> = nodeDao.getNodesByAreaWithPins(areaId)
+    fun getNodesByAreaWithPins(areaId: Long): Flow<List<NodeWithPin>> =
+        nodeDao.getNodesByAreaWithPins(areaId).withLocalTodayPins(nodeDao)
 
     /**
      * Retrieves project nodes that belong to the specified area.
@@ -1870,12 +1922,14 @@ class AppRepository internal constructor(
     /**
      * Atomically merges a backup. Older formats hydrate node-derived state without action logs;
      * current backups restore authoritative companion rows instead of regenerating them.
+     * Payload credentials are ignored; matching local authorization is preserved.
      */
     suspend fun importBundle(bundle: ExportBundle): ImportReport = transactions.write {
         require(bundle.schemaVersion in 1..EXPORT_SCHEMA_VERSION) { "Unsupported backup schema" }
         if (bundle.schemaVersion == EXPORT_SCHEMA_VERSION) {
             checkNotNull(backupDao) { "Full restore requires the database backup DAO" }.restore(bundle)
         } else {
+            val providers = bundle.providers.map { it.forBackupImport(calendarProviderDao.getProviderById(it.id)) }
             // Restore relation identity, not just unique logical edges. Room upsert cannot
             // replace an edge whose unique (from, to, type) key has a different primary ID.
             bundle.nodes.forEach { relationDao.deleteRelationsForNode(it.id) }
@@ -1889,7 +1943,7 @@ class AppRepository internal constructor(
             reviewDao.insertReviews(bundle.reviews)
             trackDao.insertTrackEntries(bundle.tracks)
             focusSessionDao.insertSessions(bundle.sessions)
-            calendarProviderDao.insertProviders(bundle.providers)
+            calendarProviderDao.insertProviders(providers)
             calendarEventDao.insertEvents(bundle.calendars)
             eventLogDao.insertLogs(bundle.recentEvents)
         }

@@ -96,7 +96,7 @@ kotlin {
             implementation(libs.kotlinx.coroutines.test)
         }
         jvmMain.dependencies {
-            implementation(compose.desktop.currentOs)
+            // Compose UI now supplies desktop binaries; packaging selects the target OS.
             implementation(libs.kotlinx.coroutinesSwing)
             implementation(libs.logback)
         }

@@ -11,7 +11,6 @@ import com.tajemniktv.tajos.data.NodeSnapshotEntity
 import com.tajemniktv.tajos.data.RelationEntity
 import com.tajemniktv.tajos.data.TaskState
 import com.tajemniktv.tajos.data.defaultInboxState
-import com.tajemniktv.tajos.ui.main.calculators.calculateNextRecurringDate
 import com.tajemniktv.tajos.ui.main.calculators.calculateStaleTasks
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -512,36 +511,14 @@ class NodeCommands(
         }
     }
 
+    /** Sends only the target ID and intended status; stale screen snapshots never own the write. */
     fun updateNodeStatus(
         node: NodeEntity,
         status: String,
     )
     {
         scope.launch {
-            val now = Clock.System.now().toEpochMilliseconds()
-            repository.updateNode(
-                    node.copy(
-                        status = status,
-                    updatedAt = now,
-                    completedAt = if (status == "done") now else node.completedAt, // NON-NLS
-                    archivedAt = if (status == "archived") now else node.archivedAt, // NON-NLS
-                    ),
-                )
-
-                if (status == "done" && node.isRecurring && node.recurringInterval != null) { // NON-NLS
-                    val nextDue = calculateNextRecurringDate(node.dueAt ?: now, node.recurringInterval)
-                    repository.insertNode(
-                        node.copy(
-                            id = 0,
-                        status = "active", // NON-NLS
-                        createdAt = now,
-                        updatedAt = now,
-                        completedAt = null,
-                            dueAt = nextDue,
-                            inboxState = false,
-                    ),
-                )
-            }
+            repository.updateNodeStatus(node.id, status)
         }
     }
 

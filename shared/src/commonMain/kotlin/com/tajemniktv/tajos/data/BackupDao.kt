@@ -32,7 +32,7 @@ abstract class BackupDao {
             tracks = readTracks(),
             sessions = readSessions(),
             calendars = readCalendars(),
-            providers = readProviders(),
+            providers = readProviders().map { it.withoutBackupTokens() },
             recentEvents = readRecentEvents(),
             nodeTags = readNodeTags(),
             pins = readPins(),
@@ -67,38 +67,67 @@ abstract class BackupDao {
     /**
      * Merges a current-schema backup by persisted identity, replacing owned companion state.
      * Unrelated roots remain untouched. Any failed write rolls back the entire restore.
+     * Matching local authorization is retained; conflicting credential identities reject restore.
      */
     @Transaction
     open suspend fun restore(bundle: ExportBundle) {
         require(bundle.schemaVersion == EXPORT_SCHEMA_VERSION) { "Expected current backup schema" }
-        bundle.nodes.map { it.id }.chunked(900).forEach { ids ->
-            clearRelations(ids)
-            clearNodeTags(ids)
-            clearTodayPins(ids)
-            clearAttachments(ids)
-            clearNodeSnapshots(ids)
-            clearDecisionOptions(ids)
-            clearTaskFacets(ids)
-            clearNoteFacets(ids)
-            clearRecordFacets(ids)
-            clearProjectFacets(ids)
-            clearAreaFacets(ids)
-            clearItemDomains(ids)
-            clearRichContentDocuments(ids)
-            clearScheduleEntries(ids)
-        }
-        bundle.savedViews.map { it.id }.chunked(900).forEach { ids ->
-            clearSavedViewSourceKinds(ids)
-            clearSavedViewFilters(ids)
-            clearSavedViewSorts(ids)
-            clearSavedViewVisibleFields(ids)
-        }
-        bundle.modes.map { it.id }.chunked(900).forEach { ids ->
-            clearModePreferences(ids)
-            clearModeAreaFilters(ids)
-            clearModeTypeFilters(ids)
-        }
+        val providers = importedProviders(bundle.providers)
+        clearOwnedRows(bundle)
+        writeRootRows(bundle, providers)
+        writeOwnedRows(bundle)
+        writeSavedViews(bundle)
+    }
+
+    /** Validates source identities before any destructive companion replacement. */
+    private suspend fun importedProviders(imported: List<CalendarProviderEntity>): List<CalendarProviderEntity> {
+        val local = readProviders().associateBy { it.id }
+        return imported.map { it.forBackupImport(local[it.id]) }
+    }
+
+    /** Clears only children owned by imported roots; unrelated roots remain untouched. */
+    private suspend fun clearOwnedRows(bundle: ExportBundle) {
+        bundle.nodes.map { it.id }.chunked(900).forEach { clearNodeState(it) }
+        bundle.savedViews.map { it.id }.chunked(900).forEach { clearSavedViewState(it) }
+        bundle.modes.map { it.id }.chunked(900).forEach { clearModeState(it) }
         bundle.tracks.map { it.id }.chunked(900).forEach { clearTrackMedications(it) }
+    }
+
+    /** Replaces the imported node's associations and typed behavioral state together. */
+    private suspend fun clearNodeState(ids: List<Long>) {
+        clearRelations(ids)
+        clearNodeTags(ids)
+        clearTodayPins(ids)
+        clearAttachments(ids)
+        clearNodeSnapshots(ids)
+        clearDecisionOptions(ids)
+        clearTaskFacets(ids)
+        clearNoteFacets(ids)
+        clearRecordFacets(ids)
+        clearProjectFacets(ids)
+        clearAreaFacets(ids)
+        clearItemDomains(ids)
+        clearRichContentDocuments(ids)
+        clearScheduleEntries(ids)
+    }
+
+    /** Replaces filters, ordering, sources, and fields for imported saved views. */
+    private suspend fun clearSavedViewState(ids: List<Long>) {
+        clearSavedViewSourceKinds(ids)
+        clearSavedViewFilters(ids)
+        clearSavedViewSorts(ids)
+        clearSavedViewVisibleFields(ids)
+    }
+
+    /** Replaces imported operating-mode preferences without affecting other modes. */
+    private suspend fun clearModeState(ids: List<Long>) {
+        clearModePreferences(ids)
+        clearModeAreaFilters(ids)
+        clearModeTypeFilters(ids)
+    }
+
+    /** Restores roots and history before their owned companions within the existing transaction. */
+    private suspend fun writeRootRows(bundle: ExportBundle, providers: List<CalendarProviderEntity>) {
         writeNodes(bundle.nodes)
         writeRelations(bundle.relations)
         writeTags(bundle.tags)
@@ -107,21 +136,25 @@ abstract class BackupDao {
         writeTracks(bundle.tracks)
         writeSessions(bundle.sessions)
         writeCalendars(bundle.calendars)
-        writeProviders(bundle.providers)
+        writeProviders(providers)
         writeRecentEvents(bundle.recentEvents)
-        writeNodeTags(bundle.nodeTags)
-        writePins(bundle.pins)
-        writeAttachments(bundle.attachments)
-        writeSnapshots(bundle.snapshots)
         writeModes(bundle.modes)
         writeModePreferences(bundle.modePreferences)
         writeModeAreaFilters(bundle.modeAreaFilters)
         writeModeTypeFilters(bundle.modeTypeFilters)
         writeModeUsageLogs(bundle.modeUsageLogs)
         writeProtocolHistory(bundle.protocolHistory)
-        writeDecisionOptions(bundle.decisionOptions)
         writeUsers(bundle.users)
         writeMedications(bundle.medications)
+    }
+
+    /** Restores authoritative companion rows without regenerating them from node fields. */
+    private suspend fun writeOwnedRows(bundle: ExportBundle) {
+        writeNodeTags(bundle.nodeTags)
+        writePins(bundle.pins)
+        writeAttachments(bundle.attachments)
+        writeSnapshots(bundle.snapshots)
+        writeDecisionOptions(bundle.decisionOptions)
         writeTrackMedications(bundle.trackMedications)
         writeInboxEntries(bundle.inboxEntries)
         writeTaskFacets(bundle.taskFacets)
@@ -132,6 +165,10 @@ abstract class BackupDao {
         writeItemDomains(bundle.itemDomains)
         writeDocuments(bundle.documents)
         writeScheduleEntries(bundle.scheduleEntries)
+    }
+
+    /** Restores saved projections and their ordering without altering unrelated views. */
+    private suspend fun writeSavedViews(bundle: ExportBundle) {
         writeSavedViews(bundle.savedViews)
         writeSavedViewSourceKinds(bundle.savedViewSourceKinds)
         writeSavedViewFilters(bundle.savedViewFilters)

@@ -9,14 +9,22 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.text.AnnotatedString
+import com.tajemniktv.tajos.ui.platform.toClipEntry
 import com.tajemniktv.tajos.ui.MainViewModel
 import com.tajemniktv.tajos.ui.Screen
 import com.tajemniktv.tajos.ui.components.screen.ScreenScaffold
+import org.jetbrains.compose.resources.stringResource
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.settings_transfer_export_ready
 import kotlinx.coroutines.launch
 
 /**
@@ -32,73 +40,76 @@ fun SettingsRoute(
     onNavigate: (String) -> Unit,
     screenId: String = "preferences",
 ) {
-    val medications by viewModel.medications.collectAsState()
-    val enabledPacks by viewModel.enabledPacks.collectAsState()
-    val isBiometricEnabled by viewModel.isBiometricEnabled.collectAsState()
-    val isBiometricHardwareAvailable by viewModel.isBiometricHardwareAvailable.collectAsState()
-    val isDarkTheme by viewModel.isDarkTheme.collectAsState()
-    val accentColorHex by viewModel.accentColorHex.collectAsState()
-    val isGlassmorphismEnabled by viewModel.isGlassmorphismEnabled.collectAsState()
-    val reduceMotion by viewModel.reduceMotion.collectAsState()
-    val sidebarMode by viewModel.sidebarMode.collectAsState()
-    val desktopWindowStartupMode by viewModel.desktopWindowStartupMode.collectAsState()
+    key(screenId) {
+        val transfer = rememberSettingsTransfer(viewModel)
+        val context = settingsDashboardContext(viewModel, transfer)
+        val plan = remember(screenId) { buildSettingsPlan(screenId) }
+        SettingsScreen(context, plan, screenId, onNavigate)
+        if (screenId == Screen.SettingsData.ID) {
+            val scope = rememberCoroutineScope()
+            SettingsExportDialog(
+                state = context.dataTransfer,
+                onCopy = { scope.launch { transfer.copyExport() } },
+                onDismiss = transfer::dismissExport,
+            )
+        }
+    }
+}
 
+/** Keeps private backup JSON out of Android's clip label and system preview. */
+@Composable
+private fun rememberSettingsTransfer(viewModel: MainViewModel): SettingsDataTransfer {
+    val clipboard = LocalClipboard.current
+    val label by rememberUpdatedState(stringResource(Res.string.settings_transfer_export_ready))
+    return remember(viewModel, clipboard) {
+        SettingsDataTransfer(
+            exportNodes = viewModel::exportDataJson,
+            exportBundle = viewModel::exportBundleJson,
+            importJson = viewModel::importDataJson,
+            copyJson = { clipboard.setClipEntry(AnnotatedString(it).toClipEntry(label, sensitive = true)) },
+        )
+    }
+}
+
+/** Collects the existing preferences projection and wires bounded Settings events. */
+@Composable
+private fun settingsDashboardContext(
+    viewModel: MainViewModel,
+    transfer: SettingsDataTransfer,
+): SettingsDashboardContext {
     var importPayload by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
-
-    val context =
-        SettingsDashboardContext(
-            viewModel = viewModel,
-            medications = medications,
-            enabledPacks = enabledPacks,
-            isBiometricEnabled = isBiometricEnabled,
-            isBiometricHardwareAvailable = isBiometricHardwareAvailable,
-            isDarkTheme = isDarkTheme,
-            accentColorHex = accentColorHex,
-            isGlassmorphismEnabled = isGlassmorphismEnabled,
-            reduceMotion = reduceMotion,
-            sidebarMode = sidebarMode,
-            desktopWindowStartupMode = desktopWindowStartupMode,
-            importPayload = importPayload,
-            onImportPayloadChange = { importPayload = it },
-            onSaveMedication = { substance, brands, dosage, hour, optional ->
-                viewModel.addMedication(substance, brands, dosage, hour, optional)
-            },
-            onDeleteMedication = { viewModel.deleteMedication(it) },
-            onSetPackOwned = { pack, owned -> viewModel.setPackOwned(pack, owned) },
-            onSetPackEnabled = { pack, enabled -> viewModel.setPackEnabled(pack, enabled) },
-            onExportData = {
-                scope.launch {
-                    viewModel.exportDataJson()
-                }
-            },
-            onExportBundle = {
-                scope.launch {
-                    viewModel.exportBundleJson()
-                }
-            },
-            onImportData = {
-                scope.launch {
-                    viewModel.importDataJson(importPayload)
-                }
-            },
-            onSetBiometricEnabled = { viewModel.setBiometricEnabled(it) },
-            onSetDarkTheme = { viewModel.setDarkTheme(it) },
-            onSetAccentColor = { viewModel.setAccentColor(it) },
-            onSetGlassmorphismEnabled = { viewModel.setGlassmorphismEnabled(it) },
-            onSetReduceMotion = { viewModel.setReduceMotion(it) },
-            onSetSidebarMode = { viewModel.setSidebarMode(it) },
-            onSetDesktopWindowStartupMode = { viewModel.setDesktopWindowStartupMode(it) },
-            onForceCrash = { throw RuntimeException("Test Crash") },
-        )
-
-    val plan = remember(screenId) { buildSettingsPlan(screenId) }
-
-    SettingsScreen(
-        context = context,
-        plan = plan,
-        screenId = screenId,
-        onNavigate = onNavigate,
+    val dataTransfer by transfer.state.collectAsState()
+    return SettingsDashboardContext(
+        viewModel = viewModel,
+        medications = viewModel.medications.collectAsState().value,
+        enabledPacks = viewModel.enabledPacks.collectAsState().value,
+        isBiometricEnabled = viewModel.isBiometricEnabled.collectAsState().value,
+        isBiometricHardwareAvailable = viewModel.isBiometricHardwareAvailable.collectAsState().value,
+        isDarkTheme = viewModel.isDarkTheme.collectAsState().value,
+        accentColorHex = viewModel.accentColorHex.collectAsState().value,
+        isGlassmorphismEnabled = viewModel.isGlassmorphismEnabled.collectAsState().value,
+        reduceMotion = viewModel.reduceMotion.collectAsState().value,
+        sidebarMode = viewModel.sidebarMode.collectAsState().value,
+        desktopWindowStartupMode = viewModel.desktopWindowStartupMode.collectAsState().value,
+        importPayload = importPayload,
+        dataTransfer = dataTransfer,
+        onImportPayloadChange = { importPayload = it },
+        onSaveMedication = viewModel::addMedication,
+        onDeleteMedication = viewModel::deleteMedication,
+        onSetPackOwned = viewModel::setPackOwned,
+        onSetPackEnabled = viewModel::setPackEnabled,
+        onExportData = { scope.launch { transfer.export(fullBundle = false) } },
+        onExportBundle = { scope.launch { transfer.export(fullBundle = true) } },
+        onImportData = { scope.launch { transfer.importPayload(importPayload) } },
+        onSetBiometricEnabled = viewModel::setBiometricEnabled,
+        onSetDarkTheme = viewModel::setDarkTheme,
+        onSetAccentColor = viewModel::setAccentColor,
+        onSetGlassmorphismEnabled = viewModel::setGlassmorphismEnabled,
+        onSetReduceMotion = viewModel::setReduceMotion,
+        onSetSidebarMode = viewModel::setSidebarMode,
+        onSetDesktopWindowStartupMode = viewModel::setDesktopWindowStartupMode,
+        onForceCrash = { throw RuntimeException("Test Crash") },
     )
 }
 
