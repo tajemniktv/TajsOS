@@ -152,10 +152,17 @@ daemons may remain until their original idle timeout or a stop command using tha
 
 ### Database backups and aggregate writes
 
+Settings → Data management opens a JSON preview after either export action. **Copy JSON** copies the
+complete payload, including content beyond the preview limit; exports are never copied automatically.
+Import feedback reports restored entities or format/schema errors. Transfer controls prevent
+overlapping actions, retain import text on failure, and release export text when the dialog closes.
+
 Full JSON backups use the versioned `ExportBundle` contract. Schema 4 snapshots every Room table
 inside one transaction, including typed facets, schedules, inbox captures, tag assignments, pins,
 saved-view children, modes, profile data, attachment references, and history. Snapshot suspend
 queries use the transaction connection instead of combining independently observed UI flows.
+New exports always include the explicit schema version even with default JSON encoding. Historical
+unversioned payloads remain ambiguous; this does not invent a migration or recover omitted state.
 
 Restoring a full backup atomically merges rows by persisted identity and replaces owned companion
 state for imported objects; roots absent from the file remain untouched. IDs are not remapped, so
@@ -166,14 +173,42 @@ backup cannot be recovered by hydration.
 
 This is a **database backup**, not a portable archive of external files: attachment paths/URLs are
 preserved, but file bytes, Android URI permissions, device-local DataStore settings, and ownership
-entitlements are not embedded. Enabled pack keys are informational metadata. Backups can contain
-private profile data and calendar credentials. Exports are unencrypted; keep the files private.
+entitlements are not embedded. Enabled pack keys are informational metadata. Calendar access and
+refresh tokens are stripped from snapshots and never accepted from imported payloads, including
+historical bundles. Sources with credentials are exported disabled; an empty destination needs
+authorization configured again. Restoring into the same profile preserves existing local tokens
+and enablement when provider ID, type, account and URL match. A credential-bearing identity
+collision rejects the entire restore instead of erasing or redirecting local authorization.
+Export never changes the live source. Private profile data and calendar feed URLs remain in the
+backup. Exports are unencrypted; keep the files private.
+
+The intentional pre-alpha migration policy remains in effect: platform database builders allow
+destructive fallback when no migration exists. A database backup does not establish a supported
+historical migration chain or make upgrades safe for irreplaceable data. This batch changes no Room
+schema or migration policy.
 
 Production repository construction from `AppDatabase` wires a shared Room writer transaction for
 aggregate commands, including node side effects, saved-view replacement, triage, and imports.
 Network calendar fetching happens before the transaction. Only successful results replace cached
 events and advance `lastSyncedAt`; unavailable sources leave the local cache and timestamp intact.
 A successful empty calendar intentionally clears its previous events.
+
+Triage retries return the capture's existing target ID, even if that target was later deleted;
+dismissed captures cannot be triaged and stale dismissal cannot erase a processed link. Today pin
+commands collapse duplicates for the same node and local date without dropping other dates.
+Missing/deleted nodes cannot acquire pins, and node deletion removes its pins atomically.
+Lifecycle callbacks reload the current node by ID and commit completion with its recurring copy in
+one transaction. Repeating the current status does nothing; explicit reopening clears completion
+metadata and permits a new completion transition. Existing fixed-duration recurrence rules remain.
+
+Unrelated node edits preserve schedule rows, including multiple reminders and schedule-only detail.
+Legacy time edits change only the row matching the previous scalar instant, preserving its identity,
+metadata, explicit timezone, and end duration. Other same-kind entries remain independent. Legacy
+recurrence edits affect only scalar-backed entries. Full-entity node update APIs still require fresh
+caller state; the lifecycle callback is field-scoped, not a general stale-write merge protocol.
+Repeated IDs in a batch retain their last value and reconcile side effects once. Recurrence-only
+edits retain stored timezone metadata without resolving it; actual timestamp edits still validate
+an explicit timezone.
 
 Regression tests use real in-memory Room databases for backup round trips and induced write
 failures. DAO-only fake repositories cannot claim to produce complete database backups.

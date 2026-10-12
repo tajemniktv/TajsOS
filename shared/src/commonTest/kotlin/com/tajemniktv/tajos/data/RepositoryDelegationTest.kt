@@ -83,6 +83,10 @@ class RepositoryDelegationTest {
         override suspend fun pinToToday(pin: TodayPinEntity) {
         }
 
+        override suspend fun getPinsForNodeOnDate(nodeId: Long, date: String): List<TodayPinEntity> = emptyList()
+
+        override suspend fun unpinFromDate(nodeId: Long, date: String) {}
+
         override suspend fun unpinFromToday(nodeId: Long) {
         }
 

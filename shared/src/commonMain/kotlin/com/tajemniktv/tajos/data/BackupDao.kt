@@ -32,7 +32,7 @@ abstract class BackupDao {
             tracks = readTracks(),
             sessions = readSessions(),
             calendars = readCalendars(),
-            providers = readProviders(),
+            providers = readProviders().map { it.withoutBackupCredentials() },
             recentEvents = readRecentEvents(),
             nodeTags = readNodeTags(),
             pins = readPins(),
@@ -67,10 +67,13 @@ abstract class BackupDao {
     /**
      * Merges a current-schema backup by persisted identity, replacing owned companion state.
      * Unrelated roots remain untouched. Any failed write rolls back the entire restore.
+     * Matching local authorization is retained; conflicting credential identities reject restore.
      */
     @Transaction
     open suspend fun restore(bundle: ExportBundle) {
         require(bundle.schemaVersion == EXPORT_SCHEMA_VERSION) { "Expected current backup schema" }
+        val localProviders = readProviders().associateBy { it.id }
+        val providers = bundle.providers.map { it.forBackupImport(localProviders[it.id]) }
         bundle.nodes.map { it.id }.chunked(900).forEach { ids ->
             clearRelations(ids)
             clearNodeTags(ids)
@@ -107,7 +110,7 @@ abstract class BackupDao {
         writeTracks(bundle.tracks)
         writeSessions(bundle.sessions)
         writeCalendars(bundle.calendars)
-        writeProviders(bundle.providers)
+        writeProviders(providers)
         writeRecentEvents(bundle.recentEvents)
         writeNodeTags(bundle.nodeTags)
         writePins(bundle.pins)

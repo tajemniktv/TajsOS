@@ -6,7 +6,6 @@ package com.tajemniktv.tajos.ui.main.state
 
 import com.tajemniktv.tajos.data.NodeEntity
 import com.tajemniktv.tajos.data.NodeWithPin
-import kotlinx.serialization.Serializable
 
 /**
  * A data class representing categorized lists of nodes based on their current status and reminders.
@@ -22,16 +21,9 @@ data class NodeCategorization(
 )
 
 /**
- * A data class used for exporting application data.
- *
- * @param version The schema or data format version of the exported payload.
- * @param nodes The complete list of [NodeEntity] items being exported.
+ * Source-compatible alias for the unchanged legacy JSON contract now owned by the data layer.
  */
-@Serializable
-data class ExportData(
-    val version: Int,
-    val nodes: List<NodeEntity>,
-)
+typealias ExportData = com.tajemniktv.tajos.data.ExportData
 
 /**
  * Represents an entry within a calendar, encompassing scheduled events or time blocks.

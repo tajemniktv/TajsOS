@@ -14,7 +14,8 @@ import com.tajemniktv.tajos.data.CalendarProviderEntity
 import com.tajemniktv.tajos.data.DecisionOptionEntity
 import com.tajemniktv.tajos.data.DesktopWindowStartupMode
 import com.tajemniktv.tajos.data.EventLogEntity
-import com.tajemniktv.tajos.data.ExportBundle
+import com.tajemniktv.tajos.data.DataImportResult
+import com.tajemniktv.tajos.data.importJson
 import com.tajemniktv.tajos.data.FocusSessionEntity
 import com.tajemniktv.tajos.data.InboxEntryEntity
 import com.tajemniktv.tajos.data.ItemKind
@@ -30,7 +31,6 @@ import com.tajemniktv.tajos.data.ProtocolHistoryEntity
 import com.tajemniktv.tajos.data.RecordKind
 import com.tajemniktv.tajos.data.RelationEntity
 import com.tajemniktv.tajos.data.ReviewEntity
-import com.tajemniktv.tajos.data.safeDecode
 import com.tajemniktv.tajos.data.TagEntity
 import com.tajemniktv.tajos.data.TaskState
 import com.tajemniktv.tajos.data.TemplateEntity
@@ -2722,25 +2722,9 @@ class MainViewModel(
             Json.encodeToString(bundle)
         }
 
-    suspend fun importDataJson(payload: String): String =
-        withContext(Dispatchers.Default) {
-            val content = payload.trim()
-            if (content.isBlank()) return@withContext "Import failed: empty payload."
-
-            val bundleResult = safeDecode { Json.decodeFromString<ExportBundle>(content) }
-            if (bundleResult != null) {
-                val report = repository.importBundle(bundleResult)
-                return@withContext "Imported bundle: ${report.nodes} nodes, ${report.relations} relations, ${report.events} events."
-            }
-
-            val legacyResult = safeDecode { Json.decodeFromString<ExportData>(content) }
-            if (legacyResult != null) {
-                val count = repository.importLegacyNodes(legacyResult.nodes)
-                return@withContext "Imported legacy export: $count nodes."
-            }
-
-            "Import failed: unrecognized JSON export format."
-        }
+    /** Imports supported local JSON and returns typed feedback for the settings surface. */
+    suspend fun importDataJson(payload: String): DataImportResult =
+        withContext(Dispatchers.Default) { repository.importJson(payload) }
 
     // Decisions
     val decisionInbox: StateFlow<List<NodeWithPin>> =

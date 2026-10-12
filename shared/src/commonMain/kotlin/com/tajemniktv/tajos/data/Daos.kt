@@ -142,12 +142,20 @@ interface NodeDao {
 
     /**
      * Pins a node to the "Today" list by inserting a [TodayPinEntity].
-     * Replaces any existing pin for the same node and date to avoid conflicts.
+     * Upserts by row ID. Logical node/date deduplication belongs to the repository transaction.
      *
      * @param pin The [TodayPinEntity] representing the pinned state.
      */
     @Upsert
     suspend fun pinToToday(pin: TodayPinEntity)
+
+    /** Loads every matching row so repository commands can also repair historical duplicates. */
+    @Query("SELECT * FROM today_pins WHERE nodeId = :nodeId AND date = :date ORDER BY id ASC")
+    suspend fun getPinsForNodeOnDate(nodeId: Long, date: String): List<TodayPinEntity>
+
+    /** Removes only one day's pins, preserving historical assignments on other dates. */
+    @Query("DELETE FROM today_pins WHERE nodeId = :nodeId AND date = :date")
+    suspend fun unpinFromDate(nodeId: Long, date: String)
 
     /**
      * Removes the "Today" pin for a specific node.
@@ -634,6 +642,10 @@ interface ScheduleEntryDao {
 
     @Query("DELETE FROM schedule_entries WHERE itemId = :itemId")
     suspend fun deleteScheduleEntriesForItem(itemId: Long)
+
+    /** Deletes one schedule entry without touching independent entries of the same kind. */
+    @Query("DELETE FROM schedule_entries WHERE id = :id")
+    suspend fun deleteScheduleEntry(id: Long)
 
     @Upsert
     suspend fun insertScheduleEntry(entry: ScheduleEntryEntity): Long

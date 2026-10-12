@@ -115,10 +115,18 @@ class FakeNodeDao : NodeDao {
     }
 
     override suspend fun pinToToday(pin: TodayPinEntity) {
-        val newId = (pins.size + 1).toLong()
+        val newId = if (pin.id != 0L) pin.id else (pins.maxOfOrNull { it.id } ?: 0L) + 1L
         val newPin = pin.copy(id = newId)
-        pins.removeAll { it.nodeId == pin.nodeId }
+        pins.removeAll { it.id == newId }
         pins.add(newPin)
+        pinsFlow.value = pins.toList()
+    }
+
+    override suspend fun getPinsForNodeOnDate(nodeId: Long, date: String): List<TodayPinEntity> =
+        pins.filter { it.nodeId == nodeId && it.date == date }
+
+    override suspend fun unpinFromDate(nodeId: Long, date: String) {
+        pins.removeAll { it.nodeId == nodeId && it.date == date }
         pinsFlow.value = pins.toList()
     }
 

@@ -5,6 +5,8 @@
 package com.tajemniktv.tajos.data
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.ExperimentalSerializationApi
 
 const val EXPORT_SCHEMA_VERSION = 4
 
@@ -12,6 +14,7 @@ const val EXPORT_SCHEMA_VERSION = 4
  * Represents a snapshot of the user's core data for backup and migration.
  *
  * Current exports contain every Room table, including owned associations and typed state.
+ * Calendar authorization tokens are excluded; providers with credentials are exported disabled.
  * Attachment references are included, not external file bytes or platform access permissions.
  * Device-local DataStore settings are excluded; enabled pack keys are carried as portable metadata.
  * When the backup contract changes, [EXPORT_SCHEMA_VERSION] must be incremented.
@@ -30,8 +33,10 @@ const val EXPORT_SCHEMA_VERSION = 4
  * @property providers The calendar sources configured by the user.
  * @property recentEvents All persisted event logs; the name is retained for older JSON bundles.
  */
+@OptIn(ExperimentalSerializationApi::class)
 @Serializable
 data class ExportBundle(
+    @EncodeDefault
     val schemaVersion: Int = EXPORT_SCHEMA_VERSION,
     val exportedAt: Long,
     val enabledPacks: Set<String> = emptySet(),
@@ -74,3 +79,33 @@ data class ExportBundle(
     val savedViewSorts: List<SavedViewSortEntity> = emptyList(),
     val savedViewVisibleFields: List<SavedViewVisibleFieldEntity> = emptyList(),
 )
+
+/**
+ * Keeps portable calendar configuration while excluding reusable authorization credentials.
+ * Credential-bearing portable copies are disabled; imports may retain matching local authorization.
+ * This returns a copy; creating a backup never changes the live provider or its cached events.
+ */
+internal fun CalendarProviderEntity.withoutBackupCredentials(): CalendarProviderEntity =
+    copy(
+        accessToken = null,
+        refreshToken = null,
+        isEnabled = isEnabled && accessToken == null && refreshToken == null,
+    )
+
+/**
+ * Imports configuration without trusting payload credentials or erasing matching local authorization.
+ * Local tokens and enablement belong to this device. A credential-bearing ID collision with a
+ * different account/type/URL rejects restore rather than attaching secrets to another identity.
+ */
+internal fun CalendarProviderEntity.forBackupImport(local: CalendarProviderEntity?): CalendarProviderEntity {
+    val sanitized = withoutBackupCredentials()
+    if (local == null || (local.accessToken == null && local.refreshToken == null)) return sanitized
+    require(id == local.id && type == local.type && accountEmail == local.accountEmail && url == local.url) {
+        "Backup calendar provider identity conflicts with local authorization"
+    }
+    return sanitized.copy(
+        accessToken = local.accessToken,
+        refreshToken = local.refreshToken,
+        isEnabled = local.isEnabled,
+    )
+}

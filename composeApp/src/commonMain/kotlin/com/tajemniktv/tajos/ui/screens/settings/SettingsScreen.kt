@@ -14,6 +14,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.text.AnnotatedString
+import com.tajemniktv.tajos.ui.platform.toClipEntry
 import com.tajemniktv.tajos.ui.MainViewModel
 import com.tajemniktv.tajos.ui.Screen
 import com.tajemniktv.tajos.ui.components.screen.ScreenScaffold
@@ -45,6 +48,16 @@ fun SettingsRoute(
 
     var importPayload by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
+    val clipboard = LocalClipboard.current
+    val transfer = remember(viewModel, clipboard) {
+        SettingsDataTransfer(
+            exportNodes = viewModel::exportDataJson,
+            exportBundle = viewModel::exportBundleJson,
+            importJson = viewModel::importDataJson,
+            copyJson = { clipboard.setClipEntry(AnnotatedString(it).toClipEntry()) },
+        )
+    }
+    val dataTransfer by transfer.state.collectAsState()
 
     val context =
         SettingsDashboardContext(
@@ -60,6 +73,7 @@ fun SettingsRoute(
             sidebarMode = sidebarMode,
             desktopWindowStartupMode = desktopWindowStartupMode,
             importPayload = importPayload,
+            dataTransfer = dataTransfer,
             onImportPayloadChange = { importPayload = it },
             onSaveMedication = { substance, brands, dosage, hour, optional ->
                 viewModel.addMedication(substance, brands, dosage, hour, optional)
@@ -69,17 +83,17 @@ fun SettingsRoute(
             onSetPackEnabled = { pack, enabled -> viewModel.setPackEnabled(pack, enabled) },
             onExportData = {
                 scope.launch {
-                    viewModel.exportDataJson()
+                    transfer.export(fullBundle = false)
                 }
             },
             onExportBundle = {
                 scope.launch {
-                    viewModel.exportBundleJson()
+                    transfer.export(fullBundle = true)
                 }
             },
             onImportData = {
                 scope.launch {
-                    viewModel.importDataJson(importPayload)
+                    transfer.importPayload(importPayload)
                 }
             },
             onSetBiometricEnabled = { viewModel.setBiometricEnabled(it) },
@@ -100,6 +114,13 @@ fun SettingsRoute(
         screenId = screenId,
         onNavigate = onNavigate,
     )
+    if (screenId == "data") {
+        SettingsExportDialog(
+            state = dataTransfer,
+            onCopy = { scope.launch { transfer.copyExport() } },
+            onDismiss = transfer::dismissExport,
+        )
+    }
 }
 
 /**
