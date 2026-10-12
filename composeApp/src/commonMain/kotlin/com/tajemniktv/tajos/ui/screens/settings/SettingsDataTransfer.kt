@@ -35,8 +35,9 @@ class SettingsDataTransfer(
     private val mutableState = MutableStateFlow(SettingsDataTransferState())
     val state: StateFlow<SettingsDataTransferState> = mutableState.asStateFlow()
 
-    /** Retains the complete export for review; exporting never writes to the clipboard. */
+    /** Replaces prior JSON before exporting, so failure cannot offer an obsolete snapshot for copy. */
     suspend fun export(fullBundle: Boolean) = runOperation {
+        mutableState.update { it.copy(exportJson = null) }
         val payload = if (fullBundle) exportBundle() else exportNodes()
         mutableState.update { it.copy(exportJson = payload) }
     }

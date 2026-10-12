@@ -90,6 +90,27 @@ class SettingsDataTransferTest {
     }
 
     @Test
+    fun failedReplacementExportCannotCopyThePreviousSnapshot() = runTest {
+        var fail = false
+        val copies = mutableListOf<String>()
+        val transfer = SettingsDataTransfer(
+            { if (fail) error("Synthetic failure") else "Old snapshot" },
+            { "Fresh snapshot" }, { DataImportResult.InvalidFormat }, { copies += it },
+        )
+        transfer.export(fullBundle = false)
+        assertEquals("Old snapshot", transfer.state.value.exportJson)
+        fail = true
+        transfer.export(fullBundle = false)
+        assertNull(transfer.state.value.exportJson)
+        assertEquals(DataTransferFeedback.Failed, transfer.state.value.feedback)
+        transfer.copyExport()
+        assertTrue(copies.isEmpty())
+        transfer.export(fullBundle = true)
+        transfer.copyExport()
+        assertEquals(listOf("Fresh snapshot"), copies)
+    }
+
+    @Test
     fun cancellationPropagatesAndReleasesBusyState() = runTest {
         val transfer = SettingsDataTransfer({ throw CancellationException("cancel") }, { "bundle" }, { DataImportResult.InvalidFormat }, {})
         assertFailsWith<CancellationException> { transfer.export(fullBundle = false) }

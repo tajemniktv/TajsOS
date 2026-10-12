@@ -156,6 +156,9 @@ Settings → Data management opens a JSON preview after either export action. **
 complete payload, including content beyond the preview limit; exports are never copied automatically.
 Import feedback reports restored entities or format/schema errors. Transfer controls prevent
 overlapping actions, retain import text on failure, and release export text when the dialog closes.
+A new export clears any prior preview before reading data, so a failed replacement cannot offer an
+older snapshot. Node-only exports await a fresh repository result instead of using an initializing UI
+cache. Unsupported bundle versions are reported before decoding their possibly newer fields.
 
 Full JSON backups use the versioned `ExportBundle` contract. Schema 4 snapshots every Room table
 inside one transaction, including typed facets, schedules, inbox captures, tag assignments, pins,

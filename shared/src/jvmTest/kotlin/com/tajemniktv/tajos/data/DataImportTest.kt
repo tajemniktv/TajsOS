@@ -54,6 +54,9 @@ class DataImportTest {
                 val unsupported = before.copy(schemaVersion = version, nodes = emptyList())
                 assertEquals(DataImportResult.UnsupportedSchema(version), repository.importJson(Json.encodeToString(unsupported)))
             }
+            val futureVersion = EXPORT_SCHEMA_VERSION + 1
+            val futurePayload = """{"schemaVersion":$futureVersion,"futureField":{"synthetic":true}}"""
+            assertEquals(DataImportResult.UnsupportedSchema(futureVersion), repository.importJson(futurePayload))
             assertEquals(before, repository.buildExportBundle().copy(exportedAt = 0))
         }
     }

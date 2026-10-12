@@ -42,15 +42,14 @@ import com.tajemniktv.tajos.data.TrackEntryEntity
 import com.tajemniktv.tajos.data.TrackMedicationJoinEntity
 import com.tajemniktv.tajos.ui.main.state.ExportData
 import io.ktor.client.engine.mock.respond
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.serialization.json.Json
@@ -246,7 +245,7 @@ class MainViewModelTest {
     }
 
     @Test
-    fun exportDataJson_serializes_current_nodes_state_to_JSON() =
+    fun exportDataJson_readsRepositoryBeforeInitialUiEmission() =
         runTest {
             val testNodes =
                 listOf(
@@ -274,7 +273,15 @@ class MainViewModelTest {
                     ),
                 )
 
-            val nodesFlow = MutableStateFlow(testNodes)
+            val pendingUiEmission = CompletableDeferred<Unit>()
+            var firstSubscription = true
+            val nodesFlow = flow {
+                if (firstSubscription) {
+                    firstSubscription = false
+                    pendingUiEmission.await()
+                }
+                emit(testNodes)
+            }
 
             val testRepo =
                 AppRepository(
@@ -310,10 +317,10 @@ class MainViewModelTest {
 
             val viewModel = MainViewModel(testRepo, testPrefs, calendarManager)
 
-            advanceTimeBy(100)
-            runCurrent()
+            assertTrue(viewModel.allNodes.value.isEmpty(), "The initial UI emission is deliberately delayed")
 
             val exportJson = viewModel.exportDataJson()
+            pendingUiEmission.complete(Unit)
             client.close()
 
             assertTrue(exportJson.isNotEmpty(), "Export JSON should not be empty")

@@ -2708,9 +2708,10 @@ class MainViewModel(
 
     suspend fun getLastReviewByType(type: String) = repository.getLastReviewByType(type)
 
+    /** Reads a fresh repository emission; the UI cache may still contain its initial empty value. */
     suspend fun exportDataJson(): String =
         withContext(Dispatchers.Default) {
-            val nodes = allNodes.value.map { it.node }
+            val nodes = repository.getAllNodes().first().map { it.node }
             val data = ExportData(version = 2, nodes = nodes)
             Json.encodeToString(data)
         }
