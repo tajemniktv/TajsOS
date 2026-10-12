@@ -90,7 +90,8 @@ class RepositoryDelegationTest {
         override suspend fun unpinFromToday(nodeId: Long) {
         }
 
-        override fun isPinnedToToday(nodeId: Long): Flow<Boolean> = flowOf(false)
+        override fun isPinnedOnDate(nodeId: Long, date: String): Flow<Boolean> = flowOf(false)
+        override fun observePinsForDate(date: String): Flow<List<TodayPinEntity>> = flowOf(emptyList())
     }
 
     private class FakeFocusSessionDao : FocusSessionDao {

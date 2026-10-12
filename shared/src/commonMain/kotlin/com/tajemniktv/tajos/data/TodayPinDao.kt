@@ -28,7 +28,11 @@ interface TodayPinDao {
     @Query("DELETE FROM today_pins WHERE nodeId = :nodeId")
     suspend fun unpinFromToday(nodeId: Long)
 
-    /** Observes whether the node has any persisted pin assignment. */
-    @Query("SELECT EXISTS(SELECT 1 FROM today_pins WHERE nodeId = :nodeId)")
-    fun isPinnedToToday(nodeId: Long): Flow<Boolean>
+    /** Observes whether the node is assigned to the explicitly resolved local date. */
+    @Query("SELECT EXISTS(SELECT 1 FROM today_pins WHERE nodeId = :nodeId AND date = :date)")
+    fun isPinnedOnDate(nodeId: Long, date: String): Flow<Boolean>
+
+    /** Supplies every pin for one date so historical rows cannot mask current UI assignments. */
+    @Query("SELECT * FROM today_pins WHERE date = :date ORDER BY id ASC")
+    fun observePinsForDate(date: String): Flow<List<TodayPinEntity>>
 }

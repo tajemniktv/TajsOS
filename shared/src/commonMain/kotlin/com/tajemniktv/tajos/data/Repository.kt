@@ -335,7 +335,7 @@ class AppRepository internal constructor(
      *
      * @return A Flow emitting a list of [NodeWithPin] objects.
      */
-    fun getAllNodes(): Flow<List<NodeWithPin>> = nodeDao.getAllNodesWithPins()
+    fun getAllNodes(): Flow<List<NodeWithPin>> = nodeDao.getAllNodesWithPins().withLocalTodayPins(nodeDao)
 
     /**
      * Retrieves a stream of active nodes that are assigned to the current local date.
@@ -1258,7 +1258,7 @@ class AppRepository internal constructor(
      * @param nodeId The ID of the node to check.
      * @return A Flow emitting true if the node is pinned to today, false otherwise.
      */
-    fun isPinnedToToday(nodeId: Long): Flow<Boolean> = nodeDao.isPinnedToToday(nodeId)
+    fun isPinnedToToday(nodeId: Long): Flow<Boolean> = nodeDao.isPinnedOnDate(nodeId, currentLocalDate().toString())
 
     /**
      * Retrieves nodes filtered by their type.
@@ -1282,7 +1282,8 @@ class AppRepository internal constructor(
      * @param projectId The id of the project whose nodes should be returned.
      * @return Lists of `NodeWithPin` representing nodes in the project along with their today-pin data.
      */
-    fun getNodesByProjectWithPins(projectId: Long): Flow<List<NodeWithPin>> = nodeDao.getNodesByProjectWithPins(projectId)
+    fun getNodesByProjectWithPins(projectId: Long): Flow<List<NodeWithPin>> =
+        nodeDao.getNodesByProjectWithPins(projectId).withLocalTodayPins(nodeDao)
 
     /**
      * Retrieve nodes that belong to a specific area.
@@ -1298,7 +1299,8 @@ class AppRepository internal constructor(
      * @param areaId ID of the area whose nodes should be returned.
      * @return A list of nodes in the given area paired with their today-pin information.
      */
-    fun getNodesByAreaWithPins(areaId: Long): Flow<List<NodeWithPin>> = nodeDao.getNodesByAreaWithPins(areaId)
+    fun getNodesByAreaWithPins(areaId: Long): Flow<List<NodeWithPin>> =
+        nodeDao.getNodesByAreaWithPins(areaId).withLocalTodayPins(nodeDao)
 
     /**
      * Retrieves project nodes that belong to the specified area.

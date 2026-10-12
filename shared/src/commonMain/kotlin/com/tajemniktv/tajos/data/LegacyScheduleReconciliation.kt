@@ -19,10 +19,12 @@ internal data class LegacyScheduleChange(
     /** Whether the scalar instant changed, rather than only its recurrence metadata. */
     val timeChanged: Boolean get() = previous != next
 
-    /** Selects one stable scalar-backed row; other entries of this kind remain independent. */
+    /** Rejects ambiguous legacy mirrors rather than moving an independent row at the same instant. */
     fun mirroredEntry(entries: List<ScheduleEntryEntity>): ScheduleEntryEntity? {
         val previousTime = previous ?: return null
-        return entries.filter { it.scheduledAt == previousTime }.minByOrNull { it.id }
+        val candidates = entries.filter { it.scheduledAt == previousTime }
+        require(candidates.size <= 1) { "Ambiguous legacy schedule mirror" }
+        return candidates.singleOrNull()
     }
 
     /** Preserves rich metadata and unresolved timezones when the instant itself did not change. */

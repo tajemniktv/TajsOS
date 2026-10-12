@@ -31,5 +31,9 @@ class FakeTodayPinDao : TodayPinDao {
         rows.value = rows.value.filterNot { it.nodeId == nodeId }
     }
 
-    override fun isPinnedToToday(nodeId: Long): Flow<Boolean> = rows.map { pins -> pins.any { it.nodeId == nodeId } }
+    override fun isPinnedOnDate(nodeId: Long, date: String): Flow<Boolean> =
+        observePinsForDate(date).map { pins -> pins.any { it.nodeId == nodeId } }
+
+    override fun observePinsForDate(date: String): Flow<List<TodayPinEntity>> =
+        rows.map { pins -> pins.filter { it.date == date }.sortedBy { it.id } }
 }

@@ -112,7 +112,8 @@ class MainViewModelTest {
 
         override fun getNodesByArea(areaId: Long): Flow<List<NodeEntity>> = flowOf(emptyList())
 
-        override fun isPinnedToToday(nodeId: Long): Flow<Boolean> = flowOf(false)
+        override fun isPinnedOnDate(nodeId: Long, date: String): Flow<Boolean> = flowOf(false)
+        override fun observePinsForDate(date: String): Flow<List<TodayPinEntity>> = flowOf(emptyList())
 
         override fun getNodesByProjectWithPins(projectId: Long): Flow<List<NodeWithPin>> = flowOf(emptyList())
 

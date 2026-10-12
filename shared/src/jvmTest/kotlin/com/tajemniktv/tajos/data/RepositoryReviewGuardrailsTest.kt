@@ -11,6 +11,10 @@ import com.tajemniktv.tajos.calendar.CalendarManager
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.flow.first
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -27,6 +31,48 @@ class RepositoryReviewGuardrailsTest {
             block(database, AppRepository(database))
         } finally {
             database.close()
+        }
+    }
+
+    @Test
+    fun ambiguousScalarMirrorCannotMoveAnIndependentSchedule() = runBlocking {
+        withDatabase { database, repository ->
+            val id = repository.insertLifeItem(ItemKind.TASK, "Ambiguous schedule", dueAt = 200)
+            val node = assertNotNull(repository.getNodeById(id))
+            database.scheduleEntryDao().deleteScheduleEntriesForItem(id)
+            database.scheduleEntryDao().insertScheduleEntries(listOf(
+                ScheduleEntryEntity(id = 10, itemId = id, kind = ScheduleEntryKind.DUE.storageKey, scheduledAt = 200, note = "Independent"),
+                ScheduleEntryEntity(id = 90, itemId = id, kind = ScheduleEntryKind.DUE.storageKey, scheduledAt = 200, note = "Scalar mirror"),
+            ))
+            val before = repository.buildExportBundle().copy(exportedAt = 0)
+            assertFailsWith<IllegalArgumentException> { repository.updateNode(node.copy(dueAt = 500)) }
+            assertEquals(before, repository.buildExportBundle().copy(exportedAt = 0))
+            assertFailsWith<IllegalArgumentException> { repository.updateNode(node.copy(recurringInterval = "weekly")) }
+            assertEquals(before, repository.buildExportBundle().copy(exportedAt = 0))
+            assertFailsWith<IllegalArgumentException> { repository.updateNodes(listOf(node.copy(dueAt = null))) }
+            assertEquals(before, repository.buildExportBundle().copy(exportedAt = 0))
+        }
+    }
+
+    @Test
+    fun historicalPinsCannotHideOrImpersonateTodayAcrossNodeProjections() = runBlocking {
+        withDatabase { database, repository ->
+            val project = repository.insertLifeItem(ItemKind.PROJECT, "Synthetic project")
+            val area = repository.insertLifeItem(ItemKind.AREA, "Synthetic area")
+            val id = repository.insertLifeItem(ItemKind.TASK, "Date-specific pins", activeProjectId = project, homeAreaId = area)
+            val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
+            val historical = TodayPinEntity(id = 10, nodeId = id, date = "2000-01-01", position = 0)
+            database.nodeDao().pinToToday(historical)
+            assertFalse(repository.isPinnedToToday(id).first())
+            assertFalse(repository.getAllNodes().first().single { it.node.id == id }.isPinnedToToday)
+            val current = historical.copy(id = 20, date = today)
+            database.nodeDao().pinToToday(current)
+            assertTrue(repository.isPinnedToToday(id).first())
+            assertEquals(current, repository.getAllNodes().first().single { it.node.id == id }.pin)
+            assertEquals(current, repository.getNodesByProjectWithPins(project).first().single().pin)
+            assertEquals(current, repository.getNodesByAreaWithPins(area).first().single { it.node.id == id }.pin)
+            assertEquals(listOf(historical, current), database.nodeDao().getPinsForNodeOnDate(id, historical.date) +
+                database.nodeDao().getPinsForNodeOnDate(id, today))
         }
     }
 

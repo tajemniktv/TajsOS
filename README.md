@@ -159,7 +159,9 @@ overlapping actions, retain import text on failure, and release export text when
 A new export clears any prior preview before reading data, so a failed replacement cannot offer an
 older snapshot. Node-only exports await a fresh repository result instead of using an initializing UI
 cache. Android marks copied backup text sensitive and uses a localized label instead of JSON in the
-clip description. This hides the system preview; other apps may still receive text when pasted.
+clip description. On Android 13 (API 33) and later this hides the system preview; other apps may still
+receive text when pasted. Older Android versions do not provide that preview guarantee.
+See [Android's clipboard guidance](https://developer.android.com/develop/ui/views/touch-and-input/copy-paste#sensitive-content).
 Version checks decode only top-level metadata and skip unknown data without retaining a JSON tree.
 Supported payloads still undergo strict decoding. Unsupported bundle and node-only versions fail
 before writes. The pasted string and decoded entities still consume memory; imports are not streamed.
@@ -214,6 +216,10 @@ Triage retries return the capture's existing target ID, even if that target was 
 dismissed captures cannot be triaged and stale dismissal cannot erase a processed link. Today pin
 commands collapse duplicates for the same node and local date without dropping other dates.
 Missing/deleted nodes cannot acquire pins, and node deletion removes its pins atomically.
+Pin observations and repository node projections select the explicitly resolved local date, so
+historical pins neither appear as today's assignment nor mask an actual current-date pin.
+Node projections resolve the device timezone/date when subscribed; automatic midnight refresh of
+an already active subscription remains outside this change.
 Lifecycle callbacks reload the current node by ID and commit completion with its recurring copy in
 one transaction. Repeating the current status does nothing; archiving retains completion history.
 An archived node must explicitly reopen before completion; stale completion callbacks cannot create
@@ -223,7 +229,9 @@ fixed-duration recurrence rules remain.
 
 Unrelated node edits preserve schedule rows, including multiple reminders and schedule-only detail.
 Legacy time edits change only the row matching the previous scalar instant, preserving its identity,
-metadata, explicit timezone, and end duration. Other same-kind entries remain independent. Legacy
+metadata, explicit timezone, and end duration. Ambiguous same-kind rows at the previous instant
+reject the aggregate edit and roll back rather than guessing which row is the scalar mirror.
+Other same-kind entries remain independent. Legacy
 recurrence edits affect only scalar-backed entries. Full-entity node update APIs still require fresh
 caller state; the lifecycle callback is field-scoped, not a general stale-write merge protocol.
 Repeated IDs in a batch retain their last value and reconcile side effects once. Recurrence-only
