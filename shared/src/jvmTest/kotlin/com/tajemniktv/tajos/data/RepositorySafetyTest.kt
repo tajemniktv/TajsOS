@@ -14,8 +14,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.LocalDate
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
@@ -25,7 +24,6 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
-import kotlin.time.Clock
 
 /** Replays stale and concurrent commands against synthetic data in real Room databases. */
 class RepositorySafetyTest {
@@ -167,11 +165,11 @@ class RepositorySafetyTest {
         withDatabase { db ->
             val repository = AppRepository(db)
             val id = repository.insertLifeItem(ItemKind.TASK, "Repair")
-            val date = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
-            val keeper = TodayPinEntity(id = 10, nodeId = id, date = date, position = 4, selectedAt = 1)
+            val date = LocalDate(2026, 10, 12)
+            val keeper = TodayPinEntity(id = 10, nodeId = id, date = date.toString(), position = 4, selectedAt = 1)
             val otherDay = keeper.copy(id = 12, date = "2000-01-01")
             db.backupDao().writePins(listOf(keeper, keeper.copy(id = 11), otherDay))
-            repository.pinToToday(id)
+            repository.pinToDate(id, date)
             assertEquals(listOf(keeper.copy(position = 0), otherDay), db.backupDao().readPins().sortedBy { it.id })
         }
     }
@@ -181,16 +179,16 @@ class RepositorySafetyTest {
         withDatabase { db ->
             val repository = AppRepository(db)
             val id = repository.insertLifeItem(ItemKind.TASK, "Pin rollback")
-            val date = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
+            val date = LocalDate(2026, 10, 12)
             db.backupDao().writePins(listOf(
-                TodayPinEntity(id = 10, nodeId = id, date = date, position = 4),
-                TodayPinEntity(id = 11, nodeId = id, date = date, position = 5),
+                TodayPinEntity(id = 10, nodeId = id, date = date.toString(), position = 4),
+                TodayPinEntity(id = 11, nodeId = id, date = date.toString(), position = 5),
             ))
             val before = repository.buildExportBundle().copy(exportedAt = 0)
             db.useWriterConnection { connection ->
                 connection.usePrepared("CREATE TRIGGER reject_pin BEFORE INSERT ON today_pins BEGIN SELECT RAISE(ABORT, 'synthetic failure'); END") { it.step() }
             }
-            assertFailsWith<androidx.sqlite.SQLiteException> { repository.pinToToday(id) }
+            assertFailsWith<androidx.sqlite.SQLiteException> { repository.pinToDate(id, date) }
             assertEquals(before, repository.buildExportBundle().copy(exportedAt = 0))
         }
     }
@@ -239,6 +237,33 @@ class RepositorySafetyTest {
             changeStatus(repository, stale, TaskState.DONE.storageKey)
             assertEquals(3, db.backupDao().readNodes().size)
             assertEquals(2, db.backupDao().readRecentEvents().count { it.eventType == "NODE_COMPLETED" })
+        }
+    }
+
+    @Test
+    fun archiveRetainsCompletionHistoryUntilExplicitReopening() = runBlocking {
+        withDatabase { db ->
+            val repository = AppRepository(db)
+            val id = repository.insertLifeItem(ItemKind.TASK, "Archive completed task", isRecurring = true, recurringInterval = "daily")
+            val stale = assertNotNull(repository.getNodeById(id))
+            changeStatus(repository, stale, TaskState.DONE.storageKey)
+            val completedAt = assertNotNull(repository.getNodeById(id)?.completedAt)
+
+            changeStatus(repository, stale, TaskState.ARCHIVED.storageKey)
+            val archived = assertNotNull(repository.getNodeById(id))
+            assertEquals(completedAt, archived.completedAt)
+            assertEquals(completedAt, db.taskFacetDao().getTaskFacetByItemId(id)?.completedAt)
+            assertNotNull(archived.archivedAt)
+            changeStatus(repository, stale, TaskState.ARCHIVED.storageKey)
+            assertEquals(archived, repository.getNodeById(id))
+            assertEquals(2, db.backupDao().readNodes().size)
+            assertEquals(1, db.backupDao().readRecentEvents().count { it.eventType == "NODE_ARCHIVED" })
+
+            changeStatus(repository, stale, TaskState.ACTIVE.storageKey)
+            val reopened = assertNotNull(repository.getNodeById(id))
+            assertNull(reopened.completedAt)
+            assertNull(reopened.archivedAt)
+            assertNull(db.taskFacetDao().getTaskFacetByItemId(id)?.completedAt)
         }
     }
 

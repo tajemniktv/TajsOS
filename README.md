@@ -198,8 +198,9 @@ dismissed captures cannot be triaged and stale dismissal cannot erase a processe
 commands collapse duplicates for the same node and local date without dropping other dates.
 Missing/deleted nodes cannot acquire pins, and node deletion removes its pins atomically.
 Lifecycle callbacks reload the current node by ID and commit completion with its recurring copy in
-one transaction. Repeating the current status does nothing; explicit reopening clears completion
-metadata and permits a new completion transition. Existing fixed-duration recurrence rules remain.
+one transaction. Repeating the current status does nothing; archiving retains completion history.
+Explicit reopening clears completion metadata and permits a new completion transition. Existing
+fixed-duration recurrence rules remain.
 
 Unrelated node edits preserve schedule rows, including multiple reminders and schedule-only detail.
 Legacy time edits change only the row matching the previous scalar instant, preserving its identity,

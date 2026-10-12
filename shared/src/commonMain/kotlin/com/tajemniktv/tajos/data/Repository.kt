@@ -851,7 +851,8 @@ class AppRepository internal constructor(
     /**
      * Applies a lifecycle transition to the current persisted node, preserving unrelated edits.
      * Repeating the current status is a no-op. Completion and a recurring successor share one
-     * transaction; reopening clears completion metadata and permits a new completion transition.
+     * transaction. Archiving retains completion history; reopening clears completion metadata
+     * and permits a new completion transition.
      * Recurrence retains the existing fixed-duration interval policy.
      */
     suspend fun updateNodeStatus(nodeId: Long, status: String): Unit = transactions.write {
@@ -862,7 +863,11 @@ class AppRepository internal constructor(
             current.copy(
                 status = status,
                 updatedAt = now,
-                completedAt = if (status == TaskState.DONE.storageKey) now else null,
+                completedAt = when (status) {
+                    TaskState.DONE.storageKey -> now
+                    TaskState.ARCHIVED.storageKey -> current.completedAt
+                    else -> null
+                },
                 archivedAt = if (status == TaskState.ARCHIVED.storageKey) now else null,
             ),
         )
@@ -1259,19 +1264,24 @@ class AppRepository internal constructor(
      *
      * @param nodeId The ID of the node to pin.
      */
-    suspend fun pinToToday(nodeId: Long): Unit = transactions.write {
-        if (nodeDao.getNodeById(nodeId) == null) return@write
-        val today =
+    suspend fun pinToToday(nodeId: Long): Unit =
+        pinToDate(
+            nodeId,
             kotlin.time.Clock.System
                 .now()
                 .toLocalDateTime(TimeZone.currentSystemDefault())
-                .date
-                .toString()
-        val existing = nodeDao.getPinsForNodeOnDate(nodeId, today)
+                .date,
+        )
+
+    /** Applies pin deduplication and rollback for an explicit local date, including fixed-date fixtures. */
+    internal suspend fun pinToDate(nodeId: Long, date: LocalDate): Unit = transactions.write {
+        if (nodeDao.getNodeById(nodeId) == null) return@write
+        val dateKey = date.toString()
+        val existing = nodeDao.getPinsForNodeOnDate(nodeId, dateKey)
         val keeper = existing.minByOrNull { it.id }
         if (existing.size == 1 && keeper?.position == 0) return@write
-        nodeDao.unpinFromDate(nodeId, today)
-        nodeDao.pinToToday(keeper?.copy(position = 0) ?: TodayPinEntity(nodeId = nodeId, date = today, position = 0))
+        nodeDao.unpinFromDate(nodeId, dateKey)
+        nodeDao.pinToToday(keeper?.copy(position = 0) ?: TodayPinEntity(nodeId = nodeId, date = dateKey, position = 0))
         if (keeper == null) logEvent("TODAY_ASSIGNED", nodeId)
     }
 
