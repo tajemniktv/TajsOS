@@ -50,8 +50,11 @@ jobs:
               - 'build.gradle.kts'
               - 'settings.gradle.kts'
               - 'gradle.properties'
+              - 'compose_compiler_config.conf'
               - 'gradlew'
               - 'gradlew.bat'
+              - '.github/workflows/ci.yml'
+              - '.github/actions/**'
 
       - name: Classify run scope
         id: classify
@@ -110,6 +113,11 @@ jobs:
         uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6
         with:
           dependency-graph: disabled
+          # Only trusted branch runs publish reusable state; PRs consume it read-only.
+          cache-read-only: ${{ github.ref != 'refs/heads/dev' && github.ref != 'refs/heads/main' }}
+          cache-cleanup: on-success
+          # Configuration-cache entries may contain secrets and must be encrypted.
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4

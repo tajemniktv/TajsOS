@@ -152,6 +152,36 @@ Run `.\gradlew.bat --stop` to release the current Gradle version's daemon immedi
 compiler daemon also exits once its clients disconnect. After a toolchain update, older versions'
 daemons may remain until their original idle timeout or a stop command using that Gradle version.
 
+### Incremental builds and caches
+
+Normal Gradle builds retain task outputs, Kotlin/KSP incremental state, the local build cache,
+and the configuration cache. Re-run the same targeted command without `clean`, `--rerun-tasks`,
+or `--refresh-dependencies` during normal development. `UP-TO-DATE` means existing outputs were
+reused; `FROM-CACHE` means outputs were restored; `Configuration cache entry reused` means project
+configuration was skipped. Some lifecycle/reporting tasks still execute even in an unchanged build.
+Use `--info` to diagnose a cache miss, or `"-Pkotlin.build.report.output=file"` for local compiler
+reports under `build/reports/kotlin-build/` (including incremental compilation fallback reasons).
+Neither option publishes a build scan.
+
+CI uses `gradle/actions/setup-gradle` as its only Gradle cache owner, retaining dependencies,
+toolchains, transforms, and task outputs across runners. Trusted `dev`/`main` runs update that
+cache; pull requests only read it. `GRADLE_ENCRYPTION_KEY` must be configured as a repository Actions
+secret (a base64-encoded AES key) to also save/restore encrypted configuration-cache entries.
+Without that secret, task/dependency caching still works, but configuration state is not persisted
+between runners. Fork PRs do not receive this secret. Successful CI runs prune unused cached state;
+failed runs do not prune it. Do not add a competing `setup-java` or `actions/cache` Gradle cache.
+
+CodeQL is the intentional exception: it reads reusable Gradle dependencies/toolchains but performs
+a clean, non-incremental compilation without task/configuration caches or a persistent Gradle daemon,
+so its extractor observes all source compilation. It does not publish a duplicate cache snapshot.
+Website builds use the package-manager download cache separately; they are not Gradle targets.
+
+When changing build configuration, verify an unchanged repeat reuses configuration and compile/test
+outputs, then temporarily move a compiler output directory under `.codex/temp/` and verify
+`FROM-CACHE` restores matching file hashes. Finally, change a source input and verify the affected
+compiler/test runs while unrelated compilation stays up-to-date; restore the source afterward.
+Cache hits alone do not prove that changed inputs are handled correctly.
+
 ### Database backups and aggregate writes
 
 Settings → Data management opens a JSON preview after either export action. **Copy JSON** copies the
