@@ -124,8 +124,10 @@ Current limits:
 Gradle dependencies are centralized in `gradle/libs.versions.toml`, and the wrapper is pinned with
 a distribution SHA-256 checksum. Prefer the latest stable toolchain and persistence releases;
 release candidates are acceptable when compatible with the selected Kotlin compiler and runtime.
-Material 3 remains on the Compose 1.12-compatible alpha line rather than pulling the Compose 1.13
-alpha runtime into an otherwise stable UI stack.
+Material 3 and Compose use the same 1.13 alpha line because Material 3 requires that runtime.
+Keep their catalog versions aligned rather than relying on a transitive runtime upgrade. Validate
+both Android and desktop targets when advancing this alpha stack. Custom slider thumbs use the
+state-based API while external values, ranges, and step counts remain authoritative.
 
 Firebase SDK versions come from the same BOM in both Android consumers (`androidApp` and the
 Android source set of `composeApp`). Do not add independent SDK pins that can drift from the BOM.

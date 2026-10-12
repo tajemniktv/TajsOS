@@ -20,7 +20,8 @@ androidx-sqlite = "2.7.1"
 kotlinx-datetime = "0.8.0"
 kotlinx-serialization = "1.12.0-RC"
 composeHotReload = "1.2.0"
-composeMultiplatform = "1.12.1"
+# Material 3 1.13 requires this Compose runtime; keep tooling and runtime aligned.
+composeMultiplatform = "1.13.0-alpha02"
 compose-icons = "1.7.3"
 junit = "4.13.2"
 # Keep the compiler within the Kotlin range supported by the CI CodeQL extractor.
@@ -31,8 +32,8 @@ mockk = "1.14.11"
 ktor = "3.6.0"
 logback = "1.6.5"
 material = "1.14.0"
-# Latest Material 3 on the stable Compose 1.12 runtime; 1.13 alphas require an alpha runtime.
-material3 = "1.12.0-alpha03"
+# Keep Material 3 aligned with the Compose runtime above.
+material3 = "1.13.0-alpha02"
 slf4j-android = "2.0.20-0"
 kover = "0.9.11"
 ksp = "2.3.12"

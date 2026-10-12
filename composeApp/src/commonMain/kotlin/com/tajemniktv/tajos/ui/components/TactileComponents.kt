@@ -33,6 +33,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.SliderState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -50,7 +51,8 @@ import com.tajemniktv.tajos.ui.theme.TajsOSTheme
 import kotlin.math.roundToInt
 
 /**
- * A tactile-themed slider component with glow effects and value display.
+ * A controlled tactile slider with a custom thumb and value display.
+ * External value updates remain authoritative; changing the range or steps recreates thumb state.
  *
  * @param label The text label for the slider.
  * @param value The current value of the slider.
@@ -75,6 +77,7 @@ fun TactileSlider(
     maxLabel: String = "",
     valueSuffix: String = "/ 05",
 ) {
+    val sliderState = rememberTactileSliderState(value, valueRange, steps)
     Column(modifier = modifier.fillMaxWidth().padding(vertical = TajsOSTheme.SpacingSm)) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -120,10 +123,8 @@ fun TactileSlider(
         Spacer(Modifier.height(TajsOSTheme.SpacingSm))
 
         Slider(
-            value = value,
+            state = sliderState,
             onValueChange = onValueChange,
-            valueRange = valueRange,
-            steps = steps,
             colors =
                 SliderDefaults.colors(
                     thumbColor = Color.Transparent, // Custom thumb below
@@ -165,6 +166,21 @@ fun TactileSlider(
             )
         }
     }
+}
+
+/**
+ * Adapts externally owned values to Material 3's custom-thumb state API.
+ * Range and step changes replace immutable state configuration; value changes reuse drag state.
+ */
+@Composable
+internal fun rememberTactileSliderState(
+    value: Float,
+    valueRange: ClosedFloatingPointRange<Float>,
+    steps: Int,
+): SliderState {
+    val state = remember(steps, valueRange) { SliderState(value, steps, valueRange) }
+    state.value = value
+    return state
 }
 
 /**
