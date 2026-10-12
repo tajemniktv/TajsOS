@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.Flow
  * NodeDao provides methods for accessing the core "Node" entities.
  */
 @Dao
-interface NodeDao {
+interface NodeDao : TodayPinDao {
     @Transaction
     @Query("SELECT * FROM nodes ORDER BY createdAt DESC")
     fun getAllNodesWithPins(): Flow<List<NodeWithPin>>
@@ -139,32 +139,6 @@ interface NodeDao {
      */
     @Delete
     suspend fun deleteNode(node: NodeEntity)
-
-    /**
-     * Pins a node to the "Today" list by inserting a [TodayPinEntity].
-     * Replaces any existing pin for the same node and date to avoid conflicts.
-     *
-     * @param pin The [TodayPinEntity] representing the pinned state.
-     */
-    @Upsert
-    suspend fun pinToToday(pin: TodayPinEntity)
-
-    /**
-     * Removes the "Today" pin for a specific node.
-     *
-     * @param nodeId The ID of the node to unpin.
-     */
-    @Query("DELETE FROM today_pins WHERE nodeId = :nodeId")
-    suspend fun unpinFromToday(nodeId: Long)
-
-    /**
-     * Observes whether a specific node is currently pinned to "Today".
-     *
-     * @param nodeId The ID of the node to check.
-     * @return A reactive stream emitting `true` if the node has an associated pin, `false` otherwise.
-     */
-    @Query("SELECT EXISTS(SELECT 1 FROM today_pins WHERE nodeId = :nodeId)")
-    fun isPinnedToToday(nodeId: Long): Flow<Boolean>
 }
 
 /**
@@ -634,6 +608,10 @@ interface ScheduleEntryDao {
 
     @Query("DELETE FROM schedule_entries WHERE itemId = :itemId")
     suspend fun deleteScheduleEntriesForItem(itemId: Long)
+
+    /** Deletes one schedule entry without touching independent entries of the same kind. */
+    @Query("DELETE FROM schedule_entries WHERE id = :id")
+    suspend fun deleteScheduleEntry(id: Long)
 
     @Upsert
     suspend fun insertScheduleEntry(entry: ScheduleEntryEntity): Long

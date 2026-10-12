@@ -50,6 +50,7 @@ data class SettingsDashboardContext(
     val sidebarMode: SidebarMode,
     val desktopWindowStartupMode: DesktopWindowStartupMode,
     val importPayload: String,
+    val dataTransfer: SettingsDataTransferState,
     val onImportPayloadChange: (String) -> Unit,
     val onSaveMedication: (String, String, String?, Int?, Boolean) -> Unit,
     val onDeleteMedication: (MedicationEntity) -> Unit,

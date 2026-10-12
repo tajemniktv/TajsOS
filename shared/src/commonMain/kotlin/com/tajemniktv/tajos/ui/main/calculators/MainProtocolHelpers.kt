@@ -7,14 +7,13 @@ package com.tajemniktv.tajos.ui.main.calculators
 import com.tajemniktv.tajos.data.ModeEntity
 import com.tajemniktv.tajos.data.NodeWithPin
 import com.tajemniktv.tajos.data.TrackEntryEntity
+import com.tajemniktv.tajos.data.nextRecurringDueAt
 import com.tajemniktv.tajos.ui.FilterHelper
 import com.tajemniktv.tajos.ui.main.state.PlaybookTemplate
 import com.tajemniktv.tajos.ui.main.state.TransitionProtocolTemplate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
-import kotlin.time.Duration.Companion.days
-import kotlin.time.Instant
 
 /** Cached regex for replacing non-alphanumeric characters with spaces to prevent recompilation. */
 private val nonAlphaNumericRegex = Regex("[^a-z0-9]+")
@@ -202,17 +201,7 @@ fun recommendProtocolLabel(templates: List<TransitionProtocolTemplate>): String?
 fun calculateNextRecurringDate(
     currentDue: Long,
     interval: String,
-): Long {
-    val offset =
-        when (interval.uppercase())
-        {
-            "DAILY" -> 1.days
-            "WEEKLY" -> 7.days
-            "MONTHLY" -> 30.days
-            else -> 1.days
-        }
-    return (Instant.fromEpochMilliseconds(currentDue) + offset).toEpochMilliseconds()
-}
+): Long = nextRecurringDueAt(currentDue, interval)
 
 /**
  * A proxy function delegating to [FilterHelper.matchesQuery] to determine if a node's title,

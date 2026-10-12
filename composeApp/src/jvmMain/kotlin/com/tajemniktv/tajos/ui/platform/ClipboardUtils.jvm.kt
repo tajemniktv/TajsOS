@@ -10,4 +10,4 @@ import androidx.compose.ui.text.AnnotatedString
 import java.awt.datatransfer.StringSelection
 
 @OptIn(ExperimentalComposeUiApi::class)
-actual fun AnnotatedString.toClipEntry(): ClipEntry = ClipEntry(StringSelection(this.text))
+actual fun AnnotatedString.toClipEntry(label: String?, sensitive: Boolean): ClipEntry = ClipEntry(StringSelection(text))

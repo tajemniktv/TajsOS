@@ -1285,6 +1285,19 @@
     <string name="detail_badge_on_hold">ON HOLD</string>
     <string name="detail_badge_queued">QUEUED</string>
     <string name="detail_badge_archived">ARCHIVED</string>
+    <string name="settings_data_desc">Export or import your system data locally.</string>
+    <string name="settings_transfer_export_ready">Export ready</string>
+    <string name="settings_transfer_private">This JSON contains personal data and may include private calendar feed URLs. Keep it private.</string>
+    <string name="settings_transfer_preview">Preview: first %1$d of %2$d characters. Copy JSON includes the complete export.</string>
+    <string name="settings_transfer_copy">Copy JSON</string>
+    <string name="settings_transfer_copied">Complete JSON copied to clipboard.</string>
+    <string name="settings_transfer_failed">Data transfer failed. Your input remains available; please try again.</string>
+    <string name="settings_transfer_busy">Working…</string>
+    <string name="settings_transfer_bundle_imported">Imported bundle: %1$d nodes, %2$d relations, %3$d events.</string>
+    <string name="settings_transfer_legacy_imported">Imported legacy export: %1$d nodes.</string>
+    <string name="settings_transfer_empty">Paste an export before importing.</string>
+    <string name="settings_transfer_invalid">Unrecognized JSON export format.</string>
+    <string name="settings_transfer_unsupported">Backup schema %1$d is unsupported. No data was imported.</string>
 </resources>
 
 

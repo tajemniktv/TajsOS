@@ -42,15 +42,14 @@ import com.tajemniktv.tajos.data.TrackEntryEntity
 import com.tajemniktv.tajos.data.TrackMedicationJoinEntity
 import com.tajemniktv.tajos.ui.main.state.ExportData
 import io.ktor.client.engine.mock.respond
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.serialization.json.Json
@@ -104,12 +103,17 @@ class MainViewModelTest {
         override suspend fun pinToToday(pin: TodayPinEntity) {
         }
 
+        override suspend fun getPinsForNodeOnDate(nodeId: Long, date: String): List<TodayPinEntity> = emptyList()
+
+        override suspend fun unpinFromDate(nodeId: Long, date: String) {}
+
         override suspend fun unpinFromToday(nodeId: Long) {
         }
 
         override fun getNodesByArea(areaId: Long): Flow<List<NodeEntity>> = flowOf(emptyList())
 
-        override fun isPinnedToToday(nodeId: Long): Flow<Boolean> = flowOf(false)
+        override fun isPinnedOnDate(nodeId: Long, date: String): Flow<Boolean> = flowOf(false)
+        override fun observePinsForDate(date: String): Flow<List<TodayPinEntity>> = flowOf(emptyList())
 
         override fun getNodesByProjectWithPins(projectId: Long): Flow<List<NodeWithPin>> = flowOf(emptyList())
 
@@ -242,86 +246,62 @@ class MainViewModelTest {
     }
 
     @Test
-    fun exportDataJson_serializes_current_nodes_state_to_JSON() =
-        runTest {
-            val testNodes =
-                listOf(
-                    NodeWithPin(
-                        node =
-                            NodeEntity(
-                                id = 1,
-                                type = "task",
-                                title = "Task 1",
-                                content = "Content 1",
-                                inboxState = false,
-                            ),
-                        pin = null,
-                    ),
-                    NodeWithPin(
-                        node =
-                            NodeEntity(
-                                id = 2,
-                                type = "note",
-                                title = "Note 1",
-                                content = "Content 2",
-                                status = "archived",
-                            ),
-                        pin = null,
-                    ),
-                )
-
-            val nodesFlow = MutableStateFlow(testNodes)
-
-            val testRepo =
-                AppRepository(
-                    nodeDao = TestNodeDao(nodesFlow),
-                    focusSessionDao = StubFocusSessionDao(),
-                    trackDao = StubTrackDao(),
-                    relationDao = StubRelationDao(),
-                    tagDao = StubTagDao(),
-                    eventLogDao = StubEventLogDao(),
-                    attachmentDao = StubAttachmentDao(),
-                    templateDao = StubTemplateDao(),
-                    nodeSnapshotDao = FakeNodeSnapshotDao(),
-                    reviewDao = FakeReviewDao(),
-                    calendarProviderDao = FakeCalendarProviderDao(),
-                    calendarEventDao = FakeCalendarEventDao(),
-                    modeDao = FakeModeDao(),
-                    protocolDao = FakeProtocolDao(),
-                    decisionDao = FakeDecisionDao(),
-                    userDao = FakeUserDao(),
-                    medicationDao = FakeMedicationDao(),
-                )
-
-            val fakeDataStore = FakeDataStore()
-            val testPrefs = PreferencesRepository(fakeDataStore)
-            val mockEngine =
-                io.ktor.client.engine.mock.MockEngine {
-                    respond("", io.ktor.http.HttpStatusCode.OK)
-                }
-            val client = io.ktor.client.HttpClient(mockEngine)
-            val calendarManager =
-                com.tajemniktv.tajos.calendar
-                    .CalendarManager(testRepo, client)
-
-            val viewModel = MainViewModel(testRepo, testPrefs, calendarManager)
-
-            advanceTimeBy(100)
-            runCurrent()
-
-            val exportJson = viewModel.exportDataJson()
-            client.close()
-
-            assertTrue(exportJson.isNotEmpty(), "Export JSON should not be empty")
-
-            val parsedData = Json.decodeFromString<ExportData>(exportJson)
-            assertEquals(2, parsedData.version, "ExportData version should be 2")
-            assertEquals(2, parsedData.nodes.size, "ExportData should contain 2 nodes")
-
-            assertEquals(1, parsedData.nodes[0].id)
-            assertEquals("Task 1", parsedData.nodes[0].title)
-
-            assertEquals(2, parsedData.nodes[1].id)
-            assertEquals("Note 1", parsedData.nodes[1].title)
+    fun exportDataJson_readsRepositoryBeforeInitialUiEmission() = runTest {
+        val expected = exportFixtureNodes()
+        val pendingUiEmission = CompletableDeferred<Unit>()
+        var firstSubscription = true
+        val nodesFlow = flow {
+            if (firstSubscription) {
+                firstSubscription = false
+                pendingUiEmission.await()
+            }
+            emit(expected)
         }
+        val repository = exportRepository(nodesFlow)
+        val client = io.ktor.client.HttpClient(io.ktor.client.engine.mock.MockEngine {
+            respond("", io.ktor.http.HttpStatusCode.OK)
+        })
+        try {
+            val viewModel = MainViewModel(repository, PreferencesRepository(FakeDataStore()),
+                com.tajemniktv.tajos.calendar.CalendarManager(repository, client))
+            assertTrue(viewModel.allNodes.value.isEmpty(), "The initial UI emission is deliberately delayed")
+            val exportJson = viewModel.exportDataJson()
+            assertTrue(exportJson.isNotEmpty(), "Export JSON should not be empty")
+            val parsed = Json.decodeFromString<ExportData>(exportJson)
+            assertEquals(com.tajemniktv.tajos.data.LEGACY_EXPORT_VERSION, parsed.version)
+            assertEquals(expected.map { it.node }, parsed.nodes)
+        } finally {
+            pendingUiEmission.complete(Unit)
+            client.close()
+        }
+    }
+
+    /** Stable timestamps keep full-row comparisons independent of serializer default evaluation. */
+    private fun exportFixtureNodes(): List<NodeWithPin> = listOf(
+        NodeWithPin(NodeEntity(id = 1, type = "task", title = "Task 1", content = "Content 1",
+            inboxState = false, createdAt = 1, updatedAt = 1), pin = null),
+        NodeWithPin(NodeEntity(id = 2, type = "note", title = "Note 1", content = "Content 2",
+            status = "archived", createdAt = 1, updatedAt = 1), pin = null),
+    )
+
+    /** Wires existing fake DAO seams without placing their construction inside behavior assertions. */
+    private fun exportRepository(nodes: Flow<List<NodeWithPin>>): AppRepository = AppRepository(
+        nodeDao = TestNodeDao(nodes),
+        focusSessionDao = StubFocusSessionDao(),
+        trackDao = StubTrackDao(),
+        relationDao = StubRelationDao(),
+        tagDao = StubTagDao(),
+        eventLogDao = StubEventLogDao(),
+        attachmentDao = StubAttachmentDao(),
+        templateDao = StubTemplateDao(),
+        nodeSnapshotDao = FakeNodeSnapshotDao(),
+        reviewDao = FakeReviewDao(),
+        calendarProviderDao = FakeCalendarProviderDao(),
+        calendarEventDao = FakeCalendarEventDao(),
+        modeDao = FakeModeDao(),
+        protocolDao = FakeProtocolDao(),
+        decisionDao = FakeDecisionDao(),
+        userDao = FakeUserDao(),
+        medicationDao = FakeMedicationDao(),
+    )
 }

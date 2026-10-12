@@ -9,4 +9,4 @@ import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.text.AnnotatedString
 
 @OptIn(ExperimentalComposeUiApi::class)
-actual fun AnnotatedString.toClipEntry(): ClipEntry = ClipEntry.withPlainText(this.text)
+actual fun AnnotatedString.toClipEntry(label: String?, sensitive: Boolean): ClipEntry = ClipEntry.withPlainText(text)

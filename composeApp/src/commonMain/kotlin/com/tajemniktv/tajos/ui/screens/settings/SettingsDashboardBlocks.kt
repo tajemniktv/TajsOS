@@ -74,6 +74,13 @@ import tajsos.composeapp.generated.resources.settings_biometric_desc
 import tajsos.composeapp.generated.resources.settings_biometric_lock
 import tajsos.composeapp.generated.resources.settings_biometric_unavailable
 import tajsos.composeapp.generated.resources.settings_export_data
+import tajsos.composeapp.generated.resources.settings_data_management
+import tajsos.composeapp.generated.resources.settings_data_desc
+import tajsos.composeapp.generated.resources.settings_placeholder_import_json
+import tajsos.composeapp.generated.resources.settings_action_import_json
+import tajsos.composeapp.generated.resources.settings_action_export_bundle
+import tajsos.composeapp.generated.resources.settings_action_import_json_simple
+import tajsos.composeapp.generated.resources.settings_transfer_busy
 import tajsos.composeapp.generated.resources.settings_force_crash
 import tajsos.composeapp.generated.resources.settings_no_medication_entries_configured_yet
 import tajsos.composeapp.generated.resources.settings_theme_dark
@@ -231,11 +238,12 @@ private fun renderSettingsFeaturePacks(context: SettingsDashboardContext) {
 @Composable
 private fun renderSettingsData(context: SettingsDashboardContext) {
     SettingsSimpleScaffold(
-        title = "DATA MANAGEMENT",
-        description = "Export or import your system data locally.",
+        title = stringResource(Res.string.settings_data_management),
+        description = stringResource(Res.string.settings_data_desc),
     ) {
         Button(
             onClick = context.onExportData,
+            enabled = !context.dataTransfer.busy,
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
             colors =
@@ -251,6 +259,7 @@ private fun renderSettingsData(context: SettingsDashboardContext) {
 
         Button(
             onClick = context.onExportBundle,
+            enabled = !context.dataTransfer.busy,
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
             colors =
@@ -259,7 +268,7 @@ private fun renderSettingsData(context: SettingsDashboardContext) {
                     contentColor = TajsOSTheme.Primary,
                 ),
         ) {
-            Text("Export Full Bundle")
+            Text(stringResource(Res.string.settings_action_export_bundle))
         }
 
         Spacer(Modifier.height(TajsOSTheme.SpacingMd))
@@ -268,9 +277,10 @@ private fun renderSettingsData(context: SettingsDashboardContext) {
             value = context.importPayload,
             onValueChange = context.onImportPayloadChange,
             modifier = Modifier.fillMaxWidth().height(180.dp),
-            label = { Text("Import JSON Payload") },
-            placeholder = { Text("Paste ExportData/ExportBundle JSON here...") },
+            label = { Text(stringResource(Res.string.settings_action_import_json)) },
+            placeholder = { Text(stringResource(Res.string.settings_placeholder_import_json)) },
             singleLine = false,
+            enabled = !context.dataTransfer.busy,
             colors =
                 OutlinedTextFieldDefaults.colors(
                     unfocusedBorderColor = TajsOSTheme.Border,
@@ -282,6 +292,7 @@ private fun renderSettingsData(context: SettingsDashboardContext) {
 
         Button(
             onClick = context.onImportData,
+            enabled = !context.dataTransfer.busy && context.importPayload.isNotBlank(),
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
             colors =
@@ -290,7 +301,13 @@ private fun renderSettingsData(context: SettingsDashboardContext) {
                     contentColor = TajsOSTheme.Primary,
                 ),
         ) {
-            Text("Import JSON")
+            Text(stringResource(Res.string.settings_action_import_json_simple))
+        }
+        if (context.dataTransfer.busy) {
+            Text(stringResource(Res.string.settings_transfer_busy), color = TajsOSTheme.Muted)
+        }
+        context.dataTransfer.feedback?.let {
+            Text(dataTransferFeedbackText(it), color = TajsOSTheme.Text)
         }
     }
 }

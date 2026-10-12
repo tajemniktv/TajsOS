@@ -375,12 +375,13 @@ class AppRepositoryTest {
     @Test
     fun testPinToTodayLogsEvent(): TestResult =
         runTest {
-            repository.pinToToday(1)
+            val id = fakeNodeDao.insertNode(NodeEntity(type = "task", title = "Existing pin target"))
+            repository.pinToToday(id)
 
             val logs = fakeEventLogDao.getLogs()
             assertEquals(1, logs.size)
             assertEquals("TODAY_ASSIGNED", logs[0].eventType)
-            assertEquals(1, logs[0].nodeId)
+            assertEquals(id, logs[0].nodeId)
         }
 
     @Test
