@@ -202,9 +202,10 @@ file, not a sanitized sharing archive. Exports are unencrypted; keep the files p
 
 The intentional pre-alpha migration policy remains in effect: platform database builders allow
 destructive fallback when no migration exists. A database backup does not establish a supported
-historical migration chain or make upgrades safe for irreplaceable data. Room schema 34 adds a
-non-unique `(nodeId, date)` index for Today pin lookup and repair; older profiles may be reset by the
-existing destructive fallback. No migration is provided. The JSON backup contract remains schema 4.
+historical migration chain or make upgrades safe for irreplaceable data. Room schema 35 includes
+non-unique `(nodeId, date)` and `date` indexes for Today pin commands and history-backed projections;
+older profiles may be reset by the existing destructive fallback. No migration is provided.
+The JSON backup contract remains schema 4.
 
 Production repository construction from `AppDatabase` wires a shared Room writer transaction for
 aggregate commands, including node side effects, saved-view replacement, triage, and imports.

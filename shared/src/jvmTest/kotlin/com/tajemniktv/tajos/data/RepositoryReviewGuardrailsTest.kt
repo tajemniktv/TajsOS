@@ -96,13 +96,23 @@ class RepositoryReviewGuardrailsTest {
                 TodayPinEntity(id = 11, nodeId = id, date = "2026-10-12", position = 1),
             ))
             assertEquals(2, database.nodeDao().getPinsForNodeOnDate(id, "2026-10-12").size)
-            val plan = database.useReaderConnection { connection ->
-                connection.usePrepared("EXPLAIN QUERY PLAN SELECT * FROM today_pins WHERE nodeId = 1 AND date = '2026-10-12' ORDER BY id ASC") { query ->
-                    buildList { while (query.step()) add(query.getText(3)) }
-                }
-            }
-            assertTrue(plan.any { "index_today_pins_nodeId_date" in it }, plan.joinToString())
+            assertQueryUses(database,
+                "SELECT * FROM today_pins WHERE nodeId = 1 AND date = '2026-10-12' ORDER BY id ASC",
+                "index_today_pins_nodeId_date")
+            assertQueryUses(database,
+                "SELECT * FROM today_pins WHERE date = '2026-10-12' ORDER BY id ASC",
+                "index_today_pins_date")
         }
+    }
+
+    /** Verifies the real SQLite access path for both command and history-backed projection queries. */
+    private suspend fun assertQueryUses(database: AppDatabase, sql: String, index: String) {
+        val plan = database.useReaderConnection { connection ->
+            connection.usePrepared("EXPLAIN QUERY PLAN $sql") { query ->
+                buildList { while (query.step()) add(query.getText(3)) }
+            }
+        }
+        assertTrue(plan.any { index in it }, plan.joinToString())
     }
 
     @Test

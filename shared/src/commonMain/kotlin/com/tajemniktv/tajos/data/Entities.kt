@@ -427,7 +427,7 @@ data class DecisionOptionEntity(
 /**
  * TodayPinEntity represents an item that has been "shortlisted" for today.
  */
-@Entity(tableName = "today_pins", indices = [Index(value = ["nodeId", "date"])])
+@Entity(tableName = "today_pins", indices = [Index(value = ["nodeId", "date"]), Index(value = ["date"])])
 @Serializable
 data class TodayPinEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,

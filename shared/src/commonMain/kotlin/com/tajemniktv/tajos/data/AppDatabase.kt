@@ -65,7 +65,7 @@ import androidx.room.RoomDatabaseConstructor
             SavedViewSortEntity::class,
             SavedViewVisibleFieldEntity::class,
         ],
-    version = 34,
+    version = 35,
 )
 @ConstructedBy(AppDatabaseConstructor::class)
 abstract class AppDatabase : RoomDatabase() {
