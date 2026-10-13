@@ -36,6 +36,15 @@ import kotlinx.coroutines.flow.first
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
+import kotlin.time.Instant
+import kotlin.random.Random
+
+internal fun forgottenWisdomCandidates(nodes: List<NodeWithPin>, now: Long): List<NodeWithPin> =
+    nodes.filter {
+        (it.node.type == "note" || it.node.type == "idea") &&
+            it.node.status == "active" &&
+            (it.node.noteType == "evergreen" || it.node.updatedAt < now - 30 * 86400000L)
+    }
 
 /**
  * Merges internal scheduling data with external calendar events into a unified timeline view.
@@ -337,10 +346,12 @@ suspend fun buildDashboardUIState(
     activeId: Long?,
     areasList: List<NodeEntity>,
     packs: PackRegistry,
+    now: Long = Clock.System.now().toEpochMilliseconds(),
+    zone: TimeZone = TimeZone.currentSystemDefault(),
+    random: Random = Random.Default,
 ): DashboardUIState {
     val accessibleModes = modesList.filter { packs.canUseMode(it.key) }
     val mode = accessibleModes.find { it.id == activeId }
-    val now = Clock.System.now().toEpochMilliseconds()
     val sevenDaysAgo = now - (7 * 24 * 60 * 60 * 1000L)
     val fourteenDaysAgo = now - (14 * 24 * 60 * 60 * 1000L)
 
@@ -457,7 +468,7 @@ suspend fun buildDashboardUIState(
             .filter { it.node.status == "active" && it.node.type == "task" } // NON-NLS
             .groupBy { it.node.locationContext ?: "general" } // NON-NLS
 
-    val localNow = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+    val localNow = Instant.fromEpochMilliseconds(now).toLocalDateTime(zone)
     val suggestion =
         when
             {
@@ -596,13 +607,7 @@ suspend fun buildDashboardUIState(
                     }
                 },
         forgottenWisdom =
-            filteredNodes
-                .filter {
-                    (it.node.type == "note" || it.node.type == "idea") && // NON-NLS
-                            it.node.status == "active" && // NON-NLS
-                        (it.node.noteType == "evergreen" || it.node.updatedAt < (now - 30 * 24 * 60 * 60 * 1000L)) // NON-NLS
-                }.shuffled()
-                .firstOrNull(),
+            forgottenWisdomCandidates(filteredNodes, now).randomOrNull(random),
         deservesAttention =
             filteredNodes
                 .filter {

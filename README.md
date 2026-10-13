@@ -155,6 +155,25 @@ Website dependencies and their lockfile are maintained separately. Run `npm ci`,
 and `npm run build` from `website/` after updates. See its README for compatibility constraints.
 These checks do not establish device acceptance, visual correctness, or iOS compatibility.
 
+Android release builds enable R8 code optimization and resource shrinking with the optimized
+Android defaults and dependency-provided consumer rules. Do not add package-wide keep rules for
+Compose, Room, serialization, or Firebase without a demonstrated reflective entry point.
+Keep `androidApp/build/outputs/mapping/release/mapping.txt` with the exact APK for crash retracing.
+Crashlytics mapping uploads remain enabled for normal releases.
+
+For **local-only** release comparisons (without uploading mapping files):
+
+```powershell
+.\gradlew.bat :androidApp:assembleRelease '-Ptajsos.release.shrink=false'
+# Save that APK before the next build overwrites it, then build the normal optimized release:
+.\gradlew.bat :androidApp:assembleRelease -x :androidApp:uploadCrashlyticsMappingFileRelease
+```
+
+The shrink opt-out is diagnostic, not the release default. Validate the optimized APK on an
+emulator/device, including startup, persisted Room data and serialization paths; a debug build
+cannot establish release compatibility. `:composeApp:jvmTest` also runs headless task-row UI
+tests (keyboard, mouse, independent actions, and narrow-layout bounds).
+
 Gradle and Kotlin compiler daemons retain their build heaps between invocations. Their idle
 timeouts are capped at five minutes in `gradle.properties`, while keeping the heap capacity needed
 for KMP compilation. A build after that idle period pays the daemon startup cost again.

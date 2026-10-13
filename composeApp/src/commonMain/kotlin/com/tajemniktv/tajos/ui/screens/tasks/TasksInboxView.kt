@@ -27,6 +27,8 @@ import androidx.compose.ui.text.font.FontWeight
 import com.tajemniktv.tajos.data.InboxEntryEntity
 import com.tajemniktv.tajos.data.NodeEntity
 import com.tajemniktv.tajos.ui.components.common.EmptyState
+import com.tajemniktv.tajos.ui.components.nodes.TaskRow
+import androidx.compose.runtime.key
 import com.tajemniktv.tajos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
@@ -152,48 +154,25 @@ internal fun TasksInboxView(
                     )
                 } else {
                     inboxTasks.forEach { task ->
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    task.title,
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    color = TajsOSTheme.Text,
-                                )
-                                val context =
+                        key(task.id) {
+                            TaskRow(
+                                node = task,
+                                onClick = { onOpen(task.id) },
+                                supportingText =
                                     listOfNotNull(
                                         task.projectId?.let { projectById[it] },
                                         task.areaId?.let { areaById[it] },
-                                    ).joinToString(" • ")
-                                if (context.isNotBlank()) {
-                                    Text(
-                                        context,
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = TajsOSTheme.Muted,
-                                    )
-                                }
-                            }
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+                                    ).joinToString(" • "),
                             ) {
                                 OutlinedButton(onClick = { onOpen(task.id) }) {
-                                    Text(
-                                        stringResource(
-                                            Res.string.tasks_open_action,
-                                        ),
-                                    )
+                                    Text(stringResource(Res.string.tasks_open_action))
                                 }
                                 OutlinedButton(onClick = { onMarkProcessed(task) }) {
-                                    Text(
-                                        stringResource(Res.string.tasks_inbox_mark_processed),
-                                    )
+                                    Text(stringResource(Res.string.tasks_inbox_mark_processed))
                                 }
                             }
+                            HorizontalDivider(color = TajsOSTheme.GhostBorder)
                         }
-                        HorizontalDivider(color = TajsOSTheme.GhostBorder)
                     }
                 }
             }

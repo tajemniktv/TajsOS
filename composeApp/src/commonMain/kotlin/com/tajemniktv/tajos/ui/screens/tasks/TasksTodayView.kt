@@ -27,6 +27,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import com.tajemniktv.tajos.data.NodeEntity
 import com.tajemniktv.tajos.ui.components.common.EmptyState
+import com.tajemniktv.tajos.ui.components.nodes.TaskRow
+import androidx.compose.runtime.key
 import com.tajemniktv.tajos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
@@ -39,6 +41,9 @@ import tajsos.composeapp.generated.resources.tasks_today_overdue
 import tajsos.composeapp.generated.resources.tasks_today_pinned
 import tajsos.composeapp.generated.resources.tasks_today_subtitle
 import tajsos.composeapp.generated.resources.tasks_today_title
+import tajsos.composeapp.generated.resources.tasks_add_today_action
+import tajsos.composeapp.generated.resources.tasks_remove_today_action
+import tajsos.composeapp.generated.resources.tasks_done_action
 import kotlin.time.Clock
 
 @Composable
@@ -151,32 +156,17 @@ private fun TodaySection(
                 )
             } else {
                 tasks.take(8).forEach { task ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                task.title,
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = TajsOSTheme.Text,
-                            )
-                            val context =
+                    key(task.id) {
+                        TaskRow(
+                            node = task,
+                            onClick = { onOpen(task.id) },
+                            supportingText =
                                 listOfNotNull(
                                     task.projectId?.let { projectById[it] },
                                     task.areaId?.let { areaById[it] },
                                     task.dueAt?.let(::shortDate),
-                                ).joinToString(" • ")
-                            if (context.isNotBlank()) {
-                                Text(
-                                    context,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = TajsOSTheme.Muted,
-                                )
-                            }
-                        }
-                        Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
+                                ).joinToString(" • "),
+                        ) {
                             OutlinedButton(onClick = {
                                 onStartFocus(task)
                             }) { Text(stringResource(Res.string.tasks_start_focus_action)) }
@@ -189,16 +179,16 @@ private fun TodaySection(
                                 Icon(Icons.Default.Star, null)
                                 Text(
                                     if (task.id in todayTaskIds) {
-                                        " Remove Today"
+                                        stringResource(Res.string.tasks_remove_today_action)
                                     } else {
-                                        " Add Today"
+                                        stringResource(Res.string.tasks_add_today_action)
                                     },
                                 )
                             }
                             IconButton(onClick = { onDone(task) }) {
                                 Icon(
                                     Icons.Default.Check,
-                                    null,
+                                    stringResource(Res.string.tasks_done_action),
                                 )
                             }
                         }

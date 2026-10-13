@@ -25,7 +25,7 @@ data class DecisionStaleItem(
  * @param weeklyCaptures The total number of new items captured into the system within the last week.
  * @param weeklyCompletions The total number of tasks or nodes completed in the last week.
  * @param weeklyFocusHours The cumulative hours spent in focus sessions in the last week.
- * @param bestFocusHour The time of day (0-23) where focus and completion rates are statistically highest.
+ * @param bestFocusHour Peak completed-session hour (0-23), or -1 when there are no completed sessions. Ties choose the earliest hour.
  * @param avgMood The calculated average user mood rating over a specific period.
  * @param avgEnergy The calculated average user energy level rating over a specific period.
  * @param avgFocus The calculated average focus score or self-reported focus quality.
@@ -37,7 +37,7 @@ data class DecisionStaleItem(
  * @param archiveRate The rate at which items are being moved to an archived or non-actionable state.
  * @param completionsByArea A map detailing the number of completed tasks associated with specific area IDs.
  * @param completionsByProject A map detailing the number of completed tasks associated with specific project IDs.
- * @param mostProductiveHour The specific hour block (0-23) where the highest productivity output is achieved.
+ * @param mostProductiveHour Peak recent completion hour (0-23), or -1 when there are no recent completions. Ties choose the earliest hour.
  * @param postponeFrequency The frequency at which due dates are delayed or items are postponed.
  * @param backlogPressure A calculated metric indicating how overwhelmingly large the backlog of outstanding tasks has become.
  * @param chaosScore A metric denoting system disorganization (e.g., untagged items, missing contexts).

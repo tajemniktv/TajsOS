@@ -49,17 +49,16 @@ fun calculateInsights(
     sessions: List<FocusSessionEntity>,
     tracks: List<TrackEntryEntity>,
     projects: List<NodeEntity>,
+    now: Long = Clock.System.now().toEpochMilliseconds(),
+    sysZone: TimeZone = TimeZone.currentSystemDefault(),
 ): InsightsData {
-    // Cached system timezone for performance during iterations
-    val sysZone = TimeZone.currentSystemDefault()
-    val now = Clock.System.now().toEpochMilliseconds()
     val sevenDaysAgo = now - (7 * 24 * 60 * 60 * 1000L)
 
     /** Cached system timezone for performance during iterations */
     val recentNodes = nodes.filter { it.node.createdAt >= sevenDaysAgo }
     val recentCompletions =
         nodes.filter {
-            it.node.status == "done" && (it.node.completedAt ?: 0) >= sevenDaysAgo // NON-NLS
+            it.node.status == "done" && it.node.completedAt != null && it.node.completedAt >= sevenDaysAgo // NON-NLS
         }
 
     val recentSessions = sessions.filter { it.startedAt >= sevenDaysAgo && it.endedAt != null }
@@ -81,7 +80,7 @@ fun calculateInsights(
         hourlyDistribution[hour]++
     }
 
-    val bestFocusHour = hourlyDistribution.indices.maxByOrNull { hourlyDistribution[it] } ?: -1
+    val bestFocusHour = hourlyDistribution.peakHourOrNoData()
 
     val completionHourlyDist = IntArray(24)
     recentCompletions.forEach {
@@ -93,7 +92,7 @@ fun calculateInsights(
         completionHourlyDist[hour]++
     }
     val mostProductiveHour =
-        completionHourlyDist.indices.maxByOrNull { completionHourlyDist[it] } ?: -1
+        completionHourlyDist.peakHourOrNoData()
 
     val sevenDaysAgoDate =
         Instant
@@ -210,14 +209,14 @@ fun calculateInsights(
                     .filter { (dailyCompletions[it.date] ?: 0) >= 3 }
                     .mapNotNull { it.moodScore }
                     .takeIf { it.isNotEmpty() }
-                    ?.average() ?: Double.NaN
+                    ?.average()
             val moodOnSlowDays =
                 recentTracks
                     .filter { (dailyCompletions[it.date] ?: 0) == 0 }
                     .mapNotNull { it.moodScore }
                     .takeIf { it.isNotEmpty() }
-                    ?.average() ?: Double.NaN
-            if (!moodOnBusyDays.isNaN() && !moodOnSlowDays.isNaN()) moodOnBusyDays - moodOnSlowDays else 0.0
+                    ?.average()
+            finiteDifferenceOrZero(moodOnBusyDays, moodOnSlowDays)
         } else {
             0.0
         }
@@ -230,15 +229,13 @@ fun calculateInsights(
                     .map { dailyFocus[it.date] ?: 0.0 }
                     .takeIf { it.isNotEmpty() }
                     ?.average()
-                    ?: Double.NaN
             val focusOnBadSleep =
                 recentTracks
                     .filter { (it.sleepScore ?: 0f) < 7f }
                     .map { dailyFocus[it.date] ?: 0.0 }
                     .takeIf { it.isNotEmpty() }
                     ?.average()
-                    ?: Double.NaN
-            if (!focusOnGoodSleep.isNaN() && !focusOnBadSleep.isNaN()) focusOnGoodSleep - focusOnBadSleep else 0.0
+            finiteDifferenceOrZero(focusOnGoodSleep, focusOnBadSleep)
         } else {
             0.0
         }
@@ -251,15 +248,13 @@ fun calculateInsights(
                     .map { dailyCaptures[it.date] ?: 0 }
                     .takeIf { it.isNotEmpty() }
                     ?.average()
-                    ?: Double.NaN
             val capturesOnLowEnergy =
                 recentTracks
                     .filter { (it.energyScore ?: 0) <= 2 }
                     .map { dailyCaptures[it.date] ?: 0 }
                     .takeIf { it.isNotEmpty() }
                     ?.average()
-                    ?: Double.NaN
-            if (!capturesOnHighEnergy.isNaN() && !capturesOnLowEnergy.isNaN()) capturesOnHighEnergy - capturesOnLowEnergy else 0.0
+            finiteDifferenceOrZero(capturesOnHighEnergy, capturesOnLowEnergy)
         } else {
             0.0
         }
@@ -292,14 +287,14 @@ fun calculateInsights(
                     .filter { it.tookMeds }
                     .mapNotNull { it.focusScore }
                     .takeIf { it.isNotEmpty() }
-                    ?.average() ?: Double.NaN
+                    ?.average()
             val focusWithoutMeds =
                 recentTracks
                     .filter { !it.tookMeds }
                     .mapNotNull { it.focusScore }
                     .takeIf { it.isNotEmpty() }
-                    ?.average() ?: Double.NaN
-            if (!focusWithMeds.isNaN() && !focusWithoutMeds.isNaN()) focusWithMeds - focusWithoutMeds else 0.0
+                    ?.average()
+            finiteDifferenceOrZero(focusWithMeds, focusWithoutMeds)
         } else {
             0.0
         }
@@ -463,6 +458,15 @@ fun calculateInsights(
         contextStability = contextStability,
         passiveBehaviorSummary = behaviorSummary,
     )
+}
+
+// A tied histogram chooses the earliest hour; an all-zero histogram is not midnight activity.
+private fun IntArray.peakHourOrNoData(): Int =
+    indices.maxByOrNull { this[it] }?.takeIf { this[it] > 0 } ?: -1
+
+internal fun finiteDifferenceOrZero(first: Double?, second: Double?): Double {
+    if (first == null || second == null || !first.isFinite() || !second.isFinite()) return 0.0
+    return (first - second).takeIf { it.isFinite() } ?: 0.0
 }
 
 /**
@@ -960,8 +964,9 @@ fun calculateTimeArchitectureSnapshot(
     nodes: List<NodeWithPin>,
     todayLayerNodes: List<NodeEntity>,
     projects: List<NodeEntity>,
+    now: Long = Clock.System.now().toEpochMilliseconds(),
+    zone: TimeZone = TimeZone.currentSystemDefault(),
 ): com.tajemniktv.tajos.ui.TimeArchitectureSnapshot {
-    val now = Clock.System.now().toEpochMilliseconds()
     val dayMs = 24 * 60 * 60 * 1000L
     val weekHorizon = now + (7 * dayMs)
     val monthHorizon = now + (30 * dayMs)
@@ -1028,7 +1033,7 @@ fun calculateTimeArchitectureSnapshot(
                 val due = item.node.dueAt ?: now
                 Instant
                     .fromEpochMilliseconds(due)
-                    .toLocalDateTime(TimeZone.currentSystemDefault())
+                    .toLocalDateTime(zone)
                     .date.dayOfWeek.name
             }.eachCount()
             .entries
@@ -1054,7 +1059,7 @@ fun calculateTimeArchitectureSnapshot(
         examPeriodMode = examPeriodMode,
         projectPhases = projectPhases,
         countdowns = countdowns,
-        monthlyResetDate = nextMonthlyResetDate(),
+        monthlyResetDate = nextMonthlyResetDate(Instant.fromEpochMilliseconds(now), zone),
         weeklyMap = weeklyMap,
         seasonalGoals = seasonalGoals,
         temporaryFocusPeriods = temporaryFocusPeriods,
@@ -1070,9 +1075,10 @@ fun calculateTimeArchitectureSnapshot(
  *
  * @return The calculated next monthly reset date.
  */
-fun nextMonthlyResetDate(): String {
-    val now = Clock.System.now()
-    val zone = TimeZone.currentSystemDefault()
+fun nextMonthlyResetDate(
+    now: Instant = Clock.System.now(),
+    zone: TimeZone = TimeZone.currentSystemDefault(),
+): String {
     val nextMonth = now.plus(1, DateTimeUnit.MONTH, zone).toLocalDateTime(zone)
     val nextReset = LocalDate(nextMonth.year, nextMonth.month, 1)
     return nextReset.toString()

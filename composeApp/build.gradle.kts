@@ -101,6 +101,10 @@ kotlin {
             implementation(libs.logback)
             implementation(libs.jna)
         }
+        jvmTest.dependencies {
+            implementation(compose.desktop.uiTestJUnit4)
+            implementation(compose.desktop.currentOs)
+        }
         val androidMain by getting {
             dependencies {
                 implementation(project.dependencies.platform(libs.firebase.bom))

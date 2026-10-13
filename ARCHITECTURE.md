@@ -81,6 +81,17 @@ Responsible for:
 
 This layer may call into domain/data logic, but should avoid becoming the place where the product rules secretly live.
 
+### Analytical and time snapshots
+
+- Insight peak hours use `-1` for no eligible activity; `0` means genuine midnight activity.
+  Tied nonempty histograms choose the earliest hour. Missing comparison groups and nonfinite
+  comparison results produce a zero delta rather than leaking NaN/Infinity into presentation.
+- Insights, time architecture, and dashboard eligibility accept a reference instant and timezone
+  for deterministic tests. Time architecture retains rolling 7/30/120-day horizons (inclusive),
+  not calendar weeks/months/semesters. Today membership comes from the explicit Today payload.
+  The monthly reset is the first day of the next local calendar month, using the same reference
+  instant as the snapshot. Forgotten-wisdom eligibility is separate from randomized selection.
+
 ## UI structure intent
 
 The UI is moving toward a clearer three-part structure:
@@ -110,6 +121,11 @@ Own:
 - wiring blocks together.
 
 They should not all reinvent layout, spacing, header behavior, and shell integration from scratch.
+
+Task-list presentations in Command, Inbox, Today, and Archive reuse `TaskRow` for titles,
+metadata, open semantics, mouse context menus and keyboard activation. Views still own their
+actions; compact rows wrap actions below the title. The All Tasks master-detail table retains its
+column layout and selection contract rather than forcing it into a summary row.
 
 ## Product model direction
 

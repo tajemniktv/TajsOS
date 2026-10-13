@@ -4,6 +4,11 @@
 
 package com.tajemniktv.tajos.ui.screens.tasks
 
+import com.tajemniktv.tajos.ui.components.nodes.TaskRow
+import androidx.compose.runtime.key
+import tajsos.composeapp.generated.resources.tasks_add_today_action
+import tajsos.composeapp.generated.resources.tasks_remove_today_action
+
 import com.tajemniktv.tajos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -309,9 +314,9 @@ private fun PriorityTaskCard(
                 ) {
                     Text(
                         if (task.id in todayTaskIds) {
-                            "Remove Today payload"
+                            stringResource(Res.string.tasks_remove_today_action)
                         } else {
-                            "Add to Today payload"
+                            stringResource(Res.string.tasks_add_today_action)
                         },
                     )
                 }
@@ -340,38 +345,23 @@ private fun QueueList(
     ) {
         Column {
             tasks.forEach { task ->
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            task.title,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = TajsOSTheme.Text,
-                        )
-                        val context =
+                key(task.id) {
+                    TaskRow(
+                        node = task,
+                        onClick = { onOpen(task.id) },
+                        supportingText =
                             listOfNotNull(
                                 task.projectId?.let { projectById[it] },
                                 task.areaId?.let { areaById[it] },
                                 task.dueAt?.let(::shortDate),
-                            ).joinToString(" • ")
-                        if (context.isNotBlank()) {
-                            Text(
-                                context,
-                                style = MaterialTheme.typography.bodySmall,
-                                color = TajsOSTheme.Muted,
-                            )
-                        }
-                    }
-                    Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
+                            ).joinToString(" • "),
+                    ) {
                         OutlinedButton(onClick = { onDoNow(task) }) { Text(stringResource(Res.string.tasks_start_focus_action)) }
                         OutlinedButton(onClick = { onOpen(task.id) }) { Text(stringResource(Res.string.tasks_open_action)) }
-                        IconButton(onClick = { onDone(task) }) { Icon(Icons.Default.Check, null) }
+                        IconButton(onClick = { onDone(task) }) { Icon(Icons.Default.Check, stringResource(Res.string.tasks_done_action)) }
                     }
+                    HorizontalDivider(color = TajsOSTheme.GhostBorder)
                 }
-                HorizontalDivider(color = TajsOSTheme.GhostBorder)
             }
         }
     }

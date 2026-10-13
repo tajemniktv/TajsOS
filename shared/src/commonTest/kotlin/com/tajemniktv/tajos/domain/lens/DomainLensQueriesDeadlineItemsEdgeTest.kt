@@ -49,8 +49,10 @@ class DomainLensQueriesDeadlineItemsEdgeTest {
         val noteMiddle = createNode(6, "Important finance note", type = "note", dueAt = 3000L, tags = listOf("finance"))
 
         val unrelatedTask = createNode(7, "Grocery list", type = "task", dueAt = 1000L) // No finance signal
+        val archived = createNode(8, "Tax archive", status = "archived", dueAt = 500L, tags = listOf("finance"))
+        val completed = createNode(9, "Tax paid", status = "done", dueAt = 500L, tags = listOf("finance"))
 
-        val allNodes = listOf(noteNoDate, taskNoDate, recordNoDate, taskLater, taskEarlier, noteMiddle, unrelatedTask)
+        val allNodes = listOf(noteNoDate, taskNoDate, recordNoDate, taskLater, taskEarlier, noteMiddle, unrelatedTask, archived, completed)
 
         val result = DomainLensQueries.financeDeadlineItems(allNodes)
 

@@ -26,6 +26,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import com.tajemniktv.tajos.data.NodeEntity
 import com.tajemniktv.tajos.ui.components.common.EmptyState
+import com.tajemniktv.tajos.ui.components.nodes.TaskRow
+import androidx.compose.runtime.key
 import com.tajemniktv.tajos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
 import tajsos.composeapp.generated.resources.Res
@@ -34,6 +36,7 @@ import tajsos.composeapp.generated.resources.tasks_archive_subtitle
 import tajsos.composeapp.generated.resources.tasks_archive_title
 import tajsos.composeapp.generated.resources.tasks_open_action
 import tajsos.composeapp.generated.resources.tasks_restore_action
+import tajsos.composeapp.generated.resources.tasks_delete_action
 
 @Composable
 internal fun TasksArchiveView(
@@ -68,44 +71,29 @@ internal fun TasksArchiveView(
         ) {
             Column {
                 archivedTasks.forEach { task ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                task.title,
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = TajsOSTheme.Text,
-                            )
-                            val context =
+                    key(task.id) {
+                        TaskRow(
+                            node = task,
+                            onClick = { onOpen(task.id) },
+                            supportingText =
                                 listOfNotNull(
                                     task.projectId?.let { projectById[it] },
                                     task.areaId?.let { areaById[it] },
                                     task.archivedAt?.let(::shortDate),
-                                ).joinToString(" • ")
-                            if (context.isNotBlank()) {
-                                Text(
-                                    context,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = TajsOSTheme.Muted,
-                                )
-                            }
-                        }
-                        Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
+                                ).joinToString(" • "),
+                        ) {
                             OutlinedButton(onClick = { onOpen(task.id) }) { Text(stringResource(Res.string.tasks_open_action)) }
                             OutlinedButton(onClick = { onRestore(task) }) { Text(stringResource(Res.string.tasks_restore_action)) }
                             IconButton(onClick = { onDelete(task) }) {
                                 Icon(
                                     Icons.Default.Delete,
-                                    null,
+                                    stringResource(Res.string.tasks_delete_action),
                                     tint = TajsOSTheme.Error,
                                 )
                             }
                         }
+                        HorizontalDivider(color = TajsOSTheme.GhostBorder)
                     }
-                    HorizontalDivider(color = TajsOSTheme.GhostBorder)
                 }
             }
         }

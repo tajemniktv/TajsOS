@@ -203,7 +203,7 @@ fun FocusInsightCard(
                     )
                 }
             }
-            if (bestHour != -1) {
+            if (bestHour in 0..23) {
                 Spacer(Modifier.height(8.dp))
                 val formattedHour = if (bestHour < 10) "0$bestHour:00" else "$bestHour:00"
                 Text(
@@ -291,7 +291,7 @@ fun EfficiencyCard(
                     color = TajsOSTheme.Muted,
                 )
             }
-            if (productiveHour != -1) {
+            if (productiveHour in 0..23) {
                 Spacer(Modifier.height(8.dp))
                 val formattedHour =
                     if (productiveHour < 10) "0$productiveHour:00" else "$productiveHour:00"

@@ -647,6 +647,9 @@ Buttons must have tactile feedback: scale to 0.98 or translate down 1px on activ
 - Use `list-row` as the baseline row token.
 - Compact rows can be 56px; rich rows can be 88px.
 - Selected rows use tonal primary treatment plus a clear leading indicator.
+- Task summary rows share `TaskRow` interaction handling. On narrow layouts, actions wrap below
+  the title and metadata rather than consuming their available width. Keep view-specific actions
+  and localized labels; key task-local composition state by node ID, not by display text.
 - Bulk actions appear only after selection.
 - Required actions must not exist only on hover.
 

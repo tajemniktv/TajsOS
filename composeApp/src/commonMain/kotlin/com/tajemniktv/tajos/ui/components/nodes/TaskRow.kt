@@ -8,6 +8,10 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -32,6 +36,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.semantics.Role
 import com.tajemniktv.tajos.data.NodeEntity
 import com.tajemniktv.tajos.ui.components.common.MouseContextMenuHost
 import com.tajemniktv.tajos.ui.components.common.mouseClickable
@@ -74,135 +79,195 @@ fun TaskRow(
     onArchive: () -> Unit = {},
 ) {
     val isDone = node.status == "done"
+    TaskRowSurface(
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .height(80.dp)
+                .drawBehind {
+                    drawRect(
+                        color = TajsOSTheme.Primary,
+                        topLeft = Offset.Zero,
+                        size =
+                            androidx.compose.ui.geometry
+                                .Size(4.dp.toPx(), size.height),
+                    )
+                },
+        onClick = onClick,
+        onLongClick = onLongClick,
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = TajsOSTheme.SpacingMd),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Checkbox(
+                checked = isDone,
+                onCheckedChange = { onToggleDone(if (it) "done" else "active") },
+                colors = CheckboxDefaults.colors(checkedColor = TajsOSTheme.Primary),
+            )
+            Column(modifier = Modifier.weight(1f).alpha(if (isDone) 0.5f else 1f)) {
+                Text(
+                    text = node.title,
+                    style =
+                        MaterialTheme.typography.bodyLarge.copy(
+                            textDecoration = if (isDone) TextDecoration.LineThrough else null,
+                        ),
+                    color = if (isDone) TajsOSTheme.Muted else TajsOSTheme.Text,
+                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    val energyLevel = node.energyLevel
+                    if (energyLevel != null) {
+                        Text(
+                            text = "⚡".repeat(energyLevel),
+                            style = MaterialTheme.typography.labelSmall,
+                            color =
+                                when (energyLevel) {
+                                    1 -> TajsOSTheme.Success
+                                    2 -> TajsOSTheme.Primary
+                                    3 -> TajsOSTheme.Error
+                                    else -> TajsOSTheme.Muted
+                                },
+                        )
+                        Spacer(Modifier.width(8.dp))
+                    }
+                    val friction = node.friction
+                    if (friction != null) {
+                        val frictionLabel =
+                            when (friction) {
+                                "easy" -> "EASY"
+                                "annoying" -> stringResource(Res.string.dash_annoying)
+                                "mentally_heavy" -> stringResource(Res.string.dash_heavy)
+                                "unclear" -> stringResource(Res.string.dash_unclear)
+                                else -> friction
+                            }
+                        Text(
+                            text = frictionLabel.uppercase(),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = TajsOSTheme.Primary,
+                        )
+                        Spacer(Modifier.width(8.dp))
+                    }
+                    if ((node.status != "active") && (node.status != "done")) {
+                        val statusColor =
+                            when (node.status) {
+                                "blocked" -> TajsOSTheme.Error
+                                "on_hold" -> TajsOSTheme.Accent
+                                "someday" -> TajsOSTheme.Muted
+                                else -> TajsOSTheme.Primary
+                            }
+                        Text(
+                            text = node.status.uppercase().replace("_", " "),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = statusColor,
+                        )
+                        Spacer(Modifier.width(8.dp))
+                    }
+                    if (!node.nextSmallestStep.isNullOrEmpty()) {
+                        Text(
+                            text = "↳ ${node.nextSmallestStep}",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = TajsOSTheme.Accent,
+                            maxLines = 1,
+                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                        )
+                    }
+                }
+            }
+            if (isDone) {
+                IconButton(onClick = onArchive, modifier = Modifier.size(48.dp)) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = stringResource(Res.string.detail_archive),
+                        tint = TajsOSTheme.Muted,
+                    )
+                }
+            }
+            IconButton(onClick = onUnpin, modifier = Modifier.size(48.dp)) {
+                Icon(
+                    Icons.Default.Close,
+                    contentDescription = stringResource(Res.string.task_row_unpin_desc),
+                    tint = TajsOSTheme.Muted,
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Task-list presentation of [TaskRow]. Views keep their own metadata and actions while the row
+ * owns open, focus/keyboard click semantics and mouse context menus.
+ * Unlike the pinned Today row, it has no implicit completion, archive or unpin action.
+ */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun TaskRow(
+    node: NodeEntity,
+    supportingText: String?,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    trailingContent: @Composable () -> Unit = {},
+) {
+    TaskRowSurface(modifier, onClick) {
+        // Task actions must wrap instead of squeezing the title out on phone-sized lists.
+        BoxWithConstraints(
+            modifier = Modifier.fillMaxWidth().padding(TajsOSTheme.SpacingMd),
+        ) {
+            if (maxWidth < 600.dp) {
+                Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {
+                    TaskRowText(node, supportingText)
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+                        verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+                    ) { trailingContent() }
+                }
+            } else {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
+                ) {
+                    Column(modifier = Modifier.weight(1f)) { TaskRowText(node, supportingText) }
+                    Row(horizontalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) { trailingContent() }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun TaskRowText(node: NodeEntity, supportingText: String?) {
+    Text(node.title, style = MaterialTheme.typography.bodyLarge, color = TajsOSTheme.Text)
+    if (!supportingText.isNullOrBlank()) {
+        Text(supportingText, style = MaterialTheme.typography.bodySmall, color = TajsOSTheme.Muted)
+    }
+}
+
+@Composable
+private fun TaskRowSurface(
+    modifier: Modifier,
+    onClick: () -> Unit,
+    onLongClick: (() -> Unit)? = null,
+    content: @Composable () -> Unit,
+) {
     val contextMenuState = rememberMouseContextMenuState()
     MouseContextMenuHost(
         state = contextMenuState,
         modifier = modifier.fillMaxWidth(),
         menuContent = {
             DropdownMenuItem(
-                text = { Text(text = stringResource(Res.string.common_open)) },
-                onClick = {
-                    contextMenuState.dismiss()
-                    onClick()
-                },
+                text = { Text(stringResource(Res.string.common_open)) },
+                onClick = { contextMenuState.dismiss(); onClick() },
             )
         },
     ) {
         Surface(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .height(80.dp)
-                    .drawBehind {
-                        drawRect(
-                            color = TajsOSTheme.Primary,
-                            topLeft = Offset.Zero,
-                            size =
-                                androidx.compose.ui.geometry
-                                    .Size(4.dp.toPx(), size.height),
-                        )
-                    }.mouseClickable(
-                        onClick = onClick,
-                        onLongClick = onLongClick,
-                        onSecondaryClickAt = { contextMenuState.showAt(it) },
-                        middleClickFallbackToPrimary = true,
-                    ),
+            modifier = Modifier.fillMaxWidth()
+                .mouseClickable(
+                    onClick = onClick, onLongClick = onLongClick, role = Role.Button,
+                    onSecondaryClickAt = { contextMenuState.showAt(it) },
+                    middleClickFallbackToPrimary = true,
+                ),
             color = TajsOSTheme.CardSurface,
-        ) {
-            Row(
-                modifier = Modifier.padding(horizontal = TajsOSTheme.SpacingMd),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Checkbox(
-                    checked = isDone,
-                    onCheckedChange = { onToggleDone(if (it) "done" else "active") },
-                    colors = CheckboxDefaults.colors(checkedColor = TajsOSTheme.Primary),
-                )
-                Column(modifier = Modifier.weight(1f).alpha(if (isDone) 0.5f else 1f)) {
-                    Text(
-                        text = node.title,
-                        style =
-                            MaterialTheme.typography.bodyLarge.copy(
-                                textDecoration = if (isDone) TextDecoration.LineThrough else null,
-                            ),
-                        color = if (isDone) TajsOSTheme.Muted else TajsOSTheme.Text,
-                    )
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        val energyLevel = node.energyLevel
-                        if (energyLevel != null) {
-                            Text(
-                                text = "⚡".repeat(energyLevel),
-                                style = MaterialTheme.typography.labelSmall,
-                                color =
-                                    when (energyLevel) {
-                                        1 -> TajsOSTheme.Success
-                                        2 -> TajsOSTheme.Primary
-                                        3 -> TajsOSTheme.Error
-                                        else -> TajsOSTheme.Muted
-                                    },
-                            )
-                            Spacer(Modifier.width(8.dp))
-                        }
-                        val friction = node.friction
-                        if (friction != null) {
-                            val frictionLabel =
-                                when (friction) {
-                                    "easy" -> "EASY"
-                                    "annoying" -> stringResource(Res.string.dash_annoying)
-                                    "mentally_heavy" -> stringResource(Res.string.dash_heavy)
-                                    "unclear" -> stringResource(Res.string.dash_unclear)
-                                    else -> friction
-                                }
-                            Text(
-                                text = frictionLabel.uppercase(),
-                                style = MaterialTheme.typography.labelSmall,
-                                color = TajsOSTheme.Primary,
-                            )
-                            Spacer(Modifier.width(8.dp))
-                        }
-                        if ((node.status != "active") && (node.status != "done")) {
-                            val statusColor =
-                                when (node.status) {
-                                    "blocked" -> TajsOSTheme.Error
-                                    "on_hold" -> TajsOSTheme.Accent
-                                    "someday" -> TajsOSTheme.Muted
-                                    else -> TajsOSTheme.Primary
-                                }
-                            Text(
-                                text = node.status.uppercase().replace("_", " "),
-                                style = MaterialTheme.typography.labelSmall,
-                                color = statusColor,
-                            )
-                            Spacer(Modifier.width(8.dp))
-                        }
-                        if (!node.nextSmallestStep.isNullOrEmpty()) {
-                            Text(
-                                text = "↳ ${node.nextSmallestStep}",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = TajsOSTheme.Accent,
-                                maxLines = 1,
-                                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
-                            )
-                        }
-                    }
-                }
-                if (isDone) {
-                    IconButton(onClick = onArchive, modifier = Modifier.size(48.dp)) {
-                        Icon(
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = stringResource(Res.string.detail_archive),
-                            tint = TajsOSTheme.Muted,
-                        )
-                    }
-                }
-                IconButton(onClick = onUnpin, modifier = Modifier.size(48.dp)) {
-                    Icon(
-                        Icons.Default.Close,
-                        contentDescription = stringResource(Res.string.task_row_unpin_desc),
-                        tint = TajsOSTheme.Muted,
-                    )
-                }
-            }
-        }
+            content = content,
+        )
     }
 }

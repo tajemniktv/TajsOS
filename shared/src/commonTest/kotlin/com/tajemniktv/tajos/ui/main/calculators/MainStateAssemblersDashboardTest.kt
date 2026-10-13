@@ -33,6 +33,9 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 import kotlin.test.assertNull
 import kotlin.time.Clock
+import kotlin.time.Instant
+import kotlinx.datetime.TimeZone
+import kotlin.random.Random
 
 class ConfigurableFakeModeDao(
     private val areaFilters: List<ModeAreaFilterEntity> = emptyList(),
@@ -107,6 +110,34 @@ class MainStateAssemblersDashboardTest {
         areasList = emptyList(),
         packs = PackRegistry(emptySet(), emptySet())
     )
+
+    @Test
+    fun forgottenWisdomEligibilityHasAnExactCutoffAndExcludesInactiveAndOtherKinds() = runTest {
+        val now = Instant.parse("2026-10-13T12:00:00Z").toEpochMilliseconds()
+        val cutoff = now - 30 * 86400000L
+        val nodes = listOf(
+            defaultNode(1, "note").copy(updatedAt = cutoff - 1),
+            defaultNode(2, "idea").copy(updatedAt = cutoff - 1),
+            defaultNode(3, "note").copy(updatedAt = now, noteType = "evergreen"),
+            defaultNode(4, "note").copy(updatedAt = cutoff),
+            defaultNode(5, "note").copy(updatedAt = now),
+            defaultNode(6, "note", "archived").copy(noteType = "evergreen"),
+            defaultNode(7, "idea", "done"),
+            defaultNode(8, "task").copy(noteType = "evergreen"),
+        ).map(::createTestNodeWithPin)
+        assertEquals(listOf(1L, 2L, 3L), forgottenWisdomCandidates(nodes, now).map { it.node.id })
+        val singleEligible = nodes.filter { it.node.id != 1L && it.node.id != 2L }
+        val state = buildDashboardUIState(
+            createRepo(), singleEligible, emptyList(), null, emptyList(), PackRegistry(emptySet(), emptySet()),
+            now = now, zone = TimeZone.UTC, random = Random(42),
+        )
+        assertEquals(3L, state.forgottenWisdom?.node?.id)
+        val empty = buildDashboardUIState(
+            createRepo(), nodes.drop(3), emptyList(), null, emptyList(), PackRegistry(emptySet(), emptySet()),
+            now = now, zone = TimeZone.UTC, random = Random(42),
+        )
+        assertNull(empty.forgottenWisdom)
+    }
 
     @Test
     fun `buildDashboardUIState basic state count`() = runTest {

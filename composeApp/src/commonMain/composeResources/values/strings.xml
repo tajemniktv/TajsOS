@@ -533,6 +533,8 @@
     <string name="tasks_start_focus_action">Start Focus</string>
     <string name="tasks_open_action">Open</string>
     <string name="tasks_pin_today_action">Pin Today</string>
+    <string name="tasks_add_today_action">Add to Today</string>
+    <string name="tasks_remove_today_action">Remove from Today</string>
     <string name="tasks_done_action">Done</string>
     <string name="tasks_do_now_action">Do Now</string>
     <string name="tasks_inbox_title">Task Inbox</string>

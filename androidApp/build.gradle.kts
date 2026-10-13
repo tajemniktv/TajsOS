@@ -49,7 +49,14 @@ android {
     }
     buildTypes {
         getByName("release") {
-            isMinifyEnabled = false
+            // The opt-out is for local before/after comparisons, not the release default.
+            val shrinkRelease = providers.gradleProperty("tajsos.release.shrink")
+                .map { it.toBooleanStrict() }.getOrElse(true)
+            isMinifyEnabled = shrinkRelease
+            isShrinkResources = shrinkRelease
+            // AndroidX, Kotlin serialization and Firebase supply their consumer rules.
+            // Add app-specific rules only for demonstrated reflective entry points.
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
             // Firebase App Distribution configuration for release builds
             configure<com.google.firebase.appdistribution.gradle.AppDistributionExtension> {
                 artifactType = "APK"

@@ -452,6 +452,8 @@
     <string name="tasks_start_focus_action">Uruchom Focus</string>
     <string name="tasks_open_action">Otwórz</string>
     <string name="tasks_pin_today_action">Przypnij na Dziś</string>
+    <string name="tasks_add_today_action">Dodaj na dziś</string>
+    <string name="tasks_remove_today_action">Usuń z dzisiaj</string>
     <string name="tasks_done_action">Ukończ</string>
     <string name="tasks_do_now_action">Zrób Teraz</string>
     <string name="tasks_inbox_title">Task Inbox</string>
