@@ -112,44 +112,13 @@ Do not sand it down into generic enterprise UI.
 If your change affects behavior, setup, scope, architecture, or workflow, update the relevant docs
 in the same PR.
 
-## Branching and pull request expectations
-
-Use a dedicated branch for your work.
-
-Recommended branch naming:
-
-- `feat/...`
-- `fix/...`
-- `docs/...`
-- `refactor/...`
-- `perf/...`
-- `test/...`
-- `chore/...`
-
-Recommended commit format:
-
-```text
-<type>: <description>
-```
-
-Examples:
-
-```text
-feat: add note detail split layout
-fix: prevent duplicate today pin creation
-refactor: extract shared screen scaffold
-docs: update architecture boundaries
-```
-
 ## Coding expectations
 
 ### Kotlin / Compose
 
-- Prefer readable, boring, maintainable code over “smart” code.
 - Preserve platform boundaries.
 - Keep business logic out of UI where possible.
-- Avoid introducing heavy dependencies without a strong reason.
-- Follow existing patterns unless there is a clear reason to improve them.
+- Follow existing patterns unless there is a reason to improve them.
 
 ### Architecture
 
