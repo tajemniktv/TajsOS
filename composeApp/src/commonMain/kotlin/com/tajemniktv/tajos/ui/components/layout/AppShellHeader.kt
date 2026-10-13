@@ -43,6 +43,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
@@ -117,8 +118,13 @@ fun AppShellHeader(
         modifier =
             modifier
                 .fillMaxWidth()
+                .glassChrome(
+                    shape = RectangleShape,
+                    material = GlassMaterial.CHROME,
+                    active = true,
+                )
                 .then(if (!isDesktop) Modifier.statusBarsPadding() else Modifier),
-        color = TajsOSTheme.SurfaceLow,
+        color = glassContainerColor(TajsOSTheme.SurfaceLow, active = true),
         tonalElevation = 0.dp,
         shadowElevation = 0.dp,
     ) {

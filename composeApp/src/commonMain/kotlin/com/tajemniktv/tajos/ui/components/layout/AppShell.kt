@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
@@ -123,6 +124,30 @@ fun AppShell(
         hazeState = hazeState,
     ) {
         Box(modifier = modifier.fillMaxSize().background(TajsOSTheme.Background)) {
+            if (isGlassmorphismEnabled) {
+                // A real source behind persistent chrome gives translucent panels depth without
+                // blurring a flat, single-color canvas into an opaque gray rectangle.
+                Box(
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .background(
+                                Brush.horizontalGradient(
+                                    listOf(
+                                        TajsOSTheme.PrimaryDim.copy(alpha = 0.16f),
+                                        TajsOSTheme.Background,
+                                    ),
+                                ),
+                            ).background(
+                                Brush.verticalGradient(
+                                    listOf(
+                                        TajsOSTheme.Primary.copy(alpha = 0.05f),
+                                        Color.Transparent,
+                                    ),
+                                ),
+                            ).hazeSource(hazeState),
+                )
+            }
             if (isDesktop) {
                 val hoverSidebar = shellState.sidebarMode == SidebarMode.HOVER_EXPAND
                 val sidebarContent: @Composable (Boolean) -> Unit = { overlay ->
@@ -141,7 +166,6 @@ fun AppShell(
                         onExpandedWidthCommit = onSidebarExpandedWidthChange,
                         onNewEntry = onNewEntry,
                         onNavigateToProfile = { onNavigate(Screen.Profile) },
-                        applyGlass = overlay,
                     )
                 }
 
@@ -213,7 +237,6 @@ fun AppShell(
                                 },
                                 forceExpandedPresentation = true,
                                 useFixedWidth = false,
-                                applyGlass = true,
                                 modifier = Modifier.fillMaxSize(),
                             )
                         }

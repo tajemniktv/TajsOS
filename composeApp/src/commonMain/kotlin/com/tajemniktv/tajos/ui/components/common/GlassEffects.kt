@@ -22,8 +22,9 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajos.ui.theme.TajsOSTheme
-import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeInput
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.blur.HazeBlurStyle
 import dev.chrisbanes.haze.blur.HazeColorEffect
 import dev.chrisbanes.haze.blur.hazeBlur
 import dev.chrisbanes.haze.blur.materials.CupertinoMaterials
@@ -41,6 +42,7 @@ data class GlassSystemConfig(
  * Material presets for glass surfaces.
  */
 enum class GlassMaterial {
+    CHROME,
     ULTRA_THIN,
     THIN,
     REGULAR,
@@ -69,8 +71,8 @@ fun ProvideGlassSystem(
 }
 
 /**
- * Resolves a transparent container only for an intentional overlapping glass surface.
- * Static cards and shell chrome keep their tonal surface colors.
+ * Resolves a transparent container only for an intentional glass surface.
+ * Ordinary cards retain their tonal surface colors.
  */
 @Composable
 fun glassContainerColor(fallback: Color, active: Boolean): Color =
@@ -90,7 +92,7 @@ fun isGlassEnabled(): Boolean {
 }
 
 /**
- * Shared glass-style chrome for overlapping surfaces such as popovers and hover overlays.
+ * Shared glass-style chrome for shell panels and overlapping surfaces.
  * Inactive or disabled glass bypasses the effect so ordinary cards retain tonal depth.
  */
 @Composable
@@ -104,13 +106,27 @@ fun Modifier.glassChrome(
     if (!active || !glass.enabled || glass.hazeState == null) return this
 
     val hazeState = glass.hazeState
-    val topGlow = TajsOSTheme.Text.copy(alpha = 0.14f)
+    val shellChrome = material == GlassMaterial.CHROME
+    val topGlow =
+        if (shellChrome) TajsOSTheme.Primary.copy(alpha = 0.05f)
+        else TajsOSTheme.Text.copy(alpha = 0.14f)
     val bottomShadow = Color.Transparent
-    val topTint = TajsOSTheme.SurfaceHigh.copy(alpha = 0.20f)
-    val bottomTint = TajsOSTheme.SurfaceLow.copy(alpha = 0.18f)
+    val topTint =
+        if (shellChrome) TajsOSTheme.PrimaryDim.copy(alpha = 0.04f)
+        else TajsOSTheme.SurfaceHigh.copy(alpha = 0.20f)
+    val bottomTint =
+        if (shellChrome) TajsOSTheme.SurfaceLow.copy(alpha = 0.10f)
+        else TajsOSTheme.SurfaceLow.copy(alpha = 0.18f)
     val edgeColor = TajsOSTheme.GhostBorder.copy(alpha = 0.2f)
     val style =
         when (material) {
+            GlassMaterial.CHROME ->
+                HazeBlurStyle {
+                    blurRadius(24.dp)
+                    noiseFactor(0.04f)
+                    backgroundColor(TajsOSTheme.Background)
+                    colorEffects(listOf(HazeColorEffect.tint(TajsOSTheme.Background.copy(alpha = 0.38f))))
+                }
             GlassMaterial.ULTRA_THIN -> CupertinoMaterials.ultraThin(TajsOSTheme.SurfaceHigh)
             GlassMaterial.THIN -> CupertinoMaterials.thin(TajsOSTheme.SurfaceHigh)
             GlassMaterial.REGULAR -> CupertinoMaterials.regular(TajsOSTheme.SurfaceHigh)
@@ -120,18 +136,23 @@ fun Modifier.glassChrome(
     val hazeModifier =
         Modifier.hazeBlur(
             input = HazeInput.Backdrop(hazeState),
-            style = style.then {
-                noiseFactor(0.08f)
-                colorEffects(
-                    listOf(
-                        HazeColorEffect.tint(
-                            TajsOSTheme.Text.copy(alpha = 0.04f),
-                            blendMode = BlendMode.Screen,
-                        ),
-                        HazeColorEffect.tint(TajsOSTheme.SurfaceHigh.copy(alpha = 0.10f)),
-                    ),
-                )
-            },
+            style =
+                if (shellChrome) {
+                    style
+                } else {
+                    style.then {
+                        noiseFactor(0.08f)
+                        colorEffects(
+                            listOf(
+                                HazeColorEffect.tint(
+                                    TajsOSTheme.Text.copy(alpha = 0.04f),
+                                    blendMode = BlendMode.Screen,
+                                ),
+                                HazeColorEffect.tint(TajsOSTheme.SurfaceHigh.copy(alpha = 0.10f)),
+                            ),
+                        )
+                    }
+                },
         )
 
     return this

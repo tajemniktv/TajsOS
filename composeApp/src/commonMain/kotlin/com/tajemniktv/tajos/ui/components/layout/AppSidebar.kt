@@ -4,11 +4,9 @@
 
 package com.tajemniktv.tajos.ui.components.layout
 
-
-import androidx.compose.ui.input.pointer.PointerIcon
-import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
@@ -19,6 +17,7 @@ import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -54,18 +53,18 @@ import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.interaction.collectIsPressedAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -124,7 +123,6 @@ fun AppSidebar(
     onExpandedWidthCommit: ((Int) -> Unit)? = null,
     forceExpandedPresentation: Boolean = false,
     useFixedWidth: Boolean = true,
-    applyGlass: Boolean = true,
     modifier: Modifier = Modifier,
 ) {
     val hoverInteraction = remember { MutableInteractionSource() }
@@ -146,7 +144,6 @@ fun AppSidebar(
     }
 
     val showExpandedContent = forceExpandedPresentation || shellState.isSidebarExpandedPresentation
-    val activeGlass = applyGlass && showExpandedContent
     var liveExpandedWidthDp by remember { mutableFloatStateOf(expandedWidthDp.toFloat()) }
     val density = LocalDensity.current
 
@@ -184,22 +181,16 @@ fun AppSidebar(
                         Modifier.fillMaxWidth()
                     },
                 ).fillMaxHeight()
-                .then(
-                    if (activeGlass) {
-                        Modifier.glassChrome(
-                            shape = RoundedCornerShape(0.dp),
-                            material = GlassMaterial.REGULAR,
-                            active = true,
-                        )
-                    } else {
-                        Modifier
-                    },
+                .glassChrome(
+                    shape = RoundedCornerShape(0.dp),
+                    material = GlassMaterial.CHROME,
+                    active = true,
                 ).hoverable(
                     interactionSource = hoverInteraction,
                     enabled = !forceExpandedPresentation && shellState.sidebarMode == SidebarMode.HOVER_EXPAND,
                 ),
         color =
-            glassContainerColor(TajsOSTheme.SidebarBackground, active = activeGlass),
+            glassContainerColor(TajsOSTheme.SidebarBackground, active = true),
         shape = RoundedCornerShape(0.dp),
         tonalElevation = 0.dp,
         shadowElevation = if (shellState.sidebarMode == SidebarMode.HOVER_EXPAND && showExpandedContent) 8.dp else 0.dp,
@@ -343,7 +334,8 @@ fun SidebarLogoHeader(showExpandedContent: Boolean) {
 }
 
 /**
- * Root item with optional inline child destinations shown in the same sidebar column.
+ * Root item with optional inline child destinations in one vertical layout.
+ * The context-menu host uses a Box, so the row and its children must share this Column.
  */
 @Composable
 fun ExpandableNavSection(
@@ -399,7 +391,7 @@ fun ExpandableNavSection(
             }
         },
     ) {
-        Box(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.fillMaxWidth()) {
             SidebarTooltip(
                 enabled = !isExpandedPresentation,
                 text = rootLabel,
@@ -502,86 +494,85 @@ fun ExpandableNavSection(
                 }
             }
 
-        }
-
-        AnimatedVisibility(visible = showChildrenInline, enter = fadeIn(), exit = fadeOut()) {
-            Column(
-                modifier = Modifier.fillMaxWidth().padding(start = 34.dp, end = 10.dp, top = 6.dp),
-                verticalArrangement = Arrangement.spacedBy(2.dp),
-            ) {
-                children.forEach { child ->
-                    val childContextMenuState = rememberMouseContextMenuState()
-                    val isActiveChild =
-                        isChildActive(
+            AnimatedVisibility(visible = showChildrenInline, enter = fadeIn(), exit = fadeOut()) {
+                Column(
+                    modifier = Modifier.fillMaxWidth().padding(start = 34.dp, end = 10.dp, top = 6.dp),
+                    verticalArrangement = Arrangement.spacedBy(2.dp),
+                ) {
+                    children.forEach { child ->
+                        SidebarChildRow(
                             root = screen,
                             child = child,
                             currentScreen = currentScreen,
                             currentRootScreen = currentRootScreen,
                             activeTasksTab = activeTasksTab,
+                            onNavigate = { onChildNavigate(child) },
                         )
-                    MouseContextMenuHost(
-                        state = childContextMenuState,
-                        modifier = Modifier.fillMaxWidth(),
-                        menuContent = {
-                            DropdownMenuItem(
-                                text = { Text(text = stringResource(Res.string.common_open)) },
-                                onClick = {
-                                    childContextMenuState.dismiss()
-                                    onChildNavigate(child)
-                                },
-                            )
-                        },
-                    ) {
-                        Surface(
-                            modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .mouseClickable(
-                                        onClick = { onChildNavigate(child) },
-                                        onSecondaryClickAt = { childContextMenuState.showAt(it) },
-                                        middleClickFallbackToPrimary = true,
-                                    ),
-                            color =
-                                if (isActiveChild) {
-                                    TajsOSTheme.Primary.copy(alpha = 0.12f)
-                                } else {
-                                    Color.Transparent
-                                },
-                            shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
-                            tonalElevation = 0.dp,
-                            shadowElevation = 0.dp,
-                        ) {
-                            Row(
-                                modifier =
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 10.dp, vertical = 8.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            ) {
-                                Icon(
-                                    imageVector = sidebarScreenIcon(child),
-                                    contentDescription = null,
-                                    tint =
-                                        if (isActiveChild) {
-                                            TajsOSTheme.Primary
-                                        } else {
-                                            TajsOSTheme.Muted.copy(alpha = 0.75f)
-                                        },
-                                    modifier = Modifier.size(14.dp),
-                                )
-                                Text(
-                                    text = stringResource(child.label),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = if (isActiveChild) TajsOSTheme.Text else TajsOSTheme.Muted,
-                                    fontWeight = if (isActiveChild) FontWeight.SemiBold else FontWeight.Normal,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                )
-                            }
-                        }
                     }
                 }
+            }
+        }
+    }
+}
+
+/** Child destination and its context menu, laid out beneath its root row. */
+@Composable
+private fun SidebarChildRow(
+    root: Screen,
+    child: Screen,
+    currentScreen: Screen?,
+    currentRootScreen: Screen?,
+    activeTasksTab: TasksTab,
+    onNavigate: () -> Unit,
+) {
+    val contextMenuState = rememberMouseContextMenuState()
+    val isActive = isChildActive(root, child, currentScreen, currentRootScreen, activeTasksTab)
+    MouseContextMenuHost(
+        state = contextMenuState,
+        modifier = Modifier.fillMaxWidth(),
+        menuContent = {
+            DropdownMenuItem(
+                text = { Text(text = stringResource(Res.string.common_open)) },
+                onClick = {
+                    contextMenuState.dismiss()
+                    onNavigate()
+                },
+            )
+        },
+    ) {
+        Surface(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .mouseClickable(
+                        onClick = onNavigate,
+                        onSecondaryClickAt = { contextMenuState.showAt(it) },
+                        middleClickFallbackToPrimary = true,
+                    ),
+            color = if (isActive) TajsOSTheme.Primary.copy(alpha = 0.12f) else Color.Transparent,
+            shape = RoundedCornerShape(TajsOSTheme.RadiusSm),
+            tonalElevation = 0.dp,
+            shadowElevation = 0.dp,
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Icon(
+                    imageVector = sidebarScreenIcon(child),
+                    contentDescription = null,
+                    tint = if (isActive) TajsOSTheme.Primary else TajsOSTheme.Muted.copy(alpha = 0.75f),
+                    modifier = Modifier.size(14.dp),
+                )
+                Text(
+                    text = stringResource(child.label),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = if (isActive) TajsOSTheme.Text else TajsOSTheme.Muted,
+                    fontWeight = if (isActive) FontWeight.SemiBold else FontWeight.Normal,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
             }
         }
     }

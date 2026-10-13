@@ -556,9 +556,9 @@ Purpose: configuration without losing the user in a filing cabinet.
 ## Elevation & Depth
 
 Depth is achieved mainly through tonal layering. Shadows exist, but they are quiet and functional.
-Glass blur is reserved for surfaces that overlap real content, such as hover-expanded navigation,
-notification popovers, and modal drawers. Persistent shell chrome and ordinary cards use tonal
-surfaces instead of tinting a flat background and calling it glass.
+When enabled, glass blur belongs to shell chrome (sidebar and header) and overlapping surfaces
+such as hover-expanded navigation, notification popovers, and modal drawers. These surfaces need
+an actual themed backdrop source; ordinary cards remain tonal rather than becoming gray glass.
 
 ### Tonal elevation
 
