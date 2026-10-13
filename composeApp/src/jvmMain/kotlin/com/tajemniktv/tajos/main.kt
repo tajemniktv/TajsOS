@@ -5,6 +5,8 @@
 package com.tajemniktv.tajos
 
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
@@ -25,6 +27,8 @@ import com.tajemniktv.tajos.data.createDatabase
 import com.tajemniktv.tajos.utils.AppDirs
 
 import com.tajemniktv.tajos.di.SharedModule
+import com.tajemniktv.tajos.ui.theme.PrimaryPurple
+import com.tajemniktv.tajos.ui.theme.buildTajsOSColors
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -86,6 +90,11 @@ fun main() =
             state = windowState,
         ) {
             val avatarPickResult = remember { mutableStateOf<String?>(null) }
+            val isDarkTheme by viewModel.isDarkTheme.collectAsState()
+            val windowPalette = buildTajsOSColors(isDarkTheme, PrimaryPurple)
+            LaunchedEffect(window, isDarkTheme) {
+                styleNativeTitleBar(window, windowPalette.surfaceHigh, windowPalette.text, isDarkTheme)
+            }
             LaunchedEffect(windowState) {
                 snapshotFlow { windowState.toDesktopWindowPlacement() }
                     .distinctUntilChanged()

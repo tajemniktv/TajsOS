@@ -44,6 +44,7 @@ firebase-crashlytics-gradle = "3.0.8"
 firebase-app-distribution-gradle = "5.3.0"
 firebase-perf-gradle = "2.0.2"
 haze = "2.0.1"
+jna = "5.19.1"
 compose-stability = "0.15.0"
 
 [libraries]
@@ -105,6 +106,7 @@ firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "fir
 haze-core = { module = "dev.chrisbanes.haze:haze", version.ref = "haze" }
 haze-blur = { module = "dev.chrisbanes.haze:haze-blur", version.ref = "haze" }
 haze-materials = { module = "dev.chrisbanes.haze:haze-blur-materials", version.ref = "haze" }
+jna = { module = "net.java.dev.jna:jna", version.ref = "jna" }
 composeStabilityRuntime = { module = "com.github.skydoves:compose-stability-runtime", version.ref = "compose-stability" }
 
 [plugins]

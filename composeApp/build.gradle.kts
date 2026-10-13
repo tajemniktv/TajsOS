@@ -99,6 +99,7 @@ kotlin {
             // Compose UI now supplies desktop binaries; packaging selects the target OS.
             implementation(libs.kotlinx.coroutinesSwing)
             implementation(libs.logback)
+            implementation(libs.jna)
         }
         val androidMain by getting {
             dependencies {

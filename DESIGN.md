@@ -559,6 +559,9 @@ Depth is achieved mainly through tonal layering. Shadows exist, but they are qui
 When enabled, glass blur belongs to shell chrome (sidebar and header) and overlapping surfaces
 such as hover-expanded navigation, notification popovers, and modal drawers. These surfaces need
 an actual themed backdrop source; ordinary cards remain tonal rather than becoming gray glass.
+The Compose blur samples content inside the app window, not the desktop behind it. The desktop
+keeps its native Windows frame for Snap and maximize behavior; its caption follows the app palette
+without replacing the system window controls.
 
 ### Tonal elevation
 
