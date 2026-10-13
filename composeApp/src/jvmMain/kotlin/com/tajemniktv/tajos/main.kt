@@ -50,6 +50,13 @@ import javax.swing.SwingUtilities
 
 fun main() =
     application {
+        // A decorated Compose window needs Skiko's software surface to present client alpha to DWM.
+        // Keep an explicit renderer override available for machines where this trade-off is unsuitable.
+        if (System.getProperty("os.name").startsWith("Windows", ignoreCase = true) &&
+            System.getProperty("skiko.renderApi").isNullOrBlank()
+        ) {
+            System.setProperty("skiko.renderApi", "SOFTWARE")
+        }
         // Basic setup for Desktop
         val database = createDatabase()
 
@@ -94,9 +101,16 @@ fun main() =
             state = windowState,
         ) {
             val avatarPickResult = remember { mutableStateOf<String?>(null) }
+            val nativeBackdropAvailable = remember { mutableStateOf(false) }
             val isDarkTheme by viewModel.isDarkTheme.collectAsState()
             val isGlassmorphismEnabled by viewModel.isGlassmorphismEnabled.collectAsState()
             val windowPalette = buildTajsOSColors(isDarkTheme, PrimaryPurple)
+            DisposableEffect(window) {
+                SwingUtilities.invokeLater {
+                    nativeBackdropAvailable.value = enableNativeDesktopTransparency(window)
+                }
+                onDispose { }
+            }
             DisposableEffect(window, isDarkTheme, isGlassmorphismEnabled) {
                 val applyChrome = {
                     styleNativeTitleBar(
@@ -127,6 +141,7 @@ fun main() =
             }
             App(
                 viewModel = viewModel,
+                nativeDesktopBackdropAvailable = nativeBackdropAvailable.value,
                 onPickAvatar = {
                     val dialog = FileDialog(null as Frame?, "Select Avatar Image", FileDialog.LOAD)
                     dialog.isVisible = true

@@ -104,6 +104,7 @@ private const val DefaultExpandedSidebarWidthDp = 280
 /**
  * Persistent app sidebar with explicit behavior modes and inline expandable root sections.
  * Root clicks always navigate; the chevron controls child visibility in expanded presentation.
+ * A native desktop backdrop replaces the in-app Haze fill only when client alpha is supported.
  */
 @Composable
 fun AppSidebar(
@@ -124,6 +125,7 @@ fun AppSidebar(
     forceExpandedPresentation: Boolean = false,
     useFixedWidth: Boolean = true,
     modifier: Modifier = Modifier,
+    nativeDesktopBackdrop: Boolean = false,
 ) {
     val hoverInteraction = remember { MutableInteractionSource() }
     val isHovered by hoverInteraction.collectIsHoveredAsState()
@@ -181,16 +183,19 @@ fun AppSidebar(
                         Modifier.fillMaxWidth()
                     },
                 ).fillMaxHeight()
-                .glassChrome(
-                    shape = RoundedCornerShape(0.dp),
-                    material = GlassMaterial.CHROME,
-                    active = true,
+                .then(
+                    if (nativeDesktopBackdrop) Modifier else Modifier.glassChrome(
+                        shape = RoundedCornerShape(0.dp),
+                        material = GlassMaterial.CHROME,
+                        active = true,
+                    ),
                 ).hoverable(
                     interactionSource = hoverInteraction,
                     enabled = !forceExpandedPresentation && shellState.sidebarMode == SidebarMode.HOVER_EXPAND,
                 ),
         color =
-            glassContainerColor(TajsOSTheme.SidebarBackground, active = true),
+            if (nativeDesktopBackdrop) TajsOSTheme.SidebarBackground.copy(alpha = 0.5f)
+            else glassContainerColor(TajsOSTheme.SidebarBackground, active = true),
         shape = RoundedCornerShape(0.dp),
         tonalElevation = 0.dp,
         shadowElevation = if (shellState.sidebarMode == SidebarMode.HOVER_EXPAND && showExpandedContent) 8.dp else 0.dp,

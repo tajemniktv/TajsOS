@@ -69,6 +69,7 @@ private const val CAPTURE_TYPE_INBOX = "inbox"
  * @param voiceCaptureResult Optional text result from a completed voice capture to prefill the capture sheet.
  * @param onVoiceCaptureConsume Callback invoked when the voice capture result has been consumed (clears or acknowledges the result).
  * @param onPickAvatar Optional callback used by the profile screen to request a platform avatar picker.
+ * @param nativeDesktopBackdropAvailable Whether the desktop window can reveal a native backdrop through alpha.
  * @param avatarPickResult Optional selected avatar reference (URI/path) from a platform picker.
  * @param onAvatarPickConsume Callback invoked after the avatar picker result has been consumed by UI state.
  */
@@ -77,6 +78,7 @@ private const val CAPTURE_TYPE_INBOX = "inbox"
 fun App(
     viewModel: MainViewModel,
     modifier: Modifier = Modifier,
+    nativeDesktopBackdropAvailable: Boolean = false,
     onVoiceCapture: (() -> Unit)? = null,
     voiceCaptureResult: String? = null,
     onVoiceCaptureConsume: () -> Unit = {},
@@ -272,6 +274,7 @@ fun App(
                     packRegistry = enabledPacks,
                     userProfile = userProfile,
                     isGlassmorphismEnabled = isGlassmorphismEnabled,
+                    nativeDesktopBackdropAvailable = nativeDesktopBackdropAvailable,
                     onModeSelect = { viewModel.switchMode(it) },
                     drawerState = drawerState,
                     scope = scope,

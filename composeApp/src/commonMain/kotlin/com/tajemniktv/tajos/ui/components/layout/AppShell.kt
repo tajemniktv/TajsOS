@@ -73,6 +73,7 @@ import kotlin.time.Clock
  * @param packRegistry Registry of enabled feature packs for conditional UI.
  * @param userProfile The current user's profile information.
  * @param isGlassmorphismEnabled Whether to apply glassmorphism effects to the UI.
+ * @param nativeDesktopBackdropAvailable Whether transparent client pixels reveal the OS backdrop.
  * @param onModeSelect Callback for switching between operating modes.
  * @param drawerState State of the navigation drawer used in mobile layout.
  * @param scope Coroutine scope for shell-level animations and actions.
@@ -97,6 +98,7 @@ fun AppShell(
     packRegistry: PackRegistry,
     userProfile: UserProfile,
     isGlassmorphismEnabled: Boolean,
+    nativeDesktopBackdropAvailable: Boolean,
     onModeSelect: (Long) -> Unit,
     drawerState: DrawerState,
     scope: CoroutineScope,
@@ -119,12 +121,18 @@ fun AppShell(
     val modeOptions = rememberModeOptions(allModes)
     val standbyLabel = stringResource(Res.string.shell_mode_standby)
     val hazeState = rememberHazeState()
+    val nativeDesktopGlass = isDesktop && isGlassmorphismEnabled && nativeDesktopBackdropAvailable
     ProvideGlassSystem(
         enabled = isGlassmorphismEnabled,
         hazeState = hazeState,
     ) {
-        Box(modifier = modifier.fillMaxSize().background(TajsOSTheme.Background)) {
-            if (isGlassmorphismEnabled) {
+        Box(
+            modifier =
+                modifier.fillMaxSize().then(
+                    if (nativeDesktopGlass) Modifier else Modifier.background(TajsOSTheme.Background),
+                ),
+        ) {
+            if (isGlassmorphismEnabled && !nativeDesktopGlass) {
                 // A real source behind persistent chrome gives translucent panels depth without
                 // blurring a flat, single-color canvas into an opaque gray rectangle.
                 Box(
@@ -166,6 +174,7 @@ fun AppShell(
                         onExpandedWidthCommit = onSidebarExpandedWidthChange,
                         onNewEntry = onNewEntry,
                         onNavigateToProfile = { onNavigate(Screen.Profile) },
+                        nativeDesktopBackdrop = nativeDesktopGlass,
                     )
                 }
 
@@ -181,7 +190,7 @@ fun AppShell(
                         sidebarContent(false)
                     }
 
-                    Column(modifier = Modifier.fillMaxSize()) {
+                    Column(modifier = Modifier.fillMaxSize().background(TajsOSTheme.Background)) {
                         AppShellHeader(
                             greeting = greeting,
                             protocolText = protocolText,

@@ -18,6 +18,7 @@ private const val DWMWA_USE_IMMERSIVE_DARK_MODE = 20
 private const val DWMWA_CAPTION_COLOR = 35
 private const val DWMWA_TEXT_COLOR = 36
 private const val DWMWA_SYSTEMBACKDROP_TYPE = 38
+private const val DWMWA_REDIRECTIONBITMAP_ALPHA = 39
 private const val DWMSBT_NONE = 1
 private const val DWMSBT_TRANSIENTWINDOW = 3
 private const val DWMWA_COLOR_DEFAULT = -1
@@ -83,6 +84,24 @@ internal fun styleNativeTitleBar(
         titleBarLogger.debug("Native title-bar styling is unavailable", error)
     }
 }
+
+/** Lets DWM consume premultiplied alpha from a supported Windows 11 client surface. */
+internal fun enableNativeClientAlpha(window: Window): Boolean =
+    runCatching {
+        val dwm = Native.load("dwmapi", DwmApi::class.java)
+        val result =
+            dwm.DwmSetWindowAttribute(
+                Native.getWindowPointer(window),
+                DWMWA_REDIRECTIONBITMAP_ALPHA,
+                IntByReference(1),
+                Int.SIZE_BYTES,
+            )
+        if (result != 0) titleBarLogger.debug("DWM client alpha was not accepted: {}", result)
+        result == 0
+    }.getOrElse { error ->
+        titleBarLogger.debug("DWM client alpha is unavailable", error)
+        false
+    }
 
 /** Converts an opaque Compose color to the Win32 COLORREF byte order (0x00BBGGRR). */
 private fun Color.toColorRef(): Int =
