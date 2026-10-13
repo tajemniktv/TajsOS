@@ -134,6 +134,10 @@ Android source set of `composeApp`). Do not add independent SDK pins that can dr
 Haze blur uses the Haze 2 `haze-blur` and `haze-blur-materials` modules, immutable styles, and explicit
 source inputs; disabling shell glass bypasses its source capture and blur modifiers.
 
+On supported Windows 11 builds, Glassmorphism Effects also requests a native DWM title-bar
+backdrop while preserving the system caption buttons, resize, and Snap behavior. The Compose
+sidebar still uses in-app Haze; it does not show windows behind TajsOS.
+
 Validate shared logic, desktop UI logic, server behavior, Android lint, and Android packaging with:
 
 ```powershell

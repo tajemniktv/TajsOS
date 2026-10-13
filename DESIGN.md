@@ -559,9 +559,11 @@ Depth is achieved mainly through tonal layering. Shadows exist, but they are qui
 When enabled, glass blur belongs to shell chrome (sidebar and header) and overlapping surfaces
 such as hover-expanded navigation, notification popovers, and modal drawers. These surfaces need
 an actual themed backdrop source; ordinary cards remain tonal rather than becoming gray glass.
-The Compose blur samples content inside the app window, not the desktop behind it. The desktop
-keeps its native Windows frame for Snap and maximize behavior; its caption follows the app palette
-without replacing the system window controls.
+The Compose blur samples content inside the app window, not the desktop behind it. On supported
+Windows 11 builds, Glassmorphism Effects may also apply a native backdrop to the title bar, while
+the sidebar retains its in-app Haze treatment. The desktop keeps its native Windows frame for Snap
+and maximize behavior; its caption uses the app palette when glass is off and the system backdrop
+when glass is on, without replacing the system controls.
 
 ### Tonal elevation
 

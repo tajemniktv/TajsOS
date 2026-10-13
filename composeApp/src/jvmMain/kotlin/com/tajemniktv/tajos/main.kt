@@ -5,6 +5,7 @@
 package com.tajemniktv.tajos
 
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,7 +43,10 @@ import tajsos.composeapp.generated.resources.next_step
 import tajsos.composeapp.generated.resources.untitled
 import java.awt.FileDialog
 import java.awt.Frame
+import java.awt.event.WindowAdapter
+import java.awt.event.WindowEvent
 import java.io.File
+import javax.swing.SwingUtilities
 
 fun main() =
     application {
@@ -91,9 +95,27 @@ fun main() =
         ) {
             val avatarPickResult = remember { mutableStateOf<String?>(null) }
             val isDarkTheme by viewModel.isDarkTheme.collectAsState()
+            val isGlassmorphismEnabled by viewModel.isGlassmorphismEnabled.collectAsState()
             val windowPalette = buildTajsOSColors(isDarkTheme, PrimaryPurple)
-            LaunchedEffect(window, isDarkTheme) {
-                styleNativeTitleBar(window, windowPalette.surfaceHigh, windowPalette.text, isDarkTheme)
+            DisposableEffect(window, isDarkTheme, isGlassmorphismEnabled) {
+                val applyChrome = {
+                    styleNativeTitleBar(
+                        window,
+                        windowPalette.surfaceHigh,
+                        windowPalette.text,
+                        isDarkTheme,
+                        isGlassmorphismEnabled,
+                    )
+                }
+                val listener =
+                    object : WindowAdapter() {
+                        override fun windowActivated(event: WindowEvent) {
+                            applyChrome()
+                        }
+                    }
+                window.addWindowListener(listener)
+                SwingUtilities.invokeLater(applyChrome)
+                onDispose { window.removeWindowListener(listener) }
             }
             LaunchedEffect(windowState) {
                 snapshotFlow { windowState.toDesktopWindowPlacement() }
