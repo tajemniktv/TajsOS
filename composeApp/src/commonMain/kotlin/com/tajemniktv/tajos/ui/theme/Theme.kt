@@ -185,6 +185,9 @@ object TajsOSTheme {
     /** Fixed width of the app sidebar in desktop layout. */
     val SidebarWidth = 280.dp
 
+    /** Width reserved for the collapsed sidebar rail. */
+    val SidebarCollapsedWidth = 72.dp
+
     /** Extra small corner radius. */
     val RadiusXs = 4.dp
 

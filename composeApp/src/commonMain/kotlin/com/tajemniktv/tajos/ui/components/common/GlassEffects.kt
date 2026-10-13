@@ -69,11 +69,12 @@ fun ProvideGlassSystem(
 }
 
 /**
- * Resolves a container color that turns transparent when glass is enabled.
+ * Resolves a transparent container only for an intentional overlapping glass surface.
+ * Static cards and shell chrome keep their tonal surface colors.
  */
 @Composable
-fun glassContainerColor(fallback: Color): Color =
-    if (LocalGlassSystem.current.enabled && LocalGlassSystem.current.hazeState != null) {
+fun glassContainerColor(fallback: Color, active: Boolean): Color =
+    if (active && LocalGlassSystem.current.enabled && LocalGlassSystem.current.hazeState != null) {
         Color.Transparent
     } else {
         fallback
@@ -89,23 +90,24 @@ fun isGlassEnabled(): Boolean {
 }
 
 /**
- * Shared glass-style chrome using source-backed Haze blur for shell and reusable cards.
- * Disabled glass bypasses the effect entirely; styles preserve the preset blur and theme tints.
+ * Shared glass-style chrome for overlapping surfaces such as popovers and hover overlays.
+ * Inactive or disabled glass bypasses the effect so ordinary cards retain tonal depth.
  */
 @Composable
 fun Modifier.glassChrome(
     shape: Shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
     material: GlassMaterial = GlassMaterial.REGULAR,
     edgeWidth: Dp = 1.dp,
+    active: Boolean,
 ): Modifier {
     val glass = LocalGlassSystem.current
-    if (!glass.enabled || glass.hazeState == null) return this
+    if (!active || !glass.enabled || glass.hazeState == null) return this
 
     val hazeState = glass.hazeState
     val topGlow = TajsOSTheme.Text.copy(alpha = 0.14f)
     val bottomShadow = Color.Transparent
-    val topTint = TajsOSTheme.SurfaceHigh.copy(alpha = 0.42f)
-    val bottomTint = TajsOSTheme.SurfaceLow.copy(alpha = 0.36f)
+    val topTint = TajsOSTheme.SurfaceHigh.copy(alpha = 0.20f)
+    val bottomTint = TajsOSTheme.SurfaceLow.copy(alpha = 0.18f)
     val edgeColor = TajsOSTheme.GhostBorder.copy(alpha = 0.2f)
     val style =
         when (material) {
@@ -117,16 +119,16 @@ fun Modifier.glassChrome(
 
     val hazeModifier =
         Modifier.hazeBlur(
-            input = HazeInput.Sources(hazeState),
+            input = HazeInput.Backdrop(hazeState),
             style = style.then {
-                noiseFactor(0.22f)
+                noiseFactor(0.08f)
                 colorEffects(
                     listOf(
                         HazeColorEffect.tint(
-                            TajsOSTheme.Text.copy(alpha = 0.08f),
+                            TajsOSTheme.Text.copy(alpha = 0.04f),
                             blendMode = BlendMode.Screen,
                         ),
-                        HazeColorEffect.tint(TajsOSTheme.SurfaceHigh.copy(alpha = 0.18f)),
+                        HazeColorEffect.tint(TajsOSTheme.SurfaceHigh.copy(alpha = 0.10f)),
                     ),
                 )
             },

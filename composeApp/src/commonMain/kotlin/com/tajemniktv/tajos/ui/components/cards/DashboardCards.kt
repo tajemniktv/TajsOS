@@ -423,13 +423,11 @@ fun VaultCard(
                 title,
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.Bold,
-                fontSize = 9.sp,
             )
             Text(
                 "$count ITEMS",
                 style = MaterialTheme.typography.bodySmall,
                 color = TajsOSTheme.Muted,
-                fontSize = 8.sp,
             )
         }
     }

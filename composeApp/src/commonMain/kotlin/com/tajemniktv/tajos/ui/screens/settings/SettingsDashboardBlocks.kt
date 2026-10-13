@@ -46,9 +46,6 @@ import com.tajemniktv.tajos.data.DesktopWindowStartupMode
 import com.tajemniktv.tajos.data.MedicationEntity
 import com.tajemniktv.tajos.ui.SidebarMode
 import com.tajemniktv.tajos.ui.components.common.EmptyState
-import com.tajemniktv.tajos.ui.components.common.GlassMaterial
-import com.tajemniktv.tajos.ui.components.common.glassChrome
-import com.tajemniktv.tajos.ui.components.common.glassContainerColor
 import com.tajemniktv.tajos.ui.components.common.mouseClickable
 import com.tajemniktv.tajos.ui.theme.PaletteAccentAmber
 import com.tajemniktv.tajos.ui.theme.PaletteAccentBlue
@@ -615,9 +612,8 @@ private fun AppearanceSectionCard(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .glassChrome(shape = RoundedCornerShape(TajsOSTheme.RadiusLg), material = GlassMaterial.REGULAR)
                 .background(
-                    color = glassContainerColor(TajsOSTheme.SurfaceLow.copy(alpha = 0.55f)),
+                    color = TajsOSTheme.SurfaceLow,
                     shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
                 ).border(
                     width = 1.dp,
@@ -700,11 +696,8 @@ private fun SettingsMedicationItem(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .glassChrome(
-                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                    material = GlassMaterial.REGULAR,
-                ).background(
-                    color = glassContainerColor(TajsOSTheme.Surface),
+                .background(
+                    color = TajsOSTheme.Surface,
                     shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
                 ).padding(TajsOSTheme.SpacingMd),
     ) {

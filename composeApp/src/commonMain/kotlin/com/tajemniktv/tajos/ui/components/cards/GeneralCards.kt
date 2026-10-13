@@ -31,11 +31,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tajemniktv.tajos.ui.components.common.GlassMaterial
-import com.tajemniktv.tajos.ui.components.common.glassChrome
-import com.tajemniktv.tajos.ui.components.common.glassContainerColor
 import com.tajemniktv.tajos.ui.theme.TajsOSTheme
 
+/** Displays a tappable metadata value; callers must supply a meaningful action. */
 @Composable
 fun InfoCard(
     title: String,
@@ -43,16 +41,12 @@ fun InfoCard(
     icon: ImageVector,
     modifier: Modifier = Modifier,
     color: Color = TajsOSTheme.Primary,
-    onClick: () -> Unit = {},
+    onClick: () -> Unit,
 ) {
     Surface(
         onClick = onClick,
-        modifier =
-            modifier.glassChrome(
-                shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
-                material = GlassMaterial.REGULAR,
-            ),
-        color = glassContainerColor(TajsOSTheme.Surface),
+        modifier = modifier,
+        color = TajsOSTheme.Surface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
     ) {
         Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
@@ -72,7 +66,6 @@ fun InfoCard(
                     style = MaterialTheme.typography.labelSmall,
                     color = TajsOSTheme.Muted,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 8.sp,
                 )
             }
             Spacer(Modifier.width(TajsOSTheme.SpacingSm))
@@ -86,21 +79,18 @@ fun InfoCard(
     }
 }
 
+/** Displays a tappable status value; callers must supply a meaningful action. */
 @Composable
 fun StatusCard(
     status: String,
     modifier: Modifier = Modifier,
     color: Color = TajsOSTheme.Success,
-    onClick: () -> Unit = {},
+    onClick: () -> Unit,
 ) {
     Surface(
         onClick = onClick,
-        modifier =
-            modifier.fillMaxWidth().glassChrome(
-                shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
-                material = GlassMaterial.REGULAR,
-            ),
-        color = glassContainerColor(TajsOSTheme.Surface),
+        modifier = modifier.fillMaxWidth(),
+        color = TajsOSTheme.Surface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
     ) {
         Column(modifier = Modifier.padding(TajsOSTheme.SpacingMd)) {
@@ -109,7 +99,6 @@ fun StatusCard(
                 style = MaterialTheme.typography.labelSmall,
                 color = TajsOSTheme.Muted,
                 fontWeight = FontWeight.Bold,
-                fontSize = 8.sp,
             )
             Spacer(Modifier.width(TajsOSTheme.SpacingSm))
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -136,12 +125,8 @@ fun LinkedNodeItem(
 ) {
     Surface(
         onClick = onClick,
-        modifier =
-            modifier.fillMaxWidth().glassChrome(
-                shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
-                material = GlassMaterial.REGULAR,
-            ),
-        color = glassContainerColor(TajsOSTheme.Surface),
+        modifier = modifier.fillMaxWidth(),
+        color = TajsOSTheme.Surface,
         shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
     ) {
         Row(
@@ -194,12 +179,8 @@ fun ConnectionCard(
 ) {
     Surface(
         onClick = onClick,
-        modifier =
-            modifier.fillMaxWidth().glassChrome(
-                shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
-                material = GlassMaterial.THIN,
-            ),
-        color = glassContainerColor(Color.Transparent),
+        modifier = modifier.fillMaxWidth(),
+        color = TajsOSTheme.SurfaceLow,
         shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
     ) {
         Row(

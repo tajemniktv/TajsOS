@@ -38,10 +38,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.tajemniktv.tajos.data.NodeWithPin
-import com.tajemniktv.tajos.ui.components.common.GlassMaterial
 import com.tajemniktv.tajos.ui.components.common.MouseContextMenuHost
-import com.tajemniktv.tajos.ui.components.common.glassChrome
-import com.tajemniktv.tajos.ui.components.common.glassContainerColor
 import com.tajemniktv.tajos.ui.components.common.mouseClickable
 import com.tajemniktv.tajos.ui.components.common.rememberMouseContextMenuState
 import com.tajemniktv.tajos.ui.theme.TajsOSTheme
@@ -107,16 +104,13 @@ fun NodeCard(
                     Modifier
                         .fillMaxWidth()
                         .graphicsLayer { scaleX = animatedScale; scaleY = animatedScale }
-                        .glassChrome(
-                            shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
-                            material = GlassMaterial.REGULAR,
-                        ).mouseClickable(
+                        .mouseClickable(
                             onClick = onClick,
                             onLongClick = onLongClick,
                             onSecondaryClickAt = { contextMenuState.showAt(it) },
                             middleClickFallbackToPrimary = true,
                         ),
-                color = glassContainerColor(TajsOSTheme.Surface),
+                color = TajsOSTheme.Surface,
                 shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
                 border =
                     BorderStroke(

@@ -556,6 +556,9 @@ Purpose: configuration without losing the user in a filing cabinet.
 ## Elevation & Depth
 
 Depth is achieved mainly through tonal layering. Shadows exist, but they are quiet and functional.
+Glass blur is reserved for surfaces that overlap real content, such as hover-expanded navigation,
+notification popovers, and modal drawers. Persistent shell chrome and ordinary cards use tonal
+surfaces instead of tinting a flat background and calling it glass.
 
 ### Tonal elevation
 
@@ -652,6 +655,8 @@ Buttons must have tactile feedback: scale to 0.98 or translate down 1px on activ
 - Use `nav-item-active` for active route capsules.
 - Collapsed sidebar items must still navigate somewhere useful.
 - Expandable roots show children only when expanded content is visible.
+- Root clicks navigate to canonical destinations; chevrons expand children inline.
+- Hover-expanded navigation overlays the content stage without shifting the header or page.
 - Top-level lens labels remain stable: Now, Plan, Operate, Knowledge, Review, Domains, Settings.
 - Icons use one family and one stroke weight per surface.
 

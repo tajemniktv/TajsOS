@@ -461,11 +461,11 @@ class MainViewModel(
             .stateIn(viewModelScope, SharingStarted.Eagerly, true)
 
     /**
-     * Selected accent color hex string (e.g., "#BA9EFF").
+     * Selected accent color hex string (e.g., "#D3BFFF").
      */
     val accentColorHex: StateFlow<String> =
         preferencesRepository.accentColorHex
-            .stateIn(viewModelScope, SharingStarted.Eagerly, "#BA9EFF")
+            .stateIn(viewModelScope, SharingStarted.Eagerly, "#D3BFFF")
 
     /**
      * Whether glassmorphism effects are enabled.
@@ -990,7 +990,7 @@ class MainViewModel(
     /**
      * Persists application accent color preference.
      *
-     * @param colorHex The color in hex format (e.g., "#BA9EFF").
+     * @param colorHex The color in hex format (e.g., "#D3BFFF").
      */
     fun setAccentColor(colorHex: String) {
         viewModelScope.launch {

@@ -117,11 +117,8 @@ fun AppShellHeader(
         modifier =
             modifier
                 .fillMaxWidth()
-                .glassChrome(
-                    shape = RoundedCornerShape(0.dp),
-                    material = GlassMaterial.THICK,
-                ).then(if (!isDesktop) Modifier.statusBarsPadding() else Modifier),
-        color = glassContainerColor(TajsOSTheme.SurfaceLow),
+                .then(if (!isDesktop) Modifier.statusBarsPadding() else Modifier),
+        color = TajsOSTheme.SurfaceLow,
         tonalElevation = 0.dp,
         shadowElevation = 0.dp,
     ) {
@@ -341,12 +338,8 @@ fun GlobalSearchBar(onClick: () -> Unit, modifier: Modifier = Modifier) {
     Surface(
         modifier =
             modifier
-                .glassChrome(
-                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                    material = GlassMaterial.THIN,
-                )
                 .mouseClickable(onClick = onClick, role = Role.Button, middleClickFallbackToPrimary = true),
-        color = glassContainerColor(TajsOSTheme.SurfaceHigh.copy(alpha = 0.5f)),
+        color = TajsOSTheme.SurfaceHigh,
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
     ) {
         Row(
@@ -406,13 +399,9 @@ fun HeaderModeSwitcher(
             onClick = { onExpandedChange(!expanded) },
             modifier =
                 Modifier
-                    .height(42.dp)
-                    .glassChrome(
-                        shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                        material = GlassMaterial.REGULAR,
-                    ),
+                    .height(42.dp),
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            color = glassContainerColor(TajsOSTheme.SurfaceHigh),
+            color = TajsOSTheme.SurfaceHigh,
             tonalElevation = 0.dp,
             shadowElevation = 0.dp,
         ) {
@@ -498,13 +487,9 @@ fun NotificationsPopover(
 ) {
     Box(modifier = modifier) {
         Surface(
-            modifier =
-                Modifier.glassChrome(
-                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                    material = GlassMaterial.REGULAR,
-                ),
+            modifier = Modifier,
             shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-            color = glassContainerColor(TajsOSTheme.SurfaceHigh),
+            color = TajsOSTheme.SurfaceHigh,
             tonalElevation = 0.dp,
             shadowElevation = 0.dp,
         ) {
@@ -546,9 +531,10 @@ fun NotificationsPopover(
                             .glassChrome(
                                 shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
                                 material = GlassMaterial.THICK,
+                                active = true,
                             ),
                     shape = RoundedCornerShape(TajsOSTheme.RadiusLg),
-                    color = glassContainerColor(TajsOSTheme.SurfaceHighest),
+                    color = glassContainerColor(TajsOSTheme.SurfaceHighest, active = true),
                     tonalElevation = 8.dp,
                     shadowElevation = 8.dp,
                 ) {

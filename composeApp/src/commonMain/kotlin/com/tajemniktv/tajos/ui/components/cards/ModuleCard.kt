@@ -32,9 +32,6 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tajemniktv.tajos.ui.components.common.GlassMaterial
-import com.tajemniktv.tajos.ui.components.common.glassChrome
-import com.tajemniktv.tajos.ui.components.common.glassContainerColor
 import com.tajemniktv.tajos.ui.components.common.mouseClickable
 import com.tajemniktv.tajos.ui.theme.TajsOSTheme
 
@@ -56,10 +53,7 @@ fun ModuleCard(
         modifier =
             modifier
                 .graphicsLayer { scaleX = scale; scaleY = scale }
-                .glassChrome(
-                    shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
-                    material = GlassMaterial.REGULAR,
-                ).mouseClickable(
+                .mouseClickable(
                     interactionSource = interactionSource,
                     onClick = {
                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
@@ -69,7 +63,7 @@ fun ModuleCard(
                     middleClickFallbackToPrimary = true,
                 ),
         shape = RoundedCornerShape(TajsOSTheme.RadiusXl),
-        color = glassContainerColor(TajsOSTheme.Surface),
+        color = TajsOSTheme.Surface,
         shadowElevation = 2.dp,
     ) {
         Column(

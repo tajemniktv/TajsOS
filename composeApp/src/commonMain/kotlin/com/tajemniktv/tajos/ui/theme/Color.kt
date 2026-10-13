@@ -16,17 +16,17 @@ import androidx.compose.ui.graphics.Color
  * Design principles in DESIGN.md
  */
 
-internal val PrimaryPurple = Color(0xFFBA9EFF)
+internal val PrimaryPurple = Color(0xFFD3BFFF)
 internal val PrimaryPurpleDim = Color(0xFF8455EF)
-internal val DeepBackground = Color(0xFF0E0E12)
-internal val DarkSidebarBackground = Color(0xFF000000)
-internal val SurfaceDark = Color(0xFF0E0E12)
-internal val SurfaceContainerLowest = Color(0xFF000000)
-internal val SurfaceContainerLow = Color(0xFF131317)
-internal val SurfaceContainerHigh = Color(0xFF1F1F24)
-internal val SurfaceContainerHighest = Color(0xFF25252B)
-internal val TextPrimary = Color(0xFFFCF8FE)
-internal val TextMuted = Color(0xFFA8A2B3)
+internal val DeepBackground = Color(0xFF101114)
+internal val DarkSidebarBackground = Color(0xFF1D1B21)
+internal val SurfaceDark = Color(0xFF15171C)
+internal val SurfaceContainerLowest = Color(0xFF0F0D13)
+internal val SurfaceContainerLow = Color(0xFF1D1B21)
+internal val SurfaceContainerHigh = Color(0xFF2B292F)
+internal val SurfaceContainerHighest = Color(0xFF36343A)
+internal val TextPrimary = Color(0xFFE6E0E9)
+internal val TextMuted = Color(0xFF948E9C)
 
 // Accents
 val AccentMagenta = Color(0xFFFF6FAE)
@@ -37,7 +37,7 @@ val AccentBlue = Color(0xFF6EA8FF)
 val AccentCyan = Color(0xFF22D3EE)
 
 // Standard Accent Options (matched with Settings UI)
-val PaletteAccentPurple = Color(0xFFB388FF)
+val PaletteAccentPurple = Color(0xFFD3BFFF)
 val PaletteAccentBlue = Color(0xFF60A5FA)
 val PaletteAccentRose = Color(0xFFFB7185)
 val PaletteAccentAmber = Color(0xFFFBBF24)
@@ -59,4 +59,4 @@ internal val LightOutlineVariant = Color(0xFFADB5BD).copy(alpha = 0.25f)
 internal val AccentSuccess = AccentGreen
 internal val AccentError = AccentRed
 internal val SubtleBorder = Color(0xFF4F4A5D)
-internal val OutlineVariant = Color(0xFF6B6580)
+internal val OutlineVariant = Color(0xFF494551)

@@ -8,13 +8,16 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -24,9 +27,8 @@ import com.tajemniktv.tajos.data.PackRegistry
 import com.tajemniktv.tajos.data.UserProfile
 import com.tajemniktv.tajos.data.resolveDisplayName
 import com.tajemniktv.tajos.ui.Screen
-import com.tajemniktv.tajos.ui.components.common.GlassMaterial
+import com.tajemniktv.tajos.ui.SidebarMode
 import com.tajemniktv.tajos.ui.components.common.ProvideGlassSystem
-import com.tajemniktv.tajos.ui.components.common.glassChrome
 import com.tajemniktv.tajos.ui.components.common.glassContainerColor
 import com.tajemniktv.tajos.ui.components.notifications.NotificationUiModel
 import com.tajemniktv.tajos.ui.components.screen.ScreenHeaderModel
@@ -54,6 +56,7 @@ import kotlin.time.Clock
 
 /**
  * Top-level application chrome with persistent sidebar, shell header, and routed content slot.
+ * Hover-expanded navigation overlays the content stage rather than resizing it.
  *
  * @param isDesktop Whether to use the wide desktop layout with persistent sidebar.
  * @param shellState The current state of the application shell (e.g. expanded state).
@@ -119,22 +122,10 @@ fun AppShell(
         enabled = isGlassmorphismEnabled,
         hazeState = hazeState,
     ) {
-        Box(modifier = modifier.fillMaxSize()) {
-            Box(
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .background(TajsOSTheme.Background)
-                        .then(
-                            if (isGlassmorphismEnabled) {
-                                Modifier.hazeSource(hazeState)
-                            } else {
-                                Modifier
-                            },
-                        ),
-            )
+        Box(modifier = modifier.fillMaxSize().background(TajsOSTheme.Background)) {
             if (isDesktop) {
-                Row(modifier = Modifier.fillMaxSize().background(TajsOSTheme.Background)) {
+                val hoverSidebar = shellState.sidebarMode == SidebarMode.HOVER_EXPAND
+                val sidebarContent: @Composable (Boolean) -> Unit = { overlay ->
                     AppSidebar(
                         shellState = shellState,
                         menuGroups = Screen.groupedItemsForPacks(packRegistry),
@@ -146,11 +137,25 @@ fun AppShell(
                         onNavigate = onNavigate,
                         onNavigateToTasksTab = onNavigateToTasksTab,
                         expandedWidthDp = sidebarExpandedWidthDp,
-                        resizeEnabled = true,
+                        resizeEnabled = !overlay,
                         onExpandedWidthCommit = onSidebarExpandedWidthChange,
                         onNewEntry = onNewEntry,
                         onNavigateToProfile = { onNavigate(Screen.Profile) },
+                        applyGlass = overlay,
                     )
+                }
+
+                Row(
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .then(if (isGlassmorphismEnabled) Modifier.hazeSource(hazeState) else Modifier),
+                ) {
+                    if (hoverSidebar) {
+                        Spacer(Modifier.width(TajsOSTheme.SidebarCollapsedWidth))
+                    } else {
+                        sidebarContent(false)
+                    }
 
                     Column(modifier = Modifier.fillMaxSize()) {
                         AppShellHeader(
@@ -172,19 +177,17 @@ fun AppShell(
                         }
                     }
                 }
+                if (hoverSidebar) {
+                    Box(modifier = Modifier.align(Alignment.TopStart)) {
+                        sidebarContent(true)
+                    }
+                }
             } else {
                 ModalNavigationDrawer(
                     drawerState = drawerState,
                     drawerContent = {
                         ModalDrawerSheet(
-                            modifier =
-                                Modifier.glassChrome(
-                                    shape =
-                                        androidx.compose.foundation.shape
-                                            .RoundedCornerShape(0.dp),
-                                    material = GlassMaterial.THICK,
-                                ),
-                            drawerContainerColor = glassContainerColor(TajsOSTheme.SidebarBackground),
+                            drawerContainerColor = glassContainerColor(TajsOSTheme.SidebarBackground, active = true),
                         ) {
                             AppSidebar(
                                 shellState = shellState,
@@ -210,13 +213,19 @@ fun AppShell(
                                 },
                                 forceExpandedPresentation = true,
                                 useFixedWidth = false,
-                                applyGlass = false,
+                                applyGlass = true,
                                 modifier = Modifier.fillMaxSize(),
                             )
                         }
                     },
                 ) {
-                    Column(modifier = Modifier.fillMaxSize().background(TajsOSTheme.Background)) {
+                    Column(
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .background(TajsOSTheme.Background)
+                                .then(if (isGlassmorphismEnabled) Modifier.hazeSource(hazeState) else Modifier),
+                    ) {
                         AppShellHeader(
                             greeting = greeting,
                             protocolText = protocolText,

@@ -1094,6 +1094,8 @@
     <string name="common_open">Otwórz</string>
     <string name="common_expand">Rozwiń</string>
     <string name="common_collapse">Zwiń</string>
+    <string name="sidebar_expand_section">Rozwiń %1$s</string>
+    <string name="sidebar_collapse_section">Zwiń %1$s</string>
     <string name="common_no_active_mode">Brak aktywnego trybu</string>
 
     <string name="places_action_open_page">OTWÓRZ STRONĘ MIEJSCA</string>

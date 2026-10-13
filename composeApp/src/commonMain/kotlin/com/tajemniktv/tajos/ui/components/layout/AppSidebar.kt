@@ -42,10 +42,8 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.FiberManualRecord
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -64,7 +62,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -96,16 +93,18 @@ import tajsos.composeapp.generated.resources.common_expand
 import tajsos.composeapp.generated.resources.common_no_active_mode
 import tajsos.composeapp.generated.resources.common_open
 import tajsos.composeapp.generated.resources.sidebar_brand
+import tajsos.composeapp.generated.resources.sidebar_collapse_section
+import tajsos.composeapp.generated.resources.sidebar_expand_section
 import tajsos.composeapp.generated.resources.sidebar_new_entry
 import kotlin.math.roundToInt
 
 private const val MinExpandedSidebarWidthDp = 220f
-private const val MaxExpandedSidebarWidthDp = 360f
-private const val DefaultExpandedSidebarWidthDp = 236
-private val CollapsedSidebarWidth = 92.dp
+private const val MaxExpandedSidebarWidthDp = 320f
+private const val DefaultExpandedSidebarWidthDp = 280
 
 /**
  * Persistent app sidebar with explicit behavior modes and inline expandable root sections.
+ * Root clicks always navigate; the chevron controls child visibility in expanded presentation.
  */
 @Composable
 fun AppSidebar(
@@ -147,8 +146,8 @@ fun AppSidebar(
     }
 
     val showExpandedContent = forceExpandedPresentation || shellState.isSidebarExpandedPresentation
+    val activeGlass = applyGlass && showExpandedContent
     var liveExpandedWidthDp by remember { mutableFloatStateOf(expandedWidthDp.toFloat()) }
-    var expandedFlyoutRoute by remember { mutableStateOf<String?>(null) }
     val density = LocalDensity.current
 
     LaunchedEffect(expandedWidthDp) {
@@ -156,14 +155,7 @@ fun AppSidebar(
             expandedWidthDp.toFloat().coerceIn(MinExpandedSidebarWidthDp, MaxExpandedSidebarWidthDp)
     }
 
-    LaunchedEffect(showExpandedContent) {
-        if (showExpandedContent) {
-            expandedFlyoutRoute = null
-        }
-    }
-
-    LaunchedEffect(showExpandedContent, currentRootScreen?.route) {
-        if (!showExpandedContent) return@LaunchedEffect
+    LaunchedEffect(currentRootScreen?.route) {
         val activeRoot = currentRootScreen ?: return@LaunchedEffect
         if (sidebarChildren(activeRoot).isNotEmpty()) {
             shellState.setRootExpanded(activeRoot.route, true)
@@ -171,7 +163,7 @@ fun AppSidebar(
     }
 
     val sidebarWidth by animateDpAsState(
-        targetValue = if (showExpandedContent) liveExpandedWidthDp.dp else CollapsedSidebarWidth,
+        targetValue = if (showExpandedContent) liveExpandedWidthDp.dp else TajsOSTheme.SidebarCollapsedWidth,
         label = "sidebarWidth",
     )
 
@@ -193,10 +185,11 @@ fun AppSidebar(
                     },
                 ).fillMaxHeight()
                 .then(
-                    if (applyGlass) {
+                    if (activeGlass) {
                         Modifier.glassChrome(
                             shape = RoundedCornerShape(0.dp),
-                            material = GlassMaterial.THICK,
+                            material = GlassMaterial.REGULAR,
+                            active = true,
                         )
                     } else {
                         Modifier
@@ -206,14 +199,10 @@ fun AppSidebar(
                     enabled = !forceExpandedPresentation && shellState.sidebarMode == SidebarMode.HOVER_EXPAND,
                 ),
         color =
-            if (applyGlass) {
-                glassContainerColor(TajsOSTheme.SurfaceLowest)
-            } else {
-                TajsOSTheme.SurfaceLowest
-            },
+            glassContainerColor(TajsOSTheme.SidebarBackground, active = activeGlass),
         shape = RoundedCornerShape(0.dp),
         tonalElevation = 0.dp,
-        shadowElevation = 0.dp,
+        shadowElevation = if (shellState.sidebarMode == SidebarMode.HOVER_EXPAND && showExpandedContent) 8.dp else 0.dp,
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             Column(modifier = Modifier.fillMaxSize()) {
@@ -251,19 +240,10 @@ fun AppSidebar(
                                 isExpandedPresentation = showExpandedContent,
                                 isActiveRoot = isActiveRoot,
                                 isExpandedRoot = shellState.isRootExpanded(rootScreen.route),
-                                isFlyoutExpanded = expandedFlyoutRoute == rootScreen.route,
                                 activeTasksTab = activeTasksTab,
                                 onRootNavigate = { onNavigate(rootScreen) },
                                 onRootExpandToggle = {
                                     shellState.toggleRootExpanded(rootScreen.route)
-                                },
-                                onExpandFlyout = {
-                                    expandedFlyoutRoute = rootScreen.route
-                                },
-                                onDismissFlyout = {
-                                    if (expandedFlyoutRoute == rootScreen.route) {
-                                        expandedFlyoutRoute = null
-                                    }
                                 },
                                 onChildNavigate = { child ->
                                     navigateFromSidebar(
@@ -373,12 +353,9 @@ fun ExpandableNavSection(
     isExpandedPresentation: Boolean,
     isActiveRoot: Boolean,
     isExpandedRoot: Boolean,
-    isFlyoutExpanded: Boolean,
     activeTasksTab: TasksTab,
     onRootNavigate: () -> Unit,
     onRootExpandToggle: () -> Unit,
-    onExpandFlyout: () -> Unit,
-    onDismissFlyout: () -> Unit,
     onChildNavigate: (Screen) -> Unit,
 ) {
     val rootLabel = stringResource(screen.label)
@@ -396,13 +373,6 @@ fun ExpandableNavSection(
     val isActiveBranch = isActiveRoot || hasActiveChild
     val showChildrenInline = isExpandedPresentation && expandable && isExpandedRoot
     val contextMenuState = rememberMouseContextMenuState()
-    val rootClickAction =
-        when {
-            !expandable -> onRootNavigate
-            isExpandedPresentation -> onRootNavigate
-            else -> onExpandFlyout
-        }
-
     MouseContextMenuHost(
         state = contextMenuState,
         modifier = Modifier.fillMaxWidth(),
@@ -414,25 +384,16 @@ fun ExpandableNavSection(
                     onRootNavigate()
                 },
             )
-            if (expandable) {
+            if (expandable && isExpandedPresentation) {
                 DropdownMenuItem(
                     text = {
                         Text(
-                            text =
-                                if (isExpandedPresentation) {
-                                    stringResource(if (showChildrenInline) Res.string.common_collapse else Res.string.common_expand)
-                                } else {
-                                    stringResource(Res.string.common_open)
-                                },
+                            text = stringResource(if (showChildrenInline) Res.string.common_collapse else Res.string.common_expand),
                         )
                     },
                     onClick = {
                         contextMenuState.dismiss()
-                        if (isExpandedPresentation) {
-                            onRootExpandToggle()
-                        } else {
-                            onExpandFlyout()
-                        }
+                        onRootExpandToggle()
                     },
                 )
             }
@@ -440,7 +401,7 @@ fun ExpandableNavSection(
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
             SidebarTooltip(
-                enabled = !isExpandedPresentation && !isFlyoutExpanded,
+                enabled = !isExpandedPresentation,
                 text = rootLabel,
             ) {
                 Surface(
@@ -449,7 +410,7 @@ fun ExpandableNavSection(
                             .fillMaxWidth()
                             .padding(horizontal = 10.dp, vertical = 2.dp)
                             .mouseClickable(
-                                onClick = rootClickAction,
+                                onClick = onRootNavigate,
                                 onSecondaryClickAt = { contextMenuState.showAt(it) },
                                 middleClickFallbackToPrimary = true,
                             ),
@@ -517,7 +478,7 @@ fun ExpandableNavSection(
                                 if (expandable) {
                                     IconButton(
                                         onClick = onRootExpandToggle,
-                                        modifier = Modifier.size(28.dp),
+                                        modifier = Modifier.size(40.dp),
                                     ) {
                                         Icon(
                                             imageVector =
@@ -526,7 +487,11 @@ fun ExpandableNavSection(
                                                 } else {
                                                     Icons.AutoMirrored.Filled.ArrowRight
                                                 },
-                                            contentDescription = null,
+                                            contentDescription =
+                                                stringResource(
+                                                    if (showChildrenInline) Res.string.sidebar_collapse_section else Res.string.sidebar_expand_section,
+                                                    rootLabel,
+                                                ),
                                             tint = TajsOSTheme.Muted,
                                         )
                                     }
@@ -537,72 +502,6 @@ fun ExpandableNavSection(
                 }
             }
 
-            if (!isExpandedPresentation && expandable) {
-                DropdownMenu(
-                    expanded = isFlyoutExpanded,
-                    onDismissRequest = onDismissFlyout,
-                ) {
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                text = rootLabel,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                        },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = screen.icon,
-                                contentDescription = null,
-                            )
-                        },
-                        onClick = {
-                            onDismissFlyout()
-                            onRootNavigate()
-                        },
-                    )
-                    HorizontalDivider(color = TajsOSTheme.GhostBorder)
-                    children.forEach { child ->
-                        val isActiveChild =
-                            isChildActive(
-                                root = screen,
-                                child = child,
-                                currentScreen = currentScreen,
-                                currentRootScreen = currentRootScreen,
-                                activeTasksTab = activeTasksTab,
-                            )
-                        DropdownMenuItem(
-                            text = {
-                                Text(
-                                    text = stringResource(child.label),
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                )
-                            },
-                            leadingIcon = {
-                                Icon(
-                                    imageVector = sidebarScreenIcon(child),
-                                    contentDescription = null,
-                                )
-                            },
-                            trailingIcon = {
-                                if (isActiveChild) {
-                                    Icon(
-                                        imageVector = Icons.Default.FiberManualRecord,
-                                        contentDescription = null,
-                                        tint = TajsOSTheme.Primary,
-                                        modifier = Modifier.size(10.dp),
-                                    )
-                                }
-                            },
-                            onClick = {
-                                onDismissFlyout()
-                                onChildNavigate(child)
-                            },
-                        )
-                    }
-                }
-            }
         }
 
         AnimatedVisibility(visible = showChildrenInline, enter = fadeIn(), exit = fadeOut()) {

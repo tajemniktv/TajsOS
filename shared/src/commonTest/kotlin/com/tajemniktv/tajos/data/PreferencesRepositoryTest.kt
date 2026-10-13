@@ -227,7 +227,7 @@ class PreferencesRepositoryTest {
         val repository = PreferencesRepository(dataStore)
 
         repository.accentColorHex.test {
-            assertEquals("#BA9EFF", awaitItem())
+            assertEquals("#D3BFFF", awaitItem())
             repository.updateAccentColor("#FF0000")
             assertEquals("#FF0000", awaitItem())
         }
@@ -271,8 +271,8 @@ class PreferencesRepositoryTest {
             repository.updateSidebarExpandedWidthDp(100) // Below MIN_SIDEBAR_EXPANDED_WIDTH_DP (220)
             assertEquals(220, awaitItem())
 
-            repository.updateSidebarExpandedWidthDp(500) // Above MAX_SIDEBAR_EXPANDED_WIDTH_DP (360)
-            assertEquals(360, awaitItem())
+            repository.updateSidebarExpandedWidthDp(500) // Above MAX_SIDEBAR_EXPANDED_WIDTH_DP (320)
+            assertEquals(320, awaitItem())
         }
     }
 

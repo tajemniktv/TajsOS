@@ -56,9 +56,9 @@ class PreferencesRepository(
     )
 
     companion object {
-        const val DEFAULT_SIDEBAR_EXPANDED_WIDTH_DP: Int = 236
+        const val DEFAULT_SIDEBAR_EXPANDED_WIDTH_DP: Int = 280
         private const val MIN_SIDEBAR_EXPANDED_WIDTH_DP: Int = 220
-        private const val MAX_SIDEBAR_EXPANDED_WIDTH_DP: Int = 360
+        private const val MAX_SIDEBAR_EXPANDED_WIDTH_DP: Int = 320
         private const val MIN_DESKTOP_WINDOW_WIDTH_DP: Int = 640
         private const val MIN_DESKTOP_WINDOW_HEIGHT_DP: Int = 480
     }
@@ -101,12 +101,12 @@ class PreferencesRepository(
             }
 
     /**
-     * Selected accent color hex string (e.g., "#BA9EFF").
+     * Selected accent color hex string (e.g., "#D3BFFF").
      */
     val accentColorHex: Flow<String> =
         safeData
             .map { preferences ->
-                preferences[PreferencesKeys.ACCENT_COLOR] ?: "#BA9EFF"
+                preferences[PreferencesKeys.ACCENT_COLOR] ?: "#D3BFFF"
             }
 
     /**
@@ -271,7 +271,7 @@ class PreferencesRepository(
     /**
      * Persists the selected accent color.
      *
-     * @param colorHex The color in hex format (e.g., "#BA9EFF").
+     * @param colorHex The color in hex format (e.g., "#D3BFFF").
      */
     suspend fun updateAccentColor(colorHex: String) {
         dataStore.edit { preferences ->
