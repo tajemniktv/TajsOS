@@ -261,8 +261,8 @@ Before broad changes, check and update if impacted:
 
 ## Skills quick guide
 
-- Repo skill packs are maintained in `.agent/skills`, one level deep (
-  `.agent/skills/<skill-name>/SKILL.md`).
+- Local agent skill packs may live in the ignored `.agents/skills` directory, one level deep
+  (`.agents/skills/<skill-name>/SKILL.md`). They are not distributed with the repository.
 - Skill precedence:
     1. Current user/task instruction
     2. Current repo reality + canonical docs (`AGENTS.md`, `README.md`, `ARCHITECTURE.md`,
