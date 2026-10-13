@@ -234,6 +234,18 @@ class PreferencesRepositoryTest {
     }
 
     @Test
+    fun accentColorHex_mapsFormerDefaultButPreservesCustomAccent() = runTest {
+        val repository = PreferencesRepository(FakeDataStore())
+        repository.accentColorHex.test {
+            assertEquals("#D3BFFF", awaitItem())
+            repository.updateAccentColor("#ba9eff")
+            assertEquals("#D3BFFF", awaitItem())
+            repository.updateAccentColor("#FF0000")
+            assertEquals("#FF0000", awaitItem())
+        }
+    }
+
+    @Test
     fun isGlassmorphismEnabled_returnsCorrectValue() = runTest {
         val dataStore = FakeDataStore()
         val repository = PreferencesRepository(dataStore)

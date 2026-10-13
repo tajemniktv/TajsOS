@@ -174,7 +174,9 @@ fun AppShell(
                         onExpandedWidthCommit = onSidebarExpandedWidthChange,
                         onNewEntry = onNewEntry,
                         onNavigateToProfile = { onNavigate(Screen.Profile) },
-                        nativeDesktopBackdrop = nativeDesktopGlass,
+                        // The floating hover panel covers page content, so native client alpha
+                        // would show that content through its labels instead of blurring it.
+                        nativeDesktopBackdrop = nativeDesktopGlass && !overlay,
                     )
                 }
 
@@ -182,7 +184,7 @@ fun AppShell(
                     modifier =
                         Modifier
                             .fillMaxSize()
-                            .then(if (isGlassmorphismEnabled) Modifier.hazeSource(hazeState) else Modifier),
+                            .then(if (isGlassmorphismEnabled && hoverSidebar) Modifier.hazeSource(hazeState) else Modifier),
                 ) {
                     if (hoverSidebar) {
                         Spacer(Modifier.width(TajsOSTheme.SidebarCollapsedWidth))

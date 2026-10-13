@@ -79,6 +79,8 @@ import tajsos.composeapp.generated.resources.settings_action_export_bundle
 import tajsos.composeapp.generated.resources.settings_action_import_json_simple
 import tajsos.composeapp.generated.resources.settings_transfer_busy
 import tajsos.composeapp.generated.resources.settings_force_crash
+import tajsos.composeapp.generated.resources.settings_glassmorphism_desc
+import tajsos.composeapp.generated.resources.settings_glassmorphism_title
 import tajsos.composeapp.generated.resources.settings_no_medication_entries_configured_yet
 import tajsos.composeapp.generated.resources.settings_theme_dark
 import tajsos.composeapp.generated.resources.settings_theme_light
@@ -423,8 +425,8 @@ private fun renderSettingsAppearance(context: SettingsDashboardContext) {
             }
 
             AppearanceSettingRow(
-                title = "Glassmorphism Effects",
-                description = "Enable translucent blur on navigation and modals.",
+                title = stringResource(Res.string.settings_glassmorphism_title),
+                description = stringResource(Res.string.settings_glassmorphism_desc),
             ) {
                 Switch(
                     checked = context.isGlassmorphismEnabled,

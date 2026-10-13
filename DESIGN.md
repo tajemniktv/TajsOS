@@ -564,6 +564,8 @@ Windows 11 builds, Glassmorphism Effects may instead reveal a native backdrop th
 and title bar. The desktop keeps its native Windows frame for Snap and maximize behavior; its
 caption uses the app palette when glass is off and the system backdrop when glass is on, without
 replacing the system controls. If native client alpha is unavailable, the sidebar uses in-app Haze.
+The floating hover sidebar also uses in-app blur instead of revealing page text beneath it.
+Collapsed roots with children open a destination menu; the root remains its first option.
 
 ### Tonal elevation
 

@@ -984,6 +984,8 @@
     <string name="settings_action_import_json_simple">Importuj JSON</string>
     <string name="settings_theme_light">Jasny</string>
     <string name="settings_theme_dark">Ciemny</string>
+    <string name="settings_glassmorphism_title">Efekty szkła</string>
+    <string name="settings_glassmorphism_desc">Rozmyj nawigację i okna. Natywne rozmycie pulpitu Windows może wymagać ponownego uruchomienia aplikacji.</string>
     <string name="settings_unlock">Odblokuj</string>
     <string name="settings_window_startup_title">Uruchamianie okna</string>
     <string name="settings_window_startup_mode">Zachowanie przy starcie</string>

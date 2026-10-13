@@ -1127,6 +1127,8 @@
     <string name="settings_action_import_json_simple">Import JSON</string>
     <string name="settings_theme_light">Light</string>
     <string name="settings_theme_dark">Dark</string>
+    <string name="settings_glassmorphism_title">Glassmorphism Effects</string>
+    <string name="settings_glassmorphism_desc">Blur navigation and modals. Native Windows desktop blur may require restarting the app.</string>
     <string name="settings_unlock">Unlock</string>
     <string name="settings_window_startup_title">Window Startup</string>
     <string name="settings_window_startup_mode">Startup Behavior</string>

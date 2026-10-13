@@ -5,6 +5,7 @@
 package com.tajemniktv.tajos
 
 import androidx.compose.ui.graphics.Color
+import com.sun.jna.Memory
 import com.sun.jna.Native
 import com.sun.jna.Pointer
 import com.sun.jna.Structure
@@ -22,6 +23,8 @@ private const val DWMWA_REDIRECTIONBITMAP_ALPHA = 39
 private const val DWMSBT_NONE = 1
 private const val DWMSBT_TRANSIENTWINDOW = 3
 private const val DWMWA_COLOR_DEFAULT = -1
+private const val MIN_CLIENT_ALPHA_BUILD = 26100
+private const val OS_VERSION_INFO_W_BYTES = 276L
 
 private val titleBarLogger = LoggerFactory.getLogger("TajsOS.WindowChrome")
 
@@ -31,9 +34,28 @@ private interface DwmApi : StdCallLibrary {
     fun DwmExtendFrameIntoClientArea(hwnd: Pointer, margins: TitleBarMargins): Int
 }
 
+private interface NtDllApi : StdCallLibrary {
+    fun RtlGetVersion(versionInfo: Pointer): Int
+}
+
+/** Checks the Windows build before choosing the process-wide software renderer at startup. */
+internal fun supportsNativeClientAlpha(): Boolean {
+    if (!System.getProperty("os.name").startsWith("Windows", ignoreCase = true)) return false
+    return runCatching {
+        val versionInfo = Memory(OS_VERSION_INFO_W_BYTES)
+        versionInfo.clear()
+        versionInfo.setInt(0, OS_VERSION_INFO_W_BYTES.toInt())
+        val status = Native.load("ntdll", NtDllApi::class.java).RtlGetVersion(versionInfo)
+        status == 0 && versionInfo.getInt(12) >= MIN_CLIENT_ALPHA_BUILD
+    }.getOrElse { error ->
+        titleBarLogger.debug("Windows build detection is unavailable", error)
+        false
+    }
+}
+
 /** Native frame insets: a negative value extends DWM composition over the client area. */
 @Structure.FieldOrder("left", "right", "top", "bottom")
-class TitleBarMargins() : Structure() {
+internal class TitleBarMargins() : Structure() {
     @JvmField var left = 0
     @JvmField var right = 0
     @JvmField var top = 0

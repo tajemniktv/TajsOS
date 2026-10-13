@@ -138,7 +138,11 @@ On supported Windows 11 builds, Glassmorphism Effects requests a native DWM titl
 and lets the sidebar reveal the blurred desktop behind TajsOS while preserving the system caption
 buttons, resize, and Snap behavior. Native sidebar transparency currently requires Skiko's
 software renderer for the whole desktop window, so it trades GPU drawing performance for that
-effect. Other platforms and unsupported Windows renderers retain the in-app Haze fallback.
+effect. The renderer is chosen at startup from the saved glass preference; enabling glass after a
+GPU-rendered launch uses in-app Haze until the next restart. Other platforms and unsupported
+Windows renderers retain the in-app Haze fallback. Hover-expanded navigation always uses in-app
+blur so page content cannot show through its labels. In collapsed mode, expandable root icons open
+a menu containing the root and child destinations.
 
 Validate shared logic, desktop UI logic, server behavior, Android lint, and Android packaging with:
 
@@ -175,7 +179,8 @@ cache; pull requests only read it. `GRADLE_ENCRYPTION_KEY` must be configured as
 secret (a base64-encoded AES key) to also save/restore encrypted configuration-cache entries.
 Without that secret, task/dependency caching still works, but configuration state is not persisted
 between runners. Fork PRs do not receive this secret. Successful CI runs prune unused cached state;
-failed runs do not prune it. Do not add a competing `setup-java` or `actions/cache` Gradle cache.
+failed Gradle builds do not prune it. A workflow failure after a successful Gradle invocation may
+still leave that cache pruned. Do not add a competing `setup-java` or `actions/cache` Gradle cache.
 
 CodeQL is the intentional exception: it reads reusable Gradle dependencies/toolchains but performs
 a clean, non-incremental compilation without task/configuration caches or a persistent Gradle daemon,

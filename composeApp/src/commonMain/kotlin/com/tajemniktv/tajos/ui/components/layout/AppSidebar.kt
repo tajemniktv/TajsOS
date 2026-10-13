@@ -61,6 +61,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerIcon
@@ -103,7 +104,7 @@ private const val DefaultExpandedSidebarWidthDp = 280
 
 /**
  * Persistent app sidebar with explicit behavior modes and inline expandable root sections.
- * Root clicks always navigate; the chevron controls child visibility in expanded presentation.
+ * Expanded root clicks navigate; collapsed roots with children open a destination menu.
  * A native desktop backdrop replaces the in-app Haze fill only when client alpha is supported.
  */
 @Composable
@@ -154,7 +155,8 @@ fun AppSidebar(
             expandedWidthDp.toFloat().coerceIn(MinExpandedSidebarWidthDp, MaxExpandedSidebarWidthDp)
     }
 
-    LaunchedEffect(currentRootScreen?.route) {
+    LaunchedEffect(currentRootScreen?.route, showExpandedContent) {
+        if (!showExpandedContent) return@LaunchedEffect
         val activeRoot = currentRootScreen ?: return@LaunchedEffect
         if (sidebarChildren(activeRoot).isNotEmpty()) {
             shellState.setRootExpanded(activeRoot.route, true)
@@ -339,7 +341,7 @@ fun SidebarLogoHeader(showExpandedContent: Boolean) {
 }
 
 /**
- * Root item with optional inline child destinations in one vertical layout.
+ * Root item with inline children when expanded and a destination menu when collapsed.
  * The context-menu host uses a Box, so the row and its children must share this Column.
  */
 @Composable
@@ -370,6 +372,8 @@ fun ExpandableNavSection(
     val isActiveBranch = isActiveRoot || hasActiveChild
     val showChildrenInline = isExpandedPresentation && expandable && isExpandedRoot
     val contextMenuState = rememberMouseContextMenuState()
+    val density = LocalDensity.current
+    val collapsedMenuOffset = with(density) { Offset(0f, 44.dp.toPx()) }
     MouseContextMenuHost(
         state = contextMenuState,
         modifier = Modifier.fillMaxWidth(),
@@ -394,6 +398,17 @@ fun ExpandableNavSection(
                     },
                 )
             }
+            if (expandable && !isExpandedPresentation) {
+                children.forEach { child ->
+                    DropdownMenuItem(
+                        text = { Text(text = stringResource(child.label)) },
+                        onClick = {
+                            contextMenuState.dismiss()
+                            onChildNavigate(child)
+                        },
+                    )
+                }
+            }
         },
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
@@ -407,7 +422,13 @@ fun ExpandableNavSection(
                             .fillMaxWidth()
                             .padding(horizontal = 10.dp, vertical = 2.dp)
                             .mouseClickable(
-                                onClick = onRootNavigate,
+                                onClick = {
+                                    if (expandable && !isExpandedPresentation) {
+                                        contextMenuState.showAt(collapsedMenuOffset)
+                                    } else {
+                                        onRootNavigate()
+                                    }
+                                },
                                 onSecondaryClickAt = { contextMenuState.showAt(it) },
                                 middleClickFallbackToPrimary = true,
                             ),
@@ -444,14 +465,15 @@ fun ExpandableNavSection(
                                 modifier = Modifier.align(Alignment.Center),
                             )
                             if (!isExpandedPresentation && expandable) {
-                                Surface(
-                                    shape = CircleShape,
-                                    color = if (isActiveBranch) TajsOSTheme.Primary else TajsOSTheme.Muted,
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.ArrowRight,
+                                    contentDescription = stringResource(Res.string.sidebar_expand_section, rootLabel),
+                                    tint = if (isActiveBranch) TajsOSTheme.Primary else TajsOSTheme.Muted,
                                     modifier =
                                         Modifier
-                                            .size(6.dp)
+                                            .size(12.dp)
                                             .align(Alignment.BottomEnd),
-                                ) {}
+                                )
                             }
                         }
                         AnimatedVisibility(

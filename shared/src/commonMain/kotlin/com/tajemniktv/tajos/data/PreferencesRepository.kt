@@ -100,13 +100,12 @@ class PreferencesRepository(
                 preferences[PreferencesKeys.DARK_THEME_ENABLED] ?: true
             }
 
-    /**
-     * Selected accent color hex string (e.g., "#D3BFFF").
-     */
+    /** Selected accent color, mapping the former default to the current palette across upgrades. */
     val accentColorHex: Flow<String> =
         safeData
             .map { preferences ->
-                preferences[PreferencesKeys.ACCENT_COLOR] ?: "#D3BFFF"
+                val stored = preferences[PreferencesKeys.ACCENT_COLOR]
+                if (stored == null || stored.equals("#BA9EFF", ignoreCase = true)) "#D3BFFF" else stored
             }
 
     /**

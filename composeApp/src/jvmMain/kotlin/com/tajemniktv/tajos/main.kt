@@ -50,13 +50,6 @@ import javax.swing.SwingUtilities
 
 fun main() =
     application {
-        // A decorated Compose window needs Skiko's software surface to present client alpha to DWM.
-        // Keep an explicit renderer override available for machines where this trade-off is unsuitable.
-        if (System.getProperty("os.name").startsWith("Windows", ignoreCase = true) &&
-            System.getProperty("skiko.renderApi").isNullOrBlank()
-        ) {
-            System.setProperty("skiko.renderApi", "SOFTWARE")
-        }
         // Basic setup for Desktop
         val database = createDatabase()
 
@@ -69,6 +62,14 @@ fun main() =
 
         val sharedModule = SharedModule(database, dataStore)
         val preferencesRepository = sharedModule.preferencesRepository
+        // The Skiko renderer is process-wide and must be selected before creating a window.
+        // Preserve an explicit user override and use software only when native glass is requested.
+        if (System.getProperty("skiko.renderApi").isNullOrBlank() &&
+            supportsNativeClientAlpha() &&
+            runBlocking { preferencesRepository.isGlassmorphismEnabled.first() }
+        ) {
+            System.setProperty("skiko.renderApi", "SOFTWARE")
+        }
         val persistedWindowPlacement =
             runBlocking {
                 preferencesRepository.desktopWindowPlacement.first()
