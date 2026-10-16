@@ -382,11 +382,9 @@ private fun renderNoteTaskMetadata(context: NoteDetailContext) {
                             Switch(
                                 checked = node.isHardDeadline,
                                 onCheckedChange = {
-                                    viewModel.updateNode(
-                                        node.copy(
+                                    viewModel.patchNode(node.id) { current -> current.copy(
                                             isHardDeadline = it,
-                                        ),
-                                    )
+                                        ) }
                                 },
                                 modifier = Modifier.scale(0.6f),
                             )
@@ -415,11 +413,9 @@ private fun renderNoteTaskMetadata(context: NoteDetailContext) {
                     BasicTextField(
                         value = nextStep,
                         onValueChange = {
-                            viewModel.updateNode(
-                                node.copy(
+                            viewModel.patchNode(node.id) { current -> current.copy(
                                     nextSmallestStep = it,
-                                ),
-                            )
+                                ) }
                         },
                         textStyle =
                             MaterialTheme.typography.bodyMedium.copy(
@@ -503,7 +499,7 @@ private fun renderNoteResourceMetadata(context: NoteDetailContext) {
                     )
                     BasicTextField(
                         value = node.author ?: "",
-                        onValueChange = { viewModel.updateNode(node.copy(author = it)) },
+                        onValueChange = { viewModel.patchNode(node.id) { current -> current.copy(author = it) } },
                         textStyle =
                             MaterialTheme.typography.bodyMedium.copy(
                                 color = TajsOSTheme.Text,
@@ -759,31 +755,31 @@ private fun renderNoteAwarePlanning(context: NoteDetailContext) {
                 title = "LOCATION",
                 selected = node.locationContext,
                 options = locationContexts,
-                apply = { value -> viewModel.updateNode(node.copy(locationContext = value)) },
+                apply = { value -> viewModel.patchNode(node.id) { current -> current.copy(locationContext = value) } },
             )
             contextRow(
                 title = "DEVICE",
                 selected = node.deviceContext,
                 options = deviceContexts,
-                apply = { value -> viewModel.updateNode(node.copy(deviceContext = value)) },
+                apply = { value -> viewModel.patchNode(node.id) { current -> current.copy(deviceContext = value) } },
             )
             contextRow(
                 title = "ENERGY",
                 selected = node.energyContext,
                 options = energyContexts,
-                apply = { value -> viewModel.updateNode(node.copy(energyContext = value)) },
+                apply = { value -> viewModel.patchNode(node.id) { current -> current.copy(energyContext = value) } },
             )
             contextRow(
                 title = "SOCIAL",
                 selected = node.socialContext,
                 options = socialContexts,
-                apply = { value -> viewModel.updateNode(node.copy(socialContext = value)) },
+                apply = { value -> viewModel.patchNode(node.id) { current -> current.copy(socialContext = value) } },
             )
             contextRow(
                 title = "TIME WINDOW",
                 selected = node.timeWindowContext,
                 options = timeWindowContexts,
-                apply = { value -> viewModel.updateNode(node.copy(timeWindowContext = value)) },
+                apply = { value -> viewModel.patchNode(node.id) { current -> current.copy(timeWindowContext = value) } },
             )
         }
     }

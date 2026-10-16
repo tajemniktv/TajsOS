@@ -4,6 +4,12 @@
 
 package com.tajemniktv.tajos.ui.screens.notes
 
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.common_back
+import tajsos.composeapp.generated.resources.notes_workspace_duplicate_title
+import tajsos.composeapp.generated.resources.notes_workspace_empty
+import tajsos.composeapp.generated.resources.notes_workspace_empty_hint
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -43,6 +49,8 @@ import com.tajemniktv.tajos.ui.components.screen.ScreenScrollBehavior
 import com.tajemniktv.tajos.ui.theme.TajsOSTheme
 import kotlinx.coroutines.launch
 
+import org.jetbrains.compose.resources.stringResource
+
 /**
  * Responsive route for the notes workspace.
  *
@@ -56,6 +64,7 @@ fun NotesRoute(
     onNavigate: (String) -> Unit,
     initialSelectedNoteId: Long? = null,
 ) {
+    val noteDrafts by viewModel.noteEdits.drafts.collectAsState()
     val allNodes by viewModel.allNodes.collectAsState()
     val allRelations by viewModel.allRelations.collectAsState()
     val nodesById = remember(allNodes) { allNodes.associate { it.node.id to it.node } }
@@ -134,8 +143,12 @@ fun NotesRoute(
                 ).toList()
         }
 
-    val selectedNote =
-        remember(allNotes, selectedNoteId) { allNotes.find { it.id == selectedNoteId } }
+    LaunchedEffect(allNotes, noteDrafts) { allNotes.forEach { viewModel.noteEdits.observe(it.source) } }
+    val selectedDraft = noteDrafts[selectedNoteId]
+    val selectedNote = allNotes.find { it.id == selectedNoteId }?.let {
+        it.copy(title = selectedDraft?.title ?: it.title, content = selectedDraft?.content ?: it.content)
+    }
+    val copiedTitle = stringResource(Res.string.notes_workspace_duplicate_title, selectedNote?.title.orEmpty())
     val selectedAttachments by viewModel
         .getAttachmentsForNode(selectedNote?.id ?: -1L)
         .collectAsState(initial = emptyList())
@@ -216,21 +229,20 @@ fun NotesRoute(
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             IconButton(onClick = { mobileInDetail = false }, modifier = Modifier.size(48.dp)) {
-                                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
+                                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(Res.string.common_back))
                             }
                         }
                         NotesEditorPane(
                             note = selectedNote,
                             focusMode = focusMode,
                             contextPanelVisible = true,
+                            contextToggleEnabled = false,
                             focusTitleSignal = focusTitleSignal,
-                            onTitleChange = { viewModel.updateNode(selectedNote.source.copy(title = it)) },
+                            draft = selectedDraft,
+                            onRetrySave = { viewModel.noteEdits.retry(selectedNoteId) },
+                            onTitleChange = { viewModel.noteEdits.updateTitle(selectedNote.id, it) },
                             onContentChange = {
-                                viewModel.updateNode(
-                                    selectedNote.source.copy(
-                                        content = it,
-                                    ),
-                                )
+                                viewModel.noteEdits.updateContent(selectedNote.id, it)
                             },
                             onToggleFavorite = { viewModel.togglePermanentPin(selectedNote.source) },
                             onArchive = {
@@ -243,7 +255,7 @@ fun NotesRoute(
                                 scope.launch {
                                     val newId =
                                         viewModel.addNodeForResult(
-                                            title = "${selectedNote.title} (Copy)",
+                                            title = copiedTitle,
                                             content = selectedNote.content,
                                             type = "note",
                                             inboxState = false,
@@ -283,23 +295,18 @@ fun NotesRoute(
                             note = selectedNote,
                             focusMode = true,
                             contextPanelVisible = false,
+                            contextToggleEnabled = false,
                             focusTitleSignal = focusTitleSignal,
+                            draft = selectedDraft,
+                            onRetrySave = { viewModel.noteEdits.retry(selectedNoteId) },
                             onTitleChange = { title ->
                                 selectedNote?.let {
-                                    viewModel.updateNode(
-                                        it.source.copy(
-                                            title = title,
-                                        ),
-                                    )
+                                    viewModel.noteEdits.updateTitle(it.id, title)
                                 }
                             },
                             onContentChange = { content ->
                                 selectedNote?.let {
-                                    viewModel.updateNode(
-                                        it.source.copy(
-                                            content = content,
-                                        ),
-                                    )
+                                    viewModel.noteEdits.updateContent(it.id, content)
                                 }
                             },
                             onToggleFavorite = { selectedNote?.let { viewModel.togglePermanentPin(it.source) } },
@@ -311,7 +318,7 @@ fun NotesRoute(
                                     scope.launch {
                                         val newId =
                                             viewModel.addNodeForResult(
-                                                title = "${item.title} (Copy)",
+                                                title = copiedTitle,
                                                 content = item.content,
                                                 type = "note",
                                                 inboxState = false,
@@ -352,8 +359,8 @@ fun NotesRoute(
                         )
                         if (allNotes.isEmpty()) {
                             EmptyState(
-                                message = "No notes",
-                                description = "Create your first note to start building your knowledge workspace.",
+                                message = stringResource(Res.string.notes_workspace_empty),
+                                description = stringResource(Res.string.notes_workspace_empty_hint),
                                 modifier = Modifier.weight(1f),
                             )
                         } else {
@@ -362,20 +369,16 @@ fun NotesRoute(
                                 focusMode = false,
                                 contextPanelVisible = contextVisible,
                                 focusTitleSignal = focusTitleSignal,
+                                draft = selectedDraft,
+                                onRetrySave = { viewModel.noteEdits.retry(selectedNoteId) },
                                 onTitleChange = { title ->
                                     selectedNote?.let {
-                                        viewModel.updateNode(
-                                            it.source.copy(
-                                                title = title,
-                                            ),
-                                        )
+                                        viewModel.noteEdits.updateTitle(it.id, title)
                                     }
                                 },
                                 onContentChange = { content ->
                                     selectedNote?.let {
-                                        viewModel.updateNode(
-                                            it.source.copy(content = content),
-                                        )
+                                        viewModel.noteEdits.updateContent(it.id, content)
                                     }
                                 },
                                 onToggleFavorite = {
@@ -393,7 +396,7 @@ fun NotesRoute(
                                         scope.launch {
                                             val newId =
                                                 viewModel.addNodeForResult(
-                                                    title = "${item.title} (Copy)",
+                                                    title = copiedTitle,
                                                     content = item.content,
                                                     type = "note",
                                                     inboxState = false,

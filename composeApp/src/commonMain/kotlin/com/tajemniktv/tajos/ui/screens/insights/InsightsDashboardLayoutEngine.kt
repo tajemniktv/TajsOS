@@ -4,27 +4,13 @@
 
 package com.tajemniktv.tajos.ui.screens.insights
 
+@Suppress("UNUSED_PARAMETER")
 fun buildInsightsDashboardPlan(surface: InsightsDashboardSurface): InsightsDashboardPlan =
-    when (surface) {
-        InsightsDashboardSurface.MOBILE -> {
-            InsightsDashboardPlan(
-                primary =
-                    listOf(
-                        InsightsDashboardBlock(
-                            "insights_main",
-                        ),
-                    ),
-            )
-        }
-
-        InsightsDashboardSurface.DESKTOP -> {
-            InsightsDashboardPlan(
-                primary =
-                    listOf(
-                        InsightsDashboardBlock(
-                            "insights_main",
-                        ),
-                    ),
-            )
-        }
-    }
+    InsightsDashboardPlan(
+        primary =
+            listOf(
+                InsightsDashboardBlock(
+                    "insights_main",
+                ),
+            ),
+    )

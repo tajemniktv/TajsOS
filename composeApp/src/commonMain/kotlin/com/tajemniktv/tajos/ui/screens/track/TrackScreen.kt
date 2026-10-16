@@ -7,6 +7,8 @@ package com.tajemniktv.tajos.ui.screens.track
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.runtime.LaunchedEffect
+import kotlinx.coroutines.flow.first
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -19,8 +21,6 @@ import com.tajemniktv.tajos.ui.MainViewModel
 import com.tajemniktv.tajos.ui.Screen
 import com.tajemniktv.tajos.ui.components.screen.ScreenScaffold
 import com.tajemniktv.tajos.ui.theme.TajsOSTheme
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import kotlin.math.roundToInt
 
 /**
@@ -37,40 +37,42 @@ fun TrackRoute(
     val trackEntries by viewModel.trackEntries.collectAsState()
     val medications by viewModel.medications.collectAsState()
 
-    val today =
-        kotlin.time.Clock.System
-            .now()
-            .toLocalDateTime(TimeZone.currentSystemDefault())
-            .date
-            .toString()
+    val localDate by viewModel.localDate.collectAsState()
+    val today = localDate.toString()
     val todayEntry = trackEntries.find { it.date == today }
 
-    var energy by remember(todayEntry) {
+    var energy by remember(today, todayEntry) {
         mutableFloatStateOf(
             todayEntry?.energyScore?.toFloat() ?: 3f,
         )
     }
-    var affective by remember(todayEntry) {
+    var affective by remember(today, todayEntry) {
         mutableFloatStateOf(
             todayEntry?.moodScore?.toFloat() ?: 3f,
         )
     }
-    var cognitive by remember(todayEntry) {
+    var cognitive by remember(today, todayEntry) {
         mutableFloatStateOf(
             todayEntry?.focusScore?.toFloat() ?: 5f,
         )
     }
-    var systemTension by remember(todayEntry) {
+    var systemTension by remember(today, todayEntry) {
         mutableFloatStateOf(
             todayEntry?.anxietyScore?.toFloat() ?: 1f,
         )
     }
-    var recovery by remember(todayEntry) { mutableFloatStateOf(todayEntry?.sleepScore ?: 7.5f) }
+    var recovery by remember(today, todayEntry) { mutableFloatStateOf(todayEntry?.sleepScore ?: 7.5f) }
 
-    var note by remember(todayEntry) { mutableStateOf(todayEntry?.symptomNote ?: "") }
+    var note by remember(today, todayEntry) { mutableStateOf(todayEntry?.symptomNote ?: "") }
 
-    val selectedMedIds = remember { mutableStateOf(setOf<Long>()) }
-    val allMedsTaken = medications.all { it.isOptional || selectedMedIds.value.contains(it.id) }
+    var selectedMedicationIds by remember(today, todayEntry?.id) { mutableStateOf<Set<Long>?>(null) }
+    LaunchedEffect(today, todayEntry?.id) {
+        selectedMedicationIds = todayEntry?.let { entry ->
+            viewModel.getMedicationsForEntry(entry.id).first().filter { it.wasTaken }.map { it.medicationId }.toSet()
+        } ?: emptySet()
+    }
+    val selectedMedIds = selectedMedicationIds.orEmpty()
+    val allMedsTaken = selectedMedicationIds != null && medications.all { it.isOptional || selectedMedIds.contains(it.id) }
 
     val context =
         TrackDashboardContext(
@@ -83,7 +85,7 @@ fun TrackRoute(
             systemTension = systemTension,
             recovery = recovery,
             note = note,
-            selectedMedIds = selectedMedIds.value,
+            selectedMedIds = selectedMedIds,
             allMedsTaken = allMedsTaken,
             onEnergyChange = { energy = it },
             onAffectiveChange = { affective = it },
@@ -92,19 +94,19 @@ fun TrackRoute(
             onRecoveryChange = { recovery = it },
             onNoteChange = { note = it },
             onToggleMed = { id ->
-                selectedMedIds.value =
-                    if (selectedMedIds.value.contains(id)) {
-                        selectedMedIds.value - id
-                    } else {
-                        selectedMedIds.value + id
-                    }
+                selectedMedicationIds?.let { selected ->
+                    selectedMedicationIds = if (id in selected) selected - id else selected + id
+                }
             },
             onToggleAllMeds = {
-                selectedMedIds.value =
-                    if (allMedsTaken) emptySet() else medications.map { it.id }.toSet()
+                selectedMedicationIds?.let { selected ->
+                    val allTaken = medications.all { it.isOptional || it.id in selected }
+                    selectedMedicationIds = if (allTaken) emptySet() else medications.map { it.id }.toSet()
+                }
             },
+            saveEnabled = selectedMedicationIds != null,
             onSave = {
-                viewModel.addTrackEntry(
+                if (selectedMedicationIds != null) viewModel.addTrackEntry(
                     energyPulse = energy.roundToInt(),
                     affectivePulse = affective.roundToInt(),
                     cognitivePulse = cognitive.roundToInt(),
@@ -112,7 +114,7 @@ fun TrackRoute(
                     recoveryPulse = recovery,
                     tookMeds = allMedsTaken,
                     note = note,
-                    medicationIds = selectedMedIds.value,
+                    medicationIds = selectedMedIds,
                 )
             },
         )

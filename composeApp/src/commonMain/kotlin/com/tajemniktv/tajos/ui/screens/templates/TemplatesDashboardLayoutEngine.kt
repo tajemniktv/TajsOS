@@ -7,23 +7,11 @@ package com.tajemniktv.tajos.ui.screens.templates
 /**
  * Builds a templates dashboard layout plan based on the active surface.
  */
+@Suppress("UNUSED_PARAMETER")
 fun buildTemplatesDashboardPlan(surface: TemplatesDashboardSurface): TemplatesDashboardPlan =
-    when (surface) {
-        TemplatesDashboardSurface.MOBILE -> {
-            TemplatesDashboardPlan(
-                primary =
-                    listOf(
-                        TemplatesDashboardBlock("templates_list"),
-                    ),
-            )
-        }
-
-        TemplatesDashboardSurface.DESKTOP -> {
-            TemplatesDashboardPlan(
-                primary =
-                    listOf(
-                        TemplatesDashboardBlock("templates_list"),
-                    ),
-            )
-        }
-    }
+    TemplatesDashboardPlan(
+        primary =
+            listOf(
+                TemplatesDashboardBlock("templates_list"),
+            ),
+    )

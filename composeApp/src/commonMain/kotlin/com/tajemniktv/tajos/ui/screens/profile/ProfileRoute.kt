@@ -4,19 +4,11 @@
 
 package com.tajemniktv.tajos.ui.screens.profile
 
-import com.tajemniktv.tajos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -25,7 +17,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
@@ -34,16 +25,6 @@ import com.tajemniktv.tajos.ui.Screen
 import com.tajemniktv.tajos.ui.components.screen.ScreenScaffold
 import com.tajemniktv.tajos.ui.components.screen.ScreenScrollBehavior
 import com.tajemniktv.tajos.ui.theme.TajsOSTheme
-import org.jetbrains.compose.resources.stringResource
-import tajsos.composeapp.generated.resources.Res
-import tajsos.composeapp.generated.resources.common_back
-import tajsos.composeapp.generated.resources.med_brand_names
-import tajsos.composeapp.generated.resources.med_dosage
-import tajsos.composeapp.generated.resources.med_is_optional
-import tajsos.composeapp.generated.resources.med_save
-import tajsos.composeapp.generated.resources.med_substance
-import tajsos.composeapp.generated.resources.med_take_at
-import tajsos.composeapp.generated.resources.profile_add_med
 
 /**
  * Profile feature route that owns state orchestration and delegates visual sections to block
@@ -129,7 +110,7 @@ fun ProfileRoute(
     }
 
     if (showAddMedDialog) {
-        AddMedicationDialog(
+        com.tajemniktv.tajos.ui.components.common.MedicationEditorDialog(
             onDismiss = { showAddMedDialog = false },
         ) { sub, br, dos, hr, isOpt ->
             viewModel.addMedication(sub, br, dos, hr, isOpt)
@@ -177,87 +158,4 @@ fun ProfileScreen(
             }
         }
     }
-}
-
-/**
- * Dialog for adding a new medication.
- *
- * @param onDismiss Callback invoked when the dialog is dismissed.
- * @param modifier The modifier to be applied to the layout.
- * @param onSave Callback invoked when the medication is saved.
- */
-@Composable
-private fun AddMedicationDialog(
-    onDismiss: () -> Unit,
-    modifier: Modifier = Modifier,
-    onSave: (substance: String, brands: String, dosage: String?, hour: Int?, optional: Boolean) -> Unit,
-) {
-    var substance by remember { mutableStateOf("") }
-    var brands by remember { mutableStateOf("") }
-    var dosage by remember { mutableStateOf("") }
-    var hour by remember { mutableStateOf("") }
-    var isOptional by remember { mutableStateOf(value = false) }
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        modifier = modifier,
-        title = { Text(stringResource(Res.string.profile_add_med)) },
-        text = {
-            androidx.compose.foundation.layout.Column(
-                verticalArrangement =
-                    Arrangement.spacedBy(
-                        TajsOSTheme.SpacingSm,
-                    ),
-            ) {
-                TactileOutlinedTextField(
-                    value = substance,
-                    onValueChange = { substance = it },
-                    label = { Text(stringResource(Res.string.med_substance)) },
-                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                )
-                TactileOutlinedTextField(
-                    value = brands,
-                    onValueChange = { brands = it },
-                    label = { Text(stringResource(Res.string.med_brand_names)) },
-                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                )
-                TactileOutlinedTextField(
-                    value = dosage,
-                    onValueChange = { dosage = it },
-                    label = { Text(stringResource(Res.string.med_dosage)) },
-                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                )
-                TactileOutlinedTextField(
-                    value = hour,
-                    onValueChange = { hour = it },
-                    label = { Text(stringResource(Res.string.med_take_at)) },
-                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                )
-                androidx.compose.foundation.layout.Row(verticalAlignment = Alignment.CenterVertically) {
-                    Checkbox(checked = isOptional, onCheckedChange = { isOptional = it })
-                    Text(stringResource(Res.string.med_is_optional))
-                }
-            }
-        },
-        confirmButton = {
-            Button(
-                onClick = {
-                    onSave(
-                        substance,
-                        brands,
-                        dosage.takeIf { it.isNotEmpty() },
-                        hour.toIntOrNull(),
-                        isOptional,
-                    )
-                },
-            ) {
-                Text(stringResource(Res.string.med_save))
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(Res.string.common_back))
-            }
-        },
-    )
 }

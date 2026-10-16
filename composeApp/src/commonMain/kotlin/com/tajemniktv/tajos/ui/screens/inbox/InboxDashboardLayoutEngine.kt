@@ -4,23 +4,11 @@
 
 package com.tajemniktv.tajos.ui.screens.inbox
 
+@Suppress("UNUSED_PARAMETER")
 fun buildInboxDashboardPlan(surface: InboxDashboardSurface): InboxDashboardPlan =
-    when (surface) {
-        InboxDashboardSurface.MOBILE -> {
-            InboxDashboardPlan(
-                primary =
-                    listOf(
-                        InboxDashboardBlock("inbox_main"),
-                    ),
-            )
-        }
-
-        InboxDashboardSurface.DESKTOP -> {
-            InboxDashboardPlan(
-                primary =
-                    listOf(
-                        InboxDashboardBlock("inbox_main"),
-                    ),
-            )
-        }
-    }
+    InboxDashboardPlan(
+        primary =
+            listOf(
+                InboxDashboardBlock("inbox_main"),
+            ),
+    )

@@ -4,27 +4,13 @@
 
 package com.tajemniktv.tajos.ui.screens.vaults
 
+@Suppress("UNUSED_PARAMETER")
 fun buildVaultsDashboardPlan(surface: VaultsDashboardSurface): VaultsDashboardPlan =
-    when (surface) {
-        VaultsDashboardSurface.MOBILE -> {
-            VaultsDashboardPlan(
-                primary =
-                    listOf(
-                        VaultsDashboardBlock(
-                            "vaults_main",
-                        ),
-                    ),
-            )
-        }
-
-        VaultsDashboardSurface.DESKTOP -> {
-            VaultsDashboardPlan(
-                primary =
-                    listOf(
-                        VaultsDashboardBlock(
-                            "vaults_main",
-                        ),
-                    ),
-            )
-        }
-    }
+    VaultsDashboardPlan(
+        primary =
+            listOf(
+                VaultsDashboardBlock(
+                    "vaults_main",
+                ),
+            ),
+    )

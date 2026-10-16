@@ -4,6 +4,23 @@
 
 package com.tajemniktv.tajos.ui.screens.notes
 
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.notes_workspace_archive
+import tajsos.composeapp.generated.resources.notes_workspace_breadcrumb
+import tajsos.composeapp.generated.resources.notes_workspace_context
+import tajsos.composeapp.generated.resources.notes_workspace_copy
+import tajsos.composeapp.generated.resources.notes_workspace_delete
+import tajsos.composeapp.generated.resources.notes_workspace_duplicate
+import tajsos.composeapp.generated.resources.notes_workspace_favorite_add
+import tajsos.composeapp.generated.resources.notes_workspace_favorite_remove
+import tajsos.composeapp.generated.resources.notes_workspace_focus
+import tajsos.composeapp.generated.resources.notes_workspace_item_meta
+import tajsos.composeapp.generated.resources.notes_workspace_more
+import tajsos.composeapp.generated.resources.notes_workspace_not_selected
+import tajsos.composeapp.generated.resources.notes_workspace_select_hint
+import tajsos.composeapp.generated.resources.notes_workspace_untitled
+import tajsos.composeapp.generated.resources.notes_workspace_word_count
+
 import com.tajemniktv.tajos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.size
@@ -31,7 +48,6 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -60,6 +76,9 @@ import kotlinx.datetime.toLocalDateTime
 import kotlin.math.max
 import kotlin.time.Instant
 
+import org.jetbrains.compose.resources.pluralStringResource
+import org.jetbrains.compose.resources.stringResource
+
 /**
  * Primary note viewer/editor pane with metadata and action row.
  */
@@ -78,6 +97,9 @@ fun NotesEditorPane(
     onDuplicate: () -> Unit,
     onDelete: () -> Unit,
     modifier: Modifier = Modifier,
+    draft: com.tajemniktv.tajos.ui.main.state.NoteTextDraft? = null,
+    onRetrySave: () -> Unit = {},
+    contextToggleEnabled: Boolean = true,
 ) {
     Surface(
         modifier = modifier.fillMaxSize(),
@@ -86,8 +108,8 @@ fun NotesEditorPane(
     ) {
         if (note == null) {
             EmptyState(
-                message = "No note selected",
-                description = "Pick a note from the list to start reading or editing.",
+                message = stringResource(Res.string.notes_workspace_not_selected),
+                description = stringResource(Res.string.notes_workspace_select_hint),
             )
             return@Surface
         }
@@ -108,9 +130,7 @@ fun NotesEditorPane(
             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                 Column(modifier = Modifier.fillMaxWidth().widthIn(max = 880.dp)) {
                     Text(
-                        text = "NOTES > ${
-                            note.domain.name.lowercase().replaceFirstChar(Char::titlecase)
-                        }",
+                        text = stringResource(Res.string.notes_workspace_breadcrumb, notesDomainLabel(note.domain)),
                         style = MaterialTheme.typography.labelSmall,
                         color = TajsOSTheme.Muted,
                     )
@@ -122,14 +142,15 @@ fun NotesEditorPane(
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true,
                         textStyle = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.SemiBold),
-                        placeholder = { Text("Untitled note") },
+                        placeholder = { Text(stringResource(Res.string.notes_workspace_untitled)) },
                     )
                     Text(
-                        text = "${absoluteDateLabel(note.updatedAt)} • ${wordCount(note.content)} words • Markdown",
+                        text = stringResource(Res.string.notes_workspace_item_meta, absoluteDateLabel(note.updatedAt), pluralStringResource(Res.plurals.notes_workspace_word_count, wordCount(note.content), wordCount(note.content))),
                         style = MaterialTheme.typography.labelSmall,
                         color = TajsOSTheme.Muted,
                         modifier = Modifier.padding(top = 6.dp),
                     )
+                    NoteSaveStatus(draft) { onRetrySave() }
                     NotesEditorHeaderActions(
                         favorite = note.isFavorite,
                         focusMode = focusMode,
@@ -138,6 +159,7 @@ fun NotesEditorPane(
                         onArchive = onArchive,
                         onToggleFocusMode = onToggleFocusMode,
                         onToggleContextPanel = onToggleContextPanel,
+                        contextToggleEnabled = contextToggleEnabled,
                         onDuplicate = onDuplicate,
                         onCopyContent = {
                             scope.launch {
@@ -188,6 +210,7 @@ fun NotesEditorHeaderActions(
     onDuplicate: () -> Unit,
     onCopyContent: () -> Unit,
     onDelete: () -> Unit,
+    contextToggleEnabled: Boolean = true,
 ) {
     var menuOpen by remember { mutableStateOf(false) }
     Row(
@@ -199,49 +222,49 @@ fun NotesEditorHeaderActions(
             IconButton(onClick = onToggleFavorite, modifier = Modifier.size(48.dp)) {
                 Icon(
                     imageVector = if (favorite) Icons.Default.Star else Icons.Default.StarBorder,
-                    contentDescription = null,
+                    contentDescription = stringResource(if (favorite) Res.string.notes_workspace_favorite_remove else Res.string.notes_workspace_favorite_add),
                     tint = if (favorite) TajsOSTheme.Primary else TajsOSTheme.Text,
                 )
             }
             IconButton(onClick = onArchive, modifier = Modifier.size(48.dp)) {
-                Icon(Icons.Default.Archive, contentDescription = null, tint = TajsOSTheme.Text)
+                Icon(Icons.Default.Archive, contentDescription = stringResource(Res.string.notes_workspace_archive), tint = TajsOSTheme.Text)
             }
             IconButton(onClick = onToggleFocusMode, modifier = Modifier.size(48.dp)) {
                 Icon(
                     Icons.Default.CenterFocusStrong,
-                    contentDescription = null,
+                    contentDescription = stringResource(Res.string.notes_workspace_focus),
                     tint = if (focusMode) TajsOSTheme.Primary else TajsOSTheme.Text,
                 )
             }
-            IconButton(onClick = onToggleContextPanel, modifier = Modifier.size(48.dp)) {
+            IconButton(onClick = onToggleContextPanel, enabled = contextToggleEnabled, modifier = Modifier.size(48.dp)) {
                 Icon(
                     Icons.Default.Info,
-                    contentDescription = null,
+                    contentDescription = stringResource(Res.string.notes_workspace_context),
                     tint = if (contextPanelVisible) TajsOSTheme.Primary else TajsOSTheme.Text,
                 )
             }
         }
         Box {
             IconButton(onClick = { menuOpen = true }, modifier = Modifier.size(48.dp)) {
-                Icon(Icons.Default.MoreVert, contentDescription = null)
+                Icon(Icons.Default.MoreVert, contentDescription = stringResource(Res.string.notes_workspace_more))
             }
             DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
                 DropdownMenuItem(
-                    text = { Text("Duplicate note") },
+                    text = { Text(stringResource(Res.string.notes_workspace_duplicate)) },
                     onClick = {
                         menuOpen = false
                         onDuplicate()
                     },
                 )
                 DropdownMenuItem(
-                    text = { Text("Copy content") },
+                    text = { Text(stringResource(Res.string.notes_workspace_copy)) },
                     onClick = {
                         menuOpen = false
                         onCopyContent()
                     },
                 )
                 DropdownMenuItem(
-                    text = { Text("Delete note") },
+                    text = { Text(stringResource(Res.string.notes_workspace_delete)) },
                     onClick = {
                         menuOpen = false
                         onDelete()

@@ -55,6 +55,7 @@ data class TrackDashboardContext(
     val onToggleMed: (Long) -> Unit,
     val onToggleAllMeds: () -> Unit,
     val onSave: () -> Unit,
+    val saveEnabled: Boolean = true,
 )
 
 /**

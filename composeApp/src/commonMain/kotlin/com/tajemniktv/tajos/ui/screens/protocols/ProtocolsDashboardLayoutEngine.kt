@@ -4,27 +4,13 @@
 
 package com.tajemniktv.tajos.ui.screens.protocols
 
+@Suppress("UNUSED_PARAMETER")
 fun buildProtocolsDashboardPlan(surface: ProtocolsDashboardSurface): ProtocolsDashboardPlan =
-    when (surface) {
-        ProtocolsDashboardSurface.MOBILE -> {
-            ProtocolsDashboardPlan(
-                primary =
-                    listOf(
-                        ProtocolsDashboardBlock(
-                            "protocols_main",
-                        ),
-                    ),
-            )
-        }
-
-        ProtocolsDashboardSurface.DESKTOP -> {
-            ProtocolsDashboardPlan(
-                primary =
-                    listOf(
-                        ProtocolsDashboardBlock(
-                            "protocols_main",
-                        ),
-                    ),
-            )
-        }
-    }
+    ProtocolsDashboardPlan(
+        primary =
+            listOf(
+                ProtocolsDashboardBlock(
+                    "protocols_main",
+                ),
+            ),
+    )

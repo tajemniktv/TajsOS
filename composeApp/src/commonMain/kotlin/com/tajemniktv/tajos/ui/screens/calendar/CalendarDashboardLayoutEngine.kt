@@ -4,27 +4,13 @@
 
 package com.tajemniktv.tajos.ui.screens.calendar
 
+@Suppress("UNUSED_PARAMETER")
 fun buildCalendarDashboardPlan(surface: CalendarDashboardSurface): CalendarDashboardPlan =
-    when (surface) {
-        CalendarDashboardSurface.MOBILE -> {
-            CalendarDashboardPlan(
-                primary =
-                    listOf(
-                        CalendarDashboardBlock(
-                            "calendar_main",
-                        ),
-                    ),
-            )
-        }
-
-        CalendarDashboardSurface.DESKTOP -> {
-            CalendarDashboardPlan(
-                primary =
-                    listOf(
-                        CalendarDashboardBlock(
-                            "calendar_main",
-                        ),
-                    ),
-            )
-        }
-    }
+    CalendarDashboardPlan(
+        primary =
+            listOf(
+                CalendarDashboardBlock(
+                    "calendar_main",
+                ),
+            ),
+    )

@@ -4,13 +4,6 @@
 
 package com.tajemniktv.tajos.ui.screens.capacity
 
+@Suppress("UNUSED_PARAMETER")
 fun buildCapacityDashboardPlan(surface: CapacityDashboardSurface): CapacityDashboardPlan =
-    when (surface) {
-        CapacityDashboardSurface.MOBILE -> {
-            CapacityDashboardPlan(primary = listOf(CapacityDashboardBlock("capacity_main")))
-        }
-
-        CapacityDashboardSurface.DESKTOP -> {
-            CapacityDashboardPlan(primary = listOf(CapacityDashboardBlock("capacity_main")))
-        }
-    }
+    CapacityDashboardPlan(primary = listOf(CapacityDashboardBlock("capacity_main")))

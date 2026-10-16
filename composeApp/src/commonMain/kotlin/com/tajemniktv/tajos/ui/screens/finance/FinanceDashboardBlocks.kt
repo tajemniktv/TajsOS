@@ -6,6 +6,17 @@
 
 package com.tajemniktv.tajos.ui.screens.finance
 
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.finance_deadlines_chip
+import tajsos.composeapp.generated.resources.finance_empty_queue
+import tajsos.composeapp.generated.resources.finance_header_tracking
+import tajsos.composeapp.generated.resources.finance_item_action
+import tajsos.composeapp.generated.resources.finance_item_note
+import tajsos.composeapp.generated.resources.finance_item_record
+import tajsos.composeapp.generated.resources.finance_metrics_reference_count
+import tajsos.composeapp.generated.resources.finance_queue_label
+import tajsos.composeapp.generated.resources.finance_reference_items
+
 import androidx.compose.foundation.background
 import com.tajemniktv.tajos.ui.components.common.mouseClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,13 +30,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Sync
-import androidx.compose.material3.AssistChip
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -47,22 +54,6 @@ import com.tajemniktv.tajos.ui.lens.LensUiContract
 import com.tajemniktv.tajos.ui.screens.maintenanceTypes
 import com.tajemniktv.tajos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
-import tajsos.composeapp.generated.resources.Res
-import tajsos.composeapp.generated.resources.finance_chip_expense
-import tajsos.composeapp.generated.resources.finance_chip_live
-import tajsos.composeapp.generated.resources.finance_chip_sync_ready
-import tajsos.composeapp.generated.resources.finance_deadlines_chip
-import tajsos.composeapp.generated.resources.finance_empty_queue
-import tajsos.composeapp.generated.resources.finance_header_tracking
-import tajsos.composeapp.generated.resources.finance_item_action
-import tajsos.composeapp.generated.resources.finance_item_note
-import tajsos.composeapp.generated.resources.finance_item_record
-import tajsos.composeapp.generated.resources.finance_metrics_reference_count
-import tajsos.composeapp.generated.resources.finance_queue_label
-import kotlin.math.abs
-import kotlin.math.roundToInt
-import androidx.compose.ui.input.pointer.PointerIcon
-import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 /**
  * Renders the finance dashboard header shell with high-level status chips and dataset volume context.
@@ -100,27 +91,7 @@ internal fun renderFinanceHeaderBlock(context: FinanceDashboardContext) {
                 style = MaterialTheme.typography.labelSmall,
                 color = TajsOSTheme.Muted,
             )
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                AssistChip(
-                    onClick = {},
-                    label = { Text(stringResource(Res.string.finance_chip_live)) },
-                )
-                AssistChip(
-                    onClick = {},
-                    label = { Text(stringResource(Res.string.finance_chip_sync_ready)) },
-                )
-                AssistChip(
-                    onClick = {},
-                    label = { Text(stringResource(Res.string.finance_chip_expense)) },
-                    leadingIcon = {
-                        Icon(
-                            Icons.Default.Add,
-                            null,
-                            modifier = Modifier.size(14.dp),
-                        )
-                    },
-                )
-            }
+
         }
     }
 }
@@ -141,13 +112,13 @@ internal fun renderFinanceMetricsBlock(context: FinanceDashboardContext) {
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Text(
-                    "REFERENCE WEIGHT",
+                    stringResource(Res.string.finance_reference_items),
                     style = MaterialTheme.typography.labelSmall,
                     color = TajsOSTheme.Muted,
                     fontWeight = FontWeight.Bold,
                 )
                 Text(
-                    formatCurrency(context.liquidity),
+                    context.knowledgeItems.size.toString(),
                     style = MaterialTheme.typography.displayMedium,
                     color = TajsOSTheme.Text,
                     fontWeight = FontWeight.ExtraBold,
@@ -237,16 +208,7 @@ internal fun renderFinanceActivityBlock(context: FinanceDashboardContext) {
                             color = TajsOSTheme.Muted,
                         )
                     }
-                    Text(
-                        formatCurrency(
-                            financeSyntheticTxn(
-                                item.node.title,
-                            ),
-                        ),
-                        color = TajsOSTheme.Primary,
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Bold,
-                    )
+
                 }
             }
         }
@@ -295,18 +257,7 @@ internal fun renderFinanceInsightsBlock(context: FinanceDashboardContext) {
                     )
                 }
             }
-            Text(
-                "MODEL CONFIDENCE ${context.confidence}%",
-                style = MaterialTheme.typography.labelSmall,
-                color = TajsOSTheme.Primary,
-                fontWeight = FontWeight.Bold,
-            )
-            LinearProgressIndicator(
-                progress = { context.confidence / 100f },
-                modifier = Modifier.fillMaxWidth().height(6.dp),
-                color = TajsOSTheme.Primary,
-                trackColor = TajsOSTheme.Border.copy(alpha = 0.3f),
-            )
+
         }
     }
 }
@@ -340,17 +291,10 @@ internal fun renderFinanceVaultBlock(context: FinanceDashboardContext) {
                     fontWeight = FontWeight.Bold,
                 )
             }
-            AssistChip(
-                onClick = {},
-                label = {
-                    Text(
-                        stringResource(
-                            Res.string.finance_deadlines_chip,
-                            context.deadlineItems.size,
-                        ),
-                    )
-                },
-                leadingIcon = { Icon(Icons.Default.Sync, null, modifier = Modifier.size(14.dp)) },
+            Text(
+                stringResource(Res.string.finance_deadlines_chip, context.deadlineItems.size),
+                style = MaterialTheme.typography.labelSmall,
+                color = TajsOSTheme.Muted,
             )
         }
     }
@@ -481,27 +425,4 @@ private fun FinanceMiniBars(
             )
         }
     }
-}
-
-internal fun financeSyntheticLiquidity(title: String): Double = 500.0 + title.length * 140.0 + (title.sumOf { it.code } % 91) * 13.0
-
-internal fun financeSyntheticTxn(title: String): Double = 40.0 + title.length * 12.0 + (title.sumOf { it.code } % 33) * 4.0
-
-/**
- * Formats a numeric amount as USD-like currency in common code without relying on JVM-only format APIs.
- */
-private fun formatCurrency(amount: Double): String {
-    val roundedCents = (amount * 100).roundToInt()
-    val sign = if (roundedCents < 0) "-" else ""
-    val absoluteCents = abs(roundedCents)
-    val wholePart = absoluteCents / 100
-    val centsPart = absoluteCents % 100
-    val groupedWhole =
-        wholePart
-            .toString()
-            .reversed()
-            .chunked(3)
-            .joinToString(",")
-            .reversed()
-    return "$sign$$groupedWhole.${centsPart.toString().padStart(2, '0')}"
 }

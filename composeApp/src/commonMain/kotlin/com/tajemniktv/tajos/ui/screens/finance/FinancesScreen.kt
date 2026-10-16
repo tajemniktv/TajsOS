@@ -82,27 +82,17 @@ fun FinancesRoute(
                 .sortedByDescending { it.node.updatedAt }
         }
 
-    val liquidity =
-        remember(recentItems) {
-            recentItems.sumOf {
-                financeSyntheticLiquidity(
-                    it.node.title,
-                )
-            }
-        }
-
     val bars =
         remember(actionItems, knowledgeItems, deadlineItems, queue, recurring, overdue) {
             listOf(
-                (actionItems.size + 1).coerceAtLeast(1),
-                (knowledgeItems.size + 1).coerceAtLeast(1),
-                (deadlineItems.size + 1).coerceAtLeast(1),
-                (queue.size + recurring.size + 1).coerceAtLeast(1),
-                (overdue.size + 1).coerceAtLeast(1),
+                actionItems.size,
+                knowledgeItems.size,
+                deadlineItems.size,
+                (queue + recurring).distinctBy { it.node.node.id }.size,
+                overdue.size,
             )
         }
 
-    val confidence = remember(snapshot) { (100 - snapshot.adminDebtMeter / 2).coerceIn(35, 98) }
 
     val context =
         remember(
@@ -118,8 +108,6 @@ fun FinancesRoute(
             knowledgeItems,
             deadlineItems,
             recentItems,
-            confidence,
-            liquidity,
             bars,
             maintenanceView,
             onEditNode,
@@ -136,8 +124,6 @@ fun FinancesRoute(
                 knowledgeItems = knowledgeItems,
                 deadlineItems = deadlineItems,
                 recentItems = recentItems,
-                confidence = confidence,
-                liquidity = liquidity,
                 bars = bars,
                 maintenanceView = maintenanceView,
                 onMaintenanceViewChange = { maintenanceView = it },

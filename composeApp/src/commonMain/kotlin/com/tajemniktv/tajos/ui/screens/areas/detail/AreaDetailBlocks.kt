@@ -4,6 +4,32 @@
 
 package com.tajemniktv.tajos.ui.screens.areas.detail
 
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.area_detail_cadence
+import tajsos.composeapp.generated.resources.area_detail_context
+import tajsos.composeapp.generated.resources.area_detail_health
+import tajsos.composeapp.generated.resources.area_detail_mission_control
+import tajsos.composeapp.generated.resources.area_detail_open_responsibilities
+import tajsos.composeapp.generated.resources.area_detail_pressure
+import tajsos.composeapp.generated.resources.area_detail_review_signals
+import tajsos.composeapp.generated.resources.area_detail_subtitle
+import tajsos.composeapp.generated.resources.area_detail_tab_notes
+import tajsos.composeapp.generated.resources.area_detail_tab_projects
+import tajsos.composeapp.generated.resources.area_detail_tab_review
+import tajsos.composeapp.generated.resources.area_detail_tab_timeline
+import tajsos.composeapp.generated.resources.area_detail_tab_work
+import tajsos.composeapp.generated.resources.area_detail_timeline_empty
+import tajsos.composeapp.generated.resources.detail_unassign
+import tajsos.composeapp.generated.resources.project_detail_assets
+import tajsos.composeapp.generated.resources.project_detail_empty_assets
+import tajsos.composeapp.generated.resources.project_detail_empty_notes
+import tajsos.composeapp.generated.resources.project_detail_empty_projects
+import tajsos.composeapp.generated.resources.project_detail_empty_work
+import tajsos.composeapp.generated.resources.project_detail_linked_notes
+import tajsos.composeapp.generated.resources.project_detail_status
+import tajsos.composeapp.generated.resources.type_note
+import tajsos.composeapp.generated.resources.type_record
+
 import com.tajemniktv.tajos.ui.components.common.mouseClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -56,33 +82,6 @@ import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
-import tajsos.composeapp.generated.resources.Res
-import tajsos.composeapp.generated.resources.area_detail_cadence
-import tajsos.composeapp.generated.resources.area_detail_context
-import tajsos.composeapp.generated.resources.area_detail_health
-import tajsos.composeapp.generated.resources.area_detail_mission_control
-import tajsos.composeapp.generated.resources.area_detail_open_responsibilities
-import tajsos.composeapp.generated.resources.area_detail_pressure
-import tajsos.composeapp.generated.resources.area_detail_review_signals
-import tajsos.composeapp.generated.resources.area_detail_subtitle
-import tajsos.composeapp.generated.resources.area_detail_tab_notes
-import tajsos.composeapp.generated.resources.area_detail_tab_projects
-import tajsos.composeapp.generated.resources.area_detail_tab_review
-import tajsos.composeapp.generated.resources.area_detail_tab_timeline
-import tajsos.composeapp.generated.resources.area_detail_tab_work
-import tajsos.composeapp.generated.resources.area_detail_timeline_empty
-import tajsos.composeapp.generated.resources.detail_unassign
-import tajsos.composeapp.generated.resources.project_detail_assets
-import tajsos.composeapp.generated.resources.project_detail_empty_assets
-import tajsos.composeapp.generated.resources.project_detail_empty_notes
-import tajsos.composeapp.generated.resources.project_detail_empty_projects
-import tajsos.composeapp.generated.resources.project_detail_empty_work
-import tajsos.composeapp.generated.resources.project_detail_linked_notes
-import tajsos.composeapp.generated.resources.project_detail_status
-import tajsos.composeapp.generated.resources.type_note
-import tajsos.composeapp.generated.resources.type_record
-import androidx.compose.ui.input.pointer.PointerIcon
-import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 object AreaDetailBlocks {
     private val renderers: Map<String, AreaDetailBlockRenderer> =
@@ -155,9 +154,9 @@ private fun renderAreaHero(context: AreaDetailContext) {
                 trackColor = TajsOSTheme.SurfaceLow,
             )
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                FilledTonalButton(onClick = {}) { Text(stringResource(Res.string.area_detail_tab_work)) }
-                FilledTonalButton(onClick = {}) { Text(stringResource(Res.string.area_detail_tab_notes)) }
-                FilledTonalButton(onClick = {}) { Text(stringResource(Res.string.area_detail_tab_projects)) }
+                FilledTonalButton(onClick = { context.onTab(AreaTab.Work) }) { Text(stringResource(Res.string.area_detail_tab_work)) }
+                FilledTonalButton(onClick = { context.onTab(AreaTab.Notes) }) { Text(stringResource(Res.string.area_detail_tab_notes)) }
+                FilledTonalButton(onClick = { context.onTab(AreaTab.Projects) }) { Text(stringResource(Res.string.area_detail_tab_projects)) }
             }
         }
     }

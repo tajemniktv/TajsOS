@@ -4,6 +4,39 @@
 
 package com.tajemniktv.tajos.ui.screens.settings
 
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.med_delete
+import tajsos.composeapp.generated.resources.profile_add_med
+import tajsos.composeapp.generated.resources.profile_medications
+import tajsos.composeapp.generated.resources.settings_action_export_bundle
+import tajsos.composeapp.generated.resources.settings_action_import_json
+import tajsos.composeapp.generated.resources.settings_action_import_json_simple
+import tajsos.composeapp.generated.resources.settings_appearance_desc
+import tajsos.composeapp.generated.resources.settings_appearance_title
+import tajsos.composeapp.generated.resources.settings_biometric_desc
+import tajsos.composeapp.generated.resources.settings_biometric_lock
+import tajsos.composeapp.generated.resources.settings_biometric_unavailable
+import tajsos.composeapp.generated.resources.settings_data_desc
+import tajsos.composeapp.generated.resources.settings_data_management
+import tajsos.composeapp.generated.resources.settings_export_data
+import tajsos.composeapp.generated.resources.settings_force_crash
+import tajsos.composeapp.generated.resources.settings_glassmorphism_desc
+import tajsos.composeapp.generated.resources.settings_glassmorphism_title
+import tajsos.composeapp.generated.resources.settings_no_medication_entries_configured_yet
+import tajsos.composeapp.generated.resources.settings_placeholder_import_json
+import tajsos.composeapp.generated.resources.settings_theme_dark
+import tajsos.composeapp.generated.resources.settings_theme_light
+import tajsos.composeapp.generated.resources.settings_theme_mode
+import tajsos.composeapp.generated.resources.settings_theme_mode_desc
+import tajsos.composeapp.generated.resources.settings_theme_settings
+import tajsos.composeapp.generated.resources.settings_transfer_busy
+import tajsos.composeapp.generated.resources.settings_window_startup_always_maximized
+import tajsos.composeapp.generated.resources.settings_window_startup_desc
+import tajsos.composeapp.generated.resources.settings_window_startup_mode
+import tajsos.composeapp.generated.resources.settings_window_startup_mode_desc
+import tajsos.composeapp.generated.resources.settings_window_startup_restore_last
+import tajsos.composeapp.generated.resources.settings_window_startup_title
+
 import com.tajemniktv.tajos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -19,14 +52,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -54,45 +84,6 @@ import com.tajemniktv.tajos.ui.theme.PaletteAccentRose
 import com.tajemniktv.tajos.ui.theme.PrimaryPurple
 import com.tajemniktv.tajos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
-import tajsos.composeapp.generated.resources.Res
-import tajsos.composeapp.generated.resources.common_back
-import tajsos.composeapp.generated.resources.med_brand_names
-import tajsos.composeapp.generated.resources.med_delete
-import tajsos.composeapp.generated.resources.med_dosage
-import tajsos.composeapp.generated.resources.med_is_optional
-import tajsos.composeapp.generated.resources.med_save
-import tajsos.composeapp.generated.resources.med_substance
-import tajsos.composeapp.generated.resources.med_take_at
-import tajsos.composeapp.generated.resources.profile_add_med
-import tajsos.composeapp.generated.resources.profile_medications
-import tajsos.composeapp.generated.resources.settings_appearance_desc
-import tajsos.composeapp.generated.resources.settings_appearance_title
-import tajsos.composeapp.generated.resources.settings_biometric_desc
-import tajsos.composeapp.generated.resources.settings_biometric_lock
-import tajsos.composeapp.generated.resources.settings_biometric_unavailable
-import tajsos.composeapp.generated.resources.settings_export_data
-import tajsos.composeapp.generated.resources.settings_data_management
-import tajsos.composeapp.generated.resources.settings_data_desc
-import tajsos.composeapp.generated.resources.settings_placeholder_import_json
-import tajsos.composeapp.generated.resources.settings_action_import_json
-import tajsos.composeapp.generated.resources.settings_action_export_bundle
-import tajsos.composeapp.generated.resources.settings_action_import_json_simple
-import tajsos.composeapp.generated.resources.settings_transfer_busy
-import tajsos.composeapp.generated.resources.settings_force_crash
-import tajsos.composeapp.generated.resources.settings_glassmorphism_desc
-import tajsos.composeapp.generated.resources.settings_glassmorphism_title
-import tajsos.composeapp.generated.resources.settings_no_medication_entries_configured_yet
-import tajsos.composeapp.generated.resources.settings_theme_dark
-import tajsos.composeapp.generated.resources.settings_theme_light
-import tajsos.composeapp.generated.resources.settings_theme_mode
-import tajsos.composeapp.generated.resources.settings_theme_mode_desc
-import tajsos.composeapp.generated.resources.settings_theme_settings
-import tajsos.composeapp.generated.resources.settings_window_startup_always_maximized
-import tajsos.composeapp.generated.resources.settings_window_startup_desc
-import tajsos.composeapp.generated.resources.settings_window_startup_mode
-import tajsos.composeapp.generated.resources.settings_window_startup_mode_desc
-import tajsos.composeapp.generated.resources.settings_window_startup_restore_last
-import tajsos.composeapp.generated.resources.settings_window_startup_title
 
 object SettingsDashboardBlocks {
     private val renderers: Map<String, SettingsDashboardBlockRenderer> =
@@ -122,7 +113,7 @@ private fun renderSettingsHealth(context: SettingsDashboardContext) {
     }
 
     if (showAddMedicationDialog) {
-        SettingsAddMedicationDialog(
+        com.tajemniktv.tajos.ui.components.common.MedicationEditorDialog(
             onDismiss = { showAddMedicationDialog = false },
             onSave = { substance, brands, dosage, hour, optional ->
                 context.onSaveMedication(substance, brands, dosage, hour, optional)
@@ -737,76 +728,4 @@ private fun SettingsMedicationItem(
             Text(stringResource(Res.string.med_delete))
         }
     }
-}
-
-@Composable
-private fun SettingsAddMedicationDialog(
-    onDismiss: () -> Unit,
-    onSave: (String, String, String?, Int?, Boolean) -> Unit,
-) {
-    var substance by remember { mutableStateOf("") }
-    var brands by remember { mutableStateOf("") }
-    var dosage by remember { mutableStateOf("") }
-    var hour by remember { mutableStateOf("") }
-    var isOptional by remember { mutableStateOf(false) }
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(stringResource(Res.string.profile_add_med)) },
-        text = {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm),
-            ) {
-                TactileOutlinedTextField(
-                    value = substance,
-                    onValueChange = { substance = it },
-                    label = { Text(stringResource(Res.string.med_substance)) },
-                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                )
-                TactileOutlinedTextField(
-                    value = brands,
-                    onValueChange = { brands = it },
-                    label = { Text(stringResource(Res.string.med_brand_names)) },
-                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                )
-                TactileOutlinedTextField(
-                    value = dosage,
-                    onValueChange = { dosage = it },
-                    label = { Text(stringResource(Res.string.med_dosage)) },
-                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                )
-                TactileOutlinedTextField(
-                    value = hour,
-                    onValueChange = { hour = it },
-                    label = { Text(stringResource(Res.string.med_take_at)) },
-                    shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
-                )
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Checkbox(checked = isOptional, onCheckedChange = { isOptional = it })
-                    Text(stringResource(Res.string.med_is_optional))
-                }
-            }
-        },
-        confirmButton = {
-            Button(
-                onClick = {
-                    onSave(
-                        substance,
-                        brands,
-                        dosage.takeIf { it.isNotEmpty() },
-                        hour.toIntOrNull(),
-                        isOptional,
-                    )
-                },
-                enabled = substance.isNotBlank(),
-            ) {
-                Text(stringResource(Res.string.med_save))
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(Res.string.common_back))
-            }
-        },
-    )
 }

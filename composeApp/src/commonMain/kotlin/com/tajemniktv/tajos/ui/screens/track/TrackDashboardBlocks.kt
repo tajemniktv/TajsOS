@@ -4,6 +4,25 @@
 
 package com.tajemniktv.tajos.ui.screens.track
 
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.track_active
+import tajsos.composeapp.generated.resources.track_bio_feedback
+import tajsos.composeapp.generated.resources.track_description
+import tajsos.composeapp.generated.resources.track_empty
+import tajsos.composeapp.generated.resources.track_history
+import tajsos.composeapp.generated.resources.track_history_meds_ok
+import tajsos.composeapp.generated.resources.track_history_sleep
+import tajsos.composeapp.generated.resources.track_label_affective_state
+import tajsos.composeapp.generated.resources.track_label_cognitive_lock
+import tajsos.composeapp.generated.resources.track_label_energy_reserves
+import tajsos.composeapp.generated.resources.track_label_recovery_cycles
+import tajsos.composeapp.generated.resources.track_label_system_tension
+import tajsos.composeapp.generated.resources.track_observations_symptoms
+import tajsos.composeapp.generated.resources.track_save
+import tajsos.composeapp.generated.resources.track_subtitle
+import tajsos.composeapp.generated.resources.track_sync_in_progress
+import tajsos.composeapp.generated.resources.track_title
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -38,24 +57,6 @@ import com.tajemniktv.tajos.ui.components.cards.TactileCard
 import com.tajemniktv.tajos.ui.components.common.EmptyState
 import com.tajemniktv.tajos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
-import tajsos.composeapp.generated.resources.Res
-import tajsos.composeapp.generated.resources.track_active
-import tajsos.composeapp.generated.resources.track_bio_feedback
-import tajsos.composeapp.generated.resources.track_description
-import tajsos.composeapp.generated.resources.track_empty
-import tajsos.composeapp.generated.resources.track_history
-import tajsos.composeapp.generated.resources.track_history_meds_ok
-import tajsos.composeapp.generated.resources.track_history_sleep
-import tajsos.composeapp.generated.resources.track_label_affective_state
-import tajsos.composeapp.generated.resources.track_label_cognitive_lock
-import tajsos.composeapp.generated.resources.track_label_energy_reserves
-import tajsos.composeapp.generated.resources.track_label_recovery_cycles
-import tajsos.composeapp.generated.resources.track_label_system_tension
-import tajsos.composeapp.generated.resources.track_observations_symptoms
-import tajsos.composeapp.generated.resources.track_save
-import tajsos.composeapp.generated.resources.track_subtitle
-import tajsos.composeapp.generated.resources.track_sync_in_progress
-import tajsos.composeapp.generated.resources.track_title
 
 object TrackDashboardBlocks {
     private val renderers: Map<String, TrackDashboardBlockRenderer> =
@@ -239,6 +240,7 @@ private fun renderTrackNote(context: TrackDashboardContext) {
 private fun renderTrackSaveButton(context: TrackDashboardContext) {
     Button(
         onClick = context.onSave,
+        enabled = context.saveEnabled,
         modifier = Modifier.fillMaxWidth().height(56.dp),
         shape = RoundedCornerShape(TajsOSTheme.RadiusMd),
         colors = ButtonDefaults.buttonColors(containerColor = TajsOSTheme.Primary),

@@ -4,6 +4,11 @@
 
 package com.tajemniktv.tajos.ui.screens.dashboard
 
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.dash_action_open_study
+import tajsos.composeapp.generated.resources.dash_label_admin_paperwork
+import tajsos.composeapp.generated.resources.dash_label_study_module
+
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Gavel
 import androidx.compose.material.icons.filled.School
@@ -17,10 +22,6 @@ import com.tajemniktv.tajos.ui.components.modes.RecoveryBasicsBlock
 import com.tajemniktv.tajos.ui.components.nodes.SuggestionGroup
 import com.tajemniktv.tajos.ui.theme.TajsOSTheme
 import org.jetbrains.compose.resources.stringResource
-import tajsos.composeapp.generated.resources.Res
-import tajsos.composeapp.generated.resources.dash_action_open_study
-import tajsos.composeapp.generated.resources.dash_label_admin_paperwork
-import tajsos.composeapp.generated.resources.dash_label_study_module
 
 @Composable
 internal fun renderBasicsBlock(context: DashboardBlockContext) {
@@ -52,6 +53,7 @@ internal fun renderCurrentFocusBlock(context: DashboardBlockContext) {
     CurrentTaskBlock(
         activeTask = context.pinnedNodes.firstOrNull(),
         onEdit = context.onEditNode,
+        onChooseTask = { context.onNavigateTo(com.tajemniktv.tajos.ui.Screen.Tasks) },
     )
 }
 

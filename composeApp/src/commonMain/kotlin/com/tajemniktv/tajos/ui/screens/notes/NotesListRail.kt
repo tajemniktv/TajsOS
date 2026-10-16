@@ -4,6 +4,33 @@
 
 package com.tajemniktv.tajos.ui.screens.notes
 
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.common_open
+import tajsos.composeapp.generated.resources.notes_workspace_all
+import tajsos.composeapp.generated.resources.notes_workspace_alphabetical
+import tajsos.composeapp.generated.resources.notes_workspace_any
+import tajsos.composeapp.generated.resources.notes_workspace_archive
+import tajsos.composeapp.generated.resources.notes_workspace_clear_search
+import tajsos.composeapp.generated.resources.notes_workspace_created
+import tajsos.composeapp.generated.resources.notes_workspace_days_ago
+import tajsos.composeapp.generated.resources.notes_workspace_empty
+import tajsos.composeapp.generated.resources.notes_workspace_favorites
+import tajsos.composeapp.generated.resources.notes_workspace_health
+import tajsos.composeapp.generated.resources.notes_workspace_item_meta
+import tajsos.composeapp.generated.resources.notes_workspace_new
+import tajsos.composeapp.generated.resources.notes_workspace_no_content
+import tajsos.composeapp.generated.resources.notes_workspace_no_results
+import tajsos.composeapp.generated.resources.notes_workspace_personal
+import tajsos.composeapp.generated.resources.notes_workspace_pinned
+import tajsos.composeapp.generated.resources.notes_workspace_recent
+import tajsos.composeapp.generated.resources.notes_workspace_search
+import tajsos.composeapp.generated.resources.notes_workspace_study
+import tajsos.composeapp.generated.resources.notes_workspace_today
+import tajsos.composeapp.generated.resources.notes_workspace_untitled
+import tajsos.composeapp.generated.resources.notes_workspace_updated
+import tajsos.composeapp.generated.resources.notes_workspace_work
+import tajsos.composeapp.generated.resources.notes_workspace_yesterday
+
 import com.tajemniktv.tajos.ui.components.TactileOutlinedTextField
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
@@ -32,7 +59,6 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -49,9 +75,8 @@ import com.tajemniktv.tajos.ui.components.common.rememberMouseContextMenuState
 import com.tajemniktv.tajos.ui.theme.TajsOSTheme
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
-import tajsos.composeapp.generated.resources.Res
-import tajsos.composeapp.generated.resources.common_open
 import kotlin.time.Instant
 
 /**
@@ -89,7 +114,7 @@ fun NotesListRail(
             ) {
                 Icon(Icons.Default.Add, contentDescription = null)
                 Spacer(Modifier.width(8.dp))
-                Text("New note")
+                Text(stringResource(Res.string.notes_workspace_new))
             }
             TactileOutlinedTextField(
                 value = searchQuery,
@@ -100,11 +125,11 @@ fun NotesListRail(
                 trailingIcon = {
                     if (searchQuery.isNotEmpty()) {
                         IconButton(onClick = { onSearchChange("") }) {
-                            Icon(Icons.Default.Close, contentDescription = "Clear search")
+                            Icon(Icons.Default.Close, contentDescription = stringResource(Res.string.notes_workspace_clear_search))
                         }
                     }
                 },
-                placeholder = { Text("Search notes...") },
+                placeholder = { Text(stringResource(Res.string.notes_workspace_search)) },
             )
             NotesFilterRow(activeFilter = activeFilter, onFilterChange = onFilterChange)
             NotesDomainRow(activeDomain = activeDomain, onDomainChange = onDomainChange)
@@ -113,9 +138,9 @@ fun NotesListRail(
             if (notes.isEmpty()) {
                 val emptyLabel =
                     if (searchQuery.isNotBlank()) {
-                        "No search results"
+                        stringResource(Res.string.notes_workspace_no_results)
                     } else {
-                        "No notes yet"
+                        stringResource(Res.string.notes_workspace_empty)
                     }
                 EmptyState(
                     message = emptyLabel,
@@ -150,11 +175,11 @@ private fun NotesFilterRow(
         modifier = Modifier.horizontalScroll(rememberScrollState()),
     ) {
         listOf(
-            NotesListFilter.ALL to "All",
-            NotesListFilter.PINNED to "Pinned",
-            NotesListFilter.RECENT to "Recent",
-            NotesListFilter.FAVORITES to "Favorites",
-            NotesListFilter.ARCHIVE to "Archive",
+            NotesListFilter.ALL to stringResource(Res.string.notes_workspace_all),
+            NotesListFilter.PINNED to stringResource(Res.string.notes_workspace_pinned),
+            NotesListFilter.RECENT to stringResource(Res.string.notes_workspace_recent),
+            NotesListFilter.FAVORITES to stringResource(Res.string.notes_workspace_favorites),
+            NotesListFilter.ARCHIVE to stringResource(Res.string.notes_workspace_archive),
         ).forEach { (filter, label) ->
             NotesTokenButton(
                 label = label,
@@ -175,11 +200,11 @@ private fun NotesDomainRow(
         modifier = Modifier.horizontalScroll(rememberScrollState()),
     ) {
         listOf(
-            null to "Any",
-            NotesDomain.PERSONAL to "Personal",
-            NotesDomain.STUDY to "Study",
-            NotesDomain.WORK to "Work",
-            NotesDomain.HEALTH to "Health",
+            null to stringResource(Res.string.notes_workspace_any),
+            NotesDomain.PERSONAL to stringResource(Res.string.notes_workspace_personal),
+            NotesDomain.STUDY to stringResource(Res.string.notes_workspace_study),
+            NotesDomain.WORK to stringResource(Res.string.notes_workspace_work),
+            NotesDomain.HEALTH to stringResource(Res.string.notes_workspace_health),
         ).forEach { (domain, label) ->
             NotesTokenButton(
                 label = label,
@@ -200,9 +225,9 @@ private fun NotesSortPicker(
         modifier = Modifier.horizontalScroll(rememberScrollState()),
     ) {
         listOf(
-            NotesSortOrder.UPDATED to "Updated",
-            NotesSortOrder.CREATED to "Created",
-            NotesSortOrder.ALPHABETICAL to "Alphabetical",
+            NotesSortOrder.UPDATED to stringResource(Res.string.notes_workspace_updated),
+            NotesSortOrder.CREATED to stringResource(Res.string.notes_workspace_created),
+            NotesSortOrder.ALPHABETICAL to stringResource(Res.string.notes_workspace_alphabetical),
         ).forEach { (sort, label) ->
             NotesTokenButton(
                 label = label,
@@ -263,7 +288,7 @@ fun NotesListItem(
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = note.title.ifBlank { "Untitled note" },
+                        text = note.title.ifBlank { stringResource(Res.string.notes_workspace_untitled) },
                         style = MaterialTheme.typography.titleSmall,
                         color = titleColor,
                         fontWeight = FontWeight.SemiBold,
@@ -289,16 +314,14 @@ fun NotesListItem(
                     }
                 }
                 Text(
-                    text = note.preview.ifBlank { "No content yet..." },
+                    text = note.preview.ifBlank { stringResource(Res.string.notes_workspace_no_content) },
                     style = MaterialTheme.typography.bodySmall,
                     color = TajsOSTheme.Muted,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
                 Text(
-                    text = "${
-                        note.domain.name.lowercase().replaceFirstChar(Char::titlecase)
-                    } • ${relativeDateLabel(note.updatedAt)}",
+                    text = stringResource(Res.string.notes_workspace_item_meta, notesDomainLabel(note.domain), relativeDateLabel(note.updatedAt)),
                     style = MaterialTheme.typography.labelSmall,
                     color = TajsOSTheme.Muted,
                     maxLines = 1,
@@ -339,6 +362,7 @@ private fun NotesTokenButton(
     }
 }
 
+@Composable
 private fun relativeDateLabel(epochMillis: Long): String {
     val now =
         kotlin.time.Clock.System
@@ -348,15 +372,15 @@ private fun relativeDateLabel(epochMillis: Long): String {
     val diff = (now - epochMillis).coerceAtLeast(0L)
     return when {
         diff < day -> {
-            "Today"
+            stringResource(Res.string.notes_workspace_today)
         }
 
         diff < day * 2 -> {
-            "Yesterday"
+            stringResource(Res.string.notes_workspace_yesterday)
         }
 
         diff < day * 7 -> {
-            "${diff / day}d ago"
+            pluralStringResource(Res.plurals.notes_workspace_days_ago, (diff / day).toInt(), (diff / day).toInt())
         }
 
         else -> {

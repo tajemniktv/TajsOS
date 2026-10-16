@@ -7,31 +7,15 @@ package com.tajemniktv.tajos.ui.screens.identity
 /**
  * Builds an identity dashboard layout plan based on the active surface.
  */
+@Suppress("UNUSED_PARAMETER")
 fun buildIdentityDashboardPlan(surface: IdentityDashboardSurface): IdentityDashboardPlan =
-    when (surface) {
-        IdentityDashboardSurface.MOBILE -> {
-            IdentityDashboardPlan(
-                primary =
-                    listOf(
-                        IdentityDashboardBlock("identity_header"),
-                        IdentityDashboardBlock("identity_signature"),
-                        IdentityDashboardBlock("identity_distinction"),
-                        IdentityDashboardBlock("identity_direction"),
-                        IdentityDashboardBlock("identity_coreshift"),
-                    ),
-            )
-        }
-
-        IdentityDashboardSurface.DESKTOP -> {
-            IdentityDashboardPlan(
-                primary =
-                    listOf(
-                        IdentityDashboardBlock("identity_header"),
-                        IdentityDashboardBlock("identity_signature"),
-                        IdentityDashboardBlock("identity_distinction"),
-                        IdentityDashboardBlock("identity_direction"),
-                        IdentityDashboardBlock("identity_coreshift"),
-                    ),
-            )
-        }
-    }
+    IdentityDashboardPlan(
+        primary =
+            listOf(
+                IdentityDashboardBlock("identity_header"),
+                IdentityDashboardBlock("identity_signature"),
+                IdentityDashboardBlock("identity_distinction"),
+                IdentityDashboardBlock("identity_direction"),
+                IdentityDashboardBlock("identity_coreshift"),
+            ),
+    )

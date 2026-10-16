@@ -4,27 +4,13 @@
 
 package com.tajemniktv.tajos.ui.screens.openloops
 
+@Suppress("UNUSED_PARAMETER")
 fun buildOpenLoopsDashboardPlan(surface: OpenLoopsDashboardSurface): OpenLoopsDashboardPlan =
-    when (surface) {
-        OpenLoopsDashboardSurface.MOBILE -> {
-            OpenLoopsDashboardPlan(
-                primary =
-                    listOf(
-                        OpenLoopsDashboardBlock(
-                            "openloops_main",
-                        ),
-                    ),
-            )
-        }
-
-        OpenLoopsDashboardSurface.DESKTOP -> {
-            OpenLoopsDashboardPlan(
-                primary =
-                    listOf(
-                        OpenLoopsDashboardBlock(
-                            "openloops_main",
-                        ),
-                    ),
-            )
-        }
-    }
+    OpenLoopsDashboardPlan(
+        primary =
+            listOf(
+                OpenLoopsDashboardBlock(
+                    "openloops_main",
+                ),
+            ),
+    )

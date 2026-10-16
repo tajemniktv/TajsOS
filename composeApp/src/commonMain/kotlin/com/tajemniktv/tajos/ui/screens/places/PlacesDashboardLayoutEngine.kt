@@ -4,27 +4,13 @@
 
 package com.tajemniktv.tajos.ui.screens.places
 
+@Suppress("UNUSED_PARAMETER")
 fun buildPlacesDashboardPlan(surface: PlacesDashboardSurface): PlacesDashboardPlan =
-    when (surface) {
-        PlacesDashboardSurface.MOBILE -> {
-            PlacesDashboardPlan(
-                primary =
-                    listOf(
-                        PlacesDashboardBlock(
-                            "places_main",
-                        ),
-                    ),
-            )
-        }
-
-        PlacesDashboardSurface.DESKTOP -> {
-            PlacesDashboardPlan(
-                primary =
-                    listOf(
-                        PlacesDashboardBlock(
-                            "places_main",
-                        ),
-                    ),
-            )
-        }
-    }
+    PlacesDashboardPlan(
+        primary =
+            listOf(
+                PlacesDashboardBlock(
+                    "places_main",
+                ),
+            ),
+    )

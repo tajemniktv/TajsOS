@@ -4,23 +4,11 @@
 
 package com.tajemniktv.tajos.ui.screens.archive
 
+@Suppress("UNUSED_PARAMETER")
 fun buildArchiveDashboardPlan(surface: ArchiveDashboardSurface): ArchiveDashboardPlan =
-    when (surface) {
-        ArchiveDashboardSurface.MOBILE -> {
-            ArchiveDashboardPlan(
-                primary =
-                    listOf(
-                        ArchiveDashboardBlock("archive_main"),
-                    ),
-            )
-        }
-
-        ArchiveDashboardSurface.DESKTOP -> {
-            ArchiveDashboardPlan(
-                primary =
-                    listOf(
-                        ArchiveDashboardBlock("archive_main"),
-                    ),
-            )
-        }
-    }
+    ArchiveDashboardPlan(
+        primary =
+            listOf(
+                ArchiveDashboardBlock("archive_main"),
+            ),
+    )

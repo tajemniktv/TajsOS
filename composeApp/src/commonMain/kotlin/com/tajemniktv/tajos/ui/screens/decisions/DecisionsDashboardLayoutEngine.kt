@@ -4,23 +4,11 @@
 
 package com.tajemniktv.tajos.ui.screens.decisions
 
+@Suppress("UNUSED_PARAMETER")
 fun buildDecisionsDashboardPlan(surface: DecisionsDashboardSurface): DecisionsDashboardPlan =
-    when (surface) {
-        DecisionsDashboardSurface.MOBILE -> {
-            DecisionsDashboardPlan(
-                primary =
-                    listOf(
-                        DecisionsDashboardBlock("decisions_main"),
-                    ),
-            )
-        }
-
-        DecisionsDashboardSurface.DESKTOP -> {
-            DecisionsDashboardPlan(
-                primary =
-                    listOf(
-                        DecisionsDashboardBlock("decisions_main"),
-                    ),
-            )
-        }
-    }
+    DecisionsDashboardPlan(
+        primary =
+            listOf(
+                DecisionsDashboardBlock("decisions_main"),
+            ),
+    )

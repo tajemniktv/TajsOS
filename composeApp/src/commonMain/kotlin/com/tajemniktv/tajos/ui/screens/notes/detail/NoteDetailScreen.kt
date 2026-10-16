@@ -4,6 +4,19 @@
 
 package com.tajemniktv.tajos.ui.screens.notes.detail
 
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.detail_not_found
+import tajsos.composeapp.generated.resources.notes_workspace_archive
+import tajsos.composeapp.generated.resources.notes_workspace_duplicate
+import tajsos.composeapp.generated.resources.notes_workspace_more
+import tajsos.composeapp.generated.resources.notes_workspace_pin_toggle
+import tajsos.composeapp.generated.resources.notes_workspace_unassign
+import tajsos.composeapp.generated.resources.type_area
+import tajsos.composeapp.generated.resources.type_note
+import tajsos.composeapp.generated.resources.type_project
+import tajsos.composeapp.generated.resources.type_record
+import tajsos.composeapp.generated.resources.type_task
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -81,6 +94,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -107,13 +121,6 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
-import tajsos.composeapp.generated.resources.Res
-import tajsos.composeapp.generated.resources.detail_not_found
-import tajsos.composeapp.generated.resources.type_area
-import tajsos.composeapp.generated.resources.type_note
-import tajsos.composeapp.generated.resources.type_project
-import tajsos.composeapp.generated.resources.type_record
-import tajsos.composeapp.generated.resources.type_task
 
 /**
  * Detailed view for a single node (Note, Idea, Task, etc.)
@@ -158,6 +165,9 @@ fun NoteDetailScreen(
     }
 
     val node = nodeWithPin.node
+    val noteDrafts by viewModel.noteEdits.drafts.collectAsState()
+    val textDraft = noteDrafts[noteId]
+    LaunchedEffect(node, textDraft) { viewModel.noteEdits.observe(node) }
     val tags by viewModel.getTagsForNode(noteId).collectAsState(initial = emptyList())
     val allTags by viewModel.allTags.collectAsState()
     val relations by viewModel.getRelationsForNode(noteId).collectAsState(initial = emptyList())
@@ -191,14 +201,15 @@ fun NoteDetailScreen(
     var showEnergyDialog by remember { mutableStateOf(false) }
     var showFrictionDialog by remember { mutableStateOf(false) }
     var showRecurringDialog by remember { mutableStateOf(false) }
+    val unassignLabel = stringResource(Res.string.notes_workspace_unassign)
     val areaOptions =
-        remember(areas) {
-            listOf(AssignmentOption(id = null, name = "Unassign")) +
+        remember(areas, unassignLabel) {
+            listOf(AssignmentOption(id = null, name = unassignLabel)) +
                 areas.map { AssignmentOption(id = it.id, name = it.title) }
         }
     val projectOptions =
-        remember(projects) {
-            listOf(AssignmentOption(id = null, name = "Unassign")) +
+        remember(projects, unassignLabel) {
+            listOf(AssignmentOption(id = null, name = unassignLabel)) +
                 projects.map { AssignmentOption(id = it.id, name = it.title) }
         }
 
@@ -206,7 +217,7 @@ fun NoteDetailScreen(
         IconButton(onClick = { viewModel.togglePermanentPin(node) }) {
             Icon(
                 if (node.isPinned) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                contentDescription = null,
+                contentDescription = stringResource(Res.string.notes_workspace_pin_toggle),
                 tint = if (node.isPinned) TajsOSTheme.Primary else TajsOSTheme.Text,
                 modifier = Modifier.size(18.dp),
             )
@@ -228,7 +239,7 @@ fun NoteDetailScreen(
         ) {
             Icon(
                 Icons.Default.ContentCopy,
-                contentDescription = null,
+                contentDescription = stringResource(Res.string.notes_workspace_duplicate),
                 modifier = Modifier.size(18.dp),
             )
         }
@@ -240,14 +251,14 @@ fun NoteDetailScreen(
         ) {
             Icon(
                 Icons.Default.Delete,
-                contentDescription = null,
+                contentDescription = stringResource(Res.string.notes_workspace_archive),
                 modifier = Modifier.size(18.dp),
             )
         }
         IconButton(onClick = { showMoreDialog = true }, modifier = Modifier.size(48.dp)) {
             Icon(
                 Icons.Default.MoreVert,
-                contentDescription = null,
+                contentDescription = stringResource(Res.string.notes_workspace_more),
                 modifier = Modifier.size(18.dp),
             )
         }
@@ -256,7 +267,7 @@ fun NoteDetailScreen(
     val context =
         NoteDetailContext(
             viewModel = viewModel,
-            node = node,
+            node = node.copy(title = textDraft?.title ?: node.title, content = textDraft?.content ?: node.content),
             tags = tags,
             allTags = allTags,
             relations = relations,
@@ -270,8 +281,8 @@ fun NoteDetailScreen(
             isAtomicMode = isAtomicMode,
             onNavigateToNode = onNavigateToNode,
             onNavigateToSearch = onNavigateToSearch,
-            onUpdateTitle = { title -> viewModel.updateNode(node.copy(title = title)) },
-            onUpdateContent = { content -> viewModel.updateNode(node.copy(content = content)) },
+            onUpdateTitle = { title -> viewModel.noteEdits.updateTitle(node.id, title) },
+            onUpdateContent = { content -> viewModel.noteEdits.updateContent(node.id, content) },
             onShowTagDialog = { showTagDialog = true },
             onShowRelationDialog = { showRelationDialog = true },
             onShowStatusDialog = { showStatusDialog = true },
@@ -316,6 +327,7 @@ fun NoteDetailScreen(
                     .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingLg),
         ) {
+            com.tajemniktv.tajos.ui.screens.notes.NoteSaveStatus(textDraft) { viewModel.noteEdits.retry(noteId) }
             plan.primary.forEach { block ->
                 NoteDetailBlocks.resolve(block.id)?.invoke(context)
             }
@@ -417,7 +429,7 @@ fun NoteDetailScreen(
             options = areaOptions,
             selectedOption = areaOptions.find { it.id == node.areaId },
             onSelect = { area ->
-                viewModel.updateNode(node.copy(areaId = area.id))
+                viewModel.patchNode(node.id) { current -> current.copy(areaId = area.id) }
                 showAreaDialog = false
             },
             optionName = { it.name },
@@ -435,7 +447,7 @@ fun NoteDetailScreen(
             options = projectOptions,
             selectedOption = projectOptions.find { it.id == node.projectId },
             onSelect = { project ->
-                viewModel.updateNode(node.copy(projectId = project.id))
+                viewModel.patchNode(node.id) { current -> current.copy(projectId = project.id) }
                 showProjectDialog = false
             },
             optionName = { it.name },
@@ -465,7 +477,7 @@ fun NoteDetailScreen(
             options = dueOptions,
             selectedOption = null,
             onSelect = { option ->
-                viewModel.updateNode(node.copy(dueAt = option.second))
+                viewModel.patchNode(node.id) { current -> current.copy(dueAt = option.second) }
                 showDueDialog = false
             },
             optionName = { it.first },
@@ -498,7 +510,7 @@ fun NoteDetailScreen(
             options = reminderOptions,
             selectedOption = null,
             onSelect = { option ->
-                viewModel.updateNode(node.copy(reminderAt = option.second))
+                viewModel.patchNode(node.id) { current -> current.copy(reminderAt = option.second) }
                 showReminderDialog = false
             },
             optionName = { it.first },
@@ -580,7 +592,7 @@ fun NoteDetailScreen(
                 ),
             selectedOption = node.noteType,
             onSelect = { type ->
-                viewModel.updateNode(node.copy(noteType = type))
+                viewModel.patchNode(node.id) { current -> current.copy(noteType = type) }
                 showNoteTypeDialog = false
             },
             optionName = { it },
@@ -615,7 +627,7 @@ fun NoteDetailScreen(
             options = listOf("raw", "highlighted", "distilled", "takeaway"),
             selectedOption = node.noteState,
             onSelect = { state ->
-                viewModel.updateNode(node.copy(noteState = state))
+                viewModel.patchNode(node.id) { current -> current.copy(noteState = state) }
                 showNoteStateDialog = false
             },
             optionName = { it },
@@ -641,7 +653,7 @@ fun NoteDetailScreen(
             options = listOf("book", "article", "podcast", "video", "link"),
             selectedOption = node.mediaType,
             onSelect = { type ->
-                viewModel.updateNode(node.copy(mediaType = type))
+                viewModel.patchNode(node.id) { current -> current.copy(mediaType = type) }
                 showMediaTypeDialog = false
             },
             optionName = { it },
@@ -667,7 +679,7 @@ fun NoteDetailScreen(
             options = (1..5).toList(),
             selectedOption = node.rating,
             onSelect = { stars ->
-                viewModel.updateNode(node.copy(rating = stars))
+                viewModel.patchNode(node.id) { current -> current.copy(rating = stars) }
                 showRatingDialog = false
             },
             optionName = { "$it STARS" },
@@ -685,7 +697,7 @@ fun NoteDetailScreen(
             options = listOf(5, 15, 30, 60, 120, -1), // -1 for clear
             selectedOption = node.estimatedMinutes,
             onSelect = { mins ->
-                viewModel.updateNode(node.copy(estimatedMinutes = if (mins == -1) null else mins))
+                viewModel.patchNode(node.id) { current -> current.copy(estimatedMinutes = if (mins == -1) null else mins) }
                 showEstimateDialog = false
             },
             optionName = { if (it == -1) "CLEAR" else "$it MIN" },
@@ -703,7 +715,7 @@ fun NoteDetailScreen(
             options = listOf(1, 2, 3),
             selectedOption = node.energyLevel,
             onSelect = { level ->
-                viewModel.updateNode(node.copy(energyLevel = level))
+                viewModel.patchNode(node.id) { current -> current.copy(energyLevel = level) }
                 showEnergyDialog = false
             },
             optionName = {
@@ -735,7 +747,7 @@ fun NoteDetailScreen(
             options = listOf("easy", "annoying", "mentally_heavy", "unclear"),
             selectedOption = node.friction,
             onSelect = { friction ->
-                viewModel.updateNode(node.copy(friction = friction))
+                viewModel.patchNode(node.id) { current -> current.copy(friction = friction) }
                 showFrictionDialog = false
             },
             optionName = { it.replace("_", " ") },
@@ -875,7 +887,7 @@ fun NoteDetailScreen(
                                         ItemKind.RECORD -> "note"
                                         else -> original.type
                                     }
-                                viewModel.updateNode(original.copy(type = targetType))
+                                viewModel.patchNode(original.id) { current -> current.copy(type = targetType) }
                             }
                         }
                     }

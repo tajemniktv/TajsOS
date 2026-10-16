@@ -4,6 +4,10 @@
 
 package com.tajemniktv.tajos.ui.screens.dashboard
 
+import tajsos.composeapp.generated.resources.Res
+import tajsos.composeapp.generated.resources.dash_choose_active_task
+import tajsos.composeapp.generated.resources.dash_no_active_task
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -20,6 +24,7 @@ import com.tajemniktv.tajos.data.NodeWithPin
 import com.tajemniktv.tajos.ui.components.cards.AlertCard
 import com.tajemniktv.tajos.ui.components.cards.DashCard
 import com.tajemniktv.tajos.ui.components.nodes.SuggestionGroup
+import org.jetbrains.compose.resources.stringResource
 import com.tajemniktv.tajos.ui.theme.TajsOSTheme
 
 /**
@@ -36,14 +41,15 @@ import com.tajemniktv.tajos.ui.theme.TajsOSTheme
 fun CurrentTaskBlock(
     activeTask: NodeWithPin?,
     onEdit: (Long) -> Unit,
+    onChooseTask: () -> Unit,
 ) {
     if (activeTask == null) {
         AlertCard(
-            title = "NO ACTIVE TASK",
-            description = "Assign a task to focus on.",
+            title = stringResource(Res.string.dash_no_active_task),
+            description = stringResource(Res.string.dash_choose_active_task),
             icon = Icons.Default.Info,
             color = TajsOSTheme.Muted,
-            onClick = {},
+            onClick = onChooseTask,
         )
     } else {
         Column(verticalArrangement = Arrangement.spacedBy(TajsOSTheme.SpacingSm)) {

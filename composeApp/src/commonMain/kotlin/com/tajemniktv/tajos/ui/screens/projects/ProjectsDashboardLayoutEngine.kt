@@ -4,27 +4,13 @@
 
 package com.tajemniktv.tajos.ui.screens.projects
 
+@Suppress("UNUSED_PARAMETER")
 fun buildProjectsDashboardPlan(surface: ProjectsDashboardSurface): ProjectsDashboardPlan =
-    when (surface) {
-        ProjectsDashboardSurface.MOBILE -> {
-            ProjectsDashboardPlan(
-                primary =
-                    listOf(
-                        ProjectsDashboardBlock(
-                            "projects_main",
-                        ),
-                    ),
-            )
-        }
-
-        ProjectsDashboardSurface.DESKTOP -> {
-            ProjectsDashboardPlan(
-                primary =
-                    listOf(
-                        ProjectsDashboardBlock(
-                            "projects_main",
-                        ),
-                    ),
-            )
-        }
-    }
+    ProjectsDashboardPlan(
+        primary =
+            listOf(
+                ProjectsDashboardBlock(
+                    "projects_main",
+                ),
+            ),
+    )
