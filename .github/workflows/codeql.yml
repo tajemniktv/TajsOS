@@ -25,7 +25,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       kmp: ${{ steps.filter.outputs.kmp }}
-      website: ${{ steps.filter.outputs.website }}
       workflows: ${{ steps.filter.outputs.workflows }}
     steps:
       - name: Checkout
@@ -39,8 +38,6 @@ jobs:
             workflows:
               - '.github/workflows/**'
               - '.github/actions/**'
-            website:
-              - 'website/**'
             kmp:
               - 'androidApp/**'
               - 'composeApp/**'
@@ -184,27 +181,6 @@ jobs:
         uses: github/codeql-action/analyze@24c54180a607b1449ed407dd24f251e4e9147c8d # v4
         with:
           category: /language:actions
-
-  analyze-js-ts:
-    name: Analyze website JavaScript/TypeScript
-    needs: changes
-    if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || needs.changes.outputs.website == 'true' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
-
-      - name: Initialize CodeQL (javascript-typescript)
-        uses: github/codeql-action/init@24c54180a607b1449ed407dd24f251e4e9147c8d # v4
-        with:
-          languages: javascript-typescript
-          build-mode: none
-          queries: security-extended
-
-      - name: Perform CodeQL Analysis (javascript-typescript)
-        uses: github/codeql-action/analyze@24c54180a607b1449ed407dd24f251e4e9147c8d # v4
-        with:
-          category: /language:javascript-typescript
 
 # Swift is intentionally omitted for now. This repository's iosApp target is a thin wrapper
 # and does not have a reliable macOS CI build path yet for CodeQL manual extraction.

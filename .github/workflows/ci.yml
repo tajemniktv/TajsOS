@@ -20,12 +20,9 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       kmp: ${{ steps.filter.outputs.kmp }}
-      website: ${{ steps.filter.outputs.website }}
       docs: ${{ steps.filter.outputs.docs }}
       docs_only: ${{ steps.classify.outputs.docs_only }}
-      website_only: ${{ steps.classify.outputs.website_only }}
       run_gradle: ${{ steps.classify.outputs.run_gradle }}
-      run_website: ${{ steps.classify.outputs.run_website }}
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
@@ -39,8 +36,6 @@ jobs:
               - '**/*.md'
               - 'LICENSE*'
               - '.github/ISSUE_TEMPLATE/**'
-            website:
-              - 'website/**'
             kmp:
               - 'androidApp/**'
               - 'composeApp/**'
@@ -61,34 +56,24 @@ jobs:
         shell: bash
         env:
           FILTER_DOCS: ${{ steps.filter.outputs.docs }}
-          FILTER_WEBSITE: ${{ steps.filter.outputs.website }}
           FILTER_KMP: ${{ steps.filter.outputs.kmp }}
           EVENT_NAME: ${{ github.event_name }}
         run: |
           docs_only=false
-          website_only=false
           run_gradle=false
-          run_website=false
 
-          if [[ "${FILTER_DOCS}" == "true" && "${FILTER_WEBSITE}" != "true" && "${FILTER_KMP}" != "true" ]]; then
+          if [[ "${FILTER_DOCS}" == "true" && "${FILTER_KMP}" != "true" ]]; then
             docs_only=true
-          fi
-
-          if [[ "${FILTER_WEBSITE}" == "true" && "${FILTER_KMP}" != "true" ]]; then
-            website_only=true
           fi
 
           if [[ "${FILTER_KMP}" == "true" || "${EVENT_NAME}" == "workflow_dispatch" ]]; then
             run_gradle=true
           fi
 
-          # The legacy website is being replaced and is intentionally excluded from CI builds.
 
           {
             echo "docs_only=${docs_only}"
-            echo "website_only=${website_only}"
             echo "run_gradle=${run_gradle}"
-            echo "run_website=${run_website}"
           } >> "${GITHUB_OUTPUT}"
 
   gradle:
@@ -249,43 +234,9 @@ jobs:
             composeApp/build/compose/binaries/**
             server/build/libs/*.jar
 
-  website:
-    name: Website Build
-    needs: changes
-    if: ${{ needs.changes.outputs.run_website == 'true' }}
-    runs-on: ubuntu-latest
-    concurrency:
-      group: ci-website-${{ github.event.pull_request.number || github.ref }}
-      cancel-in-progress: true
-    steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
-
-      - name: Set up Node
-        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
-        with:
-          node-version: "24"
-          cache: npm
-          cache-dependency-path: website/package-lock.json
-
-      - name: Install and build website
-        working-directory: website
-        run: |
-          npm ci
-          npm run build --if-present
-
-      - name: Upload website dist on dev
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/dev' }}
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
-        with:
-          name: website-dist-${{ github.run_id }}
-          if-no-files-found: ignore
-          retention-days: 14
-          path: website/dist
-
   summary:
     name: Workflow Summary
-    needs: [changes, gradle, website]
+    needs: [changes, gradle]
     if: ${{ always() }}
     runs-on: ubuntu-latest
     steps:
@@ -295,12 +246,9 @@ jobs:
           REF_NAME: ${{ github.ref_name }}
           EVENT_NAME: ${{ github.event_name }}
           CHANGES_KMP: ${{ needs.changes.outputs.kmp }}
-          CHANGES_WEBSITE: ${{ needs.changes.outputs.website }}
           CHANGES_DOCS: ${{ needs.changes.outputs.docs }}
           CHANGES_DOCS_ONLY: ${{ needs.changes.outputs.docs_only }}
-          CHANGES_WEBSITE_ONLY: ${{ needs.changes.outputs.website_only }}
           GRADLE_RESULT: ${{ needs.gradle.result || 'skipped' }}
-          WEBSITE_RESULT: ${{ needs.website.result || 'skipped' }}
         run: |
           {
             echo "## CI Summary"
@@ -308,17 +256,13 @@ jobs:
             echo "- Ref: \`${REF_NAME}\`"
             echo "- Event: \`${EVENT_NAME}\`"
             echo "- KMP changes: \`${CHANGES_KMP}\`"
-            echo "- Website changes: \`${CHANGES_WEBSITE}\`"
             echo "- Docs changes: \`${CHANGES_DOCS}\`"
             echo "- Docs-only change: \`${CHANGES_DOCS_ONLY}\`"
-            echo "- Website-only change: \`${CHANGES_WEBSITE_ONLY}\`"
             echo ""
             echo "### Jobs"
             echo "- Gradle job: \`${GRADLE_RESULT}\`"
-            echo "- Website job: \`${WEBSITE_RESULT}\`"
             echo ""
             echo "### Artifacts"
             echo "- Failure reports: uploaded only when Gradle job fails"
             echo "- Dev build artifacts: uploaded on push to \`dev\`"
-            echo "- Website dist artifact: uploaded on website builds to \`dev\`"
           } >> "${GITHUB_STEP_SUMMARY}"
