@@ -29,7 +29,6 @@ import com.tajemniktv.tajos.data.NodeWithPin
 import com.tajemniktv.tajos.data.PackRegistry
 import com.tajemniktv.tajos.data.PreferencesRepository
 import com.tajemniktv.tajos.data.ProtocolHistoryEntity
-import com.tajemniktv.tajos.data.RecordKind
 import com.tajemniktv.tajos.data.RelationEntity
 import com.tajemniktv.tajos.data.ReviewEntity
 import com.tajemniktv.tajos.data.TagEntity
@@ -98,6 +97,8 @@ import com.tajemniktv.tajos.ui.main.state.PlaybookTemplate
 import com.tajemniktv.tajos.ui.main.state.ProtocolHistoryItem
 import com.tajemniktv.tajos.ui.main.state.RelationshipSnapshot
 import com.tajemniktv.tajos.ui.main.state.SearchFiltersState
+import com.tajemniktv.tajos.ui.main.state.NoteEditController
+import com.tajemniktv.tajos.data.currentLocalDate
 import com.tajemniktv.tajos.ui.main.state.SearchPrimaryFilters
 import com.tajemniktv.tajos.ui.main.state.SearchSecondaryFilters
 import com.tajemniktv.tajos.ui.main.state.SearchTertiaryFilters
@@ -206,6 +207,18 @@ class MainViewModel(
             updateNode = ::updateNode,
             setTagOnNode = mainNodeSupport::setTagOnNode,
         )
+    }
+
+    val localDate = repository.localDates.stateIn(viewModelScope, SharingStarted.Eagerly, currentLocalDate())
+
+    val noteEdits = NoteEditController(viewModelScope) { id, title, content ->
+        repository.updateNodeText(id, title, content)
+        if (content != null) mainNodeSupport.parseInternalLinks(id)
+    }
+
+    /** Editor metadata changes also patch the latest row rather than replacing a rendered snapshot. */
+    fun patchNode(nodeId: Long, patch: (NodeEntity) -> NodeEntity) {
+        viewModelScope.launch { repository.patchNode(nodeId, patch) }
     }
 
     val allNodes: StateFlow<List<NodeWithPin>> =
@@ -1838,35 +1851,19 @@ class MainViewModel(
         medicationIds: Set<Long> = emptySet(),
     ) {
         viewModelScope.launch {
-            val entryId =
-                repository.insertTrackEntry(
-                    TrackEntryEntity(
-                        date =
-                            Clock.System
-                                .now()
-                                .toLocalDateTime(TimeZone.currentSystemDefault())
-                                .date
-                                .toString(),
-                        moodScore = mood ?: affectivePulse,
-                        energyScore = energy ?: energyPulse,
-                        focusScore = focus ?: cognitivePulse,
-                        anxietyScore = anxiety ?: systemPulse,
-                        sleepScore = sleep ?: recoveryPulse,
-                        tookMeds = tookMeds,
-                        symptomNote = note,
-                    ),
-                )
-
-            // Insert medication tracking
-            medicationIds.forEach { medId ->
-                repository.insertTrackMedication(
-                    TrackMedicationJoinEntity(
-                        trackEntryId = entryId,
-                        medicationId = medId,
-                        wasTaken = true,
-                    ),
-                )
-            }
+            repository.saveTrackCheckIn(
+                TrackEntryEntity(
+                    date = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date.toString(),
+                    moodScore = mood ?: affectivePulse,
+                    energyScore = energy ?: energyPulse,
+                    focusScore = focus ?: cognitivePulse,
+                    anxietyScore = anxiety ?: systemPulse,
+                    sleepScore = sleep ?: recoveryPulse,
+                    tookMeds = tookMeds,
+                    symptomNote = note,
+                ),
+                medicationIds,
+            )
         }
     }
 
@@ -2674,36 +2671,7 @@ class MainViewModel(
     )
     {
         viewModelScope.launch {
-            val now = Clock.System.now()
-            val dateStr = now.toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
-
-            val nodeId =
-                repository.insertLifeItem(
-                    kind = ItemKind.RECORD,
-                        title = "${type.uppercase()} REVIEW - $dateStr",
-                    content = content,
-                        inboxState = false,
-                        source = "review",
-                        recordKind = RecordKind.REFLECTION,
-                    )
-
-                repository.insertReview(
-                ReviewEntity(
-                    type = type,
-                        date = dateStr,
-                        resultNodeId = nodeId,
-                        moodScore = mood,
-                    energyScore = energy,
-                ),
-            )
-
-            if (mood != null || energy != null) {
-                addTrackEntry(
-                    mood = mood,
-                    energy = energy,
-                    note = "Linked to $type review",
-                ) // NON-NLS
-            }
+            repository.completeReview(type, content, mood, energy)
         }
     }
 

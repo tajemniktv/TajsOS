@@ -159,15 +159,3 @@ expect object AppDatabaseConstructor : RoomDatabaseConstructor<AppDatabase> {
     /** Factory method to initialize the database instance. */
     override fun initialize(): AppDatabase
 }
-
-/**
- * Configures a Room builder with standard TajsOS driver settings.
- *
- * @param builder The base Room database builder.
- */
-fun getDatabaseBuilder(builder: RoomDatabase.Builder<AppDatabase>): AppDatabase =
-    builder
-        .setDriver(
-            androidx.sqlite.driver.bundled
-                .BundledSQLiteDriver(),
-        ).build()

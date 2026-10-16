@@ -548,12 +548,7 @@ class NodeCommands(
 
     fun togglePermanentPin(node: NodeEntity) {
         scope.launch {
-            repository.updateNode(
-                node.copy(
-                    isPinned = !node.isPinned,
-                    updatedAt = Clock.System.now().toEpochMilliseconds(),
-                ),
-            )
+            repository.togglePermanentPin(node.id)
         }
     }
 

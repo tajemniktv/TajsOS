@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -291,6 +293,7 @@ class AppRepository internal constructor(
     private val savedViewDao: SavedViewDao = NoOpSavedViewDao,
     private val transactions: RepositoryTransactions = DirectRepositoryTransactions,
     private val backupDao: BackupDao? = null,
+    internal val localDates: Flow<LocalDate> = systemLocalDates,
 ) {
     /** Production construction always wires real companion DAOs, backups, and transactions. */
     constructor(
@@ -298,6 +301,7 @@ class AppRepository internal constructor(
         nodeDao: NodeDao = database.nodeDao(),
         calendarEventDao: CalendarEventDao = database.calendarEventDao(),
         savedViewDao: SavedViewDao = database.savedViewDao(),
+        localDates: Flow<LocalDate> = systemLocalDates,
     ) : this(
         nodeDao,
         database.focusSessionDao(),
@@ -328,6 +332,7 @@ class AppRepository internal constructor(
         savedViewDao,
         RoomRepositoryTransactions(database),
         database.backupDao(),
+        localDates,
     )
 
     /**
@@ -335,22 +340,15 @@ class AppRepository internal constructor(
      *
      * @return A Flow emitting a list of [NodeWithPin] objects.
      */
-    fun getAllNodes(): Flow<List<NodeWithPin>> = nodeDao.getAllNodesWithPins().withLocalTodayPins(nodeDao)
+    fun getAllNodes(): Flow<List<NodeWithPin>> = nodeDao.getAllNodesWithPins().withLocalTodayPins(nodeDao, localDates)
 
     /**
      * Retrieves a stream of active nodes that are assigned to the current local date.
      *
      * @return A Flow emitting a list of active [NodeEntity] objects for today.
      */
-    fun getTodayNodes(): Flow<List<NodeEntity>> {
-        val today =
-            kotlin.time.Clock.System
-                .now()
-                .toLocalDateTime(TimeZone.currentSystemDefault())
-                .date
-                .toString()
-        return nodeDao.getTodayNodes(today)
-    }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun getTodayNodes(): Flow<List<NodeEntity>> = localDates.flatMapLatest { nodeDao.getTodayNodes(it.toString()) }
 
     /**
      * Retrieves a single node by its ID.
@@ -848,6 +846,32 @@ class AppRepository internal constructor(
         executeNodeSideEffects(oldNode, node)
     }
 
+    /** Patches only supplied text fields on the current row, preserving edits to all other fields. */
+    suspend fun updateNodeText(nodeId: Long, title: String? = null, content: String? = null): Unit = transactions.write {
+        patchNode(nodeId) { current -> current.copy(title = title ?: current.title, content = content ?: current.content) }
+    }
+
+    /** Applies an editor's field change inside the same transaction as its fresh read. */
+    suspend fun patchNode(nodeId: Long, patch: (NodeEntity) -> NodeEntity): Unit = transactions.write {
+        val current = nodeDao.getNodeById(nodeId) ?: error("Item no longer exists")
+        var updated = patch(current)
+        require(updated.id == nodeId) { "An edit cannot change item identity" }
+        val previousDueAt = current.dueAt
+        val updatedDueAt = updated.dueAt
+        if (previousDueAt != null && updatedDueAt != null && updatedDueAt > previousDueAt) {
+            updated = updated.copy(postponeCount = current.postponeCount + 1)
+        }
+        if (updated != current) {
+            updateNode(updated.copy(updatedAt = kotlin.time.Clock.System.now().toEpochMilliseconds()))
+        }
+    }
+
+    /** Toggle against persisted state so a stale favorite callback cannot replace text or assignments. */
+    suspend fun togglePermanentPin(nodeId: Long): Unit = transactions.write {
+        val current = nodeDao.getNodeById(nodeId) ?: return@write
+        updateNode(current.copy(isPinned = !current.isPinned, updatedAt = kotlin.time.Clock.System.now().toEpochMilliseconds()))
+    }
+
     /**
      * Applies a lifecycle transition to the current persisted node, preserving unrelated edits.
      * Repeating the current status is a no-op. Completion and a recurring successor share one
@@ -1258,7 +1282,8 @@ class AppRepository internal constructor(
      * @param nodeId The ID of the node to check.
      * @return A Flow emitting true if the node is pinned to today, false otherwise.
      */
-    fun isPinnedToToday(nodeId: Long): Flow<Boolean> = nodeDao.isPinnedOnDate(nodeId, currentLocalDate().toString())
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun isPinnedToToday(nodeId: Long): Flow<Boolean> = localDates.flatMapLatest { nodeDao.isPinnedOnDate(nodeId, it.toString()) }
 
     /**
      * Retrieves nodes filtered by their type.
@@ -1283,7 +1308,7 @@ class AppRepository internal constructor(
      * @return Lists of `NodeWithPin` representing nodes in the project along with their today-pin data.
      */
     fun getNodesByProjectWithPins(projectId: Long): Flow<List<NodeWithPin>> =
-        nodeDao.getNodesByProjectWithPins(projectId).withLocalTodayPins(nodeDao)
+        nodeDao.getNodesByProjectWithPins(projectId).withLocalTodayPins(nodeDao, localDates)
 
     /**
      * Retrieve nodes that belong to a specific area.
@@ -1300,7 +1325,7 @@ class AppRepository internal constructor(
      * @return A list of nodes in the given area paired with their today-pin information.
      */
     fun getNodesByAreaWithPins(areaId: Long): Flow<List<NodeWithPin>> =
-        nodeDao.getNodesByAreaWithPins(areaId).withLocalTodayPins(nodeDao)
+        nodeDao.getNodesByAreaWithPins(areaId).withLocalTodayPins(nodeDao, localDates)
 
     /**
      * Retrieves project nodes that belong to the specified area.
@@ -1348,6 +1373,15 @@ class AppRepository internal constructor(
         if (id == -1L) id = entry.id
         logEvent("CHECKIN_CREATED")
         return@write id
+    }
+
+    /** Appends one check-in and its medication selection atomically; daily-edit semantics are unchanged. */
+    suspend fun saveTrackCheckIn(entry: TrackEntryEntity, medicationIds: Set<Long> = emptySet()): Long = transactions.write {
+        val id = insertTrackEntry(entry)
+        medicationIds.forEach { medicationId ->
+            trackDao.insertTrackMedication(TrackMedicationJoinEntity(id, medicationId, wasTaken = true))
+        }
+        id
     }
 
     // Relations
@@ -1673,6 +1707,33 @@ class AppRepository internal constructor(
         return@write id
     }
 
+    /** A reflection, its review row, and the optional check-in either all commit or all roll back. */
+    suspend fun completeReview(
+        type: String,
+        content: String,
+        mood: Int? = null,
+        energy: Int? = null,
+        timestamp: Long = kotlin.time.Clock.System.now().toEpochMilliseconds(),
+        timezone: TimeZone = TimeZone.currentSystemDefault(),
+    ): Long = transactions.write {
+        val date = kotlin.time.Instant.fromEpochMilliseconds(timestamp).toLocalDateTime(timezone).date.toString()
+        val nodeId = insertLifeItem(
+            kind = ItemKind.RECORD,
+            title = "${type.uppercase()} REVIEW - $date",
+            content = content,
+            inboxState = false,
+            source = "review",
+            recordKind = RecordKind.REFLECTION,
+        )
+        val reviewId = insertReview(ReviewEntity(type = type, date = date, resultNodeId = nodeId,
+            completedAt = timestamp, moodScore = mood, energyScore = energy))
+        if (mood != null || energy != null) {
+            saveTrackCheckIn(TrackEntryEntity(date = date, createdAt = timestamp, moodScore = mood,
+                energyScore = energy, symptomNote = "Linked to $type review"))
+        }
+        reviewId
+    }
+
     suspend fun getLastReviewByType(type: String) = reviewDao.getLastReviewByType(type)
 
     // Operating Modes
@@ -1900,12 +1961,16 @@ class AppRepository internal constructor(
     fun getAllMedications(): Flow<List<MedicationEntity>> = medicationDao.getAllMedications()
 
     suspend fun insertMedication(medication: MedicationEntity): Long = transactions.write {
+        require(medication.isValid()) { "Invalid medication" }
         var id = medicationDao.insertMedication(medication)
         if (id == -1L) id = medication.id
         return@write id
     }
 
-    suspend fun updateMedication(medication: MedicationEntity) = medicationDao.updateMedication(medication)
+    suspend fun updateMedication(medication: MedicationEntity) {
+        require(medication.isValid()) { "Invalid medication" }
+        medicationDao.updateMedication(medication)
+    }
 
     suspend fun deleteMedication(medication: MedicationEntity) = medicationDao.deleteMedication(medication)
 
