@@ -7,7 +7,7 @@ This file defines **TajsOS-specific** expectations, not general agent behavior o
 
 - **TajsOS** is an experimental, local-first personal operating system for life, projects, knowledge, execution, and reflection. Build one connected system, not isolated feature silos or a generic task app.
 - Design for clarity and low-friction use, including neurodivergent users, without making ADHD the product identity.
-- **Android and Desktop JVM are primary targets.** iOS is a scaffold; the website and server have separate responsibilities. Do not present planned features as shipped.
+- **Android and Desktop JVM are primary targets.** iOS is a scaffold; the server is experimental and the former website is archived. Do not present planned features as shipped.
 - Strengthen core architecture and workflows before adding breadth. Follow `ROADMAP.md` for priorities.
 
 ## Repository map and sources of truth
@@ -19,7 +19,6 @@ This file defines **TajsOS-specific** expectations, not general agent behavior o
 | `androidApp/` | Android entry point and platform integrations |
 | `server/` | Experimental Ktor backend / sync work |
 | `iosApp/` | iOS scaffold |
-| `website/` | Separate Astro website and marketing/documentation surface |
 
 - **`README.md`**: current capabilities, setup, dependencies, and validation commands.
 - **`ARCHITECTURE.md`**: layering, module boundaries, and UI structure.
@@ -41,7 +40,6 @@ This file defines **TajsOS-specific** expectations, not general agent behavior o
   - Shared/Desktop/server: `./gradlew :shared:jvmTest :composeApp:jvmTest :server:test`
   - Android: `./gradlew :androidApp:lintDebug :androidApp:assembleDebug`
   - Desktop packaging: `./gradlew :composeApp:createDistributable`
-  - Website (inside `website/`): `npm ci`, `npm run check`, `npm run build`
   - Coverage, when relevant: `./gradlew koverXmlReport`
 - Update the **relevant** canonical docs when behavior, architecture, design conventions, or development commands change; do not duplicate their full contents here.
 - Follow `CONTRIBUTING.md` and the authorized task workflow for commits/PRs. Never modify release, licensing, or distribution policy incidentally.

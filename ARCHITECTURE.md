@@ -44,8 +44,7 @@ At a high level, the repo currently centers around:
 - `iosApp/`  
   iOS scaffold.
 
-- `website/`  
-  Website and documentation surface.
+The former website is archived under `.codex/archive/website` and has no active build/deployment workflow.
 
 ## Layering intent
 
@@ -80,6 +79,17 @@ Responsible for:
 - platform-aware presentation decisions.
 
 This layer may call into domain/data logic, but should avoid becoming the place where the product rules secretly live.
+
+### Editor and aggregate writes
+
+- Note text and metadata patches load the current row inside the writer transaction. Shared
+  `NoteEditController` keeps per-item drafts, coalesces writes, and retains failed text for retry
+  across Notes route changes. Drafts are in memory; abrupt process termination is not draft recovery.
+- Track check-ins and medication joins commit together. Review completion commits its reflection,
+  review row, and optional check-in together. Repeated check-ins remain append-only pending the
+  daily-check-in product decision.
+- One shared local-date signal switches existing Today queries across midnight or device timezone
+  changes, checking the device clock while subscribed. The supported refresh bound is about one second.
 
 ### Analytical and time snapshots
 

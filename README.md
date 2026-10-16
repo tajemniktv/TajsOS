@@ -128,9 +128,10 @@ androidApp/   Android-specific app entrypoint
 composeApp/   Shared Compose UI and navigation
 shared/       Core data models, entities, repository, business logic
 server/       Ktor backend for sync / remote features
-website/      Website / documentation
 iosApp/       iOS scaffold
 ```
+
+The former website is archived under `.codex/archive/website`; it is not a current build or deployment target.
 
 ---
 
