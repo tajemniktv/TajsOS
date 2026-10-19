@@ -133,13 +133,18 @@ iosApp/       iOS scaffold
 
 The former website is archived under `.codex/archive/website`; it is not a current build or deployment target.
 
+CI validates the KMP application on `dev` pushes and pull requests to `dev`/`main` when app or build
+files change; manual runs also execute the Gradle checks. CodeQL analyzes Kotlin/Java and GitHub
+Actions, including a weekly scan. Website builds, deployment, JavaScript/TypeScript scanning, and
+website dependency updates are retired here; Dependabot maintains Gradle and Actions dependencies.
+
 ---
 
 ## Project stats
 
-[![CI](https://img.shields.io/github/actions/workflow/status/tajemniktv/TajsOS/ci.yml?branch=main&label=CI)](https://github.com/tajemniktv/TajsOS/actions/workflows/ci.yml)
-[![Codecov](https://codecov.io/gh/tajemniktv/TajsOS/branch/main/graph/badge.svg)](https://codecov.io/gh/tajemniktv/TajsOS)
-[![CodeQL](https://img.shields.io/github/actions/workflow/status/tajemniktv/TajsOS/codeql.yml?branch=main&label=CodeQL)](https://github.com/tajemniktv/TajsOS/actions/workflows/codeql.yml)
+[![CI](https://img.shields.io/github/actions/workflow/status/tajemniktv/TajsOS/ci.yml?branch=dev&label=CI)](https://github.com/tajemniktv/TajsOS/actions/workflows/ci.yml)
+[![Codecov](https://codecov.io/gh/tajemniktv/TajsOS/branch/dev/graph/badge.svg)](https://codecov.io/gh/tajemniktv/TajsOS)
+[![CodeQL](https://img.shields.io/github/actions/workflow/status/tajemniktv/TajsOS/codeql.yml?branch=dev&label=CodeQL)](https://github.com/tajemniktv/TajsOS/actions/workflows/codeql.yml)
 [![Latest release](https://img.shields.io/github/v/release/tajemniktv/TajsOS?display_name=release)](https://github.com/tajemniktv/TajsOS/releases)
 [![Last commit](https://img.shields.io/github/last-commit/tajemniktv/TajsOS)](https://github.com/tajemniktv/TajsOS/commits/main)
 [![Open issues](https://img.shields.io/github/issues/tajemniktv/TajsOS)](https://github.com/tajemniktv/TajsOS/issues)

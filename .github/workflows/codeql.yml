@@ -182,5 +182,6 @@ jobs:
         with:
           category: /language:actions
 
+# JavaScript/TypeScript scanning was retired with the website; there is no active source target.
 # Swift is intentionally omitted for now. This repository's iosApp target is a thin wrapper
 # and does not have a reliable macOS CI build path yet for CodeQL manual extraction.
