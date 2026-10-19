@@ -39,7 +39,7 @@ kover = "0.9.11"
 ksp = "2.3.12"
 google-services = "4.5.0"
 # Firebase SDK versions are aligned by this BOM in each Android consumer.
-firebase-bom = "35.0.0"
+firebase-bom = "35.0.2"
 firebase-crashlytics-gradle = "3.0.8"
 firebase-app-distribution-gradle = "5.3.0"
 firebase-perf-gradle = "2.0.2"
