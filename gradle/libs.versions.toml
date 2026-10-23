@@ -18,7 +18,7 @@ androidx-datastore = "1.2.1"
 androidx-navigation = "2.10.0-rc01"
 androidx-sqlite = "2.7.1"
 kotlinx-datetime = "0.8.0"
-kotlinx-serialization = "1.12.0-RC"
+kotlinx-serialization = "1.12.0"
 composeHotReload = "1.2.0"
 # Material 3 1.13 requires this Compose runtime; keep tooling and runtime aligned.
 composeMultiplatform = "1.13.0-alpha02"
